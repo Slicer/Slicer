@@ -1502,27 +1502,128 @@ class MakeModelOptions(EditOptions):
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
 
-#### GrowCut
-class GrowCutOptions(EditOptions):
-  """ GrowCut-specfic gui
+#### GrowCutSegment
+class GrowCutSegmentOptions(EditOptions):
+  """ GrowCutSegment-specfic gui
   """
 
   def __init__(self, parent=0):
-    super(GrowCutOptions,self).__init__(parent)
+    super(GrowCutSegmentOptions,self).__init__(parent)
 
   def __del__(self):
-    super(GrowCutOptions,self).__del__()
+    super(GrowCutSegmentOptions,self).__del__()
 
   def create(self):
-    super(GrowCutOptions,self).create()
+    super(GrowCutSegmentOptions,self).create()
+    self.applyFrame = qt.QFrame(self.frame)
+    self.applyFrame.setLayout(qt.QHBoxLayout())
+    self.frame.layout().addWidget(self.applyFrame)
+    self.widgets.append(self.applyFrame)
+    
+    self.radiusFrame = qt.QFrame(self.frame)
+    self.radiusFrame.setLayout(qt.QHBoxLayout())
+    self.frame.layout().addWidget(self.radiusFrame)
+    self.widgets.append(self.radiusFrame)
+    self.radiusLabel = qt.QLabel("Radius:", self.radiusFrame)
+    self.radiusLabel.setToolTip("Set the radius of the paint brush in millimeters")
+    self.radiusFrame.layout().addWidget(self.radiusLabel)
+    self.widgets.append(self.radiusLabel)
+    self.radiusSpinBox = qt.QDoubleSpinBox(self.radiusFrame)
+    self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
+    self.radiusSpinBox.minimum = 0.01
+    self.radiusSpinBox.maximum = 100
+    self.radiusSpinBox.suffix = "mm"
+    self.radiusFrame.layout().addWidget(self.radiusSpinBox)
+    self.widgets.append(self.radiusSpinBox)
+    
+    self.radius = ctk.ctkDoubleSlider(self.frame)
+    self.radius.minimum = 0.01
+    self.radius.maximum = 100
+    self.radius.orientation = 1
+    self.radius.singleStep = 0.01
+    self.frame.layout().addWidget(self.radius)
+    self.widgets.append(self.radius)
 
-    HelpButton(self.frame, "TODO: GrowCut is not yet available in slicer4")
+    self.smudge = qt.QCheckBox("Smudge", self.frame)
+    self.smudge.setToolTip("Set the label number automatically by sampling the pixel location where the brush stroke starts.")
+    self.frame.layout().addWidget(self.smudge)
+    self.widgets.append(self.smudge)
+
+    self.smudge.connect('clicked()', self.updateMRMLFromGUI)
+    self.radius.connect('valueChanged(double)', self.onRadiusValueChanged)
+    self.radiusSpinBox.connect('valueChanged(double)', self.onRadiusSpinBoxChanged)
+
+    self.radius1 = qt.QPushButton("1", self.frame)
+    self.radius1.setToolTip("Set radius to 1")
+    self.radius1.setGeometry(80,79,20,20)
+    #self.frame.layout().addWidget(self.radius1)
+    self.widgets.append(self.radius1)
+
+    self.radius2 = qt.QPushButton("2", self.frame)
+    self.radius2.setToolTip("Set radius to 2")
+    self.radius2.setGeometry(102,79,20,20)
+    #self.frame.layout().addWidget(self.radius2)
+    self.widgets.append(self.radius2)
+
+    self.radius3 = qt.QPushButton("3", self.frame)
+    self.radius3.setToolTip("Set radius to 3")
+    self.radius3.setGeometry(122,79,20,20)
+    #self.frame.layout().addWidget(self.radius3)
+    self.widgets.append(self.radius3)
+
+    self.radius4 = qt.QPushButton("4", self.frame)
+    self.radius4.setToolTip("Set radius to 4")
+    self.radius4.setGeometry(142,79,20,20)
+   # self.frame.layout().addWidget(self.radius4)
+    self.widgets.append(self.radius4)
+
+    self.radius5 = qt.QPushButton("5", self.frame)
+    self.radius5.setToolTip("Set radius to 5")
+    self.radius5.setGeometry(162,79,20,20)
+   # self.frame.layout().addWidget(self.radius5)
+    self.widgets.append(self.radius5)
+
+
+    self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.setToolTip("Apply to run segmentation.\nUse the 'a' or 'Enter' hotkey to apply in slice window")
+    self.frame.layout().addWidget(self.apply)
+    self.widgets.append(self.apply)
+
+    HelpButton(self.frame, "Use this tool to apply grow cut segmentation.\n\n Select different label colors and paint on foreground and background or as many different classes as you want. \n But to run segmentation correctly, you need to supply a minimum or two class labels.")
+
+    self.radius1.connect('clicked()', self.onRadius1)
+    self.radius2.connect('clicked()', self.onRadius2)
+    self.radius3.connect('clicked()', self.onRadius3)
+    self.radius4.connect('clicked()', self.onRadius4)
+    self.radius5.connect('clicked()', self.onRadius5)
+
+    self.apply.connect('clicked()', self.onApply)
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
 
+  def onRadius1(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect updateRadius1 }')
+
+  def onRadius2(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect updateRadius2 }')
+
+  def onRadius3(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect updateRadius3 }')
+
+  def onRadius4(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect updateRadius4 }')
+
+  def onRadius5(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect updateRadius5 }')
+
+
+  def onApply(self):
+    tcl('set effect [lindex [itcl::find objects -class GrowCutSegmentEffect] 0]; if { $effect != "" } { $effect apply }')
+    #tcl('::GrowCutSegmentEffect::apply')
+    
   def destroy(self):
-    super(GrowCutOptions,self).destroy()
+    super(GrowCutSegmentOptions,self).destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -1537,21 +1638,77 @@ class GrowCutOptions(EditOptions):
       self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(GrowCutOptions,self).setMRMLDefaults()
+    super(GrowCutSegmentOptions,self).setMRMLDefaults()
+    disableState = self.parameterNode.GetDisableModifiedEvent()
+    self.parameterNode.SetDisableModifiedEvent(1)
+    paintdefaults = (
+      ("radius", "3"),
+      ("smudge", "0")
+    )
+    growcutdefaults = (
+      ("contrastNoiseRatio", "0.8"),
+      ("priorStrength", "0.0003"),
+      ("segmented", "2")
+    )
+    for d in paintdefaults:
+      param = "Paint,"+d[0]
+      pvalue = self.parameterNode.GetParameter(param)
+      print pvalue
+      if pvalue == '':
+        self.parameterNode.SetParameter(param, d[1])
+    for d in growcutdefaults:
+       param = "GrowCutSegment,"+d[0]
+       pvalue = self.parameterNode.GetParameter(param)
+       if pvalue == '':
+          self.parameterNode.SetParameter(param, d[1])
+          
+    self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def updateGUIFromMRML(self,caller,event):
+    if self.updatingGUI:
+      return
+    paintparams = ("radius", "smudge")
+    for p in paintparams:
+      if self.parameterNode.GetParameter("Paint,"+p) == '':
+        # don't update if the parameter node has not got all values yet
+        return
+ 
     self.updatingGUI = True
-    super(GrowCutOptions,self).updateGUIFromMRML(caller,event)
+    super(GrowCutSegmentOptions,self).updateGUIFromMRML(caller,event)
+    self.smudge.setChecked( int(self.parameterNode.GetParameter("Paint,smudge")) )
+    self.radius.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
+    self.radiusSpinBox.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
     self.updatingGUI = False
+
+  def onRadiusValueChanged(self,value):
+    if self.updatingGUI:
+      return
+    self.updatingGUI = True
+    self.radiusSpinBox.setValue(self.radius.value)
+    self.updatingGUI = False
+    self.updateMRMLFromGUI()
+
+  def onRadiusSpinBoxChanged(self,value):
+    if self.updatingGUI:
+      return
+    self.updatingGUI = True
+    self.radius.setValue(self.radiusSpinBox.value)
+    self.updatingGUI = False
+    self.updateMRMLFromGUI()
 
   def updateMRMLFromGUI(self):
     if self.updatingGUI:
       return
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(GrowCutOptions,self).updateMRMLFromGUI()
+    super(GrowCutSegmentOptions,self).updateMRMLFromGUI()
+    if self.smudge.checked:
+      self.parameterNode.SetParameter( "Paint,smudge", "1" )
+    else:
+      self.parameterNode.SetParameter( "Paint,smudge", "0" )
+    self.parameterNode.SetParameter( "Paint,radius", str(self.radius.value) )
+    self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
 
 
-# TODO: Speed up paintApply
