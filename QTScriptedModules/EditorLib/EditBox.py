@@ -432,7 +432,7 @@ itcl::body EditBox::setButtonState {effect state} {
           vol = nodes.GetItemAsObject(n)
           volID = vol.GetID()
           volname = vol.GetName()
-    if volname == gestureName:
+          if volname == gestureName:
             foundNode = volID
             gestureID = volID
             break
