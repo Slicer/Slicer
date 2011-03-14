@@ -103,6 +103,8 @@ protected:
   /// Not public as we internally take care of chosing/updating the layout node
   void SetLayoutNode(vtkMRMLLayoutNode* layoutNode);
 
+  /// Update the logic when the layout node is set or modified
+  void UpdateFromLayoutNode();
   /// Make sure the view node list mapped in the current layout is up-to-date.
   void UpdateViewCollectionsFromLayout();
   void CreateMissingViews();

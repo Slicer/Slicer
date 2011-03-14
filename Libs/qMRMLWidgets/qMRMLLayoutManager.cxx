@@ -857,15 +857,8 @@ QWidget* qMRMLLayoutManager::viewFromXML(QDomElement viewElement)
   // convert Qt xml element into vtkMRMLLayoutLogic attributes
   vtkMRMLLayoutLogic::ViewAttributes attributes = d->attributesFromXML(viewElement);
   vtkMRMLNode* viewNode = d->MRMLLayoutLogic->GetViewFromAttributes(attributes);
-  if (!viewNode)
-    {
-    viewNode = d->MRMLLayoutLogic->CreateViewFromAttributes(attributes);
-    if (viewNode)
-      {
-      this->mrmlScene()->AddNode(viewNode);
-      viewNode->Delete();
-      }
-    }
+  // the view should have been created automatically by the logic when the new
+  // view arrangement is set
   Q_ASSERT(viewNode);
   return d->viewWidget(viewNode);
 }

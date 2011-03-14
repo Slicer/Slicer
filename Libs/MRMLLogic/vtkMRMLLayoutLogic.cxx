@@ -226,17 +226,10 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
       }
-    // Create other missing views (based on the current layout)
-    this->CreateMissingViews();
     }
   else if (event == vtkCommand::ModifiedEvent && caller == this->LayoutNode)
     {
-    if (this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
-      {
-      this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
-      }
-    this->CreateMissingViews();
-    this->UpdateViewCollectionsFromLayout();
+    this->UpdateFromLayoutNode();
     //vtkMRMLAbstractLogic doesn't handle events not coming from the MRML scene.
     return;
     }
@@ -315,6 +308,7 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
     }
   if (this->LayoutNode && this->LayoutNode->GetScene() == this->GetMRMLScene())
     {
+    this->UpdateFromLayoutNode();
     return;
     }
   this->GetMRMLScene()->InitTraversal();
@@ -351,6 +345,18 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::UpdateFromLayoutNode()
+{
+  if (this->LayoutNode &&
+      this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
+    {
+    this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
+    }
+  this->CreateMissingViews();
+  this->UpdateViewCollectionsFromLayout();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
 {
   if (this->LayoutNode == layoutNode)
@@ -359,13 +365,9 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
     }
   this->GetMRMLObserverManager()->SetAndObserveObject(
     vtkObjectPointer(&this->LayoutNode), layoutNode);
-  if (this->LayoutNode &&
-      this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
-    {
-    this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
-    }
+  // To do only once (when the layout node is set)
   this->AddDefaultLayouts();
-  this->UpdateViewCollectionsFromLayout();
+  this->UpdateFromLayoutNode();
 }
 
 //----------------------------------------------------------------------------
