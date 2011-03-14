@@ -18,6 +18,9 @@
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerAbstractModuleRepresentation.h"
 
 /// MRML includes
 #include <vtkMRMLScene.h>
@@ -185,3 +188,39 @@ void qSlicerIOManager::openScreenshotDialog()
     }
   d->ScreenshotDialog->show();
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::openSceneViewsDialog()
+{
+//  Q_D(qSlicerIOManager);
+  qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+  if (!moduleManager)
+    {
+    qWarning() << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
+    return;
+    }
+  if (moduleManager->isLoaded("sceneviews") == false)
+    {
+    // load it?
+    if (moduleManager->loadModule("sceneviews") == false)
+      {
+      qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to load Scene Views module (sceneviews).";
+      return;
+      }
+    }
+  
+    qSlicerAbstractCoreModule *modulePointer = moduleManager->module("sceneviews");
+    if (modulePointer == NULL)
+      {
+      qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
+      return;
+      }
+    QObject * widgetRepresentation = dynamic_cast<QObject*>(modulePointer->widgetRepresentation());
+    if (widgetRepresentation == NULL)
+      {
+      qWarning() << "qSlicerIOManager::openSceneViewsDialog: failed to get the scene views module representation";
+      return;
+      }
+    QMetaObject::invokeMethod(widgetRepresentation, "showSceneViewDialog");
+}
+

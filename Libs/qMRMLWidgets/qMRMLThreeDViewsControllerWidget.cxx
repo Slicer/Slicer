@@ -150,7 +150,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->actionSetBlackBackground, SIGNAL(triggered()), SLOT(setBlackBackground()));
 
   // Scene View buttons
-  connect(this->SceneViewButton, SIGNAL(clicked()), SLOT(createSceneView()));
   this->SceneViewMenu = new qMRMLSceneViewMenu(widget);
   connect(widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
           this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -323,9 +322,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::createSceneView()
 {
   Q_Q(qMRMLThreeDViewsControllerWidget);
 
-  // try to pop up the scene view module dialogue
-  //qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
-
   // Ask user for a name
   bool ok = false;
   QString sceneViewName = QInputDialog::getText(q, tr("SceneView Name"),
@@ -375,7 +371,7 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
   Q_D(qMRMLThreeDViewsControllerWidget);
   d->setupUi(this);
 
-  connect(d->ScreenshotButton, SIGNAL(clicked()), SIGNAL(screenshotButtonClicked()));
+  connect(d->SceneViewButton, SIGNAL(clicked()), SIGNAL(sceneViewButtonClicked()));
 }
 
 // --------------------------------------------------------------------------

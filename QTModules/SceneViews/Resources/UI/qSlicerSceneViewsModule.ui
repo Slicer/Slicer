@@ -35,7 +35,7 @@
          <item>
           <layout class="QHBoxLayout" name="selectedLayout">
            <item>
-            <widget class="QPushButton" name="screenShot">
+            <widget class="QPushButton" name="sceneView">
              <property name="toolTip">
               <string>Create a 3D Slicer SceneView.</string>
              </property>

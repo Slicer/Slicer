@@ -198,11 +198,22 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->MRMLThreeDViewsControllerWidget->setActiveThreeDRenderer(
       this->LayoutManager->activeThreeDRenderer());
 
+  // to get the scene views module dialog to pop up when a button is pressed
+  // in the views controller widget, we emit a signal, and the
+  // io manager will deal with the sceneviews module
   QObject::connect(this->MRMLThreeDViewsControllerWidget,
-                   SIGNAL(screenshotButtonClicked()),
+                   SIGNAL(sceneViewButtonClicked()),
                    qSlicerApplication::application()->ioManager(),
-                   SLOT(openScreenshotDialog()));
+                   SLOT(openSceneViewsDialog()));
 
+  // to get the scene views module dialog to pop up when a button is pressed
+  // in the views controller widget, we emit a signal, and the
+  // io manager will deal with the sceneviews module
+  QObject::connect(this->MRMLThreeDViewsControllerWidget,
+                   SIGNAL(sceneViewButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openSceneViewsDialog()));
+  
   //----------------------------------------------------------------------------
   // View Toolbar
   //----------------------------------------------------------------------------

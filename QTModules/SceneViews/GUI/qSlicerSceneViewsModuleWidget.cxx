@@ -99,7 +99,7 @@ qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
   , d_ptr(new qSlicerSceneViewsModuleWidgetPrivate(*this))
 {
 
-  this->m_SnapShotDialog = 0;
+  this->m_SceneViewDialog = 0;
 
 
 }
@@ -108,11 +108,11 @@ qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
 qSlicerSceneViewsModuleWidget::~qSlicerSceneViewsModuleWidget()
 {
 
-  if (this->m_SnapShotDialog)
+  if (this->m_SceneViewDialog)
     {
-    this->m_SnapShotDialog->close();
-    delete this->m_SnapShotDialog;
-    this->m_SnapShotDialog = 0;
+    this->m_SceneViewDialog->close();
+    delete this->m_SceneViewDialog;
+    this->m_SceneViewDialog = 0;
     }
 
 
@@ -138,8 +138,8 @@ void qSlicerSceneViewsModuleWidget::setup()
   this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
       SLOT(deleteSelectedButtonClicked()));
 
-  this->connect(d->screenShot, SIGNAL(clicked()), this,
-      SLOT(onSnapShotButtonClicked()));
+  this->connect(d->sceneView, SIGNAL(clicked()), this,
+      SLOT(onSceneViewButtonClicked()));
 
 }
 
@@ -192,34 +192,34 @@ void qSlicerSceneViewsModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
   QByteArray mrmlIdArray = mrmlId.toLatin1();
 
-  // the selected entry is a snapshot node,
+  // the selected entry is a sceneView node,
   // we check if we have to create a new dialog..
 
-  if (!this->m_SnapShotDialog)
+  if (!this->m_SceneViewDialog)
     {
 
-    // no snapshot dialog exists yet..
-    this->m_SnapShotDialog = new qSlicerSceneViewsModuleDialog();
+    // no sceneView dialog exists yet..
+    this->m_SceneViewDialog = new qSlicerSceneViewsModuleDialog();
 
     // pass a pointer to the logic class
-    this->m_SnapShotDialog->setLogic(d->logic());
+    this->m_SceneViewDialog->setLogic(d->logic());
 
     // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
-        SLOT(snapshotRejected()));
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(snapshotAccepted()));
+    this->connect(this->m_SceneViewDialog, SIGNAL(dialogRejected()), this,
+        SLOT(sceneViewRejected()));
+    this->connect(this->m_SceneViewDialog, SIGNAL(dialogAccepted()), this,
+        SLOT(sceneViewAccepted()));
 
     }
 
   // reset all fields of the dialog
-  this->m_SnapShotDialog->reset();
+  this->m_SceneViewDialog->reset();
 
   // now we initialize it with existing values
-  this->m_SnapShotDialog->initialize(mrmlIdArray.data());
+  this->m_SceneViewDialog->initialize(mrmlIdArray.data());
 
   // in any case, show the dialog
-  this->m_SnapShotDialog->open();
+  this->m_SceneViewDialog->open();
 
 }
 
@@ -252,50 +252,56 @@ void qSlicerSceneViewsModuleWidget::refreshTree()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// Signal callback when the OK button of the snapshot dialog was clicked
-void qSlicerSceneViewsModuleWidget::snapshotAccepted()
+// Signal callback when the OK button of the sceneView dialog was clicked
+void qSlicerSceneViewsModuleWidget::sceneViewAccepted()
 {
 
-  this->m_SnapShotDialog->setVisible(false);
-  //std::cout << "Snapshot accepted" << std::endl;
+  this->m_SceneViewDialog->setVisible(false);
+  //std::cout << "SceneView accepted" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
-// Signal callback when the CANCEL button of the snapshot dialog was clicked
-void qSlicerSceneViewsModuleWidget::snapshotRejected()
+// Signal callback when the CANCEL button of the sceneView dialog was clicked
+void qSlicerSceneViewsModuleWidget::sceneViewRejected()
 {
-  this->m_SnapShotDialog->setVisible(false);
-  //std::cout << "Snapshot rejected" << std::endl;
+  this->m_SceneViewDialog->setVisible(false);
+  //std::cout << "SceneView rejected" << std::endl;
 }
 
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::onSnapShotButtonClicked()
+void qSlicerSceneViewsModuleWidget::onSceneViewButtonClicked()
 {
 
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  if (!this->m_SnapShotDialog)
+  if (!this->m_SceneViewDialog)
     {
 
-    this->m_SnapShotDialog = new qSlicerSceneViewsModuleDialog();
+    this->m_SceneViewDialog = new qSlicerSceneViewsModuleDialog();
 
     // pass a pointer to the logic class
-    this->m_SnapShotDialog->setLogic(d->logic());
+    this->m_SceneViewDialog->setLogic(d->logic());
 
     // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
-        SLOT(snapshotRejected()));
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(snapshotAccepted()));
+    this->connect(this->m_SceneViewDialog, SIGNAL(dialogRejected()), this,
+        SLOT(sceneViewRejected()));
+    this->connect(this->m_SceneViewDialog, SIGNAL(dialogAccepted()), this,
+        SLOT(sceneViewAccepted()));
 
     }
 
   // show the dialog
-  this->m_SnapShotDialog->reset();
-  this->m_SnapShotDialog->open();
+  this->m_SceneViewDialog->reset();
+  this->m_SceneViewDialog->open();
 
 
 
 }
 
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::showSceneViewDialog()
+{
+  this->onSceneViewButtonClicked();
+}

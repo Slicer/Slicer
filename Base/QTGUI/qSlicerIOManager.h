@@ -48,6 +48,7 @@ public:
 public slots:
 
   void openScreenshotDialog();
+  void openSceneViewsDialog();
   bool openLoadSceneDialog();
   bool openAddSceneDialog();
   inline bool openAddDataDialog();

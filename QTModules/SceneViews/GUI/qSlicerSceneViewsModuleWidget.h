@@ -34,6 +34,11 @@ public:
 
     /// User clicked on restore button
     void restoreButtonClicked(QString mrmlId);
+public slots:
+    /// a public slot allowing other modules to open up the scene view capture
+    /// dialog (get the module manager, get the module sceneviews, get the
+    /// widget representation, then invoke this method, see qSlicerIOManager openSceneViewsDialog
+    void showSceneViewDialog();
 
 protected:
 
@@ -45,10 +50,10 @@ protected slots:
   /// Delete selected Annotations
   void deleteSelectedButtonClicked();
 
-  // Snapshot dialog
-  void snapshotRejected();
-  void snapshotAccepted();
-  void onSnapShotButtonClicked();
+  // Scene view dialog
+  void sceneViewRejected();
+  void sceneViewAccepted();
+  void onSceneViewButtonClicked();
 
 protected:
   QScopedPointer<qSlicerSceneViewsModuleWidgetPrivate> d_ptr;
@@ -59,7 +64,7 @@ private:
 
   virtual void setup();
 
-  qSlicerSceneViewsModuleDialog* m_SnapShotDialog;
+  qSlicerSceneViewsModuleDialog* m_SceneViewDialog;
 
 };
 

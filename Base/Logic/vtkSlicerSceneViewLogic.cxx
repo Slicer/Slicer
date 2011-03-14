@@ -100,7 +100,7 @@ void vtkSlicerSceneViewLogic::CreateSceneView(const char* name, const char* desc
   newSceneViewNode->StoreScene();
   //newSceneViewNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSceneViewNode);
-
+  newSceneViewNode->Delete();
 }
 
 //---------------------------------------------------------------------------
