@@ -67,6 +67,11 @@ public:
   /// This returns the best view node that matches the attributes
   vtkMRMLNode*   GetViewFromAttributes(const ViewAttributes& attributes);
 
+  /// This returns the best view node that matches the attributes
+  vtkCollection* GetViewsFromAttributes(const ViewAttributes& attributes);
+
+  vtkMRMLNode*   CreateViewFromAttributes(const ViewAttributes& attributes);
+
   /// Returns the up-to-date list of all the nodes that are mapped in the current
   /// layout.
   vtkGetObjectMacro(ViewNodes, vtkCollection);
@@ -100,6 +105,7 @@ protected:
 
   /// Make sure the view node list mapped in the current layout is up-to-date.
   void UpdateViewCollectionsFromLayout();
+  void CreateMissingViews();
 
   /// As we pass the root element of the entire layout, it returns a list of
   /// all the nodes that are found in the layout.

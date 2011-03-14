@@ -86,7 +86,7 @@ const char* oneUpGreenView =
 
 const char* tabbed3DView =
   "<layout type=\"tab\">"
-  " <item multiple=\"true\" name=\"$NodeID\">"
+  " <item multiple=\"true\">"
   "  <view class=\"vtkMRMLViewNode\"/>"
   " </item>"
   "</layout>";
@@ -112,7 +112,7 @@ const char* dual3DView =
   "    <view class=\"vtkMRMLViewNode\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" attributes=\"secondary\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -159,10 +159,10 @@ const char* triple3DEndoscopyView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" attributes=\"secondary\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" attributes=\"endoscopy\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"endoscopy\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -216,7 +216,9 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
       event == vtkMRMLScene::SceneImportedEvent)
     {
     vtkDebugMacro("vtkMRMLLayoutLogic::ProcessMRMLEvents: got a NewScene event " << event);
+    // Create default 3D view + slice views
     this->UpdateViewNodes();
+    // Create/Retrieve Layout node
     this->UpdateLayoutNode();
     // Restore the layout to its old state after importing a scene
     if (event == vtkMRMLScene::SceneImportedEvent &&
@@ -224,6 +226,8 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
       }
+    // Create other missing views (based on the current layout)
+    this->CreateMissingViews();
     }
   else if (event == vtkCommand::ModifiedEvent && caller == this->LayoutNode)
     {
@@ -231,6 +235,7 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
       }
+    this->CreateMissingViews();
     this->UpdateViewCollectionsFromLayout();
     //vtkMRMLAbstractLogic doesn't handle events not coming from the MRML scene.
     return;
@@ -259,9 +264,13 @@ void vtkMRMLLayoutLogic::UpdateViewNodes()
     this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLViewNode"));
   if (!viewNode)
     {
+    ViewAttributes attributes;
+    attributes["class"] = "vtkMRMLViewNode";
+    attributes["type"] = "main";
+
+    // there must be at least 1 main view node.
     viewNode = vtkMRMLViewNode::SafeDownCast(
-      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode"));
-    viewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("View"));
+      this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(viewNode);
     viewNode->Delete();
     }
@@ -273,35 +282,24 @@ void vtkMRMLLayoutLogic::UpdateViewNodes()
   // as they always go together).
   if (!sliceNode)
     {
-    std::string name;
+    ViewAttributes attributes;
+    attributes["class"] = "vtkMRMLSliceNode";
     // Red
+    attributes["singletontag"] = "Red";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
-      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode"));
-    // Note that LayoutName and SingletonTag is the same
-    sliceNode->SetLayoutName("Red");
-    sliceNode->SetOrientationToAxial();
-    name = std::string(sliceNode->GetLayoutName()) + std::string(sliceNode->GetOrientationString());
-    sliceNode->SetName(name.c_str());
+      this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
     sliceNode->Delete();
     // Yellow
+    attributes["singletontag"] = "Yellow";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
-      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode"));
-    // Note that LayoutName and SingletonTag is the same
-    sliceNode->SetLayoutName("Yellow");
-    sliceNode->SetOrientationToSagittal();
-    name = std::string(sliceNode->GetLayoutName()) + std::string(sliceNode->GetOrientationString());
-    sliceNode->SetName(name.c_str());
+      this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
     sliceNode->Delete();
     // Green
+    attributes["singletontag"] = "Green";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
-      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode"));
-    // Note that LayoutName and SingletonTag is the same
-    sliceNode->SetLayoutName("Green");
-    sliceNode->SetOrientationToCoronal();
-    name = std::string(sliceNode->GetLayoutName()) + std::string(sliceNode->GetOrientationString());
-    sliceNode->SetName(name.c_str());
+      this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
     sliceNode->Delete();
     }
@@ -412,9 +410,70 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromElement(vtkXMLDataElement* element)
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& attributes)
+{
+  // filter on the class name, that remove a lot of options
+  ViewAttributes::const_iterator it = attributes.find(std::string("class"));
+  ViewAttributes::const_iterator end = attributes.end();
+  if (it == end)
+    {
+    return NULL;
+    }
+  const std::string& className = it->second;
+  vtkMRMLNode* node = this->GetMRMLScene()->CreateNodeByClass(className.c_str());
+  it = attributes.find(std::string("type"));
+  if (it != end)
+    {
+    const std::string& type = it->second;
+    node->SetAttribute("ViewType", type.c_str());
+    }
+  if (className == "vtkMRMLViewNode")
+    {
+    node->SetName(this->GetMRMLScene()->GetUniqueNameByString("View"));
+    }
+  else if (className == "vtkMRMLSliceNode")
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    it = attributes.find(std::string("singletontag"));
+    if (it != end)
+      {
+      const std::string& singletonTag = it->second;
+      sliceNode->SetLayoutName(singletonTag.c_str());
+      if (singletonTag == "Red")
+        {
+        sliceNode->SetOrientationToAxial();
+        }
+      else if (singletonTag == "Yellow")
+        {
+        sliceNode->SetOrientationToSagittal();
+        }
+      else if (singletonTag == "Green")
+        {
+        sliceNode->SetOrientationToCoronal();
+        }
+      }
+    std::string name = std::string(sliceNode->GetLayoutName()) + std::string(sliceNode->GetOrientationString());
+    node->SetName(name.c_str());
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& attributes)
 {
-  if (!this->GetMRMLScene())
+  vtkSmartPointer<vtkCollection> nodes;
+  nodes.TakeReference(this->GetViewsFromAttributes(attributes));
+  if (nodes.GetPointer() == NULL || nodes->GetNumberOfItems() == 0)
+    {
+    return NULL;
+    }
+  return vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(0));
+}
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& attributes)
+{
+    if (!this->GetMRMLScene())
     {
     return NULL;
     }
@@ -426,9 +485,8 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
     return NULL;
     }
   const std::string& className = it->second;
-  vtkSmartPointer<vtkCollection> nodes;
-  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass(className.c_str()));
-  if (nodes.GetPointer() == NULL || nodes->GetNumberOfItems() == 0)
+  vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass(className.c_str());
+  if (nodes == NULL || nodes->GetNumberOfItems() == 0)
     {
     vtkWarningMacro("Couldn't find nodes matching class: " << className);
     return NULL;
@@ -450,15 +508,33 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
         {
         if (attributeValue == node->GetSingletonTag())
           {
-          return node;
+          nodes->RemoveAllItems();
+          nodes->AddItem(node);
+          break;
           }
         }
-      vtkWarningMacro("Couln't find node with SingleTag: " << attributeValue);
+      if (nodes->GetNumberOfItems() > 1)
+        {
+        vtkWarningMacro("Couln't find node with SingleTag: " << attributeValue);
+        }
+      }
+    else if (attributeName == "type")
+      {
+      for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
+        {
+        std::string viewType =
+          node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
+        if (attributeValue != viewType &&
+            // if there is no viewType, it's a main view.
+            !(attributeValue == "main" && viewType != std::string()))
+          {
+          nodes->RemoveItem(node);
+          }
+        }
       }
     // Add here specific codes to retrieve views
     }
-  // return the first node that matches;
-  return vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(0));
+  return nodes;
 }
 
 //----------------------------------------------------------------------------
@@ -477,13 +553,6 @@ void vtkMRMLLayoutLogic::UpdateViewCollectionsFromLayout()
 vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayout(vtkXMLDataElement* root)
 {
   vtkCollection* views = vtkCollection::New();
-  if (!root)
-    {
-    // It's normal if the view is SlicerLayoutNone, it's less if it's something
-    // else; probably a layout not supported yet
-    return views;
-    }
-
   vtkXMLDataElement* viewElement = root;
   while ((viewElement = this->GetNextViewElement(viewElement)))
     {
@@ -499,6 +568,30 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayout(vtkXMLDataElement* root)
       }
     }
   return views;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::CreateMissingViews()
+{
+  vtkXMLDataElement* viewElement =
+    this->LayoutNode ? this->LayoutNode->GetLayoutRootElement() : 0;
+  while ((viewElement = this->GetNextViewElement(viewElement)))
+    {
+    vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
+    if (viewNode)
+      {
+      continue;
+      }
+    ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
+    viewNode = this->CreateViewFromAttributes(attributes);
+    if (!viewNode)
+      {
+      vtkWarningMacro("Can't find node for element: " << viewElement->GetName());
+      viewElement->PrintXML(std::cerr, vtkIndent(0));
+      }
+    this->GetMRMLScene()->AddNode(viewNode);
+    viewNode->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------

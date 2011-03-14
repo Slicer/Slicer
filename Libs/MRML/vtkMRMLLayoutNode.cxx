@@ -64,7 +64,6 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 
   // Synchronize the view description with the layout
   this->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutNone, "");
-  this->UpdateLayoutDescription();
 }
 
 //----------------------------------------------------------------------------
@@ -218,7 +217,7 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
     }
   this->ViewArrangement = arrNew;
 #if 1
-  if (this->GetLayoutDescription(this->ViewArrangement).empty())
+  if (!this->IsLayoutDescription(this->ViewArrangement))
     {
     vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
                     << " is not recognized, register it with "
@@ -232,7 +231,7 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::AddLayoutDescription(int layout, const char* layoutDescription)
 {
-  if (this->Layouts.find(layout) != this->Layouts.end())
+  if (this->IsLayoutDescription(layout))
     {
     vtkDebugMacro( << "Layout " << layout << " has already been registered");
     return;
@@ -240,6 +239,13 @@ void vtkMRMLLayoutNode::AddLayoutDescription(int layout, const char* layoutDescr
   this->Layouts[layout] = std::string(layoutDescription);
   this->UpdateLayoutDescription();
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLLayoutNode::IsLayoutDescription(int layout)
+{
+  std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
+  return it != this->Layouts.end();
 }
 
 //----------------------------------------------------------------------------

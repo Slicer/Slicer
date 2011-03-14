@@ -90,11 +90,11 @@ public:
       SlicerLayoutOneUpYellowSliceView,
       SlicerLayoutOneUpGreenSliceView,
       SlicerLayoutTabbed3DView,
-      SlicerLayoutTabbedSliceView,
+      SlicerLayoutTabbedSliceView, // 10
       SlicerLayoutLightboxView,
       SlicerLayoutCompareView,
       SlicerLayoutSideBySideLightboxView,
-      SlicerLayoutNone,
+      SlicerLayoutNone, // 14
       SlicerLayoutDual3DView,
       SlicerLayoutConventionalWidescreenView,
       SlicerLayoutCompareWidescreenView,
@@ -106,6 +106,7 @@ public:
     };
 
   void AddLayoutDescription(int layout, const char* layoutDescription);
+  bool IsLayoutDescription(int layout);
   std::string GetLayoutDescription(int layout);
   vtkGetStringMacro(CurrentViewArrangement);
   vtkGetObjectMacro(LayoutRootElement, vtkXMLDataElement);
