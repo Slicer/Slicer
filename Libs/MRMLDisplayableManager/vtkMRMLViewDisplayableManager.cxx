@@ -155,8 +155,10 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
                                                             vtkMRMLViewNode * viewNode)
 {
   assert(renderer);
-  assert(renderer->IsActiveCameraCreated());
-  assert(viewNode);
+  if (!renderer->IsActiveCameraCreated() || !viewNode)
+    {
+    return;
+    }
 
   // Turn off box and axis labels to compute bounds
   this->BoxAxisActor->VisibilityOff();
@@ -446,10 +448,7 @@ void vtkMRMLViewDisplayableManager::Create()
 
   // If there is a active camera available, it means the vtkMRMLCameraDisplayableManager
   // has already been created and ActiveCameraChangedEvent already invoked.
-  if (this->GetRenderer()->IsActiveCameraCreated())
-    {
-    this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
-    }
+  this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
 }
 
 //---------------------------------------------------------------------------

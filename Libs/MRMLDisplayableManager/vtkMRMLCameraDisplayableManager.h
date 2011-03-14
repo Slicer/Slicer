@@ -67,7 +67,9 @@ protected:
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
-  
+  virtual void AdditionnalInitializeStep();
+  void SetCameraToRenderer();
+  void SetCameraToInteractor();
 private:
 
   vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&);// Not implemented
