@@ -112,7 +112,7 @@ class EditBox(object):
     "LabelVisibilityOff", "LabelVisibilityOn", 
     "SnapToGridOff", "SnapToGridOn",
     "InterpolateLabels", "LabelOpacity",
-    "ToggleLabelOutline", "Watershed", "Wand", "GrowCutSegment",
+    "ToggleLabelOutline", "Watershed", "Wand", 
     )
 
   # allow overriding the developers name of the tool for a more user-friendly label name
@@ -253,8 +253,8 @@ class EditBox(object):
       self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
       self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
       # TODO: add back GrowCut and prev/next fiducial
-      #self.createButtonRow( ("MakeModel", "GrowCutSegment") )
-      self.createButtonRow( ("MakeModel", ) )
+      self.createButtonRow( ("MakeModel", "GrowCutSegment") )
+      #self.createButtonRow( ("MakeModel", ) )
       #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
       self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
     # if using embedded format: create all of the buttons in the effects list in a single row
@@ -360,7 +360,11 @@ itcl::body EditBox::setButtonState {effect state} {
     elif effect == "NextCheckPoint":
         tcl('EditorPerformNextCheckPoint')
     else:
-
+        if effect == "GrowCutSegment":
+          self.editorGestureCheckPoint()
+          #volumesLogic = slicer.modules.volumes.logic()
+          #print ("VolumesLogic is %s " % volumesLogic)
+          #tcl('EditorGestureCheckPoint $%s' % volumesLogic)        
         if mouseTool:
           # TODO: make some nice custom cursor shapes
           # - for now use the built in override cursor
@@ -377,8 +381,6 @@ itcl::body EditBox::setButtonState {effect state} {
         # create an instance of the effect for each of the active sliceGUIs
         # - have the effect reset the tool label when completed
         #
-        if effect == "GrowCutSegment":
-          tcl('EditorGestureCheckPoint')
      
         ret = tcl('catch "EffectSWidget::Add %s" res' % self.effectClasses[effect])
         if ret != '0':
@@ -396,3 +398,73 @@ itcl::body EditBox::setButtonState {effect state} {
     if not self.embedded:
       self.effectButtons["PreviousCheckPoint"].setDisabled( not previousImagesExist )
       self.effectButtons["NextCheckPoint"].setDisabled( not nextImagesExist )
+
+  def editorGestureCheckPoint(self):
+    labelID = self.editUtil.getLabelID()
+    labelNode = slicer.mrmlScene.GetNodeByID(labelID)
+    labelImage = labelNode.GetImageData()
+
+    backgroundID  = self.editUtil.getBackgroundID()
+    backgroundNode = slicer.mrmlScene.GetNodeByID(backgroundID)
+    backgroundImage = backgroundNode.GetImageData()
+
+    labelDim = labelImage.GetDimensions()
+    backgroundDim = backgroundImage.GetDimensions()
+
+    gestureID = None
+
+    if labelDim[0] != backgroundDim[0]  | labelDim[1] != backgroundDim[1] | labelDim[2] != backgroundDim[2]:
+      dialog = qt.QErrorMessage(self.parent)
+      dialog.showMessage("Label Image and Background Image Dimensions don't match. Select another label image. All previous gestures will be lost.")
+    else:
+      labelName = labelNode.GetName()
+      gestureName = labelName + '-growcut'
+      nodes = slicer.mrmlScene.GetNodesByName(gestureName)
+      if nodes.GetNumberOfItems() == 0:
+        volumesLogic = slicer.modules.volumes.logic()
+        gestureNode = volumesLogic.CreateLabelVolume( slicer.mrmlScene, labelNode, gestureName) 
+        gestureID = gestureNode.GetID()
+        node = self.editorGetGestureParameterNode(gestureID)
+      else:
+        nNodes = nodes.GetNumberOfItems()
+        foundNode = None
+        for n in xrange(nNodes):
+          vol = nodes.GetItemAsObject(n)
+          volID = vol.GetID()
+          volname = vol.GetName()
+    if volname == gestureName:
+            foundNode = volID
+            gestureID = volID
+            break
+        if foundNode == None:
+          volumesLogic = slicer.modules.volumes.logic()
+          gestureNode = volumesLogic.CreateLabelVolume( slicer.mrmlScene, labelNode, gestureName)
+          gestureID = gestureNode.GetID()
+          node = self.editorGetGestureParameterNode(gestureID)
+        else:
+          node = self.editorGetGestureParameterNode(foundNode)
+    numNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
+    for n in xrange(numNodes):
+      cnode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
+      cnode.SetReferenceLabelVolumeID(labelNode.GetID())
+      cnode.SetLabelOpacity(0.6)
+      cnode.SetReferenceForegroundVolumeID(gestureID)
+      cnode.SetForegroundOpacity(0.4)
+
+  def editorGetGestureParameterNode(self, id):
+     node = None
+     nNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScriptedModuleNode')
+     for n in xrange(nNodes):
+       compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLScriptedModuleNode')
+       nodeid = None
+       if compNode.GetModuleName() == 'Editor':
+         nodeId = compNode.GetParameter('gestureid')
+       if nodeId:
+         val = compNode.SetParameter('gestureid', nodeId)
+         node = val
+         break
+     if node == None:
+      node = tcl('EditorCreateGestureParameterNode %s' % id)
+     return node
+
+
