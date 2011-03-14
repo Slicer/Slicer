@@ -144,11 +144,41 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   scene->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
 
-  if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ||
-      layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
+  if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
+      layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
     {
     std::cerr << __LINE__ << "Set View Arrangement on layout manager failed." << std::endl
-              << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView
+              << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
+              << ", layout set: " << layoutManager->layout()
+              << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    scene->Delete();
+    return EXIT_FAILURE;
+    }
+
+  // The layout is changed to none only if vtkMRMLScene::Clear() is called
+  scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
+
+  if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
+      layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+    {
+    std::cerr << __LINE__ << "Set View Arrangement on layout manager failed." << std::endl
+              << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
+              << ", layout set: " << layoutManager->layout()
+              << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    scene->Delete();
+    return EXIT_FAILURE;
+    }
+  // Imitates what vtkMRMLScene::Clear() would have done:
+  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutNone);
+
+  // and restore it back
+  scene->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
+
+  if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
+      layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+    {
+    std::cerr << __LINE__ << "Set View Arrangement on layout manager failed." << std::endl
+              << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
     scene->Delete();

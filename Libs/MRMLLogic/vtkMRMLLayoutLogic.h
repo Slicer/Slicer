@@ -26,6 +26,7 @@ class vtkXMLDataElement;
 /// The logic keeps an up-to-date list of the different MRML view nodes
 /// (3D, slice ...) that are mapped into the layout.
 /// A typical use case would be:
+/// <code>
 /// vtkMRMLScene* scene = vtkMRMLScene::New();
 /// vtkMRMLLayoutLogic* layoutLogic = vtkMRMLLayoutLogic::New();
 /// layoutLogic->SetMRMLScene(scene);
@@ -40,6 +41,11 @@ class vtkXMLDataElement;
 ///   views->GetItemAsObject(2));
 /// vtkMRMLSliceNode* greenNode = vtkMRMLSliceNode::SafeDownCast(
 ///   views->GetItemAsObject(3));
+/// </code>
+/// When vtkMRMLScene::Clear() is called, vtkMRMLLayoutNode::Copy() is called
+/// with an empty layout node, it sets the view arrangement to None.
+/// So when the scene is created/closed/imported, the view arrangement is
+/// restored to its previous valid layout.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLLayoutLogic : public vtkMRMLAbstractLogic
 {
 public:

@@ -221,7 +221,10 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
     // Create/Retrieve Layout node
     this->UpdateLayoutNode();
     // Restore the layout to its old state after importing a scene
-    if (event == vtkMRMLScene::SceneImportedEvent &&
+    // TBD: check on GetIsUpdating() should be enough
+    if (((event == vtkMRMLScene::SceneClosedEvent &&
+          !this->GetMRMLScene()->GetIsUpdating()) ||
+         event == vtkMRMLScene::SceneImportedEvent) &&
         this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone)
       {
       this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
