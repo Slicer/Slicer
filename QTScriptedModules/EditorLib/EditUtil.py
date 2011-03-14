@@ -29,6 +29,16 @@ class EditUtil(object):
     if compNode:
       backgroundID = compNode.GetBackgroundVolumeID()
       return slicer.mrmlScene.GetNodeByID(backgroundID)
+  
+  def getBackgroundID(self,):
+    compNode = self.getCompositeNode()
+    if compNode:
+      return compNode.GetBackgroundVolumeID()
+
+  def getLabelID(self,):
+    compNode = self.getCompositeNode()
+    if compNode:
+      return compNode.GetLabelVolumeID()
 
   def getLabelVolume(self,):
     compNode = self.getCompositeNode()
