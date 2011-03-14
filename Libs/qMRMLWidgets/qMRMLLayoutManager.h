@@ -113,8 +113,9 @@ protected:
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);
 
   virtual void onViewportChanged();
-  virtual QWidget* processViewElement(QDomElement viewElement);
+  virtual void setupView(QDomElement viewElement, QWidget* view);
   virtual QWidget* viewFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
   using ctkLayoutManager::setLayout;
 private:

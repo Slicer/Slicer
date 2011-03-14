@@ -112,6 +112,7 @@ protected:
 
   /// Pointer on the unique Layout node of the mrml node.
   vtkMRMLLayoutNode* LayoutNode;
+  int                LastValidViewArrangement;
   /// Up-to-date list of the nodes that are mapped into the scene
   vtkCollection*     ViewNodes;
 };

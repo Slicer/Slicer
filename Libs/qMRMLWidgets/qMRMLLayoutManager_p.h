@@ -32,6 +32,9 @@
 // qMRML includes
 #include "qMRMLLayoutManager.h"
 
+// MRMLLogic includes
+#include <vtkMRMLLayoutLogic.h>
+
 // VTK includes
 #include <vtkSmartPointer.h>
 
@@ -104,6 +107,8 @@ public:
   void setSideBySideLightboxView();
   void setDual3DView();
   void setNone();
+
+  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement);
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.

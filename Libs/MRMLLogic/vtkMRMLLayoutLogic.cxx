@@ -175,6 +175,7 @@ vtkStandardNewMacro(vtkMRMLLayoutLogic);
 vtkMRMLLayoutLogic::vtkMRMLLayoutLogic()
 {
   this->LayoutNode = NULL;
+  this->LastValidViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
   this->ViewNodes = vtkCollection::New();
 }
 
@@ -217,9 +218,19 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
     vtkDebugMacro("vtkMRMLLayoutLogic::ProcessMRMLEvents: got a NewScene event " << event);
     this->UpdateViewNodes();
     this->UpdateLayoutNode();
+    // Restore the layout to its old state after importing a scene
+    if (event == vtkMRMLScene::SceneImportedEvent &&
+        this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone)
+      {
+      this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
+      }
     }
   else if (event == vtkCommand::ModifiedEvent && caller == this->LayoutNode)
     {
+    if (this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
+      {
+      this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
+      }
     this->UpdateViewCollectionsFromLayout();
     //vtkMRMLAbstractLogic doesn't handle events not coming from the MRML scene.
     return;
@@ -350,6 +361,11 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
     }
   this->GetMRMLObserverManager()->SetAndObserveObject(
     vtkObjectPointer(&this->LayoutNode), layoutNode);
+  if (this->LayoutNode &&
+      this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
+    {
+    this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
+    }
   this->AddDefaultLayouts();
   this->UpdateViewCollectionsFromLayout();
 }
