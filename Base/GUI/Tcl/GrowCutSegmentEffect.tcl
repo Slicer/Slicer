@@ -57,6 +57,11 @@ if { [itcl::find class GrowCutSegmentEffect] == "" } {
   method updateGUIFromMRML {} {}
   method apply {} {} 
   method initialize {} {}
+  method updateRadius1 {} {}
+  method updateRadius2 {} {}
+  method updateRadius3 {} {}
+  method updateRadius4 {} {}
+  method updateRadius5 {} {}
 }
 }
 
@@ -220,6 +225,42 @@ itcl::body GrowCutSegmentEffect::processEvent { {caller ""} {event ""} } {
          }   
        }
     }
+}
+
+
+itcl::body GrowCutSegmentEffect::updateRadius1 {} {
+  
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" 1
+}
+
+
+
+itcl::body GrowCutSegmentEffect::updateRadius2 {} {
+  
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" 2
+}
+
+
+itcl::body GrowCutSegmentEffect::updateRadius3 {} {
+  
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" 3
+}
+
+
+itcl::body GrowCutSegmentEffect::updateRadius4 {} {
+  
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" 4
+}
+
+
+itcl::body GrowCutSegmentEffect::updateRadius5 {} {
+  
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" 5
 }
 
 
