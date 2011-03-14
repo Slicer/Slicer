@@ -92,6 +92,20 @@ proc EditorLabelCheckPoint {} {
 
 
 
+proc EditorCreateGestureParameterNode {id} {
+
+  set node [vtkMRMLScriptedModuleNode New]
+  $node SetModuleName "Editor"
+
+  #set node defaults
+  #puts "setting parameter $id.."
+  $node SetParameter gestureid $id
+
+  $::slicer3::MRMLScene AddNode $node
+  $node Delete
+
+}
+
 #
 # make it easier to test the model by looking for the first slice logic
 #
