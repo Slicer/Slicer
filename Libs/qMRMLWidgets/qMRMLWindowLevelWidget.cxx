@@ -262,8 +262,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
   double oldLevel  = d->VolumeDisplayNode->GetLevel();
 
   int disabledModify = d->VolumeDisplayNode->StartModify();
-  d->VolumeDisplayNode->SetWindow(window);
-  d->VolumeDisplayNode->SetLevel(level);
+  d->VolumeDisplayNode->SetWindowLevel(window, level);
   if (oldWindow != d->VolumeDisplayNode->GetWindow() ||
       oldLevel  != d->VolumeDisplayNode->GetLevel())
     {
@@ -386,7 +385,8 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
                       this, SLOT(updateDisplayNode()));
 
   d->VolumeNode = volumeNode;
-  if (d->VolumeNode)
+  Q_ASSERT(!d->VolumeNode || d->VolumeNode->GetImageData());
+  if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
     double range[2];
     d->VolumeNode->GetImageData()->GetScalarRange(range);

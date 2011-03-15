@@ -76,6 +76,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// The level value to use when autoWindowLevel is 'no'
   double GetLevel();
   virtual void SetLevel(double);
+  
+  /// Sets the window and level at once, generates only 1 modified event if
+  /// needed.
+  virtual void SetWindowLevel(double window, double level);
 
   /// 
   /// Specifies whether to apply the threshold

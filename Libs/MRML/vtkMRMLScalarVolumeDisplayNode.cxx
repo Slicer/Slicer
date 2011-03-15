@@ -397,6 +397,20 @@ void vtkMRMLScalarVolumeDisplayNode::SetLevel(double level)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetWindowLevel(double window, double level)
+{
+  if (this->MapToWindowLevelColors->GetWindow() == window &&
+      this->MapToWindowLevelColors->GetLevel() == level)
+    {
+    return;
+    }
+
+  this->MapToWindowLevelColors->SetWindow(window);
+  this->MapToWindowLevelColors->SetLevel(level);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetApplyThreshold(int apply)
 {
   if (this->ApplyThreshold == apply)
