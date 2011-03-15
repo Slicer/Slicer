@@ -30,41 +30,30 @@ public:
     void refreshTree();
 
     /// User clicked on property edit button
-    void propertyEditButtonClicked(QString mrmlId);
+    void editSceneView(const QString& mrmlId);
 
     /// User clicked on restore button
-    void restoreButtonClicked(QString mrmlId);
+    void restoreSceneView(const QString& mrmlId);
+
 public slots:
     /// a public slot allowing other modules to open up the scene view capture
     /// dialog (get the module manager, get the module sceneviews, get the
     /// widget representation, then invoke this method, see qSlicerIOManager openSceneViewsDialog
     void showSceneViewDialog();
 
-protected:
-
 protected slots:
 
   void moveDownSelected();
   void moveUpSelected();
 
-  /// Delete selected Annotations
-  void deleteSelectedButtonClicked();
-
-  // Scene view dialog
-  void sceneViewRejected();
-  void sceneViewAccepted();
-  void onSceneViewButtonClicked();
-
 protected:
   QScopedPointer<qSlicerSceneViewsModuleWidgetPrivate> d_ptr;
+
+  virtual void setup();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleWidget);
   Q_DISABLE_COPY(qSlicerSceneViewsModuleWidget);
-
-  virtual void setup();
-
-  qSlicerSceneViewsModuleDialog* m_SceneViewDialog;
 
 };
 

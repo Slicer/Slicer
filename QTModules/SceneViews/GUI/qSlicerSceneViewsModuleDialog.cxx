@@ -72,7 +72,7 @@ void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleDialog::initialize(const char* nodeId)
+void qSlicerSceneViewsModuleDialog::initialize(const QString& nodeId)
 {
   if (!this->m_Logic)
     {
@@ -80,7 +80,7 @@ void qSlicerSceneViewsModuleDialog::initialize(const char* nodeId)
     return;
     }
 
-  this->m_Id = vtkStdString(nodeId);
+  this->m_Id = vtkStdString(nodeId.toLatin1());
 
   // get the name..
   vtkStdString name = this->m_Logic->GetSceneViewName(this->m_Id.c_str());
@@ -156,9 +156,7 @@ void qSlicerSceneViewsModuleDialog::initialize(const char* nodeId)
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleDialog::createConnection()
 {
-
   // connect the OK and CANCEL button to the individual Slots
-  this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
   this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
 
   this->connect(ui.threeDViewRadio, SIGNAL(clicked()), this, SLOT(onThreeDViewRadioClicked()));
@@ -169,22 +167,11 @@ void qSlicerSceneViewsModuleDialog::createConnection()
 
   QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
   this->connect(restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleDialog::onDialogRejected()
-{
-
-  // emit an event which gets caught by main GUI window
-  emit dialogRejected();
-
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleDialog::onDialogAccepted()
 {
-
   // name
   QString name = this->ui.nameEdit->text();
   QByteArray nameBytes = name.toLatin1();
@@ -236,10 +223,6 @@ void qSlicerSceneViewsModuleDialog::onDialogAccepted()
     //                               "The SceneView was updated without changing the attached scene.");
 
     }
-
-  // emit an event which gets caught by main GUI window
-  emit dialogAccepted();
-
 }
 
 //-----------------------------------------------------------------------------
@@ -279,8 +262,7 @@ void qSlicerSceneViewsModuleDialog::onRestoreButtonClicked()
 
   //QMessageBox::information(this, "3D Slicer SceneView updated",
   //                               "The SceneView was restored including the attached scene.");
-
-  emit dialogAccepted();
+  this->accept();
 }
 
 //-----------------------------------------------------------------------------

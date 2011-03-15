@@ -140,26 +140,26 @@ void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
   if (index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
     // user wants to toggle the un-/lock of the annotation
-    this->m_Widget->restoreButtonClicked(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
+    this->m_Widget->restoreSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
   else if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn)
     {
     // user wants to edit the properties of this annotation
-    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
+    this->m_Widget->editSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
 
 }
 
 //------------------------------------------------------------------------------
-const char* qMRMLSceneViewsTreeWidget::firstSelectedNode()
+QString qMRMLSceneViewsTreeWidget::firstSelectedNode()const
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(const qMRMLSceneViewsTreeWidget);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
   if (selected.isEmpty())
     {
-    return 0;
+    return QString();
     }
 
   // now get the first selected item
@@ -168,10 +168,11 @@ const char* qMRMLSceneViewsTreeWidget::firstSelectedNode()
   // check if it is a valid node
   if (!d->SortFilterModel->mrmlNodeFromIndex(index))
     {
-    return 0;
+    return QString();
     }
 
-  return d->SortFilterModel->mrmlNodeFromIndex(index)->GetID();
+  const char* id = d->SortFilterModel->mrmlNodeFromIndex(index)->GetID();
+  return id ? QString(id) : QString();
 }
 
 //------------------------------------------------------------------------------
@@ -258,17 +259,15 @@ void qMRMLSceneViewsTreeWidget::mouseMoveEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setSelectedNode(const char* id)
+void qMRMLSceneViewsTreeWidget::setSelectedNode(const QString& id)
 {
   Q_D(qMRMLSceneViewsTreeWidget);
 
-  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
+  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id.toLatin1());
 
   if (node)
     {
-
     this->setCurrentIndex(d->SortFilterModel->indexFromMRMLNode(node));
-
     }
 }
 

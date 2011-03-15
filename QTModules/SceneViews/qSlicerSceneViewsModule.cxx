@@ -69,3 +69,11 @@ QIcon qSlicerSceneViewsModule::icon() const
 {
   return QIcon(":/Icons/SelectCameras.png");
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModule::showSceneViewDialog()
+{
+  Q_ASSERT(this->widgetRepresentation());
+  dynamic_cast<qSlicerSceneViewsModuleWidget*>(this->widgetRepresentation())
+    ->showSceneViewDialog();
+}

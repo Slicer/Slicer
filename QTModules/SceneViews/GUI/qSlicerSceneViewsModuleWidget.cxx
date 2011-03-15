@@ -1,10 +1,9 @@
 #include "GUI/qSlicerSceneViewsModuleWidget.h"
 #include "ui_qSlicerSceneViewsModule.h"
 
-
-
 // CTK includes
 #include "ctkCollapsibleButton.h"
+
 // QT includes
 #include <QButtonGroup>
 #include <QList>
@@ -26,14 +25,12 @@
 #include "vtkCollection.h"
 #include "vtkSmartPointer.h"
 
-
 // GUI includes
 #include "GUI/qSlicerSceneViewsModuleDialog.h"
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 
 //-----------------------------------------------------------------------------
 class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModule
@@ -45,21 +42,11 @@ public:
 
   qSlicerSceneViewsModuleWidgetPrivate(qSlicerSceneViewsModuleWidget& object);
   ~qSlicerSceneViewsModuleWidgetPrivate();
-  void
-  setupUi(qSlicerWidget* widget);
+  void setupUi(qSlicerWidget* widget);
 
+  vtkSlicerSceneViewLogic* logic() const;
 
-  vtkSlicerSceneViewLogic*
-  logic() const;
-
-
-protected slots:
-
-protected:
-
-private:
-
-
+  QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
 };
 
 //-----------------------------------------------------------------------------
@@ -74,13 +61,17 @@ qSlicerSceneViewsModuleWidgetPrivate::logic() const
 qSlicerSceneViewsModuleWidgetPrivate::qSlicerSceneViewsModuleWidgetPrivate(qSlicerSceneViewsModuleWidget& object)
   : q_ptr(&object)
 {
-
+  this->SceneViewDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleWidgetPrivate::~qSlicerSceneViewsModuleWidgetPrivate()
 {
-
+  if (this->SceneViewDialog)
+    {
+    this->SceneViewDialog->close();
+    delete this->SceneViewDialog.data();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -92,30 +83,16 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerSceneViewsModule::setupUi(widget);
 }
 
-
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
   , d_ptr(new qSlicerSceneViewsModuleWidgetPrivate(*this))
 {
-
-  this->m_SceneViewDialog = 0;
-
-
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleWidget::~qSlicerSceneViewsModuleWidget()
 {
-
-  if (this->m_SceneViewDialog)
-    {
-    this->m_SceneViewDialog->close();
-    delete this->m_SceneViewDialog;
-    this->m_SceneViewDialog = 0;
-    }
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -136,25 +113,22 @@ void qSlicerSceneViewsModuleWidget::setup()
       SLOT(moveUpSelected()));
 
   this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
-      SLOT(deleteSelectedButtonClicked()));
+                d->hierarchyTreeWidget, SLOT(deleteSelected()));
 
   this->connect(d->sceneView, SIGNAL(clicked()), this,
-      SLOT(onSceneViewButtonClicked()));
-
+      SLOT(showSceneViewDialog()));
 }
-
-
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidget::moveDownSelected()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  const char* id = d->logic()->MoveSceneViewDown(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* id = d->logic()->MoveSceneViewDown(
+    d->hierarchyTreeWidget->firstSelectedNode().toLatin1());
 
   d->hierarchyTreeWidget->clearSelection();
   d->hierarchyTreeWidget->setSelectedNode(id);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -162,79 +136,36 @@ void qSlicerSceneViewsModuleWidget::moveUpSelected()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  const char* id = d->logic()->MoveSceneViewUp(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* id = d->logic()->MoveSceneViewUp(
+    d->hierarchyTreeWidget->firstSelectedNode().toLatin1());
 
   d->hierarchyTreeWidget->clearSelection();
   d->hierarchyTreeWidget->setSelectedNode(id);
-
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::restoreButtonClicked(QString mrmlId)
+void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
 {
-
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  QByteArray mrmlIdArray = mrmlId.toLatin1();
-
-  d->logic()->RestoreSceneView(mrmlIdArray.data());
+  d->logic()->RestoreSceneView(mrmlId.toLatin1());
 
   QMessageBox::information(this, "3D Slicer SceneView updated",
                                  "The SceneView was restored including the attached scene.");
-
-
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::propertyEditButtonClicked(QString mrmlId)
+void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  QByteArray mrmlIdArray = mrmlId.toLatin1();
-
-  // the selected entry is a sceneView node,
-  // we check if we have to create a new dialog..
-
-  if (!this->m_SceneViewDialog)
+  this->showSceneViewDialog();
+  if (d->SceneViewDialog)
     {
-
-    // no sceneView dialog exists yet..
-    this->m_SceneViewDialog = new qSlicerSceneViewsModuleDialog();
-
-    // pass a pointer to the logic class
-    this->m_SceneViewDialog->setLogic(d->logic());
-
-    // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SceneViewDialog, SIGNAL(dialogRejected()), this,
-        SLOT(sceneViewRejected()));
-    this->connect(this->m_SceneViewDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(sceneViewAccepted()));
-
+    // now we initialize it with existing values
+    d->SceneViewDialog->initialize(mrmlId);
     }
-
-  // reset all fields of the dialog
-  this->m_SceneViewDialog->reset();
-
-  // now we initialize it with existing values
-  this->m_SceneViewDialog->initialize(mrmlIdArray.data());
-
-  // in any case, show the dialog
-  this->m_SceneViewDialog->open();
-
 }
-
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::deleteSelectedButtonClicked()
-{
-
-  Q_D(qSlicerSceneViewsModuleWidget);
-
-  d->hierarchyTreeWidget->deleteSelected();
-
-}
-
-
 
 //-----------------------------------------------------------------------------
 // Refresh the hierarchy tree after an sceneView was added or modified.
@@ -252,56 +183,27 @@ void qSlicerSceneViewsModuleWidget::refreshTree()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// Signal callback when the OK button of the sceneView dialog was clicked
-void qSlicerSceneViewsModuleWidget::sceneViewAccepted()
+void qSlicerSceneViewsModuleWidget::showSceneViewDialog()
 {
-
-  this->m_SceneViewDialog->setVisible(false);
-  //std::cout << "SceneView accepted" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-// Signal callback when the CANCEL button of the sceneView dialog was clicked
-void qSlicerSceneViewsModuleWidget::sceneViewRejected()
-{
-  this->m_SceneViewDialog->setVisible(false);
-  //std::cout << "SceneView rejected" << std::endl;
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::onSceneViewButtonClicked()
-{
-
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  if (!this->m_SceneViewDialog)
+  if (!d->SceneViewDialog)
     {
 
-    this->m_SceneViewDialog = new qSlicerSceneViewsModuleDialog();
+    d->SceneViewDialog = new qSlicerSceneViewsModuleDialog();
 
     // pass a pointer to the logic class
-    this->m_SceneViewDialog->setLogic(d->logic());
+    d->SceneViewDialog->setLogic(d->logic());
 
     // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SceneViewDialog, SIGNAL(dialogRejected()), this,
-        SLOT(sceneViewRejected()));
-    this->connect(this->m_SceneViewDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(sceneViewAccepted()));
-
+    this->connect(d->SceneViewDialog, SIGNAL(rejected()),
+                  d->SceneViewDialog, SLOT(hide()));
+    this->connect(d->SceneViewDialog, SIGNAL(accepted()),
+                  d->SceneViewDialog, SLOT(hide()));
     }
 
   // show the dialog
-  this->m_SceneViewDialog->reset();
-  this->m_SceneViewDialog->open();
-
-
-
+  d->SceneViewDialog->reset();
+  d->SceneViewDialog->open();
 }
 
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::showSceneViewDialog()
-{
-  this->onSceneViewButtonClicked();
-}

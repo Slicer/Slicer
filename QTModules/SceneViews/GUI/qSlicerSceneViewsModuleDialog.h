@@ -15,7 +15,7 @@ public:
   void setLogic(vtkSlicerSceneViewLogic* logic);
 
   /// Initialize this dialog with values from an existing annotation Snapshot node.
-  void initialize(const char* nodeId);
+  void initialize(const QString& nodeId);
 
   /// Reset the dialog.
   void reset();
@@ -24,7 +24,6 @@ protected:
 
 protected slots:
 
-  void onDialogRejected();
   void onDialogAccepted();
 
   /// Slots for the four radio buttons to select screenShot area
@@ -36,10 +35,6 @@ protected slots:
 
   /// Slots for the restore button
   void onRestoreButtonClicked();
-
-signals:
-  void dialogRejected();
-  void dialogAccepted();
 
 private:
 

@@ -209,18 +209,12 @@ void qSlicerIOManager::openSceneViewsDialog()
       }
     }
   
-    qSlicerAbstractCoreModule *modulePointer = moduleManager->module("sceneviews");
-    if (modulePointer == NULL)
-      {
-      qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
-      return;
-      }
-    QObject * widgetRepresentation = dynamic_cast<QObject*>(modulePointer->widgetRepresentation());
-    if (widgetRepresentation == NULL)
-      {
-      qWarning() << "qSlicerIOManager::openSceneViewsDialog: failed to get the scene views module representation";
-      return;
-      }
-    QMetaObject::invokeMethod(widgetRepresentation, "showSceneViewDialog");
+  qSlicerAbstractCoreModule *modulePointer = moduleManager->module("sceneviews");
+  if (modulePointer == NULL)
+    {
+    qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
+    return;
+    }
+  QMetaObject::invokeMethod(modulePointer, "showSceneViewDialog");
 }
 

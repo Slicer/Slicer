@@ -42,7 +42,8 @@ class qMRMLSceneViewsTreeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
-class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget : public qMRMLTreeWidget
+class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget
+  : public qMRMLTreeWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
@@ -55,9 +56,9 @@ public:
 
   void hideScene();
 
-  void setSelectedNode(const char* id);
+  void setSelectedNode(const QString& id);
 
-  const char* firstSelectedNode();
+  QString firstSelectedNode()const;
 
   // Register the widget
   void setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
@@ -65,12 +66,9 @@ public:
   // Register the logic
   void setAndObserveLogic(vtkSlicerSceneViewLogic* logic);
 
-
-  void deleteSelected();
-
-
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+  void deleteSelected();
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
