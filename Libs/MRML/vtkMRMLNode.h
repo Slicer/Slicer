@@ -313,10 +313,9 @@ public:
   /// while the DisableModifiedEvent flag was nonzero.
   void InvokePendingModifiedEvent ()
     {
-    int oldModifiedEventPending = this->ModifiedEventPending;
-    this->ModifiedEventPending = 0;
-    if ( oldModifiedEventPending )
+    if ( this->ModifiedEventPending )
       {
+      this->ModifiedEventPending = 0;
       Superclass::Modified();
       }
     }
