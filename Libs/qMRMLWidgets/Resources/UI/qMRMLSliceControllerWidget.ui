@@ -407,6 +407,9 @@
           <property name="toolTip">
            <string>Slice distance from RAS origin</string>
           </property>
+          <property name="pageStep">
+           <double>1.000000000000000</double>
+          </property>
          </widget>
         </item>
         <item>
