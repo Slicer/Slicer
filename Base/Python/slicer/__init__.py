@@ -15,6 +15,7 @@ __kits_to_load = [
 'PythonQt.qSlicerBaseQTGUI',
 # slicer module logic
 'modulelogic'
+#CLI logic
 ]
 
 for kit in __kits_to_load:

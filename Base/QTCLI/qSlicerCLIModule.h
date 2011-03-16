@@ -29,6 +29,8 @@
 
 #include "qSlicerBaseQTCLIExport.h"
 
+class vtkSlicerCLIModuleLogic;
+
 class qSlicerCLIModulePrivate;
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 {
@@ -69,6 +71,13 @@ public:
   /// executable modules.
   void setModuleType(const QString& type);
   QString moduleType() const;
+
+  ///
+  /// This method allows to get a pointer to the ModuleLogic.
+  /// If no moduleLogic already exists, one will be created calling
+  /// 'createLogic' method.
+  Q_INVOKABLE vtkSlicerCLIModuleLogic* cliModuleLogic();
+
 
   virtual QString title() const;
   virtual QString category() const;

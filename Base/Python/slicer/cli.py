@@ -47,7 +47,7 @@ def setNodeParameters(node, parameters):
     else:
       print "parameter ", key, " has unsupported type ", value.__class__.__name__
 
-def run(module, node = None, parameters = None):
+def run(module, node = None, parameters = None, wait_for_completion = False):
   '''Runs a CLI, optionally given a node with optional parameters, returning
   back the node (or the new one if created)'''
   import slicer.util
@@ -57,12 +57,19 @@ def run(module, node = None, parameters = None):
     node = createNode(module, parameters)
     if not node:
       return
-  widget = slicer.util.getModuleGui(module)
-  if not widget:
-    print "Could not find widget representation for module"
-    return None
-  widget.setCurrentCommandLineModuleNode(node)
-  widget.apply()
+
+  logic = module.logic()
+
+  if wait_for_completion:
+      logic.ApplyAndWait(node)
+  else:
+      logic.Apply(node)
+  #widget = slicer.util.getModuleGui(module)
+  #if not widget:
+  #  print "Could not find widget representation for module"
+  #  return None
+  #widget.setCurrentCommandLineModuleNode(node)
+  #widget.apply()
   return node
   
 def cancel(node):
