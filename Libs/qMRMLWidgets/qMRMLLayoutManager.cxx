@@ -209,40 +209,45 @@ void qMRMLLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
     {
     return;
     }
+    
+  vtkMRMLScene* oldScene = this->MRMLScene;
+  this->MRMLScene = scene;
+  this->MRMLLayoutNode = 0;
+  // We want to connect the logic to the scene first (before the following
+  // qvtkReconnect); that way, anytime the scene is modified, the logic
+  // callbacks will be called  before qMRMLLayoutManager and keep the scene
+  // in a good state
+  this->MRMLLayoutLogic->SetMRMLScene(this->MRMLScene);
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::NodeAddedEvent, this,
     SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::NodeRemovedEvent, this,
     SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::SceneImportedEvent, this,
     SLOT(onSceneImportedEvent()));
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::SceneRestoredEvent, this,
     SLOT(onSceneImportedEvent()));
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::SceneAboutToBeClosedEvent, this,
     SLOT(onSceneAboutToBeClosedEvent()));
 
   this->qvtkReconnect(
-    this->MRMLScene, scene,
+    oldScene, scene,
     vtkMRMLScene::SceneClosedEvent, this,
     SLOT(onSceneClosedEvent()));
-
-  this->MRMLScene = scene;
-  this->MRMLLayoutNode = 0;
-  this->MRMLLayoutLogic->SetMRMLScene(this->MRMLScene);
 
   // update all the slice views and the 3D views
   foreach (qMRMLSliceWidget* sliceWidget, this->SliceWidgetList )
@@ -875,7 +880,7 @@ QList<QWidget*> qMRMLLayoutManager::viewsFromXML(QDomElement viewElement)
   for (vtkMRMLNode* node = 0;(node = vtkMRMLNode::SafeDownCast(viewNodes->GetNextItemAsObject()));)
     {
     res  << d->viewWidget(node);
-    }
+    } 
   viewNodes->Delete();
   return res;
 }
