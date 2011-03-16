@@ -313,11 +313,12 @@ public:
   /// while the DisableModifiedEvent flag was nonzero.
   void InvokePendingModifiedEvent ()
     {
-    if ( this->ModifiedEventPending )
+    int oldModifiedEventPending = this->ModifiedEventPending;
+    this->ModifiedEventPending = 0;
+    if ( oldModifiedEventPending )
       {
       Superclass::Modified();
       }
-    this->ModifiedEventPending = 0;
     }
 
   void CopyWithSingleModifiedEvent (vtkMRMLNode *node)
