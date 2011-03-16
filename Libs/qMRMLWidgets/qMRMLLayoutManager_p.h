@@ -67,7 +67,6 @@ public:
 
   virtual void init();
 
-  void setMRMLScene(vtkMRMLScene* scene);
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
 
@@ -85,12 +84,9 @@ public:
   /// Delete 3D Viewer associated with \a viewNode
   void removeThreeDView(vtkMRMLViewNode* viewNode);
 
-  ///
-  void initialize();
-
   /// Enable/disable paint event associated with the TargetWidget
-  bool startUpdateLayout();
-  void endUpdateLayout(bool updateEnabled);
+  //bool startUpdateLayout();
+  //void endUpdateLayout(bool updateEnabled);
 
   /// Actually set the layout type to the node
   void updateLayoutNode(int layout);
@@ -128,14 +124,14 @@ public slots:
   /// Handle MRML scene event
   void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
-  void onSceneImportedEvent();
   void onSceneAboutToBeClosedEvent();
   void onSceneClosedEvent();
 
   /// Handle Layout node event
   void onLayoutNodeModifiedEvent(vtkObject* layoutNode);
-protected slots:
-  void initializeNode(vtkMRMLNode*);
+  void updateWidgetsFromViewNodes();
+  void updateLayoutFromMRMLScene();
+
 public:
   QString            ScriptedDisplayableManagerDirectory;
   vtkMRMLScene*      MRMLScene;

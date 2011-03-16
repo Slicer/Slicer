@@ -202,72 +202,13 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
   return 0;
 }
 
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
-{
-  if (this->MRMLScene == scene)
-    {
-    return;
-    }
-    
-  vtkMRMLScene* oldScene = this->MRMLScene;
-  this->MRMLScene = scene;
-  this->MRMLLayoutNode = 0;
-  // We want to connect the logic to the scene first (before the following
-  // qvtkReconnect); that way, anytime the scene is modified, the logic
-  // callbacks will be called  before qMRMLLayoutManager and keep the scene
-  // in a good state
-  this->MRMLLayoutLogic->SetMRMLScene(this->MRMLScene);
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::NodeAddedEvent, this,
-    SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::NodeRemovedEvent, this,
-    SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::SceneImportedEvent, this,
-    SLOT(onSceneImportedEvent()));
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::SceneRestoredEvent, this,
-    SLOT(onSceneImportedEvent()));
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, this,
-    SLOT(onSceneAboutToBeClosedEvent()));
-
-  this->qvtkReconnect(
-    oldScene, scene,
-    vtkMRMLScene::SceneClosedEvent, this,
-    SLOT(onSceneClosedEvent()));
-
-  // update all the slice views and the 3D views
-  foreach (qMRMLSliceWidget* sliceWidget, this->SliceWidgetList )
-    {
-    sliceWidget->setMRMLScene(this->MRMLScene);
-    }
-  foreach (qMRMLThreeDView* threeDView, this->ThreeDViewList )
-    {
-    threeDView->setMRMLScene(this->MRMLScene);
-    }
-
-  this->initialize();
-}
-
 // --------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::setMRMLLayoutNode(vtkMRMLLayoutNode* layoutNode)
 {
   this->qvtkReconnect(this->MRMLLayoutNode, layoutNode, vtkCommand::ModifiedEvent,
                     this, SLOT(onLayoutNodeModifiedEvent(vtkObject*)));
   this->MRMLLayoutNode = layoutNode;
+  this->onLayoutNodeModifiedEvent(layoutNode);
 }
 
 // --------------------------------------------------------------------------
@@ -455,7 +396,7 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
     {
     if (viewNode == this->ActiveMRMLThreeDViewNode)
       {
-      this->setActiveMRMLThreeDViewNode(0); 
+      this->setActiveMRMLThreeDViewNode(0);
       }
     this->removeThreeDView(viewNode);
     }
@@ -473,12 +414,8 @@ void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 {
   Q_Q(qMRMLLayoutManager);
   logger.trace("onSceneAboutToBeClosedEvent");
-
+  // remove the layout during closing.
   q->clearLayout();
-//  if (this->MRMLLayoutNode)
-//    {
-//    this->SavedCurrentViewArrangement = this->MRMLLayoutNode->GetViewArrangement();
-//    }
 }
 
 //------------------------------------------------------------------------------
@@ -495,36 +432,8 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
   // Since the loaded scene may not contain the required nodes, calling
   // initialize will make sure the LayoutNode, MRMLViewNode,
   // MRMLSliceNode exists.
-  this->initialize();
-
-  // Make sure the layoutNode arrangement match the LayoutManager one
+  this->updateLayoutFromMRMLScene();
   Q_ASSERT(this->MRMLLayoutNode);
-  //this->MRMLLayoutNode->SetViewArrangement(viewArrangement);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::onSceneImportedEvent()
-{
-  logger.trace("onSceneImportedEvent");
-
-  // Since the loaded scene may not contain the required node, calling initialize
-  // will make sure the LayoutNode, MRMLViewNode, MRMLSliceNode exists.
-  this->initialize();
-
-  // Make sure the layoutNode arrangement match the LayoutManager one
-  Q_ASSERT(this->MRMLLayoutNode);
-
-  // Restore saved view arrangement
-//  if (this->MRMLLayoutNode &&
-//      this->MRMLLayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone &&
-//      this->SavedCurrentViewArrangement != vtkMRMLLayoutNode::SlicerLayoutNone)
-//    {
-//    this->MRMLLayoutNode->SetViewArrangement(this->SavedCurrentViewArrangement);
-//    }
-//  else
-//    {
-    this->onLayoutNodeModifiedEvent(this->MRMLLayoutNode);
-//    }
 }
 
 //------------------------------------------------------------------------------
@@ -540,101 +449,61 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::initializeNode(vtkMRMLNode* node)
-{
-  Q_ASSERT(this->sender());
-  QString sliceLogicName = this->sender()->property("SliceLogicName").toString();
-  vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-  Q_ASSERT(sliceNode);
-  // Note that SingletonTag and LayoutName are the same
-  sliceNode->SetLayoutName(sliceLogicName.toLatin1()); 
-  if (sliceLogicName == "Red")
-    {
-    sliceNode->SetOrientationToAxial();
-    }
-  else if(sliceLogicName == "Yellow")
-    {
-    sliceNode->SetOrientationToSagittal();
-    }
-  else if(sliceLogicName == "Green")
-    {
-    sliceNode->SetOrientationToCoronal();
-    }
-  else
-    {
-    sliceNode->SetOrientationToReformat();
-    }
-  sliceNode->SetName(sliceLogicName.toLower().append(
-      sliceNode->GetOrientationString()).toLatin1());
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::initialize()
+void qMRMLLayoutManagerPrivate::updateWidgetsFromViewNodes()
 {
   if (!this->MRMLScene)
     {
     return;
     }
-  // Create vtkMRMLViewNode if required
-  int viewNodeCount = qMRMLUtils::countVisibleViewNode(this->MRMLScene);
-    Q_ASSERT(viewNodeCount);
-  // It's ok to have more than 2 View nodes. Right now the user can't access
-  // them but it might be supported later on. They could also create tones of
-  // views from the Camera module if they wish.
-  // Q_ASSERT(viewNodeCount >= 0 && viewNodeCount <= 2);
-  if (viewNodeCount)
+  // Maybe the nodes have been created a while ago, we need to associate a view to each of them
+  std::vector<vtkMRMLNode*> viewNodes;
+  this->MRMLScene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (unsigned int i = 0; i < viewNodes.size(); ++i)
     {
-    // Maybe the nodes have been created a while ago, we need to associate a view to each of them
-    std::vector<vtkMRMLNode*> viewNodes;
-    this->MRMLScene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
-    for (unsigned int i = 0; i < viewNodes.size(); ++i)
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes[i]);
+    if (!this->threeDView(viewNode))
       {
-      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes[i]);
-      if (!this->threeDView(viewNode))
-        {
-        this->createThreeDView(viewNode);
-        }
-      // For now, the active view is the first one
-      if (i == 0)
-        {
-        this->setActiveMRMLThreeDViewNode(viewNode);
-        }
+      this->createThreeDView(viewNode);
+      }
+    // For now, the active view is the first one
+    if (i == 0)
+      {
+      this->setActiveMRMLThreeDViewNode(viewNode);
       }
     }
 
-  // Create "Red", "Yellow" and "Green" vtkMRMLSliceNode if required
-  int sliceNodeCount = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  Q_ASSERT(sliceNodeCount);
-  if (sliceNodeCount)
+  // Maybe the nodes have been created a while ago, we need to associate a view to each of them
+  std::vector<vtkMRMLNode*> sliceNodes;
+  this->MRMLScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  for (unsigned int i = 0; i < sliceNodes.size();++i)
     {
-    // Maybe the nodes have been created a while ago, we need to associate a view to each of them
-    std::vector<vtkMRMLNode*> sliceNodes;
-    this->MRMLScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
-    for (unsigned int i = 0; i < sliceNodes.size();++i)
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
+    if (!this->sliceWidget(sliceNode))
       {
-      vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-      if (!this->sliceWidget(sliceNode))
-        {
-        this->createSliceWidget(sliceNode);
-        }
+      this->createSliceWidget(sliceNode);
       }
     }
+}
 
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::updateLayoutFromMRMLScene()
+{
+  if (!this->MRMLScene)
+    {
+    this->setMRMLLayoutNode(0);
+    return;
+    }
   // Create vtkMRMLLayoutNode if required
   this->MRMLScene->InitTraversal();
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(
     this->MRMLScene->GetNextNodeByClass("vtkMRMLLayoutNode"));
   Q_ASSERT(layoutNode);
-  if (layoutNode)
-    {
-    // make sure there is just 1 node
-    Q_ASSERT( this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLLayoutNode") == 1 );
-    this->setMRMLLayoutNode(layoutNode);
-    // relayout the items
-    this->setLayoutInternal(layoutNode->GetViewArrangement());
-    }
-}
 
+  this->setMRMLLayoutNode(layoutNode);
+  // make sure there is just 1 node
+  Q_ASSERT( this->MRMLScene->GetNextNodeByClass("vtkMRMLLayoutNode") == 0);
+}
+/*
 //------------------------------------------------------------------------------
 bool qMRMLLayoutManagerPrivate::startUpdateLayout()
 {
@@ -658,6 +527,7 @@ void qMRMLLayoutManagerPrivate::endUpdateLayout(bool updatesEnabled)
     }
   q->viewport()->setUpdatesEnabled(updatesEnabled);
 }
+*/
 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
@@ -673,20 +543,12 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
     return;
     }
 
-  //this->SavedCurrentViewArrangement = layout;
   // TBD: modify the dom doc manually, don't create a new one
   QDomDocument newLayout;
   newLayout.setContent(QString(
     this->MRMLLayoutNode ?
     this->MRMLLayoutNode->GetCurrentViewArrangement() : ""));
   q->setLayout(newLayout);
-  /*
-  // TODO: find a way to remove that hack (only needed for the tests)
-  if (q->viewport())
-    {
-    this->Viewport->repaint();
-    }
-  */
   emit q->layoutChanged(layout);
 }
 
@@ -745,8 +607,8 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
 void qMRMLLayoutManager::onViewportChanged()
 {
   Q_D(qMRMLLayoutManager);
-  // create necessary views if needed
-  d->initialize();
+  d->updateWidgetsFromViewNodes();
+  d->updateLayoutFromMRMLScene();
   this->ctkLayoutManager::onViewportChanged();
 }
 
@@ -793,7 +655,53 @@ vtkMRMLLayoutLogic* qMRMLLayoutManager::layoutLogic()const
 void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLLayoutManager);
-  d->setMRMLScene(scene);
+  if (d->MRMLScene == scene)
+    {
+    return;
+    }
+
+  vtkMRMLScene* oldScene = d->MRMLScene;
+  d->MRMLScene = scene;
+  d->MRMLLayoutNode = 0;
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
+                   d, SLOT(updateWidgetsFromViewNodes()));
+  // We want to connect the logic to the scene first (before the following
+  // qvtkReconnect); that way, anytime the scene is modified, the logic
+  // callbacks will be called  before qMRMLLayoutManager and keep the scene
+  // in a good state
+  d->MRMLLayoutLogic->SetMRMLScene(d->MRMLScene);
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeAddedEvent,
+                   d, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeRemovedEvent,
+                   d, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
+                   d, SLOT(updateLayoutFromMRMLScene()));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneRestoredEvent,
+                   d, SLOT(updateLayoutFromMRMLScene()));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneAboutToBeClosedEvent,
+                   d, SLOT(onSceneAboutToBeClosedEvent()));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneClosedEvent,
+                   d, SLOT(onSceneClosedEvent()));
+
+  // update all the slice views and the 3D views
+  foreach (qMRMLSliceWidget* sliceWidget, d->SliceWidgetList )
+    {
+    sliceWidget->setMRMLScene(d->MRMLScene);
+    }
+  foreach (qMRMLThreeDView* threeDView, d->ThreeDViewList )
+    {
+    threeDView->setMRMLScene(d->MRMLScene);
+    }
+
+  d->updateWidgetsFromViewNodes();
+  d->updateLayoutFromMRMLScene();
 }
 
 //------------------------------------------------------------------------------
@@ -865,7 +773,9 @@ QWidget* qMRMLLayoutManager::viewFromXML(QDomElement viewElement)
   // the view should have been created automatically by the logic when the new
   // view arrangement is set
   Q_ASSERT(viewNode);
-  return d->viewWidget(viewNode);
+  QWidget* view = d->viewWidget(viewNode);
+  Q_ASSERT(view);
+  return view;
 }
 
 //------------------------------------------------------------------------------
