@@ -71,5 +71,20 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
   vtkIndent i;
   pnode->WriteXML(std::cerr, 1);
+  //     qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
+
   return 0;
+}
+
+void vtkSlicerCropVolumeLogic::RegisterNodes()
+{
+  if(!this->GetMRMLScene())
+    return;
+  std::cerr << "RRegistering nodes" << std::endl;
+  //qDebug() << "Registering crop volume mrml node";
+
+  vtkMRMLCropVolumeParametersNode* pNode = vtkMRMLCropVolumeParametersNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(pNode);
+  pNode->Delete();
+
 }

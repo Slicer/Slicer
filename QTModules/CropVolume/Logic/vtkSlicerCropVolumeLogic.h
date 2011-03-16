@@ -62,6 +62,8 @@ public:
   
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
+  virtual void RegisterNodes();
+
 protected:
   vtkSlicerCropVolumeLogic();
   virtual ~vtkSlicerCropVolumeLogic();

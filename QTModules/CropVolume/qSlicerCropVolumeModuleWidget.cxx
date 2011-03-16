@@ -113,6 +113,8 @@ void qSlicerCropVolumeModuleWidget::setup()
       qDebug() << "Fatal error";
       abort();
     }
+    std::cerr << "FOUND crop vol param node" << std::endl;
+
   } else {
     qDebug() << "No CropVolume parameter nodes found!";
     this->parametersNode = vtkMRMLCropVolumeParametersNode::New();

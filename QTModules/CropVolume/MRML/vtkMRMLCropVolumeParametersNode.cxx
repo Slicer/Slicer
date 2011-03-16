@@ -94,6 +94,7 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
   qDebug() << "Reading CropVolume param node!";
+  std::cerr << "Reading CropVolume param node!" << std::endl;
   Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
@@ -132,6 +133,8 @@ void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
       continue;
     }
   }
+
+  this->WriteXML(std::cout,1);
 }
 
 //----------------------------------------------------------------------------

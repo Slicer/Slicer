@@ -16,7 +16,7 @@ SET(module_logic_include_directories
 
 # Source files
 SET(module_logic_SRCS
-  vtkSlicerCropVolumeLogic.cxx
+  vtkSlicerCropVolumeLogic.cxx ${CMAKE_CURRENT_SOURCE_DIR}/../MRML/vtkMRMLCropVolumeParametersNode.cxx
   )
 
 # Additional Target libraries
