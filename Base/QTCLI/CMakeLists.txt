@@ -60,7 +60,6 @@ SET(KIT_resources
 SET(KIT_target_libraries
   qSlicerBaseQTCore
   qSlicerBaseQTGUI
-  qMRMLWidgets # HACK: Added ONLY for qCTKFlowLayout
   #SlicerBaseLogic
   ModuleDescriptionParser
   MRMLCLI
