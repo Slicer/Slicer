@@ -168,11 +168,10 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   d->Desc = desc; 
 }
 
+//-----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic* qSlicerCLIModule::cliModuleLogic()
 {
-  Q_D(qSlicerCLIModule);
-
   vtkSlicerCLIModuleLogic* myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
   return myLogic;
 }
- 
+
