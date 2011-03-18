@@ -76,11 +76,18 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor[0] = 0.70196;
   this->BackgroundColor[1] = 0.70196;
   this->BackgroundColor[2] = 0.90588;
+  this->VolumeRenderingParameterNodeID = NULL;
+
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode()
 {
+  if (this->VolumeRenderingParameterNodeID)
+  {
+    delete [] this->VolumeRenderingParameterNodeID;
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -408,6 +415,8 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " renderMode=\"" << "Orthographic" << "\"";
     }
+  of << indent << " volumeRenderingVolumeRenderingParameterNodeID=\"" << (this->VolumeRenderingParameterNodeID ? this->VolumeRenderingParameterNodeID : "NULL") << "\"";
+
 }
 
 //----------------------------------------------------------------------------
@@ -660,8 +669,13 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->Visibility = 0;
         }
       }
+      else if (!strcmp(attName, "volumeRenderingVolumeRenderingParameterNodeID"))
+      {
+        this->SetVolumeRenderingParameterNodeID(attValue);
+        continue;
+      }
     }
-    
+
   this->EndModify(disabledModify);
 }
 
@@ -696,6 +710,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   // Important: do not use SetActive or RemoveActiveFlagInScene will be called
   this->Active = node->GetActive();
   this->Visibility = node->GetVisibility();
+  this->SetVolumeRenderingParameterNodeID(node->GetVolumeRenderingParameterNodeID());
 
   this->EndModify(disabledModify);
 }
@@ -727,6 +742,8 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundColor:       " << this->BackgroundColor[0] << " "
      << this->BackgroundColor[1] << " "
      << this->BackgroundColor[2] <<"\n";
+  os << "VolumeRenderingParameterNodeID: " << ( (this->VolumeRenderingParameterNodeID) ? this->VolumeRenderingParameterNodeID : "None" ) << "\n";
+
 }
 
 //---------------------------------------------------------------------------

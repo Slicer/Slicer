@@ -208,6 +208,10 @@ protected:
   int NewParametersNodeFromSceneLoadingFlag;
 
 protected:
+  void OnScenarioNodeModified();
+  void OnViewNodeModified();
+  void OnVolumeRenderingParameterNodeModified();
+
   void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode);

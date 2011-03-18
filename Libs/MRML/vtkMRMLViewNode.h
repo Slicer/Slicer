@@ -143,6 +143,11 @@ public:
   vtkGetMacro (RenderMode, int );
   virtual void SetRenderMode ( int );
   
+  ///
+  /// the ID of a MRMLVolumeRenderingParametersNode
+  vtkGetStringMacro (VolumeRenderingParameterNodeID);
+  vtkSetStringMacro (VolumeRenderingParameterNodeID);
+
   /// Modes for automatically controlling camera 
   enum
     {
@@ -258,7 +263,11 @@ protected:
   /// 
   /// Indicates whether or not the View is visible
   int Visibility;
-  
+
+  ///
+  /// Volume Rendering Parameter node for this view
+  char *VolumeRenderingParameterNodeID;
+
   /// 
   /// When a view is set Active, make other views inactive.
   virtual void RemoveActiveFlagInScene();
