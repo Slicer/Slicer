@@ -23,8 +23,8 @@ SET(qt_module_SRCS
   qSlicerCropVolumeModule.h
   qSlicerCropVolumeModuleWidget.cxx
   qSlicerCropVolumeModuleWidget.h
-  MRML/vtkMRMLCropVolumeParametersNode.cxx
-  MRML/vtkMRMLCropVolumeParametersNode.h
+  #MRML/vtkMRMLCropVolumeParametersNode.cxx
+  #MRML/vtkMRMLCropVolumeParametersNode.h
   )
 
 # Headers that should run through moc
