@@ -51,6 +51,10 @@ vtkMRMLAnnotationBidimensionalNode::vtkMRMLAnnotationBidimensionalNode()
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
 {
+
+    Superclass::Initialize(mrmlScene);
+
+    /* taken out by rec from Kilian
     if (!mrmlScene)
     {
         vtkErrorMacro("Scene was null!");
@@ -62,7 +66,7 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
     this->CreateAnnotationTextDisplayNode();
     this->CreateAnnotationPointDisplayNode();
     this->CreateAnnotationLineDisplayNode();
-    
+    */
   // default starting position
     /*
   {

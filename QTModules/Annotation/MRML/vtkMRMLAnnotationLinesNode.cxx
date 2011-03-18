@@ -566,6 +566,7 @@ int vtkMRMLAnnotationLinesNode::AddLine(int ctrlPtIdStart, int ctrlPtIdEnd,int s
   return -1;
 }
 
+//---------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesNode::SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag)
 {
   int result = vtkMRMLAnnotationControlPointsNode::SetControlPoint(id,newControl,selectedFlag,visibleFlag);
@@ -583,6 +584,7 @@ int vtkMRMLAnnotationLinesNode::SetControlPoint(int id, double newControl[3],int
   return result;
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
 {
    if (!mrmlScene)
@@ -594,6 +596,6 @@ void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
    Superclass::Initialize(mrmlScene);
    // we need to disable the modified event which would get fired when we set the new displayNode
    this->DisableModifiedEventOn();
-   this->CreateAnnotationPointDisplayNode();
+   this->CreateAnnotationLineDisplayNode();
    this->DisableModifiedEventOff();
 }
