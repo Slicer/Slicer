@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DiffusionTensorVolumeDisplayWidget</class>
+ <widget class="qSlicerWidget" name="DiffusionTensorVolumeDisplayWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>667</width>
+    <height>539</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Tensor Display Properties</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="ScalarInvariantLabel">
+     <property name="text">
+      <string>Scalar Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="qMRMLScalarInvariantComboBox" name="ScalarInvariantComboBox"/>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="qSlicerScalarVolumeDisplayWidget" name="ScalarVolumeDisplayWidget" native="true"/>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+     <property name="title">
+      <string>Glyphs on Slices Display</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="GlyphVisibilityLabel">
+        <property name="text">
+         <string>Slice Visibility:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="RedSliceCheckBox">
+          <property name="text">
+           <string>Red</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="YellowSliceCheckBox">
+          <property name="text">
+           <string>Yellow</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="GreenSliceCheckBox">
+          <property name="text">
+           <string>Green</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="qSlicerDTISliceDisplayWidget" name="DiffusionTensorVolumeSliceDisplayNodeWidget" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLScalarInvariantComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLScalarInvariantComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerScalarVolumeDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerScalarVolumeDisplayWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerDTISliceDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerDTISliceDisplayWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
