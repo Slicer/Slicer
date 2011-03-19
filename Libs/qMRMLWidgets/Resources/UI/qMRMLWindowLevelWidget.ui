@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>45</height>
+    <width>517</width>
+    <height>55</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0,0">
    <property name="margin">
     <number>0</number>
    </property>
@@ -36,7 +36,7 @@
       <string>W: </string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
     </widget>
    </item>
@@ -46,7 +46,7 @@
       <string>L: </string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
     </widget>
    </item>
@@ -75,7 +75,7 @@
       <string>Min:</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
     </widget>
    </item>
@@ -85,7 +85,7 @@
       <string>Max:</string>
      </property>
      <property name="decimals">
-      <number>1</number>
+      <number>2</number>
      </property>
     </widget>
    </item>

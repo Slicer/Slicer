@@ -410,6 +410,23 @@ void vtkMRMLScalarVolumeDisplayNode::SetWindowLevel(double window, double level)
   this->Modified();
 }
 
+
+//---------------------------------------------------------------------------
+double vtkMRMLScalarVolumeDisplayNode::GetWindowLevelMin()
+{
+  const double window = this->GetWindow();
+  const double level = this->GetLevel();
+  return level - 0.5 * window;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLScalarVolumeDisplayNode::GetWindowLevelMax()
+{
+  const double window = this->GetWindow();
+  const double level = this->GetLevel();
+  return level + 0.5 * window;
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetApplyThreshold(int apply)
 {

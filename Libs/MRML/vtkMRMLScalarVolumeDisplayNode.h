@@ -81,6 +81,9 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// needed.
   virtual void SetWindowLevel(double window, double level);
 
+  double GetWindowLevelMin();
+  double GetWindowLevelMax();
+
   /// 
   /// Specifies whether to apply the threshold
   vtkBooleanMacro(ApplyThreshold, int);

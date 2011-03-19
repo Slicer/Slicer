@@ -70,17 +70,17 @@ void qMRMLWindowLevelWidgetPrivate::init()
   q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
 
   QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setMinMaxRangeValue(double, double)));
+                   q, SLOT(onMinMaxValuesChanged(double, double)));
 
   QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setWindow(double)));
+                   q, SLOT(onWindowValueChanged(double)));
   QObject::connect(this->LevelSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setLevel(double)));
+                   q, SLOT(onLevelValueChanged(double)));
 
   QObject::connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setMinimumValue(double)));
+                   q, SLOT(onMinValueChanged(double)));
   QObject::connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setMaximumValue(double)));
+                   q, SLOT(onMaxValueChanged(double)));
   this->MinSpinBox->setVisible(false);
   this->MaxSpinBox->setVisible(false);
 
@@ -118,7 +118,6 @@ void qMRMLWindowLevelWidgetPrivate::openRangeWidget()
     }
   QPoint bottomLeft = QPoint(q->geometry().x(), q->geometry().bottom());
   QPoint pos = q->parentWidget() ? q->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
-  qDebug() << "open: pos2: " << pos << QPoint(q->geometry().x(), q->geometry().bottom());
   this->RangeWidgetAnimation->setStartValue(
     QRect(pos, QSize(q->width(), 0)));
   this->RangeWidgetAnimation->setEndValue(
@@ -439,7 +438,6 @@ void qMRMLWindowLevelWidget::updateDisplayNode()
 void qMRMLWindowLevelWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLWindowLevelWidget);
-
   if (!d->VolumeDisplayNode)
     {
     return;
@@ -456,9 +454,9 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
   double level = d->VolumeDisplayNode->GetLevel();
   d->WindowSpinBox->setValue(window);
   d->LevelSpinBox->setValue(level);
-  double min = level - 0.5 * window;
-  double max = level + 0.5 * window;
-  d->WindowLevelRangeSlider->setValues(min, max );
+  double min = d->VolumeDisplayNode->GetWindowLevelMin();
+  double max = d->VolumeDisplayNode->GetWindowLevelMax();
+  d->WindowLevelRangeSlider->setValues(min, max);
   d->MinSpinBox->setValue(min);
   d->MaxSpinBox->setValue(max);
   switch (d->VolumeDisplayNode->GetAutoWindowLevel())
@@ -486,6 +484,80 @@ void qMRMLWindowLevelWidget::setRange(double min, double max)
   d->MaxSpinBox->setRange(min, max);
   d->RangeWidget->setValues(min, max);
 }
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::onWindowValueChanged(double windowValue)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  const double nodeWindow = d->VolumeDisplayNode->GetWindow();
+  const double roundNodeWindow =
+    QString::number(nodeWindow, 'f', d->WindowSpinBox->decimals()).toDouble();
+  if (windowValue == roundNodeWindow)
+    {
+    return;
+    }
+  this->setWindow(windowValue);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::onLevelValueChanged(double levelValue)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  const double nodeLevel = d->VolumeDisplayNode->GetLevel();
+  const double roundNodeLevel =
+    QString::number(nodeLevel, 'f', d->LevelSpinBox->decimals()).toDouble();
+  if (levelValue == roundNodeLevel)
+    {
+    return;
+    }
+  this->setLevel(levelValue);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::onMinValueChanged(double minValue)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  const double nodeMin = d->VolumeDisplayNode->GetWindowLevelMin();
+  const double roundNodeMin =
+    QString::number(nodeMin, 'f', d->MinSpinBox->decimals()).toDouble();
+  if (minValue == roundNodeMin)
+    {
+    return;
+    }
+  this->setMinimumValue(minValue);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::onMaxValueChanged(double maxValue)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  const double nodeMax = d->VolumeDisplayNode->GetWindowLevelMax();
+  const double roundNodeMax =
+    QString::number(nodeMax, 'f', d->MaxSpinBox->decimals()).toDouble();
+  if (maxValue == roundNodeMax)
+    {
+    return;
+    }
+  this->setMaximumValue(maxValue);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::onMinMaxValuesChanged(double minValue, double maxValue)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  const double nodeMin = d->VolumeDisplayNode->GetWindowLevelMin();
+  const double nodeMax = d->VolumeDisplayNode->GetWindowLevelMax();
+  const double roundNodeMin =
+    QString::number(nodeMin, 'f', 2).toDouble();
+  const double roundNodeMax =
+    QString::number(nodeMax, 'f', 2).toDouble();
+  if (minValue == roundNodeMin && maxValue == roundNodeMax)
+    {
+    return;
+    }
+  this->setMinMaxRangeValue(minValue, maxValue);
+}
+
 
 // --------------------------------------------------------------------------
 bool qMRMLWindowLevelWidget::eventFilter(QObject* obj, QEvent* event)
