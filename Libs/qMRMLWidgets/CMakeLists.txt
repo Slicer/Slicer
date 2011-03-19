@@ -96,6 +96,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLRangeWidget.h
   qMRMLROIWidget.cxx
   qMRMLROIWidget.h
+  qMRMLScalarInvariantComboBox.cxx
+  qMRMLScalarInvariantComboBox.h
   qMRMLSceneCategoryModel.cxx
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.cxx
@@ -176,6 +178,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLNodeFactory.h
   qMRMLRangeWidget.h
   qMRMLROIWidget.h
+  qMRMLScalarInvariantComboBox.h
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.h

@@ -38,6 +38,10 @@ SET(designer_plugin_SRCS
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.cxx
   qMRMLROIWidgetPlugin.h
+  qMRMLScalarInvariantComboBoxPlugin.cxx
+  qMRMLScalarInvariantComboBoxPlugin.h
+  qMRMLSceneFactoryWidgetPlugin.cxx
+  qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceControllerWidgetPlugin.cxx
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.cxx
@@ -54,8 +58,6 @@ SET(designer_plugin_SRCS
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.cxx
   qMRMLTreeWidgetPlugin.h
-  qMRMLSceneFactoryWidgetPlugin.cxx
-  qMRMLSceneFactoryWidgetPlugin.h
   qMRMLVolumeInfoWidgetPlugin.cxx
   qMRMLVolumeInfoWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.cxx
@@ -90,6 +92,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h
+  qMRMLScalarInvariantComboBoxPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.h

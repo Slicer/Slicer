@@ -13,32 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  This file was originally developed by Julien Finet, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-#ifndef __qMRMLWidgetPlugin_h
-#define __qMRMLWidgetPlugin_h
+#ifndef __qMRMLScalarInvariantComboBoxPlugin_h
+#define __qMRMLScalarInvariantComboBoxPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetPlugin :
-  public QObject,
-  public qMRMLWidgetsAbstractPlugin
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLScalarInvariantComboBoxPlugin
+  : public QObject
+  ,  public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLWidgetPlugin(QObject *_parent = 0);
-  
+  qMRMLScalarInvariantComboBoxPlugin(QObject *_parent = 0);
+
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;
   bool     isContainer() const;
   QString  name() const;
-  
 };
 
 #endif
+

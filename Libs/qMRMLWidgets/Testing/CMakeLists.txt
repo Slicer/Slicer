@@ -28,6 +28,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLNodeComboBoxTest5.cxx
   qMRMLNodeComboBoxTest6.cxx
   qMRMLNodeFactoryTest1.cxx
+  qMRMLScalarInvariantComboBoxTest1.cxx
   qMRMLSceneCategoryModelTest1.cxx
   qMRMLSceneColorTableModelTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
@@ -105,6 +106,7 @@ SIMPLE_TEST( qMRMLNodeComboBoxTest4 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest5 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest6 )
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
+SIMPLE_TEST( qMRMLScalarInvariantComboBoxTest1 )
 SIMPLE_TEST( qMRMLSceneCategoryModelTest1 )
 SIMPLE_TEST( qMRMLSceneColorTableModelTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )

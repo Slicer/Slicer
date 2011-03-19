@@ -37,6 +37,7 @@
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
+#include "qMRMLScalarInvariantComboBoxPlugin.h"
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
 #include "qMRMLSliceWidgetPlugin.h"
@@ -55,8 +56,9 @@
 #include "qMRMLWidgetsPluginExport.h"
 
 // \class Group the plugins in one library
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin : public QObject,
-                           public QDesignerCustomWidgetCollectionInterface
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin
+  : public QObject
+  , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
@@ -82,6 +84,7 @@ public:
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin
+            << new qMRMLScalarInvariantComboBoxPlugin
             << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin

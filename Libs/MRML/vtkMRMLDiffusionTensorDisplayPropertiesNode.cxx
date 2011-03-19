@@ -370,6 +370,19 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
     }
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant()
+{
+  return vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant()
+{
+  return vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector;
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(int var)
 {
   if (var ==  vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace)
@@ -479,11 +492,13 @@ const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(i
   return "(unknown)";
 }
 
+//----------------------------------------------------------------------------
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarInvariantAsString()
 {
   return this->GetScalarEnumAsString(this->ScalarInvariant);
 }
 
+//----------------------------------------------------------------------------
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsString()
 {
   if (this->GlyphGeometry == this->Lines)
@@ -505,6 +520,7 @@ const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsStrin
   return "(unknown)";
 }
 
+//----------------------------------------------------------------------------
 const char*
 vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphEigenvectorAsString()
 {
@@ -524,6 +540,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphEigenvectorAsString()
   return "(unknown)";
 }
 
+//----------------------------------------------------------------------------
 const char *
 vtkMRMLDiffusionTensorDisplayPropertiesNode::GetColorGlyphByAsString()
 {

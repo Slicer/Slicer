@@ -148,11 +148,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// TO DO: add the rest of the scalars
 
   /// 
-  /// Return the lowest and highest integers, for use in looping
-  int GetFirstScalarInvariant() {return this->Trace;};
-  int GetLastScalarInvariant() {return this->ColorOrientationMinEigenvector;};
-
-  /// 
   /// Return a text string describing the ScalarInvariant variable
   virtual const char * GetScalarInvariantAsString();
 
@@ -450,6 +445,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
  //Helper function to get the string of Scalar enums
   static const char *GetScalarEnumAsString(int val);
+  ///
+  /// Return the lowest and highest integers, for use in looping
+  static int GetFirstScalarInvariant();
+  static int GetLastScalarInvariant();
 
  protected:
   vtkMRMLDiffusionTensorDisplayPropertiesNode();
