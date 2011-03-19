@@ -23,8 +23,8 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class qSlicerScalarVolumeDisplayWidgetPrivate:
-                                          public Ui_qSlicerScalarVolumeDisplayWidget
+class qSlicerScalarVolumeDisplayWidgetPrivate
+  : public Ui_qSlicerScalarVolumeDisplayWidget
 {
   Q_DECLARE_PUBLIC(qSlicerScalarVolumeDisplayWidget);
 protected:
@@ -39,7 +39,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerScalarVolumeDisplayWidgetPrivate::qSlicerScalarVolumeDisplayWidgetPrivate(qSlicerScalarVolumeDisplayWidget& object)
+qSlicerScalarVolumeDisplayWidgetPrivate::qSlicerScalarVolumeDisplayWidgetPrivate(
+  qSlicerScalarVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
   this->Histogram = new ctkVTKHistogram();
@@ -51,6 +52,7 @@ qSlicerScalarVolumeDisplayWidgetPrivate::~qSlicerScalarVolumeDisplayWidgetPrivat
 {
   delete this->Histogram;
 }
+
 //-----------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 {

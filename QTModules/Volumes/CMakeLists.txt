@@ -29,6 +29,8 @@ SET(qt_module_SRCS
   qSlicerVolumesModuleWidget.h
   qSlicerVolumeDisplayWidget.cxx
   qSlicerVolumeDisplayWidget.h
+  Widgets/qSlicerDTISliceDisplayWidget.cxx
+  Widgets/qSlicerDTISliceDisplayWidget.h
   )
 
 # Headers that should run through moc
@@ -40,10 +42,12 @@ SET(qt_module_MOC_SRCS
   qSlicerVolumesModule.h
   qSlicerVolumesModuleWidget.h
   qSlicerVolumeDisplayWidget.h
+  Widgets/qSlicerDTISliceDisplayWidget.h
   )
 
 # UI files
 SET(qt_module_UI_SRCS
+  Resources/UI/qSlicerDTISliceDisplayWidget.ui
   Resources/UI/qSlicerLabelMapVolumeDisplayWidget.ui
   Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
   Resources/UI/qSlicerVolumesIOOptionsWidget.ui
@@ -73,5 +77,5 @@ slicerMacroBuildQtModule(
   )
 
 if(BUILD_TESTING)
-  #add_subdirectory(Testing)
+  add_subdirectory(Testing)
 endif(BUILD_TESTING)
