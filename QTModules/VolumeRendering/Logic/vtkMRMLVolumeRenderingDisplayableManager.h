@@ -189,7 +189,9 @@ protected:
   // internal histogram instance (fg)
   //vtkKWHistogramSet *HistogramsFg;
 
-  vtkCommand* GUICallback;
+  /// Holders for MRML callbacks
+  //vtkCallbackCommand *MRMLCallback;
+
 
   vtkVolumeProperty *VolumePropertyGPURaycastII;
 

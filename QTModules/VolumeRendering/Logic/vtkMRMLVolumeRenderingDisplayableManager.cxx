@@ -72,8 +72,6 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
   //this->Histograms = vtkKWHistogramSet::New();
   //this->HistogramsFg = vtkKWHistogramSet::New();
 
-  this->GUICallback = NULL;
-
   this->VolumePropertyGPURaycastII = NULL;
   //this->VolumePropertyGPURaycast3 = NULL;
 
@@ -102,33 +100,33 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
   //delete instances
   if (this->MapperTexture)
   {
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
   }
   if (this->MapperGPURaycast)
   {
-    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycast->Delete();
     this->MapperGPURaycast = NULL;
   }
   if (this->MapperGPURaycastII)
   {
-    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycastII->Delete();
     this->MapperGPURaycastII = NULL;
   }
   if (this->MapperRaycast)
   {
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GUICallback);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
+    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperRaycast->Delete();
     this->MapperRaycast = NULL;
   }
 
   if (this->MapperGPURaycast3)
   {
-    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycast3->Delete();
     this->MapperGPURaycast3 = NULL;
   }
@@ -184,7 +182,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGUICallbackCommand(vtkCommand*
   this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
   this->MapperGPURaycast3->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
 
-  this->GUICallback = callback;
+  //this->GetMRMLCallbackCommand() = callback;
 }
 
 void vtkMRMLVolumeRenderingDisplayableManager::Reset()
@@ -192,32 +190,32 @@ void vtkMRMLVolumeRenderingDisplayableManager::Reset()
   //delete instances
   if (this->MapperTexture)
   {
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperTexture->Delete();
     this->MapperTexture = NULL;
   }
   if (this->MapperGPURaycast)
   {
-    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycast->Delete();
     this->MapperGPURaycast = NULL;
   }
   if (this->MapperGPURaycastII)
   {
-    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycastII->Delete();
     this->MapperGPURaycastII = NULL;
   }
   if (this->MapperRaycast)
   {
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GUICallback);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
+    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperRaycast->Delete();
     this->MapperRaycast = NULL;
   }
   if (this->MapperGPURaycast3)
   {
-    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
     this->MapperGPURaycast3->Delete();
     this->MapperGPURaycast3 = NULL;
   }
@@ -268,17 +266,17 @@ void vtkMRMLVolumeRenderingDisplayableManager::Reset()
   //this->Histograms = vtkKWHistogramSet::New();
   //this->HistogramsFg = vtkKWHistogramSet::New();
 
-  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
 
   //cpu ray casting
-  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-  this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent, this->GUICallback);
+  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
+  this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent, this->GetMRMLCallbackCommand());
 
   //hook up the gpu mapper
-  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
 
-  this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
-  this->MapperGPURaycast3->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GUICallback);
+  this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
+  this->MapperGPURaycast3->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLCallbackCommand());
 }
 
 vtkMRMLVolumeRenderingParametersNode* vtkMRMLVolumeRenderingDisplayableManager::CreateParametersNode()
@@ -384,6 +382,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistogramsFg(vtkMRMLVolumeRe
 
 void vtkMRMLVolumeRenderingDisplayableManager::UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  if (vspNode == 0 || vspNode->GetVolumeNode() == 0 || vspNode->GetVolumePropertyNode() == 0)
+  {
+    return;
+  }
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   vtkVolumeProperty *prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
   if (input == NULL || prop == NULL)
@@ -898,6 +900,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycast3Parameters(vtkMRMLV
 
 void vtkMRMLVolumeRenderingDisplayableManager::EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  if (vspNode == 0 || vspNode->GetVolumeNode() == 0)
+  {
+    return;
+  }
   double *spacing = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetSpacing();
 
   if (spacing)
@@ -1011,8 +1017,10 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
  */
 int vtkMRMLVolumeRenderingDisplayableManager::SetupMapperFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  if (vspNode == NULL)
+  if (vspNode == NULL || vspNode->GetVolumeNode() == NULL)
+  {
     return 0;
+  }
 
   this->Volume->SetMapper(NULL);
   this->EstimateSampleDistance(vspNode);
@@ -1025,7 +1033,10 @@ int vtkMRMLVolumeRenderingDisplayableManager::SetupMapperFromParametersNode(vtkM
     this->MapperRaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
     this->MapperRaycast->SetSampleDistance(vspNode->GetEstimatedSampleDistance());
     this->Volume->SetMapper(this->MapperRaycast);
-    this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+    if (vspNode->GetVolumePropertyNode())
+      {
+      this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+      }
     break;
   case 3:
     this->MapperGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
@@ -1035,7 +1046,10 @@ int vtkMRMLVolumeRenderingDisplayableManager::SetupMapperFromParametersNode(vtkM
       if (this->MapperGPURaycast->IsRenderSupported(window,vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
         {
         this->Volume->SetMapper(this->MapperGPURaycast);
-        this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+        if (vspNode->GetVolumePropertyNode())
+          {
+          this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+          }
         }
       }
     else
@@ -1046,40 +1060,52 @@ int vtkMRMLVolumeRenderingDisplayableManager::SetupMapperFromParametersNode(vtkM
   case 4:
     this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
     if (vspNode->GetFgVolumeNode())
-      this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
+      {
+      this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData()); 
+      }
     this->MapperGPURaycastII->SetFramerate(vspNode->GetExpectedFPS());
     if (this->MapperGPURaycastII->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-    {
+      {
       this->Volume->SetMapper(this->MapperGPURaycastII);
       this->CreateVolumePropertyGPURaycastII(vspNode);
       this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
-    }
+      }
     else
+      {
       return -1;
+      }
     break;
   case 2:
     this->MapperTexture->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
     this->MapperTexture->SetSampleDistance(vspNode->GetEstimatedSampleDistance());
     this->MapperTexture->SetFramerate(vspNode->GetExpectedFPS());
     if (this->MapperTexture->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-    {
+      {
       this->Volume->SetMapper(this->MapperTexture);
-      this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-    }
+      if (vspNode->GetVolumePropertyNode())
+        {
+        this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+        }
+      }
     else
+      {
       return -1;
+      }
     break;
   case 1:
     this->MapperGPURaycast3->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
     this->MapperGPURaycast3->SetSampleDistance(vspNode->GetEstimatedSampleDistance());
     //this->MapperGPURaycast3->SetFramerate(vspNode->GetExpectedFPS());
     if (this->MapperGPURaycast3->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-    {
+      {
       this->Volume->SetMapper(this->MapperGPURaycast3);
       //this->CreateVolumePropertyGPURaycast3(vspNode);
       //this->Volume->SetProperty(this->VolumePropertyGPURaycast3);
-      this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-    }
+      if (vspNode->GetVolumePropertyNode())
+        {
+        this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+        }
+      }
     //else
     //  return -1;
     break;
@@ -1482,7 +1508,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
   // Observe ViewNode, Scenario Node, and Parameter node for modify events
   if (event == vtkCommand::ModifiedEvent && this->GetMRMLScene())
   {
-    node = reinterpret_cast<vtkMRMLNode *>(callData);
+    node = reinterpret_cast<vtkMRMLNode *>(caller);
 
     if (node != NULL && node == this->ScenarioNode )
     {
@@ -1541,7 +1567,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
       else if (node->IsA("vtkMRMLViewNode"))
       {
         vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(node); 
-        viewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->MRMLCallback);
+        viewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
       }
     }
   }
@@ -1626,7 +1652,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromParametersN
 
   if (vspNode->GetROINode())
   {
-    vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallback);
+    vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
     vspNode->GetROINode()->InsideOutOn();
 
     this->SetROI(vspNode);
@@ -1642,18 +1668,19 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromParametersN
   //Add observer to trigger update of transform
   if (selectedImageData)
     {
-    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallback);
-    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallback );
+    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
     }
 
   selectedImageData = vspNode->GetFgVolumeNode();
   if (selectedImageData)
     {
     //Add observer to trigger update of transform
-    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallback);
-    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->MRMLCallback );
+    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
     }
 
+  this->UpdatePipelineByVolumeProperty();
   this->AddVolumeToViewers();
 
   this->GetInteractor()->Enable();
@@ -1813,11 +1840,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdatePipelineByROI()
   vtkMRMLROINode *roi = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
   if (roi)
     {
-    roi->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallback);
+    roi->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
     }
 
  
-  vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallback);
+  vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
   vspNode->GetROINode()->InsideOutOn();
 
   this->SetROI(vspNode);

@@ -88,7 +88,7 @@ void qSlicerVolumeRenderingModuleWidget::setup()
   d->ParameterNodeSelector = new qMRMLNodeComboBox(this);
   d->ParameterNodeSelector->setObjectName(QString::fromUtf8("ParameterNodeSelector"));
   d->ParameterNodeSelector->setNodeTypes(QStringList() << QString::fromUtf8("vtkMRMLVolumeRenderingParametersNode"));
-  d->ParameterNodeSelector->setAddEnabled(true);
+  d->ParameterNodeSelector->setAddEnabled(false);
   d->ParameterNodeSelector->setRenameEnabled(true);
 
   d->gridLayout->addWidget(d->ParameterNodeSelector, 0, 1, 1, 1);
@@ -249,6 +249,18 @@ vtkMRMLVolumeRenderingParametersNode* qSlicerVolumeRenderingModuleWidget::create
   volumeRenderingParametersNode->SetCurrentVolumeMapper(0);
   scene->AddNode(volumeRenderingParametersNode);
   volumeRenderingParametersNode->Delete();
+  if (d->ActiveVolumeNodeSelector->currentNode())
+  {
+    volumeRenderingParametersNode->SetAndObserveVolumeNodeID(d->ActiveVolumeNodeSelector->currentNode()->GetID());
+  }
+  if (d->ROINodeSelector->currentNode())
+  {
+    volumeRenderingParametersNode->SetAndObserveROINodeID(d->ROINodeSelector->currentNode()->GetID());
+  }
+  if (d->VolumePropertyNodeSelector->currentNode())
+  {
+    volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID(d->VolumePropertyNodeSelector->currentNode()->GetID());
+  }
   d->ParameterNodeSelector->setCurrentNode(volumeRenderingParametersNode);
   return volumeRenderingParametersNode;
 }

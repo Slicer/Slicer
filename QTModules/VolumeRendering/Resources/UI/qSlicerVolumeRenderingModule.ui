@@ -23,7 +23,7 @@
       <item>
        <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_2">
         <property name="title">
-         <string>Volume Render</string>
+         <string>Inputs</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
