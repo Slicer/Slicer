@@ -6,6 +6,7 @@
 
 #include "qSlicerVolumeRenderingModuleExport.h"
 #include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLNode;
@@ -34,6 +35,8 @@ public slots:
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
 
   vtkMRMLVolumeRenderingParametersNode* createParameterNode();
+
+  vtkMRMLVolumePropertyNode* createVolumeProprtyNode();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;

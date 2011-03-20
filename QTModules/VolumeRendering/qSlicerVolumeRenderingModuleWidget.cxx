@@ -181,7 +181,7 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumePropertyNode(vtkMRMLNode* 
   {
     volumeRenderingParametersNode = this->createParameterNode();
   }
-  volumeRenderingParametersNode->SetAndObserveFgVolumePropertyNodeID(volumePropertyNode->GetID());
+  volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
 }
   
 
@@ -233,8 +233,15 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
     if (!volumeRenderingParametersNode)
     {
       volumeRenderingParametersNode = this->createParameterNode();
+      this->setMRMLParameterNode(volumeRenderingParametersNode);
     }
     volumeRenderingParametersNode->SetAndObserveVolumeNodeID(scalarVolumeNode->GetID());
+
+    if (volumeRenderingParametersNode->GetVolumePropertyNode() == 0)
+    {
+      vtkMRMLVolumePropertyNode* vpNode =  this->createVolumeProprtyNode();
+      this->setMRMLVolumePropertyNode(vpNode);
+    }
   }
 }
 
@@ -265,3 +272,13 @@ vtkMRMLVolumeRenderingParametersNode* qSlicerVolumeRenderingModuleWidget::create
   return volumeRenderingParametersNode;
 }
 
+// --------------------------------------------------------------------------
+vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingModuleWidget::createVolumeProprtyNode()
+{
+  vtkMRMLScene* scene = this->mrmlScene();
+
+  vtkMRMLVolumePropertyNode *volumePropertyNode = vtkMRMLVolumePropertyNode::New();
+  scene->AddNode(volumePropertyNode);
+  volumePropertyNode->Delete();
+  return volumePropertyNode;
+}
