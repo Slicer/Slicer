@@ -1583,7 +1583,6 @@ class GrowCutSegmentOptions(EditOptions):
    # self.frame.layout().addWidget(self.radius5)
     self.widgets.append(self.radius5)
 
-
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.setToolTip("Apply to run segmentation.\nUse the 'a' or 'Enter' hotkey to apply in slice window")
     self.frame.layout().addWidget(self.apply)
