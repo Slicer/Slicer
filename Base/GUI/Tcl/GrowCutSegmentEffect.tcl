@@ -97,17 +97,17 @@ itcl::body GrowCutSegmentEffect::constructor {sliceGUI} {
 
 itcl::body GrowCutSegmentEffect::destructor {} {
 
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
+#  if { [info command $sliceGUI] != "" } {
+#    foreach tag $_guiObserverTags {
+#      $sliceGUI RemoveObserver $tag
+#    }
+#  }
 
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
+#  if { [info command $_sliceNode] != "" } {
+#    foreach tag $_nodeObserverTags {
+#      $_sliceNode RemoveObserver $tag
+#    }
+#  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
