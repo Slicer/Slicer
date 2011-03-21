@@ -412,8 +412,12 @@ itcl::body EditBox::setButtonState {effect state} {
     backgroundDim = backgroundImage.GetDimensions()
 
     gestureID = None
-
-    if labelDim[0] != backgroundDim[0]  | labelDim[1] != backgroundDim[1] | labelDim[2] != backgroundDim[2]:
+    print ("printting label dimensions ")
+    print labelDim
+    print ("printing background dimensions ")
+    print backgroundDim
+#    if labelDim[0] != backgroundDim[0]  | labelDim[1] != backgroundDim[1] | labelDim[2] != backgroundDim[2]:
+    if labelDim != backgroundDim: 
       dialog = qt.QErrorMessage(self.parent)
       dialog.showMessage("Label Image and Background Image Dimensions don't match. Select another label image. All previous gestures will be lost.")
     else:
