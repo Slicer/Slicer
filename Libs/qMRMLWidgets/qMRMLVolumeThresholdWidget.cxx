@@ -255,30 +255,24 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLVolumeThresholdWidget);
 
-  if (d->VolumeDisplayNode)
+  if (!d->VolumeDisplayNode)
     {
-    int autoThresh = d->VolumeDisplayNode->GetAutoThreshold();
-    int applyThresh = d->VolumeDisplayNode->GetApplyThreshold();
-    int index = 0;
-    if (applyThresh == 0)
-      {
-      index = 2; // Off
-      }
-    else
-      {
-      index = autoThresh; // manual 0; auto 1
-      }
-    d->AutoManualComboBox->setCurrentIndex(index);
-
-    if (d->VolumeNode)
-      {
-      double range[2];
-      d->VolumeNode->GetImageData()->GetScalarRange(range);
-      d->VolumeThresholdRangeWidget->setRange(range[0], range[1]);
-      }
-
-    double min = d->VolumeDisplayNode->GetLowerThreshold();
-    double max = d->VolumeDisplayNode->GetUpperThreshold();
-    d->VolumeThresholdRangeWidget->setValues(min, max );
+    return;
     }
+  const int autoThresh = d->VolumeDisplayNode->GetAutoThreshold();
+  const int applyThresh = d->VolumeDisplayNode->GetApplyThreshold();
+  // 0 = manual, 1 = auto, 2 = off
+  int index = (applyThresh == 0) ? 2 : autoThresh;
+  d->AutoManualComboBox->setCurrentIndex(index);
+
+  if (d->VolumeNode && d->VolumeNode->GetImageData())
+    {
+    double range[2];
+    d->VolumeNode->GetImageData()->GetScalarRange(range);
+    d->VolumeThresholdRangeWidget->setRange(range[0], range[1]);
+    }
+
+  const double min = d->VolumeDisplayNode->GetLowerThreshold();
+  const double max = d->VolumeDisplayNode->GetUpperThreshold();
+  d->VolumeThresholdRangeWidget->setValues(min, max );
 }

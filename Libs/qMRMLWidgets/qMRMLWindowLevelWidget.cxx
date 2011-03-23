@@ -384,7 +384,6 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
                       this, SLOT(updateDisplayNode()));
 
   d->VolumeNode = volumeNode;
-  Q_ASSERT(!d->VolumeNode || d->VolumeNode->GetImageData());
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
     double range[2];
