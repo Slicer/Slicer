@@ -335,8 +335,8 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
 ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 777
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 1050
   BRAINSFitTest
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
