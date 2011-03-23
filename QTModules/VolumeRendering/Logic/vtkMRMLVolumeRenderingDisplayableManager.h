@@ -198,7 +198,8 @@ protected:
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
   vtkMRMLVolumeRenderingParametersNode* VolumeRenderingParametersNode;
-  vtkMRMLVolumeRenderingScenarioNode* ScenarioNode;
+  vtkMRMLVolumeRenderingScenarioNode*   ScenarioNode;
+  vtkMRMLViewNode*                      ViewNode;
 
   vtkMRMLVolumeNode*          VolumeNode;
   vtkMRMLVolumePropertyNode*  VolumePropertyNode;
@@ -206,8 +207,7 @@ protected:
   vtkMRMLVolumePropertyNode*  FgVolumePropertyNode;
   vtkMRMLROINode*             ROINode;
 
-  int NewParametersNodeForNewInputFlag;
-  int NewParametersNodeFromSceneLoadingFlag;
+  int SceneIsLoadingFlag;
 
 protected:
   void OnScenarioNodeModified();

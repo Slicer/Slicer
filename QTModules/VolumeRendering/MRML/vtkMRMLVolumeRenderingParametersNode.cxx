@@ -51,7 +51,7 @@ vtkMRMLNode* vtkMRMLVolumeRenderingParametersNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
 {
-  this->HideFromEditors = 1;
+  this->HideFromEditors = 0;
 
   this->VolumeNodeID = NULL;
   this->VolumeNode = NULL;

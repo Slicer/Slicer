@@ -34,6 +34,8 @@ public slots:
 
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
 
+  void setMRMLViewNode(vtkMRMLNode* node);
+
   vtkMRMLVolumeRenderingParametersNode* createParameterNode();
 
   vtkMRMLVolumePropertyNode* createVolumeProprtyNode();

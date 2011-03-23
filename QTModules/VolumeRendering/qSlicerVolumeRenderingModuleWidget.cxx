@@ -6,6 +6,7 @@
 #include "ui_qSlicerVolumeRenderingModule.h"
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkMRMLViewNode.h"
 
 #include <QtGui/QLabel>
 #include "qMRMLNodeComboBox.h"
@@ -31,6 +32,9 @@ public:
 
   QLabel *VolumePropertyLabel;
   qMRMLNodeComboBox *VolumePropertyNodeSelector;
+
+  QLabel *ViewLabel;
+  qMRMLNodeComboBox *ViewNodeSelector;
 
 };
 
@@ -128,13 +132,46 @@ void qSlicerVolumeRenderingModuleWidget::setup()
   QObject::connect(this, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), d->VolumePropertyNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
   QObject::connect(d->VolumePropertyNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setMRMLVolumePropertyNode(vtkMRMLNode*)));
 
+  d->ViewLabel = new QLabel(this);
+  d->ViewLabel->setObjectName(QString::fromUtf8("ViewLabel"));
+  d->ViewLabel->setText(QString::fromUtf8("VolumeProperty"));
+  d->gridLayout->addWidget(d->ViewLabel, 4, 0, 1, 1);
+
+  d->ViewNodeSelector = new qMRMLNodeComboBox(this);
+  d->ViewNodeSelector->setObjectName(QString::fromUtf8("ViewNodeSelector"));
+  d->ViewNodeSelector->setNodeTypes(QStringList() << QString::fromUtf8("vtkMRMLViewNode"));
+  d->ViewNodeSelector->setAddEnabled(false);
+  d->ViewNodeSelector->setRenameEnabled(false);
+
+  d->gridLayout->addWidget(d->ViewNodeSelector, 4, 1, 1, 1);
+
+  QObject::connect(this, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), d->ViewNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(d->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setMRMLViewNode(vtkMRMLNode*)));
+
 
 
 }
 
 // --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setMRMLViewNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(node);
+
+  vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
+    d->ParameterNodeSelector->currentNode());
+  if (volumeRenderingParametersNode && viewNode)
+  {
+    viewNode->SetVolumeRenderingParameterNodeID(volumeRenderingParametersNode->GetID());
+  }
+}
+
+ // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setMRMLParameterNode(vtkMRMLNode* paramNode)
 {
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
   if (paramNode == NULL)
     {
     return;
@@ -144,21 +181,9 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLParameterNode(vtkMRMLNode* param
     {
     return;
     }
-
-  // use vtkMRMLVolumeRenderingScenarioNode (assume singletone)
-  // to hold current parameter node
-  vtkMRMLVolumeRenderingScenarioNode *snode = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(
-    scene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingScenarioNode"));
-
-  if (snode == NULL)
-    {
-    snode = vtkMRMLVolumeRenderingScenarioNode::New();
-    snode->SetParametersNodeID(paramNode->GetID());
-    scene->AddNode(snode);
-    snode->Delete();
-    }
-
-  snode->SetParametersNodeID(paramNode->GetID());
+  this->setMRMLVolumePropertyNode(d->VolumePropertyNodeSelector->currentNode());
+  this->setMRMLROINode(d->ROINodeSelector->currentNode());
+  this->setMRMLViewNode(d->ViewNodeSelector->currentNode());
 }
 
 // --------------------------------------------------------------------------
@@ -177,11 +202,10 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumePropertyNode(vtkMRMLNode* 
 
   vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
                 d->ParameterNodeSelector->currentNode());
-  if (!volumeRenderingParametersNode)
+  if (volumeRenderingParametersNode)
   {
-    volumeRenderingParametersNode = this->createParameterNode();
+    volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
   }
-  volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
 }
   
 
