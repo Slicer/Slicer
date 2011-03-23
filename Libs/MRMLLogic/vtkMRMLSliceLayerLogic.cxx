@@ -529,35 +529,38 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
         if (this->GetSliceNode() != 0 &&
             !strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
           {
-          dnode->SetSliceImage(sliceImage);
-
           vtkMRMLTransformNode* tnode = volumeNode->GetParentTransformNode();
           vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
-          transformToWorld->Identity();
+          //transformToWorld->Identity();unnecessary, transformToWorld is already identiy
           if (tnode != 0 && tnode->IsLinear())
             {
             vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
             lnode->GetMatrixTransformToWorld(transformToWorld);
+            transformToWorld->Invert();
             }
-          transformToWorld->Invert();
 
           vtkMatrix4x4* xyToRas = this->SliceNode->GetXYToRAS();
 
-          vtkMatrix4x4::Multiply4x4(transformToWorld, xyToRas, transformToWorld); 
-
-          dnode->SetSlicePositionMatrix(transformToWorld);
+          vtkMatrix4x4::Multiply4x4(transformToWorld, xyToRas, transformToWorld);
           double dirs[3][3];
           volumeNode->GetIJKToRASDirections(dirs);
           vtkSmartPointer<vtkMatrix4x4> trot = vtkSmartPointer<vtkMatrix4x4>::New();
-          trot->Identity();
-          for (int i=0; i<3; i++) 
+          //trot->Identity(); unnecessary, trot is already identiy
+          for (int i=0; i<3; i++)
             {
             for (int j=0; j<3; j++)
               {
               trot->SetElement(i, j, dirs[i][j]);
               }
             }
+          // Calling SetSlicePositionMatrix() and SetSliceGlyphRotationMatrix()
+          // would update the glyph filter twice. Fire a modified() event only
+          // once
+          int blocked = dnode->StartModify();
+          dnode->SetSliceImage(sliceImage);
+          dnode->SetSlicePositionMatrix(transformToWorld);
           dnode->SetSliceGlyphRotationMatrix(trot);
+          dnode->EndModify(blocked);
           }
         }
       }

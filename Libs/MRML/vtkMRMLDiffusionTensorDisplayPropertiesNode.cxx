@@ -546,3 +546,15 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::GetColorGlyphByAsString()
 {
   return this->GetScalarEnumAsString(this->ColorGlyphBy);
 }
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstColorGlyphBy()
+{
+  return vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy()
+{
+  return vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector;
+}

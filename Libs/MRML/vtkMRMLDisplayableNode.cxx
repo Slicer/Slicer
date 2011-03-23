@@ -205,7 +205,7 @@ void vtkMRMLDisplayableNode::UpdateReferences()
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
 {
   vtkMRMLDisplayNode* node = NULL;
-  if (this->GetScene() && this->GetNthDisplayNodeID(n) )
+  if (this->GetScene())
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->GetNthDisplayNodeID(n));
     node = vtkMRMLDisplayNode::SafeDownCast(snode);
