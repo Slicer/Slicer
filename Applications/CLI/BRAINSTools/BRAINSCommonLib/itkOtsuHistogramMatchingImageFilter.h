@@ -97,8 +97,8 @@ public:
   typedef typename itk::Image< unsigned char, 3 > MaskImageType;
 
   /** Histogram related typedefs. */
-  typedef Statistics::Histogram< THistogramMeasurement > HistogramType;
-  typedef typename HistogramType::Pointer HistogramPointer;
+  typedef Statistics::Histogram< THistogramMeasurement > OtsuHistogramType;
+  typedef typename OtsuHistogramType::Pointer HistogramPointer;
 
   /** Set/Get the source image. */
   void SetSourceImage(const InputImageType *source)
@@ -142,9 +142,9 @@ public:
   /** Methods to get the histograms of the source, reference, and
     * output. Objects are only valid after Update() has been called
     * on this filter. */
-  itkGetObjectMacro(SourceHistogram, HistogramType);
-  itkGetObjectMacro(ReferenceHistogram, HistogramType);
-  itkGetObjectMacro(OutputHistogram, HistogramType);
+  itkGetObjectMacro(SourceHistogram, OtsuHistogramType);
+  itkGetObjectMacro(ReferenceHistogram, OtsuHistogramType);
+  itkGetObjectMacro(OutputHistogram, OtsuHistogramType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
@@ -185,7 +185,7 @@ protected:
   /** Construct a histogram from an image. */
   void ConstructHistogram(const InputImageType *image,
                           const typename MaskImageType::Pointer mask,
-                          HistogramType *histogram, const THistogramMeasurement minValue,
+                          OtsuHistogramType *histogram, const THistogramMeasurement minValue,
                           const THistogramMeasurement maxValue);
 
 private:

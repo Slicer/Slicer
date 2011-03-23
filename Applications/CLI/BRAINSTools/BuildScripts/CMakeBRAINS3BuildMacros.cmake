@@ -1,5 +1,10 @@
 include(ExternalProject)
 
+#  This is a hack to get similar behavior in both Slicer3 and Slicer4 for building BRAINSFit
+if (Slicer3_SOURCE_DIR)
+  set(Slicer_SOURCE_DIR "${Slicer3_SOURCE_DIR}" CACHE INTERNAL "Needed to get Slicer3 and Slicer4 to have same behavior" FORCE)
+endif (Slicer3_SOURCE_DIR)
+
 #
 # argv1 == program name
 # argv2 == src variable name
@@ -81,7 +86,7 @@ endif(NOT SETOPTIONALDEBUGIMAGEVIEWER)
 #-----------------------------------------------------------------------------
 ## A macro to create executables for Slicer or BRAINS3
 if(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
-macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
+  macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES LIBSOURCES ENTRYPOINTNAME EXTRA_LIBS)
 
   find_package(GenerateCLP NO_MODULE REQUIRED)
   include(${GenerateCLP_USE_FILE})
@@ -89,13 +94,16 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
   get_filename_component(TMP_FILENAME ${PROGCLI} NAME_WE)
   set(PROGCLI_HEADER "${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h")
 
-  set(CLP_SOURCES ${PROGSOURCES})
+  set(CLP_SOURCES ${PROGSOURCES} ${LIBSOURCES})
+  set(CLP_PRIMARY_SOURCES ${LIBSOURCES})
   if(EXISTS  ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
     GENERATECLP(CLP_SOURCES ${PROGCLI} ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h)
   else()
     GENERATECLP(CLP_SOURCES ${PROGCLI} )
   endif()
+  
   add_executable( ${PROGNAME} ${CLP_SOURCES} ${PROGCLI_HEADER})
+
   if(WIN32)
     set(BRAINS_ITK_LIBS "")
   else(WIN32)
@@ -106,8 +114,8 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
   if (Slicer_SOURCE_DIR)
     ### If building as part of the Slicer_SOURCE_DIR, then only build the shared object, and not the command line program.
 
-    add_library(${PROGNAME}Lib SHARED ${CLP_SOURCES} ${PROGCLI_HEADER})
-    set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+    add_library(${PROGNAME}Lib SHARED ${CLP_PRIMARY_SOURCES} ${PROGCLI_HEADER})
+    set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-D${ENTRYPOINTNAME}=ModuleEntryPoint")
     slicer3_set_plugins_output_path(${PROGNAME}Lib)
     target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ${BRAINS_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
@@ -128,9 +136,8 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
       ARCHIVE DESTINATION lib)
   endif (Slicer_SOURCE_DIR)
 
-endmacro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES)
+endmacro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES LIBSOURCES)
 endif(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
-
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------

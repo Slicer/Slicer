@@ -1,7 +1,7 @@
 project(BRAINSFitIGT)
 set(LOCAL_PROJECT_NAME BRAINSFitIGT)
-cmake_minimum_required(VERSION 2.8.2)
-cmake_policy(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
@@ -44,7 +44,7 @@ configure_file(
 set(CLP BRAINSFitIGT)
 set(${CLP}_SOURCE BRAINSFitIGT.cxx  ${BRAINSFitIGT_SOURCE_DIR}/BRAINSFitIGTPrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitIGTPrimary.xml "${${CLP}_SOURCE}" "")
-target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 INSTALL(TARGETS BRAINSFitIGT DESTINATION bin)
 

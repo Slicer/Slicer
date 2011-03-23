@@ -18,6 +18,18 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkNormalizedMutualInformationHistogramImageToImageMetric.h"
 
+#if ( ITK_VERSION_MAJOR < 4  ) //These are all defaults in ITKv4
+// Check that ITK was compiled with correct flags set:
+#ifndef ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE
+#error \
+  "Results will not be correct if ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is turned off"
+#endif
+#ifndef ITK_USE_ORIENTED_IMAGE_DIRECTION
+#error \
+  "Results will not be correct if ITK_USE_ORIENTED_IMAGE_DIRECTION is turned off"
+#endif
+#endif
+
 namespace itk
 {
 
@@ -66,76 +78,6 @@ BRAINSFitHelper::BRAINSFitHelper()
   m_CostMetric="MMI"; //Default to Mattes Mutual Information Metric
 }
 
-#define BRAINSFitCommonTransferToFromTemplatedVersionMacro(LOCAL_COST_METRIC_OBJECT,FIXEDIMAGETYPE,MOVINGIMAGETYPE)     \
-{                                                                                        \
-    BRAINSFitHelperTemplate<FIXEDIMAGETYPE,MOVINGIMAGETYPE>::Pointer                                         \
-                                    myHelper=BRAINSFitHelperTemplate<FIXEDIMAGETYPE,MOVINGIMAGETYPE>::New(); \
-    myHelper->SetTransformType(this->m_TransformType);                                   \
-    myHelper->SetFixedVolume(this->m_FixedVolume);                                       \
-    myHelper->SetMovingVolume(this->m_PreprocessedMovingVolume);                         \
-    myHelper->SetHistogramMatch(this->m_HistogramMatch);                                 \
-    myHelper->SetNumberOfMatchPoints(this->m_NumberOfMatchPoints);                       \
-    myHelper->SetFixedBinaryVolume(this->m_FixedBinaryVolume);                           \
-    myHelper->SetMovingBinaryVolume(this->m_MovingBinaryVolume);                         \
-    myHelper->SetOutputFixedVolumeROI(this->m_OutputFixedVolumeROI);                     \
-    myHelper->SetOutputMovingVolumeROI(this->m_OutputMovingVolumeROI);                   \
-    myHelper->SetPermitParameterVariation(this->m_PermitParameterVariation);             \
-    myHelper->SetNumberOfSamples(this->m_NumberOfSamples);                               \
-    myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);                   \
-    myHelper->SetNumberOfIterations(this->m_NumberOfIterations);                         \
-    myHelper->SetMaximumStepLength(this->m_MaximumStepLength);                           \
-    myHelper->SetMinimumStepLength(this->m_MinimumStepLength);                           \
-    myHelper->SetRelaxationFactor(this->m_RelaxationFactor);                             \
-    myHelper->SetTranslationScale(this->m_TranslationScale);                             \
-    myHelper->SetReproportionScale(this->m_ReproportionScale);                           \
-    myHelper->SetSkewScale(this->m_SkewScale);                                           \
-    myHelper->SetBackgroundFillValue(this->m_BackgroundFillValue);                       \
-    myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);               \
-    myHelper->SetUseExplicitPDFDerivativesMode(this->m_UseExplicitPDFDerivativesMode);   \
-    myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);     \
-    myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);               \
-    myHelper->SetSplineGridSize(this->m_SplineGridSize);                                 \
-    myHelper->SetCostFunctionConvergenceFactor(this->m_CostFunctionConvergenceFactor);   \
-    myHelper->SetProjectedGradientTolerance(this->m_ProjectedGradientTolerance);         \
-    myHelper->SetMaxBSplineDisplacement(this->m_MaxBSplineDisplacement);                 \
-    myHelper->SetDisplayDeformedImage(this->m_DisplayDeformedImage);                     \
-    myHelper->SetPromptUserAfterDisplay(this->m_PromptUserAfterDisplay);                 \
-    myHelper->SetDebugLevel(this->m_DebugLevel);                                         \
-    myHelper->SetCostMetricObject(LOCAL_COST_METRIC_OBJECT);                             \
-    if ( this->m_DebugLevel > 7 ) { this->PrintCommandLine(true, "BF"); }                \
-    myHelper->StartRegistration();                                                       \
-    this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();            \
-    this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();          \
-    this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();    \
-}
-
-
-#define BRAINSFitCommonMetricSetupMacro()                                                     \
-    MetricType::Pointer localCostMetric=MetricType::New();                                    \
-    {                                                                                         \
-    localCostMetric->ReinitializeSeed(76926294);                                              \
-    localCostMetric->SetInterpolator(localLinearInterpolator);                                \
-    localCostMetric->SetFixedImage(this->m_FixedVolume);                                      \
-    localCostMetric->SetFixedImageRegion( this->m_FixedVolume->GetLargestPossibleRegion() );  \
-    localCostMetric->SetMovingImage(this->m_PreprocessedMovingVolume);                        \
-    if ( this->m_FixedBinaryVolume.IsNotNull() )                                              \
-      {                                                                                       \
-      localCostMetric->SetFixedImageMask(this->m_FixedBinaryVolume);                          \
-      }                                                                                       \
-    if ( this->m_MovingBinaryVolume.IsNotNull() )                                             \
-      {                                                                                       \
-      localCostMetric->SetMovingImageMask(this->m_MovingBinaryVolume);                        \
-      }                                                                                       \
-    if ( this->m_NumberOfSamples > 0 )                                                        \
-      {                                                                                       \
-        localCostMetric->SetNumberOfSpatialSamples(this->m_NumberOfSamples);                  \
-      }                                                                                       \
-    else                                                                                      \
-      {                                                                                       \
-        localCostMetric->SetUseAllPixels(true);                                               \
-      }                                                                                       \
-    }                                                                                         \
-
 void
 BRAINSFitHelper::StartRegistration(void)
 {
@@ -160,40 +102,37 @@ BRAINSFitHelper::StartRegistration(void)
     this->m_PreprocessedMovingVolume = this->m_MovingVolume;
     }
 
-  typedef itk::LinearInterpolateImageFunction< MovingVolumeType, double > InterpolatorType;
-  InterpolatorType::Pointer localLinearInterpolator = InterpolatorType::New();
 
   if(this->m_CostMetric == "MMI")
     {
-    //Setup the CostMetricObject
     typedef itk::MattesMutualInformationImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-      { // MatttesMutualInformation Metric options.
-      localCostMetric->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
-      const bool UseCachingOfBSplineWeights = ( m_UseCachingOfBSplineWeightsMode == "ON" ) ? true : false;
-      localCostMetric->SetUseCachingOfBSplineWeights(UseCachingOfBSplineWeights);
-      }
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+
+    MetricType::Pointer localCostMetric = this->GetCostMetric<MetricType>();
+    localCostMetric->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
+    const bool UseCachingOfBSplineWeights = ( m_UseCachingOfBSplineWeightsMode == "ON" ) ? true : false;
+    localCostMetric->SetUseCachingOfBSplineWeights(UseCachingOfBSplineWeights);
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "MSE")
     {
     typedef itk::MeanSquaresImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "NC")
     {
     typedef itk::NormalizedCorrelationImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   // This requires additional machinery (training transform, etc) and hence isn't as easy to incorporate
   // into the BRAINSFit framework.
   /*else if(this->m_CostMetric == "KL")
     {
     typedef itk::KullbackLeiblerCompareHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+this->RunRegistration<MetricType>();
     }*/
   else if(this->m_CostMetric == "KS")
     {
@@ -218,50 +157,50 @@ BRAINSFitHelper::StartRegistration(void)
     this->m_MovingVolume = binaryThresholdMovingVolume->GetOutput();
 
     typedef itk::KappaStatisticImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "MRSD")
     {
     typedef itk::MeanReciprocalSquareDifferenceImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "MIH")
     {
     typedef itk::MutualInformationHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "GD")
     {
     typedef itk::GradientDifferenceImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "CCH")
     {
     typedef itk::CorrelationCoefficientHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "MC")
     {
     typedef itk::MatchCardinalityImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "MSEH")
     {
     typedef itk::MeanSquaresHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else if(this->m_CostMetric == "NMIH")
     {
     typedef itk::NormalizedMutualInformationHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    BRAINSFitCommonMetricSetupMacro();
-    BRAINSFitCommonTransferToFromTemplatedVersionMacro(localCostMetric,MetricType::FixedImageType,MetricType::MovingImageType);
+    this->SetupRegistration<MetricType>();
+    this->RunRegistration<MetricType>();
     }
   else
     {

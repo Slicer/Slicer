@@ -33,7 +33,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "warning LNK4221"
   "variable .var_args[2]*. is used before its value is set"
   "qHullLib"
-  "fann-"
   "/FL/"
   "bkHull.cxx:[0-9]+: warning: dereferencing type-punned pointer will break strict-aliasing rules"
   "warning #1170: invalid redeclaration of nested class"

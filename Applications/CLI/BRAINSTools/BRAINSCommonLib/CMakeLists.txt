@@ -1,7 +1,7 @@
 project(BRAINSCommonLibProject)
 set(LOCAL_PROJECT_NAME BRAINSCommonLib)
-cmake_minimum_required(VERSION 2.8.2)
-cmake_policy(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
@@ -51,8 +51,14 @@ include_directories(
 
 set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3LandmarkIO.cxx)
 
+## ITKv4 requires that ITKReview is explicitly linked against
+if(ITK_VERSION_MAJOR EQUAL 4 )
+  set(ITKREVIEWLIB ITKReview)
+endif(ITK_VERSION_MAJOR EQUAL 4 )
+
+
 add_library(BRAINSCommonLib ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES})
+target_link_libraries(BRAINSCommonLib ITKAlgorithms ITKIO ${ITKREVIEWLIB})
 
 
 if (Slicer_SOURCE_DIR)
@@ -84,16 +90,22 @@ else (Slicer_SOURCE_DIR)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibInstallConfig.cmake.in
                  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
                  @ONLY)
- 
+
   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
-          DESTINATION lib/BRAINSCommonLib
+          DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/BRAINSCommonLib
           COMPONENT Development
           RENAME BRAINSCommonLibConfig.cmake)
 
-   INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
-           DESTINATION lib/BRAINSCommonLib
-           COMPONENT Development
-           RENAME UseBRAINSCommonLib.cmake)
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
+     ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake @ONLY)
+
+   # INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
+   #         DESTINATION lib/BRAINSCommonLib
+   #         COMPONENT Development
+   #         RENAME UseBRAINSCommonLib.cmake)
+   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake
+     DESTINATION lib/BRAINSCommonLib
+     COMPONENT Development)
 
 endif (Slicer_SOURCE_DIR)
 

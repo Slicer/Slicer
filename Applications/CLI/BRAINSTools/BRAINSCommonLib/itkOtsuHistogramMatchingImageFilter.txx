@@ -51,9 +51,9 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
   m_UpperGradient = 0.0;
 
   // Create histograms.
-  m_SourceHistogram = HistogramType::New();
-  m_ReferenceHistogram = HistogramType::New();
-  m_OutputHistogram = HistogramType::New();
+  m_SourceHistogram = OtsuHistogramType::New();
+  m_ReferenceHistogram = OtsuHistogramType::New();
+  m_OutputHistogram = OtsuHistogramType::New();
 
   m_SourceMask = NULL;
   m_ReferenceMask = NULL;
@@ -424,15 +424,15 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
  // itkSpatialObject, it is currently
  // hardcoded to itk::Image<unsigned char, 3>
  // Find similar conversion code in BRAINSFitHelper.cxx
-  HistogramType  *histogram,
+  OtsuHistogramType  *histogram,
   const THistogramMeasurement minValue,
   const THistogramMeasurement maxValue)
 {
     {
     // allocate memory for the histogram
-    typename HistogramType::SizeType size;
-    typename HistogramType::MeasurementVectorType lowerBound;
-    typename HistogramType::MeasurementVectorType upperBound;
+    typename OtsuHistogramType::SizeType size;
+    typename OtsuHistogramType::MeasurementVectorType lowerBound;
+    typename OtsuHistogramType::MeasurementVectorType upperBound;
 
     size.SetSize(1);
     lowerBound.SetSize(1);
@@ -447,10 +447,10 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
     histogram->SetToZero();
     }
 
-  typename HistogramType::MeasurementVectorType measurement;
+  typename OtsuHistogramType::MeasurementVectorType measurement;
   measurement.SetSize(1);
 
-  typedef typename HistogramType::MeasurementType MeasurementType;
+  typedef typename OtsuHistogramType::MeasurementType MeasurementType;
   measurement[0] = NumericTraits< MeasurementType >::Zero;
 
     {
@@ -486,7 +486,11 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
         {
         // add sample to histogram
         measurement[0] = value;
-        histogram->IncreaseFrequency(measurement, 1);
+#if  ITK_VERSION_MAJOR >=4
+        histogram->IncreaseFrequencyOfMeasurement(measurement, 1.0F);
+#else
+        histogram->IncreaseFrequency(measurement, 1.0F);
+#endif
         }
       ++iter;
       }

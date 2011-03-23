@@ -5,7 +5,6 @@
  *
  *  ================================================================== */
 
-#include "BRAINSResamplePrimary.h"
 #include <iostream>
 #include "itkVector.h"
 #include "itkImage.h"
@@ -319,6 +318,14 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     }
   return EXIT_SUCCESS;
 }
+
+#ifdef WIN32
+#define MODULE_EXPORT __declspec(dllexport)
+#else
+#define MODULE_EXPORT
+#endif
+
+extern "C" MODULE_EXPORT int BRAINSResamplePrimary(int, char* []);
 
 int BRAINSResamplePrimary(int argc, char *argv[])
 {

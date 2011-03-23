@@ -1,5 +1,9 @@
 project(SimpleDiffeomorphicRegistration)
 
+if (WIN32)
+  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
+endif (WIN32)
+
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
 #-----------------------------------------------------------------------------

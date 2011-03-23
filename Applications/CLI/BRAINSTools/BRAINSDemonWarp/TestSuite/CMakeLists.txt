@@ -8,8 +8,9 @@
 
 if(WIN32)
   set(BRAINSWARP_ITK_LIBS "")
+  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
 else(WIN32)
-  set(BRAINSWARP_ITK_LIBS ITKAlgorithms ${ITK_LIBRARIES})
+  set(BRAINSWARP_ITK_LIBS ${ITK_LIBRARIES})
 endif(WIN32)
 
 add_executable( BRAINSDemonWarpCLPTests BRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx)
@@ -22,8 +23,8 @@ target_link_libraries(VBRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINS
 set_target_properties(VBRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
 set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpCLPTests> )
 
-include(MIDAS)
-set(MIDAS_KEY_DIR "${BRAINSCommonLib_DATA_DIRS}")
+include(${BRAINS_CMAKE_HELPER_DIR}/MIDAS.cmake)
+set(MIDAS_KEY_DIR "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData")
 
 #1
 midas_add_test(NAME ValidateBRAINSDemonsWarpTest_nii COMMAND ${BRAINS_Demon_Warp_TESTS}

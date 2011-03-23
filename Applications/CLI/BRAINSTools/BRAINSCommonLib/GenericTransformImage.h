@@ -19,6 +19,7 @@
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
 #include <itkBSplineDeformableTransform.h>
+#include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
 #include "ConvertToRigidAffine.h"
 #include "itkResampleImageFilter.h"
@@ -53,6 +54,7 @@ typedef itk::AffineTransform< double, 3 >         AffineTransformType;
 typedef itk::VersorRigid3DTransform< double >     VersorRigid3DTransformType;
 typedef itk::ScaleVersor3DTransform< double >     ScaleVersor3DTransformType;
 typedef itk::ScaleSkewVersor3DTransform< double > ScaleSkewVersor3DTransformType;
+typedef itk::ThinPlateR2LogRSplineKernelTransform< double, 3 > ThinPlateSpline3DTransformType;
 
 namespace itk
 {
@@ -67,7 +69,10 @@ namespace itk
  * \return an image with the same voxels values as the input, but with differnt physical space representation.
  */
   template< class IOImageType >
-    typename IOImageType::Pointer SetRigidTransformInPlace(typename VersorRigid3DTransformType::ConstPointer RigidTransform,typename IOImageType::ConstPointer InputImage)
+  typename IOImageType::Pointer SetRigidTransformInPlace(typename VersorRigid3DTransformType::ConstPointer RigidTransform,//typename
+                                                                                                                          //IOImageType::ConstPointer
+                                                                                                                          //InputImage)
+                                                         const IOImageType *InputImage)
       {
       typename VersorRigid3DTransformType::Pointer InvOfRigidTransform=VersorRigid3DTransformType::New();
       const typename IOImageType::PointType centerPoint = RigidTransform->GetCenter();
@@ -86,6 +91,7 @@ namespace itk
       //Now change the Origin and Direction to make data aligned.
       OutputAlignedImage->SetOrigin( InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetTranslation() );
       OutputAlignedImage->SetDirection( InvOfRigidTransform->GetMatrix() * InputImage->GetDirection() );
+      OutputAlignedImage->SetMetaDataDictionary(InputImage->GetMetaDataDictionary());
       return OutputAlignedImage;
       }
 /**

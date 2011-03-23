@@ -155,20 +155,34 @@ MultiModeHistogramThresholdBinaryImageFilter< TInputImage, TOutputImage >
     // threshold->SetUpperThreshold( NumericTraits<typename
     // InputImageType::PixelType>::max() );
     threshold->Update();
+    typename IntegerImageType::Pointer thresholdImage=threshold->GetOutput();
 
     if ( j == 0 )
       {
-      accumulate = threshold->GetOutput();
+      accumulate = thresholdImage;
       }
     else
       {
-      typedef MultiplyImageFilter< IntegerImageType,
-                                   IntegerImageType >
-      IntersectMasksFilterType;
-      typename IntersectMasksFilterType::Pointer intersect =
-        IntersectMasksFilterType::New();
+      typedef MultiplyImageFilter< IntegerImageType, IntegerImageType > IntersectMasksFilterType;
+      if(accumulate->GetLargestPossibleRegion().GetSize() != thresholdImage->GetLargestPossibleRegion().GetSize())
+        {
+        itkExceptionMacro(<< "Image data size mismatch " << accumulate->GetLargestPossibleRegion().GetSize() << " != " << thresholdImage->GetLargestPossibleRegion().GetSize() << "." << std::endl );
+        }
+      if(accumulate->GetSpacing() != thresholdImage->GetSpacing())
+        {
+        itkExceptionMacro(<< "Image data spacing mismatch " << accumulate->GetSpacing() << " != " << thresholdImage->GetSpacing() << "." << std::endl );
+        }
+      if(accumulate->GetDirection() != thresholdImage->GetDirection())
+        {
+        itkExceptionMacro(<< "Image data spacing mismatch " << accumulate->GetDirection() << " != " << thresholdImage->GetDirection() << "." << std::endl );
+        }
+      if(accumulate->GetOrigin() != thresholdImage->GetOrigin())
+        {
+        itkExceptionMacro(<< "Image data spacing mismatch " << accumulate->GetOrigin() << " != " << thresholdImage->GetOrigin() << "." << std::endl );
+        }
+      typename IntersectMasksFilterType::Pointer intersect = IntersectMasksFilterType::New();
       intersect->SetInput1(accumulate);
-      intersect->SetInput2( threshold->GetOutput() );
+      intersect->SetInput2( thresholdImage );
       intersect->Update();
       accumulate = intersect->GetOutput();
       }

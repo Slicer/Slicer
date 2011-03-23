@@ -4,7 +4,7 @@ if(ITK_FOUND)
 else(ITK_FOUND)
   message(FATAL_ERROR "Cannot build without ITK. Please set ITK_DIR.")
 endif(ITK_FOUND)
-
+set(BRAINSCommonLib_DATA_DIRS @BRAINSCommonLib_DATA_DIRS_CONFIG@)
 include_directories(${BRAINSCommonLib_INCLUDE_DIRS})
 link_directories(${BRAINSCommonLib_LIBRARY_DIRS})
 

@@ -18,6 +18,13 @@ PURPOSE.  See the above copyright notices for more information.
 #  pragma warning ( disable : 4786 )
 #endif
 
+#include "itkMedianImageFilter.h"
+#include "itkExtractImageFilter.h"
+
+#include "BRAINSFitPrimary.h"
+#include "BRAINSFitHelper.h"
+#include "BRAINSFitPrimaryCLP.h"
+
 //  This program was modified from
 // Insight/Examples/Registration/ImageRegistration8.cxx
 //  and is an improved replacement for the old (and defective)
@@ -27,15 +34,8 @@ PURPOSE.  See the above copyright notices for more information.
 //  MattesMutualInformationImageToImageMetric is the logical
 //  thing to insist on (with ITK) when seeking rigid 3D registrations.
 
-#include "BRAINSFitPrimary.h"
-
-#ifdef USE_DEBUG_IMAGE_VIEWER
-#  include "DebugImageViewerClient.h"
-#endif
-
-#include "BRAINSFitHelper.h"
-#include "BRAINSFitPrimaryCLP.h"
-
+#if ( ITK_VERSION_MAJOR < 4  ) //These are all defaults in ITKv4
+#include "itkBrains2MaskImageIOFactory.h"
 // Check that ITK was compiled with correct flags set:
 #ifndef ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE
 #  error                                                                  \
@@ -48,6 +48,7 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef ITK_USE_TRANSFORM_IO_FACTORIES
 #  error                                                                  \
   "BRAINSFit Requires ITK_USE_TRANSFORM_IO_FACTORIES to be on, please rebuild ITK."
+#endif
 #endif
 
 #if ( ITK_VERSION_MAJOR < 3  )
@@ -63,7 +64,15 @@ PURPOSE.  See the above copyright notices for more information.
 #  endif
 #endif
 
-#include "GenericTransformImage.h"
+#ifdef WIN32
+#define MODULE_EXPORT __declspec(dllexport)
+#else
+#define MODULE_EXPORT
+#endif
+
+#ifdef USE_DEBUG_IMAGE_VIEWER
+#  include "DebugImageViewerClient.h"
+#endif
 
 typedef float PixelType;
 // Dimension and MaxInputDimension comes from an enum at the start of
@@ -127,10 +136,11 @@ typename ImageType::Pointer ExtractImage(
   typename InputImageType::Pointer & inputImage,
   unsigned int InputImageTimeIndex)
 {
-  typedef typename itk::ExtractImageFilter< InputImageType,
-                                            ImageType > ExtractImageFilterType;
-  typename ExtractImageFilterType::Pointer extractImageFilter =
-    ExtractImageFilterType::New();
+  typedef typename itk::ExtractImageFilter< InputImageType, ImageType > ExtractImageFilterType;
+  typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+#if  ITK_VERSION_MAJOR >=4
+  extractImageFilter->SetDirectionCollapseToSubmatrix();
+#endif
 
   // fixedVolumeReader->GetOutput();
   InputImageType::RegionType inputRegion = inputImage->GetLargestPossibleRegion();
@@ -157,6 +167,7 @@ typename ImageType::Pointer ExtractImage(
               << std::endl;
     throw;
     }
+
   typename ImageType::Pointer extractImage = extractImageFilter->GetOutput();
   //  std::cerr << "Extract fixed image origin" << extractImage->GetOrigin() <<
   // std::endl;
@@ -187,9 +198,13 @@ typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
 DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
+extern "C" MODULE_EXPORT int BRAINSFitPrimary (int argc, char *argv[]);
 int BRAINSFitPrimary(int argc, char *argv[])
 {
   PARSE_ARGS;
+#if ( ITK_VERSION_MAJOR < 4  ) //These are all defaults in ITKv4
+  itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
+#endif
 
   itk::AddExtraTransformRegister();
   // Apparently when you register one transform, you need to register all your
@@ -418,6 +433,8 @@ int BRAINSFitPrimary(int argc, char *argv[])
                                                                      // along z
     // DEBUG
     std::cout << "Median radius  " << indexRadius << std::endl;
+    std::cout << "Fixed Image size     "  << extractFixedVolume->GetLargestPossibleRegion().GetSize() << std::endl;
+    std::cout << "Moving Image size     " << extractMovingVolume->GetLargestPossibleRegion().GetSize() << std::endl;
     extractFixedVolume = DoMedian< FixedVolumeType >(extractFixedVolume,
                                                      indexRadius);
     extractMovingVolume = DoMedian< MovingVolumeType >(extractMovingVolume,

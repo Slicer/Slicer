@@ -1,7 +1,7 @@
 project(BRAINSResample)
 set(LOCAL_PROJECT_NAME BRAINSResample)
-cmake_minimum_required(VERSION 2.8.2)
-cmake_policy(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
@@ -50,14 +50,17 @@ include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 
 
 set(CLP BRAINSResample)
-set(${CLP}_SOURCE BRAINSResample.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
+#set(${CLP}_SOURCE BRAINSResample.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
+set(${CLP}_SOURCE BRAINSResample.cxx )
+set(${CLP}_PRIMARY_SOURCE ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
+#CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
+CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "BRAINSResamplePrimary" "")
 
 
 if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
-  set(CLP BRAINSResampleCLP) ## NOTE: This is completely redundant, but is needed to support all the old scripts that use the original name
-  set( ${CLP}_SOURCE BRAINSResampleCLP.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
-  CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "")
+  set(${CLP}_SOURCE BRAINSResample.cxx )
+  set(${CLP}_PRIMARY_SOURCE ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
+  CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "BRAINSResamplePrimary" "")
 ## HACK -- Need to write other backwards compatibility wrappers for the old names of BRAINSResampleCLP
 endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 

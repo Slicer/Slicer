@@ -195,6 +195,8 @@ int BRAINSFitIGTPrimary(int argc, char *argv[])
 
   itk::AddExtraTransformRegister();
 
+  RegisterBrains2MaskFactory();
+
 #ifdef USE_DEBUG_IMAGE_VIEWER
   if ( UseDebugImageViewer )
     {

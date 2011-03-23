@@ -16,44 +16,22 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdio.h>
+#include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 #include "BRAINSCommonLibWin32Header.h"
 
 // TODO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
+#include "BRAINSFitHelperTemplate.h"
 #include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 
-#include "itkFindCenterOfBrainFilter.h"
-#include "itkMedianImageFilter.h"
-#include "itkHistogramMatchingImageFilter.h"
-
 #include "itkIO.h"
-
-#include "itkCenteredVersorTransformInitializer.h"
-#include "itkCenteredTransformInitializer.h"
-
-#include "itkVersorRigid3DTransformOptimizer.h"
-#include "itkVersorRigid3DTransformOptimizer.h"
-#include "itkVersorTransformOptimizer.h"
-
-#include "itkVector.h"
-#include "itkMultiThreader.h"
-
-#include "itkExtractImageFilter.h"
-
-#include "itkResampleImageFilter.h"
-#include "itkExtractImageFilter.h"
-#include "itkAffineTransform.h"
-#include <stdio.h>
-#include "ConvertToRigidAffine.h"
-
+#include "GenericTransformImage.h"
+#include "itkFindCenterOfBrainFilter.h"
 #include "ReadMask.h"
 #include "BRAINSMacro.h"
-
-#include "itkImageMaskSpatialObject.h"
-
-#include "GenericTransformImage.h"
 
 typedef itk::SpatialObject< 3 >    SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
@@ -62,14 +40,12 @@ namespace itk
 {
 /** Method for verifying that the ordering of the transformTypes is consistent
   * with converting routines. */
-BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector< std::string > & transformType);
+BRAINSCommonLib_EXPORT extern void
+ValidateTransformRankOrdering(const std::vector< std::string > & transformType);
 }
 
 namespace itk
 {
-
-
-
 
 class BRAINSCommonLib_EXPORT BRAINSFitHelper:public Object
 {
@@ -228,6 +204,13 @@ private:
   BRAINSFitHelper(const Self &); // purposely not implemented
   void operator=(const Self &);  // purposely not implemented
 
+  template<class TLocalCostMetric>
+    void SetupRegistration();
+  template<class TLocalCostMetric>
+    void RunRegistration();
+  template<class TLocalCostMetric>
+    typename TLocalCostMetric::Pointer GetCostMetric();
+
   FixedImagePointer  m_FixedVolume;
   MovingImagePointer m_MovingVolume;
   MovingImagePointer m_PreprocessedMovingVolume;
@@ -271,7 +254,164 @@ private:
   double                                       m_FinalMetricValue;
   bool                                         m_ObserveIterations;
   std::string                                  m_CostMetric;
+  itk::Object::Pointer                         m_Helper;
 };  // end BRAINSFitHelper class
+
+template<class TLocalCostMetric>
+void
+BRAINSFitHelper::
+SetupRegistration()
+{
+
+  typedef typename TLocalCostMetric::FixedImageType FixedImageType;
+  typedef typename TLocalCostMetric::MovingImageType MovingImageType;
+  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType,MovingImageType> HelperType;
+
+  typedef typename itk::LinearInterpolateImageFunction< MovingVolumeType, double > InterpolatorType;
+  typename InterpolatorType::Pointer localLinearInterpolator = InterpolatorType::New();
+  //
+  // set up cost metric
+  typename TLocalCostMetric::Pointer localCostMetric = TLocalCostMetric::New();
+  localCostMetric->ReinitializeSeed(76926294);
+  localCostMetric->SetInterpolator(localLinearInterpolator);
+  localCostMetric->SetFixedImage(this->m_FixedVolume);
+  localCostMetric->SetFixedImageRegion( this->m_FixedVolume->GetLargestPossibleRegion() );
+  localCostMetric->SetMovingImage(this->m_PreprocessedMovingVolume);
+
+
+  if ( this->m_MovingBinaryVolume.IsNotNull() )
+    {
+    localCostMetric->SetMovingImageMask(this->m_MovingBinaryVolume);
+    }
+  if ( this->m_FixedBinaryVolume.IsNotNull() )
+    {
+    localCostMetric->SetUseAllPixels(false);
+    //Convert to using list of samples that are desired.
+    // Do not set this if using explicit samples localCostMetric->SetFixedImageMask(this->m_FixedBinaryVolume);
+    typename TLocalCostMetric::FixedImageIndexContainer myListOfIndexLocations;
+    myListOfIndexLocations.reserve(this->m_NumberOfSamples);
+    itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
+      this->m_FixedVolume->GetBufferedRegion() );
+    NRit.SetNumberOfSamples(this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels());
+    NRit.GoToBegin();
+    if( this->m_NumberOfSamples == 0 )
+      {
+      this->m_NumberOfSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
+      }
+    size_t currentCount=0;
+    while( ( ! NRit.IsAtEnd() ) && ( currentCount < this->m_NumberOfSamples ) )
+      {
+      typename FixedImageType::PointType testPoint;
+      this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(),testPoint);
+      if(this->m_FixedBinaryVolume->IsInside(testPoint) )
+        {
+        myListOfIndexLocations.push_back(NRit.GetIndex());
+        currentCount++;
+        }
+      ++NRit;
+      }
+    assert(currentCount != 0 );
+    this->m_NumberOfSamples=myListOfIndexLocations.size();
+    localCostMetric->SetNumberOfFixedImageSamples(myListOfIndexLocations.size());
+    localCostMetric->SetNumberOfSpatialSamples(this->m_NumberOfSamples);
+    localCostMetric->SetFixedImageIndexes(myListOfIndexLocations);
+    }
+  else
+    {
+    if ( this->m_NumberOfSamples > 0 )
+      {
+      localCostMetric->SetNumberOfSpatialSamples(this->m_NumberOfSamples);
+      }
+    else
+      {
+      localCostMetric->SetUseAllPixels(true);
+      }
+    }
+
+  typename HelperType::Pointer
+    myHelper = BRAINSFitHelperTemplate<FixedImageType,MovingImageType>::New();
+  myHelper->SetTransformType(this->m_TransformType);
+  myHelper->SetFixedVolume(this->m_FixedVolume);
+  myHelper->SetMovingVolume(this->m_PreprocessedMovingVolume);
+  myHelper->SetHistogramMatch(this->m_HistogramMatch);
+  myHelper->SetNumberOfMatchPoints(this->m_NumberOfMatchPoints);
+  myHelper->SetFixedBinaryVolume(this->m_FixedBinaryVolume);
+  myHelper->SetMovingBinaryVolume(this->m_MovingBinaryVolume);
+  myHelper->SetOutputFixedVolumeROI(this->m_OutputFixedVolumeROI);
+  myHelper->SetOutputMovingVolumeROI(this->m_OutputMovingVolumeROI);
+  myHelper->SetPermitParameterVariation(this->m_PermitParameterVariation);
+  myHelper->SetNumberOfSamples(this->m_NumberOfSamples);
+  myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
+  myHelper->SetNumberOfIterations(this->m_NumberOfIterations);
+  myHelper->SetMaximumStepLength(this->m_MaximumStepLength);
+  myHelper->SetMinimumStepLength(this->m_MinimumStepLength);
+  myHelper->SetRelaxationFactor(this->m_RelaxationFactor);
+  myHelper->SetTranslationScale(this->m_TranslationScale);
+  myHelper->SetReproportionScale(this->m_ReproportionScale);
+  myHelper->SetSkewScale(this->m_SkewScale);
+  myHelper->SetBackgroundFillValue(this->m_BackgroundFillValue);
+  myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);
+  myHelper->SetUseExplicitPDFDerivativesMode(this->m_UseExplicitPDFDerivativesMode);
+  myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);
+  myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);
+  myHelper->SetSplineGridSize(this->m_SplineGridSize);
+  myHelper->SetCostFunctionConvergenceFactor(this->m_CostFunctionConvergenceFactor);
+  myHelper->SetProjectedGradientTolerance(this->m_ProjectedGradientTolerance);
+  myHelper->SetMaxBSplineDisplacement(this->m_MaxBSplineDisplacement);
+  myHelper->SetDisplayDeformedImage(this->m_DisplayDeformedImage);
+  myHelper->SetPromptUserAfterDisplay(this->m_PromptUserAfterDisplay);
+  myHelper->SetDebugLevel(this->m_DebugLevel);
+  myHelper->SetCostMetricObject(localCostMetric);
+  if ( this->m_DebugLevel > 7 )
+    {
+    this->PrintCommandLine(true, "BF");
+    }
+  this->m_Helper = static_cast<itk::Object *>(myHelper.GetPointer());
+}
+
+template<class TLocalCostMetric>
+void
+BRAINSFitHelper::
+RunRegistration()
+{
+  typedef typename TLocalCostMetric::FixedImageType FixedImageType;
+  typedef typename TLocalCostMetric::MovingImageType MovingImageType;
+  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType,MovingImageType>
+    HelperType;
+
+  typename HelperType::Pointer myHelper =
+    dynamic_cast<HelperType *>(this->m_Helper.GetPointer());
+
+  myHelper->StartRegistration();
+  this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
+  this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();
+  this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();
+  this->m_GenericTransformList.resize(myHelper->GetGenericTransformListPtr()->size());
+  std::copy(myHelper->GetGenericTransformListPtr()->begin(),
+    myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin());
+
+}
+
+template <class TLocalCostMetric>
+typename TLocalCostMetric::Pointer
+BRAINSFitHelper::
+GetCostMetric()
+{
+  typedef typename TLocalCostMetric::FixedImageType FixedImageType;
+  typedef typename TLocalCostMetric::MovingImageType MovingImageType;
+  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType,MovingImageType>
+    HelperType;
+  typedef typename HelperType::MetricType GenericMetricType;
+
+  typename HelperType::Pointer myHelper =
+    dynamic_cast<HelperType *>(this->m_Helper.GetPointer());
+
+  typename GenericMetricType::Pointer metric = myHelper->GetCostMetricObject();
+  typename TLocalCostMetric::Pointer rval =
+    dynamic_cast<TLocalCostMetric *>(metric.GetPointer());
+  return rval;
+}
+
 }   // end namespace itk
 
 #endif  // __BRAINSFITHELPER__

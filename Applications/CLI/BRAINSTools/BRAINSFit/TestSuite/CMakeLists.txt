@@ -21,12 +21,15 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   if(BRAINSFitTestDriver)
     # The test driver is only needed to help generate new testcases
     add_executable(BRAINSFitTestDriver BRAINSFitTestDriver.cxx)
-    target_link_libraries(BRAINSFitTestDriver ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+    target_link_libraries(BRAINSFitTestDriver ${ITK_LIBRARIES}
+      ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
     set_target_properties(BRAINSFitTestDriver PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
   endif()
 endif(COMPILE_TEST_GENERATION_PROGRAMS)
 
-include(MIDAS)
+include(${BRAINS_CMAKE_HELPER_DIR}/MIDAS.cmake)
+## Needed to set this for Slicer3 to find the test data directory
+set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData")
 set(MIDAS_KEY_DIR "${BRAINSCommonLib_DATA_DIRS}")
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
@@ -49,9 +52,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
@@ -101,9 +104,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{scale.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{scale.test.mask.md5}
+  --movingBinaryVolume MIDAS{scale.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -152,9 +155,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{translation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{translation.test.mask.md5}
+  --movingBinaryVolume MIDAS{translation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -465,9 +468,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -567,9 +570,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -618,9 +621,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{scale.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{scale.test.mask.md5}
+  --movingBinaryVolume MIDAS{scale.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -721,9 +724,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -772,9 +775,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{scale.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{scale.test.mask.md5}
+  --movingBinaryVolume MIDAS{scale.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -824,18 +827,20 @@ set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHeadMasksUShort)
 midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
+  --compareIntensityTolerance 2505
+  --compareRadiusTolerance 1
   --compareNumberOfPixelsTolerance 1000
   BRAINSFitTest
   --costMetric MMI
+  --backgroundFillValue 10000
+  --scaleOutputValues
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500,2500,500
   --splineGridSize 7,5,6
   --numberOfSamples 144000
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.01
-  --outputVolumePixelType short
+  --outputVolumePixelType ushort
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,BSpline
@@ -918,9 +923,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
@@ -946,9 +951,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -997,9 +1002,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
@@ -1025,9 +1030,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -1098,9 +1103,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
@@ -1126,9 +1131,9 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --initialTransform MIDAS{BRAINSFitTest_Initializer_RigidRotationNoMasks.mat.md5}
   --maskProcessingMode ROI
   --fixedVolume MIDAS{test.nii.gz.md5}
-  --fixedBinaryVolume MIDAS{test.mask.md5}
+  --fixedBinaryVolume MIDAS{test_mask.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
-  --movingBinaryVolume MIDAS{rotation.test.mask.md5}
+  --movingBinaryVolume MIDAS{rotation.test_mask.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )

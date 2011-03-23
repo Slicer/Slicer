@@ -25,9 +25,6 @@ typename BSplineTransformType::Pointer
 DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
           typename RegisterImageType::Pointer m_FixedVolume,
           typename RegisterImageType::Pointer m_MovingVolume,
-          typename ImageMaskSpatialObjectType::Pointer m_FixedMask,
-          typename ImageMaskSpatialObjectType::Pointer m_MovingMask,
-          const int m_NumberOfSamples,
           typename itk::ImageToImageMetric<
                  RegisterImageType, RegisterImageType >::Pointer CostMetricObject,
           const double m_MaxBSplineDisplacement,
@@ -60,9 +57,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   typedef typename itk::LBFGSBOptimizer OptimizerType;
 
-  typedef typename itk::ImageToImageMetric<
-    RegisterImageType, RegisterImageType >  MetricType;
-
   typedef typename itk::LinearInterpolateImageFunction<
     RegisterImageType,
     double >          InterpolatorType;
@@ -72,7 +66,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
     RegisterImageType >          RegistrationType;
 
   typedef typename BSplineTransformType::Pointer     TransformTypePointer;
-  typedef typename MetricType::Pointer               MetricTypePointer;
   typedef typename OptimizerType::Pointer            OptimizerTypePointer;
   typedef typename OptimizerType::ParametersType     OptimizerParameterType;
   typedef typename OptimizerType::ScalesType         OptimizerScalesType;

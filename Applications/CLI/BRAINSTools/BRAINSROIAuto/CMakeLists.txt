@@ -1,7 +1,7 @@
 project(BRAINSROIAuto)
 set(LOCAL_PROJECT_NAME BRAINSROIAuto)
-cmake_minimum_required(VERSION 2.8.2)
-cmake_policy(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
@@ -15,6 +15,8 @@ SETIFEMPTY(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 SETIFEMPTY(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 SETIFEMPTY(CMAKE_BUNDLE_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/bin)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+
+SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
 
 ###
 CHECKIFSLICER3BUILD()  ## Call the convenience macro
@@ -45,9 +47,10 @@ configure_file(
 
 set(CLP BRAINSROIAuto)
 set(${CLP}_SOURCE BRAINSROIAuto.cxx )
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" "")
+set(${CLP}_PRIMARY_SOURCE BRAINSROIAuto.cxx)
+CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "main" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 if(BUILD_TESTING)
-  #  add_subdirectory(TestSuite)
+    add_subdirectory(TestSuite)
 endif(BUILD_TESTING)

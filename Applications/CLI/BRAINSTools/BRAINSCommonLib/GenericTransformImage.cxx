@@ -24,6 +24,8 @@
 #include "itkTranslationTransform.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkVersorTransform.h"
+#include "itkThinPlateR2LogRSplineKernelTransform.h"
+#include "itkThinPlateSplineKernelTransform.h"
 #include "itkTransformFactory.h"
 #include <itksys/SystemTools.hxx>
 
@@ -281,6 +283,16 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
                                             tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
       }
+    else if ( transformFileType == "ThinPlateR2LogRSplineKernelTransform" )
+      {
+      const ThinPlateSpline3DTransformType::ConstPointer tempInitializerITKTransform =
+      dynamic_cast< ThinPlateSpline3DTransformType const *const >( ( *( currentTransformList.begin() ) ).GetPointer() );
+      ThinPlateSpline3DTransformType::Pointer tempCopy = ThinPlateSpline3DTransformType::New();
+      tempCopy->SetFixedParameters( tempInitializerITKTransform->GetFixedParameters() );
+      tempCopy->SetParametersByValue( tempInitializerITKTransform->GetParameters() );
+      tempCopy->ComputeWMatrix();  
+      genericTransform = tempCopy.GetPointer();
+      }
     }
   else if ( currentTransformList.size() == 2 ) //A special case for
                                                // BSplineTransforms
@@ -435,7 +447,6 @@ void AddExtraTransformRegister(void)
   itk::TransformFactory< itk::QuaternionRigidTransform< double > >::RegisterTransform ();
   itk::TransformFactory< itk::Rigid2DTransform< double > >::RegisterTransform ();
   itk::TransformFactory< itk::Rigid3DPerspectiveTransform< double > >::RegisterTransform ();
-  itk::TransformFactory< itk::Rigid3DTransform< double > >::RegisterTransform ();
   itk::TransformFactory< itk::ScalableAffineTransform< double > >::RegisterTransform ();
   itk::TransformFactory< itk::ScaleLogarithmicTransform< double > >::RegisterTransform ();
   itk::TransformFactory< itk::ScaleSkewVersor3DTransform< double > >::RegisterTransform ();
@@ -463,7 +474,6 @@ void AddExtraTransformRegister(void)
   itk::TransformFactory< itk::QuaternionRigidTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::Rigid2DTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::Rigid3DPerspectiveTransform< float > >::RegisterTransform ();
-  itk::TransformFactory< itk::Rigid3DTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::ScalableAffineTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::ScaleLogarithmicTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::ScaleSkewVersor3DTransform< float > >::RegisterTransform ();
@@ -473,5 +483,14 @@ void AddExtraTransformRegister(void)
   itk::TransformFactory< itk::TranslationTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::VersorRigid3DTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::VersorTransform< float > >::RegisterTransform ();
+  itk::TransformFactory< itk::VersorTransform< float > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateR2LogRSplineKernelTransform< float, 2 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateR2LogRSplineKernelTransform< float, 3 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateSplineKernelTransform< float, 2 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateSplineKernelTransform< float, 3 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateR2LogRSplineKernelTransform< double, 2 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateR2LogRSplineKernelTransform< double, 3 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateSplineKernelTransform< double, 2 > >::RegisterTransform ();
+  itk::TransformFactory< itk::ThinPlateSplineKernelTransform< double, 3 > >::RegisterTransform ();
 }
 } //end namespace itk

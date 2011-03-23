@@ -13,7 +13,13 @@
  *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  *  PURPOSE.  See the above copyright notices for more information.
  *  =========================================================================*/
-#include "BRAINSFitPrimary.h"
+#ifdef WIN32
+#define MODULE_IMPORT __declspec(dllimport)
+#else
+#define MODULE_IMPORT
+#endif
+
+extern "C" MODULE_IMPORT int BRAINSFitPrimary(int, char* []);
 
 // main function built in BRAINSFitPrimary.cxx so that testing only builds
 // templates once.

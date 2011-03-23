@@ -20,15 +20,15 @@ macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
   OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
   #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_ITK)
-    find_package(ITK 3.20 REQUIRED)
+    find_package(ITK REQUIRED)
     include(${ITK_USE_FILE})
     set(ITK_DEPEND "") ## Set the external depandancy for ITK
   else()
     set(proj Insight)
     ExternalProject_Add(${proj}
-      CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
-      CVS_MODULE "Insight"
-      CVS_TAG -r ITK-3-20
+    GIT_REPOSITORY "http://itk.org/ITK.git"
+    # This tag fixes two items:  #1) ImageDuplicator for vector images, #2) respect metric->NumberOfThreads
+    GIT_TAG "0219c81682779b7cc51166578b5e3af5a1b887d1"
       UPDATE_COMMAND ""
       SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
@@ -102,9 +102,11 @@ macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
     endif(APPLE)
 
     ExternalProject_Add(${proj}
-      CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
-      CVS_MODULE "${vtk_module}"
-      CVS_TAG ${vtk_tag}
+      GIT_REPOSITORY "git://vtk.org/VTK.git"
+      GIT_TAG "v5.6.1"
+      # CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
+      # CVS_MODULE "${vtk_module}"
+      # CVS_TAG ${vtk_tag}
       UPDATE_COMMAND ""
       SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
@@ -195,6 +197,134 @@ macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
   endif()
 endmacro()
 
+macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
+  set(packageToCheck VTK)
+  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  if(OPT_USE_SYSTEM_VTK)
+    find_package(VTK 5.6 REQUIRED)
+    include(${VTK_USE_FILE})
+    set(VTK_DEPEND "") ## Set the external depandancy for ITK
+  else()
+    set(proj vtk-5-6)
+    set(vtk_tag -r VTK-5-6)
+    set(vtk_module VTK)
+
+    set(vtk_WRAP_TCL OFF)
+    set(vtk_WRAP_PYTHON OFF)
+
+    set(vtk_GUI_ARGS
+        -DVTK_USE_GUISUPPORT:BOOL=OFF
+        -DVTK_USE_QVTK:BOOL=OFF
+        -DVTK_USE_QT:BOOL=OFF
+        -DVTK_USE_X:BOOL=OFF
+        -DVTK_USE_CARBON:BOOL=OFF
+        -DVTK_USE_COCOA:BOOL=OFF
+        -DVTK_USE_RENDERING:BOOL=OFF
+    )
+    if(APPLE)
+      # Qt 4.6 binary libs are built with empty OBJCXX_FLAGS for mac Cocoa
+      set(vtk_GUI_ARGS
+        ${vtk_GUI_ARGS}
+        -DVTK_REQUIRED_OBJCXX_FLAGS:STRING=
+        )
+    endif(APPLE)
+
+    ExternalProject_Add(${proj}
+      CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
+      CVS_MODULE "${vtk_module}"
+      CVS_TAG ${vtk_tag}
+      UPDATE_COMMAND ""
+      SOURCE_DIR ${proj}
+      BINARY_DIR ${proj}-build
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${LOCAL_CMAKE_BUILD_OPTIONS}
+        -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DVTK_USE_PARALLEL:BOOL=ON
+        -DVTK_DEBUG_LEAKS:BOOL=OFF
+        -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
+        -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
+        ${vtk_GUI_ARGS}
+      INSTALL_COMMAND ""
+      #  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+    )
+    FORCE_BUILD_CHECK(${proj})
+
+    set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+    set(VTK_DEPEND ${proj})
+    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    set(VTK_CMAKE
+       -DVTK_DIR:PATH=${VTK_DIR}
+    )
+  endif()
+endmacro()
+
+macro(PACKAGE_NEEDS_VTK_WITHR LOCAL_CMAKE_BUILD_OPTIONS gen)
+  set(packageToCheck VTK)
+  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  if(OPT_USE_SYSTEM_VTK)
+    find_package(VTK 5.7 REQUIRED)
+    include(${VTK_USE_FILE})
+    set(VTK_DEPEND "") ## Set the external depandancy for ITK
+  else()
+    set(proj vtk-head)
+
+    set(vtk_WRAP_TCL OFF)
+    set(vtk_WRAP_PYTHON OFF)
+
+    set(vtk_GUI_ARGS
+        -DVTK_USE_GUISUPPORT:BOOL=OFF
+        -DVTK_USE_QVTK:BOOL=OFF
+        -DVTK_USE_QT:BOOL=OFF
+        -DVTK_USE_X:BOOL=OFF
+        -DVTK_USE_CARBON:BOOL=OFF
+        -DVTK_USE_COCOA:BOOL=OFF
+        -DVTK_USE_RENDERING:BOOL=OFF
+    )
+    if(APPLE)
+      # Qt 4.6 binary libs are built with empty OBJCXX_FLAGS for mac Cocoa
+      set(vtk_GUI_ARGS
+        ${vtk_GUI_ARGS}
+        -DVTK_REQUIRED_OBJCXX_FLAGS:STRING=
+        )
+    endif(APPLE)
+
+    ExternalProject_Add(${proj}
+      GIT_REPOSITORY "git://vtk.org/VTK.git"
+      SOURCE_DIR ${proj}
+      BINARY_DIR ${proj}-build
+      DEPENDS ${R_DEPEND}
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${LOCAL_CMAKE_BUILD_OPTIONS}
+        -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DVTK_USE_PARALLEL:BOOL=OFF
+        -DVTK_DEBUG_LEAKS:BOOL=OFF
+        -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
+        -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
+        -DVTK_USE_GNU_R:BOOL=ON
+        -DR_COMMAND:FILEPATH=${R_DIR}/bin/R
+        -DR_INCLUDE_DIR:PATH=${R_DIR}/include                                                                       
+        -DR_LIBRARY_BASE=${R_DIR}/lib                                                                                 
+        -DR_LIBRARY_BLAS:FILEPATH=${R_DIR}/lib/libRblas${CMAKE_SHARED_LIBRARY_SUFFIX}                                                   
+        -DR_LIBRARY_LAPACK:FILEPATH=${R_DIR}/lib/libRlapack${CMAKE_SHARED_LIBRARY_SUFFIX}                                                  
+        #-DVTK_R_HOME:PATH=${CMAKE_CURRENT_BINARY_DIR}/R-build
+        ${vtk_GUI_ARGS}
+      INSTALL_COMMAND ""
+      #  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+    )
+    FORCE_BUILD_CHECK(${proj})
+
+    set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+    set(VTK_DEPEND ${proj})
+    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    set(VTK_CMAKE
+       -DVTK_DIR:PATH=${VTK_DIR}
+    )
+  endif()
+endmacro()
 #-----------------------------------------------------------------------------
 # Get and build SlicerExecutionModel
 ##  Build the SlicerExecutionModel Once, and let all derived project use the same version
@@ -260,5 +390,36 @@ macro(PACKAGE_NEEDS_BRAINSCommonLib LOCAL_CMAKE_BUILD_OPTIONS gen)
     FORCE_BUILD_CHECK(${proj})
     set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib-build)
     set(BRAINSCommonLib_DEPEND "${proj}")
+  endif()
+endmacro()
+
+#-----------------------------------------------------------------------------
+# Get and build R statistical library
+macro(PACKAGE_NEEDS_RSTATS LOCAL_CMAKE_BUILD_OPTIONS gen)
+  set(packageToCheck R)
+  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  if(OPT_USE_SYSTEM_R)
+    find_package(R NO_MODULE REQUIRED)
+    include(${R_USE_FILE})
+    set(R_DEPEND "")
+  else()
+    set(proj R)
+    ExternalProject_Add(${proj}
+      URL "http://streaming.stat.iastate.edu/CRAN/src/base/R-2/R-2.12.0.tar.gz"
+      SOURCE_DIR ${proj}
+      BINARY_DIR ${proj}-build
+      DEPENDS ""
+      CONFIGURE_COMMAND ${CMAKE_CURRENT_BINARY_DIR}/R/configure --prefix=${CMAKE_CURRENT_BINARY_DIR} --enable-BLAS-shlib
+      #CMAKE_ARGS
+      #  ${LOCAL_CMAKE_BUILD_OPTIONS}
+      #  -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+      #  -DITK_DIR:PATH=${ITK_DIR}
+      #  INSTALL_COMMAND ""
+        # INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    FORCE_BUILD_CHECK(${proj})
+    set(R_DIR ${CMAKE_CURRENT_BINARY_DIR}/R-build)
+    set(R_DEPEND "${proj}")
   endif()
 endmacro()

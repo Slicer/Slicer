@@ -15,46 +15,36 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdio.h>
 
-#include "BRAINSCommonLibWin32Header.h"
+#include "itkIO.h"
+#include "itkVector.h"
+#include "itkMedianImageFilter.h"
+#include "itkHistogramMatchingImageFilter.h"
+
+#include "itkCenteredVersorTransformInitializer.h"
+#include "itkCenteredTransformInitializer.h"
+#include "itkVersorRigid3DTransformOptimizer.h"
+#include "itkVersorRigid3DTransformOptimizer.h"
+#include "itkVersorTransformOptimizer.h"
+#include "itkMultiThreader.h"
+#include "itkResampleImageFilter.h"
+#include "itkAffineTransform.h"
+#include "itkImageMaskSpatialObject.h"
+
+#include "itkFindCenterOfBrainFilter.h"
 
 // TODO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
 #include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 
-#include "itkFindCenterOfBrainFilter.h"
-#include "itkMedianImageFilter.h"
-#include "itkHistogramMatchingImageFilter.h"
-
-#include "itkIO.h"
-
-#include "itkCenteredVersorTransformInitializer.h"
-#include "itkCenteredTransformInitializer.h"
-
-#include "itkVersorRigid3DTransformOptimizer.h"
-#include "itkVersorRigid3DTransformOptimizer.h"
-#include "itkVersorTransformOptimizer.h"
-
-#include "itkVector.h"
-#include "itkMultiThreader.h"
-
-#include "itkExtractImageFilter.h"
-
-#include "itkResampleImageFilter.h"
-#include "itkExtractImageFilter.h"
-#include "itkAffineTransform.h"
-#include <stdio.h>
 #include "ConvertToRigidAffine.h"
-
 #include "genericRegistrationHelper.h"
-
 #include "ReadMask.h"
 #include "BRAINSMacro.h"
-
-#include "itkImageMaskSpatialObject.h"
-
 #include "GenericTransformImage.h"
+#include "BRAINSCommonLibWin32Header.h"
 
 typedef itk::SpatialObject< 3 >    SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
@@ -70,7 +60,7 @@ namespace itk
 {
 
 template <class FixedImageType, class MovingImageType>
-class BRAINSCommonLib_EXPORT BRAINSFitHelperTemplate:public Object
+class BRAINSFitHelperTemplate: public Object
 {
 public:
   /** Standard class typedefs. */
@@ -213,6 +203,13 @@ protected:
     * the registration. */
   void  GenerateData();
 
+  /** instantiate and call the Registration Helper */
+  template <class TransformType,
+            class OptimizerType,
+            class MetricType>
+    void FitCommonCode(int numberOfIterations,
+                       double minimumStepLength,
+                       typename TransformType::Pointer &initialITKTransform);
 private:
 
   BRAINSFitHelperTemplate(const Self &); // purposely not implemented

@@ -9,6 +9,15 @@
 DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
+#ifdef WIN32
+#define MODULE_EXPORT __declspec(dllexport)
+#else
+#define MODULE_EXPORT
+#endif
+
+extern "C" MODULE_EXPORT int VBRAINSDemonWarpPrimary(int, char* []);
+
+
 int VBRAINSDemonWarpPrimary(int argc, char *argv[])
 {
   struct BRAINSDemonWarpAppParameters command;

@@ -3,6 +3,5 @@
 
 #include "BRAINSResampleCommonLibWin32Header.h"
 
-int BRAINSResamplePrimary(int argc, char *argv[]);
 
 #endif // __BRAINSRESAMPLEPRIMARY_h

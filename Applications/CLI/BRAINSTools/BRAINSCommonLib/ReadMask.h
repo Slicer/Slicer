@@ -8,30 +8,15 @@
 template< class MaskType, unsigned VDimension >
 typename MaskType::Pointer
 ReadImageMask(const std::string & filename,
-              typename itk::ImageBase< VDimension > *referenceImage)
+              typename itk::ImageBase< VDimension > * /*referenceImage*/)
 {
   typedef unsigned char                                    MaskPixelType;
   typedef typename itk::Image< MaskPixelType, VDimension > MaskImageType;
   typename MaskImageType::Pointer OrientedMaskImage = NULL;
 
-  //HACK:  Remove support for BRAINS2 masks from the CommonLibrary.  BRAINS3 will not support them.
-  if ( itksys::SystemTools::GetFilenameLastExtension(filename) == ".mask" )
-    {
-    // HACK:  THIS ASSUMES THAT THE MASK IS A BRAINS2 mask with improper
-    // orientation and origin, and then proceeds to
-    //       force the origin and direction orientation.
-    //       The test suite should be re-written so that only if the brains2
-    // read in the mask
-    OrientedMaskImage = itkUtil::ReadImageAndOrient< MaskImageType >( filename,
-                                                                      referenceImage->GetDirection() );
-    OrientedMaskImage->SetOrigin( referenceImage->GetOrigin() );
-    // TODO: Should also check that spacing is the same;
-    }
-  else
-    {
-    OrientedMaskImage = itkUtil::ReadImage< MaskImageType >(filename);
-    // TODO:  May want to check that physical spaces overlap?
-    }
+  OrientedMaskImage = itkUtil::ReadImage< MaskImageType >(filename);
+  // TODO:  May want to check that physical spaces overlap?
+
   // convert mask image to mask
   typedef typename itk::ImageMaskSpatialObject< VDimension >
   ImageMaskSpatialObjectType;

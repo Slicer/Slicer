@@ -1,7 +1,7 @@
 project(BRAINSFit)
 set(LOCAL_PROJECT_NAME BRAINSFit)
-cmake_minimum_required(VERSION 2.8.2)
-cmake_policy(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
 enable_testing()
 include(Dart)
@@ -14,6 +14,8 @@ SETIFEMPTY(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 SETIFEMPTY(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 SETIFEMPTY(CMAKE_BUNDLE_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/bin)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+
+SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
 
 ###
 CHECKIFSLICER3BUILD()  ## Call the convenience macro
@@ -40,11 +42,16 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSFitCommonLib.h
   )
 
+## ITKv4 requires that ITKReview is explicitly linked against
+if(ITK_VERSION_MAJOR EQUAL 4 )
+  set(ITKREVIEWLIB ITKReview)
+endif(ITK_VERSION_MAJOR EQUAL 4 )
 
 ###
 set(CLP BRAINSFit)
-set(${CLP}_SOURCE BRAINSFit.cxx  ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "")
+set(${CLP}_SOURCE BRAINSFit.cxx ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
+set(${CLP}_PRIMARY_SOURCE ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
+CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "BRAINSFitPrimary" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 INSTALL(TARGETS BRAINSFit DESTINATION bin)

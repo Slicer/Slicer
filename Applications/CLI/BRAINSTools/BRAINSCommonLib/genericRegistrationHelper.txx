@@ -23,7 +23,8 @@
 #include "itkMatrix.h"
 #include "ConvertToRigidAffine.h"
 
-#include <itkWindowedSincInterpolateImageFunction.h>
+#include "itkWindowedSincInterpolateImageFunction.h"
+#include "itkMattesMutualInformationImageToImageMetric.h"
 
 namespace itk
 {
@@ -108,6 +109,17 @@ throw ( ExceptionObject )
 
   m_Registration = RegistrationType::New();
 
+    {
+    // Special BUG work around for MMI metric
+    // that does not work in multi-threaded mode
+    typedef itk::MattesMutualInformationImageToImageMetric<FixedImageType,MovingImageType> MattesMutualInformationMetricType;
+    typename MattesMutualInformationMetricType::Pointer test_MMICostMetric= dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer());
+    if(test_MMICostMetric.IsNotNull())
+      {
+      this->m_CostMetricObject->SetNumberOfThreads(1);
+      this->m_Registration->SetNumberOfThreads(1);
+      }
+    }
   m_Registration->SetMetric(this->m_CostMetricObject);
   m_Registration->SetOptimizer(optimizer);
   m_Registration->SetInterpolator(interpolator);

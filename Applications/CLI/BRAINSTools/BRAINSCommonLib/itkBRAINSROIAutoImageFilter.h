@@ -117,7 +117,22 @@ public:
       }
     return m_ResultMaskPointer;
   }
-
+  typename UCHARIMAGE::ConstPointer GetBinaryImageROI()
+  {
+    ImageMaskPointer tmp = this->GetSpatialObjectROI();
+    typename UCHARIMAGE::ConstPointer rval;
+    if(tmp.IsNotNull())
+      {
+      typename itk::ImageMaskSpatialObject<3>::Pointer imso =
+        dynamic_cast<itk::ImageMaskSpatialObject<3> *>
+        (tmp.GetPointer());
+      if(imso.IsNotNull())
+        {
+        rval = imso->GetImage();
+        }
+      }
+    return rval;
+  }
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( SameDimensionCheck,

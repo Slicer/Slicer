@@ -13,6 +13,14 @@
 DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
+#ifdef WIN32
+#define MODULE_EXPORT __declspec(dllexport)
+#else
+#define MODULE_EXPORT
+#endif
+
+extern "C" MODULE_EXPORT int BRAINSDemonWarpPrimary(int, char* []);
+
 int BRAINSDemonWarpPrimary(int argc, char *argv[])
 {
   // Apparently when you register one transform, you need to register all your
