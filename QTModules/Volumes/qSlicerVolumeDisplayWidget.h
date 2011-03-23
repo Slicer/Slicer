@@ -11,8 +11,7 @@
 #include "qSlicerVolumesModuleExport.h"
 
 class vtkMRMLNode;
-class qSlicerLabelMapVolumeDisplayWidget;
-class qSlicerScalarVolumeDisplayWidget;
+class qSlicerVolumeDisplayWidgetPrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumeDisplayWidget : public QStackedWidget
 {
@@ -23,19 +22,21 @@ public:
   /// Constructors
   typedef QStackedWidget Superclass;
   explicit qSlicerVolumeDisplayWidget(QWidget* parent=0);
-  virtual ~qSlicerVolumeDisplayWidget(){}
-
+  virtual ~qSlicerVolumeDisplayWidget();
 
 public slots:
-
-  /// 
+  ///
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
-protected slots:
-  void updateFromMRML(vtkObject* volume);
+
+//protected slots:
+//  void updateFromMRML(vtkObject* volume);
+protected:
+  QScopedPointer<qSlicerVolumeDisplayWidgetPrivate> d_ptr;
+
 private:
-  qSlicerScalarVolumeDisplayWidget*   ScalarVolumeDisplayWidget;
-  qSlicerLabelMapVolumeDisplayWidget* LabelMapVolumeDisplayWidget;
+  Q_DECLARE_PRIVATE(qSlicerVolumeDisplayWidget);
+  Q_DISABLE_COPY(qSlicerVolumeDisplayWidget);
 };
 
 #endif

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>410</width>
-    <height>274</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,6 +137,9 @@
      <property name="value">
       <double>50.000000000000000</double>
      </property>
+     <property name="tracking">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="7" column="0">
@@ -156,6 +159,9 @@
      </property>
      <property name="value">
       <double>10.000000000000000</double>
+     </property>
+     <property name="tracking">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -237,8 +243,11 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QCheckBox" name="GlyphManualScalarRangeCheckBox">
+       <property name="toolTip">
+        <string>Manual or Auto scalar range</string>
+       </property>
        <property name="text">
-        <string>Manual:</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -311,12 +320,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>152</x>
-     <y>128</y>
+     <x>196</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
-     <x>233</x>
-     <y>122</y>
+     <x>408</x>
+     <y>159</y>
     </hint>
    </hints>
   </connection>
@@ -327,12 +336,28 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>150</y>
+     <x>384</x>
+     <y>197</y>
     </hint>
     <hint type="destinationlabel">
      <x>124</x>
-     <y>249</y>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerDTISliceDisplayWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GlyphScalarColorTableComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>70</y>
     </hint>
    </hints>
   </connection>

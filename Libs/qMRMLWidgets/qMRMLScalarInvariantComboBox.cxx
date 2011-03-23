@@ -154,11 +154,11 @@ void qMRMLScalarInvariantComboBox::updateWidgetFromMRML()
 void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 {
   Q_D(qMRMLScalarInvariantComboBox);
-  // if onCurrentScalarInvariantChanged() is called it's because the
-  // DisplayPropertiesNode is not null.
-  Q_ASSERT(d->DisplayPropertiesNode);
   int scalarInvariant = d->ComboBox->itemData(index).toInt();
-  d->DisplayPropertiesNode->SetColorGlyphBy(scalarInvariant);
+  if (d->DisplayPropertiesNode)
+    {
+    d->DisplayPropertiesNode->SetColorGlyphBy(scalarInvariant);
+    }
   emit scalarInvariantChanged(scalarInvariant);
 }
 
@@ -166,7 +166,8 @@ void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 int qMRMLScalarInvariantComboBox::scalarInvariant()const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
-  return d->DisplayPropertiesNode ? d->DisplayPropertiesNode->GetScalarInvariant() : -1;
+  QVariant scalarInvariant = d->ComboBox->itemData(d->ComboBox->currentIndex());
+  return scalarInvariant.isValid() ? scalarInvariant.toInt() : -1;
 }
 
 //------------------------------------------------------------------------------

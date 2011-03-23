@@ -36,6 +36,8 @@
 class vtkMRMLNode;
 class vtkMRMLDiffusionTensorVolumeDisplayNode;
 class vtkMRMLDiffusionTensorVolumeNode;
+class vtkMRMLDiffusionTensorSliceDisplayNode;
+class vtkMRMLGlyphableVolumeSliceDisplayNode;
 class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerDiffusionTensorVolumeDisplayWidget : public qSlicerWidget
@@ -45,11 +47,12 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerDiffusionTensorVolumeDisplayWidge
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
-  explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent);
+  explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent = 0);
   virtual ~qSlicerDiffusionTensorVolumeDisplayWidget();
 
   vtkMRMLDiffusionTensorVolumeNode* volumeNode()const;
   vtkMRMLDiffusionTensorVolumeDisplayNode* volumeDisplayNode()const;
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes()const;
 public slots:
 
   ///
@@ -57,8 +60,13 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLDiffusionTensorVolumeNode* volumeNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
+  void setVolumeScalarInvariant(int scalarInvariant);
+  void setRedSliceVisible(bool visible);
+  void setYellowSliceVisible(bool visible);
+  void setGreenSliceVisible(bool visible);
 protected slots:
   void updateWidgetFromMRML();
+  void synchronizeSliceDisplayNodes();
 
 protected:
   QScopedPointer<qSlicerDiffusionTensorVolumeDisplayWidgetPrivate> d_ptr;

@@ -42,7 +42,7 @@ public:
   qSlicerDTISliceDisplayWidgetPrivate(qSlicerDTISliceDisplayWidget& object);
   ~qSlicerDTISliceDisplayWidgetPrivate();
   void init();
-
+  void computeScalarBounds(double scalarBounds[2]);
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode* DisplayNode;
 };
 
@@ -78,6 +78,8 @@ void qSlicerDTISliceDisplayWidgetPrivate::init()
                    q, SLOT(setOpacity(double)));
   QObject::connect(this->GlyphScalarColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setColorMap(vtkMRMLNode*)));
+  QObject::connect(this->GlyphColorByScalarComboBox, SIGNAL(scalarInvariantChanged(int)),
+                   q, SLOT(setColorGlyphBy(int)));
   QObject::connect(this->GlyphManualScalarRangeCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setManualScalarRange(bool)));
   QObject::connect(this->GlyphScalarRangeWidget, SIGNAL(valuesChanged(double, double)),
@@ -92,6 +94,70 @@ void qSlicerDTISliceDisplayWidgetPrivate::init()
                    q, SLOT(setGlyphEigenVector(int)));
   QObject::connect(this->TubeEigenVectorComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setGlyphEigenVector(int)));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBounds[2])
+{
+  Q_Q(qSlicerDTISliceDisplayWidget);
+  switch(q->displayPropertiesNode() ?
+         q->displayPropertiesNode()->GetColorGlyphBy() : -1)
+    {
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D11:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
+      {
+      scalarBounds[0] = 0.;
+      scalarBounds[1] = 1.;
+      vtkPolyData* glyphs = this->DisplayNode->GetPolyData();
+      if (glyphs)
+        {
+        glyphs->GetScalarRange(scalarBounds);
+        }
+      }
+      break;
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
+      scalarBounds[0] = 0.;
+      scalarBounds[1] = 1.414213562; // sqrt(2)
+      break;
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
+      scalarBounds[0] = 0.;
+      scalarBounds[1] = 1;
+      break;
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+      scalarBounds[0] = 0.;
+      scalarBounds[1] = 255;
+      break;
+    default:
+      scalarBounds[0] = 0;
+      scalarBounds[1] = 255;
+      break;
+    }
+  // Calling GetPolyData() forces the Scalar Range to be recomputed if auto range 
+  // is true
+  this->DisplayNode->GetPolyData();
+  scalarBounds[0] = qMin (scalarBounds[0], q->displayNode()->GetScalarRange()[0]);
+  scalarBounds[1] = qMax (scalarBounds[1], q->displayNode()->GetScalarRange()[1]);
 }
 
 // --------------------------------------------------------------------------
@@ -143,13 +209,17 @@ void qSlicerDTISliceDisplayWidget::setMRMLDTISliceDisplayNode(
 {
   Q_D(qSlicerDTISliceDisplayWidget);
 
-  qvtkReconnect(d->DisplayNode, displayNode,vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* oldDisplayNode =
+    this->displayNode();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* oldDisplayPropertiesNode =
+    this->displayPropertiesNode();
+
   d->DisplayNode = displayNode;
 
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode =
-    this->displayPropertiesNode();
-  d->GlyphColorByScalarComboBox->setDisplayPropertiesNode(displayPropertiesNode);
+  qvtkReconnect(oldDisplayNode, this->displayNode(),vtkCommand::ModifiedEvent,
+                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(oldDisplayPropertiesNode, this->displayPropertiesNode(),
+                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->updateWidgetFromMRML();
 }
@@ -172,6 +242,23 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
     d->DisplayNode->GetColorNode());
   d->GlyphManualScalarRangeCheckBox->setChecked(
     d->DisplayNode->GetAutoScalarRange() == 0);
+  double scalarBounds[2];
+  d->computeScalarBounds(scalarBounds);
+  double singleStep = qAbs(scalarBounds[1] - scalarBounds[0]) / 100.;
+  double i = 1.;
+  int decimals = 0;
+  while (i > singleStep)
+    {
+    ++decimals;
+    i /= 10.;
+    }
+  // TBD: blockSignals are not very important, just reduce the noise resulting
+  // from unnecessary updates.
+  d->GlyphScalarRangeWidget->blockSignals(true);
+  d->GlyphScalarRangeWidget->setDecimals(decimals);
+  d->GlyphScalarRangeWidget->setSingleStep(i);
+  d->GlyphScalarRangeWidget->setRange(scalarBounds[0], scalarBounds[1]);
+  d->GlyphScalarRangeWidget->blockSignals(false);
   double scalarRange[2];
   d->DisplayNode->GetScalarRange(scalarRange);
   d->GlyphScalarRangeWidget->setValues(scalarRange[0], scalarRange[1]);
@@ -180,6 +267,7 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
     this->displayPropertiesNode();
   if (displayPropertiesNode)
     {
+    d->GlyphColorByScalarComboBox->setScalarInvariant(displayPropertiesNode->GetColorGlyphBy());
     d->GlyphGeometryComboBox->setCurrentIndex(displayPropertiesNode->GetGlyphGeometry());
     d->GlyphScaleSliderWidget->setValue(displayPropertiesNode->GetGlyphScaleFactor());
     d->GlyphSpacingSliderWidget->setValue(
@@ -188,6 +276,23 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
       QVariant(displayPropertiesNode->GetGlyphEigenvector()));
     d->LineEigenVectorComboBox->setCurrentIndex(index);
     d->TubeEigenVectorComboBox->setCurrentIndex(index);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
+{
+  if (!this->displayPropertiesNode())
+    {
+    return;
+    }
+  this->displayPropertiesNode()->SetColorGlyphBy(scalarInvariant);
+  if (scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
+      scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
+      scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
+    {
+    this->setManualScalarRange(true);
+    this->setScalarRange(0, 255);
     }
 }
 

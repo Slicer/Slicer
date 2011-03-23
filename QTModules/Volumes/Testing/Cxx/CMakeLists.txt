@@ -2,7 +2,9 @@ SET(KIT Volumes)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qSlicerDiffusionTensorVolumeDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest1.cxx
+  qSlicerDTISliceDisplayWidgetTest2.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -11,11 +13,19 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
+SET(DTI_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
+
 MACRO(SIMPLE_TEST  TESTNAME)
   ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
 ENDMACRO()
 
+MACRO(TEST_WITH_ARG  TESTNAME ARG)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARG})
+ENDMACRO()
+
+SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
 SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )
+TEST_WITH_ARG( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )
 
 #ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
 

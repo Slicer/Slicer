@@ -62,6 +62,7 @@ public slots:
   /// Utility function to easily connect signals/slots
   void setMRMLDTISliceDisplayNode(vtkMRMLNode* displayNode);
 
+  void setColorGlyphBy(int);
   void setColorMap(vtkMRMLNode* colorNode);
   void setOpacity(double);
   void setVisibility(bool);

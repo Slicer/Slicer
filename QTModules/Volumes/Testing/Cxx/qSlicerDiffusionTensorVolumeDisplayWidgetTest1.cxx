@@ -23,40 +23,33 @@
 #include <QTimer>
 
 // Volumes includes
-#include "qSlicerDTISliceDisplayWidget.h"
+#include "qSlicerDiffusionTensorVolumeDisplayWidget.h"
 
 // MRML includes
-#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
-#include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
+#include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-int qSlicerDTISliceDisplayWidgetTest1( int argc, char * argv[] )
+int qSlicerDiffusionTensorVolumeDisplayWidgetTest1( int argc, char * argv[] )
 {
   QApplication app(argc, argv);
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
-  scene->AddNode(propertiesNode);
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
-  displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propertiesNode->GetID());
+  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> displayNode =
+    vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode>::New();
   scene->AddNode(displayNode);
+  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeNode> volumeNode =
+    vtkSmartPointer<vtkMRMLDiffusionTensorVolumeNode>::New();
+  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+  scene->AddNode(volumeNode);
 
-  qSlicerDTISliceDisplayWidget widget;
+  qSlicerDiffusionTensorVolumeDisplayWidget widget;
   widget.setMRMLScene(scene);
-  widget.setMRMLDTISliceDisplayNode(displayNode);
-
-  for (int i = vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstColorGlyphBy();
-       i <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy();
-       ++i)
-    {
-    widget.setColorGlyphBy(i);
-    }
+  widget.setMRMLVolumeNode(volumeNode);
 
   widget.show();
   if (argc < 2 || QString(argv[1]) != "-I")

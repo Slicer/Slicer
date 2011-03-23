@@ -26,6 +26,7 @@
 
 // MRML includes
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 
 // VTK includes
 #include <vtkPointData.h>
@@ -54,6 +55,7 @@ qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
   qSlicerDiffusionTensorVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
+  this->VolumeNode = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -68,6 +70,20 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
   Q_Q(qSlicerDiffusionTensorVolumeDisplayWidget);
 
   this->setupUi(q);
+  this->DTISliceDisplayWidget->setVisibilityHidden(true);
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->ScalarVolumeDisplayWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->DTISliceDisplayWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  QObject::connect(this->ScalarInvariantComboBox, SIGNAL(scalarInvariantChanged(int)),
+                   q, SLOT(setVolumeScalarInvariant(int)));
+  QObject::connect(this->RedSliceCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setRedSliceVisible(bool)));
+  QObject::connect(this->YellowSliceCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setYellowSliceVisible(bool)));
+  QObject::connect(this->GreenSliceCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setGreenSliceVisible(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -106,13 +122,20 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidg
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidget::sliceDisplayNode()const
+QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDisplayWidget::sliceDisplayNodes()const
 {
-  vtkMRMLDiffusionTensorVolumeNode* volumeNode = this->volumeNode();
-  return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetDisplayNode()) : 0;
+  Q_D(const qSlicerDiffusionTensorVolumeDisplayWidget);
+  vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode = this->volumeDisplayNode();
+  if (!displayNode)
+    {
+    return QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
+    }
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res
+    = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromVector(
+      QVector<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromStdVector(
+        displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode)));
+  return res;
 }
-
 
 // --------------------------------------------------------------------------
 void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* node)
@@ -127,20 +150,29 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 
   vtkMRMLDiffusionTensorVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
-  d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
-
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :0,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
-  d->Histogram->setDataArray(volumeNode &&
-                             volumeNode->GetImageData() &&
-                             volumeNode->GetImageData()->GetPointData() ?
-                             volumeNode->GetImageData()->GetPointData()->GetScalars() :
-                             0);
-  d->Histogram->build();
-  this->setEnabled(volumeNode != 0);
-
+  d->VolumeNode = volumeNode;
+  d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+  vtkMRMLDiffusionTensorVolumeDisplayNode* newVolumeDisplayNode = this->volumeDisplayNode();
+  if (newVolumeDisplayNode)
+    {
+    std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
+      newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+    if (dtiSliceDisplayNodes.size() == 0)
+      {
+      newVolumeDisplayNode->AddSliceGlyphDisplayNodes(d->VolumeNode);
+      dtiSliceDisplayNodes =
+        newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+      }
+    Q_ASSERT(dtiSliceDisplayNodes.size());
+    d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(dtiSliceDisplayNodes[0]);
+    qvtkDisconnect(0, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
+    qvtkConnect(dtiSliceDisplayNodes[0], vtkCommand::ModifiedEvent,
+                this, SLOT(synchronizeSliceDisplayNodes()));
+    this->synchronizeSliceDisplayNodes();
+    }
   this->updateWidgetFromMRML();
 }
 
@@ -150,189 +182,76 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
   Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
-  if (displayNode)
-    {
-    d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
-    d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
-    }
-  if (this->isVisible())
-    {
-    this->updateTransferFunction();
-    }
-}
-
-//----------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::updateTransferFunction()
-{
-  Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
-  // from vtkKWWindowLevelThresholdEditor::UpdateTransferFunction
-  vtkMRMLVolumeNode* volumeNode = d->MRMLWindowLevelWidget->mrmlVolumeNode();
-  Q_ASSERT(volumeNode == d->MRMLVolumeThresholdWidget->mrmlVolumeNode());
-  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-  if (imageData == 0)
-    {
-    d->ColorTransferFunction->RemoveAllPoints();
-    return;
-    }
-  double range[2] = {0,255};
-  imageData->GetScalarRange(range);
-  // AdjustRange call will take out points that are outside of the new
-  // range, but it needs the points to be there in order to work, so call
-  // RemoveAllPoints after it's done
-  d->ColorTransferFunction->AdjustRange(range);
-  d->ColorTransferFunction->RemoveAllPoints();
-
-  double min = d->MRMLWindowLevelWidget->level() - 0.5 * d->MRMLWindowLevelWidget->window();
-  double max = d->MRMLWindowLevelWidget->level() + 0.5 * d->MRMLWindowLevelWidget->window();
-  double minVal = 0;
-  double maxVal = 1;
-  double low   = d->MRMLVolumeThresholdWidget->isOff() ? range[0] : d->MRMLVolumeThresholdWidget->lowerThreshold();
-  double upper = d->MRMLVolumeThresholdWidget->isOff() ? range[1] : d->MRMLVolumeThresholdWidget->upperThreshold();
-
-  d->ColorTransferFunction->SetColorSpaceToRGB();
-
-  if (low >= max || upper <= min)
-    {
-    d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
-    }
-  else
-    {
-    max = qMax(min+0.001, max);
-    low = qMax(range[0] + 0.001, low);
-    min = qMax(range[0] + 0.001, min);
-    upper = qMin(range[1] - 0.001, upper);
-
-    if (min <= low)
-      {
-      minVal = (low - min)/(max - min);
-      min = low + 0.001;
-      }
-
-    if (max >= upper)
-      {
-      maxVal = (upper - min)/(max-min);
-      max = upper - 0.001;
-      }
-
-    d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(low, 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(min, minVal, minVal, minVal);
-    d->ColorTransferFunction->AddRGBPoint(max, maxVal, maxVal, maxVal);
-    d->ColorTransferFunction->AddRGBPoint(upper, maxVal, maxVal, maxVal);
-    if (upper+0.001 < range[1])
-      {
-      d->ColorTransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
-      d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
-      }
-    }
-
-  d->ColorTransferFunction->SetAlpha(1.0);
-  d->ColorTransferFunction->Build();
-}
-
-// -----------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::showEvent( QShowEvent * event )
-{
-  this->updateTransferFunction();
-  this->Superclass::showEvent(event);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::setInterpolate(bool interpolate)
-{
-  vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
   if (!displayNode)
     {
     return;
     }
-  displayNode->SetInterpolate(interpolate);
+  d->ScalarInvariantComboBox->setScalarInvariant(displayNode->GetScalarInvariant());
+  this->setEnabled(d->VolumeNode != 0);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::setColorNode(vtkMRMLNode* colorNode)
+void qSlicerDiffusionTensorVolumeDisplayWidget::synchronizeSliceDisplayNodes()
 {
-  vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
-  if (!displayNode || !colorNode)
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
+  if (sliceDisplayNodes.count() != 3)
     {
     return;
     }
-  Q_ASSERT(vtkMRMLColorNode::SafeDownCast(colorNode));
-  displayNode->SetAndObserveColorNodeID(colorNode->GetID());
+  sliceDisplayNodes[1]->SetColorMode(sliceDisplayNodes[0]->GetColorMode());
+  sliceDisplayNodes[1]->SetOpacity(sliceDisplayNodes[0]->GetOpacity());
+  sliceDisplayNodes[1]->SetAndObserveColorNodeID(sliceDisplayNodes[0]->GetColorNodeID());
+  sliceDisplayNodes[1]->SetAutoScalarRange(sliceDisplayNodes[0]->GetAutoScalarRange());
+  sliceDisplayNodes[1]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0],
+                                       sliceDisplayNodes[0]->GetScalarRange()[1]);
+  sliceDisplayNodes[2]->SetColorMode(sliceDisplayNodes[0]->GetColorMode());
+  sliceDisplayNodes[2]->SetOpacity(sliceDisplayNodes[0]->GetOpacity());
+  sliceDisplayNodes[2]->SetAndObserveColorNodeID(sliceDisplayNodes[0]->GetColorNodeID());
+  sliceDisplayNodes[2]->SetAutoScalarRange(sliceDisplayNodes[0]->GetAutoScalarRange());
+  sliceDisplayNodes[2]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0],
+                                       sliceDisplayNodes[0]->GetScalarRange()[1]);
 }
 
-// --------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::onPresetButtonClicked()
+//----------------------------------------------------------------------------
+void qSlicerDiffusionTensorVolumeDisplayWidget::setVolumeScalarInvariant(int scalarInvariant)
 {
-  QToolButton* preset = qobject_cast<QToolButton*>(this->sender());
-  this->setPreset(preset->accessibleName());
+  vtkMRMLDiffusionTensorVolumeDisplayNode* volumeDisplayNode = this->volumeDisplayNode();
+  if (!volumeDisplayNode)
+    {
+    return;
+    }
+  volumeDisplayNode->SetScalarInvariant(scalarInvariant);
 }
 
-// --------------------------------------------------------------------------
-void qSlicerDiffusionTensorVolumeDisplayWidget::setPreset(const QString& presetName)
+//----------------------------------------------------------------------------
+void qSlicerDiffusionTensorVolumeDisplayWidget::setRedSliceVisible(bool visible)
 {
-  Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
-  QString colorNodeID;
-  double window = -1.;
-  double level = std::numeric_limits<double>::max();
-  if (presetName == "CT-Bone")
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
+  if (sliceDisplayNodes.count() != 3)
     {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = 400.;
+    return;
     }
-  else if (presetName == "CT-Air")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1000.;
-    level = -426.;
-    }
-  else if (presetName == "PET")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeRainbow";
-    window = 10000.;
-    level = 6000.;
-    }
-  else if (presetName == "CT-Abdomen")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 350.;
-    level = 40.;
-    }
-  else if (presetName == "CT-Brain")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 100.;
-    level = 50.;
-    }
-  else if (presetName == "CT-Lung")
-    {
-    colorNodeID = "vtkMRMLColorTableNodeGrey";
-    window = 1400.;
-    level = -500.;
-    }
+  sliceDisplayNodes[0]->SetVisibility(visible);
+}
 
-  vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toLatin1());
-  if (colorNode)
+//----------------------------------------------------------------------------
+void qSlicerDiffusionTensorVolumeDisplayWidget::setYellowSliceVisible(bool visible)
+{
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
+  if (sliceDisplayNodes.count() != 3)
     {
-    this->setColorNode(colorNode);
+    return;
     }
-  if (window != -1 || level!= std::numeric_limits<double>::max())
+  sliceDisplayNodes[1]->SetVisibility(visible);
+}
+
+//----------------------------------------------------------------------------
+void qSlicerDiffusionTensorVolumeDisplayWidget::setGreenSliceVisible(bool visible)
+{
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
+  if (sliceDisplayNodes.count() != 3)
     {
-    d->MRMLWindowLevelWidget->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
+    return;
     }
-  if (window != -1 && level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setWindowLevel(window, level);
-    }
-  else if (window != -1)
-    {
-    d->MRMLWindowLevelWidget->setWindow(window);
-    }
-  else if (level != std::numeric_limits<double>::max())
-    {
-    d->MRMLWindowLevelWidget->setLevel(level);
-    }
+  sliceDisplayNodes[2]->SetVisibility(visible);
 }

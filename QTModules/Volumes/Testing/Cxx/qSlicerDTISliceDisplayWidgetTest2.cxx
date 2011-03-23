@@ -24,6 +24,7 @@
 
 // Volumes includes
 #include "qSlicerDTISliceDisplayWidget.h"
+#include <vtkSlicerVolumesLogic.h>
 
 // MRML includes
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
@@ -34,11 +35,27 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-int qSlicerDTISliceDisplayWidgetTest1( int argc, char * argv[] )
+int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 {
   QApplication app(argc, argv);
 
+  if (argc < 2)
+    {
+    std::cerr << "Usage: qSlicerDTISliceDisplayWidgetTest2 dtiFileName" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "file: " << argv[1] << std::endl;
+
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkSmartPointer<vtkSlicerVolumesLogic> volumesLogic = vtkSmartPointer<vtkSlicerVolumesLogic>::New();
+  volumesLogic->SetMRMLScene(scene);
+  vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "dti");
+  if (!volumeNode)
+    {
+    std::cerr << "Bad DTI file:" << argv[1] << std::endl;
+    return EXIT_FAILURE;
+    }
+
   vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode =
     vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
   scene->AddNode(propertiesNode);
@@ -46,20 +63,15 @@ int qSlicerDTISliceDisplayWidgetTest1( int argc, char * argv[] )
     vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
   displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propertiesNode->GetID());
   scene->AddNode(displayNode);
+  volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
+  displayNode->SetSliceImage(volumeNode->GetImageData());
 
   qSlicerDTISliceDisplayWidget widget;
   widget.setMRMLScene(scene);
   widget.setMRMLDTISliceDisplayNode(displayNode);
 
-  for (int i = vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstColorGlyphBy();
-       i <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy();
-       ++i)
-    {
-    widget.setColorGlyphBy(i);
-    }
-
   widget.show();
-  if (argc < 2 || QString(argv[1]) != "-I")
+  if (argc < 3 || QString(argv[2]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
