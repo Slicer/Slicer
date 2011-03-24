@@ -192,6 +192,30 @@ const char* compareView =
   " </item>"
   "</layout>";
 
+const char* compareWidescreenView =
+  "<layout type=\"horizontal\" split=\"true\" >"
+  " <item>"
+  "  <layout type=\"vertical\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
 
@@ -426,6 +450,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          tabbedSliceView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
                                          compareView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
+                                         compareWidescreenView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDual3DView,
                                          dual3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView,

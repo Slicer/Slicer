@@ -70,6 +70,7 @@ public slots:
   void switchToTabbedSliceView();
   void switchToLightboxView();
   void switchToCompareView();
+  void switchToCompareWidescreenView();
   void switchToSideBySideLightboxView();
   void switchToDual3DView();
   void switchToNone();

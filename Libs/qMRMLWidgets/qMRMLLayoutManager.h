@@ -96,6 +96,7 @@ public slots:
   inline void switchToTabbedSliceView();
   inline void switchToLightboxView();
   inline void switchToCompareView();
+  inline void switchToCompareWidescreenView();
   inline void switchToSideBySideLightboxView();
   inline void switchToDual3DView();
   inline void switchToNone();
@@ -181,6 +182,12 @@ void qMRMLLayoutManager::switchToLightboxView()
 void qMRMLLayoutManager::switchToCompareView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareView);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::switchToCompareWidescreenView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView);
 }
 
 //------------------------------------------------------------------------------

@@ -166,6 +166,13 @@ void qMRMLLayoutWidget::switchToCompareView()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLLayoutWidget::switchToCompareWidescreenView()
+{
+  Q_D(qMRMLLayoutWidget);
+  d->LayoutManager->switchToCompareWidescreenView();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLLayoutWidget::switchToSideBySideLightboxView()
 {
   Q_D(qMRMLLayoutWidget);

@@ -418,7 +418,7 @@ void qSlicerMainWindow::setupMenuActions()
   d->actionViewLayoutTabbed3D->setData(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
   d->actionViewLayoutTabbedSlice->setData(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
   d->actionViewLayoutCompare->setData(vtkMRMLLayoutNode::SlicerLayoutCompareView);
-  d->actionViewLayoutSideBySideLightbox->setData(vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView);
+  d->actionViewLayoutCompareWidescreen->setData(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView);
 
   qSlicerMainWindowCore_connect(WindowPythonInteractor);
 

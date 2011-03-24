@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -72,7 +72,7 @@
      <addaction name="actionViewLayoutTabbed3D"/>
      <addaction name="actionViewLayoutTabbedSlice"/>
      <addaction name="actionViewLayoutCompare"/>
-     <addaction name="actionViewLayoutSideBySideLightbox"/>
+     <addaction name="actionViewLayoutCompareWidescreen"/>
     </widget>
     <addaction name="actionViewExtensionManager"/>
     <addaction name="actionViewCacheRemoteIOManager"/>
@@ -170,11 +170,11 @@
       </widget>
      </item>
      <item>
-      <widget class="qSlicerModulePanel" name="ModulePanel"/>
+      <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget" native="true">
+       <property name="text" stdset="0">
         <string>Manipulate Slice Views</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -198,13 +198,13 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget" native="true">
+       <property name="text" stdset="0">
         <string>Manipulate 3D View</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget"/>
+         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -283,7 +283,7 @@
    <addaction name="actionViewLayoutTabbed3D"/>
    <addaction name="actionViewLayoutTabbedSlice"/>
    <addaction name="actionViewLayoutCompare"/>
-   <addaction name="actionViewLayoutSideBySideLightbox"/>
+   <addaction name="actionViewLayoutCompareWidescreen"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -798,16 +798,16 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutSideBySideLightbox">
+  <action name="actionViewLayoutCompareWidescreen">
    <property name="icon">
     <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
-    <string>Side-by-side Lightbox</string>
+    <string>Compare Widescreen</string>
    </property>
    <property name="toolTip">
-    <string>Side-by-side Lightbox</string>
+    <string>Compare widescreen</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -891,12 +891,6 @@
    <header>qMRMLSlicesControllerToolBar.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLThreeDViewsControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLThreeDViewsControllerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -918,6 +912,12 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLThreeDViewsControllerWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLThreeDViewsControllerWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -987,8 +987,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>44</y>
+     <x>1010</x>
+     <y>65</y>
     </hint>
    </hints>
   </connection>
@@ -1019,8 +1019,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>140</x>
-     <y>42</y>
+     <x>256</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -1035,8 +1035,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>91</x>
-     <y>42</y>
+     <x>155</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -1051,8 +1051,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>42</y>
+     <x>269</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
