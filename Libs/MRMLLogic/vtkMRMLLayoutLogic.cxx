@@ -546,21 +546,11 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
         }
       if (nodes->GetNumberOfItems() > 1)
         {
-        vtkWarningMacro("Couldn't find node with SingletonTag: " << attributeValue << ". Creating a new instance of " << className << ".");
-        vtkMRMLNode *newnode = this->GetMRMLScene()->CreateNodeByClass(className.c_str());
-        if (newnode)
-          {
-          newnode->SetSingletonTag(attributeValue.c_str());
-          newnode->SetName((className + attributeValue).c_str());
-          this->GetMRMLScene()->AddNode(newnode);
-          nodes->RemoveAllItems();
-          nodes->AddItem(newnode);
-          newnode->Delete();
-          }
-        else
-          {
-          vtkWarningMacro("Do not know how to construct an instance of " << className.c_str());
-          }
+        vtkWarningMacro("Couldn't find node with SingletonTag: " << attributeValue );
+        // Did not find the node, return an empty list to trigger the
+        // calling method, CreateMissingViews(), to create the appropriate node.
+        nodes->RemoveAllItems();
+        break;
         }
       }
     else if (attributeName == "type")
