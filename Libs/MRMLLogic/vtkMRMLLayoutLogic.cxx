@@ -168,6 +168,30 @@ const char* triple3DEndoscopyView =
   " </item>"
   "</layout>";
 
+const char* compareView =
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"vertical\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
 
@@ -400,6 +424,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          tabbed3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView,
                                          tabbedSliceView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
+                                         compareView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDual3DView,
                                          dual3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView,
@@ -520,7 +546,21 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
         }
       if (nodes->GetNumberOfItems() > 1)
         {
-        vtkWarningMacro("Couln't find node with SingleTag: " << attributeValue);
+        vtkWarningMacro("Couldn't find node with SingletonTag: " << attributeValue << ". Creating a new instance of " << className << ".");
+        vtkMRMLNode *newnode = this->GetMRMLScene()->CreateNodeByClass(className.c_str());
+        if (newnode)
+          {
+          newnode->SetSingletonTag(attributeValue.c_str());
+          newnode->SetName((className + attributeValue).c_str());
+          this->GetMRMLScene()->AddNode(newnode);
+          nodes->RemoveAllItems();
+          nodes->AddItem(newnode);
+          newnode->Delete();
+          }
+        else
+          {
+          vtkWarningMacro("Do not know how to construct an instance of " << className.c_str());
+          }
         }
       }
     else if (attributeName == "type")
