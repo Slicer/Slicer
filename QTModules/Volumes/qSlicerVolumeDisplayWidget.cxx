@@ -66,7 +66,10 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
     }
   if (activeWidget)
     {
-    activeWidget->setMRMLScene(0);
+    // We must remove the node "before" the setting the scene to 0.
+    // Because removing the scene could modify the observed node (e.g setting
+    // the scene to 0 on a colortable combobox will set the color node of the
+    // observed node to 0.
     vtkMRMLNode* emptyVolumeNode = 0;
     if (activeWidget == this->ScalarVolumeDisplayWidget)
       {
@@ -80,6 +83,7 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
       {
       this->DTVolumeDisplayWidget->setMRMLVolumeNode(emptyVolumeNode);
       }
+    activeWidget->setMRMLScene(0);
     }
   if (displayWidget)
     {
