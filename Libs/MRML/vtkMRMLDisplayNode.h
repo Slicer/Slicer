@@ -202,6 +202,8 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   
   /// 
   /// String ID of the color MRML node
+  /// Note that anytime the color node is modified, the observing display node
+  /// fires a Modified event.
   virtual void SetAndObserveColorNodeID(const char *ColorNodeID);
   //BTX
   void SetAndObserveColorNodeID(const std::string& ColorNodeID);
