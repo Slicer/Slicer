@@ -216,6 +216,73 @@ const char* compareWidescreenView =
   " </item>"
   "</layout>";
 
+const char* threeOverThreeView =
+  "<layout type=\"vertical\">"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumVioletRed\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"YellowGreen\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* fourOverFourView =
+  "<layout type=\"vertical\">"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumAquaMarine\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumPurple\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
 
@@ -452,6 +519,10 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          compareView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
                                          compareWidescreenView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView,
+                                         threeOverThreeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourOverFourView,
+                                         fourOverFourView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDual3DView,
                                          dual3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView,

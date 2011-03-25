@@ -173,6 +173,20 @@ void qMRMLLayoutWidget::switchToCompareWidescreenView()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLLayoutWidget::switchToThreeOverThreeView()
+{
+  Q_D(qMRMLLayoutWidget);
+  d->LayoutManager->switchToThreeOverThreeView();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutWidget::switchToFourOverFourView()
+{
+  Q_D(qMRMLLayoutWidget);
+  d->LayoutManager->switchToFourOverFourView();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLLayoutWidget::switchToSideBySideLightboxView()
 {
   Q_D(qMRMLLayoutWidget);

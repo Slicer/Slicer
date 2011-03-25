@@ -264,10 +264,16 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceViewName(newSliceViewName);
 
-  // If name matches either 'Red, 'Green' or 'Yellow' set the corresponding color
-  // set Orange otherwise
+  // If name matches either 'Red, 'Green' or 'Yellow' set the
+  // corresponding color (legacy colors). If the name matches an SVG color keyword
+  // http://www.w3.org/TR/SVG/types.html#ColorKeywords, then use that.
+  // Set Orange otherwise
   QColor highlightedBoxColor;
   highlightedBoxColor.setRgbF(0.882352941176, 0.439215686275, 0.0705882352941); // orange
+
+  QColor namedColor;
+  namedColor.setNamedColor( newSliceViewName.toLower() );
+
   if (newSliceViewName == "Red")
     {
     highlightedBoxColor.setRgbF(0.952941176471, 0.290196078431, 0.2); // red
@@ -279,6 +285,10 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
   else if (newSliceViewName == "Yellow")
     {
     highlightedBoxColor.setRgbF(0.929411764706, 0.835294117647, 0.298039215686); // yellow
+    }
+  else if (namedColor.isValid())
+    {
+    highlightedBoxColor = namedColor;
     }
 
   // Set the color associated with the highlightedBox

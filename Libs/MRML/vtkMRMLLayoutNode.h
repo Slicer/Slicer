@@ -94,16 +94,18 @@ public:
       SlicerLayoutOneUpGreenSliceView,
       SlicerLayoutTabbed3DView,
       SlicerLayoutTabbedSliceView, // 10
-      SlicerLayoutLightboxView,
+      SlicerLayoutLightboxView, // Remove?
       SlicerLayoutCompareView,
-      SlicerLayoutSideBySideLightboxView,
+      SlicerLayoutSideBySideLightboxView, // Remove?
       SlicerLayoutNone, // 14
       SlicerLayoutDual3DView,
       SlicerLayoutConventionalWidescreenView,
       SlicerLayoutCompareWidescreenView,
-      SlicerLayoutSingleLightboxView,
+      SlicerLayoutSingleLightboxView, // Remove?
       SlicerLayoutTriple3DEndoscopyView, // Up to here, all layouts are Slicer 3 compatible
-      SlicerLayout3DPlusLightboxView, // really used ?
+      SlicerLayout3DPlusLightboxView, // really used ?, Remove?
+      SlicerLayoutThreeOverThreeView, 
+      SlicerLayoutFourOverFourView,
       SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };

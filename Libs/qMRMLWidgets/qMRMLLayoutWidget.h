@@ -71,6 +71,8 @@ public slots:
   void switchToLightboxView();
   void switchToCompareView();
   void switchToCompareWidescreenView();
+  void switchToThreeOverThreeView();
+  void switchToFourOverFourView();
   void switchToSideBySideLightboxView();
   void switchToDual3DView();
   void switchToNone();
