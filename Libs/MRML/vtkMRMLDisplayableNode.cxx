@@ -393,7 +393,7 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
     if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
       {
-      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
+      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
       }
     }
   if (this->PolyData && this->PolyData == vtkPolyData::SafeDownCast(caller) &&
