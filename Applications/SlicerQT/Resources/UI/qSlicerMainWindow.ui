@@ -73,6 +73,8 @@
      <addaction name="actionViewLayoutTabbedSlice"/>
      <addaction name="actionViewLayoutCompare"/>
      <addaction name="actionViewLayoutCompareWidescreen"/>
+     <addaction name="actionViewLayoutThreeOverThree"/>
+     <addaction name="actionViewLayoutFourOverFour"/>
     </widget>
     <addaction name="actionViewExtensionManager"/>
     <addaction name="actionViewCacheRemoteIOManager"/>
@@ -284,6 +286,8 @@
    <addaction name="actionViewLayoutTabbedSlice"/>
    <addaction name="actionViewLayoutCompare"/>
    <addaction name="actionViewLayoutCompareWidescreen"/>
+   <addaction name="actionViewLayoutThreeOverThree"/>
+   <addaction name="actionViewLayoutFourOverFour"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -807,7 +811,7 @@
     <string>Compare Widescreen</string>
    </property>
    <property name="toolTip">
-    <string>Compare widescreen</string>
+    <string>Compare Widescreen</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -875,6 +879,24 @@
    </property>
    <property name="text">
     <string>Triple 3D</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutThreeOverThree">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Three over three</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutFourOverFour">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four over four</string>
    </property>
   </action>
  </widget>
