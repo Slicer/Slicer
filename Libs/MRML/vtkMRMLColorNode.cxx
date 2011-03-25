@@ -25,6 +25,7 @@ Version:   $Revision: 1.0 $
 #include "vtkMRMLStorageNode.h"
 #include <itksys/SystemTools.hxx>
 
+#include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
@@ -158,6 +159,12 @@ vtkLookupTable * vtkMRMLColorNode::GetLookupTable()
 {
   vtkDebugMacro("Subclass has not implemented GetLookupTable, returning NULL");
   return NULL;
+}
+
+//----------------------------------------------------------------------------
+vtkScalarsToColors * vtkMRMLColorNode::GetScalarsToColors()
+{
+  return this->GetLookupTable();
 }
 
 //----------------------------------------------------------------------------

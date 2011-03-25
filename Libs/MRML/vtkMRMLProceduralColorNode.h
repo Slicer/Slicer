@@ -85,6 +85,11 @@ public:
   /// Get the color transfer function for this node
   vtkGetObjectMacro(ColorTransferFunction, vtkColorTransferFunction);
 
+  ///
+  /// Reimplemented vtkMRMLColorNode::GetScalarsToColors() to return the
+  /// transfer function instead of the empty lookuptable
+  virtual vtkScalarsToColors* GetScalarsToColors();
+
   /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()

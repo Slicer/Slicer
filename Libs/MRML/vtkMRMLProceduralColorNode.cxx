@@ -129,6 +129,12 @@ void vtkMRMLProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+//-----------------------------------------------------------
+vtkScalarsToColors* vtkMRMLProceduralColorNode::GetScalarsToColors()
+{
+  return this->GetColorTransferFunction();
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::SetType(int type)
 {

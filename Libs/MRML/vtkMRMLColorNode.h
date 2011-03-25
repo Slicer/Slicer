@@ -32,6 +32,7 @@
 #include <vector>
 
 class vtkLookupTable;
+class vtkScalarsToColors;
 
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
@@ -135,6 +136,13 @@ public:
   /// Most color nodes will implement a look up table, so provide a top level
   /// get method
   virtual vtkLookupTable * GetLookupTable();
+
+  ///
+  /// Utility function that either returns a vtkLookupTable or a
+  /// vtkColorTransferFunction whichever makes more sense.
+  /// Returns vtkMRMLColorNode::GetLookupTable() by default. You should
+  /// the method if you want it to return something else in subclasses
+  virtual vtkScalarsToColors* GetScalarsToColors();
 
   /// 
   /// get/set the string used for an unnamed colour

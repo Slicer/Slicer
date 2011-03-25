@@ -66,6 +66,7 @@ public:
   vtkLookupTable *GetLookupTable();
   vtkFSLookupTable *GetFSLookupTable();
   virtual void SetLookupTable(vtkFSLookupTable* newLookupTable);
+  virtual vtkScalarsToColors* GetScalarsToColors();
 
   /// 
   /// Get/Set for Type

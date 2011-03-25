@@ -488,6 +488,12 @@ vtkLookupTable * vtkMRMLFreeSurferProceduralColorNode::GetLookupTable()
 }
 
 //---------------------------------------------------------------------------
+vtkScalarsToColors* vtkMRMLFreeSurferProceduralColorNode::GetScalarsToColors()
+{
+  return this->GetLookupTable();
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLFreeSurferProceduralColorNode::GetNumberOfColors()
 {
   double *range = this->GetLookupTable()->GetRange();
