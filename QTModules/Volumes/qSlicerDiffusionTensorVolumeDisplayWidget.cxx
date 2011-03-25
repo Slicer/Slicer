@@ -180,6 +180,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
+  this->setEnabled(d->VolumeNode != 0);
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode)
@@ -187,7 +188,6 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
     return;
     }
   d->ScalarInvariantComboBox->setScalarInvariant(displayNode->GetScalarInvariant());
-  this->setEnabled(d->VolumeNode != 0);
 }
 
 // --------------------------------------------------------------------------
