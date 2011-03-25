@@ -112,6 +112,7 @@ public:
     {
     return this->GetNthDisplayNode(0);
     };
+  std::vector<vtkMRMLDisplayNode*> GetDisplayNodes();
     
   /// 
   /// Set and observe poly data for this model

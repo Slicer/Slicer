@@ -200,6 +200,11 @@ void vtkMRMLDisplayableNode::UpdateReferences()
     }
 }
 
+//----------------------------------------------------------------------------
+std::vector<vtkMRMLDisplayNode*> vtkMRMLDisplayableNode::GetDisplayNodes()
+{
+  return this->DisplayNodes;
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
