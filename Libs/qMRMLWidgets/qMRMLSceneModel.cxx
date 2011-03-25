@@ -571,7 +571,15 @@ void qMRMLSceneModel::updateScene()
     oldScenePreItems = this->preItems(oldSceneItem[0]);
     oldScenePostItems = this->postItems(oldSceneItem[0]);
     }
+  // Stop listening to all the nodes before we remove them (setRowCount) as some
+  // weird behavior could arise when removing the nodes (e.g onMRMLNodeModified
+  // could be called ...)
+  qvtkDisconnect(0, vtkCommand::ModifiedEvent,
+                 this, SLOT(onMRMLNodeModified(vtkObject*)));
+  // TBD: Because we don't call clear, I don't think restoring the column count
+  // is necessary because it shouldn't be changed.
   int oldColumnCount = this->columnCount();
+
   this->setRowCount(0);
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
   this->setColumnCount(oldColumnCount);
@@ -874,8 +882,11 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
 
-  qvtkDisconnect(node, vtkCommand::ModifiedEvent,
-                this, SLOT(onMRMLNodeModified(vtkObject*)));
+  int connectionsRemoved = qvtkDisconnect(node, vtkCommand::ModifiedEvent,
+                                          this, SLOT(onMRMLNodeModified(vtkObject*)));
+  Q_ASSERT((!d->ListenNodeModifiedEvent && connectionsRemoved == 0) ||
+           (d->ListenNodeModifiedEvent && connectionsRemoved == 1));
+
   // TODO: can be fasten by browsing the tree only once
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,
                                         QString(node->GetID()), 1,
@@ -931,6 +942,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   Q_ASSERT(modifiedNode && modifiedNode->GetScene());
   //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
+  Q_ASSERT(nodeIndexes.count());
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
   for (int i = 0; i < nodeIndexes.size(); ++i)
     {
