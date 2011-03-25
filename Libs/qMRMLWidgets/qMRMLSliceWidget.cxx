@@ -154,6 +154,7 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
 
   QStringList displayableManagers;
   //displayableManagers << "vtkSliceDisplayableManager";
+  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
 
 #ifdef Slicer_USE_PYTHONQT
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);

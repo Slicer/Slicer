@@ -95,6 +95,7 @@ SET(DisplayableManager_SRCS
   vtkMRMLViewDisplayableManager.cxx
 
   # DisplayableManager associated with SliceView
+  vtkMRMLSliceModelDisplayableManager.cxx
   )
 
 SET(KIT_SRCS

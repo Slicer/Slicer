@@ -13,49 +13,46 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  This file was originally developed by Julien Finet, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLViewDisplayableManager_h
-#define __vtkMRMLViewDisplayableManager_h
+#ifndef __vtkMRMLSliceModelDisplayableManager_h
+#define __vtkMRMLSliceModelDisplayableManager_h
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
-
+#include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager : 
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceModelDisplayableManager :
+  public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
-  static vtkMRMLViewDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
+  static vtkMRMLSliceModelDisplayableManager* New();
+  vtkTypeRevisionMacro(vtkMRMLSliceModelDisplayableManager,
+                       vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
 protected:
 
-  vtkMRMLViewDisplayableManager();
-  virtual ~vtkMRMLViewDisplayableManager();
-
-  virtual void AdditionnalInitializeStep();
+  vtkMRMLSliceModelDisplayableManager();
+  virtual ~vtkMRMLSliceModelDisplayableManager();
 
   virtual void Create();
-  
+
 private:
 
-  vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLViewDisplayableManager&);                     // Not Implemented
-  
+  vtkMRMLSliceModelDisplayableManager(const vtkMRMLSliceModelDisplayableManager&);// Not implemented
+  void operator=(const vtkMRMLSliceModelDisplayableManager&);                     // Not Implemented
+
   //BTX
   class vtkInternal;
   vtkInternal * Internal;
   //ETX
-
 };
 
 #endif
