@@ -92,7 +92,7 @@ set(weave_DEPENDENCIES python NUMPY)
 
 set(VTK_DEPENDENCIES)
 set(CTKAPPLAUNCHER_DEPENDENCIES)
-set(CTK_DEPENDENCIES VTK)
+set(CTK_DEPENDENCIES VTK Insight)
 if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
@@ -134,6 +134,7 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 include(SuperBuild/External_VTK.cmake)
+include(SuperBuild/External_Insight.cmake)
 
 if(Slicer_USE_QT)
   include(SuperBuild/External_CTK.cmake)
@@ -142,7 +143,6 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-include(SuperBuild/External_Insight.cmake)
 include(SuperBuild/External_teem.cmake)
 include(SuperBuild/External_OpenIGTLink.cmake)
 

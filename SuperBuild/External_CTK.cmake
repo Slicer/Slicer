@@ -25,11 +25,13 @@ if (Slicer_USE_QT)
         -DCTK_USE_GIT_PROTOCOL:BOOL=${Slicer_USE_GIT_PROTOCOL}
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         -DVTK_DIR:PATH=${VTK_DIR}
+        -DITK_DIR:PATH=${ITK_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
         -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
         -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
         -DCTK_LIB_Widgets:BOOL=ON
         -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
+        -DCTK_LIB_ImageProcessing/ITK/Core:BOOL=ON
         -DCTK_LIB_Scripting/Python/Core:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=${Slicer_USE_PYTHONQT}
