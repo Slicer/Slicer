@@ -259,6 +259,25 @@ vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
   return d->SliceController->mrmlSliceCompositeNode();
 }
 
+namespace
+{
+//---------------------------------------------------------------------------
+bool slicer_qcolor_is_valid_color(const QString& colorName)
+{
+#if QT_VERSION < 0x040700
+  if (colorName.startsWith("compare"))
+    {
+    return false;
+    }
+  QColor c;
+  c.setNamedColor(colorName);
+  return c.isValid();
+#else
+  return QColor::isValidColor(colorName);
+#endif
+}
+} // end namespace
+
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 {
@@ -283,7 +302,7 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
     {
     highlightedBoxColor.setRgbF(0.929411764706, 0.835294117647, 0.298039215686); // yellow
     }
-  else if (QColor::isValidColor(newSliceViewName.toLower()))
+  else if (slicer_qcolor_is_valid_color(newSliceViewName.toLower()))
     {
     highlightedBoxColor.setNamedColor(newSliceViewName.toLower());
     }

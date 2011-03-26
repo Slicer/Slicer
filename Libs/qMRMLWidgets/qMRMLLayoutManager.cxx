@@ -367,7 +367,20 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     {
     QString layoutName = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
-    Q_ASSERT(layoutName.startsWith("Compare") || QColor::isValidColor(layoutName.toLower()));
+#ifndef QT_NO_DEBUG
+    // Note: The following has to be done since QColor::isValidColor is not available with Qt < 4.7
+    bool startWithCompare = layoutName.startsWith("Compare");
+    bool validColor = false;
+    if(!startWithCompare)
+      {
+      // To avoid warning 'unknown color', let's check if the color is valid only if it doesn't
+      // start with 'Compare'
+      QColor c;
+      c.setNamedColor(layoutName.toLower());
+      validColor = c.isValid();
+      }
+    Q_ASSERT(startWithCompare || validColor);
+#endif
     if (!this->sliceWidget(sliceNode))
       {
       this->createSliceWidget(sliceNode);
