@@ -367,7 +367,7 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     {
     QString layoutName = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
-    Q_ASSERT(layoutName == "Red" || layoutName == "Yellow" || layoutName == "Green");
+    Q_ASSERT(layoutName.startsWith("Compare") || QColor::isValidColor(layoutName.toLower()));
     if (!this->sliceWidget(sliceNode))
       {
       this->createSliceWidget(sliceNode);
