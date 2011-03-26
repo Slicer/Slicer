@@ -23,13 +23,13 @@ const char* conventionalView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -40,7 +40,7 @@ const char* fourUpView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
   "    <view class=\"vtkMRMLViewNode\"/>"
@@ -50,10 +50,10 @@ const char* fourUpView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -68,19 +68,19 @@ const char* oneUp3DView =
 const char* oneUpRedView =
   "<layout type=\"horizontal\">"
   " <item>"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   " </item>"
   "</layout>";
 const char* oneUpYellowView =
   "<layout type=\"horizontal\">"
   " <item>"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   " </item>"
   "</layout>";
 const char* oneUpGreenView =
   "<layout type=\"horizontal\">"
   " <item>"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   " </item>"
   "</layout>";
 
@@ -94,13 +94,13 @@ const char* tabbed3DView =
 const char* tabbedSliceView =
   "<layout type=\"tab\">"
   " <item name=\"Red slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   " </item>"
   " <item name=\"Yellow slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   " </item>"
   " <item name=\"Green slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   " </item>"
   "</layout>";
 
@@ -119,13 +119,13 @@ const char* dual3DView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -139,13 +139,13 @@ const char* conventionalWidescreenView =
   " <item>"
   "  <layout type=\"vertical\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -173,7 +173,7 @@ const char* compareView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
   "    <view class=\"vtkMRMLViewNode\"/>"
@@ -183,10 +183,10 @@ const char* compareView =
   " <item>"
   "  <layout type=\"vertical\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\" orientation=\"Axial\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -200,17 +200,17 @@ const char* compareWidescreenView =
   "    <view class=\"vtkMRMLViewNode\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\" orientation=\"Axial\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -221,26 +221,26 @@ const char* threeOverThreeView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumVioletRed\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumVioletRed\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"YellowGreen\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"YellowGreen\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -254,13 +254,13 @@ const char* fourOverFourView =
   "    <view class=\"vtkMRMLViewNode\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -270,13 +270,13 @@ const char* fourOverFourView =
   "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumVioletRed\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"MediumVioletRed\" orientation=\"Axial\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"RoyalBlue\" orientation=\"Sagittal\"/>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"YellowGreen\"/>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"YellowGreen\" orientation=\"Coronal\"/>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -397,18 +397,21 @@ void vtkMRMLLayoutLogic::UpdateViewNodes()
     attributes["class"] = "vtkMRMLSliceNode";
     // Red
     attributes["singletontag"] = "Red";
+    attributes["orientation"] = "Axial";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
       this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
     sliceNode->Delete();
     // Yellow
     attributes["singletontag"] = "Yellow";
+    attributes["orientation"] = "Sagittal";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
       this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
     sliceNode->Delete();
     // Green
     attributes["singletontag"] = "Green";
+    attributes["orientation"] = "Coronal";
     sliceNode = vtkMRMLSliceNode::SafeDownCast(
       this->CreateViewFromAttributes(attributes));
     this->GetMRMLScene()->AddNode(sliceNode);
@@ -567,18 +570,12 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
       {
       const std::string& singletonTag = it->second;
       sliceNode->SetLayoutName(singletonTag.c_str());
-      if (singletonTag == "Red")
-        {
-        sliceNode->SetOrientationToAxial();
-        }
-      else if (singletonTag == "Yellow")
-        {
-        sliceNode->SetOrientationToSagittal();
-        }
-      else if (singletonTag == "Green")
-        {
-        sliceNode->SetOrientationToCoronal();
-        }
+      }
+    it = attributes.find(std::string("orientation"));
+    if (it != end)
+      {
+      const std::string& orientation = it->second;
+      sliceNode->SetOrientation(orientation.c_str());
       }
     std::string name = std::string(sliceNode->GetLayoutName()) + std::string(sliceNode->GetOrientationString());
     node->SetName(name.c_str());
