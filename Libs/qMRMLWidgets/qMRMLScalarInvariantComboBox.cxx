@@ -178,5 +178,5 @@ void qMRMLScalarInvariantComboBox::setScalarInvariant(int value)
     {
     return;
     }
-  d->DisplayPropertiesNode->SetScalarInvariant(value);
+  d->DisplayPropertiesNode->SetColorGlyphBy(value);
 }
