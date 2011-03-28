@@ -28,6 +28,14 @@
 #include <QTimer>
 #include <QVector>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+#include <ctkErrorLogFDMessageHandler.h>
+#include <ctkErrorLogQtMessageHandler.h>
+#include <ctkErrorLogStreamMessageHandler.h>
+#include <ctkITKErrorLogMessageHandler.h>
+#include <ctkVTKErrorLogMessageHandler.h>
+
 // For:
 //  - Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_INSTALL_PLUGINS_BIN_DIR
@@ -144,6 +152,9 @@ public:
 
   /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
+
+  /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
+  QSharedPointer<ctkErrorLogModel>           ErrorLogModel;
 
   /// ExitWhenDone flag
   bool                                 ExitWhenDone;
@@ -395,6 +406,23 @@ CTK_GET_CPP(qSlicerCoreApplication, bool, initialized, Initialized);
 void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 {
   Q_D(qSlicerCoreApplication);
+
+  // Instantiate ErrorLogModel
+  d->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
+  d->ErrorLogModel->setLogEntryGrouping(true);
+  d->ErrorLogModel->setTerminalOutputEnabled(true);
+
+  QList<ctkErrorLogAbstractMessageHandler*> handlers;
+  handlers << new ctkErrorLogFDMessageHandler
+           << new ctkErrorLogQtMessageHandler
+           << new ctkErrorLogStreamMessageHandler
+           << new ctkITKErrorLogMessageHandler
+           << new ctkVTKErrorLogMessageHandler;
+  foreach(ctkErrorLogAbstractMessageHandler* h, handlers)
+    {
+    this->errorLogModel()->registerMsgHandler(h);
+    this->errorLogModel()->setMsgHandlerEnabled(h->handlerName(), true);
+    }
   
   // Create MRML scene
   VTK_CREATE(vtkMRMLScene, scene);
@@ -448,7 +476,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   // Initialization done !
   d->Initialized = true;
 
-  // Instanciate moduleManager
+  // Instantiate moduleManager
   d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
 
 #ifdef Slicer_USE_PYTHONQT
@@ -472,6 +500,17 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
+
+  // Disable all message handlers if a 'display...AndExit' option is True
+  if (options->displayHelpAndExit() ||
+      options->displayVersionAndExit() ||
+      options->displayProgramPathAndExit() ||
+      options->displayHomePathAndExit() ||
+      options->displaySettingsPathAndExit()
+      )
+    {
+    this->errorLogModel()->disableAllMsgHandler();
+    }
 
   if (options->displayHelpAndExit())
     {
@@ -556,6 +595,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
   if (!(options->displayHelpAndExit() ||
       options->displayHomePathAndExit() ||
+      options->displayProgramPathAndExit() ||
       options->displaySettingsPathAndExit() ||
       options->displayVersionAndExit() ||
       options->ignoreSlicerRC()))
@@ -811,6 +851,13 @@ qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CoreCommandOptions.data();
+}
+
+//-----------------------------------------------------------------------------
+ctkErrorLogModel* qSlicerCoreApplication::errorLogModel()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ErrorLogModel.data();
 }
 
 //-----------------------------------------------------------------------------

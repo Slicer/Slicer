@@ -45,6 +45,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit)
   Q_PROPERTY(bool displaySettingsPathAndExit READ displaySettingsPathAndExit)
   Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery)
+  Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers)
   Q_PROPERTY(QString tempDirectory READ tempDirectory)
 public:
   typedef ctkCommandLineParser Superclass;
@@ -98,6 +99,9 @@ public:
 
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;
+
+  /// Return True if slicer shouldn't catch messages printed to the terminal.
+  bool disableMessageHandlers()const;
 
   /// Return temp directory
   /// Try to read the value from the setting, if no value is found it defaults to

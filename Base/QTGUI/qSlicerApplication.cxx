@@ -34,6 +34,7 @@
 
 // CTK includes
 #include <ctkColorDialog.h>
+#include "ctkErrorLogModel.h"
 #include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
 #include <ctkSettings.h>
@@ -294,10 +295,23 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
 //-----------------------------------------------------------------------------
 void qSlicerApplication::handleCommandLineArguments()
 {
-  this->Superclass::handleCommandLineArguments();
-
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
+
+  if (options->noMainWindow() || options->disableMessageHandlers())
+    {
+    // If no UI is expected, it doesn't make sens to use registered handlers.
+    // Let's disable them.
+    this->errorLogModel()->disableAllMsgHandler();
+    }
+  else
+    {
+    // We are now sure Slicer is started with a UI, let's disable the terminal
+    // output and keep the messages in the error log model.
+    this->errorLogModel()->setTerminalOutputEnabled(false);
+    }
+
+  this->Superclass::handleCommandLineArguments();
 
   this->setToolTipsEnabled(!options->disableToolTips());
 }

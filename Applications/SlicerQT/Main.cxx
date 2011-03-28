@@ -29,6 +29,8 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // CTK includes
+#include <ctkErrorLogModel.h>
+#include <ctkErrorLogStatusMessageHandler.h>
 #include <ctkLogger.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
@@ -191,6 +193,9 @@ int main(int argc, char* argv[])
     {
     window.reset(new qSlicerMainWindow);
     window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
+
+    app.errorLogModel()->registerMsgHandler(new ctkErrorLogStatusMessageHandler(window.data()));
+    app.errorLogModel()->setMsgHandlerEnabled(ctkErrorLogStatusMessageHandler::HandlerName, true);
     }
 
   // Load all available modules

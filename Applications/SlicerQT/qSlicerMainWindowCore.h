@@ -54,6 +54,7 @@ public slots:
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();
   void setLayout(int);
+  void onWindowErrorLogActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 
   void onHelpKeyboardShortcutsActionTriggered();

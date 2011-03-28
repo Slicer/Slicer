@@ -422,6 +422,7 @@ void qSlicerMainWindow::setupMenuActions()
   d->actionViewLayoutThreeOverThree->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView);
   d->actionViewLayoutFourOverFour->setData(vtkMRMLLayoutNode::SlicerLayoutFourOverFourView);
 
+  qSlicerMainWindowCore_connect(WindowErrorLog);
   qSlicerMainWindowCore_connect(WindowPythonInteractor);
 
   qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);

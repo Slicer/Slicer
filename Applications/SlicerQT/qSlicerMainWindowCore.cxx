@@ -76,6 +76,7 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Supercl
   Q_D(qSlicerMainWindowCore);
   
   d->ParentWidget = _parent;
+  d->ErrorLogWidget.setErrorLogModel(qSlicerCoreApplication::application()->errorLogModel());
 }
 
 //-----------------------------------------------------------------------------
@@ -144,6 +145,15 @@ void qSlicerMainWindowCore::onEditRedoActionTriggered()
 void qSlicerMainWindowCore::setLayout(int layout)
 {
   qSlicerApplication::application()->layoutManager()->setLayout(layout);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowCore::onWindowErrorLogActionTriggered()
+{
+  Q_D(qSlicerMainWindowCore);
+  d->ErrorLogWidget.show();
+  d->ErrorLogWidget.activateWindow();
+  d->ErrorLogWidget.raise();
 }
 
 //-----------------------------------------------------------------------------

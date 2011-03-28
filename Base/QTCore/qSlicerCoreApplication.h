@@ -32,6 +32,7 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 #include "qSlicerBaseQTCoreExport.h"
 
+class ctkErrorLogModel;
 class QSettings;
 class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions;
@@ -126,6 +127,9 @@ public:
   /// Set coreCommandOptions
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
+
+  /// Get errorLogModel
+  ctkErrorLogModel* errorLogModel()const;
 
   /// Get application settings
   /// \note It will also instanciate a QSettings object if required.

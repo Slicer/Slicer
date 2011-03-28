@@ -72,6 +72,7 @@ SET(KIT_target_libraries
   SlicerBaseLogic
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
+  CTKImageProcessingITKCore
   CTKVisualizationVTKCore
   )
 

@@ -188,6 +188,13 @@ bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableMessageHandlers() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-message-handlers").toBool();
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::tempDirectory() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -245,6 +252,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("disable-settings", "", QVariant::Bool,
                     "Start application ignoring user settings.");
+
+  this->addArgument("disable-message-handlers", "", QVariant::Bool,
+                    "Start application disabling the 'terminal' message handlers.");
 }
 
 //-----------------------------------------------------------------------------
