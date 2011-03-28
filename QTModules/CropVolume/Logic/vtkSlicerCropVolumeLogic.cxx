@@ -80,7 +80,7 @@ void vtkSlicerCropVolumeLogic::RegisterNodes()
 {
   if(!this->GetMRMLScene())
     return;
-  std::cerr << "RRegistering nodes" << std::endl;
+  //std::cout << "Registering nodes" << std::endl;
   //qDebug() << "Registering crop volume mrml node";
 
   vtkMRMLCropVolumeParametersNode* pNode = vtkMRMLCropVolumeParametersNode::New();
