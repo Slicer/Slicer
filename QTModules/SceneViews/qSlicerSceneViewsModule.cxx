@@ -10,7 +10,7 @@
 #include "qSlicerSceneViewsModule.h"
 #include "GUI/qSlicerSceneViewsModuleWidget.h"
 
-#include <vtkSlicerSceneViewLogic.h>
+#include <vtkSlicerSceneViewsModuleLogic.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerSceneViewsModule, qSlicerSceneViewsModule);
@@ -49,7 +49,7 @@ qSlicerAbstractModuleRepresentation* qSlicerSceneViewsModule::createWidgetRepres
 vtkMRMLAbstractLogic* qSlicerSceneViewsModule::createLogic()
 {
 
-  return vtkSlicerSceneViewLogic::New();
+  return vtkSlicerSceneViewsModuleLogic::New();
 }
 
 //-----------------------------------------------------------------------------

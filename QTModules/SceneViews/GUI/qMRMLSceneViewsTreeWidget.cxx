@@ -327,7 +327,7 @@ void qMRMLSceneViewsTreeWidget::setAndObserveWidget(qSlicerSceneViewsModuleWidge
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setAndObserveLogic(vtkSlicerSceneViewLogic* logic)
+void qMRMLSceneViewsTreeWidget::setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic)
 {
   if (!logic)
     {

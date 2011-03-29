@@ -44,17 +44,17 @@ public:
   ~qSlicerSceneViewsModuleWidgetPrivate();
   void setupUi(qSlicerWidget* widget);
 
-  vtkSlicerSceneViewLogic* logic() const;
+  vtkSlicerSceneViewsModuleLogic* logic() const;
 
   QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
 };
 
 //-----------------------------------------------------------------------------
-vtkSlicerSceneViewLogic*
+vtkSlicerSceneViewsModuleLogic*
 qSlicerSceneViewsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerSceneViewsModuleWidget);
-  return vtkSlicerSceneViewLogic::SafeDownCast(q->logic());
+  return vtkSlicerSceneViewsModuleLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------

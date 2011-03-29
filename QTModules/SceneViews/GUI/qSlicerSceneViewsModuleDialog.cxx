@@ -1,6 +1,6 @@
 #include "qSlicerSceneViewsModuleDialog.h"
 
-#include <vtkSlicerSceneViewLogic.h>
+#include <vtkSlicerSceneViewsModuleLogic.h>
 #include <ctkVTKSliceView.h>
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
@@ -59,7 +59,7 @@ qSlicerSceneViewsModuleDialog::~qSlicerSceneViewsModuleDialog()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewLogic* logic)
+void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewsModuleLogic* logic)
 {
   if (!logic)
     {
@@ -338,9 +338,11 @@ void qSlicerSceneViewsModuleDialog::grabScreenShot(QString screenshotWindow)
 
 
   // convert the screenshot from QPixmap to vtkImageData and store it with this class
-  vtkImageData* vtkimage = vtkImageData::New();
-  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(),vtkimage);
-  this->m_vtkImageData = vtkimage;
+  if ( this->m_vtkImageData == NULL)
+    {
+    this->m_vtkImageData =  vtkImageData::New();
+    }
+  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), this->m_vtkImageData);
 
 }
 

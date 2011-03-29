@@ -2,7 +2,7 @@
 #define __qSlicerSceneViewsModuleDialog_h
 
 #include "ui_qSlicerSceneViewsModuleDialog.h"
-#include <vtkSlicerSceneViewLogic.h>
+#include <vtkSlicerSceneViewsModuleLogic.h>
 
 class qSlicerSceneViewsModuleDialog : public QDialog
 {
@@ -12,7 +12,7 @@ public:
   ~qSlicerSceneViewsModuleDialog();
 
   /// Set the Annotation module logic.
-  void setLogic(vtkSlicerSceneViewLogic* logic);
+  void setLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
   /// Initialize this dialog with values from an existing annotation Snapshot node.
   void initialize(const QString& nodeId);
@@ -45,7 +45,7 @@ private:
     /// The screenshotWindow is Red, Green, Yellow for a sliceView or empty for a ThreeDView
     void grabScreenShot(QString screenshotWindow);
 
-    vtkSlicerSceneViewLogic* m_Logic;
+    vtkSlicerSceneViewsModuleLogic* m_Logic;
 
     vtkImageData* m_vtkImageData;
 

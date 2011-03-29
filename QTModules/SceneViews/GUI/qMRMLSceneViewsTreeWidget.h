@@ -35,7 +35,7 @@
 #include "qSlicerSceneViewsModuleExport.h"
 
 // Logic includes
-#include <vtkSlicerSceneViewLogic.h>
+#include <vtkSlicerSceneViewsModuleLogic.h>
 
 class qMRMLSortFilterProxyModel;
 class qMRMLSceneViewsTreeWidgetPrivate;
@@ -64,7 +64,7 @@ public:
   void setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
 
   // Register the logic
-  void setAndObserveLogic(vtkSlicerSceneViewLogic* logic);
+  void setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
@@ -88,7 +88,7 @@ private:
   Q_DISABLE_COPY(qMRMLSceneViewsTreeWidget);
 
   qSlicerSceneViewsModuleWidget* m_Widget;
-  vtkSlicerSceneViewLogic* m_Logic;
+  vtkSlicerSceneViewsModuleLogic* m_Logic;
 
 };
 

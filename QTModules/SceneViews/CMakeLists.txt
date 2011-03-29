@@ -12,7 +12,17 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories
+  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
+  )
 
+#-----------------------------------------------------------------------
+#
+# LOGIC
+#
+#-----------------------------------------------------------------------
+SET(Logic_SRCS
+  Logic/vtkSlicerSceneViewsModuleLogic.cxx
+  Logic/vtkSlicerSceneViewsModuleLogic.h
   )
   
 #-----------------------------------------------------------------------
@@ -37,6 +47,7 @@ SET(GUI_SRCS
 #
 #-----------------------------------------------------------------------
 SET(qt_module_SRCS
+  ${Logic_SRCS}
   ${GUI_SRCS}
   qSlicerSceneViewsModule.cxx
   qSlicerSceneViewsModule.h
@@ -79,7 +90,6 @@ SET(qt_module_resources
 SET(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
-  MRMLLogic
 )
 
 #-----------------------------------------------------------------------
@@ -105,6 +115,6 @@ slicerMacroBuildQtModule(
 #
 #-----------------------------------------------------------------------
 if(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing/Cxx)
+  ADD_SUBDIRECTORY(Testing/Cxx)
 endif(BUILD_TESTING)
 
