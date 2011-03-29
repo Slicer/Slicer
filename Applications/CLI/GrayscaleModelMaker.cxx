@@ -83,14 +83,20 @@ int main(int argc, char * argv[])
     vtkXMLPolyDataWriter * writer = NULL;
 
     // check for the input file
-    FILE * infile;
-    infile = fopen(InputVolume.c_str(),"r");
-    if (infile == NULL)
-    {
+    // - strings that start with slicer: are shared memory references, so they won't exist.
+    //   The memory address starts with 0x in linux but not on Windows
+    if ( InputVolume.find(std::string("slicer:")) != 0 )
+      {
+      // check for the input file
+      FILE * infile;
+      infile = fopen(InputVolume.c_str(),"r");
+      if (infile == NULL)
+        {
         std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
         return EXIT_FAILURE;
-    }
-    fclose(infile);
+        }
+      fclose(infile);
+      }
 
     // Read the file
     reader = vtkITKArchetypeImageSeriesScalarReader::New();
