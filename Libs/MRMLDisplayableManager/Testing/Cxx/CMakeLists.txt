@@ -5,6 +5,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLCameraDisplayableManagerTest1.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
+  vtkMRMLSliceModelDisplayableManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 
