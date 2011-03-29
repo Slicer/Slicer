@@ -10,6 +10,7 @@
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkSlicerVolumeRenderingLogic.h"
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
@@ -68,14 +69,6 @@ public:
   vtkGetObjectMacro (ROINode, vtkMRMLROINode);
   void SetAndObserveROINode(vtkMRMLROINode* vspNode);
 
-  // Description:
-  // Create VolumeRenderingParametersNode
-  vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
-
-  // Description:
-  // Create VolumeRenderingScenarioNode
-  vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
-
 
   // Description:
   // setup mapper based on current parameters node
@@ -85,10 +78,6 @@ public:
   //  1: success
   int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  // prepare volume property based on bg input volume
-  void SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  // prepare volume property based on bg input volume
-  void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   // Description:
   // Update MRML events
@@ -114,14 +103,8 @@ public:
   void SetGPURaycast3Parameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
-
   void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
   void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
-
-  void UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
   //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
@@ -157,6 +140,7 @@ protected:
 
   static bool First;
 
+  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
   // Description:
   // The hardware accelerated texture mapper.
   vtkSlicerVolumeTextureMapper3D *MapperTexture;

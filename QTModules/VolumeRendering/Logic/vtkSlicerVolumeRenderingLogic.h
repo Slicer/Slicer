@@ -27,6 +27,8 @@
 // MRML includes
 #include <vtkMRML.h>
 #include <vtkMRMLVolumeNode.h>
+#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 // STD includes
 #include <cstdlib>
@@ -61,6 +63,27 @@ public:
   //BTX
   using vtkMRMLAbstractLogic::ProcessLogicEvents; 
   //ETX
+
+  // Description:
+  // Create VolumeRenderingParametersNode
+  vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
+
+  // Description:
+  // Create VolumeRenderingScenarioNode
+  vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
+
+  void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
 
 protected:
   vtkSlicerVolumeRenderingLogic();
