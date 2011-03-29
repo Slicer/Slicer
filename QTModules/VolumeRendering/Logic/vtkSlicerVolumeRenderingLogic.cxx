@@ -529,3 +529,41 @@ vtkMRMLVolumeRenderingScenarioNode* vtkSlicerVolumeRenderingLogic::CreateScenari
   return node;
 }
 
+// Description:
+// Update VolumeRenderingParametersNode from VolumeNode,
+// if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
+// and initioalize them from VolumeNode
+void vtkSlicerVolumeRenderingLogic::UpdateParametersNodeFromVolumeNode(
+                                          vtkMRMLVolumeRenderingParametersNode *volumeRenderingParametersNode, 
+                                          vtkMRMLVolumeNode *volumeNode, 
+                                          vtkMRMLVolumePropertyNode **propNode,
+                                          vtkMRMLROINode **roiNode)
+{
+
+  if (volumeNode == NULL) 
+  {
+    volumeRenderingParametersNode->SetAndObserveVolumeNodeID(NULL);
+    return;
+  }
+
+  volumeRenderingParametersNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
+
+  if (*propNode == NULL)
+  {
+    *propNode = vtkMRMLVolumePropertyNode::New();
+    this->GetMRMLScene()->AddNode(*propNode);
+    (*propNode)->Delete();
+  }
+  volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID((*propNode)->GetID());
+
+  if (*roiNode == NULL)
+  {
+    *roiNode = vtkMRMLROINode::New();
+    this->GetMRMLScene()->AddNode(*roiNode);
+    (*roiNode)->Delete();
+  }
+  volumeRenderingParametersNode->SetAndObserveROINodeID((*roiNode)->GetID());
+
+ 
+}
+

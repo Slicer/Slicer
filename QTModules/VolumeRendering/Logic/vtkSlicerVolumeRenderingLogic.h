@@ -27,6 +27,8 @@
 // MRML includes
 #include <vtkMRML.h>
 #include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLVolumePropertyNode.h>
+#include <vtkMRMLROINode.h>
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
@@ -67,6 +69,15 @@ public:
   // Description:
   // Create VolumeRenderingParametersNode
   vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
+
+  // Description:
+  // Update VolumeRenderingParametersNode from VolumeNode,
+  // if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
+  // and initioalize them from VolumeNode
+  void UpdateParametersNodeFromVolumeNode(vtkMRMLVolumeRenderingParametersNode *paramNode, 
+                                          vtkMRMLVolumeNode *volumeNode, 
+                                          vtkMRMLVolumePropertyNode **propNode,
+                                          vtkMRMLROINode **roiNode);
 
   // Description:
   // Create VolumeRenderingScenarioNode

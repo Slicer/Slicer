@@ -15,6 +15,8 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
+#include "vtkSlicerVolumeRenderingLogic.h"
+
 //-----------------------------------------------------------------------------
 class qSlicerVolumeRenderingModuleWidgetPrivate: public Ui_qSlicerVolumeRenderingModule
 {
@@ -226,11 +228,11 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
 
   vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
     d->ParameterNodeSelector->currentNode());
-  if (!volumeRenderingParametersNode)
+
+  if (volumeRenderingParametersNode)
   {
-    volumeRenderingParametersNode = this->createParameterNode();
+    volumeRenderingParametersNode->SetAndObserveROINodeID(roiNode->GetID());
   }
-  volumeRenderingParametersNode->SetAndObserveROINodeID(roiNode->GetID());
 }
   
 // --------------------------------------------------------------------------
@@ -260,12 +262,6 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
       this->setMRMLParameterNode(volumeRenderingParametersNode);
     }
     volumeRenderingParametersNode->SetAndObserveVolumeNodeID(scalarVolumeNode->GetID());
-
-    if (volumeRenderingParametersNode->GetVolumePropertyNode() == 0)
-    {
-      vtkMRMLVolumePropertyNode* vpNode =  this->createVolumeProprtyNode();
-      this->setMRMLVolumePropertyNode(vpNode);
-    }
   }
 }
 
@@ -274,35 +270,20 @@ vtkMRMLVolumeRenderingParametersNode* qSlicerVolumeRenderingModuleWidget::create
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  vtkMRMLScene* scene = this->mrmlScene();
+  vtkSlicerVolumeRenderingLogic *logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
 
-  vtkMRMLVolumeRenderingParametersNode *volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::New();
-  volumeRenderingParametersNode->SetCurrentVolumeMapper(0);
-  scene->AddNode(volumeRenderingParametersNode);
-  volumeRenderingParametersNode->Delete();
-  if (d->ActiveVolumeNodeSelector->currentNode())
-  {
-    volumeRenderingParametersNode->SetAndObserveVolumeNodeID(d->ActiveVolumeNodeSelector->currentNode()->GetID());
-  }
-  if (d->ROINodeSelector->currentNode())
-  {
-    volumeRenderingParametersNode->SetAndObserveROINodeID(d->ROINodeSelector->currentNode()->GetID());
-  }
-  if (d->VolumePropertyNodeSelector->currentNode())
-  {
-    volumeRenderingParametersNode->SetAndObserveVolumePropertyNodeID(d->VolumePropertyNodeSelector->currentNode()->GetID());
-  }
+  vtkMRMLVolumeRenderingParametersNode *volumeRenderingParametersNode = logic->CreateParametersNode();
+
+  vtkMRMLVolumePropertyNode *propNode = vtkMRMLVolumePropertyNode::SafeDownCast(d->VolumePropertyNodeSelector->currentNode());
+
+  vtkMRMLROINode            *roiNode = vtkMRMLROINode::SafeDownCast(d->ROINodeSelector->currentNode());
+
+  logic->UpdateParametersNodeFromVolumeNode(volumeRenderingParametersNode,
+                                            vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode()),
+                                            &propNode, &roiNode);
+
   d->ParameterNodeSelector->setCurrentNode(volumeRenderingParametersNode);
+  d->VolumePropertyNodeSelector->setCurrentNode(propNode);
+  d->ROINodeSelector->setCurrentNode(roiNode);
   return volumeRenderingParametersNode;
-}
-
-// --------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingModuleWidget::createVolumeProprtyNode()
-{
-  vtkMRMLScene* scene = this->mrmlScene();
-
-  vtkMRMLVolumePropertyNode *volumePropertyNode = vtkMRMLVolumePropertyNode::New();
-  scene->AddNode(volumePropertyNode);
-  volumePropertyNode->Delete();
-  return volumePropertyNode;
 }

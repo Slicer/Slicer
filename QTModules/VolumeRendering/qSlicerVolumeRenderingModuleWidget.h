@@ -38,8 +38,6 @@ public slots:
 
   vtkMRMLVolumeRenderingParametersNode* createParameterNode();
 
-  vtkMRMLVolumePropertyNode* createVolumeProprtyNode();
-
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
   
