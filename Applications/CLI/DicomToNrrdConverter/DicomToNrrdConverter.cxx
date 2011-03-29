@@ -1968,9 +1968,9 @@ int main(int argc, char* argv[])
           if(useBMatrixGradientDirections)
             {
             header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
-              << DiffusionVectors[k][0] << "   "
-              << DiffusionVectors[k][1] << "   "
-              << DiffusionVectors[k][2] << std::endl;
+              << DiffusionVectors[k][0] * scaleFactor << "   "
+              << DiffusionVectors[k][1] * scaleFactor << "   "
+              << DiffusionVectors[k][2] * scaleFactor << std::endl;
             }
           else
             {
