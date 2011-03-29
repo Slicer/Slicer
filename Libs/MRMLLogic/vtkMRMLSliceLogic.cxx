@@ -1420,13 +1420,10 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
 
   ijkToSlice->Multiply4x4(rasToSlice, ijkToRAS, ijkToSlice);
 
-  double invector[4];
-  invector[0] = invector[1] = invector[2] = 1.0;
-  invector[3] = 0.0;
+  double invector[4] = {1., 1., 1., 0.};
   double spacing[4];
   ijkToSlice->MultiplyPoint(invector, spacing);
-  int i;
-  for (i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
     {
     this->SliceSpacing[i] = fabs(spacing[i]);
     }
@@ -1698,6 +1695,7 @@ void vtkMRMLSliceLogic::ResizeSliceNode(double newWidth, double newHeight)
 //----------------------------------------------------------------------------
 double *vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
 {
+  // TBD: Doesn't return the lowest slice spacing, just the first valid spacing
   vtkMRMLVolumeNode *volumeNode;
   for ( int layer=0; layer < 3; layer++ )
     {

@@ -168,12 +168,16 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
                                             unsigned long event, 
                                             void *callData)
 {
-  // ignore node events that aren't volumes or slice nodes
+  // ignore node events that aren't the observed volume or slice node
   if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-    if (node == 0 || !(node->IsA("vtkMRMLVolumeNode") || node->IsA("vtkMRMLSliceNode")))
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    if (node == 0 ||
+        (volumeNode && volumeNode != this->VolumeNode) ||
+        (sliceNode && sliceNode != this->SliceNode))
       {
       return;
       }
@@ -198,8 +202,9 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       this->Modified();
       return;
     }
+  // TBD: make sure UpdateTransforms() is not called for not a good reason as it
+  // is expensive.
   this->UpdateTransforms();
-  
 }
 
 //----------------------------------------------------------------------------
