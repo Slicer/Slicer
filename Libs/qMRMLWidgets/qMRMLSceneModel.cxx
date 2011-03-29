@@ -884,8 +884,14 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
 
   int connectionsRemoved = qvtkDisconnect(node, vtkCommand::ModifiedEvent,
                                           this, SLOT(onMRMLNodeModified(vtkObject*)));
-  Q_ASSERT((!d->ListenNodeModifiedEvent && connectionsRemoved == 0) ||
-           (d->ListenNodeModifiedEvent && connectionsRemoved == 1));
+
+  Q_ASSERT_X((!d->ListenNodeModifiedEvent && connectionsRemoved == 0) ||
+             (d->ListenNodeModifiedEvent && connectionsRemoved == 1),
+             "qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved()",
+             "A node has been removed from the scene but the scene model has "
+             "never been notified it has been added in the first place. Maybe"
+             " vtkMRMLScene::AddNodeNoNotify() has been used instead of "
+             "vtkMRMLScene::AddNode");
 
   // TODO: can be fasten by browsing the tree only once
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,

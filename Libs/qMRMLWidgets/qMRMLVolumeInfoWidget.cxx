@@ -391,10 +391,9 @@ void qMRMLVolumeInfoWidget::setLabelMap(bool enable)
     {
     displayNode = vtkMRMLScalarVolumeDisplayNode::New();
     }
-  scalarNode->GetScene()->AddNodeNoNotify(displayNode);
   displayNode->SetAndObserveColorNodeID (enable ? "vtkMRMLColorTableNodeLabels" : "vtkMRMLColorTableNodeGrey");
+  scalarNode->GetScene()->AddNode(displayNode);
   scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
   scalarNode->SetLabelMap( enable );
-  //scalarNode->GetScene()->Edited();
   displayNode->Delete();
 }

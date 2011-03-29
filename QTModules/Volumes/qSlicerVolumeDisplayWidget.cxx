@@ -85,9 +85,9 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
       }
     activeWidget->setMRMLScene(0);
     }
+  // QStackWidget::setCurrentWidget(0) is not supported
   if (displayWidget)
     {
-    // QStackWidget->setCurrentWidget(0) is not supported
     q->setCurrentWidget(displayWidget);
     }
 }
@@ -112,16 +112,14 @@ qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget()
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
    Q_D(qSlicerVolumeDisplayWidget);
-//  qvtkDisconnect(0, vtkCommand::ModifiedEvent,
-//                 this, SLOT(updateFromMRML(vtkObject*)));
+   qvtkDisconnect(0, vtkCommand::ModifiedEvent,
+                  this, SLOT(updateFromMRML(vtkObject*)));
 
   if (volumeNode == 0)
     {
     d->setCurrentDisplayWidget(0);
     return;
     }
-//  qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
-//              this, SLOT(updateFromMRML(vtkObject*)));
 
   vtkMRMLScene* scene = volumeNode->GetScene();
   vtkMRMLScalarVolumeNode* scalarVolumeNode =
@@ -136,22 +134,26 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     }
    else if (scalarVolumeNode && !scalarVolumeNode->GetLabelMap())
     {
+    qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
+              this, SLOT(updateFromMRML(vtkObject*)));
     d->ScalarVolumeDisplayWidget->setMRMLScene(scene);
     d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     d->setCurrentDisplayWidget(d->ScalarVolumeDisplayWidget);
     }
   else if (scalarVolumeNode && scalarVolumeNode->GetLabelMap())
     {
+    qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
+              this, SLOT(updateFromMRML(vtkObject*)));
     d->LabelMapVolumeDisplayWidget->setMRMLScene(scene);
     d->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     d->setCurrentDisplayWidget(d->LabelMapVolumeDisplayWidget);
     }
 }
-/*
+
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::updateFromMRML(vtkObject* volume)
 {
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volume);
   this->setMRMLVolumeNode(volumeNode);
 }
-*/
+
