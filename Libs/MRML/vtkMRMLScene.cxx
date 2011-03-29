@@ -2785,6 +2785,10 @@ vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::CopyNodeReferences(vtkMRMLScene *scene)
 {
+  if (!scene)
+    {
+    return;
+    }
   this->ReferencedIDChanges = scene->ReferencedIDChanges;
   this->ReferencedIDs = scene->ReferencedIDs;
   this->ReferencingNodes = scene->ReferencingNodes;

@@ -20,8 +20,8 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkImageData.h"
 
-class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
 {
@@ -51,6 +51,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
   /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SceneSnapshot";};
+//  virtual const char* GetNodeTagName() {return "SceneView";};
 
   /// 
   /// Updates scene nodes 
@@ -84,8 +85,10 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
 
   ///
   /// The attached screenshot of this sceneView
-  void SetScreenshot(vtkImageData* screenshot) {this->m_ScreenShot = screenshot;}
-  vtkImageData* GetScreenshot() {return this->m_ScreenShot;}
+  vtkSetObjectMacro(m_ScreenShot, vtkImageData);
+  void SetScreenshot(vtkImageData *screenshot) { this->Setm_ScreenShot(screenshot); };
+  vtkGetObjectMacro(m_ScreenShot, vtkImageData);
+  vtkImageData* GetScreenshot() { return this->Getm_ScreenShot(); };
 
   ///
   /// The screenshot type of this sceneView

@@ -79,6 +79,10 @@ vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
     this->Nodes->GetCurrentScene()->RemoveAllItems();
     this->Nodes->Delete();
     }
+  if (this->m_ScreenShot)
+    {
+    this->m_ScreenShot->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -199,13 +203,14 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
     pngReader->SetFileName(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
     pngReader->Update();
 
-    vtkImageData* imageData = vtkImageData::New();
+    vtkImageData *imageData = vtkImageData::New();
     imageData->DeepCopy(pngReader->GetOutput());
 
     this->SetScreenshot(imageData);
     this->GetScreenshot()->SetSpacing(1.0, 1.0, 1.0);
     this->GetScreenshot()->SetOrigin(0.0, 0.0, 0.0);
     this->GetScreenshot()->SetScalarType(VTK_UNSIGNED_CHAR);
+    imageData->Delete();
     }
 
 
@@ -275,9 +280,16 @@ void vtkMRMLSceneViewNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::UpdateScene(vtkMRMLScene *scene)
 {
-  this->Nodes->CopyNodeReferences(scene);
-  this->Nodes->UpdateNodeChangedIDs();
-  this->Nodes->UpdateNodeReferences();
+  if (!scene)
+    {
+    return;
+    }
+  if (this->Nodes)
+    {
+    this->Nodes->CopyNodeReferences(scene);
+    this->Nodes->UpdateNodeChangedIDs();
+    this->Nodes->UpdateNodeReferences();
+    }
   this->UpdateSnapshotScene(this->Nodes);
 }
 //----------------------------------------------------------------------------
