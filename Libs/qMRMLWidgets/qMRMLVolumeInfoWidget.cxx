@@ -85,7 +85,14 @@ void qMRMLVolumeInfoWidgetPrivate::init()
                    q, SLOT(setImageOrigin(double*)));
   QObject::connect(this->CenterVolumePushButton, SIGNAL(clicked()),
                    q, SLOT(center()));
-  QObject::connect(this->ScanOrderComboBox, SIGNAL(currentIndexChanged(int)),
+  // setScanOrder is dangerous, it can loose orientation information because
+  // ComputeScanOrderFromIJKToRAS is not the exact opposite of
+  // ComputeIJKToRASFromScanOrder
+  // As an example, ComputeScanOrderFromIJKToRAS returns IS for a trace of -1 1 -1
+  // but ComputeIJKToRASFromScanOrder -1 -1 -1 for IS
+  // So we should change the scan order only if the user decides to (activated
+  // is fired only when the user selects an item)
+  QObject::connect(this->ScanOrderComboBox, SIGNAL(activated(int)),
                    q, SLOT(setScanOrder(int)));
   QObject::connect(this->NumberOfScalarsSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(setNumberOfScalars(int)));
@@ -336,6 +343,12 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
     this->isCentered(),
     IJKToRAS))
     {
+    if (!this->isCentered())
+      {
+      IJKToRAS->SetElement(0, 3, d->VolumeNode->GetOrigin()[0]);
+      IJKToRAS->SetElement(1, 3, d->VolumeNode->GetOrigin()[1]);
+      IJKToRAS->SetElement(2, 3, d->VolumeNode->GetOrigin()[2]);
+      }
     d->VolumeNode->SetIJKToRASMatrix(IJKToRAS);
     }
 }
