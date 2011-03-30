@@ -7,7 +7,7 @@
 #include <QUrl>
 
 // CTK includes
-#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 // SlicerQ includes
 #include "qSlicerCoreIOManager.h"
@@ -23,6 +23,7 @@ class qSlicerIOManagerPrivate;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
 {
   Q_OBJECT;
+  QVTK_OBJECT;
 public:
   typedef qSlicerCoreIOManager Superclass;
   qSlicerIOManager(QObject* parent = 0);
@@ -45,6 +46,12 @@ public:
   /// fileType (only 1 dialog per filetype) is overriden.
   void registerDialog(qSlicerFileDialog* dialog);
 
+  ///
+  /// Displays a progress dialog if it takes too long to load
+  Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
+                                     const qSlicerIO::IOProperties& parameters,
+                                     vtkCollection* loadedNodes = 0);
+
 public slots:
 
   void openScreenshotDialog();
@@ -60,6 +67,9 @@ public slots:
   inline bool openAddFiducialDialog();
   inline bool openAddDTIDialog();
   inline bool openSaveDataDialog();
+
+protected slots:
+  void refreshProgressDialog();
 
 protected:
   friend class qSlicerFileDialog;

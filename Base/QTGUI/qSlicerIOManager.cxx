@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMap>
+#include <QProgressDialog>
 #include <QString>
 #include <QUrl>
 
@@ -44,6 +45,7 @@ public:
   QMap<int, qSlicerFileDialog*> WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
+  QWeakPointer<QProgressDialog>       ProgressDialog;
 };
 
 //-----------------------------------------------------------------------------
@@ -173,6 +175,51 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
              dialog->action() == qSlicerFileDialog::Write);
     }
   dialog->setParent(this);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
+                                 const qSlicerIO::IOProperties& parameters,
+                                 vtkCollection* loadedNodes)
+{
+  Q_D(qSlicerIOManager);
+  QProgressDialog progress(
+    "Loading file " + parameters.value("fileName").toString() + " ...",
+    "Cancel",
+    0, 100);
+  progress.setCancelButton(0); // we don't support cancelling while loading
+  progress.setWindowModality(Qt::WindowModal);
+  progress.setMinimumDuration(1000);
+  progress.setValue(0);
+  progress.setValue(25);
+  d->ProgressDialog = QWeakPointer<QProgressDialog>(&progress);
+
+  qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
+              vtkMRMLScene::NodeAddedEvent,
+              this, SLOT(refreshProgressDialog()));
+
+  bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes);
+  // Closes the progress dialog
+  progress.setValue(100);
+
+  qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
+                 vtkMRMLScene::NodeAddedEvent,
+                 this, SLOT(refreshProgressDialog()));
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::refreshProgressDialog()
+{
+  Q_D(qSlicerIOManager);
+  if (!d->ProgressDialog.isNull())
+    {
+    int progress = d->ProgressDialog.data()->value();
+    d->ProgressDialog.data()->setValue(
+      qBound(50, ++progress, 99) );
+    }
+  // Give time to process graphic events including the progress dialog if needed
+  qApp->processEvents();
 }
 
 //-----------------------------------------------------------------------------

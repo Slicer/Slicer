@@ -33,7 +33,6 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 class vtkMRMLNode;
-class vtkMRMLScene;
 class vtkCollection;
 class qSlicerCoreIOManagerPrivate;
 
@@ -74,9 +73,9 @@ public:
   /// \note Make also sure the case of parameter name is respected
   ///
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType
-  Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType,
-                             const qSlicerIO::IOProperties& parameters,
-                             vtkCollection* loadedNodes = 0);
+  Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
+                                     const qSlicerIO::IOProperties& parameters,
+                                     vtkCollection* loadedNodes = 0);
 
 
   /// Load a list of node corresponding to \a fileType and return the first loaded node.
