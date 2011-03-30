@@ -649,6 +649,10 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
       }
     else if (attributeName == "type")
       {
+      if (className == "vtkMRMLSliceNode")
+        {
+        continue;
+        }
       for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
         {
         std::string viewType =
