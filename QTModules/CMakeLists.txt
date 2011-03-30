@@ -46,13 +46,13 @@ SET(qtmodules
   #Measurements
   Models
   #FiberBundles
-  SceneViews  
+  SceneViews
   SlicerWelcome
   TractographyDisplay
   TractographyFiducialSeeding
   Volumes
   CropVolume
-  VolumeRendering
+  #VolumeRendering
   )
 
 FOREACH(module ${qtmodules})
