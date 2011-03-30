@@ -55,7 +55,7 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceModelDisplayableManagerTest1(int argc, char* argv[])
+int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Renderer, RenderWindow and Interactor
   vtkRenderer* rr = vtkRenderer::New();
