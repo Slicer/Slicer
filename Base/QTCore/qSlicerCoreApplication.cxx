@@ -412,17 +412,13 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   d->ErrorLogModel->setLogEntryGrouping(true);
   d->ErrorLogModel->setTerminalOutputEnabled(true);
 
-  QList<ctkErrorLogAbstractMessageHandler*> handlers;
-  handlers << new ctkErrorLogFDMessageHandler
-           << new ctkErrorLogQtMessageHandler
-           << new ctkErrorLogStreamMessageHandler
-           << new ctkITKErrorLogMessageHandler
-           << new ctkVTKErrorLogMessageHandler;
-  foreach(ctkErrorLogAbstractMessageHandler* h, handlers)
-    {
-    //this->errorLogModel()->registerMsgHandler(h);
-    //this->errorLogModel()->setMsgHandlerEnabled(h->handlerName(), true);
-    }
+  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
+  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
+  d->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
+  d->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
+
+  d->ErrorLogModel->setAllMsgHandlerEnabled(true);
   
   // Create MRML scene
   VTK_CREATE(vtkMRMLScene, scene);
@@ -500,17 +496,6 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
-
-  // Disable all message handlers if a 'display...AndExit' option is True
-  if (options->displayHelpAndExit() ||
-      options->displayVersionAndExit() ||
-      options->displayProgramPathAndExit() ||
-      options->displayHomePathAndExit() ||
-      options->displaySettingsPathAndExit()
-      )
-    {
-    this->errorLogModel()->disableAllMsgHandler();
-    }
 
   if (options->displayHelpAndExit())
     {
