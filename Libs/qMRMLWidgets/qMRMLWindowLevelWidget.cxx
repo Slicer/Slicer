@@ -383,9 +383,11 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
     }
 
   this->qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateDisplayNode()));
+                      this, SLOT(updateWidgetFromMRMLVolumeNode()));
 
   d->VolumeNode = volumeNode;
+  this->updateWidgetFromMRMLVolumeNode();
+
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
     double range[2];
@@ -395,7 +397,6 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
     range[1] = qMax(900., range[1]);
     this->setRange(range[0], range[1]);
     }
-  this->updateDisplayNode();
 }
 
 // --------------------------------------------------------------------------
@@ -425,11 +426,21 @@ void qMRMLWindowLevelWidget::setMaximumValue(double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateDisplayNode()
+void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
 {
   Q_D(qMRMLWindowLevelWidget);
-  
-  this->setMRMLVolumeDisplayNode( d->VolumeNode ? 
+  if (d->VolumeNode && d->VolumeNode->GetImageData())
+    {
+    double range[2];
+    d->VolumeNode->GetImageData()->GetScalarRange(range);
+    // we don't want RangeWidget to fire any signal because we don't have
+    // a display node correctly set here (it's done )
+    d->RangeWidget->blockSignals(true);
+    d->RangeWidget->setRange(range[0] - qAbs(range[1] - range[0]),
+                             range[1] + qAbs(range[1] - range[0]));
+    d->RangeWidget->blockSignals(false);
+    }
+  this->setMRMLVolumeDisplayNode( d->VolumeNode ?
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
       d->VolumeNode->GetVolumeDisplayNode()) :
     0);
@@ -444,13 +455,6 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     return;
     }
 
-  if (d->VolumeNode && d->VolumeNode->GetImageData())
-    {
-    double range[2];
-    d->VolumeNode->GetImageData()->GetScalarRange(range);
-    d->RangeWidget->setRange(range[0] - qAbs(range[1] - range[0]),
-                             range[1] + qAbs(range[1] - range[0]));
-    }
   double window = d->VolumeDisplayNode->GetWindow();
   double level = d->VolumeDisplayNode->GetLevel();
   d->WindowSpinBox->setValue(window);
