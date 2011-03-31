@@ -45,9 +45,16 @@ QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qSlicerWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qSlicerWidget\" \
-          name=\"SlicerWidget\">\n"
-          "</widget>\n";
+  return "<widget class=\"qSlicerWidget\" name=\"SlicerWidget\">\n"
+    " <property name=\"geometry\">\n"
+    "  <rect>\n"
+    "   <x>0</x>\n"
+    "   <y>0</y>\n"
+    "   <width>100</width>\n"
+    "   <height>100</height>\n"
+    "  </rect>\n"
+    " </property>\n"
+    "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
