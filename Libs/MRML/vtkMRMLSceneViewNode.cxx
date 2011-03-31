@@ -532,7 +532,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   for (n=0; n<nnodesScene; n++)
     {
     node = this->Scene->GetNthNode(n);
-    assert(node->GetScene() != this->Scene);
+    assert(node->GetScene() == this->Scene);
     }
 #endif
 }
