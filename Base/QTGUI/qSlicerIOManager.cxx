@@ -88,9 +88,12 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   this->ProgressDialog->setMinimumDuration(1000);
   this->ProgressDialog->setValue(0);
 
-  q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
-                 vtkMRMLScene::NodeAddedEvent,
-                 q, SLOT(refreshProgressDialog()));
+  if (steps == 1)
+    {
+    q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
+                    vtkMRMLScene::NodeAddedEvent,
+                    q, SLOT(updateProgressDialog()));
+    }
   return true;
 }
 
@@ -106,7 +109,7 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
 
   q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
                     vtkMRMLScene::NodeAddedEvent,
-                    q, SLOT(refreshProgressDialog()));
+                    q, SLOT(updateProgressDialog()));
   delete this->ProgressDialog;
   this->ProgressDialog = 0;
 }
@@ -262,6 +265,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
                             fileProperties["fileType"].toInt()),
                           fileProperties, loadedNodes)
       && res;
+    this->updateProgressDialog();
     if (d->ProgressDialog->wasCanceled())
       {
       res = false;
@@ -278,7 +282,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerIOManager::refreshProgressDialog()
+void qSlicerIOManager::updateProgressDialog()
 {
   Q_D(qSlicerIOManager);
   if (!d->ProgressDialog)

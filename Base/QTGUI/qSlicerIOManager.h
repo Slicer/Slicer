@@ -77,7 +77,7 @@ public slots:
   inline bool openSaveDataDialog();
 
 protected slots:
-  void refreshProgressDialog();
+  void updateProgressDialog();
 
 protected:
   friend class qSlicerFileDialog;
