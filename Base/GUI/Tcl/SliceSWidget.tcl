@@ -252,7 +252,11 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   # set the image size based on the size of renderer zero.
   #
   ###set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
-  set pokedRenderer [$_renderWidget GetRenderer]  
+  #set pokedRenderer [$_renderWidget GetRenderer]
+  # Get the last renderer since the first corresponds to the overlay
+  set nr [$_renderWidget GetNumberOfRenderers]
+  set renderedid [expr $nr - 1]
+  set pokedRenderer [$_renderWidget GetNthRenderer $renderedid]
   foreach {w h} [$pokedRenderer GetSize] {}
 
 
@@ -389,7 +393,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
 
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
-  set renderer0 [$_renderWidget GetRenderer]
+  #set renderer0 [$_renderWidget GetRenderer]
+  # Get the last renderer since the first corresponds to the overlay
+  set nr [$_renderWidget GetNumberOfRenderers]
+  set renderedid [expr $nr - 1]
+  set renderer0 [$_renderWidget GetNthRenderer $renderedid]
   
   foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
 
