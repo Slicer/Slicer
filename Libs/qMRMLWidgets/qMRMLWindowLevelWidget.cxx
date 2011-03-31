@@ -91,9 +91,10 @@ void qMRMLWindowLevelWidgetPrivate::init()
   q->setEnabled(this->VolumeDisplayNode != 0);
 
   this->RangeWidget = new ctkRangeWidget(0);
-  //this->RangeWidget->setAttribute(Qt::WA_ShowWithoutActivating);
-  //this->RangeWidget->setWindowFlags(Qt::Popup);
-  this->RangeWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+  // you can't use the flag Qt::Popup as it automatically closes when there is
+  // a click outside of the rangewidget
+  this->RangeWidget->setWindowFlags(Qt::ToolTip);
+  //this->RangeWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
   this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
   this->RangeWidget->setRange(-1000000., 1000000.);
   //this->RangeWidget->resize(this->RangeWidget->sizeHint());
@@ -102,7 +103,7 @@ void qMRMLWindowLevelWidgetPrivate::init()
   this->RangeWidget->installEventFilter(q);
   QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double, double)),
                    q, SLOT(setRange(double, double)));
-  
+  this->RangeWidget->setToolTip("Set the range boundaries of Window/Level to control large numbers or allow fine tuning");
   this->RangeWidgetAnimation = new QPropertyAnimation(this->RangeWidget, "geometry");
   this->RangeWidgetAnimation->setDuration(100);
 }
@@ -130,6 +131,7 @@ void qMRMLWindowLevelWidgetPrivate::openRangeWidget()
 void qMRMLWindowLevelWidgetPrivate::closeRangeWidget()
 {
   Q_Q(qMRMLWindowLevelWidget);
+
   if (!this->RangeWidget->isVisible())
     {
     return;
@@ -590,8 +592,17 @@ void qMRMLWindowLevelWidget::leaveEvent(QEvent* event)
 void qMRMLWindowLevelWidget::hideRangeWidget()
 {
   Q_D(qMRMLWindowLevelWidget);
-  if (d->RangeWidget->underMouse() ||
-      this->underMouse())
+/*
+  QPoint topLeft = QPoint(this->geometry().left(), this->geometry().top());
+  QPoint bottomRight = QPoint(this->geometry().right(), this->geometry().bottom());
+  topLeft = this->parentWidget() ? this->parentWidget()->mapToGlobal(topLeft) : topLeft;
+  bottomRight = this->parentWidget() ? this->parentWidget()->mapToGlobal(bottomRight) : bottomRight;
+  QRect geom(topLeft, bottomRight);
+*/
+  if (d->RangeWidget->underMouse()
+      || this->underMouse()
+//      ||geom.contains(QCursor::pos())
+  )
     {
     return;
     }
