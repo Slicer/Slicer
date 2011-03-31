@@ -149,7 +149,9 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     fileDialog.setSidebarUrls(ioManager->favorites());
     }
   // warning: we are responsible for the memory of options
-  qSlicerIOOptions* options = ioManager->fileOptions(this->fileType());
+  QStringList fileDescriptions = ioManager->fileDescriptions(this->fileType());
+  Q_ASSERT(fileDescriptions.count());
+  qSlicerIOOptions* options = ioManager->fileOptions(fileDescriptions[0]);
   qSlicerIOOptionsWidget* optionsWidget =
     dynamic_cast<qSlicerIOOptionsWidget*>(options);
   // options is not necessary a qSLicerIOOptionsWidget (for the case of

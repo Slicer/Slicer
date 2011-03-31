@@ -139,9 +139,9 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     }
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  QList<qSlicerIO::IOFileType> fileTypes =
-    coreIOManager->fileTypes(file.absoluteFilePath());
-  if (fileTypes.isEmpty())
+  QStringList fileDescriptions =
+    coreIOManager->fileDescriptions(file.absoluteFilePath());
+  if (fileDescriptions.isEmpty())
     {
     return;
     }
@@ -157,20 +157,20 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   this->FileWidget->setItem(row, FileColumn, fileItem);
   // Description
   QComboBox* descriptionComboBox = new QComboBox(this->FileWidget);
-  foreach(const qSlicerIO::IOFileType fileType, fileTypes)
+  foreach(const QString& fileDescription, fileDescriptions)
     {
-    descriptionComboBox->addItem(coreIOManager->fileDescription(fileType),
-                                 fileType);
+    descriptionComboBox->addItem(fileDescription,
+                                 QVariant(coreIOManager->fileTypeFromDescription(fileDescription)));
     }
   // adding items to the combobox automatically selects the first item
   // let's select none, connect the signal and then selecting the first will
   // automatically create the option widget
   descriptionComboBox->setCurrentIndex(-1);
-  QObject::connect(descriptionComboBox, SIGNAL(currentIndexChanged(int)),
-                   this, SLOT(onFileTypeChanged()));
+  QObject::connect(descriptionComboBox, SIGNAL(currentIndexChanged(QString)),
+                   this, SLOT(onFileTypeChanged(QString)));
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
-    this->FileWidget->setSortingEnabled(sortingEnabled);
+  this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -205,6 +205,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
       logger.trace(QString("selectedFiles - row: %1 - UnChecked").arg(row));
       continue;
       }
+    // TBD: fileType is not good enough to describe what reader to use
     properties["fileType"] = descriptionComboBox->itemData(
       descriptionComboBox->currentIndex()).toInt();
     qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
@@ -224,7 +225,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDataDialogPrivate::onFileTypeChanged()
+void qSlicerDataDialogPrivate::onFileTypeChanged(const QString& description)
 {
   QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
   if (!comboBox)
@@ -248,20 +249,17 @@ void qSlicerDataDialogPrivate::onFileTypeChanged()
     return;
     }
   QString fileName = this->FileWidget->item(row, FileColumn)->text();
-  qSlicerIO::IOFileType fileType =
-    static_cast<qSlicerIO::IOFileType>(
-      comboBox->itemData(comboBox->currentIndex()).toInt());
-  this->setFileOptions(row, fileName, fileType);
+  this->setFileOptions(row, fileName, description);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::setFileOptions(
-  int row, const QString& fileName, const qSlicerIO::IOFileType& fileType)
+  int row, const QString& fileName, const QString& fileDescription)
 {
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   // Options
-  qSlicerIOOptions* options = coreIOManager->fileOptions(fileType);
+  qSlicerIOOptions* options = coreIOManager->fileOptions(fileDescription);
   qSlicerIOOptionsWidget* optionsWidget =
     dynamic_cast<qSlicerIOOptionsWidget*>(options);
   if (optionsWidget)
@@ -360,13 +358,12 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     return res;
     }
   QList<qSlicerIO::IOProperties> files = d->selectedFiles();
-  foreach(qSlicerIO::IOProperties properties, files)
+  for (int i = 0; i < files.count(); ++i)
     {
-    properties.unite(readerProperties);
-    res = qSlicerCoreApplication::application()->coreIOManager()
-      ->loadNodes(static_cast<qSlicerIO::IOFileType>(
-        properties["fileType"].toInt()), properties) || res;
+    files[i].unite(readerProperties);
     }
+  res = qSlicerCoreApplication::application()->coreIOManager()
+    ->loadNodes(files);
   d->reset();
   return res;
 }

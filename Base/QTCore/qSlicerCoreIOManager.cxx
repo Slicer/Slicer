@@ -152,6 +152,14 @@ qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)con
 }
 
 //-----------------------------------------------------------------------------
+qSlicerIO::IOFileType qSlicerCoreIOManager
+::fileTypeFromDescription(const QString& fileDescription)const
+{
+  qSlicerIO* reader = this->io(fileDescription);
+  return reader ? reader->fileType() : qSlicerIO::NoFile;
+}
+
+//-----------------------------------------------------------------------------
 QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& fileName)const
 {
   Q_D(const qSlicerCoreIOManager);
@@ -161,13 +169,6 @@ QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& file
     matchingFileTypes << matchingReader->fileType();
     }
   return matchingFileTypes;
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::fileDescription(const QString& fileName)const
-{
-  QStringList matchingDescriptions = this->fileDescriptions(fileName);
-  return matchingDescriptions.count() ? matchingDescriptions[0] : tr("Unknown");
 }
 
 //-----------------------------------------------------------------------------
@@ -181,30 +182,32 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
     }
   return matchingDescriptions;
 }
+
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::fileDescription(const qSlicerIO::IOFileType& fileType)const
+QStringList qSlicerCoreIOManager::fileDescriptions(const qSlicerIO::IOFileType fileType)const
 {
-  QList<qSlicerIO*> readers = this->ios(fileType);
-  if (readers.isEmpty())
+  QStringList matchingDescriptions;
+  foreach(qSlicerIO* reader, this->ios())
     {
-    return tr("Unknown");
+    if (reader->fileType() == fileType)
+      {
+      matchingDescriptions << reader->description();
+      }
     }
-  // not sure to know what it means to have more reader per type
-  Q_ASSERT(readers.count() == 1);
-  return readers[0]->description();
+  return matchingDescriptions;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const qSlicerIO::IOFileType& fileType)const
+qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescription)const
 {
   Q_D(const qSlicerCoreIOManager);
-  QList<qSlicerIO*> readers = this->ios(fileType);
-  if (readers.isEmpty())
+  qSlicerIO* reader = this->io(readerDescription);
+  if (!reader)
     {
     return 0;
     }
-  readers[0]->setMRMLScene(d->currentScene());
-  return readers[0]->options();
+  reader->setMRMLScene(d->currentScene());
+  return reader->options();
 }
 
 //-----------------------------------------------------------------------------
@@ -352,6 +355,21 @@ QList<qSlicerIO*> qSlicerCoreIOManager::ios(const qSlicerIO::IOFileType& fileTyp
   return res;
 }
 
+//-----------------------------------------------------------------------------
+qSlicerIO* qSlicerCoreIOManager::io(const QString& ioDescription)const
+{
+  Q_D(const qSlicerCoreIOManager);
+  QList<qSlicerIO*> res;
+  foreach(qSlicerIO* io, d->Readers)
+    {
+    if (io->description() == ioDescription)
+      {
+      res << io;
+      }
+    }
+  Q_ASSERT(res.count() < 2);
+  return res.count() ? res[0] : 0;
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreIOManager::registerIO(qSlicerIO* io)

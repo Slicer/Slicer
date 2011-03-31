@@ -46,19 +46,15 @@ public:
   /// Return the file type associated with a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;
   Q_INVOKABLE QList<qSlicerIO::IOFileType> fileTypes(const QString& file)const;
+  Q_INVOKABLE qSlicerIO::IOFileType fileTypeFromDescription(const QString& fileDescription)const;
 
   /// Return the file description associated with a \a file
   /// Usually the description is a short text of one or two words
-  QString fileDescription(const QString& file)const;
   QStringList fileDescriptions(const QString& file)const;
-  QString fileDescription(const qSlicerIO::IOFileType& fileType)const;
-
-  /// Return the file option associated with a \a file
-  /// Convenient function to retrieve the first matching reader option
-  inline qSlicerIOOptions* fileOptions(const QString& file)const;
+  QStringList fileDescriptions(const qSlicerIO::IOFileType fileType)const;
 
   /// Return the file option associated with a \a file type
-  qSlicerIOOptions* fileOptions(const qSlicerIO::IOFileType& fileType)const;
+  qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
@@ -111,7 +107,8 @@ protected:
 
   /// Returns the list of registered readers or writers associated with \a fileType
   QList<qSlicerIO*> ios(const qSlicerIO::IOFileType& fileType)const;
-  
+  qSlicerIO* io(const QString& ioDescription)const;
+
 protected:
   QScopedPointer<qSlicerCoreIOManagerPrivate> d_ptr;
 
@@ -119,11 +116,6 @@ private:
   Q_DECLARE_PRIVATE(qSlicerCoreIOManager);
   Q_DISABLE_COPY(qSlicerCoreIOManager);
 };
-
-qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& file)const
-{
-  return this->fileOptions(this->fileType(file));
-}
 
 #endif
 

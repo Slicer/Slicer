@@ -64,7 +64,9 @@ public:
 
   typedef QMap<QString, QVariant> IOProperties;
 
+  /// Unique name of a reader
   virtual QString description()const = 0;
+  /// Multiple readers can share the same file type
   virtual IOFileType fileType()const = 0;
   /// Return  a list of the supported extensions. Please read
   /// QFileDialog::nameFilters for the allowed formats

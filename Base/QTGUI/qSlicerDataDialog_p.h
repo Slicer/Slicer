@@ -31,7 +31,7 @@ public slots:
   void showOptions(bool);
 
 protected slots:
-  void onFileTypeChanged();
+  void onFileTypeChanged(const QString&);
 
 //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
 //  void updateCheckBoxHeader(int row, int column);
@@ -47,7 +47,7 @@ protected:
   // addFile doesn't resize the columns to contents (as it might be a bit too
   // time consuming if you do it for every file added).
   void addFile(const QFileInfo& file);
-  void setFileOptions(int row, const QString& filePath, const qSlicerIO::IOFileType& fileType);
+  void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
 };
 
 
