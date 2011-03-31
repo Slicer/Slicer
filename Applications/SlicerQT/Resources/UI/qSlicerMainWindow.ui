@@ -375,7 +375,7 @@
      <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
    </property>
    <property name="text">
-    <string>Save Scene</string>
+    <string>Save</string>
    </property>
    <property name="toolTip">
     <string>Display the &quot;Save Data&quot; widget, which offers many options for saving a scene and/or individual datasets.</string>
