@@ -679,6 +679,8 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
                    d, SLOT(updateWidgetsFromViewNodes()));
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneRestoredEvent,
+                   d, SLOT(updateWidgetsFromViewNodes()));
   // We want to connect the logic to the scene first (before the following
   // qvtkReconnect); that way, anytime the scene is modified, the logic
   // callbacks will be called  before qMRMLLayoutManager and keep the scene

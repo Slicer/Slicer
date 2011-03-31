@@ -59,9 +59,22 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
 {
-  Q_Q(qMRMLThreeDViewsControllerWidget);
+  //Q_Q(qMRMLThreeDViewsControllerWidget);
+  //q->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
 
-  q->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
+  // Enable buttons
+  QList<QWidget*> widgets;
+  widgets << this->AxesWidget
+      << this->PitchButton << this->RollButton << this->YawButton
+      << this->CenterButton << this->OrthoButton << this->VisibilityButton
+      << this->ScreenshotButton /*<< this->SceneViewButton << this->SelectSceneViewMenuButton*/
+      << this->ZoomInButton << this->ZoomOutButton << this->StereoButton
+      << this->RockButton << this->SpinButton;
+  foreach(QWidget* w, widgets)
+    {
+    w->setEnabled(this->ActiveMRMLThreeDViewNode != 0);
+    }
+
   if (!this->ActiveMRMLThreeDViewNode)
     {
     return;
@@ -408,19 +421,6 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
 
   d->NavigationView->setMRMLViewNode(newActiveMRMLThreeDViewNode);
   d->updateWidgetFromMRML();
-
-  // Enable buttons
-  QList<QWidget*> widgets;
-  widgets << d->AxesWidget
-      << d->PitchButton << d->RollButton << d->YawButton
-      << d->CenterButton << d->OrthoButton << d->VisibilityButton
-      << d->ScreenshotButton /*<< d->SceneViewButton << d->SelectSceneViewMenuButton*/
-      << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
-      << d->RockButton << d->SpinButton;
-  foreach(QWidget* w, widgets)
-    {
-    w->setEnabled(newActiveMRMLThreeDViewNode != 0);
-    }
 }
 
 // --------------------------------------------------------------------------
