@@ -31,6 +31,7 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 
 // STD includes
+#include <cassert>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -382,6 +383,9 @@ void vtkMRMLSceneViewNode::StoreScene()
       //--- Try deleting copy after collection has a reference to it,
       //--- in order to eliminate debug leaks..
       newNode->Delete();
+
+      // sanity check
+      assert(newNode->GetScene() == this->Nodes);
       }
     }
 }
@@ -521,6 +525,16 @@ void vtkMRMLSceneViewNode::RestoreScene()
   this->Scene->IsRestoring--;
 
   this->Scene->InvokeEvent(vtkMRMLScene::SceneRestoredEvent, this);
+
+#ifndef NDEBUG
+  // sanity checks
+  nnodesScene = this->Scene->GetNumberOfNodes();
+  for (n=0; n<nnodesScene; n++)
+    {
+    node = this->Scene->GetNthNode(n);
+    assert(node->GetScene() != this->Scene)
+    }
+#endif
 }
 
 //----------------------------------------------------------------------------

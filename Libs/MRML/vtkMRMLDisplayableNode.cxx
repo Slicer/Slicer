@@ -125,10 +125,6 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
   vtkMRMLDisplayableNode *node = (vtkMRMLDisplayableNode *) anode;
   this->SetAndObserveDisplayNodeID(NULL);
 
-  // at this point, we need the scene
-  // so copy it from node to this object
-  this->SetScene(node->GetScene());
-
   int ndnodes = node->GetNumberOfDisplayNodes();
   for (int i=0; i<ndnodes; i++)
     {
