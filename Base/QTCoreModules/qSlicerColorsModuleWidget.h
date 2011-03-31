@@ -41,7 +41,9 @@ public:
   qSlicerColorsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerColorsModuleWidget();
 
+
 public slots:
+  void setCurrentColorNode(vtkMRMLNode*);
   void setNumberOfColors(int);
   void setLookupTableRange(double min, double max);
   void copyCurrentColorNode();

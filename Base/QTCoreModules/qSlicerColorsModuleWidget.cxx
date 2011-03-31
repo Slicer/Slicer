@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QInputDialog>
+#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -133,12 +134,6 @@ void qSlicerColorsModuleWidget::setup()
   QIcon copyIcon = this->style()->standardIcon(QStyle::SP_FileDialogNewFolder);
   d->CopyColorNodeButton->setIcon(copyIcon);
 
-  qMRMLThreeDView* threeDView = qSlicerApplication::application()->layoutManager()->threeDView(0);
-  vtkRenderer* activeRenderer = qSlicerApplication::application()->layoutManager()->activeThreeDRenderer();
-  if (activeRenderer)
-    {
-    d->ScalarBarWidget->SetInteractor(activeRenderer->GetRenderWindow()->GetInteractor());
-    }
   d->VTKScalarBar->setScalarBarWidget(d->ScalarBarWidget);
 
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -149,8 +144,18 @@ void qSlicerColorsModuleWidget::setup()
           this, SLOT(setLookupTableRange(double, double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
-  connect(d->VTKScalarBar, SIGNAL(modified()), threeDView, SLOT(scheduleRender()));
-  
+
+  if (qSlicerApplication::application()->layoutManager())
+    {
+    qMRMLThreeDView* threeDView = qSlicerApplication::application()->layoutManager()->threeDView(0);
+    vtkRenderer* activeRenderer = qSlicerApplication::application()->layoutManager()->activeThreeDRenderer();
+    if (activeRenderer)
+      {
+      d->ScalarBarWidget->SetInteractor(activeRenderer->GetRenderWindow()->GetInteractor());
+      }
+    connect(d->VTKScalarBar, SIGNAL(modified()), threeDView, SLOT(scheduleRender()));
+    }
+
   // Select the default color node
   d->setDefaultColorNode();
 }
@@ -161,6 +166,13 @@ void qSlicerColorsModuleWidget::setMRMLScene(vtkMRMLScene *scene)
   Q_D(qSlicerColorsModuleWidget);
   this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
   d->setDefaultColorNode();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModuleWidget::setCurrentColorNode(vtkMRMLNode* colorNode)
+{
+  Q_D(qSlicerColorsModuleWidget);
+  d->ColorTableComboBox->setCurrentNode(colorNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -180,6 +192,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
   d->NumberOfColorsSpinBox->setEnabled(
     colorNode->GetType() == vtkMRMLColorTableNode::User);
   d->NumberOfColorsSpinBox->setValue(colorNode->GetNumberOfColors());
+
   Q_ASSERT(d->NumberOfColorsSpinBox->value() == colorNode->GetNumberOfColors());
 
   if (colorNode->GetLookupTable())
@@ -233,6 +246,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
   Q_D(qSlicerColorsModuleWidget);
   vtkMRMLColorNode* currentNode = vtkMRMLColorNode::SafeDownCast(
     d->ColorTableComboBox->currentNode());
+  Q_ASSERT(currentNode);
   QString newColorName = QInputDialog::getText(
     this, "Transfer function name",
     "Please select a new name for the transfer function to create from copy",

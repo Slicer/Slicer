@@ -420,8 +420,8 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
            << new ctkVTKErrorLogMessageHandler;
   foreach(ctkErrorLogAbstractMessageHandler* h, handlers)
     {
-    this->errorLogModel()->registerMsgHandler(h);
-    this->errorLogModel()->setMsgHandlerEnabled(h->handlerName(), true);
+    //this->errorLogModel()->registerMsgHandler(h);
+    //this->errorLogModel()->setMsgHandlerEnabled(h->handlerName(), true);
     }
   
   // Create MRML scene
