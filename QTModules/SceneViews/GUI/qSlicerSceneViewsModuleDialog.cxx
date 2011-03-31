@@ -285,7 +285,26 @@ void qSlicerSceneViewsModuleDialog::reset()
   restoreButton->setVisible(false);
 
   // we want a default name which is easily overwritable by just typing
-  this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("SceneView"));
+  QString name = this->ui.nameEdit->text();
+  if (name.size() > 0)
+    {
+    // check to see if it's an already used name for a node (redrawing the
+    // dialog causes it to reset and calling GetUniqueNameByString increments
+    // the number each time).
+    QByteArray nameBytes = name.toLatin1();
+    vtkCollection *col = this->m_Logic->GetMRMLScene()->GetNodesByName(nameBytes.data());
+    if (col->GetNumberOfItems() > 0)
+      {
+      // get a new unique name
+      this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("SceneView"));
+      }
+    col->RemoveAllItems();
+    col->Delete();
+    }
+  else
+    {
+    this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("SceneView"));
+    }
   this->ui.nameEdit->setFocus();
   this->ui.nameEdit->selectAll();
 
