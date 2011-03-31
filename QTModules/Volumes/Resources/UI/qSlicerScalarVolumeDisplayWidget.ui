@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>346</height>
+    <width>331</width>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,7 +48,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="WindowLevelPresetsLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -91,7 +91,7 @@
          <string>CT-Bone</string>
         </property>
         <property name="text">
-         <string>CT-bone</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
@@ -117,7 +117,7 @@
          <string>CT-Air</string>
         </property>
         <property name="text">
-         <string>CT-air</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
@@ -143,7 +143,7 @@
          <string>PET</string>
         </property>
         <property name="text">
-         <string>PET</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
@@ -175,7 +175,7 @@
          <string>CT-Abdomen</string>
         </property>
         <property name="text">
-         <string>CT-abd</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
@@ -207,7 +207,7 @@
          <string>CT-Brain</string>
         </property>
         <property name="text">
-         <string>CT-brain</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
@@ -239,7 +239,7 @@
          <string>CT-Lung</string>
         </property>
         <property name="text">
-         <string>CT-lung</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../qSlicerVolumesModule.qrc">
