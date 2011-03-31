@@ -181,9 +181,6 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   procNode->SetSingletonTag(procNodeID);
   if (this->GetMRMLScene()->GetNodeByID(procNodeID) == NULL)
     {
-    this->GetMRMLScene()->RequestNodeID(procNode, procNodeID);        
-    this->GetMRMLScene()->AddNode(procNode);
-    
     vtkColorTransferFunction *func = procNode->GetColorTransferFunction();
     int minValue =  VTK_INT_MIN;
     int maxValue =  VTK_INT_MAX;
@@ -199,6 +196,10 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
       m += (int)(spacing);
       }
     func->Build();
+    //procNode->SetNamesFromColors();
+    // Add the node after it has been initialized
+    this->GetMRMLScene()->RequestNodeID(procNode, procNodeID);
+    this->GetMRMLScene()->AddNode(procNode);
     }
 
   delete [] procNodeID;

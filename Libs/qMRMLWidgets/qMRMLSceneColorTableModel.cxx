@@ -115,16 +115,14 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
   Q_ASSERT(node);
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
   vtkMRMLProceduralColorNode* proceduralNode = vtkMRMLProceduralColorNode::SafeDownCast(node);
-  if ((node->GetLookupTable() &&
-       colorGradient.MTime >= node->GetLookupTable()->GetMTime()) ||
-      (proceduralNode &&
-       colorGradient.MTime >= proceduralNode->GetColorTransferFunction()->GetMTime()))
+  if (!node->GetScalarsToColors() ||
+      colorGradient.MTime >= node->GetScalarsToColors()->GetMTime())
     {
     return false;
     }
   //qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
   ctkTransferFunction* lt = 0;
-  if (node->GetLookupTable())
+  if (vtkLookupTable::SafeDownCast(node->GetScalarsToColors()))
     {
     lt = new ctkVTKLookupTable(node->GetLookupTable());
     }
@@ -137,11 +135,13 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
   delete lt;
   //qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
   colorGradient.Gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  QPainter pixmapPainter(&colorGradient.Pixmap);
+  QPainter pixmapPainter;
+  pixmapPainter.begin(&colorGradient.Pixmap);
   pixmapPainter.fillRect(0,0,
                          colorGradient.Pixmap.width(),
                          colorGradient.Pixmap.height(),
                          colorGradient.Gradient);
+  pixmapPainter.end();
   QGradientStops gradientStops = colorGradient.Gradient.stops();
   int count = gradientStops.count();
   for (int i = 0; i < count; ++i)
@@ -149,7 +149,6 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
     gradientStops[i].second.setAlpha(64);
     }
   colorGradient.Gradient.setStops(gradientStops);
-  colorGradient.MTime = node->GetLookupTable() ? node->GetLookupTable()->GetMTime()
-    : proceduralNode->GetColorTransferFunction()->GetMTime();
+  colorGradient.MTime = node->GetScalarsToColors()->GetMTime();
   return true;
 }

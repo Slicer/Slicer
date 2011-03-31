@@ -179,6 +179,7 @@ bool vtkMRMLProceduralColorNode::SetNameFromColor(int index)
 //---------------------------------------------------------------------------
 int vtkMRMLProceduralColorNode::GetNumberOfColors()
 {
+  /*
   double *range = this->ColorTransferFunction->GetRange();
   if (!range)
     {
@@ -191,6 +192,8 @@ int vtkMRMLProceduralColorNode::GetNumberOfColors()
     numPoints++;
     }
   return numPoints;
+  */
+  return this->ColorTransferFunction->GetSize();
 }
 
 //---------------------------------------------------------------------------
@@ -201,12 +204,21 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double* color)
     vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetNumberOfColors() << ", call SetNumberOfColors" << endl);
     return false;
     }
+  /*
   double *range = this->ColorTransferFunction->GetRange();
   if (!range)
     {
     return false;
     }
   this->ColorTransferFunction->GetColor(range[0] + entry, color);
+  color[3] = this->ColorTransferFunction->GetAlpha();
+  return true;
+  */
+  double val[6];
+  this->ColorTransferFunction->GetNodeValue(entry, val);
+  color[0] = val[1]; // r
+  color[1] = val[2]; // g
+  color[2] = val[3]; // b
   color[3] = this->ColorTransferFunction->GetAlpha();
   return true;
 }

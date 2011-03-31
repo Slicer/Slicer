@@ -1411,9 +1411,9 @@ void vtkMRMLColorTableNode::SetType(int type)
       {
       int size = 255;
       
-      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0);
-      this->GetLookupTable()->SetRange(0, size);
       this->GetLookupTable()->SetNumberOfTableValues(size + 1);
+      this->GetLookupTable()->SetTableRange(0, size);
+      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0);
       for (int i = 1; i <= size; i++)
         {
         // table values have to be 0-1
