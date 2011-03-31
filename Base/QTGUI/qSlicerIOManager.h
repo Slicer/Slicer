@@ -48,10 +48,18 @@ public:
 
   ///
   /// Displays a progress dialog if it takes too long to load
+  /// There is no way to know in advance how long the loading will take, so the
+  /// progress dialog listens to the scene and increment the progress anytime
+  /// a node is added.
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
                                      vtkCollection* loadedNodes = 0);
-
+  ///
+  /// If you have a list of nodes to load, it's best to use this function
+  /// in order to have a unique progress dialog instead of multiple ones.
+  /// It internally calls loadNodes() for each file.
+  virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
+                         vtkCollection* loadedNodes = 0);
 public slots:
 
   void openScreenshotDialog();

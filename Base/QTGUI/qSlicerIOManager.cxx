@@ -38,6 +38,9 @@ public:
   qSlicerIOManagerPrivate(qSlicerIOManager& object);
 
   void init();
+  /// Return true if a dialog is created, false if a dialog already existed
+  bool startProgressDialog(int steps = 1);
+  void stopProgressDialog();
 
   QStringList                   History;
   QList<QUrl>                   Favorites;
@@ -45,13 +48,14 @@ public:
   QMap<int, qSlicerFileDialog*> WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
-  QWeakPointer<QProgressDialog>       ProgressDialog;
+  QProgressDialog*              ProgressDialog;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
   :q_ptr(&object)
 {
+  this->ProgressDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -64,6 +68,49 @@ void qSlicerIOManagerPrivate::init()
   q->registerDialog(new qSlicerModelsDialog(q));
   q->registerDialog(new qSlicerSaveDataDialog(q));
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
+{
+  Q_Q(qSlicerIOManager);
+  if (this->ProgressDialog)
+    {
+    return false;
+    }
+  int max = (steps != 1 ? steps : 100);
+  this->ProgressDialog = new QProgressDialog("Loading file... ", "Cancel", 0, max);
+  if (steps == 1)
+    {
+    // We only support cancelling a load action if we can have control over it
+    this->ProgressDialog->setCancelButton(0);
+    }
+  this->ProgressDialog->setWindowModality(Qt::WindowModal);
+  this->ProgressDialog->setMinimumDuration(1000);
+  this->ProgressDialog->setValue(0);
+
+  q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
+                 vtkMRMLScene::NodeAddedEvent,
+                 q, SLOT(refreshProgressDialog()));
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManagerPrivate::stopProgressDialog()
+{
+  Q_Q(qSlicerIOManager);
+  if (!this->ProgressDialog)
+    {
+    return;
+    }
+  this->ProgressDialog->setValue(this->ProgressDialog->maximum());
+
+  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
+                    vtkMRMLScene::NodeAddedEvent,
+                    q, SLOT(refreshProgressDialog()));
+  delete this->ProgressDialog;
+  this->ProgressDialog = 0;
+}
+
 
 //-----------------------------------------------------------------------------
 qSlicerIOManager::qSlicerIOManager(QObject* _parent):Superclass(_parent)
@@ -183,28 +230,50 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
                                  vtkCollection* loadedNodes)
 {
   Q_D(qSlicerIOManager);
-  QProgressDialog progress(
-    "Loading file " + parameters.value("fileName").toString() + " ...",
-    "Cancel",
-    0, 100);
-  progress.setCancelButton(0); // we don't support cancelling while loading
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(1000);
-  progress.setValue(0);
-  progress.setValue(25);
-  d->ProgressDialog = QWeakPointer<QProgressDialog>(&progress);
 
-  qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
-              vtkMRMLScene::NodeAddedEvent,
-              this, SLOT(refreshProgressDialog()));
+  bool needStop = d->startProgressDialog(1);
+  d->ProgressDialog->setLabelText(
+    "Loading file " + parameters.value("fileName").toString() + " ...");
+  if (needStop)
+    {
+    d->ProgressDialog->setValue(25);
+    }
 
   bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes);
-  // Closes the progress dialog
-  progress.setValue(100);
+  if (needStop)
+    {
+    d->stopProgressDialog();
+    }
+  return res;
+}
 
-  qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
-                 vtkMRMLScene::NodeAddedEvent,
-                 this, SLOT(refreshProgressDialog()));
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
+                                 vtkCollection* loadedNodes)
+{
+  Q_D(qSlicerIOManager);
+
+  bool needStop = d->startProgressDialog(files.count());
+  bool res = true;
+  foreach(qSlicerIO::IOProperties fileProperties, files)
+    {
+    res = this->loadNodes(static_cast<qSlicerIO::IOFileType>(
+                            fileProperties["fileType"].toInt()),
+                          fileProperties, loadedNodes)
+      && res;
+    if (d->ProgressDialog->wasCanceled())
+      {
+      res = false;
+      break;
+      }
+    }
+
+  if (needStop)
+    {
+    d->stopProgressDialog();
+    }
+
   return res;
 }
 
@@ -212,14 +281,15 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 void qSlicerIOManager::refreshProgressDialog()
 {
   Q_D(qSlicerIOManager);
-  if (!d->ProgressDialog.isNull())
+  if (!d->ProgressDialog)
     {
-    int progress = d->ProgressDialog.data()->value();
-    d->ProgressDialog.data()->setValue(
-      qBound(50, ++progress, 99) );
+    return;
     }
+  int progress = d->ProgressDialog->value();
+  d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1) );
   // Give time to process graphic events including the progress dialog if needed
-  qApp->processEvents();
+  // TBD: Not needed ?
+  //qApp->processEvents();
 }
 
 //-----------------------------------------------------------------------------

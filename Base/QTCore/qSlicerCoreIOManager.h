@@ -77,6 +77,10 @@ public:
                                      const qSlicerIO::IOProperties& parameters,
                                      vtkCollection* loadedNodes = 0);
 
+  /// Utility function that loads a bunch of files. The "fileType" attribute should
+  /// in the parameter map for each node to load.
+  virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
+                         vtkCollection* loadedNodes = 0);
 
   /// Load a list of node corresponding to \a fileType and return the first loaded node.
   /// This function is provided for convenience and is equivalent to call loadNodes

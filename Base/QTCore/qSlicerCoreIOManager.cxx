@@ -263,6 +263,21 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
+                                     vtkCollection* loadedNodes)
+{
+  bool res = true;
+  foreach(qSlicerIO::IOProperties fileProperties, files)
+    {
+    res = this->loadNodes(static_cast<qSlicerIO::IOFileType>(
+                            fileProperties["fileType"].toInt()),
+                          fileProperties, loadedNodes)
+      && res;
+    }
+  return res;
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
   qSlicerIO::IOFileType fileType,
   const qSlicerIO::IOProperties& parameters)
