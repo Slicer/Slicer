@@ -436,8 +436,8 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
     // we don't want RangeWidget to fire any signal because we don't have
     // a display node correctly set here (it's done )
     d->RangeWidget->blockSignals(true);
-    d->RangeWidget->setRange(range[0] - qAbs(range[1] - range[0]),
-                             range[1] + qAbs(range[1] - range[0]));
+    double margin = 2. * qAbs(range[1] - range[0]);
+    d->RangeWidget->setRange(range[0] - margin, range[1] + margin);
     d->RangeWidget->blockSignals(false);
     }
   this->setMRMLVolumeDisplayNode( d->VolumeNode ?
