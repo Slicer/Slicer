@@ -19,10 +19,10 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerMainWindowCore.h"
 
 // STD includes
@@ -30,7 +30,7 @@
 
 int qSlicerMainWindowCoreTest1(int argc, char * argv[] )
 {
-  QApplication app(argc, argv);
+  qSlicerCoreApplication app(argc, argv);
 
   qSlicerMainWindowCore mainWindow;
 

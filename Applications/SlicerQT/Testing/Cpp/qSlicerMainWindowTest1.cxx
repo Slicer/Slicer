@@ -23,6 +23,7 @@
 #include <QTimer>
 
 // SlicerQt includes
+#include "qSlicerApplication.h"
 #include "qSlicerMainWindow.h"
 
 // STD includes
@@ -30,7 +31,7 @@
 
 int qSlicerMainWindowTest1(int argc, char * argv[] )
 {
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
 
   qSlicerMainWindow mainWindow;
   mainWindow.show();

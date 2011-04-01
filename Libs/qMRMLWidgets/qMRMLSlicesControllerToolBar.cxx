@@ -492,8 +492,11 @@ void qMRMLSlicesControllerToolBar::setMRMLScene(vtkMRMLScene* scene)
   qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::SceneImportedEvent,
                 this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
   d->MRMLScene = scene;
-  this->onMRMLSceneChanged(d->MRMLScene, reinterpret_cast<void*>(this),
-                           vtkMRMLScene::SceneImportedEvent, 0);
+  if (d->MRMLScene)
+    {
+    this->onMRMLSceneChanged(d->MRMLScene, reinterpret_cast<void*>(this),
+                             vtkMRMLScene::SceneImportedEvent, 0);
+    }
 }
 
 // --------------------------------------------------------------------------

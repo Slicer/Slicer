@@ -32,6 +32,7 @@
 
 class qSlicerAboutDialogPrivate;
 
+/// Pre-request that a qSlicerApplication has been instanced
 class Q_SLICERQT_EXPORT qSlicerAboutDialog :
   public QDialog
 {

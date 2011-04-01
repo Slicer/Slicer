@@ -24,13 +24,14 @@
 
 // SlicerQt includes
 #include "qSlicerAboutDialog.h"
+#include "qSlicerApplication.h"
 
 // STD includes
 #include <cstdlib>
 
 int qSlicerAboutDialogTest1(int argc, char * argv[] )
 {
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
 
   qSlicerAboutDialog about;
 

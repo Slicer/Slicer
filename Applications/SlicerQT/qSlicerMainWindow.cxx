@@ -98,7 +98,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Update the list of modules when they are loaded
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
-  Q_ASSERT(moduleManager);
+  if (!moduleManager)
+    {
+    qWarning() << "No module manager is created.";
+    }
 
   QObject::connect(moduleManager,
                    SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
@@ -524,7 +527,7 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
   Q_D(qSlicerMainWindow);
 
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
-  if (scene->GetIsUpdating())
+  if (scene && scene->GetIsUpdating())
     {
     return;
     }

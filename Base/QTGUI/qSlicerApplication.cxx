@@ -226,8 +226,11 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
 {
   Q_D(qSlicerApplication);
   d->LayoutManager = layoutManager;
-  this->mrmlApplicationLogic()->SetSliceLogics(
-    layoutManager? layoutManager->mrmlSliceLogics() : 0);
+  if (this->mrmlApplicationLogic())
+    {
+    this->mrmlApplicationLogic()->SetSliceLogics(
+      layoutManager? layoutManager->mrmlSliceLogics() : 0);
+    }
 }
 
 //-----------------------------------------------------------------------------
