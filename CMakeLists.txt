@@ -265,10 +265,25 @@ SET(Slicer_VERSION_MINOR "0")
 
 IF(NOT Slicer_VERSION_PATCH)
   SET(Slicer_VERSION_PATCH "gamma")
-  IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
-    Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
-    SET(Slicer_VERSION_PATCH "gamma-r${Slicer_WC_REVISION}")
-  ENDIF()
+  
+  IF(WIN32)
+    EXECUTE_PROCESS(COMMAND cmd /c "date /T"
+      RESULT_VARIABLE getdate_result
+      OUTPUT_VARIABLE date
+      ERROR_VARIABLE date
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    STRING(REGEX REPLACE ".*(..)/(..)/(....)" "\\3-\\1-\\2" date ${date})
+  ELSEIF(UNIX)
+    EXECUTE_PROCESS(COMMAND date "+%Y-%m-%d"
+      RESULT_VARIABLE getdate_result
+      OUTPUT_VARIABLE date
+      ERROR_VARIABLE date
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  ELSE()
+    SET(${date} 000000)
+  ENDIF (WIN32)
+
+  SET(Slicer_VERSION_PATCH "gamma-${date}")
 ENDIF()
 
 
