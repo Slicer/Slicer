@@ -264,8 +264,8 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 
   int disabledModify = d->VolumeDisplayNode->StartModify();
   d->VolumeDisplayNode->SetWindowLevel(window, level);
-  if (oldWindow != d->VolumeDisplayNode->GetWindow() ||
-      oldLevel  != d->VolumeDisplayNode->GetLevel())
+  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) ||
+      !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
     {
     if (this->autoWindowLevel() == qMRMLWindowLevelWidget::Auto)
       {
@@ -387,16 +387,6 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
 
   d->VolumeNode = volumeNode;
   this->updateWidgetFromMRMLVolumeNode();
-
-  if (d->VolumeNode && d->VolumeNode->GetImageData())
-    {
-    double range[2];
-    d->VolumeNode->GetImageData()->GetScalarRange(range);
-    //give us some space
-    range[0] = qMin(-1200., range[0]);
-    range[1] = qMax(900., range[1]);
-    this->setRange(range[0], range[1]);
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -429,6 +419,9 @@ void qMRMLWindowLevelWidget::setMaximumValue(double max)
 void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
 {
   Q_D(qMRMLWindowLevelWidget);
+  vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      d->VolumeNode->GetVolumeDisplayNode()) :0;
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
     double range[2];
@@ -436,14 +429,57 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
     // we don't want RangeWidget to fire any signal because we don't have
     // a display node correctly set here (it's done )
     d->RangeWidget->blockSignals(true);
-    double margin = 2. * qAbs(range[1] - range[0]);
-    d->RangeWidget->setRange(range[0] - margin, range[1] + margin);
+    double interval = qAbs(range[1] - range[0]);
+    double min, max;
+    if (interval < 10.)
+      {
+      min = qMin(-10., range[0] - 2.*interval);
+      max = qMax(10., range[1] + 2.*interval);
+      }
+    else
+      {
+      min = qMin(-1200., range[0] - 2.*interval);
+      max = qMax(900., range[1] + 2.*interval);
+      }
+    d->RangeWidget->setRange(min, max);
     d->RangeWidget->blockSignals(false);
+    if (d->VolumeDisplayNode != newVolumeDisplayNode)
+      {
+      if (interval < 10.)
+        {
+        d->WindowLevelRangeSlider->setSingleStep(0.01);
+        d->WindowSpinBox->setSingleStep(0.01);
+        d->LevelSpinBox->setSingleStep(0.01);
+        d->MinSpinBox->setSingleStep(0.01);
+        d->MaxSpinBox->setSingleStep(0.01);
+        d->RangeWidget->setSingleStep(0.01);
+        
+        //give us some space
+        range[0] = qMin(-5., range[0]);
+        range[1] = qMax(5., range[1]);
+        }
+      else
+        {
+        //give us some space
+        range[0] = qMin(-600., range[0]);
+        range[1] = qMax(450., range[1]);
+        }
+      d->WindowLevelRangeSlider->blockSignals(true);
+      d->WindowSpinBox->blockSignals(true);
+      d->LevelSpinBox->blockSignals(true);
+      d->MinSpinBox->blockSignals(true);
+      d->MaxSpinBox->blockSignals(true);
+      d->RangeWidget->blockSignals(true);
+      this->setRange(range[0], range[1]);
+      d->WindowLevelRangeSlider->blockSignals(false);
+      d->WindowSpinBox->blockSignals(false);
+      d->LevelSpinBox->blockSignals(false);
+      d->MinSpinBox->blockSignals(false);
+      d->MaxSpinBox->blockSignals(false);
+      d->RangeWidget->blockSignals(false);
+      }
     }
-  this->setMRMLVolumeDisplayNode( d->VolumeNode ?
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      d->VolumeNode->GetVolumeDisplayNode()) :
-    0);
+  this->setMRMLVolumeDisplayNode( newVolumeDisplayNode );
 }
 
 // --------------------------------------------------------------------------
