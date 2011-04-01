@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
   // Create python console
   Q_ASSERT(qSlicerApplication::application()->pythonManager());
   ctkPythonConsole pythonConsole;
-  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());\
+  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
 
   QStringList autocompletePreferenceList;
   autocompletePreferenceList
