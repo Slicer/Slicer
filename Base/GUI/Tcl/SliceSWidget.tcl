@@ -945,6 +945,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
 
+  # check arguments - if they are, for example, nan, just bail out
+  foreach v "r a s" {
+    if { [scan [set $v] %g scanvar] == 0 } {
+      return
+    }
+  }
+
   $this updateStatusAnnotation $r $a $s
     
   foreach {x y z} [$this rasToXYZ "$r $a $s"] {}
@@ -1092,6 +1099,13 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
 }
 
 itcl::body SliceSWidget::updateAnnotation {r a s} {
+
+  # check arguments - if they are, for example, nan, just bail out
+  foreach v "r a s" {
+    if { [scan [set $v] %g scanvar] == 0 } {
+      return
+    }
+  }
 
   $this updateStatusAnnotation $r $a $s
 
