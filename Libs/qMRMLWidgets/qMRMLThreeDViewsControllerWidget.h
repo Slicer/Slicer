@@ -57,6 +57,7 @@ public slots:
 
 signals:
 
+  void screenshotButtonClicked();
   void sceneViewButtonClicked();
 
 protected:

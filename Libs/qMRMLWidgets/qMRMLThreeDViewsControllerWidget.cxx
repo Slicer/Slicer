@@ -384,6 +384,7 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
   Q_D(qMRMLThreeDViewsControllerWidget);
   d->setupUi(this);
 
+  connect(d->ScreenshotButton, SIGNAL(clicked()), SIGNAL(screenshotButtonClicked()));
   connect(d->SceneViewButton, SIGNAL(clicked()), SIGNAL(sceneViewButtonClicked()));
 }
 
