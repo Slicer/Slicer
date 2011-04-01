@@ -136,7 +136,7 @@ void qSlicerVolumeRenderingModuleWidget::setup()
 
   d->ViewLabel = new QLabel(this);
   d->ViewLabel->setObjectName(QString::fromUtf8("ViewLabel"));
-  d->ViewLabel->setText(QString::fromUtf8("VolumeProperty"));
+  d->ViewLabel->setText(QString::fromUtf8("View"));
   d->gridLayout->addWidget(d->ViewLabel, 4, 0, 1, 1);
 
   d->ViewNodeSelector = new qMRMLNodeComboBox(this);

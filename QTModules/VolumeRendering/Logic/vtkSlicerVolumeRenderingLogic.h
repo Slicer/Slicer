@@ -83,18 +83,19 @@ public:
   // Create VolumeRenderingScenarioNode
   vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
 
-  void UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  void UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  void UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  void SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
+  vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 
 protected:
   vtkSlicerVolumeRenderingLogic();

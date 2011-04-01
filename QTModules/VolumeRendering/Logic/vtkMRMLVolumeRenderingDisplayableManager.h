@@ -119,8 +119,6 @@ public:
    */
   int SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
 
-  vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
-
   /* return values:
    * 0: mapper not supported
    * 1: mapper supported
@@ -206,11 +204,6 @@ protected:
   void AddVolumeToViewers();
   void InitializePipelineFromParametersNode();
   int ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void UpdatePipelineByROI();
-  void UpdatePipelineByDisplayNode();
-  void UpdatePipelineByVolumeProperty();
-  void UpdatePipelineByFgVolumeProperty();
-  void UpdatePipelineByParameterNode();
 
 };
 

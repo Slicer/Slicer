@@ -23,18 +23,15 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 #include <vtkMRMLVolumeHeaderlessStorageNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLDiffusionWeightedVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
-#include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
-#include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
-#include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
-#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
+#include <vtkMRMLVolumePropertyStorageNode.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx> 
+#include <itksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -106,7 +103,7 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
-void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   if (vspNode == 0 || vspNode->GetVolumeNode() == 0 || vspNode->GetVolumePropertyNode() == 0)
   {
@@ -137,7 +134,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyScalarRange(vtkMRMLVolum
   functionOpacity->AdjustRange(rangeNew);
 }
 
-void vtkSlicerVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkSlicerVolumeRenderingLogic::UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData();
   vtkVolumeProperty *prop = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
@@ -160,8 +157,12 @@ void vtkSlicerVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVol
   functionOpacity->AdjustRange(rangeNew);
 }
 
-void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
+  if (vspNode == NULL || (!vspNode->GetFollowVolumeDisplayNode()) )
+  {
+    return;
+  }
   double range[2];
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   input->GetScalarRange(range);
@@ -263,14 +264,14 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVol
   prop->SetSpecularPower(40);
 }
 
-void vtkSlicerVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
+void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  this->UpdateVolumePropertyScalarRange(vspNode);
+  this->UpdateTranferFunctionRangeFromImage(vspNode);
   //this->SetupHistograms(vspNode);
 
   if (vspNode->GetFollowVolumeDisplayNode())
   {
-    this->UpdateVolumePropertyByDisplayNode(vspNode);
+    this->UpdateVolumePropertyFromDisplayNode(vspNode);
   }
   else if (vspNode->GetVolumeNode())
   {
@@ -369,13 +370,20 @@ void vtkSlicerVolumeRenderingLogic::SetupVolumePropertyFromImageData(vtkMRMLVolu
     {
     //TODO label map
     } 
-  }
+  else if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
+    {
+      double scalarRange[2];
+      vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+      vspNode->SetDepthPeelingThreshold(scalarRange[0]);
 
+      vspNode->SetThreshold(scalarRange);
+    }
+  }
 }
 
 void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  this->UpdateFgVolumePropertyScalarRange(vspNode);
+  this->UpdateFgTranferFunctionRangeFromImage(vspNode);
   //this->SetupHistogramsFg(vspNode);
 
   if (vspNode->GetFgVolumeNode())
@@ -475,7 +483,15 @@ void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVo
     else if (vlNode)
     {
     //TODO label map
-    } 
+    }
+    else if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
+    {
+        double scalarRange[2];
+        vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+        vspNode->SetDepthPeelingThreshold(scalarRange[0]);
+
+        vspNode->SetThreshold(scalarRange);
+    }
   }
 }
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode)
@@ -564,6 +580,96 @@ void vtkSlicerVolumeRenderingLogic::UpdateParametersNodeFromVolumeNode(
   }
   volumeRenderingParametersNode->SetAndObserveROINodeID((*roiNode)->GetID());
 
- 
+  this->UpdateVolumePropertyFromImageData(volumeRenderingParametersNode);
+
+  this->FitROIToVolume(volumeRenderingParametersNode);
 }
 
+//----------------------------------------------------------------------------
+
+vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile (const char* filename)
+{
+  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+  vtkMRMLVolumePropertyStorageNode *vpStorageNode = vtkMRMLVolumePropertyStorageNode::New();
+
+  // check for local or remote files
+  int useURI = 0; // false;
+  if (this->GetMRMLScene()->GetCacheManager() != NULL)
+    {
+    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    }
+  
+  itksys_stl::string name;
+  const char *localFile;
+  if (useURI)
+    {
+    vpStorageNode->SetURI(filename);
+     // reset filename to the local file name
+    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    }
+  else
+    {
+    vpStorageNode->SetFileName(filename);
+    localFile = filename;
+    }
+  const itksys_stl::string fname(localFile);
+  // the model name is based on the file name (itksys call should work even if
+  // file is not on disk yet)
+  name = itksys::SystemTools::GetFilenameName(fname);
+  
+  // check to see which node can read this type of file
+  if (!vpStorageNode->SupportedFileType(name.c_str()))
+    {
+    vpStorageNode->Delete();
+    vpStorageNode = NULL;
+    }
+
+  /* don't read just yet, need to add to the scene first for remote reading
+  if (vpStorageNode->ReadData(vpNode) != 0)
+    {
+    storageNode = vpStorageNode;
+    }
+  */
+  if (vpStorageNode != NULL)
+    {
+    std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+
+    vpNode->SetName(uname.c_str());
+
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    vpNode->SetScene(this->GetMRMLScene());
+    vpStorageNode->SetScene(this->GetMRMLScene());
+
+    this->GetMRMLScene()->AddNodeNoNotify(vpStorageNode);  
+    vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
+
+    this->GetMRMLScene()->AddNode(vpNode);  
+
+    //this->Modified();  
+
+    // the scene points to it still
+    vpNode->Delete();
+
+    // now set up the reading
+    int retval = vpStorageNode->ReadData(vpNode);
+    if (retval != 1)
+      {
+      vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
+      this->GetMRMLScene()->RemoveNode(vpNode);
+      this->GetMRMLScene()->RemoveNode(vpStorageNode);
+      vpNode = NULL;
+      }
+    }
+  else
+    {
+    vtkDebugMacro("Couldn't read file, returning null model node: " << filename);
+    vpNode->Delete();
+    vpNode = NULL;
+    }
+  if (vpStorageNode)
+    {
+    vpStorageNode->Delete();
+    }
+  return vpNode;  
+}
