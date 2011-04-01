@@ -22,9 +22,20 @@
 #include <QApplication>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
+// CTK includes
+#ifdef Slicer_USE_PYTHONQT
+# include <ctkPythonConsole.h>
+#endif
+
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerMainWindow.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+#endif
 
 // STD includes
 #include <cstdlib>
@@ -37,6 +48,14 @@ int qSlicerMainWindowTest1(int argc, char * argv[] )
 
   qSlicerMainWindow mainWindow;
   mainWindow.show();
+
+#ifdef Slicer_USE_PYTHONQT
+  // Create python console
+  Q_ASSERT(qSlicerApplication::application()->pythonManager());
+  ctkPythonConsole pythonConsole;
+  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
+  pythonConsole.resize(600, 280);
+#endif
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
