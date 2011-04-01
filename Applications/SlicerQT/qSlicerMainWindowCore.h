@@ -38,7 +38,7 @@ class Q_SLICERQT_EXPORT qSlicerMainWindowCore : public QObject
   
 public:
   typedef QObject Superclass;
-  qSlicerMainWindowCore(qSlicerMainWindow *parent);
+  qSlicerMainWindowCore(qSlicerMainWindow *parent = 0);
   virtual ~qSlicerMainWindowCore();
 
 public slots: 

@@ -1,6 +1,9 @@
 SET(KIT SlicerQT)
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qSlicerAboutDialogTest1.cxx
+  qSlicerMainWindowCoreTest1.cxx
+  qSlicerMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
@@ -21,5 +24,8 @@ ENDMACRO()
 # Add Tests
 #
 
+SIMPLE_TEST( qSlicerAboutDialogTest1 )
+SIMPLE_TEST( qSlicerMainWindowCoreTest1 )
+SIMPLE_TEST( qSlicerMainWindowTest1 )
 SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 
