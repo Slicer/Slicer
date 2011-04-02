@@ -32,6 +32,7 @@
 #include <vtkMRMLEMSWorkingDataNode.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentDefinePreprocessingStepPrivate :
                                                        public Ui_qSlicerEMSegmentDefinePreprocessingStep
 {

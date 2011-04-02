@@ -24,6 +24,7 @@
 #include "ui_qSlicerEMSegmentDefineAtlasStep.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentDefineAtlasStepPrivate: public Ui_qSlicerEMSegmentDefineAtlasStep
 {
 public:

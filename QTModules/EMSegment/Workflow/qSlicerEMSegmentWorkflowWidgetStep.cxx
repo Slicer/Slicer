@@ -37,6 +37,7 @@
 #include <vtkEMSegmentMRMLManager.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentWorkflowWidgetStepPrivate
 {
 public:

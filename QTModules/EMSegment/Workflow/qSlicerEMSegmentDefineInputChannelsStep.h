@@ -32,6 +32,7 @@
 
 class qSlicerEMSegmentDefineInputChannelsStepPrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineInputChannelsStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT

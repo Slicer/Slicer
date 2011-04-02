@@ -24,6 +24,7 @@
 #include "ui_qSlicerEMSegmentEditNodeBasedParametersStep.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentEditNodeBasedParametersStepPrivate: public Ui_qSlicerEMSegmentEditNodeBasedParametersStep
 {
 public:

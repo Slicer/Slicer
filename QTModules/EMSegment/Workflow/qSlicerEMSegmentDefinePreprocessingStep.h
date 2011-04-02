@@ -32,6 +32,7 @@
 
 class qSlicerEMSegmentDefinePreprocessingStepPrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefinePreprocessingStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT

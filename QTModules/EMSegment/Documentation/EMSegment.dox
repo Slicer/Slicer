@@ -1,0 +1,7 @@
+/**
+\defgroup Slicer_QtModules_EMSegment EMSegment
+\ingroup Slicer_QtModules
+This module is designed for users who perform atlas based medical image segmentation. The module can be operated in two modes:
+An advanced mode that allows users to parameterize the tool to specific segmentation tasks and a simple mode which is designed for users who would like to apply the predefined parameterization to new data with a minimal amount of user interaction.
+
+*/

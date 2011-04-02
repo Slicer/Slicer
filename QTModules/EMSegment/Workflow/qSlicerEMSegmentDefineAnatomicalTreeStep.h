@@ -32,6 +32,7 @@
 
 class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineAnatomicalTreeStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT

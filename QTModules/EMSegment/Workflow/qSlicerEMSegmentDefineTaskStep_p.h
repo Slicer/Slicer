@@ -39,6 +39,7 @@ class QString;
 class vtkMRMLNode;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentDefineTaskStepPrivate : public QObject,
                                               public Ui_qSlicerEMSegmentDefineTaskStep
 {

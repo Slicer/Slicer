@@ -32,6 +32,7 @@
 
 class qSlicerEMSegmentDefineTaskStepPrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineTaskStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT

@@ -51,6 +51,7 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentInputChannelListWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerEMSegmentInputChannelListWidget);

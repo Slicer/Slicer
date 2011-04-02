@@ -32,6 +32,7 @@
 #include "ui_qSlicerEMSegmentEditRegistrationParametersStep.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentEditRegistrationParametersStepPrivate : public QObject,
                                                               public Ui_qSlicerEMSegmentEditRegistrationParametersStep
 {

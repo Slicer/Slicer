@@ -48,6 +48,7 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentDefineInputChannelsStepPrivate : public Ui_qSlicerEMSegmentDefineInputChannelsStep
 {
 public:

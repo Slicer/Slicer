@@ -27,6 +27,7 @@
 #include "ctkWorkflowWidgetStep.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate: public Ui_qSlicerEMSegmentDefineAnatomicalTreeStep
 {
 public:

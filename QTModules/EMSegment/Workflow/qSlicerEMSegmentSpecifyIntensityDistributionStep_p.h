@@ -35,6 +35,7 @@
 class vtkMRMLNode;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate : public QObject,
                                                                 public Ui_qSlicerEMSegmentSpecifyIntensityDistributionStep
 {

@@ -32,6 +32,7 @@
 
 class qSlicerEMSegmentSegmentationLogicStepPrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentSegmentationLogicStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT

@@ -48,6 +48,7 @@ class vtkMRMLNode;
 class vtkMRMLColorTableNode;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
     public QObject,
     public Ui_qSlicerEMSegmentAnatomicalTreeWidget

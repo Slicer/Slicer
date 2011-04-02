@@ -46,6 +46,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentGraphWidgetPrivate :
                                           public Ui_qSlicerEMSegmentGraphWidget
 {

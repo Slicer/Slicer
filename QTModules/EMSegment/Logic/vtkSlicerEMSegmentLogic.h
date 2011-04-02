@@ -43,6 +43,7 @@ class vtkGridTransform;
 class vtkImageData;
 class vtkMatrix4x4;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class VTK_SLICER_EMSEGMENT_MODULE_LOGIC_EXPORT vtkSlicerEMSegmentLogic :
   public vtkSlicerModuleLogic
 {

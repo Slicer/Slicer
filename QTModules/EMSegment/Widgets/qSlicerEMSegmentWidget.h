@@ -33,6 +33,7 @@
 class qSlicerEMSegmentWidgetPrivate;
 class vtkEMSegmentMRMLManager;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWidget : public qSlicerWidget
 {
   Q_OBJECT

@@ -52,6 +52,7 @@
 #include <vtkSlicerEMSegmentLogic.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentModuleWidgetPrivate: public Ui_qSlicerEMSegmentModule
 {
   Q_DECLARE_PUBLIC(qSlicerEMSegmentModuleWidget);

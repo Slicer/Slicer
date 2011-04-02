@@ -19,6 +19,7 @@
 // VTK includes
 #include <vtkPlotLine.h>
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT vtkPlotGaussian : public vtkPlotLine
 {
 public:

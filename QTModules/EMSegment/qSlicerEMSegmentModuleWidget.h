@@ -33,6 +33,7 @@ class qSlicerEMSegmentModuleWidgetPrivate;
 class vtkMRMLNode;
 class ctkWorkflowStep;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentModuleWidget :
   public qSlicerAbstractModuleWidget
 {

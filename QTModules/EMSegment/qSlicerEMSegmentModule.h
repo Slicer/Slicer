@@ -31,6 +31,7 @@
 
 class qSlicerEMSegmentModulePrivate;
 
+/// \ingroup Slicer_QtModules_EMSegment
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentModule :
   public qSlicerLoadableModule
 {

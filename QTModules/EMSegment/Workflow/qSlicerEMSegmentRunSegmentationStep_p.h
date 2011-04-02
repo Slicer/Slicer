@@ -29,6 +29,7 @@
 class vtkMRMLROINode;
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentRunSegmentationStepPrivate : public QObject,
                                                    public Ui_qSlicerEMSegmentRunSegmentationStep
 {

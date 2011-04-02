@@ -34,6 +34,7 @@
 #include <vtkSlicerEMSegmentLogic.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_EMSegment
 class qSlicerEMSegmentSegmentationLogicStepPrivate
 {
 public:
