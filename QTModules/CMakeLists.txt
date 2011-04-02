@@ -52,7 +52,7 @@ SET(qtmodules
   TractographyFiducialSeeding
   Volumes
   CropVolume
-  #VolumeRendering
+  VolumeRendering
   )
 
 FOREACH(module ${qtmodules})
