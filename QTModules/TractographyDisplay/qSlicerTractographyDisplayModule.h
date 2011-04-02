@@ -28,6 +28,7 @@
 
 class qSlicerTractographyDisplayModulePrivate;
 
+/// \ingroup Slicer_QtModules_TractographyDisplay
 class Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT qSlicerTractographyDisplayModule
   :public qSlicerLoadableModule
 {

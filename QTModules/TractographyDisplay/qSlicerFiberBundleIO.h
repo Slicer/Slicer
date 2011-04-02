@@ -28,6 +28,7 @@
 #include "qSlicerIO.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_TractographyDisplay
 class qSlicerFiberBundleIO: public qSlicerIO
 {
   Q_OBJECT
