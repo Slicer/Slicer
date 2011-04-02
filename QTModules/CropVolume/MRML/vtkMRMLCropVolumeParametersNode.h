@@ -28,6 +28,7 @@
 class vtkMRMLAnnotationROINode;
 class vtkMRMLVolumeNode;
 
+/// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkMRMLCropVolumeParametersNode : public vtkMRMLNode
 {
   public:   

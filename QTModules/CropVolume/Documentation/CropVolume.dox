@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_CropVolume CropVolume
+\ingroup Slicer_QtModules
+This module allows to extract rectangular subvolume from a scalar image, with the subvolume defined by Slicer ROI widget.
+
+*/

@@ -10,6 +10,7 @@ class qSlicerCropVolumeModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLCropVolumeParametersNode;
 
+/// \ingroup Slicer_QtModules_CropVolume
 class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget :
   public qSlicerAbstractModuleWidget
 {

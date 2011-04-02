@@ -11,6 +11,7 @@
 
 class qSlicerCropVolumeModulePrivate;
 
+/// \ingroup Slicer_QtModules_CropVolume
 class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModule :
   public qSlicerLoadableModule
 {

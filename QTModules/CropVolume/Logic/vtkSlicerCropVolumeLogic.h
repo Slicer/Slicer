@@ -39,6 +39,7 @@ class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
 class vtkMRMLCropVolumeParametersNode;
 
+/// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic :
   public vtkSlicerModuleLogic
 {

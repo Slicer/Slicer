@@ -13,6 +13,7 @@
 #include <vtkSlicerCropVolumeLogic.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_CropVolume
 class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModule
 {
   Q_DECLARE_PUBLIC(qSlicerCropVolumeModuleWidget);

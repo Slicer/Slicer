@@ -13,6 +13,7 @@
 Q_EXPORT_PLUGIN2(qSlicerCropVolumeModule, qSlicerCropVolumeModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_CropVolume
 class qSlicerCropVolumeModulePrivate
 {
 public:
