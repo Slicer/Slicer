@@ -30,6 +30,7 @@
 
 class qSlicerWelcomeModuleWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_SlicerWelcome
 class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModuleWidget :
   public qSlicerAbstractModuleWidget
 {

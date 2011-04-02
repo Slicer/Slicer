@@ -29,6 +29,7 @@
 Q_EXPORT_PLUGIN2(qSlicerWelcomeModule, qSlicerWelcomeModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_SlicerWelcome
 class qSlicerWelcomeModulePrivate
 {
 public:

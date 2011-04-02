@@ -33,6 +33,7 @@
 #include "ctkButtonGroup.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_SlicerWelcome
 class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModule
 {
 public:

@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_SlicerWelcome SlicerWelcome
+\ingroup Slicer_QtModules
+This module is intended as a welcome screen and basic overview of the Slicer software.
+
+*/
