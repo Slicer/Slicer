@@ -86,6 +86,7 @@ class vtkSlicerFixedPointRayCastImage;
 // Forward declaration needed for use by friend declaration below.
 VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg );
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastMapper : public vtkVolumeMapper
 {
 public:

@@ -31,6 +31,7 @@ class vtkVolume;
 class vtkRenderer;
 class vtkFixedPointRayCastImage;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerMesaRayCastImageDisplayHelper : public vtkSlicerRayCastImageDisplayHelper
 {
 public:

@@ -18,6 +18,7 @@
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModuleWidgetPrivate: public Ui_qSlicerVolumeRenderingModule
 {
 public:

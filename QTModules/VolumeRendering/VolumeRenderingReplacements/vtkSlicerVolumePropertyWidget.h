@@ -40,6 +40,7 @@ class vtkKWScaleWithEntry;
 class vtkKWVolumeMaterialPropertyWidget;
 class vtkVolumeProperty;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerVolumePropertyWidget : public vtkSlicerWidget
 {
 public:

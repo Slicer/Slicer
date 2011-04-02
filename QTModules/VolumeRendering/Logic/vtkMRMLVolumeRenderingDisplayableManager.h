@@ -22,6 +22,7 @@ class vtkTimerLog;
 class vtkMatrix4x4;
 class vtkPlanes;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
   public vtkMRMLAbstractThreeDViewDisplayableManager
 {

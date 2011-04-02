@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_VolumeRendering VolumeRendering
+\ingroup Slicer_QtModules
+This module provides interactive visualization of 3D image data.
+
+*/

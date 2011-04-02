@@ -63,6 +63,7 @@ class vtkVolumeProperty;
 
 VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients(void *arg);
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class vtkSlicerGPUVolumeTextureMapper3D;
 struct GradientsArgsType
 {
@@ -73,6 +74,7 @@ struct GradientsArgsType
   unsigned char *volume2;
 };
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeTextureMapper3D : public vtkVolumeMapper
 {
 public:

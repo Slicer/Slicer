@@ -21,7 +21,7 @@
 #include "vtkObject.h"
 #include "VolumeRenderingReplacementsExport.h"
 
-
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerVolumeRenderingFactory : public vtkObject
 {
 public:

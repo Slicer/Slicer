@@ -48,6 +48,7 @@ class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkVolumeProperty;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class vtkSlicerGPUMultiVolumeMapper;
 typedef struct{
     float *dataPtr;
@@ -56,6 +57,7 @@ typedef struct{
     unsigned char *volume;
 }GPUGradientsArgsType;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPUMultiVolumeMapper : public vtkVolumeMapper
 {
 public:

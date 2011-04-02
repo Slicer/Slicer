@@ -42,6 +42,7 @@ class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkSlicerVolumeRenderingLogic :
   public vtkSlicerModuleLogic
 {

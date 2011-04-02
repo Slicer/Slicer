@@ -14,6 +14,7 @@
 Q_EXPORT_PLUGIN2(qSlicerVolumeRenderingModule, qSlicerVolumeRenderingModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModulePrivate
 {
 public:

@@ -31,6 +31,7 @@
 
 #include "vtkMatrix4x4.h"
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingScenarioNode : public vtkMRMLNode
 {
   public:

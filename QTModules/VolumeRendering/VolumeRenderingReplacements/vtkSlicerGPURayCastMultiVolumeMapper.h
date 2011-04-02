@@ -39,6 +39,7 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
+/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPURayCastMultiVolumeMapper : public vtkSlicerGPUMultiVolumeMapper
 {
 public:
