@@ -40,6 +40,7 @@
 #include "vtkMRMLNode.h"
 
 //------------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_SceneViews
 class qMRMLSceneViewsTreeWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSceneViewsTreeWidget);

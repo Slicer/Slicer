@@ -34,6 +34,8 @@
 // VTK includes
 class vtkImageData;
 class vtkMRMLHierarchyNode;
+
+/// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT vtkSlicerSceneViewsModuleLogic :
   public vtkMRMLAbstractLogic
 {

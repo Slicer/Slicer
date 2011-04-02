@@ -27,6 +27,8 @@
 
 class qMRMLSceneViewsModelPrivate;
 class vtkMRMLNode;
+
+/// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsModel : public qMRMLSceneModel
 {
   Q_OBJECT

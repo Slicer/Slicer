@@ -42,6 +42,7 @@ class qMRMLSceneViewsTreeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
+/// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget
   : public qMRMLTreeWidget
 {

@@ -4,6 +4,7 @@
 #include "ui_qSlicerSceneViewsModuleDialog.h"
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
+/// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModuleDialog : public QDialog
 {
   Q_OBJECT

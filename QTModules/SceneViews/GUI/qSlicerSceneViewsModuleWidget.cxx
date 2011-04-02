@@ -33,6 +33,7 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModule
 {
   Q_DECLARE_PUBLIC(qSlicerSceneViewsModuleWidget);
