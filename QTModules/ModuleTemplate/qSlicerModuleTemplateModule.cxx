@@ -13,6 +13,7 @@
 Q_EXPORT_PLUGIN2(qSlicerModuleTemplateModule, qSlicerModuleTemplateModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_ModuleTemplate
 class qSlicerModuleTemplateModulePrivate
 {
 public:

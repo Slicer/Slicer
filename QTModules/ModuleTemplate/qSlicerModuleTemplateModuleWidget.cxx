@@ -6,6 +6,7 @@
 #include "ui_qSlicerModuleTemplateModule.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_ModuleTemplate
 class qSlicerModuleTemplateModuleWidgetPrivate: public Ui_qSlicerModuleTemplateModule
 {
 public:

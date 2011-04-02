@@ -11,6 +11,7 @@
 
 class qSlicerModuleTemplateModulePrivate;
 
+/// \ingroup Slicer_QtModules_ModuleTemplate
 class Q_SLICER_QTMODULES_MODULETEMPLATE_EXPORT qSlicerModuleTemplateModule :
   public qSlicerLoadableModule
 {
