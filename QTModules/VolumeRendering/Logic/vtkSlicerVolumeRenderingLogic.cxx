@@ -370,7 +370,8 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVol
     {
     //TODO label map
     } 
-  else if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
+
+  if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
     {
       double scalarRange[2];
       vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
@@ -484,7 +485,8 @@ void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVo
     {
     //TODO label map
     }
-    else if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
+
+    if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
     {
         double scalarRange[2];
         vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
