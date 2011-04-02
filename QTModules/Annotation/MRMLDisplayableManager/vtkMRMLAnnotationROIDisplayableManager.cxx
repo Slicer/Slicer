@@ -32,6 +32,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationROIDisplayableManager, "$Revision: 1.0 $")
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationROIDisplayableManager Callback
+/// \ingroup Slicer_QtModules_Annotation
 class vtkAnnotationROIWidgetCallback : public vtkCommand
 {
 public:

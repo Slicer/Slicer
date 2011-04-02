@@ -35,6 +35,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationFiducialDisplayableManager, "$Revision: 1.
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationFiducialDisplayableManager Callback
+/// \ingroup Slicer_QtModules_Annotation
 class vtkAnnotationFiducialWidgetCallback : public vtkCommand
 {
 public:

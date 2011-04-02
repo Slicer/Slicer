@@ -39,6 +39,7 @@
 #include "vtkMRMLNode.h"
 
 //------------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Annotation
 class qMRMLAnnotationTreeWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLAnnotationTreeWidget);

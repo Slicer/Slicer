@@ -29,6 +29,7 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager :
     public vtkMRMLAnnotationDisplayableManager
 {

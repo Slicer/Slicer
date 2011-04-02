@@ -4,6 +4,7 @@
 #include "ui_qSlicerAnnotationModuleSnapShotDialog.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
+/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModuleSnapShotDialog : public QDialog
 {
   Q_OBJECT

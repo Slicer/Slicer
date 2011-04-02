@@ -10,6 +10,7 @@
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLNode.h"
 
+/// \ingroup Slicer_QtModules_Annotation
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:

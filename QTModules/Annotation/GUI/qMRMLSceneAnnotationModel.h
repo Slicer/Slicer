@@ -34,6 +34,8 @@
 
 class qMRMLSceneAnnotationModelPrivate;
 class vtkMRMLNode;
+
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLSceneAnnotationModel : public qMRMLSceneDisplayableModel
 {
   Q_OBJECT

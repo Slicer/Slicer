@@ -13,6 +13,7 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "qSlicerAnnotationModuleExport.h"
 
+/// \ingroup Slicer_QtModules_Annotation
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
  public:

@@ -37,6 +37,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $"
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationTextDisplayableManager Callback
+/// \ingroup Slicer_QtModules_Annotation
 class vtkAnnotationTextWidgetCallback : public vtkCommand
 {
 public:

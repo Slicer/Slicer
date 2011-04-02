@@ -15,7 +15,8 @@
 class vtkStringArray;
 class vtkMRMLStorageNode;
 class vtkMRMLAnnotationLineDisplayNode;
- 
+
+/// \ingroup Slicer_QtModules_Annotation
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationLinesNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:

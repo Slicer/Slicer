@@ -20,7 +20,7 @@ class vtkMRMLAnnotationRulerNode;
 class vtkMRMLAnnotationAngleNode;
 class vtkMRMLAnnotationFiducialNode;
 
-
+/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModulePropertyDialog : public QDialog
 {
   Q_OBJECT

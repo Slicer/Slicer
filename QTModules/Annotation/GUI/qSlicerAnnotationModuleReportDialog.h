@@ -5,6 +5,7 @@
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "vtkCollection.h"
 
+/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModuleReportDialog : public QDialog
 {
   Q_OBJECT

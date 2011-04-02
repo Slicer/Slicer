@@ -21,6 +21,7 @@
 // VTK include
 #include <vtkObject.h>
 
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationClickCounter :
     public vtkObject
 {

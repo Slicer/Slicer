@@ -16,8 +16,6 @@
 //---------------------------------------------------------------------------
 qSlicerAnnotationModuleReportDialog::qSlicerAnnotationModuleReportDialog()
 {
-
-
   this->m_Logic = 0;
 
   this->m_Annotations = 0;
@@ -33,13 +31,11 @@ qSlicerAnnotationModuleReportDialog::qSlicerAnnotationModuleReportDialog()
   ui.titleEdit->setText("Annotation Report");
 
   this->createConnection();
-
 }
 
 //---------------------------------------------------------------------------
 qSlicerAnnotationModuleReportDialog::~qSlicerAnnotationModuleReportDialog()
 {
-
   if (this->m_Logic)
     {
     this->m_Logic = 0;
@@ -50,14 +46,11 @@ qSlicerAnnotationModuleReportDialog::~qSlicerAnnotationModuleReportDialog()
     this->m_Annotations->Delete();
     this->m_Annotations = 0;
     }
-
 }
-
 
 //---------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::createConnection()
 {
-
   // connect the OK and CANCEL button to the individual Slots
   this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
   this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
@@ -73,9 +66,6 @@ void qSlicerAnnotationModuleReportDialog::createConnection()
   this->connect(printButton, SIGNAL(clicked()), this, SLOT(onPrintButtonClicked()));
 
   this->connect(ui.titleEdit, SIGNAL(textEdited(const QString &)), this, SLOT(onTextEdited()));
-
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -88,7 +78,6 @@ void qSlicerAnnotationModuleReportDialog::setLogic(vtkSlicerAnnotationModuleLogi
     }
 
   this->m_Logic = logic;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -108,7 +97,6 @@ void qSlicerAnnotationModuleReportDialog::setAnnotations(vtkCollection* collecti
     {
     this->m_Annotations->AddItem(collection->GetItemAsObject(i));
     }
-
 }
 
 //---------------------------------------------------------------------------
@@ -132,7 +120,6 @@ void qSlicerAnnotationModuleReportDialog::setAnnotations(vtkCollection* collecti
 //---------------------------------------------------------------------------
 QString qSlicerAnnotationModuleReportDialog::generateReport()
 {
-
   QString html = "<html>\n";
   html.append("<head>\n");
   html.append("<meta name=\"Author\" content=\"Daniel Haehn, Kilian Pohl, Yong Zhang\">\n");
@@ -170,7 +157,6 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
   html.append("</html>");
 
   return html;
-
 }
 
 //---------------------------------------------------------------------------
@@ -195,7 +181,6 @@ bool qSlicerAnnotationModuleReportDialog::isAnnotationSelected(const char* mrmlI
 //---------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtkMRMLAnnotationHierarchyNode* currentHierarchy)
 {
-
   vtkCollection* children = vtkCollection::New();
   currentHierarchy->GetDirectChildren(children);
 
@@ -216,7 +201,6 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
         {
         // the node was selected in the annotation treeView, so add it to the report
         this->m_Html.append(QString(this->m_Logic->GetHTMLRepresentation(annotationNode,level)));
-
         }
 
       continue;
@@ -232,10 +216,8 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
       // now check if the child was selected
       if (this->isAnnotationSelected(hierarchyNode->GetID()))
         {
-
         // the node was selected in the annotation treeView, so add it to the report
         this->m_Html.append(QString(this->m_Logic->GetHTMLRepresentation(hierarchyNode,level)));
-
         }
 
       // anyway, we need to recursively start again at this hierarchy
@@ -243,31 +225,24 @@ void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtk
 
       } // hierarchyNode
 
-
     } // loop through children
-
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::updateReport()
 {
-
   this->ui.reportBrowser->setHtml(this->generateReport());
-
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::onTextEdited()
 {
-
   this->updateReport();
-
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::onPrintButtonClicked()
 {
-
   QPrinter printer;
 
   QPrintDialog *dialog = new QPrintDialog(&printer, this);
@@ -277,25 +252,19 @@ void qSlicerAnnotationModuleReportDialog::onPrintButtonClicked()
   {
 
     this->ui.reportBrowser->print(&printer);
-
   }
-
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::onDialogRejected()
 {
-
   // emit an event which gets caught by main GUI window
   emit dialogRejected();
-
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleReportDialog::onDialogAccepted()
 {
-
   if (this->saveReport())
     {
     // emit an event which gets caught by main GUI window
@@ -306,7 +275,6 @@ void qSlicerAnnotationModuleReportDialog::onDialogAccepted()
 //-----------------------------------------------------------------------------
 bool qSlicerAnnotationModuleReportDialog::saveReport()
 {
-
   QString filename = QFileDialog::getSaveFileName(this, "Save Annotation Report", QString(), "3D Slicer Annotation Report (*.html)");
 
   QString report = this->generateReport();
@@ -374,14 +342,12 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
           QFile screenshotHolder(tempPath);
           QString outPath = imgdir;
           screenshotHolder.copy(outPath.append("/").append(QString(annotationNode->GetID())).append(QString(".png")));
-
           }
 
         // all annotation icons
         QString iconPath = QString(annotationNode->GetIcon());
         QImage iconHolder = QImage(iconPath);
         iconHolder.save(iconPath.replace(QString(":/Icons"), imgdir));
-
         }
       else if (hierarchyNode)
         {
@@ -389,17 +355,13 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
         QImage iconHolder = QImage(iconPath);
         iconHolder.save(iconPath.replace(QString(":/Icons"), imgdir));
         }
-
       } // for loop through all selected nodes
-
 
     out << report;
     file.close();
 
     return true;
-
     } // file dialog accepted
 
   return false; // file dialog cancelled
-
 }

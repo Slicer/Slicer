@@ -23,7 +23,7 @@
 #include <vtkAbstractWidget.h>
 #include <vtkDistanceWidget.h>
 
-
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerWidget :
     public vtkDistanceWidget
 {

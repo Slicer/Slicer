@@ -37,23 +37,20 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent
   this->Superclass::PrintSelf(os, indent);
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManagerHelper::vtkMRMLAnnotationDisplayableManagerHelper()
 {
-
   this->SeedWidget = 0;
-
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerHelper()
 {
-
   if(this->SeedWidget)
     {
     this->RemoveSeeds();
     }
-
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNode* node)

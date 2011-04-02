@@ -33,6 +33,7 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLInteractionNode;
 class vtkObserverManager;
 
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModuleWidget :
   public qSlicerAbstractModuleWidget
 {

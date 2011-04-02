@@ -22,7 +22,7 @@
 #include <vtkObject.h>
 #include <vtkBiDimensionalRepresentation2D.h>
 
-
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationBidimensionalRepresentation :
     public vtkBiDimensionalRepresentation2D
 {

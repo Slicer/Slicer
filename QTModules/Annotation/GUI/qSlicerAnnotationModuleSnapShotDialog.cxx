@@ -270,11 +270,8 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   this->ui.nameEdit->setFocus();
   this->ui.nameEdit->selectAll();
 
-
-
   // reset the id
   this->m_Id = vtkStdString("");
-
 }
 
 //-----------------------------------------------------------------------------
@@ -283,7 +280,6 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWindow)
 {
-
   QWidget* widget = 0;
 
   if(screenshotWindow.length()>0)
@@ -313,16 +309,12 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
 
   this->setVisible(true);
 
-
   ui.screenshotPlaceholder->setPixmap(screenShot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
       Qt::KeepAspectRatio,Qt::SmoothTransformation));
-
 
   // convert the screenshot from QPixmap to vtkImageData and store it with this class
   vtkImageData* vtkimage = vtkImageData::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(),vtkimage);
   this->m_vtkImageData = vtkimage;
-
 }
-
 

@@ -21,6 +21,7 @@
 Q_EXPORT_PLUGIN2(qSlicerAnnotationModule, qSlicerAnnotationModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModulePrivate
 {
   public:

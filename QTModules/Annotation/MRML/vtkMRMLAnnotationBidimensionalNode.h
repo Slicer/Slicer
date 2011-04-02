@@ -8,6 +8,7 @@ class vtkMatrix4x4;
 class vtkAbstractTransform;
 class vtkMRMLScene;
 
+/// \ingroup Slicer_QtModules_Annotation
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationBidimensionalNode : public vtkMRMLAnnotationLinesNode
 {
 public:

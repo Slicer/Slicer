@@ -22,7 +22,7 @@
 #include <vtkObject.h>
 #include <vtkDistanceRepresentation3D.h>
 
-
+/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerRepresentation3D :
     public vtkDistanceRepresentation3D
 {

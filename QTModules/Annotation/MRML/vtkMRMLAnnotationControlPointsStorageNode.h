@@ -12,7 +12,7 @@
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationControlPointsNode;
 
-
+/// \ingroup Slicer_QtModules_Annotation
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
 {
   public:

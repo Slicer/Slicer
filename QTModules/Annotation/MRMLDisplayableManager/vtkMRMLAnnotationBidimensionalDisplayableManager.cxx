@@ -35,6 +35,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationBidimensionalDisplayableManager, "$Revisio
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationBidimensionalDisplayableManager Callback
+/// \ingroup Slicer_QtModules_Annotation
 class vtkAnnotationBidimensionalWidgetCallback : public vtkCommand
 {
 public:

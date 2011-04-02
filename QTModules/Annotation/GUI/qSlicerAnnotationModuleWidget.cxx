@@ -40,6 +40,7 @@
 
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
 {
   Q_DECLARE_PUBLIC(qSlicerAnnotationModuleWidget);
@@ -49,21 +50,10 @@ public:
 
   qSlicerAnnotationModuleWidgetPrivate(qSlicerAnnotationModuleWidget& object);
   ~qSlicerAnnotationModuleWidgetPrivate();
-  void
-  setupUi(qSlicerWidget* widget);
 
+  void setupUi(qSlicerWidget* widget);
 
-  vtkSlicerAnnotationModuleLogic*
-  logic() const;
-
-
-protected slots:
-
-protected:
-
-private:
-
-
+  vtkSlicerAnnotationModuleLogic* logic() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -96,19 +86,15 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerAnnotationModule::setupUi(widget);
 }
 
-
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
   , d_ptr(new qSlicerAnnotationModuleWidgetPrivate(*this))
 {
-
   this->m_ReportDialog = 0;
   this->m_SnapShotDialog = 0;
   this->m_PropertyDialog = 0;
   this->m_CurrentAnnotationType = 0;
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -134,7 +120,6 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
     delete this->m_PropertyDialog;
     this->m_PropertyDialog = 0;
     }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -201,10 +186,7 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onSnapShotButtonClicked()));
   this->connect(d->generateReport, SIGNAL(clicked()), this,
       SLOT(onReportButtonClicked()));
-
 }
-
-
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveDownSelected()
@@ -232,8 +214,6 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
   //Q_D(qSlicerAnnotationModuleWidget);
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -243,7 +223,6 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
 
   d->hierarchyTreeWidget->selectAll();
   d->logic()->SetActiveHierarchyNode(0);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -254,7 +233,6 @@ void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
   // TODO
 
   d->logic()->RestoreAnnotationView(d->hierarchyTreeWidget->firstSelectedNode());
-
 }
 
 //-----------------------------------------------------------------------------

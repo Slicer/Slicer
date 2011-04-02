@@ -18,14 +18,14 @@
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLFiducialListNode.h"
 
+//------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 {
-
   this->m_id = 0;
   this->m_logic = 0;
-
 }
 
+//------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic)
 {
   this->m_id = vtkStdString(id);
@@ -38,12 +38,11 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
 
   // create the slot and signal connections
   this->createConnection();
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::initialize()
 {
-
   // backup the current annotationNode
   // TODO does not work with displayableNodes
   //this->m_logic->BackupAnnotationNode(this->m_id);
@@ -526,9 +525,9 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::createConnection()
 {
-
   this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
   this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
 
@@ -660,6 +659,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 {
   Q_UNUSED(text)
@@ -701,15 +701,15 @@ void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
-
   QString text = ui.annotationTextEdit->toPlainText();
   QByteArray bytes = text.toLatin1();
   this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateTextFromTable(QString text)
 {
   Q_UNUSED(text)
@@ -718,16 +718,16 @@ void qSlicerAnnotationModulePropertyDialog::updateTextFromTable(QString text)
   //    text);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateValue(QString valueString)
 {
   QString valueStr;
   valueStr.append("<p>Value: <b>").append(valueString).append("</b></p>");
   // ui.annotationValueBrowser->setHtml(
   //    valueStr);
-
 }
 
-
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
   Q_UNUSED(node);
@@ -748,9 +748,9 @@ void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLines
  */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
-
   Q_UNUSED(node);
   /*
    if (!node)
@@ -768,9 +768,9 @@ void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationC
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 {
-
   Q_UNUSED(node);
   /*
    if (!node)
@@ -787,6 +787,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotation
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
@@ -828,6 +829,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
   Q_UNUSED(node);
@@ -842,6 +844,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLines
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
   Q_UNUSED(node);
@@ -856,6 +859,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationC
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 {
   Q_UNUSED(node);
@@ -869,6 +873,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotation
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
@@ -894,35 +899,33 @@ void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
    */
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor qcolor)
 {
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
 
   this->m_logic->SetAnnotationTextUnselectedColor(this->m_id.c_str(),color);
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qcolor)
 {
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
 
   this->m_logic->SetAnnotationTextSelectedColor(this->m_id.c_str(),color);
-
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)
 {
-
   this->m_logic->SetAnnotationTextScale(this->m_id.c_str(), value);
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
 {
-
   // toggle the lock flag
   this->m_logic->SetAnnotationLockedUnlocked(this->m_id.c_str());
 
@@ -940,12 +943,11 @@ void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
     }
 
   this->lockUnlockInterface(locked);
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 {
-
   this->m_logic->SetAnnotationVisibility(this->m_id.c_str());
 
   // load the visiblity status
@@ -961,29 +963,33 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
     ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
     ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
     }
-
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 {
   Q_UNUSED(qcolor);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSelectedColorChanged(QColor qcolor)
 {
   Q_UNUSED(qcolor);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
 {
   Q_UNUSED(value);
@@ -993,51 +999,62 @@ void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
   //   this->m_logic->POINT_AMBIENT,
   //  &value);
 }
+
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineColorChanged(QColor qcolor)
 {
   Q_UNUSED(qcolor);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineSelectedColorChanged(QColor qcolor)
 {
   Q_UNUSED(qcolor);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineWidthChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineOpacityChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineAmbientChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineDiffuseChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineSpecularChanged(double value)
 {
   Q_UNUSED(value);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::UpdateLockUnlockStatus(bool isLock)
 {
   Q_UNUSED(isLock);
@@ -1084,6 +1101,7 @@ void qSlicerAnnotationModulePropertyDialog::TurnColorArrayToQColor(double* color
   qcolor.setBlue(color[2] * 255.0001);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::FormatValueToChar(const char* format, std::vector<
     double> vv, QString &valueString)
 {
@@ -1101,6 +1119,7 @@ void qSlicerAnnotationModulePropertyDialog::FormatValueToChar(const char* format
   //valueString = valuechar;
 }
 
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color, QColor &qcolor)
 {
   color[0] = qcolor.red() / 255.0;
@@ -1113,26 +1132,21 @@ void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 {
-
   // the user clicked cancel, now restore the backuped node
   //this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
 
   emit dialogRejected();
-
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
 {
-
   emit dialogAccepted();
-
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
 {
-
   lock = !lock;
 
   ui.annotationTextEdit->setEnabled(lock);
@@ -1155,6 +1169,5 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineOpacitySliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineSpecularSliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineWidthSliderSpinBoxWidget_2->setEnabled(lock);
-
 }
 
