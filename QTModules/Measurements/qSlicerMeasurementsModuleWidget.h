@@ -28,6 +28,7 @@
 
 class qSlicerMeasurementsModuleWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_Measurements
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsModuleWidget :
   public qSlicerAbstractModuleWidget
 {

@@ -32,6 +32,7 @@
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Measurements
 class qSlicerMeasurementsModulePrivate
 {
 public:

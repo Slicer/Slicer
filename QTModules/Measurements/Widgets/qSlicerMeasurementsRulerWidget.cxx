@@ -29,6 +29,7 @@
 #include "ui_qSlicerMeasurementsRulerWidget.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Measurements
 class qSlicerMeasurementsRulerWidgetPrivate : public Ui_qSlicerMeasurementsRulerWidget
 {
 public:

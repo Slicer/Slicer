@@ -28,6 +28,7 @@
 
 class qSlicerMeasurementsAngleWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_Measurements
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsAngleWidget : public qSlicerWidget
 { 
   Q_OBJECT

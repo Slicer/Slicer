@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Measurements Measurements
+\ingroup Slicer_QtModules
+The Measurements module allows you to add rulers and angle widgets to the scene and they will be displayed and able to be manipulated in both the 3D and 2D windows.
+
+*/

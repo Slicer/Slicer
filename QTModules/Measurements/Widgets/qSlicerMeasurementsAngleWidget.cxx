@@ -29,6 +29,7 @@
 #include "ui_qSlicerMeasurementsAngleWidget.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Measurements
 class qSlicerMeasurementsAngleWidgetPrivate : public Ui_qSlicerMeasurementsAngleWidget
 {
 public:
