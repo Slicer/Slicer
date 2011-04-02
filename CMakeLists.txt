@@ -406,11 +406,6 @@ IF(BUILD_TESTING)
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
     ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake 
     COPYONLY)
-  
-  CONFIGURE_FILE(
-    ${Slicer_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
-    ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake
-    @ONLY)
     
 ENDIF()
 
