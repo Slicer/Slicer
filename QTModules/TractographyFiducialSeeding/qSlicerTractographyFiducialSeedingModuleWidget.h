@@ -16,6 +16,7 @@ class vtkMRMLTransformableNode;
 class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLTractographyFiducialSeedingNode;
 
+/// \ingroup Slicer_QtModules_TractographyFiducialSeeding
 class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModuleWidget :  public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

@@ -13,6 +13,7 @@
 #include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_TractographyFiducialSeeding
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
   public Ui_qSlicerTractographyFiducialSeedingModule
 {

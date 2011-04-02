@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_TractographyFiducialSeeding TractographyFiducialSeeding
+\ingroup Slicer_QtModules
+This module is used for interactive seeding of DTI fiber tracts starting from a list of fiducials or vertices of a model.
+
+*/

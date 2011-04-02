@@ -9,6 +9,7 @@
 class qSlicerTractographyFiducialSeedingModulePrivate;
 class qSlicerTractographyFiducialSeedingModuleWidget;
 
+/// \ingroup Slicer_QtModules_TractographyFiducialSeeding
 class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModule : public qSlicerLoadableModule
 {
   Q_OBJECT
