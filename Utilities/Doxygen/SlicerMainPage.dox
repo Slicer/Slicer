@@ -1,0 +1,13 @@
+/**
+
+\mainpage
+
+\section intro_sec Introduction
+
+See the <a href="http://www.slicer.org/slicerWiki">Slicer Wiki</a> for more information.
+
+\defgroup Slicer_CLI Slicer Command Line Modules
+
+\defgroup Slicer_QtModules Slicer Qt Loadable Modules
+
+*/

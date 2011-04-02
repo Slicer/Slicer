@@ -131,7 +131,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Additional Slicer Options
 #-----------------------------------------------------------------------------
-OPTION(BUILD_DOCUMENTATION "Build Slicer Documentation" OFF)
 OPTION(BUILD_TESTING "Test the project" ON)
 OPTION(WITH_MEMCHECK "Run tests through valgrind." OFF)
 OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
@@ -164,6 +163,20 @@ MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 
 # Slicer implicitly uses Qt
 SET(Slicer_USE_QT ON CACHE INTERNAL "Build Slicer with Qt")
+
+#-----------------------------------------------------------------------------
+# Documentation
+#-----------------------------------------------------------------------------
+
+OPTION(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
+MARK_AS_ADVANCED(DOCUMENTATION_TARGET_IN_ALL)
+
+SET(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+ CACHE PATH "Where documentation archives should be stored")
+MARK_AS_ADVANCED(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+
+# Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
+FIND_PACKAGE(Doxygen QUIET)
 
 #-----------------------------------------------------------------------------
 # CTestCustom
@@ -810,9 +823,7 @@ ADD_SUBDIRECTORY(Utilities/Package)
 # Documentation
 #-----------------------------------------------------------------------------
 
-IF(BUILD_DOCUMENTATION)
-  ADD_SUBDIRECTORY(Utilities/Doxygen)
-ENDIF()
+ADD_SUBDIRECTORY(Utilities/Doxygen)
 
 # Add CMake directory so that install rules associated with *.cmake files are evaluated
 ADD_SUBDIRECTORY(CMake)

@@ -1,93 +1,66 @@
-#
-# Build the documentation
-#
-INCLUDE (Documentation)
+FIND_PACKAGE( Doxygen QUIET)
 
-IF (BUILD_DOCUMENTATION)
-  SET(BUILD_DOXYGEN ON)
-  SET(DOCUMENTATION_DOWNLOAD_VTK_TAGFILE ON)
-  SET(DOCUMENTATION_HTML_TARZ ON)
-  SET(DOCUMENTATION_DOWNLOAD_EXTRA_TAGFILE ON)
-  SET(DOXYGEN_EXTRA_TAGFILENAME "ParaViewNightlyDoc.tag")
-  SET(DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR "http://www.paraview.org/doc/nightly")
-  SET(DOXYGEN_EXTRA_TAGFILENAME1 "InsightDoxygen.tag")
-  SET(DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR1 "http://www.itk.org/Doxygen/")
-  SET(DOXYGEN_PROJECT_NAME "Slicer4")
-  SET(DOXYGEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-  SET(DOXYGEN_PROJECT_SOURCE_DIR "${Slicer_SOURCE_DIR}")
-  SET(VTK_DOXYGEN_HOME "${CMAKE_CURRENT_SOURCE_DIR}")
-  #SET(DOXYGEN_CVSWEB_CHECKOUT "http://public.kitware.com/cgi-bin/cvsweb.cgi/~checkout~/Slicer/")
-  #SET(DOXYGEN_CVSWEB_CHECKOUT_SUFFIX "?cvsroot=Slicer")
-  SET(DOXYGEN_SOURCE_LOCATIONS_DIR "${Slicer_SOURCE_DIR}")
+IF( DOXYGEN_FOUND )
+  IF( DOXYGEN_DOT_FOUND )
 
-  FILE(GLOB_RECURSE modules_glob RELATIVE "${Slicer_SOURCE_DIR}"
-    "${Slicer_SOURCE_DIR}/*/*.h")
-  SET(modules)
-  SET(modules_paths)
-  FOREACH(mod ${modules_glob})
-    GET_FILENAME_COMPONENT(module_path "${mod}" PATH)
-    SET(modules ${modules} "${module_path}")
-    IF("${modules}" MATCHES ";")
-      LIST(REMOVE_ITEM modules "${module_path}")
-    ENDIF("${modules}" MATCHES ";")
-    SET(modules ${modules} "${module_path}")
-    SET(modules_paths ${modules_paths} "${module_path}")
-  ENDFOREACH(mod)
-  #LIST(SORT modules)
-  #MESSAGE("Found modules: ${modules}")
+    # Automatically generate documentation at build time
+    SET(all_arg)
+    IF (DOCUMENTATION_TARGET_IN_ALL)
+      SET(all_arg "ALL")
+    ENDIF()
 
-  SET(DOXYGEN_SOURCE_LOCATIONS)
-  FOREACH(module ${modules})
-    SET(DOXYGEN_SOURCE_LOCATIONS
-      "${DOXYGEN_SOURCE_LOCATIONS} \\
-        \"${Slicer_SOURCE_DIR}/${module}\"")
-  ENDFOREACH(module)
-  SET(DOXYGEN_PARSED_INPUT_DIRS)
-  FOREACH(module ${modules})
-    SET(DOXYGEN_PARSED_INPUT_DIRS
-      "${DOXYGEN_PARSED_INPUT_DIRS} \\
- \"${CMAKE_CURRENT_BINARY_DIR}/dox/${module}\"")
-  ENDFOREACH(module)
+    #
+    # User documentation
+    #
+    SET( Slicer_USER_DOCUMENTATION "NO" )
+    SET( Slicer_ADDITIONAL_EXCLUDE_PATTERN "*_p.h\  *Private.*" )
+    SET( Slicer_DOCUMENTATION_HTML_TARZ TRUE)
 
-  SET(DOXYGEN_IGNORE_PREFIX "vtkKW vtkPV vtkSM vtk vtkITK vtkMRML vtkKW vtkSlicer itk")
-  SET(DOXYGEN_TAG_FILES
-    "\"@CMAKE_CURRENT_BINARY_DIR@/vtkNightlyDoc.tag=http://www.vtk.org/doc/nightly/html\"\\
-    \"@CMAKE_CURRENT_BINARY_DIR@/InsightDoxygen.tag=http://www.itk.org/Doxygen/html\"\\
-    \"@CMAKE_CURRENT_BINARY_DIR@/ParaViewNightlyDoc.tag=http://www.paraview.org/doc/nightly/html\"")
+    CONFIGURE_FILE( Doxyfile.txt.in
+      ${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt
+      )
 
-  #
-  # Configure the script and the doxyfile, then add target
-  #
-  IF(NOT DOT_PATH)
-    GET_FILENAME_COMPONENT(DOT_PATH ${DOT} PATH)
-  ENDIF(NOT DOT_PATH)
+    CONFIGURE_FILE(
+      ${CMAKE_CURRENT_SOURCE_DIR}/generate_doc.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake
+      @ONLY
+      )
 
-  CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/doxyfile @ONLY)
+    SET(userdoc_output "${CMAKE_CURRENT_BINARY_DIR}/doc/html/index.html")
 
-  CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/doc_makeall.sh.in
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh @ONLY)
+    # Run doxygen as a custom command driven by a custom target.
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${userdoc_output}
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake"
+      DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake"
+              "${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt"
+      )
 
-  ADD_CUSTOM_TARGET(${DOXYGEN_PROJECT_NAME}DoxygenDoc
-    ${BASH}
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh)
+    ADD_CUSTOM_TARGET(doc ${all_arg} DEPENDS ${userdoc_output})
+    SET_TARGET_PROPERTIES(doc PROPERTIES LABELS Documentation)
 
-  # also a target for the combined documentation
-  CONFIGURE_FILE( 
-    ${CMAKE_CURRENT_SOURCE_DIR}/combined_doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/combined_doxyfile)
-
-  CONFIGURE_FILE( 
-    ${CMAKE_CURRENT_SOURCE_DIR}/doc_combined_makeall.sh.in
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_combined_makeall.sh)
-
-  ADD_CUSTOM_TARGET(CombinedDoxygenDoc
-    ${BASH}
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_combined_makeall.sh)
+    #
+    # Dev documentation
+    #
+    SET( Slicer_USER_DOCUMENTATION "YES" )
+    SET( Slicer_ADDITIONAL_EXCLUDE_PATTERN "" )
+    SET( Slicer_ADDITIONAL_FILE_PATTERN "*.c \  *.cc \  *.cxx \  *.cpp \  *.c++ \  *.hxx \  *.hpp \  *.h++ \  *.txx \  *.C \  *.CC \  *.C++ \  *.moc" )
 
 
-ENDIF (BUILD_DOCUMENTATION)
+    CONFIGURE_FILE( Doxyfile.txt.in
+      ${CMAKE_CURRENT_BINARY_DIR}/DevDoxyfile.txt
+      )
 
-INCLUDE (${Slicer_SOURCE_DIR}/Utilities/Doxygen/LocalUserOptions.cmake OPTIONAL)
+    # TODO Let's disable target 'doc-dev', it crashes using doxygen 1.7.3
+    #ADD_CUSTOM_TARGET( doc-dev
+    #  ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/DevDoxyfile.txt
+    #  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/DevDoxyfile.txt
+    #  )
+    #SET_TARGET_PROPERTIES(doc-dev PROPERTIES LABELS Documentation)
+
+  ELSE( DOXYGEN_DOT_FOUND )
+    MESSAGE( WARNING
+      "Warning: Dot not found - Documentation will not be created"
+      )
+  ENDIF( DOXYGEN_DOT_FOUND )
+ENDIF( DOXYGEN_FOUND )
