@@ -40,6 +40,7 @@ class vtkMRMLDiffusionTensorSliceDisplayNode;
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
 class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerDiffusionTensorVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT

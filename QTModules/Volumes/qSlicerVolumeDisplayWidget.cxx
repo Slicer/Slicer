@@ -13,6 +13,7 @@
 #include <vtkMRMLVolumeNode.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumeDisplayWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeDisplayWidget);

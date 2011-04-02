@@ -13,6 +13,7 @@
 class vtkMRMLNode;
 class qSlicerVolumeDisplayWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumeDisplayWidget : public QStackedWidget
 {
   Q_OBJECT

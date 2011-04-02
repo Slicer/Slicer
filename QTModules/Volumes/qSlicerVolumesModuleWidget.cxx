@@ -28,6 +28,7 @@
 #include "ui_qSlicerVolumesModule.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModule
 {
 public:

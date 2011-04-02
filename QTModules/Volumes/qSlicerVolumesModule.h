@@ -32,6 +32,7 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerVolumesModulePrivate;
 
+/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
   public qSlicerLoadableModule
 {

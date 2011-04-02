@@ -37,6 +37,7 @@ class vtkMRMLLabelMapVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerLabelMapVolumeDisplayWidgetPrivate;
 
+/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerLabelMapVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT

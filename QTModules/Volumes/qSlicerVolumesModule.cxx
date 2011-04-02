@@ -37,6 +37,7 @@
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesModulePrivate
 {
 public:

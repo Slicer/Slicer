@@ -30,6 +30,7 @@
 #include "ui_qSlicerVolumesIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesIOOptionsWidgetPrivate:
   public Ui_qSlicerVolumesIOOptionsWidget
 {

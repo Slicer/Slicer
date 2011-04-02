@@ -32,6 +32,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerLabelMapVolumeDisplayWidgetPrivate:
                                           public Ui_qSlicerLabelMapVolumeDisplayWidget
 {

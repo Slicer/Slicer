@@ -28,6 +28,7 @@
 #include "qSlicerIO.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesIO: public qSlicerIO
 {
   Q_OBJECT
