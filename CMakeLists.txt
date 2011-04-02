@@ -41,7 +41,6 @@ SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 
-INCLUDE(CMake/Slicer3PersistenceMacros.cmake)
 INCLUDE(CMake/Slicer3PluginsMacros.cmake)
 INCLUDE(CMake/SlicerMacroParseArguments.cmake)
 INCLUDE(CMake/SlicerMacroBuildCLI.cmake)
@@ -353,15 +352,16 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Slicer include and libraries subdirectory
 #
-slicer3_set_persistent_property(Slicer_Libs_LIBRARIES "")
-slicer3_set_persistent_property(Slicer_Base_LIBRARIES "")
-slicer3_set_persistent_property(Slicer_Modules_LIBRARIES "")
-slicer3_set_persistent_property(Slicer_QTModules_LIBRARIES "")
 
-slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer_Modules_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer_QTModules_INCLUDE_DIRS "")
+SET(Slicer_Libs_LIBRARIES CACHE INTERNAL "Slicer Libs libraries" FORCE)
+SET(Slicer_Base_LIBRARIES CACHE INTERNAL "Slicer Base libraries" FORCE)
+SET(Slicer_Modules_LIBRARIES CACHE INTERNAL "Slicer Modules libraries" FORCE)
+SET(Slicer_QTModules_LIBRARIES CACHE INTERNAL "Slicer QTModules libraries" FORCE)
+
+SET(Slicer_Libs_INCLUDE_DIRS CACHE INTERNAL "Slicer Libs includes" FORCE)
+SET(Slicer_Base_INCLUDE_DIRS CACHE INTERNAL "Slicer Base includes" FORCE)
+SET(Slicer_Modules_INCLUDE_DIRS CACHE INTERNAL "Slicer Modules includes" FORCE)
+SET(Slicer_QTModules_INCLUDE_DIRS CACHE INTERNAL "Slicer QTModules includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
@@ -687,23 +687,6 @@ INCLUDE_DIRECTORIES(
 ADD_SUBDIRECTORY(Libs)
 ADD_SUBDIRECTORY(Base)
 ADD_SUBDIRECTORY(Resources)
-
-#-----------------------------------------------------------------------------
-# At this point, let's not have the applications and modules guess which
-# include paths or libraries they need, but use Slicer3_*_LIBRARIES and
-# Slicer_*_INCLUDE_DIRS instead. As far as modules are concerned, both
-# variables are actually set automatically by the import script when building
-# against a Slicer build or installed tree. When in-source, we need to
-# set both variables now. Retrieve them from the persistent property cache
-# since they were collected in each subdir (which makes it impossible to
-# use normal variables, since a new scope is created in each subdir).
-#
-slicer3_get_persistent_property(Slicer_Libs_LIBRARIES Slicer_Libs_LIBRARIES)
-slicer3_get_persistent_property(Slicer_Base_LIBRARIES Slicer_Base_LIBRARIES)
-
-slicer3_get_persistent_property(Slicer_Libs_INCLUDE_DIRS Slicer_Libs_INCLUDE_DIRS)
-slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS Slicer_Base_INCLUDE_DIRS)
-
 
 #-----------------------------------------------------------------------------
 # Module Logic

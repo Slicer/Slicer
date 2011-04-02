@@ -97,8 +97,8 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
 
   INCLUDE_DIRECTORIES(${include_dirs})
 
-  slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS tmp)
-  slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
+  # Update Slicer_Base_INCLUDE_DIRS
+  SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
 
   #-----------------------------------------------------------------------------
   # Configure
@@ -149,8 +149,8 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   # --------------------------------------------------------------------------
   # Build the library
 
-  slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
-  slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
+  # Update Slicer_Base_LIBRARIES
+  SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
 
   ADD_LIBRARY(${lib_name}
     ${SLICERQTBASELIB_SRCS}

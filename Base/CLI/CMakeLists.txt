@@ -43,8 +43,8 @@ SET(include_dirs
 
 INCLUDE_DIRECTORIES(${include_dirs})
 
-slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
+# Update Slicer_Base_INCLUDE_DIRS
+SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerBaseCLIConfigure.h.in 
@@ -84,8 +84,8 @@ TARGET_LINK_LIBRARIES(${lib_name}
 )
 SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
-slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} SlicerBaseCLI)
+# Update Slicer_Base_LIBRARIES
+SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
