@@ -1,7 +1,3 @@
-/**
-  * \defgroup AF Apply Field
-  * \ingroup Reg
-  */
 #ifndef __ApplyField_h
 #define __ApplyField_h
 
