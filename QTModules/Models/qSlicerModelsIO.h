@@ -25,6 +25,7 @@
 #include "qSlicerIO.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Models
 class qSlicerModelsIO: public qSlicerIO
 {
   Q_OBJECT

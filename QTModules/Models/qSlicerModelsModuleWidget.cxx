@@ -29,6 +29,7 @@
 #include "ui_qSlicerModelsModule.h"
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Models
 class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModule
 {
 public:

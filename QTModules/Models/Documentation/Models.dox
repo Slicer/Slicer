@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Models Models
+\ingroup Slicer_QtModules
+This module is used for loading, saving, changing the appearance of, and organizing 3d surface models.
+
+*/

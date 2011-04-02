@@ -35,6 +35,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Models
 class qMRMLModelDisplayNodeWidgetPrivate: public Ui_qMRMLModelDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelDisplayNodeWidget);

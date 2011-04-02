@@ -37,6 +37,7 @@
 #include <vtkMRMLStorageNode.h>
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Models
 qSlicerModelsIO::qSlicerModelsIO(QObject* _parent)
   :qSlicerIO(_parent)
 {
