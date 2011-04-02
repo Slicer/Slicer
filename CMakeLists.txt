@@ -412,11 +412,6 @@ IF(BUILD_TESTING)
     ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake
     @ONLY)
     
-  CONFIGURE_FILE(
-    ${Slicer_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
-    ${Slicer_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake 
-    @ONLY)
-    
 ENDIF()
 
 #-----------------------------------------------------------------------------
