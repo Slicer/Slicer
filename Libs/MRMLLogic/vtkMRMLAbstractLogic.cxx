@@ -110,7 +110,7 @@ void vtkMRMLAbstractLogic::MRMLCallback(vtkObject *caller,unsigned long eid,
 {
   vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
 
-  if (self && self->GetInMRMLCallbackFlag())
+  if (self && !self->EnterMRMLCallback())
     {
 #ifdef _DEBUG
     vtkDebugWithObjectMacro(self, "vtkMRMLAbstractLogic ******* MRMLCallback called recursively?");
@@ -120,11 +120,12 @@ void vtkMRMLAbstractLogic::MRMLCallback(vtkObject *caller,unsigned long eid,
 
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLCallback");
 
-  self->SetInMRMLCallbackFlag(1);
+  self->SetInMRMLCallbackFlag(self->GetInMRMLCallbackFlag() + 1);
+  int oldProcessingEvent = self->GetProcessingMRMLEvent();
   self->SetProcessingMRMLEvent(eid);
   self->ProcessMRMLEvents(caller, eid, callData);
-  self->SetProcessingMRMLEvent(0);
-  self->SetInMRMLCallbackFlag(0);
+  self->SetProcessingMRMLEvent(oldProcessingEvent);
+  self->SetInMRMLCallbackFlag(self->GetInMRMLCallbackFlag() - 1);
 }
 
 //----------------------------------------------------------------------------
@@ -137,7 +138,7 @@ void vtkMRMLAbstractLogic::LogicCallback(vtkObject *caller, unsigned long eid,
 {
   vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
 
-  if (self && self->GetInLogicCallbackFlag())
+  if (self && !self->EnterLogicCallback())
     {
 #ifdef _DEBUG
     vtkDebugWithObjectMacro(self, "vtkMRMLAbstractLogic ******* LogicCallback called recursively?");
@@ -147,9 +148,9 @@ void vtkMRMLAbstractLogic::LogicCallback(vtkObject *caller, unsigned long eid,
 
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic LogicCallback");
 
-  self->SetInLogicCallbackFlag(1);
+  self->SetInLogicCallbackFlag(self->GetInLogicCallbackFlag() + 1);
   self->ProcessLogicEvents(caller, eid, callData);
-  self->SetInLogicCallbackFlag(0);
+  self->SetInLogicCallbackFlag(self->GetInLogicCallbackFlag() - 1);
 }
 
 //----------------------------------------------------------------------------
@@ -297,6 +298,18 @@ void vtkMRMLAbstractLogic::SetInMRMLCallbackFlag(int flag)
 int vtkMRMLAbstractLogic::GetInMRMLCallbackFlag()
 {
   return this->Internal->InMRMLCallbackFlag;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAbstractLogic::EnterMRMLCallback()const
+{
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAbstractLogic::EnterLogicCallback()const
+{
+  return true;
 }
 
 //---------------------------------------------------------------------------

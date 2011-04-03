@@ -173,10 +173,18 @@ protected:
   /// In MRMLCallback, loop are avoided by checking the value of the flag
   void SetInMRMLCallbackFlag(int flag);
 
+  /// Return true if the MRML callback must be executed, false otherwise.
+  /// By default, it returns true, you can reimplement it in subclasses
+  virtual bool EnterMRMLCallback()const;
+
   /// Set InLogicCallbackFlag flag
   /// True means ProcesslogicEvent has already been called
   /// In LogicCallback, loop are avoided by checking the value of the flag
   void SetInLogicCallbackFlag(int flag);
+
+  /// Return true if the Logic callback must be executed, false otherwise.
+  /// By default, it returns true, you can reimplement it in subclasses
+  virtual bool EnterLogicCallback()const;
 
   /// Set event id currently processed or 0 if any.
   void SetProcessingMRMLEvent(int event);
