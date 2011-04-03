@@ -91,7 +91,7 @@ void qSlicerCropVolumeModuleWidget::setup()
   connect( d->InputROIComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this, SLOT(onInputROIChanged()));
   connect( d->OutputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this, SLOT(onInputROIChanged()));
+    this, SLOT(onOutputVolumeChanged()));
   connect( d->VisibilityButton, SIGNAL(toggled(bool)),
     this, SLOT(onROIVisibilityChanged()));
   connect( d->LinearRadioButton, SIGNAL(toggled(bool)),
@@ -165,13 +165,18 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged(){
 }
 
 void qSlicerCropVolumeModuleWidget::onOutputVolumeChanged(){
+  std::cerr << "Output volume changed!" << std::endl;
   if(!this->parametersNode)
     return;
 
   Q_D(qSlicerCropVolumeModuleWidget);
   vtkMRMLNode* n = d->OutputVolumeComboBox->currentNode();
-  if(n)
+  std::cerr << "Got current node" << std::endl;
+
+  if(n){
     this->parametersNode->SetAndObserveOutputVolumeNodeID(n->GetID());
+    std::cerr << "Output volume node is now " << n->GetID() << std::endl;
+  }
 }
 
 void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged(){
