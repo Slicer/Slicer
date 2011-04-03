@@ -51,7 +51,7 @@ SET(qtmodules
   TractographyDisplay
   TractographyFiducialSeeding
   Volumes
-  CropVolume
+  #CropVolume
   VolumeRendering
   )
 
