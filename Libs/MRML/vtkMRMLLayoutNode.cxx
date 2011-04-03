@@ -305,7 +305,7 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
   vtkXMLDataElement* root = parser->GetRootElement();
   // if we don't register, then the root element will be destroyed when the
   // parser gets out of scope
-  root->Register(this);
+  root->Register(0);
   return root;
 }
 

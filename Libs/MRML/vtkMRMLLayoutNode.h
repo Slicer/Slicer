@@ -116,12 +116,13 @@ public:
   vtkGetStringMacro(CurrentViewArrangement);
   vtkGetObjectMacro(LayoutRootElement, vtkXMLDataElement);
 
+  // You are responsible to delete the reutrned dataElement.
+  static vtkXMLDataElement* ParseLayout(const char* description);
+
 protected:
   void UpdateLayoutDescription();
   void SetLayoutDescription(const char* description);
   vtkSetStringMacro(CurrentViewArrangement);
-  // You are responsible to delete the reutrned dataElement.
-  vtkXMLDataElement* ParseLayout(const char* description);
 
 protected:
   vtkMRMLLayoutNode();

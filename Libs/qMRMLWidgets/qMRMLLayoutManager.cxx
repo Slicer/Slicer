@@ -509,7 +509,7 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutManagerPrivate::attributesFromXML(QDomElement viewElement)
+vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutManagerPrivate::attributesFromXML(QDomElement viewElement)const
 {
   vtkMRMLLayoutLogic::ViewAttributes attributes;
   QDomNamedNodeMap elementAttributes = viewElement.attributes();
@@ -521,6 +521,35 @@ vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutManagerPrivate::attributesFromXML(
       viewElement.attribute(attribute.nodeName()).toStdString();
     }
   return attributes;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutManagerPrivate::propertiesFromXML(QDomElement viewElement)const
+{
+  vtkMRMLLayoutLogic::ViewProperties properties;
+  for (QDomElement childElement = viewElement.firstChildElement();
+       !childElement.isNull();
+       childElement = childElement.nextSiblingElement())
+    {
+    properties.push_back(this->propertyFromXML(childElement));
+    }
+  return properties;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutManagerPrivate::propertyFromXML(QDomElement propertyElement)const
+{
+  vtkMRMLLayoutLogic::ViewProperty property;
+  QDomNamedNodeMap elementAttributes = propertyElement.attributes();
+  const int attributeCount = elementAttributes.count();
+  for (int i = 0; i < attributeCount; ++i)
+    {
+    QDomNode attribute = elementAttributes.item(i);
+    property[attribute.nodeName().toStdString()] =
+      propertyElement.attribute(attribute.nodeName()).toStdString();
+    }
+  property["value"] = propertyElement.text().toStdString();
+  return property;
 }
 
 //------------------------------------------------------------------------------
@@ -710,6 +739,8 @@ QWidget* qMRMLLayoutManager::viewFromXML(QDomElement viewElement)
   // the view should have been created automatically by the logic when the new
   // view arrangement is set
   Q_ASSERT(viewNode);
+  vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);
+  d->MRMLLayoutLogic->ApplyProperties(properties, viewNode, "relayout");
   QWidget* view = d->viewWidget(viewNode);
   Q_ASSERT(view);
   return view;

@@ -91,7 +91,9 @@ public:
 
   void setLayoutInternal(int layout);
 
-  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement);
+  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
+  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;
+  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement)const;
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.

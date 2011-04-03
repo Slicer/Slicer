@@ -55,6 +55,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef std::map<std::string, std::string> ViewAttributes;
+  typedef ViewAttributes ViewProperty;
+  typedef std::vector<ViewProperty> ViewProperties;
 
   ///
   /// Update logic state when MRML scene chenges
@@ -77,6 +79,9 @@ public:
   vtkCollection* GetViewsFromAttributes(const ViewAttributes& attributes);
 
   vtkMRMLNode*   CreateViewFromAttributes(const ViewAttributes& attributes);
+
+  void ApplyProperties(const ViewProperties& properties, vtkMRMLNode* view, const std::string& action);
+  void ApplyProperty(const ViewProperty& property, vtkMRMLNode* view);
 
   /// Returns the up-to-date list of all the nodes that are mapped in the current
   /// layout.
@@ -114,6 +119,7 @@ protected:
   /// Make sure the view node list mapped in the current layout is up-to-date.
   void UpdateViewCollectionsFromLayout();
   void CreateMissingViews();
+  void CreateMissingViews(vtkXMLDataElement* layoutRootElement);
 
   /// As we pass the root element of the entire layout, it returns a list of
   /// all the nodes that are found in the layout.
@@ -122,13 +128,16 @@ protected:
   /// Utility functions to browse XML data elements
   vtkXMLDataElement* GetNextViewElement(vtkXMLDataElement* viewElement);
   vtkXMLDataElement* GetNextElement(vtkXMLDataElement* element);
-  ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement);
+  ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement)const;
+  ViewProperties     GetViewElementProperties(vtkXMLDataElement* viewElement)const;
+  ViewProperty       GetViewElementProperty(vtkXMLDataElement* viewProperty)const;
 
   /// Pointer on the unique Layout node of the mrml node.
   vtkMRMLLayoutNode* LayoutNode;
   int                LastValidViewArrangement;
   /// Up-to-date list of the nodes that are mapped into the scene
   vtkCollection*     ViewNodes;
+  vtkXMLDataElement* ConventionalLayoutRootElement;
 };
 
 #endif
