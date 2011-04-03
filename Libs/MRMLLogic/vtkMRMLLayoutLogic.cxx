@@ -484,8 +484,26 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
     {
     return;
     }
-  this->GetMRMLObserverManager()->SetAndObserveObject(
-    vtkObjectPointer(&this->LayoutNode), layoutNode);
+  // vtkMRMLLayoutLogic needs to receive the ModifiedEvent before anyone (in
+  // particular qMRMLLayoutManager). It should be the case as vtkMRMLLayoutLogic
+  // is the first to add an observer to it. However VTK wrongly calls the
+  // firstly added observer after all the other observer are called. So we need
+  // to enforce, using a priority, that it is first. The observer manager
+  // can't give control over the priority so we need to do the observation
+  // manually.
+  //this->GetMRMLObserverManager()->SetAndObserveObject(
+  //  vtkObjectPointer(&this->LayoutNode), layoutNode);
+
+  if (this->LayoutNode)
+    {
+    this->LayoutNode->RemoveObservers(vtkCommand::ModifiedEvent, this->GetMRMLCallbackCommand());
+    }
+  this->LayoutNode = layoutNode;
+  if (this->LayoutNode)
+    {
+    this->LayoutNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLCallbackCommand(), 10.);
+    }
+
   // To do only once (when the layout node is set)
   this->AddDefaultLayouts();
   this->UpdateFromLayoutNode();
