@@ -21,8 +21,6 @@
 // Qt includes
 #include <QButtonGroup>
 #include <QDebug>
-#include <QFileInfo>
-#include <QVariant>
 #include <QWidget>
 
 // CTK includes
@@ -30,41 +28,25 @@
 #include <ctkLayoutManager_p.h>
 
 // qMRMLWidgets includes
-#include <qMRMLThreeDView.h>
-#include <qMRMLSliceWidget.h>
-#include <qMRMLSliceControllerWidget.h>
-#include <qMRMLUtils.h>
-#include <qMRMLNodeFactory.h>
-
-// SlicerQt includes
-#include "vtkSlicerConfigure.h"
 #include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutManager_p.h"
+#include <qMRMLSliceWidget.h>
+#include <qMRMLSliceControllerWidget.h>
+#include <qMRMLThreeDView.h>
 
 // MRMLLogic includes
 #include <vtkMRMLLayoutLogic.h>
+#include <vtkMRMLSliceLogic.h>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceLogic.h>
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkCollection.h>
 #include <vtkSmartPointer.h>
-#include <vtkIntArray.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkInteractorObserver.h>
-#include <vtkCornerAnnotation.h>
-#include <vtkXMLDataElement.h>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qMRMLLayoutManager");
@@ -132,20 +114,6 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDView(vtkMRMLViewNode* node)con
       }
     }
   return 0;
-}
-
-//------------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDViewCreateIfNeeded(int id)
-{
-  Q_ASSERT(id >= 0);
-  qMRMLThreeDView* view = this->threeDView(id);
-  while (!view)
-    {
-    this->createThreeDView();
-    view = this->threeDView(id);
-    }
-  Q_ASSERT(view);
-  return view;
 }
 
 //------------------------------------------------------------------------------
@@ -255,19 +223,6 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
 
   logger.trace(QString("created %1").arg(sliceLayoutName));
   return sliceWidget;
-}
-
-// --------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView()
-{
-  int lastViewCount = this->ThreeDViewList.size();
-  vtkMRMLNode* viewNode = qMRMLNodeFactory::createNode(this->MRMLScene, "vtkMRMLViewNode");
-  // onNodeAdded should have created the threeDView, if not, then create it
-  if (lastViewCount == this->ThreeDViewList.size())
-    {
-    this->createThreeDView(vtkMRMLViewNode::SafeDownCast(viewNode));
-    }
-  return this->threeDView(lastViewCount);
 }
 
 // --------------------------------------------------------------------------
@@ -501,21 +456,9 @@ void qMRMLLayoutManagerPrivate::updateWidgetsFromViewNodes()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::updateLayoutFromMRMLScene()
 {
-  if (!this->MRMLScene)
-    {
-    this->setMRMLLayoutNode(0);
-    return;
-    }
-  // Create vtkMRMLLayoutNode if required
-  this->MRMLScene->InitTraversal();
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(
-    this->MRMLScene->GetNextNodeByClass("vtkMRMLLayoutNode"));
-  Q_ASSERT(layoutNode);
-
-  this->setMRMLLayoutNode(layoutNode);
-  // make sure there is just 1 node
-  Q_ASSERT( this->MRMLScene->GetNextNodeByClass("vtkMRMLLayoutNode") == 0);
+  this->setMRMLLayoutNode(this->MRMLLayoutLogic->GetLayoutNode());
 }
+
 /*
 //------------------------------------------------------------------------------
 bool qMRMLLayoutManagerPrivate::startUpdateLayout()
@@ -743,7 +686,7 @@ int qMRMLLayoutManager::layout()const
 {
   Q_D(const qMRMLLayoutManager);
   return d->MRMLLayoutNode ?
-    d->MRMLLayoutNode->GetViewArrangement() : vtkMRMLLayoutNode::SlicerLayoutNone;//d->SavedCurrentViewArrangement;
+    d->MRMLLayoutNode->GetViewArrangement() : vtkMRMLLayoutNode::SlicerLayoutNone;
 }
 
 //------------------------------------------------------------------------------
@@ -755,27 +698,6 @@ void qMRMLLayoutManager::setLayout(int layout)
     return;
     }
   d->setLayoutInternal(layout);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManager::switchToOneUpSliceView(const QString& sliceLayoutName)
-{
-  if (sliceLayoutName == "Red")
-    {
-    this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-    }
-  else if (sliceLayoutName == "Green")
-    {
-    this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
-    }
-  else if (sliceLayoutName == "Yellow")
-    {
-    this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
-    }
-  else
-    {
-    logger.warn(QString("Unknown view : %1").arg(sliceLayoutName));
-    }
 }
 
 //------------------------------------------------------------------------------

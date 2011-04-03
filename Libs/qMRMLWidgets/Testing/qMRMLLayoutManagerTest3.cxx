@@ -29,6 +29,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLLayoutLogic.h>
+#include <vtkMRMLLayoutNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

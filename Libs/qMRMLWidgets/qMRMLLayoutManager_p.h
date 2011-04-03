@@ -78,8 +78,6 @@ public:
 
   /// Instantiate a 3D Viewer corresponding to \a viewNode
   virtual qMRMLThreeDView* createThreeDView(vtkMRMLViewNode* viewNode);
-  /// Convenient function that creates a vtkMRMLViewNode and a qMRMLThreeDView
-  qMRMLThreeDView* createThreeDView();
 
   /// Delete 3D Viewer associated with \a viewNode
   void removeThreeDView(vtkMRMLViewNode* viewNode);
@@ -92,17 +90,6 @@ public:
   void updateLayoutNode(int layout);
 
   void setLayoutInternal(int layout);
-  void setConventionalView();
-  void setOneUp3DView();
-  void setOneUpSliceView(const QString& sliceViewName);
-  void setFourUpView();
-  void setTabbed3DView();
-  void setTabbedSliceView();
-  void setLightboxView();
-  void setCompareView();
-  void setSideBySideLightboxView();
-  void setDual3DView();
-  void setNone();
 
   vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement);
 
@@ -110,7 +97,6 @@ public:
   /// identified by \a renderViewName.
   qMRMLThreeDView* threeDView(vtkMRMLViewNode* node)const;
   qMRMLThreeDView* threeDView(int id)const;
-  qMRMLThreeDView* threeDViewCreateIfNeeded(int id);
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName

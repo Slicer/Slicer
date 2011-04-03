@@ -47,6 +47,7 @@
 #include "qSlicerSettingsPythonPanel.h"
 
 // MRML includes
+#include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------

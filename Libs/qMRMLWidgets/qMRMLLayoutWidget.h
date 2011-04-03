@@ -57,26 +57,6 @@ public slots:
   /// Set the MRML \a scene to the layout manager
   void setMRMLScene(vtkMRMLScene* scene);
 
-  /// Switch to the different layout
-  /// propagate to the layout manager
-  void switchToConventionalView();
-  void switchToOneUp3DView();
-  void switchToOneUpRedSliceView();
-  void switchToOneUpYellowSliceView();
-  void switchToOneUpGreenSliceView();
-  void switchToOneUpSliceView(const QString& sliceViewName);
-  void switchToFourUpView();
-  void switchToTabbed3DView();
-  void switchToTabbedSliceView();
-  void switchToLightboxView();
-  void switchToCompareView();
-  void switchToCompareWidescreenView();
-  void switchToThreeOverThreeView();
-  void switchToFourOverFourView();
-  void switchToSideBySideLightboxView();
-  void switchToDual3DView();
-  void switchToNone();
-
   /// Propagate to the layoutmanager
   void setLayout(int);
 
