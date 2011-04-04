@@ -134,10 +134,12 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SelectedSlice = -1;
   this->SelectedOrientation = -1;
 
+#if ITK_VERSION_MAJOR < 4
   // make sure ITK built-in factories are registered,
   // then register the extra ones and unregister the 
   // ones we don't want
   itk::ImageIOFactory::RegisterBuiltInFactories();
+#endif
   this->RegisterExtraBuiltInFactories();
   this->UnRegisterDeprecatedBuiltInFactories();
 }
