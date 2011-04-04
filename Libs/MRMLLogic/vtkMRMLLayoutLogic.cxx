@@ -702,7 +702,7 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
 //----------------------------------------------------------------------------
 vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& attributes)
 {
-    if (!this->GetMRMLScene())
+  if (!this->GetMRMLScene())
     {
     return NULL;
     }
@@ -718,7 +718,12 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
   if (nodes == NULL || nodes->GetNumberOfItems() == 0)
     {
     vtkWarningMacro("Couldn't find nodes matching class: " << className);
-    return NULL;
+    if (nodes)
+      {
+      nodes->Delete();
+      nodes = 0;
+      }
+    return nodes;
     }
   vtkCollectionSimpleIterator nodesIt;
   vtkMRMLNode* node;
