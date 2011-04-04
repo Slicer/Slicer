@@ -140,7 +140,7 @@ add_library(${lib_name}
 slicer3_set_modules_output_path(${lib_name})
 
 set(libs
-  ITKNumerics
+  ${ITK_LIBRARIES}
   )
 
 IF (VTK_WRAP_TCL)
