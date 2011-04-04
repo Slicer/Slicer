@@ -77,13 +77,16 @@
 #include "itkNrrdImageIO.h"
 #include "itkGE5ImageIO.h"
 #if ITK_VERSION_MAJOR < 4
+#include "itkAnalyzeImageIO.h"
 #include "itkBrains2MaskImageIOFactory.h"
 #include "itkBrains2MaskImageIO.h"
+#else
+#include "itkAnalyzeImageIOFactory.h"
+#include "itkAnalyzeImageIO.h"
 #endif
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
-#include "itkAnalyzeImageIO.h"
 #include "itkDICOMImageIO2Factory.h"
 #include <itksys/SystemTools.hxx>
 
@@ -165,6 +168,8 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
     {
 #if ITK_VERSION_MAJOR < 4
     itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
+#else
+    itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
 #endif
     itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
     firstTime = false;
