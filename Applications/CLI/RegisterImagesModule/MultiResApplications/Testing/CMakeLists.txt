@@ -1,5 +1,5 @@
 
-include_directories( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
+include_directories( ${CLI_SOURCE_DIR} ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 link_directories( ${RegisterImagesMultiResApplications_BUILD_DIR} )
 
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
