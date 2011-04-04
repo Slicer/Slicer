@@ -362,11 +362,19 @@ ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes,
   physicalVolumes.resize((const int)numObjects);
   for (unsigned n = 0; n < numObjects; n++)
     {
+#if ITK_VERSION_MAJOR < 4
       volumes[n] = labelFilter->GetOutput()->
               GetNthLabelObject(n)->GetSize();
       physicalVolumes[n] = (unsigned int)
            (labelFilter->GetOutput()->
             GetNthLabelObject(n)->GetSize()/1000.0);
+#else
+      volumes[n] = labelFilter->GetOutput()->
+              GetNthLabelObject(n)->GetNumberOfPixels();
+      physicalVolumes[n] = (unsigned int)
+           (labelFilter->GetOutput()->
+            GetNthLabelObject(n)->GetNumberOfPixels()/1000.0);
+#endif
     }  
 
 #endif
