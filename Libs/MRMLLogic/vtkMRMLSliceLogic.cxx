@@ -92,6 +92,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->SliceModelDisplayNode = 0;
   this->ImageData = 0;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
+  this->AddingSliceModelNodes = false;
 }
 
 //----------------------------------------------------------------------------
@@ -321,6 +322,12 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     node->UnRegister(this);
     }
 
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::EnterMRMLCallback()const
+{
+  return this->AddingSliceModelNodes == false;
 }
 
 //----------------------------------------------------------------------------
@@ -1138,9 +1145,11 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 
   if (this->SliceModelNode != 0 && this->GetMRMLScene()->GetNodeByID( this->GetSliceModelNode()->GetID() ) == 0 )
     {
+    this->AddingSliceModelNodes = true;
     this->GetMRMLScene()->AddNode(this->SliceModelDisplayNode);
     this->GetMRMLScene()->AddNode(this->SliceModelTransformNode);
     this->GetMRMLScene()->AddNode(this->SliceModelNode);
+    this->AddingSliceModelNodes = false;
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());

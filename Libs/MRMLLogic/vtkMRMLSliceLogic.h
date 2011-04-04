@@ -158,6 +158,9 @@ public:
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
+  /// Reimplemented to avoir calling ProcessMRMLEvents when we are added the
+  /// MRMLModelNode into the scene
+  virtual bool EnterMRMLCallback()const;
 
   virtual void ProcessMRMLEvents(vtkObject * /*caller*/,
                                   unsigned long /*event*/, 
@@ -323,7 +326,9 @@ protected:
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
+  bool                        AddingSliceModelNodes;
   bool                        Initialized;
+
   char *                      Name;
   vtkMRMLSliceNode *          SliceNode;
   vtkMRMLSliceCompositeNode * SliceCompositeNode;
