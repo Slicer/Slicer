@@ -2,8 +2,8 @@
 set(proj BatchMake)
 
 ExternalProject_Add(${proj}
-  CVS_REPOSITORY ":pserver:anoncvs:@batchmake.org:/cvsroot/BatchMake"
-  CVS_MODULE "BatchMake"
+  GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
+  GIT_TAG "origin/master"
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
   CMAKE_GENERATOR ${gen}
