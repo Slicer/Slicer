@@ -217,7 +217,7 @@ if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
 endif()
 
 if(APPLE)
-  set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
+  set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer.icns")
 endif()
 
 # slicer3 does _not_ require setting the windows path
