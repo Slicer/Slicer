@@ -32,11 +32,11 @@
 #include "vtkMatrix4x4.h"
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLDisplayNode
+class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLVolumeRenderingParametersNode *New();
-  vtkTypeMacro(vtkMRMLVolumeRenderingParametersNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLVolumeRenderingParametersNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -200,6 +200,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParam
 
   vtkSetVector2Macro(WindowLevelFg, double);
   vtkGetVectorMacro(WindowLevelFg, double, 2);
+
   
 protected:
   vtkMRMLVolumeRenderingParametersNode();

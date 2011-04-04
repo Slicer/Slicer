@@ -341,7 +341,10 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStor
       int pos = fileInfo.absoluteFilePath().indexOf(cacheDir);
       if ( pos != -1)
         {
+        int disableModify = node->GetDisableModifiedEvent();
+        node->SetDisableModifiedEvent(1);
         node->ModifiedSinceReadOn();
+        node->SetDisableModifiedEvent(disableModify);
         }
       }
     else
@@ -552,7 +555,10 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       }
 
     // clean up node after saving
+    int disableModify = node->GetDisableModifiedEvent();
+    node->SetDisableModifiedEvent(1);
     node->SetModifiedSinceRead(0);
+    node->SetDisableModifiedEvent(disableModify);
     nodeNameItem->setCheckState(Qt::Unchecked);
     nodeStatusItem->setText("Not Modified");
     }
