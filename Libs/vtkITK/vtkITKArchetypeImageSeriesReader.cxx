@@ -80,7 +80,8 @@
 #include "itkAnalyzeImageIO.h"
 #include "itkBrains2MaskImageIOFactory.h"
 #include "itkBrains2MaskImageIO.h"
-#else
+#endif
+#ifdef ITKv3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
 #include "itkAnalyzeImageIO.h"
 #endif
@@ -168,7 +169,8 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
     {
 #if ITK_VERSION_MAJOR < 4
     itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
-#else
+#endif
+#ifdef ITKv3_COMPATIBILITY
     itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
 #endif
     itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );

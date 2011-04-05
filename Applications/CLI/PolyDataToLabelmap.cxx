@@ -42,6 +42,9 @@
 #include "itkPluginUtilities.h"
 #include "PolyDataToLabelmapCLP.h"
 
+#ifdef ITKV3_COMPATIBILITY
+#include "itkAnalyzeImageIOFactory.h"
+#endif
 
 typedef itk::Image< unsigned char, 3 > LabelImageType;
 
@@ -278,7 +281,9 @@ int main( int argc, char * argv[] )
 
   itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
-
+#ifdef ITKV3_COMPATIBILITY
+  itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
+#endif
   try
     {
     itk::GetImageType (InputVolume, pixelType, componentType);
