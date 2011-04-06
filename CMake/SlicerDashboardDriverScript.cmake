@@ -98,7 +98,9 @@ MACRO(run_ctest)
     message("First time build - Initialize CMakeCache.txt")
     set(force_build 1)
 
+    #-----------------------------------------------------------------------------
     # Write initial cache.
+    #-----------------------------------------------------------------------------
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -115,56 +117,98 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 
     set(force_build 0)
     
-    ctest_submit(PARTS Update)
+    #-----------------------------------------------------------------------------
+    # The following variable can be used while testing the driver scripts
+    #-----------------------------------------------------------------------------
+    set(run_ctest_with_update TRUE)
+    set(run_ctest_with_configure TRUE)
+    set(run_ctest_with_build TRUE)
+    set(run_ctest_with_test FALSE)
+    set(run_ctest_with_coverage TRUE)
+    set(run_ctest_with_memcheck TRUE)
+    set(run_ctest_with_notes TRUE)
     
-    message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
+    #-----------------------------------------------------------------------------
+    # Update
+    #-----------------------------------------------------------------------------
+    if(run_ctest_with_update)
+      ctest_submit(PARTS Update)
+    endif()
     
-    #set(label Slicer)
-    
-    set_property(GLOBAL PROPERTY SubProject ${label})
-    set_property(GLOBAL PROPERTY Label ${label})
-     
-    ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
-    ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
-    ctest_submit(PARTS Configure)
+    #-----------------------------------------------------------------------------
+    # Configure
+    #-----------------------------------------------------------------------------
+    if (run_ctest_with_configure)
+      message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
+      
+      #set(label Slicer)
+      
+      set_property(GLOBAL PROPERTY SubProject ${label})
+      set_property(GLOBAL PROPERTY Label ${label})
+       
+      ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
+      ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
+      ctest_submit(PARTS Configure)
+    endif()
 
+    #-----------------------------------------------------------------------------
     # Build top level
-    message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
-    ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
-    ctest_submit(PARTS Build)
+    #-----------------------------------------------------------------------------
+    if (run_ctest_with_build)
+      message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
+      ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
+      ctest_submit(PARTS Build)
+    endif()
     
+    #-----------------------------------------------------------------------------
     # Inner build directory
+    #-----------------------------------------------------------------------------
     set(slicer_build_dir "${CTEST_BINARY_DIRECTORY}/Slicer-build")
     
-    message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
-    ctest_test(
-      BUILD "${slicer_build_dir}" 
-      #INCLUDE_LABEL ${label}
-      PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
-      EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
-    # runs only tests that have a LABELS property matching "${label}"
-    ctest_submit(PARTS Test)
+    #-----------------------------------------------------------------------------
+    # Test
+    #-----------------------------------------------------------------------------
+    if (run_ctest_with_test)
+      message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
+      ctest_test(
+        BUILD "${slicer_build_dir}" 
+        #INCLUDE_LABEL ${label}
+        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
+        EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
+      # runs only tests that have a LABELS property matching "${label}"
+      ctest_submit(PARTS Test)
+    endif()
     
-    # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
-    file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
-    file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
-    
+    #-----------------------------------------------------------------------------
     # Global coverage ... 
-    if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-      message("----------- [ Global coverage ] -----------")
-      ctest_coverage(BUILD "${slicer_build_dir}")
-      ctest_submit(PARTS Coverage)
-    endif ()
+    #-----------------------------------------------------------------------------
+    if (run_ctest_with_coverage)
+      # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
+      file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
+      file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
+      
+      if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+        message("----------- [ Global coverage ] -----------")
+        ctest_coverage(BUILD "${slicer_build_dir}")
+        ctest_submit(PARTS Coverage)
+      endif ()
+    endif()
     
+    #-----------------------------------------------------------------------------
     # Global dynamic analysis ...
-    if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
+    #-----------------------------------------------------------------------------
+    if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
         message("----------- [ Global memcheck ] -----------")
         ctest_memcheck(BUILD "${slicer_build_dir}")
         ctest_submit(PARTS MemCheck)
-      endif ()
+    endif ()
     
+    #-----------------------------------------------------------------------------
     # Note should be at the end
-    ctest_submit(PARTS Notes)
+    #-----------------------------------------------------------------------------
+    if (run_ctest_with_notes)
+      ctest_submit(PARTS Notes)
+    endif()
   
   endif()
 endmacro()
