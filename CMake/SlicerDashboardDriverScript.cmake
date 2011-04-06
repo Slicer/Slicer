@@ -130,7 +130,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     set(run_ctest_with_update TRUE)
     set(run_ctest_with_configure TRUE)
     set(run_ctest_with_build TRUE)
-    set(run_ctest_with_test FALSE)
+    set(run_ctest_with_test TRUE)
     set(run_ctest_with_coverage TRUE)
     set(run_ctest_with_memcheck TRUE)
     set(run_ctest_with_packages TRUE)
