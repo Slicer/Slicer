@@ -254,5 +254,12 @@ if(FILE_EXTENSIONS)
 
 endif()
 
+# -------------------------------------------------------------------------
+# Disable generator enabled by default
+set(CPACK_BINARY_TZ   OFF)
+set(CPACK_BINARY_STGZ OFF)
+set(CPACK_SOURCE_TBZ2 OFF)
+set(CPACK_SOURCE_TZ   OFF)
+
 include(CPack)
 
