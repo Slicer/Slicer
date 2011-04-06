@@ -502,7 +502,9 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
     // nothing can do, it's gone
     return;
     }
-  
+
+  this->GetMRMLScene()->SetIsClosing(true);
+
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
   vtkMRMLColorTableNode *node;
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
@@ -541,10 +543,11 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
 
    // remove the random procedural color nodes (after the fs proc nodes as
    // getting them by class)
-  int numProcNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLProceduralColorNode");
+  std::vector<vtkMRMLNode *> procNodes;
+  int numProcNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLProceduralColorNode", procNodes);
   for (int i = 0; i < numProcNodes; i++)
     {
-    vtkMRMLProceduralColorNode *procNode =  vtkMRMLProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLProceduralColorNode"));
+    vtkMRMLProceduralColorNode* procNode = vtkMRMLProceduralColorNode::SafeDownCast(procNodes[i]);
     if (procNode != NULL &&
         strcmp(procNode->GetID(), this->GetProceduralColorNodeID(procNode->GetName())) == 0)
       {
@@ -611,6 +614,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
       this->GetMRMLScene()->RemoveNode(node);
       }
     }
+  this->GetMRMLScene()->SetIsClosing(false);
 }
 
 //----------------------------------------------------------------------------

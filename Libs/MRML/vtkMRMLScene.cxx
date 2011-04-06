@@ -492,8 +492,7 @@ void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller),
 void vtkMRMLScene::Clear(int removeSingletons) 
 {
   this->SetUndoOff();
-  this->IsClosing++;
-  this->InvokeEvent(this->SceneAboutToBeClosedEvent, NULL);
+  this->SetIsClosing(true);
   
   if (!removeSingletons)
     {
@@ -537,8 +536,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // to create a few new scene once the current one has been close.
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
-  this->IsClosing--;
-  this->InvokeEvent(this->SceneClosedEvent, NULL);
+  this->SetIsClosing(false);
 }
 
 //------------------------------------------------------------------------------
@@ -751,6 +749,37 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
       }
     }
   return NULL;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetIsClosing(bool closing)
+{
+  if (closing)
+    {
+    this->IsClosing++;
+    if (this->IsClosing == 1)
+      {
+      this->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
+      this->Modified();
+      }
+    }
+  else
+    {
+    if (this->IsClosing == 0)
+      {
+      vtkErrorMacro(<< "Make sure SetIsClosing(true) / SetIsClosing(false) "
+                    "are paired properly");
+      return;
+      }
+
+    this->IsClosing--;
+
+    if (this->IsClosing == 0)
+      {
+      this->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
+      this->Modified();
+      }
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -460,6 +460,13 @@ public:
   /// Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
 
+  ///
+  /// IsClosing should be set to True when a important number of node will be
+  /// removed to the scene.
+  /// \note Every call to SetIsClosing(true) should be paired with
+  /// exactly one SetIsClosing(false)
+  void SetIsClosing(bool closing);
+
   /// 
   /// IsClosing is true during scene close
   /// \sa Clear()
