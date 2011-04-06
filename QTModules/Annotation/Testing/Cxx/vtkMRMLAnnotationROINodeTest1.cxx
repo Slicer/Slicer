@@ -94,21 +94,37 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   */
 
   vtkIndent ind;
-  node2->SetXYZ(3,-5,0);
-  node2->SetRadiusXYZ(100,200,-10);
+  int retval;
+  retval = node2->SetXYZ(3,-5,0);
+  if (!retval)
+    {
+    std::cerr << "ERROR: got " << retval << " when trying to call SetXYZ" << std::endl;
+    return EXIT_FAILURE;
+    }
+  retval = node2->SetRadiusXYZ(100,200,-10);
+  if  (!retval)
+    {
+    std::cerr << "ERROR: got " << retval << " when trying to call SetRadiusXYZ" << std::endl;
+    return EXIT_FAILURE;
+    }
 
+  std::cout << "PrintAnnotationInfo:" << std::endl;
   node2->PrintAnnotationInfo(cout,ind);
 
-  double *center = node2->GetXYZ();
-  double *radius = node2->GetRadiusXYZ();
+  double center[3];
+  node2->GetXYZ(center);
+  double radius[3];
+  node2->GetRadiusXYZ(radius);
 
   cout << "Center: " << center[0] << ", " << center[1] << ", " << center[2] << std::endl;
   cout << "Radius: " << radius[0] << ", " << radius[1] << ", " << radius[2] << std::endl;
-
+  
   if(center[0]!=3 || center[1]!=-5 || center[2]!=0 || 
      radius[0]!=100 || radius[1]!=200 || radius[2]!=-10)
+    {
+    std::cerr << "Error: Center and/or radius not as expected, should be 3,-5,0 and 100,200,-10" << std::endl;
     return EXIT_FAILURE;
-  
+    }
   cout << "Passed Adding and Deleting Data" << endl;
 
   node2->Modified();

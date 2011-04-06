@@ -283,13 +283,15 @@ void vtkMRMLAnnotationROINode::PrintAnnotationInfo(ostream& os, vtkIndent indent
 
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
-  double* origin = this->GetXYZ();
+  double origin[3];
+  this->GetXYZ(origin);
   os << indent << "Origin:" << endl;
   os << indent << indent << "X: " << origin[0] << endl;
   os << indent << indent << "Y: " << origin[1] << endl;
   os << indent << indent << "Z: " << origin[2] << endl;
 
-  double* radius = this->GetRadiusXYZ();
+  double radius[3];
+  this->GetRadiusXYZ(radius);
   os << indent << "Radius:" << endl;
   os << indent << indent << "rX: " << radius[0] << endl;
   os << indent << indent << "rY: " << radius[1] << endl;
@@ -342,6 +344,30 @@ void vtkMRMLAnnotationROINode::SetROIAnnotationVisibility(int flag)
 int vtkMRMLAnnotationROINode::GetROIAnnotationVisibility()
 {
   return this->GetAnnotationAttribute(0, vtkMRMLAnnotationNode::TEXT_VISIBLE);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationROINode::GetXYZ(double point[3])
+{
+  point[0] = point[1] = point[2] = 0.0;
+  if (this->PolyData && this->PolyData->GetPoints()) 
+    {
+    this->PolyData->GetPoint(0, point);
+    return 1;
+    }
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationROINode::GetRadiusXYZ(double point[3])
+{
+  point[0] = point[1] = point[2] = 0.0;
+  if (this->PolyData && this->PolyData->GetPoints()) 
+    {
+    this->PolyData->GetPoint(1, point);
+    return 1;
+    }
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -440,11 +466,10 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   double (*matrix)[4] = transformMatrix->Element;
   double xyzIn[3];
   double xyzOut[3];
-  double *p = NULL;
+  double p[3];
 
   // first point
-  p = this->GetXYZ();
-  if (p)
+  if (this->GetXYZ(p))
     {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
@@ -457,8 +482,7 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
     }
 
   // second point
-  p = this->GetRadiusXYZ();
-  if (p)
+  if (this->GetRadiusXYZ(p))
     {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
@@ -476,11 +500,10 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
   double xyzIn[3];
   double xyzOut[3];
-  double *p;
+  double p[3];
 
   // first point
-  p = this->GetXYZ();
-  if (p)
+  if (this->GetXYZ(p))
     {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
@@ -491,8 +514,7 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
     }
   
   // second point
-  p = this->GetRadiusXYZ();
-  if (p)
+  if (this->GetRadiusXYZ(p))
     {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];

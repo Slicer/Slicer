@@ -102,7 +102,9 @@ public:
   /// void SetXYZ(double X, double Y, double Z);
   /// void SetXYZ(double* XYZ);
   /// vtkGetVectorMacro(XYZ,double,3);
-  double* GetXYZ() {return this->GetControlPointCoordinates(0);}
+  //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
+  // returns 1 and control point coordinate 0 on success, 0 and 0,0,0 on failure
+  int GetXYZ(double point[3]);
   int SetXYZ(double newControl[3]) { return this->SetControlPoint(0, newControl);}
   int SetXYZ(double nC1, double nC2, double nC3) {
     double newControl[3] = {nC1,nC2,nC3};
@@ -115,7 +117,7 @@ public:
   /// void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   /// void SetRadiusXYZ(double* RadiusXYZ);
   /// vtkGetVectorMacro(RadiusXYZ,double,3);
-  double* GetRadiusXYZ() {return this->GetControlPointCoordinates(1);}
+  int GetRadiusXYZ(double point[3]);
   int SetRadiusXYZ(double newControl[3]) { return this->SetControlPoint(1, newControl);}
   int SetRadiusXYZ(double nC1, double nC2, double nC3) {
     double newControl[3] = {nC1,nC2,nC3};

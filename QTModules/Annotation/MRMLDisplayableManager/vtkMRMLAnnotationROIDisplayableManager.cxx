@@ -155,10 +155,12 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   // we need to save the origin here in the matrix
   //double origin[3];
-  double* origin = roiNode->GetXYZ();
-  double* radius = roiNode->GetRadiusXYZ();
+  double origin[3];
+  int originRetVal = roiNode->GetXYZ(origin);
+  double radius[3];
+  int radiusRetVal = roiNode->GetRadiusXYZ(radius);
 
-  if(!origin || !radius)
+  if(!originRetVal || !radiusRetVal)
     {
       vtkErrorMacro("CreateWidget: Failed to initialize a new ROI node!");
       return NULL;
@@ -289,18 +291,22 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   // we need to save the origin here in the matrix
   //double origin[3] = {0,0,0};
-  double* origin = roiNode->GetXYZ();
-  matrix->SetElement(0,3,origin[0]);
-  matrix->SetElement(1,3,origin[1]);
-  matrix->SetElement(2,3,origin[2]);
-
+  double origin[3];
+  if (roiNode->GetXYZ(origin))
+    {
+    matrix->SetElement(0,3,origin[0]);
+    matrix->SetElement(1,3,origin[1]);
+    matrix->SetElement(2,3,origin[2]);
+    }
   // we need to save the radius here in the matrix
   //double radius[3] = {0,0,0};
-  double* radius = roiNode->GetRadiusXYZ();
-  matrix->SetElement(0,0,radius[0]*2.0);
-  matrix->SetElement(1,1,radius[1]*2.0);
-  matrix->SetElement(2,2,radius[2]*2.0);
-
+  double radius[3];
+  if (roiNode->GetRadiusXYZ(radius))
+    {
+    matrix->SetElement(0,0,radius[0]*2.0);
+    matrix->SetElement(1,1,radius[1]*2.0);
+    matrix->SetElement(2,2,radius[2]*2.0);
+    }
   // we set the matrix to the transform
   transform->SetMatrix(matrix);
 
@@ -384,7 +390,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   origin[1] = matrix->GetElement(1,3);
   origin[2] = matrix->GetElement(2,3);
 
-  if (this->GetWorldCoordinatesChanged(origin,roiNode->GetXYZ()))
+  double roiNodeOrigin[3];
+  roiNode->GetXYZ(roiNodeOrigin);
+  if (this->GetWorldCoordinatesChanged(origin,roiNodeOrigin))
     {
     // save only if the coordinates really changed
     roiNode->SetXYZ(origin);
@@ -396,7 +404,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   radius[1] = matrix->GetElement(1,1)/2.0;
   radius[2] = matrix->GetElement(2,2)/2.0;
 
-  if (this->GetWorldCoordinatesChanged(radius,roiNode->GetRadiusXYZ()))
+  double roiNodeRadius[3];
+  roiNode->GetRadiusXYZ(roiNodeRadius);
+  if (this->GetWorldCoordinatesChanged(radius,roiNodeRadius))
     {
     // save only if the radius really changed
     roiNode->SetRadiusXYZ(radius);
