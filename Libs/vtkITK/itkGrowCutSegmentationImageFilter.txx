@@ -843,7 +843,7 @@ template <class TInputImage, class TOutputImage, class TWeightPixelType>
 void 
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, 
-   int threadId)
+   int itkNotUsed(threadId))
 {
   
 
