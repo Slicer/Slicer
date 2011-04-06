@@ -57,16 +57,16 @@ public:
   vtkGetMacro(PriorSegmentConfidence, double);
 
   // Methods to set the gestureColors
-  void SetGestureColors( vtkPoints *points )
- {
-    GestureColors = points;
-    this->Modified();
- }
+  //void SetGestureColors( vtkPoints *points )
+// {
+//    GestureColors = points;
+//    this->Modified();
+// }
  
   // Method for getting the gesture colors
-  vtkPoints* GetGestureColors (){
-    return GestureColors;
-  }
+ // vtkPoints* GetGestureColors (){
+ //   return GestureColors;
+ // }
 
   
 
@@ -76,7 +76,7 @@ public:
   double ObjectSize;
   double PriorSegmentConfidence;
   double ContrastNoiseRatio;
-  vtkPoints *GestureColors;
+ // vtkPoints *GestureColors;
 
   // optional : contrastNoiseRatio Threshold. Use this for producing 
   // output with values over the threshold in the final segmentation
