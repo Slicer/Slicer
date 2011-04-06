@@ -44,6 +44,13 @@ foreach(var ${expected_variables})
   endif()
 endforeach()
 
+# Make sure command 'ctest_upload' is available if WITH_PACKAGES is True
+if (WITH_PACKAGES)
+  if(NOT COMMAND ctest_upload)
+    message(FATAL_ERROR "Failed to enable option WITH_PACKAGES ! CMake ${CMAKE_VERSION} doesn't support 'ctest_upload' command.")
+  endif()
+endif()
+
 set(repository http://svn.slicer.org/Slicer4/trunk)
 
 # Should binary directory be cleaned?
@@ -126,6 +133,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     set(run_ctest_with_test FALSE)
     set(run_ctest_with_coverage TRUE)
     set(run_ctest_with_memcheck TRUE)
+    set(run_ctest_with_packages TRUE)
     set(run_ctest_with_notes TRUE)
     
     #-----------------------------------------------------------------------------
@@ -202,6 +210,25 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         ctest_memcheck(BUILD "${slicer_build_dir}")
         ctest_submit(PARTS MemCheck)
     endif ()
+    
+    #-----------------------------------------------------------------------------
+    # Create packages / installers ...
+    #-----------------------------------------------------------------------------
+    if (WITH_PACKAGES AND run_ctest_with_packages)
+      message("----------- [ WITH_PACKAGES ] -----------")
+      include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
+      set(packages)
+      message("Packaging ...")
+      SlicerFunctionCTestPackage(
+        BINARY_DIR ${slicer_build_dir} 
+        CONFIG ${CTEST_BUILD_CONFIGURATION}
+        RETURN_VAR packages)
+      message("Uploading ...")
+      foreach(p ${packages})
+        ctest_upload(FILES ${p})
+        ctest_submit(PARTS Upload)
+      endforeach()
+    endif()
     
     #-----------------------------------------------------------------------------
     # Note should be at the end
