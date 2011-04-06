@@ -52,7 +52,7 @@ public:
 
   ///
   /// Add a DisplayableManager and initialize it if required
-  void AddAndInitialize(vtkMRMLAbstractDisplayableManager * displayableManager);
+  void AddDisplayableManager(vtkMRMLAbstractDisplayableManager * displayableManager);
 
   ///
   /// Return the number of DisplayableManager already added to the group
@@ -66,11 +66,7 @@ public:
   /// Set Renderer and Interactor
   /// No-op if already initialized.
   /// \sa IsInitialized
-  void Initialize(vtkRenderer* newRenderer);
-
-  ///
-  /// Return True if Group has already been initialized
-  bool IsInitialized();
+  void SetRenderer(vtkRenderer* newRenderer);
 
   ///
   /// Convenient method to get the WindowInteractor associated with the Renderer
@@ -89,6 +85,19 @@ public:
   /// Set / Get MRML Displayable Node
   vtkMRMLNode* GetMRMLDisplayableNode();
   void SetMRMLDisplayableNode(vtkMRMLNode* newMRMLDisplayableNode);
+
+  /// Returns true if the displayableManagerName corresponds to a valid
+  /// displayable manager, false otherwise.
+  /// To be valid, ad displayableManagerName must be the name of a VTK
+  /// class that derives from vtkMRMLAbstractDisplayableManager or be a valid
+  /// python script file name.
+  static bool IsADisplayableManager(const char* displayableManagerName);
+
+  /// Returns a new instance of a displayable manager defined by its name:
+  /// VTK class name or python file name.
+  /// You are responsible of the returned pointer.
+  static vtkMRMLAbstractDisplayableManager* InstantiateDisplayableManager(
+    const char* displayableManagerName);
 
 protected:
 

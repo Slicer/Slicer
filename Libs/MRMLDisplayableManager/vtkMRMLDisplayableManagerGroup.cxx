@@ -69,7 +69,6 @@ public:
   vtkMRMLDisplayableManagerFactory*     DisplayableManagerFactory;
   vtkMRMLNode*                          MRMLDisplayableNode;
   vtkRenderer*                          Renderer;
-  bool                                  Initialized;
 };
 
 //----------------------------------------------------------------------------
@@ -80,7 +79,6 @@ vtkMRMLDisplayableManagerGroup::vtkInternal::vtkInternal()
 {
   this->MRMLDisplayableNode = 0;
   this->Renderer = 0;
-  this->Initialized = false;
   this->CallBackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
   this->DisplayableManagerFactory = 0;
 }
@@ -122,6 +120,56 @@ void vtkMRMLDisplayableManagerGroup::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLDisplayableManagerGroup
+::IsADisplayableManager(const char* displayableManagerName)
+{
+  // Check if displayableManagerName is a valid displayable manager
+  vtkSmartPointer<vtkObject> objectSmartPointer;
+  objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
+  if (objectSmartPointer.GetPointer() &&
+      objectSmartPointer->IsA("vtkMRMLAbstractDisplayableManager"))
+    {
+    return true;
+    }
+#ifdef MRMLDisplayableManager_USE_PYTHON
+  // Check if vtkClassOrScriptName is a python script
+  if (std::string(displayableManagerName).find(".py") != std::string::npos)
+    {
+    // TODO Make sure the file exists ...
+    return true;
+    }
+#endif
+  return false;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAbstractDisplayableManager* vtkMRMLDisplayableManagerGroup
+::InstantiateDisplayableManager(const char* displayableManagerName)
+{
+  vtkMRMLAbstractDisplayableManager* displayableManager = 0;
+#ifdef MRMLDisplayableManager_USE_PYTHON
+  // Are we dealing with a python scripted displayable manager
+  if (std::string(displayableManagerName).find(".py") != std::string::npos)
+    {
+    // TODO Make sure the file exists ...
+    vtkMRMLScriptedDisplayableManager* scriptedDisplayableManager =
+      vtkMRMLScriptedDisplayableManager::New();
+    scriptedDisplayableManager->SetPythonSource(displayableManagerName);
+    displayableManager = scriptedDisplayableManager;
+    }
+  else
+    {
+#endif
+    // Object will be unregistered when the SmartPointer will go out-of-scope
+    displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
+      vtkInstantiator::CreateInstance(displayableManagerName));
+#ifdef MRMLDisplayableManager_USE_PYTHON
+    }
+#endif
+  return displayableManager;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
     vtkMRMLDisplayableManagerFactory * factory)
 {
@@ -154,46 +202,32 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
+void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
     vtkMRMLAbstractDisplayableManager * displayableManager)
 {
   // Sanity checks
   if (!displayableManager)
     {
-    vtkWarningMacro(<<"AddAndInitialize - displayableManager is NULL");
+    vtkWarningMacro(<<"AddDisplayableManager - displayableManager is NULL");
     return;
     }
 
   // Make sure the displayableManager has NOT already been added
-  vtkInternal::DisplayableManagersIt it = std::find(this->Internal->DisplayableManagers.begin(),
-                                                    this->Internal->DisplayableManagers.end(),
-                                                    displayableManager);
-
-  if ( it != this->Internal->DisplayableManagers.end())
+  const char * displayableManagerClassName = displayableManager->GetClassName();
+  if (this->GetDisplayableManagerByClassName(displayableManagerClassName) != 0)
     {
-    vtkWarningMacro(<<"AddAndInitialize - "
+    vtkWarningMacro(<<"AddDisplayableManager - "
                     << displayableManager->GetClassName()
                     << " (" << displayableManager << ") already added");
     return;
     }
 
-  // Initialize DisplayableManager if required
-  bool initialized = displayableManager->IsInitialized();
-
-  // Already initialized DisplayableManager are expected to have the same Renderer
-  assert(initialized ? displayableManager->GetRenderer() == this->Internal->Renderer : 1);
-
-  if (!initialized)
-    {
-    displayableManager->Initialize(this, this->Internal->Renderer);
-    displayableManager->SetAndObserveMRMLDisplayableNode(this->GetMRMLDisplayableNode());
-    }
+  displayableManager->SetMRMLDisplayableManagerGroup(this);
+  displayableManager->SetRenderer(this->Internal->Renderer);
+  displayableManager->SetAndObserveMRMLDisplayableNode(this->GetMRMLDisplayableNode());
 
   displayableManager->Register(this);
   this->Internal->DisplayableManagers.push_back(displayableManager);
-
-  // Update Name -> Object map
-  const char * displayableManagerClassName = displayableManager->GetClassName();
   this->Internal->NameToDisplayableManagerMap[displayableManagerClassName] = displayableManager;
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
@@ -207,22 +241,25 @@ int vtkMRMLDisplayableManagerGroup::GetDisplayableManagerCount()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::Initialize(vtkRenderer* newRenderer)
+void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
 {
   // Sanity checks
-  if (this->Internal->Initialized)
+  if (this->Internal->Renderer == newRenderer)
     {
     return;
     }
-  if (!newRenderer)
+
+  if (this->Internal->Renderer)
     {
-    return;
+    this->Internal->Renderer->Delete();
     }
 
   this->Internal->Renderer = newRenderer;
-  this->Internal->Renderer->Register(this);
 
-  this->Internal->Initialized = true;
+  if (this->Internal->Renderer)
+    {
+    this->Internal->Renderer->Register(this);
+    }
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "initializing DisplayableManagerGroup using Renderer: " << newRenderer);
@@ -231,27 +268,10 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkRenderer* newRenderer)
   for(size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
     vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
-    bool initialized = displayableManager->IsInitialized();
-
-    // Already initalized DisplayableManager are expected to have the same Renderer
-    assert(initialized ? displayableManager->GetRenderer() == newRenderer : 1);
-
-    if (!initialized)
-      {
-      displayableManager->Initialize(this, newRenderer);
-      }
+    displayableManager->SetRenderer(newRenderer);
     }
 
   this->Modified();
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLDisplayableManagerGroup::IsInitialized()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Initialized of "
-                << this->Internal->Initialized);
-  return this->Internal->Initialized;
 }
 
 //----------------------------------------------------------------------------
@@ -318,8 +338,6 @@ vtkMRMLAbstractDisplayableManager*
 
   if (it == this->Internal->NameToDisplayableManagerMap.end())
     {
-    vtkWarningMacro(<< "GetDisplayableManagerByClassName - "
-                    << "DisplayableManager identified by [" << className << "] does NOT exist");
     return 0;
     }
 
@@ -357,36 +375,11 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
 {
   assert(displayableManagerName);
 
-#ifdef MRMLDisplayableManager_USE_PYTHON
-  std::string str(displayableManagerName);
-  if (str.find(".py") != std::string::npos)
-    {
-    vtkSmartPointer<vtkMRMLScriptedDisplayableManager> scriptedDisplayableManager =
-        vtkSmartPointer<vtkMRMLScriptedDisplayableManager>::New();
-    scriptedDisplayableManager->SetPythonSource(displayableManagerName);
-
-    this->AddAndInitialize(scriptedDisplayableManager);
-    }
-  else
-    {
-#endif
-    // Object will be unregistered when the SmartPointer will go out-of-scope
-    vtkSmartPointer<vtkObject> objectSmartPointer;
-    objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
-    vtkMRMLAbstractDisplayableManager* displayableManager =
-        vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
-    if (!displayableManager)
-      {
-      vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate "
-                    << displayableManagerName);
-      return;
-      }
-
-    this->AddAndInitialize(displayableManager);
-#ifdef MRMLDisplayableManager_USE_PYTHON
-    }
-#endif
-
+  vtkSmartPointer<vtkMRMLAbstractDisplayableManager> newDisplayableManager;
+  newDisplayableManager.TakeReference(
+    vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(
+      displayableManagerName));
+  this->AddDisplayableManager(newDisplayableManager);
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryRegisteredEvent:"
                 << displayableManagerName)
 }

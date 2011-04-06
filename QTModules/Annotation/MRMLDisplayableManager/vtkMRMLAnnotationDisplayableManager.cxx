@@ -870,8 +870,10 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
     // for 3D, we want to convert the coordinates using the pick function
 
     // ModelDisplayableManager is expected to be instantiated !
-    vtkMRMLModelDisplayableManager * modelDisplayableManager = vtkMRMLModelDisplayableManager::SafeDownCast(
-             this->GetDisplayableManagerGroup()->GetDisplayableManagerByClassName("vtkMRMLModelDisplayableManager"));
+    vtkMRMLModelDisplayableManager * modelDisplayableManager =
+      vtkMRMLModelDisplayableManager::SafeDownCast(
+        this->GetMRMLDisplayableManagerGroup()->GetDisplayableManagerByClassName(
+          "vtkMRMLModelDisplayableManager"));
     assert(modelDisplayableManager);
 
     double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];

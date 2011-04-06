@@ -50,10 +50,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
   ///
-  /// Return True if the DisplayableManager has already been initialized
-  bool IsInitialized();
-
-  ///
   /// Return True if Create() method has been invoked
   /// \sa CreateIfPossible() Create()
   bool IsCreated();
@@ -86,13 +82,10 @@ protected:
   friend class vtkMRMLDisplayableManagerGroup;
   //ETX
 
-  /// Set Renderer and Interactor
-  /// No-op if already initialized.
-  /// Called by vtkMRMLDisplayableManagerGroup
-  /// \sa IsInitialized
-  void Initialize(vtkMRMLDisplayableManagerGroup * group, vtkRenderer* newRenderer);
+  virtual void SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup* group);
+  virtual void SetRenderer(vtkRenderer* newRenderer);
 
-  /// Called by Initialize();
+  /// Called by SetRenderer();
   /// Sub-class could overload that function and perform additional initialization steps
   /// \note Initialization occurs before the MRMLDisplayableNode is set and observed
   /// \warning That function should NOT be used directly !
@@ -117,7 +110,7 @@ protected:
   void SetAndObserveMRMLDisplayableNode(vtkMRMLNode * newMRMLDisplayableNode);
 
   /// Get associated DisplayableManager group
-  vtkMRMLDisplayableManagerGroup * GetDisplayableManagerGroup();
+  vtkMRMLDisplayableManagerGroup * GetMRMLDisplayableManagerGroup();
 
   /// Invoke Create() and set Created flag to True
   /// A no-op if IsCreated() return True

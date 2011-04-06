@@ -243,7 +243,6 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
 {
-  assert(!this->IsInitialized());
   vtkRenderWindowInteractor * interactor = this->GetInteractor();
   if (interactor)
     {

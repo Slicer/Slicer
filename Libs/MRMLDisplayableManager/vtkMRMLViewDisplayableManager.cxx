@@ -438,7 +438,7 @@ void vtkMRMLViewDisplayableManager::Create()
   // CameraNodeDisplayableManager is expected to be instantiated !
   vtkMRMLCameraDisplayableManager * cameraDisplayableManager =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
-          this->GetDisplayableManagerGroup()->GetDisplayableManagerByClassName(
+          this->GetMRMLDisplayableManagerGroup()->GetDisplayableManagerByClassName(
               "vtkMRMLCameraDisplayableManager"));
   assert(cameraDisplayableManager);
 

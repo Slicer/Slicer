@@ -328,6 +328,8 @@ vtkMRMLAbstractDisplayableManager::vtkMRMLAbstractDisplayableManager()
 {
   this->Internal = new vtkInternal(this);
   this->AddObserver(vtkCommand::DeleteEvent, this->Internal->DeleteCallBackCommand);
+  // Default observable event associated with DisplayableNode
+  this->AddMRMLDisplayableManagerEvent(vtkCommand::ModifiedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -347,7 +349,8 @@ void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerGroup()
+vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager
+::GetMRMLDisplayableManagerGroup()
 {
   return this->Internal->DisplayableManagerGroup;
 }
@@ -386,44 +389,44 @@ void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGroup * group,
-                                                   vtkRenderer* newRenderer)
+void vtkMRMLAbstractDisplayableManager
+::SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup * group)
 {
   // Sanity checks
-  if (this->Internal->Initialized)
+  if (this->Internal->DisplayableManagerGroup == group)
     {
     return;
     }
-  if (!group)
-    {
-    return;
-    }
-  if (!newRenderer)
-    {
-    return;
-    }
-
   this->Internal->DisplayableManagerGroup = group;
-
-  this->Internal->Renderer = newRenderer;
-  this->Internal->Renderer->Register(this);
-
-  // Default observable event associated with DisplayableNode
-  this->Internal->MRMLDisplayableNodeObservableEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-
-  this->AdditionnalInitializeStep();
-
-  vtkDebugMacro("initializing with Group " << group << " and Renderer " << newRenderer);
-
-  this->Internal->Initialized = true;
-
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAbstractDisplayableManager::IsInitialized()
+void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
 {
-  return this->Internal->Initialized;
+  // Sanity checks
+  if (this->Internal->Renderer == newRenderer)
+    {
+    return;
+    }
+
+  if (this->Internal->Renderer)
+    {
+    this->Internal->Renderer->Delete();
+    }
+
+  this->Internal->Renderer = newRenderer;
+
+  if (this->Internal->Renderer)
+    {
+    this->Internal->Renderer->Register(this);
+    }
+
+  this->AdditionnalInitializeStep();
+
+  this->Internal->Initialized = true;
+
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
