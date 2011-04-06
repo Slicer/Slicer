@@ -40,15 +40,10 @@ ENDIF()
 # Find and install python
 # -------------------------------------------------------------------------
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
-  #assum get build test build tree
-  get_filename_component(PARENT_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
-  set(PYTHON_DIR "${PARENT_BUILD_DIR}/Slicer3-lib/python-build")
 
-  #try superbuild tree
-  if(NOT EXISTS ${PYTHON_DIR})
-    get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
-    set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-build")
-  endif()
+  get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
+  set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-build")
+
   if(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
     get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
   endif()
