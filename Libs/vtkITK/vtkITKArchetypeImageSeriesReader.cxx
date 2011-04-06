@@ -80,6 +80,7 @@
 #include "itkAnalyzeImageIO.h"
 #include "itkBrains2MaskImageIOFactory.h"
 #include "itkBrains2MaskImageIO.h"
+#include "itkDICOMImageIO2Factory.h"
 #endif
 #ifdef ITKv3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
@@ -88,7 +89,6 @@
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
-#include "itkDICOMImageIO2Factory.h"
 #include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
@@ -193,7 +193,7 @@ vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
     return;
     }
   firstTime = false;
-  
+#if ITK_VERSION_MAJOR < 4
   std::list<itk::ObjectFactoryBase*> registeredFactories = itk::ObjectFactoryBase::GetRegisteredFactories();
   itk::DICOMImageIO2Factory *dicomIO = NULL;
   for ( std::list<itk::ObjectFactoryBase*>::iterator i = registeredFactories.begin();
@@ -213,6 +213,7 @@ vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
     {
     vtkErrorMacro("Could not find dicomIO factory to unregister");
     }
+#endif
 }
 
 //----------------------------------------------------------------------------
