@@ -38,6 +38,7 @@
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerMouseModeToolBar");
@@ -141,8 +142,20 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
                       this, SLOT(onMRMLSceneImportedEvent()));
 
+  
+
   this->MRMLScene = newScene;
 
+  // watch for changes to the interaction node so can update the widget
+  if (this->MRMLScene)
+    {
+    vtkMRMLInteractionNode * interactionNode = this->MRMLAppLogic->GetInteractionNode();
+    if (interactionNode)
+      {
+      this->qvtkReconnect(interactionNode, vtkMRMLInteractionNode::InteractionModeChangedEvent,
+                          this, SLOT(onInteractionNodeModeChangedEvent()));
+      }
+    }
   // Update UI
   q->setEnabled(this->MRMLScene != 0);
   if (this->MRMLScene)
@@ -173,7 +186,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
         }
       break;
     case vtkMRMLInteractionNode::Place:
-      if (interactionNode->GetPickModePersistence())
+      if (interactionNode->GetPlaceModePersistence())
         {
         q->switchToPersistentPlaceMode();
         }
@@ -204,6 +217,11 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
   this->updateWidgetFromMRML();
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::onInteractionNodeModeChangedEvent()
+{
+  this->updateWidgetFromMRML();
+}
 //---------------------------------------------------------------------------
 // qSlicerModuleSelectorToolBar methods
 
@@ -281,7 +299,7 @@ void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
   interactionNode->NormalizeAllMouseModes();
   interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPickModePersistence(1);
+  interactionNode->SetPlaceModePersistence(1);
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 
   d->PersistentPlaceModeAction->setChecked(true);
@@ -298,7 +316,18 @@ void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
   interactionNode->NormalizeAllMouseModes();
   interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPickModePersistence(0);
+  interactionNode->SetPlaceModePersistence(0);
+
+  // check to see if there's a currently selected fiducial node
+  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
+  if ( selectionNode )
+    {
+    if (selectionNode->GetActiveAnnotationID() == NULL)
+      {
+      // set it to be fiducials
+      selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
+      }
+    }
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 
   d->SinglePlaceModeAction->setChecked(true);
