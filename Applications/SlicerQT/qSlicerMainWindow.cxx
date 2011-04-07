@@ -46,9 +46,17 @@
 #include "qSlicerSettingsGeneralPanel.h"
 #include "qSlicerSettingsPythonPanel.h"
 
+// MRMLLogic includes
+#include <vtkMRMLSliceLogic.h>
+#include <vtkMRMLSliceLayerLogic.h>
+
 // MRML includes
+#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public Ui_qSlicerMainWindow
@@ -345,6 +353,26 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 //-----------------------------------------------------------------------------
 qSlicerMainWindow::~qSlicerMainWindow()
 {
+  Q_D(qSlicerMainWindow);
+  // When quitting the application, the modules are unloaded (~qSlicerCoreApplication)
+  // in particular the Colors module which deletes vtkMRMLColorLogic and removes
+  // all the color nodes from the scene. If a volume was loaded in the views,
+  // it would then try to render it with no color node and generate warnings.
+  // There is no need to render anything so remove the volumes from the views.
+  // It is maybe not the best place to do that but I couldn't think of anywhere
+  // else.
+  vtkCollection* sliceLogics = d->LayoutManager ? d->LayoutManager->mrmlSliceLogics() : 0;
+  for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
+    if (!sliceLogic)
+      {
+      continue;
+      }
+    sliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(0);
+    sliceLogic->GetSliceCompositeNode()->SetReferenceForegroundVolumeID(0);
+    sliceLogic->GetSliceCompositeNode()->SetReferenceLabelVolumeID(0);
+    }
 }
 
 //-----------------------------------------------------------------------------
