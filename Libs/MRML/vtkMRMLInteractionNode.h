@@ -98,6 +98,7 @@ public:
   /// 
   /// Return a text string describing the mode
   const char *GetInteractionModeAsString(int mode);
+  const char *GetInteractionModeAsString() { return this->GetInteractionModeAsString(this->CurrentInteractionMode); } ;
   ///
   /// Return the mode given a text string.
   int GetInteractionModeByString ( const char * modeString );
