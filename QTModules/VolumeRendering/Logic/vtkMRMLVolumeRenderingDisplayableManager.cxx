@@ -1128,7 +1128,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
       else if (node->IsA("vtkMRMLViewNode"))
       {
         vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(node);
-        vtkSetAndObserveMRMLNodeMacro(this->ViewNode, this->GetMRMLViewNode());
+        vtkSetAndObserveMRMLNodeMacro(this->ViewNode, viewNode);
         if (this->ViewNode)
           {
           this->ViewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
@@ -1295,7 +1295,7 @@ vtkMRMLVolumeRenderingParametersNode* vtkMRMLVolumeRenderingDisplayableManager::
 
 void vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToViewers()
 {
-  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+//  vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
   this->GetRenderer()->AddViewProp(this->GetVolumeActor() );
   this->GetInteractor()->Enable();
   this->RequestRender();
