@@ -6,6 +6,7 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLInteractionNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -182,6 +183,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   // Use tmpPtr to query only one time for the coordinates
   double* tmpPtr = fiducialNode->GetFiducialCoordinates();
+  
   double worldCoordinates[4] = {tmpPtr[0],tmpPtr[1],tmpPtr[2],1};
 
   double position1[4];
@@ -389,14 +391,15 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 /// Create a annotationMRMLnode
 void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
-
   if (!this->IsCorrectDisplayableManager())
     {
     // jump out
+    vtkDebugMacro("OnClickInRenderWindow: jumping out");
     return;
     }
 
   // place the seed where the user clicked
+  vtkDebugMacro("OnClickInRenderWindow: placing seed at " << x << ", " << y);
   this->PlaceSeed(x,y);
 
   if (this->m_ClickCounter->HasEnoughClicks(1))
@@ -427,6 +430,14 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
     // reset updating state
     this->m_Updating = 0;
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      vtkDebugMacro("End of one time place, place mode persistence = " << interactionNode->GetPlaceModePersistence());
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
     }
 
   }
+
