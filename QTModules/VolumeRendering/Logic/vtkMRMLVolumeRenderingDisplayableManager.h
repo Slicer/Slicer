@@ -40,6 +40,8 @@ public:
 
   void SetGUICallbackCommand(vtkCommand* callback);
 
+  virtual void Create();
+  
   // Description:
   // Get, Set and Observe VolumeRenderingParametersNode
   vtkGetObjectMacro (VolumeRenderingParametersNode, vtkMRMLVolumeRenderingParametersNode);
@@ -137,6 +139,8 @@ protected:
 
   //virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
+  void OnCreate();
+
   static bool First;
 
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
@@ -191,6 +195,7 @@ protected:
   vtkMRMLROINode*             ROINode;
 
   int SceneIsLoadingFlag;
+  int ProcessingMRMLFlag;
 
 protected:
   void OnScenarioNodeModified();

@@ -88,6 +88,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
   this->ROINode = NULL;
 
   this->SceneIsLoadingFlag = 0;
+  this->ProcessingMRMLFlag = 0;
 
 }
 
@@ -1086,10 +1087,42 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnVolumeRenderingParameterNodeMod
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::Create()
+{
+  if (this->ProcessingMRMLFlag)
+  {
+    return;
+  }
+  this->ProcessingMRMLFlag = 1;
+
+  this->OnCreate();
+
+  this->ProcessingMRMLFlag = 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::OnCreate()
+{
+  vtkSetAndObserveMRMLNodeMacro(this->ViewNode, this->GetMRMLViewNode());
+  if (this->ViewNode)
+    {
+    this->ViewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
+    }
+  this->OnScenarioNodeModified();
+  this->OnViewNodeModified();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                 unsigned long event,
                                                 void *callData)
 {
+
+  if (this->ProcessingMRMLFlag)
+  {
+    return;
+  }
+  this->ProcessingMRMLFlag = 1;
 
   vtkMRMLNode *node = NULL;
 
@@ -1143,13 +1176,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
   else if (event == vtkMRMLScene::SceneImportedEvent)
   {
     this->SceneIsLoadingFlag = 0;
-    vtkSetAndObserveMRMLNodeMacro(this->ViewNode, this->GetMRMLViewNode());
-    if (this->ViewNode)
-      {
-      this->ViewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
-      }
-    this->OnScenarioNodeModified();
-    this->OnViewNodeModified();
+    this->OnCreate();
   }
   else if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
   {
@@ -1197,7 +1224,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
 
   // TODO add code from vtkVolumeRenderingGUI::ProcessGUIEvents
   // to observe ParametersNode (ROI, VolumeProp, volumes etc)
-
+  this->ProcessingMRMLFlag = 0;
 
 }
 

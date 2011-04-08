@@ -162,37 +162,81 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLViewNode(vtkMRMLNode* node)
 
   vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(node);
 
-  vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
-    d->ParameterNodeSelector->currentNode());
-  if (volumeRenderingParametersNode && viewNode)
+  d->ViewNodeSelector->setCurrentNode(viewNode);
+
+  if (viewNode == NULL)
   {
-    viewNode->SetVolumeRenderingParameterNodeID(volumeRenderingParametersNode->GetID());
+    return;
   }
+
+  vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = NULL;
+  if (viewNode->GetVolumeRenderingParameterNodeID() && viewNode->GetScene())
+  {
+    volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
+         viewNode->GetScene()->GetNodeByID(viewNode->GetVolumeRenderingParameterNodeID()));
+  }
+  this->setMRMLParameterNode(volumeRenderingParametersNode);
 }
 
  // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLParameterNode(vtkMRMLNode* paramNode)
+void qSlicerVolumeRenderingModuleWidget::setMRMLParameterNode(vtkMRMLNode* node)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  if (paramNode == NULL)
+  vtkMRMLVolumeRenderingParametersNode* paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(node);
+
+  d->ParameterNodeSelector->setCurrentNode(paramNode);
+  if (paramNode == NULL || paramNode->GetScene() == NULL)
     {
     return;
     }
-  vtkMRMLScene* scene = paramNode->GetScene();
+
+  this->setMRMLVolumeNode(paramNode->GetVolumeNode());
+  this->setMRMLVolumePropertyNode(paramNode->GetVolumePropertyNode());
+  this->setMRMLROINode(paramNode->GetROINode());
+
+  vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(d->ViewNodeSelector->currentNode());
+  if (viewNode)
+  {
+    viewNode->SetVolumeRenderingParameterNodeID(paramNode->GetID());
+  }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLScalarVolumeNode* scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+
+  d->ActiveVolumeNodeSelector->setCurrentNode(scalarVolumeNode);
+
+  if (scalarVolumeNode == NULL)
+    {
+    return;
+    }
+  vtkMRMLScene* scene = scalarVolumeNode->GetScene();
   if (scene == NULL)
     {
     return;
     }
-  this->setMRMLVolumePropertyNode(d->VolumePropertyNodeSelector->currentNode());
-  this->setMRMLROINode(d->ROINodeSelector->currentNode());
-  this->setMRMLViewNode(d->ViewNodeSelector->currentNode());
+
+  vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
+    d->ParameterNodeSelector->currentNode());
+  if (!volumeRenderingParametersNode)
+  {
+    volumeRenderingParametersNode = this->createParameterNode();
+    volumeRenderingParametersNode->SetAndObserveVolumeNodeID(scalarVolumeNode->GetID());
+  }
+
 }
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setMRMLVolumePropertyNode(vtkMRMLNode* volumePropertyNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+  
+  d->VolumePropertyNodeSelector->setCurrentNode(volumePropertyNode);
   if (volumePropertyNode == NULL)
     {
     return;
@@ -214,9 +258,12 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumePropertyNode(vtkMRMLNode* 
 
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
+void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* node)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(node);
+  d->ROINodeSelector->setCurrentNode(roiNode);
   if (roiNode == NULL)
     {
     return;
@@ -236,35 +283,6 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
   }
 }
   
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-
-  if (volumeNode == NULL)
-    {
-    return;
-    }
-  vtkMRMLScene* scene = volumeNode->GetScene();
-  if (scene == NULL)
-    {
-    return;
-    }
-
-  vtkMRMLScalarVolumeNode* scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
-
-  if (scalarVolumeNode)
-  {
-    vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
-      d->ParameterNodeSelector->currentNode());
-    if (!volumeRenderingParametersNode)
-    {
-      volumeRenderingParametersNode = this->createParameterNode();
-      this->setMRMLParameterNode(volumeRenderingParametersNode);
-    }
-    volumeRenderingParametersNode->SetAndObserveVolumeNodeID(scalarVolumeNode->GetID());
-  }
-}
 
 // --------------------------------------------------------------------------
 vtkMRMLVolumeRenderingParametersNode* qSlicerVolumeRenderingModuleWidget::createParameterNode()
@@ -283,8 +301,9 @@ vtkMRMLVolumeRenderingParametersNode* qSlicerVolumeRenderingModuleWidget::create
                                             vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode()),
                                             &propNode, &roiNode);
 
-  d->ParameterNodeSelector->setCurrentNode(volumeRenderingParametersNode);
-  d->VolumePropertyNodeSelector->setCurrentNode(propNode);
-  d->ROINodeSelector->setCurrentNode(roiNode);
+  setMRMLParameterNode(volumeRenderingParametersNode);
+  //d->ParameterNodeSelector->setCurrentNode(volumeRenderingParametersNode);
+  //d->VolumePropertyNodeSelector->setCurrentNode(propNode);
+  //d->ROINodeSelector->setCurrentNode(roiNode);
   return volumeRenderingParametersNode;
 }
