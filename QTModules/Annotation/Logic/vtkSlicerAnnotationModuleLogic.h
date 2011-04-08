@@ -165,9 +165,6 @@ public:
   //
   // Place Annotations programmatically
   //
-  /// Place a fiducial annotation at the given world position. If the hierarchyNode is valid,
-  /// add the fiducial to this hierarchy.
-  void PlaceFiducial(double r, double a, double s, vtkMRMLAnnotationHierarchyNode* hierarchy=0);
 
   //
   // Report functionality

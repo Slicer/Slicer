@@ -678,6 +678,7 @@ vtkMRMLNode* vtkMRMLHierarchyNode::GetAssociatedNode()
   return node;
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::AssociatedHierarchyIsModified(vtkMRMLScene *scene)
 {
   if (scene == NULL)
@@ -688,5 +689,24 @@ void vtkMRMLHierarchyNode::AssociatedHierarchyIsModified(vtkMRMLScene *scene)
   SceneAssociatedHierarchyNodesMTime[scene] = 0;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLHierarchyNode::SetSortingValue(double value)
+{
+  // reimplemented from vtkSet macro
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SortingValue to " << value);
+  if (this->SortingValue != value) 
+    { 
+    this->SortingValue = value; 
+    this->Modified(); 
+
+    // if there is an associated node, call modified on it to trigger updates in
+    // q widgets
+    vtkMRMLNode *associatedNode = this->GetAssociatedNode();
+    if (associatedNode)
+      {
+      associatedNode->Modified();
+      }
+    }
+}
 
 // End

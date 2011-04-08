@@ -145,7 +145,10 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
                                                           const char *associatedNodeID);
   /// 
   /// Node's Sorting Value
-  vtkSetMacro(SortingValue, double);
+  //vtkSetMacro(SortingValue, double);
+  /// Use a method for Set because it needs to call modified on any associated
+  //nodes (since the order of that associated node could have changed as well)
+  void SetSortingValue(double value);
   vtkGetMacro(SortingValue, double);
 
 

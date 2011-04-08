@@ -326,7 +326,7 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (!selectionNode)
     {
-    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    vtkErrorMacro("StopPlaceMode: No selection node in the scene.");
     return;
     }
 
@@ -366,7 +366,7 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (!selectionNode)
     {
-    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    vtkErrorMacro("CancelCurrentOrRemoveLastAddedAnnotationNode: No selection node in the scene.");
     return;
     }
 
@@ -1321,7 +1321,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
   hNode->SetIndexInParent(currentIndex - 1);
   vtkDebugMacro("MoveAnnotationUp: after moving to " << currentIndex - 1 << ", current index is " << hNode->GetIndexInParent());
   // trigger an update on the q widget
-  annotationNode->Modified();
+  // done in the hierarchy node now when set the sorting value
+  //annotationNode->Modified();
   // the id should be the same now
   this->m_StringHolder = annotationNode->GetID();
   return this->m_StringHolder.c_str();
@@ -1732,53 +1733,6 @@ bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
 //
 //
 //---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
-// Place a fiducial annotation at the given world position. If the hierarchyNode is valid,
-// add the fiducial to this hierarchy.
-//---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::PlaceFiducial(double r, double a, double s, vtkMRMLAnnotationHierarchyNode* hierarchy)
-{
-  if(hierarchy)
-    {
-    this->m_ActiveHierarchy = hierarchy;
-    }
-
-  // we use the selectionNode to tell the displayableManagers which annotation is coming
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-  if (!selectionNode)
-    {
-    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
-    return;
-    }
-
-  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
-
-  // activate the event listening of this class
-  this->InitializeEventListeners();
-
-  // worldCoordinates as an array
-  double worldCoordinates1[4];
-
-  // set the coordinates which were passed to this function to this array
-  worldCoordinates1[0] = r;
-  worldCoordinates1[1] = a;
-  worldCoordinates1[2] = s;
-  worldCoordinates1[3] = 1;
-
-  // create the MRML node
-  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
-
-  fiducialNode->SetFiducialCoordinates(worldCoordinates1);
-
-  fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
-
-  fiducialNode->Initialize(this->GetMRMLScene());
-
-  fiducialNode->Delete();
-
-}
 
 //---------------------------------------------------------------------------
 //
