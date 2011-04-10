@@ -27,6 +27,9 @@
 #include <vtkMRMLVolumeNode.h>
 
 // CLI invocation
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerAbstractCoreModule.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
@@ -113,9 +116,9 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   int outputExtent[3];
 
-  outputExtent[0] = roiRadius[0]*minSpacing*2.;
-  outputExtent[1] = roiRadius[1]*minSpacing*2.;
-  outputExtent[2] = roiRadius[2]*minSpacing*2.;
+  outputExtent[0] = roiRadius[0]/minSpacing*2.;
+  outputExtent[1] = roiRadius[1]/minSpacing*2.;
+  outputExtent[2] = roiRadius[2]/minSpacing*2.;
 
   std::cout << "Roi radius is: " << roiRadius[0] << ", " << roiRadius[1] << ", "
       << roiRadius[2] << std::endl;
@@ -147,6 +150,14 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   // FIXME: does not seem to work -- test this
   outputVolume->SetIJKToRASMatrix(outputIJKToRAS);
   outputVolume->SetRASToIJKMatrix(outputRASToIJK);
+
+  outputVolume->GetIJKToRASMatrix(outputIJKToRAS);
+  std::cout << "Initialized IJKtoRAS matrix: " << std::endl;
+  outputIJKToRAS->Print(std::cout);
+  outputVolume->GetRASToIJKMatrix(outputIJKToRAS);
+  std::cout << "Initialized RAStoIJK matrix: " << std::endl;
+  outputRASToIJK->Print(std::cout);
+
 //  outputVolume->SetOrigin(roiXYZ[0]-roiRadius[0]+minSpacing*.5,
 //      roiXYZ[1]-roiRadius[1]+minSpacing*.5,
 //      roiXYZ[2]-roiRadius[2]+minSpacing*.5);
@@ -168,6 +179,24 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 //  volumeXform->Delete();
 //  roiXform->Delete();
 //  T->Delete();
+
+  // use the prepared volume as the reference for resampling
+  vtkMRMLCommandLineModuleNode* cmdNode = vtkMRMLCommandLineModuleNode::New();
+  cmdNode->SetDescription("Resample Scalar/Vector/DWI Volume");
+  cmdNode->SetParameterAsString("inputVolume", inputVolume->GetName());
+  cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetName());
+  cmdNode->SetParameterAsString("outputVolume",outputVolume->GetName());
+
+  vtkSlicerCLIModuleLogic* cmdLogic = vtkSlicerCLIModuleLogic::SafeDownCast(
+              qSlicerCoreApplication::application()->moduleManager()->module("resamplevolume2")->logic());
+  std::cerr << "cmd logic created" << std::endl;
+  cmdLogic->get
+  //cmdLogic->SetAndObserveMRMLScene(this->GetMRMLScene());
+  //cmdLogic->SetTemporaryDirectory(
+  //            qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
+  //cmdLogic->SetModuleLibDirectory();
+  cmdLogic->ApplyAndWait(cmdNode);
+  std::cerr << "After apply and wait" << std::endl;
 
   return 0;
 }
