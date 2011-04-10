@@ -61,7 +61,7 @@ FUNCTION(SlicerFunctionCTestPackage)
 
   IF(rv EQUAL 0)
 
-    set(regexp "CPack: - package: (.*) generated\\.")
+    set(regexp ".*CPack: - package: (.*) generated\\.")
 
     # Extract list of generated packages
     set(raw_package_list)
