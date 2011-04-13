@@ -170,11 +170,8 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix)
 {
-  if (this->DiffusionTensorGlyphFilter)
-    {
-    this->DiffusionTensorGlyphFilter->SetTensorRotationMatrix(matrix);
-    this->Modified();
-    }
+  this->DiffusionTensorGlyphFilter->SetTensorRotationMatrix(matrix);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -184,22 +181,16 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
   // calling Superclass::SetSlicePositionMatrix(matrix)
   // because the later fire the even Modified() wich will update the pipeline
   // and execute the filter that needs to be up-to-date.
-  if (this->DiffusionTensorGlyphFilter)
-    {
-    this->DiffusionTensorGlyphFilter->SetVolumePositionMatrix(matrix);
-    }
+  this->DiffusionTensorGlyphFilter->SetVolumePositionMatrix(matrix);
   Superclass::SetSlicePositionMatrix(matrix);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
-  if (this->DiffusionTensorGlyphFilter)
-    {
-    this->DiffusionTensorGlyphFilter->SetInput(image);
-    this->DiffusionTensorGlyphFilter->SetDimensions(image->GetDimensions());
-    this->Modified();
-    }
+  this->DiffusionTensorGlyphFilter->SetInput(image);
+  this->DiffusionTensorGlyphFilter->SetDimensions(image->GetDimensions());
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -211,34 +202,24 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkN
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
 {
  // if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
-  if ( this->DiffusionTensorGlyphFilter 
-        && this->DiffusionTensorGlyphFilter->GetInput() != NULL 
-        && this->GetDiffusionTensorDisplayPropertiesNode() != NULL 
-        && this->GetVisibility())
+  if ( this->DiffusionTensorGlyphFilter->GetInput() != NULL 
+       && this->GetDiffusionTensorDisplayPropertiesNode() != NULL 
+       && this->GetVisibility())
     {
     this->UpdatePolyDataPipeline();
-    return this->DiffusionTensorGlyphFilter->GetOutput();
     }
-  else
-    {
-    return NULL;
-    }
+  return this->DiffusionTensorGlyphFilter->GetOutput();
 }
 
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
 {
-
-  if ( this->DiffusionTensorGlyphFilter && this->Visibility != 0 && this->GetDiffusionTensorDisplayPropertiesNode() )
+  if ( this->Visibility != 0 && this->GetDiffusionTensorDisplayPropertiesNode() )
     {
     this->UpdatePolyDataPipeline();
     this->SliceToXYTransformer->Update();
-    return this->SliceToXYTransformer->GetOutput();
     }
-  else
-    {
-    return NULL;
-    }
+  return this->SliceToXYTransformer->GetOutput();
 }
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline() 
