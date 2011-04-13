@@ -89,7 +89,7 @@
       <item row="0" column="1">
        <widget class="ctkComboBox" name="SliceOrientationSelector">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
@@ -157,7 +157,7 @@
       <item row="0" column="3">
        <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
@@ -219,7 +219,7 @@
       <item row="1" column="1">
        <widget class="qMRMLNodeComboBox" name="LabelMapSelector">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
@@ -281,7 +281,7 @@
       <item row="1" column="3">
        <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
