@@ -116,8 +116,8 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 {
 
   // hack to force initialization of the renderview
-  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
   //this->DebugOn();
 
@@ -1120,7 +1120,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double vtkNotUse
 {
 
   // The user clicked in the renderWindow
-  vtkErrorMacro("OnClickInThreeDRenderWindow should be overloaded!");
+  vtkErrorMacro("OnClickInRenderWindow should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
