@@ -3,6 +3,7 @@
 
 // SlicerQT includes
 #include "qSlicerDiffusionTensorVolumeDisplayWidget.h"
+#include "qSlicerDiffusionWeightedVolumeDisplayWidget.h"
 #include "qSlicerLabelMapVolumeDisplayWidget.h"
 #include "qSlicerScalarVolumeDisplayWidget.h"
 #include "qSlicerVolumeDisplayWidget.h"
@@ -26,9 +27,10 @@ public:
   void init();
   void setCurrentDisplayWidget(qSlicerWidget* displayWidget);
 
-  qSlicerScalarVolumeDisplayWidget*          ScalarVolumeDisplayWidget;
-  qSlicerLabelMapVolumeDisplayWidget*        LabelMapVolumeDisplayWidget;
-  qSlicerDiffusionTensorVolumeDisplayWidget* DTVolumeDisplayWidget;
+  qSlicerScalarVolumeDisplayWidget*            ScalarVolumeDisplayWidget;
+  qSlicerLabelMapVolumeDisplayWidget*          LabelMapVolumeDisplayWidget;
+  qSlicerDiffusionWeightedVolumeDisplayWidget* DWVolumeDisplayWidget;
+  qSlicerDiffusionTensorVolumeDisplayWidget*   DTVolumeDisplayWidget;
 };
 
 // --------------------------------------------------------------------------
@@ -38,6 +40,7 @@ qSlicerVolumeDisplayWidgetPrivate::qSlicerVolumeDisplayWidgetPrivate(
 {
   this->ScalarVolumeDisplayWidget = 0;
   this->LabelMapVolumeDisplayWidget = 0;
+  this->DWVolumeDisplayWidget = 0;
   this->DTVolumeDisplayWidget = 0;
 }
 
@@ -50,6 +53,9 @@ void qSlicerVolumeDisplayWidgetPrivate::init()
 
   this->LabelMapVolumeDisplayWidget = new qSlicerLabelMapVolumeDisplayWidget(q);
   q->addWidget(this->LabelMapVolumeDisplayWidget);
+
+  this->DWVolumeDisplayWidget = new qSlicerDiffusionWeightedVolumeDisplayWidget(q);
+  q->addWidget(this->DWVolumeDisplayWidget);
 
   this->DTVolumeDisplayWidget = new qSlicerDiffusionTensorVolumeDisplayWidget(q);
   q->addWidget(this->DTVolumeDisplayWidget);
@@ -79,6 +85,10 @@ void qSlicerVolumeDisplayWidgetPrivate::setCurrentDisplayWidget(
     if (activeWidget == this->LabelMapVolumeDisplayWidget)
       {
       this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(emptyVolumeNode);
+      }
+    if (activeWidget == this->DWVolumeDisplayWidget)
+      {
+      this->DWVolumeDisplayWidget->setMRMLVolumeNode(emptyVolumeNode);
       }
     if (activeWidget == this->DTVolumeDisplayWidget)
       {
@@ -125,6 +135,8 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
   vtkMRMLScene* scene = volumeNode->GetScene();
   vtkMRMLScalarVolumeNode* scalarVolumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+  vtkMRMLDiffusionWeightedVolumeNode* dwiVolumeNode =
+    vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volumeNode);
   vtkMRMLDiffusionTensorVolumeNode* dtiVolumeNode =
     vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volumeNode);
    if (dtiVolumeNode)
@@ -132,6 +144,12 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     d->DTVolumeDisplayWidget->setMRMLScene(scene);
     d->DTVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     d->setCurrentDisplayWidget(d->DTVolumeDisplayWidget);
+    }
+   else if (dwiVolumeNode)
+    {
+    d->DWVolumeDisplayWidget->setMRMLScene(scene);
+    d->DWVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    d->setCurrentDisplayWidget(d->DWVolumeDisplayWidget);
     }
    else if (scalarVolumeNode && !scalarVolumeNode->GetLabelMap())
     {

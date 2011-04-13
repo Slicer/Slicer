@@ -17,6 +17,8 @@ SET(qt_module_include_directories
 SET(qt_module_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.cxx
   qSlicerDiffusionTensorVolumeDisplayWidget.h
+  qSlicerDiffusionWeightedVolumeDisplayWidget.cxx
+  qSlicerDiffusionWeightedVolumeDisplayWidget.h
   qSlicerLabelMapVolumeDisplayWidget.cxx
   qSlicerLabelMapVolumeDisplayWidget.h
   qSlicerScalarVolumeDisplayWidget.cxx
@@ -38,6 +40,7 @@ SET(qt_module_SRCS
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.h
+  qSlicerDiffusionWeightedVolumeDisplayWidget.h
   qSlicerLabelMapVolumeDisplayWidget.h
   qSlicerScalarVolumeDisplayWidget.h
   qSlicerVolumesIO.h
@@ -51,6 +54,7 @@ SET(qt_module_MOC_SRCS
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerDiffusionTensorVolumeDisplayWidget.ui
+  Resources/UI/qSlicerDiffusionWeightedVolumeDisplayWidget.ui
   Resources/UI/qSlicerDTISliceDisplayWidget.ui
   Resources/UI/qSlicerLabelMapVolumeDisplayWidget.ui
   Resources/UI/qSlicerScalarVolumeDisplayWidget.ui

@@ -133,14 +133,53 @@
    <extends>QWidget</extends>
    <header>qSlicerScalarVolumeDisplayWidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>qSlicerDTISliceDisplayWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerDTISliceDisplayWidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qSlicerDiffusionTensorVolumeDisplayWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ScalarVolumeDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>49</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerDiffusionTensorVolumeDisplayWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>DTISliceDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

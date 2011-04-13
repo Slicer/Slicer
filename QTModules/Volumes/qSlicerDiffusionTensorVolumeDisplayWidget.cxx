@@ -72,10 +72,6 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
 
   this->setupUi(q);
   this->DTISliceDisplayWidget->setVisibilityHidden(true);
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ScalarVolumeDisplayWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->DTISliceDisplayWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   QObject::connect(this->ScalarInvariantComboBox, SIGNAL(scalarInvariantChanged(int)),
                    q, SLOT(setVolumeScalarInvariant(int)));
