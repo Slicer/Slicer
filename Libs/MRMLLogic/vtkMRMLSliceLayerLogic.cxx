@@ -176,7 +176,11 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
     vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (node == 0 ||
+        // Care only about volume and slice nodes
+        (!volumeNode && !sliceNode) ||
+        // Care only if the node is the observed volume node 
         (volumeNode && volumeNode != this->VolumeNode) ||
+        // Care only if the node is the observed slice node
         (sliceNode && sliceNode != this->SliceNode))
       {
       return;
