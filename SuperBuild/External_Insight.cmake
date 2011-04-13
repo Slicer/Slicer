@@ -21,7 +21,6 @@ if(NOT DEFINED ITK_DIR)
       ${ep_common_args}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DCMAKE_SKIP_RPATH:BOOL=ON
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DITK_INSTALL_LIB_DIR:PATH=${Slicer_INSTALL_LIB_DIR}

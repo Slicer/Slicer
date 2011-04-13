@@ -12,7 +12,6 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     ${ep_common_args}
     -DBUILD_SHARED_LIBS:BOOL=ON
-    -DCMAKE_SKIP_RPATH:BOOL=ON
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
