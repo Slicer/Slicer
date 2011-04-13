@@ -52,7 +52,8 @@ public:
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
   void OnMRMLSceneClosedEvent();
-
+  void OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode);
+  void OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode);
   //
   // Annotation Properties (interface to MRML)
   //

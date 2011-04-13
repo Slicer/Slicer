@@ -65,7 +65,9 @@ public slots:
 
   void onMRMLSceneAboutToBeClosedEvent();
   void onMRMLSceneImportedEvent();
+  void onMRMLSceneClosedEvent();
   void onInteractionNodeModeChangedEvent();
+  void onInteractionNodeModePersistenceChangedEvent();
 
 public:
 

@@ -142,7 +142,8 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
                       this, SLOT(onMRMLSceneImportedEvent()));
 
-  
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneClosedEvent,
+                      this, SLOT(onMRMLSceneClosedEvent()));
 
   this->MRMLScene = newScene;
 
@@ -154,6 +155,8 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
       {
       this->qvtkReconnect(interactionNode, vtkMRMLInteractionNode::InteractionModeChangedEvent,
                           this, SLOT(onInteractionNodeModeChangedEvent()));
+      this->qvtkReconnect(interactionNode, vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent,
+                          this, SLOT(onInteractionNodeModePersistenceChangedEvent()));
       }
     }
   // Update UI
@@ -218,10 +221,31 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::onMRMLSceneClosedEvent()
+{
+  Q_Q(qSlicerMouseModeToolBar);
+  Q_ASSERT(this->MRMLScene);
+  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+    {
+    return;
+    }
+  // reenable it and update
+  q->setEnabled(true);
+  this->updateWidgetFromMRML();
+}
+                      
+//---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onInteractionNodeModeChangedEvent()
 {
   this->updateWidgetFromMRML();
 }
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::onInteractionNodeModePersistenceChangedEvent()
+{
+  this->updateWidgetFromMRML();
+}
+
 //---------------------------------------------------------------------------
 // qSlicerModuleSelectorToolBar methods
 
@@ -258,95 +282,95 @@ void qSlicerMouseModeToolBar::setMRMLScene(vtkMRMLScene* newScene)
 void qSlicerMouseModeToolBar::switchToPersistentPickMode()
 {
   Q_D(qSlicerMouseModeToolBar);
-  // TODO Add function vtkMRMLInteractionNode::switchToPersistentPickMode
-
-  logger.trace("switchToPersistentPickMode");
 
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  interactionNode->NormalizeAllMouseModes();
-  interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPickModePersistence(1);
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::PickManipulate);
+  if (interactionNode)
+    {
+    logger.trace("switchToPersistentPickMode");
+    
+    interactionNode->SwitchToPersistentPickMode();
 
-  d->PersistentPickModeAction->setChecked(true);
+    d->PersistentPickModeAction->setChecked(true);
+    }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToSinglePickMode()
 {
   Q_D(qSlicerMouseModeToolBar);
-  // TODO Add function vtkMRMLInteractionNode::switchToSinglePickMode
-
-  logger.trace("switchToSinglePickMode");
 
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  interactionNode->NormalizeAllMouseModes();
-  interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPickModePersistence(0);
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::PickManipulate);
+  if (interactionNode)
+    {
+    logger.trace("switchToSinglePickMode");
+    
+    interactionNode->SwitchToSinglePickMode();
 
-  d->SinglePickModeAction->setChecked(true);
+    d->SinglePickModeAction->setChecked(true);
+    }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
 {
   Q_D(qSlicerMouseModeToolBar);
-  // TODO Add function vtkMRMLInteractionNode::switchToPersistentPlaceMode
-
-  logger.trace("switchToPersistentPlaceMode");
 
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  interactionNode->NormalizeAllMouseModes();
-  interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPlaceModePersistence(1);
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+  if (interactionNode)
+    {
+    logger.trace("switchToPersistentPlaceMode");
+    
+    interactionNode->SwitchToPersistentPlaceMode();
 
-  d->PersistentPlaceModeAction->setChecked(true);
+    d->PersistentPlaceModeAction->setChecked(true);
+    }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
 {
   Q_D(qSlicerMouseModeToolBar);
-  // TODO Add function vtkMRMLInteractionNode::switchToSinglePlaceMode
-
-  logger.trace("switchToSinglePlaceMode");
 
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  interactionNode->NormalizeAllMouseModes();
-  interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetPlaceModePersistence(0);
+  if (interactionNode)
+    {
+    logger.trace("switchToSinglePlaceMode");
+    
+    interactionNode->SwitchToSinglePlaceMode();
+
+    d->SinglePlaceModeAction->setChecked(true);
+    }
 
   // check to see if there's a currently selected fiducial node
   vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
   if ( selectionNode )
     {
-    if (selectionNode->GetActiveAnnotationID() == NULL)
+    if (selectionNode->GetActiveAnnotationID() == NULL ||
+        strcmp(selectionNode->GetActiveAnnotationID(), "") == 0)
       {
       // set it to be fiducials
       selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
       }
     }
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+ 
 
-  d->SinglePlaceModeAction->setChecked(true);
+  
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToViewTransformMode()
 {
   Q_D(qSlicerMouseModeToolBar);
-  // TODO Add function vtkMRMLInteractionNode::switchToRotateMode
-
-  logger.trace("switchToViewTransformMode");
 
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  interactionNode->NormalizeAllMouseModes();
-  interactionNode->SetLastInteractionMode(interactionNode->GetCurrentInteractionMode());
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-
-  d->ViewTransformModeAction->setChecked(true);
+  if (interactionNode)
+    {
+    logger.trace("switchToViewTransformMode");
+    
+    interactionNode->SwitchToViewTransformMode();
+    
+    d->ViewTransformModeAction->setChecked(true);
+    }
 }
 
 

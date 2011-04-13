@@ -87,6 +87,7 @@ public:
     {
       InteractionModeChangedEvent = 19001,
       TransientTimeoutEvent,
+      InteractionModePersistenceChangedEvent,
     };
 
   //BTX
@@ -105,6 +106,14 @@ public:
 
   int WindowLevelLock;
   int PlaceOperationLock;
+
+  ///
+  /// Convenience methods for the mouse mode tool bar to call
+  void SwitchToPersistentPickMode();
+  void SwitchToSinglePickMode();
+  void SwitchToPersistentPlaceMode();
+  void SwitchToSinglePlaceMode();
+  void SwitchToViewTransformMode();
   
 protected:
   vtkMRMLInteractionNode();

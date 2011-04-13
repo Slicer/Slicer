@@ -65,6 +65,11 @@ public:
         Screenshot,
       };
 
+    /// the logic observes the interaction node, update the gui to keep in
+    /// step with the mouse modes tool bar. If interactionNode is null, try to
+    /// get it from the scene.
+    void updateWidgetFromInteractionMode(vtkMRMLInteractionNode *interactionNode);
+    
 protected:
 
 protected slots:
@@ -123,9 +128,16 @@ protected slots:
   void onCancelButtonClicked();
   void onDoneButtonClicked();
 
+  /// enable all the annotation tool buttons
   void enableAllAnnotationTools();
+  /// disable all the annotation tool buttons
   void disableAllAnnotationTools();
+  /// set checked to false for the buttons
+  void resetAllAnnotationButtons();
+  /// resets the annotation buttons, stops place mode, disables mouse mode buttons
   void resetAllAnnotationTools();
+
+  /// calls the logic method of same name
   void cancelOrRemoveLastAddedAnnotationNode();
 
   // Sticky Node (semi-approved)

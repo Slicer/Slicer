@@ -112,7 +112,10 @@ void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModule
     }
 
   this->m_Widget = widget;
-
+  
+  // be sure to listen to the mrml events, will undo any other observed events
+  // to add new ones (double call doesn't hurt)
+  this->InitializeEventListeners();
 }
 
 //-----------------------------------------------------------------------------
@@ -125,7 +128,7 @@ void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModule
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(
-  vtkObject * vtkNotUsed(caller), unsigned long event, void *callData)
+  vtkObject *caller, unsigned long event, void *callData)
 {
   vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
 
@@ -137,21 +140,36 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(
     return;
     }
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
-  if (!annotationNode)
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
+  if (interactionNode)
     {
+    switch (event)
+      {
+      case vtkMRMLInteractionNode::InteractionModeChangedEvent:
+        this->OnInteractionModeChangedEvent(interactionNode);
+        break;
+      case vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent:
+        this->OnInteractionModePersistenceChangedEvent(interactionNode);
+        break;
+      default:
+        vtkWarningMacro("ProcessMRMLEvents: unhandled event on interaction node: " << event);
+      }
     return;
     }
-
-  switch (event)
+  
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (annotationNode)
     {
-    case vtkMRMLScene::NodeAddedEvent:
-      this->OnMRMLSceneNodeAddedEvent(annotationNode);
-      break;
-    case vtkCommand::ModifiedEvent:
-      this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
-      break;
-
+    switch (event)
+      {
+      case vtkMRMLScene::NodeAddedEvent:
+        this->OnMRMLSceneNodeAddedEvent(annotationNode);
+        break;
+      case vtkCommand::ModifiedEvent:
+        this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
+        break;
+      }
+    return;
     }
 
 }
@@ -192,8 +210,11 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
     return;
     }
 
-  // refresh the hierarchy tree
-  this->m_Widget->refreshTree();
+  if (this->m_Widget)
+    {
+    // refresh the hierarchy tree
+    this->m_Widget->refreshTree();
+    }
 
 }
 
@@ -209,7 +230,35 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
     {
     this->m_ActiveHierarchy = 0;
     }
-  this->m_Widget->refreshTree();
+
+  if (this->m_Widget)
+    {
+    this->m_Widget->refreshTree();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode)
+{
+  vtkDebugMacro("OnInteractionModeChangedEvent");
+  if (!interactionNode ||
+      this->m_Widget == NULL)
+    {
+    return;
+    }
+  this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode)
+{
+  vtkDebugMacro("OnInteractionModePersistenceChangedEvent");
+  if (!interactionNode ||
+      this->m_Widget == NULL)
+    {
+    return;
+    }
+  this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
 }
 
 //---------------------------------------------------------------------------
@@ -225,6 +274,12 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
 {
+  if (this->GetMRMLScene() == NULL)
+    {
+    vtkWarningMacro("InitializeEventListeners: no scene to listen to!");
+    return;
+    }
+      
   // a good time to add the observed events!
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -233,6 +288,22 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events);
   events->Delete();
+
+  // also observe the interaction node for changes
+  vtkMRMLInteractionNode *interactionNode =
+      vtkMRMLInteractionNode::SafeDownCast(
+          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
+    {
+    vtkIntArray *interactionEvents = vtkIntArray::New();
+    interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
+    interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(interactionNode, interactionNode, interactionEvents);
+    interactionEvents->Delete();
+    }
+  else { vtkWarningMacro("InitializeEventListeners: No interaction node!"); }
+  vtkDebugMacro("InitializeEventListeners: listeners added");
+
 }
 
 //-----------------------------------------------------------------------------
@@ -270,7 +341,7 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
     return;
     }
 
-  this->InitializeEventListeners();
+//  this->InitializeEventListeners();
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
   interactionNode->SetPlaceModePersistence(1);
@@ -309,9 +380,12 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationHierarchy
     return;
     }
 
-  // refresh the hierarchy tree
-  this->m_Widget->refreshTree();
-
+  if (this->m_Widget)
+    {
+    // refresh the hierarchy tree
+    this->m_Widget->refreshTree();
+    }
+  
   this->m_LastAddedAnnotationNode = annotationNode;
 
 }
@@ -432,6 +506,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 {
   if(!this->GetMRMLScene())
     {
+    vtkWarningMacro("RegisterNodes: no scene");
     return;
     }
 
@@ -533,6 +608,8 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
 
+  // set up the event listeners now
+  this->InitializeEventListeners();
 }
 
 //---------------------------------------------------------------------------
@@ -1428,6 +1505,23 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::GetTopLevelHiera
 vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode)
 {
 
+  // check that there isn't already a hierarchy node for this node
+  if (annotationNode && annotationNode->GetScene() && annotationNode->GetID())
+    {
+    vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(annotationNode->GetScene(), annotationNode->GetID());
+    if (hnode != NULL)
+      {
+      vtkMRMLAnnotationHierarchyNode *ahnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(hnode);
+      if (ahnode != NULL)
+        {
+        vtkWarningMacro("AddHierarchyNodeForAnnotation: annotation node " << annotationNode->GetID() << " already has a hierarchy node, returning.");
+        return ahnode;
+        }
+      else { vtkWarningMacro("AddHierarchyNodeForAnnotation: found a hierarchy node for this annotation node, but it's not an annotatin hierarchy node, so adding a new one"); }
+      }
+    }
+  else { vtkErrorMacro("AddHierarchyNodeForAnnotation: annotation node is null or has no scene or id, not checking for existing hierarchy node"); }
+  
   if (!this->m_ActiveHierarchy)
     {
     // no active hierarchy node, this means we create the new node directly under the top-level hierarchy node
