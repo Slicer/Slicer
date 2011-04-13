@@ -219,10 +219,14 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   for (unsigned i = 0; i < ndims; i++)
     {
       int diff = static_cast< int > (roiStart[i] - radius);
-      roiStart[i] = 0;
-      if (diff >= 0)
+      //roiStart[i] = 0;
+      if (diff >= index[i])
       {
         roiStart[i] -= radius;
+      }
+      else 
+      {
+        roiStart[i] = index[i];
       }
       roiEnd[i] = (static_cast<unsigned int>(roiEnd[i] + radius) < size[i]) ? 
   (roiEnd[i] + radius) : size[i]-1;
@@ -253,7 +257,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   for (unsigned n = 0; n < ndims; n++)
     {
       istart[n] = roiStart[n];
-      isize[n] = roiEnd[n]-roiStart[n]+1;
+      isize[n] = roiEnd[n]-roiStart[n];
       
       std::cout<<" istart "<<istart[n]<<" isize "<<isize[n]<<" ";
       
