@@ -21,6 +21,9 @@
 // QT includes
 #include <QDebug>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRML includes
 #include "qMRMLVolumeInfoWidget.h"
 #include "ui_qMRMLVolumeInfoWidget.h"
@@ -114,7 +117,7 @@ bool qMRMLVolumeInfoWidgetPrivate::centeredOrigin(double* origin)const
   vtkImageData *imageData = this->VolumeNode ? this->VolumeNode->GetImageData() : 0;
   if (!imageData)
     {
-    qWarning() << "qMRMLVolumeInfoWidget::centerVolume(): No image data, can't center volume.";
+    qWarning() << __FUNCTION__ << "No image data, can't retrieve origin.";
     return false;
     }
  
@@ -174,6 +177,28 @@ void qMRMLVolumeInfoWidget::setVolumeNode(vtkMRMLVolumeNode* volumeNode)
   qvtkReconnect(d->VolumeNode, volumeNode, vtkMRMLVolumeNode::ImageDataModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;
+  if (d->VolumeNode)
+    {
+    // The number of decimals is important. If it is too small, it would
+    // round the spacing/origin and generate an offset on the image.
+    double* spacing = d->VolumeNode->GetSpacing();
+    int decimals = qMin(qMax(ctk::significantDecimals(spacing[0]),
+                             qMax(ctk::significantDecimals(spacing[1]),
+                                  ctk::significantDecimals(spacing[2]))),
+                        8);
+    d->ImageSpacingWidget->blockSignals(true);
+    d->ImageSpacingWidget->setDecimals(decimals);
+    d->ImageSpacingWidget->blockSignals(false);
+    double* origin = d->VolumeNode->GetOrigin();
+    decimals = qMin(qMax(ctk::significantDecimals(origin[0]),
+                         qMax(ctk::significantDecimals(origin[1]),
+                              ctk::significantDecimals(origin[2]))),
+                    8);
+    d->ImageOriginWidget->blockSignals(true);
+    d->ImageOriginWidget->setDecimals(decimals);
+    d->ImageOriginWidget->blockSignals(false);
+    }
+
   this->updateWidgetFromMRML();
 }
 
