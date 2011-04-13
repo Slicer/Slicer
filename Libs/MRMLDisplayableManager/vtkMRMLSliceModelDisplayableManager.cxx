@@ -420,12 +420,19 @@ std::vector<vtkMRMLDisplayNode*>::iterator vtkMRMLSliceModelDisplayableManager::
 void vtkMRMLSliceModelDisplayableManager::vtkInternal::UpdateVolumeDisplayNode(
   vtkMRMLDisplayNode* displayNode)
 {
-  if (!this->IsDisplayable(displayNode) ||
-      !this->IsVisible(displayNode))
+  if (!this->IsDisplayable(displayNode))
     {
     return;
     }
   DisplayActorsType::const_iterator it = this->Actors.find(displayNode);
+  // If the actors haven't been created yet and the actors should not be visible
+  // anyway, then don't even create them. However if the actors were created
+  // and the visibility has later been turned off, then update the actor by
+  // setting its visibility to off.
+  if (!this->IsVisible(displayNode) && it == this->Actors.end())
+    {
+    return;
+    }
   if (it == this->Actors.end())
     {
     this->AddActor(displayNode);
@@ -471,6 +478,7 @@ void vtkMRMLSliceModelDisplayableManager::vtkInternal::UpdateActor(
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
     }
+  actor->SetVisibility(this->IsVisible(displayNode));
   // TBD: Not sure a render request has to systematically be called
   this->External->RequestRender();
 }
