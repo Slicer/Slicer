@@ -1,7 +1,0 @@
-# The GenerateLM source tree.
-set(GenerateLM_INCLUDE_DIRS "@GenerateLM_INCLUDE_DIRS_CONFIG@")
-set(GenerateLM_LIBRARY_DIRS "@GenerateLM_LIBRARY_DIRS_CONFIG@")
-set(GenerateLM_USE_FILE "@GenerateLM_USE_FILE_CONFIG@")
-set(GENERATELM_EXE "@GENERATELM_EXE_CONFIG@")
-set(LoadableModule_DIR "@LoadableModule_DIR@")
-set(ITK_DIR "@ITK_DIR_CONFIG@")

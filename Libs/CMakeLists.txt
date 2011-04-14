@@ -22,14 +22,6 @@ LIST(APPEND dirs
   MRMLDisplayableManager
   )
 
-IF(Slicer_USE_KWWIDGETS)
-  LIST(APPEND dirs
-    GenerateLM
-    SlicerIO
-    ITKCommandIO
-    )
-ENDIF()
-
 LIST(APPEND dirs
   MRMLIDImageIO
   MGHImageIO
