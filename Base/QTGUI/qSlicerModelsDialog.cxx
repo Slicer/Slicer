@@ -125,9 +125,7 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
   Q_D(qSlicerModelsDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
-#ifdef Slicer_USE_KWWIDGETS
-  d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);
-#endif
+
   bool res = false;
   if (d->exec() != QDialog::Accepted)
     {

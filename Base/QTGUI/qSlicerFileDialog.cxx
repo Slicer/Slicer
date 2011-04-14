@@ -138,9 +138,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   Q_ASSERT(!ioProperties.contains("fileName"));
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog fileDialog(qobject_cast<QWidget*>(this->parent()));
-#ifdef Slicer_USE_KWWIDGETS
-  fileDialog.setWindowFlags(fileDialog.windowFlags() | Qt::WindowStaysOnTopHint);
-#endif
+
   fileDialog.setNameFilters(
     qSlicerFileDialog::nameFilters(d->FileType));
   fileDialog.setHistory(ioManager->history());

@@ -761,9 +761,7 @@ bool qSlicerSaveDataDialog::exec(const qSlicerIO::IOProperties& readerProperties
   Q_D(qSlicerSaveDataDialog);
   Q_UNUSED(readerProperties);
   Q_ASSERT(!readerProperties.contains("fileName"));
-#ifdef Slicer_USE_KWWIDGETS
-  d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);
-#endif
+
   d->setMRMLScene(qSlicerCoreApplication::application()->mrmlScene());
   if (d->exec() != QDialog::Accepted)
     {
