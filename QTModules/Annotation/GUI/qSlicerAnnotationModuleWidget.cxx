@@ -193,6 +193,9 @@ void qSlicerAnnotationModuleWidget::setup()
 
   // logic - make sure the logic knows about this widget
   d->logic()->SetAndObserveWidget(this);
+
+  // update the state according to the interaction node
+  this->updateWidgetFromInteractionMode(NULL);
 }
 
 //-----------------------------------------------------------------------------
