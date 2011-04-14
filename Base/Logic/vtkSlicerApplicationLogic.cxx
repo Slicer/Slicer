@@ -66,12 +66,6 @@
 // MRMLLogic includes
 #include "vtkMRMLSliceLogic.h"
 
-// KWWidgets includes
-#ifdef Slicer_USE_KWWIDGETS
-# include "vtkKWTkUtilities.h"
-# include "vtkKWApplication.h"
-#endif
-
 // Slice includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerColorLogic.h"
@@ -1145,32 +1139,6 @@ void vtkSlicerApplicationLogic::ProcessModified()
       }
     }
   this->ModifiedQueueLock->Unlock();
-
-#if defined(Slicer_USE_KWWIDGETS)
-  // if this is a string array, try to evaluate the entries in the interp
-  //  - this allows threads to indirectly access the interpreter
-  vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj->GetPointer() );
-  if ( stringArray != NULL )
-    {
-    Tcl_Interp *interp = vtkKWApplication::GetMainInterp();
-    int numValues = stringArray->GetNumberOfValues();
-    for (int i = 0; i < numValues; i++)
-      {
-      const char *script = stringArray->GetValue( i ).c_str();
-      int returnCode;
-#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 2
-      returnCode = Tcl_GlobalEval(interp, script);
-#else
-      returnCode = Tcl_EvalEx(interp, script, -1, TCL_EVAL_GLOBAL);
-#endif
-      if ( returnCode != TCL_OK )
-        {
-        vtkErrorMacro ("Error evaluating message from script.\n" << 
-                       script << "\n" <<Tcl_GetStringResult (interp) );
-        }
-      }
-    }
-#endif //defined(Slicer_USE_KWWIDGETS)
 
   // Modify the object
   //  - decrement reference count that was increased when it was added to the queue
