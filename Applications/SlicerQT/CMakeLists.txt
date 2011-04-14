@@ -88,7 +88,44 @@ target_link_libraries(${lib_name}
   ${SlicerQT_LIBRARIES}
   )
 
+
+# --------------------------------------------------------------------------
+# Configure Application Bundle Resources (Mac Only)
+# --------------------------------------------------------------------------
+
+IF(Q_WS_MAC)
+  SET(apple_bundle_sources "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer.icns")
+  SET_SOURCE_FILES_PROPERTIES(
+    "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer.icns"
+    PROPERTIES
+    MACOSX_PACKAGE_LOCATION Resources
+    )
+  SET(MACOSX_BUNDLE_ICON_FILE Slicer.icns)
+ENDIF(Q_WS_MAC)
+
+IF(QT_MAC_USE_COCOA)
+  GET_FILENAME_COMPONENT(qt_menu_nib
+    "@QT_QTGUI_LIBRARY_RELEASE@/Resources/qt_menu.nib"
+    REALPATH)
+
+  SET(qt_menu_nib_sources
+    "${qt_menu_nib}/classes.nib"
+    "${qt_menu_nib}/info.nib"
+    "${qt_menu_nib}/keyedobjects.nib"
+    )
+  SET_SOURCE_FILES_PROPERTIES(
+    ${qt_menu_nib_sources}
+    PROPERTIES
+    MACOSX_PACKAGE_LOCATION Resources/qt_menu.nib
+    )
+  ELSE(QT_MAC_USE_COCOA)
+    set(qt_menu_nib_sources)
+ENDIF(QT_MAC_USE_COCOA)
+
+# --------------------------------------------------------------------------
 # Apply user-defined properties to the library target.
+# --------------------------------------------------------------------------
+
 IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 ENDIF(Slicer_LIBRARY_PROPERTIES)
@@ -103,9 +140,15 @@ install(TARGETS ${lib_name}
 # Build the executable
 # --------------------------------------------------------------------------
 
-SET(SlicerQT_EXE_SUFFIX -real)
-ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX}
-  Main.cxx)
+IF(NOT APPLE)
+  SET(SlicerQT_EXE_SUFFIX -real)
+ENDIF()
+
+ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX} WIN32 MACOSX_BUNDLE
+  Main.cxx
+  ${apple_bundle_sources}
+  ${qt_menu_nib_sources}
+  )
 SET_TARGET_PROPERTIES(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS SlicerQT)
 TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
   ${lib_name}
@@ -130,15 +173,24 @@ SET(dynamicHeaders
 # Install
 # --------------------------------------------------------------------------
 
+IF(NOT APPLE)
+  SET(SlicerQT_INSTALL_DESTINATION_ARGS RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR})
+ELSE()
+  SET(SlicerQT_INSTALL_DESTINATION_ARGS BUNDLE DESTINATION ${Slicer_BUNDLE_LOCATION})
+
+  #INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/qt.conf
+  #    DESTINATION "${ProjectManager_BUNDLE_LOCATION}/${PROJECT_NAME}.app/Contents/Resources")
+ENDIF()
+
 INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
-  DESTINATION ${Slicer_INSTALL_BIN_DIR}
+  ${SlicerQT_INSTALL_DESTINATION_ARGS}
   COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
-# Configure Slicer Launcher
+# Configure Slicer Launcher (Linux & Windows Only)
 # --------------------------------------------------------------------------
 
-IF(Slicer_USE_CTKAPPLAUNCHER)
+IF(Slicer_USE_CTKAPPLAUNCHER AND NOT APPLE)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
   INCLUDE(${Slicer_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
   ctkAppLauncherConfigure(

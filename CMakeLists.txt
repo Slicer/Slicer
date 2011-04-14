@@ -251,7 +251,7 @@ SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
 SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
 SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 # Set to create Bundle in a directory
-SET(Slicer_BUNDLE_LOCATION )
+SET(Slicer_BUNDLE_LOCATION ".")
 
 #-----------------------------------------------------------------------------
 # Superbuild script
