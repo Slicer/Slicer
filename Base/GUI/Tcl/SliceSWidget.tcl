@@ -116,12 +116,14 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
-  # events to catch (currently not catching KeyReleaseEvent, CharEvent, UserEvent)
+  # events to catch (currently not catching KeyReleaseEvent, UserEvent)
+  # We catch CharEvent (KeyPressEvent would have been enough) in order to prevent
+  # the default vtkInteractorStyle::OnChar() to be called.
   set events {  "MouseMoveEvent" "RightButtonPressEvent" "RightButtonReleaseEvent"
     "LeftButtonPressEvent" "LeftButtonReleaseEvent" "MiddleButtonPressEvent"
     "MiddleButtonReleaseEvent" "MouseWheelForwardEvent" "MouseWheelBackwardEvent"
     "ExposeEvent" "ConfigureEvent" "EnterEvent" "LeaveEvent"
-    "TimerEvent" "KeyPressEvent" "ExitEvent" }
+    "TimerEvent" "KeyPressEvent" "ExitEvent" "CharEvent" }
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
@@ -782,7 +784,28 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "TimerEvent" { }
     "KeyPressEvent" { 
       set key [$_interactor GetKeySym]
-      if { [lsearch "v V r b f g G T space c e s S Up Down Left Right" $key] != -1 } {
+      if { [lsearch "space Up Down Left Right" $key] != -1 } {
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        $sliceGUI SetGUICommandAbortFlag 1
+        switch [$_interactor GetKeySym] {
+          "Left" - "Down" {
+            $this decrementSlice
+          }
+          "Right" - "Up" {
+            $this incrementSlice
+          }
+          "space" {
+            ::Box::ShowDialog EditBox
+          }
+          default {
+            set capture 0
+          }
+        }
+      }
+    }
+    "CharEvent" {
+      set key [$_interactor GetKeySym]
+      if { [lsearch "v V r b f g G T c e s S" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
         switch [$_interactor GetKeySym] {
@@ -843,14 +866,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 $_sliceCompositeNode SetForegroundOpacity 0.0
             }
           }
-          "b" - "Left" - "Down" {
+          "b" {
             $this decrementSlice
           }
-          "f" - "Right" - "Up" {
+          "f" {
             $this incrementSlice
-          }
-          "space" {
-            ::Box::ShowDialog EditBox
           }
           "c" {
             ::Box::ShowDialog ColorBox
