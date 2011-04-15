@@ -53,12 +53,14 @@ public:
   void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
-  QSize computeSizeHint()const;
+  QSize sizeHint()const;
+  void recomputeSizeHint(bool forceUpdate = false);
 
   qMRMLSceneModel*           SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
   QString                    SceneModelType;
   bool                       FitSizeToVisibleIndexes;
+  mutable QSize              TreeViewSizeHint;
   
   QMenu*                     NodeMenu;
   vtkMRMLNode*               CurrentNode;
@@ -73,6 +75,7 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
   this->FitSizeToVisibleIndexes = true;
   this->NodeMenu = 0;
   this->CurrentNode = 0;
+  this->TreeViewSizeHint = QSize();
 }
 
 //------------------------------------------------------------------------------
@@ -95,6 +98,9 @@ void qMRMLTreeWidgetPrivate::init()
                    q, SLOT(onNumberOfVisibleIndexChanged()));
   QObject::connect(q, SIGNAL(expanded(const QModelIndex&)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
+//QObject::connect(q->header(), SIGNAL(sectionResized(int, int, int)),
+  //                  q, SLOT(onSectionResized()));
+  q->horizontalScrollBar()->installEventFilter(q);
   
   this->NodeMenu = new QMenu(q);
   QAction* deleteAction = new QAction("Delete",this->NodeMenu);
@@ -159,9 +165,30 @@ void qMRMLTreeWidgetPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* 
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLTreeWidgetPrivate::computeSizeHint()const
+void qMRMLTreeWidgetPrivate::recomputeSizeHint(bool force)
+{
+  Q_Q(qMRMLTreeWidget);
+  this->TreeViewSizeHint = QSize();
+  if ((this->FitSizeToVisibleIndexes || force) && q->isVisible())
+    {
+    // TODO: if the number of items changes often, don't update geometry,
+    // it might be too expensive, maybe use a timer
+    q->updateGeometry();
+    }
+}
+
+//------------------------------------------------------------------------------
+QSize qMRMLTreeWidgetPrivate::sizeHint()const
 {
   Q_Q(const qMRMLTreeWidget);
+  if (!this->FitSizeToVisibleIndexes)
+    {
+    return q->QTreeView::sizeHint();
+    }
+  if (this->TreeViewSizeHint.isValid())
+    {
+    return this->TreeViewSizeHint;
+    }
   int visibleIndexCount = 0;
   for(QModelIndex index = this->SortFilterModel->mrmlSceneIndex();
       index.isValid();
@@ -170,14 +197,14 @@ QSize qMRMLTreeWidgetPrivate::computeSizeHint()const
     ++visibleIndexCount;
     }
 
-  QSize treeViewSizeHint = q->QTreeView::sizeHint();
-  treeViewSizeHint.setHeight(
+  this->TreeViewSizeHint = q->QTreeView::sizeHint();
+  this->TreeViewSizeHint.setHeight(
     q->frameWidth()
     + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
     + visibleIndexCount * q->sizeHintForRow(0)
     + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeWidget*>(q)) ? q->horizontalScrollBar()->height() : 0)
     + q->frameWidth());
-  return treeViewSizeHint;
+  return this->TreeViewSizeHint;
 }
 
 //------------------------------------------------------------------------------
@@ -323,16 +350,14 @@ qMRMLSceneModel* qMRMLTreeWidget::sceneModel()const
 QSize qMRMLTreeWidget::minimumSizeHint()const
 {
   Q_D(const qMRMLTreeWidget);
-  QSize minSize = this->QTreeView::minimumSizeHint();
-  return minSize.expandedTo(d->computeSizeHint());
+  return d->sizeHint();
 }
 
 //--------------------------------------------------------------------------
 QSize qMRMLTreeWidget::sizeHint()const
 {
   Q_D(const qMRMLTreeWidget);
-  QSize size = this->QTreeView::minimumSizeHint();
-  return size.expandedTo(d->computeSizeHint());
+  return d->sizeHint();
 }
 
 //--------------------------------------------------------------------------
@@ -351,10 +376,7 @@ void qMRMLTreeWidget::updateGeometries()
 void qMRMLTreeWidget::onNumberOfVisibleIndexChanged()
 {
   Q_D(qMRMLTreeWidget);
-  if (d->FitSizeToVisibleIndexes)
-    {
-    this->updateGeometry();
-    }
+  d->recomputeSizeHint();
 }
 
 //--------------------------------------------------------------------------
@@ -362,10 +384,7 @@ void qMRMLTreeWidget::setFitSizeToVisibleIndexes(bool enable)
 {
   Q_D(qMRMLTreeWidget);
   d->FitSizeToVisibleIndexes = enable;
-  if (d->FitSizeToVisibleIndexes)
-    {
-    this->updateGeometry();
-    }
+  d->recomputeSizeHint(true);
 }
 
 //--------------------------------------------------------------------------
@@ -419,4 +438,21 @@ void qMRMLTreeWidget::deleteCurrentNode()
     }
   this->mrmlScene()->RemoveNode(d->CurrentNode);
   d->CurrentNode = 0;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLTreeWidget::eventFilter(QObject* object, QEvent* e)
+{
+  Q_D(qMRMLTreeWidget);
+  bool res = this->QTreeView::eventFilter(object, e);
+  // When the horizontal scroll bar is shown/hidden, the sizehint should be
+  // updated ?
+  if (d->FitSizeToVisibleIndexes &&
+      object == this->horizontalScrollBar() &&
+      (e->type() == QEvent::Show ||
+       e->type() == QEvent::Hide))
+    {
+    d->recomputeSizeHint();
+    }
+  return res;
 }

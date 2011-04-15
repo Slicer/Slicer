@@ -82,6 +82,9 @@ public:
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
+
+  virtual bool eventFilter(QObject* object, QEvent* e);
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 
@@ -96,7 +99,6 @@ protected slots:
   virtual void onCurrentRowChanged(const QModelIndex& index);
   void onNumberOfVisibleIndexChanged();
   void deleteCurrentNode();
-  
 protected:
   QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;
 
