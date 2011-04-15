@@ -60,8 +60,11 @@ public:
   QAction* moduleAction(const QString& moduleName)const;
 
   ///
-  /// Add a module by name. The module action will be inserted
-  /// based on its category.
+  /// Add a module by name into the menu.
+  /// The category property of the module is used to assign a submenu to the
+  /// module action.
+  /// \sa qSlicerAbstractCoreModule::category()
+  /// \sa qSlicerAbstractCoreModule::action()
   void addModule(const QString& moduleName);
 
   ///

@@ -97,6 +97,12 @@ public:
   ///
   /// Title of the module, (displayed to the user)
   virtual QString title()const = 0;
+  ///
+  /// Category the module belongs to. Categories support subcategories. Use the
+  /// '.' separator to specify a subcategory (no depth limit), e.g.:
+  /// "Filtering.Arithmetic".
+  /// The function must be reimplemented in derived classes.
+  /// Note: If a category doesn't exist, it will be created.
   virtual QString category()const;
   virtual QString contributor()const;
 
