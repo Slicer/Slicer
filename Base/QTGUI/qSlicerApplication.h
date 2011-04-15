@@ -33,6 +33,7 @@
 // QTGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class QMainWindow;
 class qSlicerApplicationPrivate;
 class qSlicerCommandOptions;
 class qSlicerIOManager;
@@ -87,6 +88,10 @@ public:
   /// Set/Get default window flags that could be used when displaying top level widgets
   void setDefaultWindowFlags(Qt::WindowFlags defaultWindowFlags);
   Qt::WindowFlags defaultWindowFlags() const;
+
+  ///
+  /// Return a pointer on the main window of the application if any.
+  QMainWindow* mainWindow()const;
 
   ///
   /// TODO

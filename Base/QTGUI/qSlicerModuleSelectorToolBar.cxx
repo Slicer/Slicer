@@ -222,6 +222,13 @@ qSlicerModuleSelectorToolBar::~qSlicerModuleSelectorToolBar()
 }
 
 //---------------------------------------------------------------------------
+qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu()const
+{
+  Q_D(const qSlicerModuleSelectorToolBar);
+  return d->ModulesMenu;
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* moduleManager)
 {
   Q_D(qSlicerModuleSelectorToolBar);

@@ -21,13 +21,15 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
+#include <QMainWindow>
 
 // CTK includes
 #include <ctkLogger.h>
 
 // QtGUI includes
-#include "qSlicerCoreApplication.h"
+#include "qSlicerApplication.h"
 #include "qSlicerModulesMenu.h"
+#include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "ui_qSlicerSettingsModulesPanel.h"
 
@@ -77,22 +79,27 @@ void qSlicerSettingsModulesPanelPrivate::init()
                    q, SLOT(onHomeModuleChanged(const QString&)));
   this->ModulesMenu->setModuleManager(qSlicerCoreApplication::application()->moduleManager());
 
+  QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onShowHiddenModulesChanged(bool)));
+
   // default values
   this->ModulesMenu->setCurrentModule("welcome");
   this->ExtensionInstallDirectoryButton->setDirectory( qSlicerCoreApplication::application()->extensionsPath());
   this->TemporaryDirectoryButton->setDirectory( qSlicerCoreApplication::application()->temporaryPath());
 
   // register settings
-  q->registerProperty("disable-loadable-module", this->LoadModulesCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
-  q->registerProperty("disable-cli-module", this->LoadCommandLineModulesCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
-  q->registerProperty("Modules/HomeModule", this->ModulesMenu, "currentModule",
-                      SIGNAL(currentModuleChanged(const QString&)));
-  q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton, "directory",
-                      SIGNAL(directoryChanged(const QString&)));
-  q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton, "directory",
-                      SIGNAL(directoryChanged(const QString&)));
+  q->registerProperty("disable-loadable-module", this->LoadModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("disable-cli-module", this->LoadCommandLineModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("Modules/HomeModule", this->ModulesMenu,
+                      "currentModule", SIGNAL(currentModuleChanged(const QString&)));
+  q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton,
+                      "directory", SIGNAL(directoryChanged(const QString&)));
+  q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
+                      "directory", SIGNAL(directoryChanged(const QString&)));
+  q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(const QString&)),
@@ -139,3 +146,18 @@ void qSlicerSettingsModulesPanel::onTemporaryPathChanged(const QString& path)
 {
   qSlicerCoreApplication::application()->setTemporaryPath(path);
 }
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onShowHiddenModulesChanged(bool show)
+{
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  foreach (qSlicerModuleSelectorToolBar* toolBar,
+           mainWindow->findChildren<qSlicerModuleSelectorToolBar*>())
+    {
+    toolBar->modulesMenu()->setShowHiddenModules(show);
+    // refresh the list
+    toolBar->modulesMenu()->setModuleManager(
+      toolBar->modulesMenu()->moduleManager());
+    }
+}
+

@@ -25,6 +25,7 @@
 #include <QFont>
 #include <QFontDatabase>
 #include <QFontInfo>
+#include <QMainWindow>
 #include <QMap>
 #include <QPalette>
 #include <QPluginLoader>
@@ -238,6 +239,20 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 {
   Q_D(const qSlicerApplication);
   return d->LayoutManager;
+}
+
+//-----------------------------------------------------------------------------
+QMainWindow* qSlicerApplication::mainWindow()const
+{
+  foreach(QWidget * widget, this->topLevelWidgets())
+    {
+    QMainWindow* window = qobject_cast<QMainWindow*>(widget);
+    if (window)
+      {
+      return window;
+      }
+    }
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

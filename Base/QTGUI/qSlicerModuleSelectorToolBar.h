@@ -30,6 +30,7 @@
 
 class qSlicerModuleSelectorToolBarPrivate;
 class qSlicerModuleManager;
+class qSlicerModulesMenu;
 class qSlicerAbstractCoreModule;
 
 ///
@@ -50,6 +51,9 @@ public:
   qSlicerModuleSelectorToolBar(const QString& title, QWidget* parent = 0);
   qSlicerModuleSelectorToolBar(QWidget* parent = 0);
   virtual ~qSlicerModuleSelectorToolBar();
+
+  /// Returns a pointer to the modules menu used to populate the list of modules
+  qSlicerModulesMenu* modulesMenu()const;
 
   ///
   /// Module manager contains all the loaded modules

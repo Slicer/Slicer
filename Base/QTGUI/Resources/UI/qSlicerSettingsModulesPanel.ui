@@ -66,7 +66,7 @@
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="HomeModuleLabel">
      <property name="text">
       <string>Home module:</string>
      </property>
@@ -74,6 +74,20 @@
    </item>
    <item row="3" column="1">
     <widget class="QPushButton" name="HomeModuleButton">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="ShowHiddenModulesLabel">
+     <property name="text">
+      <string>Show hidden modules:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
      <property name="text">
       <string/>
      </property>
