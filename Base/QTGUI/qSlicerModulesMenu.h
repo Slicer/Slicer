@@ -44,8 +44,16 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
   /// module. When duplicateActions is true, the QActions populating the menu are
   /// duplicates from the original module QAction. That way the qSlicerModulesMenu
   /// behaves independently from the other qSlicerModulesMenus.
+  /// Note: this property should be set before moduels are added (addModule()).
   Q_PROPERTY(bool duplicateActions READ duplicateActions WRITE setDuplicateActions)
 
+  /// By default (showHiddenModules == false), modules with the hidden property
+  /// set to true are not shown. If showHiddenModules is true, all the modules
+  /// are visible.
+  /// Note: this property should be set before modules are added (addModule),
+  /// changing its value won't change the visibility of the current volumes but
+  /// only the future added modules
+  Q_PROPERTY(bool showHiddenModules READ showHiddenModules WRITE setShowHiddenModules)
 public:
   typedef QMenu Superclass;
 
@@ -62,9 +70,11 @@ public:
   ///
   /// Add a module by name into the menu.
   /// The category property of the module is used to assign a submenu to the
-  /// module action.
+  /// module action. If a module is hidden and showHiddenModules is false
+  /// (default), the module is ignored and not added into the list
   /// \sa qSlicerAbstractCoreModule::category()
   /// \sa qSlicerAbstractCoreModule::action()
+  /// \sa qSlicerAbstractCoreModule::isHidden()
   void addModule(const QString& moduleName);
 
   ///
@@ -90,6 +100,12 @@ public:
 
   void setDuplicateActions(bool duplicate);
   bool duplicateActions()const;
+
+  ///
+  /// If true, modules with the hidden property set to true are still visible
+  /// in the module.
+  void setShowHiddenModules(bool show);
+  bool showHiddenModules()const;
 
 public slots:
   void addModule(qSlicerAbstractCoreModule*);

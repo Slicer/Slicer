@@ -187,6 +187,12 @@ CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
+bool qSlicerAbstractCoreModule::isHidden()const
+{
+  return false;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresentation()
 {
   Q_D(qSlicerAbstractCoreModule);

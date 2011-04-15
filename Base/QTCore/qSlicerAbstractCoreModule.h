@@ -64,6 +64,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QString contributor READ contributor)
   Q_PROPERTY(int index READ index)
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
+  Q_PROPERTY(bool hidden READ isHidden)
 
 public:
 
@@ -147,6 +148,11 @@ public:
   /// By default, a module is disabled
   bool isEnabled()const;
 
+  ///
+  /// Returns true if the module should be hidden to the user.
+  /// By default, modules are not hidden.
+  virtual bool isHidden()const;
+
 public slots:
 
   ///
@@ -154,7 +160,8 @@ public slots:
   virtual void setEnabled(bool enabled);
 
   ///
-  /// Set the current MRML scene to the widget
+  /// Set the current MRML scene to the module, it is propagated to the logic
+  /// and representations if any
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected:
@@ -170,7 +177,6 @@ protected:
   /// Create and return the module logic
   /// Note: Only one instance of the logic will exist per module
   virtual vtkMRMLAbstractLogic* createLogic() = 0;
-
 
 protected:
   QScopedPointer<qSlicerAbstractCoreModulePrivate> d_ptr;

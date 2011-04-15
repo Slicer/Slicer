@@ -53,6 +53,7 @@ public:
   QMenu*                AllModulesMenu;
   QString               CurrentModule;
   bool                  DuplicateActions;
+  bool                  ShowHiddenModules;
 };
 
 //---------------------------------------------------------------------------
@@ -62,6 +63,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   this->ModuleManager = 0;
   this->AllModulesMenu = 0;
   this->DuplicateActions = false;
+  this->ShowHiddenModules = false;
 }
 
 //---------------------------------------------------------------------------
@@ -280,6 +282,20 @@ bool qSlicerModulesMenu::duplicateActions()const
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModulesMenu::setShowHiddenModules(bool show)
+{
+  Q_D(qSlicerModulesMenu);
+  d->ShowHiddenModules = show;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModulesMenu::showHiddenModules()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->ShowHiddenModules;
+}
+
+//---------------------------------------------------------------------------
 QString qSlicerModulesMenu::currentModule()const
 {
   Q_D(const qSlicerModulesMenu);
@@ -348,6 +364,11 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   if (!module)
     {
     qWarning() << "A module needs a QAction to be handled by qSlicerModulesMenu";
+    return;
+    }
+  if (module->isHidden() && !d->ShowHiddenModules)
+    {
+    // ignore hidden modules
     return;
     }
   QAction* moduleAction = module->action();
