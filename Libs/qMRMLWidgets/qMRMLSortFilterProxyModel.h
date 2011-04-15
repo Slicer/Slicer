@@ -37,6 +37,9 @@ class qMRMLAbstractItemHelper;
 class qMRMLSortFilterProxyModelPrivate;
 class QStandardItem;
 
+///
+/// Filter nodes based on their types and attributes
+/// Support filtering QSortFilterProxyModel::filterRegExp
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT

@@ -80,8 +80,8 @@ qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
   // For speed issue, we might want to disable the dynamic sorting however
   // when having source models using QStandardItemModel, drag&drop is handled
   // in 2 steps, first a new row is created (which automatically calls
-  // filterAcceptRow() that returns false) and then set the row with the
-  // correct values (which doesn't call filterAcceptRow() on the up to date
+  // filterAcceptsRow() that returns false) and then set the row with the
+  // correct values (which doesn't call filterAcceptsRow() on the up to date
   // value unless DynamicSortFilter is true). 
   this->setDynamicSortFilter(true);
 }
@@ -197,7 +197,9 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
   // Accept all the nodes if no type has been set
   if (d->NodeTypes.isEmpty())
     {
-    return true;
+    // Apply filter if any
+    return this->QSortFilterProxyModel::filterAcceptsRow(source_row,
+                                                         source_parent);
     }
   foreach(const QString& nodeType, d->NodeTypes)
     {
@@ -242,7 +244,9 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
         return false;
         }
       }
-    return true;
+    // Apply filter if any
+    return this->QSortFilterProxyModel::filterAcceptsRow(source_row,
+                                                         source_parent);
     }
   return false;
 }
