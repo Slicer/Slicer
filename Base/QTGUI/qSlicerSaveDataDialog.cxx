@@ -53,29 +53,40 @@
 #include <vtkStringArray.h>
 
 //-----------------------------------------------------------------------------
-qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* _parent)
-  :QDialog(_parent)
+qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget)
+  :QDialog(parentWidget)
 {
   this->MRMLScene = 0;
 
   this->setupUi(this);
 
-  // checkable headers.
+  // Checkable headers.
+  // We replace the current FileWidget header view with a checkable header view.
+  // Checked files (rows) will be saved, unchecked files will be discarded.
+  // In order to have a column checkable, we need to manually set a checkstate
+  // to a column. No checkstate (null QVariant) means uncheckable.
   this->FileWidget->model()->setHeaderData(NodeNameColumn, Qt::Horizontal,
                                            Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = this->FileWidget->horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, this->FileWidget);
+  // Copy the previous behavior of the header into the new checkable header view
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->setStretchLastSection(previousHeaderView->stretchLastSection());
-  headerView->setPropagateToItems(true);
+  // Propagate to top-level items only (depth = 1),no need to go deeper
+  // (depth = -1 or 2, 3...) as it is a flat list.
+  headerView->setPropagateDepth(1);
+  // Finally assign the new header to the view
   this->FileWidget->setHorizontalHeader(headerView);
 
+  // Connect push buttons to associated actions
   connect(this->DirectoryButton, SIGNAL(directoryChanged(const QString&)),
           this, SLOT(setDirectory(const QString&)));
-  connect(this->SelectSceneDataButton, SIGNAL(clicked()), this, SLOT(selectModifiedSceneData()));
-  connect(this->SelectDataButton, SIGNAL(clicked()), this, SLOT(selectModifiedData()));
+  connect(this->SelectSceneDataButton, SIGNAL(clicked()),
+          this, SLOT(selectModifiedSceneData()));
+  connect(this->SelectDataButton, SIGNAL(clicked()),
+          this, SLOT(selectModifiedData()));
 }
 
 //-----------------------------------------------------------------------------
@@ -731,8 +742,8 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* _parent)
-  :qSlicerFileDialog(_parent)
+qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* parentObject)
+  : qSlicerFileDialog(parentObject)
   , d_ptr(new qSlicerSaveDataDialogPrivate(0))
 {
 }

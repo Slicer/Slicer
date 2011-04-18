@@ -46,30 +46,39 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   :QDialog(_parent)
 {
   this->setupUi(this);
-  // checkable headers.
-  this->FileWidget->model()->setHeaderData(FileColumn, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
+
+  // Checkable headers.
+  // We replace the current FileWidget header view with a checkable header view.
+  // Checked files (rows) will be loaded into the scene, unchecked files will be
+  // discarded.
+  // In order to have a column checkable, we need to manually set a checkstate
+  // to a column. No checkstate (null QVariant) means uncheckable.
+  this->FileWidget->model()->setHeaderData(
+    FileColumn, Qt::Horizontal, Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = this->FileWidget->horizontalHeader();
-  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, this->FileWidget);
+  ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(
+    Qt::Horizontal, this->FileWidget);
+  // Copy the previous behavior of the header into the new checkable header view
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
   headerView->setHighlightSections(previousHeaderView->highlightSections());
-  //headerView->setModel(previousHeaderView->model());
-  //headerView->setSelectionModel(previousHeaderView->selectionModel());
-  headerView->setPropagateToItems(true);
+  headerView->setStretchLastSection(previousHeaderView->stretchLastSection());
+  // Propagate to top-level items only (depth = 1),no need to go deeper
+  // (depth = -1 or 2, 3...) as it is a flat list.
+  headerView->setPropagateDepth(1);
+  // Finally assign the new header to the view
   this->FileWidget->setHorizontalHeader(headerView);
-  /*
-  connect(this->FileWidget->model(), SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
-          this, SLOT(updateCheckBoxes(Qt::Orientation, int, int)));
-  connect(this->FileWidget, SIGNAL(cellChanged(int,int)),
-          this, SLOT(updateCheckBoxHeader(int,int)));
-  */
+
+  // Connect the "Options" button with the visibility of the "Options" column.
   connect(this->ShowOptionsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(showOptions(bool)));
-  // hide the options by default;
+  // Hide the options by default;
   this->showOptions(false);
 
   connect(this->AddDirectoryButton, SIGNAL(clicked()), this, SLOT(addDirectory()));
   connect(this->AddFilesButton, SIGNAL(clicked()), this, SLOT(addFiles()));
+
+  // Reset clears the FileWidget of all previously added files.
   QPushButton* resetButton = this->ButtonBox->button(QDialogButtonBox::Reset);
   connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
 }
