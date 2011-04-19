@@ -769,21 +769,21 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->m_DisableInteractorStyleEventsProcessing == 1)
     {
-    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    vtkDebugMacro("OnInteractorStyleEvent: Processing of events was disabled.")
     return;
     }
   if (eventid == vtkCommand::LeftButtonReleaseEvent)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
       {
-      vtkWarningMacro("OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates");
+      vtkDebugMacro("OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates");
       this->OnClickInRenderWindowGetCoordinates();
       }
-    else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
+    //else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
     }
   else if (eventid == vtkCommand::LeftButtonPressEvent)
     {
-    vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
+    //vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
     }
   else
     {

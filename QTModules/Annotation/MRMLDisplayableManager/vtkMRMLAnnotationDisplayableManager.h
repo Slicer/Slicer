@@ -65,6 +65,9 @@ public:
   /// Check if there are real changes between two sets of worldCoordinates
   bool GetWorldCoordinatesChanged(double * worldCoordinates1, double * worldCoordinates2);
 
+  /// Convert display to world coordinates
+  void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
+  void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
 protected:
 
@@ -126,8 +129,8 @@ protected:
   //
 
   /// Convert display to world coordinates
-  void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
-  void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
+//  void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
+//  void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
   /// Convert display to world coordinates
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
