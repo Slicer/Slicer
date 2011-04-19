@@ -78,7 +78,10 @@ else()
 endif()
 
 # For more details, see http://www.kitware.com/blog/home/post/11
-set(CTEST_USE_LAUNCHERS 1)
+set(CTEST_USE_LAUNCHERS 0)
+if (NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio")
+  set(CTEST_USE_LAUNCHERS 1)
+endif()
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
