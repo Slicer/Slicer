@@ -717,20 +717,6 @@ FOREACH(subdir ${modules_subdirs})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Module EMSegment libraries
-#-----------------------------------------------------------------------------
-# The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
-# CMakeLists.txt. Doing so allow to build these libraries also if Slicer_USE_KWWIDGETS is OFF
-
-IF(Slicer_BUILD_QTLOADABLEMODULES)
-  INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
-  ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
-  ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
-  ADD_SUBDIRECTORY(Modules/EMSegment/Registration)
-  ADD_SUBDIRECTORY(Modules/EMSegment/Graph)
-ENDIF()
-
-#-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #-----------------------------------------------------------------------------
 
