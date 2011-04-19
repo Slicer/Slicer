@@ -42,7 +42,6 @@ INCLUDE(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 SET(qtmodules
   Annotation
-  EMSegment
   #Measurements
   Models
   #FiberBundles
