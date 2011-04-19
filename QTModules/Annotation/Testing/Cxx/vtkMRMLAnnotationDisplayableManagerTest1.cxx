@@ -1,0 +1,370 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) 2010 Kitware Inc.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLViewDisplayableManager.h>
+#include <vtkMRMLAnnotationDisplayableManager.h>
+#include <vtkMRMLAnnotationFiducialDisplayableManager.h>
+#include <vtkThreeDViewInteractorStyle.h>
+
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLInteractionNode.h>
+
+// VTK includes
+#include <vtkRegressionTestImage.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h> 
+#include <vtkSmartPointer.h>
+#include <vtkErrorCode.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
+#include <vtkMath.h>
+#include <vtkCamera.h>
+
+// STD includes
+#include <cstdlib>
+#include <iostream>
+#include <iterator>
+
+#include "TestingMacros.h"
+
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+char vtkMRMLAnnotationDisplayableManagerTest1EventLog[] =
+"# StreamVersion 1\n"
+"EnterEvent 585 173 0 0 0 0 0\n"
+"MouseWheelForwardEvent 444 275 0 0 0 1 0\n"
+"RenderEvent 444 275 0 0 0 0 0\n"
+"MouseWheelBackwardEvent 444 275 0 0 0 0 0\n"
+"LeaveEvent 616 400 0 0 0 0 0\n";
+
+namespace
+{
+//----------------------------------------------------------------------------
+/// Read \a filename into string \a output
+/// Note also that End-of-line will be removed
+bool readFileIntoString(const char* filename, std::string& output)
+{
+  std::ifstream istream(filename);
+  if( !istream )
+    {
+    cerr << "Could not open input file:" << filename << endl;
+    return false;
+    }
+
+  std::string line;
+  while(std::getline(istream,line))
+    {
+    output+=line;
+    }
+
+  return true;
+}
+}
+
+//----------------------------------------------------------------------------
+class vtkRenderRequestCallback : public vtkCommand
+{
+public:
+  static vtkRenderRequestCallback *New()
+    { return new vtkRenderRequestCallback; }
+  void SetRenderer(vtkRenderer *renderer)
+    { this->Renderer =  renderer; }
+  int GetRenderRequestCount()
+    { return this->RenderRequestCount; }
+  virtual void Execute(vtkObject*, unsigned long , void* )
+    {
+    this->Renderer->GetRenderWindow()->Render();
+    this->RenderRequestCount++;
+    //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
+    }
+protected:
+  vtkRenderRequestCallback():Renderer(0), RenderRequestCount(0){}
+  vtkRenderer * Renderer;
+  int           RenderRequestCount;
+};
+
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+{
+  // Renderer, RenderWindow and Interactor
+  vtkRenderer* rr = vtkRenderer::New();
+  vtkRenderWindow* rw = vtkRenderWindow::New();
+  vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
+  rw->SetSize(600, 600);
+
+  rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
+
+  rw->AddRenderer(rr);
+  rw->SetInteractor(ri);
+
+  // Set Interactor Style
+  vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
+  ri->SetInteractorStyle(iStyle);
+  iStyle->Delete();
+
+  // MRML scene
+  vtkMRMLScene* scene = vtkMRMLScene::New();
+
+  // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+  applicationLogic->SetMRMLScene(scene);
+  // Pass through event handling once without observing the scene
+  // allows any dependent nodes to be created
+  applicationLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, 0);
+  applicationLogic->SetAndObserveMRMLScene(scene);
+
+  // Add ViewNode
+  vtkMRMLViewNode * viewNode = vtkMRMLViewNode::New();
+  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
+  viewNode->Delete();
+  if (!nodeAdded)
+    {
+    std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Factory
+  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::New();
+
+  factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLAnnotationDisplayableManager");
+//  factory->RegisterDisplayableManager("vtkMRMLAnnotationFiducialDisplayableManager");
+  // need a model displayable manager for the coord transform testing/picking
+  factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
+
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
+      factory->InstantiateDisplayableManagers(rr);
+
+  if (!displayableManagerGroup)
+    {
+    std::cerr << "Failed to instantiate Displayable Managers using "
+        << "InstantiateDisplayableManagers" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // RenderRequest Callback
+  vtkRenderRequestCallback * renderRequestCallback = vtkRenderRequestCallback::New();
+  renderRequestCallback->SetRenderer(rr);
+  displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
+
+  // Assign ViewNode
+  displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
+
+  // Check if RenderWindowInteractor has NOT been changed
+  if (displayableManagerGroup->GetInteractor() != ri)
+    {
+    std::cerr << "Expected RenderWindowInteractor:" << ri << std::endl;
+    std::cerr << "Current RenderWindowInteractor:"
+        << displayableManagerGroup->GetInteractor() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  double windowWidth = displayableManagerGroup->GetInteractor()->GetRenderWindow()->GetSize()[0];
+  double windowHeight = displayableManagerGroup->GetInteractor()->GetRenderWindow()->GetSize()[1];
+  std::cout << "Render window size: " << windowWidth << "x" << windowHeight << std::endl;
+  
+  // change to place mode
+  vtkMRMLNode *mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNode1");
+  vtkMRMLInteractionNode *interactionNode = NULL;
+  if (mrmlNode)
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(mrmlNode);
+    interactionNode->SwitchToPersistentPlaceMode();
+    }
+
+  // get the fiducial displayable manager so we can test the
+  // OnClickInRenderWindow method
+  vtkMRMLAbstractDisplayableManager * dm1 =
+      displayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLAnnotationDisplayableManager");
+  vtkMRMLAnnotationDisplayableManager *adm = NULL;
+  if (dm1)
+    {
+    adm = vtkMRMLAnnotationDisplayableManager::SafeDownCast(dm1);
+    }
+  else
+    {
+    std::cerr << "Unalble to get the annotation displayable manager from the displayble manager group!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (adm ==  NULL)
+    {
+    std::cerr << "Unable to cast the annotation displayable manager from the displayble manager!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  double worldCoords1[4], worldCoords2[4], worldCoords3[4], worldCoords4[4];
+  worldCoords1[0] = worldCoords1[1] = worldCoords1[2] = worldCoords1[3] = 0.0;
+  worldCoords2[0] = worldCoords2[1] = worldCoords2[2] = worldCoords2[3] = 0.0;
+  worldCoords3[0] = worldCoords3[1] = worldCoords3[2] = worldCoords3[3] = 0.0;
+  worldCoords4[0] = worldCoords4[1] = worldCoords4[2] = worldCoords4[3] = 0.0;
+
+  double dispCoords[2];
+  dispCoords[0] = dispCoords[1] = 100.0;
+  adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords1);
+  std::cout << "Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords1[0] << "," << worldCoords1[1] << "," << worldCoords1[2] << "," << worldCoords1[3] << std::endl;
+
+  dispCoords[0] = 900.0;
+  dispCoords[1] = 900.0;
+  adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords2);
+  std::cout << "Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords2[0] << "," << worldCoords2[1] << "," << worldCoords2[2] << "," << worldCoords2[3] << std::endl;
+
+  dispCoords[0] = 250.0;
+  dispCoords[1] = 750.0;
+  adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords3);
+  std::cout << "Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords3[0] << "," << worldCoords3[1] << "," << worldCoords3[2] << "," << worldCoords3[3] << std::endl;
+
+  dispCoords[0] = 800.0;
+  dispCoords[1] = 55.0;
+  adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords4);
+  std::cout << "Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords4[0] << "," << worldCoords4[1] << "," << worldCoords4[2] << "," << worldCoords4[3] << std::endl;
+
+  // print out distances between resulting world coordinates
+  double d12 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords2);
+  std::cout << "Distance between world coords 1 and 2: " << d12 << std::endl;
+
+  double d13 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords3);
+  std::cout << "Distance between world coords 1 and 3: " << d13 << std::endl;
+
+  double d14 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords4);
+  std::cout << "Distance between world coords 1 and 4: " << d14 << std::endl;
+
+  double d23 = vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords3);
+  std::cout << "Distance between world coords 2 and 3: " << d23 << std::endl;
+
+  double d24 = vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords4);
+  std::cout << "Distance between world coords 2 and 4: " << d24 << std::endl;
+
+  double d34 = vtkMath::Distance2BetweenPoints(worldCoords3, worldCoords4);
+  std::cout << "Distance between world coords 3 and 4: " << d34 << std::endl;
+  
+  // Interactor style should be vtkThreeDViewInteractorStyle
+  vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
+  if (!vtkThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
+    {
+    std::cerr << "Expected interactorStyle: vtkThreeDViewInteractorStyle" << std::endl;
+    std::cerr << "Current RenderWindowInteractor: "
+      << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  /*
+  // try triggering a mouse wheel event to see if it changes anything
+//  displayableManagerGroup->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+//  displayableManagerGroup->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  adm->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  adm->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  
+  // Event recorder playback
+  vtkInteractorEventRecorder * recorder = vtkInteractorEventRecorder::New();
+  recorder->SetInteractor(displayableManagerGroup->GetInteractor());
+  // Play the mouse wheel events
+  recorder->ReadFromInputStringOn();
+  recorder->SetInputString(vtkMRMLAnnotationDisplayableManagerTest1EventLog);
+  recorder->Play();
+  recorder->Delete();
+  */
+  // check out the camera
+  vtkCamera *cam = displayableManagerGroup->GetRenderer()->GetActiveCamera();
+  if (cam)
+    {
+    double *campos = cam->GetPosition();
+    double *camfocal = cam->GetFocalPoint();
+    double *camviewup = cam->GetViewUp();
+    std::cout << "Current Camera:" << std::endl;
+    if (campos)
+      {
+      std::cout << "\tPos = " << campos[0] << ", " << campos[1] << ", " << campos[2] << std::endl;
+      }
+    if (camfocal)
+      {
+      std::cout << "\tFocal = " << camfocal[0] << ", " << camfocal[1] << ", " << camfocal[2] << std::endl;
+      }
+    if (camviewup)
+      {
+      std::cout << "\tViewUp = " << camviewup[0] << ", " << camviewup[1] << ", " << camviewup[2] << std::endl;
+      }
+    // compare to the current camera node?
+    mrmlNode = scene->GetNodeByID("vtkMRMLCameraNode1");
+    vtkMRMLCameraNode *camnode = NULL;
+    if (mrmlNode)
+      {
+      camnode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+      if (camnode)
+        {
+        /*
+          // try setting the position
+        double newpos[3];
+        newpos[0] = 0.0; newpos[1] = 605.0; newpos[3] = 0.0;
+        camnode->SetPosition(newpos);
+        */
+        double *nodePos = camnode->GetPosition();
+        if (nodePos)
+          {
+          std::cout << "Camera Node:\n\tPosition = " << nodePos[0] << ", " << nodePos[1] << ", " << nodePos[2] << std::endl;
+          }
+        double *nodeFoc = camnode->GetFocalPoint();
+        if (nodeFoc)
+          {
+          std::cout << "\tFocalPoint = " << nodeFoc[0] << ", " << nodeFoc[1] << ", " << nodeFoc[2] << std::endl;
+          }
+        double *nodeViewup = camnode->GetViewUp();
+        if (nodeViewup)
+          {
+          std::cout << "\tViewUp = " << nodeViewup[0] << ", " << nodeViewup[1] << ", " << nodeViewup[2] << std::endl;
+          }
+        }
+      }
+    }
+  
+  // try getting the world to display coords now for the last display point
+  double worldCoords5[4];
+  worldCoords5[0] = worldCoords5[1] = worldCoords5[2] = worldCoords5[3] = 0.0;
+  adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords5);
+  std::cout << "Last Check: Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords5[0] << "," << worldCoords5[1] << "," << worldCoords5[2] << "," << worldCoords5[3] << std::endl;
+  double d45 = vtkMath::Distance2BetweenPoints(worldCoords4, worldCoords5);
+  std::cout << "Distance between world coords 4 and 5 (should be < epsilon): " << d45 << std::endl;
+   
+
+
+  renderRequestCallback->Delete();
+  if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
+  factory->Delete();
+  applicationLogic->Delete();
+  scene->Delete();
+  rr->Delete();
+  rw->Delete();
+  ri->Delete();
+
+//  return !retval;
+  return EXIT_SUCCESS;
+}
+

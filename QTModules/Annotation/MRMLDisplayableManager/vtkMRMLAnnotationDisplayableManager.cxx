@@ -116,8 +116,8 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 {
 
   // hack to force initialization of the renderview
-  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
   //this->DebugOn();
 
@@ -769,15 +769,26 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->m_DisableInteractorStyleEventsProcessing == 1)
     {
-    vtkDebugMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
     return;
     }
   if (eventid == vtkCommand::LeftButtonReleaseEvent)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
       {
+      vtkWarningMacro("OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates");
       this->OnClickInRenderWindowGetCoordinates();
       }
+    else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
+    }
+  else if (eventid == vtkCommand::LeftButtonPressEvent)
+    {
+    vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
+    }
+  else
+    {
+    //vtkWarningMacro("OnInteractorStyleEvent: unhandled event " << eventid);
+    //std::cout << "AnnotationDisplayableManager: OnInteractorStyleEvent: unhandled event " << eventid << std::endl;
     }
 }
 

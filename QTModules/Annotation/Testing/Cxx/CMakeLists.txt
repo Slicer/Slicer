@@ -19,6 +19,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationFiducialNodeTest1.cxx
   vtkMRMLAnnotationFiducialsStorageNodeTest1.cxx
   vtkMRMLAnnotationROINodeTest1.cxx
+  vtkMRMLAnnotationDisplayableManagerTest1.cxx
   #TestAnnotationWidgetsStandalone.cxx
   #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
   #vtkMRMLAnnotationTextDisplayableManagerTest1.cxx

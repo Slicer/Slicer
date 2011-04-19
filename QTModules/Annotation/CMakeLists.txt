@@ -14,6 +14,7 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
   )
 
 #-----------------------------------------------------------------------
