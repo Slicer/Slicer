@@ -8,9 +8,8 @@ include(${TCLAP_USE_FILE})
 find_package(ModuleDescriptionParser REQUIRED)
 include(${ModuleDescriptionParser_USE_FILE})
 
-
-# create the .clp files
-# usage: GENERATE_CLP(foo_SRCS XML_FILE [LOGO_FILE])
+# Create the .clp files
+# Usage: GENERATE_CLP(foo_SRCS XML_FILE [LOGO_FILE])
 macro(GENERATECLP SOURCES)
 
   # The shell into which nmake.exe executes the custom command has some issues
@@ -19,26 +18,27 @@ macro(GENERATECLP SOURCES)
   if(CMAKE_GENERATOR MATCHES "NMake Makefiles")
     set(verbatim "")
     set(quote "\"")
-  else(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+  else()
     set(verbatim "VERBATIM")
     set(quote "")
-  endif(CMAKE_GENERATOR MATCHES "NMake Makefiles")
-
-  # what is the filename without the extension
+  endif()
+  
+  # What is the filename without the extension
   get_filename_component(TMP_FILENAME ${ARGV1} NAME_WE)
-
-  # the input file might be full path so handle that
+  
+  # The input file might be full path so handle that
   get_filename_component(TMP_FILEPATH ${ARGV1} PATH)
 
-  # compute the input filename
-  if (TMP_FILEPATH)
+  # Compute the input filename
+  if(TMP_FILEPATH)
     set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.xml)
-  else (TMP_FILEPATH)
+  else()
     set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.xml)
-  endif (TMP_FILEPATH)
+  endif()
 
   # add custom command to output
   if ("x${ARGV2}" STREQUAL "x")
+  
     ## CASE OF NO LOGO FILE
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
@@ -48,12 +48,19 @@ macro(GENERATECLP SOURCES)
       --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
       ${verbatim}
       )
-    # mark the .clp file as a header file
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
-    foreach( INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
-      set_source_files_properties(${INPUT_SOURCE_FILE} PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h)
-    endforeach( INPUT_SOURCE_FILE )
-  else ("x${ARGV2}" STREQUAL "x")
+      
+    # Mark the .clp file as a header file
+    set_source_files_properties(
+      ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h 
+      PROPERTIES HEADER_FILE_ONLY TRUE)
+      
+    foreach(INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
+      set_source_files_properties(${INPUT_SOURCE_FILE} PROPERTIES 
+        OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h)
+    endforeach()
+    
+  else()
+  
     ## CASE WITH LOGO FILE
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
@@ -64,15 +71,27 @@ macro(GENERATECLP SOURCES)
       --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
       ${verbatim}
       )
-    # mark the .clp file as a header file
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
-    foreach( INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
-      set_source_files_properties(${INPUT_SOURCE_FILE} PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h OBJECT_DEPENDS ${ARGV2})
-    endforeach( INPUT_SOURCE_FILE )
-    # mark the logo include file as a header file
-    set_source_files_properties(${ARGV2} PROPERTIES HEADER_FILE_ONLY TRUE)
-  endif ("x${ARGV2}" STREQUAL "x")
+      
+    # Mark the .clp file as a header file
+    set_source_files_properties(
+      ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h 
+      PROPERTIES HEADER_FILE_ONLY TRUE)
+    
+    foreach(INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
+      set_source_files_properties(
+        ${INPUT_SOURCE_FILE} PROPERTIES 
+          OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h 
+          OBJECT_DEPENDS ${ARGV2})
+    endforeach()
+    
+    # Mark the logo include file as a header file
+    set_source_files_properties(
+      ${ARGV2} 
+      PROPERTIES HEADER_FILE_ONLY TRUE)
+      
+  endif()
 
   set(${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h ${${SOURCES}})
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
+  
 endmacro(GENERATECLP)
