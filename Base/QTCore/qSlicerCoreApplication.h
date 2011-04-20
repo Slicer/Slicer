@@ -60,6 +60,7 @@ public:
 
   enum ApplicationAttribute
     {
+    AA_DisablePython = 1000
     };
 
   /// \sa QCoreApplication::setAttribute

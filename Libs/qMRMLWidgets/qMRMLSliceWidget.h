@@ -64,6 +64,10 @@ public:
   /// scripted DisplayableManager should be sourced from.
   void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
 
+  /// If set to True, scripted DisplayableManager located in the directory specified
+  /// when calling registerDisplayableManagers() will be ignored.
+  void setIgnoreScriptedDisplayableManagers(bool value);
+
   /// Get slice controller
   qMRMLSliceControllerWidget* sliceController()const;
 

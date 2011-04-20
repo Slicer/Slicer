@@ -91,7 +91,10 @@ int main(int argc, char* argv[])
   qSlicerApplication app(argc, argv);
 
 #ifdef Slicer_USE_PYTHONQT
-  app.pythonManager()->setInitializationFunction(PythonPreInitialization);
+  if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
+    {
+    app.pythonManager()->setInitializationFunction(PythonPreInitialization);
+    }
 #endif
 
   //app.setApplicationVersion();
@@ -143,11 +146,14 @@ int main(int argc, char* argv[])
     moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory", loadableModuleFactory);
 
 #ifdef Slicer_USE_PYTHONQT
-    qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =
-      new qSlicerScriptedLoadableModuleFactory();
-    scriptedLoadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
-    moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
-                                          scriptedLoadableModuleFactory);
+    if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
+      {
+      qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =
+        new qSlicerScriptedLoadableModuleFactory();
+      scriptedLoadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
+      moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
+                                            scriptedLoadableModuleFactory);
+      }
 #endif
     }
 
@@ -172,19 +178,22 @@ int main(int argc, char* argv[])
   moduleFactoryManager->instantiateAllModules();
 
 #ifdef Slicer_USE_PYTHONQT
-  // Create python console
-  Q_ASSERT(qSlicerApplication::application()->pythonManager());
   ctkPythonConsole pythonConsole;
-  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
+  if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
+    {
+    // Create python console
+    Q_ASSERT(qSlicerApplication::application()->pythonManager());
+    pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
 
-  QStringList autocompletePreferenceList;
-  autocompletePreferenceList
-      << "slicer" << "slicer.mrmlScene"
-      << "qt.QPushButton";
-  pythonConsole.completer()->setAutocompletePreferenceList(autocompletePreferenceList);
+    QStringList autocompletePreferenceList;
+    autocompletePreferenceList
+        << "slicer" << "slicer.mrmlScene"
+        << "qt.QPushButton";
+    pythonConsole.completer()->setAutocompletePreferenceList(autocompletePreferenceList);
 
-  //pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
-  pythonConsole.resize(600, 280);
+    //pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
+    pythonConsole.resize(600, 280);
+    }
 #endif
 
   // Create main window
@@ -243,12 +252,15 @@ int main(int argc, char* argv[])
     }
 
 #ifdef Slicer_USE_PYTHONQT
-  // Show pythonConsole if required
-  if(app.commandOptions()->showPythonInteractor())
+  if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
-    pythonConsole.show();
-    pythonConsole.activateWindow();
-    pythonConsole.raise();
+    // Show pythonConsole if required
+    if(app.commandOptions()->showPythonInteractor())
+      {
+      pythonConsole.show();
+      pythonConsole.activateWindow();
+      pythonConsole.raise();
+      }
     }
 #endif
 

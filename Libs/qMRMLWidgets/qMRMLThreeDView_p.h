@@ -71,6 +71,7 @@ public:
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
+  bool                               IgnoreScriptedDisplayableManagers;
 };
 
 #endif

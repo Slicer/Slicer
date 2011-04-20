@@ -65,6 +65,7 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
   this->ActiveMRMLThreeDViewNode = 0;
   this->MRMLSliceLogics = vtkCollection::New();
   this->SliceControllerButtonGroup = 0;
+  this->IgnoreScriptedDisplayableManagers = false;
   //this->SavedCurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
 }
 
@@ -243,6 +244,7 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* vi
 
   logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
   threeDView = new qMRMLThreeDView(q->viewport());
+  threeDView->setIgnoreScriptedDisplayableManagers(this->IgnoreScriptedDisplayableManagers);
   threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
   threeDView->setMRMLScene(this->MRMLScene);
   threeDView->setMRMLViewNode(viewNode);
@@ -771,5 +773,7 @@ void qMRMLLayoutManager::setupView(QDomElement viewElement, QWidget*view)
   vtkMRMLNode* viewNode = d->viewNode(view);
   viewNode->SetAttribute("MappedInLayout", "1");
   view->setWindowTitle(viewNode->GetName());
-
 }
+
+//------------------------------------------------------------------------------
+CTK_SET_CPP(qMRMLLayoutManager, bool, setIgnoreScriptedDisplayableManagers, IgnoreScriptedDisplayableManagers);

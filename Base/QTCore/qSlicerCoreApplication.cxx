@@ -489,9 +489,12 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 
 #ifdef Slicer_USE_PYTHONQT
   // Initialize Python
-  if (this->corePythonManager())
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    this->corePythonManager()->mainContext();
+    if (this->corePythonManager())
+      {
+      this->corePythonManager()->mainContext();
+      }
     }
 #endif
 
@@ -563,62 +566,65 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
 #ifdef Slicer_USE_PYTHONQT
 
-  // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
-  QString pythonScript = options->pythonScript();
-  QString extraPythonScript = options->extraPythonScript();
-  if(!extraPythonScript.isEmpty())
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    pythonScript = extraPythonScript;
-    }
-
-  // Set 'argv' so that python script can retrieve its associated arguments
-  int pythonArgc = 1 /*scriptname*/ + options->unparsedArguments().count();
-  char** pythonArgv = new char*[pythonArgc];
-  pythonArgv[0] = new char[pythonScript.size() + 1];
-  strcpy(pythonArgv[0], pythonScript.toAscii().data());
-  for(int i = 0; i < options->unparsedArguments().count(); ++i)
-    {
-    pythonArgv[i + 1] = new char[options->unparsedArguments().at(i).size() + 1];
-    strcpy(pythonArgv[i + 1], options->unparsedArguments().at(i).toAscii().data());
-    }
-
-  // See http://docs.python.org/c-api/init.html
-  PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
-
-  // Clean memory
-  for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
-  delete[] pythonArgv;
-
-  // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
-  if (!(options->displayHelpAndExit() ||
-      options->displayHomePathAndExit() ||
-      options->displayProgramPathAndExit() ||
-      options->displaySettingsPathAndExit() ||
-      options->displayVersionAndExit() ||
-      options->ignoreSlicerRC()))
-    {
-    this->corePythonManager()->executeString("loadSlicerRCFile()");
-    }
-
-  // Execute python script
-  if(!pythonScript.isEmpty())
-    {
-    if (QFile::exists(pythonScript))
+    // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
+    QString pythonScript = options->pythonScript();
+    QString extraPythonScript = options->extraPythonScript();
+    if(!extraPythonScript.isEmpty())
       {
-      // TODO Retrieve test status ...
-      this->corePythonManager()->executeFile(pythonScript);
+      pythonScript = extraPythonScript;
+      }
+
+    // Set 'argv' so that python script can retrieve its associated arguments
+    int pythonArgc = 1 /*scriptname*/ + options->unparsedArguments().count();
+    char** pythonArgv = new char*[pythonArgc];
+    pythonArgv[0] = new char[pythonScript.size() + 1];
+    strcpy(pythonArgv[0], pythonScript.toAscii().data());
+    for(int i = 0; i < options->unparsedArguments().count(); ++i)
+      {
+      pythonArgv[i + 1] = new char[options->unparsedArguments().at(i).size() + 1];
+      strcpy(pythonArgv[i + 1], options->unparsedArguments().at(i).toAscii().data());
+      }
+
+    // See http://docs.python.org/c-api/init.html
+    PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
+
+    // Clean memory
+    for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
+    delete[] pythonArgv;
+
+    // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
+    if (!(options->displayHelpAndExit() ||
+        options->displayHomePathAndExit() ||
+        options->displayProgramPathAndExit() ||
+        options->displaySettingsPathAndExit() ||
+        options->displayVersionAndExit() ||
+        options->ignoreSlicerRC()))
+      {
+      this->corePythonManager()->executeString("loadSlicerRCFile()");
+      }
+
+    // Execute python script
+    if(!pythonScript.isEmpty())
+      {
+      if (QFile::exists(pythonScript))
+        {
+        // TODO Retrieve test status ...
+        this->corePythonManager()->executeFile(pythonScript);
+        testing = true;
+        }
+      else
+        {
+        qWarning() << "Specified python script doesn't exist:" << pythonScript;
+        }
+      }
+    QString pythonCode = options->pythonCode();
+    if(!pythonCode.isEmpty())
+      {
+      success = this->corePythonManager()->executeString(pythonCode).toBool();
       testing = true;
       }
-    else
-      {
-      qWarning() << "Specified python script doesn't exist:" << pythonScript;
-      }
-    }
-  QString pythonCode = options->pythonCode();
-  if(!pythonCode.isEmpty())
-    {
-    success = this->corePythonManager()->executeString(pythonCode).toBool();
-    testing = true;
     }
 #endif
 

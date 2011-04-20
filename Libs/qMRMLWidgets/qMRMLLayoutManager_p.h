@@ -122,6 +122,7 @@ public slots:
 
 public:
   QString            ScriptedDisplayableManagerDirectory;
+  bool               IgnoreScriptedDisplayableManagers;
   vtkMRMLScene*      MRMLScene;
   vtkMRMLLayoutNode* MRMLLayoutNode;
   vtkMRMLLayoutLogic*MRMLLayoutLogic;

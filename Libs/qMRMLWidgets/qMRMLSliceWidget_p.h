@@ -65,6 +65,7 @@ public:
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   QString                            ScriptDisplayableManagerDirectory;
   vtkMRMLSliceNode*                  MRMLSliceNode;
+  bool                               IgnoreScriptedDisplayableManagers;
 };
 
 #endif

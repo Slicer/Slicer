@@ -62,6 +62,7 @@ qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
   this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
   this->MRMLViewNode = 0;
+  this->IgnoreScriptedDisplayableManagers = false;
 }
 
 //---------------------------------------------------------------------------
@@ -271,16 +272,19 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
       << "vtkMRMLModelDisplayableManager";
 
 #ifdef Slicer_USE_PYTHONQT
-  QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
-  if (dirInfo.isDir())
+  if (!d->IgnoreScriptedDisplayableManagers)
     {
-    displayableManagers << QString("%1/vtkScriptedExampleDisplayableManager.py").arg(
-        scriptedDisplayableManagerDirectory);
-    }
-  else
-    {
-    logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
-                 arg(scriptedDisplayableManagerDirectory));
+    QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
+    if (dirInfo.isDir())
+      {
+      displayableManagers << QString("%1/vtkScriptedExampleDisplayableManager.py").arg(
+          scriptedDisplayableManagerDirectory);
+      }
+    else
+      {
+      logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
+                   arg(scriptedDisplayableManagerDirectory));
+      }
     }
 #else
   Q_UNUSED(scriptedDisplayableManagerDirectory);
@@ -303,6 +307,9 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
   d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  this, SLOT(scheduleRender()));
 }
+
+//------------------------------------------------------------------------------
+CTK_SET_CPP(qMRMLThreeDView, bool, setIgnoreScriptedDisplayableManagers, IgnoreScriptedDisplayableManagers);
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)

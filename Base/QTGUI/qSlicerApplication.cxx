@@ -116,9 +116,12 @@ void qSlicerApplicationPrivate::init()
   q->setCoreIOManager(new qSlicerIOManager);
   
 #ifdef Slicer_USE_PYTHONQT
-  // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
-  // will be responsible to delete it
-  q->setCorePythonManager(new qSlicerPythonManager());
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
+    // will be responsible to delete it
+    q->setCorePythonManager(new qSlicerPythonManager());
+    }
 #endif
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
@@ -142,7 +145,7 @@ void qSlicerApplicationPrivate::initStyle()
 
   // Force showing the icons in the menus despite the native OS style
   // discourages it
-  q->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, false);
 
   // Init the style of the icons
   // The plugin qSlicerIconEnginePlugin is located in the iconengines
@@ -214,9 +217,12 @@ qSlicerIOManager* qSlicerApplication::ioManager()
 //-----------------------------------------------------------------------------
 qSlicerPythonManager* qSlicerApplication::pythonManager()
 {
-  qSlicerPythonManager* _pythonManager = 
-    qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
-  Q_ASSERT(_pythonManager);
+  qSlicerPythonManager* _pythonManager = 0;
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    _pythonManager = qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
+    Q_ASSERT(_pythonManager);
+    }
 
   return _pythonManager;
 }

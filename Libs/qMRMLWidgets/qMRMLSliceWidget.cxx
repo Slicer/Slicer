@@ -59,6 +59,7 @@ qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
 {
   this->DisplayableManagerGroup = 0;
   this->MRMLSliceNode = 0;
+  this->IgnoreScriptedDisplayableManagers = false;
 }
 
 //---------------------------------------------------------------------------
@@ -157,16 +158,19 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
   displayableManagers << "vtkMRMLSliceModelDisplayableManager";
 
 #ifdef Slicer_USE_PYTHONQT
-  QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
-  if (dirInfo.isDir())
+  if (!d->IgnoreScriptedDisplayableManagers)
     {
-    //displayableManagers<< QString("%1/vtkScriptedExampleDisplayableManager.py").
-    //  arg(scriptedDisplayableManagerDirectory);
-    }
-  else
-    {
-    logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
-                 arg(scriptedDisplayableManagerDirectory));
+    QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
+    if (dirInfo.isDir())
+      {
+      //displayableManagers<< QString("%1/vtkScriptedExampleDisplayableManager.py").
+      //  arg(scriptedDisplayableManagerDirectory);
+      }
+    else
+      {
+      logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
+                   arg(scriptedDisplayableManagerDirectory));
+      }
     }
 #else
   Q_UNUSED(scriptedDisplayableManagerDirectory);
@@ -194,6 +198,9 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
   d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  d->VTKSliceView, SLOT(scheduleRender()));
 }
+
+//------------------------------------------------------------------------------
+CTK_SET_CPP(qMRMLSliceWidget, bool, setIgnoreScriptedDisplayableManagers, IgnoreScriptedDisplayableManagers);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
