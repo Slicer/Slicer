@@ -24,6 +24,7 @@
 #include <QDebug>
 
 // SlicerQt includes
+#include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleWidget.h"
 #include "qSlicerCLIModuleWidget_p.h"
 #include "vtkSlicerCLIModuleLogic.h"
@@ -46,7 +47,7 @@ qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWid
   this->CommandLineModuleNode = 0;
   this->CLIModuleUIHelper = 0;
 }
-    
+
 //-----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic()const
 {
@@ -59,6 +60,14 @@ vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNo
 {
   return vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->MRMLCommandLineModuleNodeSelector->currentNode());
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLIModule * qSlicerCLIModuleWidgetPrivate::module()const
+{
+  Q_Q(const qSlicerCLIModuleWidget);
+  qSlicerAbstractCoreModule* coreModule = const_cast<qSlicerAbstractCoreModule*>(q->module());
+  return qobject_cast<qSlicerCLIModule*>(coreModule);
 }
 
 //-----------------------------------------------------------------------------
@@ -374,17 +383,16 @@ void qSlicerCLIModuleWidget::apply()
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->CLIModuleUIHelper->updateMRMLCommandLineModuleNode(node);
-  d->logic()->Apply(node);
+  d->module()->run(node, /* waitForCompletion= */ true);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::cancel()
 {
   Q_D(qSlicerCLIModuleWidget);
-  qDebug() << "Cancel module processing...";
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
-  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
+  d->module()->cancel(node);
 }
 
 //-----------------------------------------------------------------------------

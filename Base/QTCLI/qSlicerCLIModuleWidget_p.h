@@ -40,10 +40,11 @@
 // STD includes
 #include <vector>
 
-class vtkSlicerCLIModuleLogic; 
-class QFormLayout;
 class QBoxLayout;
-class vtkMRMLCommandLineModuleNode; 
+class QFormLayout;
+class qSlicerCLIModule;
+class vtkMRMLCommandLineModuleNode;
+class vtkSlicerCLIModuleLogic;
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModuleUIHelper; 
@@ -67,6 +68,10 @@ public:
   /// 
   /// Convenient function to cast vtkMRMLNode into vtkMRMLCommandLineModuleNode
   vtkMRMLCommandLineModuleNode* commandLineModuleNode()const; 
+
+  /// Convenient method to cast qSlicerAbstractModule into qSlicerCLIModule
+  qSlicerCLIModule * module()const;
+
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
   typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;

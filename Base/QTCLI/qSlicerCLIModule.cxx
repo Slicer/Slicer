@@ -24,8 +24,9 @@
 #include <QDebug>
 
 // SlicerQT includes
-#include "vtkSlicerCLIModuleLogic.h"
+#include "qMRMLNodeComboBox.h"
 #include "qSlicerCLIModuleWidget.h"
+#include "vtkSlicerCLIModuleLogic.h"
 
 // Slicer vtk includes
 //#include <vtkCommandLineModuleLogic.h>
@@ -173,5 +174,48 @@ vtkSlicerCLIModuleLogic* qSlicerCLIModule::cliModuleLogic()
 {
   vtkSlicerCLIModuleLogic* myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
   return myLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode* qSlicerCLIModule::createNode()
+{
+  qSlicerCLIModuleWidget* widget = dynamic_cast<qSlicerCLIModuleWidget*>(this->widgetRepresentation());
+  Q_ASSERT(widget);
+  qMRMLNodeComboBox * selector = widget->findChild<qMRMLNodeComboBox*>(QLatin1String("MRMLCommandLineModuleNodeSelector"));
+  Q_ASSERT(selector);
+  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(selector->addNode());
+  Q_ASSERT(node);
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::run(vtkMRMLCommandLineModuleNode* parameterNode, bool waitForCompletion)
+{
+  if (!parameterNode)
+    {
+    return;
+    }
+
+  Q_ASSERT(this->cliModuleLogic());
+
+  if (waitForCompletion)
+    {
+    this->cliModuleLogic()->ApplyAndWait(parameterNode);
+    }
+  else
+    {
+    this->cliModuleLogic()->Apply(parameterNode);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::cancel(vtkMRMLCommandLineModuleNode* node)
+{
+  if (!node)
+    {
+    return;
+    }
+  qDebug() << "Cancel module processing...";
+  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
 }
 
