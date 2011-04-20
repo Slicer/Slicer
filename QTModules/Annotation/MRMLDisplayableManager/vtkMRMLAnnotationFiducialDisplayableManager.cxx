@@ -177,9 +177,9 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   seedWidget->SetCurrentRenderer(this->GetRenderer());
 
   //seedWidget->ProcessEventsOff();
-  seedWidget->CompleteInteraction();
 
   seedWidget->On();
+  seedWidget->CompleteInteraction();
 
   // Use tmpPtr to query only one time for the coordinates
   double* tmpPtr = fiducialNode->GetFiducialCoordinates();
@@ -205,10 +205,10 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
     }
 
-  seedWidget->CompleteInteraction();
+  //seedWidget->CompleteInteraction();
   seedWidget->On();
 
-  //seedWidget->CompleteInteraction();
+  seedWidget->CompleteInteraction();
 
   return seedWidget;
 
@@ -438,6 +438,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
     }
+  else { vtkDebugMacro("OnClickInRenderWindow: not enough clicks"); }
 
   }
 

@@ -203,7 +203,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   if (!node->IsA(this->m_Focus))
     {
     // jump out
-    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager, jumping out!")
+    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager for node " << node->GetID() << ", jumping out!")
     // also delete potential seeds
     this->m_ClickCounter->Reset();
     this->Helper->RemoveSeeds();
@@ -216,6 +216,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     return;
     }
 
+  vtkDebugMacro("OnMRMLSceneNodeAddedEvent:  node " << node->GetID());
+  
   // Node added should not be already managed
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it = std::find(
       this->Helper->AnnotationNodeList.begin(),
@@ -239,7 +241,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
   if (!newWidget) {
-    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
     // Exit here, if this is not the right displayableManager
     return;
   }
@@ -269,12 +271,12 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
     this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
-    vtkDebugMacro("The node was added to a 2D displayableManager.")
+    vtkDebugMacro("The node " << node->GetID() << " was added to a 2D displayableManager.")
     }
   else
     {
     //std::cout << "3D!" << annotationNode << std::endl;
-    vtkDebugMacro("The node was added to a 3D displayableManager.")
+    vtkDebugMacro("The node " << node->GetID() << " was added to a 3D displayableManager.")
     }
 
   // and render again after seeds were removed
@@ -595,9 +597,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           marker->SetCurrentRenderer(this->GetRenderer());
 
           marker->ProcessEventsOff();
-          marker->CompleteInteraction();
-
+          
           marker->On();
+          marker->CompleteInteraction();
 
           // we save the marker in our WidgetIntersection list associated to this node
           this->Helper->WidgetIntersections[rulerNode] = marker;
@@ -623,6 +625,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
 
         marker->On();
+        marker->CompleteInteraction();
 
         //std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
 
@@ -736,7 +739,14 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         widget->GetRepresentation()->SetRenderer(currentRenderer);
         // ..and turn it on again!
         widget->On();
-
+        // if it's a seed widget, go to complete interaction state
+        vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+        if (seedWidget)
+          {
+          vtkDebugMacro("SeedWidget: Complete interaction");
+          seedWidget->CompleteInteraction();
+          }
+        
         // we need to render again
         currentRenderer->Render();
 
