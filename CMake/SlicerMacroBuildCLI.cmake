@@ -53,7 +53,7 @@ MACRO(slicerMacroBuildCLI)
     # Set labels associated with the target.
     SET_TARGET_PROPERTIES(${CLP}Lib PROPERTIES LABELS ${CLP})
 
-    ADD_EXECUTABLE(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+    ADD_EXECUTABLE(${CLP} ${Slicer_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
     slicer3_set_plugins_output_path(${CLP})
     TARGET_LINK_LIBRARIES(${CLP} ${CLP}Lib)
     
