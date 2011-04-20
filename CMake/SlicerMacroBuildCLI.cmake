@@ -25,6 +25,10 @@ MACRO(slicerMacroBuildCLI)
   ENDIF()
   
   SET(CLP ${MY_NAME})
+
+  # GenerateCLP
+  find_package(GenerateCLP REQUIRED)
+  include(${GenerateCLP_USE_FILE})
   
   SET(${CLP}_SOURCE ${CLP}.cxx ${MY_ADDITIONAL_SRCS})
   generateclp(${CLP}_SOURCE ${CLP}.xml ${MY_LOGO_HEADER})
