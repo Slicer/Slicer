@@ -248,22 +248,22 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   std::cout << "Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords4[0] << "," << worldCoords4[1] << "," << worldCoords4[2] << "," << worldCoords4[3] << std::endl;
 
   // print out distances between resulting world coordinates
-  double d12 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords2);
+  double d12 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords2));
   std::cout << "Distance between world coords 1 and 2: " << d12 << std::endl;
 
-  double d13 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords3);
+  double d13 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords3));
   std::cout << "Distance between world coords 1 and 3: " << d13 << std::endl;
 
-  double d14 = vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords4);
+  double d14 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords1, worldCoords4));
   std::cout << "Distance between world coords 1 and 4: " << d14 << std::endl;
 
-  double d23 = vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords3);
+  double d23 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords3));
   std::cout << "Distance between world coords 2 and 3: " << d23 << std::endl;
 
-  double d24 = vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords4);
+  double d24 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords2, worldCoords4));
   std::cout << "Distance between world coords 2 and 4: " << d24 << std::endl;
 
-  double d34 = vtkMath::Distance2BetweenPoints(worldCoords3, worldCoords4);
+  double d34 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords3, worldCoords4));
   std::cout << "Distance between world coords 3 and 4: " << d34 << std::endl;
   
   // Interactor style should be vtkThreeDViewInteractorStyle
@@ -379,7 +379,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   worldCoords5[0] = worldCoords5[1] = worldCoords5[2] = worldCoords5[3] = 0.0;
   adm->GetDisplayToWorldCoordinates(dispCoords, worldCoords5);
   std::cout << "Last Check: Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords5[0] << "," << worldCoords5[1] << "," << worldCoords5[2] << "," << worldCoords5[3] << std::endl;
-  double d45 = vtkMath::Distance2BetweenPoints(worldCoords4, worldCoords5);
+  double d45 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords4, worldCoords5));
   std::cout << "Distance between world coords 4 and 5 (should be < epsilon): " << d45 << std::endl;
    
 
