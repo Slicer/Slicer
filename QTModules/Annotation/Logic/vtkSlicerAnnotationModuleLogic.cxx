@@ -233,7 +233,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
 
   if (this->m_Widget)
     {
-    this->m_Widget->refreshTree();
+//    this->m_Widget->refreshTree();
     }
 }
 
