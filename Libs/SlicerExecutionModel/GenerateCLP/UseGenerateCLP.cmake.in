@@ -1,19 +1,12 @@
-find_package(ITK)
-if(ITK_FOUND)
-  include(${ITK_USE_FILE})
-else(ITK_FOUND)
-  message(FATAL_ERROR "Cannot build without ITK. Please set ITK_DIR.")
-endif(ITK_FOUND)
+
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
 find_package(TCLAP REQUIRED)
-if(TCLAP_FOUND)
-  include(${TCLAP_USE_FILE})
-endif(TCLAP_FOUND)
+include(${TCLAP_USE_FILE})
 
 find_package(ModuleDescriptionParser REQUIRED)
-if(ModuleDescriptionParser_FOUND)
-  include(${ModuleDescriptionParser_USE_FILE})
-endif(ModuleDescriptionParser_FOUND)
+include(${ModuleDescriptionParser_USE_FILE})
 
 
 # create the .clp files
