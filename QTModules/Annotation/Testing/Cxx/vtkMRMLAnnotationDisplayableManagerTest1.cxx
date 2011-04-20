@@ -275,6 +275,34 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
     return EXIT_FAILURE;
     }
+  else
+    {
+    vtkRenderer *currentDefRenderer = currentInteractoryStyle->GetCurrentRenderer();
+    if (!currentDefRenderer)
+      {
+      std::cerr << "ERROR: current interactor style doesn't have a current renderer! Trying to set it from the  displayable manager group..." << std::endl;
+      //return EXIT_FAILURE;
+      currentDefRenderer = displayableManagerGroup->GetRenderer();
+      currentInteractoryStyle->SetCurrentRenderer(displayableManagerGroup->GetRenderer());
+      currentDefRenderer = currentInteractoryStyle->GetCurrentRenderer();
+      if (currentDefRenderer == NULL)
+        {
+        std::cerr << "ERROR: unable to set the interactor style renderer from the displayble manager group's renderer!" << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+    int *currentSize = currentDefRenderer->GetSize();
+    double *viewport = currentDefRenderer->GetViewport();
+    std::cout << "Current interactor style's current renderer:" << std::endl;
+    if (viewport)
+      {
+      std::cout << "\tviewport = " << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << std::endl;
+      }
+    if (currentSize)
+      {
+      std::cout << "\tcurrentSize = " << currentSize[0] << ", " << currentSize[1] << std::endl;
+      }
+    }
 
   /*
   // try triggering a mouse wheel event to see if it changes anything
@@ -312,6 +340,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       {
       std::cout << "\tViewUp = " << camviewup[0] << ", " << camviewup[1] << ", " << camviewup[2] << std::endl;
       }
+    
     // compare to the current camera node?
     mrmlNode = scene->GetNodeByID("vtkMRMLCameraNode1");
     vtkMRMLCameraNode *camnode = NULL;
