@@ -9,6 +9,7 @@ SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerCLIExecutableModuleFactoryTest1.cxx
   qSlicerCLILoadableModuleFactoryTest1.cxx
+  qSlicerCLIModuleTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -32,3 +33,4 @@ ENDMACRO()
 
 SIMPLE_TEST( qSlicerCLIExecutableModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerCLILoadableModuleFactoryTest1 )
+SIMPLE_TEST( qSlicerCLIModuleTest1 )
