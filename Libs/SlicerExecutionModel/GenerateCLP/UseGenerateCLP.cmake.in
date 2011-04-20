@@ -12,6 +12,11 @@ include(${ModuleDescriptionParser_USE_FILE})
 # Usage: GENERATE_CLP(foo_SRCS XML_FILE [LOGO_FILE])
 macro(GENERATECLP SOURCES)
 
+  # Sanity checks
+  if(NOT EXISTS ${GENERATECLP_EXE})
+    message(FATAL_ERROR "GENERATECLP_EXE value is invalid. It points to an inexistent file")
+  endif()
+
   # The shell into which nmake.exe executes the custom command has some issues
   # with mixing quoted and unquoted arguments :( Let's help.
 
