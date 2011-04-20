@@ -166,6 +166,21 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
     {
     this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(index)));
     }
+  else
+    {
+    // if the user clicked on a row that isn't a hierarchy node, reset the
+    // active hierarchy to the parent hierarchy of this node (going via the
+    // hierarchy node associated with this node)
+    if(d->SortFilterModel->mrmlNodeFromIndex(index) &&
+       !d->SortFilterModel->mrmlNodeFromIndex(index)->IsA("vtkMRMLAnnotationHierarchyNode"))
+      {
+      vtkMRMLHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::GetAssociatedHierarchyNode(this->mrmlScene(), d->SortFilterModel->mrmlNodeFromIndex(index)->GetID());
+      if (hnode)
+        {
+        this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(hnode->GetParentNode()));
+        }
+      }
+    }
 
   // check if user clicked on icon, this can happen even after we marked a hierarchy as active
   if (index.column() == qMRMLSceneAnnotationModel::VisibilityColumn)
