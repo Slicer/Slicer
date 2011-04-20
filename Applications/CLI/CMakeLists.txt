@@ -19,12 +19,6 @@ include_directories(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
 link_directories(${SlicerBaseCLI_BINARY_DIR} ${ModuleDescriptionParser_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  slicerMacroBuildCLI(
-    NAME CLIModule4Test
-    LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-    )
-endif()
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME DiffusionTensorTest
