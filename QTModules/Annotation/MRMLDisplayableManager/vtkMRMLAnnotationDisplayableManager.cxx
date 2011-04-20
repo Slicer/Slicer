@@ -116,8 +116,8 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 {
 
   // hack to force initialization of the renderview
-  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
   //this->DebugOn();
 
@@ -130,6 +130,9 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
 
   // after a new scene got associated, we want to make sure everything old is gone
   this->OnMRMLSceneClosedEvent();
+
+  vtkDebugMacro("SetMRMLSceneInternal: add observer on interaction node now?");
+
 }
 
 //---------------------------------------------------------------------------
@@ -171,10 +174,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 {
+  vtkDebugMacro("OnMRMLSceneClosedEvent: remove observers?");
   // run through all nodes and remove node and widget
-  for (unsigned int i=0; i<this->Helper->AnnotationNodeList.size(); i++) {
-    this->Helper->RemoveWidgetAndNode(this->Helper->AnnotationNodeList[i]);
-  }
+  this->Helper->RemoveAllWidgetsAndNodes();
 
   this->SetUpdateFromMRMLRequested(1);
   this->RequestRender();

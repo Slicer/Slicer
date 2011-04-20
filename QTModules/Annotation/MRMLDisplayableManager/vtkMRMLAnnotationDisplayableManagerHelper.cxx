@@ -164,6 +164,32 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetIntersectionWi
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
+{
+  WidgetsIt widgetIterator = this->Widgets.begin();
+  for (widgetIterator =  this->Widgets.begin();
+       widgetIterator != this->Widgets.end();
+       ++widgetIterator)
+    {
+    widgetIterator->second->Off();
+    widgetIterator->second->Delete();
+    }
+  this->Widgets.clear();
+  
+  WidgetIntersectionsIt intIt;
+  for (intIt = this->WidgetIntersections.begin();
+       intIt != this->WidgetIntersections.end();
+       ++intIt)
+    {
+    intIt->second->Off();
+    intIt->second->Delete();
+    }
+  this->WidgetIntersections.clear();
+
+  this->AnnotationNodeList.clear();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     vtkMRMLAnnotationNode *node)
 {

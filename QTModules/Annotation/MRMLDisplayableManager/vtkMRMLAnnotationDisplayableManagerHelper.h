@@ -51,6 +51,8 @@ public:
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice intersection representation
   vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
+  /// Remove all widgets, intersection widgets, nodes
+  void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
   void RemoveWidgetAndNode(vtkMRMLAnnotationNode *node);
 
