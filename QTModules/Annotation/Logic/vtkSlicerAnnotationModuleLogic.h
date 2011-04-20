@@ -36,7 +36,7 @@ public:
   void AddAnnotationNode(const char * nodeDescriptor);
 
   // After a node was added, propagate to widget
-  void AddNodeCompleted(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
+  void AddNodeCompleted(vtkMRMLAnnotationNode* annotationNode);
 
   // Cancel the current annotation placement or remove last annotation node
   void CancelCurrentOrRemoveLastAddedAnnotationNode();
@@ -148,8 +148,9 @@ public:
   /// The active hierarchy node will be the parent. If there is no
   /// active hierarchy node, use the top-level annotation hierarchy node as the parent.
   /// If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
-  /// a parent to the new hierarchy node. Return the new hierarchy node.
-  vtkMRMLAnnotationHierarchyNode* AddHierarchy();
+  /// a parent to the new hierarchy node. The newly added hierarchy node will be the
+  /// active hierarchy node. Return true on success, false on failure.
+  bool AddHierarchy();
 
   /// Return the toplevel Annotation hierarchy node or create one if there is none:
   /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
@@ -162,6 +163,8 @@ public:
   /// Set the active hierarchy node which will be used as a parent for new annotations
   void SetActiveHierarchyNodeByID(const char* id);
 
+  /// return the id of the active hierarchy node, null if none
+  const char *GetActiveHierarchyNodeID();
 
   //
   // Place Annotations programmatically
@@ -202,8 +205,8 @@ private:
   /// The active hierarchy node will be the parent. If there is no
   /// active hierarchy node, use the top-level annotation hierarchy node as the parent.
   /// If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
-  /// a parent to the new hierarchy node. Return the new hierarchy node.
-  vtkMRMLAnnotationHierarchyNode* AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode=0);
+  /// a parent to the new hierarchy node. Return true on success, false on failure.
+  bool AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode=0);
 
 
 };

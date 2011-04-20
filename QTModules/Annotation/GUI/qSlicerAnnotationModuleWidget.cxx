@@ -603,7 +603,10 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 
   d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->firstSelectedNode());
   this->refreshTree();
-  d->hierarchyTreeWidget->setSelectedNode(d->logic()->AddHierarchy()->GetID());
+  if (d->logic()->AddHierarchy())
+    {
+    d->hierarchyTreeWidget->setSelectedNode(d->logic()->GetActiveHierarchyNodeID());
+    }
 }
 
 //-----------------------------------------------------------------------------
