@@ -58,6 +58,16 @@ public:
   /// Return a reference to the application singleton
   static qSlicerCoreApplication* application();
 
+  enum ApplicationAttribute
+    {
+    };
+
+  /// \sa QCoreApplication::setAttribute
+  static void setAttribute(qSlicerCoreApplication::ApplicationAttribute attribute, bool on = true);
+
+  /// \sa QCoreApplication::testAttribute
+  static bool testAttribute(qSlicerCoreApplication::ApplicationAttribute attribute);
+
   /// Instantiate MRMLScene and Application logic.
   ///  - Configure scene
   ///  - AppLogic is set as a scene observer.

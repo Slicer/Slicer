@@ -400,6 +400,18 @@ qSlicerCoreApplication* qSlicerCoreApplication::application()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::ApplicationAttribute attribute, bool on)
+{
+  QCoreApplication::setAttribute(static_cast<Qt::ApplicationAttribute>(attribute), on);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::ApplicationAttribute attribute)
+{
+  return QCoreApplication::testAttribute(static_cast<Qt::ApplicationAttribute>(attribute));
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
