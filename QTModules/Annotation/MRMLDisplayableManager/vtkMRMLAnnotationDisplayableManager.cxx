@@ -245,15 +245,25 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 {
-  this->RequestRender();
+  this->UpdateFromMRML();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
-
+  if (!node || !this->GetMRMLScene())
+    {
+    return;
+    }
+  
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 
+  // if the scene is still updating, jump out
+  if (this->GetMRMLScene()->GetIsUpdating())
+    {
+//    return;
+    }
+  
   if (!node->IsA(this->m_Focus))
     {
     // jump out
