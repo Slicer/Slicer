@@ -217,6 +217,12 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
 {
+  Q_Q(qSlicerMouseModeToolBar);
+
+  // re-enable in case it didn't get re-enabled for scene load
+  q->setEnabled(true);
+  
+  // update the state from mrml
   this->updateWidgetFromMRML();
 }
 
