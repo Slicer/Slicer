@@ -76,6 +76,13 @@ protected:
 
   virtual void Create();
 
+  /// Remove MRML observers
+  virtual void RemoveMRMLObservers();
+
+  /// Called from RequestRender method if UpdateFromMRMLRequested is true
+  /// \sa RequestRender() SetUpdateFromMRMLRequested()
+  virtual void UpdateFromMRML();
+
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager

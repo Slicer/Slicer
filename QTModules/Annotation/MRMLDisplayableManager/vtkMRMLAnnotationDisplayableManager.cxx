@@ -124,6 +124,60 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::RemoveMRMLObservers()
+{
+  // run through all associated nodes
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
+    {
+    vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, NULL);
+    ++it;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
+{
+  // this gets called from RequestRender, so make sure to jump out quickly if possible
+  if (this->GetMRMLScene() == NULL || this->m_Focus == NULL)
+    {
+    return;
+    }
+  // check if there are any of these nodes in the scene
+  if (this->GetMRMLScene()->GetNumberOfNodesByClass(this->m_Focus) < 1)
+    {
+    return;
+    }
+  // loop over the nodes for which this manager provides widgets
+  this->GetMRMLScene()->InitTraversal();
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
+  // turn off update from mrml requested, as we're doing it now, and create
+  // widget requests a render which checks this flag before calling update
+  // from mrml again
+  this->SetUpdateFromMRMLRequested(0);
+  while (node != NULL)
+    {
+    vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+    if (annotationNode)
+      {
+      // do we  have a widget for it?
+      if (this->GetWidget(annotationNode) == NULL)
+        {
+        vtkDebugMacro("UpdateFromMRML: creating a widget for node " << annotationNode->GetID());
+        vtkAbstractWidget *widget = this->CreateWidget(annotationNode);
+        if (widget)
+          {
+          // update the new widget from the node
+          this->PropagateMRMLToWidget(annotationNode, widget);
+          }
+        }
+      }
+    node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   Superclass::SetMRMLSceneInternal(newScene);
