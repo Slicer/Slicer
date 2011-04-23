@@ -269,7 +269,6 @@ proc launch_SetEnvironment {} {
       set ::env(FreeSurfer_DIR)     $::env(Slicer_HOME)/lib/FreeSurfer
       set ::env(IGT_DIR)            $::env(Slicer_HOME)/lib/IGT
       set ::env(ITKCommandIO_DIR)   $::env(Slicer_HOME)/lib/ITKCommandIO
-      set ::env(LoadableModule_DIR) $::env(Slicer_HOME)/lib/LoadableModule
       set ::env(MGHImageIO_DIR)     $::env(Slicer_HOME)/lib/MGHImageIO
       set ::env(MRML_DIR)           $::env(Slicer_HOME)/lib/MRML
       set ::env(MRMLCLI_DIR)        $::env(Slicer_HOME)/lib/MRMLCLI
@@ -457,7 +456,6 @@ proc launch_SetEnvironment {} {
       set ::env(FreeSurfer_DIR)     [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(IGT_DIR)            [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(ITKCommandIO_DIR)   [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
-      set ::env(LoadableModule_DIR) [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(MGHImageIO_DIR)     [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(MRML_DIR)           [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(MRMLCLI_DIR)        [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
@@ -647,7 +645,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(IGT_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITKCommandIO_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(LoadableModule_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(MGHImageIO_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(MRML_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(MRMLCLI_DIR):$::env(LD_LIBRARY_PATH)
@@ -704,7 +701,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(IGT_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITKCommandIO_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(LoadableModule_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(MGHImageIO_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(MRML_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(MRMLCLI_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -764,7 +760,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(FreeSurfer_DIR)\;$::env(Path)
             set ::env(Path) $::env(IGT_DIR)\;$::env(Path)
             set ::env(Path) $::env(ITKCommandIO_DIR)\;$::env(Path)
-            set ::env(Path) $::env(LoadableModule_DIR)\;$::env(Path)
             set ::env(Path) $::env(MGHImageIO_DIR)\;$::env(Path)
             set ::env(Path) $::env(MRML_DIR)\;$::env(Path)
             set ::env(Path) $::env(MRMLCLI_DIR)\;$::env(Path)

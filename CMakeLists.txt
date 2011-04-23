@@ -590,7 +590,6 @@ SET(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
 SET(ModuleDescriptionParser_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
 SET(GenerateCLP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
 SET(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
-SET(LoadableModule_DIR ${Slicer_BINARY_DIR}/Libs/LoadableModule)
 SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
