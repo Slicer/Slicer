@@ -1,3 +1,0 @@
-include_directories(BEFORE ${LoadableModule_INCLUDE_DIRS})
-link_directories(${LoadableModule_LIBRARY_DIRS})
-

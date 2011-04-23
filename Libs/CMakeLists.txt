@@ -57,7 +57,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 
 SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHONQT})
-SET(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHONQT})
 
 SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
 SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
