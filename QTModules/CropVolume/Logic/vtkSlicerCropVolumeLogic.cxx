@@ -29,7 +29,9 @@
 // CLI invocation
 #include <qSlicerCoreApplication.h>
 #include <qSlicerModuleManager.h>
+#include <qSlicerModuleFactoryManager.h>
 #include <qSlicerAbstractCoreModule.h>
+#include <qSlicerCLIModule.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
@@ -104,12 +106,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   double roiRadius[3], roiXYZ[3];
   // BUG: it looks like at this time ROI annotation node returns the pointer to the same array
   // for getcenter and getradius, so I need to store the values
-  roiRadius[0] = inputROI->GetRadiusXYZ()[0];
-  roiRadius[1] = inputROI->GetRadiusXYZ()[1];
-  roiRadius[2] = inputROI->GetRadiusXYZ()[2];
-  roiXYZ[0] = inputROI->GetXYZ()[0];
-  roiXYZ[1] = inputROI->GetXYZ()[1];
-  roiXYZ[2] = inputROI->GetXYZ()[2];
+  inputROI->GetRadiusXYZ(roiRadius);
+  inputROI->GetXYZ(roiXYZ);
 
   double* inputSpacing = inputVolume->GetSpacing();
   double minSpacing = fmin(inputSpacing[0],fmin(inputSpacing[1],inputSpacing[2]));
@@ -180,23 +178,30 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 //  roiXform->Delete();
 //  T->Delete();
 
+
   // use the prepared volume as the reference for resampling
-  vtkMRMLCommandLineModuleNode* cmdNode = vtkMRMLCommandLineModuleNode::New();
-  cmdNode->SetDescription("Resample Scalar/Vector/DWI Volume");
+
+  qSlicerModuleManager * moduleManager =
+          qSlicerCoreApplication::application()->moduleManager();
+  qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
+  QStringList moduleNames = moduleFactoryManager->moduleNames();
+  if(!moduleNames.contains("resamplevolume2")){
+      std::cerr << "resamplevolume2 module name was not found in the list of registered modules!" << std::endl;
+      return -1;
+  }
+  qSlicerAbstractCoreModule * module = moduleManager->module("resamplevolume2");
+  if(!module){
+      std::cerr << "resamplevolume2 module reference was not found!" << std::endl;
+      return -1;
+  }
+  qSlicerCLIModule * cliModule = qobject_cast<qSlicerCLIModule*>(module);
+
+  vtkMRMLCommandLineModuleNode* cmdNode = cliModule->createNode();
+
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetName());
   cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetName());
   cmdNode->SetParameterAsString("outputVolume",outputVolume->GetName());
-
-  vtkSlicerCLIModuleLogic* cmdLogic = vtkSlicerCLIModuleLogic::SafeDownCast(
-              qSlicerCoreApplication::application()->moduleManager()->module("resamplevolume2")->logic());
-  std::cerr << "cmd logic created" << std::endl;
-  cmdLogic->get
-  //cmdLogic->SetAndObserveMRMLScene(this->GetMRMLScene());
-  //cmdLogic->SetTemporaryDirectory(
-  //            qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
-  //cmdLogic->SetModuleLibDirectory();
-  cmdLogic->ApplyAndWait(cmdNode);
-  std::cerr << "After apply and wait" << std::endl;
+  cliModule->run(cmdNode, true);
 
   return 0;
 }

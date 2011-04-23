@@ -242,10 +242,12 @@ void vtkMRMLCropVolumeParametersNode::SetAndObserveROINodeID(const char *ROINode
     this->SetROINodeID(ROINodeID);
     vtkMRMLAnnotationROINode *node = this->GetROINode();
     vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
-    double *radius = node->GetRadiusXYZ();
+    double radius[3];
+    node->GetRadiusXYZ(radius);
     std::cerr << "ROI radius: " << radius[0] << ", " << radius[1] << ", "
           << radius[2] << std::endl;
-    double *center = node->GetXYZ();
+    double center[3];
+    node->GetXYZ(center);
     std::cerr << "ROI center: " << center[0] << ", " << center[1] << ", "
           << center[2] << std::endl;
   }
