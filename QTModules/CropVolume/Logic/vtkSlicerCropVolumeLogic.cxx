@@ -112,13 +112,6 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputExtent[1] = roiRadius[1]/minSpacing*2.;
   outputExtent[2] = roiRadius[2]/minSpacing*2.;
 
-  std::cout << "Roi radius is: " << roiRadius[0] << ", " << roiRadius[1] << ", "
-      << roiRadius[2] << std::endl;
-  std::cout << "Roi center is: " << roiXYZ[0] << ", " << roiXYZ[1] << ", "
-      << roiXYZ[2] << std::endl;
-  std::cout << "Spacing: " << inputSpacing[0] << ", " << inputSpacing[1] << ", "
-      << inputSpacing[2] << std::endl;
-
   outputIJKToRAS->SetElement(0,0,minSpacing);
   outputIJKToRAS->SetElement(1,1,minSpacing);
   outputIJKToRAS->SetElement(2,2,minSpacing);

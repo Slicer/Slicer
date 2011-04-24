@@ -281,6 +281,7 @@ vtkMRMLVolumeNode* vtkMRMLCropVolumeParametersNode::GetOutputVolumeNode()
            ((this->OutputVolumeNode != NULL && strcmp(this->OutputVolumeNode->GetID(), this->OutputVolumeNodeID)) ||
             (this->OutputVolumeNode == NULL)) )
     {
+    std::cout << "OutputVolumeNodeID is " << this->OutputVolumeNodeID << std::endl;
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->OutputVolumeNodeID);
     vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
     }

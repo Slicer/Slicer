@@ -74,8 +74,6 @@ qSlicerCropVolumeModuleWidget::~qSlicerCropVolumeModuleWidget()
 //-----------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::setup()
 {
-  qDebug() << "setting up CropVolume widget";
-
   Q_D(qSlicerCropVolumeModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
@@ -113,8 +111,7 @@ void qSlicerCropVolumeModuleWidget::setup()
     if(!this->parametersNode){
       qDebug() << "Fatal error";
       abort();
-    }
-    std::cerr << "FOUND crop vol param node" << std::endl;
+    }   
 
   } else {
     qDebug() << "No CropVolume parameter nodes found!";
@@ -125,7 +122,6 @@ void qSlicerCropVolumeModuleWidget::setup()
   pnc->Delete();
 
   this->updateWidget();
-  //std::cout << "Scene is set to " <<
   }
 }
 
@@ -136,8 +132,8 @@ void qSlicerCropVolumeModuleWidget::initializeNode(vtkMRMLNode *n)
 }
 
 void qSlicerCropVolumeModuleWidget::onApply(){
-  QMessageBox::information(this, tr("CropVolume"),
-                       tr("This module is under development and not ready for your use at this time."));
+//  QMessageBox::information(this, tr("CropVolume"),
+//                       tr("This module is under development and not ready for your use at this time."));
 
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkSlicerCropVolumeLogic *l = vtkSlicerCropVolumeLogic::SafeDownCast(d->logic());
@@ -165,17 +161,17 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged(){
 }
 
 void qSlicerCropVolumeModuleWidget::onOutputVolumeChanged(){
-  std::cerr << "Output volume changed!" << std::endl;
+  //std::cerr << "Output volume changed!" << std::endl;
   if(!this->parametersNode)
     return;
 
   Q_D(qSlicerCropVolumeModuleWidget);
   vtkMRMLNode* n = d->OutputVolumeComboBox->currentNode();
-  std::cerr << "Got current node" << std::endl;
+  //std::cerr << "Got current node" << std::endl;
 
   if(n){
     this->parametersNode->SetAndObserveOutputVolumeNodeID(n->GetID());
-    std::cerr << "Output volume node is now " << n->GetID() << std::endl;
+    //std::cerr << "Output volume node is now " << n->GetID() << std::endl;
   }
 }
 
@@ -185,12 +181,21 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged(){
 
   Q_D(qSlicerCropVolumeModuleWidget);
   this->parametersNode->SetROIVisibility(d->VisibilityButton->isChecked());
+  this->parametersNode->GetROINode()->SetVisibility(d->VisibilityButton->isChecked());
 }
 
 void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
 {
   if(!this->parametersNode)
     return;
+  vtkMRMLCropVolumeParametersNode *p = this->parametersNode;
+  Q_D(qSlicerCropVolumeModuleWidget);
+  if(d->NNRadioButton->isChecked())
+    p->SetInterpolationMode(1);
+  if(d->LinearRadioButton->isChecked())
+    p->SetInterpolationMode(2);
+  if(d->CubicRadioButton->isChecked())
+    p->SetInterpolationMode(3);
 }
 
 void qSlicerCropVolumeModuleWidget::updateWidget()
@@ -199,7 +204,20 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     return;
 
   Q_D(qSlicerCropVolumeModuleWidget);
-  if(d->InputVolumeComboBox->currentNode() != this->parametersNode->GetInputVolumeNode())
-    d->InputVolumeComboBox->setCurrentNode(this->parametersNode->GetInputVolumeNode());
+  vtkMRMLCropVolumeParametersNode *p = this->parametersNode;
 
+  if(d->InputVolumeComboBox->currentNode() != p->GetInputVolumeNode())
+    d->InputVolumeComboBox->setCurrentNode(p->GetInputVolumeNode());
+  if(d->OutputVolumeComboBox->currentNode() != p->GetOutputVolumeNode()){
+    d->OutputVolumeComboBox->setCurrentNode(p->GetOutputVolumeNode());
+  }
+
+  d->VisibilityButton->setChecked(p->GetROIVisibility());
+  switch(p->GetInterpolationMode()){
+    case 1: d->NNRadioButton->setChecked(1); break;
+    case 2: d->LinearRadioButton->setChecked(1); break;
+    case 3: d->CubicRadioButton->setChecked(1); break;
+  }
+  d->IsotropicCheckbox->setChecked(p->GetIsotropicResampling());
+  this->parametersNode->GetROINode()->SetVisibility(p->GetROIVisibility());
 }
