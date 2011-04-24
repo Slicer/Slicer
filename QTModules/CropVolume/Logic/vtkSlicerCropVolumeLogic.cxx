@@ -79,10 +79,6 @@ void vtkSlicerCropVolumeLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
-  //vtkIndent i;
-  //pnode->WriteXML(std::cerr, 1);
-  //     qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
-  // create an empty volume that covers the ROI defined in the pnode
   vtkMRMLVolumeNode *inputVolume = pnode->GetInputVolumeNode();
   vtkMRMLAnnotationROINode *inputROI = pnode->GetROINode();
   vtkMRMLVolumeNode *outputVolume = pnode->GetOutputVolumeNode();
@@ -90,22 +86,20 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
-  vtkMatrix4x4 *volumeXform = vtkMatrix4x4::New();
-  vtkMatrix4x4 *roiXform = vtkMatrix4x4::New();
-  vtkMatrix4x4 *T = vtkMatrix4x4::New();
+  //vtkMatrix4x4 *volumeXform = vtkMatrix4x4::New();
+  //vtkMatrix4x4 *roiXform = vtkMatrix4x4::New();
+  //vtkMatrix4x4 *T = vtkMatrix4x4::New();
 
   inputVolume->GetRASToIJKMatrix(inputRASToIJK);
   inputVolume->GetIJKToRASMatrix(inputIJKToRAS);
   outputRASToIJK->Identity();
   outputIJKToRAS->Identity();
 
-  T->Identity();
-  roiXform->Identity();
-  volumeXform->Identity();
+  //T->Identity();
+  //roiXform->Identity();
+  //volumeXform->Identity();
 
   double roiRadius[3], roiXYZ[3];
-  // BUG: it looks like at this time ROI annotation node returns the pointer to the same array
-  // for getcenter and getradius, so I need to store the values
   inputROI->GetRadiusXYZ(roiRadius);
   inputROI->GetXYZ(roiXYZ);
 
@@ -140,25 +134,12 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputImageData->SetDimensions(outputExtent[0], outputExtent[1], outputExtent[2]);
   outputImageData->AllocateScalars();
 
-  //std::cerr << "Calculated extent: " << outputExtent[0] << ", " << outputExtent[1] << ", " << outputExtent[2] << std::endl;
-
   outputVolume->SetAndObserveImageData(outputImageData);
   outputImageData->Delete();
 
-  // FIXME: does not seem to work -- test this
   outputVolume->SetIJKToRASMatrix(outputIJKToRAS);
   outputVolume->SetRASToIJKMatrix(outputRASToIJK);
 
-  outputVolume->GetIJKToRASMatrix(outputIJKToRAS);
-  std::cout << "Initialized IJKtoRAS matrix: " << std::endl;
-  outputIJKToRAS->Print(std::cout);
-  outputVolume->GetRASToIJKMatrix(outputIJKToRAS);
-  std::cout << "Initialized RAStoIJK matrix: " << std::endl;
-  outputRASToIJK->Print(std::cout);
-
-//  outputVolume->SetOrigin(roiXYZ[0]-roiRadius[0]+minSpacing*.5,
-//      roiXYZ[1]-roiRadius[1]+minSpacing*.5,
-//      roiXYZ[2]-roiRadius[2]+minSpacing*.5);
   outputVolume->ModifiedSinceReadOn();
 
   vtkMRMLDisplayNode* inputDisplay = inputVolume->GetDisplayNode();
@@ -169,38 +150,34 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     outputVolume->SetAndObserveDisplayNodeID(outputDisplay->GetID());
   }
 
-//  FIXME: some of these causes segfault ...
-//  inputRASToIJK->Delete();
-//  inputIJKToRAS->Delete();
-//  outputRASToIJK->Delete();
-//  outputIJKToRAS->Delete();
-//  volumeXform->Delete();
-//  roiXform->Delete();
-//  T->Delete();
-
+  inputRASToIJK->Delete();
+  inputIJKToRAS->Delete();
+  outputRASToIJK->Delete();
+  outputIJKToRAS->Delete();
 
   // use the prepared volume as the reference for resampling
-
   qSlicerModuleManager * moduleManager =
           qSlicerCoreApplication::application()->moduleManager();
   qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   QStringList moduleNames = moduleFactoryManager->moduleNames();
+
   if(!moduleNames.contains("resamplevolume2")){
       std::cerr << "resamplevolume2 module name was not found in the list of registered modules!" << std::endl;
       return -1;
   }
+
   qSlicerAbstractCoreModule * module = moduleManager->module("resamplevolume2");
   if(!module){
       std::cerr << "resamplevolume2 module reference was not found!" << std::endl;
       return -1;
   }
-  qSlicerCLIModule * cliModule = qobject_cast<qSlicerCLIModule*>(module);
 
+  qSlicerCLIModule * cliModule = qobject_cast<qSlicerCLIModule*>(module);
   vtkMRMLCommandLineModuleNode* cmdNode = cliModule->createNode();
 
-  cmdNode->SetParameterAsString("inputVolume", inputVolume->GetName());
-  cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetName());
-  cmdNode->SetParameterAsString("outputVolume",outputVolume->GetName());
+  cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
+  cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetID());
+  cmdNode->SetParameterAsString("outputVolume",outputVolume->GetID());
   cliModule->run(cmdNode, true);
 
   return 0;
@@ -210,11 +187,7 @@ void vtkSlicerCropVolumeLogic::RegisterNodes()
 {
   if(!this->GetMRMLScene())
     return;
-  //std::cout << "Registering nodes" << std::endl;
-  //qDebug() << "Registering crop volume mrml node";
-
   vtkMRMLCropVolumeParametersNode* pNode = vtkMRMLCropVolumeParametersNode::New();
   this->GetMRMLScene()->RegisterNodeClass(pNode);
   pNode->Delete();
-
 }
