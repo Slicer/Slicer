@@ -284,6 +284,13 @@ QStringList qSlicerModuleFactoryManager::moduleNames(const QString& factoryName)
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerModuleFactoryManager::instantiatedModuleNames() const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->MapNameToTitle.keys();
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::instantiateModule(const QString& name)
 {
   Q_D(qSlicerModuleFactoryManager);
@@ -324,6 +331,13 @@ void qSlicerModuleFactoryManager::uninstantiateAll()
 
 //-----------------------------------------------------------------------------
 bool qSlicerModuleFactoryManager::isRegistered(const QString& name)const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->ModuleNameToFactoryCache.contains(name);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerModuleFactoryManager::isInstantiated(const QString& name)const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->MapNameToTitle.contains(name);

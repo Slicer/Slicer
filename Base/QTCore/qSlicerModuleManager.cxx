@@ -95,12 +95,22 @@ qSlicerModuleFactoryManager* qSlicerModuleManager::factoryManager()const
 bool qSlicerModuleManager::isLoaded(const QString& name)const
 {
   Q_D(const qSlicerModuleManager);
-  // If a module is not registered, we consider it isn't loaded
-  if (!d->ModuleFactoryManager.isRegistered(name))
-    {
-    return false;
-    }
   return d->ModuleList.contains(name);
+}
+
+//---------------------------------------------------------------------------
+int qSlicerModuleManager::loadAllModules()
+{
+  int loadedCount = 0;
+  foreach(const QString& name, this->factoryManager()->moduleNames())
+    {
+    bool loaded = this->loadModule(name);
+    if (loaded)
+      {
+      ++loadedCount;
+      }
+    }
+  return loadedCount;
 }
 
 //---------------------------------------------------------------------------
@@ -179,14 +189,14 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
     return false;
     }
 
-  qSlicerAbstractCoreModule * _module = iter.value();
-  Q_ASSERT(_module);
+  qSlicerAbstractCoreModule * moduleToUnload = iter.value();
+  Q_ASSERT(moduleToUnload);
 
   // Handle pre-unload
-  emit this->moduleAboutToBeUnloaded(_module);
+  emit this->moduleAboutToBeUnloaded(moduleToUnload);
 
   // Tells Qt to delete the object when appropriate
-  _module->deleteLater();
+  moduleToUnload->deleteLater();
 
   // Remove the object from the list
   d->ModuleList.remove(iter.key());
@@ -209,12 +219,21 @@ qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
              << d->ModuleFactoryManager.moduleNames();
     return 0;
     }
+  if (!d->ModuleFactoryManager.isInstantiated(name))
+    {
+    qDebug() << "The module" << name << "has been registered but not instantiated.";
+    qDebug() << "The following modules have been instantiated:"
+             << d->ModuleFactoryManager.instantiatedModuleNames();
+    return 0;
+    }
 
-  qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find(name);
+  qSlicerModuleManagerPrivate::ModuleListConstIterator iter =
+    d->ModuleList.find(name);
   if ( iter == d->ModuleList.constEnd() )
     {
-    qDebug()<< "The module" << name << "can not be found.";
-    qDebug() << "The following modules exists:" << d->ModuleList.keys();
+    qDebug()<< "The module" << name << "has not been loaded.";
+    qDebug() << "The following modules have been loaded:"
+             << this->loadedModules();
     return 0;
     }
   return iter.value();

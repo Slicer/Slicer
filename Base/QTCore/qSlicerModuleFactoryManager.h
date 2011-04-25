@@ -71,11 +71,14 @@ public:
   /// Get a module title given its \a name
   QString moduleTitle(const QString & name) const;
 
-  /// Convenient method returning the list of all module names
+  /// Convenient method returning the list of all registered module names
   Q_INVOKABLE QStringList moduleNames() const;
 
   /// Convenient method returning the list of module names for the factory identified by \a factoryName
   Q_INVOKABLE QStringList moduleNames(const QString& factoryName) const;
+
+  /// List of registered and instantiated modules
+  Q_INVOKABLE QStringList instantiatedModuleNames() const;
 
   /// Instantiate a module given its \a name
   qSlicerAbstractCoreModule* instantiateModule(const QString& name);
@@ -88,6 +91,9 @@ public:
 
   /// Indicate if a module has been registered
   Q_INVOKABLE bool isRegistered(const QString& name)const;
+
+  /// Indicate if a module has been instantiated
+  Q_INVOKABLE bool isInstantiated(const QString& name)const;
 
   /// Enable/Disable verbose output during module discovery process
   void setVerboseModuleDiscovery(bool value);

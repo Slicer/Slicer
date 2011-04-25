@@ -57,6 +57,15 @@ public:
   /// Return True if module \a name has been loaded
   Q_INVOKABLE bool isLoaded(const QString& name)const;
 
+  /// Load all the registered modules. Instantiate them if not instantiated
+  /// yet.
+  /// To register modules, please use
+  /// qSlicerModuleFactoryManager::registerAllModules()
+  /// Returns the number of loaded modules.
+  /// \sa qSlicerModuleFactoryManager::registerAllModules()
+  /// \sa qSlicerModuleFactoryManager::instantiateAllModules()
+  Q_INVOKABLE int loadAllModules();
+
   /// Return the loaded module identified by \a name
   Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name);
 
