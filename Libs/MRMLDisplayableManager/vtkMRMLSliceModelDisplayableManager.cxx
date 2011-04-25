@@ -537,27 +537,40 @@ void vtkMRMLSliceModelDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 
 //---------------------------------------------------------------------------
 void vtkMRMLSliceModelDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                            unsigned long vtkNotUsed(event),
+                                                            unsigned long event,
                                                             void *callData)
 {
-  // TBD: don't update when the scene is processing
-  if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
+  if (caller == this->GetMRMLScene()
+      && this->GetMRMLScene()->GetIsUpdating())
     {
-    //std::cout << "SLICE COMPOSITE UPDATED" << std::endl;
-    this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
+    return;
     }
-  else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
+  if (event == vtkMRMLScene::SceneImportedEvent ||
+      event == vtkMRMLScene::SceneRestoredEvent)
     {
-    //std::cout << "VOLUME UPDATED" << std::endl;
-    if (callData == 0)
+    this->Internal->UpdateSliceNode();
+    return;
+    }
+  if (event == vtkCommand::ModifiedEvent)
+    {
+    if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
       {
-      this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
+    //std::cout << "SLICE COMPOSITE UPDATED" << std::endl;
+      this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
       }
-    }
-  else if (vtkMRMLDisplayNode::SafeDownCast(caller))
-    {
-    //std::cout << "DISPLAY NODE UPDATED" << std::endl;
-    this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
+    else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
+      {
+      //std::cout << "VOLUME UPDATED" << std::endl;
+      if (callData == 0)
+        {
+        this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
+        }
+      }
+    else if (vtkMRMLDisplayNode::SafeDownCast(caller))
+      {
+      //std::cout << "DISPLAY NODE UPDATED" << std::endl;
+      this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
+      }
     }
   // Default MRML Event handler is NOT needed
 //  else
