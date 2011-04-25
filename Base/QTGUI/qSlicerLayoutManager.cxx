@@ -36,10 +36,9 @@
 // SlicerQt includes
 #include "vtkSlicerConfigure.h"
 #include "qSlicerLayoutManager.h"
-
+#include "qSlicerApplication.h"
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL
 #include "qSlicerPythonManager.h"
-#include "qSlicerApplication.h"
 #endif
 
 // qMRMLSlicer
