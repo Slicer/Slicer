@@ -491,6 +491,8 @@ void qMRMLSlicesControllerToolBar::setMRMLScene(vtkMRMLScene* scene)
                 this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
   qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::SceneImportedEvent,
                 this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
+  qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::SceneRestoredEvent,
+                this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
   d->MRMLScene = scene;
   if (d->MRMLScene)
     {
@@ -515,7 +517,7 @@ void qMRMLSlicesControllerToolBar::onMRMLSceneChanged(
   Q_UNUSED(receiver);
   Q_UNUSED(sender);
   Q_ASSERT(d->MRMLScene == sender);
-  if (d->MRMLScene->GetIsImporting())
+  if (d->MRMLScene->GetIsUpdating())
     {
     return;
     }
@@ -523,26 +525,16 @@ void qMRMLSlicesControllerToolBar::onMRMLSceneChanged(
     {
     this->connectNode(reinterpret_cast<vtkMRMLNode*>(calldata));
     }
-  else if (event == vtkMRMLScene::SceneImportedEvent)
+  else if (event == vtkMRMLScene::SceneImportedEvent ||
+           event == vtkMRMLScene::SceneRestoredEvent)
     {
-    std::vector<vtkMRMLNode*> nodes;
-    int nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLSliceCompositeNode", nodes);
-    for(int i = 0; i < nodesCount; ++i)
+    vtkCollection* scene = this->mrmlScene()->GetCurrentScene();
+    vtkCollectionSimpleIterator it;
+    vtkMRMLNode* node = 0;
+    for (scene->InitTraversal(it);
+         (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
       {
-      this->connectNode(nodes[i]);
-      this->connectNode(nodes[i]);
-      }
-    nodes.clear();
-    nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode", nodes);
-    for(int i = 0; i < nodesCount; ++i)
-      {
-      this->connectNode(nodes[i]);
-      }
-    nodes.clear();
-    nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLSliceNode", nodes);
-    for(int i = 0; i < nodesCount; ++i)
-      {
-      this->connectNode(nodes[i]);
+      this->connectNode(node);
       }
     }
 }
