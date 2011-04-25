@@ -6,6 +6,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerColorsModuleWidgetTest1.cxx
   qSlicerCoreModuleTest1.cxx
   qSlicerCoreModuleFactoryTest1.cxx
+  qSlicerModulePanelTest2.cxx
   qSlicerTransformsModuleTest1.cxx
   qSlicerTransformsModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
@@ -34,6 +35,7 @@ SIMPLE_TEST( qSlicerCamerasModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerColorsModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerCoreModuleTest1 )
 SIMPLE_TEST( qSlicerCoreModuleFactoryTest1 )
+SIMPLE_TEST( qSlicerModulePanelTest2 )
 SIMPLE_TEST( qSlicerTransformsModuleTest1 )
 SIMPLE_TEST( qSlicerTransformsModuleWidgetTest1 )
 
