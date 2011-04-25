@@ -99,6 +99,8 @@ Version:   $Revision: 1.18 $
 #include <sstream>
 #include <map>
 
+//#define MRMLSCENE_VERBOSE 1
+
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
 {
@@ -491,6 +493,10 @@ void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller),
 //------------------------------------------------------------------------------
 void vtkMRMLScene::Clear(int removeSingletons) 
 {
+#ifdef MRMLSCENE_VERBOSE
+  vtkTimerLog* timer = vtkTimerLog::New();
+  timer->StartTimer();
+#endif
   this->SetUndoOff();
   this->SetIsClosing(true);
   
@@ -537,6 +543,11 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
   this->SetIsClosing(false);
+#ifdef MRMLSCENE_VERBOSE
+  timer->StopTimer();
+  std::cerr << "vtkMRMLScene::Clear():" << timer->GetElapsedTime() << "\n";
+  timer->Delete();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -857,6 +868,10 @@ int vtkMRMLScene::Connect()
     vtkErrorMacro(<< "vtkMRMLScene::Connect should NOT be called recusively !");
     return 0;
     }
+#ifdef MRMLSCENE_VERBOSE
+  vtkTimerLog* timer = vtkTimerLog::New();
+  timer->StartTimer();
+#endif
   this->IsConnecting++;
   this->Clear(0);
   bool undoFlag = this->GetUndoFlag();
@@ -865,12 +880,23 @@ int vtkMRMLScene::Connect()
   // Note that IsConnecting flag is decremented at the end of Import method
   // This ensure that the event SceneImportedEvent is invoked after IsUpdating is decremented
   this->SetUndoFlag(undoFlag);
+#ifdef MRMLSCENE_VERBOSE
+  timer->StopTimer();
+  std::cerr << "vtkMRMLScene::Connect():" << timer->GetElapsedTime() << "\n";
+  timer->Delete();
+#endif
   return res;
 }
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Import()
 {
+#ifdef MRMLSCENE_VERBOSE
+  vtkTimerLog* addNodesTimer = vtkTimerLog::New();
+  vtkTimerLog* updateSceneTimer = vtkTimerLog::New();
+  vtkTimerLog* timer = vtkTimerLog::New();
+  timer->StartTimer();
+#endif
   this->SetErrorCode(0);
   this->SetErrorMessage(std::string(""));
 
@@ -896,13 +922,19 @@ int vtkMRMLScene::Import()
       {
       this->AddReservedID(node->GetID());
       }
+#ifdef MRMLSCENE_VERBOSE
+    addNodesTimer->StartTimer();
+#endif
     for (scene->InitTraversal(it); 
          (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
       {
       //this->AddNodeNoNotify(node);
       this->AddNode(node);
       }
-    
+#ifdef MRMLSCENE_VERBOSE
+    addNodesTimer->StopTimer();
+    updateSceneTimer->StartTimer();
+#endif
     // fix node references that may be not unique in the imported scene.
     this->UpdateNodeReferences(scene);
     
@@ -923,7 +955,6 @@ int vtkMRMLScene::Import()
         node->UpdateScene(this);
         }
       }
-
     if (this->GetErrorCode() == 1)
       {
       //vtkErrorMacro("Import: error updating node " << node->GetID());
@@ -944,6 +975,9 @@ int vtkMRMLScene::Import()
       
     this->Modified();
     this->RemoveUnusedNodeReferences();
+#ifdef MRMLSCENE_VERBOSE
+    updateSceneTimer->StopTimer();
+#endif
     } //if (res)
   else
     {
@@ -955,7 +989,14 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
+#ifdef MRMLSCENE_VERBOSE
+  vtkTimerLog* importingTimer = vtkTimerLog::New();
+  importingTimer->StartTimer();
+#endif
   this->SetIsImporting(false); // Takes care of sending SceneImportedEvent
+#ifdef MRMLSCENE_VERBOSE
+  importingTimer->StopTimer();
+#endif
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 
@@ -971,6 +1012,17 @@ int vtkMRMLScene::Import()
     {
     returnCode = 0;
     }
+#ifdef MRMLSCENE_VERBOSE
+  timer->StopTimer();
+  std::cerr<<"vtkMRMLScene::Import()::AddNodes:" << addNodesTimer->GetElapsedTime() << "\n";
+  std::cerr<< "vtkMRMLScene::Import()::UpdateScene" << updateSceneTimer->GetElapsedTime() << "\n";
+  std::cerr<<"vtkMRMLScene::Import()::SceneImported:" << importingTimer->GetElapsedTime() << "\n";
+  std::cerr<<"vtkMRMLScene::Import():" << timer->GetElapsedTime() << "\n";
+  addNodesTimer->Delete();
+  updateSceneTimer->Delete();
+  importingTimer->Delete();
+  timer->Delete();
+#endif
   return returnCode;
 }
 
@@ -1331,6 +1383,10 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
         }
       }
     }
+#ifdef MRMLSCENE_VERBOSE
+  vtkTimerLog* timer = vtkTimerLog::New();
+  timer->StartTimer();
+#endif
   if (add)
     {
     this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
@@ -1341,6 +1397,11 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     this->InvokeEvent(this->NodeAddedEvent, n);
     }
   this->Modified();
+#ifdef MRMLSCENE_VERBOSE
+  timer->StopTimer();
+  std::cerr << "AddNode: " << n->GetID() << " :" << timer->GetElapsedTime() << "\n";
+  timer->Delete();
+#endif
   return node;
 }
 
