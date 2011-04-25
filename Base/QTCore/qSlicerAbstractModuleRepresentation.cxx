@@ -73,7 +73,7 @@ vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic()const
 }
 
 //-----------------------------------------------------------------------------
-const qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
+qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module;

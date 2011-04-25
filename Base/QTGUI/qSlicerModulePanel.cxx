@@ -71,43 +71,65 @@ qSlicerModulePanel::~qSlicerModulePanel()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::setModule(const QString& moduleName)
+qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule()const
 {
-  Q_D(qSlicerModulePanel);
-
-  qSlicerAbstractCoreModule * module = 0;
-
-  if (!moduleName.isEmpty())
-    {
-    module = qSlicerApplication::application()->moduleManager()->module(moduleName);
-    Q_ASSERT(module);
-    }
-
-  // Retrieve current module associated with the module panel
+  Q_D(const qSlicerModulePanel);
   QBoxLayout* scrollAreaLayout =
     qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
-  Q_ASSERT(scrollAreaLayout);
+
   QLayoutItem* item = scrollAreaLayout->itemAt(1);
+
   qSlicerAbstractModuleWidget* currentModuleWidget =
     item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
-  // If module is already set, return.
-  if (module && (module->widgetRepresentation() == currentModuleWidget))
+  return currentModuleWidget ? currentModuleWidget->module() : 0;
+}
+
+//---------------------------------------------------------------------------
+QString qSlicerModulePanel::currentModuleName()const
+{
+  qSlicerAbstractCoreModule* module = this->currentModule();
+  return module ? module->name() : QString();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::setModule(const QString& moduleName)
+{
+  if (!this->moduleManager())
     {
     return;
     }
 
-  if (currentModuleWidget)
+  qSlicerAbstractCoreModule * module = 0;
+  if (!moduleName.isEmpty())
+    {
+    module = this->moduleManager()->module(moduleName);
+    Q_ASSERT(module);
+    }
+  this->setModule(module);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::setModule(qSlicerAbstractCoreModule* module)
+{
+  // Retrieve current module associated with the module panel
+  qSlicerAbstractCoreModule* oldModule = this->currentModule();
+  if (module == oldModule)
+    {
+    return;
+    }
+
+  if (oldModule)
     {
     // Remove the current module
-    this->removeModule(currentModuleWidget->moduleName());
+    this->removeModule(oldModule);
     }
 
   if (module)
     {
-    qDebug() << "Show module (name):" << moduleName;
+    qDebug() << "Show module (name):" << module->name();
     // Add the new module
-    this->addModule(module->name());
+    this->addModule(module);
     }
   else
     {
@@ -116,17 +138,15 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::addModule(const QString& moduleName)
+void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
 {
-  qSlicerAbstractCoreModule* module =
-    qSlicerApplication::application()->moduleManager()->module(moduleName);
   Q_ASSERT(module);
 
   qSlicerAbstractModuleWidget* moduleWidget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
   if (moduleWidget == 0)
     {
-    qDebug() << "Warning, there is no UI for the module"<< moduleName;
+    qDebug() << "Warning, there is no UI for the module"<< module->name();
     emit moduleAdded(module->name());
     return;
     }
@@ -167,10 +187,8 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::removeModule(const QString& moduleName)
+void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
 {
-  qSlicerAbstractCoreModule * module =
-    qSlicerApplication::application()->moduleManager()->module(moduleName);
   Q_ASSERT(module);
 
   qSlicerAbstractModuleWidget * moduleWidget =
@@ -210,7 +228,7 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanel::removeAllModule()
+void qSlicerModulePanel::removeAllModules()
 {
   this->setModule("");
 }

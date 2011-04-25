@@ -52,6 +52,9 @@ public:
   /// Set/Get module name
   QString moduleName()const;
 
+  /// Returns the module the representation belongs to.
+  qSlicerAbstractCoreModule* module()const;
+
 protected:
   ///
   /// All inialization code should be done in the setup
@@ -59,8 +62,6 @@ protected:
 
   /// Return the logic of the module
   vtkMRMLAbstractLogic* logic() const;
-
-  const qSlicerAbstractCoreModule* module()const;
 
 protected:
   QScopedPointer<qSlicerAbstractModuleRepresentationPrivate> d_ptr;

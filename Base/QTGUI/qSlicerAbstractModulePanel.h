@@ -24,8 +24,9 @@
 #include "qSlicerWidget.h"
 #include "qSlicerBaseQTGUIExport.h"
 
-class qSlicerAbstractModule;
-class qSlicerAbstractModule; 
+class qSlicerAbstractCoreModule;
+class qSlicerAbstractModulePanelPrivate;
+class qSlicerModuleManager;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModulePanel: public qSlicerWidget
 {
@@ -33,14 +34,28 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModulePanel: public qSlicerWidge
 public:
   qSlicerAbstractModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerAbstractModulePanel();
-  virtual void addModule(const QString& moduleName) = 0;
-  virtual void removeModule(const QString& moduleName) = 0;
-  virtual void removeAllModule() = 0;
+
+  void addModule(const QString& moduleName);
+  void removeModule(const QString& moduleName);
+  virtual void removeAllModules() = 0;
+
+  void setModuleManager(qSlicerModuleManager* moduleManager);
+  qSlicerModuleManager* moduleManager()const;
 
 signals:
   void moduleAdded(const QString& moduleName);
   //void moduleAboutToBeRemoved(const QString& moduleName);
   void moduleRemoved(const QString& moduleName);
+
+protected:
+  QScopedPointer<qSlicerAbstractModulePanelPrivate> d_ptr;
+
+  virtual void addModule(qSlicerAbstractCoreModule* module) = 0;
+  virtual void removeModule(qSlicerAbstractCoreModule* module) = 0;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerAbstractModulePanel);
+  Q_DISABLE_COPY(qSlicerAbstractModulePanel);
 };
 
 #endif

@@ -131,6 +131,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   q->insertToolBar(this->ModuleToolBar, this->ModuleSelectorToolBar);
 
   // Connect the selector with the module panel
+  this->ModulePanel->setModuleManager(moduleManager);
   QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(const QString&)),
                    this->ModulePanel, SLOT(setModule(const QString&)));
 
