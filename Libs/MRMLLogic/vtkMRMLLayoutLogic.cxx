@@ -401,7 +401,11 @@ void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
                                             void * callData)
 {
   vtkDebugMacro("vtkMRMLLayoutLogic::ProcessMRMLEvents: got an event " << event);
-
+  if (this->GetMRMLScene()->GetIsUpdating())
+    {
+    return;
+    }
+  
   // when there's a new scene, add the default nodes
   //if (event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneClosedEvent)
   if (event == vtkMRMLScene::NewSceneEvent ||
