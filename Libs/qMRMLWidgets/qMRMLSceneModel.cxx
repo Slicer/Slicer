@@ -895,8 +895,9 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
 
-  int connectionsRemoved = qvtkDisconnect(node, vtkCommand::ModifiedEvent,
-                                          this, SLOT(onMRMLNodeModified(vtkObject*)));
+  int connectionsRemoved =
+    qvtkDisconnect(node, vtkCommand::ModifiedEvent,
+                   this, SLOT(onMRMLNodeModified(vtkObject*)));
 
   Q_ASSERT_X((!d->ListenNodeModifiedEvent && connectionsRemoved == 0) ||
              (d->ListenNodeModifiedEvent && connectionsRemoved == 1),
@@ -905,6 +906,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
              "never been notified it has been added in the first place. Maybe"
              " vtkMRMLScene::AddNodeNoNotify() has been used instead of "
              "vtkMRMLScene::AddNode");
+  Q_UNUSED(connectionsRemoved);
 
   // TODO: can be fasten by browsing the tree only once
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,
