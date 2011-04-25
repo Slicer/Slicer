@@ -117,11 +117,16 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
   items << new QStandardItem;
   items[1]->setFlags(0);
   parent->insertRow(row, items);
+
+  // update extra item cache info (for faster retrieval)
+  QMap<QString, QVariant> extraItems = parent->data(qMRMLSceneModel::ExtraItemsRole).toMap();
+  extraItems[extraType] = extraItems[extraType].toStringList() << text;
+  parent->setData(extraItems, qMRMLSceneModel::ExtraItemsRole );
 }
 
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString extraType)const
+QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString& extraType)const
 {
   QStringList res;
   if (parent == 0)
@@ -129,7 +134,10 @@ QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QStr
     //parent = q->invisibleRootItem();
     return res;
     }
-  int rowCount = parent->rowCount();
+  // It is expensive to search, cache the extra items.
+  res = parent->data(qMRMLSceneModel::ExtraItemsRole).toMap()[extraType].toStringList();
+  /*
+  const int rowCount = parent->rowCount();
   for (int i = 0; i < rowCount; ++i)
     {
     QStandardItem* child = parent->child(i);
@@ -145,6 +153,7 @@ QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QStr
         }
       }
     }
+  */
   return res;
 }
 
@@ -152,6 +161,13 @@ QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QStr
 void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QString extraType)
 {
   Q_Q(qMRMLSceneModel);
+  Q_ASSERT(parent);
+  QMap<QString, QVariant> extraItems =
+    parent->data(qMRMLSceneModel::ExtraItemsRole).toMap();
+  if (extraItems[extraType].toStringList().size() == 0)
+    {
+    return;
+    }
   QModelIndex start = parent ? parent->index().child(0,0) : QModelIndex().child(0,0);
   QModelIndexList indexes =
     q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
@@ -164,6 +180,8 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     start = parentIndex.child(row,0);
     indexes = q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
     }
+  extraItems[extraType] = QStringList();
+  parent->setData(extraItems, qMRMLSceneModel::ExtraItemsRole);
 }
 
 //------------------------------------------------------------------------------
@@ -628,12 +646,7 @@ void qMRMLSceneModel::populateScene()
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
 {
-  QStandardItem* nodeItem = this->itemFromNode(node);
-  if (nodeItem)
-    {
-    // the item is already into the scene, don't add it again
-    return nodeItem;
-    }
+  Q_ASSERT(this->itemFromNode(node) == 0);
   vtkMRMLNode* parentNode = this->parentNode(node);
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();

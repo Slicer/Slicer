@@ -50,7 +50,8 @@ public:
   
   enum ItemDataRole{
     UIDRole = Qt::UserRole + 1,
-    PointerRole
+    PointerRole,
+    ExtraItemsRole
     };
 
   enum ModelColumn
