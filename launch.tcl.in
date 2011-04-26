@@ -276,7 +276,6 @@ proc launch_SetEnvironment {} {
       set ::env(ModuleDescriptionParser_DIR)  $::env(Slicer_HOME)/lib/ModuleDescriptionParser
       set ::env(MRMLIDImageIO_DIR)  $::env(Slicer_HOME)/lib/MRMLIDImageIO
       set ::env(Qdec_DIR)           $::env(Slicer_HOME)/lib/Qdec
-      set ::env(RemoteIO_DIR)       $::env(Slicer_HOME)/lib/RemoteIO
       set ::env(FileWatcher_DIR)    $::env(Slicer_HOME)/lib/FileWatcher
       set ::env(tclap_DIR)          $::env(Slicer_HOME)/lib/tclap
       set ::env(vtkITK_DIR)         $::env(Slicer_HOME)/lib/vtkITK
@@ -461,7 +460,6 @@ proc launch_SetEnvironment {} {
       set ::env(ModuleDescriptionParser_DIR)     [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(MRMLIDImageIO_DIR)  [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(Qdec_DIR)           [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
-      set ::env(RemoteIO_DIR)       [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(FileWatcher_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(tclap_DIR)          [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(vtkITK_DIR)         [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
@@ -644,7 +642,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(ModuleDescriptionParser_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(MRMLIDImageIO_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(FileWatcher_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(tclap_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(LD_LIBRARY_PATH)
@@ -697,7 +694,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(ModuleDescriptionParser_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(MRMLIDImageIO_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(FileWatcher_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(tclap_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -753,7 +749,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(ModuleDescriptionParser_DIR)\;$::env(Path)
             set ::env(Path) $::env(MRMLIDImageIO_DIR)\;$::env(Path)
             set ::env(Path) $::env(Qdec_DIR)\;$::env(Path)
-            set ::env(Path) $::env(RemoteIO_DIR)\;$::env(Path)
             set ::env(Path) $::env(FileWatcher_DIR)\;$::env(Path)
             set ::env(Path) $::env(tclap_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkITK_DIR)\;$::env(Path)
@@ -831,7 +826,6 @@ proc launch_SetPaths {} {
 	  set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/FreeSurfer$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/MRML$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/MRMLLogic$SEP$::env(PYTHONPATH)"
-      set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/RemoteIO$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/vtkTeem$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/bin$SEP$::env(PYTHONPATH)"
     }
