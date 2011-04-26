@@ -31,6 +31,9 @@ SET(qtmodules
   #CropVolume
   VolumeRendering
   )
+IF(BUILD_TESTING)
+  LIST(APPEND qtmodules ModuleTemplate)
+ENDIF()
 
 FOREACH(module ${qtmodules})
   ADD_SUBDIRECTORY(${module})
