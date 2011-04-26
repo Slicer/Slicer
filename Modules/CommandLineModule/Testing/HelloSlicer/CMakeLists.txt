@@ -59,8 +59,8 @@ slicer3_install_plugins(${CLP})
 
 # Test it
 
-slicer3_enable_plugins_testing()
+# slicer3_enable_plugins_testing()
 
-slicer3_add_plugins_test(${CLP}Test1 ${CLP} --help)
+# slicer3_add_plugins_test(${CLP}Test1 ${CLP} --help)
 
 
