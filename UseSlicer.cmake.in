@@ -8,9 +8,6 @@
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
 
-set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
-set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
-set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)

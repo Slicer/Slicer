@@ -404,13 +404,6 @@ ENDIF()
 #UNSET(Slicer_INSTALL_MODULES_INCLUDE_DIR)
 UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
 
-# Relax some constraints related to the build settings file. This was
-# preventing people from using the same compiler but with a different generator,
-# or just the same compiler installed in a non-standard location.
-SET(SKIP_VTK_BUILD_SETTINGS_FILE 1)
-SET(SKIP_ITK_BUILD_SETTINGS_FILE 1)
-SET(SKIP_Teem_BUILD_SETTINGS_FILE 1)
-
 #-----------------------------------------------------------------------------
 # Python
 #-----------------------------------------------------------------------------
