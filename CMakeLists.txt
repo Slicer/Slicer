@@ -419,7 +419,7 @@ IF(BUILD_TESTING)
   LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
 ENDIF()
 
-INCLUDE(SlicerFindQtAndCheckVersion)
+INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
 #-----------------------------------------------------------------------------
 # CTK
