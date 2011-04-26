@@ -192,6 +192,7 @@ SET(slicer_cmake_boolean_args
   WITH_MEMCHECK
   Slicer_BUILD_CLI
   Slicer_BUILD_QTLOADABLEMODULES
+  Slicer_BUILD_QTSCRIPTEDMODULES
   Slicer_USE_PYTHONQT
   Slicer_USE_PYTHONQT_WITH_TCL
   Slicer_USE_CTKAPPLAUNCHER
@@ -274,3 +275,10 @@ ExternalProject_Add(${proj}
     -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
   INSTALL_COMMAND ""
   )
+  
+#-----------------------------------------------------------------------------
+# Slicer extensions
+#-----------------------------------------------------------------------------
+IF(Slicer_BUILD_EXTENSIONS)
+  ADD_SUBDIRECTORY(Extensions)
+ENDIF()
