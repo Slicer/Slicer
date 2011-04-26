@@ -219,50 +219,24 @@ SOURCE_GROUP("Header Files" FILES ${MRML_SRCS_HEADERS})
 # Wrapping hints used by all Tcl, Python and Java wrapping.
 # It can also be used by external wrapping tools.
 SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-
 # --------------------------------------------------------------------------
 # Build library
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
-
 # --------------------------------------------------------------------------
 SET(srcs ${MRML_SRCS} ${MRML_SRCS_HEADERS})
-
-IF (VTK_WRAP_TCL)
-  SET(srcs ${srcs} ${MRML_TCL_SRCS})
-ENDIF (VTK_WRAP_TCL)
 
 SET(lib_name ${PROJECT_NAME})
 ADD_LIBRARY(${lib_name} ${srcs})
 
-SET(VTK_LIBRARIES
-  vtkHybrid
-  vtkRendering
-  )
-
 SET(libs
   vtkITK
   ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES}
   FreeSurfer
   )
-  
 IF(MRML_USE_vtkTeem)
   LIST(APPEND libs vtkTeem)
 ENDIF()
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
-
-
-FOREACH(c ${VTK_LIBRARIES})
-  SET(tcl_wrap)
-  IF (VTK_WRAP_TCL)
-    SET(tcl_wrap TCL)
-  ENDIF()
-  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
-ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

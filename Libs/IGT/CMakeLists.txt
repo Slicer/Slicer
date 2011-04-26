@@ -111,47 +111,25 @@ endif()
 
 # --------------------------------------------------------------------------
 # Build library
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
 # --------------------------------------------------------------------------
-
 set(lib_name ${PROJECT_NAME})
-SET(srcs
-  ${IGT_SRCS} 
-  )
-IF (VTK_WRAP_TCL)
-  SET(srcs
-    ${srcs}
-    ${IGT_TCL_SRCS}
-    )
-ENDIF (VTK_WRAP_TCL)
-add_library(${lib_name}
-  ${srcs}
-  )
+
+SET(srcs ${IGT_SRCS})
+add_library(${lib_name} ${srcs})
 
 SET(libs
   MRML
   ${TRACKING_INTERFACE_LIB}
 )
-IF (VTK_WRAP_TCL)
-  # Complain if KWWidget is not available
-  IF(NOT KWWidgets_FOUND)
-    MESSAGE(FATAL_ERROR "IGT required KWWidgets to build")
-  ELSE(NOT KWWidgets_FOUND)
-    ADD_DEFINITIONS(-DKWWidgets_FOUND)
-  ENDIF(NOT KWWidgets_FOUND)
-  SET(libs
-    ${libs}
-    ${KWWidgets_LIBRARIES}
-    )
-ENDIF (VTK_WRAP_TCL)
-target_link_libraries(${lib_name}
-  ${libs}
-  )
+
+# If VTK_WRAP_TCL: Complain if KWWidget is not available
+#  IF(NOT KWWidgets_FOUND)
+#    MESSAGE(FATAL_ERROR "IGT required KWWidgets to build")
+#  ELSE(NOT KWWidgets_FOUND)
+#    ADD_DEFINITIONS(-DKWWidgets_FOUND)
+#  ENDIF(NOT KWWidgets_FOUND)
+
+target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

@@ -79,40 +79,17 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Build library
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
 # --------------------------------------------------------------------------
 set(lib_name ${PROJECT_NAME})
 SET(srcs ${FreeSurfer_SRCS})
 
 ADD_LIBRARY(${lib_name} ${srcs})
-IF (VTK_WRAP_TCL)
-  SET(srcs ${srcs} ${FreeSurfer_TCL_SRCS} )
-ENDIF (VTK_WRAP_TCL)
 
-
-SET(VTK_LIBRARIES
-  vtkCommon
-  vtkIO
-  )
-  
 SET(libs
+  ${VTK_LIBRARIES}
   vtkzlib
   )
-
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
-
-FOREACH(c ${VTK_LIBRARIES})
-  SET(tcl_wrap)
-  IF (VTK_WRAP_TCL)
-    SET(tcl_wrap TCL)
-  ENDIF()
-  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
-ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

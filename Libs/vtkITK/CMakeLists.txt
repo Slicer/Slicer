@@ -114,49 +114,18 @@ set_source_files_properties(
   )
 
 # --------------------------------------------------------------------------
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
+# Build library
 # --------------------------------------------------------------------------
-# Build the library
-
 set(lib_name ${PROJECT_NAME})
 
-SET(srcs
-  ${vtkITK_SRCS}
-  )
-
-IF (VTK_WRAP_TCL)
-  SET(srcs
-    ${srcs}
-    ${vtkITK_TCL_SRCS}
-    )
-ENDIF(VTK_WRAP_TCL)
-
-add_library(${lib_name} 
-  ${srcs}
-  )
+SET(srcs ${vtkITK_SRCS})
+add_library(${lib_name} ${srcs})
   
 SET(libs
   ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES}
   )
 target_link_libraries(${lib_name} ${libs})
-IF (VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkImagingTCL
-    )
-ELSE (VTK_WRAP_TCL)
-  SET(libs
-    ${libs}
-    vtkImaging
-    vtkCommon
-    vtkFiltering
-    )
-ENDIF (VTK_WRAP_TCL)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

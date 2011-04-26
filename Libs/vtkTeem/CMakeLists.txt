@@ -102,19 +102,10 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Build library
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
 # --------------------------------------------------------------------------
-SET(srcs ${vtkTeem_SRCS} )
-IF (VTK_WRAP_TCL)
-  SET(srcs ${srcs} ${vtkTeem_TCL_SRCS})
-ENDIF (VTK_WRAP_TCL)
-
 set(lib_name ${PROJECT_NAME})
+
+SET(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
@@ -128,26 +119,11 @@ else ( ${Teem_VERSION_MAJOR} GREATER 1 )
   endif ( ${Teem_VERSION_MINOR} LESS 10 )
 endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
-SET(VTK_LIBRARIES
-  vtkIO
-  vtkImaging
-  vtkGraphics
-  )
-
 SET(libs
   ${Teem_LIBRARIES}
+  ${VTK_LIBRARIES}
   )
-
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
-
-
-FOREACH(c ${VTK_LIBRARIES})
-  SET(tcl_wrap)
-  IF (VTK_WRAP_TCL)
-    SET(tcl_wrap TCL)
-  ENDIF()
-  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
-ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

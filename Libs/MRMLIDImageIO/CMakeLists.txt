@@ -75,12 +75,12 @@ set(MRMLIDImageIO_SRCS
 # --------------------------------------------------------------------------
 # Note: Library name is different from the directory name !
 set(lib_name MRMLIDIO)
-add_library(${lib_name} 
-  ${MRMLIDImageIO_SRCS}
-  )
-target_link_libraries(${lib_name} 
-  MRML
-)
+
+SET(srcs ${MRMLIDImageIO_SRCS})
+add_library(${lib_name} ${srcs})
+
+set(libs MRML)
+target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
@@ -125,9 +125,7 @@ set_target_properties(MRMLIDIOPlugin
   ARCHIVE_OUTPUT_DIRECTORY 
   "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR}"
   )
-target_link_libraries(MRMLIDIOPlugin 
-  ${lib_name}
-)
+target_link_libraries(MRMLIDIOPlugin ${lib_name})
 
 # Note MRMLIDIO and MRMLIDOPlugin are installed in different locations
 

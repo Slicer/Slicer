@@ -91,19 +91,9 @@ set(RemoteIO_SRCS
 
 # --------------------------------------------------------------------------
 # Build library
-# Wrapping
-IF (VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  vtk_wrap_tcl3(RemoteIO RemoteIO_TCL_SRCS "${RemoteIO_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
 # --------------------------------------------------------------------------
 set(lib_name ${PROJECT_NAME})
 SET(srcs ${RemoteIO_SRCS})
-
-IF (VTK_WRAP_TCL)
-  SET(srcs ${srcs} ${RemoteIO_TCL_SRCS})
-ENDIF (VTK_WRAP_TCL)
 
 add_library(${lib_name} ${srcs})
   

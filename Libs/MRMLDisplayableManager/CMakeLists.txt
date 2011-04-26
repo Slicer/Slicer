@@ -62,7 +62,7 @@ INSTALL(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 SET(DisplayableManager_SRCS
 
   # DisplayableManager associated with ThreeDView
@@ -118,23 +118,10 @@ VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   ${PROJECT_BINARY_DIR}
   "vtk${PROJECT_NAME}Win32Header.h")
 
-# TCL Wrapping
-if (VTK_WRAP_TCL)
-   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake") 
-   vtk_wrap_tcl3(MRMLDisplayableManager  KIT_TCL_SRCS   "${KIT_SRCS}" "")
-endif()
-
 SET(srcs
- ${KIT_SRCS}
- ${DisplayableManagerInstantiator_SRCS}
- )
-
-if (VTK_WRAP_TCL)
-  set(srcs
-    ${srcs}
-    ${KIT_TCL_SRCS}
-    )
-endif()
+  ${KIT_SRCS}
+  ${DisplayableManagerInstantiator_SRCS}
+  )
 
 # --------------------------------------------------------------------------
 # Build library
@@ -143,6 +130,7 @@ SET(lib_name ${PROJECT_NAME})
 ADD_LIBRARY(${lib_name} ${srcs})
 
 SET(libs
+  ${VTK_LIBRARIES}
   MRML
   MRMLLogic
   )
@@ -154,21 +142,7 @@ IF(MRMLDisplayableManager_USE_PYTHON)
     )
 ENDIF()
 
-TARGET_LINK_LIBRARIES(${lib_name}
-  ${libs}
-  )
-
-SET(VTK_LIBRARIES
-  vtkWidgets
-  )
-
-FOREACH(c ${VTK_LIBRARIES})
-  SET(tcl_wrap)
-  IF (VTK_WRAP_TCL)
-    SET(tcl_wrap TCL)
-  ENDIF()
-  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
-ENDFOREACH(c)
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

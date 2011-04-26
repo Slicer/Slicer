@@ -65,27 +65,10 @@ SET(MRMLCLI_SRCS
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
-# Wrapping
-if (VTK_WRAP_TCL)
-   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake") 
-   vtk_wrap_tcl3(MRMLCLI  MRMLCLI_TCL_SRCS   "${MRMLCLI_SRCS}" "")
-endif (VTK_WRAP_TCL)
-
-SET(srcs
- ${MRMLCLI_SRCS}
- )
-
-if (VTK_WRAP_TCL)
-  set(srcs
-        ${srcs}
-        ${MRMLCLI_TCL_SRCS}
-   )
-endif (VTK_WRAP_TCL)
-
 SET(lib_name ${PROJECT_NAME})
-ADD_LIBRARY(${lib_name} 
-  ${srcs}
-  )
+SET(srcs ${MRMLCLI_SRCS})
+
+ADD_LIBRARY(${lib_name} ${srcs})
 
 SET(libs
   MRML

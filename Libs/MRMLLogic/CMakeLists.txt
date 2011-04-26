@@ -77,39 +77,18 @@ SET(MRMLLogic_SRCS
 # set hints for tcl and python
 SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
 
-# TCL Wrapping
-if (VTK_WRAP_TCL)
-   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-   vtk_wrap_tcl3(MRMLLogic  MRMLLogic_TCL_SRCS   "${MRMLLogic_SRCS}" "")
-endif()
-
-SET(srcs
- ${MRMLLogic_SRCS}
- )
-
-if (VTK_WRAP_TCL)
-  set(srcs
-    ${srcs}
-    ${MRMLLogic_TCL_SRCS}
-    )
-endif()
-
 # --------------------------------------------------------------------------
-# Build and install the library
-
+# Build library
+# --------------------------------------------------------------------------
 SET(lib_name ${PROJECT_NAME})
-ADD_LIBRARY(${lib_name} 
-  ${srcs}
- )
 
-SET(VTK_LIBRARIES
-  vtkHybrid
-  vtkRendering
-  )
+SET(srcs ${MRMLLogic_SRCS})
+ADD_LIBRARY(${lib_name} ${srcs})
 
 SET(libs
   MRML
   vtkTeem
+  ${VTK_LIBRARIES}
   )
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
