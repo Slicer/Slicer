@@ -280,8 +280,6 @@ proc launch_SetEnvironment {} {
       set ::env(tclap_DIR)          $::env(Slicer_HOME)/lib/tclap
       set ::env(vtkITK_DIR)         $::env(Slicer_HOME)/lib/vtkITK
       set ::env(vtkTeem_DIR)        $::env(Slicer_HOME)/lib/vtkTeem
-      set ::env(qCTKWidgets_DIR)    $::env(Slicer_HOME)/lib/qCTKWidgets
-      set ::env(qVTKWidgets_DIR)    $::env(Slicer_HOME)/lib/qVTKWidgets
       set ::env(qMRMLWidgets_DIR)   $::env(Slicer_HOME)/lib/qMRMLWidgets
     
       set ::env(Slicer_COMPILER_DIR) ""
@@ -464,9 +462,7 @@ proc launch_SetEnvironment {} {
       set ::env(tclap_DIR)          [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(vtkITK_DIR)         [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(vtkTeem_DIR)        [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
-      set ::env(qCTKWidgets_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(qMRMLWidgets_DIR)   [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
-      set ::env(qVTKWidgets_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       
     
       # Slicer3 Base
@@ -646,8 +642,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(tclap_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(qCTKWidgets_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(qVTKWidgets_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
@@ -698,8 +692,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(tclap_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(qCTKWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(qVTKWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -753,8 +745,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(tclap_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkITK_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkTeem_DIR)\;$::env(Path)
-            set ::env(Path) $::env(qCTKWidgets_DIR)\;$::env(Path)
-            set ::env(Path) $::env(qVTKWidgets_DIR)\;$::env(Path)
             set ::env(Path) $::env(qMRMLWidgets_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer_LIB_DIR)\;$::env(Path)
