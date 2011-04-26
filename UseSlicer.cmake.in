@@ -4,79 +4,92 @@
 # Slicer modules built against a Slicer build tree or a Slicer installation.
 #
 
-# Relax some constraints related to the build settings file. This was
-# preventing people from using the same compiler but with a different generator,
-# or just the same compiler installed in a non-standard location.
-
-
-find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
-
-find_package(Teem REQUIRED)
-if(Teem_FOUND)
-  include(${Teem_USE_FILE})
-endif(Teem_FOUND)
+# --------------------------------------------------------------------------
+# Prerequisites
+# --------------------------------------------------------------------------
+set(dependent_projects CTK GenerateCLP ITK Teem VTK) # List all required project
 
 if(Slicer_USE_BatchMake)
- find_package(BatchMake)
- if(BatchMake_FOUND)
-   include(${BatchMake_USE_FILE})
- endif(BatchMake_FOUND)
-endif(Slicer_USE_BatchMake)
+  list(APPEND dependent_projects BatchMake)
+endif()
 
-# Add compiler flags needed to use Slicer.
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer_REQUIRED_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Slicer_REQUIRED_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Slicer_REQUIRED_LINK_FLAGS}")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${Slicer_REQUIRED_LINK_FLAGS}")
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${Slicer_REQUIRED_LINK_FLAGS}")
+# Include projects
+foreach(proj ${dependent_projects})
+  find_package(${proj} REQUIRED)
+  include(${${proj}_USE_FILE})
+endforeach()
 
-# Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
-if(CMAKE_COMPILER_2005)
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif(CMAKE_COMPILER_2005)
+#-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+  ${Slicer_CMAKE_DIR}
+  ${VTK_CMAKE_DIR}
+  ${CTK_CMAKE_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+  
+# --------------------------------------------------------------------------
+# Qt
+# --------------------------------------------------------------------------
+# Note: This block should be added after VTK and CTK are found.
+#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE 
+#       are valid.
+INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
-# DevStudio 9.0 - Disable warning C4996: [...] This function or variable may be unsafe. [...]
-# To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
-if(MSVC90)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif(MSVC90)
+# --------------------------------------------------------------------------
+# Platform check
+# --------------------------------------------------------------------------
+INCLUDE(SlicerBlockPlatformCheck)
 
+#-----------------------------------------------------------------------------
+# Set {ITK,VTK}_REQUIRED_{C,CXX}_FLAGS variables
+#-----------------------------------------------------------------------------
+INCLUDE(vtkDetermineCompilerFlags)
+INCLUDE(ITKPlatformSpecificChecks)
+
+#-----------------------------------------------------------------------------
+# Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
+#-----------------------------------------------------------------------------
+INCLUDE(SlicerBlockCXXRequiredFlags)
+
+#-----------------------------------------------------------------------------
+# Set CMAKE_{C,CXX}_FLAGS variables
+#-----------------------------------------------------------------------------
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${VTK_REQUIRED_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
+
+#-----------------------------------------------------------------------------
+# Link directories
+#------------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ${Slicer_BUILD_SHARED})
-endif(NOT DEFINED BUILD_SHARED_LIBS)
+endif()
 
-# Add include directories needed to use Slicer.
-include_directories(BEFORE 
-  ${Slicer_Libs_INCLUDE_DIRS} 
-  ${Slicer_Base_INCLUDE_DIRS}
-  )
-
-# Add link directories needed to use Slicer.
 link_directories(
   ${Slicer_Libs_LIBRARY_DIRS}
   ${Slicer_Base_LIBRARY_DIRS}
   )
 
-# Some people use Mesa instead of the default system OpenGL.
-# Try to help them a little.
-if(NOT WIN32)
-  foreach(dependency ${vtkftgl_LIB_DEPENDS})
-    get_filename_component(dependency_lib "${dependency}" NAME_WE)
-    if(dependency_lib STREQUAL "libGL")
-      get_filename_component(OPENGL_gl_LIBRARY_PATH "${dependency}" PATH)
-      link_directories("${OPENGL_gl_LIBRARY_PATH}")
-    endif(dependency_lib STREQUAL "libGL")
-  endforeach(dependency)
-endif(NOT WIN32)
+#-----------------------------------------------------------------------------
+# Include directories - See SlicerMacroBuildQtModule
+#------------------------------------------------------------------------------
 
-# Add cmake module path.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Slicer_CMAKE_DIR}")
-include(Slicer3Macros)
-include(Slicer3ModulesMacros)
-include(Slicer3PluginsMacros)
+#-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+  ${VTK_CMAKE_DIR}
+  ${CTK_CMAKE_DIR}
+  ${CTK_CMAKE_UTILITIES_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
+#-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#-----------------------------------------------------------------------------
+include(CMakeParseArguments)
+#include(ctkMacroCompilePythonScript)
 include(SlicerMacroParseArguments)
 include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildQtModule)
