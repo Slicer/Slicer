@@ -1,5 +1,7 @@
 PROJECT(SlicerLibs)
 
+# Enable this option to avoid unnecessary re-compilation associated with command line module
+SET(GENERATECLP_USE_MD5 ON)
 
 # --------------------------------------------------------------------------
 #                      ----] W A R N I N G [----

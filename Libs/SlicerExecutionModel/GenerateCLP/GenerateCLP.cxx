@@ -49,14 +49,20 @@
   streams.
 */
 
+#include "GenerateCLPConfig.h" // For GENERATECLP_USE_MD5
 
 #include <cstdlib>
 #include <cstdio>
 #include <fstream>
+#include <sstream>
 #include "expat.h"
 #include <string>
 #include <vector>
+
 #include <itksys/SystemTools.hxx>
+#ifdef GENERATECLP_USE_MD5
+# include <itksys/MD5.h>
+#endif
 
 #include "GenerateCLP.h"
 #include "ModuleDescriptionUtilities.h"
@@ -156,6 +162,13 @@ void GenerateEchoArgs(std::ostream &, ModuleDescription &);
  * structure */
 void GenerateProcessInformationAddressDecoding(std::ostream &sout);
 
+#ifdef GENERATECLP_USE_MD5
+///** Compute the md5sum of a file */
+bool ComputeFileMD5(const char* source, char* md5out);
+
+///** Compute the md5sum of a string.  */
+std::string ComputeStringMD5(const char* input);
+#endif
 
 } // end of anonymous namespace
 
@@ -197,24 +210,49 @@ main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
+  std::stringstream parametersGroupsMsg;
+
   // Print each command line arg
-  std::cerr << "GenerateCLP: Found " << module.GetParameterGroups().size() << " parameters groups" << std::endl;
+  parametersGroupsMsg << "GenerateCLP: Found " << module.GetParameterGroups().size() << " parameters groups" << std::endl;
   std::vector<ModuleParameterGroup>::const_iterator git;
   for (git = module.GetParameterGroups().begin();
        git != module.GetParameterGroups().end();
        ++git)
     {
-    std::cerr << "GenerateCLP: Group \"" << (*git).GetLabel() << "\" has " << (*git).GetParameters().size() << " parameters" << std::endl;
+    parametersGroupsMsg << "GenerateCLP: Group \"" << (*git).GetLabel() << "\" has " << (*git).GetParameters().size() << " parameters" << std::endl;
     }
 
+  //
+  // If GENERATE_USE_MD5 is defined, generated output will be appended into a stringstream.
+  //
+  // Following the generation, the MD5 of both the output buffer and 
+  // the existing file (if any) will be computed.
+  // 
+  // Three cases can be numbered:
+  //   1) Output file [OutputCxx] do NOT exists               => Write output buffer to file.
+  //   2) Output file [OutputCxx] exists and MD5 match        => Discard Output buffer.
+  //   3) Output file [OutputCxx] exists and MD5 do NOT match => Write output buffer to file.
+  //
+  // Computing the MD5 allows to update the file only if required. Since the 
+  // modified time associated the file will be updated only if it really changed, 
+  // extra compilation cycle could be avoided.
+  //
+  
   // Do the hard stuff
-  std::ofstream sout(OutputCxx.c_str(),std::ios::out);
+#ifdef GENERATECLP_USE_MD5
+  std::stringstream sout;
+#else
+  std::cout << parametersGroupsMsg.str();
+  std::cout.flush();
+
+  std::ofstream sout(OutputCxx.c_str(), std::ios::out);
   if (sout.fail())
     {
     std::cerr << argv[0] << ": Cannot open " << OutputCxx << " for output" << std::endl;
     perror(argv[0]);
     return EXIT_FAILURE;
     }
+#endif
   if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
     {
     std::cerr << argv[0] << ": Cannot open " << logoFiles[0] << " as a logo file" << std::endl;
@@ -234,7 +272,57 @@ main(int argc, char *argv[])
   GenerateEchoArgs(sout, module);
   GenerateProcessInformationAddressDecoding(sout);
   GeneratePost(sout);
+#ifndef GENERATECLP_USE_MD5
   sout.close();
+#endif
+
+#ifdef GENERATECLP_USE_MD5
+
+  bool writeOutputBuffer = true;
+  bool outputFileExists = itksys::SystemTools::FileExists(OutputCxx.c_str());
+  if (outputFileExists)
+    {
+    // Compute MD5 of output buffer
+    std::string outputBufferMD5 = itksys::SystemTools::LowerCase(ComputeStringMD5(sout.str().c_str()));
+
+    // Compute MD5 of existing file
+    char computedExistingOutputFileMD5[32];
+    bool success = ComputeFileMD5(OutputCxx.c_str(), computedExistingOutputFileMD5);
+
+    if (success)
+      {
+      std::string existingOutputFileMD5 =
+          itksys::SystemTools::LowerCase(std::string(computedExistingOutputFileMD5, 32));
+
+      if (outputBufferMD5.compare(existingOutputFileMD5) == 0)
+        {
+        std::cout << "GenerateCLP: File "
+                  << itksys::SystemTools::GetFilenameName(OutputCxx) << " up-to-date." << std::endl;
+        writeOutputBuffer = false;
+        }
+      }
+    else
+      {
+      std::cerr << argv[0] << ": Failed to compute MD5 of file:" << OutputCxx << std::endl;
+      }
+    }
+
+  if (writeOutputBuffer)
+    {
+    std::cout << parametersGroupsMsg.str();
+    std::cout.flush();
+
+    std::ofstream sOutputFile(OutputCxx.c_str(),std::ios::out);
+    if (sOutputFile.fail())
+      {
+      std::cerr << argv[0] << ": Cannot open " << OutputCxx << " for output" << std::endl;
+      perror(argv[0]);
+      return EXIT_FAILURE;
+      }
+    sOutputFile << sout.str();
+    sOutputFile.close();
+    }
+#endif
 
   return (EXIT_SUCCESS);
 }
@@ -1313,5 +1401,66 @@ void GenerateProcessInformationAddressDecoding(std::ostream &sout)
   sout << "sscanf(processInformationAddressString.c_str(), \"%p\", &CLPProcessInformation);" << EOL << std::endl;
   sout << "}" << std::endl;
 }
+
+#ifdef GENERATECLP_USE_MD5
+// Adapted from CMake/Source/cmSystemTools.cxx
+bool ComputeFileMD5(const char* source, char* md5out)
+{
+  if(!itksys::SystemTools::FileExists(source))
+    {
+    return false;
+    }
+
+  // Open files
+#if defined(_WIN32) || defined(__CYGWIN__)
+  itksys_ios::ifstream fin(source, itksys_ios::ios::binary | itksys_ios::ios::in);
+#else
+  itksys_ios::ifstream fin(source);
+#endif
+  if(!fin)
+    {
+    return false;
+    }
+
+  itksysMD5* md5 = itksysMD5_New();
+  itksysMD5_Initialize(md5);
+
+  // Should be efficient enough on most system:
+  const int bufferSize = 4096;
+  char buffer[bufferSize];
+  unsigned char const* buffer_uc =
+    reinterpret_cast<unsigned char const*>(buffer);
+  // This copy loop is very sensitive on certain platforms with
+  // slightly broken stream libraries (like HPUX).  Normally, it is
+  // incorrect to not check the error condition on the fin.read()
+  // before using the data, but the fin.gcount() will be zero if an
+  // error occurred.  Therefore, the loop should be safe everywhere.
+  while(fin)
+    {
+    fin.read(buffer, bufferSize);
+    if(int gcount = static_cast<int>(fin.gcount()))
+      {
+      itksysMD5_Append(md5, buffer_uc, gcount);
+      }
+    }
+  itksysMD5_FinalizeHex(md5, md5out);
+  itksysMD5_Delete(md5);
+
+  fin.close();
+  return true;
+}
+
+// Adapted from CMake/Source/cmSystemTools.cxx
+std::string ComputeStringMD5(const char* input)
+{
+  char md5out[32];
+  itksysMD5* md5 = itksysMD5_New();
+  itksysMD5_Initialize(md5);
+  itksysMD5_Append(md5, reinterpret_cast<unsigned char const*>(input), -1);
+  itksysMD5_FinalizeHex(md5, md5out);
+  itksysMD5_Delete(md5);
+  return std::string(md5out, 32);
+}
+#endif
 
 } // end of anonymous namespace

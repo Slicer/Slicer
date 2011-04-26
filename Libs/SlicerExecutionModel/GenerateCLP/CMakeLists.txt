@@ -48,6 +48,21 @@ include(${ITK_USE_FILE})
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
+if(NOT DEFINED GENERATECLP_USE_MD5)
+  option(GENERATECLP_USE_MD5 "Enabling that option will teach GenerateCLP to overwrite output file only if needed. Make sure to build ITK with KWSYS_USE_MD5 enabled." OFF)
+endif()
+
+# --------------------------------------------------------------------------
+# Configure header(s)
+# --------------------------------------------------------------------------
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPConfig.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPConfig.h
+  )
+
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 # --------------------------------------------------------------------------
 # Build executable
