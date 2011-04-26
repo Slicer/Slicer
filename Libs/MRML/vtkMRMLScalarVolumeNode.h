@@ -33,7 +33,6 @@ class vtkImageData;
 class vtkImageAccumulateDiscrete;
 class vtkImageBimodalAnalysis;
 class vtkMRMLStorageNode;
-class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
