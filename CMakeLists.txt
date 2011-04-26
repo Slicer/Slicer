@@ -540,8 +540,8 @@ INSTALL(FILES
 #-----------------------------------------------------------------------------
 
 INCLUDE_DIRECTORIES(
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_BINARY_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   )
   
 #-----------------------------------------------------------------------------
@@ -615,8 +615,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Launcher for slicer
 #-----------------------------------------------------------------------------
-
-# let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
 # on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
