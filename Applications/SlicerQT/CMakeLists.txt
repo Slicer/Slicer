@@ -94,13 +94,14 @@ target_link_libraries(${lib_name}
 # --------------------------------------------------------------------------
 
 IF(Q_WS_MAC)
-  SET(apple_bundle_sources "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer.icns")
+  SET(apple_icon_file Slicer.icns)
+  SET(apple_bundle_sources "${CMAKE_CURRENT_SOURCE_DIR}/Resources/${apple_icon_file}")
   SET_SOURCE_FILES_PROPERTIES(
-    "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer.icns"
+    "${apple_bundle_sources}"
     PROPERTIES
     MACOSX_PACKAGE_LOCATION Resources
     )
-  SET(MACOSX_BUNDLE_ICON_FILE Slicer.icns)
+  SET(MACOSX_BUNDLE_ICON_FILE ${apple_icon_file})
 ENDIF(Q_WS_MAC)
 
 IF(QT_MAC_USE_COCOA)
