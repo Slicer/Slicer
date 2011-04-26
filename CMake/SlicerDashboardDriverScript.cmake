@@ -37,6 +37,9 @@ endif()
 if(NOT DEFINED CTEST_PARALLEL_LEVEL)
   set(CTEST_PARALLEL_LEVEL 8)
 endif()
+if(NOT DEFINED WITH_EXTENSIONS)
+  set(WITH_EXTENSIONS OFF)
+endif()
 
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
@@ -119,6 +122,7 @@ Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
 DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
+Slicer_BUILD_EXTENSIONS:BOOL=${WITH_EXTENSIONS}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
@@ -219,6 +223,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     if (WITH_PACKAGES AND run_ctest_with_packages)
       message("----------- [ WITH_PACKAGES ] -----------")
+      
+      #-----------------------------------------------------------------------------
+      # Build and upload Slicer packages
+      #-----------------------------------------------------------------------------
       include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
       set(packages)
       message("Packaging ...")
@@ -231,6 +239,30 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         ctest_upload(FILES ${p})
         ctest_submit(PARTS Upload)
       endforeach()
+      
+      #-----------------------------------------------------------------------------
+      # Build and upload extension packages
+      #-----------------------------------------------------------------------------
+      if(WITH_EXTENSIONS)
+        # Collect extension description file (*.s4ext)
+        file(GLOB_RECURSE s4extfiles "${CTEST_SOURCE_DIRECTORY}/Extensions/*.s4ext")
+        foreach(file ${s4extfiles})
+          # Extract file basename
+          get_filename_component(extension_name ${file} NAME_WE)
+          message("Packaging extension ${extension_name} ...")
+          set(extension_packages)
+          SlicerFunctionCTestPackage(
+            BINARY_DIR ${CTEST_BINARY_DIRECTORY}/Extensions/${extension_name}-build
+            CONFIG ${CTEST_BUILD_CONFIGURATION}
+            RETURN_VAR extension_packages)
+          message("Uploading extension ${extension_name} ...")
+          foreach(p ${extension_packages})
+            ctest_upload(FILES ${p})
+            ctest_submit(PARTS Upload)
+          endforeach()
+        endforeach()
+      endif()
+      
     endif()
     
     #-----------------------------------------------------------------------------
