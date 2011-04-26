@@ -43,19 +43,25 @@ configure_file(
 # --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  file(GLOB headers "${TCLAP_SOURCE_DIR}/include/tclap/*.h")
+  # Note "COPYING" is a filename containing the license file
+  install(
+    FILES ${headers} COPYING
+    DESTINATION include/tclap COMPONENT Development
+    )
+ENDIF()
 
-file(GLOB __files1 "${TCLAP_SOURCE_DIR}/include/tclap/*.h")
-# Note "COPYING" is a filename containing the license file
-install(FILES 
-  ${__files1} 
-  COPYING
-  DESTINATION include/tclap COMPONENT Development
-  )
-
+# --------------------------------------------------------------------------
 # Install support files
 # --------------------------------------------------------------------------
-install(FILES 
-  ${TCLAP_BINARY_DIR}/UseTCLAP.cmake 
-  ${TCLAP_BINARY_DIR}/install/TCLAPConfig.cmake 
-  DESTINATION lib/tclap COMPONENT Development
-  )
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(FILES 
+    ${TCLAP_BINARY_DIR}/UseTCLAP.cmake 
+    ${TCLAP_BINARY_DIR}/install/TCLAPConfig.cmake 
+    DESTINATION lib/tclap COMPONENT Development
+    )
+ENDIF()

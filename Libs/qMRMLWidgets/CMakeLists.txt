@@ -272,11 +272,18 @@ SET(QT_INCLUDE_DIRS
 SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
-FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-INSTALL(FILES
-  ${headers}
-  DESTINATION include/${PROJECT_NAME} COMPONENT Development
-  )
+# --------------------------------------------------------------------------
+# Install headers
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  install(
+    FILES ${headers}
+    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Build library

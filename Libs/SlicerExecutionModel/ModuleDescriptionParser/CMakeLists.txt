@@ -76,13 +76,16 @@ configure_file(
 # --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
-
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/ModuleDescriptionParserConfigure.h"
-  DESTINATION include/${PROJECT_NAME} COMPONENT Development
-  )
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  install(
+    FILES ${headers} "${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}"
+    DESTINATION include/${PROJECT_NAME} COMPONENT Development
+    )
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Sources
@@ -216,9 +219,14 @@ include(GenerateModuleDescriptionParserConfig.cmake)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY)
+  
+# --------------------------------------------------------------------------
+# Install support files
+# --------------------------------------------------------------------------
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(FILES 
+    ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 
+    ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
+    DESTINATION lib/${lib_name} COMPONENT Development)
+ENDIF()
 
-install(FILES 
-  ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 
-  ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
-  DESTINATION lib/${lib_name} COMPONENT Development
-  )

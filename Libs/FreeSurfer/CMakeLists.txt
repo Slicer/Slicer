@@ -55,12 +55,18 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(
-  FILES ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/FreeSurferConfigure.h" 
-  DESTINATION include/${PROJECT_NAME} COMPONENT Development
-  )
+# --------------------------------------------------------------------------
+# Install headers
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  install(
+    FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
+    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Sources
@@ -161,26 +167,34 @@ install(
 # --------------------------------------------------------------------------
 # Install Test Data
 # --------------------------------------------------------------------------
-file(GLOB_RECURSE PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.png")
-file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
-file(GLOB_RECURSE CURVFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.curv")
-file(GLOB_RECURSE ORIGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.orig")
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  #file(GLOB_RECURSE PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.png")
+  #file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
+  #file(GLOB_RECURSE CURVFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.curv")
+  #file(GLOB_RECURSE ORIGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.orig")
 
-foreach(file 
-    ${PNGFILES}
-    ${TCLFILES}
-    ${CURVFILES}
-    ${ORIGFILES}
-    )
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
-    COPYONLY
-    )
-endforeach() 
+  #foreach(file 
+  #    ${PNGFILES}
+  #    ${TCLFILES}
+  #    ${CURVFILES}
+  #    ${ORIGFILES}
+  #    )
+  #  configure_file(
+  #    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+  #    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
+  #    COPYONLY
+  #    )
+  #endforeach()
 
-install(DIRECTORY
-  Testing
-  DESTINATION share/${PROJECT_NAME} COMPONENT Development
-  PATTERN ".svn" EXCLUDE
-  )
+  install(DIRECTORY
+    Testing
+    DESTINATION share/${PROJECT_NAME} COMPONENT Development
+    PATTERN "*.cxx" EXCLUDE
+    PATTERN ".svn" EXCLUDE
+    PATTERN "*.tcl" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE
+    )
+ENDIF()

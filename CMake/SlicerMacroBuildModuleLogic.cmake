@@ -128,14 +128,28 @@ MACRO(SlicerMacroBuildModuleLogic)
     ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
     )
 
+  # --------------------------------------------------------------------------
   # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${MODULELOGIC_NAME} COMPONENT Development
-    )
-
+  # --------------------------------------------------------------------------
+  IF(DEFINED Slicer_DEVELOPMENT_INSTALL)
+    IF(NOT DEFINED ${MODULELOGIC_NAME}_DEVELOPMENT_INSTALL)
+      SET(${MODULELOGIC_NAME}_DEVELOPMENT_INSTALL ${Slicer_DEVELOPMENT_INSTALL})
+    ENDIF()
+  ELSE()
+    IF (NOT DEFINED ${MODULELOGIC_NAME}_DEVELOPMENT_INSTALL)
+      SET(${MODULELOGIC_NAME}_DEVELOPMENT_INSTALL OFF)
+    ENDIF()
+  ENDIF()
+  
+  IF(${MODULELOGIC_NAME}_DEVELOPMENT_INSTALL)
+    FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    INSTALL(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${MODULELOGIC_NAME} COMPONENT Development
+      )
+  ENDIF()
+  
   IF(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
     # TODO: A parameter named 'WRAPPED_TARGET_LIBRARIES'

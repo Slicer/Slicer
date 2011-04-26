@@ -73,20 +73,30 @@ include(GenerateGenerateCLPConfig.cmake)
 if(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
   SET(GenerateCLP_INSTALL_BIN_DIR bin)
 endif()
-
-install(TARGETS GenerateCLP RUNTIME 
-  DESTINATION ${GenerateCLP_INSTALL_BIN_DIR} COMPONENT Development
-  )
-install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
-  DESTINATION lib/GenerateCLP
-  COMPONENT Development
-  RENAME GenerateCLPConfig.cmake
-  )
-install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
-  DESTINATION lib/GenerateCLP
-  COMPONENT Development
-  RENAME UseGenerateCLP.cmake
-  )
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+ENDIF()
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(TARGETS GenerateCLP RUNTIME 
+    DESTINATION ${GenerateCLP_INSTALL_BIN_DIR} COMPONENT Development
+    )
+ENDIF()
+  
+# --------------------------------------------------------------------------
+# Install support files
+# --------------------------------------------------------------------------
+IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
+    DESTINATION lib/GenerateCLP
+    COMPONENT Development
+    RENAME GenerateCLPConfig.cmake
+    )
+  install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
+    DESTINATION lib/GenerateCLP
+    COMPONENT Development
+    RENAME UseGenerateCLP.cmake
+    )
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Launcher
@@ -122,9 +132,14 @@ if(NOT WIN32)
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c)
   add_dependencies(GenerateCLPLauncher GenerateCLP)
 
-  install(TARGETS GenerateCLPLauncher RUNTIME 
-    DESTINATION bin COMPONENT Development
-    )
+  # --------------------------------------------------------------------------
+  # Install launcher
+  # --------------------------------------------------------------------------
+  IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+    install(TARGETS GenerateCLPLauncher RUNTIME 
+      DESTINATION bin COMPONENT Development
+      )
+  ENDIF()
 endif()
 
 # --------------------------------------------------------------------------

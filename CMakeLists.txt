@@ -161,6 +161,19 @@ SET(Slicer_ITK_GIT_TAG "origin/slicer-4.0" CACHE STRING "ITK git tag to use")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 
 #-----------------------------------------------------------------------------
+# Install no development files by default, but allow the user to get
+# them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
+#-----------------------------------------------------------------------------
+#OPTION(Slicer_INSTALL_DEVELOPMENT "Install Slicer extension development files." OFF)
+#MARK_AS_ADVANCED(Slicer_INSTALL_DEVELOPMENT)
+SET(Slicer_INSTALL_DEVELOPMENT OFF)
+IF(NOT Slicer_INSTALL_DEVELOPMENT)
+  SET(Slicer_INSTALL_NO_DEVELOPMENT 1)
+ELSE ()
+  SET(Slicer_INSTALL_NO_DEVELOPMENT 0)
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
 
@@ -573,11 +586,13 @@ FOREACH(f ${files})
     )
 ENDFOREACH()
 
-INSTALL(FILES 
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
-  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
-  )
+IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  INSTALL(FILES 
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
+    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Set C/CXX Flags
@@ -620,7 +635,6 @@ INSTALL(FILES
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )
-
 
 #-----------------------------------------------------------------------------
 # Includes
@@ -690,12 +704,14 @@ ENDIF()
 
 # Install testing data
 
-INSTALL(DIRECTORY
-  Testing
-  DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
-  PATTERN ".svn" EXCLUDE
-  PATTERN "CMakeLists.txt" EXCLUDE
-  )
+IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  INSTALL(DIRECTORY
+    Testing
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
+    PATTERN ".svn" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Launcher for slicer
@@ -742,18 +758,20 @@ ADD_SUBDIRECTORY(Utilities/Package)
 
 ADD_SUBDIRECTORY(Utilities/Doxygen)
 
-#FILE(GLOB cmake_files "${CMAKE_CURRENT_SOURCE_DIR}/CMake/*.cmake")
-#INSTALL(
-#  FILES ${cmake_files}
-#  DESTINATION ${Slicer_INSTALL_LIB_DIR}/CMake COMPONENT Development
-#  )
+IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  FILE(GLOB cmake_files "${CMAKE_CURRENT_SOURCE_DIR}/CMake/*.cmake")
+  INSTALL(
+    FILES ${cmake_files}
+    DESTINATION ${Slicer_INSTALL_LIB_DIR}/CMake COMPONENT Development
+    )
 
-#INSTALL(FILES
-#  ${Slicer_BINARY_DIR}/UseSlicer.cmake
-#  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake
-#  DESTINATION ${Slicer_INSTALL_LIB_DIR}
-#  COMPONENT Development
-#  )
+  INSTALL(FILES
+    ${Slicer_BINARY_DIR}/UseSlicer.cmake
+    ${Slicer_BINARY_DIR}/SlicerConfig.cmake
+    DESTINATION ${Slicer_INSTALL_LIB_DIR}
+    COMPONENT Development
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as

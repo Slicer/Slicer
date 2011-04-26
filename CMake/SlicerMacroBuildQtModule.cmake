@@ -154,13 +154,28 @@ MACRO(slicerMacroBuildQtModule)
     LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
     )
-
+  
+  # --------------------------------------------------------------------------
   # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${QTMODULE_NAME} COMPONENT Development
-    )
+  # --------------------------------------------------------------------------
+  IF(DEFINED Slicer_DEVELOPMENT_INSTALL)
+    IF(NOT DEFINED ${QTMODULE_NAME}_DEVELOPMENT_INSTALL)
+      SET(${QTMODULE_NAME}_DEVELOPMENT_INSTALL ${Slicer_DEVELOPMENT_INSTALL})
+    ENDIF()
+  ELSE()
+    IF (NOT DEFINED ${QTMODULE_NAME}_DEVELOPMENT_INSTALL)
+      SET(${QTMODULE_NAME}_DEVELOPMENT_INSTALL OFF)
+    ENDIF()
+  ENDIF()
+
+  IF(${QTMODULE_NAME}_DEVELOPMENT_INSTALL)
+    # Install headers
+    FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    INSTALL(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${QTMODULE_NAME} COMPONENT Development
+      )
+  ENDIF()
 
 ENDMACRO()

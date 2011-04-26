@@ -198,15 +198,20 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
-
+  
+  # --------------------------------------------------------------------------
   # Install headers
-  FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-    )
-
+  # --------------------------------------------------------------------------
+  IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+    # Install headers
+    FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    INSTALL(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+      )
+  ENDIF()
+  
   # --------------------------------------------------------------------------
   # PythonQt wrapping
   # --------------------------------------------------------------------------
