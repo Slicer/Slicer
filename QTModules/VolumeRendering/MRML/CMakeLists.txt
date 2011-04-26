@@ -18,9 +18,9 @@ SET(module_mrml_include_directories
 
 # Source files
 SET(module_mrml_SRCS
-  vtkMRMLVolumeRenderingParametersNode.cxx
+  vtkMRMLVolumeRenderingDisplayNode.cxx
   vtkMRMLVolumeRenderingScenarioNode.cxx
-  vtkMRMLVolumeRenderingParametersNode.h
+  vtkMRMLVolumeRenderingDisplayNode.h
   vtkMRMLVolumeRenderingScenarioNode.h
   )
 

@@ -8,7 +8,7 @@
 
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
@@ -43,9 +43,9 @@ public:
   virtual void Create();
   
   // Description:
-  // Get, Set and Observe VolumeRenderingParametersNode
-  vtkGetObjectMacro (VolumeRenderingParametersNode, vtkMRMLVolumeRenderingParametersNode);
-  void SetAndObserveVolumeRenderingParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  // Get, Set and Observe DisplayNode
+  vtkGetObjectMacro (DisplayNode, vtkMRMLVolumeRenderingDisplayNode);
+  void SetAndObserveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   // Description:
   // Get, Set and Observe VolumeNode
@@ -79,7 +79,7 @@ public:
   // -1: requested mapper not supported
   //  0: invalid input parameter
   //  1: success
-  int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 
   // Description:
@@ -88,31 +88,33 @@ public:
                                   unsigned long /*event*/,
                                   void * /*callData*/ );
 
+  virtual void UpdateFromMRML();
+
   // Description:
   // Get Volume Actor
   vtkVolume* GetVolumeActor(){return this->Volume;}
 
-  void SetupHistograms(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetupHistograms(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
 
-  void SetupHistogramsFg(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetupHistogramsFg(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
 
-  void SetExpectedFPS(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetGPUMemorySize(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetCPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetGPURaycastParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetGPURaycast3Parameters(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void SetROI(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void SetExpectedFPS(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetGPUMemorySize(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetGPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetGPURaycast3Parameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetROI(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void TransformModified(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void TransformModified(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void SetVolumeVisibility(int isVisible);
 
@@ -120,15 +122,27 @@ public:
    * 0: cpu ray cast not used
    * 1: success
    */
-  int SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
+  int SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingDisplayNode* vspNode, int buttonDown);
 
   /* return values:
    * 0: mapper not supported
    * 1: mapper supported
    */
-  int IsCurrentMapperSupported(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  int IsCurrentMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  
+  virtual void OnMRMLSceneAboutToBeClosedEvent();
+  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
+  void RemoveMRMLObservers();
+
+  void UpdateDisplayNodeObservers();
+
+  void RemoveDisplayNodeObservers();
+
 protected:
   vtkMRMLVolumeRenderingDisplayableManager();
   ~vtkMRMLVolumeRenderingDisplayableManager();
@@ -184,7 +198,7 @@ protected:
 
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
-  vtkMRMLVolumeRenderingParametersNode* VolumeRenderingParametersNode;
+  vtkMRMLVolumeRenderingDisplayNode*    DisplayNode;
   vtkMRMLVolumeRenderingScenarioNode*   ScenarioNode;
   vtkMRMLViewNode*                      ViewNode;
 
@@ -196,20 +210,23 @@ protected:
 
   int SceneIsLoadingFlag;
   int ProcessingMRMLFlag;
+  int UpdatingFromMRML;
+
+  std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *>      DisplayNodes;
+
 
 protected:
   void OnScenarioNodeModified();
-  void OnViewNodeModified();
-  void OnVolumeRenderingParameterNodeModified();
+  void OnVolumeRenderingDisplayNodeModified();
+
 
   void ComputeInternalVolumeSize(int index);
-  void CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output);
-  void EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode);
-  vtkMRMLVolumeRenderingParametersNode* GetCurrentParametersNode();
+  void CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output);
+  void EstimateSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void RemoveVolumeFromViewers();
   void AddVolumeToViewers();
-  void InitializePipelineFromParametersNode();
-  int ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void InitializePipelineFromDisplayNode();
+  int ValidateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 };
 

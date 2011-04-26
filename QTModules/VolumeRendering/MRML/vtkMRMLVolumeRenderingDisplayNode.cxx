@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLVolumeRenderingParametersNode.cxx,v $
+Module:    $RCSfile: vtkMRMLVolumeRenderingDisplayNode.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -18,38 +18,38 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
 
 
 //------------------------------------------------------------------------------
-vtkMRMLVolumeRenderingParametersNode* vtkMRMLVolumeRenderingParametersNode::New()
+vtkMRMLVolumeRenderingDisplayNode* vtkMRMLVolumeRenderingDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingParametersNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingDisplayNode");
   if(ret)
     {
-    return (vtkMRMLVolumeRenderingParametersNode*)ret;
+    return (vtkMRMLVolumeRenderingDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingParametersNode;
+  return new vtkMRMLVolumeRenderingDisplayNode;
 }
 
 //----------------------------------------------------------------------------
 
-vtkMRMLNode* vtkMRMLVolumeRenderingParametersNode::CreateNodeInstance()
+vtkMRMLNode* vtkMRMLVolumeRenderingDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingParametersNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingDisplayNode");
   if(ret)
     {
-    return (vtkMRMLVolumeRenderingParametersNode*)ret;
+    return (vtkMRMLVolumeRenderingDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingParametersNode;
+  return new vtkMRMLVolumeRenderingDisplayNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
+vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 {
   this->HideFromEditors = 0;
 
@@ -118,7 +118,7 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingParametersNode::~vtkMRMLVolumeRenderingParametersNode()
+vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode()
 {
   if (this->VolumeNodeID)
     {
@@ -147,7 +147,7 @@ vtkMRMLVolumeRenderingParametersNode::~vtkMRMLVolumeRenderingParametersNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
 
@@ -336,7 +336,7 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
@@ -371,7 +371,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   if (this->VolumeNodeID && !strcmp(oldID, this->VolumeNodeID))
     {
@@ -396,7 +396,7 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateReferenceID(const char *oldID, 
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::UpdateReferences()
+void vtkMRMLVolumeRenderingDisplayNode::UpdateReferences()
 {
    Superclass::UpdateReferences();
 
@@ -425,10 +425,10 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateReferences()
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLVolumeRenderingParametersNode *node = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(anode);
+  vtkMRMLVolumeRenderingDisplayNode *node = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(anode);
   this->DisableModifiedEventOn();
 
   this->SetVolumeNodeID(node->GetVolumeNodeID());
@@ -466,7 +466,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumeNodeID(const char *volumeNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumeNodeID(const char *volumeNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
 
@@ -479,7 +479,7 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumeNodeID(const char 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumeNodeID(const char *volumeNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveFgVolumeNodeID(const char *volumeNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, NULL);
 
@@ -492,7 +492,7 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumeNodeID(const cha
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetVolumeNode()
+vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 {
   if (this->VolumeNodeID == NULL)
     {
@@ -509,7 +509,7 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetFgVolumeNode()
+vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumeNode()
 {
   if (this->FgVolumeNodeID == NULL)
     {
@@ -526,7 +526,7 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetFgVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumePropertyNodeID(const char *VolumePropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumePropertyNodeID(const char *VolumePropertyNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
 
@@ -539,7 +539,7 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumePropertyNodeID(con
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumePropertyNodeID(const char *VolumePropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveFgVolumePropertyNodeID(const char *VolumePropertyNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, NULL);
 
@@ -552,7 +552,7 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveFgVolumePropertyNodeID(c
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingParametersNode::GetVolumePropertyNode()
+vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumePropertyNode()
 {
   if (this->VolumePropertyNodeID == NULL)
     {
@@ -569,7 +569,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingParametersNode::GetVolumeProper
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingParametersNode::GetFgVolumePropertyNode()
+vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumePropertyNode()
 {
   if (this->FgVolumePropertyNodeID == NULL)
     {
@@ -586,7 +586,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingParametersNode::GetFgVolumeProp
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::SetAndObserveROINodeID(const char *ROINodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveROINodeID(const char *ROINodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
 
@@ -598,7 +598,7 @@ void vtkMRMLVolumeRenderingParametersNode::SetAndObserveROINodeID(const char *RO
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLROINode* vtkMRMLVolumeRenderingParametersNode::GetROINode()
+vtkMRMLROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
 {
   if (this->ROINodeID == NULL)
     {
@@ -615,7 +615,7 @@ vtkMRMLROINode* vtkMRMLVolumeRenderingParametersNode::GetROINode()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLVolumeRenderingDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
   this->SetAndObserveVolumeNodeID(this->VolumeNodeID);
@@ -626,7 +626,7 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     unsigned long event,
                                                     void *callData )
 {
@@ -636,7 +636,7 @@ void vtkMRMLVolumeRenderingParametersNode::ProcessMRMLEvents ( vtkObject *caller
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingParametersNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 

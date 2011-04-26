@@ -6,19 +6,19 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLVolumeRenderingParametersNode.h,v $
+  Module:    $RCSfile: vtkMRMLVolumeRenderingDisplayNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeRenderingParametersNode - MRML node for storing a slice through RAS space
+// .NAME vtkMRMLVolumeRenderingDisplayNode - MRML node for storing a slice through RAS space
 // .SECTION Description
 // This node stores the information about the currently selected volume
 //
 //
 
-#ifndef __vtkMRMLVolumeRenderingParametersNode_h
-#define __vtkMRMLVolumeRenderingParametersNode_h
+#ifndef __vtkMRMLVolumeRenderingDisplayNode_h
+#define __vtkMRMLVolumeRenderingDisplayNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
@@ -32,11 +32,11 @@
 #include "vtkMatrix4x4.h"
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLNode
+class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
   public:
-  static vtkMRMLVolumeRenderingParametersNode *New();
-  vtkTypeMacro(vtkMRMLVolumeRenderingParametersNode,vtkMRMLNode);
+  static vtkMRMLVolumeRenderingDisplayNode *New();
+  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -203,10 +203,10 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParam
 
   
 protected:
-  vtkMRMLVolumeRenderingParametersNode();
-  ~vtkMRMLVolumeRenderingParametersNode();
-  vtkMRMLVolumeRenderingParametersNode(const vtkMRMLVolumeRenderingParametersNode&);
-  void operator=(const vtkMRMLVolumeRenderingParametersNode&);
+  vtkMRMLVolumeRenderingDisplayNode();
+  ~vtkMRMLVolumeRenderingDisplayNode();
+  vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
+  void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
   char *VolumeNodeID;
   vtkSetReferenceStringMacro(VolumeNodeID);

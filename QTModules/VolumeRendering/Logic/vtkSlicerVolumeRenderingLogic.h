@@ -29,7 +29,7 @@
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
 #include <vtkMRMLROINode.h>
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 // STD includes
@@ -38,8 +38,7 @@
 #include "VolumeRenderingLogicExport.h"
 
 class vtkMRMLScalarVolumeNode;
-class vtkMRMLScalarVolumeDisplayNode;
-class vtkMRMLVolumeHeaderlessStorageNode;
+class vtkMRMLViewNode;
 class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
@@ -68,14 +67,14 @@ public:
   //ETX
 
   // Description:
-  // Create VolumeRenderingParametersNode
-  vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
+  // Create DisplayNode
+  vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode();
 
   // Description:
-  // Update VolumeRenderingParametersNode from VolumeNode,
+  // Update DisplayNode from VolumeNode,
   // if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
   // and initioalize them from VolumeNode
-  void UpdateParametersNodeFromVolumeNode(vtkMRMLVolumeRenderingParametersNode *paramNode, 
+  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
                                           vtkMRMLVolumeNode *volumeNode, 
                                           vtkMRMLVolumePropertyNode **propNode,
                                           vtkMRMLROINode **roiNode);
@@ -84,17 +83,41 @@ public:
   // Create VolumeRenderingScenarioNode
   vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
 
-  void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  // Description:
+  // Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
+  void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode *volumeNode, 
+                                        vtkMRMLViewNode *viewNode);
 
-  void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  // Description:
+  // Find volume rendering display node reference in the volume
+  vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeByID(vtkMRMLVolumeNode *volumeNode, 
+                                                                    char *displayNodeID);
+  // Description:
+  // Find volume rendering display node referencing the view node and volume node
+  vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
+                                                        vtkMRMLVolumeNode *volumeNode, 
+                                                        vtkMRMLViewNode *viewNode);
+  // Description:
+  // Find volume rendering display node referencing the view node in the scene
+  vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
+                                                        vtkMRMLViewNode *viewNode);
 
-  void UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  // Description:
+  // Find first volume rendering display node
+  vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNode(vtkMRMLVolumeNode *volumeNode);
 
-  void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
-  void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void FitROIToVolume(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  void UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  void FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 

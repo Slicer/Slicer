@@ -5,7 +5,7 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerVolumeRenderingModuleExport.h"
-#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
@@ -29,7 +29,7 @@ public slots:
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
-  void setMRMLParameterNode(vtkMRMLNode* node);
+  void setMRMLDisplayNode(vtkMRMLNode* node);
 
   void setMRMLROINode(vtkMRMLNode* node);
 
@@ -37,7 +37,7 @@ public slots:
 
   void setMRMLViewNode(vtkMRMLNode* node);
 
-  vtkMRMLVolumeRenderingParametersNode* createParameterNode();
+  vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
@@ -47,6 +47,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);
   Q_DISABLE_COPY(qSlicerVolumeRenderingModuleWidget);
+  bool settingVolumeNode;
+  bool settingDisplayNode;
 };
 
 #endif

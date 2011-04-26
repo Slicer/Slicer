@@ -222,10 +222,13 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   void SetActiveScalarName(const char *scalarName);
     
   /// Add View Node ID for the view to display this node in.
-  void AddViewNodeID(char* viewNodeID)
-  {
-    ViewNodeIDs.push_back(viewNodeID);
-  }
+  void AddViewNodeID(const char* viewNodeID);
+
+  /// Remove View Node ID for the view to display this node in.
+  void RemoveViewNodeID(char* viewNodeID);
+
+  /// Remove All View Node IDs for the views to display this node in.
+  void RemoveAllViewNodeIDs();
 
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
@@ -236,15 +239,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 
   /// Get View Node ID's for the view to display this node in.
   /// If NULL, display in all views
-  const char* GetNthViewNodeID(unsigned int index)
-  {
-    if (index >= ViewNodeIDs.size())
-      {
-      vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-" << ViewNodeIDs.size()-1 );
-      return NULL;
-      }
-    return ViewNodeIDs[index].c_str();
-  }
+  const char* GetNthViewNodeID(unsigned int index);
   
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views

@@ -146,6 +146,21 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
     of << indent << " activeScalarName=\"" << this->ActiveScalarName << "\"";
     }
 
+  std::stringstream ss;
+  unsigned int n;
+  for (n=0; n < this->ViewNodeIDs.size(); n++) 
+    {
+    ss << this->ViewNodeIDs[n];
+    if (n < ViewNodeIDs.size()-1)
+      {
+      ss << " ";
+      }
+    }
+  if (this->ViewNodeIDs.size() > 0) 
+    {
+    of << indent << " viewNodeRef=\"" << ss.str().c_str() << "\"";
+    }
+
   of << " ";
 }
 
@@ -156,6 +171,23 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
     {
     this->SetAndObserveColorNodeID(newID);
     }
+  else
+    {
+    bool modified = false;
+    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+      {
+      if ( std::string(oldID) == this->ViewNodeIDs[i])
+        {
+        this->ViewNodeIDs[i] =  std::string(newID);
+        modified = true;
+        }
+      }
+    if (modified)
+      {
+      this->Modified();
+      }
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -334,7 +366,18 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       {
       this->SetActiveScalarName(attValue);
       }
+    else if (!strcmp(attName, "viewNodeRef")) 
+      {
+      std::stringstream ss(attValue);
+      while (!ss.eof())
+        {
+        std::string id;
+        ss >> id;
+        this->AddViewNodeID(id.c_str());
+        }
 
+      //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
+      }  
     }  
     this->EndModify(disabledModify);
 }
@@ -378,6 +421,12 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
+  int ndnodes = node->GetNumberOfViewNodeIDs();
+  for (int i=0; i<ndnodes; i++)
+    {
+    this->AddViewNodeID(node->ViewNodeIDs[i].c_str());
+    }
+
   this->EndModify(disabledModify);
 }
 
@@ -417,6 +466,13 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent<< "ActiveScalarName: " <<
     (this->ActiveScalarName ? this->ActiveScalarName : "(none)") << "\n";
+
+  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    {
+    os << indent << "ViewNodeIDs[" << i << "]: " <<
+      this->ViewNodeIDs[i] << "\n";
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -479,6 +535,22 @@ void vtkMRMLDisplayNode::UpdateReferences()
     {
     this->SetAndObserveColorNodeID(NULL);
     }
+
+  std::vector< std::string > viewNodeIDs;
+
+  for (unsigned int i=0; i < this->ViewNodeIDs.size(); i++)
+    {
+    if (this->Scene->GetNodeByID(this->ViewNodeIDs[i]) != NULL)
+      {
+      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
+      }    
+    }
+  if (this->ViewNodeIDs.size() != viewNodeIDs.size())
+    {
+    viewNodeIDs = this->ViewNodeIDs;
+    this->Modified();
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -600,3 +672,71 @@ void vtkMRMLDisplayNode::SetActiveScalarName(const char *scalarName)
   
   this->Modified();
 }
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
+{
+  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    {
+    if (std::string(viewNodeID) == this->ViewNodeIDs[i])
+      {
+      return; // already exists, do nothing
+      }
+    }
+
+  ViewNodeIDs.push_back(std::string(viewNodeID));
+  this->Scene->AddReferencedNodeID(viewNodeID, this); 
+
+  this->Modified();
+}
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
+{
+  if (viewNodeID == NULL)
+    {
+    return;
+    }
+  std::vector< std::string > viewNodeIDs;
+  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    {
+    if (std::string(viewNodeID) != this->ViewNodeIDs[i])
+      {
+      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
+      }
+    }
+  if (viewNodeIDs.size() != this->ViewNodeIDs.size())
+    {
+    this->Scene->RemoveReferencedNodeID(viewNodeID, this); 
+    this->ViewNodeIDs = viewNodeIDs;
+    this->Modified();
+    }
+  else
+    {
+    vtkErrorMacro("vtkMRMLDisplayNode::RemoveViewNodeID() id " << viewNodeID << " not found");
+    }
+}
+
+//-------------------------------------------------------
+void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
+{
+  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    {
+    this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this); 
+    }
+  this->ViewNodeIDs.clear();
+  this->Modified();
+}
+
+//-------------------------------------------------------
+const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
+{
+  if (index >= ViewNodeIDs.size())
+    {
+    vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-" << ViewNodeIDs.size()-1 );
+    return NULL;
+    }
+  return ViewNodeIDs[index].c_str();
+}
+
+
