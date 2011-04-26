@@ -141,11 +141,6 @@ ENDIF()
 # CPack
 # -------------------------------------------------------------------------
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
-  "${Slicer_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
-  @ONLY)
-
 include(InstallRequiredSystemLibraries)
 include(${CMAKE_CURRENT_SOURCE_DIR}/InstallDebugSystemLibraries.cmake)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
