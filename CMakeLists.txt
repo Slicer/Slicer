@@ -39,6 +39,7 @@ SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 INCLUDE(CMakeParseArguments)
 INCLUDE(Slicer3PluginsMacros)
 INCLUDE(SlicerMacroDiscoverSystemNameAndBits)
+INCLUDE(SlicerMacroExtractRepositoryInfo)
 INCLUDE(SlicerMacroParseArguments)
 INCLUDE(SlicerMacroBuildCLI)
 INCLUDE(SlicerMacroEmptyExternalProject)
@@ -518,34 +519,18 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_
 # Generate SlicerVersion.txt
 #-----------------------------------------------------------------------------
 
+SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
+
+SET(slicer_version_file ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt)
+
 # Note that Slicer_BUILD is set above
-
-SET(Slicer_WC_URL NA)
-SET(Slicer_WC_REVISION 0)
-
-SET(slicer_version_file_source ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in)
-SET(slicer_version_file_binary ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt)
-
-# Case where Slicer is checkout using SVN
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
-  Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
-  CONFIGURE_FILE(
-    ${slicer_version_file_source}
-    ${slicer_version_file_binary}
-    )
-ENDIF()
-
-# Case where Slicer is checkout using Git-SVN
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes)
-  GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
-  CONFIGURE_FILE(
-    ${slicer_version_file_source}
-    ${slicer_version_file_binary}
-    )
-ENDIF()
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
+  ${slicer_version_file}
+  )
 
 INSTALL(FILES
-  ${slicer_version_file_binary}
+  ${slicer_version_file}
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )
