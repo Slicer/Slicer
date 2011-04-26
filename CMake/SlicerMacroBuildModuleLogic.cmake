@@ -32,11 +32,11 @@ MACRO(SlicerMacroBuildModuleLogic)
   # Sanity checks
   IF(NOT DEFINED MODULELOGIC_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF(NOT DEFINED MODULELOGIC_NAME)
+  ENDIF()
 
   IF(NOT DEFINED MODULELOGIC_EXPORT_DIRECTIVE)
     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF(NOT DEFINED MODULELOGIC_EXPORT_DIRECTIVE)
+  ENDIF()
 
   # Define library name
   SET(lib_name ${MODULELOGIC_NAME})
@@ -48,7 +48,7 @@ MACRO(SlicerMacroBuildModuleLogic)
     FIND_PACKAGE(Slicer REQUIRED)
     INCLUDE(${Slicer_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
-  ENDIF(NOT Slicer_SOURCE_DIR)
+  ENDIF()
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -69,7 +69,7 @@ MACRO(SlicerMacroBuildModuleLogic)
   
   IF (NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
     MESSAGE("Warning, Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
-  ENDIF(NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
+  ENDIF()
   CONFIGURE_FILE(
     ${Slicer_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
@@ -169,14 +169,14 @@ MACRO(SlicerMacroBuildModuleLogic)
     
     FOREACH(c ${Slicer_Wrapped_LIBRARIES})
       TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c})
-    ENDFOREACH(c)
+    ENDFOREACH()
 
     TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD ${lib_name})
 
     ## Python modules on Windows must have the extension ".pyd"
     IF(WIN32 AND NOT CYGWIN)
       SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
-    ENDIF(WIN32 AND NOT CYGWIN)
+    ENDIF()
 
     # Apply user-defined properties to the library target.
     IF(Slicer_LIBRARY_PROPERTIES)
@@ -186,7 +186,7 @@ MACRO(SlicerMacroBuildModuleLogic)
       SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES
          ${Slicer_LIBRARY_PROPERTIES}
       )
-    ENDIF(Slicer_LIBRARY_PROPERTIES)
+    ENDIF()
 
     INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
       RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
@@ -224,6 +224,6 @@ del os
         )
     ENDIF()
 
-  ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+  ENDIF()
     
-ENDMACRO(SlicerMacroBuildModuleLogic)
+ENDMACRO()
