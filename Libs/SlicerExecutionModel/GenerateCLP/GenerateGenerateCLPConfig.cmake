@@ -3,6 +3,9 @@
 
 # Following the standard pattern, UseGenerateCLP.cmake is a configured file
 #
+
+get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)
+
 if(GenerateCLP_EXE_PATH)
   set(GENERATECLP_EXE "${GenerateCLP_EXE_PATH}")
 else(GenerateCLP_EXE_PATH)

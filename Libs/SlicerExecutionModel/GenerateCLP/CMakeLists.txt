@@ -52,9 +52,10 @@ endif()
 # --------------------------------------------------------------------------
 # Build and link executable
 # --------------------------------------------------------------------------
-set(GENERATECLP_SOURCE GenerateCLP.cxx)
+set(GENERATECLP_SOURCE 
+  GenerateCLP.cxx
+  )
 add_executable(GenerateCLP ${GENERATECLP_SOURCE})
-get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)
 
 target_link_libraries(GenerateCLP
   # Appearently windows does not like static libs mixed with shared libs ModuleDescriptionParser-static
