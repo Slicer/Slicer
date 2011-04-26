@@ -135,21 +135,15 @@ endif()
 
 include(SuperBuild/External_VTK.cmake)
 include(SuperBuild/External_Insight.cmake)
-
-if(Slicer_USE_QT)
-  include(SuperBuild/External_CTK.cmake)
-  if (Slicer_USE_CTKAPPLAUNCHER)
-    include(SuperBuild/External_CTKAPPLAUNCHER.cmake)
-  endif()
+include(SuperBuild/External_CTK.cmake)
+if (Slicer_USE_CTKAPPLAUNCHER)
+  include(SuperBuild/External_CTKAPPLAUNCHER.cmake)
 endif()
-
 include(SuperBuild/External_teem.cmake)
 include(SuperBuild/External_OpenIGTLink.cmake)
-
 if(Slicer_USE_BatchMake)
   include(SuperBuild/External_BatchMake.cmake)
 endif()
-
 include(SuperBuild/External_cmcurl.cmake)
 include(SuperBuild/External_libarchive.cmake)
 
@@ -163,11 +157,9 @@ if (Slicer_USE_PYTHONQT_WITH_TCL)
   endif()
 endif()
 
-if(Slicer_USE_QT)
-  list(APPEND slicer_DEPENDENCIES CTK)
-  if (Slicer_USE_CTKAPPLAUNCHER)
-    list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
-  endif()
+list(APPEND slicer_DEPENDENCIES CTK)
+if (Slicer_USE_CTKAPPLAUNCHER)
+  list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
 
 if(Slicer_USE_PYTHONQT)
@@ -208,7 +200,6 @@ SET(slicer_cmake_boolean_args
   WITH_MEMCHECK
   Slicer_BUILD_CLI
   Slicer_BUILD_QTLOADABLEMODULES
-  Slicer_USE_QT
   Slicer_USE_PYTHONQT
   Slicer_USE_PYTHONQT_WITH_TCL
   Slicer_USE_CTKAPPLAUNCHER

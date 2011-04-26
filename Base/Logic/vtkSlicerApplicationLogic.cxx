@@ -386,9 +386,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
                                             unsigned long /*event*/, 
                                             void * /*callData*/ )
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::ProcessMRMLEvents is deprecated");
-#endif
 
   //
   // Look for a selection node in the scene
@@ -511,9 +509,7 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::Connect (const char *URL)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Connect is deprecated");
-#endif
 
   if (this->GetMRMLScene())
     {
@@ -525,9 +521,7 @@ void vtkSlicerApplicationLogic::Connect (const char *URL)
 //----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::Commit()
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
-#endif
   if (this->GetMRMLScene())
     {
     return (this->GetMRMLScene()->Commit());
@@ -538,9 +532,7 @@ int vtkSlicerApplicationLogic::Commit()
 //----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::Commit(const char *URL)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
-#endif
   if (this->GetMRMLScene())
     {
     return (this->GetMRMLScene()->Commit(URL));
@@ -565,9 +557,7 @@ vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, SelectionNode, vtkMRMLSelectionN
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkSlicerApplicationLogic::GetSelectionNode()
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetSelectionNode is deprecated");
-#endif
   vtkDebugMacro(<< this->GetClassName() << " (" << this
                 << "): returning SelectionNode address " << this->SelectionNode );
   return this->SelectionNode;
@@ -579,9 +569,7 @@ vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, InteractionNode, vtkMRMLInteract
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode* vtkSlicerApplicationLogic::GetInteractionNode()
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetInteractionNode is deprecated");
-#endif
   vtkDebugMacro(<< this->GetClassName() << " (" << this
                 << "): returning InteractionNode address " << this->InteractionNode );
   return this->InteractionNode;
@@ -590,9 +578,7 @@ vtkMRMLInteractionNode* vtkSlicerApplicationLogic::GetInteractionNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutName)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetSliceLogic is deprecated");
-#endif
   if (this->InternalSliceLogicMap)
     {
     SliceLogicMap::const_iterator lend = (*this->InternalSliceLogicMap).end();
@@ -611,9 +597,7 @@ vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutNa
 // this function can be further improved to check if this is a duplicate.
 void vtkSlicerApplicationLogic::AddSliceLogic(const char *layoutName, vtkMRMLSliceLogic *sliceLogic)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::AddSliceLogic is deprecated");
-#endif
   if (this->InternalSliceLogicMap)
     {
     (*this->InternalSliceLogicMap)[layoutName] = sliceLogic;
@@ -622,9 +606,7 @@ void vtkSlicerApplicationLogic::AddSliceLogic(const char *layoutName, vtkMRMLSli
 
 void vtkSlicerApplicationLogic::AddSliceLogic(vtkMRMLSliceLogic *sliceLogic)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::AddSliceLogic is deprecated");
-#endif
   if (this->InternalSliceLogicMap)
     {
     (*this->InternalSliceLogicMap)[sliceLogic->GetName()] = sliceLogic;
@@ -633,9 +615,7 @@ void vtkSlicerApplicationLogic::AddSliceLogic(vtkMRMLSliceLogic *sliceLogic)
 
 void vtkSlicerApplicationLogic::RemoveSliceLogic(vtkMRMLSliceLogic *sliceLogic)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::RemoveSliceLogic is deprecated");
-#endif
   SliceLogicMap::iterator mit;
   for (mit = (*this->InternalSliceLogicMap).begin();
        mit != (*this->InternalSliceLogicMap).end(); ++mit)
@@ -652,9 +632,7 @@ void vtkSlicerApplicationLogic::RemoveSliceLogic(vtkMRMLSliceLogic *sliceLogic)
 
 void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::RemoveSliceLogic is deprecated");
-#endif
   SliceLogicMap::iterator mit;
   mit = (*this->InternalSliceLogicMap).find(layoutName);
   if (mit != (*this->InternalSliceLogicMap).end())
@@ -668,9 +646,7 @@ void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
 
 void vtkSlicerApplicationLogic::CreateSliceLogics()
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::CreateSliceLogics is deprecated");
-#endif
   // make sure there is a CrossHair in the scene
   vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
   crosshair->SetCrosshairName("default");
@@ -714,9 +690,7 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::DeleteSliceLogics()
 {
-#ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::DeleteSliceLogics is deprecated");
-#endif
   if (this->InternalSliceLogicMap)
     {
     vtkMRMLSliceLogic *sliceLogic;

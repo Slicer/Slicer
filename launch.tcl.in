@@ -120,7 +120,6 @@ proc launch_SetEnvironment {} {
     #
     # Indicate if Slicer was build with QT support
     #
-    set ::Slicer_USE_QT "@Slicer_USE_QT@"
     set ::Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@"
     
     #
@@ -546,10 +545,6 @@ proc launch_ParseArgs {argv} {
       }
     }
     "--designer" {
-      if { $::Slicer_USE_QT != "ON" } {
-        ShowAndLogError "Failed to start Qt Designer - Slicer is *NOT* built with QT Support"
-        exit $::EXIT_CODE_GENERIC_ERROR
-      }
       set ::LAUNCH(launchDesigner) 1
       set ::argv [lreplace $::argv 0 1]
       set ::LAUNCH(showSplash) 0

@@ -27,7 +27,6 @@
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer_USE_OPENTRACKER
-#cmakedefine Slicer_USE_QT
 
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
 

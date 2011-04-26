@@ -20,22 +20,13 @@ LIST(APPEND dirs
   MRMLCLI
   MRMLLogic
   MRMLDisplayableManager
-  )
-
-LIST(APPEND dirs
   MRMLIDImageIO
   MGHImageIO
   IGT
   RemoteIO
   #SIGN
+  qMRMLWidgets
   )
-
-#-----------------------------------------------------------------------------
-# QT libraries
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_QT)
-  LIST(APPEND dirs qMRMLWidgets)
-ENDIF()
 
 #-----------------------------------------------------------------------------
 # CUDA

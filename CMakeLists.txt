@@ -160,9 +160,6 @@ MARK_AS_ADVANCED(Slicer_ITK_GIT_REPOSITORY)
 SET(Slicer_ITK_GIT_TAG "origin/slicer-4.0" CACHE STRING "ITK git tag to use")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 
-# Slicer implicitly uses Qt
-SET(Slicer_USE_QT ON CACHE INTERNAL "Build Slicer with Qt")
-
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
@@ -417,52 +414,46 @@ INCLUDE(${VTK_USE_FILE})
 #-----------------------------------------------------------------------------
 # Qt 
 #-----------------------------------------------------------------------------
-IF(Slicer_USE_QT)
 
-  # Module name should be specified as they appear in FindQt4.cmake
-  # For example, the module name associated with the variable QT_USE_QTXML is XML.
-  SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
-  IF(BUILD_TESTING)
-    LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
-  ENDIF()
-  
-  INCLUDE(SlicerFindQtAndCheckVersion)
+# Module name should be specified as they appear in FindQt4.cmake
+# For example, the module name associated with the variable QT_USE_QTXML is XML.
+SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
+IF(BUILD_TESTING)
+  LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
 ENDIF()
+
+INCLUDE(SlicerFindQtAndCheckVersion)
 
 #-----------------------------------------------------------------------------
 # CTK
 #-----------------------------------------------------------------------------
 
-IF(Slicer_USE_QT)
-  FIND_PACKAGE(CTK REQUIRED)
-  INCLUDE(${CTK_USE_FILE})
-  # Update CMake module path
-  SET(CMAKE_MODULE_PATH
-    ${VTK_CMAKE_DIR}
-    ${CTK_CMAKE_DIR} 
-    ${CMAKE_MODULE_PATH} 
-    ${CTK_CMAKE_UTILITIES_DIR})
-ENDIF()
+FIND_PACKAGE(CTK REQUIRED)
+INCLUDE(${CTK_USE_FILE})
+# Update CMake module path
+SET(CMAKE_MODULE_PATH
+  ${VTK_CMAKE_DIR}
+  ${CTK_CMAKE_DIR} 
+  ${CMAKE_MODULE_PATH} 
+  ${CTK_CMAKE_UTILITIES_DIR})
 
 #-----------------------------------------------------------------------------
 # PythonQt
 #-----------------------------------------------------------------------------
-IF(Slicer_USE_QT)
-  IF(Slicer_USE_PYTHONQT)
-    IF(NOT VTK_WRAP_PYTHON)
-      MESSAGE(FATAL_ERROR "Since both Slicer_USE_QT and Slicer_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer_USE_PYTHONQT or re-configure VTK with python wrapping.")
-    ENDIF()
-
-    INCLUDE(vtkMacroKitPythonWrap)
-
-    SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
-    LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
-    INCLUDE(ctkMacroWrapPythonQt)
-    INCLUDE(ctkMacroCompilePythonScript)
-    
-    # Enable qMRMLWidgets python wrapping
-    SET(qMRMLWidgets_WRAP_PYTHON ON)
+IF(Slicer_USE_PYTHONQT)
+  IF(NOT VTK_WRAP_PYTHON)
+    MESSAGE(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. Re-configure VTK with python wrapping.")
   ENDIF()
+
+  INCLUDE(vtkMacroKitPythonWrap)
+
+  SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+  LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
+  INCLUDE(ctkMacroWrapPythonQt)
+  INCLUDE(ctkMacroCompilePythonScript)
+  
+  # Enable qMRMLWidgets python wrapping
+  SET(qMRMLWidgets_WRAP_PYTHON ON)
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -549,19 +540,17 @@ SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 #-----------------------------------------------------------------------------
 # Qt Loadable and Scripted Modules
 #-----------------------------------------------------------------------------
-IF(Slicer_USE_QT)
-  IF(Slicer_BUILD_QTLOADABLEMODULES)
-    SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
-    SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
-    SET(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
-    SET(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
-  ENDIF()
-  IF(Slicer_BUILD_QTSCRIPTEDMODULES)
-    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
-    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
-    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTScriptedModules")
-    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTScriptedModules")
-  ENDIF()
+IF(Slicer_BUILD_QTLOADABLEMODULES)
+  SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+  SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+  SET(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
+  SET(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
+ENDIF()
+IF(Slicer_BUILD_QTSCRIPTEDMODULES)
+  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
+  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
+  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTScriptedModules")
+  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTScriptedModules")
 ENDIF()
 
 # --------------------------------------------------------------------------
@@ -677,11 +666,11 @@ ENDFOREACH()
 # Qt Loadable Modules
 #-----------------------------------------------------------------------------
 
-IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
+IF(Slicer_BUILD_QTLOADABLEMODULES)
   ADD_SUBDIRECTORY(QTModules)
 ENDIF()
 
-IF(Slicer_USE_PYTHONQT AND Slicer_BUILD_QTSCRIPTEDMODULES)
+IF(Slicer_BUILD_QTSCRIPTEDMODULES)
   ADD_SUBDIRECTORY(QTScriptedModules)
 ENDIF()
 
@@ -715,21 +704,17 @@ INSTALL(DIRECTORY
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
-IF(Slicer_USE_QT)
+# on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
+IF(APPLE)
+  SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
 
-  # on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
-  IF(APPLE)
-    SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
-
-    FOREACH(qtlib ${QTLIBLIST})
-      IF(QT_${qtlib}_LIBRARY_RELEASE AND APPLE)
-          GET_FILENAME_COMPONENT(QT_FRAMEWORK_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-          SET(Slicer_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer_QT_FRAMEWORK_DIRS}")
-      ENDIF()
-    ENDFOREACH()
-  ENDIF()
-
-ENDIF(Slicer_USE_QT)
+  FOREACH(qtlib ${QTLIBLIST})
+    IF(QT_${qtlib}_LIBRARY_RELEASE AND APPLE)
+        GET_FILENAME_COMPONENT(QT_FRAMEWORK_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
+        SET(Slicer_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer_QT_FRAMEWORK_DIRS}")
+    ENDIF()
+  ENDFOREACH()
+ENDIF()
 
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/launch.tcl.in
@@ -743,10 +728,7 @@ INSTALL(
 #-----------------------------------------------------------------------------
 # Launcher for QTDesigner
 #-----------------------------------------------------------------------------
-
-IF(Slicer_USE_QT)
-  ADD_SUBDIRECTORY(Utilities/Designer)
-ENDIF()
+ADD_SUBDIRECTORY(Utilities/Designer)
 
 #-----------------------------------------------------------------------------
 # Package slicer
