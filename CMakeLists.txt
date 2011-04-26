@@ -46,22 +46,9 @@ INCLUDE(SlicerFunctionInstallLibrary)
 INCLUDE(SlicerFunctionGetGccVersion)
 
 #-----------------------------------------------------------------------------
-# Platform check
+# Platform checks
 #-----------------------------------------------------------------------------
-
-SET(PLATFORM_CHECK true)
-
-if(PLATFORM_CHECK)
-  # See CMake/Modules/Platform/Darwin.cmake)
-  #   6.x == Mac OSX 10.2 (Jaguar)
-  #   7.x == Mac OSX 10.3 (Panther)
-  #   8.x == Mac OSX 10.4 (Tiger)
-  #   9.x == Mac OSX 10.5 (Leopard)
-  #  10.x == Mac OSX 10.6 (Snow Leopard)
-  if (DARWIN_MAJOR_VERSION LESS "8")
-    message(FATAL_ERROR "Only Mac OSX >= 10.4 are supported !")
-  endif()
-endif()
+INCLUDE(SlicerBlockPlatformCheck)
 
 #-----------------------------------------------------------------------------
 # Determine endian type
