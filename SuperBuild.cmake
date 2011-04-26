@@ -33,15 +33,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Qt - Let's check if a valid version of Qt is available
 #-----------------------------------------------------------------------------
-
-FIND_PACKAGE(Qt4)
-IF(QT_FOUND)
-  IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_LESS "${minimum_required_qt_version}")
-    MESSAGE(FATAL_ERROR "error: Slicer requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
-  ENDIF()
-ELSE()
-  MESSAGE(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
-ENDIF()
+INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties

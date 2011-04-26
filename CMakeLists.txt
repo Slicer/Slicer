@@ -71,6 +71,9 @@ IF(NOT GIT_FOUND)
   MESSAGE(FATAL_ERROR "error: Install Git and try to re-configure")
 ENDIF()
 
+#-----------------------------------------------------------------------------
+# Qt - Slicer_REQUIRED_QT_VERSION
+#-----------------------------------------------------------------------------
 SET(Slicer_REQUIRED_QT_VERSION "4.6.2")
 
 #-----------------------------------------------------------------------------
@@ -232,6 +235,16 @@ SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
 SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 # Set to create Bundle in a directory
 SET(Slicer_BUNDLE_LOCATION ".")
+
+#-----------------------------------------------------------------------------
+# Qt - Slicer_REQUIRED_QT_MODULES
+#-----------------------------------------------------------------------------
+# Module name should be specified as they appear in FindQt4.cmake
+# For example, the module name associated with the variable QT_USE_QTXML is XML.
+SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
+IF(BUILD_TESTING)
+  LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Superbuild script
@@ -396,25 +409,19 @@ ENDIF()
 INCLUDE(${VTK_USE_FILE})
 
 #-----------------------------------------------------------------------------
+# CTK
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(CTK REQUIRED)
+INCLUDE(${CTK_USE_FILE})
+
+#-----------------------------------------------------------------------------
 # Qt 
 #-----------------------------------------------------------------------------
-
-# Module name should be specified as they appear in FindQt4.cmake
-# For example, the module name associated with the variable QT_USE_QTXML is XML.
-SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
-IF(BUILD_TESTING)
-  LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
-ENDIF()
-
 INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
 #-----------------------------------------------------------------------------
-# CTK
-#-----------------------------------------------------------------------------
-
-FIND_PACKAGE(CTK REQUIRED)
-INCLUDE(${CTK_USE_FILE})
 # Update CMake module path
+#-----------------------------------------------------------------------------
 SET(CMAKE_MODULE_PATH
   ${VTK_CMAKE_DIR}
   ${CTK_CMAKE_DIR} 
