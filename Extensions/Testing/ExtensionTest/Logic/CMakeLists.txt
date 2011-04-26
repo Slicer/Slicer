@@ -15,7 +15,8 @@ SET(module_logic_include_directories
 
 # Source files
 SET(module_logic_SRCS
-  vtkSlicerExtensionTestLogic.cxx
+  vtkSlicerExtensionTemplateLogic.cxx
+  vtkSlicerExtensionTemplateLogic.h
   )
 
 # Additional Target libraries
