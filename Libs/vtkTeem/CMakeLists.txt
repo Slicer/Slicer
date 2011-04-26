@@ -42,12 +42,11 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
  
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-
 include_directories(${include_dirs})
 
 configure_file(

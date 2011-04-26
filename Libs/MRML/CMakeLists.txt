@@ -43,7 +43,7 @@ if(MRML_USE_Teem)
   include(${Teem_USE_FILE})
   option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
   mark_as_advanced(MRML_USE_vtkTeem)
-endif(MRML_USE_Teem)
+endif()
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -51,42 +51,21 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
  
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkITK_SOURCE_DIR}
+  ${vtkITK_BINARY_DIR}
+  ${FreeSurfer_SOURCE_DIR}
+  ${FreeSurfer_BINARY_DIR}
   )
-
-set(packages
-  vtkITK 
-  FreeSurfer
-  )
-
 if(MRML_USE_Teem)
-  set(packages ${packages} 
-    vtkTeem
+  list(APPEND include_dirs 
+    ${vtkTeem_SOURCE_DIR}
+    ${vtkTeem_BINARY_DIR}
     )
-endif(MRML_USE_Teem)
-  
-foreach(package 
-    ${packages}
-    )
-  # This is mostly to test building this lib as standalone outside Slicer3
-  if(NOT DEFINED ${package}_SOURCE_DIR)
-    set(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
-  endif(NOT DEFINED ${package}_SOURCE_DIR)
-  if(NOT DEFINED ${package}_BINARY_DIR)
-    string(REPLACE ${PROJECT_NAME} ${package} 
-      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    link_directories(${${package}_BINARY_DIR})
-  endif(NOT DEFINED ${package}_BINARY_DIR)
-
-  set(include_dirs ${include_dirs}
-    ${${package}_SOURCE_DIR}
-    ${${package}_BINARY_DIR}
-    )
-endforeach(package)
-
+endif()
 include_directories(${include_dirs})
 
 configure_file(

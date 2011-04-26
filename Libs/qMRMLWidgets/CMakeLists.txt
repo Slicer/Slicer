@@ -256,6 +256,8 @@ SOURCE_GROUP("Generated" FILES
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
   ${MRMLLogic_SOURCE_DIR}
   ${MRMLLogic_BINARY_DIR}
   ${MRMLDisplayableManager_SOURCE_DIR}
@@ -269,26 +271,6 @@ SET(QT_INCLUDE_DIRS
   ${QT_QTCORE_INCLUDE_DIR}
   ${QT_QTXML_INCLUDE_DIR}
   )
-
-FOREACH(package
-    MRML
-    )
-  # This is mostly to test building this lib as standalone outside Slicer3
-  IF(NOT DEFINED ${package}_SOURCE_DIR)
-    SET(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
-  ENDIF(NOT DEFINED ${package}_SOURCE_DIR)
-  IF(NOT DEFINED ${package}_BINARY_DIR)
-    STRING(REPLACE ${PROJECT_NAME} ${package}
-      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    LINK_DIRECTORIES(${${package}_BINARY_DIR})
-  ENDIF(NOT DEFINED ${package}_BINARY_DIR)
-
-  SET(include_dirs ${include_dirs}
-    ${${package}_SOURCE_DIR}
-    ${${package}_BINARY_DIR}
-    )
-ENDFOREACH(package)
-
 SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 

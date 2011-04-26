@@ -31,45 +31,21 @@ FOREACH(policy ${project_policies})
 ENDFOREACH()
 
 SET(MRMLDisplayableManager_USE_PYTHON ${Slicer_USE_PYTHONQT})
+
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
   ${MRMLLogic_SOURCE_DIR}
   ${MRMLLogic_BINARY_DIR}
   )
 IF(MRMLDisplayableManager_USE_PYTHON)
-  LIST(APPEND include_dirs
-    ${PYTHON_INCLUDE_DIR}
-    )
+  LIST(APPEND include_dirs ${PYTHON_INCLUDE_DIR})
 ENDIF()
-
-SET(packages
-  MRML
-  MRMLLogic
-  )
-  
-FOREACH(package 
-    ${packages}
-    )
-  # This is mostly to test building this lib as standalone outside Slicer3
-  IF(NOT DEFINED ${package}_SOURCE_DIR)
-    SET(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
-  ENDIF(NOT DEFINED ${package}_SOURCE_DIR)
-  IF(NOT DEFINED ${package}_BINARY_DIR)
-    STRING(REPLACE ${PROJECT_NAME} ${package}
-      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    LINK_DIRECTORIES(${${package}_BINARY_DIR})
-  ENDIF(NOT DEFINED ${package}_BINARY_DIR)
-
-  SET(include_dirs ${include_dirs}
-    ${${package}_SOURCE_DIR}
-    ${${package}_BINARY_DIR}
-    )
-ENDFOREACH()
-
 INCLUDE_DIRECTORIES(${include_dirs})
 
 CONFIGURE_FILE(

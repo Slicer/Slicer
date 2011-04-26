@@ -32,36 +32,15 @@ ENDFOREACH()
 
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
+  ${MRML_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
-
-SET(packages
-  MRML
-  ModuleDescriptionParser
-  )
-
-FOREACH(package 
-    ${packages}
-    )
-  # This is mostly to test building this lib as standalone outside Slicer3
-  IF(NOT DEFINED ${package}_SOURCE_DIR)
-    SET(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
-  ENDIF(NOT DEFINED ${package}_SOURCE_DIR)
-  IF(NOT DEFINED ${package}_BINARY_DIR)
-    STRING(REPLACE ${PROJECT_NAME} ${package}
-      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    LINK_DIRECTORIES(${${package}_BINARY_DIR})
-  ENDIF(NOT DEFINED ${package}_BINARY_DIR)
-
-  SET(include_dirs ${include_dirs}
-    ${${package}_SOURCE_DIR}
-    ${${package}_BINARY_DIR}
-    )
-ENDFOREACH(package)
-
 INCLUDE_DIRECTORIES(${include_dirs})
 
 CONFIGURE_FILE(

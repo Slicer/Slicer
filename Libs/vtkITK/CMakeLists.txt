@@ -30,17 +30,11 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
-if(NOT VTK_FOUND)
-  message(STATUS " vtk not found in vtkITK")
-  find_package(VTK REQUIRED)
-  include(${VTK_USE_FILE})
-endif(NOT VTK_FOUND)
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
 
-if(NOT ITK_FOUND)
-  message(STATUS " itk not found in vtkITK")
-  find_package(ITK REQUIRED)
-  include(${ITK_USE_FILE})
-endif(NOT ITK_FOUND)
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -48,12 +42,11 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
  
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-
 include_directories(${include_dirs})
 
 configure_file(
