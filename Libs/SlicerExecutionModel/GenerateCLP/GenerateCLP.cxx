@@ -69,6 +69,9 @@
 #pragma warning ( disable : 4996 )
 #endif
 
+namespace
+{
+
 /* Comma separated arguments need a temporary variable to store the
  * string
  */
@@ -153,6 +156,9 @@ void GenerateEchoArgs(std::ofstream &, ModuleDescription &);
  * structure */
 void GenerateProcessInformationAddressDecoding(std::ofstream &sout);
 
+
+} // end of anonymous namespace
+
 int
 main(int argc, char *argv[])
 {
@@ -232,6 +238,9 @@ main(int argc, char *argv[])
 
   return (EXIT_SUCCESS);
 }
+
+namespace
+{
 
 void GeneratePre(std::ofstream &sout, ModuleDescription &, int argc, char *argv[])
 {
@@ -1304,3 +1313,5 @@ void GenerateProcessInformationAddressDecoding(std::ofstream &sout)
   sout << "sscanf(processInformationAddressString.c_str(), \"%p\", &CLPProcessInformation);" << EOL << std::endl;
   sout << "}" << std::endl;
 }
+
+} // end of anonymous namespace
