@@ -50,15 +50,6 @@ MACRO(slicerMacroBuildQtModule)
   ADD_DEFINITIONS(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
 
   # --------------------------------------------------------------------------
-  # Find Slicer
-
-  IF(NOT Slicer_SOURCE_DIR)
-    FIND_PACKAGE(Slicer REQUIRED)
-    INCLUDE(${Slicer_USE_FILE})
-    slicer3_set_default_install_prefix_for_external_projects()
-  ENDIF()
-
-  # --------------------------------------------------------------------------
   # Include dirs
 
   INCLUDE_DIRECTORIES(
