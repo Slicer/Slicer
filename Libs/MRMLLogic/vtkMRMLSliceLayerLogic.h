@@ -56,7 +56,7 @@
 //
 #include "vtkImageResliceMask.h"
 #include "vtkImageReslice.h"
-#include "vtkImageSlice.h"
+#include "vtkImageLinearReslice.h"
 #include "vtkAssignAttribute.h"
 
 // STL includes
@@ -93,7 +93,7 @@ public:
 
   /// 
   /// The image reslice or slice being used
-  vtkGetObjectMacro (Slice, vtkImageSlice);
+  vtkGetObjectMacro (Slice, vtkImageLinearReslice);
   vtkGetObjectMacro (Reslice, vtkImageResliceMask);
 
   /// 
@@ -209,7 +209,7 @@ protected:
   vtkImageCast *ResliceAlphaCast;
   vtkImageLogic *AlphaLogic;
   vtkImageResliceMask *Reslice;
-  vtkImageSlice *Slice;
+  vtkImageLinearReslice *Slice;
   vtkImageThreshold *Threshold;
   vtkImageLabelOutline *LabelOutline;
   vtkImageAppendComponents *AppendComponents;

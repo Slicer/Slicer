@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkImageSlice.cxx,v $
+  Module:    $RCSfile: vtkImageLinearReslice.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkImageSlice.h"
+#include "vtkImageLinearReslice.h"
 
 #include "vtkImageData.h"
 #include "vtkInformation.h"
@@ -35,14 +35,14 @@
 #include <float.h>
 #include <math.h>
 
-vtkCxxRevisionMacro(vtkImageSlice, "$Revision$");
-vtkStandardNewMacro(vtkImageSlice);
+vtkCxxRevisionMacro(vtkImageLinearReslice, "$Revision$");
+vtkStandardNewMacro(vtkImageLinearReslice);
 //
 // TODO: why?
-//vtkCxxSetObjectMacro(vtkImageSlice,SliceTransform,vtkAbstractTransform);
+//vtkCxxSetObjectMacro(vtkImageLinearReslice,SliceTransform,vtkAbstractTransform);
 
 //----------------------------------------------------------------------------
-vtkImageSlice::vtkImageSlice()
+vtkImageLinearReslice::vtkImageLinearReslice()
 {
   // if NULL, the main Input is used
 
@@ -76,13 +76,13 @@ vtkImageSlice::vtkImageSlice()
 }
 
 //----------------------------------------------------------------------------
-vtkImageSlice::~vtkImageSlice()
+vtkImageLinearReslice::~vtkImageLinearReslice()
 {
   this->SetSliceTransform(NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkImageSlice::PrintSelf(ostream& os, vtkIndent indent)
+void vtkImageLinearReslice::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -106,7 +106,7 @@ void vtkImageSlice::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 // the MTime of the filter
-unsigned long int vtkImageSlice::GetMTime()
+unsigned long int vtkImageLinearReslice::GetMTime()
 {
   unsigned long mTime=this->vtkObject::GetMTime();
   unsigned long time;
@@ -128,7 +128,7 @@ unsigned long int vtkImageSlice::GetMTime()
 
 //----------------------------------------------------------------------------
 // TODO
-int vtkImageSlice::RequestUpdateExtent(
+int vtkImageLinearReslice::RequestUpdateExtent(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -160,7 +160,7 @@ int vtkImageSlice::RequestUpdateExtent(
 }
 
 //----------------------------------------------------------------------------
-int vtkImageSlice::FillInputPortInformation(int vtkNotUsed(port), vtkInformation *info)
+int vtkImageLinearReslice::FillInputPortInformation(int vtkNotUsed(port), vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
@@ -169,7 +169,7 @@ int vtkImageSlice::FillInputPortInformation(int vtkNotUsed(port), vtkInformation
 
 //----------------------------------------------------------------------------
 // TODO
-int vtkImageSlice::RequestInformation(
+int vtkImageLinearReslice::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector ** vtkNotUsed(inputVector),
   vtkInformationVector *outputVector)
@@ -196,7 +196,7 @@ int vtkImageSlice::RequestInformation(
 //----------------------------------------------------------------------------
 // This function executes the filter for any type of data.  
 template <class T>
-void vtkImageSliceExecute(vtkImageSlice *self,
+void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
                             vtkImageData *inData, 
                             vtkImageData *outData, T *outPtr,
                             int outExt[6], int id)
@@ -328,7 +328,7 @@ void vtkImageSliceExecute(vtkImageSlice *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the regions data types.
-void vtkImageSlice::ThreadedRequestData(
+void vtkImageLinearReslice::ThreadedRequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **vtkNotUsed(inputVector),
   vtkInformationVector *vtkNotUsed(outputVector),
@@ -356,7 +356,7 @@ void vtkImageSlice::ThreadedRequestData(
   switch (inData[0][0]->GetScalarType())
     {
     vtkTemplateMacro( 
-      vtkImageSliceExecute(this, inData[0][0],  outData[0], (VTK_TT *)outPtr, outExt, id) );
+      vtkImageLinearResliceExecute(this, inData[0][0],  outData[0], (VTK_TT *)outPtr, outExt, id) );
     default: 
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");

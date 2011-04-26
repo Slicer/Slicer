@@ -32,7 +32,7 @@ proc sliceTest {} {
     set slice [vtkImageReslice New]
     #$slice SetSliceTransform $trans
   } else {
-    set slice [vtkImageSlice New]
+    set slice [vtkImageLinearReslice New]
     $slice SetOutputDimensions 512 512 1
     $slice SetSliceTransform $trans
   }

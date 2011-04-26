@@ -102,10 +102,11 @@ SET(VTK_LIBRARIES
   vtkIO
   )
   
-#SET(libs
-#  )
+SET(libs
+  vtkzlib
+  )
 
-#TARGET_LINK_LIBRARIES(${lib_name} ${libs})
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
 FOREACH(c ${VTK_LIBRARIES})
   SET(tcl_wrap)

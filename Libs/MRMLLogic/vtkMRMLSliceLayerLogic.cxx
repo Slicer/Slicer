@@ -59,7 +59,7 @@ vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
   this->AssignAttributeScalarsFromTensors->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
 
   // Create the parts for the scalar layer pipeline
-  this->Slice = vtkImageSlice::New();
+  this->Slice = vtkImageLinearReslice::New();
   this->Reslice = vtkImageResliceMask::New();
   this->ResliceThreshold = vtkImageThreshold::New();
   this->ResliceAppendComponents = vtkImageAppendComponents::New();

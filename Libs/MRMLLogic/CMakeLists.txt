@@ -92,7 +92,7 @@ SET(MRMLLogic_SRCS
   # slicer's vtk extensions (filters)
   vtkImageLabelOutline.cxx
   vtkImageNeighborhoodFilter.cxx
-  vtkImageSlice.cxx
+  vtkImageLinearReslice.cxx
   vtkImageResliceMask.cxx
   )
   

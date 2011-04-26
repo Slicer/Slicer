@@ -140,14 +140,6 @@ SET(srcs ${SlicerBaseLogic_SRCS})
 
 ADD_LIBRARY(${lib_name} ${srcs})
 
-SET(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkGraphics
-  vtkIO
-  vtkHybrid
-  )
-
 SET(libs
   MRML
   MRMLCLI

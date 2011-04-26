@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkImageSlice.h,v $
+  Module:    $RCSfile: vtkImageLinearReslice.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,9 +12,9 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkImageSlice - Slices a volume along a new set of axes.
+///  vtkImageLinearReslice - Slices a volume along a new set of axes.
 /// 
-/// vtkImageSlice uses a vtkMatrix4x4 to pull a slice out of a volume.
+/// vtkImageLinearReslice uses a vtkMatrix4x4 to pull a slice out of a volume.
 /// This is based on David Gobbi's vtkImageReslice, but tries to be more
 /// efficient by only treating the special case of a linear transform
 /// .SECTION Caveats
@@ -22,8 +22,8 @@
 /// vtkImageReslice vtkAbstractTransform vtkMatrix4x4
 
 
-#ifndef __vtkImageSlice_h
-#define __vtkImageSlice_h
+#ifndef __vtkImageLinearReslice_h
+#define __vtkImageLinearReslice_h
 
 
 #include "vtkAbstractTransform.h"
@@ -40,11 +40,11 @@ class vtkImageData;
 class vtkAbstractTransform;
 class vtkMatrix4x4;
 
-class VTK_MRML_LOGIC_EXPORT vtkImageSlice : public vtkThreadedImageAlgorithm
+class VTK_MRML_LOGIC_EXPORT vtkImageLinearReslice : public vtkThreadedImageAlgorithm
 {
 public:
-  static vtkImageSlice *New();
-  vtkTypeRevisionMacro(vtkImageSlice, vtkThreadedImageAlgorithm);
+  static vtkImageLinearReslice *New();
+  vtkTypeRevisionMacro(vtkImageLinearReslice, vtkThreadedImageAlgorithm);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -124,8 +124,8 @@ public:
 
 
 protected:
-  vtkImageSlice();
-  ~vtkImageSlice();
+  vtkImageLinearReslice();
+  ~vtkImageLinearReslice();
 
   vtkAbstractTransform *SliceTransform;
   int InterpolationMode;
@@ -146,12 +146,12 @@ protected:
   virtual int FillInputPortInformation(int port, vtkInformation *info);
 
 private:
-  vtkImageSlice(const vtkImageSlice&);  /// Not implemented.
-  void operator=(const vtkImageSlice&);  /// Not implemented.
+  vtkImageLinearReslice(const vtkImageLinearReslice&);  /// Not implemented.
+  void operator=(const vtkImageLinearReslice&);  /// Not implemented.
 };
 
 //----------------------------------------------------------------------------
-inline const char *vtkImageSlice::GetInterpolationModeAsString()
+inline const char *vtkImageLinearReslice::GetInterpolationModeAsString()
 {
   switch (this->InterpolationMode)
     {
