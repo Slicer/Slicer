@@ -30,14 +30,19 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
-
-set(PARSER1TEST_SOURCE Parser1Test )
+# --------------------------------------------------------------------------
+# Build Parser1Test executable
+# --------------------------------------------------------------------------
+set(PARSER1TEST_SOURCE Parser1Test.cxx )
 add_executable(Parser1Test ${PARSER1TEST_SOURCE})
 target_link_libraries(Parser1Test ModuleDescriptionParser )
 
 set(ModuleFactoryTest_SOURCE ModuleFactoryTest )
 add_executable(ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
 target_link_libraries(ModuleFactoryTest ModuleDescriptionParser )
+# --------------------------------------------------------------------------
+# Build ModuleFactoryTest executable
+# --------------------------------------------------------------------------
 
 include_directories(
   ${ModuleDescriptionParser_SOURCE_DIR}

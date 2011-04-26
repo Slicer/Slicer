@@ -11,11 +11,17 @@
   Version:   $Revision$
 
 ==========================================================================*/
+
+// ModuleDescriptionParser includes
+#include "ModuleFactory.h"
+
+// ITKSYS includes
+#include <itksys/Directory.hxx>
+#include <itksys/SystemTools.hxx>
+
+// STD includes
 #include <string>
 #include <cstdlib>
-#include "ModuleFactory.h"
-#include "itksys/Directory.hxx"
-#include "itksys/SystemTools.hxx"
 
 void WarningMessage(const char *msg);
 void ErrorMessage(const char *msg);

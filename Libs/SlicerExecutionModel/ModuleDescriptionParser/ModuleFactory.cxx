@@ -11,16 +11,20 @@
   Version:   $Revision$
 
 ==========================================================================*/
-#include "itksys/DynamicLoader.hxx"
-#include "itksys/Directory.hxx"
-#include "itksys/SystemTools.hxx"
-#include "itksys/Process.h"
-#include "itksys/Base64.h"
 
+// ModuleDescriptionParser includes
 #include "ModuleFactory.h"
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 
+// ITKSYS includes
+#include <itksys/DynamicLoader.hxx>
+#include <itksys/Directory.hxx>
+#include <itksys/SystemTools.hxx>
+#include <itksys/Process.h>
+#include <itksys/Base64.h>
+
+// STD includes
 #include <set>
 #include <map>
 #include <sstream>
@@ -366,18 +370,17 @@ void ModuleFactory::Scan()
   
   // Scan for shared object modules first since they will be higher
   // performance than command line module
-  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0, numberOfOtherFiles;
-
-  numberOfShared = this->ScanForSharedObjectModules();
-  numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
-  numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  int numberOfShared = this->ScanForSharedObjectModules();
+  int numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
+  int numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  int numberOfPython = 0;
 #ifdef ModuleDescriptionParser_USE_PYTHON
   // Be sure that python is initialized
   Py_Initialize();
   numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
-  numberOfOtherFiles = this->ScanForNotAModuleFiles();
+  int numberOfOtherFiles = this->ScanForNotAModuleFiles();
   
   // Store the module cache information
   this->SaveModuleCache();
