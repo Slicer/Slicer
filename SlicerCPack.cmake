@@ -252,10 +252,10 @@ endif()
 # -------------------------------------------------------------------------
 # Disable generator enabled by default
 # -------------------------------------------------------------------------
-set(CPACK_BINARY_TZ   OFF)
-set(CPACK_BINARY_STGZ OFF)
-set(CPACK_SOURCE_TBZ2 OFF)
-set(CPACK_SOURCE_TZ   OFF)
+set(CPACK_BINARY_TZ   OFF CACHE BOOL "Enable to build TZ packages")
+set(CPACK_BINARY_STGZ OFF CACHE BOOL "Enable to build STGZ packages")
+set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages")
+set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages")
 
 include(CPack)
 
