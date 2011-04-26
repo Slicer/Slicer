@@ -51,7 +51,6 @@ SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHONQT})
 
 SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
 SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
-SET(ITKCommandIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 SET(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 SET(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 # vtkITK contains tests that uses MRML's test data.
@@ -74,8 +73,6 @@ ENDFOREACH()
 # Since there is inconsistency between library name and project/dir name, 
 # let's tweak the list of generated library names
 
-STRING(REPLACE ITKCommandIO CommandIO libs "${libs}")
-  STRING(REPLACE SlicerIO slicerio libs "${libs}")
 STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
 STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library

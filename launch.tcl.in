@@ -278,7 +278,6 @@ proc launch_SetEnvironment {} {
       set ::env(Qdec_DIR)           $::env(Slicer_HOME)/lib/Qdec
       set ::env(RemoteIO_DIR)       $::env(Slicer_HOME)/lib/RemoteIO
       set ::env(FileWatcher_DIR)    $::env(Slicer_HOME)/lib/FileWatcher
-      set ::env(SlicerIO_DIR)       $::env(Slicer_HOME)/lib/SlicerIO
       set ::env(tclap_DIR)          $::env(Slicer_HOME)/lib/tclap
       set ::env(vtkITK_DIR)         $::env(Slicer_HOME)/lib/vtkITK
       set ::env(vtkTeem_DIR)        $::env(Slicer_HOME)/lib/vtkTeem
@@ -464,7 +463,6 @@ proc launch_SetEnvironment {} {
       set ::env(Qdec_DIR)           [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(RemoteIO_DIR)       [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(FileWatcher_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
-      set ::env(SlicerIO_DIR)       [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(tclap_DIR)          [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(vtkITK_DIR)         [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
       set ::env(vtkTeem_DIR)        [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
@@ -648,7 +646,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(FileWatcher_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SlicerIO_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(tclap_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(LD_LIBRARY_PATH)
@@ -702,7 +699,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(FileWatcher_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SlicerIO_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(tclap_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -759,7 +755,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(Qdec_DIR)\;$::env(Path)
             set ::env(Path) $::env(RemoteIO_DIR)\;$::env(Path)
             set ::env(Path) $::env(FileWatcher_DIR)\;$::env(Path)
-            set ::env(Path) $::env(SlicerIO_DIR)\;$::env(Path)
             set ::env(Path) $::env(tclap_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkITK_DIR)\;$::env(Path)
             set ::env(Path) $::env(vtkTeem_DIR)\;$::env(Path)
