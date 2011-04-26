@@ -113,7 +113,12 @@ add_library(${lib_name}
   ${AtlasCreator_SRCS}
   ${AtlasCreator_TCL_SRCS}
   )
-slicer3_set_modules_output_path(${lib_name})
+#slicer3_set_modules_output_path(${lib_name})
+SET_TARGET_PROPERTIES(${lib_name} PROPERTIES 
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
+  )
 
 target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
@@ -123,7 +128,12 @@ target_link_libraries(${lib_name}
   vtkSlicerAtlasCreatorModuleLogic
   )
 
-slicer3_install_modules(${lib_name})
+#slicer3_install_modules(${lib_name})
+INSTALL(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
 # Testing
