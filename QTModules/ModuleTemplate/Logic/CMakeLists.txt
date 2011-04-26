@@ -16,6 +16,7 @@ SET(module_logic_include_directories
 # Source files
 SET(module_logic_SRCS
   vtkSlicerModuleTemplateLogic.cxx
+  vtkSlicerModuleTemplateLogic.h
   )
 
 # Additional Target libraries
