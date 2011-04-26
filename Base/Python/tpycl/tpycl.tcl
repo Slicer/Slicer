@@ -60,7 +60,7 @@ proc ::after {option args} {
   }
   return 'after0'
 }
-
+  
 namespace eval tpycl {
 
   proc registerClass {className pyConstructor} {
@@ -143,6 +143,12 @@ namespace eval tpycl {
           # TODO: need more robust type parsing
           set tuple 1
         }
+        
+        set isArray 0
+        if { [string range $types 0 1] == "'\[" } {
+          # TODO: need more robust type parsing
+          set isArray 1
+        }
 
         if { $types == "''" } {
           set types ""
@@ -180,7 +186,7 @@ namespace eval tpycl {
               set arg 0.
             }
           }
-          if { [string index $pycmd end] != "(" } {
+          if { ([string index $pycmd end] != "(") && ([string index $pycmd end] != "\[") } {
             # if not at start of arg list, add a comma
             set pycmd "$pycmd,"
           } else {
@@ -188,13 +194,22 @@ namespace eval tpycl {
               # append a paren but don't look like an array while doing it
               set pycmd [format "$pycmd%s" "("]
             }
+            if { $isArray } {
+              # Append a 'open bracket'
+              set pycmd [format "$pycmd%s" "\["]
+            }
           }
           set pycmd "$pycmd$arg"
         }
-        set pycmd "$pycmd)"
-        if { $args != "" && $tuple } {
-          set pycmd "$pycmd)"
+        if { $args != "" } {
+          if { $tuple } {
+            set pycmd "$pycmd)"
+          }
+          if { $isArray } {
+            set pycmd "$pycmd\]"
+          }
         }
+        set pycmd "$pycmd)"
       }
     }
 
