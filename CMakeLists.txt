@@ -101,7 +101,7 @@ IF(NOT GIT_FOUND)
   MESSAGE(FATAL_ERROR "error: Install Git and try to re-configure")
 ENDIF()
 
-SET(minimum_required_qt_version "4.6.2")
+SET(Slicer_REQUIRED_QT_VERSION "4.6.2")
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
@@ -432,7 +432,7 @@ INCLUDE(${ITK_USE_FILE})
 #-----------------------------------------------------------------------------
 FIND_PACKAGE(VTK REQUIRED)
 IF(NOT VTK_USE_QVTK)
-  MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${minimum_required_qt_version} is *required*")
+  MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 ENDIF()
 INCLUDE(${VTK_USE_FILE})
 
@@ -440,21 +440,8 @@ INCLUDE(${VTK_USE_FILE})
 # Qt 
 #-----------------------------------------------------------------------------
 IF(Slicer_USE_QT)
-  SET(extra_error_message)
-  IF(NOT DEFINED QT_QMAKE_EXECUTABLE AND EXISTS "${VTK_QT_QMAKE_EXECUTABLE}")
-    SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE})
-    SET(extra_error_message "You should probably reconfigure VTK.")
-  ENDIF()
   
-  FIND_PACKAGE(Qt4)
-  IF(NOT QT4_FOUND)
-    MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable.")
-  ENDIF()
-  
-  # Check version, note that ${QT_VERSION_PATCH} could also be used
-  IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_LESS "${minimum_required_qt_version}")
-    MESSAGE(FATAL_ERROR "error: Slicer requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}. ${extra_error_message}")
-  ENDIF()
+  INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQtAndCheckVersion.cmake)
   
   MESSAGE(STATUS "Configuring Slicer with Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
   
@@ -462,7 +449,6 @@ IF(Slicer_USE_QT)
   SET(QT_USE_QTNETWORK ON)
   SET(QT_USE_QTTEST ${BUILD_TESTING})
 
-  # Includes Qt headers
   INCLUDE(${QT_USE_FILE})
 ENDIF()
 
