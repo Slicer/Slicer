@@ -38,6 +38,7 @@ SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 #-----------------------------------------------------------------------------
 INCLUDE(CMakeParseArguments)
 INCLUDE(Slicer3PluginsMacros)
+INCLUDE(SlicerMacroDiscoverSystemNameAndBits)
 INCLUDE(SlicerMacroParseArguments)
 INCLUDE(SlicerMacroBuildCLI)
 INCLUDE(SlicerMacroEmptyExternalProject)
@@ -280,9 +281,7 @@ SET(Slicer_QTModules_INCLUDE_DIRS CACHE INTERNAL "Slicer QTModules includes" FOR
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
 #-----------------------------------------------------------------------------
-
-SET(Slicer_BUILD NA)
-INCLUDE(SlicerBlockDiscoverSystemNameAndBits)
+SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX Slicer)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
