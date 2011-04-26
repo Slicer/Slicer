@@ -60,7 +60,7 @@ install(
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(FreeSurfer_SRCS
   vtkFSIO.cxx
   vtkFSSurfaceReader.cxx
@@ -78,6 +78,7 @@ set_source_files_properties(
 )
 
 # --------------------------------------------------------------------------
+# Build library
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -85,16 +86,14 @@ IF (VTK_WRAP_TCL)
 ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
 set(lib_name ${PROJECT_NAME})
 SET(srcs ${FreeSurfer_SRCS})
 
+ADD_LIBRARY(${lib_name} ${srcs})
 IF (VTK_WRAP_TCL)
   SET(srcs ${srcs} ${FreeSurfer_TCL_SRCS} )
 ENDIF (VTK_WRAP_TCL)
 
-add_library(${lib_name} ${srcs})
 
 SET(VTK_LIBRARIES
   vtkCommon
@@ -117,11 +116,12 @@ ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
   SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()

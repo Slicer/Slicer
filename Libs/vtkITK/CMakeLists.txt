@@ -65,7 +65,7 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(vtkITK_SRCS
   vtkITKNumericTraits.cxx
   vtkITKArchetypeImageSeriesReader.cxx
@@ -143,6 +143,7 @@ add_library(${lib_name}
 SET(libs
   ${ITK_LIBRARIES}
   )
+target_link_libraries(${lib_name} ${libs})
 IF (VTK_WRAP_TCL)
   SET(libs
     ${libs}
@@ -156,17 +157,15 @@ ELSE (VTK_WRAP_TCL)
     vtkFiltering
     )
 ENDIF (VTK_WRAP_TCL)
-target_link_libraries(${lib_name} 
-  ${libs}
-  )
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
   SET(${lib_name}_INSTALL_BIN_DIR bin)
 ENDIF()

@@ -57,7 +57,7 @@ INSTALL(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
   vtkMRMLApplicationLogic.cxx
@@ -111,18 +111,16 @@ SET(libs
   MRML
   vtkTeem
   )
-
-TARGET_LINK_LIBRARIES(${lib_name}
-  ${libs}
-  )
+TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
   SET(${lib_name}_INSTALL_BIN_DIR bin)
 ENDIF()

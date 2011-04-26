@@ -82,7 +82,7 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(MRML_SRCS
   vtkEventBroker.cxx
   vtkImageAccumulateDiscrete.cxx
@@ -221,6 +221,7 @@ SOURCE_GROUP("Header Files" FILES ${MRML_SRCS_HEADERS})
 SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
 
 # --------------------------------------------------------------------------
+# Build library
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -229,8 +230,6 @@ ENDIF (VTK_WRAP_TCL)
 
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
 SET(srcs ${MRML_SRCS} ${MRML_SRCS_HEADERS})
 
 IF (VTK_WRAP_TCL)
@@ -252,9 +251,8 @@ SET(libs
   )
   
 IF(MRML_USE_vtkTeem)
-  SET(libs ${libs} vtkTeem)
-ENDIF(MRML_USE_vtkTeem)
-
+  LIST(APPEND libs vtkTeem)
+ENDIF()
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
 
@@ -268,11 +266,12 @@ ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
   SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()

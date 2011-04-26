@@ -64,15 +64,15 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(MRMLIDImageIO_SRCS
   itkMRMLIDImageIO.cxx
   itkMRMLIDImageIOFactory.cxx
   )
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
+# Build library
+# --------------------------------------------------------------------------
 # Note: Library name is different from the directory name !
 set(lib_name MRMLIDIO)
 add_library(${lib_name} 
@@ -84,11 +84,12 @@ target_link_libraries(${lib_name}
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
   SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()
@@ -110,7 +111,7 @@ INSTALL(TARGETS ${lib_name}
 
 if(NOT DEFINED MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR)
   set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
-endif(NOT DEFINED MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR)
+endif()
 
 add_library(MRMLIDIOPlugin SHARED 
   itkMRMLIDIOPlugin.cxx

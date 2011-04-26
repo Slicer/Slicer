@@ -63,7 +63,7 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkNRRDWriter.cxx
@@ -101,6 +101,7 @@ set_source_files_properties(
   )
 
 # --------------------------------------------------------------------------
+# Build library
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -108,8 +109,6 @@ IF (VTK_WRAP_TCL)
 ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
-# Build the library
-
 SET(srcs ${vtkTeem_SRCS} )
 IF (VTK_WRAP_TCL)
   SET(srcs ${srcs} ${vtkTeem_TCL_SRCS})
@@ -152,11 +151,12 @@ ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
   SET(${lib_name}_INSTALL_BIN_DIR bin)
 ENDIF()

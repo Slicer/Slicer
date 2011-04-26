@@ -65,7 +65,7 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(IGT_SRCS
   vtkIGTDataManager.cxx
   vtkIGTDataStream.cxx
@@ -91,7 +91,7 @@ set(TRACKING_INTERFACE_LIBRARY "")
 #  SET(TRACKING_INTERFACE_LIB  
 #    ${NAVITRACK_LIB}
 #  )
-#ENDIF(IGT_USE_NAVITRACK)
+#ENDIF()
 
 if(IGT_USE_IGSTK)
   set(IGT_SRCS
@@ -107,9 +107,10 @@ if(IGT_USE_IGSTK)
   set(TRACKING_INTERFACE_LIB  
     ${IGSTK_LIBRARIES}
     )
-endif(IGT_USE_IGSTK)
+endif()
 
 # --------------------------------------------------------------------------
+# Build library
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -117,7 +118,6 @@ IF (VTK_WRAP_TCL)
 ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
-# Build and install the library
 
 set(lib_name ${PROJECT_NAME})
 SET(srcs
@@ -155,11 +155,12 @@ target_link_libraries(${lib_name}
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
   SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()

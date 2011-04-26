@@ -247,12 +247,10 @@ SOURCE_GROUP("Generated" FILES
   ${qMRMLWidgets_UI_CXX}
   ${qMRMLWidgets_QRC_CXX}
   )
-  
 
 # --------------------------------------------------------------------------
 # Include dirs
-#
-
+# --------------------------------------------------------------------------
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -281,9 +279,8 @@ INSTALL(FILES
   )
 
 # --------------------------------------------------------------------------
-# Build the library
-#
-
+# Build library
+# --------------------------------------------------------------------------
 SET(lib_name ${PROJECT_NAME})
 
 ADD_LIBRARY(${lib_name}
@@ -306,10 +303,8 @@ TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
 
 # --------------------------------------------------------------------------

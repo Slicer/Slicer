@@ -78,18 +78,19 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(RemoteIO_SRCS
- vtkHTTPHandler.cxx
- vtkSRBHandler.cxx
- vtkXNATHandler.cxx
- vtkHIDHandler.cxx
- vtkXNDHandler.cxx
- vtkHIDTagTable.cxx
- vtkXNDTagTable.cxx
+  vtkHTTPHandler.cxx
+  vtkSRBHandler.cxx
+  vtkXNATHandler.cxx
+  vtkHIDHandler.cxx
+  vtkXNDHandler.cxx
+  vtkHIDTagTable.cxx
+  vtkXNDTagTable.cxx
   )
 
 # --------------------------------------------------------------------------
+# Build library
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -97,8 +98,6 @@ IF (VTK_WRAP_TCL)
 ENDIF (VTK_WRAP_TCL)
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
 set(lib_name ${PROJECT_NAME})
 SET(srcs ${RemoteIO_SRCS})
 
@@ -112,16 +111,16 @@ SET(libs
   ${SLICERLIBCURL_LIBRARIES}
   MRML
   )
-
 target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
   SET(${lib_name}_INSTALL_BIN_DIR bin)
 ENDIF()

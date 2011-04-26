@@ -137,12 +137,10 @@ if (VTK_WRAP_TCL)
 endif()
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
+# Build library
+# --------------------------------------------------------------------------
 SET(lib_name ${PROJECT_NAME})
-ADD_LIBRARY(${lib_name} 
-  ${srcs}
- )
+ADD_LIBRARY(${lib_name} ${srcs})
 
 SET(libs
   MRML
@@ -174,11 +172,12 @@ ENDFOREACH(c)
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
   SET(${lib_name}_INSTALL_BIN_DIR bin)
 ENDIF()
