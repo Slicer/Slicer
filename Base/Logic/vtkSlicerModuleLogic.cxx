@@ -88,8 +88,8 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
 #endif
       vtksys::SystemTools::ReplaceString(
         library_directory,
-        Slicer_INSTALL_MODULES_LIB_DIR,
-        Slicer_INSTALL_MODULES_SHARE_DIR
+        Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR,
+        Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR
         );
       vtksys_stl::string share_directory = 
         library_directory + "/" + module_name;
@@ -106,7 +106,7 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
         {
         vtksys_stl::string directory(env);
         vtksys::SystemTools::ConvertToUnixSlashes(directory);
-        directory = directory + '/' + Slicer_INSTALL_MODULES_SHARE_DIR;
+        directory = directory + '/' + Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR;
         if (this->GetModuleName())
           {
           directory = directory + '/' + this->GetModuleName();
@@ -136,8 +136,8 @@ const char* vtkSlicerModuleLogic::GetModuleLibDirectory()
       vtksys_stl::string directory(share_dir);
       vtksys::SystemTools::ReplaceString(
         directory,
-        Slicer_INSTALL_MODULES_SHARE_DIR,
-        Slicer_INSTALL_MODULES_LIB_DIR
+        Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR,
+        Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
         );
       this->SetModuleLibDirectory(directory.c_str());
       }

@@ -298,7 +298,6 @@ proc launch_SetEnvironment {} {
       set ::env(Slicer_BIN_DIR)    $::env(Slicer_HOME)/bin
     
       set ::env(Slicer_PLUGINS_DIR)            $::env(Slicer_HOME)/@Slicer_INSTALL_PLUGINS_LIB_DIR@
-      set ::env(Slicer_MODULES_DIR)            $::env(Slicer_HOME)/@Slicer_INSTALL_MODULES_LIB_DIR@
       set ::env(Slicer_QTLOADABLEMODULES_DIR)  $::env(Slicer_HOME)/@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@
     
       # QtDesigner variable
@@ -481,7 +480,6 @@ proc launch_SetEnvironment {} {
       set ::env(Slicer_LIB_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
     
       set ::env(Slicer_PLUGINS_DIR) [file normalize "$::env(Slicer_HOME)/@Slicer_INSTALL_PLUGINS_LIB_DIR@/$::BUILD_SUBDIR"]
-      set ::env(Slicer_MODULES_DIR) [file normalize "$::env(Slicer_HOME)/@Slicer_INSTALL_MODULES_LIB_DIR@/$::BUILD_SUBDIR"]
       set ::env(Slicer_QTLOADABLEMODULES_DIR) [file normalize "$::env(Slicer_HOME)/@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
     
     
@@ -664,7 +662,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(Slicer_MODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer_QTLOADABLEMODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(X11_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SFW_LIB_DIR):$::env(LD_LIBRARY_PATH)
@@ -673,7 +670,6 @@ proc launch_SetPaths {} {
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer_PLUGINS_DIR):$::env(PATH)"
-            set ::env(PATH) "$::env(Slicer_MODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer_QTLOADABLEMODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(QT_BINARY_DIR):$::env(PATH)"
             set ::env(QTDESIGNER_EXE) "designer"
@@ -720,13 +716,11 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(qMRMLWidgets_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_MODULES_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer_QTLOADABLEMODULES_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TCL_DIR)/bin"
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer_PLUGINS_DIR):$::env(PATH)"
-            set ::env(PATH) "$::env(Slicer_MODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer_QTLOADABLEMODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(QT_BINARY_DIR):$::env(PATH)"
             set ::env(QTDESIGNER_EXE) "Designer.app/Contents/MacOS/Designer"
@@ -780,7 +774,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(Slicer_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer_PLUGINS_DIR)\;$::env(Path)
-            set ::env(Path) $::env(Slicer_MODULES_DIR)\;$::env(Path)
             set ::env(Path) $::env(Slicer_QTLOADABLEMODULES_DIR)\;$::env(Path)
             set ::env(Path) $::env(QT_BINARY_DIR)\;$::env(Path)
             set ::env(QTDESIGNER_EXE) "designer.exe"

@@ -299,11 +299,6 @@ SET(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_CACHE_DIR "${Slicer_INSTALL_LIB_DIR}/PluginsCache")
 
-SET(Slicer_INSTALL_MODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
-SET(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
-SET(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
-SET(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
-
 SET(Slicer_HOME "${Slicer_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
@@ -394,15 +389,6 @@ IF(BUILD_TESTING)
     COPYONLY)
     
 ENDIF()
-
-#-----------------------------------------------------------------------------
-# Since modules are KWWidgets based, unset there variables
-# Since the module Logic is shared between QTModules and regular Modules,
-# the associated BIN, LIB and INCLUDE directory shouldn't be unset
-#UNSET(Slicer_INSTALL_MODULES_BIN_DIR)
-#UNSET(Slicer_INSTALL_MODULES_LIB_DIR)
-#UNSET(Slicer_INSTALL_MODULES_INCLUDE_DIR)
-UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
 
 #-----------------------------------------------------------------------------
 # Python

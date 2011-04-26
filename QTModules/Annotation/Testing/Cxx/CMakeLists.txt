@@ -91,7 +91,7 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #   get_filename_component(filename "${file}" NAME)
 #   configure_file(
 #     ${file}
-#     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${filename}
+#     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${filename}
 #     COPYONLY)
 # endforeach(file)
 # 
@@ -101,7 +101,7 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #   ${RAWGZFILES}
 #   ${LOGFILES} 
 #   ${TESTFILES}
-#   DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+#   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
 #   ) 
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
