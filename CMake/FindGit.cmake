@@ -33,12 +33,14 @@
 #  <var-prefix>_WC_REVISION - Current SHA1 hash
 #  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_URL - output of command `git config --get remote.origin.url'
+#  <var-prefix>_WC_ROOT - Same value as working copy URL
 #  <var-prefix>_WC_GITSVN - Set to false
 # 
 # ... and also the following ones if it's a git-svn repository:
 #  <var-prefix>_WC_GITSVN - Set to True if it is a 
 #  <var-prefix>_WC_INFO - output of command `git svn info'
 #  <var-prefix>_WC_URL - url of the associated SVN repository
+#  <var-prefix>_WC_ROOT - root url of the associated SVN repository
 #  <var-prefix>_WC_REVISION - current SVN revision number
 #  <var-prefix>_WC_LAST_CHANGED_AUTHOR - author of last commit
 #  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
@@ -95,7 +97,8 @@ IF(GIT_EXECUTABLE)
        WORKING_DIRECTORY ${dir}
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
-       
+    
+    SET(${prefix}_WC_ROOT ${${prefix}_WC_URL})
     SET(${prefix}_WC_GITSVN False)
     
     # In case git-svn is used, attempt to extract svn info
@@ -112,6 +115,8 @@ IF(GIT_EXECUTABLE)
         "\\2" ${prefix}_WC_URL "${${prefix}_WC_INFO}")
       STRING(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
         "\\2" ${prefix}_WC_REVISION "${${prefix}_WC_INFO}")
+      STRING(REGEX REPLACE "^(.*\n)?Repository Root: ([^\n]+).*"
+        "\\2" ${prefix}_WC_ROOT "${${prefix}_WC_INFO}")
       STRING(REGEX REPLACE "^(.*\n)?Last Changed Author: ([^\n]+).*"
         "\\2" ${prefix}_WC_LAST_CHANGED_AUTHOR "${${prefix}_WC_INFO}")
       STRING(REGEX REPLACE "^(.*\n)?Last Changed Rev: ([^\n]+).*"
