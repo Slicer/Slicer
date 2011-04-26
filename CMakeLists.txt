@@ -38,29 +38,28 @@ SET(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/qSlicerExport.h.in")
 SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 
 #-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s)
-#-----------------------------------------------------------------------------
-
-INCLUDE(CMake/Slicer3PluginsMacros.cmake)
-INCLUDE(CMake/SlicerMacroParseArguments.cmake)
-INCLUDE(CMake/SlicerMacroBuildCLI.cmake)
-INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
-INCLUDE(CMake/SlicerFunctionCheckCompilerFlags.cmake)
-INCLUDE(CMake/SlicerFunctionInstallLibrary.cmake)
-INCLUDE(CMake/SlicerFunctionGetGccVersion.cmake)
-
-#-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
 
 SET(CMAKE_MODULE_PATH
-  ${VTK_CMAKE_DIR}
   ${Slicer_SOURCE_DIR}/CMake
   ${Slicer_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
   
 SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
+
+#-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#-----------------------------------------------------------------------------
+INCLUDE(CMakeParseArguments)
+INCLUDE(Slicer3PluginsMacros)
+INCLUDE(SlicerMacroParseArguments)
+INCLUDE(SlicerMacroBuildCLI)
+INCLUDE(SlicerMacroEmptyExternalProject)
+INCLUDE(SlicerFunctionCheckCompilerFlags)
+INCLUDE(SlicerFunctionInstallLibrary)
+INCLUDE(SlicerFunctionGetGccVersion)
 
 #-----------------------------------------------------------------------------
 # Platform check
@@ -273,7 +272,7 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
 #-----------------------------------------------------------------------------
 # Today date
 #-----------------------------------------------------------------------------
-INCLUDE(CMake/SlicerFunctionToday.cmake)
+INCLUDE(SlicerFunctionToday)
 TODAY(Slicer_BUILDDATE)
 
 #-----------------------------------------------------------------------------
@@ -368,7 +367,7 @@ SET(Slicer_QTModules_INCLUDE_DIRS CACHE INTERNAL "Slicer QTModules includes" FOR
 #-----------------------------------------------------------------------------
 
 SET(Slicer_BUILD NA)
-INCLUDE(CMake/SlicerDiscoverSystemNameAndBits.cmake)
+INCLUDE(SlicerDiscoverSystemNameAndBits)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
@@ -448,7 +447,7 @@ IF(Slicer_USE_QT)
     LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
   ENDIF()
   
-  INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQtAndCheckVersion.cmake)
+  INCLUDE(SlicerFindQtAndCheckVersion)
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -459,7 +458,11 @@ IF(Slicer_USE_QT)
   FIND_PACKAGE(CTK REQUIRED)
   INCLUDE(${CTK_USE_FILE})
   # Update CMake module path
-  SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CTK_CMAKE_UTILITIES_DIR})
+  SET(CMAKE_MODULE_PATH
+    ${VTK_CMAKE_DIR}
+    ${CTK_CMAKE_DIR} 
+    ${CMAKE_MODULE_PATH} 
+    ${CTK_CMAKE_UTILITIES_DIR})
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -473,8 +476,8 @@ IF(Slicer_USE_QT)
 
     SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
     LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
-    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake)
-    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroCompilePythonScript.cmake)
+    INCLUDE(ctkMacroWrapPythonQt)
+    INCLUDE(ctkMacroCompilePythonScript)
     
     # Enable qMRMLWidgets python wrapping
     SET(qMRMLWidgets_WRAP_PYTHON ON)
@@ -661,7 +664,7 @@ ADD_SUBDIRECTORY(Resources)
 # Module Logic
 #-----------------------------------------------------------------------------
 
-INCLUDE("${Slicer_CMAKE_DIR}/SlicerMacroBuildModuleLogic.cmake")
+INCLUDE(SlicerMacroBuildModuleLogic)
 
 # KWWidgets and Qt modules share the same logics typically located in the
 # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
