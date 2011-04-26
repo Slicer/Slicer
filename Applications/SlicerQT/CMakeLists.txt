@@ -193,7 +193,7 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 
 IF(Slicer_USE_CTKAPPLAUNCHER AND NOT APPLE)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
-  INCLUDE(${Slicer_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
+  INCLUDE(SlicerBlockCTKAppLauncherSettings)
   ctkAppLauncherConfigure(
     TARGET SlicerQT${SlicerQT_EXE_SUFFIX}
     APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
