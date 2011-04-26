@@ -356,7 +356,7 @@ SET(Slicer_QTModules_INCLUDE_DIRS CACHE INTERNAL "Slicer QTModules includes" FOR
 #-----------------------------------------------------------------------------
 
 SET(Slicer_BUILD NA)
-INCLUDE(SlicerDiscoverSystemNameAndBits)
+INCLUDE(SlicerBlockDiscoverSystemNameAndBits)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
