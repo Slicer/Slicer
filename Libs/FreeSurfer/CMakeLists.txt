@@ -137,37 +137,16 @@ INSTALL(TARGETS ${lib_name}
   )
 
 # --------------------------------------------------------------------------
-# Create Python wrappers if VTK is wrapped in Python
-#
-
-IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
-
-  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
-
-  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
-  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${FreeSurfer_SRCS}")
-  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
-  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
-  
-  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name} ${PYTHON_LIBRARIES})
-  
-  FOREACH(c ${KIT_PYTHON_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
-  ENDFOREACH(c)
-
-  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
-
-  ## Python modules on Windows must have the extension ".pyd"
-  IF(WIN32 AND NOT CYGWIN)
-    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
-  ENDIF(WIN32 AND NOT CYGWIN)
-
-  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development)
-
-ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+# Python Wrapping
+# --------------------------------------------------------------------------
+IF(VTK_WRAP_PYTHON)
+  vtkMacroKitPythonWrap(
+    KIT_NAME ${lib_name}
+    KIT_SRCS ${FreeSurfer_SRCS}
+    KIT_INSTALL_BIN_DIR ${${lib_name}_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${${lib_name}_INSTALL_LIB_DIR}
+    )
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Install support files

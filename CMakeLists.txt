@@ -474,6 +474,8 @@ IF(Slicer_USE_QT)
       MESSAGE(FATAL_ERROR "Since both Slicer_USE_QT and Slicer_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF()
 
+    INCLUDE(vtkMacroKitPythonWrap)
+
     SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
     LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
     INCLUDE(ctkMacroWrapPythonQt)
