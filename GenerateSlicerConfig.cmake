@@ -18,10 +18,19 @@
 #
 #
 
+SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
+
+# License and Readme file
+SET(Slicer_LICENSE_FILE_CONFIG ${Slicer_SOURCE_DIR}/License.txt)
+SET(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
+
+# Path to extension CPack script
+set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/SlicerExtensionCPack.cmake)
+
+# Slicer/Libs
 SET(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
 SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
 SET(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
 
 SET(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
 SET(Slicer_Libs_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin ${Slicer_BINARY_DIR}/lib)
@@ -29,13 +38,18 @@ SET(Slicer_Libs_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin ${Slicer_BINARY_DIR
 SET(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
 SET(Slicer_Base_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin)
 
+# Qt
+SET(QT_QMAKE_EXECUTABLE_CONFIG ${QT_QMAKE_EXECUTABLE})
+
+# External project
+SET(BatchMake_DIR_CONFIG ${BatchMake_DIR})
+SET(CTK_DIR_CONFIG ${CTK_DIR})
 SET(ITK_DIR_CONFIG ${ITK_DIR})
-SET(VTK_DIR_CONFIG ${VTK_DIR})
-SET(Teem_DIR_CONFIG ${Teem_DIR})
+SET(OpenCV_DIR_CONFIG ${OpenCV_DIR})
 SET(PYTHON_INCLUDE_PATH_CONFIG ${PYTHON_INCLUDE_PATH})
 SET(PYTHON_LIBRARIES_CONFIG ${PYTHON_LIBRARIES})
-SET(BatchMake_DIR_CONFIG ${BatchMake_DIR})
-SET(OpenCV_DIR_CONFIG ${OpenCV_DIR})
+SET(Teem_DIR_CONFIG ${Teem_DIR})
+SET(VTK_DIR_CONFIG ${VTK_DIR})
 
 # Configure SlicerConfig.cmake for the install tree.
 CONFIGURE_FILE(
