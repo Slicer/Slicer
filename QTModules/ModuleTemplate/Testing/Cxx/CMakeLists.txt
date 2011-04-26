@@ -2,7 +2,7 @@ SET(KIT ModuleTemplate)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qSlicerModuleTemplateTest1.cxx
+  qSlicerModuleTemplateModuleTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -19,6 +19,6 @@ MACRO(TEST_WITH_ARG  TESTNAME ARG)
   ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARG})
 ENDMACRO()
 
-SIMPLE_TEST( qSlicerModuleTemplateTest1 )
+SIMPLE_TEST( qSlicerModuleTemplateModuleTest1 )
 #SET(DTI_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 #TEST_WITH_ARG( MyTest2 ${DTI_FILE} )
