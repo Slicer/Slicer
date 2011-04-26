@@ -271,21 +271,21 @@ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
 
 #-----------------------------------------------------------------------------
+# Today date
+#-----------------------------------------------------------------------------
+INCLUDE(CMake/SlicerFunctionToday.cmake)
+TODAY(Slicer_BUILDDATE)
+
+#-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
 
 SET(Slicer_VERSION_MAJOR "4")
 SET(Slicer_VERSION_MINOR "0")
 
-INCLUDE(CMake/SlicerMacroToday.cmake)
-
-# Get build time
-TODAY(Slicer_BUILDDATE)
-
 IF(NOT Slicer_VERSION_PATCH)
   SET(Slicer_VERSION_PATCH "gamma-${Slicer_BUILDDATE}")
 ENDIF()
-
 
 SET(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
