@@ -6,7 +6,7 @@
 
 # This is source code manager (i.e. svn)
 scm local
-scmurl /home/jchris/Projects/Slicer4/Extensions/Testing/ExtensionTest
+scmurl Testing/ExtensionTemplate
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files 
