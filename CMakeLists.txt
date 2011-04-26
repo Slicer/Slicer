@@ -440,16 +440,15 @@ INCLUDE(${VTK_USE_FILE})
 # Qt 
 #-----------------------------------------------------------------------------
 IF(Slicer_USE_QT)
+
+  # Module name should be specified as they appear in FindQt4.cmake
+  # For example, the module name associated with the variable QT_USE_QTXML is XML.
+  SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
+  IF(BUILD_TESTING)
+    LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
+  ENDIF()
   
   INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQtAndCheckVersion.cmake)
-  
-  MESSAGE(STATUS "Configuring Slicer with Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-  
-  # Enable modules
-  SET(QT_USE_QTNETWORK ON)
-  SET(QT_USE_QTTEST ${BUILD_TESTING})
-
-  INCLUDE(${QT_USE_FILE})
 ENDIF()
 
 #-----------------------------------------------------------------------------
