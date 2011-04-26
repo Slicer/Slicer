@@ -309,7 +309,7 @@ ENDIF()
 
 # --------------------------------------------------------------------------
 # PythonQt wrapping
-#
+# --------------------------------------------------------------------------
 IF(qMRMLWidgets_WRAP_PYTHON)
   SET(KIT_PYTHONQT_SRCS) # Clear variable
   ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
@@ -322,30 +322,29 @@ IF(qMRMLWidgets_WRAP_PYTHON)
 ENDIF()
 
 # --------------------------------------------------------------------------
-# Install
-#
-
-IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
-  SET(${lib_name}_INSTALL_BIN_DIR bin)
+# Install library
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()
-IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
-  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
 # Testing
-#
+# --------------------------------------------------------------------------
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()
 
 # --------------------------------------------------------------------------
-# Sub directories
-#
+# QtDesigner Plugins
+# --------------------------------------------------------------------------
 ADD_SUBDIRECTORY(Plugins)

@@ -50,7 +50,7 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
 endif()
 
 # --------------------------------------------------------------------------
-# Build and link executable
+# Build executable
 # --------------------------------------------------------------------------
 set(GENERATECLP_SOURCE 
   GenerateCLP.cxx
@@ -68,9 +68,8 @@ target_link_libraries(GenerateCLP
 include(GenerateGenerateCLPConfig.cmake)
 
 # --------------------------------------------------------------------------
-# Install Rules
+# Install executable
 # --------------------------------------------------------------------------
-
 if(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
   SET(GenerateCLP_INSTALL_BIN_DIR bin)
 endif()
@@ -112,6 +111,9 @@ endif()
 set(GenerateCLP_FORWARD_EXE GenerateCLP)
 
 if(NOT WIN32)
+  # --------------------------------------------------------------------------
+  # Build launcher
+  # --------------------------------------------------------------------------
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPLauncher.c.in
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c
@@ -125,6 +127,8 @@ if(NOT WIN32)
     )
 endif()
 
+# --------------------------------------------------------------------------
+# Testing
 # --------------------------------------------------------------------------
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)

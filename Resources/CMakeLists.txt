@@ -5,7 +5,7 @@ foreach(headerfile ${HEADERFILES})
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/${headerfile}"
     COPYONLY
     )
-endforeach(headerfile)
+endforeach()
 
 install(
   FILES ${HEADERFILES}
@@ -19,7 +19,7 @@ foreach(pngfile ${PNGFILES})
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/${pngfile}"
     COPYONLY
     )
-endforeach(pngfile)
+endforeach()
 
 install(
   FILES ${PNGFILES}
@@ -37,7 +37,7 @@ configure_file(
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/${parameterset}"
     COPYONLY
     )
-endforeach(parameterset)
+endforeach()
 install(
   FILES ${PARAMETERSETS}
   DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Resources/ParameterSets

@@ -32,6 +32,7 @@ ENDFOREACH()
 
 # --------------------------------------------------------------------------
 # Include dirs
+# --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -62,12 +63,18 @@ ENDIF()
 
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
 # Update Slicer_Base_INCLUDE_DIRS
+# --------------------------------------------------------------------------
 SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkSlicerBaseLogicConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
@@ -79,7 +86,7 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerApplicationLogic.cxx
@@ -131,8 +138,8 @@ SET_SOURCE_FILES_PROPERTIES(
 #   "vtkSlicerBaseLogic.h")
 
 # --------------------------------------------------------------------------
-# Build the library
-
+# Build library
+# --------------------------------------------------------------------------
 set(lib_name SlicerBaseLogic)
 
 #SET(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
@@ -162,16 +169,19 @@ ENDIF()
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
-# Update Slicer_Base_LIBRARIES
-SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
-
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Update Slicer_Base_LIBRARIES
+# --------------------------------------------------------------------------
+SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
+
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
@@ -179,11 +189,9 @@ install(TARGETS ${lib_name}
   )
   
 # --------------------------------------------------------------------------
-# Create Python wrappers if VTK is wrapped in Python
-#
-
+# Python Wrapping
+# --------------------------------------------------------------------------
 IF(VTK_WRAP_PYTHON)
-
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${SlicerBaseLogic_SRCS}
@@ -191,18 +199,18 @@ IF(VTK_WRAP_PYTHON)
     KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     )
-
 ENDIF()
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
-
+# --------------------------------------------------------------------------
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Install support files
+# --------------------------------------------------------------------------
 
 # Should this location change, update Base/Logic/vtkSlicerColorLogic.cxx
 
@@ -214,7 +222,7 @@ foreach(colorfile ${COLORFILES})
     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
     COPYONLY
     )
-endforeach(colorfile)
+endforeach()
 install(
   FILES ${COLORFILES}
   DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources/ColorFiles

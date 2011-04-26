@@ -121,15 +121,15 @@ TARGET_LINK_LIBRARIES(CudaSupport
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
-
+# --------------------------------------------------------------------------
 #IF(BUILD_TESTING)
 #  ADD_SUBDIRECTORY(Testing)
-#ENDIF(BUILD_TESTING)
+#ENDIF()
 
 
 CONFIGURE_FILE(
   ${CudaSupport_SOURCE_DIR}/CudappSupportConfigure.h.in 
   ${CudaSupport_BINARY_DIR}/CudappSupportConfigure.h
-)
+  )
 
-ENDIF(CUDA_SUPPORT_ENABLED)
+ENDIF()

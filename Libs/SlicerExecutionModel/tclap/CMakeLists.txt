@@ -30,16 +30,19 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
-
-## No libs created in tclap if(NOT DEFINED BUILD_SHARED_LIBS)
-## No libs created in tclap   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-## No libs created in tclap endif(NOT DEFINED BUILD_SHARED_LIBS)
-
+# --------------------------------------------------------------------------
+# Configure support file
+# --------------------------------------------------------------------------
 include(GenerateTCLAPConfig.cmake)
 
-configure_file(${TCLAP_SOURCE_DIR}/UseTCLAP.cmake.in
-  ${TCLAP_BINARY_DIR}/UseTCLAP.cmake COPYONLY)
+configure_file(
+  ${TCLAP_SOURCE_DIR}/UseTCLAP.cmake.in
+  ${TCLAP_BINARY_DIR}/UseTCLAP.cmake COPYONLY
+  )
 
+# --------------------------------------------------------------------------
+# Install headers
+# --------------------------------------------------------------------------
 
 file(GLOB __files1 "${TCLAP_SOURCE_DIR}/include/tclap/*.h")
 # Note "COPYING" is a filename containing the license file
@@ -49,6 +52,8 @@ install(FILES
   DESTINATION include/tclap COMPONENT Development
   )
 
+# Install support files
+# --------------------------------------------------------------------------
 install(FILES 
   ${TCLAP_BINARY_DIR}/UseTCLAP.cmake 
   ${TCLAP_BINARY_DIR}/install/TCLAPConfig.cmake 

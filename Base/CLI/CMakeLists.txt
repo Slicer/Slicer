@@ -33,22 +33,27 @@ ENDFOREACH()
 
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 SET(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
-
 INCLUDE_DIRECTORIES(${include_dirs})
 
+# --------------------------------------------------------------------------
 # Update Slicer_Base_INCLUDE_DIRS
+# --------------------------------------------------------------------------
 SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerBaseCLIConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseCLIConfigure.h
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkSlicerBaseCLIConfigure.h)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 INSTALL(FILES 
@@ -62,7 +67,7 @@ INSTALL(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 # Single library target. Down the road, we may want to have one library that
 # only depends on ITK and a second library that only depends on VTK
 
@@ -71,27 +76,30 @@ SET(SlicerBaseCLI_SRCS
   )
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
+# Build library
+# --------------------------------------------------------------------------
 SET(lib_name "SlicerBaseCLI")
 
-ADD_LIBRARY(${lib_name} 
-  ${SlicerBaseCLI_SRCS}
-  )
+ADD_LIBRARY(${lib_name} ${SlicerBaseCLI_SRCS})
 TARGET_LINK_LIBRARIES(${lib_name} 
   vtkCommon 
   ModuleDescriptionParser
 )
 SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
-# Update Slicer_Base_LIBRARIES
-SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
-
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Update Slicer_Base_LIBRARIES
+# --------------------------------------------------------------------------
+SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
+
+# --------------------------------------------------------------------------
+# Build library
+# --------------------------------------------------------------------------
 INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries

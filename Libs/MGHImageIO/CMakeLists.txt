@@ -39,7 +39,7 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
  
 # --------------------------------------------------------------------------
 # Include dirs
-
+# --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -52,9 +52,13 @@ set(include_dirs
 
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file itkMGHImageIOConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/itkMGHImageIOConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/itkMGHImageIOConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -66,25 +70,27 @@ install(FILES
 
 # --------------------------------------------------------------------------
 # Sources
-
+# --------------------------------------------------------------------------
 set(MGHImageIO_SRCS
   itkMGHImageIO.cxx
   itkMGHImageIOFactory.cxx
   )
 
 # --------------------------------------------------------------------------
-# Build and install the library
-
+# Build library
+# --------------------------------------------------------------------------
 # Note: Library name is different from the directory name !
 set(lib_name MGHIO)
-add_library(${lib_name} 
-  ${MGHImageIO_SRCS}
-  )
 
-target_link_libraries(${lib_name} 
-  ${ITK_LIBRARIES}
-)
+set(srcs ${MGHImageIO_SRCS})
+add_library(${lib_name} ${srcs})
 
+set(libs ${ITK_LIBRARIES})
+target_link_libraries(${lib_name} ${libs})
+
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
   SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()
@@ -126,20 +132,22 @@ target_link_libraries(MGHIOPlugin
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF()
 
+# --------------------------------------------------------------------------
+# Install library - MGHIO and MGHIOPlugin are installed in different locations
+# --------------------------------------------------------------------------
 install(TARGETS MGHIOPlugin
   RUNTIME DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
-# make a copy named '.so' for compatibility with the expectations
+# --------------------------------------------------------------------------
+# Make a copy named '.so' for compatibility with the expectations
 # of the ITK Factory mechanism on macs
-
+# --------------------------------------------------------------------------
 if(APPLE)
   add_custom_command(
     TARGET MGHIOPlugin
@@ -154,4 +162,4 @@ if(APPLE)
     "${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
     DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR}
     )
-endif(APPLE)
+endif()

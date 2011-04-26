@@ -43,9 +43,13 @@ SET(include_dirs
   )
 INCLUDE_DIRECTORIES(${include_dirs})
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLCLIConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLCLIConfigure.h
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkMRMLCLIConfigure.h)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -92,9 +96,9 @@ IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -105,7 +109,7 @@ IF(VTK_WRAP_PYTHON)
     KIT_NAME ${lib_name}
     KIT_SRCS ${MRMLCLI_SRCS}
     KIT_PYTHON_LIBRARIES MRMLPythonD
-    KIT_INSTALL_BIN_DIR ${${lib_name}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${lib_name}_INSTALL_LIB_DIR}
+    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
 ENDIF()

@@ -48,9 +48,13 @@ IF(MRMLDisplayableManager_USE_PYTHON)
 ENDIF()
 INCLUDE_DIRECTORIES(${include_dirs})
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLDisplayableManagerConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLDisplayableManagerConfigure.h
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkMRMLDisplayableManagerConfigure.h)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -152,17 +156,17 @@ ENDIF()
 # --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
-  SET(${lib_name}_INSTALL_BIN_DIR bin)
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 ENDIF()
-IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
-  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
   
 # --------------------------------------------------------------------------
@@ -173,15 +177,15 @@ IF(MRMLDisplayableManager_USE_PYTHON AND VTK_WRAP_PYTHON)
     KIT_NAME ${lib_name}
     KIT_SRCS ${KIT_SRCS}
     KIT_PYTHON_LIBRARIES MRMLLogicPythonD
-    KIT_INSTALL_BIN_DIR ${${lib_name}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${lib_name}_INSTALL_LIB_DIR}
+    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
   ADD_SUBDIRECTORY(Python)
 ENDIF()
 
 # --------------------------------------------------------------------------
 # Testing
-
+# --------------------------------------------------------------------------
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()

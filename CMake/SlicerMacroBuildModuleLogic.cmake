@@ -29,21 +29,24 @@ MACRO(SlicerMacroBuildModuleLogic)
     ${ARGN}
     )
 
+  # --------------------------------------------------------------------------
   # Sanity checks
-  IF(NOT DEFINED MODULELOGIC_NAME)
-    MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF()
-
-  IF(NOT DEFINED MODULELOGIC_EXPORT_DIRECTIVE)
-    MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF()
-
+  # --------------------------------------------------------------------------
+  SET(expected_defined_vars NAME EXPORT_DIRECTIVE)
+  FOREACH(var ${expected_defined_vars})
+    IF(NOT DEFINED MODULELOGIC_${var})
+      MESSAGE(FATAL_ERROR "${var} is mandatory")
+    ENDIF()
+  ENDFOREACH()
+  
+  # --------------------------------------------------------------------------
   # Define library name
+  # --------------------------------------------------------------------------
   SET(lib_name ${MODULELOGIC_NAME})
 
   # --------------------------------------------------------------------------
   # Include dirs
-
+  # --------------------------------------------------------------------------
   INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -69,15 +72,15 @@ MACRO(SlicerMacroBuildModuleLogic)
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   #-----------------------------------------------------------------------------
-  # Source group(s)
-  
+  # Source groups
+  # --------------------------------------------------------------------------
   SOURCE_GROUP("Generated" FILES
     ${dynamicHeaders}
     )
 
   # --------------------------------------------------------------------------
-  # Build the library
-
+  # Build library
+  # --------------------------------------------------------------------------
   ADD_LIBRARY(${lib_name}
     ${MODULELOGIC_SRCS}
     )
@@ -113,12 +116,12 @@ MACRO(SlicerMacroBuildModuleLogic)
 
   # Apply user-defined properties to the library target.
   IF(Slicer_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-      ${Slicer_LIBRARY_PROPERTIES}
-    )
-  ENDIF(Slicer_LIBRARY_PROPERTIES)
+    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  ENDIF()
   
-  # Install rules
+  # --------------------------------------------------------------------------
+  # Install library
+  # --------------------------------------------------------------------------
   INSTALL(TARGETS ${lib_name}
     RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries 
     LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries

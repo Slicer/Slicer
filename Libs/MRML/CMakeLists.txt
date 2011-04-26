@@ -68,9 +68,13 @@ if(MRML_USE_Teem)
 endif()
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkMRMLConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -254,9 +258,9 @@ IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -266,20 +270,21 @@ IF(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${MRML_SRCS}
-    KIT_INSTALL_BIN_DIR ${${lib_name}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${lib_name}_INSTALL_LIB_DIR}
+    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
 ENDIF()
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
-
+# --------------------------------------------------------------------------
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+endif()
 
-# Install the testing data
-
+# --------------------------------------------------------------------------
+# Install Test Data
+# --------------------------------------------------------------------------
 file(GLOB_RECURSE MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
 file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
 file(GLOB_RECURSE XMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.xml")
@@ -302,7 +307,7 @@ foreach(file
     ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
     COPYONLY
     )
-endforeach(file) 
+endforeach() 
 
 install(DIRECTORY
   Testing

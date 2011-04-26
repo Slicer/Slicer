@@ -33,7 +33,6 @@ ENDFOREACH()
 # --------------------------------------------------------------------------
 # Prerequisites
 # --------------------------------------------------------------------------
-
 find_package(ITK REQUIRED) ## ITK is required for expat.h
 include(${ITK_USE_FILE})
 
@@ -47,11 +46,10 @@ endif()
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
- 
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
-
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR} 
@@ -61,19 +59,22 @@ if(ModuleDescriptionParser_USE_PYTHON)
   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
   if(WIN32)
     set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH}/../PC)
-  endif(WIN32)
-endif(ModuleDescriptionParser_USE_PYTHON)
+  endif()
+endif()
 
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file ModuleDescriptionParserConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/ModuleDescriptionParserConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
-
 # --------------------------------------------------------------------------
-# Install rule for header files
+# Install headers
 # --------------------------------------------------------------------------
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -86,7 +87,6 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
-
 set(ModuleDescriptionParser_SRCS
   ModuleParameter.cxx
   ModuleParameterGroup.cxx
@@ -99,9 +99,9 @@ set(ModuleDescriptionParser_SRCS
   BatchMakeUtilities.cxx
   )
 
-#
+# --------------------------------------------------------------------------
 # Enable Binary File Descriptor support if available
-#
+# --------------------------------------------------------------------------
 if(USE_BFD)
   if(NOT WIN32)
     include(CheckIncludeFile)
@@ -119,13 +119,13 @@ if(USE_BFD)
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         OUTPUT_VARIABLE OUTPUT)
       message(${OUTPUT})
-      
+
       if(HAVE_BFD)
         message(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
       else()
         message(STATUS "Testing libbfd - error.  ModuleFactory will not look for global symbols in plugin executables.")
       endif()
-      
+
     endif()
 
     if(HAVE_BFD)
@@ -137,13 +137,10 @@ if(USE_BFD)
 endif()
 
 # --------------------------------------------------------------------------
-# Build and install the library
+# Build library
 # --------------------------------------------------------------------------
 set(lib_name ModuleDescriptionParser)
-
-add_library(${lib_name}
-  ${ModuleDescriptionParser_SRCS}
-  )
+add_library(${lib_name} ${ModuleDescriptionParser_SRCS})
 
 ## Always build an explicitly static library for linking against GenerateCLP so that
 ## GenerateCLP can be run from CMake without having to set DYLD_LIBRARY_PATH or LD_LIBRARY_PATH
@@ -152,59 +149,56 @@ add_library(${lib_name}
   ## ${ModuleDescriptionParser_SRCS}
   ## )
 
-set(link_libs
+set(libs
   ITKEXPAT
   itksys
   )
-  
+
 #
 # Append extra platform dependent libraries required for linking
 #
 if(ModuleDescriptionParser_USE_PYTHON)
-  set(link_libs ${link_libs} ${PYTHON_LIBRARIES})
+  list(APPEND libs ${PYTHON_LIBRARIES})
 endif()
 
 if(NOT WIN32 AND NOT APPLE AND NOT UNIX)
-  set(link_libs ${link_libs} util pthread)
+  list(APPEND libs util pthread)
 endif()
 
 if(UNIX)
-  set(link_libs ${link_libs} pthread)
-endif(UNIX)
-
-if(NOT WIN32 AND HAVE_BFD)
-  set(link_libs ${link_libs} bfd iberty)
+  list(APPEND libs pthread)
 endif()
 
-target_link_libraries(${lib_name} ${link_libs})
+if(NOT WIN32 AND HAVE_BFD)
+  list(APPEND libs bfd iberty)
+endif()
+
+target_link_libraries(${lib_name} ${libs})
 ## target_link_libraries(${lib_name}-static ${link_libs})
 
 #
 # Apply user-defined properties to the library target.
 #
 if(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer_LIBRARY_PROPERTIES}
-  )
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
 
 
 # --------------------------------------------------------------------------
-# Install rules for library
+# Install library
 # --------------------------------------------------------------------------
-
-if(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
-  SET(${lib_name}_INSTALL_BIN_DIR bin)
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 endif()
 
-if(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
-  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
 endif()
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -216,9 +210,8 @@ if(BUILD_TESTING)
 endif()
 
 # --------------------------------------------------------------------------
-# Install support files
+# Configure support files
 # --------------------------------------------------------------------------
-
 include(GenerateModuleDescriptionParserConfig.cmake) 
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in

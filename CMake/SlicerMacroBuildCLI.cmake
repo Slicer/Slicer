@@ -11,7 +11,9 @@ MACRO(slicerMacroBuildCLI)
     ${ARGN}
     )
     
+  # --------------------------------------------------------------------------
   # Sanity checks
+  # --------------------------------------------------------------------------
   IF(NOT DEFINED MY_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
   ENDIF()

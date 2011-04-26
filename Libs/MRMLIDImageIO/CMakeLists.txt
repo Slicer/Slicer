@@ -51,9 +51,13 @@ set(include_dirs
   )
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file itkMRMLIDImageIOConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/itkMRMLIDImageIOConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/itkMRMLIDImageIOConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -127,16 +131,19 @@ set_target_properties(MRMLIDIOPlugin
   )
 target_link_libraries(MRMLIDIOPlugin ${lib_name})
 
-# Note MRMLIDIO and MRMLIDOPlugin are installed in different locations
-
+# --------------------------------------------------------------------------
+# Install library - MRMLIDIO and MRMLIDOPlugin are installed in different locations
+# --------------------------------------------------------------------------
 install(TARGETS MRMLIDIOPlugin
   RUNTIME DESTINATION ${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
-# make a copy named '.so' for compatibility with the expectations
+# --------------------------------------------------------------------------
+# Make a copy named '.so' for compatibility with the expectations
 # of the ITK Factory mechanism on macs
+# --------------------------------------------------------------------------
 if(APPLE)
   add_custom_command(
     TARGET MRMLIDIOPlugin
@@ -151,4 +158,4 @@ if(APPLE)
     "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR}/libMRMLIDIOPlugin.so"
     DESTINATION ${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR}
     )
-endif(APPLE)
+endif()

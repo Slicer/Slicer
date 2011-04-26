@@ -1,8 +1,11 @@
 PROJECT(SlicerLibs)
 
-#
-# Order of project directory is important. Project should be topologically ordered
-#
+
+# --------------------------------------------------------------------------
+#                      ----] W A R N I N G [----
+# --------------------------------------------------------------------------
+# Order of project directory matters. Project should be topologically ordered
+# --------------------------------------------------------------------------
 
 SET(dirs
   SlicerExecutionModel # Bundled subdirectory that can easily be included in other packages.
@@ -46,7 +49,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Set library properties
 #-----------------------------------------------------------------------------
-
 SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHONQT})
 
 SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
@@ -59,7 +61,6 @@ SET(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 #-----------------------------------------------------------------------------
 # Generate list of corresponding libraries and include directories
 #-----------------------------------------------------------------------------
-
 SET(libs)
 SET(include_dirs)
 FOREACH(dir ${dirs})
@@ -80,14 +81,12 @@ LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
 #-----------------------------------------------------------------------------
 # Update variable Slicer_Libs_LIBRARIES and Slicer_Libs_INCLUDE_DIRS
 #-----------------------------------------------------------------------------
-
 SET(Slicer_Libs_LIBRARIES ${Slicer_Libs_LIBRARIES} ${libs} CACHE INTERNAL "Slicer Libs libraries" FORCE)
 SET(Slicer_Libs_INCLUDE_DIRS ${Slicer_Libs_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Loop over list of directories
 #-----------------------------------------------------------------------------
-
 FOREACH(dir ${dirs})
   SET(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
   SET(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})

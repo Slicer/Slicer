@@ -51,9 +51,13 @@ set(include_dirs
   )
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file vtkIGTConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkIGTConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkIGTConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -147,14 +151,14 @@ IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
-
+# --------------------------------------------------------------------------
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+endif()

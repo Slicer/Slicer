@@ -46,9 +46,13 @@ set(include_dirs
   )
 include_directories(${include_dirs})
 
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
+set(configure_header_file FreeSurferConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/FreeSurferConfigure.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/FreeSurferConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
@@ -107,9 +111,9 @@ IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
 ENDIF()
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -119,14 +123,14 @@ IF(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${FreeSurfer_SRCS}
-    KIT_INSTALL_BIN_DIR ${${lib_name}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${lib_name}_INSTALL_LIB_DIR}
+    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
 ENDIF()
 
 # --------------------------------------------------------------------------
 # Install support files
-
+# --------------------------------------------------------------------------
 # Should this location change, update Libs\MRML\vtkMRMLFreeSurferProceduralColorNode.cxx
 
 # Copy the resource files to the build directory
@@ -141,7 +145,7 @@ foreach(file ${RESFILES})
     ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
     COPYONLY
     )
-endforeach(file)
+endforeach()
 install(
   FILES ${RESFILES}
   DESTINATION share/${PROJECT_NAME}
@@ -149,13 +153,14 @@ install(
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
-
+# --------------------------------------------------------------------------
 # IF(BUILD_TESTING)
 #  ADD_SUBDIRECTORY(Testing)
-# ENDIF(BUILD_TESTING)
+# ENDIF()
 
-# Install the testing data
-
+# --------------------------------------------------------------------------
+# Install Test Data
+# --------------------------------------------------------------------------
 file(GLOB_RECURSE PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.png")
 file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
 file(GLOB_RECURSE CURVFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.curv")
@@ -172,7 +177,7 @@ foreach(file
     ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
     COPYONLY
     )
-endforeach(file) 
+endforeach() 
 
 install(DIRECTORY
   Testing

@@ -1,5 +1,4 @@
-PROJECT( SlicerExecutionModel )
-set(LOCAL_PROJECT_NAME SlicerExecutionModel)
+PROJECT(SlicerExecutionModel)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -9,10 +8,8 @@ cmake_minimum_required(VERSION 2.8.2)
 ##NOTE:  Only build these items if they have not already been identified.
 ##       This allows for these items to be skipped if building against Slicer versions
 
-if(NOT ITK_FOUND)
-   find_package(ITK REQUIRED)
-   include(${ITK_USE_FILE})
-endif(NOT ITK_FOUND)
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
 ## A simple macro to set variables ONLY if it has not been set
 ## This is needed when stand-alone packages are combined into

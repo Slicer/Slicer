@@ -29,29 +29,34 @@ MACRO(slicerMacroBuildQtModule)
     ""
     ${ARGN}
     )
-
+  
+  # --------------------------------------------------------------------------
   # Sanity checks
-  IF(NOT DEFINED QTMODULE_NAME)
-    MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF()
-
-  IF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
-    MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF()
-
+  # --------------------------------------------------------------------------
+  SET(expected_defined_vars NAME EXPORT_DIRECTIVE)
+  FOREACH(var ${expected_defined_vars})
+    IF(NOT DEFINED QTMODULE_${var})
+      MESSAGE(FATAL_ERROR "${var} is mandatory")
+    ENDIF()
+  ENDFOREACH()
+  
   IF(NOT DEFINED QTMODULE_TITLE)
     SET(QTMODULE_TITLE ${QTMODULE_NAME})
   ENDIF()
 
+  # --------------------------------------------------------------------------
   # Define library name
+  # --------------------------------------------------------------------------
   SET(lib_name qSlicer${QTMODULE_NAME}Module)
 
+  # --------------------------------------------------------------------------
   # Define Module title
+  # --------------------------------------------------------------------------
   ADD_DEFINITIONS(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
 
   # --------------------------------------------------------------------------
   # Include dirs
-
+  # --------------------------------------------------------------------------
   INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -76,17 +81,9 @@ MACRO(slicerMacroBuildQtModule)
   SET(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-
-  #file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
-  #install(FILES
-  #  ${files}
-  #  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
-  #  )
-
   #-----------------------------------------------------------------------------
   # Sources
-  #
-
+  #-----------------------------------------------------------------------------
   QT4_WRAP_CPP(QTMODULE_MOC_OUTPUT ${QTMODULE_MOC_SRCS})
   QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
   IF(DEFINED QTMODULE_RESOURCES)
@@ -104,6 +101,9 @@ MACRO(slicerMacroBuildQtModule)
     WRAP_EXCLUDE
     )
 
+  # --------------------------------------------------------------------------
+  # Source groups
+  # --------------------------------------------------------------------------
   SOURCE_GROUP("Resources" FILES
     ${QTMODULE_UI_SRCS}
     ${Slicer_LOGOS_RESOURCE}
@@ -118,14 +118,13 @@ MACRO(slicerMacroBuildQtModule)
     )
   
   # --------------------------------------------------------------------------
-  # Build the library
-
+  # Build library
+  #-----------------------------------------------------------------------------
   ADD_LIBRARY(${lib_name}
     ${QTMODULE_SRCS}
     ${QTMODULE_MOC_OUTPUT}
     ${QTMODULE_UI_CXX}
     ${QTMODULE_QRC_SRCS}
-    #${qSlicerModule_TCL_SRCS}
     )
 
   # Set qt loadable modules output path
@@ -140,7 +139,6 @@ MACRO(slicerMacroBuildQtModule)
     ${Slicer_Libs_LIBRARIES}
     ${Slicer_Base_LIBRARIES}
     ${QTMODULE_TARGET_LIBRARIES}
-    #${ITK_LIBRARIES}
     )
 
   # Apply user-defined properties to the library target.
@@ -148,7 +146,9 @@ MACRO(slicerMacroBuildQtModule)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
   ENDIF()
 
-  # Install rules
+  # --------------------------------------------------------------------------
+  # Install library
+  # --------------------------------------------------------------------------
   INSTALL(TARGETS ${lib_name}
     RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries

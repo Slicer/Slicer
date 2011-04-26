@@ -59,21 +59,28 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     ${ARGN}
     )
 
+  # --------------------------------------------------------------------------
   # Sanity checks
-  IF(NOT DEFINED SLICERQTBASELIB_NAME)
-    MESSAGE(SEND_ERROR "NAME is mandatory")
+  # --------------------------------------------------------------------------
+  SET(expected_defined_vars NAME EXPORT_DIRECTIVE)
+  FOREACH(var ${expected_defined_vars})
+    IF(NOT DEFINED SLICERQTBASELIB_${var})
+      MESSAGE(FATAL_ERROR "${var} is mandatory")
+    ENDIF()
+  ENDFOREACH()
+
+  IF(NOT DEFINED Slicer_INSTALL_NO_DEVELOPMENT)
+    MESSAGE(SEND_ERROR "Slicer_INSTALL_NO_DEVELOPMENT is mandatory")
   ENDIF()
 
-  IF(NOT DEFINED SLICERQTBASELIB_EXPORT_DIRECTIVE)
-    MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF()
-
+  # --------------------------------------------------------------------------
   # Define library name
+  # --------------------------------------------------------------------------
   SET(lib_name ${SLICERQTBASELIB_NAME})
 
   # --------------------------------------------------------------------------
   # Include dirs
-
+  # --------------------------------------------------------------------------
   SET(QT_INCLUDE_DIRS
     ${QT_INCLUDE_DIR}
     ${QT_QTWEBKIT_INCLUDE_DIR}
@@ -97,12 +104,14 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
 
   INCLUDE_DIRECTORIES(${include_dirs})
 
+  #-----------------------------------------------------------------------------
   # Update Slicer_Base_INCLUDE_DIRS
+  #-----------------------------------------------------------------------------
   SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
 
   #-----------------------------------------------------------------------------
   # Configure
-  #
+  # --------------------------------------------------------------------------
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${SLICERQTBASELIB_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${SLICERQTBASELIB_NAME})
   SET(MY_LIBNAME ${lib_name})
@@ -116,8 +125,7 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
 
   #-----------------------------------------------------------------------------
   # Sources
-  #
-
+  # --------------------------------------------------------------------------
   QT4_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS})
   QT4_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
   IF(DEFINED SLICERQTBASELIB_RESOURCES)
@@ -132,7 +140,10 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     ${SLICERQTBASELIB_QRC_SRCS}
     WRAP_EXCLUDE
     )
-
+  
+  # --------------------------------------------------------------------------
+  # Source groups
+  # --------------------------------------------------------------------------
   SOURCE_GROUP("Resources" FILES
     ${SLICERQTBASELIB_UI_SRCS}
     ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc
@@ -147,11 +158,13 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   )
 
   # --------------------------------------------------------------------------
-  # Build the library
-
   # Update Slicer_Base_LIBRARIES
+  # --------------------------------------------------------------------------
   SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
-
+  
+  # --------------------------------------------------------------------------
+  # Build the library
+  # --------------------------------------------------------------------------
   ADD_LIBRARY(${lib_name}
     ${SLICERQTBASELIB_SRCS}
     ${SLICERQTBASELIB_MOC_OUTPUT}
@@ -163,7 +176,7 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   # Apply user-defined properties to the library target.
   IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-  ENDIF(Slicer_LIBRARY_PROPERTIES)
+  ENDIF()
 
   SET(QT_LIBRARIES
     ${QT_QTCORE_LIBRARY}
@@ -177,7 +190,9 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
 
-  # Install rules
+  #-----------------------------------------------------------------------------
+  # Install library
+  #-----------------------------------------------------------------------------
   INSTALL(TARGETS ${lib_name}
     RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
@@ -192,7 +207,9 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
 
+  # --------------------------------------------------------------------------
   # PythonQt wrapping
+  # --------------------------------------------------------------------------
   IF(Slicer_USE_PYTHONQT AND SLICERQTBASELIB_WRAP_PYTHONQT)
     SET(KIT_PYTHONQT_SRCS) # Clear variable
     ctkMacroWrapPythonQt("org.slicer.base" ${lib_name}
