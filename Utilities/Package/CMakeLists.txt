@@ -142,7 +142,6 @@ ENDIF()
 # -------------------------------------------------------------------------
 
 include(InstallRequiredSystemLibraries)
-include(${CMAKE_CURRENT_SOURCE_DIR}/InstallDebugSystemLibraries.cmake)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
 
 SET(CPACK_MONOLITHIC_INSTALL ON)
