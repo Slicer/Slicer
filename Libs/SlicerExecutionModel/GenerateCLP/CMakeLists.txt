@@ -30,27 +30,28 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
-
- 
+# --------------------------------------------------------------------------
+# Prerequisites
+# --------------------------------------------------------------------------
 find_package(ModuleDescriptionParser REQUIRED)
-if(ModuleDescriptionParser_FOUND)
-  include(${ModuleDescriptionParser_USE_FILE})
-endif(ModuleDescriptionParser_FOUND)
+include(${ModuleDescriptionParser_USE_FILE})
 
 find_package(TCLAP REQUIRED)
-if(TCLAP_FOUND)
-  include(${TCLAP_USE_FILE})
-endif(TCLAP_FOUND)
+include(${TCLAP_USE_FILE})
 
 find_package(ITK REQUIRED)
-if(ITK_FOUND)
-  include(${ITK_USE_FILE})
-endif(ITK_FOUND)
+include(${ITK_USE_FILE})
 
+# --------------------------------------------------------------------------
+# Option(s)
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif(NOT DEFINED BUILD_SHARED_LIBS)
- 
+endif()
+
+# --------------------------------------------------------------------------
+# Build and link executable
+# --------------------------------------------------------------------------
 set(GENERATECLP_SOURCE GenerateCLP.cxx)
 add_executable(GenerateCLP ${GENERATECLP_SOURCE})
 get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)
@@ -65,9 +66,13 @@ target_link_libraries(GenerateCLP
 
 include(GenerateGenerateCLPConfig.cmake)
 
-IF(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
+# --------------------------------------------------------------------------
+# Install Rules
+# --------------------------------------------------------------------------
+
+if(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
   SET(GenerateCLP_INSTALL_BIN_DIR bin)
-ENDIF()
+endif()
 
 install(TARGETS GenerateCLP RUNTIME 
   DESTINATION ${GenerateCLP_INSTALL_BIN_DIR} COMPONENT Development
@@ -84,8 +89,10 @@ install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
   )
 
 # --------------------------------------------------------------------------
+# Launcher
+# --------------------------------------------------------------------------
 # Enable shared link forwarding support if needed.
-# This is required so that GenerateLM can be run from an installed tree,
+# This is required so that GenerateCLP can be run from an installed tree,
 # where the binary is actually not in the same directory as the shared
 # libraries it depends on.
 #
@@ -95,12 +102,12 @@ if(WIN32)
   set(GenerateCLP_FORWARD_PATH_BUILD 
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
   set(GenerateCLP_FORWARD_PATH_INSTALL "\"\"")
-else(WIN32)
+else()
   set(GenerateCLP_FORWARD_PATH_BUILD 
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\",\"${ITK_DIR}/bin\"")
   set(GenerateCLP_FORWARD_PATH_INSTALL
     "\"${GenerateCLP_DIR}\",\"${ITK_DIR}\",\"${ModuleDescriptionParser_DIR}\"")
-endif(WIN32)
+endif()
 set(GenerateCLP_FORWARD_EXE GenerateCLP)
 
 if(NOT WIN32)
@@ -115,9 +122,9 @@ if(NOT WIN32)
   install(TARGETS GenerateCLPLauncher RUNTIME 
     DESTINATION bin COMPONENT Development
     )
-endif(NOT WIN32)
+endif()
 
 # --------------------------------------------------------------------------
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+endif()
