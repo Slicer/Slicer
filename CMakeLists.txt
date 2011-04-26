@@ -41,9 +41,7 @@ INCLUDE(Slicer3PluginsMacros)
 INCLUDE(SlicerMacroParseArguments)
 INCLUDE(SlicerMacroBuildCLI)
 INCLUDE(SlicerMacroEmptyExternalProject)
-INCLUDE(SlicerFunctionCheckCompilerFlags)
 INCLUDE(SlicerFunctionInstallLibrary)
-INCLUDE(SlicerFunctionGetGccVersion)
 
 #-----------------------------------------------------------------------------
 # Platform checks
@@ -181,48 +179,9 @@ SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
 MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
-# Set coverage Flags
+# Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
 #-----------------------------------------------------------------------------
-IF(WITH_COVERAGE)
-  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    SET(coverage_flags "-g -fprofile-arcs -ftest-coverage -O0 -DNDEBUG")
-    SET(COVERAGE_CXX_FLAGS ${coverage_flags})
-    SET(COVERAGE_C_FLAGS ${coverage_flags})
-  ENDIF()
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# Slicer C/CXX Flags
-#-----------------------------------------------------------------------------
-SET(Slicer_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
-SET(Slicer_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
-
-IF(CMAKE_COMPILER_IS_GNUCXX)
-  SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
-  SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
-  SlicerFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
-  
-  slicerFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
-  # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
-  # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
-  # Doing so should allow to build package made for distribution using older linux distro.
-  IF(GCC_VERSION VERSION_GREATER "4.4.0" OR (CMAKE_BUILD_TYPE STREQUAL "Debug" AND GCC_VERSION VERSION_LESS "4.4.0"))
-    SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
-  ENDIF()
-  IF(MINGW)
-    # suppress warnings about auto imported symbols
-    SET(Slicer_CXX_FLAGS "-Wl,--enable-auto-import ${Slicer_CXX_FLAGS}")
-  ENDIF()
-
-  # Note: -Wold-style-cast is too verbose
-  #       Let's postpone the use of -Wsign-promo 
-  SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
-  SET(Slicer_CXX_FLAGS "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${Slicer_CXX_FLAGS}")
-ELSEIF(MSVC)
-  SET(cflags "/Zm1000 /W3")
-  SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
-  SET(Slicer_CXX_FLAGS "${cflags} /EHsc /GR ${Slicer_CXX_FLAGS}")
-ENDIF()
+INCLUDE(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
 # Slicer install directories
@@ -294,39 +253,6 @@ SET(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_CACHE_DIR "${Slicer_INSTALL_LIB_DIR}/PluginsCache")
 
 SET(Slicer_HOME "${Slicer_BINARY_DIR}")
-
-#-----------------------------------------------------------------------------
-# Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
-#
-# On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
-# warnings (copied from ITK's CMake files so that ITK templated code will compile
-# correctly).
-IF(WIN32)
-  IF(NOT BORLAND)
-    IF(NOT CYGWIN)
-      IF(NOT MINGW)
-        ADD_DEFINITIONS(
-          -D_CRT_FAR_MAPPINGS_NO_DEPRECATE
-          -D_CRT_IS_WCTYPE_NO_DEPRECATE
-          -D_CRT_MANAGED_FP_NO_DEPRECATE
-          -D_CRT_NONSTDC_NO_DEPRECATE
-          -D_CRT_SECURE_NO_DEPRECATE
-          -D_CRT_SECURE_NO_DEPRECATE_GLOBALS
-          -D_CRT_SETERRORMODE_BEEP_SLEEP_NO_DEPRECATE
-          -D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
-          -D_CRT_VCCLRIT_NO_DEPRECATE
-          -D_SCL_SECURE_NO_DEPRECATE
-          )
-      ENDIF()
-    ENDIF()
-  ENDIF()
-ENDIF()
-
-# Disable warning C4996: [...] This function or variable may be unsafe. [...]
-# To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
-IF(MSVC90)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-ENDIF()
 
 #-----------------------------------------------------------------------------
 # Avoid linker bug in Mac OS 10.5
@@ -573,10 +499,21 @@ IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Set C/CXX Flags
+# Set COVERAGE_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
-SET(CMAKE_CXX_FLAGS ${Slicer_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
-SET(CMAKE_C_FLAGS ${Slicer_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
+INCLUDE(SlicerBlockCXXCoverageFlags)
+
+#-----------------------------------------------------------------------------
+# Set {ITK,VTK}_REQUIRED_{C,CXX}_FLAGS variables
+#-----------------------------------------------------------------------------
+INCLUDE(vtkDetermineCompilerFlags)
+INCLUDE(ITKPlatformSpecificChecks)
+
+#-----------------------------------------------------------------------------
+# Set CMAKE_{C,CXX}_FLAGS variables
+#-----------------------------------------------------------------------------
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${VTK_REQUIRED_C_FLAGS} ${COVERAGE_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
 # Generate SlicerVersion.txt
