@@ -138,11 +138,63 @@ ENDIF()
 
 
 # -------------------------------------------------------------------------
-# CPack
+# Install System libraries
+# -------------------------------------------------------------------------
+include(InstallRequiredSystemLibraries)
+
+# -------------------------------------------------------------------------
+# Install Slicer
+# -------------------------------------------------------------------------
+set(CPACK_INSTALL_CMAKE_PROJECTS
+  "${Slicer_BINARY_DIR};Slicer;ALL;/")
+
+# -------------------------------------------------------------------------
+# Install VTK
+# -------------------------------------------------------------------------
+if(EXISTS "${VTK_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;RuntimeLibraries;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Install ITK
+# -------------------------------------------------------------------------
+if(EXISTS "${ITK_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;RuntimeLibraries;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Install Teem
+# -------------------------------------------------------------------------
+if(EXISTS "${Teem_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;ALL;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Install BatchMake
+# -------------------------------------------------------------------------
+if(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;Runtime;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Install OpenIGTLink
+# -------------------------------------------------------------------------
+if(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;RuntimeLibraries;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Install CTK
+# -------------------------------------------------------------------------
+if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;Runtime;/")
+endif()
+
+# -------------------------------------------------------------------------
+# Package properties
 # -------------------------------------------------------------------------
 
-include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
 
 SET(CPACK_MONOLITHIC_INSTALL ON)
 #append RuntimeExecutables
@@ -155,59 +207,11 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
 
-# 
-# Slicer
-#
-set(CPACK_INSTALL_CMAKE_PROJECTS
-  "${Slicer_BINARY_DIR};Slicer;ALL;/")
-
-# 
-# VTK
-#
-if(EXISTS "${VTK_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;RuntimeLibraries;/")
-endif()
-
-# 
-# ITK
-#
-if(EXISTS "${ITK_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;RuntimeLibraries;/")
-endif()
-
-# 
-# Teem
-#
-if(EXISTS "${Teem_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;ALL;/")
-endif()
-
-# 
-# BatchMake
-#
-if(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;Runtime;/")
-endif()
-
-# 
-# OpenIGTLink
-#
-if(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;RuntimeLibraries;/")
-endif()
-
-# 
-# CTK
-#
-if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;Runtime;/")
-endif()
-
 if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Slicer.icns")
 endif()
 
-# slicer3 does _not_ require setting the windows path
+# Slicer does *NOT* require setting the windows path
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
 set(APPLICATION_NAME "Slicer")
@@ -216,7 +220,7 @@ set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
 
 # -------------------------------------------------------------------------
 # File extensions
-
+# -------------------------------------------------------------------------
 set(FILE_EXTENSIONS .mrml .xcat)
 
 if(FILE_EXTENSIONS)
@@ -243,11 +247,11 @@ if(FILE_EXTENSIONS)
           ")
     endforeach()
   endif()
-
 endif()
 
 # -------------------------------------------------------------------------
 # Disable generator enabled by default
+# -------------------------------------------------------------------------
 set(CPACK_BINARY_TZ   OFF)
 set(CPACK_BINARY_STGZ OFF)
 set(CPACK_SOURCE_TBZ2 OFF)
