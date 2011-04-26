@@ -605,12 +605,15 @@ SET(CMAKE_C_FLAGS ${Slicer_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 SET(Slicer_WC_URL NA)
 SET(Slicer_WC_REVISION 0)
 
+SET(slicer_version_file_source ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in)
+SET(slicer_version_file_binary ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt)
+
 # Case where Slicer is checkout using SVN
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
   CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
-    ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
+    ${slicer_version_file_source}
+    ${slicer_version_file_binary}
     )
 ENDIF()
 
@@ -618,10 +621,16 @@ ENDIF()
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes)
   GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
   CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
-    ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
+    ${slicer_version_file_source}
+    ${slicer_version_file_binary}
     )
 ENDIF()
+
+INSTALL(FILES
+  ${slicer_version_file_binary}
+  DESTINATION ${Slicer_INSTALL_LIB_DIR}
+  COMPONENT Development
+  )
 
 
 #-----------------------------------------------------------------------------
@@ -754,19 +763,15 @@ ADD_SUBDIRECTORY(Utilities/Doxygen)
 # Add CMake directory so that install rules associated with *.cmake files are evaluated
 ADD_SUBDIRECTORY(CMake)
 
-#-----------------------------------------------------------------------------
-# Set up for building against a Slicer build tree and a Slicer installation 
-#-----------------------------------------------------------------------------
-INCLUDE(${Slicer_SOURCE_DIR}/GenerateSlicerConfig.cmake)
+#INSTALL(FILES
+#  ${Slicer_BINARY_DIR}/UseSlicer.cmake
+#  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake
+#  DESTINATION ${Slicer_INSTALL_LIB_DIR}
+#  COMPONENT Development
+#  )
 
-CONFIGURE_FILE(${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
-  ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY IMMEDIATE)
-
-INSTALL(FILES
-  #   ${Slicer_BINARY_DIR}/Slicer3BuildSettings.cmake
-  ${Slicer_BINARY_DIR}/UseSlicer.cmake
-  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake
-  ${Slicer_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt
-  DESTINATION ${Slicer_INSTALL_LIB_DIR}
-  COMPONENT Development
-  )
+#-----------------------------------------------------------------------------
+# The commands in this directory are intended to be executed as
+# the end of the whole configuration process, as a "last step".
+# This directory is typically the last add_subdirectory in the main CMakeLists.txt.
+ADD_SUBDIRECTORY(Utilities/LastConfigureStep)
