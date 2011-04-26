@@ -37,17 +37,20 @@ set(PARSER1TEST_SOURCE Parser1Test.cxx )
 add_executable(Parser1Test ${PARSER1TEST_SOURCE})
 target_link_libraries(Parser1Test ModuleDescriptionParser )
 
-set(ModuleFactoryTest_SOURCE ModuleFactoryTest )
-add_executable(ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
-target_link_libraries(ModuleFactoryTest ModuleDescriptionParser )
 # --------------------------------------------------------------------------
 # Build ModuleFactoryTest executable
 # --------------------------------------------------------------------------
+#set(ModuleFactoryTest_SOURCE ModuleFactoryTest.cxx)
+#add_executable(ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
+#target_link_libraries(ModuleFactoryTest ModuleDescriptionParser )
 
-include_directories(
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  )
+#include_directories(
+#  ${ModuleDescriptionParser_SOURCE_DIR}
+#  )
 
+# --------------------------------------------------------------------------
+# Add tests
+# --------------------------------------------------------------------------
 set(TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
 add_test(
   NAME Parser1Test1 
@@ -58,11 +61,9 @@ add_test(
   NAME Parser1Test2 
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest2.xml)
 
-if(Slicer_BINARY_DIR)
-  add_test(
-    NAME ModuleFactoryTest 
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ModuleFactoryTest> 
-      ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/
-    )
-endif()
+#add_test(
+#  NAME ModuleFactoryTest 
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ModuleFactoryTest> 
+#    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/
+#  )
 
