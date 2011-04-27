@@ -178,8 +178,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   //seedWidget->ProcessEventsOff();
 
-  seedWidget->On();
-  seedWidget->CompleteInteraction();
+
 
   // Use tmpPtr to query only one time for the coordinates
   double* tmpPtr = fiducialNode->GetFiducialCoordinates();
@@ -191,24 +190,43 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   if (this->GetSliceNode())
     {
 
+    bool showWidget = true;
+    showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
+
+    // TODO: Is the on two times necessary?
+    if (showWidget)
+      {
+      seedWidget->On();
+      seedWidget->CompleteInteraction();
+      }
+
     this->GetWorldToDisplayCoordinates(worldCoordinates,position1);
 
     vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
+    if (showWidget)
+      {
+      seedWidget->On();
+      seedWidget->CompleteInteraction();
+      }
+
+
     }
   else
     {
 
+    // TODO: Is the on two times necessary?
+    seedWidget->On();
+    seedWidget->CompleteInteraction();
+
     vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
 
+    seedWidget->On();
+    seedWidget->CompleteInteraction();
+
     }
-
-  //seedWidget->CompleteInteraction();
-  seedWidget->On();
-
-  seedWidget->CompleteInteraction();
 
   return seedWidget;
 

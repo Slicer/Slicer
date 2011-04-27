@@ -317,31 +317,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   // Refresh observers
   this->SetAndObserveNodes();
 
+  // TODO do we need this render call?
   this->RequestRender();
 
-  // for the following, deactivate tracking of mouse clicks b/c it might be simulated
-
-  this->m_DisableInteractorStyleEventsProcessing = 1;
   // tear down widget creation
   this->OnWidgetCreated(newWidget, annotationNode);
-  this->m_DisableInteractorStyleEventsProcessing = 0;
 
   // Remove all placed seeds
   this->Helper->RemoveSeeds();
-
-  this->RequestRender();
-
-  if(this->m_SliceNode)
-    {
-    // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
-    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
-    vtkDebugMacro("The node " << node->GetID() << " was added to a 2D displayableManager.")
-    }
-  else
-    {
-    //std::cout << "3D!" << annotationNode << std::endl;
-    vtkDebugMacro("The node " << node->GetID() << " was added to a 3D displayableManager.")
-    }
 
   // and render again after seeds were removed
   this->RequestRender();
@@ -535,7 +518,12 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     if (annotationNode->GetVisible())
       {
       // only then update the visibility according to the geometry
-      widget->SetEnabled(showWidget);
+      // and only adjust the widget settings if there was a change
+      if ((widget->GetEnabled() && !showWidget) || (!widget->GetEnabled() && showWidget))
+        {
+        widget->SetEnabled(showWidget);
+        }
+
       }
 
     // if the widget is not displayable, show at least the intersection
@@ -783,8 +771,9 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
 
     // check if lightbox is enabled
-    if (rendererCollection->GetNumberOfItems()>1)
+    if (sliceNode->GetLayoutGridRows() > 1 || sliceNode->GetLayoutGridColumns() > 1)
       {
+
       // check if the rendererIndex is valid for the current lightbox view
       if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
         {

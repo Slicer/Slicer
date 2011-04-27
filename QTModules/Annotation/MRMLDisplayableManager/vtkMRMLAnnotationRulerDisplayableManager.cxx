@@ -184,6 +184,16 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     rulerWidget->SetRepresentation(dRep);
 
+    bool showWidget = true;
+    showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
+
+    rulerWidget->SetWidgetStateToManipulate();
+
+    if (showWidget)
+      {
+      rulerWidget->On();
+      }
+
     }
   else
     {
@@ -200,10 +210,11 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     rulerWidget->SetRepresentation(dRep2);
 
+    rulerWidget->SetWidgetStateToManipulate();
+    rulerWidget->On();
+
     }
 
-  rulerWidget->SetWidgetStateToManipulate();
-  rulerWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
 
