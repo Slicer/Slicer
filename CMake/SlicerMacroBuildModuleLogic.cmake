@@ -43,7 +43,7 @@ MACRO(SlicerMacroBuildModuleLogic)
   # Define library name
   # --------------------------------------------------------------------------
   SET(lib_name ${MODULELOGIC_NAME})
-
+  
   # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
@@ -52,8 +52,15 @@ MACRO(SlicerMacroBuildModuleLogic)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
+    ${Slicer_ModuleLogic_INCLUDE_DIRS}
     ${MODULELOGIC_INCLUDE_DIRECTORIES}
     )
+
+  #-----------------------------------------------------------------------------
+  # Update Slicer_ModuleLogic_INCLUDE_DIRS
+  #-----------------------------------------------------------------------------
+  SET(Slicer_ModuleLogic_INCLUDE_DIRS ${Slicer_ModuleLogic_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "Slicer Module logic includes" FORCE)
 
   #-----------------------------------------------------------------------------
   # Configure export header
@@ -114,6 +121,7 @@ MACRO(SlicerMacroBuildModuleLogic)
   TARGET_LINK_LIBRARIES(${lib_name}
     ${Slicer_Libs_LIBRARIES}
     ${Slicer_ModuleLogic_Base_LIBRARIES}
+    ${Slicer_ModuleLogic_LIBRARIES}
     ${MODULELOGIC_TARGET_LIBRARIES}
     )
 
@@ -121,6 +129,11 @@ MACRO(SlicerMacroBuildModuleLogic)
   IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
   ENDIF()
+  
+  # --------------------------------------------------------------------------
+  # Update Slicer_ModuleLogic_LIBRARIES
+  # --------------------------------------------------------------------------
+  SET(Slicer_ModuleLogic_LIBRARIES ${Slicer_ModuleLogic_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Module logic libraries" FORCE)
   
   # --------------------------------------------------------------------------
   # Install library

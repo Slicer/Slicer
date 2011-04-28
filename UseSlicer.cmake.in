@@ -69,6 +69,7 @@ endif()
 link_directories(
   ${Slicer_Libs_LIBRARY_DIRS}
   ${Slicer_Base_LIBRARY_DIRS}
+  ${Slicer_ModuleLogic_LIBRARY_DIRS}
   )
 
 #-----------------------------------------------------------------------------
