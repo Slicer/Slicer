@@ -272,13 +272,9 @@ ENDIF()
 
 SET(Slicer_Libs_LIBRARIES CACHE INTERNAL "Slicer Libs libraries" FORCE)
 SET(Slicer_Base_LIBRARIES CACHE INTERNAL "Slicer Base libraries" FORCE)
-SET(Slicer_Modules_LIBRARIES CACHE INTERNAL "Slicer Modules libraries" FORCE)
-SET(Slicer_QTModules_LIBRARIES CACHE INTERNAL "Slicer QTModules libraries" FORCE)
 
 SET(Slicer_Libs_INCLUDE_DIRS CACHE INTERNAL "Slicer Libs includes" FORCE)
 SET(Slicer_Base_INCLUDE_DIRS CACHE INTERNAL "Slicer Base includes" FORCE)
-SET(Slicer_Modules_INCLUDE_DIRS CACHE INTERNAL "Slicer Modules includes" FORCE)
-SET(Slicer_QTModules_INCLUDE_DIRS CACHE INTERNAL "Slicer QTModules includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
