@@ -380,7 +380,7 @@ void ModuleFactory::Scan()
   numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
-  int numberOfOtherFiles = this->ScanForNotAModuleFiles();
+  /*int numberOfOtherFiles = */this->ScanForNotAModuleFiles();
   
   // Store the module cache information
   this->SaveModuleCache();
