@@ -67,13 +67,18 @@ MACRO(slicerMacroBuildQtModule)
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
 
+  #-----------------------------------------------------------------------------
+  # Configure export header
+  #-----------------------------------------------------------------------------
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${QTMODULE_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
   SET(MY_LIBNAME ${lib_name})
 
+  # Sanity checks
   IF (NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
-    MESSAGE("Warning, Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
+    MESSAGE(FATAL_ERROR "error: Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
   ENDIF()
+  
   CONFIGURE_FILE(
     ${Slicer_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
