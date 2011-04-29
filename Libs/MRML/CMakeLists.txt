@@ -119,6 +119,7 @@ set(MRML_SRCS
   vtkMRMLScalarVolumeNode.cxx
   vtkMRMLScene.cxx
   vtkMRMLSceneViewNode.cxx
+  vtkMRMLSceneViewStorageNode.cxx
   vtkMRMLScriptedModuleNode.cxx
   vtkMRMLScriptedModuleNode.h
   vtkMRMLSelectionNode.cxx
