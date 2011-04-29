@@ -24,9 +24,6 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include "vtkCallbackCommand.h"
 #include "vtkCollection.h"
-#include <vtkImageData.h>
-#include <vtkPNGWriter.h>
-#include <vtkPNGReader.h>
 #include <vtkSmartPointer.h>
 #include "vtkObjectFactory.h"
 
@@ -66,7 +63,7 @@ vtkMRMLNode* vtkMRMLSceneViewNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
 {
-  this->HideFromEditors = 1;
+  this->HideFromEditors = 0;
 
   this->Nodes = NULL;
   this->m_ScreenShot = NULL;
@@ -83,6 +80,7 @@ vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
   if (this->m_ScreenShot)
     {
     this->m_ScreenShot->Delete();
+    this->m_ScreenShot = NULL;
     }
 }
 
@@ -99,30 +97,6 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
   vtksys::SystemTools::ReplaceString(description,"\n","[br]");
 
   of << indent << " sceneViewDescription=\"" << description << "\"";
-
-  if (this->GetScreenshot())
-    {
-    // create the directory 'ScreenCaptures'
-    vtkStdString screenCapturePath;
-    screenCapturePath += this->GetScene()->GetRootDirectory();
-    screenCapturePath += "/";
-    screenCapturePath += "ScreenCaptures/";
-
-    vtksys::SystemTools::MakeDirectory(vtksys::SystemTools::ConvertToOutputPath(screenCapturePath.c_str()).c_str());
-
-    // write out the associated screencapture
-    vtkSmartPointer<vtkPNGWriter> pngWriter = vtkSmartPointer<vtkPNGWriter>::New();
-    pngWriter->SetInput(this->GetScreenshot());
-
-    vtkStdString screenCaptureFilename;
-    screenCaptureFilename += screenCapturePath;
-    screenCaptureFilename += this->GetID();
-    screenCaptureFilename += ".png";
-
-    pngWriter->SetFileName(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
-    pngWriter->Write();
-    }
-
 }
 
 //----------------------------------------------------------------------------
@@ -185,35 +159,63 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
       }
     }
 
-  // now read the screenCapture
+  // for backward compatibility:
+  
+  // now read the screenCapture if there's a directory for them
+  // TODO: don't do this if there is a storage node already, but the problem
+  // is that the storage node will get set after, so GetStorageNode returns
+  // null right now
   vtkStdString screenCapturePath;
-  screenCapturePath += this->GetScene()->GetRootDirectory();
+  if (this->GetScene() &&
+      this->GetScene()->GetRootDirectory())
+    {
+    screenCapturePath += this->GetScene()->GetRootDirectory();
+    }
+  else
+    {
+    screenCapturePath += ".";
+    }
   screenCapturePath += "/";
   screenCapturePath += "ScreenCaptures/";
-
+  
   vtkStdString screenCaptureFilename;
   screenCaptureFilename += screenCapturePath;
-  screenCaptureFilename += this->GetID();
+  if (this->GetID())
+    {
+    screenCaptureFilename += this->GetID();
+    }
+  else
+    {
+    screenCaptureFilename += "vtkMRMLSceneViewNodeNoID";
+    }
   screenCaptureFilename += ".png";
-
-
+  
+  
   if (vtksys::SystemTools::FileExists(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str(),true))
     {
-
-    vtkSmartPointer<vtkPNGReader> pngReader = vtkSmartPointer<vtkPNGReader>::New();
-    pngReader->SetFileName(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
-    pngReader->Update();
-
-    vtkImageData *imageData = vtkImageData::New();
-    imageData->DeepCopy(pngReader->GetOutput());
-
-    this->SetScreenshot(imageData);
-    this->GetScreenshot()->SetSpacing(1.0, 1.0, 1.0);
-    this->GetScreenshot()->SetOrigin(0.0, 0.0, 0.0);
-    this->GetScreenshot()->SetScalarType(VTK_UNSIGNED_CHAR);
-    imageData->Delete();
+    // create a storage node and use it to read the file
+    vtkMRMLStorageNode *storageNode = this->GetStorageNode();
+    if (storageNode == NULL)
+      {
+      // only read the directory if there isn't a storage node already
+      storageNode = this->CreateDefaultStorageNode();
+      if (storageNode)
+        {
+        storageNode->SetFileName(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
+        if (this->GetScene())
+          {
+          this->GetScene()->AddNode(storageNode);
+          }
+        vtkWarningMacro("ReadXMLAttributes: found the ScreenCapture directory, creating a storage node to read the image file at\n\t" << storageNode->GetFileName() << "\n\tImage data be overwritten if there is a storage node pointing to another file");
+        storageNode->ReadData(this);
+        storageNode->Delete();
+        }
+      }
+    else
+      {
+      vtkWarningMacro("ReadXMLAttributes: there is a ScreenCaptures directory with a valid file in it, but waiting to let the extant storage node read it's image file");
+      }
     }
-
 
   this->EndModify(disabledModify);
 }
@@ -281,6 +283,9 @@ void vtkMRMLSceneViewNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::UpdateScene(vtkMRMLScene *scene)
 {
+  // the superclass update scene ensures that the storage node is read into
+  // this storable node
+  Superclass::UpdateScene(scene);
   if (!scene)
     {
     return;
@@ -575,4 +580,10 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
         }
       } //if (node) 
     } //for (n=0; n<nnodesSanpshot; n++) 
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLSceneViewNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLSceneViewStorageNode::New();
 }

@@ -21,13 +21,15 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkImageData.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLSceneViewStorageNode.h"
 
-
-class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
+class vtkMRMLStorageNode;
+class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 {
   public:
   static vtkMRMLSceneViewNode *New();
-  vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -50,8 +52,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
 
   /// 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "SceneSnapshot";};
-//  virtual const char* GetNodeTagName() {return "SceneView";};
+//  virtual const char* GetNodeTagName() {return "SceneSnapshot";};
+  virtual const char* GetNodeTagName() {return "SceneView";};
 
   /// 
   /// Updates scene nodes 
@@ -86,9 +88,13 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
   ///
   /// The attached screenshot of this sceneView
   vtkSetObjectMacro(m_ScreenShot, vtkImageData);
-  void SetScreenshot(vtkImageData *screenshot) { this->Setm_ScreenShot(screenshot); };
+  void SetScreenshot(vtkImageData *screenshot) {
+      this->Setm_ScreenShot(screenshot);
+  };
   vtkGetObjectMacro(m_ScreenShot, vtkImageData);
-  vtkImageData* GetScreenshot() { return this->Getm_ScreenShot(); };
+  vtkImageData* GetScreenshot() {
+      return this->Getm_ScreenShot();
+  };
 
   ///
   /// The screenshot type of this sceneView
@@ -102,6 +108,15 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
   int GetScreenshotType() {return this->m_ScreenShotType;}
 
 
+  /// 
+  /// Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
+  /// Utility transformable methods
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
+    
 protected:
   vtkMRMLSceneViewNode();
   ~vtkMRMLSceneViewNode();

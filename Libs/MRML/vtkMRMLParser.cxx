@@ -101,8 +101,21 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className.c_str() );
   if (!node)
     {
-    vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
-    return;
+    // check to see if it's a renamed node
+    if (className.compare("vtkMRMLSceneSnapshotNode") == 0)
+      {
+      node = this->MRMLScene->CreateNodeByClass("vtkMRMLSceneViewNode");
+      if (!node)
+        {
+        vtkWarningMacro(<< "Failed to create a vtkMRMLSceneViewNode when encountered class name " << className.c_str());
+        return;
+        }
+      }
+    else
+      {
+      vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
+      return;
+      }
     }
 
   node->SetScene(this->MRMLScene);
@@ -151,7 +164,19 @@ void vtkMRMLParser::EndElement (const char *name)
   const char* className = this->MRMLScene->GetClassNameByTag(name);
   if (className == NULL) 
     {
-    return;
+    // check for a renamed node
+    if (strcmp(name, "SceneSnapshot") == 0)
+      {
+      className = this->MRMLScene->GetClassNameByTag("SceneView");
+      if (className == NULL)
+        {
+        return;
+        }
+      }
+    else
+      {
+      return;
+      }
     }
 
   this->NodeStack.pop();

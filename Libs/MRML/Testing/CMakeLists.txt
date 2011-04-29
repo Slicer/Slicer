@@ -63,6 +63,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneSnapshotNodeTest1.cxx
   vtkMRMLSceneTest1.cxx
   vtkMRMLSceneTest2.cxx
+  vtkMRMLSceneViewStorageNodeTest1.cxx
+  vtkMRMLSceneViewNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
   vtkMRMLSliceCompositeNodeTest1.cxx
   vtkMRMLSliceNodeTest1.cxx
@@ -164,6 +166,8 @@ SIMPLE_TEST( vtkMRMLScalarVolumeNodeTest1 )
 SIMPLE_TEST( vtkMRMLScalarVolumeNodeTest2 )
 SIMPLE_TEST( vtkMRMLSceneSnapshotNodeTest1 )
 SIMPLE_TEST( vtkMRMLSceneTest1 )
+SIMPLE_TEST( vtkMRMLSceneViewNodeTest1 )
+SIMPLE_TEST( vtkMRMLSceneViewStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLSelectionNodeTest1 )
 SIMPLE_TEST( vtkMRMLSliceCompositeNodeTest1 )
 SIMPLE_TEST( vtkMRMLSliceNodeTest1 )
