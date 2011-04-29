@@ -397,7 +397,7 @@ FOREACH(cli_module ${cli_modules})
   ADD_SUBDIRECTORY(${cli_module})
 ENDFOREACH(cli_module)
 
-option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
+option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" OFF)
 if(BUILD_BRAINSTOOLS)
   if( "${ITK_VERSION_MAJOR}" LESS 4 )
   add_subdirectory(BRAINSTools)

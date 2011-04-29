@@ -1311,7 +1311,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::ValidateDisplayNode(vtkMRMLVolumeR
     }
   if (vspNode->GetROINode() == NULL)
     {
-    return 0;
+    //return 0;
     }
   if (vspNode->GetVolumePropertyNode() == NULL)
     {
@@ -1323,6 +1323,10 @@ int vtkMRMLVolumeRenderingDisplayableManager::ValidateDisplayNode(vtkMRMLVolumeR
     return 0;
     }
   if (vspNode->GetFgVolumeNodeID() && strcmp(vspNode->GetFgVolumeNodeID(), "NULL") != 0 && vspNode->GetFgVolumeNode() == NULL)
+    {
+    return 0;
+    }
+  if (this->GetMRMLViewNode() == NULL)
     {
     return 0;
     }
