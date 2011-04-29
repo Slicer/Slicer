@@ -280,7 +280,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     {
     return QFileInfo();
     }
-
+  
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   if (snode == 0)
     {
@@ -290,7 +290,11 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     storageNode->Delete();
     snode = storageNode;
     }
-
+  else
+    {
+    // there already is a storage node, don't need this new one
+    storageNode->Delete();
+    }
   if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
     {
     QString fileExtension = snode->GetDefaultWriteFileExtension();
