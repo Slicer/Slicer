@@ -68,6 +68,7 @@ public:
   void setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
 public slots:
+  void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
   void setMRMLScene(vtkMRMLScene* scene);
   void deleteSelected();
 
@@ -83,6 +84,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* e);
     bool viewportEvent(QEvent* e);
   #endif
+  virtual void mousePressEvent(QMouseEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneViewsTreeWidget);

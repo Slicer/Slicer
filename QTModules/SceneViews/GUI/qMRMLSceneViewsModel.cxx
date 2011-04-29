@@ -45,6 +45,7 @@
 //------------------------------------------------------------------------------
 qMRMLSceneViewsModel::qMRMLSceneViewsModel(QObject *vparent)
   :qMRMLSceneModel(vparent)
+//  :qMRMLSceneHierarchyModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
   this->setColumnCount(5);
@@ -95,16 +96,20 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
     case qMRMLSceneViewsModel::ThumbnailColumn:
       if (viewNode)
         {
-
         if (viewNode->GetScreenshot())
           {
           QImage qimage;
           qMRMLUtils::vtkImageDataToQImage(viewNode->GetScreenshot(),qimage);
-
+          QSize imageSize = qimage.size();
+//          std::cout << "Image size = " << imageSize.width() << "x" << imageSize.height() << std::endl;
           QPixmap screenshot;
           screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
           item->setData(screenshot.scaled(80,80,Qt::KeepAspectRatio,Qt::SmoothTransformation),Qt::DecorationRole);
           item->setData(QSize(80,80),Qt::SizeHintRole);
+          }
+        else
+          {
+//          std::cout << "view node's screen shot is null, storage node is " << (viewNode->GetStorageNode() == NULL ? "null" : viewNode->GetStorageNode()->GetID()) << std::endl;
           }
         }
       break;

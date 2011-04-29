@@ -9,6 +9,7 @@
 #include "qMRMLUtils.h"
 
 #include "vtkImageData.h"
+#include "vtkSmartPointer.h"
 
 // QT includes
 #include <QPushButton>
@@ -133,11 +134,19 @@ void qSlicerSceneViewsModuleDialog::initialize(const QString& nodeId)
   this->ui.fullLayoutRadio->setEnabled(false);
 
   // get the actual screenshot..
-  this->m_vtkImageData = this->m_Logic->GetSceneViewScreenshot(this->m_Id);
+//  this->m_vtkImageData = this->m_Logic->GetSceneViewScreenshot(this->m_Id);
+//  vtkImageData *imageData = this->m_Logic->GetSceneViewScreenshot(this->m_Id);
+  vtkSmartPointer<vtkImageData> copyScreenshot = this->m_Logic->GetSceneViewScreenshot(this->m_Id);
+  if (!this->m_vtkImageData)
+    {
+    this->m_vtkImageData = vtkImageData::New();
+    }
+  this->m_vtkImageData->DeepCopy(copyScreenshot);
 
   // ..and convert it from vtkImageData to QImage..
   QImage qimage;
   qMRMLUtils::vtkImageDataToQImage(this->m_vtkImageData,qimage);
+//  qMRMLUtils::vtkImageDataToQImage(imageData,qimage);
 
   // ..and then to QPixmap..
   QPixmap screenshot;
@@ -345,11 +354,13 @@ void qSlicerSceneViewsModuleDialog::grabScreenShot(QString screenshotWindow)
 
   // this is a hack right now for platforms other than mac
   // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
-  this->setVisible(false);
+  //this->setVisible(false);
+  this->hide();
 
   QPixmap screenShot = QPixmap::grabWidget(widget);
 
-  this->setVisible(true);
+  //this->setVisible(true);
+  this->show();
 
 
   ui.screenshotPlaceholder->setPixmap(screenShot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
@@ -364,5 +375,3 @@ void qSlicerSceneViewsModuleDialog::grabScreenShot(QString screenshotWindow)
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), this->m_vtkImageData);
 
 }
-
-

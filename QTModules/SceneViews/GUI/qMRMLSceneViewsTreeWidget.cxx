@@ -38,6 +38,8 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkMRMLSceneViewNode.h"
+#include "vtkMRMLHierarchyNode.h"
 
 //------------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews
@@ -75,14 +77,15 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
   this->SceneModel = new qMRMLSceneViewsModel(q);
   q->setSceneModel(this->SceneModel, "SceneViews");
   //this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
-  // we only want to show vtkMRMLAnnotationNodes and vtkMRMLAnnotationHierarchyNodes
+  // we only want to show vtkMRMLSceneViewNodes and vtkMRMLHierarchyNodes
   QStringList nodeTypes = QStringList();
   nodeTypes.append("vtkMRMLSceneViewNode");
-
+//  nodeTypes.append("vtkMRMLHierarchyNode");
+  
   //this->SortFilterModel->setNodeTypes(nodeTypes);
   q->setNodeTypes(nodeTypes);
   this->SortFilterModel = q->sortFilterProxyModel();
-  this->SortFilterModel->setShowHidden(true);
+  //this->SortFilterModel->setShowHidden(true);
 
   //this->SortFilterModel->setSourceModel(this->SceneModel);
   //q->qMRMLTreeWidget::setModel(this->SortFilterModel);
@@ -94,6 +97,12 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
                    q, SLOT(onClicked(const QModelIndex&)));
 
 
+  QObject::connect( q->selectionModel(),
+        SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        q,
+        SLOT( onSelectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        Qt::DirectConnection );
+  
   q->setUniformRowHeights(true);
 }
 
@@ -132,20 +141,43 @@ void qMRMLSceneViewsTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+void qMRMLSceneViewsTreeWidget::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
+{
+
+  Q_UNUSED(index)
+  Q_UNUSED(beforeIndex)
+
+  if (index.size() == 0)
+    {
+    // the user clicked in empty space of the treeView
+    // so we set the active hierarchy to the top level one
+    this->m_Logic->SetActiveHierarchyNode(0);
+    }
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
 {
 
   Q_D(qMRMLSceneViewsTreeWidget);
 
+  // if the user clicked on a hierarchy, set this as the active one
+  // this means, new scene view or new user-created hierarchies will be created
+  // as childs of this one
+  if(d->SortFilterModel->mrmlNodeFromIndex(index)->IsA("vtkMRMLHierarchyNode"))
+    {
+    this->m_Logic->SetActiveHierarchyNode(vtkMRMLHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(index)));
+    }
+  
   // check if user clicked on icon, this can happen even after we marked a hierarchy as active
   if (index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
-    // user wants to toggle the un-/lock of the annotation
+    // user wants to toggle the restore
     this->m_Widget->restoreSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
   else if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn)
     {
-    // user wants to edit the properties of this annotation
+    // user wants to edit the properties of this scene view
     this->m_Widget->editSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
 
@@ -182,25 +214,91 @@ void qMRMLSceneViewsTreeWidget::deleteSelected()
   Q_D(qMRMLSceneViewsTreeWidget);
   QModelIndexList selected = this->selectedIndexes();
 
+  QStringList markedForDeletion;
+
   // first, check if we selected anything
   if (selected.isEmpty())
     {
     return;
     }
 
+  // case: delete a hierarchy only, if it is the only selection
+  // warning: all directly under this hierarchy laying scene view nodes will be lost
+  // if there are other hierarchies underneath the one which gets deleted, they will get reparented
+  if (selected.count()==6)
+    {
+    // only one item was selected, is this a hierarchy?
+    vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.first()));
+    if (hierarchyNode)
+      {
+      // get confirmation to delete
+      QMessageBox msgBox;
+      msgBox.setText("Do you really want to delete the selected hierarchy?");
+      msgBox.setInformativeText("This includes all directly associated scene views.");
+      msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox.setDefaultButton(QMessageBox::No);
+      int ret = msgBox.exec();
+
+      if (ret == QMessageBox::Yes)
+        {
+
+        hierarchyNode->RemoveHierarchyChildrenNodes();
+
+        this->mrmlScene()->RemoveNode(hierarchyNode);
+
+        }
+      // all done, bail out
+      return;
+      }
+    // if this is not a hierarchyNode, treat this single selection as a normal case
+
+    }
+  // end hierarchy case
+
+
   // get confirmation to delete
   QMessageBox msgBox;
   msgBox.setText("Do you really want to delete the selected SceneView?");
-  msgBox.setInformativeText("This can not be undone.");
+  msgBox.setInformativeText("This does not include hierarchies. This can not be undone.");
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
 
+  if (ret == QMessageBox::No)
+    {
+    //bail out
+    return;
+    }
+
   if (ret == QMessageBox::Yes)
     {
-    // delete
-    this->mrmlScene()->RemoveNode(d->SortFilterModel->mrmlNodeFromIndex(selected.at(0)));
+    // delete the selected scene view nodes but no hierarchies
+    for (int i = 0; i < selected.count(); ++i)
+      {
 
+      // we need to prevent looping through all columns
+      // there we only update once a row
+      if (selected.at(i).column() ==  qMRMLSceneViewsModel::ThumbnailColumn)
+        {
+        
+        vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
+        
+        if (sceneViewNode)
+          {
+          // we mark this one for deletion
+          markedForDeletion.append(QString(sceneViewNode->GetID()));
+          }
+        }
+      } // for
+    
+    // we parsed the complete selection and saved all mrmlIds to delete
+    // now, it is safe to delete
+    for (int j=0; j < markedForDeletion.size(); ++j)
+      {
+      vtkMRMLSceneViewNode* sceneViewNodeToDelete = vtkMRMLSceneViewNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
+      this->m_Logic->RemoveSceneViewNode(sceneViewNodeToDelete);
+      }
+    this->m_Logic->SetActiveHierarchyNode(0);
     }
 
 }
@@ -281,8 +379,20 @@ void qMRMLSceneViewsTreeWidget::hideScene()
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();
 
-  this->setRootIndex(d->SortFilterModel->mapFromSource(root));
+   if (this->m_Logic)
+    {
+    // if the logic is already registered, we look for the first HierarchyNode
+    vtkMRMLNode* toplevelNode = this->m_Logic->GetTopLevelHierarchyNode(0);
+    //GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode");
 
+    if (toplevelNode)
+      {
+      // if we find it, we use it as the root index
+      root = d->SceneModel->indexes(toplevelNode)[0];
+      }
+    }
+   
+  this->setRootIndex(d->SortFilterModel->mapFromSource(root));
 
   // set the column widths
   this->header()->setResizeMode(qMRMLSceneViewsModel::DummyColumn, (QHeaderView::ResizeToContents));
@@ -302,6 +412,12 @@ void qMRMLSceneViewsTreeWidget::hideScene()
 
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSceneViewsTreeWidget::mousePressEvent(QMouseEvent* event)
+{
+  // skip qMRMLTreeWidget
+  this->QTreeView::mousePressEvent(event);
+}
 
 //------------------------------------------------------------------------------
 //

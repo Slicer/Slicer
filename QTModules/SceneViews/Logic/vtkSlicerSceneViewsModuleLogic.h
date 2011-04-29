@@ -58,6 +58,7 @@ public:
   void SetAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
 
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  void OnMRMLSceneImportedEvent();
   void OnMRMLSceneViewNodeModifiedEvent(vtkMRMLNode* node);
   void OnMRMLSceneClosedEvent();
 
@@ -92,6 +93,9 @@ public:
 
   /// Move sceneView up
   const char* MoveSceneViewDown(const char* id);
+
+  /// Remove a scene view node
+  void RemoveSceneViewNode(vtkMRMLSceneViewNode *sceneViewNode);
 
   //
   // Hierarchy functionality
