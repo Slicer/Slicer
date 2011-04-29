@@ -482,7 +482,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
   if ( !(strcmp(this->GetURI(), "")) )
     {
     vtkDebugMacro("StageWriteData: uri is empty, setting state to transfer done");
-    this->SetReadStateTransferDone();
+    this->SetWriteStateTransferDone();
     return;
     }
 
