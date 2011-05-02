@@ -405,9 +405,11 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType id)
 {
 
-  if (!this->PolyData || !this->PolyData->GetPoints()) 
+  if (!this->PolyData ||
+      !this->PolyData->GetPoints() ||
+      this->PolyData->GetNumberOfPoints() == 0) 
     {
-      return 0;
+    return 0;
     }
 
   return this->PolyData->GetPoint(id);
