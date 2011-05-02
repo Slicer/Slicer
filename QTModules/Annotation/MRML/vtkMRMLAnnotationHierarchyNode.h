@@ -6,12 +6,12 @@
 #ifndef __vtkMRMLAnnotationHierarchyNode_h
 #define __vtkMRMLAnnotationHierarchyNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLNode.h"
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
   static vtkMRMLAnnotationHierarchyNode *New();

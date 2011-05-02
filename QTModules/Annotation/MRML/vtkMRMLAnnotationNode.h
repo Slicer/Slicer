@@ -9,18 +9,18 @@
 #ifndef __vtkMRMLAnnotationNode_h
 #define __vtkMRMLAnnotationNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLModelNode.h" 
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLCameraNode.h"
+#include "AnnotationMRMLExport.h"
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
 class vtkMRMLAnnotationTextDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLAnnotationNode *New();
@@ -75,7 +75,7 @@ public:
 
   int GetNumberOfTexts(); 
 
-  //BTX
+//BTX
   enum 
   {
     TEXT_SELECTED = 0,
@@ -84,7 +84,7 @@ public:
      LockModifiedEvent,
      CancelPlacementEvent,
   };
-
+//ETX
   virtual const char *GetAttributeTypesEnumAsString(int val);
   vtkDataArray* GetAnnotationAttributes(int att); 
   int GetAnnotationAttribute(vtkIdType id, int att);

@@ -9,7 +9,7 @@
 #ifndef __vtkMRMLAnnotationLinesNode_h
 #define __vtkMRMLAnnotationLinesNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 
 class vtkStringArray;
@@ -17,7 +17,7 @@ class vtkMRMLStorageNode;
 class vtkMRMLAnnotationLineDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationLinesNode : public vtkMRMLAnnotationControlPointsNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationLinesNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
   static vtkMRMLAnnotationLinesNode *New();
@@ -81,14 +81,15 @@ public:
   // add line display node if not already present
   void CreateAnnotationLineDisplayNode();
 
-  //BTX
+//BTX
   enum 
   {
     LINE_SELECTED = vtkMRMLAnnotationControlPointsNode::NUM_CP_ATTRIBUTE_TYPES,
     LINE_VISIBLE,
     NUM_LINE_ATTRIBUTE_TYPES
   };
-
+//ETX
+  
   const char *GetAttributeTypesEnumAsString(int val);
 
   // Description:

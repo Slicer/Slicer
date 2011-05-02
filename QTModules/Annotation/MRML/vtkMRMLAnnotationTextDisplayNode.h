@@ -11,10 +11,10 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLAnnotationDisplayNode.h"
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
  public:
   static vtkMRMLAnnotationTextDisplayNode *New (  );

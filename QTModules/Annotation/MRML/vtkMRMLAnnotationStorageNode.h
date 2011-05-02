@@ -6,7 +6,7 @@
 #ifndef __vtkMRMLAnnotationStorageNode_h
 #define __vtkMRMLAnnotationStorageNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLStorageNode.h"
 
 class vtkMRMLAnnotationTextDisplayNode;
@@ -14,7 +14,7 @@ class vtkMRMLAnnotationDisplayNode;
 class vtkMRMLAnnotationNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationStorageNode : public vtkMRMLStorageNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationStorageNode : public vtkMRMLStorageNode
 {
   public:
   static vtkMRMLAnnotationStorageNode *New();

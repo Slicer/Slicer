@@ -61,6 +61,18 @@ int vtkMRMLAnnotationFiducialNode::SetFiducial(const char* label, double newCont
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLAnnotationFiducialNode::GetFiducialCoordinates(double coord[3])
+{
+  coord[0] = coord[1] = coord[2] = 0.0;
+  if (this->PolyData && this->PolyData->GetPoints()) 
+    {
+    this->PolyData->GetPoint(0, coord);
+    return true;
+    }
+  return false;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialNode::SetTextFromID()
 {
   std::string idLabel = this->GetID();

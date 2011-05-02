@@ -9,14 +9,14 @@
 #ifndef __vtkMRMLAnnotationFiducialNode_h
 #define __vtkMRMLAnnotationFiducialNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
   static vtkMRMLAnnotationFiducialNode *New();
@@ -34,7 +34,7 @@ public:
   virtual const char* GetIcon() {return ":/Icons/AnnotationPoint.png";};
 
   int  SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag);
-
+  
   // Selected and visible are currently always set to 1 and are controlled by selected and visible flag - we can change this later
   void SetFiducialLabel(const char* newLabel) {this->SetText(0,newLabel,1,1);}
   vtkStdString GetFiducialLabel() {return this->GetText(0);}
@@ -44,9 +44,17 @@ public:
   int GetFiducialValue() { 
     return 0;}
 
-
   int SetFiducialCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
+  int SetFiducialCoordinates(double x, double y, double z) {
+      double newCoord[3];
+      newCoord[0] = x;
+      newCoord[1] = y;
+      newCoord[2] = z;
+      return this->SetFiducialCoordinates(newCoord);
+  }
   double* GetFiducialCoordinates() {return this->GetControlPointCoordinates(0);}
+  /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
+  bool GetFiducialCoordinates(double coord[3]);
 
   enum
   {

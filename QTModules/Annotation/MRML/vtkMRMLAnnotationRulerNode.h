@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationRulerNode_h
 #define __vtkMRMLAnnotationRulerNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
@@ -9,7 +9,7 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationRulerNode : public vtkMRMLAnnotationLinesNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationRulerNode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationRulerNode *New();
@@ -124,7 +124,7 @@ public:
   // Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
 
-  //  void Initialize(vtkMRMLScene* mrmlScene);
+//  void Initialize(vtkMRMLScene* mrmlScene);
 
   int GetVisibility() {return this->GetVisible();}
   void SetVisibility(int flag) {this->SetVisible(flag);}

@@ -9,7 +9,7 @@
 #ifndef __vtkMRMLAnnotationTextNode_h
 #define __vtkMRMLAnnotationTextNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 
 
@@ -17,7 +17,7 @@ class vtkStringArray;
 class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextNode : public vtkMRMLAnnotationControlPointsNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationTextNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
   static vtkMRMLAnnotationTextNode *New();

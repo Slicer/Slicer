@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationROINode_h
 #define __vtkMRMLAnnotationROINode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
@@ -9,7 +9,7 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationROINode *New();
@@ -67,7 +67,7 @@ public:
   int GetROIAnnotationVisibility();
   void SetROIAnnotationVisibility(int flag);
 
-  int SetROI(vtkIdType line1Id, int sel, int vis);  
+//  int SetROI(vtkIdType line1Id, int sel, int vis);  
 
   // Description:
   // get/set the point representation color
@@ -103,8 +103,8 @@ public:
   /// void SetXYZ(double* XYZ);
   /// vtkGetVectorMacro(XYZ,double,3);
   //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
-  // returns 1 and control point coordinate 0 on success, 0 and 0,0,0 on failure
-  int GetXYZ(double point[3]);
+  // returns true and control point coordinate 0 on success, false and 0,0,0 on failure
+  bool GetXYZ(double point[3]);
   int SetXYZ(double newControl[3]) { return this->SetControlPoint(0, newControl);}
   int SetXYZ(double nC1, double nC2, double nC3) {
     double newControl[3] = {nC1,nC2,nC3};
@@ -117,7 +117,7 @@ public:
   /// void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   /// void SetRadiusXYZ(double* RadiusXYZ);
   /// vtkGetVectorMacro(RadiusXYZ,double,3);
-  int GetRadiusXYZ(double point[3]);
+  bool GetRadiusXYZ(double point[3]);
   int SetRadiusXYZ(double newControl[3]) { return this->SetControlPoint(1, newControl);}
   int SetRadiusXYZ(double nC1, double nC2, double nC3) {
     double newControl[3] = {nC1,nC2,nC3};

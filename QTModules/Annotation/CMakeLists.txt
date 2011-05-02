@@ -10,10 +10,14 @@ SET(qt_module_title "Annotation")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
 
+# Add subdirectories
+ADD_SUBDIRECTORY(MRML)
+
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
+  ${CMAKE_CURRENT_BINARY_DIR}/MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
   )
 
@@ -132,64 +136,6 @@ FOREACH(file ${MODULE_WIDGETS_SRCS})
   LIST(APPEND qt_module_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/${file})
 ENDFOREACH()
 
-#-----------------------------------------------------------------------
-#
-# MRML
-#
-#-----------------------------------------------------------------------
-SET(MODULE_MRML_SRCS
-  vtkMRMLAnnotationSnapshotNode.cxx
-  vtkMRMLAnnotationSnapshotNode.h
-  vtkMRMLAnnotationHierarchyNode.cxx
-  vtkMRMLAnnotationHierarchyNode.h
-  vtkMRMLAnnotationNode.cxx
-  vtkMRMLAnnotationNode.h
-  vtkMRMLAnnotationStorageNode.cxx
-  vtkMRMLAnnotationStorageNode.h
-  vtkMRMLAnnotationDisplayNode.cxx
-  vtkMRMLAnnotationDisplayNode.h
-  vtkMRMLAnnotationTextDisplayNode.cxx
-  vtkMRMLAnnotationTextDisplayNode.h
-  vtkMRMLAnnotationControlPointsNode.cxx
-  vtkMRMLAnnotationControlPointsNode.h
-  vtkMRMLAnnotationControlPointsStorageNode.cxx
-  vtkMRMLAnnotationControlPointsStorageNode.h
-  vtkMRMLAnnotationPointDisplayNode.cxx
-  vtkMRMLAnnotationPointDisplayNode.h
-  vtkMRMLAnnotationLinesNode.cxx
-  vtkMRMLAnnotationLinesNode.h
-  vtkMRMLAnnotationLinesStorageNode.cxx
-  vtkMRMLAnnotationLinesStorageNode.h
-  vtkMRMLAnnotationLineDisplayNode.cxx
-  vtkMRMLAnnotationLineDisplayNode.h
-  vtkMRMLAnnotationAngleNode.cxx
-  vtkMRMLAnnotationAngleNode.h
-  vtkMRMLAnnotationAngleStorageNode.cxx
-  vtkMRMLAnnotationAngleStorageNode.h
-  vtkMRMLAnnotationRulerNode.cxx
-  vtkMRMLAnnotationRulerNode.h
-  vtkMRMLAnnotationRulerStorageNode.cxx
-  vtkMRMLAnnotationRulerStorageNode.h
-  vtkMRMLAnnotationFiducialNode.cxx
-  vtkMRMLAnnotationFiducialNode.h
-  vtkMRMLAnnotationFiducialsStorageNode.cxx
-  vtkMRMLAnnotationFiducialsStorageNode.h
-  vtkMRMLAnnotationStickyNode.cxx
-  vtkMRMLAnnotationStickyNode.h
-  vtkMRMLAnnotationTextNode.cxx
-  vtkMRMLAnnotationTextNode.h
-  vtkMRMLAnnotationROINode.cxx
-  vtkMRMLAnnotationROINode.h
-  vtkMRMLAnnotationSplineNode.cxx
-  vtkMRMLAnnotationSplineNode.h
-  vtkMRMLAnnotationBidimensionalNode.cxx
-  vtkMRMLAnnotationBidimensionalNode.h
-  )
-
-# Expand MRML sources filename and append to module sources
-FOREACH(file ${MODULE_MRML_SRCS})
-  LIST(APPEND qt_module_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/MRML/${file})
-ENDFOREACH()
 
 #-----------------------------------------------------------------------
 #
@@ -232,6 +178,7 @@ SET(qt_module_resources
 SET(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
+  AnnotationMRML
 )
 
 #-----------------------------------------------------------------------

@@ -6,13 +6,13 @@
 #ifndef __vtkMRMLAnnotationRulerStorageNode_h
 #define __vtkMRMLAnnotationRulerStorageNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 class vtkMRMLAnnotationRulerNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationRulerStorageNode : public vtkMRMLAnnotationLinesStorageNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode : public vtkMRMLAnnotationLinesStorageNode
 {
   public:
   static vtkMRMLAnnotationRulerStorageNode *New();

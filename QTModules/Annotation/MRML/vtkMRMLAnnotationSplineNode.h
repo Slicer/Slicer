@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationSplineNode_h
 #define __vtkMRMLAnnotationSplineNode_h
 
-#include "qSlicerAnnotationModuleExport.h"
+#include "AnnotationMRMLExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
@@ -9,7 +9,7 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSplineNode : public vtkMRMLAnnotationLinesNode
+class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationSplineNode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationSplineNode *New();
