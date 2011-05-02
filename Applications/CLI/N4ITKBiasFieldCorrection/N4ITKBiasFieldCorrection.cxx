@@ -275,7 +275,7 @@ int main(int argc, char** argv){
   if( histogramSharpening.size() && histogramSharpening[0] )
     correcter->SetBiasFieldFullWidthAtHalfMaximum( histogramSharpening[0] );
   if( histogramSharpening.size()>1 && histogramSharpening[1] )
-    correcter->SetWeinerFilterNoise( histogramSharpening[1] );
+    correcter->SetWienerFilterNoise( histogramSharpening[1] );
   if( histogramSharpening.size()>2 && histogramSharpening[2] )
     correcter->SetNumberOfHistogramBins( histogramSharpening[2] );
 
@@ -351,11 +351,18 @@ int main(int argc, char** argv){
     CropperType::Pointer cropper = CropperType::New();
     cropper->SetInput( divider->GetOutput() );
     cropper->SetExtractionRegion( inputRegion );
+#if ITK_VERSION_MAJOR > 3
+          cropper->SetDirectionCollapseToSubmatrix();
+#endif
     cropper->Update();
 
     CropperType::Pointer biasFieldCropper = CropperType::New();
     biasFieldCropper->SetInput( expFilter->GetOutput() );
     biasFieldCropper->SetExtractionRegion( inputRegion );
+#if ITK_VERSION_MAJOR > 3
+    biasFieldCropper->SetDirectionCollapseToSubmatrix();
+#endif
+
     biasFieldCropper->Update();
 
     if(outputBiasFieldName != "" ){

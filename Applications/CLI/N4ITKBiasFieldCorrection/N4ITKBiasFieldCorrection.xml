@@ -111,22 +111,6 @@
       <description>Weight Image</description>
     </image>
 
-    <float>
-      <name>alpha</name>
-      <longflag>bsplinealpha</longflag>
-      <description>Sigmoid normalized alpha</description>
-      <label>BSpline alpha</label>
-      <default>0</default>
-    </float>
-   
-    <float>
-      <name>beta</name>
-      <longflag>bsplinebeta</longflag>
-      <description>Sigmoid normalized beta</description>
-      <label>BSpline beta</label>
-      <default>0.5</default>
-    </float>
-    
     <float-vector>
       <name>histogramSharpening</name>
       <longflag>histogramsharpening</longflag>

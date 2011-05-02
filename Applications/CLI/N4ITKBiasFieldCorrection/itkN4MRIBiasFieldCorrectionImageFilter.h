@@ -64,7 +64,7 @@ namespace itk {
  *     can reconstruct it using the class itkBSplineControlPointImageFilter.
  *     See the IJ article and the test file for an example.
  *  5. The 'Z' parameter in Sled's 1998 paper is the square root
- *     of the class variable 'm_WeinerFilterNoise'.
+ *     of the class variable 'm_WienerFilterNoise'.
  *
  * The basic algorithm iterates between sharpening the intensity histogram of
  * the corrected input image and spatially smoothing those results with a
@@ -198,7 +198,7 @@ public:
   itkGetConstMacro( MaskLabel, MaskPixelType );
 
   // Sharpen histogram parameters: in estimating the bias field, the
-  // first step is to sharpen the intensity histogram by Weiner deconvolution
+  // first step is to sharpen the intensity histogram by Wiener deconvolution
   // with a 1-D Gaussian.  The following parameters define this operation.
   // These default values in N4 match the default values in N3.
 
@@ -215,14 +215,14 @@ public:
   itkGetConstMacro( NumberOfHistogramBins, unsigned int );
 
   /**
-   * Set the noise estimate defining the Weiner filter.  Default = 0.01.
+   * Set the noise estimate defining the Wiener filter.  Default = 0.01.
    */
-  itkSetMacro( WeinerFilterNoise, RealType );
+  itkSetMacro( WienerFilterNoise, RealType );
 
   /**
-   * Get the noise estimate defining the Weiner filter.  Default = 0.01.
+   * Get the noise estimate defining the Wiener filter.  Default = 0.01.
    */
-  itkGetConstMacro( WeinerFilterNoise, RealType );
+  itkGetConstMacro( WienerFilterNoise, RealType );
 
   /**
    * Set the full width at half maximum parameter characterizing the width of
@@ -400,10 +400,10 @@ private:
 
   MaskPixelType m_MaskLabel;
 
-  // Parameters for deconvolution with Weiner filter
+  // Parameters for deconvolution with Wiener filter
 
   unsigned int m_NumberOfHistogramBins;
-  RealType     m_WeinerFilterNoise;
+  RealType     m_WienerFilterNoise;
   RealType     m_BiasFieldFullWidthAtHalfMaximum;
 
   // Convergence parameters
