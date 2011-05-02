@@ -347,7 +347,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& o
    // put down a header
   if (refNode == NULL)
     {
-      return 0;
+    vtkWarningMacro("WriteAnnotationRulerProperties: ref node is null");
+    return 0;
     }
 
   of << "# " << this->GetAnnotationStorageType() << "Resolution = " << refNode->GetResolution() << endl;
@@ -363,7 +364,8 @@ void vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vt
 {
   if (!refNode)
     {
-      return;
+    vtkWarningMacro("WriteAnnotationRulerData: reference node is null");
+    return;
     }
   int sel = refNode->GetSelected();
   int vis = refNode->GetVisible(); 
@@ -378,7 +380,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
   fstream of;
   if (!this->OpenFileToWrite(of)) 
     {
-      return 0;
+    vtkWarningMacro("WriteData: cannot open file to write");
+    return 0;
     } 
 
   int flag = this->WriteData(refNode,of);
@@ -386,7 +389,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
   of.close();
 
   Superclass::StageWriteData(refNode);
-  
+
+  vtkDebugMacro("RulerStorageNode: WriteData: returning " << flag);
   return flag;
 }
 
@@ -394,10 +398,12 @@ int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode, fstream& of)
 {
-  
-  if (!Superclass::WriteData(refNode,of))
+
+  int retval = Superclass::WriteData(refNode,of);
+  if (!retval)
     {
-      return 0;
+    vtkWarningMacro("Ruler: WriteData: unable to call superclass WriteData, retval = " << retval);
+    return 0;
     }
 
   // test whether refNode is a valid node to hold a volume
@@ -420,7 +426,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode, fstream& 
   // Control Points Properties
   if (!WriteAnnotationRulerProperties(of, aNode))
     {
-      return 0;
+    vtkWarningMacro("Ruler: WriteData: failure in WriteAnnotationRulerProperties");
+    return 0;
     }
 
   WriteAnnotationRulerData(of, aNode);

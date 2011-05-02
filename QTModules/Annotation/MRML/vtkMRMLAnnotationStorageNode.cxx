@@ -563,12 +563,14 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
   // put down a header
   if (refNode == NULL)
     {
-      return 0;
+    vtkWarningMacro("WriteAnnotationTextProperties: reference node is null");
+    return 0;
     }
   vtkMRMLAnnotationTextDisplayNode *annDisNode = refNode->GetAnnotationTextDisplayNode();
   if (annDisNode == NULL)
     {
-      return 0;
+    vtkWarningMacro("WriteAnnotationTextProperties: annotation text display node is null");
+    return 0;
     }
 
   of << "# Name = " << refNode->GetName() << endl; 
@@ -583,6 +585,7 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnot
 {
   if (!refNode)
     {
+    vtkWarningMacro("WriteAnnotationData: reference node is null");
     return;
     }
   // if change the ones being included, make sure to update the parsing in ReadData
@@ -600,14 +603,14 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 {
   if (this->GetFileName() == NULL) 
     {
-    vtkErrorMacro("WriteData: file name is not set");
+    vtkErrorMacro("OpenFileToWrite: file name is not set");
     return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("vtkMRMLAnnotationStorageNode: File name not specified");
+    vtkErrorMacro("OpenFileToWrite: File name not specified");
     return 0;
     }
 
@@ -615,7 +618,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 
   if (!of.is_open())
     {
-    vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
+    vtkErrorMacro("OpenFileToWrite: unable to open file " << fullName.c_str() << " for writing");
     return 0;
     }
 
@@ -628,6 +631,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
 {
+  vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData");
   // test whether refNode is a valid node to hold a volume
   if ( !refNode ||
        !( refNode->IsA("vtkMRMLAnnotationNode") ) )
@@ -648,6 +652,7 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
 
   WriteAnnotationTextProperties(of, annotationNode);
   WriteAnnotationData(of, annotationNode);
+  vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData: returning 1");
   return 1;
 }
 //----------------------------------------------------------------------------
@@ -655,13 +660,15 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
 {
   if (!refNode)
     {
+    vtkWarningMacro("WriteData: reference node is null.");
     return 0;
     }
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 
     {
-      return 0;
+    vtkWarningMacro("WriteData: unable to open file to write");
+    return 0;
     } 
 
   int flag = this->WriteData(refNode,of);
@@ -669,7 +676,8 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
   of.close();
 
   Superclass::StageWriteData(refNode);
-  
+
+  vtkDebugMacro("WriteData: returning " << flag);
   return flag;
   
 }
