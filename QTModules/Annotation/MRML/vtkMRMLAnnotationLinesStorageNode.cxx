@@ -391,13 +391,15 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
    // put down a header
   if (refNode == NULL)
     {
-      return 0;
+    vtkErrorMacro("WriteAnnotationLinesProperties: ref node is null");
+    return 0;
     }
 
   vtkMRMLAnnotationLineDisplayNode *annDisNode = refNode->GetAnnotationLineDisplayNode();
   if (annDisNode == NULL)
     {
-      return 0;
+    vtkErrorMacro("WriteAnnotationLinesProperties: no annotation line display node");
+    return 0;
     }
 
   this->WriteAnnotationLineDisplayProperties(of, annDisNode, this->GetAnnotationStorageType());
@@ -432,7 +434,8 @@ int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode)
   fstream of;
   if (!this->OpenFileToWrite(of)) 
     {
-      return 0;
+    vtkWarningMacro(" vtkMRMLAnnotationLinesStorageNode::WriteData: can't open file to write");
+    return 0;
     } 
 
   int flag = this->WriteData(refNode,of);
@@ -440,7 +443,8 @@ int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode)
   of.close();
 
   Superclass::StageWriteData(refNode);
-  
+
+  vtkDebugMacro(" vtkMRMLAnnotationLinesStorageNode::WriteData: returning flag " << flag);
   return flag;
 }
 
@@ -448,10 +452,11 @@ int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode, fstream& of)
 {
-  
-  if (!Superclass::WriteData(refNode,of))
+  int retval = Superclass::WriteData(refNode,of);
+  if (!retval)
     {
-      return 0;
+    vtkWarningMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: can't call WriteData on superclass, retval = " << retval);
+    return 0;
     }
 
   // test whether refNode is a valid node to hold a volume
@@ -474,11 +479,13 @@ int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode, fstream& 
   // Control Points Properties
   if (!WriteAnnotationLinesProperties(of, aNode))
     {
-      return 0;
+    vtkWarningMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: error writing annotation lines properties");
+    return 0;
     }
 
   WriteAnnotationLinesData(of, aNode);
 
+  vtkDebugMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: returning 1");
   return 1;
 }
 
