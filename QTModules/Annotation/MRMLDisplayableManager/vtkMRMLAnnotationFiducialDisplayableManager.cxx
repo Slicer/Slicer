@@ -182,8 +182,14 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   // Use tmpPtr to query only one time for the coordinates
   double* tmpPtr = fiducialNode->GetFiducialCoordinates();
-  
-  double worldCoordinates[4] = {tmpPtr[0],tmpPtr[1],tmpPtr[2],1};
+
+  double worldCoordinates[4] = {0.0, 0.0, 0.0, 1.0};
+  if (tmpPtr != NULL)
+    {
+    worldCoordinates[0] = tmpPtr[0];
+    worldCoordinates[1] = tmpPtr[1];
+    worldCoordinates[2] = tmpPtr[2];
+    }
 
   double position1[4];
 

@@ -1019,7 +1019,10 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r,
 /// Convert world to display coordinates
 void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates)
 {
-
+  if (worldCoordinates == NULL)
+    {
+    return;
+    }
   this->GetWorldToDisplayCoordinates(worldCoordinates[0], worldCoordinates[1], worldCoordinates[2], displayCoordinates);
 
 }
