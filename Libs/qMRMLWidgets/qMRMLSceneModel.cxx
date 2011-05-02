@@ -617,7 +617,13 @@ void qMRMLSceneModel::populateScene()
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
 {
-  Q_ASSERT(this->itemFromNode(node) == 0);
+  QStandardItem* nodeItem = this->itemFromNode(node);
+  if (nodeItem != 0)
+    {
+    // It is possible that the node has been already added if it is the parent
+    // of a child node already inserted.
+    return nodeItem;
+    }
   vtkMRMLNode* parentNode = this->parentNode(node);
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
