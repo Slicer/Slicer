@@ -62,7 +62,7 @@ qSlicerModuleTemplateModule::~qSlicerModuleTemplateModule()
 //-----------------------------------------------------------------------------
 QString qSlicerModuleTemplateModule::helpText()const
 {
-  return QString();
+  return "Write some help here...";
 }
 
 //-----------------------------------------------------------------------------
