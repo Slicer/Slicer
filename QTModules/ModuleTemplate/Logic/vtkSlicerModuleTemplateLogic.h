@@ -42,7 +42,7 @@ class VTK_SLICER_MODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerModuleTemplateLogic
 public:
   
   static vtkSlicerModuleTemplateLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerModuleTemplateLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerModuleTemplateLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   /// Initialize listening to MRML events
