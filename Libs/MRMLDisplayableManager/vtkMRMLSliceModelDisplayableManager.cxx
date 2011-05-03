@@ -502,8 +502,9 @@ bool vtkMRMLSliceModelDisplayableManager::vtkInternal::IsDisplayable(
 {
   // Currently only support DTI Slice display nodes, add here more type if
   // needed
-  return displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") &&
-    std::string(displayNode->GetName()) == this->GetSliceNode()->GetLayoutName();
+  return displayNode
+    && displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode")
+    && (std::string(displayNode->GetName()) == this->GetSliceNode()->GetLayoutName());
 }
 
 //---------------------------------------------------------------------------
