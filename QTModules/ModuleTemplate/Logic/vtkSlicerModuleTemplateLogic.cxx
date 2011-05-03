@@ -25,6 +25,7 @@
 
 
 //----------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkSlicerModuleTemplateLogic, "$Revision: 1.0$")
 vtkStandardNewMacro(vtkSlicerModuleTemplateLogic);
 
 //----------------------------------------------------------------------------
