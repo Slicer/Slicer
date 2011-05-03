@@ -161,6 +161,12 @@ void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
 
   Q_D(qMRMLSceneViewsTreeWidget);
 
+  // is it a valid node?
+  if (d->SortFilterModel->mrmlNodeFromIndex(index) == NULL)
+    {
+    //std::cerr << "OnClicked: invalid node this index " << std::endl;
+    return;
+    }
   // if the user clicked on a hierarchy, set this as the active one
   // this means, new scene view or new user-created hierarchies will be created
   // as childs of this one
