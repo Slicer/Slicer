@@ -81,11 +81,52 @@ public:
   /// Set the selected text color of an Annotation MRML node
   void SetAnnotationTextSelectedColor(const char* id, double * color);
 
-  /// Get the selected text color of an Annotation MRML node
+  /// Get the text color of an Annotation MRML node
   double * GetAnnotationTextUnselectedColor(const char* id);
-  /// Set the selected text color of an Annotation MRML node
+  /// Set the text color of an Annotation MRML node
   void SetAnnotationTextUnselectedColor(const char* id, double * color);
 
+  /// Get the color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationColor(const char *id);
+  /// Set the color of an annotation mrml node
+  void SetAnnotationColor(const char *id, double *color);
+
+  /// Get the unselected color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationUnselectedColor(const char *id);
+  /// Set the unselected color of an annotation mrml node
+  void SetAnnotationUnselectedColor(const char *id, double *color);
+
+  /// Get the point color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationPointColor(const char *id);
+  /// Set the point color of an annotation mrml node
+  void SetAnnotationPointColor(const char *id, double *color);
+
+  /// Get the unselected point color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationPointUnselectedColor(const char *id);
+  /// Set the unselected point color of an annotation mrml node
+  void SetAnnotationPointUnselectedColor(const char *id, double *color);
+
+  /// Get the point glyph type of the annotation mrml node as a string,
+  /// returns null if can't find it
+  const char * GetAnnotationPointGlyphTypeAsString(const char *id);
+  /// Get the point glyph type of the annotation mrml node, 
+  int GetAnnotationPointGlyphType(const char *id);
+  /// Set the point glyph type of the annotation mrml node from a string
+  void SetAnnotationPointGlyphTypeFromString(const char *id, const char *glyphType);
+  /// Set the point glyph type of the annotation mrml node
+  void SetAnnotationPointGlyphType(const char *id, int glyphType);
+  
+  /// Get the line color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationLineColor(const char *id);
+  /// Set the line color of an annotation mrml node
+  void SetAnnotationLineColor(const char *id, double *color);
+
+  /// Get the unselected line color of an annotation mrml node, returns null if can't find it
+  double * GetAnnotationLineUnselectedColor(const char *id);
+  /// Set the unselected line color of an annotation mrml node
+  void SetAnnotationLineUnselectedColor(const char *id, double *color);
+
+  
   /// Get the measurement value of an Annotation MRML node
   const char * GetAnnotationMeasurement(const char * id, bool showUnits);
 

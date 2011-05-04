@@ -59,6 +59,7 @@ protected slots:
     void onPointAmbientChanged(double value);
     void onPointDiffuseChanged(double value);
     void onPointSpecularChanged(double value);
+    void onPointGlyphChanged(QString value);
     void onLineColorChanged(QColor qcolor);
     void onLineSelectedColorChanged(QColor qcolor);
     void onLineWidthChanged(double value);

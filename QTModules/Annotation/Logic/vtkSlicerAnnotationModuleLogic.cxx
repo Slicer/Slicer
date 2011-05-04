@@ -608,6 +608,11 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
 {
+  if (!id)
+    {
+    return false;
+    }
+  
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
 
   if (annotationNode)
@@ -624,11 +629,17 @@ bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::GetAnnotationName(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationName: no id");
+    return 0;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationName: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationName: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -649,11 +660,17 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationName(const char * id)
 //---------------------------------------------------------------------------
 vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationText: no id supplid");
+    return 0;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationText: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationText: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -683,11 +700,17 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const char * newtext)
 {
+   if (!id)
+    {
+    vtkErrorMacro("SetAnnotationText: no id specified");
+    return;
+    }
+
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationText: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationText: Could not get the MRML node with id " << id)
     return;
     }
 
@@ -703,8 +726,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
     }
   // end of special case for snapShots
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      node);
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
   if (!annotationNode)
     {
@@ -714,7 +736,8 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
 
   if (!newtext)
     {
-    vtkErrorMacro("SetAnnotationText: Could not get the text.")
+    vtkErrorMacro("SetAnnotationText: No text supplied, using an empty string.")
+      annotationNode->SetText(0,"",1,1);
     return;
     }
 
@@ -727,11 +750,17 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
 //---------------------------------------------------------------------------
 double vtkSlicerAnnotationModuleLogic::GetAnnotationTextScale(const char* id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationTextScale: no id specified");
+    return 0;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationTextScale: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -753,11 +782,16 @@ double vtkSlicerAnnotationModuleLogic::GetAnnotationTextScale(const char* id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationTextScale(const char* id, double textScale)
 {
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationTextScale: no id given");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node with id " << id)
     return;
     }
 
@@ -779,11 +813,16 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextScale(const char* id, doub
 //---------------------------------------------------------------------------
 double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const char* id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationTextSelectedColor: no id specified");
+    return 0;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationTextSelectedColor: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -792,7 +831,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const ch
 
   if (!annotationNode)
     {
-    vtkErrorMacro("GetAnnotationTextScale: Could not get the annotation MRML node.")
+    vtkErrorMacro("GetAnnotationTextSelectedColor: Could not get the annotation MRML node.")
     return 0;
     }
 
@@ -805,11 +844,15 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const ch
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationTextSelectedColor(const char* id, double * color)
 {
+  if (!id)
+    {
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationTextSelectedColor: Could not get the MRML node with id " << id)
     return;
     }
 
@@ -818,7 +861,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextSelectedColor(const char* 
 
   if (!annotationNode)
     {
-    vtkErrorMacro("SetAnnotationTextScale: Could not get the annotation MRML node.")
+    vtkErrorMacro("SetAnnotationTextSelectedColor: Could not get the annotation MRML node.")
     return;
     }
 
@@ -833,11 +876,16 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextSelectedColor(const char* 
 //---------------------------------------------------------------------------
 double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextUnselectedColor(const char* id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationTextUnselectedColor: no id given");
+    return 0;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationTextUnselectedColor: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -846,7 +894,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextUnselectedColor(const 
 
   if (!annotationNode)
     {
-    vtkErrorMacro("GetAnnotationTextScale: Could not get the annotation MRML node.")
+    vtkErrorMacro("GetAnnotationTextUnselectedColor: Could not get the annotation MRML node.")
     return 0;
     }
 
@@ -859,20 +907,24 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextUnselectedColor(const 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationTextUnselectedColor(const char* id, double * color)
 {
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationTextUnselectedColor: no id given");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationTextUnselectedColor: Could not get the MRML node with id " << id)
     return;
     }
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      node);
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
   if (!annotationNode)
     {
-    vtkErrorMacro("SetAnnotationTextScale: Could not get the annotation MRML node.")
+    vtkErrorMacro("SetAnnotationTextUnselectedColor: Could not get the annotation MRML node with id " << id)
     return;
     }
 
@@ -883,15 +935,615 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextUnselectedColor(const char
 }
 
 //---------------------------------------------------------------------------
+// Get the color of an annotation node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLDisplayableNode* annotationNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationColor: Could not get the displayable MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetDisplayNode()->GetSelectedColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation mrml node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLDisplayableNode* annotationNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationColor: Could not get the displayable MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetDisplayNode()->SetSelectedColor(color);
+  // this should trigger a display modified event, but it's not being caught
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+// Get the unselected color of an annotation node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationUnselectedColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationUnselectedColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationUnselectedColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLDisplayableNode* annotationNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationUnselectedColor: Could not get the displayable MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationUnselectedColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetDisplayNode()->GetColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation mrml node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationUnselectedColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationUnselectedColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationUnselectedColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationUnselectedColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLDisplayableNode* annotationNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationUnselectedColor: Could not get the displayable MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationUnselectedColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetDisplayNode()->SetColor(color);
+  // this should trigger a display modified event, but it's not being caught
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+// Get the color of an annotation point node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationPointColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationPointColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationPointColor: Could not get the displayable control points MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationPointColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetAnnotationPointDisplayNode()->GetSelectedColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationPointColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationPointColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationPointColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationPointColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationPointColor: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationPointColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationPointDisplayNode()->SetSelectedColor(color);
+  // this should trigger a display modified event, but it's not being caught
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+// Get the unselected color of an annotation point node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointUnselectedColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationPointUnselectedColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationPointUnselectedColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationPointUnselectedColor: Could not get the displayable control points MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationPointUnselectedColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetAnnotationPointDisplayNode()->GetColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationPointUnselectedColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationPointDisplayNode()->SetColor(color);
+}
+
+//---------------------------------------------------------------------------
+// Get the glyph type of the annotation point node as a string
+//---------------------------------------------------------------------------
+const char * vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphTypeAsString(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: no id given, cannot get glyph type");
+    return NULL;
+    }
+
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the MRML node for id " << id);
+    return NULL;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the displayable control points MRML node for id " << id);
+    return NULL;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the display node for node " << id);
+    return NULL;
+    }
+
+  return annotationNode->GetAnnotationPointDisplayNode()->GetGlyphTypeAsString();
+}
+
+//---------------------------------------------------------------------------
+// Get the glyph type of the annotation point node 
+//---------------------------------------------------------------------------
+int vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphType(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphType: no id given, cannot get glyph type");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the MRML node for id " << id);
+    return NULL;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the displayable control points MRML node for id " << id);
+    return NULL;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationPointGlyphType: Could not get the display node for node " << id);
+    return NULL;
+    }
+
+  return annotationNode->GetAnnotationPointDisplayNode()->GetGlyphType();
+}
+
+//---------------------------------------------------------------------------
+// Set the glyph type of the annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphTypeFromString(const char *id, const char *glyphType)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: no id given, cannot set glyph type");
+    return;
+    }
+  if (!glyphType)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: no glyph type given, cannot set glyph type for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationPointDisplayNode()->SetGlyphTypeFromString(glyphType);
+}
+
+//---------------------------------------------------------------------------
+// Set the glyph type of the annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphType(const char *id, int glyphType)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphType: no id given, cannot set glyph type to " << glyphType);
+    return;
+    }
+    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphType: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphType: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationPointGlyphType: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationPointDisplayNode()->SetGlyphType(glyphType);
+}
+
+//---------------------------------------------------------------------------
+// Get the color of an annotation line node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationLineColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationLineColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLAnnotationLinesNode* annotationNode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationLineColor: Could not get the displayable control points MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationLineColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetAnnotationLineDisplayNode()->GetSelectedColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationLineColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationLineColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationLineColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationLineColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationLinesNode* annotationNode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationLineColor: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationLineColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationLineDisplayNode()->SetSelectedColor(color);
+  // this should trigger a display modified event, but it's not being caught
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+// Get the unselected color of an annotation point node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineUnselectedColor(const char *id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationLineUnselectedColor: no id given, cannot get color");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationLineUnselectedColor: Could not get the MRML node for id " << id);
+    return 0;
+    }
+
+  vtkMRMLAnnotationLinesNode* annotationNode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationLineUnselectedColor: Could not get the displayable control points MRML node for id " << id);
+    return 0;
+    }
+  
+  if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
+    {
+    vtkErrorMacro("GetAnnotationLineUnselectedColor: Could not get the display node for node " << id);
+    return 0;
+    }
+
+  return annotationNode->GetAnnotationLineDisplayNode()->GetColor();
+}
+
+//---------------------------------------------------------------------------
+/// Set the color of an annotation point node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationLineUnselectedColor(const char *id, double *color)
+{
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: no id given, cannot set color");
+    return;
+    }
+  if (!color)
+    {
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: no color given, cannot set color for node " << id);
+    return;
+    }
+  
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: Could not get the MRML node for id " << id);
+    return;
+    }
+
+  vtkMRMLAnnotationLinesNode* annotationNode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: Could not get the displayable control points MRML node for id " << id);
+    return;
+    }
+  
+  if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
+    {
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: Could not get the display node for node " << id);
+    return;
+    }
+
+  annotationNode->GetAnnotationLineDisplayNode()->SetColor(color);
+}
+    
+//---------------------------------------------------------------------------
 // Get the measurement value of a MRML Annotation node
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char* id, bool showUnits)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationMeasurement: no id given");
+    return 0;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationMeasurement: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationMeasurement: Could not get the MRML node with id " << id)
     return 0;
     }
 
@@ -1029,7 +1681,17 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
 {
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  if (!this->GetMRMLScene() ||
+      id == NULL)
+    {
+    return 0;
+    }
+  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(id);
+  if (!mrmlNode)
+    {
+    return 0;
+    }
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(mrmlNode);
 
   if (annotationNode)
     {
@@ -1060,11 +1722,16 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
 //---------------------------------------------------------------------------
 int vtkSlicerAnnotationModuleLogic::GetAnnotationLockedUnlocked(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationLockedUnlocked: no id");
+    return 0;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationLockedUnlocked: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationLockedUnlocked: Could not get the MRML node with id " << id);
     return 0;
     }
 
@@ -1087,11 +1754,16 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationLockedUnlocked(const char * id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationLockedUnlocked(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationLockedUnlocked: no id");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationLockedUnlocked: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationLockedUnlocked: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1115,11 +1787,17 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLockedUnlocked(const char * id
 //---------------------------------------------------------------------------
 int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("GetAnnotationVisibility: no id given");
+    return 0;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("GetAnnotationVisibility: Could not get the MRML node.")
+    vtkErrorMacro("GetAnnotationVisibility: Could not get the MRML node with id " << id);
     return 0;
     }
 
@@ -1142,11 +1820,16 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationVisibility: no id given");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationVisibility: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationVisibility: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1169,11 +1852,17 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool selected)
 {
+  if (!id)
+    {
+    vtkErrorMacro("SetAnnotationSelected: no id given");
+    return;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("SetAnnotationSelected: Could not get the MRML node.")
+    vtkErrorMacro("SetAnnotationSelected: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1206,11 +1895,17 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
 {
+  if (!id)
+    {
+    vtkErrorMacro("BackupAnnotationNode: no id given");
+    return;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("BackupAnnotationNode: Could not get the MRML node.")
+    vtkErrorMacro("BackupAnnotationNode: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1247,13 +1942,19 @@ void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 {
-  vtkDebugMacro("RestoreAnnotationNode: " << id)
+  if (!id)
+    {
+    vtkErrorMacro("RestoreAnnotationNode: no id given");
+    return;
+    }
+   
+  vtkDebugMacro("RestoreAnnotationNode: " << id);
 
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("RestoreAnnotationNode: Could not get the MRML node.")
+    vtkErrorMacro("RestoreAnnotationNode: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1314,12 +2015,17 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
 {
-
+   if (!id)
+    {
+    vtkErrorMacro("RestoreAnnotationView: no id given");
+    return;
+    }
+   
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
     {
-    vtkErrorMacro("RestoreAnnotationView: Could not get the MRML node.")
+    vtkErrorMacro("RestoreAnnotationView: Could not get the MRML node with id " << id);
     return;
     }
 
@@ -1465,25 +2171,28 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::GetTopLevelHiera
 
   vtkMRMLAnnotationHierarchyNode* toplevelNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationHierarchyNode"));
 
-  if (!toplevelNode)
+  if (toplevelNode)
     {
-    // no annotation hierarchy node is currently in the scene, create a new one
-    toplevelNode = vtkMRMLAnnotationHierarchyNode::New();
-    toplevelNode->SetScene(this->GetMRMLScene());
-    toplevelNode->HideFromEditorsOff();
-    toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationToplevelHierarchyNode"));
-
-    if (!node)
-      {
-      this->GetMRMLScene()->AddNode(toplevelNode);
-      }
-    else
-      {
-      this->GetMRMLScene()->InsertBeforeNode(node,toplevelNode);
-      }
+    return toplevelNode;
     }
 
-  return toplevelNode;
+  // no annotation hierarchy node is currently in the scene, create a new one
+  vtkMRMLAnnotationHierarchyNode *newTopLevelNode = NULL;
+  newTopLevelNode = vtkMRMLAnnotationHierarchyNode::New();
+  newTopLevelNode->SetScene(this->GetMRMLScene());
+  newTopLevelNode->HideFromEditorsOff();
+  newTopLevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationToplevelHierarchyNode"));
+  
+  if (!node)
+    {
+    this->GetMRMLScene()->AddNode(newTopLevelNode);
+    }
+  else
+    {
+    this->GetMRMLScene()->InsertBeforeNode(node,newTopLevelNode);
+    }
+
+  return newTopLevelNode;
 }
 
 //---------------------------------------------------------------------------
@@ -1607,7 +2316,7 @@ void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNode(vtkMRMLAnnotationHie
 
     if (!toplevelNode)
       {
-      vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find or create any hierarchy.")
+      vtkErrorMacro("SetActiveHierarchyNode: Could not find or create any hierarchy.")
       return;
       }
 

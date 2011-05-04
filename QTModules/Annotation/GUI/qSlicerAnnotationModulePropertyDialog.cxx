@@ -968,13 +968,19 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 {
-  Q_UNUSED(qcolor);
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
+
+  this->m_logic->SetAnnotationPointUnselectedColor(this->m_id.c_str(),color);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSelectedColorChanged(QColor qcolor)
 {
-  Q_UNUSED(qcolor);
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
+
+  this->m_logic->SetAnnotationPointColor(this->m_id.c_str(),color);
 }
 
 //------------------------------------------------------------------------------
@@ -1013,15 +1019,27 @@ void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 }
 
 //------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onPointGlyphChanged(QString value)
+{
+  this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(),value.toAscii().data());
+}
+
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineColorChanged(QColor qcolor)
 {
-  Q_UNUSED(qcolor);
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
+
+  this->m_logic->SetAnnotationLineUnselectedColor(this->m_id.c_str(),color);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineSelectedColorChanged(QColor qcolor)
 {
-  Q_UNUSED(qcolor);
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
+
+  this->m_logic->SetAnnotationLineColor(this->m_id.c_str(),color);
 }
 
 //------------------------------------------------------------------------------
