@@ -304,9 +304,11 @@ void vtkMRMLAnnotationControlPointsNode::CreateAnnotationPointDisplayNode()
   node = vtkMRMLAnnotationPointDisplayNode::New();
   node->SetScene(this->GetScene());
   this->GetScene()->AddNode(node);
-  node->Delete();
+
   // vtkMRMLDisplayableNode stores the ids in DisplayNodeIDs 
   this->AddAndObserveDisplayNodeID(node->GetID());
+  node->Delete();
+
   // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets 
   // node->SetPolyData(this->GetPolyData());
   
@@ -550,9 +552,13 @@ void vtkMRMLAnnotationControlPointsNode::Initialize(vtkMRMLScene* mrmlScene)
     vtkErrorMacro("Scene was null!")
     return;
   }
-  Superclass::Initialize(mrmlScene);
+
   // we need to disable the modified event which would get fired when we set the new displayNode
   this->DisableModifiedEventOn();
+  // at this point we need to have a scene, else the displayNodes can not be created
+  this->SetScene(mrmlScene);
   this->CreateAnnotationPointDisplayNode();
   this->DisableModifiedEventOff();
+
+  Superclass::Initialize(mrmlScene);
 }

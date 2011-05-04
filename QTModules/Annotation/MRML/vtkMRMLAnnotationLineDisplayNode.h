@@ -55,7 +55,7 @@ class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
                                    void * /*callData*/ );
 
   /// Get/Set for Symbol scale
-  ///  vtkSetMacro(SymbolScale,double);
+  ///  vtkSetMacro(GlyphScale,double);
   void SetLineThickness(double thickness);
   vtkGetMacro(LineThickness,double);
 

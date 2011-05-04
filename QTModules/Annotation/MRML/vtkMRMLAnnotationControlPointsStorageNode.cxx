@@ -99,19 +99,19 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
   int pointOffset = preposition.size();
   preposition.insert(0,"# ");
 
-  if (lineString.find(preposition + "SymbolScale = ") != std::string::npos)
+  if (lineString.find(preposition + "GlyphScale = ") != std::string::npos)
     {
      std::string str = lineString.substr(16 + pointOffset,std::string::npos);
-     vtkDebugMacro("Getting symbolScale, substr = " << str);
+     vtkDebugMacro("Getting GlyphScale, substr = " << str);
      float scale = atof(str.c_str());
-     refNode->SetSymbolScale(scale);
+     refNode->SetGlyphScale(scale);
      return 1;
     }
 
-  if (lineString.find(preposition + "SymbolType = ") != std::string::npos)
+  if (lineString.find(preposition + "GlyphType = ") != std::string::npos)
     {
       std::string str = lineString.substr(15 + pointOffset,std::string::npos);
-      vtkDebugMacro("Getting symbolType, substr = " << str);
+      vtkDebugMacro("Getting GlyphType, substr = " << str);
       int t = atoi(str.c_str());
       refNode->SetGlyphType(t);
       return 1;
@@ -412,8 +412,8 @@ void vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayPrope
   WriteAnnotationDisplayProperties(of,refNode, preposition);
 
   preposition.insert(0,"# ");
-  of << preposition + "SymbolScale = " << refNode->GetSymbolScale() << endl;
-  of << preposition + "SymbolType = " << refNode->GetGlyphType() << endl;
+  of << preposition + "GlyphScale = " << refNode->GetGlyphScale() << endl;
+  of << preposition + "GlyphType = " << refNode->GetGlyphType() << endl;
 }
 
 //----------------------------------------------------------------------------

@@ -459,7 +459,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadData()
 //         //    std::string str = lineString.substr(16,std::string::npos);
 //         //    vtkDebugMacro("Getting symbolScale, substr = " << str);
 //         //    float scale = atof(str.c_str());
-//         //    annotationDisplayNode->SetSymbolScale(scale);
+//         //    annotationDisplayNode->SetGlyphScale(scale);
 //         //  }
 //         //else if (lineString.find("# symbolType = ") != std::string::npos)
 //         //  {

@@ -58,7 +58,7 @@ vtkMRMLNode* vtkMRMLAnnotationPointDisplayNode::CreateNodeInstance()
 vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
 {
   this->GlyphType = this->StarBurst2D;
-  this->SymbolScale = 5.0;
+  this->GlyphScale = 10.0;
 }
 
 
@@ -70,8 +70,8 @@ void vtkMRMLAnnotationPointDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-  of << " symbolScale=\"" << this->SymbolScale << "\"";
-  of << " symbolType=\"" << this->GlyphType << "\"";
+  of << " glyphScale=\"" << this->GlyphScale << "\"";
+  of << " glyphType=\"" << this->GlyphType << "\"";
  }
 
 
@@ -90,17 +90,17 @@ void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-      if (!strcmp(attName, "symbolType"))
+      if (!strcmp(attName, "glyphType"))
       {
     std::stringstream ss;
         ss << attValue;
         ss >> this->GlyphType;
       }        
-      else if (!strcmp(attName, "symbolScale")) 
+      else if (!strcmp(attName, "glyphScale"))
       {
           std::stringstream ss;
           ss << attValue;
-          ss >> this->SymbolScale;
+          ss >> this->GlyphScale;
       }
     }
   this->EndModify(disabledModify);
@@ -117,7 +117,7 @@ void vtkMRMLAnnotationPointDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLAnnotationPointDisplayNode *node = (vtkMRMLAnnotationPointDisplayNode *) anode;
   this->SetGlyphType(node->GlyphType);
-  this->SetSymbolScale(node->SymbolScale);
+  this->SetGlyphScale(node->GlyphScale);
 
   this->EndModify(disabledModify);
 }
@@ -157,9 +157,9 @@ void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char *glyph
 void vtkMRMLAnnotationPointDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  os << indent << "Symbol scale: (";
-  os << this->SymbolScale << ")\n";
-  os << indent << "Symbol type: ";
+  os << indent << "Glyph scale: (";
+  os << this->GlyphScale << ")\n";
+  os << indent << "Glyph type: ";
   os << this->GetGlyphTypeAsString() << " (" << this->GlyphType << ")\n";
     
 }
@@ -211,14 +211,14 @@ void  vtkMRMLAnnotationPointDisplayNode::SetGlyphType(int type)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode::SetSymbolScale(double scale)
+void vtkMRMLAnnotationPointDisplayNode::SetGlyphScale(double scale)
 {
-    if (this->SymbolScale == scale)
+    if (this->GlyphScale == scale)
     {
         return;
     }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SymbolScale to " << scale);
-    this->SymbolScale = scale;
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
+    this->GlyphScale = scale;
    
     if (!this->GetDisableModifiedEvent())
       {

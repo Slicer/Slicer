@@ -94,9 +94,9 @@ class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   void SetGlyphTypeFromString(const char *glyphString);
 
   /// Get/Set for Symbol scale
-  ///  vtkSetMacro(SymbolScale,double);
-  void SetSymbolScale(double scale);
-  vtkGetMacro(SymbolScale,double);
+  ///  vtkSetMacro(GlyphScale,double);
+  void SetGlyphScale(double scale);
+  vtkGetMacro(GlyphScale,double);
 
  protected:
   vtkMRMLAnnotationPointDisplayNode();
@@ -104,7 +104,7 @@ class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   vtkMRMLAnnotationPointDisplayNode( const vtkMRMLAnnotationPointDisplayNode& );
   void operator= ( const vtkMRMLAnnotationPointDisplayNode& );
 
-  double SymbolScale;
+  double GlyphScale;
   int GlyphType;
   static const char* GlyphTypesNames[GlyphMax+1];
 

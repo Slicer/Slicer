@@ -53,7 +53,7 @@ vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  // of << " symbolScale=\"" << this->SymbolScale << "\"";
+  // of << " symbolScale=\"" << this->GlyphScale << "\"";
   of << " textScale=\"" << this->TextScale << "\"";
 }
 
