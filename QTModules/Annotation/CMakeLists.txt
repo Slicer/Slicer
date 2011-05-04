@@ -70,6 +70,9 @@ SET(Widget_SRCS
   Widgets/vtkAnnotationBidimensionalWidget.h
   Widgets/vtkAnnotationBidimensionalRepresentation.cxx
   Widgets/vtkAnnotationBidimensionalRepresentation.h
+  
+  Widgets/vtkAnnotationGlyphSource2D.cxx
+  Widgets/vtkAnnotationGlyphSource2D.h
   )
   
 #-----------------------------------------------------------------------
