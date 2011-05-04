@@ -672,7 +672,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "LeftButtonReleaseEvent" { 
         # let the annotation module handle pick/place/view transform
-        }
     }
     "MiddleButtonPressEvent" {
         $this startTranslate $x $y  $windowx $windowy  $rox $roy  $ras
