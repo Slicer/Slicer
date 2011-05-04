@@ -151,7 +151,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
 
-  lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
+#  lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
   set gridSWidget [GridSWidget #auto $sliceGUI]
   $gridSWidget configure -layer "label"
   lappend _swidgets $gridSWidget
@@ -644,6 +644,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
+        # seed widget is disabled, annotation module takes care of fiducials
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
         set modeString ""
         if { $interactionNode != "" } {
@@ -670,22 +671,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeftButtonReleaseEvent" { 
-        $sliceGUI SetGUICommandAbortFlag 1
-        if { [$sliceGUI GetGrabID] == $this } {
-            $sliceGUI SetGrabID ""
-        }
-        # RESET MOUSE MODE BACK TO
-        # TRANSFORM, UNLESS USER HAS
-        # SELECTED A PERSISTENT PICK OR
-        # PLACE MODE.
-        set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
-        if { $interactionNode != "" } {
-            set pickPersistence [ $interactionNode GetPickModePersistence ]
-            set placePersistence [ $interactionNode GetPlaceModePersistence ]
-            if { $pickPersistence == 0 && $placePersistence == 0 } {
-                set mode [ $interactionNode GetInteractionModeByString "ViewTransform" ]
-                $interactionNode SetCurrentInteractionMode $mode
-            }
+        # let the annotation module handle pick/place/view transform
         }
     }
     "MiddleButtonPressEvent" {
