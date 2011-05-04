@@ -184,6 +184,14 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item)const
+{
+  QString uid =
+    item ? item->data(qMRMLSceneModel::UIDRole).toString() : QString();
+  return uid == "preItem" || uid == "postItem";
+}
+
+//------------------------------------------------------------------------------
 // qMRMLSceneModel
 //------------------------------------------------------------------------------
 qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
@@ -982,13 +990,22 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
   //return;
   // check on the column is optional(no strong feeling), it is just there to be
   // faster though
-  if (item == this->mrmlSceneItem())
+  if (!this->isANode(item))
     {
     return;
     }
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
   Q_ASSERT(mrmlNode);
   this->updateNodeFromItem(mrmlNode, item);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel::isANode(const QStandardItem * item)const
+{
+  Q_D(const qMRMLSceneModel);
+  return item
+    && item != this->mrmlSceneItem()
+    && !d->isExtraItem(item);
 }
 
 //------------------------------------------------------------------------------

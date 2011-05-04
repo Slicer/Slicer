@@ -52,6 +52,7 @@ public:
                        const QString& text, const QString& extraType,
                        const Qt::ItemFlags& flags);
   void removeAllExtraItems(QStandardItem* parent, const QString extraType);
+  bool isExtraItem(const QStandardItem* item)const;
   void listenNodeModifiedEvent();
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;

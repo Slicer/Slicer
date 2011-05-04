@@ -149,10 +149,17 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSceneCategoryModel::isANode(const QStandardItem * item)const
+{
+  return this->qMRMLSceneModel::isANode(item)
+    && item->data(qMRMLSceneModel::UIDRole).toString() != "category";
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneCategoryModel::updateItemFromCategory(QStandardItem* item, const QString& category)
 {
-  item->setFlags(Qt::ItemIsEnabled);
   item->setData(QString("category"), qMRMLSceneModel::UIDRole);
+  item->setFlags(Qt::ItemIsEnabled);
   item->setText(category);
 }
 

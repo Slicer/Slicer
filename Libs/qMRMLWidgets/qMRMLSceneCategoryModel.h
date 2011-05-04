@@ -39,6 +39,7 @@ public:
 protected:
   virtual QStandardItem* insertNode(vtkMRMLNode* node);
   using qMRMLSceneModel::insertNode;
+  virtual bool isANode(const QStandardItem * item)const;
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
