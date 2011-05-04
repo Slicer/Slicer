@@ -219,5 +219,8 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     case 3: d->CubicRadioButton->setChecked(1); break;
   }
   d->IsotropicCheckbox->setChecked(p->GetIsotropicResampling());
-  this->parametersNode->GetROINode()->SetVisibility(p->GetROIVisibility());
+  if (this->parametersNode->GetROINode())
+    {
+    this->parametersNode->GetROINode()->SetVisibility(p->GetROIVisibility());
+    }
 }
