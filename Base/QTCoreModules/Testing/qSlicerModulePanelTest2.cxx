@@ -50,27 +50,24 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
   app.moduleManager()->loadAllModules();
 
   QDockWidget dockWidget;
-  qSlicerModulePanel modulePanel(&dockWidget);
-  dockWidget.setWidget(&modulePanel);
+  qSlicerModulePanel* modulePanel = new qSlicerModulePanel(&dockWidget);
+  dockWidget.setWidget(modulePanel);
   //QHBoxLayout* hbox = new QHBoxLayout;
   //hbox->addWidget(&modulePanel);
   //dockWidget.setLayout(hbox);
 
-  modulePanel.setModuleManager(app.moduleManager());
+  modulePanel->setModuleManager(app.moduleManager());
 
-  modulePanel.setModule("colors");
-  if (modulePanel.currentModuleName() != "colors")
+  modulePanel->setModule("colors");
+  if (modulePanel->currentModuleName() != "colors")
     {
     std::cerr<< "qSlicerModulePanel::setModule() failed "
-             << qPrintable(modulePanel.currentModuleName()) << std::endl;
+             << qPrintable(modulePanel->currentModuleName()) << std::endl;
     return EXIT_FAILURE;
     }
-  //modulePanel.setModule("transforms");
-  //modulePanel.show();
-  //dockWidget.show();
-  QMainWindow mainWindow;
-  mainWindow.addDockWidget(Qt::LeftDockWidgetArea, &dockWidget);
-  mainWindow.show();
+  modulePanel->setModule("transforms");
+
+  dockWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
