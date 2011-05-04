@@ -424,45 +424,40 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
   // place the seed where the user clicked
   vtkDebugMacro("OnClickInRenderWindow: placing seed at " << x << ", " << y);
-  this->PlaceSeed(x,y);
 
-  if (this->m_ClickCounter->HasEnoughClicks(1))
+  // switch to updating state to avoid events mess
+  this->m_Updating = 1;
+
+  double displayCoordinates1[2];
+  displayCoordinates1[0] = x;
+  displayCoordinates1[1] = y;
+
+
+  double worldCoordinates1[4];
+
+  this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
+
+  // create the MRML node
+  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+
+  fiducialNode->SetFiducialCoordinates(worldCoordinates1);
+
+  fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
+
+  fiducialNode->Initialize(this->GetMRMLScene());
+
+  fiducialNode->Delete();
+
+  // reset updating state
+  this->m_Updating = 0;
+
+  // if this was a one time place, go back to view transform mode
+  vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+  if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
     {
-
-    // switch to updating state to avoid events mess
-    this->m_Updating = 1;
-
-    vtkHandleWidget *h1 = this->GetSeed(0);
-
-    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
-
-    double worldCoordinates1[4];
-
-    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
-
-    // create the MRML node
-    vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
-
-    fiducialNode->SetFiducialCoordinates(worldCoordinates1);
-
-    fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
-
-    fiducialNode->Initialize(this->GetMRMLScene());
-
-    fiducialNode->Delete();
-
-    // reset updating state
-    this->m_Updating = 0;
-
-    // if this was a one time place, go back to view transform mode
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-      {
-      vtkDebugMacro("End of one time place, place mode persistence = " << interactionNode->GetPlaceModePersistence());
-      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-      }
+    vtkDebugMacro("End of one time place, place mode persistence = " << interactionNode->GetPlaceModePersistence());
+    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
     }
-  else { vtkDebugMacro("OnClickInRenderWindow: not enough clicks"); }
 
-  }
+}
 

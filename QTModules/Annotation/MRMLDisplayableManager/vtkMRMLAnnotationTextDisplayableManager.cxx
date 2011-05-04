@@ -473,65 +473,59 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
     return;
     }
 
-  // place the seed where the user clicked
-  this->PlaceSeed(x,y);
+  // switch to updating state to avoid events mess
+  this->m_Updating = 1;
 
-  if (this->m_ClickCounter->HasEnoughClicks(1))
+
+  double displayCoordinates1[2];
+  displayCoordinates1[0] = x;
+  displayCoordinates1[1] = y;
+
+  // offset the caption
+  double displayCoordinates2[4];
+  if (this->GetSliceNode())
+   {
+   // offset by 50
+   displayCoordinates2[0] = displayCoordinates1[0] - 50.0;
+   displayCoordinates2[1] = displayCoordinates1[1] - 50.0;
+   }
+  else
     {
-
-    // switch to updating state to avoid events mess
-    this->m_Updating = 1;
-
-    vtkHandleWidget *h1 = this->GetSeed(0);
-
-    // convert the coordinates
-    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
-    // offset the caption
-    double displayCoordinates2[4];
-    if (this->GetSliceNode())
-     {
-     // offset by 50
-     displayCoordinates2[0] = displayCoordinates1[0] - 50.0;
-     displayCoordinates2[1] = displayCoordinates1[1] - 50.0;
-     }
-    else
-      {
-      // offest by a bit more
-      displayCoordinates2[0] = displayCoordinates1[0] - 100.0;
-      displayCoordinates2[1] = displayCoordinates1[1] - 100.0;
-      }
-    displayCoordinates2[2] = 0.0;
-    displayCoordinates2[3] = 0.0;
-    
-    if (displayCoordinates1)
-      {
-      vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
-      }
-    double worldCoordinates1[4];
-    double worldCoordinates2[4];
-      
-    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
-
-    this->RestrictDisplayCoordinatesToViewport(displayCoordinates2);
-    vtkDebugMacro("OnClickInRenderWindow: restricted to viewport displaycoordinates2 = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
-    this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
-
-    // create the MRML node
-    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->SetTextCoordinates(worldCoordinates1);
-    textNode->SetCaptionCoordinates(worldCoordinates2);
-    
-    textNode->SetTextLabel("New text");
-
-    textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));
-
-    textNode->Initialize(this->GetMRMLScene());
-
-    textNode->Delete();
-
-    // reset updating state
-    this->m_Updating = 0;
-
+    // offest by a bit more
+    displayCoordinates2[0] = displayCoordinates1[0] - 100.0;
+    displayCoordinates2[1] = displayCoordinates1[1] - 100.0;
     }
+  displayCoordinates2[2] = 0.0;
+  displayCoordinates2[3] = 0.0;
+
+  if (displayCoordinates1)
+    {
+    vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+    }
+  double worldCoordinates1[4];
+  double worldCoordinates2[4];
+    
+  this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
+
+  this->RestrictDisplayCoordinatesToViewport(displayCoordinates1);
+  this->RestrictDisplayCoordinatesToViewport(displayCoordinates2);
+  vtkDebugMacro("OnClickInRenderWindow: restricted to viewport displaycoordinates2 = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+  this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
+
+  // create the MRML node
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+  textNode->SetTextCoordinates(worldCoordinates1);
+  textNode->SetCaptionCoordinates(worldCoordinates2);
+
+  textNode->SetTextLabel("New text");
+
+  textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));
+
+  textNode->Initialize(this->GetMRMLScene());
+
+  textNode->Delete();
+
+  // reset updating state
+  this->m_Updating = 0;
 
   }
