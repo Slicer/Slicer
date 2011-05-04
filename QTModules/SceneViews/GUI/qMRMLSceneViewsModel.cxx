@@ -44,13 +44,12 @@
 
 //------------------------------------------------------------------------------
 qMRMLSceneViewsModel::qMRMLSceneViewsModel(QObject *vparent)
-  :qMRMLSceneModel(vparent)
-//  :qMRMLSceneHierarchyModel(vparent)
+  : Superclass(vparent)
 {
   this->setListenNodeModifiedEvent(true);
   this->setColumnCount(5);
   this->setHorizontalHeaderLabels(
-    QStringList() << "" << "Preview/Edit" << "Restore" << "Name" << "Description");
+    QStringList() << "Name" << "Id" << "Preview/Edit" << "Restore" << "Description");
 }
 
 //------------------------------------------------------------------------------
@@ -61,6 +60,8 @@ qMRMLSceneViewsModel::~qMRMLSceneViewsModel()
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
+  this->Superclass::updateNodeFromItemData(node, item);
+/*
   if (item->column() == qMRMLSceneViewsModel::NameColumn)
     {
 
@@ -72,7 +73,7 @@ void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardIt
       viewNode->SetName(vtkStdString(item->text().toLatin1()));
       }
     }
-  else if (item->column() == qMRMLSceneViewsModel::DescriptionColumn)
+    else*/ if (item->column() == qMRMLSceneViewsModel::DescriptionColumn)
     {
 
     vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
@@ -80,7 +81,7 @@ void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardIt
     if (viewNode)
       {
       // if we have a snapshot node, the name can be changed by editing the textcolumn
-      viewNode->SetSceneViewDescription(vtkStdString(item->text().toLatin1()));
+      viewNode->SetSceneViewDescription(item->text().toStdString());
       }
     }
   //this->m_Widget->refreshTree();
@@ -89,8 +90,13 @@ void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardIt
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
-  vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
+  this->Superclass::updateItemDataFromNode(item, node, column);
 
+  vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
+  if (!viewNode)
+    {
+    return;
+    }
   switch (column)
     {
     case qMRMLSceneViewsModel::ThumbnailColumn:
@@ -119,7 +125,7 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
     case qMRMLSceneViewsModel::NameColumn:
       if (viewNode)
         {
-        item->setText(QString(viewNode->GetName()));
+        //item->setText(QString(viewNode->GetName()));
         }
       break;
     case qMRMLSceneViewsModel::DescriptionColumn:
@@ -135,15 +141,15 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneViewsModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
-  QFlags<Qt::ItemFlag> flags = this->qMRMLSceneModel::nodeFlags(node, column);
+  QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
   // remove the ItemIsEditable flag from any possible item (typically at column 0)
-  flags = flags & ~Qt::ItemIsEditable;
+  //flags = flags & ~Qt::ItemIsEditable;
   // and set it to the right column
   switch(column)
     {
-    case qMRMLSceneViewsModel::NameColumn:
-      flags = flags | Qt::ItemIsEditable;
-      break;
+    //case qMRMLSceneViewsModel::NameColumn:
+    //  flags = flags | Qt::ItemIsEditable;
+    //  break;
     case qMRMLSceneViewsModel::DescriptionColumn:
       flags = flags | Qt::ItemIsEditable;
       break;

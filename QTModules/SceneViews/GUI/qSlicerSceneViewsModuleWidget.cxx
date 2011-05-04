@@ -106,7 +106,8 @@ void qSlicerSceneViewsModuleWidget::setup()
   d->hierarchyTreeWidget->setAndObserveWidget(this);
   d->hierarchyTreeWidget->setAndObserveLogic(d->logic());
   d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
-//  d->hierarchyTreeWidget->hideScene();
+  d->logic()->SetAndObserveWidget(this);
+  d->hierarchyTreeWidget->hideScene();
 
   this->connect(d->moveDownSelectedButton, SIGNAL(clicked()),
       SLOT(moveDownSelected()));

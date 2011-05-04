@@ -28,21 +28,23 @@
 class qMRMLSceneViewsModelPrivate;
 class vtkMRMLNode;
 /// \ingroup Slicer_QtModules_SceneViews
-class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsModel : public qMRMLSceneModel
-    //public qMRMLSceneHierarchyModel
+class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsModel
+//  : public qMRMLSceneModel
+  : public qMRMLSceneHierarchyModel
 {
   Q_OBJECT
 
 public:
+  typedef qMRMLSceneHierarchyModel Superclass;
   qMRMLSceneViewsModel(QObject *parent=0);
   virtual ~qMRMLSceneViewsModel();
 
   // Enum for the different columns
   enum Columns{
-    DummyColumn = 0,
-    ThumbnailColumn = 1,
-    RestoreColumn = 2,
-    NameColumn = 3,
+    NameColumn = 0,
+    IdColumn = 1,
+    ThumbnailColumn = 2,
+    RestoreColumn = 3,
     DescriptionColumn = 4
   };
 

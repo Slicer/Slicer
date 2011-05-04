@@ -80,7 +80,7 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
   // we only want to show vtkMRMLSceneViewNodes and vtkMRMLHierarchyNodes
   QStringList nodeTypes = QStringList();
   nodeTypes.append("vtkMRMLSceneViewNode");
-//  nodeTypes.append("vtkMRMLHierarchyNode");
+  nodeTypes.append("vtkMRMLHierarchyNode");
   
   //this->SortFilterModel->setNodeTypes(nodeTypes);
   q->setNodeTypes(nodeTypes);
@@ -90,8 +90,13 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
   //this->SortFilterModel->setSourceModel(this->SceneModel);
   //q->qMRMLTreeWidget::setModel(this->SortFilterModel);
 
-  //ctkModelTester * tester = new ctkModelTester(p);
-  //tester->setModel(this->SortFilterModel);
+  // Useful views to debug
+  //QTreeView* treeView = new QTreeView(0);
+  //treeView->setModel(this->SceneModel);
+  //treeView->show();
+  //QTreeView* treeView2 = new QTreeView(0);
+  //treeView2->setModel(this->SortFilterModel);
+  //treeView2->show();
 
   QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
                    q, SLOT(onClicked(const QModelIndex&)));
@@ -390,7 +395,6 @@ void qMRMLSceneViewsTreeWidget::hideScene()
     // if the logic is already registered, we look for the first HierarchyNode
     vtkMRMLNode* toplevelNode = this->m_Logic->GetTopLevelHierarchyNode(0);
     //GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode");
-
     if (toplevelNode)
       {
       // if we find it, we use it as the root index
@@ -401,21 +405,15 @@ void qMRMLSceneViewsTreeWidget::hideScene()
   this->setRootIndex(d->SortFilterModel->mapFromSource(root));
 
   // set the column widths
-  this->header()->setResizeMode(qMRMLSceneViewsModel::DummyColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneViewsModel::ThumbnailColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneViewsModel::RestoreColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneViewsModel::NameColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneViewsModel::DescriptionColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(QHeaderView::ResizeToContents);
+//  this->header()->setResizeMode(qMRMLSceneViewsModel::NameColumn, (QHeaderView::ResizeToContents));
+////  this->header()->setResizeMode(qMRMLSceneViewsModel::IDColumn, (QHeaderView::ResizeToContents));
+//  this->header()->setResizeMode(qMRMLSceneViewsModel::ThumbnailColumn, (QHeaderView::ResizeToContents));
+//  this->header()->setResizeMode(qMRMLSceneViewsModel::RestoreColumn, (QHeaderView::ResizeToContents));
+//  this->header()->setResizeMode(qMRMLSceneViewsModel::DescriptionColumn, (QHeaderView::ResizeToContents));
 
-  // hide the strange columns
-  this->hideColumn(6);
-  this->hideColumn(7);
-  this->hideColumn(8);
-  this->hideColumn(9);
-  this->hideColumn(10);
-  //this->hideColumn(11);
-
-
+  this->header()->moveSection(qMRMLSceneViewsModel::NameColumn, qMRMLSceneViewsModel::RestoreColumn);
+  this->hideColumn(qMRMLSceneViewsModel::IDColumn);
 }
 
 //------------------------------------------------------------------------------

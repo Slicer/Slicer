@@ -739,7 +739,7 @@ void qMRMLSceneModel::updateItemDataFromNode(
     case qMRMLSceneModel::NameColumn:
       item->setText(QString(node->GetName()));
       break;
-    case 1:
+    case qMRMLSceneModel::IDColumn:
       item->setText(QString(node->GetID()));
       break;
     default:
