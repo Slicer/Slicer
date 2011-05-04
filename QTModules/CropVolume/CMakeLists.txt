@@ -15,6 +15,7 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer_SOURCE_DIR}/QTModules/Annotation/MRML
   ${Slicer_BINARY_DIR}/QTModules/Annotation
+  ${Slicer_BINARY_DIR}/QTModules/Annotation/MRML
   )
 
 # Source files
@@ -42,6 +43,7 @@ SET(qt_module_UI_SRCS
 SET(qt_module_target_libraries
   vtkSlicerCropVolumeModuleLogic
   qSlicerAnnotationModule
+  AnnotationMRML
   )
 
 # Resources
