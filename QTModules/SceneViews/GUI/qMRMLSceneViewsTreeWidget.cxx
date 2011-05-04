@@ -68,27 +68,18 @@ qMRMLSceneViewsTreeWidgetPrivate::qMRMLSceneViewsTreeWidgetPrivate(qMRMLSceneVie
 void qMRMLSceneViewsTreeWidgetPrivate::init()
 {
   Q_Q(qMRMLSceneViewsTreeWidget);
-  //p->qMRMLTreeWidget::setModel(new qMRMLItemModel(p));
-  //this->SceneModel = new qMRMLSceneViewsModel(q);
-  //this->SceneModel->setColumnCount(6);
-
-  //this->SceneModel->setListenNodeModifiedEvent(true);
 
   this->SceneModel = new qMRMLSceneViewsModel(q);
   q->setSceneModel(this->SceneModel, "SceneViews");
-  //this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
   // we only want to show vtkMRMLSceneViewNodes and vtkMRMLHierarchyNodes
   QStringList nodeTypes = QStringList();
   nodeTypes.append("vtkMRMLSceneViewNode");
   nodeTypes.append("vtkMRMLHierarchyNode");
-  
-  //this->SortFilterModel->setNodeTypes(nodeTypes);
+
   q->setNodeTypes(nodeTypes);
+  // keep a pointer on the sort filter
   this->SortFilterModel = q->sortFilterProxyModel();
   //this->SortFilterModel->setShowHidden(true);
-
-  //this->SortFilterModel->setSourceModel(this->SceneModel);
-  //q->qMRMLTreeWidget::setModel(this->SortFilterModel);
 
   // Useful views to debug
   //QTreeView* treeView = new QTreeView(0);
@@ -109,18 +100,29 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
         Qt::DirectConnection );
   
   q->setUniformRowHeights(true);
+
+  // we need to enable mouse tracking to set the appropriate cursor while mouseMove occurs
+  q->setMouseTracking(true);
+
+  // set the column widths
+  q->header()->setResizeMode(QHeaderView::ResizeToContents);
+//  q->header()->setResizeMode(qMRMLSceneViewsModel::NameColumn, (QHeaderView::ResizeToContents));
+////  q->header()->setResizeMode(qMRMLSceneViewsModel::IDColumn, (QHeaderView::ResizeToContents));
+//  q->header()->setResizeMode(qMRMLSceneViewsModel::ThumbnailColumn, (QHeaderView::ResizeToContents));
+//  q->header()->setResizeMode(qMRMLSceneViewsModel::RestoreColumn, (QHeaderView::ResizeToContents));
+//  q->header()->setResizeMode(qMRMLSceneViewsModel::DescriptionColumn, (QHeaderView::ResizeToContents));
+
+  q->header()->moveSection(qMRMLSceneViewsModel::NameColumn, qMRMLSceneViewsModel::RestoreColumn);
+  q->hideColumn(qMRMLSceneViewsModel::IDColumn);
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneViewsTreeWidget::qMRMLSceneViewsTreeWidget(QWidget *_parent)
-  :qMRMLTreeWidget(_parent)
+qMRMLSceneViewsTreeWidget::qMRMLSceneViewsTreeWidget(QWidget *parentWidget)
+  : qMRMLTreeWidget(parentWidget)
   , d_ptr(new qMRMLSceneViewsTreeWidgetPrivate(*this))
 {
   Q_D(qMRMLSceneViewsTreeWidget);
   d->init();
-
-  // we need to enable mouse tracking to set the appropriate cursor while mouseMove occurs
-  this->setMouseTracking(true);
 }
 
 //------------------------------------------------------------------------------
@@ -131,11 +133,8 @@ qMRMLSceneViewsTreeWidget::~qMRMLSceneViewsTreeWidget()
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
-  Q_ASSERT(d->SortFilterModel);
-  // only qMRMLSceneModel needs the scene, the other proxies don't care.
-  d->SceneModel->setMRMLScene(scene);
-
+  this->Superclass::setMRMLScene(scene);
+  // TBD: Is it really better than this->expandToDepth(2) that is the default ?
   this->expandAll();
 }
 
@@ -148,8 +147,6 @@ void qMRMLSceneViewsTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsTreeWidget::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
 {
-
-  Q_UNUSED(index)
   Q_UNUSED(beforeIndex)
 
   if (index.size() == 0)
@@ -158,6 +155,8 @@ void qMRMLSceneViewsTreeWidget::onSelectionChanged(const QItemSelection& index,c
     // so we set the active hierarchy to the top level one
     this->m_Logic->SetActiveHierarchyNode(0);
     }
+  // TBD: what if index.size() > 0 ?
+  // should probably synchronized with onClicked...
 }
 
 //------------------------------------------------------------------------------
@@ -184,12 +183,12 @@ void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
   if (index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
     // user wants to toggle the restore
-    this->m_Widget->restoreSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
+    emit this->restoreSceneViewRequested(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
   else if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn)
     {
     // user wants to edit the properties of this scene view
-    this->m_Widget->editSceneView(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
+    emit this->editSceneViewRequested(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
 
 }
@@ -325,25 +324,25 @@ void qMRMLSceneViewsTreeWidget::deleteSelected()
 //------------------------------------------------------------------------------
 bool qMRMLSceneViewsTreeWidget::viewportEvent(QEvent* e)
 {
-
   // reset the cursor if we leave the viewport
   if(e->type() == QEvent::Leave)
     {
-    setCursor(QCursor());
+    this->setCursor(QCursor());
     }
 
-  return QTreeView::viewportEvent(e);
+  return this->Superclass::viewportEvent(e);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsTreeWidget::mouseMoveEvent(QMouseEvent* e)
 {
-  this->QTreeView::mouseMoveEvent(e);
+  this->Superclass::mouseMoveEvent(e);
 
   // get the index of the current column
   QModelIndex index = indexAt(e->pos());
 
-  if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn || index.column() == qMRMLSceneViewsModel::RestoreColumn)
+  if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn
+      || index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
     // we are over a column with a clickable icon
     // let's change the cursor
@@ -403,17 +402,6 @@ void qMRMLSceneViewsTreeWidget::hideScene()
     }
    
   this->setRootIndex(d->SortFilterModel->mapFromSource(root));
-
-  // set the column widths
-  this->header()->setResizeMode(QHeaderView::ResizeToContents);
-//  this->header()->setResizeMode(qMRMLSceneViewsModel::NameColumn, (QHeaderView::ResizeToContents));
-////  this->header()->setResizeMode(qMRMLSceneViewsModel::IDColumn, (QHeaderView::ResizeToContents));
-//  this->header()->setResizeMode(qMRMLSceneViewsModel::ThumbnailColumn, (QHeaderView::ResizeToContents));
-//  this->header()->setResizeMode(qMRMLSceneViewsModel::RestoreColumn, (QHeaderView::ResizeToContents));
-//  this->header()->setResizeMode(qMRMLSceneViewsModel::DescriptionColumn, (QHeaderView::ResizeToContents));
-
-  this->header()->moveSection(qMRMLSceneViewsModel::NameColumn, qMRMLSceneViewsModel::RestoreColumn);
-  this->hideColumn(qMRMLSceneViewsModel::IDColumn);
 }
 
 //------------------------------------------------------------------------------

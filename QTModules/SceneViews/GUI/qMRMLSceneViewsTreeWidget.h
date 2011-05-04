@@ -52,6 +52,7 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
 
 public:
+  typedef qMRMLTreeWidget Superclass;
   qMRMLSceneViewsTreeWidget(QWidget *parent=0);
   virtual ~qMRMLSceneViewsTreeWidget();
 
@@ -69,11 +70,13 @@ public:
 
 public slots:
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
-  void setMRMLScene(vtkMRMLScene* scene);
+  virtual void setMRMLScene(vtkMRMLScene* scene);
   void deleteSelected();
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
+  void restoreSceneViewRequested(const QString& nodeID);
+  void editSceneViewRequested(const QString& nodeID);
 
 protected slots:
   void onClicked(const QModelIndex& index);

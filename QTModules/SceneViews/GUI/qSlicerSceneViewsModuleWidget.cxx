@@ -51,6 +51,9 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// qSlicerSceneViewsModuleWidgetPrivate methods
+
+//-----------------------------------------------------------------------------
 vtkSlicerSceneViewsModuleLogic*
 qSlicerSceneViewsModuleWidgetPrivate::logic() const
 {
@@ -76,13 +79,38 @@ qSlicerSceneViewsModuleWidgetPrivate::~qSlicerSceneViewsModuleWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerSceneViewsModuleWidgetPrivate methods
-
-//-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
+  Q_Q(qSlicerSceneViewsModuleWidget);
   this->Ui_qSlicerSceneViewsModule::setupUi(widget);
+
+  QObject::connect(this->hierarchyTreeWidget,
+                   SIGNAL(restoreSceneViewRequested(const QString&)),
+                   q, SLOT(restoreSceneView(const QString&)));
+  QObject::connect(this->hierarchyTreeWidget,
+                   SIGNAL(editSceneViewRequested(const QString&)),
+                   q, SLOT(editSceneView(const QString&)));
+
+  // setup the hierarchy treeWidget
+  this->hierarchyTreeWidget->setAndObserveLogic(this->logic());
+  this->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
+  this->logic()->SetAndObserveWidget(q);
+  this->hierarchyTreeWidget->hideScene();
+
+  q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
+             q, SLOT(moveDownSelected()));
+  q->connect(this->moveUpSelectedButton, SIGNAL(clicked()),
+             q, SLOT(moveUpSelected()));
+
+  QObject::connect(this->deleteSelectedButton, SIGNAL(clicked()),
+                   this->hierarchyTreeWidget, SLOT(deleteSelected()));
+
+  QObject::connect(this->sceneView, SIGNAL(clicked()),
+                   q, SLOT(showSceneViewDialog()));
 }
+
+//-----------------------------------------------------------------------------
+// qSlicerSceneViewsModuleWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
@@ -100,25 +128,8 @@ qSlicerSceneViewsModuleWidget::~qSlicerSceneViewsModuleWidget()
 void qSlicerSceneViewsModuleWidget::setup()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
-
-  // setup the hierarchy treeWidget
-  d->hierarchyTreeWidget->setAndObserveWidget(this);
-  d->hierarchyTreeWidget->setAndObserveLogic(d->logic());
-  d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
-  d->logic()->SetAndObserveWidget(this);
-  d->hierarchyTreeWidget->hideScene();
-
-  this->connect(d->moveDownSelectedButton, SIGNAL(clicked()),
-      SLOT(moveDownSelected()));
-  this->connect(d->moveUpSelectedButton, SIGNAL(clicked()),
-      SLOT(moveUpSelected()));
-
-  this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
-                d->hierarchyTreeWidget, SLOT(deleteSelected()));
-
-  this->connect(d->sceneView, SIGNAL(clicked()), this,
-      SLOT(showSceneViewDialog()));
 }
 
 //-----------------------------------------------------------------------------

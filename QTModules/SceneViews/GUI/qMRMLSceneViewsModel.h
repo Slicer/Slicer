@@ -22,11 +22,9 @@
 #define __qMRMLSceneViewsModel_h
 
 #include "qMRMLSceneHierarchyModel.h"
-
 #include "qSlicerSceneViewsModuleExport.h"
-
 class qMRMLSceneViewsModelPrivate;
-class vtkMRMLNode;
+
 /// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsModel
 //  : public qMRMLSceneModel
@@ -48,18 +46,14 @@ public:
     DescriptionColumn = 4
   };
 
-  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-
 protected:
 
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
-  
+  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
 
 private:
   Q_DISABLE_COPY(qMRMLSceneViewsModel);
-
-
 };
 
 #endif

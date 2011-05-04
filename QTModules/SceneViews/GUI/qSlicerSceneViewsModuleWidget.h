@@ -29,17 +29,17 @@ public:
 
     void refreshTree();
 
-    /// User clicked on property edit button
-    void editSceneView(const QString& mrmlId);
-
-    /// User clicked on restore button
-    void restoreSceneView(const QString& mrmlId);
-
 public slots:
     /// a public slot allowing other modules to open up the scene view capture
     /// dialog (get the module manager, get the module sceneviews, get the
     /// widget representation, then invoke this method, see qSlicerIOManager openSceneViewsDialog
     void showSceneViewDialog();
+
+    /// User clicked on restore button
+    void restoreSceneView(const QString& mrmlId);
+
+    /// User clicked on property edit button
+    void editSceneView(const QString& mrmlId);
 
 protected slots:
 

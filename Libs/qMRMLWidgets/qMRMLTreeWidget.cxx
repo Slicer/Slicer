@@ -413,14 +413,6 @@ void qMRMLTreeWidget::mousePressEvent(QMouseEvent* e)
     {
     return;
     }
-  
-  // Don't support annotation deletion yet
-  if (node->IsA("vtkMRMLAnnotationHierarchyNode") || 
-      node->IsA("vtkMRMLAnnotationNode") ||
-      node->IsA("vtkMRMLAnnotationDisplayNode"))
-    {
-    return;
-    }
 
   d->CurrentNode = node;
   d->NodeMenu->exec(e->globalPos());

@@ -61,21 +61,8 @@ qMRMLSceneViewsModel::~qMRMLSceneViewsModel()
 void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
   this->Superclass::updateNodeFromItemData(node, item);
-/*
-  if (item->column() == qMRMLSceneViewsModel::NameColumn)
+  if (item->column() == qMRMLSceneViewsModel::DescriptionColumn)
     {
-
-    vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
-
-    if (viewNode)
-      {
-      // if we have a snapshot node, the name can be changed by editing the textcolumn
-      viewNode->SetName(vtkStdString(item->text().toLatin1()));
-      }
-    }
-    else*/ if (item->column() == qMRMLSceneViewsModel::DescriptionColumn)
-    {
-
     vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
 
     if (viewNode)
@@ -84,7 +71,6 @@ void qMRMLSceneViewsModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardIt
       viewNode->SetSceneViewDescription(item->text().toStdString());
       }
     }
-  //this->m_Widget->refreshTree();
 }
 
 //------------------------------------------------------------------------------
@@ -122,12 +108,6 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
     case qMRMLSceneViewsModel::RestoreColumn:
       item->setData(QPixmap(":/Icons/Restore.png"),Qt::DecorationRole);
       break;
-    case qMRMLSceneViewsModel::NameColumn:
-      if (viewNode)
-        {
-        //item->setText(QString(viewNode->GetName()));
-        }
-      break;
     case qMRMLSceneViewsModel::DescriptionColumn:
       if (viewNode)
         {
@@ -142,14 +122,8 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
 QFlags<Qt::ItemFlag> qMRMLSceneViewsModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  // remove the ItemIsEditable flag from any possible item (typically at column 0)
-  //flags = flags & ~Qt::ItemIsEditable;
-  // and set it to the right column
   switch(column)
     {
-    //case qMRMLSceneViewsModel::NameColumn:
-    //  flags = flags | Qt::ItemIsEditable;
-    //  break;
     case qMRMLSceneViewsModel::DescriptionColumn:
       flags = flags | Qt::ItemIsEditable;
       break;
