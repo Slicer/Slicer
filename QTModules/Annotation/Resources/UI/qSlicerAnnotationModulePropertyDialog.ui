@@ -54,7 +54,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -245,41 +245,41 @@
        <item row="2" column="2">
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
-          <widget class="QLabel" name="glyphScaleLabel">
+          <widget class="QLabel" name="pointGlyphScaleLabel">
            <property name="text">
             <string>Size:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="opacityLabel">
            <property name="text">
             <string>Opacity:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="ambientLabel">
            <property name="text">
             <string>Ambient:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="diffuseLabel">
            <property name="text">
             <string>Diffuse:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="specularLabel">
            <property name="text">
             <string>Specular:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget">
            <property name="singleStep">
             <double>0.100000000000000</double>
@@ -289,25 +289,42 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget"/>
          </item>
          <item row="0" column="1">
           <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="pointGlyphTypeComboBox">
+           <property name="accessibleDescription">
+            <string>Glyph type combo box</string>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="pointGlyphTypeLabel">
+           <property name="text">
+            <string>Type:</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

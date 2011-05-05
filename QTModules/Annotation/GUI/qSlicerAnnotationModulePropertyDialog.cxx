@@ -7,12 +7,14 @@
 #include <QFontMetrics>
 #include <QDebug>
 #include <QMessageBox>
+#include <QComboBox>
 
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
+#include "vtkMRMLAnnotationControlPointsNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
@@ -127,6 +129,49 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
     }
 
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(mrmlNode);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+
+  // load the point colours
+  
+  
+  // unselected
+  double *pointUnSelColor = pointDisplayNode->GetColor();
+  QColor pointUnSelQColor;
+  this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
+  ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
+  ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
+
+  // selected
+  double *pointSelColor = pointDisplayNode->GetSelectedColor();
+  QColor pointSelQColor;
+  this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
+  ui.pointSelectedColorPickerButton->setDisplayColorName(false);
+  ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
+
+  // load the glyph type
+  int index =  ui.pointGlyphTypeComboBox->findData(QString(pointDisplayNode->GetGlyphTypeAsString()));
+  std::cout << "glyph type = " << pointDisplayNode->GetGlyphTypeAsString() << ", index = " << index << std::endl;
+  if (index != -1)
+    {
+    ui.pointGlyphTypeComboBox->setCurrentIndex(index);
+    }
+  // glyph size
+  ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
 
   /*
    this->setWindowTitle(
@@ -531,6 +576,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
   this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
 
+  // text
   this->connect(ui.annotationTextEdit, SIGNAL(textChanged()), this,
       SLOT(onTextChanged()));
 
@@ -543,10 +589,36 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.textUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
       this, SLOT(onTextUnselectedColorChanged(QColor)));
 
+  // point 
+  this->connect(ui.pointUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                this, SLOT(onPointColorChanged(QColor)));
+  this->connect(ui.pointSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                this, SLOT(onPointSelectedColorChanged(QColor)));
+
+  // fill in the combo box with glyph types?
+  this->connect(ui.pointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
+                this, SLOT(onPointGlyphChanged(QString)));
+  vtkMRMLAnnotationPointDisplayNode *displayNode = vtkMRMLAnnotationPointDisplayNode::New();
+  int min = displayNode->GetMinimumGlyphType();
+  int max = displayNode->GetMaximumGlyphType();
+  for (int i = min; i <= max; i++)
+    {
+    ui.pointGlyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString(i), i);
+    }
+  displayNode->Delete();
+
+  this->connect(ui.pointSizeSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onPointSizeChanged(double)));
+  
+  // line
+  this->connect(ui.lineUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                this, SLOT(onLineColorChanged(QColor)));
+  this->connect(ui.lineSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                this, SLOT(onLineSelectedColorChanged(QColor)));
+
   this->connect(ui.lockUnlockButton, SIGNAL(clicked()), this, SLOT(onLockUnlockButtonClicked()));
   this->connect(ui.visibleInvisibleButton, SIGNAL(clicked()), this, SLOT(onVisibleInvisibleButtonClicked()));
-
-  /*
+   /*
    this->connect(
    ui.annotationTextEdit,
    SIGNAL(textChanged()),
@@ -986,7 +1058,23 @@ void qSlicerAnnotationModulePropertyDialog::onPointSelectedColorChanged(QColor q
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
 {
-  Q_UNUSED(value);
+  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+  pointDisplayNode->SetGlyphScale(value);
 }
 
 //------------------------------------------------------------------------------
@@ -1021,6 +1109,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointGlyphChanged(QString value)
 {
+//  std::cout << "OnPointGlyphChanged: " << value.toAscii().data() << std::endl;
   this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(),value.toAscii().data());
 }
 
