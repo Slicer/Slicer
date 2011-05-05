@@ -498,10 +498,8 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
   displayCoordinates2[2] = 0.0;
   displayCoordinates2[3] = 0.0;
 
-  if (displayCoordinates1)
-    {
-    vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
-    }
+  vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+
   double worldCoordinates1[4];
   double worldCoordinates2[4];
     
