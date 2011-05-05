@@ -188,24 +188,13 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   seedWidget->SetCurrentRenderer(this->GetRenderer());
 
   //seedWidget->ProcessEventsOff();
-
-
-
-  // Use tmpPtr to query only one time for the coordinates
-  double* tmpPtr = fiducialNode->GetFiducialCoordinates();
-
-  double worldCoordinates[4] = {0.0, 0.0, 0.0, 1.0};
-  if (tmpPtr != NULL)
-    {
-    worldCoordinates[0] = tmpPtr[0];
-    worldCoordinates[1] = tmpPtr[1];
-    worldCoordinates[2] = tmpPtr[2];
-    }
-
-  double position1[4];
-
+  
   // create a new handle
   vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
+  if (!newhandle)
+    {
+    vtkErrorMacro("CreateWidget: error creaing a new handle!");
+    }
 
   // init the widget from the mrml node
   this->PropagateMRMLToWidget(fiducialNode, seedWidget);
