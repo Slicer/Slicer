@@ -313,8 +313,6 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
       return;
       }
 
-    d->logic()->SetAnnotationSelected(mrmlIdArray.data(), true);
-
     // TODO
     //d->setItemEditable(d->tableWidget->selectedItems(), false);
 
