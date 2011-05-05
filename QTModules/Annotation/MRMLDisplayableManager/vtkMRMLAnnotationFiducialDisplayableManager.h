@@ -57,6 +57,11 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
+  /// set up an observer on the interactor style to watch for key press events
+  virtual void AdditionnalInitializeStep();
+  /// respond to the interactor style event
+//  virtual void OnInteractorStyleEvent(int eventid);
+  
 private:
 
   vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented

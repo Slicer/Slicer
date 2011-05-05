@@ -4,6 +4,7 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
@@ -25,6 +26,12 @@
 #include <vtkOrientedPolygonalHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
+
+#include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyle.h>
+#include "vtkSliceViewInteractorStyle.h"
+
+#include <vtkFollower.h>
 
 // std includes
 #include <string>
@@ -159,7 +166,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   VTK_CREATE(vtkSeedRepresentation, rep);
 
   VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-  std::cout << "GLYPHTHPEPEE" << displayNode->GetGlyphType() << std::endl;
+  vtkDebugMacro("GLYPHTHPEPEE" << displayNode->GetGlyphType());
   glyphSource->SetGlyphType(displayNode->GetGlyphType());
   glyphSource->Update();
   glyphSource->SetScale(1.0);
@@ -200,28 +207,14 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   // create a new handle
   vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
 
-  if (fiducialNode->GetSelected())
-    {
-    // use the selected color
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->GetProperty()->SetColor(displayNode->GetSelectedColor());
-    }
-  else
-    {
-    // use the normal color
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->GetProperty()->SetColor(displayNode->GetColor());
-    }
-
-
+  // init the widget from the mrml node
+  this->PropagateMRMLToWidget(fiducialNode, seedWidget);
+  
   if (this->GetSliceNode())
     {
 
     bool showWidget = true;
     showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
-
-    this->GetWorldToDisplayCoordinates(worldCoordinates,position1);
-
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->SetUniformScale(displayNode->GetGlyphScale()/300);
-    vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
     if (showWidget)
       {
@@ -231,9 +224,6 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     }
   else
     {
-
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->SetUniformScale(displayNode->GetGlyphScale());
-    vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
 
     seedWidget->On();
 
@@ -343,33 +333,80 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   glyphSource->Update();
   glyphSource->SetScale(1.0);
 
-  if (fiducialNode->GetSelected())
+  vtkOrientedPolygonalHandleRepresentation3D *handleRep = vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
+  if (handleRep)
     {
-    // use the selected color
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->GetProperty()->SetColor(displayNode->GetSelectedColor());
+    if (fiducialNode->GetSelected())
+      {
+      // use the selected color
+      handleRep->GetProperty()->SetColor(displayNode->GetSelectedColor());
+      }
+    else
+      {
+      // use the unselected color
+      handleRep->GetProperty()->SetColor(displayNode->GetColor());
+      }
+    handleRep->SetHandle(glyphSource->GetOutput());
+
+    // the following check is only needed since we require a different uniform scale depending on 2D and 3D
+    if (this->GetSliceNode())
+      {
+      
+      handleRep->SetUniformScale(displayNode->GetGlyphScale()/300);
+      
+      }
+    else
+      {
+      
+      handleRep->SetUniformScale(displayNode->GetGlyphScale());
+      
+      }
+
+    // update the text
+    if (fiducialNode->GetNumberOfTexts() > 0)
+      {
+      // create a string
+      vtkStdString textString;
+      for (int i = 0; i < fiducialNode->GetNumberOfTexts(); i++)
+        {
+        if (i > 0)
+          {
+          textString.append("\n");
+          }
+        textString.append(fiducialNode->GetText(i));
+        }
+      handleRep->SetLabelText(textString.c_str());
+      // get the text display node
+      vtkMRMLAnnotationTextDisplayNode *textDisplayNode = fiducialNode->GetAnnotationTextDisplayNode();
+      if (textDisplayNode)
+        {
+        // scale the text
+        double textscale[3] = {textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale()};
+        handleRep->SetLabelTextScale(textscale);
+        // set the colours
+        if (fiducialNode->GetSelected())
+          {
+          if (handleRep->GetLabelTextActor())
+            {
+            handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetSelectedColor());
+            }        
+          }
+        else
+          {
+          if (handleRep->GetLabelTextActor())
+            {
+            handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetColor());
+            }
+          }
+        }
+      handleRep->LabelVisibilityOn();
+      }
+    else
+      {
+      handleRep->LabelVisibilityOff();
+      }
     }
-  else
-    {
-    // use the normal color
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->GetProperty()->SetColor(displayNode->GetColor());
-    }
-
-  vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetHandle(glyphSource->GetOutput());
-
-  // the following check is only needed since we require a different uniform scale depending on 2D and 3D
-  if (this->GetSliceNode())
-    {
-
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetUniformScale(displayNode->GetGlyphScale()/300);
-
-    }
-  else
-    {
-
-    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetUniformScale(displayNode->GetGlyphScale());
-
-    }
-
+  
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
@@ -464,7 +501,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
   if (!this->IsCorrectDisplayableManager())
     {
     // jump out
-    vtkDebugMacro("OnClickInRenderWindow: jumping out");
+    vtkDebugMacro("OnClickInRenderWindow: x = " << x << ", y = " << y << ", incorrect displayable manager, focus = " << this->m_Focus << ", jumping out");
     return;
     }
 
@@ -507,3 +544,52 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
 }
 
+//---------------------------------------------------------------------------
+/// observe key press events
+void vtkMRMLAnnotationFiducialDisplayableManager::AdditionnalInitializeStep()
+{
+  // don't add the key press event, as it triggers a crash on start up
+  //vtkDebugMacro("Adding an observer on the key press event");
+  //this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
+}
+
+/*
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eventid)
+{
+  std::cout << "Fiducial DisplayableManager: event = " << eventid << std::endl;
+  return;
+//  if (this->m_DisableInteractorStyleEventsProcessing == 1)
+//    {
+//    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+//    return;
+//    }
+
+//  std::cout << "vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent " << eventid << std::endl;
+
+  if (eventid == vtkCommand::KeyPressEvent)
+    {
+    vtkWarningMacro("OnInteractorStyleEvent: TBD: handle key press event");
+    vtkInteractorStyle *style = NULL;
+    vtkInteractorObserver *obs = this->GetInteractor()->GetInteractorStyle();
+    if (obs)
+      {
+      style = vtkInteractorStyle::SafeDownCast(obs);
+      vtkSliceViewInteractorStyle *sliceViewStyle = vtkSliceViewInteractorStyle::SafeDownCast(obs);
+      if (sliceViewStyle)
+        {
+        std::cout << "vtkMRMLAnnotationFiducialDisplayableManager: GetChar = " << sliceViewStyle->GetChar() << std::endl;
+        }
+      }
+    }
+  else if (eventid == vtkCommand::KeyReleaseEvent)
+    {
+    vtkWarningMacro("Got a key release event");
+    }
+  else
+    {
+    //vtkWarningMacro("OnInteractorStyleEvent: unhandled event " << eventid);
+    std::cout << "vtkMRMLAnnotationFiducialDisplayableManager: OnInteractorStyleEvent: unhandled event " << eventid << std::endl;
+    }
+}
+*/
