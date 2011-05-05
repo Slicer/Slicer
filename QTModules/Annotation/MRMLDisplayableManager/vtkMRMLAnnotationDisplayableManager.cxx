@@ -109,6 +109,21 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 
     ++it;
     }
+
+  // also observe the interaction node
+  // also observe the interaction node for changes
+  vtkMRMLInteractionNode *interactionNode =
+      vtkMRMLInteractionNode::SafeDownCast(
+          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
+    {
+    vtkIntArray *interactionEvents = vtkIntArray::New();
+    interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
+    interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(interactionNode, interactionNode, interactionEvents);
+    interactionEvents->Delete();
+    }
+  else { vtkWarningMacro("SetAndObserveNodes: No interaction node!"); }
 }
 
 //---------------------------------------------------------------------------
@@ -120,7 +135,6 @@ void vtkMRMLAnnotationDisplayableManager::Create()
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
   //this->DebugOn();
-
 }
 
 //---------------------------------------------------------------------------
@@ -195,6 +209,8 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                             void *callData)
 {
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
+  vtkMRMLAnnotationDisplayNode *displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(caller);
+  vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
   if (annotationNode)
     {
     switch(event)
@@ -211,6 +227,39 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       case vtkMRMLAnnotationNode::CancelPlacementEvent:
         this->Helper->RemoveSeeds();
         break;
+      }
+    }
+  else if (displayNode)
+    {
+    switch(event)
+      {
+      case vtkCommand::ModifiedEvent:
+        this->OnMRMLAnnotationDisplayNodeModifiedEvent(displayNode);
+        break;
+      }
+    }
+  else if (interactionNode)
+    {
+    if (this->IsCorrectDisplayableManager())
+      {
+      int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
+      int persistence =  interactionNode->GetPlaceModePersistence();
+      vtkDebugMacro("Annotation DisplayableManager " << this->m_Focus << ": Processing mrml events, got an event on the interaction node, currentInteractionMode = " << currentInteractionMode << ", persistence = " << persistence);
+      if (currentInteractionMode == vtkMRMLInteractionNode::PickManipulate)
+        {
+        // turn on processing events on the widgets
+        this->Helper->UpdateLockedAllWidgets(false);
+        }
+      else if (currentInteractionMode == vtkMRMLInteractionNode::Place)
+        {
+        // turn off processing events on the 3d widgets
+        this->Helper->UpdateLockedAllWidgets(true);
+        }
+      else if (currentInteractionMode == vtkMRMLInteractionNode::ViewTransform)
+        {
+        // turn on processing events on the 3d widgets
+        this->Helper->UpdateLockedAllWidgets(false);
+        }
       }
     }
   else
@@ -261,9 +310,17 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   // if the scene is still updating, jump out
   if (this->GetMRMLScene()->GetIsUpdating())
     {
-//    return;
+    return;
     }
-  
+
+  if (node->IsA("vtkMRMLAnnotationDisplayNode"))
+    {
+    // have a display node, need to observe it
+    VTK_CREATE(vtkIntArray, nodeEvents);
+    nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(node, node, nodeEvents);
+    return;
+    }
   if (!node->IsA(this->m_Focus))
     {
     // jump out
@@ -375,10 +432,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
   //std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
 
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
-
-  // Propagate MRML changes to widget
-  this->PropagateMRMLToWidget(annotationNode, widget);
-
+  if (widget)
+    {
+    // Propagate MRML changes to widget
+    this->PropagateMRMLToWidget(annotationNode, widget);
+    }
   if(this->m_SliceNode)
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
@@ -398,6 +456,46 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
     }
 
   this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode* node)
+{
+  //this->DebugOn();
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Updating in progress.. Exit now.")
+    return;
+    }
+
+  vtkMRMLAnnotationDisplayNode *annotationDisplayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(node);
+  if (!annotationDisplayNode)
+    {
+    vtkErrorMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Can not access node.")
+    return;
+    }
+
+  // find the annotation node that has this display node
+  vtkMRMLAnnotationNode *annotationNode = this->Helper->GetAnnotationNodeFromDisplayNode(annotationDisplayNode);
+ 
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: found the annotation node " << annotationNode->GetID() << " associated with the modified display node " << annotationDisplayNode->GetID());
+  vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
+
+  if (widget)
+    {
+    // Propagate MRML changes to widget
+    this->PropagateMRMLToWidget(annotationNode, widget);
+    
+    this->Helper->UpdateWidget(annotationNode);
+    
+    this->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -522,6 +620,15 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       if ((widget->GetEnabled() && !showWidget) || (!widget->GetEnabled() && showWidget))
         {
         widget->SetEnabled(showWidget);
+        if (showWidget)
+          {
+          vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+          if (seedWidget)
+            {
+            seedWidget->CompleteInteraction();
+            std::cout << "Helper: mrml slice modified complete interaction" << std::endl;
+            }
+          }
         }
 
       }
@@ -834,26 +941,34 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->m_DisableInteractorStyleEventsProcessing == 1)
     {
-    vtkDebugMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
     return;
     }
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    //std::cout << "Annotation DisplayableManger: OnInteractorStyleEvent : " << this->m_Focus << ", not correct displayable manager, returning" << std::endl;
+    return;
+    }
+  vtkDebugMacro("OnInteractorStyleEvent " << this->m_Focus << " " << eventid);
+  
   if (eventid == vtkCommand::LeftButtonReleaseEvent)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
       {
-      vtkDebugMacro("OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates");
+      //std::cout << "OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates" << std::endl;
       this->OnClickInRenderWindowGetCoordinates();
       }
-    //else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
+//    else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
     }
   else if (eventid == vtkCommand::LeftButtonPressEvent)
     {
-    //vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
-    }
+//    vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
+    }  
   else
     {
     //vtkWarningMacro("OnInteractorStyleEvent: unhandled event " << eventid);
-    //std::cout << "AnnotationDisplayableManager: OnInteractorStyleEvent: unhandled event " << eventid << std::endl;
+    //std::cout << "Annotation DisplayableManager: OnInteractorStyleEvent: unhandled event " << eventid << std::endl;
     }
 }
 
@@ -1178,11 +1293,12 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
         this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
   if ( selectionNode == NULL )
     {
-    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
+    vtkErrorMacro ( "IsCorrectDisplayableManager: No selection node in the scene." );
     return false;
     }
   if ( selectionNode->GetActiveAnnotationID() == NULL)
     {
+    vtkErrorMacro ( "IsCorrectDisplayableManager: no active annotation");
     return false;
     }
   // the purpose of the displayableManager is hardcoded

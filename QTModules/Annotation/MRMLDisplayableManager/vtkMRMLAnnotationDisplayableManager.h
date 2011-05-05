@@ -110,7 +110,7 @@ protected:
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
-
+  void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
   //
   // Handling of interaction within the RenderWindow
   //
