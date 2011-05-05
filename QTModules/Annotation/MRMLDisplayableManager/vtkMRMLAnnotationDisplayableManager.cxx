@@ -626,7 +626,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           if (seedWidget)
             {
             seedWidget->CompleteInteraction();
-            std::cout << "Helper: mrml slice modified complete interaction" << std::endl;
+            vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
             }
           }
         }
