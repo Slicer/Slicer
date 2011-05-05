@@ -32,9 +32,9 @@
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSceneViewsModel.h"
-#include "qMRMLTreeWidget.h"
+#include "qMRMLTreeView.h"
 
-#include "qMRMLSceneViewsTreeWidget.h"
+#include "qMRMLSceneViewsTreeView.h"
 
 // MRML includes
 #include "vtkMRMLNode.h"
@@ -43,13 +43,13 @@
 
 //------------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews
-class qMRMLSceneViewsTreeWidgetPrivate
+class qMRMLSceneViewsTreeViewPrivate
 {
-  Q_DECLARE_PUBLIC(qMRMLSceneViewsTreeWidget);
+  Q_DECLARE_PUBLIC(qMRMLSceneViewsTreeView);
 protected:
-  qMRMLSceneViewsTreeWidget* const q_ptr;
+  qMRMLSceneViewsTreeView* const q_ptr;
 public:
-  qMRMLSceneViewsTreeWidgetPrivate(qMRMLSceneViewsTreeWidget& object);
+  qMRMLSceneViewsTreeViewPrivate(qMRMLSceneViewsTreeView& object);
   void init();
 
   qMRMLSceneViewsModel*           SceneModel;
@@ -57,7 +57,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLSceneViewsTreeWidgetPrivate::qMRMLSceneViewsTreeWidgetPrivate(qMRMLSceneViewsTreeWidget& object)
+qMRMLSceneViewsTreeViewPrivate::qMRMLSceneViewsTreeViewPrivate(qMRMLSceneViewsTreeView& object)
   : q_ptr(&object)
 {
   this->SceneModel = 0;
@@ -65,9 +65,9 @@ qMRMLSceneViewsTreeWidgetPrivate::qMRMLSceneViewsTreeWidgetPrivate(qMRMLSceneVie
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidgetPrivate::init()
+void qMRMLSceneViewsTreeViewPrivate::init()
 {
-  Q_Q(qMRMLSceneViewsTreeWidget);
+  Q_Q(qMRMLSceneViewsTreeView);
 
   this->SceneModel = new qMRMLSceneViewsModel(q);
   q->setSceneModel(this->SceneModel, "SceneViews");
@@ -117,21 +117,21 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneViewsTreeWidget::qMRMLSceneViewsTreeWidget(QWidget *parentWidget)
-  : qMRMLTreeWidget(parentWidget)
-  , d_ptr(new qMRMLSceneViewsTreeWidgetPrivate(*this))
+qMRMLSceneViewsTreeView::qMRMLSceneViewsTreeView(QWidget *parentWidget)
+  : qMRMLTreeView(parentWidget)
+  , d_ptr(new qMRMLSceneViewsTreeViewPrivate(*this))
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(qMRMLSceneViewsTreeView);
   d->init();
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneViewsTreeWidget::~qMRMLSceneViewsTreeWidget()
+qMRMLSceneViewsTreeView::~qMRMLSceneViewsTreeView()
 {
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLSceneViewsTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
   // TBD: Is it really better than this->expandToDepth(2) that is the default ?
@@ -145,7 +145,7 @@ void qMRMLSceneViewsTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
+void qMRMLSceneViewsTreeView::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
 {
   Q_UNUSED(beforeIndex)
 
@@ -160,10 +160,10 @@ void qMRMLSceneViewsTreeWidget::onSelectionChanged(const QItemSelection& index,c
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
+void qMRMLSceneViewsTreeView::onClicked(const QModelIndex& index)
 {
 
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(qMRMLSceneViewsTreeView);
 
   // is it a valid node?
   if (d->SortFilterModel->mrmlNodeFromIndex(index) == NULL)
@@ -194,9 +194,9 @@ void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSceneViewsTreeWidget::firstSelectedNode()const
+QString qMRMLSceneViewsTreeView::firstSelectedNode()const
 {
-  Q_D(const qMRMLSceneViewsTreeWidget);
+  Q_D(const qMRMLSceneViewsTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
@@ -219,9 +219,9 @@ QString qMRMLSceneViewsTreeWidget::firstSelectedNode()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::deleteSelected()
+void qMRMLSceneViewsTreeView::deleteSelected()
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(qMRMLSceneViewsTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   QStringList markedForDeletion;
@@ -322,7 +322,7 @@ void qMRMLSceneViewsTreeWidget::deleteSelected()
 
 #ifndef QT_NO_CURSOR
 //------------------------------------------------------------------------------
-bool qMRMLSceneViewsTreeWidget::viewportEvent(QEvent* e)
+bool qMRMLSceneViewsTreeView::viewportEvent(QEvent* e)
 {
   // reset the cursor if we leave the viewport
   if(e->type() == QEvent::Leave)
@@ -334,7 +334,7 @@ bool qMRMLSceneViewsTreeWidget::viewportEvent(QEvent* e)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::mouseMoveEvent(QMouseEvent* e)
+void qMRMLSceneViewsTreeView::mouseMoveEvent(QMouseEvent* e)
 {
   this->Superclass::mouseMoveEvent(e);
 
@@ -368,9 +368,9 @@ void qMRMLSceneViewsTreeWidget::mouseMoveEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setSelectedNode(const QString& id)
+void qMRMLSceneViewsTreeView::setSelectedNode(const QString& id)
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(qMRMLSceneViewsTreeView);
 
   vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id.toLatin1());
 
@@ -381,9 +381,9 @@ void qMRMLSceneViewsTreeWidget::setSelectedNode(const QString& id)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::hideScene()
+void qMRMLSceneViewsTreeView::hideScene()
 {
-  Q_D(qMRMLSceneViewsTreeWidget);
+  Q_D(qMRMLSceneViewsTreeView);
 
   // first, we set the root index to the mrmlScene
   // this works also if the scene is not defined yet
@@ -405,9 +405,9 @@ void qMRMLSceneViewsTreeWidget::hideScene()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::mousePressEvent(QMouseEvent* event)
+void qMRMLSceneViewsTreeView::mousePressEvent(QMouseEvent* event)
 {
-  // skip qMRMLTreeWidget
+  // skip qMRMLTreeView
   this->QTreeView::mousePressEvent(event);
 }
 
@@ -420,14 +420,14 @@ void qMRMLSceneViewsTreeWidget::mousePressEvent(QMouseEvent* event)
 //-----------------------------------------------------------------------------
 /// Set and observe the GUI widget
 //-----------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget)
+void qMRMLSceneViewsTreeView::setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget)
 {
   if (!widget)
     {
     return;
     }
 
-  //Q_D(qMRMLSceneViewsTreeWidget);
+  //Q_D(qMRMLSceneViewsTreeView);
 
   this->m_Widget = widget;
 
@@ -436,14 +436,14 @@ void qMRMLSceneViewsTreeWidget::setAndObserveWidget(qSlicerSceneViewsModuleWidge
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLSceneViewsTreeWidget::setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic)
+void qMRMLSceneViewsTreeView::setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic)
 {
   if (!logic)
     {
     return;
     }
 
-  //Q_D(qMRMLSceneViewsTreeWidget);
+  //Q_D(qMRMLSceneViewsTreeView);
 
   this->m_Logic = logic;
 

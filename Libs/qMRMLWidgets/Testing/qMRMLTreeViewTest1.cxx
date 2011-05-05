@@ -1,6 +1,25 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) 2010 Kitware Inc.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
 #include <QApplication>
 
-#include <qMRMLTreeWidget.h>
+#include <qMRMLTreeView.h>
 #include <qMRMLSceneModel.h>
 #include <qMRMLSceneTransformModel.h>
 #include <qMRMLSortFilterProxyModel.h>
@@ -13,7 +32,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-int qMRMLTreeWidgetTest1( int argc, char * argv [] )
+int qMRMLTreeViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   if( argc < 2 )
@@ -83,32 +102,32 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
 
   std::cout << std::endl<< "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
-  qMRMLTreeWidget   mrmlItem;
+  qMRMLTreeView   mrmlItem;
   mrmlItem.setMRMLScene(scene);
   scene->SetURL(argv[1]);
    timer->StartTimer();
   scene->Import();
   timer->StopTimer();
-  std::cout << "qMRMLTreeWidget Loaded: " << timer->GetElapsedTime() << std::endl;
+  std::cout << "qMRMLTreeView Loaded: " << timer->GetElapsedTime() << std::endl;
   timer->StartTimer();
   scene->Delete();
   timer->StopTimer();
-  std::cout << "qMRMLTreeWidget Deleted: " << timer->GetElapsedTime() << std::endl;
+  std::cout << "qMRMLTreeView Deleted: " << timer->GetElapsedTime() << std::endl;
 
   std::cout << std::endl<< "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
-  qMRMLTreeWidget   treeWidget;
+  qMRMLTreeView   treeWidget;
   treeWidget.show();
   treeWidget.setMRMLScene(scene);
   scene->SetURL(argv[1]);
   timer->StartTimer();
   scene->Import();
   timer->StopTimer();
-  std::cout << "qMRMLTreeWidget visible Loaded: " << timer->GetElapsedTime() << std::endl;
+  std::cout << "qMRMLTreeView visible Loaded: " << timer->GetElapsedTime() << std::endl;
   timer->StartTimer();
   scene->Delete();
   timer->StopTimer();
-  std::cout << "qMRMLTreeWidget visible Deleted: " << timer->GetElapsedTime() << std::endl;
+  std::cout << "qMRMLTreeView visible Deleted: " << timer->GetElapsedTime() << std::endl;
 
   timer->Delete();
   return EXIT_SUCCESS;

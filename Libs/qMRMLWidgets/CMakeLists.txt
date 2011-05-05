@@ -124,8 +124,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLThreeDViewsControllerWidget_p.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
-  qMRMLTreeWidget.cxx
-  qMRMLTreeWidget.h
+  qMRMLTreeView.cxx
+  qMRMLTreeView.h
   qMRMLUtils.cxx
   qMRMLUtils.h
   qMRMLVolumeInfoWidget.cxx
@@ -189,7 +189,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLThreeDViewsControllerWidget.h
   qMRMLThreeDViewsControllerWidget_p.h
   qMRMLTransformSliders.h
-  qMRMLTreeWidget.h
+  qMRMLTreeView.h
   qMRMLVolumeInfoWidget.h
   qMRMLVolumeThresholdWidget.h
   qMRMLWidget.h

@@ -19,49 +19,49 @@
 ==============================================================================*/
 
 // qMRML includes
-#include "qMRMLTreeWidgetPlugin.h"
-#include "qMRMLTreeWidget.h"
+#include "qMRMLTreeViewPlugin.h"
+#include "qMRMLTreeView.h"
 
 // --------------------------------------------------------------------------
-qMRMLTreeWidgetPlugin::qMRMLTreeWidgetPlugin(QObject *_parent):QObject(_parent)
+qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLTreeWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qMRMLTreeViewPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLTreeWidget* _widget = new qMRMLTreeWidget(_parent);
+  qMRMLTreeView* _widget = new qMRMLTreeView(_parent);
   return _widget;
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTreeWidgetPlugin::domXml() const
+QString qMRMLTreeViewPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLTreeWidget\" \
-          name=\"MRMLTreeWidget\">\n"
+  return "<widget class=\"qMRMLTreeView\" \
+          name=\"MRMLTreeView\">\n"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon qMRMLTreeWidgetPlugin::icon() const
+QIcon qMRMLTreeViewPlugin::icon() const
 {
   return QIcon(":/Icons/listview.png");
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTreeWidgetPlugin::includeFile() const
+QString qMRMLTreeViewPlugin::includeFile() const
 {
-  return "qMRMLTreeWidget.h";
+  return "qMRMLTreeView.h";
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLTreeWidgetPlugin::isContainer() const
+bool qMRMLTreeViewPlugin::isContainer() const
 {
   return false;
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTreeWidgetPlugin::name() const
+QString qMRMLTreeViewPlugin::name() const
 {
-  return "qMRMLTreeWidget";
+  return "qMRMLTreeView";
 }

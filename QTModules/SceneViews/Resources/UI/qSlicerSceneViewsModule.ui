@@ -93,7 +93,7 @@
           </layout>
          </item>
          <item>
-          <widget class="qMRMLSceneViewsTreeWidget" name="hierarchyTreeWidget">
+          <widget class="qMRMLSceneViewsTreeView" name="hierarchyTreeView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
@@ -188,9 +188,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLSceneViewsTreeWidget</class>
+   <class>qMRMLSceneViewsTreeView</class>
    <extends>QTreeView</extends>
-   <header>GUI/qMRMLSceneViewsTreeWidget.h</header>
+   <header>GUI/qMRMLSceneViewsTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

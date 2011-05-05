@@ -57,7 +57,7 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
+      <widget class="qMRMLTreeView" name="MRMLTreeView">
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -97,9 +97,9 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeWidget</class>
+   <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
-   <header>qMRMLTreeWidget.h</header>
+   <header>qMRMLTreeView.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSceneFactoryWidget</class>
@@ -128,7 +128,7 @@
   <connection>
    <sender>MRMLSceneFactoryWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLTreeWidget</receiver>
+   <receiver>MRMLTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -31,22 +31,22 @@
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSceneAnnotationModel.h"
-#include "qMRMLTreeWidget.h"
+#include "qMRMLTreeView.h"
 
-#include "qMRMLAnnotationTreeWidget.h"
+#include "qMRMLAnnotationTreeView.h"
 
 // MRML includes
 #include "vtkMRMLNode.h"
 
 //------------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
-class qMRMLAnnotationTreeWidgetPrivate
+class qMRMLAnnotationTreeViewPrivate
 {
-  Q_DECLARE_PUBLIC(qMRMLAnnotationTreeWidget);
+  Q_DECLARE_PUBLIC(qMRMLAnnotationTreeView);
 protected:
-  qMRMLAnnotationTreeWidget* const q_ptr;
+  qMRMLAnnotationTreeView* const q_ptr;
 public:
-  qMRMLAnnotationTreeWidgetPrivate(qMRMLAnnotationTreeWidget& object);
+  qMRMLAnnotationTreeViewPrivate(qMRMLAnnotationTreeView& object);
   void init();
 
   qMRMLSceneAnnotationModel*           SceneModel;
@@ -54,7 +54,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAnnotationTreeWidgetPrivate::qMRMLAnnotationTreeWidgetPrivate(qMRMLAnnotationTreeWidget& object)
+qMRMLAnnotationTreeViewPrivate::qMRMLAnnotationTreeViewPrivate(qMRMLAnnotationTreeView& object)
   : q_ptr(&object)
 {
   this->SceneModel = 0;
@@ -62,10 +62,10 @@ qMRMLAnnotationTreeWidgetPrivate::qMRMLAnnotationTreeWidgetPrivate(qMRMLAnnotati
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidgetPrivate::init()
+void qMRMLAnnotationTreeViewPrivate::init()
 {
-  Q_Q(qMRMLAnnotationTreeWidget);
-  //p->qMRMLTreeWidget::setModel(new qMRMLItemModel(p));
+  Q_Q(qMRMLAnnotationTreeView);
+  //p->qMRMLTreeView::setModel(new qMRMLItemModel(p));
   //this->SceneModel = new qMRMLSceneAnnotationModel(q);
   //this->SceneModel->setColumnCount(6);
 
@@ -83,7 +83,7 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   this->SortFilterModel = q->sortFilterProxyModel();
 
   //this->SortFilterModel->setSourceModel(this->SceneModel);
-  //q->qMRMLTreeWidget::setModel(this->SortFilterModel);
+  //q->qMRMLTreeView::setModel(this->SortFilterModel);
 
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
@@ -101,11 +101,11 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLAnnotationTreeWidget::qMRMLAnnotationTreeWidget(QWidget *_parent)
-  :qMRMLTreeWidget(_parent)
-  , d_ptr(new qMRMLAnnotationTreeWidgetPrivate(*this))
+qMRMLAnnotationTreeView::qMRMLAnnotationTreeView(QWidget *_parent)
+  :qMRMLTreeView(_parent)
+  , d_ptr(new qMRMLAnnotationTreeViewPrivate(*this))
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   d->init();
 
   // we need to enable mouse tracking to set the appropriate cursor while mouseMove occurs
@@ -113,14 +113,14 @@ qMRMLAnnotationTreeWidget::qMRMLAnnotationTreeWidget(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLAnnotationTreeWidget::~qMRMLAnnotationTreeWidget()
+qMRMLAnnotationTreeView::~qMRMLAnnotationTreeView()
 {
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLAnnotationTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   Q_ASSERT(d->SortFilterModel);
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
@@ -136,7 +136,7 @@ void qMRMLAnnotationTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
+void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
 {
 
   Q_UNUSED(index)
@@ -153,10 +153,10 @@ void qMRMLAnnotationTreeWidget::onSelectionChanged(const QItemSelection& index,c
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
+void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
 {
 
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
 
   vtkMRMLNode *mrmlNode = d->SortFilterModel->mrmlNodeFromIndex(index);
   if (!mrmlNode)
@@ -209,9 +209,9 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
 }
 
 //------------------------------------------------------------------------------
-const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
+const char* qMRMLAnnotationTreeView::firstSelectedNode()
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
@@ -233,9 +233,9 @@ const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::toggleLockForSelected()
+void qMRMLAnnotationTreeView::toggleLockForSelected()
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
@@ -265,9 +265,9 @@ void qMRMLAnnotationTreeWidget::toggleLockForSelected()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
+void qMRMLAnnotationTreeView::toggleVisibilityForSelected()
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
@@ -298,9 +298,9 @@ void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::deleteSelected()
+void qMRMLAnnotationTreeView::deleteSelected()
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   QStringList markedForDeletion;
@@ -401,7 +401,7 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
 //------------------------------------------------------------------------------
 // Return the selected annotations as a collection of mrmlNodes
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
+void qMRMLAnnotationTreeView::selectedAsCollection(vtkCollection* collection)
 {
 
   if (!collection)
@@ -409,7 +409,7 @@ void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
     return;
     }
 
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
   QModelIndexList selected = this->selectedIndexes();
 
   // first, check if we selected anything
@@ -449,7 +449,7 @@ void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
 
 #ifndef QT_NO_CURSOR
 //------------------------------------------------------------------------------
-bool qMRMLAnnotationTreeWidget::viewportEvent(QEvent* e)
+bool qMRMLAnnotationTreeView::viewportEvent(QEvent* e)
 {
 
   // reset the cursor if we leave the viewport
@@ -462,7 +462,7 @@ bool qMRMLAnnotationTreeWidget::viewportEvent(QEvent* e)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::mouseMoveEvent(QMouseEvent* e)
+void qMRMLAnnotationTreeView::mouseMoveEvent(QMouseEvent* e)
 {
   this->QTreeView::mouseMoveEvent(e);
 
@@ -495,9 +495,9 @@ void qMRMLAnnotationTreeWidget::mouseMoveEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::setSelectedNode(const char* id)
+void qMRMLAnnotationTreeView::setSelectedNode(const char* id)
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
 
   vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
 
@@ -508,9 +508,9 @@ void qMRMLAnnotationTreeWidget::setSelectedNode(const char* id)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::hideScene()
+void qMRMLAnnotationTreeView::hideScene()
 {
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
 
   // first, we set the root index to the mrmlScene
   // this works also if the scene is not defined yet
@@ -557,7 +557,7 @@ void qMRMLAnnotationTreeWidget::hideScene()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onVisibilityColumnClicked(vtkMRMLNode* node)
+void qMRMLAnnotationTreeView::onVisibilityColumnClicked(vtkMRMLNode* node)
 {
 
   if (!node)
@@ -602,7 +602,7 @@ void qMRMLAnnotationTreeWidget::onVisibilityColumnClicked(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onLockColumnClicked(vtkMRMLNode* node)
+void qMRMLAnnotationTreeView::onLockColumnClicked(vtkMRMLNode* node)
 {
 
   if (!node)
@@ -647,9 +647,9 @@ void qMRMLAnnotationTreeWidget::onLockColumnClicked(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::mousePressEvent(QMouseEvent* event)
+void qMRMLAnnotationTreeView::mousePressEvent(QMouseEvent* event)
 {
-  // skip qMRMLTreeWidget
+  // skip qMRMLTreeView
   this->QTreeView::mousePressEvent(event);
 }
 
@@ -662,14 +662,14 @@ void qMRMLAnnotationTreeWidget::mousePressEvent(QMouseEvent* event)
 //-----------------------------------------------------------------------------
 /// Set and observe the GUI widget
 //-----------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::setAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
+void qMRMLAnnotationTreeView::setAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
 {
   if (!widget)
     {
     return;
     }
 
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
 
   this->m_Widget = widget;
 
@@ -682,14 +682,14 @@ void qMRMLAnnotationTreeWidget::setAndObserveWidget(qSlicerAnnotationModuleWidge
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic)
+void qMRMLAnnotationTreeView::setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
   if (!logic)
     {
     return;
     }
 
-  Q_D(qMRMLAnnotationTreeWidget);
+  Q_D(qMRMLAnnotationTreeView);
 
   this->m_Logic = logic;
 

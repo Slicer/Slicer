@@ -56,8 +56,8 @@ SET(designer_plugin_SRCS
   qMRMLThreeDViewsControllerWidgetPlugin.h
   qMRMLTransformSlidersPlugin.cxx
   qMRMLTransformSlidersPlugin.h
-  qMRMLTreeWidgetPlugin.cxx
-  qMRMLTreeWidgetPlugin.h
+  qMRMLTreeViewPlugin.cxx
+  qMRMLTreeViewPlugin.h
   qMRMLVolumeInfoWidgetPlugin.cxx
   qMRMLVolumeInfoWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.cxx
@@ -101,7 +101,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLThreeDViewPlugin.h
   qMRMLThreeDViewsControllerWidgetPlugin.h
   qMRMLTransformSlidersPlugin.h
-  qMRMLTreeWidgetPlugin.h
+  qMRMLTreeViewPlugin.h
   qMRMLVolumeInfoWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.h
   qMRMLWidgetPlugin.h

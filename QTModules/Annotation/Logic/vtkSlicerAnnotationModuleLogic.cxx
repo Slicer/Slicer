@@ -18,7 +18,6 @@
 #include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 
-#include "qMRMLTreeWidget.h"
 #include "qSlicerCoreApplication.h"
 
 // MRML includes

@@ -34,7 +34,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="qMRMLTreeWidget" name="MRMLTreeWidget"/>
+       <widget class="qMRMLTreeView" name="MRMLTreeView"/>
       </item>
      </layout>
     </widget>
@@ -62,9 +62,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeWidget</class>
+   <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
-   <header>qMRMLTreeWidget.h</header>
+   <header>qMRMLTreeView.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -80,7 +80,7 @@
   <connection>
    <sender>qSlicerMRMLTreeModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLTreeWidget</receiver>
+   <receiver>MRMLTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

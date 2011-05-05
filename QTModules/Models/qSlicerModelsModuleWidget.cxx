@@ -64,9 +64,9 @@ void qSlicerModelsModuleWidget::setup()
 {
   Q_D(qSlicerModelsModuleWidget);
   d->setupUi(this);
-  d->ModelHierarchyTreeWidget->setColumnHidden(1, true);
+  d->ModelHierarchyTreeView->setColumnHidden(1, true);
   d->ClipModelsNodeComboBox->setVisible(false);
-  d->ModelHierarchyTreeWidget->sortFilterProxyModel()->setShowHiddenForTypes(
+  d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
     QStringList() << "vtkMRMLModelHierarchyNode");
   this->Superclass::setup();
 }

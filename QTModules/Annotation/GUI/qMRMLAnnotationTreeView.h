@@ -18,33 +18,32 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneViewsTreeWidget_h
-#define __qMRMLSceneViewsTreeWidget_h
+#ifndef __qMRMLAnnotationTreeView_h
+#define __qMRMLAnnotationTreeView_h
 
 // Qt includes
 #include <QTreeView>
 // Annotation QT includes
-#include "GUI/qSlicerSceneViewsModuleWidget.h"
+#include "GUI/qSlicerAnnotationModuleWidget.h"
 
 // CTK includes
 #include <ctkPimpl.h>
 
 // qMRML includes
-#include "qMRMLTreeWidget.h"
+#include "qMRMLTreeView.h"
 
-#include "qSlicerSceneViewsModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 
 // Logic includes
-#include <vtkSlicerSceneViewsModuleLogic.h>
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 class qMRMLSortFilterProxyModel;
-class qMRMLSceneViewsTreeWidgetPrivate;
+class qMRMLAnnotationTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
-/// \ingroup Slicer_QtModules_SceneViews
-class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget
-  : public qMRMLTreeWidget
+/// \ingroup Slicer_QtModules_Annotation
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLAnnotationTreeView : public qMRMLTreeView
 {
   Q_OBJECT
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
@@ -52,37 +51,42 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeWidget
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
 
 public:
-  typedef qMRMLTreeWidget Superclass;
-  qMRMLSceneViewsTreeWidget(QWidget *parent=0);
-  virtual ~qMRMLSceneViewsTreeWidget();
+  qMRMLAnnotationTreeView(QWidget *parent=0);
+  virtual ~qMRMLAnnotationTreeView();
 
   void hideScene();
 
-  void setSelectedNode(const QString& id);
-
-  QString firstSelectedNode()const;
+  const char* firstSelectedNode();
 
   // Register the widget
-  void setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
+  void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
 
   // Register the logic
-  void setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic);
+  void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
+
+
+  void toggleLockForSelected();
+
+  void toggleVisibilityForSelected();
+
+  void deleteSelected();
+
+  void selectedAsCollection(vtkCollection* collection);
+
+  void setSelectedNode(const char* id);
 
 public slots:
+  void setMRMLScene(vtkMRMLScene* scene);
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
-  virtual void setMRMLScene(vtkMRMLScene* scene);
-  void deleteSelected();
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
-  void restoreSceneViewRequested(const QString& nodeID);
-  void editSceneViewRequested(const QString& nodeID);
 
 protected slots:
   void onClicked(const QModelIndex& index);
 
 protected:
-  QScopedPointer<qMRMLSceneViewsTreeWidgetPrivate> d_ptr;
+  QScopedPointer<qMRMLAnnotationTreeViewPrivate> d_ptr;
   #ifndef QT_NO_CURSOR
     void mouseMoveEvent(QMouseEvent* e);
     bool viewportEvent(QEvent* e);
@@ -90,11 +94,17 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSceneViewsTreeWidget);
-  Q_DISABLE_COPY(qMRMLSceneViewsTreeWidget);
+  Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);
+  Q_DISABLE_COPY(qMRMLAnnotationTreeView);
 
-  qSlicerSceneViewsModuleWidget* m_Widget;
-  vtkSlicerSceneViewsModuleLogic* m_Logic;
+  qSlicerAnnotationModuleWidget* m_Widget;
+  vtkSlicerAnnotationModuleLogic* m_Logic;
+
+  // toggle the visibility of an annotation
+  void onVisibilityColumnClicked(vtkMRMLNode* node);
+
+  // toggle un-/lock of an annotation
+  void onLockColumnClicked(vtkMRMLNode* node);
 
 };
 

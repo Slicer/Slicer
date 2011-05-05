@@ -18,19 +18,19 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLTreeWidgetPlugin_h
-#define __qMRMLTreeWidgetPlugin_h
+#ifndef __qMRMLTreeViewPlugin_h
+#define __qMRMLTreeViewPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLTreeWidgetPlugin :
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLTreeViewPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLTreeWidgetPlugin(QObject *_parent = 0);
+  qMRMLTreeViewPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

@@ -84,18 +84,18 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   Q_Q(qSlicerSceneViewsModuleWidget);
   this->Ui_qSlicerSceneViewsModule::setupUi(widget);
 
-  QObject::connect(this->hierarchyTreeWidget,
+  QObject::connect(this->hierarchyTreeView,
                    SIGNAL(restoreSceneViewRequested(const QString&)),
                    q, SLOT(restoreSceneView(const QString&)));
-  QObject::connect(this->hierarchyTreeWidget,
+  QObject::connect(this->hierarchyTreeView,
                    SIGNAL(editSceneViewRequested(const QString&)),
                    q, SLOT(editSceneView(const QString&)));
 
   // setup the hierarchy treeWidget
-  this->hierarchyTreeWidget->setAndObserveLogic(this->logic());
-  this->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
+  this->hierarchyTreeView->setAndObserveLogic(this->logic());
+  this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
   this->logic()->SetAndObserveWidget(q);
-  this->hierarchyTreeWidget->hideScene();
+  this->hierarchyTreeView->hideScene();
 
   q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
              q, SLOT(moveDownSelected()));
@@ -103,7 +103,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
              q, SLOT(moveUpSelected()));
 
   QObject::connect(this->deleteSelectedButton, SIGNAL(clicked()),
-                   this->hierarchyTreeWidget, SLOT(deleteSelected()));
+                   this->hierarchyTreeView, SLOT(deleteSelected()));
 
   QObject::connect(this->sceneView, SIGNAL(clicked()),
                    q, SLOT(showSceneViewDialog()));
@@ -138,10 +138,10 @@ void qSlicerSceneViewsModuleWidget::moveDownSelected()
   Q_D(qSlicerSceneViewsModuleWidget);
 
   const char* id = d->logic()->MoveSceneViewDown(
-    d->hierarchyTreeWidget->firstSelectedNode().toLatin1());
+    d->hierarchyTreeView->firstSelectedNode().toLatin1());
 
-  d->hierarchyTreeWidget->clearSelection();
-  d->hierarchyTreeWidget->setSelectedNode(id);
+  d->hierarchyTreeView->clearSelection();
+  d->hierarchyTreeView->setSelectedNode(id);
 }
 
 //-----------------------------------------------------------------------------
@@ -150,10 +150,10 @@ void qSlicerSceneViewsModuleWidget::moveUpSelected()
   Q_D(qSlicerSceneViewsModuleWidget);
 
   const char* id = d->logic()->MoveSceneViewUp(
-    d->hierarchyTreeWidget->firstSelectedNode().toLatin1());
+    d->hierarchyTreeView->firstSelectedNode().toLatin1());
 
-  d->hierarchyTreeWidget->clearSelection();
-  d->hierarchyTreeWidget->setSelectedNode(id);
+  d->hierarchyTreeView->clearSelection();
+  d->hierarchyTreeView->setSelectedNode(id);
 }
 
 //-----------------------------------------------------------------------------
@@ -187,8 +187,8 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 void qSlicerSceneViewsModuleWidget::refreshTree()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
-  d->hierarchyTreeWidget->setMRMLScene(d->logic()->GetMRMLScene());
-  d->hierarchyTreeWidget->hideScene();
+  d->hierarchyTreeView->setMRMLScene(d->logic()->GetMRMLScene());
+  d->hierarchyTreeView->hideScene();
 }
 
 //-----------------------------------------------------------------------------

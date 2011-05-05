@@ -18,7 +18,7 @@
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
 
-#include "GUI/qMRMLAnnotationTreeWidget.h"
+#include "GUI/qMRMLAnnotationTreeView.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "MRML/vtkMRMLAnnotationRulerNode.h"
 
@@ -30,7 +30,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
-int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv [])
+int qMRMLSceneAnnotationModelAndAnnotationTreeViewTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
@@ -38,7 +38,7 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
 
   sceneFactory.generateScene();
 
-  qMRMLAnnotationTreeWidget* view = new qMRMLAnnotationTreeWidget(0);
+  qMRMLAnnotationTreeView* view = new qMRMLAnnotationTreeView(0);
 
   //view->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -59,7 +59,7 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
   view3.setModel(view->sceneModel());
   view3.show();
 /*
-  qMRMLTreeWidget view2;
+  qMRMLTreeView view2;
   view2.setSceneModelType("Displayable");
   view2.sceneModel()->setMRMLScene(sceneFactory.mrmlScene());
   view2.show();

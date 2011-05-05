@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLTreeWidget_h
-#define __qMRMLTreeWidget_h
+#ifndef __qMRMLTreeView_h
+#define __qMRMLTreeView_h
 
 // Qt includes
 #include <QTreeView>
@@ -31,12 +31,12 @@
 
 class qMRMLSceneModel;
 class qMRMLSortFilterProxyModel;
-class qMRMLTreeWidgetPrivate;
+class qMRMLTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
-// TODO: Rename to qMRMLSceneTreeWidget
-class QMRML_WIDGETS_EXPORT qMRMLTreeWidget : public QTreeView
+// TODO: Rename to qMRMLSceneTreeView
+class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 {
   Q_OBJECT
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
@@ -44,8 +44,8 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeWidget : public QTreeView
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
 public:
-  qMRMLTreeWidget(QWidget *parent=0);
-  virtual ~qMRMLTreeWidget();
+  qMRMLTreeView(QWidget *parent=0);
+  virtual ~qMRMLTreeView();
 
   vtkMRMLScene* mrmlScene()const;
 
@@ -100,14 +100,14 @@ protected slots:
   void onNumberOfVisibleIndexChanged();
   void deleteCurrentNode();
 protected:
-  QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;
+  QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
 
   // reimplemented for performance issues
   virtual void updateGeometries();
   virtual void mousePressEvent(QMouseEvent* event);
 private:
-  Q_DECLARE_PRIVATE(qMRMLTreeWidget);
-  Q_DISABLE_COPY(qMRMLTreeWidget);
+  Q_DECLARE_PRIVATE(qMRMLTreeView);
+  Q_DISABLE_COPY(qMRMLTreeView);
 };
 
 #endif

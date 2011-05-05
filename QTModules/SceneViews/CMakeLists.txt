@@ -33,8 +33,8 @@ SET(Logic_SRCS
 SET(GUI_SRCS
   GUI/qMRMLSceneViewsModel.cxx
   GUI/qMRMLSceneViewsModel.h
-  GUI/qMRMLSceneViewsTreeWidget.cxx
-  GUI/qMRMLSceneViewsTreeWidget.h
+  GUI/qMRMLSceneViewsTreeView.cxx
+  GUI/qMRMLSceneViewsTreeView.h
   GUI/qSlicerSceneViewsModuleWidget.cxx
   GUI/qSlicerSceneViewsModuleWidget.h
   GUI/qSlicerSceneViewsModuleDialog.cxx
@@ -61,7 +61,7 @@ SET(qt_module_SRCS
 SET(qt_module_MOC_SRCS
   qSlicerSceneViewsModule.h
   GUI/qMRMLSceneViewsModel.h
-  GUI/qMRMLSceneViewsTreeWidget.h
+  GUI/qMRMLSceneViewsTreeView.h
   GUI/qSlicerSceneViewsModuleWidget.h
   GUI/qSlicerSceneViewsModuleDialog.h
   )

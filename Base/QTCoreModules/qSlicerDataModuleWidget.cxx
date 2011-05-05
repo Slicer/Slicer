@@ -69,20 +69,20 @@ void qSlicerDataModuleWidget::setup()
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
   d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
 //  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
-//          d->MRMLTreeWidget, SLOT(setSceneModel(QString*)));
+//          d->MRMLTreeView, SLOT(setSceneModel(QString*)));
           
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
-          d->MRMLTreeWidget->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
+          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
   connect(d->FilterLineEdit, SIGNAL(textChanged(const QString&)),
-          d->MRMLTreeWidget->sortFilterProxyModel(), SLOT(setFilterFixedString(const QString&)));
+          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(const QString&)));
   // hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
 
   // Hide the node inspector as it is possible to edit nodes via the tree
   d->MRMLNodeInspectorGroupBox->setVisible(false);
-  //   connect(d->MRMLTreeWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+  //   connect(d->MRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
   //           this, SLOT(onMRMLNodeChanged(vtkMRMLNode*)));
   // Change the node name only when the Enter key is pressed or the line edit
   // looses the focus
@@ -128,11 +128,11 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
 {
   Q_D(qSlicerDataModuleWidget);
 
-  d->MRMLTreeWidget->setColumnHidden(1, !visible);
-  const int columnCount = d->MRMLTreeWidget->header()->count();
+  d->MRMLTreeView->setColumnHidden(1, !visible);
+  const int columnCount = d->MRMLTreeView->header()->count();
   for(int i = 0; i < columnCount; ++i)
     {
-    d->MRMLTreeWidget->resizeColumnToContents(i);
+    d->MRMLTreeView->resizeColumnToContents(i);
     }
   d->DisplayMRMLIDsCheckBox->setChecked(visible);
 }

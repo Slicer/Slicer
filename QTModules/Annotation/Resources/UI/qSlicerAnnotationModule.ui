@@ -331,7 +331,7 @@
           </layout>
          </item>
          <item>
-          <widget class="qMRMLAnnotationTreeWidget" name="hierarchyTreeWidget">
+          <widget class="qMRMLAnnotationTreeView" name="hierarchyTreeView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
@@ -507,9 +507,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLAnnotationTreeWidget</class>
+   <class>qMRMLAnnotationTreeView</class>
    <extends>QTreeView</extends>
-   <header>GUI/qMRMLAnnotationTreeWidget.h</header>
+   <header>GUI/qMRMLAnnotationTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

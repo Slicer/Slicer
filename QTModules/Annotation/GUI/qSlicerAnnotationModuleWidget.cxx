@@ -133,10 +133,10 @@ void qSlicerAnnotationModuleWidget::setup()
   d->setupUi(this);
 
   // setup the hierarchy treeWidget
-  d->hierarchyTreeWidget->setAndObserveWidget(this);
-  d->hierarchyTreeWidget->setAndObserveLogic(d->logic());
-  d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
-  d->hierarchyTreeWidget->hideScene();
+  d->hierarchyTreeView->setAndObserveWidget(this);
+  d->hierarchyTreeView->setAndObserveLogic(d->logic());
+  d->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
+  d->hierarchyTreeView->hideScene();
 
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
@@ -203,10 +203,10 @@ void qSlicerAnnotationModuleWidget::moveDownSelected()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  const char* mrmlId = d->logic()->MoveAnnotationDown(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* mrmlId = d->logic()->MoveAnnotationDown(d->hierarchyTreeView->firstSelectedNode());
 
-  d->hierarchyTreeWidget->clearSelection();
-  d->hierarchyTreeWidget->setSelectedNode(mrmlId);
+  d->hierarchyTreeView->clearSelection();
+  d->hierarchyTreeView->setSelectedNode(mrmlId);
 }
 
 //-----------------------------------------------------------------------------
@@ -214,10 +214,10 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  const char* mrmlId = d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* mrmlId = d->logic()->MoveAnnotationUp(d->hierarchyTreeView->firstSelectedNode());
 
-  d->hierarchyTreeWidget->clearSelection();
-  d->hierarchyTreeWidget->setSelectedNode(mrmlId);
+  d->hierarchyTreeView->clearSelection();
+  d->hierarchyTreeView->setSelectedNode(mrmlId);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->hierarchyTreeWidget->selectAll();
+  d->hierarchyTreeView->selectAll();
   d->logic()->SetActiveHierarchyNode(0);
 }
 
@@ -242,7 +242,7 @@ void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
 
   // TODO
 
-  d->logic()->RestoreAnnotationView(d->hierarchyTreeWidget->firstSelectedNode());
+  d->logic()->RestoreAnnotationView(d->hierarchyTreeView->firstSelectedNode());
 }
 
 //-----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
     if (this->m_PropertyDialog)
       {
-      QMessageBox::warning(d->hierarchyTreeWidget,
+      QMessageBox::warning(d->hierarchyTreeView,
           QString("Modify Annotation Properties"), QString(
               "The property dialog is already open."));
 
@@ -399,7 +399,7 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->hierarchyTreeWidget->toggleVisibilityForSelected();
+  d->hierarchyTreeView->toggleVisibilityForSelected();
 
 }
 
@@ -409,7 +409,7 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
 
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->hierarchyTreeWidget->toggleLockForSelected();
+  d->hierarchyTreeView->toggleLockForSelected();
 }
 
 //-----------------------------------------------------------------------------
@@ -418,7 +418,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->hierarchyTreeWidget->deleteSelected();
+  d->hierarchyTreeView->deleteSelected();
 
 }
 
@@ -599,11 +599,11 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->firstSelectedNode());
+  d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeView->firstSelectedNode());
   this->refreshTree();
   if (d->logic()->AddHierarchy())
     {
-    d->hierarchyTreeWidget->setSelectedNode(d->logic()->GetActiveHierarchyNodeID());
+    d->hierarchyTreeView->setSelectedNode(d->logic()->GetActiveHierarchyNodeID());
     }
 }
 
@@ -800,8 +800,8 @@ void qSlicerAnnotationModuleWidget::refreshTree()
   // this gets called on scene closed, can we make sure that the widget is
   // visible?
   
-  d->hierarchyTreeWidget->setMRMLScene(d->logic()->GetMRMLScene());
-  d->hierarchyTreeWidget->hideScene();
+  d->hierarchyTreeView->setMRMLScene(d->logic()->GetMRMLScene());
+  d->hierarchyTreeView->hideScene();
 }
 
 //-----------------------------------------------------------------------------
@@ -889,13 +889,13 @@ void qSlicerAnnotationModuleWidget::onReportButtonClicked()
 
   VTK_CREATE(vtkCollection,collection);
 
-  d->hierarchyTreeWidget->selectedAsCollection(collection.GetPointer());
+  d->hierarchyTreeView->selectedAsCollection(collection.GetPointer());
 
   // if nothing was selected, select all
   if(collection->GetNumberOfItems() == 0)
     {
-    d->hierarchyTreeWidget->selectAll();
-    d->hierarchyTreeWidget->selectedAsCollection(collection.GetPointer());
+    d->hierarchyTreeView->selectAll();
+    d->hierarchyTreeView->selectedAsCollection(collection.GetPointer());
     }
 
   this->m_ReportDialog->setAnnotations(collection.GetPointer());

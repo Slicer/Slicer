@@ -45,7 +45,7 @@
 #include "qMRMLThreeDViewPlugin.h"
 #include "qMRMLThreeDViewsControllerWidgetPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
-#include "qMRMLTreeWidgetPlugin.h"
+#include "qMRMLTreeViewPlugin.h"
 #include "qMRMLVolumeInfoWidgetPlugin.h"
 #include "qMRMLVolumeThresholdWidgetPlugin.h"
 #include "qMRMLWidgetPlugin.h"
@@ -93,7 +93,7 @@ public:
             << new qMRMLThreeDViewPlugin
             << new qMRMLThreeDViewsControllerWidgetPlugin
             << new qMRMLTransformSlidersPlugin
-            << new qMRMLTreeWidgetPlugin
+            << new qMRMLTreeViewPlugin
             << new qMRMLVolumeInfoWidgetPlugin
             << new qMRMLVolumeThresholdWidgetPlugin
             << new qMRMLWidgetPlugin

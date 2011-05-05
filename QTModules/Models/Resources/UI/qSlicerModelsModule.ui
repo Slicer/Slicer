@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="qMRMLTreeWidget" name="ModelHierarchyTreeWidget">
+    <widget class="qMRMLTreeView" name="ModelHierarchyTreeView">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -140,9 +140,9 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeWidget</class>
+   <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
-   <header>qMRMLTreeWidget.h</header>
+   <header>qMRMLTreeView.h</header>
    <slots>
     <slot>setSceneModel(int)</slot>
    </slots>
@@ -162,7 +162,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>ModelHierarchyTreeWidget</sender>
+   <sender>ModelHierarchyTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>MRMLModelInfoWidget</receiver>
    <slot>setMRMLModelNode(vtkMRMLNode*)</slot>
@@ -178,7 +178,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>ModelHierarchyTreeWidget</sender>
+   <sender>ModelHierarchyTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>ModelDisplayWidget</receiver>
    <slot>setMRMLModelNode(vtkMRMLNode*)</slot>
@@ -196,7 +196,7 @@
   <connection>
    <sender>qSlicerModelsModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ModelHierarchyTreeWidget</receiver>
+   <receiver>ModelHierarchyTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

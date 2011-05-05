@@ -37,19 +37,19 @@
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSortFilterModelHierarchyProxyModel.h"
 #include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLTreeWidget.h"
+#include "qMRMLTreeView.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
-class qMRMLTreeWidgetPrivate
+class qMRMLTreeViewPrivate
 {
-  Q_DECLARE_PUBLIC(qMRMLTreeWidget);
+  Q_DECLARE_PUBLIC(qMRMLTreeView);
 protected:
-  qMRMLTreeWidget* const q_ptr;
+  qMRMLTreeView* const q_ptr;
 public:
-  qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object);
+  qMRMLTreeViewPrivate(qMRMLTreeView& object);
   void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
@@ -67,7 +67,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
+qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   : q_ptr(&object)
 {
   this->SceneModel = 0;
@@ -79,9 +79,9 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidgetPrivate::init()
+void qMRMLTreeViewPrivate::init()
 {
-  Q_Q(qMRMLTreeWidget);
+  Q_Q(qMRMLTreeView);
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
   
@@ -110,9 +110,9 @@ void qMRMLTreeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
+void qMRMLTreeViewPrivate::setSceneModel(qMRMLSceneModel* newModel)
 {
-  Q_Q(qMRMLTreeWidget);
+  Q_Q(qMRMLTreeView);
   if (!newModel)
     {
     return;
@@ -127,9 +127,9 @@ void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidgetPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel)
+void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel)
 {
-  Q_Q(qMRMLTreeWidget);
+  Q_Q(qMRMLTreeView);
   if (newSortModel == this->SortFilterModel)
     {
     return;
@@ -165,9 +165,9 @@ void qMRMLTreeWidgetPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* 
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidgetPrivate::recomputeSizeHint(bool force)
+void qMRMLTreeViewPrivate::recomputeSizeHint(bool force)
 {
-  Q_Q(qMRMLTreeWidget);
+  Q_Q(qMRMLTreeView);
   this->TreeViewSizeHint = QSize();
   if ((this->FitSizeToVisibleIndexes || force) && q->isVisible())
     {
@@ -178,9 +178,9 @@ void qMRMLTreeWidgetPrivate::recomputeSizeHint(bool force)
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLTreeWidgetPrivate::sizeHint()const
+QSize qMRMLTreeViewPrivate::sizeHint()const
 {
-  Q_Q(const qMRMLTreeWidget);
+  Q_Q(const qMRMLTreeView);
   if (!this->FitSizeToVisibleIndexes)
     {
     return q->QTreeView::sizeHint();
@@ -202,31 +202,31 @@ QSize qMRMLTreeWidgetPrivate::sizeHint()const
     q->frameWidth()
     + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
     + visibleIndexCount * q->sizeHintForRow(0)
-    + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeWidget*>(q)) ? q->horizontalScrollBar()->height() : 0)
+    + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeView*>(q)) ? q->horizontalScrollBar()->height() : 0)
     + q->frameWidth());
   return this->TreeViewSizeHint;
 }
 
 //------------------------------------------------------------------------------
-// qMRMLTreeWidget
+// qMRMLTreeView
 //------------------------------------------------------------------------------
-qMRMLTreeWidget::qMRMLTreeWidget(QWidget *_parent)
+qMRMLTreeView::qMRMLTreeView(QWidget *_parent)
   :QTreeView(_parent)
-  , d_ptr(new qMRMLTreeWidgetPrivate(*this))
+  , d_ptr(new qMRMLTreeViewPrivate(*this))
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   d->init();
 }
 
 //------------------------------------------------------------------------------
-qMRMLTreeWidget::~qMRMLTreeWidget()
+qMRMLTreeView::~qMRMLTreeView()
 {
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
@@ -234,16 +234,16 @@ void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLTreeWidget::sceneModelType()const
+QString qMRMLTreeView::sceneModelType()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->SceneModelType;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
+void qMRMLTreeView::setSceneModelType(const QString& modelName)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
 
   qMRMLSceneModel* newModel = 0;
   qMRMLSortFilterProxyModel* newFilterModel = d->SortFilterModel;
@@ -276,9 +276,9 @@ void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType)
+void qMRMLTreeView::setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
 
   if (!newSceneModel) 
     {
@@ -289,79 +289,79 @@ void qMRMLTreeWidget::setSceneModel(qMRMLSceneModel* newSceneModel, const QStrin
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
+vtkMRMLScene* qMRMLTreeView::mrmlScene()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->SceneModel ? d->SceneModel->mrmlScene() : 0;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::onCurrentRowChanged(const QModelIndex& index)
+void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
   emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::setListenNodeModifiedEvent(bool listen)
+void qMRMLTreeView::setListenNodeModifiedEvent(bool listen)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   Q_ASSERT(d->SceneModel);
   d->SceneModel->setListenNodeModifiedEvent(listen);
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTreeWidget::listenNodeModifiedEvent()const
+bool qMRMLTreeView::listenNodeModifiedEvent()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : false;
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLTreeWidget::nodeTypes()const
+QStringList qMRMLTreeView::nodeTypes()const
 {
   return this->sortFilterProxyModel()->nodeTypes();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTreeWidget::setNodeTypes(const QStringList& _nodeTypes)
+void qMRMLTreeView::setNodeTypes(const QStringList& _nodeTypes)
 {
   this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
 }
 
 //--------------------------------------------------------------------------
-qMRMLSortFilterProxyModel* qMRMLTreeWidget::sortFilterProxyModel()const
+qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
   return d->SortFilterModel;
 }
 
 //--------------------------------------------------------------------------
-qMRMLSceneModel* qMRMLTreeWidget::sceneModel()const
+qMRMLSceneModel* qMRMLTreeView::sceneModel()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   Q_ASSERT(d->SceneModel);
   return d->SceneModel;
 }
 
 //--------------------------------------------------------------------------
-QSize qMRMLTreeWidget::minimumSizeHint()const
+QSize qMRMLTreeView::minimumSizeHint()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->sizeHint();
 }
 
 //--------------------------------------------------------------------------
-QSize qMRMLTreeWidget::sizeHint()const
+QSize qMRMLTreeView::sizeHint()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->sizeHint();
 }
 
 //--------------------------------------------------------------------------
-void qMRMLTreeWidget::updateGeometries()
+void qMRMLTreeView::updateGeometries()
 {
   // don't update the geometries if it's not visible on screen
   // UpdateGeometries is for tree child widgets geometry
@@ -373,31 +373,31 @@ void qMRMLTreeWidget::updateGeometries()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLTreeWidget::onNumberOfVisibleIndexChanged()
+void qMRMLTreeView::onNumberOfVisibleIndexChanged()
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   d->recomputeSizeHint();
 }
 
 //--------------------------------------------------------------------------
-void qMRMLTreeWidget::setFitSizeToVisibleIndexes(bool enable)
+void qMRMLTreeView::setFitSizeToVisibleIndexes(bool enable)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   d->FitSizeToVisibleIndexes = enable;
   d->recomputeSizeHint(true);
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeWidget::fitSizeToVisibleIndexes()const
+bool qMRMLTreeView::fitSizeToVisibleIndexes()const
 {
-  Q_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeView);
   return d->FitSizeToVisibleIndexes;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::mousePressEvent(QMouseEvent* e)
+void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   this->QTreeView::mousePressEvent(e);
   
   if (e->button() != Qt::RightButton)
@@ -420,9 +420,9 @@ void qMRMLTreeWidget::mousePressEvent(QMouseEvent* e)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::deleteCurrentNode()
+void qMRMLTreeView::deleteCurrentNode()
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   if (!d->CurrentNode)
     {
     qWarning() << "No node to delete";
@@ -433,9 +433,9 @@ void qMRMLTreeWidget::deleteCurrentNode()
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTreeWidget::eventFilter(QObject* object, QEvent* e)
+bool qMRMLTreeView::eventFilter(QObject* object, QEvent* e)
 {
-  Q_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeView);
   bool res = this->QTreeView::eventFilter(object, e);
   // When the horizontal scroll bar is shown/hidden, the sizehint should be
   // updated ?

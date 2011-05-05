@@ -31,7 +31,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0" colspan="2">
-       <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
+       <widget class="qMRMLTreeView" name="MRMLTreeView">
         <property name="dragDropMode">
          <enum>QAbstractItemView::InternalMove</enum>
         </property>
@@ -612,9 +612,9 @@ p, li { white-space: pre-wrap; }
    <header>ctkDynamicSpacer.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeWidget</class>
+   <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
-   <header>qMRMLTreeWidget.h</header>
+   <header>qMRMLTreeView.h</header>
    <slots>
     <slot>setSceneModel(int)</slot>
    </slots>
@@ -793,7 +793,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>qSlicerDataModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLTreeWidget</receiver>
+   <receiver>MRMLTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -825,7 +825,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>MRMLSceneModelComboBox</sender>
    <signal>currentIndexChanged(QString)</signal>
-   <receiver>MRMLTreeWidget</receiver>
+   <receiver>MRMLTreeView</receiver>
    <slot>setSceneModelType(QString)</slot>
    <hints>
     <hint type="sourcelabel">

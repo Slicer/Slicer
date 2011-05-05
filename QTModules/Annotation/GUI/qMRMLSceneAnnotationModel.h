@@ -25,7 +25,6 @@
 
 // Annotation QT includes
 #include "GUI/qSlicerAnnotationModuleWidget.h"
-#include "GUI/qMRMLAnnotationTreeWidget.h"
 
 #include "qSlicerAnnotationModuleExport.h"
 

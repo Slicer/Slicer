@@ -83,8 +83,8 @@ SET(Widget_SRCS
 SET(GUI_SRCS
   GUI/qMRMLSceneAnnotationModel.cxx
   GUI/qMRMLSceneAnnotationModel.h
-  GUI/qMRMLAnnotationTreeWidget.cxx
-  GUI/qMRMLAnnotationTreeWidget.h
+  GUI/qMRMLAnnotationTreeView.cxx
+  GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.cxx
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.cxx
@@ -148,7 +148,7 @@ ENDFOREACH()
 SET(qt_module_MOC_SRCS
   qSlicerAnnotationModule.h
   GUI/qMRMLSceneAnnotationModel.h
-  GUI/qMRMLAnnotationTreeWidget.h
+  GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
