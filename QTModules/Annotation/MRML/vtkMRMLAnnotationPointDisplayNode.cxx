@@ -57,8 +57,8 @@ vtkMRMLNode* vtkMRMLAnnotationPointDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
 {
-  this->GlyphType = this->StarBurst2D;
-  this->GlyphScale = 10.0;
+  this->GlyphType = 12;
+  this->GlyphScale = 5.0;
 }
 
 

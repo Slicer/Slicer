@@ -42,8 +42,8 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->SetVectorVisibility(0);
   this->SetScalarVisibility(0);
   this->SetTensorVisibility(0);
-  this->Color[0]=1.0; this->Color[1]=1.0; this->Color[2]=1.0;
-  this->SelectedColor[0]=1.0; this->SelectedColor[1]=0.0; this->SelectedColor[2]=0.0;
+  this->Color[0]=1.0; this->Color[1]=0.0; this->Color[2]=0.0;
+  this->SelectedColor[0]=0.0; this->SelectedColor[1]=1.0; this->SelectedColor[2]=0.0;
   this->SetName("");
   this->Opacity = 1.0;
   this->Ambient = 0;

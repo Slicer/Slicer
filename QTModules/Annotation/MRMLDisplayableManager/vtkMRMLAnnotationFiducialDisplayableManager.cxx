@@ -7,6 +7,9 @@
 #include "vtkMRMLAnnotationNode.h"
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
+#include "vtkMRMLAnnotationDisplayNode.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
+#include "vtkAnnotationGlyphSource2D.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -19,7 +22,7 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkPointHandleRepresentation2D.h>
-#include <vtkPointHandleRepresentation3D.h>
+#include <vtkOrientedPolygonalHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
 
@@ -146,25 +149,26 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
+  vtkMRMLAnnotationPointDisplayNode *displayNode = fiducialNode->GetAnnotationPointDisplayNode();
+
+  if (!displayNode)
+    {
+    std::cout<<"No DisplayNode!"<<std::endl;
+    }
+
   VTK_CREATE(vtkSeedRepresentation, rep);
 
-  // use different representations for 2D and 3D
-  if (this->GetSliceNode())
-    {
-    VTK_CREATE(vtkPointHandleRepresentation2D, handle);
-    handle->GetProperty()->SetColor(1,0,0);
-    handle->SetHandleSize(10);
+  VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+  std::cout << "GLYPHTHPEPEE" << displayNode->GetGlyphType() << std::endl;
+  glyphSource->SetGlyphType(displayNode->GetGlyphType());
+  glyphSource->Update();
+  glyphSource->SetScale(1.0);
 
-    rep->SetHandleRepresentation(handle);
-    }
-  else
-    {
-    VTK_CREATE(vtkPointHandleRepresentation3D, handle);
-    handle->GetProperty()->SetColor(1,0,0);
-    handle->SetHandleSize(10);
 
-    rep->SetHandleRepresentation(handle);
-    }
+  VTK_CREATE(vtkOrientedPolygonalHandleRepresentation3D, handle);
+  handle->SetHandle(glyphSource->GetOutput());
+
+  rep->SetHandleRepresentation(handle);
 
 
   //seed widget
@@ -193,46 +197,49 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   double position1[4];
 
+  // create a new handle
+  vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
+
+  if (fiducialNode->GetSelected())
+    {
+    // use the selected color
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->GetProperty()->SetColor(displayNode->GetSelectedColor());
+    }
+  else
+    {
+    // use the normal color
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->GetProperty()->SetColor(displayNode->GetColor());
+    }
+
+
   if (this->GetSliceNode())
     {
 
     bool showWidget = true;
     showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
 
-    // TODO: Is the on two times necessary?
-    if (showWidget)
-      {
-      seedWidget->On();
-      seedWidget->CompleteInteraction();
-      }
-
     this->GetWorldToDisplayCoordinates(worldCoordinates,position1);
 
-    vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->SetUniformScale(displayNode->GetGlyphScale()/300);
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
     if (showWidget)
       {
       seedWidget->On();
-      seedWidget->CompleteInteraction();
       }
-
 
     }
   else
     {
 
-    // TODO: Is the on two times necessary?
-    seedWidget->On();
-    seedWidget->CompleteInteraction();
-
-    vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(newhandle->GetRepresentation())->SetUniformScale(displayNode->GetGlyphScale());
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
 
     seedWidget->On();
-    seedWidget->CompleteInteraction();
 
     }
+
+  seedWidget->CompleteInteraction();
 
   return seedWidget;
 
@@ -322,6 +329,45 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     {
     // only update when really changed
     seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+    }
+
+  vtkMRMLAnnotationPointDisplayNode *displayNode = fiducialNode->GetAnnotationPointDisplayNode();
+
+  if (!displayNode)
+    {
+    vtkErrorMacro("Could not get display Node!")
+    }
+
+  VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+  glyphSource->SetGlyphType(displayNode->GetGlyphType());
+  glyphSource->Update();
+  glyphSource->SetScale(1.0);
+
+  if (fiducialNode->GetSelected())
+    {
+    // use the selected color
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->GetProperty()->SetColor(displayNode->GetSelectedColor());
+    }
+  else
+    {
+    // use the normal color
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->GetProperty()->SetColor(displayNode->GetColor());
+    }
+
+  vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetHandle(glyphSource->GetOutput());
+
+  // the following check is only needed since we require a different uniform scale depending on 2D and 3D
+  if (this->GetSliceNode())
+    {
+
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetUniformScale(displayNode->GetGlyphScale()/300);
+
+    }
+  else
+    {
+
+    vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0))->SetUniformScale(displayNode->GetGlyphScale());
+
     }
 
   seedRepresentation->NeedToRenderOn();
