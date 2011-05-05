@@ -40,6 +40,8 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Lock/Unlock all widgets
+  void UpdateLockedAllWidgets(bool locked);
   /// Lock/Unlock a widget
   void UpdateLocked(vtkMRMLAnnotationNode* node);
   /// Hide/Show a widget
@@ -57,6 +59,9 @@ public:
   void RemoveWidgetAndNode(vtkMRMLAnnotationNode *node);
 
 
+  /// Search the annotation node list and return the annotation node that has this display node
+  vtkMRMLAnnotationNode * GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode *displayNode);
+  
   //----------------------------------------------------------------------------------
   // The Lists!!
   //

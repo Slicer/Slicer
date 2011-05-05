@@ -53,6 +53,29 @@ vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerH
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgets(bool locked)
+{
+  // loop through all widgets and update lock status
+  vtkDebugMacro("UpdateLockedAllWidgets: locked = " << locked);
+  for (WidgetsIt it = this->Widgets.begin();
+       it !=  this->Widgets.end();
+       ++it)
+    {
+    if (it->second)
+      {
+      if (locked)
+        {
+        it->second->ProcessEventsOff();
+        }
+      else
+        {
+        it->second->ProcessEventsOn();
+        }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNode* node)
 {
   // Sanity checks
@@ -97,6 +120,11 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
   if (node->GetVisible())
     {
     widget->EnabledOn();
+    vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+    if (seedWidget)
+      {
+      seedWidget->CompleteInteraction();
+      }
     }
   else
     {
@@ -124,6 +152,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateWidget(
   this->UpdateVisible(node);
 
 }
+
 
 //---------------------------------------------------------------------------
 vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetWidget(
@@ -277,8 +306,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
     seedWidget->SetInteractor(interactor);
     seedWidget->SetCurrentRenderer(renderer);
 
-    seedWidget->ProcessEventsOff();
     seedWidget->CompleteInteraction();
+    seedWidget->ProcessEventsOff();
 
     this->SeedWidget = seedWidget;
 
@@ -298,7 +327,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
   this->HandleWidgetList.push_back(newhandle);
 
   this->SeedWidget->On();
-
+  this->SeedWidget->CompleteInteraction();
 }
 
 //---------------------------------------------------------------------------
@@ -325,4 +354,35 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetSeed(int index)
     }
 
   return this->HandleWidgetList[index];
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationNode * vtkMRMLAnnotationDisplayableManagerHelper::GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode *displayNode)
+{
+  if (!displayNode ||
+      !displayNode->GetID())
+    {
+    vtkErrorMacro("GetAnnotationNodeFromDisplayNode: display node or it's id is null");
+    return NULL;
+    }
+  // iterate through the node list
+  for (unsigned int i = 0; i < this->AnnotationNodeList.size(); i++)
+    {
+    vtkMRMLAnnotationNode *annotationNode = this->AnnotationNodeList[i];
+    int numNodes = annotationNode->GetNumberOfDisplayNodes();
+    for (int n = 0; n < numNodes; n++)
+      {
+      vtkMRMLDisplayNode *thisDisplayNode = annotationNode->GetNthDisplayNode(n);
+      if (thisDisplayNode && thisDisplayNode->GetID() &&
+          displayNode->GetID())
+        {
+        if (strcmp(thisDisplayNode->GetID(),displayNode->GetID()) == 0)
+          {
+          return annotationNode;
+          }
+        }
+      }
+    }
+  vtkDebugMacro("GetAnnotationNodeFromDisplayNode: unable to find annotation node that has display node " << (displayNode->GetID() ? displayNode->GetID() : "null"));
+  return NULL;
 }
