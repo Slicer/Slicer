@@ -321,6 +321,18 @@ void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
 {
   Q_D(qSlicerMouseModeToolBar);
 
+  // check to see if there's a currently selected annotation node
+  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
+  if ( selectionNode )
+    {
+    if (selectionNode->GetActiveAnnotationID() == NULL ||
+        strcmp(selectionNode->GetActiveAnnotationID(), "") == 0)
+      {
+      // set it to be fiducials
+      selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
+      }
+    }
+  
   vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
   if (interactionNode)
     {
@@ -337,17 +349,7 @@ void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
 {
   Q_D(qSlicerMouseModeToolBar);
 
-  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  if (interactionNode)
-    {
-    logger.trace("switchToSinglePlaceMode");
-    
-    interactionNode->SwitchToSinglePlaceMode();
-
-    d->SinglePlaceModeAction->setChecked(true);
-    }
-
-  // check to see if there's a currently selected fiducial node
+  // check to see if there's a currently selected annotation node
   vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
   if ( selectionNode )
     {
@@ -358,8 +360,16 @@ void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
       selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
       }
     }
- 
+  
+  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
+  if (interactionNode)
+    {
+    logger.trace("switchToSinglePlaceMode");
+    
+    interactionNode->SwitchToSinglePlaceMode();
 
+    d->SinglePlaceModeAction->setChecked(true);
+    }
   
 }
 
