@@ -120,7 +120,6 @@ OPTION(Slicer_USE_NUMPY       "Build Slicer with NumPy" ON)
 OPTION(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
 OPTION(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
 OPTION(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." ON)
-OPTION(Slicer_USE_OPENCV      "Build Slicer with OpenCV support." OFF)
 OPTION(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 MARK_AS_ADVANCED(Slicer_USE_CTKAPPLAUNCHER)
 SET(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK")
@@ -398,32 +397,6 @@ ENDIF()
 IF(Slicer_USE_OPENIGTLINK)
   FIND_PACKAGE(OpenIGTLink REQUIRED)
   INCLUDE(${OpenIGTLink_USE_FILE})
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# OpenCV (Built in Slicer3-lib)
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_OPENCV)
-  FIND_PACKAGE(OpenCV REQUIRED)
-
-  IF(OPENCV_BUILD_SETTINGS_FILE AND NOT SKIP_OPENCV_BUILD_SETTINGS_FILE)
-    INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
-    CMAKE_IMPORT_BUILD_SETTINGS(${OPENCV_BUILD_SETTINGS_FILE})
-  ENDIF()
-  
-  # Add compiler flags needed to use OPENCV.
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPENCV_REQUIRED_C_FLAGS}")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPENCV_REQUIRED_CXX_FLAGS}")
-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
-  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
-  SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OPENCV_REQUIRED_LINK_FLAGS}")
-  
-  # Add include directories needed to use OPENCV.
-  INCLUDE_DIRECTORIES(BEFORE ${OPENCV_INCLUDE_DIRS})
-  
-  # Add link directories needed to use OPENCV.
-  LINK_DIRECTORIES(${OPENCV_LIBRARY_DIRS})
-  #INCLUDE(${OPENCV_USE_FILE})
 ENDIF()
 
 #-----------------------------------------------------------------------------
