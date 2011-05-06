@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationROINode_h
 #define __vtkMRMLAnnotationROINode_h
 
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
@@ -9,7 +9,7 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationROINode *New();

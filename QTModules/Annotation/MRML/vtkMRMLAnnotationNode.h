@@ -13,14 +13,14 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLCameraNode.h"
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
 class vtkMRMLAnnotationTextDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLAnnotationNode *New();

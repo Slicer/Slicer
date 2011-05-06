@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationBidimensionalNode_h
 #define __vtkMRMLAnnotationBidimensionalNode_h
 
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
@@ -9,7 +9,7 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationBidimensionalNode : public vtkMRMLAnnotationLinesNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationBidimensionalNode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationBidimensionalNode *New();

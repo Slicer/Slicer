@@ -181,7 +181,7 @@ SET(qt_module_resources
 SET(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
-  AnnotationMRML
+  vtkSlicerAnnotationModuleMRML
 )
 
 #-----------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #ifndef __vtkMRMLAnnotationSnapshotNode_h
 #define __vtkMRMLAnnotationSnapshotNode_h
 
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 #include "vtkMRMLAnnotationNode.h"
 
@@ -15,7 +15,7 @@ class vtkStringArray;
 class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
 public:
   static vtkMRMLAnnotationSnapshotNode *New();

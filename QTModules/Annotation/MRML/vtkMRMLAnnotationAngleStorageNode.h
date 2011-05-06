@@ -6,13 +6,13 @@
 #ifndef __vtkMRMLAnnotationAngleStorageNode_h
 #define __vtkMRMLAnnotationAngleStorageNode_h
 
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 class vtkMRMLAnnotationAngleNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationAngleStorageNode : public vtkMRMLAnnotationLinesStorageNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationAngleStorageNode : public vtkMRMLAnnotationLinesStorageNode
 {
   public:
   static vtkMRMLAnnotationAngleStorageNode *New();

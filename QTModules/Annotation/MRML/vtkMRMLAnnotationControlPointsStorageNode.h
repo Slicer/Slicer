@@ -6,14 +6,14 @@
 #ifndef __vtkMRMLAnnotationControlPointsStorageNode_h
 #define __vtkMRMLAnnotationControlPointsStorageNode_h
 
-#include "AnnotationMRMLExport.h"
+#include "vtkSlicerAnnotationModuleMRMLExport.h"
 #include "vtkMRMLAnnotationStorageNode.h"
 
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationControlPointsNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  Q_SLICER_QTMODULES_ANNOTATION_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
+class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
 {
   public:
   static vtkMRMLAnnotationControlPointsStorageNode *New();
