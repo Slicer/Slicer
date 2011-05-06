@@ -270,11 +270,9 @@ ENDIF()
 # Slicer include and libraries subdirectory
 #
 
-SET(Slicer_Libs_LIBRARIES CACHE INTERNAL "Slicer Libs libraries" FORCE)
 SET(Slicer_Base_LIBRARIES CACHE INTERNAL "Slicer Base libraries" FORCE)
 SET(Slicer_ModuleLogic_LIBRARIES CACHE INTERNAL "Slicer Module logic libraries" FORCE)
 
-SET(Slicer_Libs_INCLUDE_DIRS CACHE INTERNAL "Slicer Libs includes" FORCE)
 SET(Slicer_Base_INCLUDE_DIRS CACHE INTERNAL "Slicer Base includes" FORCE)
 SET(Slicer_ModuleLogic_INCLUDE_DIRS CACHE INTERNAL "Slicer Module logic includes" FORCE)
 

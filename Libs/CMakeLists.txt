@@ -78,10 +78,10 @@ STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
 
 #-----------------------------------------------------------------------------
-# Update variable Slicer_Libs_LIBRARIES and Slicer_Libs_INCLUDE_DIRS
+# Set variable Slicer_Libs_LIBRARIES and Slicer_Libs_INCLUDE_DIRS
 #-----------------------------------------------------------------------------
-SET(Slicer_Libs_LIBRARIES ${Slicer_Libs_LIBRARIES} ${libs} CACHE INTERNAL "Slicer Libs libraries" FORCE)
-SET(Slicer_Libs_INCLUDE_DIRS ${Slicer_Libs_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
+SET(Slicer_Libs_LIBRARIES ${libs} CACHE INTERNAL "Slicer Libs libraries" FORCE)
+SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Loop over list of directories
