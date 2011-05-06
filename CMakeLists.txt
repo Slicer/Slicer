@@ -553,6 +553,8 @@ ADD_SUBDIRECTORY(Resources)
 # Module Logic
 #-----------------------------------------------------------------------------
 
+INCLUDE(SlicerMacroBuildModuleLibrary)
+INCLUDE(SlicerMacroPythonWrapModuleLibrary)
 INCLUDE(SlicerMacroBuildModuleLogic)
 
 # KWWidgets and Qt modules share the same logics typically located in the

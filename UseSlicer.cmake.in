@@ -66,6 +66,8 @@ link_directories(
 include(CMakeParseArguments)
 #include(ctkMacroCompilePythonScript)
 include(SlicerMacroParseArguments)
+include(SlicerMacroBuildModuleLibrary)
+#include(SlicerMacroPythonWrapModuleLibrary)
 include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildQtModule)
 
