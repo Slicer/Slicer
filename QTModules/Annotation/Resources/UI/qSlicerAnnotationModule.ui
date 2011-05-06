@@ -184,7 +184,7 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Bidimensional measurement</string>
+            <string>Bidimensional orthogonal measurement</string>
            </property>
            <property name="text">
             <string/>
