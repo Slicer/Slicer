@@ -550,12 +550,17 @@ ADD_SUBDIRECTORY(Base)
 ADD_SUBDIRECTORY(Resources)
 
 #-----------------------------------------------------------------------------
-# Module Logic
+# Macro useful to build ModuleLogic and ModuleMRML libraries
 #-----------------------------------------------------------------------------
 
 INCLUDE(SlicerMacroBuildModuleLibrary)
 INCLUDE(SlicerMacroPythonWrapModuleLibrary)
 INCLUDE(SlicerMacroBuildModuleLogic)
+INCLUDE(SlicerMacroBuildModuleMRML)
+
+#-----------------------------------------------------------------------------
+# Module Logic
+#-----------------------------------------------------------------------------
 
 # KWWidgets and Qt modules share the same logics typically located in the
 # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt

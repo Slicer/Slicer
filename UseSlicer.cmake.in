@@ -69,5 +69,6 @@ include(SlicerMacroParseArguments)
 include(SlicerMacroBuildModuleLibrary)
 #include(SlicerMacroPythonWrapModuleLibrary)
 include(SlicerMacroBuildModuleLogic)
+include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildQtModule)
 

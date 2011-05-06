@@ -7,6 +7,7 @@ SET(Slicer_PYTHON_SCRIPTS
   slicer/slicerqt
   slicer/util
   slicer/modulelogic/__init__
+  slicer/modulemrml/__init__
   mrml
   mrmlcli
   mrmlLogic
