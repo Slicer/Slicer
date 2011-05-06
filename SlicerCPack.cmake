@@ -257,5 +257,12 @@ set(CPACK_BINARY_STGZ OFF CACHE BOOL "Enable to build STGZ packages" FORCE)
 set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages" FORCE)
 set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
 
+set(CPACK_BINARY_PACKAGEMAKER OFF CACHE BOOL "Enable to build PackageMaker packages" FORCE)
+
+# -------------------------------------------------------------------------
+# Enable generator disabled by default
+# -------------------------------------------------------------------------
+set(CPACK_BINARY_DRAGNDROP ON CACHE BOOL "Enable to build OSX Drag And Drop packages" FORCE)
+
 include(CPack)
 
