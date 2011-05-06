@@ -79,6 +79,14 @@ set(libs ${ITK_LIBRARIES})
 target_link_libraries(${lib_name} ${libs})
 
 # --------------------------------------------------------------------------
+# Export target
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+ENDIF()
+EXPORT(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+
+# --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)

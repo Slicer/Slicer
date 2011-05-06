@@ -170,6 +170,13 @@ if(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
 
+# --------------------------------------------------------------------------
+# Export target
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+ENDIF()
+EXPORT(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install library

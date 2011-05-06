@@ -22,6 +22,12 @@ IF(DEFINED SlicerExecutionModel_INSTALL_NO_DEVELOPMENT)
   SET(tclap_INSTALL_NO_DEVELOPMENT ${SlicerExecutionModel_INSTALL_NO_DEVELOPMENT})
 ENDIF()
 
+IF(DEFINED SlicerExecutionModel_EXPORT_FILE)
+  SET(GenerateCLP_EXPORT_FILE ${SlicerExecutionModel_EXPORT_FILE})
+  SET(ModuleDescriptionParser_EXPORT_FILE ${SlicerExecutionModel_EXPORT_FILE})
+  #SET(tclap_EXPORT_FILE ${SlicerExecutionModel_EXPORT_FILE})
+ENDIF()
+
 
 # --------------------------------------------------------------------------
 # SETIFEMPTY

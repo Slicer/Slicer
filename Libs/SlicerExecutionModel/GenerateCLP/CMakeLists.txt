@@ -51,12 +51,13 @@ include_directories(
 # --------------------------------------------------------------------------
 # Build executable
 # --------------------------------------------------------------------------
+set(executable_name GenerateCLP)
 set(GENERATECLP_SOURCE 
   GenerateCLP.cxx
   )
-add_executable(GenerateCLP ${GENERATECLP_SOURCE})
+add_executable(${executable_name} ${GENERATECLP_SOURCE})
 
-target_link_libraries(GenerateCLP
+target_link_libraries(${executable_name}
   # Appearently windows does not like static libs mixed with shared libs ModuleDescriptionParser-static
   # A different solution will have to be investigated for makeing GenerateCLP work without
   # shared libs.
@@ -65,6 +66,14 @@ target_link_libraries(GenerateCLP
   ITKEXPAT)
 
 include(GenerateGenerateCLPConfig.cmake)
+
+# --------------------------------------------------------------------------
+# Export target
+# --------------------------------------------------------------------------
+IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+ENDIF()
+EXPORT(TARGETS ${executable_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install executable
