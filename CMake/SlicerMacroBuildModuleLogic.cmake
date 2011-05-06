@@ -106,21 +106,10 @@ MACRO(SlicerMacroBuildModuleLogic)
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
     )
 
-  # TODO: fix this
-  # HACK Since we don't depend on qSlicerBaseQT{Base, Core, CLI, CoreModules, GUI},
-  # let's remove them from the list
-  SET(Slicer_ModuleLogic_Base_LIBRARIES ${Slicer_Base_LIBRARIES})
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES qSlicerBaseQTBase)
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES qSlicerBaseQTCore)
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES qSlicerBaseQTCLI)
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES qSlicerBaseQTCoreModules)
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES qSlicerBaseQTGUI)
-  # Let's also remove dependency on SlicerBaseGUI
-  LIST(REMOVE_ITEM Slicer_ModuleLogic_Base_LIBRARIES SlicerBaseGUI)
-
   TARGET_LINK_LIBRARIES(${lib_name}
     ${Slicer_Libs_LIBRARIES}
-    ${Slicer_ModuleLogic_Base_LIBRARIES}
+    SlicerBaseLogic
+    SlicerBaseCLI
     ${Slicer_ModuleLogic_LIBRARIES}
     ${MODULELOGIC_TARGET_LIBRARIES}
     )
