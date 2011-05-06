@@ -122,7 +122,13 @@ function(midas_add_test)
   endforeach(arg)
 
   file(WRITE "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/${testName}_fetchData.cmake"
-       "#This is an auto generated file -- do not edit\n\n")
+# Start file content
+"#This is an auto generated file -- do not edit
+
+set(midas_test_name \"${testName}\")
+")
+# End file content
+
   list(REMOVE_DUPLICATES downloadScripts)
   foreach(downloadScript ${downloadScripts})
     file(APPEND "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/${testName}_fetchData.cmake" "include(\"${downloadScript}\")\n")
@@ -161,49 +167,55 @@ macro(_process_keyfile keyFile testName extractTgz)
     set(cmake_symlink copy) # Windows has no symlinks; copy instead.
   endif()
   file(WRITE "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake"
-  "message(STATUS \"Data is here: ${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\")
+# Start file content
+"message(STATUS \"Data is here: ${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\")
 if(NOT EXISTS \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
-  file(DOWNLOAD \"${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
+  file(DOWNLOAD \"${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
   list(GET status 0 exitCode)
   list(GET status 1 errMsg)
   if(NOT exitCode EQUAL 0)
-    file(REMOVE \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\")
+    file(REMOVE \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\")
     message(FATAL_ERROR \"Error downloading ${checksum}: \${errMsg}\")
   endif(NOT exitCode EQUAL 0)
 
-  execute_process(COMMAND \"${CMAKE_COMMAND}\" -E md5sum \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\" OUTPUT_VARIABLE output)
+  execute_process(COMMAND \"${CMAKE_COMMAND}\" -E md5sum \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" OUTPUT_VARIABLE output)
   string(SUBSTRING \${output} 0 32 computedChecksum)
 
   if(NOT computedChecksum STREQUAL ${checksum})
-    file(READ \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\" serverResponse)
-    file(REMOVE \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\")
+    file(READ \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" serverResponse)
+    file(REMOVE \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\")
     message(FATAL_ERROR \"Error: Computed checksum (\${computedChecksum}) did not match expected (${checksum}). Server response: \${serverResponse}\")
   else(NOT computedChecksum STREQUAL ${checksum})
-    file(RENAME \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
+    file(RENAME \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
   endif(NOT computedChecksum STREQUAL ${checksum})
 endif(NOT EXISTS \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
 
 file(MAKE_DIRECTORY \"${MIDAS_DATA_DIR}/${base_filepath}\")
-file(MAKE_DIRECTORY \"${MIDAS_DATA_DIR}/${testName}_${base_filepath}\")
+file(MAKE_DIRECTORY \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_filepath}\")
 ")
+# End file content
 
   if(${extractTgz})
     file(APPEND "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake"
-         "# Extract the contents of the tgz
+# Start file content
+"# Extract the contents of the tgz
 get_filename_component(dirName \"${base_filename}\" NAME_WE)
-file(MAKE_DIRECTORY \"${MIDAS_DATA_DIR}/${testName}_${base_filepath}/\${dirName}\")
+file(MAKE_DIRECTORY \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_filepath}/\${dirName}\")
 execute_process(COMMAND \"${CMAKE_COMMAND}\" -E tar xzf \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\"
-                WORKING_DIRECTORY \"${MIDAS_DATA_DIR}/${testName}_${base_filepath}/\${dirName}\")
+                WORKING_DIRECTORY \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_filepath}/\${dirName}\")
 file(REMOVE_RECURSE \"${MIDAS_DATA_DIR}/${base_filepath}/\${dirName}\")
-file(RENAME \"${MIDAS_DATA_DIR}/${testName}_${base_filepath}/\${dirName}\" \"${MIDAS_DATA_DIR}/${base_filepath}/\${dirName}\")
+file(RENAME \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_filepath}/\${dirName}\" \"${MIDAS_DATA_DIR}/${base_filepath}/\${dirName}\")
 ")
+# End file content
   else()
     file(APPEND "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake"
-         "# Create a human-readable file name for the data.
-file(REMOVE \"${MIDAS_DATA_DIR}/${testName}_${base_file}\")
-execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${cmake_symlink} \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\" \"${MIDAS_DATA_DIR}/${testName}_${base_file}\" WORKING_DIRECTORY \"${MIDAS_DATA_DIR}\")
-file(RENAME \"${MIDAS_DATA_DIR}/${testName}_${base_file}\" \"${MIDAS_DATA_DIR}/${base_file}\")
+# Start file content
+"# Create a human-readable file name for the data.
+file(REMOVE \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_file}\")
+execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${cmake_symlink} \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\" \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_file}\" WORKING_DIRECTORY \"${MIDAS_DATA_DIR}\")
+file(RENAME \"${MIDAS_DATA_DIR}/\${midas_test_name}_${base_file}\" \"${MIDAS_DATA_DIR}/${base_file}\")
 ")
+# End file content
   endif(${extractTgz})
 
   list(APPEND downloadScripts "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake")
