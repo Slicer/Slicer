@@ -2,6 +2,10 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "CropVolume")
 
+# Build module sub libraries
+#ADD_SUBDIRECTORY(MRML)
+#ADD_SUBDIRECTORY(Logic)
+
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_CROPVOLUME_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included

@@ -2,11 +2,10 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Annotation")
 
+# Build module sub libraries
+ADD_SUBDIRECTORY(MRML)
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
-
-# Add subdirectories
-ADD_SUBDIRECTORY(MRML)
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories

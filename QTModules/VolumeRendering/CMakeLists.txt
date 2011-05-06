@@ -1,11 +1,11 @@
 
-# Add subdirectories
+# Module name (usually identique to the directory name)
+SET(qt_module_name "VolumeRendering")
+
+# Build module sub libraries
 ADD_SUBDIRECTORY(MRML)
 ADD_SUBDIRECTORY(VolumeRenderingReplacements)
 ADD_SUBDIRECTORY(Logic)
-
-# Module name (usually identique to the directory name)
-SET(qt_module_name "VolumeRendering")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT")
 

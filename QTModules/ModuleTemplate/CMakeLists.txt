@@ -1,9 +1,9 @@
 
-# Add subdirectories
-ADD_SUBDIRECTORY(Logic)
-
 # Module name (usually identique to the directory name)
 SET(qt_module_name "ModuleTemplate")
+
+# Build module sub libraries
+ADD_SUBDIRECTORY(Logic)
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_MODULETEMPLATE_EXPORT")
 

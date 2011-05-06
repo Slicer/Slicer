@@ -1,4 +1,4 @@
-project(vtkSlicerVolumesModuleLogic)
+PROJECT(vtkSlicerVolumesModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details

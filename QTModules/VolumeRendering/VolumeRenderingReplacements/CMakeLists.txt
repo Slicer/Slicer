@@ -1,4 +1,4 @@
-project(VolumeRenderingReplacements)
+PROJECT(VolumeRenderingReplacements)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -6,7 +6,7 @@ project(VolumeRenderingReplacements)
 
 SET(module_replacements_name "${PROJECT_NAME}")
 
-# The header '${PROJECT_NAME}Export.h' will be automatically configured.
+# The header '${module_replacements_name}Export.h' will be automatically configured.
 SET(module_replacements_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT")
 
 # Additional directories to include

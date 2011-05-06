@@ -1,4 +1,4 @@
-project(vtkSlicerVolumeRenderingModuleMRML)
+PROJECT(vtkSlicer${qt_module_name}ModuleMRML)
 
 #
 # See CMake/SlicerMacroBuildModuleMRML.cmake for details
@@ -6,7 +6,7 @@ project(vtkSlicerVolumeRenderingModuleMRML)
 
 SET(module_mrml_name "${PROJECT_NAME}")
 
-# The header '${PROJECT_NAME}Export.h' will be automatically configured.
+# The header '${module_mrml_name}Export.h' will be automatically configured.
 SET(module_mrml_export_directive "VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT")
 
 # Additional directories to include
