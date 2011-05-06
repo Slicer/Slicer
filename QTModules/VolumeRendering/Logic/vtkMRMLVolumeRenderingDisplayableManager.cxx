@@ -1,5 +1,3 @@
-#include "VolumeRenderingLogicExport.h"
-
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
 #include "vtkVolumeProperty.h"
