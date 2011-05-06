@@ -24,6 +24,7 @@ set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
 set(CTEST_CMAKE_COMMAND   "$ENV{HOME}/Dashboards/Support/cmake-2.8.3-rc3-Linux-i386/bin/cmake")
 # Open a shell and type in "cmake --help" to obtain the proper spelling of the generator
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+set(MY_BITNESS            "64")
 
 #
 # Dashboard options
@@ -74,7 +75,7 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
 # Update the following variable to match the chosen build options. This variable is used to 
 # generate both the build directory and the build name.
 # See http://www.cdash.org/CDash/index.php?project=Slicer4 for examples
-set(BUILD_OPTIONS_STRING "PythonQt-With-Tcl-NoCLI") 
+set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}-PythonQt-With-Tcl-NoCLI") 
 
 #
 # Project specific properties
@@ -101,7 +102,7 @@ set(CTEST_NOTES_FILES "${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}")
 # Project specific properties
 #
 set(CTEST_PROJECT_NAME "Slicer4")
-set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-QT${MY_QT_VERSION}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
+set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
 
 #
 # Display build info
