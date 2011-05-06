@@ -126,6 +126,12 @@ set(Slicer_ModuleLogic_LIBRARY_DIRS "@Slicer_ModuleLogic_LIBRARY_DIRS_CONFIG@")
 # Slicer Module logic include file directories.
 set(Slicer_ModuleLogic_INCLUDE_DIRS "@Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG@")
 
+# Slicer Module MRML library directories.
+set(Slicer_ModuleMRML_LIBRARY_DIRS "@Slicer_ModuleMRML_LIBRARY_DIRS_CONFIG@")
+
+# Slicer Module MRML include file directories.
+set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@")
+
 # The location of the UseSlicer.cmake file.
 set(Slicer_USE_FILE "@Slicer_USE_FILE_CONFIG@")
 

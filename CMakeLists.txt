@@ -275,6 +275,7 @@ SET(Slicer_ModuleLogic_LIBRARIES CACHE INTERNAL "Slicer Module logic libraries" 
 
 SET(Slicer_Base_INCLUDE_DIRS CACHE INTERNAL "Slicer Base includes" FORCE)
 SET(Slicer_ModuleLogic_INCLUDE_DIRS CACHE INTERNAL "Slicer Module logic includes" FORCE)
+SET(Slicer_ModuleMRML_INCLUDE_DIRS CACHE INTERNAL "Slicer Module logic includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
