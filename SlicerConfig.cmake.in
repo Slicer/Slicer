@@ -97,6 +97,9 @@ set(Slicer_HOME "@Slicer_HOME@")
 # automatically pull in their dependencies.
 set(Slicer_Libs_LIBRARIES "@Slicer_Libs_LIBRARIES@")
 
+# Slicer Libs VTK wrapped libraries
+set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
+
 # Slicer Libs library directories.
 set(Slicer_Libs_LIBRARY_DIRS "@Slicer_Libs_LIBRARY_DIRS_CONFIG@")
 

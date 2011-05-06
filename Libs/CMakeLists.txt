@@ -84,6 +84,20 @@ SET(Slicer_Libs_LIBRARIES ${libs} CACHE INTERNAL "Slicer Libs libraries" FORCE)
 SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
 
 #-----------------------------------------------------------------------------
+# Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
+#-----------------------------------------------------------------------------
+SET(Slicer_Libs_VTK_WRAPPED_LIBRARIES 
+  vtkTeem
+  vtkITK
+  FreeSurfer
+  MRML
+  MRMLCLI
+  MRMLLogic
+  MRMLDisplayableManager
+  RemoteIO
+  CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)
+
+#-----------------------------------------------------------------------------
 # Loop over list of directories
 #-----------------------------------------------------------------------------
 FOREACH(dir ${dirs})

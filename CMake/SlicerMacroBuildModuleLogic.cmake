@@ -163,15 +163,17 @@ MACRO(SlicerMacroBuildModuleLogic)
     SET(VTK_WRAPPED_LIBRARIES
       vtkVolumeRenderingPythonD
       )
+    
+    SET(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)
+    FOREACH(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
+      LIST(APPEND Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    ENDFOREACH()
 
-    # TODO: Slicer's Use file should export this list automatically
-    # (currently the wrapped and non-wrapped libs are mixed together)
-    # See "HACK" above
     SET(Slicer_Wrapped_LIBRARIES
-      vtkTeemPythonD vtkITKPythonD FreeSurferPythonD MRMLPythonD MRMLCLIPythonD MRMLLogicPythonD MRMLDisplayableManagerPythonD
-      RemoteIOPythonD SlicerBaseLogicPythonD
+      ${Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES}
+      SlicerBaseLogicPythonD
+      ${VTK_WRAPPED_LIBRARIES}
       )
-    LIST(APPEND Slicer_Wrapped_LIBRARIES ${VTK_WRAPPED_LIBRARIES})
 
     vtkMacroKitPythonWrap(
       KIT_NAME ${lib_name}
