@@ -578,6 +578,19 @@ vtkMRMLSliceNode * vtkMRMLAnnotationDisplayableManager::GetSliceNode()
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::Is2DDisplayableManager()
+{
+  if (this->m_SliceNode != NULL)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode* sliceNode)
 {
 
@@ -1025,7 +1038,7 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManager::GetSeed(int index)
 void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates)
 {
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
     // 2D case
 
@@ -1101,7 +1114,7 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double * 
 void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates)
 {
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
     // 2D case
 
@@ -1154,7 +1167,7 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double
   double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
   double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
   
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
     // 2D case
 

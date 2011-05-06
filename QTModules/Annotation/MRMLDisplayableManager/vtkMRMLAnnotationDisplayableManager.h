@@ -53,6 +53,10 @@ public:
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
+  /// Check if this is a 2d SliceView displayable manager, returns true if so,
+  /// false otherwise. Checks return from GetSliceNode for non null, which means
+  /// it's a 2d displayable manager
+  virtual bool Is2DDisplayableManager();
   /// Get the sliceNode, if registered. This would mean it is a 2D SliceView displayableManager.
   vtkMRMLSliceNode * GetSliceNode();
 
