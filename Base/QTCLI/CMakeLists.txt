@@ -60,7 +60,6 @@ SET(KIT_resources
 SET(KIT_target_libraries
   qSlicerBaseQTCore
   qSlicerBaseQTGUI
-  #SlicerBaseLogic
   ModuleDescriptionParser
   MRMLCLI
   )

@@ -44,18 +44,11 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIR
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
-# Link directories
+# Static or Shared library
 #------------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ${Slicer_BUILD_SHARED})
 endif()
-
-link_directories(
-  ${Slicer_Libs_LIBRARY_DIRS}
-  ${Slicer_Base_LIBRARY_DIRS}
-  ${Slicer_ModuleLogic_LIBRARY_DIRS}
-  ${Slicer_ModuleMRML_LIBRARY_DIRS}
-  )
 
 #-----------------------------------------------------------------------------
 # Include directories - See SlicerMacroBuildQtModule

@@ -65,15 +65,12 @@ ADD_LIBRARY(${lib_name}
   ${SlicerQT_SRCS}
   ${SlicerQT_UI_CXX}
   ${SlicerQT_QRC_SRCS}
-)
+  )
 SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS SlicerQT)
 
-# HACK Since we don't depend on SlicerBaseGUI, remove it from the list
-SET(Slicer_BaseQT_LIBRARIES ${Slicer_Base_LIBRARIES})
-LIST(REMOVE_ITEM Slicer_BaseQT_LIBRARIES SlicerBaseGUI)
-
-SET(SlicerQT_LIBRARIES 
-  ${Slicer_BaseQT_LIBRARIES}
+SET(SlicerQT_LIBRARIES
+  qSlicerBaseQTCLI
+  qSlicerBaseQTCoreModules
   )
 
 IF(Slicer_USE_PYTHONQT)
@@ -82,7 +79,7 @@ IF(Slicer_USE_PYTHONQT)
     qSlicerBaseQTCorePythonQt
     qSlicerBaseQTGUIPythonQt
     )
-ENDIF(Slicer_USE_PYTHONQT)
+ENDIF()
 
 target_link_libraries(${lib_name} 
   ${SlicerQT_LIBRARIES}

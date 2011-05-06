@@ -62,8 +62,8 @@ MACRO(slicerMacroBuildQtModule)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
-    ${MRMLLogic_SOURCE_DIR}
-    ${MRMLLogic_BINARY_DIR}
+    ${Slicer_ModuleLogic_INCLUDE_DIRS}
+    ${Slicer_ModuleMRML_INCLUDE_DIRS}
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
 
@@ -141,8 +141,7 @@ MACRO(slicerMacroBuildQtModule)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
   TARGET_LINK_LIBRARIES(${lib_name}
-    ${Slicer_Libs_LIBRARIES}
-    ${Slicer_Base_LIBRARIES}
+    ${Slicer_GUI_LIBRARY}
     ${QTMODULE_TARGET_LIBRARIES}
     )
 

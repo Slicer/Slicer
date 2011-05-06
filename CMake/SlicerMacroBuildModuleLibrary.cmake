@@ -136,5 +136,10 @@ MACRO(SlicerMacroBuildModuleLibrary)
       DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${MODULELIBRARY_NAME} COMPONENT Development
       )
   ENDIF()
+  
+  # --------------------------------------------------------------------------
+  # Export target
+  # --------------------------------------------------------------------------
+  SET_PROPERTY(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULELIBRARY_NAME})
     
 ENDMACRO()

@@ -27,18 +27,13 @@ SET(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
 # Path to extension CPack script
 set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/SlicerExtensionCPack.cmake)
 
+SET(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
+SET(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
+
 SET(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
-SET(Slicer_Libs_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin ${Slicer_BINARY_DIR}/lib)
-
 SET(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
-SET(Slicer_Base_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin)
-
 SET(Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG ${Slicer_ModuleLogic_INCLUDE_DIRS})
-SET(Slicer_ModuleLogic_LIBRARY_DIRS_CONFIG ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR})
-
 SET(Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG ${Slicer_ModuleMRML_INCLUDE_DIRS})
-SET(Slicer_ModuleMRML_LIBRARY_DIRS_CONFIG ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR})
-
 
 # Qt
 SET(QT_QMAKE_EXECUTABLE_CONFIG ${QT_QMAKE_EXECUTABLE})
@@ -65,7 +60,10 @@ IF(Slicer_USE_BatchMake)
   LIST(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG BatchMake)
 ENDIF()
 
-# Configure SlicerConfig.cmake for the install tree.
+# Export Targets file.
+SET(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
+
+# Configure SlicerConfig.cmake for the build tree.
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/SlicerConfig.cmake.in
   ${Slicer_BINARY_DIR}/SlicerConfig.cmake @ONLY)

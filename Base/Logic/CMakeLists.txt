@@ -165,11 +165,6 @@ IF(Slicer_LIBRARY_PROPERTIES)
 ENDIF()
 
 # --------------------------------------------------------------------------
-# Update Slicer_Base_LIBRARIES
-# --------------------------------------------------------------------------
-SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
-
-# --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
 install(TARGETS ${lib_name}

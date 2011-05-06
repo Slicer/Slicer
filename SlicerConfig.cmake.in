@@ -92,41 +92,26 @@ SET(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
 # Slicer home (top of the tree)
 set(Slicer_HOME "@Slicer_HOME@")
 
-# Slicer Libs libraries.  Those listed here should
-# automatically pull in their dependencies.
-set(Slicer_Libs_LIBRARIES "@Slicer_Libs_LIBRARIES@")
+# Slicer Core library
+set(Slicer_CORE_LIBRARY @Slicer_CORE_LIBRARY_CONFIG@)
+
+# Slicer GUI library
+set(Slicer_GUI_LIBRARY @Slicer_GUI_LIBRARY_CONFIG@)
+
+# MRML libraries
+set(MRML_LIBRARIES @MRML_LIBRARIES@)
 
 # Slicer Libs VTK wrapped libraries
 set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
 
-# Slicer Libs library directories.
-set(Slicer_Libs_LIBRARY_DIRS "@Slicer_Libs_LIBRARY_DIRS_CONFIG@")
-
 # Slicer Libs include file directories.
 set(Slicer_Libs_INCLUDE_DIRS "@Slicer_Libs_INCLUDE_DIRS_CONFIG@")
-
-# Slicer Base libraries.  Those listed here should
-# automatically pull in their dependencies.
-set(Slicer_Base_LIBRARIES "@Slicer_Base_LIBRARIES@")
-
-# Slicer Base library directories.
-set(Slicer_Base_LIBRARY_DIRS "@Slicer_Base_LIBRARY_DIRS_CONFIG@")
 
 # Slicer Base include file directories.
 set(Slicer_Base_INCLUDE_DIRS "@Slicer_BINARY_DIR@" "@Slicer_Base_INCLUDE_DIRS_CONFIG@")
 
-# Slicer Module logic libraries.  Those listed here should
-# automatically pull in their dependencies.
-set(Slicer_ModuleLogic_LIBRARIES "@Slicer_ModuleLogic_LIBRARIES@")
-
-# Slicer Module logic library directories.
-set(Slicer_ModuleLogic_LIBRARY_DIRS "@Slicer_ModuleLogic_LIBRARY_DIRS_CONFIG@")
-
 # Slicer Module logic include file directories.
 set(Slicer_ModuleLogic_INCLUDE_DIRS "@Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG@")
-
-# Slicer Module MRML library directories.
-set(Slicer_ModuleMRML_LIBRARY_DIRS "@Slicer_ModuleMRML_LIBRARY_DIRS_CONFIG@")
 
 # Slicer Module MRML include file directories.
 set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@")
@@ -156,4 +141,9 @@ ENDIF()
 
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
+
+# The Slicer targets file.
+IF(EXISTS "@Slicer_TARGETS_FILE@")
+  INCLUDE("@Slicer_TARGETS_FILE@")
+ENDIF()
 

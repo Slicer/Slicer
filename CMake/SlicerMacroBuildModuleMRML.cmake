@@ -33,11 +33,6 @@ MACRO(SlicerMacroBuildModuleMRML)
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )
-    
-  LIST(APPEND MODULEMRML_TARGET_LIBRARIES
-    ${Slicer_Libs_LIBRARIES}
-    ${Slicer_ModuleMRML_LIBRARIES}
-    )
   
   SlicerMacroBuildModuleLibrary(
     NAME ${MODULEMRML_NAME}
@@ -48,18 +43,15 @@ MACRO(SlicerMacroBuildModuleMRML)
     )
 
   #-----------------------------------------------------------------------------
-  # Update Slicer_ModuleMRML_INCLUDE_DIRS and Slicer_ModuleMRML_LIBRARIES
+  # Update Slicer_ModuleMRML_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  SET(Slicer_ModuleMRML_INCLUDE_DIRS
-    ${Slicer_ModuleMRML_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    CACHE INTERNAL "Slicer Module MRML includes" FORCE)
-  
-  SET(Slicer_ModuleMRML_LIBRARIES 
-    ${Slicer_ModuleMRML_LIBRARIES}
-    ${ModuleMRML_NAME}
-    CACHE INTERNAL "Slicer Module MRML libraries" FORCE)
+  IF(Slicer_SOURCE_DIR)
+    SET(Slicer_ModuleMRML_INCLUDE_DIRS
+      ${Slicer_ModuleMRML_INCLUDE_DIRS}
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      CACHE INTERNAL "Slicer Module MRML includes" FORCE)
+  ENDIF()
   
   # --------------------------------------------------------------------------
   # Python wrapping

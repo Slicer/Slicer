@@ -156,11 +156,6 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     ${SLICERQTBASELIB_QRC_SRCS}
     ${dynamicHeaders}
   )
-
-  # --------------------------------------------------------------------------
-  # Update Slicer_Base_LIBRARIES
-  # --------------------------------------------------------------------------
-  SET(Slicer_Base_LIBRARIES ${Slicer_Base_LIBRARIES} ${lib_name} CACHE INTERNAL "Slicer Base libraries" FORCE)
   
   # --------------------------------------------------------------------------
   # Build the library
@@ -225,5 +220,10 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
       SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
     ENDIF()
   ENDIF()
+  
+  # --------------------------------------------------------------------------
+  # Export target
+  # --------------------------------------------------------------------------
+  SET_PROPERTY(GLOBAL APPEND PROPERTY Slicer_TARGETS ${SLICERQTBASELIB_NAME})
 
 ENDMACRO()

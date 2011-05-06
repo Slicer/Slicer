@@ -73,14 +73,20 @@ ENDFOREACH()
 # Since there is inconsistency between library name and project/dir name, 
 # let's tweak the list of generated library names
 
-STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
-STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
-LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
+#STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
+#STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
+#LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
+
+# Anticipating the move of MRML related libraries to a standalone project, 
+# let's group these libraries.
+# Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
+SET(MRML_LIBRARIES 
+  MRML MRMLCLI MRMLLogic MRMLDisplayableManager 
+  CACHE INTERNAL "MRML libraries" FORCE)
 
 #-----------------------------------------------------------------------------
-# Set variable Slicer_Libs_LIBRARIES and Slicer_Libs_INCLUDE_DIRS
+# Set variable Slicer_Libs_INCLUDE_DIRS
 #-----------------------------------------------------------------------------
-SET(Slicer_Libs_LIBRARIES ${libs} CACHE INTERNAL "Slicer Libs libraries" FORCE)
 SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
 
 #-----------------------------------------------------------------------------

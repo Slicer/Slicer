@@ -24,6 +24,7 @@ SET(module_mrml_SRCS
 # Additional Target libraries
 SET(module_mrml_target_libraries
   ${ITK_LIBRARIES}
+  ${MRML_LIBRARIES}
   )
 
 SlicerMacroBuildModuleMRML(

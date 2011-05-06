@@ -33,13 +33,16 @@ MACRO(SlicerMacroBuildModuleLogic)
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
     ${Slicer_ModuleLogic_INCLUDE_DIRS}
+    ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )
+  
+  # Note: Linking against qSlicerBaseQTCLI provides logic with 
+  #       access to the core application modulemanager. Using the module manager
+  #       a module logic can then use the services provided by registrered 
+  #       command line module (CLI).
     
   LIST(APPEND MODULELOGIC_TARGET_LIBRARIES
-    ${Slicer_Libs_LIBRARIES}
-    SlicerBaseLogic
-    SlicerBaseCLI
-    ${Slicer_ModuleLogic_LIBRARIES}
+    qSlicerBaseQTCLI
     )
   
   SlicerMacroBuildModuleLibrary(
@@ -51,18 +54,15 @@ MACRO(SlicerMacroBuildModuleLogic)
     )
 
   #-----------------------------------------------------------------------------
-  # Update Slicer_ModuleLogic_INCLUDE_DIRS and Slicer_ModuleLogic_LIBRARIES
+  # Update Slicer_ModuleLogic_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  SET(Slicer_ModuleLogic_INCLUDE_DIRS
-    ${Slicer_ModuleLogic_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    CACHE INTERNAL "Slicer Module logic includes" FORCE)
-  
-  SET(Slicer_ModuleLogic_LIBRARIES 
-    ${Slicer_ModuleLogic_LIBRARIES}
-    ${MODULELOGIC_NAME}
-    CACHE INTERNAL "Slicer Module logic libraries" FORCE)
+  IF(Slicer_SOURCE_DIR)
+    SET(Slicer_ModuleLogic_INCLUDE_DIRS
+      ${Slicer_ModuleLogic_INCLUDE_DIRS}
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      CACHE INTERNAL "Slicer Module logic includes" FORCE)
+  ENDIF()
   
   # --------------------------------------------------------------------------
   # Python wrapping

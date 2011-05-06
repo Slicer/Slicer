@@ -28,9 +28,14 @@
 # end of CMakeLists processing, i.e. instead of waiting until some variables
 # are configured in SUBDIRS.
 
+#-----------------------------------------------------------------------------
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
   ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY)
+
+#-----------------------------------------------------------------------------
+GET_PROPERTY(Slicer_TARGETS GLOBAL PROPERTY Slicer_TARGETS)
+EXPORT(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
 
 #-----------------------------------------------------------------------------
 # Create the SlicerConfig.cmake file containing the Slicer configuration.
