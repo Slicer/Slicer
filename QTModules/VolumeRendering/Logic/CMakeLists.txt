@@ -11,8 +11,8 @@ SET(module_logic_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPO
 
 # Additional directories to include
 SET(module_logic_include_directories
-  ${VolumeRenderingMRML_SOURCE_DIR}
-  ${VolumeRenderingMRML_BINARY_DIR}
+  ${vtkSlicerVolumeRenderingModuleMRML_SOURCE_DIR}
+  ${vtkSlicerVolumeRenderingModuleMRML_BINARY_DIR}
   ${VolumeRenderingReplacements_SOURCE_DIR}
   ${VolumeRenderingReplacements_BINARY_DIR}
   )
@@ -43,7 +43,7 @@ SET(module_logic_SRCS
 
 # Additional Target libraries
 SET(module_logic_target_libraries
-  VolumeRenderingMRML
+  vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
   )
 
