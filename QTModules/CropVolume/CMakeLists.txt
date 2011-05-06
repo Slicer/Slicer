@@ -3,8 +3,8 @@
 SET(qt_module_name "CropVolume")
 
 # Build module sub libraries
-#ADD_SUBDIRECTORY(MRML)
-#ADD_SUBDIRECTORY(Logic)
+ADD_SUBDIRECTORY(MRML)
+ADD_SUBDIRECTORY(Logic)
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_CROPVOLUME_EXPORT")
 
@@ -12,14 +12,6 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_CROPVOLUME_EXPORT")
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
-  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-  ${CMAKE_CURRENT_BINARY_DIR}/Logic
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML
-  ${CMAKE_CURRENT_BINARY_DIR}/MRML
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${Slicer_SOURCE_DIR}/QTModules/Annotation/MRML
-  ${Slicer_BINARY_DIR}/QTModules/Annotation
-  ${Slicer_BINARY_DIR}/QTModules/Annotation/MRML
   )
 
 # Source files
@@ -28,8 +20,6 @@ SET(qt_module_SRCS
   qSlicerCropVolumeModule.h
   qSlicerCropVolumeModuleWidget.cxx
   qSlicerCropVolumeModuleWidget.h
-  #MRML/vtkMRMLCropVolumeParametersNode.cxx
-  #MRML/vtkMRMLCropVolumeParametersNode.h
   )
 
 # Headers that should run through moc
@@ -41,23 +31,18 @@ SET(qt_module_MOC_SRCS
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerCropVolumeModule.ui
-)
+  )
 
 # Additional Target libraries
 SET(qt_module_target_libraries
+  vtkSlicerCropVolumeModuleMRML
   vtkSlicerCropVolumeModuleLogic
-  qSlicerAnnotationModule
-  AnnotationMRML
   )
 
 # Resources
 SET(qt_module_resources
   Resources/qSlicerCropVolumeModule.qrc
-)
-
-# Add subdirectories
-ADD_SUBDIRECTORY(Logic)
-
+  )
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
@@ -70,7 +55,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(Testing)
-endif(BUILD_TESTING)
+ENDIF()

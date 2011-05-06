@@ -11,17 +11,18 @@ SET(module_logic_export_directive "VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
 SET(module_logic_include_directories
-  ${qt_module_include_directories}
   )
 
 # Source files
 SET(module_logic_SRCS
-  vtkSlicerCropVolumeLogic.cxx ${CMAKE_CURRENT_SOURCE_DIR}/../MRML/vtkMRMLCropVolumeParametersNode.cxx
+  vtkSlicerCropVolumeLogic.cxx
+  vtkSlicerCropVolumeLogic.h
   )
 
 # Additional Target libraries
 SET(module_logic_target_libraries
   ${ITK_LIBRARIES}
+  vtkSlicerCropVolumeModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(

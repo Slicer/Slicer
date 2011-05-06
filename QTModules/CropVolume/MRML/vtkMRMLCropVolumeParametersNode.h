@@ -23,13 +23,13 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkSlicerCropVolumeModuleLogicExport.h"
+#include "vtkSlicerCropVolumeModuleMRMLExport.h"
 
 class vtkMRMLAnnotationROINode;
 class vtkMRMLVolumeNode;
 
 /// \ingroup Slicer_QtModules_CropVolume
-class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkMRMLCropVolumeParametersNode : public vtkMRMLNode
+class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode : public vtkMRMLNode
 {
   public:   
 

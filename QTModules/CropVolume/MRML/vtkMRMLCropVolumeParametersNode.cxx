@@ -12,19 +12,23 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// VTK includes
+#include "vtkObjectFactory.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeNode.h"
+
+// CropModuleMRML includes
+#include "vtkMRMLCropVolumeParametersNode.h"
+
+// AnnotationMRML includes
+#include "vtkMRMLAnnotationROINode.h"
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include <QDebug>
-
-#include "vtkObjectFactory.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLCropVolumeParametersNode.h"
-
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-
 
 //------------------------------------------------------------------------------
 vtkMRMLCropVolumeParametersNode* vtkMRMLCropVolumeParametersNode::New()
@@ -93,7 +97,6 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
-  qDebug() << "Reading CropVolume param node!";
   std::cerr << "Reading CropVolume param node!" << std::endl;
   Superclass::ReadXMLAttributes(atts);
 
