@@ -22,7 +22,7 @@ include(${Teem_USE_FILE})
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif(NOT DEFINED BUILD_SHARED_LIBS)
+endif()
  
 # --------------------------------------------------------------------------
 # Include dirs
