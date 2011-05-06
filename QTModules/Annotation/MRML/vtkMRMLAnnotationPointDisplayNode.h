@@ -59,7 +59,7 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
   {
-    GlyphMin,
+    GlyphMin = 1,
     Vertex2D = GlyphMin,
     Dash2D,
     Cross2D,
@@ -106,7 +106,7 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
 
   double GlyphScale;
   int GlyphType;
-  static const char* GlyphTypesNames[GlyphMax+1];
+  static const char* GlyphTypesNames[GlyphMax+2];
 
 };
 

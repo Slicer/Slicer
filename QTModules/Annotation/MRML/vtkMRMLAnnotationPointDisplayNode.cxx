@@ -8,8 +8,9 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+1] = 
-{ 
+const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] = 
+{
+  "GlyphMin",
   "Vertex2D",
   "Dash2D",
   "Cross2D",
@@ -57,7 +58,7 @@ vtkMRMLNode* vtkMRMLAnnotationPointDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
 {
-  this->GlyphType = 12;
+  this->GlyphType = vtkMRMLAnnotationPointDisplayNode::Sphere3D;
   this->GlyphScale = 5.0;
 }
 
