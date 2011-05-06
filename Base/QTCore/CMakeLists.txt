@@ -89,7 +89,6 @@ IF(Slicer_USE_PYTHONQT)
     CTKVisualizationVTKCorePythonQt
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils
-    PythonQt
     )
   IF(WIN32)
     # TODO: this resolves link errors on windows, but shouldn't be
