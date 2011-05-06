@@ -50,50 +50,6 @@ vtkMRMLAnnotationRulerNode::vtkMRMLAnnotationRulerNode()
   this->ModelID1 = NULL;
   this->ModelID2 = NULL;
 }
-//----------------------------------------------------------------------------
-// void vtkMRMLAnnotationRulerNode::Initialize(vtkMRMLScene* mrmlScene)
-// {
-//     if (!mrmlScene)
-//     {
-//         vtkErrorMacro("Scene was null!");
-//         return;
-//     }
-// 
-//   mrmlScene->AddNode(this);
-// 
-//     this->CreateAnnotationTextDisplayNode();
-//     this->CreateAnnotationPointDisplayNode();
-//     this->CreateAnnotationLineDisplayNode();
-//     
-//     this->AddText(" ",1,1);
-// 
-//   // default starting position
-//   this->SetPosition1(-250.0, 50.0, 0.0);
-//   this->SetPosition2(250.0, 50.0, 0.0);
-// 
-//   // the end points of the lines are blue
-//     double color1[3] = { 0.0, 0.0, 1.0}; 
-//     this->SetPointColour(color1);
-// 
-//     // line color
-//     double color2[3] = { 1.0, 1.0, 1.0}; 
-//     this->SetLineColour(color2);
-// 
-//     // text color
-//     double color3[3] = { 1.0, 0.0, 0.0 } ;
-//     this->SetDistanceAnnotationTextColour(color3);
-// 
-//     // the annotation on the line
-//     //this->SetDistanceAnnotationScale(10.0);
-//     //this->SetDistanceAnnotationVisibility(1);
-// 
-//     // default taken from vtkLineRepresentation
-//     this->SetResolution(5);
-// 
-//     this->distanceMeasurement = 500.0;
-// 
-//     this->InvokeEvent(vtkMRMLAnnotationRulerNode::RulerNodeAddedEvent);
-// }
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationRulerNode::~vtkMRMLAnnotationRulerNode()
