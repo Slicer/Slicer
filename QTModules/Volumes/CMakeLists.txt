@@ -1,7 +1,6 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Volumes")
 
-SET(qt_module_title "Volumes")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 
@@ -74,7 +73,6 @@ SET(qt_module_resources
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
-  TITLE ${qt_module_title}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}
   SRCS ${qt_module_SRCS}

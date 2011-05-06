@@ -2,7 +2,6 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Annotation")
 
-SET(qt_module_title "Annotation")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
 
@@ -73,12 +72,12 @@ SET(GUI_SRCS
 
 # Create the instantiator for DisplayableManager classes.
 SET(VTK_USE_INSTANTIATOR_NEW 1)
-VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_title}ModuleInstantiator"
+VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_name}ModuleInstantiator"
   DisplayableManagerInstantiator_SRCS
   "${DisplayableManager_SRCS}"
   "${qt_module_export_directive}"
   ${CMAKE_CURRENT_BINARY_DIR}
-  "qSlicer${qt_module_title}ModuleExport.h"
+  "qSlicer${qt_module_name}ModuleExport.h"
   )
 
 # Source files
@@ -125,7 +124,6 @@ SET(qt_module_target_libraries
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
-  TITLE ${qt_module_title}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}
   SRCS ${qt_module_SRCS}
