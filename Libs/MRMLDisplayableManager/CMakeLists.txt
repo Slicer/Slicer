@@ -16,6 +16,10 @@ endif()
 
 SET(MRMLDisplayableManager_USE_PYTHON ${Slicer_USE_PYTHONQT})
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif()
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------

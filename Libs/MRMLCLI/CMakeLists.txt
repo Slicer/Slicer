@@ -14,6 +14,10 @@ if(POLICY CMP0017)
   CMAKE_POLICY(SET CMP0017 OLD)
 endif()
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif()
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
