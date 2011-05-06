@@ -1,8 +1,4 @@
-#-----------------------------------------------------------------------
-#
-# SETUP
-#
-#-----------------------------------------------------------------------
+
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Annotation")
 
@@ -21,11 +17,6 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
   )
 
-#-----------------------------------------------------------------------
-#
-# DISPLAYABLE MANAGERS
-#
-#-----------------------------------------------------------------------
 SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.cxx
@@ -41,23 +32,13 @@ SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx     
   )
   
-#-----------------------------------------------------------------------
-#
-# LOGIC
-#
-#-----------------------------------------------------------------------
 SET(Logic_SRCS
   Logic/vtkSlicerAnnotationModuleLogic.cxx
   Logic/vtkSlicerAnnotationModuleLogic.h
   )
   
-#-----------------------------------------------------------------------
-#
-# WIDGETS
-#
-#-----------------------------------------------------------------------
 SET(Widget_SRCS
-  # our own ruler
+  # Ruler VTK widget
   Widgets/vtkAnnotationRulerWidget.cxx
   Widgets/vtkAnnotationRulerWidget.h
   Widgets/vtkAnnotationRulerRepresentation.cxx
@@ -65,7 +46,7 @@ SET(Widget_SRCS
   Widgets/vtkAnnotationRulerRepresentation3D.cxx
   Widgets/vtkAnnotationRulerRepresentation3D.h  
   
-  # our own bidimensional
+  # Bidimensional VTK widget
   Widgets/vtkAnnotationBidimensionalWidget.cxx
   Widgets/vtkAnnotationBidimensionalWidget.h
   Widgets/vtkAnnotationBidimensionalRepresentation.cxx
@@ -75,11 +56,6 @@ SET(Widget_SRCS
   Widgets/vtkAnnotationGlyphSource2D.h
   )
   
-#-----------------------------------------------------------------------
-#
-# GUI
-#
-#-----------------------------------------------------------------------
 SET(GUI_SRCS
   GUI/qMRMLSceneAnnotationModel.cxx
   GUI/qMRMLSceneAnnotationModel.h
@@ -95,7 +71,6 @@ SET(GUI_SRCS
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
-
 # Create the instantiator for DisplayableManager classes.
 SET(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_title}ModuleInstantiator"
@@ -106,45 +81,18 @@ VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_title}ModuleInstantiator"
   "qSlicer${qt_module_title}ModuleExport.h"
   )
 
-#-----------------------------------------------------------------------
-#
-# ALL SOURCE FILES TOGETHER
-#
-#-----------------------------------------------------------------------
+# Source files
 SET(qt_module_SRCS
   ${DisplayableManager_SRCS}
   ${DisplayableManagerInstantiator_SRCS}
   ${Logic_SRCS}
   ${Widget_SRCS}
   ${GUI_SRCS}
-  #${DEPRECATED_SRCS}
   qSlicerAnnotationModule.cxx
   qSlicerAnnotationModule.h
   )
 
-#-----------------------------------------------------------------------
-#
-# WIDGETS
-#
-#-----------------------------------------------------------------------
-SET(MODULE_WIDGETS_SRCS
-  #vtkAnnotationAngleWidget.cxx
-  #vtkAnnotationAngleWidget.h
-  #vtkAnnotationAngleWidgetClass.cxx
-  #vtkAnnotationAngleWidgetClass.h
-  )
-
-# Expand WIDGETS sources filename and append to module sources
-FOREACH(file ${MODULE_WIDGETS_SRCS})
-  LIST(APPEND qt_module_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/${file})
-ENDFOREACH()
-
-
-#-----------------------------------------------------------------------
-#
-# MOC HEADERS
-#
-#-----------------------------------------------------------------------
+# Headers that should run through moc
 SET(qt_module_MOC_SRCS
   qSlicerAnnotationModule.h
   GUI/qMRMLSceneAnnotationModel.h
@@ -155,11 +103,7 @@ SET(qt_module_MOC_SRCS
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
-#-----------------------------------------------------------------------
-#
-# RESOURCES
-#
-#-----------------------------------------------------------------------
+# UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
@@ -170,25 +114,15 @@ SET(qt_module_UI_SRCS
 # Resources
 SET(qt_module_resources
   Resources/qSlicerAnnotationModule.qrc
-)
+  )
 
-#-----------------------------------------------------------------------
-#
-# LINK TARGETS
-#
-#-----------------------------------------------------------------------
 # Additional Target libraries
 SET(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
   vtkSlicerAnnotationModuleMRML
-)
+  )
 
-#-----------------------------------------------------------------------
-#
-# BUILD QTMODULE
-#
-#-----------------------------------------------------------------------
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
   TITLE ${qt_module_title}
@@ -199,14 +133,9 @@ slicerMacroBuildQtModule(
   UI_SRCS ${qt_module_UI_SRCS}
   TARGET_LIBRARIES ${qt_module_target_libraries}
   RESOURCES ${qt_module_resources}
-)
+  )
 
-#-----------------------------------------------------------------------
-#
-# TESTING
-#
-#-----------------------------------------------------------------------
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing/Cxx)
-endif(BUILD_TESTING)
+endif()
 

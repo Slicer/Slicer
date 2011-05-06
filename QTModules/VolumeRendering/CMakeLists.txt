@@ -36,7 +36,7 @@ SET(qt_module_MOC_SRCS
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerVolumeRenderingModule.ui
-)
+  )
 
 # Additional Target libraries
 SET(qt_module_target_libraries
@@ -48,7 +48,7 @@ SET(qt_module_target_libraries
 # Resources
 SET(qt_module_resources
   Resources/qSlicerVolumeRenderingModule.qrc
-)
+  )
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
@@ -63,5 +63,5 @@ slicerMacroBuildQtModule(
 
 
 if(BUILD_TESTING)
-  #add_subdirectory(Testing)
-endif(BUILD_TESTING)
+  #ADD_SUBDIRECTORY(Testing)
+endif()

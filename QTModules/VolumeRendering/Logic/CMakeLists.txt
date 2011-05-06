@@ -47,7 +47,6 @@ SET(module_logic_target_libraries
   VolumeRenderingReplacements
   )
 
-
 SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}
   EXPORT_DIRECTIVE ${module_logic_export_directive}

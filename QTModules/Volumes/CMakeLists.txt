@@ -60,7 +60,7 @@ SET(qt_module_UI_SRCS
   Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
   Resources/UI/qSlicerVolumesIOOptionsWidget.ui
   Resources/UI/qSlicerVolumesModule.ui
-)
+  )
 
 # Additional Target libraries
 SET(qt_module_target_libraries
@@ -70,7 +70,7 @@ SET(qt_module_target_libraries
 # Resources
 SET(qt_module_resources
   Resources/qSlicerVolumesModule.qrc
-)
+  )
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}
@@ -86,4 +86,4 @@ slicerMacroBuildQtModule(
 
 if(BUILD_TESTING)
   add_subdirectory(Testing)
-endif(BUILD_TESTING)
+endif()
