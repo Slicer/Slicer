@@ -7,6 +7,57 @@
 # or a Slicer installation.
 #
 
+# Slicer options
+set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
+set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
+set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
+set(Slicer_USE_OPENCV "@Slicer_USE_OPENCV@")
+set(Slicer_USE_OPENIGTLINK "@Slicer_USE_OPENIGTLINK@")
+set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+
+# Qt
+set(QT_QMAKE_EXECUTABLE "@QT_QMAKE_EXECUTABLE_CONFIG@")
+set(Slicer_REQUIRED_QT_VERSION "@Slicer_REQUIRED_QT_VERSION@")
+set(Slicer_REQUIRED_QT_MODULES "@Slicer_REQUIRED_QT_MODULES@")
+
+# Slicer libraries
+set(GenerateCLP_DIR "@GenerateCLP_DIR_CONFIG@")
+set(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR_CONFIG@")
+set(TCLAP_DIR "@TCLAP_DIR_CONFIG@")
+
+# External projects
+if(Slicer_USE_BatchMake)
+  set(BatchMake_DIR "@BatchMake_DIR_CONFIG@")
+endif()
+set(CTK_DIR "@CTK_DIR_CONFIG@")
+set(ITK_DIR "@ITK_DIR_CONFIG@")
+set(OpenCV_DIR "@OpenCV_DIR_CONFIG@")
+set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")
+set(PYTHON_LIBRARIES "@PYTHON_LIBRARIES@")
+set(Teem_DIR "@Teem_DIR_CONFIG@")
+set(VTK_DIR "@VTK_DIR_CONFIG@")
+
+# List all required external project
+set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
+
+# Include external projects
+foreach(proj ${Slicer_EXTERNAL_PROJECTS})
+  find_package(${proj} REQUIRED)
+endforeach()
+
+# Slicer CMake macros and functions directory
+set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
+
+# Update CMake module path
+set(CMAKE_MODULE_PATH
+  ${Slicer_CMAKE_DIR}
+  ${VTK_CMAKE_DIR}
+  ${CTK_CMAKE_DIR}
+  ${CTK_CMAKE_UTILITIES_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
 # Slicer version number
 set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
 set(Slicer_VERSION_MINOR "@Slicer_VERSION_MINOR@")
@@ -39,20 +90,8 @@ set(Slicer_LIBRARY_PROPERTIES "@Slicer_LIBRARY_PROPERTIES@")
 SET(Slicer_EXPORT_HEADER_TEMPLATE "@Slicer_EXPORT_HEADER_TEMPLATE@")
 SET(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
 
-# Slicer options
-set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
-set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
-set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
-set(Slicer_USE_OPENCV "@Slicer_USE_OPENCV@")
-set(Slicer_USE_OPENIGTLINK "@Slicer_USE_OPENIGTLINK@")
-set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
-set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
-
 # Slicer home (top of the tree)
 set(Slicer_HOME "@Slicer_HOME@")
-
-# The CMake macros dir.
-set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
 
 # Slicer Libs libraries.  Those listed here should
 # automatically pull in their dependencies.
@@ -111,27 +150,4 @@ ENDIF()
 
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
-
-# Components needed to build modules from outside a Slicer build tree or 
-# from outside a Slicer installation tree
-
-# Qt
-set(QT_QMAKE_EXECUTABLE "@QT_QMAKE_EXECUTABLE_CONFIG@")
-set(Slicer_REQUIRED_QT_VERSION "@Slicer_REQUIRED_QT_VERSION@")
-set(Slicer_REQUIRED_QT_MODULES "@Slicer_REQUIRED_QT_MODULES@")
-
-# Slicer libraries
-set(GenerateCLP_DIR "@GenerateCLP_DIR_CONFIG@")
-set(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR_CONFIG@")
-set(TCLAP_DIR "@TCLAP_DIR_CONFIG@")
-
-# External projects
-set(BatchMake_DIR "@BatchMake_DIR_CONFIG@")
-set(CTK_DIR "@CTK_DIR_CONFIG@")
-set(ITK_DIR "@ITK_DIR_CONFIG@")
-set(OpenCV_DIR "@OpenCV_DIR_CONFIG@")
-set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")
-set(PYTHON_LIBRARIES "@PYTHON_LIBRARIES@")
-set(Teem_DIR "@Teem_DIR_CONFIG@")
-set(VTK_DIR "@VTK_DIR_CONFIG@")
 

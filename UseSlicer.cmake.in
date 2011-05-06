@@ -7,27 +7,11 @@
 # --------------------------------------------------------------------------
 # Prerequisites
 # --------------------------------------------------------------------------
-set(dependent_projects CTK GenerateCLP ITK Teem VTK) # List all required project
-
-if(Slicer_USE_BatchMake)
-  list(APPEND dependent_projects BatchMake)
-endif()
 
 # Include projects
-foreach(proj ${dependent_projects})
-  find_package(${proj} REQUIRED)
-  include(${${proj}_USE_FILE})
-endforeach()
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${Slicer_CMAKE_DIR}
-  ${VTK_CMAKE_DIR}
-  ${CTK_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
+FOREACH(proj ${Slicer_EXTERNAL_PROJECTS})
+  INCLUDE(${${proj}_USE_FILE})
+ENDFOREACH()
   
 # --------------------------------------------------------------------------
 # Qt
@@ -75,16 +59,6 @@ link_directories(
 #-----------------------------------------------------------------------------
 # Include directories - See SlicerMacroBuildQtModule
 #------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${VTK_CMAKE_DIR}
-  ${CTK_CMAKE_DIR}
-  ${CTK_CMAKE_UTILITIES_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
