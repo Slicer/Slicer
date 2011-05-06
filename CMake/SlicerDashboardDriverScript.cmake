@@ -104,10 +104,7 @@ set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 #
 MACRO(run_ctest)
   ctest_start(${model})
-  set(FILES_UPDATED 0)
-  if(NOT SCRIPT_MODE STREQUAL "experimental")
-    ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
-  endif()
+  ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
 
   # force a build if this is the first run and the build dir is empty
   if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
