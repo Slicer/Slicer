@@ -104,6 +104,7 @@ IF(GIT_EXECUTABLE)
     # In case git-svn is used, attempt to extract svn info
     EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} svn info
       WORKING_DIRECTORY ${dir}
+      TIMEOUT 3
       ERROR_VARIABLE git_svn_info_error
       OUTPUT_VARIABLE ${prefix}_WC_INFO
       RESULT_VARIABLE git_svn_info_result
