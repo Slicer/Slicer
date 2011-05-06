@@ -14,11 +14,8 @@ SET(dirs
 # FileWatcher
   )
 
-IF(Teem_FOUND)
-  LIST(APPEND dirs vtkTeem)
-ENDIF()
-
 LIST(APPEND dirs
+  vtkTeem
   vtkITK
   FreeSurfer
   MRML
