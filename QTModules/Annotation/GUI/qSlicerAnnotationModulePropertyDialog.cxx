@@ -135,45 +135,89 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     return;
     }
   vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(mrmlNode);
-  if (!pointsNode)
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = NULL;
+  if (pointsNode)
     {
-    return;
+    // get the point display node
+    pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
     }
-  // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
-  if (!pointDisplayNode)
+  if (pointDisplayNode)
     {
-    return;
-    }
 
-  // load the point colours
+    // load the point colours
   
   
-  // unselected
-  double *pointUnSelColor = pointDisplayNode->GetColor();
-  QColor pointUnSelQColor;
-  this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
-  ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
-  ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
-
-  // selected
-  double *pointSelColor = pointDisplayNode->GetSelectedColor();
-  QColor pointSelQColor;
-  this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
-  ui.pointSelectedColorPickerButton->setDisplayColorName(false);
-  ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
-
-  // load the glyph type
-  int index =  ui.pointGlyphTypeComboBox->findData(QString(pointDisplayNode->GetGlyphTypeAsString()));
-  std::cout << "glyph type = " << pointDisplayNode->GetGlyphTypeAsString() << ", index = " << index << std::endl;
-  if (index != -1)
-    {
-    ui.pointGlyphTypeComboBox->setCurrentIndex(index);
+    // unselected
+    double *pointUnSelColor = pointDisplayNode->GetColor();
+    QColor pointUnSelQColor;
+    this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
+    ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
+    ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
+    
+    // selected
+    double *pointSelColor = pointDisplayNode->GetSelectedColor();
+    QColor pointSelQColor;
+    this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
+    ui.pointSelectedColorPickerButton->setDisplayColorName(false);
+    ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
+    
+    // load the glyph type
+    int index =  ui.pointGlyphTypeComboBox->findData(QString(pointDisplayNode->GetGlyphTypeAsString()));
+    std::cout << "glyph type = " << pointDisplayNode->GetGlyphType() << ", as string = " << pointDisplayNode->GetGlyphTypeAsString() << ", index = " << index << std::endl;
+    if (index != -1)
+      {
+      ui.pointGlyphTypeComboBox->setCurrentIndex(index);
+      }
+    else
+      {
+      ui.pointGlyphTypeComboBox->setCurrentIndex(pointDisplayNode->GetGlyphType());
+      }
+    // glyph size
+    ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
+    
+    // glyph material properties
+    ui.pointOpacitySliderSpinBoxWidget->setValue(pointDisplayNode->GetOpacity());
+    ui.pointAmbientSliderSpinBoxWidget->setValue(pointDisplayNode->GetAmbient());
+    ui.pointDiffuseSliderSpinBoxWidget->setValue(pointDisplayNode->GetDiffuse());
+    ui.pointSpecularSliderSpinBoxWidget->setValue(pointDisplayNode->GetSpecular());
     }
-  // glyph size
-  ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
+    
+  /// Lines
+  // get the line version of the node
+  vtkMRMLAnnotationLinesNode *linesNode = vtkMRMLAnnotationLinesNode::SafeDownCast(mrmlNode);
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = NULL;
+  if (linesNode)
+    {
+    lineDisplayNode = linesNode->GetAnnotationLineDisplayNode();
+    }
 
-  /*
+  if (lineDisplayNode)
+    {
+    // colours
+
+    // unselected
+    double *lineUnSelColor = lineDisplayNode->GetColor();
+    QColor lineUnSelQColor;
+    this->TurnColorArrayToQColor(lineUnSelColor,lineUnSelQColor);
+    ui.lineUnselectedColorPickerButton->setDisplayColorName(false);
+    ui.lineUnselectedColorPickerButton->setColor(lineUnSelQColor);
+
+    // selected
+    double *lineSelColor = lineDisplayNode->GetSelectedColor();
+    QColor lineSelQColor;
+    this->TurnColorArrayToQColor(lineSelColor, lineSelQColor);
+    ui.lineSelectedColorPickerButton->setDisplayColorName(false);
+    ui.lineSelectedColorPickerButton->setColor(lineSelQColor);
+    
+    // width
+    ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
+    // line material properties
+    ui.lineOpacitySliderSpinBoxWidget_2->setValue(lineDisplayNode->GetOpacity());
+    ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
+    ui.lineDiffuseSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetDiffuse());
+    ui.lineSpecularSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetSpecular());
+    }
+    /*
    this->setWindowTitle(
    "Annotation Properties");
    this->SaveStateForUndo(

@@ -6,6 +6,9 @@
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
+#include "vtkMRMLAnnotationLineDisplayNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 
 // Annotation widget includes
 #include "Widgets/vtkAnnotationRulerWidget.h"
@@ -28,6 +31,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
+#include <vtkLineRepresentation.h>
 
 // std includes
 #include <string>
@@ -171,7 +175,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     // this is a 2D displayableManager
     VTK_CREATE(vtkPointHandleRepresentation2D, handle);
-    handle->GetProperty()->SetColor(1,0,0);
+//    handle->GetProperty()->SetColor(1,0,0);
 
     VTK_CREATE(vtkAnnotationRulerRepresentation, dRep);
     dRep->SetHandleRepresentation(handle);
@@ -200,7 +204,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     // this is a 3D displayableManager
     VTK_CREATE(vtkPointHandleRepresentation3D, handle2);
-    handle2->GetProperty()->SetColor(1,1,0);
+//    handle2->GetProperty()->SetColor(1,1,0);
 
     VTK_CREATE(vtkAnnotationRulerRepresentation3D, dRep2);
     dRep2->SetHandleRepresentation(handle2);
@@ -215,6 +219,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     }
 
+  this->PropagateMRMLToWidget(rulerNode, rulerWidget);
 
   vtkDebugMacro("CreateWidget: Widget was set up")
 
@@ -379,6 +384,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   double displayCoordinatesBuffer1[4];
   double displayCoordinatesBuffer2[4];
 
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = rulerNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
+  
   // update the location
   if (this->GetSliceNode())
     {
@@ -406,6 +414,51 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       rep->SetPoint2DisplayPosition(displayCoordinates2);
       }
 
+    // set the color
+    vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
+    vtkHandleRepresentation *pointrep2 = rep->GetPoint2Representation();
+    vtkPointHandleRepresentation2D *handle1 = NULL;
+    vtkPointHandleRepresentation2D *handle2 = NULL;
+    if (pointrep1 && pointrep2)
+      {
+      handle1 = vtkPointHandleRepresentation2D::SafeDownCast(pointrep1);
+      handle2 = vtkPointHandleRepresentation2D::SafeDownCast(pointrep2);
+      }
+    if (handle1 && handle2 && pointDisplayNode)
+      {
+      if (rulerNode->GetSelected())
+        {
+        handle1->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+        handle2->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        handle1->GetProperty()->SetColor(pointDisplayNode->GetColor());
+        handle2->GetProperty()->SetColor(pointDisplayNode->GetColor());
+        }
+      }
+    if (lineDisplayNode)
+      {
+      vtkLineRepresentation *lineRep = vtkLineRepresentation::SafeDownCast(rep);
+       // for now, set the colour from the point display node
+      if (pointDisplayNode && lineRep && lineRep->GetLineProperty())
+        {
+        if (rulerNode->GetSelected())
+          {
+          lineRep->GetLineProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+          }
+        else
+          {
+          // lineRep->SetLineColor
+          double *col = pointDisplayNode->GetColor();
+          if (col)
+            {
+            lineRep->SetLineColor(col[0], col[1], col[1]);
+            }
+          }
+        }
+      //lineDisplayNode->GetLineThickness();
+      }
     rep->NeedToRenderOn();
     }
   else
@@ -416,13 +469,57 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     // update the distance measurement
     rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
-
+    // set the color
+    vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
+    vtkHandleRepresentation *pointrep2 = rep->GetPoint2Representation();
+    vtkPointHandleRepresentation3D *handle1 = NULL;
+    vtkPointHandleRepresentation3D *handle2 = NULL;
+    if (pointrep1 && pointrep2)
+      {
+      handle1 = vtkPointHandleRepresentation3D::SafeDownCast(pointrep1);
+      handle2 = vtkPointHandleRepresentation3D::SafeDownCast(pointrep2);
+      }
+    if (handle1 && handle2 && pointDisplayNode)
+      {
+      if (rulerNode->GetSelected())
+        {
+        handle1->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+        handle2->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        handle1->GetProperty()->SetColor(pointDisplayNode->GetColor());
+        handle2->GetProperty()->SetColor(pointDisplayNode->GetColor());
+        }
+      }
+    if (lineDisplayNode)
+      {
+      // get the line representation
+      vtkDistanceRepresentation *lineRep = vtkDistanceRepresentation::SafeDownCast(rep);
+      // for now, set the colour from the point display node
+      if (pointDisplayNode && lineRep)
+        {
+        if (rulerNode->GetSelected())
+          {
+//          lineRep->SetColor(pointDisplayNode->GetSelectedColor());
+          }
+        else
+          {
+//          lineRep->SetColor(pointDisplayNode->GetColor());
+          }
+        }
+      //double thickness = lineDisplayNode->GetLineThickness();
+      }
+    //vtkProperty *labelProperty = rep->GetLabelProperty();
+  
     // change the 3D location
     rep->SetPoint1WorldPosition(worldCoordinates1);
     rep->SetPoint2WorldPosition(worldCoordinates2);
+
     rep->NeedToRenderOn();
     }
 
+  
 
   rulerWidget->Modified();
 
