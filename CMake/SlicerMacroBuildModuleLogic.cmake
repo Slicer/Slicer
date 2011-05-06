@@ -157,12 +157,10 @@ MACRO(SlicerMacroBuildModuleLogic)
   
   IF(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
-    # TODO: A parameter named 'WRAPPED_TARGET_LIBRARIES'
-    # should be added to the macro.
-    # VTK wrapped libraries
-    SET(VTK_WRAPPED_LIBRARIES
-      vtkVolumeRenderingPythonD
-      )
+    SET(VTK_PYTHON_WRAPPED_LIBRARIES)
+    FOREACH(lib ${VTK_LIBRARIES})
+      LIST(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    ENDFOREACH()
     
     SET(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)
     FOREACH(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
@@ -170,9 +168,9 @@ MACRO(SlicerMacroBuildModuleLogic)
     ENDFOREACH()
 
     SET(Slicer_Wrapped_LIBRARIES
+      ${VTK_PYTHON_WRAPPED_LIBRARIES}
       ${Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES}
       SlicerBaseLogicPythonD
-      ${VTK_WRAPPED_LIBRARIES}
       )
 
     vtkMacroKitPythonWrap(
