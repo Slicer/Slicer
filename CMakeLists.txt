@@ -24,7 +24,6 @@ SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
-
 SET(CMAKE_MODULE_PATH
   ${Slicer_SOURCE_DIR}/CMake
   ${Slicer_BINARY_DIR}/CMake
@@ -60,7 +59,6 @@ test_big_endian(CMAKE_WORDS_BIGENDIAN)
 #-----------------------------------------------------------------------------
 # Prerequisites
 #-----------------------------------------------------------------------------
-
 FIND_PACKAGE(Subversion)
 IF(NOT Subversion_FOUND)
   MESSAGE(FATAL_ERROR "error: Install SVN and try to re-configure")
@@ -79,7 +77,6 @@ SET(Slicer_REQUIRED_QT_VERSION "4.6.2")
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
 #-----------------------------------------------------------------------------
-
 OPTION(Slicer_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
 MARK_AS_ADVANCED(Slicer_SUPERBUILD)
 
@@ -151,7 +148,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
-
 OPTION(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
 MARK_AS_ADVANCED(DOCUMENTATION_TARGET_IN_ALL)
 
@@ -175,7 +171,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
 #-----------------------------------------------------------------------------
-
 SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
 MARK_AS_ADVANCED(ADDITIONAL_C_FLAGS)
 SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
@@ -189,7 +184,6 @@ INCLUDE(SlicerBlockCXXRequiredFlags)
 #-----------------------------------------------------------------------------
 # Slicer install directories
 #------------------------------------------------------------------------------
-
 SET(Slicer_INSTALL_BIN_DIR "bin")
 SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
 SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
@@ -238,7 +232,6 @@ TODAY(Slicer_BUILDDATE)
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
-
 SET(Slicer_VERSION_MAJOR "4")
 SET(Slicer_VERSION_MINOR "0")
 
@@ -252,7 +245,6 @@ SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 #-----------------------------------------------------------------------------
 # Plugins and Modules install directories
 #------------------------------------------------------------------------------
-
 SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
