@@ -162,15 +162,35 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
     
     // load the glyph type
+  
+
+    // fill in the combo box with glyph types if not already done
+    if (ui.pointGlyphTypeComboBox->count() == 0)
+      {
+      vtkMRMLAnnotationPointDisplayNode *displayNode = vtkMRMLAnnotationPointDisplayNode::New();
+      int min = displayNode->GetMinimumGlyphType();
+      int max = displayNode->GetMaximumGlyphType();
+      ui.pointGlyphTypeComboBox->setEnabled(false);
+      for (int i = min; i <= max; i++)
+        {
+        displayNode->SetGlyphType(i);
+        ui.pointGlyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString());
+        //std::cout << "Adding glyphs to the combo box i = " << i << ", glyph type = " << displayNode->GetGlyphType() << ", as string = " << displayNode->GetGlyphTypeAsString() << ", combo box current index = " << ui.pointGlyphTypeComboBox->currentIndex() << ", count = " << ui.pointGlyphTypeComboBox->count() << std::endl;
+        }
+      ui.pointGlyphTypeComboBox->setEnabled(true);
+      displayNode->Delete();
+      }
     int index =  ui.pointGlyphTypeComboBox->findData(QString(pointDisplayNode->GetGlyphTypeAsString()));
-    std::cout << "glyph type = " << pointDisplayNode->GetGlyphType() << ", as string = " << pointDisplayNode->GetGlyphTypeAsString() << ", index = " << index << std::endl;
+//    std::cout << "glyph type = " << pointDisplayNode->GetGlyphType() << ", as string = " << pointDisplayNode->GetGlyphTypeAsString() << ", index = " << index << ", combo box size = " << ui.pointGlyphTypeComboBox->count() << std::endl;
     if (index != -1)
       {
       ui.pointGlyphTypeComboBox->setCurrentIndex(index);
       }
     else
       {
-      ui.pointGlyphTypeComboBox->setCurrentIndex(pointDisplayNode->GetGlyphType());
+      // glyph types start at 1, combo box is 0 indexed
+      ui.pointGlyphTypeComboBox->setCurrentIndex(pointDisplayNode->GetGlyphType() - 1);
+//      std::cout << "\tset current index via the glyph type " << pointDisplayNode->GetGlyphType() << ", current index = " << ui.pointGlyphTypeComboBox->currentIndex() << std::endl;
       }
     // glyph size
     ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
@@ -639,21 +659,12 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.pointSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onPointSelectedColorChanged(QColor)));
 
-  // fill in the combo box with glyph types?
-  this->connect(ui.pointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
-                this, SLOT(onPointGlyphChanged(QString)));
-  vtkMRMLAnnotationPointDisplayNode *displayNode = vtkMRMLAnnotationPointDisplayNode::New();
-  int min = displayNode->GetMinimumGlyphType();
-  int max = displayNode->GetMaximumGlyphType();
-  for (int i = min; i <= max; i++)
-    {
-    ui.pointGlyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString(i), i);
-    }
-  displayNode->Delete();
-
   this->connect(ui.pointSizeSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
                 this, SLOT(onPointSizeChanged(double)));
   
+  this->connect(ui.pointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
+                this, SLOT(onPointGlyphChanged(QString)));
+
   // line
   this->connect(ui.lineUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onLineColorChanged(QColor)));

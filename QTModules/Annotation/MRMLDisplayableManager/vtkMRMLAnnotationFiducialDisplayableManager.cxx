@@ -4,7 +4,6 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
@@ -26,6 +25,7 @@
 #include <vtkOrientedPolygonalHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
+#include <vtkSphereSource.h>
 
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyle.h>
@@ -164,17 +164,16 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     }
 
   VTK_CREATE(vtkSeedRepresentation, rep);
+  VTK_CREATE(vtkOrientedPolygonalHandleRepresentation3D, handle);
 
+  // default to a starburst glyph, update in propagate mrml to widget
   VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-  vtkDebugMacro("GLYPHTHPEPEE" << displayNode->GetGlyphType());
-  glyphSource->SetGlyphType(displayNode->GetGlyphType());
+  glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
   glyphSource->Update();
   glyphSource->SetScale(1.0);
-
-
-  VTK_CREATE(vtkOrientedPolygonalHandleRepresentation3D, handle);
   handle->SetHandle(glyphSource->GetOutput());
 
+  
   rep->SetHandleRepresentation(handle);
 
 
@@ -317,14 +316,66 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     vtkErrorMacro("Could not get display Node!")
     }
 
-  VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-  glyphSource->SetGlyphType(displayNode->GetGlyphType());
-  glyphSource->Update();
-  glyphSource->SetScale(1.0);
-
   vtkOrientedPolygonalHandleRepresentation3D *handleRep = vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
   if (handleRep)
     {
+    // set the glyph type
+    vtkDebugMacro("DisplayNode glyph type = " << displayNode->GetGlyphType() << " = " << displayNode->GetGlyphTypeAsString() << ", is 3d glyph = " << (displayNode->GlyphTypeIs3D() ? "true" : "false") << ", is 2d disp manager = " << this->Is2DDisplayableManager());
+    if (displayNode->GlyphTypeIs3D())
+      {
+      if (this->Is2DDisplayableManager())
+        {
+        // map the 3d sphere to a filled circle, the 3d diamond to a filled
+        // diamond
+        VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+        if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+          {
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Circle2D);
+          }
+        else if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Diamond3D)
+          {
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
+          }
+        else
+          {
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
+          }
+        glyphSource->Update();
+        glyphSource->SetScale(1.0);
+        handleRep->SetHandle(glyphSource->GetOutput());
+        }
+      else
+        {
+        if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+          {
+          VTK_CREATE(vtkSphereSource, sphereSource);
+          sphereSource->SetRadius(0.5);
+          sphereSource->SetPhiResolution(10);
+          sphereSource->SetThetaResolution(10);
+          sphereSource->Update();
+          handleRep->SetHandle(sphereSource->GetOutput());
+          }
+        else
+          {
+          // the 3d diamond isn't supported yet, use a 2d diamond for now
+          VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
+          glyphSource->Update();
+          glyphSource->SetScale(1.0);
+          handleRep->SetHandle(glyphSource->GetOutput());
+          }
+        }
+      }
+    else
+      {
+      // 2D
+      VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+      glyphSource->SetGlyphType(displayNode->GetGlyphType());
+      glyphSource->Update();
+      glyphSource->SetScale(1.0);
+      handleRep->SetHandle(glyphSource->GetOutput());
+      }
+    
     if (fiducialNode->GetSelected())
       {
       // use the selected color
@@ -335,7 +386,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       // use the unselected color
       handleRep->GetProperty()->SetColor(displayNode->GetColor());
       }
-    handleRep->SetHandle(glyphSource->GetOutput());
+//    handleRep->SetHandle(glyphSource->GetOutput());
 
     // the following check is only needed since we require a different uniform scale depending on 2D and 3D
     if (this->GetSliceNode())
