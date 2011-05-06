@@ -34,7 +34,11 @@
 
 #include "vnl/algo/vnl_fft_1d.h"
 #include "vnl/vnl_complex_traits.h"
+#if ITK_VERSION_MAJOR <=3
 #include "vxl/vcl/vcl_complex.h"
+#else
+#include "vcl_complex.h"
+#endif
 
 namespace itk {
 
