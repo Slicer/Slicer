@@ -172,50 +172,24 @@ MACRO(SlicerMacroBuildModuleLogic)
     # should be added to the macro.
     # VTK wrapped libraries
     SET(VTK_WRAPPED_LIBRARIES
-      vtkVolumeRendering
+      vtkVolumeRenderingPythonD
       )
 
     # TODO: Slicer's Use file should export this list automatically
     # (currently the wrapped and non-wrapped libs are mixed together)
     # See "HACK" above
     SET(Slicer_Wrapped_LIBRARIES
-      vtkTeem vtkITK FreeSurfer MRML MRMLCLI MRMLLogic MRMLDisplayableManager
-      RemoteIO SlicerBaseLogic
+      vtkTeemPythonD vtkITKPythonD FreeSurferPythonD MRMLPythonD MRMLCLIPythonD MRMLLogicPythonD MRMLDisplayableManagerPythonD
+      RemoteIOPythonD SlicerBaseLogicPythonD
       )
     LIST(APPEND Slicer_Wrapped_LIBRARIES ${VTK_WRAPPED_LIBRARIES})
 
-    INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
-    VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${MODULELOGIC_SRCS}")
-    ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
-    ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
-    
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name} ${PYTHON_LIBRARIES})
-    
-    FOREACH(c ${Slicer_Wrapped_LIBRARIES})
-      TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c})
-    ENDFOREACH()
-
-    TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD ${lib_name})
-
-    ## Python modules on Windows must have the extension ".pyd"
-    IF(WIN32 AND NOT CYGWIN)
-      SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
-    ENDIF()
-
-    # Apply user-defined properties to the library target.
-    IF(Slicer_LIBRARY_PROPERTIES)
-      SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES
-         ${Slicer_LIBRARY_PROPERTIES}
-      )
-      SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES
-         ${Slicer_LIBRARY_PROPERTIES}
-      )
-    ENDIF()
-
-    INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-      RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+    vtkMacroKitPythonWrap(
+      KIT_NAME ${lib_name}
+      KIT_SRCS ${MODULELOGIC_SRCS}
+      KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
+      KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
+      KIT_PYTHON_LIBRARIES ${Slicer_Wrapped_LIBRARIES}
       )
 
     # Generate "Python/<lib_name>.py" file
@@ -223,15 +197,7 @@ MACRO(SlicerMacroBuildModuleLogic)
 \"\"\" This module loads all the classes from the ${lib_name} library into its
 namespace.\"\"\"
 
-import os
-
-if os.name == 'posix':
-  from lib${lib_name}Python import *
-else:
-  from ${lib_name}Python import *
-
-# Removing things the user shouldn't have to see.
-del os
+from ${lib_name}Python import *
 ")
 
     FILE(GLOB PYFILES
