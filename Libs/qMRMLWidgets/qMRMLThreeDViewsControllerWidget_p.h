@@ -53,6 +53,12 @@ public:
   qMRMLThreeDViewsControllerWidgetPrivate(qMRMLThreeDViewsControllerWidget& object);
   ~qMRMLThreeDViewsControllerWidgetPrivate(){}
 
+  /// Enumeration over display modes
+  enum DisplayMode {
+    NavigationDisplayMode = 0,
+    MagnificationDisplayMode
+  };
+
   void setupUi(qMRMLWidget* widget);
 
 public slots:
@@ -85,6 +91,8 @@ public slots:
   void onSpinViewButtonToggled(bool enabled);
   void onRockViewButtonToggled(bool enabled);
   void setAnimationMode(int newAnimationMode);
+
+  void setDisplayMode(DisplayMode newMode);
 
 public:
 

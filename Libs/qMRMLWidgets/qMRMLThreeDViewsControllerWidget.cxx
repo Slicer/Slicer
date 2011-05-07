@@ -177,6 +177,16 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->AnimateViewButtonGroup->addButton(this->RockButton);
   connect(this->SpinButton, SIGNAL(toggled(bool)), SLOT(onSpinViewButtonToggled(bool)));
   connect(this->RockButton, SIGNAL(toggled(bool)), SLOT(onRockViewButtonToggled(bool)));
+
+  // Connect the magnify widget to the MRMLThreeDViewsControllerWidget to
+  // toggle between navigation (3D) and magnification (2D) modes depending
+  // on whether the mouse is within an observed QVTKWidget (i.e. within a
+  // ctkVTKSliceView).
+  connect(this->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
+          q, SLOT(setDisplayModeToMagnification()));
+  connect(this->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
+          q, SLOT(setDisplayModeToNavigation()));
+  this->setDisplayMode(NavigationDisplayMode);
 }
 
 // --------------------------------------------------------------------------
@@ -375,6 +385,12 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setAnimationMode(int newAnimationM
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setDisplayMode(DisplayMode newMode)
+{
+  this->StackedWidget->setCurrentIndex(newMode);
+}
+
+// --------------------------------------------------------------------------
 // qMRMLThreeDViewsControllerWidget methods
 
 // --------------------------------------------------------------------------
@@ -443,4 +459,25 @@ void qMRMLThreeDViewsControllerWidget::lookFromAxis(const ctkAxesWidget::Axis& a
   d->ActiveMRMLThreeDViewNode->InvokeEvent(
     vtkMRMLViewNode::LookFromAxisRequestedEvent,
     const_cast<void*>(reinterpret_cast<const void*>(&axis)));
+}
+
+// --------------------------------------------------------------------------
+ctkVTKMagnifyView * qMRMLThreeDViewsControllerWidget::magnifyView()
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  return d->VTKMagnify;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::setDisplayModeToNavigation()
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::NavigationDisplayMode);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::setDisplayModeToMagnification()
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::MagnificationDisplayMode);
 }

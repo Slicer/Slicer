@@ -26,6 +26,7 @@
 
 // CTK includes
 #include <ctkAxesWidget.h>
+class ctkVTKMagnifyView;
 
 // qMRMLWidget includes
 #include "qMRMLWidget.h"
@@ -47,6 +48,9 @@ public:
   explicit qMRMLThreeDViewsControllerWidget(QWidget* parent = 0);
   virtual ~qMRMLThreeDViewsControllerWidget();
 
+  /// Provide access to the magnify widget
+  ctkVTKMagnifyView * magnifyView();
+
 public slots:
 
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -54,6 +58,8 @@ public slots:
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void setActiveThreeDRenderer(vtkRenderer* newActiveRenderer);
   void lookFromAxis(const ctkAxesWidget::Axis& axis);
+  void setDisplayModeToNavigation();
+  void setDisplayModeToMagnification();
 
 signals:
 
