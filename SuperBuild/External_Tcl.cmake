@@ -15,7 +15,11 @@ set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
 
 if(WIN32)
-  set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
+  if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+    set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl85-x64-build")
+  else()
+    set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
+  endif()
   set(tcl_SOURCE_DIR tcl-build)
 else()
   set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")

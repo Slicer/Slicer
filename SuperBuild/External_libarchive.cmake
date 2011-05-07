@@ -1,8 +1,13 @@
 #-----------------------------------------------------------------------------
 # Get and build LIBARCHIVE (libarchive)
 
-set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
-set(libarchive_MD5 f43382413b4457d0e192771b100a66e7)
+if(WIN32)
+  set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)
+  set(libarchive_MD5 bb416ba2e35693394a546e460797d87e)
+else()
+  set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
+  set(libarchive_MD5 f43382413b4457d0e192771b100a66e7)
+endif()
 
 set(proj libarchive)
 

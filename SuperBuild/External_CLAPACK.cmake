@@ -4,6 +4,7 @@ set(CLAPACK_version 3.2.1)
 # Since the netlib.org server has been down several time, especially when the nightly dashboard 
 # started, we added a copy of the archive to slicer3 lib mirrors.
 set(CLAPACK_file http://svn.slicer.org/Slicer3-lib-mirrors/trunk/clapack-${CLAPACK_version}-CMAKE.tgz)
+set(CLAPACK_MD5 4fd18eb33f3ff8c5d65a7d43913d661b)
 
 # The CLAPACK external project for Titan
 
@@ -30,7 +31,7 @@ ExternalProject_Add(CLAPACK
   SOURCE_DIR ${CLAPACK_source}
   BINARY_DIR ${CLAPACK_binary}
   URL ${CLAPACK_file}
-  URL_MD5 4fd18eb33f3ff8c5d65a7d43913d661b
+  URL_MD5 ${CLAPACK_MD5}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
