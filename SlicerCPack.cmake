@@ -255,6 +255,7 @@ endif()
 set(CPACK_BINARY_TZ   OFF CACHE BOOL "Enable to build TZ packages" FORCE)
 set(CPACK_BINARY_STGZ OFF CACHE BOOL "Enable to build STGZ packages" FORCE)
 set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages" FORCE)
+set(CPACK_SOURCE_TGZ  OFF CACHE BOOL "Enable to build TGZ source packages" FORCE)
 set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
 
 if(APPLE)
