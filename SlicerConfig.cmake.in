@@ -7,6 +7,12 @@
 # or a Slicer installation.
 #
 
+# Output directories
+set(Slicer_CMAKE_RUNTIME_OUTPUT_DIRECTORY "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
+set(Slicer_CMAKE_LIBRARY_OUTPUT_DIRECTORY "@CMAKE_LIBRARY_OUTPUT_DIRECTORY@")
+set(Slicer_CMAKE_ARCHIVE_OUTPUT_DIRECTORY "@CMAKE_ARCHIVE_OUTPUT_DIRECTORY@")
+set(Slicer_BINARY_DIR "@Slicer_BINARY_DIR@")
+
 # Slicer options
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")

@@ -66,3 +66,14 @@ include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildQtModule)
 
+#-----------------------------------------------------------------------------
+# Set Output directories if not already done
+#-----------------------------------------------------------------------------
+FOREACH(dir RUNTIME LIBRARY ARCHIVE)
+  IF(NOT DEFINED CMAKE_${dir}_OUTPUT_DIRECTORY)
+    SET(CMAKE_${dir}_OUTPUT_DIRECTORY ${Slicer_CMAKE_${dir}_OUTPUT_DIRECTORY})
+    message(STATUS "Setting CMAKE_${dir}_OUTPUT_DIRECTORY: ${CMAKE_${dir}_OUTPUT_DIRECTORY}")
+  ELSE()
+    message(STATUS "CMAKE_${dir}_OUTPUT_DIRECTORY already set: ${CMAKE_${dir}_OUTPUT_DIRECTORY}")
+  ENDIF()
+ENDFOREACH()
