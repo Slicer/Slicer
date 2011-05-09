@@ -48,7 +48,12 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Set library properties
 #-----------------------------------------------------------------------------
-SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHONQT})
+
+# Python support within ModuleDescriptionParser is used only within ModuleFactory.cxx
+# Considering the ModuleFactory isn't used anymore to discover modules, let's disable the 
+# associated python support so that the python library aren't a dependency of 
+# either ModuleDescriptionParser or program/library depending on ModuleDescriptionParser.
+SET(ModuleDescriptionParser_USE_PYTHON OFF)
 
 SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
 SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
