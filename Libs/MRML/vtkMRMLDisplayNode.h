@@ -247,6 +247,9 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   {
     return ViewNodeIDs;
   }
+  /// True if the view node id is present in the viewnodeid list
+  /// false if not found
+  bool IsViewNodeIDPresent(const char* viewNodeID);
 
 protected:
   vtkMRMLDisplayNode() ;

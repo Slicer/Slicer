@@ -11,6 +11,7 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -676,6 +677,11 @@ void vtkMRMLDisplayNode::SetActiveScalarName(const char *scalarName)
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
 {
+  if (viewNodeID == 0)
+    {
+    return;
+    }
+
   for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
     {
     if (std::string(viewNodeID) == this->ViewNodeIDs[i])
@@ -740,3 +746,15 @@ const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
 }
 
 
+//-------------------------------------------------------
+bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)
+{
+  if (viewNodeID == 0)
+    {
+    return false;
+    }
+  std::string value(viewNodeID);
+  std::vector< std::string >::const_iterator it =
+    std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
+  return it != this->ViewNodeIDs.end();
+}
