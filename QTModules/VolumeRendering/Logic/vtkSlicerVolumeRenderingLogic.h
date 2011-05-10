@@ -73,11 +73,18 @@ public:
   // Description:
   // Update DisplayNode from VolumeNode,
   // if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
-  // and initioalize them from VolumeNode
+  // and initialize them from VolumeNode
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
                                           vtkMRMLVolumeNode *volumeNode, 
                                           vtkMRMLVolumePropertyNode **propNode,
                                           vtkMRMLROINode **roiNode);
+  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
+                                          vtkMRMLVolumeNode *volumeNode)
+    {
+    vtkMRMLVolumePropertyNode *propNode = NULL;
+    vtkMRMLROINode            *roiNode = NULL;
+    this->UpdateDisplayNodeFromVolumeNode(paramNode, volumeNode, &propNode, &roiNode);
+    };
 
   // Description:
   // Create VolumeRenderingScenarioNode
