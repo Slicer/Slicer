@@ -174,6 +174,26 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
 
 void vtkMRMLVolumeRenderingDisplayableManager::RemoveMRMLObservers()
 {
+  vtkMRMLVolumeRenderingDisplayNode* vspNode = this->GetDisplayNode();
+  if (vspNode)
+    {
+    vtkMRMLVolumeNode *volumeNode = vspNode->GetVolumeNode();
+    //Add observer to trigger update of transform
+    if (volumeNode)
+      {
+      volumeNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+      volumeNode->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+      }
+
+    volumeNode = vspNode->GetFgVolumeNode();
+    if (volumeNode)
+      {
+      //Add observer to trigger update of transform
+      volumeNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+      volumeNode->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+      }
+    }
+
   vtkSetAndObserveMRMLNodeMacro(this->ScenarioNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->ViewNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->DisplayNode, NULL);
@@ -1248,9 +1268,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromDisplayNode
     return;
   }
 
-  this->RemoveVolumeFromViewers();
+  //this->RemoveVolumeFromViewers();
 
-  this->GetInteractor()->Disable();
+  //this->GetInteractor()->Disable();
 
   //this->SetupHistograms(vspNode);
   //if (vspNode->GetFgVolumeNode())
@@ -1270,20 +1290,20 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromDisplayNode
   //this->CreateRenderingFrame();
 
 
-  vtkMRMLVolumeNode *selectedImageData = vspNode->GetVolumeNode();
+  vtkMRMLVolumeNode *volumeNode = vspNode->GetVolumeNode();
   //Add observer to trigger update of transform
-  if (selectedImageData)
+  if (volumeNode)
     {
-    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
-    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+    volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+    volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
     }
 
-  selectedImageData = vspNode->GetFgVolumeNode();
-  if (selectedImageData)
+  volumeNode = vspNode->GetFgVolumeNode();
+  if (volumeNode)
     {
     //Add observer to trigger update of transform
-    selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
-    selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+    volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+    volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
     }
 
 
@@ -1344,7 +1364,20 @@ int vtkMRMLVolumeRenderingDisplayableManager::ValidateDisplayNode(vtkMRMLVolumeR
 void vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToViewers()
 {
 //  vtkMRMLVolumeRenderingDisplayNode* vspNode = this->GetDisplayNode();
-  this->GetRenderer()->AddViewProp(this->GetVolumeActor() );
+  if (this->GetRenderer()->GetVolumes() &&
+      this->GetRenderer()->GetVolumes()->GetNextVolume() != NULL && 
+      this->GetRenderer()->GetVolumes()->GetNextVolume() != this->GetVolumeActor())
+  {
+    this->GetRenderer()->RemoveVolume( this->GetVolumeActor() );
+  }
+
+  vtkVolumeCollection *vols = this->GetRenderer()->GetVolumes();
+  if (vols != NULL && this->GetVolumeActor() &&
+     !vols->IsItemPresent(this->GetVolumeActor()) )
+  {
+    this->GetRenderer()->AddVolume(this->GetVolumeActor() );
+  }
+
   this->GetInteractor()->Enable();
   this->RequestRender();
 }
@@ -1352,7 +1385,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToViewers()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::RemoveVolumeFromViewers()
 {
-  this->GetRenderer()->RemoveViewProp( this->GetVolumeActor() );
+  this->GetRenderer()->RemoveVolume( this->GetVolumeActor() );
 }
 
 //---------------------------------------------------------------------------

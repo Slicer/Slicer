@@ -631,7 +631,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     void *callData )
 {
     Superclass::ProcessMRMLEvents(caller, event, callData);
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    //this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     return;
 }
 

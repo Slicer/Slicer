@@ -2,15 +2,15 @@ import slicer
 import qt
 import os
 # TODO: this won't be needed once it is done automatically at module discovery
-from libVolumeRenderingMRMLPython import *
+#from libVolumeRenderingMRMLPython import *
 
 def load_default_volume():
   if not getNodes().has_key('moving'):
+    fileName = "c:/alexy/Slicer4/MRML/Testing/TestData/moving.nrrd"
     #fileName = os.environ['Slicer_HOME'] + "/share/MRML/Testing/TestData/moving.nrrd"
-    fileName = os.environ['HOME'] + "/Dropbox/data/faces/neutral.nrrd"
+    #fileName = os.environ['HOME'] + "/Dropbox/data/faces/neutral.nrrd"
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeScalarVolume (fileName, "moving", 0)
-
     # automatically select the volume to display
     mrmlLogic = slicer.app.mrmlApplicationLogic()
     selNode = mrmlLogic.GetSelectionNode()
@@ -24,42 +24,79 @@ slicer.app.processEvents()
 # TODO: actually select the module GUI 
 slicer.modules.volumerendering.widgetRepresentation()
 
-
+def vr0():
+  print("0: VTK CPU ray cast")
+  vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
+  vpn = vrdn.GetVolumePropertyNode()
+  vrdn.SetCurrentVolumeMapper(0)
 
 def vr1():
-  print("set params for 1")
+  print("1: VTK GPU ray cast")
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vpn = vrdn.GetVolumePropertyNode()
-  vp = vpn.GetVolumeProperty()
-
-  vrdn.SetUseThreshold(1)
-  vrdn.SetThreshold(3000,5000)
+  vrdn.SetCurrentVolumeMapper(1)
 
 def vr2():
-  print("set params for 2")
+  print("2: VTK GPU texture mapping")
+  vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
+  vpn = vrdn.GetVolumePropertyNode()
+  vrdn.SetCurrentVolumeMapper(2)
+
+def vr3():
+  print("3: NCI GPU ray cast")
+  vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
+  vpn = vrdn.GetVolumePropertyNode()
+  vrdn.SetCurrentVolumeMapper(3)
+
+def vr4():
+  print("4: NCI GPU ray cast (multi-volume)")
+  vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
+  vpn = vrdn.GetVolumePropertyNode()
+  vrdn.SetCurrentVolumeMapper(4)
+
+def vrthres(value):
+  print("set theshold to", value)
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vpn = vrdn.GetVolumePropertyNode()
   vp = vpn.GetVolumeProperty()
-
-  vrdn.SetUseThreshold(1)
-  vrdn.SetThreshold(300,5000)
+  op = vp.GetScalarOpacity()
+  op.RemoveAllPoints()
+  op.AddPoint(value,0)
+  op.AddPoint(value+0.01,1)
+  vp.Modified()
 
 
 control = qt.QWidget()
 layout = qt.QVBoxLayout()
 control.setLayout(layout)
 
-b1 = qt.QPushButton("Step 1")
+b0 = qt.QPushButton("0: VTK CPU ray cast")
+layout.addWidget(b0)
+b0.connect('clicked()', vr0)
+
+b1 = qt.QPushButton("1: VTK GPU ray cast")
 layout.addWidget(b1)
 b1.connect('clicked()', vr1)
 
-b2 = qt.QPushButton("Step 2")
+b2 = qt.QPushButton("2: VTK GPU texture mapping")
 layout.addWidget(b2)
 b2.connect('clicked()', vr2)
 
-b2 = qt.QPushButton("Exit")
-layout.addWidget(b2)
-b2.connect('clicked()', exit)
+b3 = qt.QPushButton("3: NCI GPU ray cast")
+layout.addWidget(b3)
+b3.connect('clicked()', vr3)
+
+b4 = qt.QPushButton("4: NCI GPU ray cast (multi-volume)")
+layout.addWidget(b4)
+b4.connect('clicked()', vr4)
+
+s1 = qt.QSlider(qt.Qt.Horizontal,control)
+layout.addWidget(s1)
+s1.connect('valueChanged(int)', vrthres)
+
+be = qt.QPushButton("Exit")
+layout.addWidget(be)
+be.connect('clicked()', exit)
 
 p = mainWindow().geometry
 control.setGeometry(p.x()-30, p.y()-30, 300, 700)
