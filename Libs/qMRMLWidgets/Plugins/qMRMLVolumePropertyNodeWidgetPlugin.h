@@ -18,19 +18,19 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLVolumeInfoWidgetPlugin_h
-#define __qMRMLVolumeInfoWidgetPlugin_h
+#ifndef __qMRMLVolumePropertyNodeWidgetPlugin_h
+#define __qMRMLVolumePropertyNodeWidgetPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLVolumeInfoWidgetPlugin
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLVolumePropertyNodeWidgetPlugin
   : public QObject
   , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLVolumeInfoWidgetPlugin(QObject *parent = 0);
+  qMRMLVolumePropertyNodeWidgetPlugin(QObject *parent = 0);
 
   QWidget *createWidget(QWidget *parent);
   QString  domXml() const;

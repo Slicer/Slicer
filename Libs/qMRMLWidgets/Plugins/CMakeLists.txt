@@ -60,6 +60,8 @@ SET(designer_plugin_SRCS
   qMRMLTreeViewPlugin.h
   qMRMLVolumeInfoWidgetPlugin.cxx
   qMRMLVolumeInfoWidgetPlugin.h
+  qMRMLVolumePropertyNodeWidgetPlugin.cxx
+  qMRMLVolumePropertyNodeWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.cxx
   qMRMLVolumeThresholdWidgetPlugin.h
   qMRMLWidgetsAbstractPlugin.cxx
@@ -103,6 +105,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeViewPlugin.h
   qMRMLVolumeInfoWidgetPlugin.h
+  qMRMLVolumePropertyNodeWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.h
   qMRMLWidgetPlugin.h
   qMRMLWindowLevelWidgetPlugin.h

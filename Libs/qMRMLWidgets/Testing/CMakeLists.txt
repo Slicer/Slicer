@@ -47,6 +47,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLTreeViewTest1.cxx
   qMRMLUtilsTest1.cxx
   qMRMLVolumeInfoWidgetTest1.cxx
+  qMRMLVolumePropertyNodeWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
@@ -125,6 +126,7 @@ SIMPLE_TEST( qMRMLThreeDViewTest1 )
 SCENE_TEST(  qMRMLTreeViewTest1 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLUtilsTest1 )
 SIMPLE_TEST( qMRMLVolumeInfoWidgetTest1 )
+SIMPLE_TEST( qMRMLVolumePropertyNodeWidgetTest1 )
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )

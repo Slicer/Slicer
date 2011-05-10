@@ -18,27 +18,39 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLVolumeInfoWidgetPlugin_h
-#define __qMRMLVolumeInfoWidgetPlugin_h
+// QT includes
+#include <QApplication>
+#include <QTimer>
 
-#include "qMRMLWidgetsAbstractPlugin.h"
+// qMRML includes
+#include "qMRMLVolumePropertyNodeWidget.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLVolumeInfoWidgetPlugin
-  : public QObject
-  , public qMRMLWidgetsAbstractPlugin
+// MRML includes
+#include <vtkMRMLVolumePropertyNode.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+
+// STD includes
+#include <cstdlib>
+#include <iostream>
+
+int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
 {
-  Q_OBJECT
+  QApplication app(argc, argv);
 
-public:
-  qMRMLVolumeInfoWidgetPlugin(QObject *parent = 0);
+  vtkSmartPointer<vtkMRMLVolumePropertyNode> volumePropertyNode =
+    vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
 
-  QWidget *createWidget(QWidget *parent);
-  QString  domXml() const;
-  QIcon    icon() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
-};
+  qMRMLVolumePropertyNodeWidget widget;
+  widget.setMRMLVolumePropertyNode(volumePropertyNode);
 
-#endif
+  widget.show();
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
+  return app.exec();
+}
 

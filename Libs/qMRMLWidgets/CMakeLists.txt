@@ -130,6 +130,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLUtils.h
   qMRMLVolumeInfoWidget.cxx
   qMRMLVolumeInfoWidget.h
+  qMRMLVolumePropertyNodeWidget.cxx
+  qMRMLVolumePropertyNodeWidget.h
   qMRMLVolumeThresholdWidget.cxx
   qMRMLVolumeThresholdWidget.h
   qMRMLWidget.cxx
@@ -191,6 +193,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLTransformSliders.h
   qMRMLTreeView.h
   qMRMLVolumeInfoWidget.h
+  qMRMLVolumePropertyNodeWidget.h
   qMRMLVolumeThresholdWidget.h
   qMRMLWidget.h
   qMRMLWindowLevelWidget.h
@@ -212,6 +215,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLThreeDViewsControllerWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeInfoWidget.ui
+  Resources/UI/qMRMLVolumePropertyNodeWidget.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
