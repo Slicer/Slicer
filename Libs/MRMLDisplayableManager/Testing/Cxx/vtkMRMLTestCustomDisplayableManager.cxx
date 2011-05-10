@@ -96,6 +96,13 @@ void vtkMRMLTestCustomDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 //---------------------------------------------------------------------------
 void vtkMRMLTestCustomDisplayableManager::AdditionnalInitializeStep()
 {
+  this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTestCustomDisplayableManager::OnInteractorStyleEvent(int eventid)
+{
+  std::cout << "OnInteractorStyleEvent: event id = " << eventid << std::endl;
 }
 
 //---------------------------------------------------------------------------

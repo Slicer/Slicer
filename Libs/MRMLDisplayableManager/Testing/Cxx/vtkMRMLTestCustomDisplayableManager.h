@@ -47,6 +47,8 @@ protected:
   virtual ~vtkMRMLTestCustomDisplayableManager();
 
   virtual void AdditionnalInitializeStep();
+  /// respond to the interactor style event
+  virtual void OnInteractorStyleEvent(int eventid);
 
   virtual void Create();
 
