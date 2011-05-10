@@ -297,14 +297,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>ViewNodeComboBox</sender>
+   <sender>VolumePropertyNodeComboBox</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>VolumePropertyNodeWidget</receiver>
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>189</x>
-     <y>201</y>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
      <x>205</x>

@@ -42,7 +42,12 @@ public slots:
 
   void setMRMLViewNode(vtkMRMLNode* node);
 
-  vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode();
+protected slots:
+  void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
+  void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
+  void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
+  void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
+  void onCurrentMRMLViewNodeChanged(vtkMRMLNode* node);
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
