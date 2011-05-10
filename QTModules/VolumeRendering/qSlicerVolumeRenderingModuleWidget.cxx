@@ -260,7 +260,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     dnode = d->createVolumeRenderingDisplayNode();
     if (volumeNode)
       {
-      volumeNode->SetAndObserveDisplayNodeID(dnode->GetID());
+      volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());
       }
     }
 
