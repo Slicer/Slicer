@@ -132,18 +132,13 @@ def getNodes(pattern=""):
           nodes[node.GetName()] = node
     return nodes
 
-def getNode(pattern=""):
-    """ return the first node where name or id matches pattern
+def getNode(pattern="", index=0):
+    """ return the indexth node where name or id matches pattern
         - empty string matches any
     """
-    import slicer
-    nodes = {}
-    scene = slicer.mrmlScene
-    count = scene.GetNumberOfNodes()
-    for idx in range(count):
-        node = scene.GetNthNode(idx)
-        name = node.GetName()
-        id = node.GetID()
-        if name.find(pattern) >= 0 or id.find(pattern) >= 0:
-          return node
-
+    nodes = getNodes(pattern)
+    try:
+      if nodes.keys():
+        return nodes[nodes.keys()[index]]
+    except IndexError:
+      return None
