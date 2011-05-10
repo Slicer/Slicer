@@ -1562,7 +1562,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   else if (mnd && !mnd->GetDisplayNode())
     {
     // Model node
-    disp = vtkMRMLModelDisplayNode::New();
+    vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
+    disp = modelDisplayNode;
+    if (mnd->GetPolyData()) 
+      {
+      modelDisplayNode->SetPolyData(mnd->GetPolyData());
+      }
     if (mnd->GetPolyData() &&
         mnd->GetPolyData()->GetPointData() &&
         mnd->GetPolyData()->GetPointData()->GetScalars())
