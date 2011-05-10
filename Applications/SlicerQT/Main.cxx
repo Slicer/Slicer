@@ -211,6 +211,12 @@ int main(int argc, char* argv[])
   QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
   foreach(const QString& name, moduleNames)
     {
+    if ( name.isNull() )
+      {
+      qWarning() << "Encountered null module name";
+      continue;
+      }
+    qWarning() << "checking module " << name;
     moduleManager->loadModule(name);
     if (enableSplash)
       {
