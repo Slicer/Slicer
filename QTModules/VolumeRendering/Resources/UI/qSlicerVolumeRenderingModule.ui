@@ -13,64 +13,177 @@
   <property name="windowTitle">
    <string>Volume Render</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
-     <property name="text" stdset="0">
-      <string>Volume Rendering</string>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
+     <property name="text">
+      <string>Inputs</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_2">
-        <property name="title">
-         <string>Inputs</string>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="VolumeNodeLabel">
+        <property name="text">
+         <string>Volume:</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <layout class="QGridLayout" name="gridLayout"/>
-         </item>
-        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="DisplayNodeLlabel">
+        <property name="text">
+         <string>Display:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="DisplayNodeComboBox">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLVolumeRenderingDisplayNode</string>
+         </stringlist>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ROINodeLabel">
+        <property name="text">
+         <string>ROI:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="ROINodeComboBox">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLROINode</string>
+         </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="VolumePropertyNodeLabel">
+        <property name="text">
+         <string>Property:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qMRMLNodeComboBox" name="VolumePropertyNodeComboBox">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLVolumePropertyNode</string>
+         </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="ViewNodeLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="qMRMLNodeComboBox" name="ViewNodeComboBox">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLViewNode</string>
+         </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
-      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item>
+    <widget class="ctkCollapsibleButton" name="RenderingCollapsibleButton">
+     <property name="text">
+      <string>Rendering</string>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="active" stdset="0">
+     <property name="checked">
       <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
-      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="active" stdset="0">
-      <bool>true</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTabWidget" name="RenderingTabWidget">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="TechniquesTab">
+         <attribute name="title">
+          <string>Techniques</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="VolumePropertyTab">
+         <attribute name="title">
+          <string>Volume Properties</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="volumePropertyLayout">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="ROITab">
+         <attribute name="title">
+          <string>ROI</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="MiscTab">
+         <attribute name="title">
+          <string>Misc</string>
+         </attribute>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -83,15 +196,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkDynamicSpacer</class>
+   <class>qMRMLVolumePropertyNodeWidget</class>
    <extends>QWidget</extends>
-   <header>ctkDynamicSpacer.h</header>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -105,18 +217,98 @@
  </resources>
  <connections>
   <connection>
-   <sender>CTKCollapsibleButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>CTKSpacer</receiver>
-   <slot>setActive(bool)</slot>
+   <sender>qSlicerVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>VolumeNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>30</y>
+     <x>501</x>
+     <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>220</x>
-     <y>571</y>
+     <x>343</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>DisplayNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>395</x>
+     <y>92</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ROINodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>438</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>VolumePropertyNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>548</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>542</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ViewNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>581</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>563</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ViewNodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>VolumePropertyNodeWidget</receiver>
+   <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>328</y>
     </hint>
    </hints>
   </connection>

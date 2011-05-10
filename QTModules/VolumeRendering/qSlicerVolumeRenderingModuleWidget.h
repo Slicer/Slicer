@@ -5,11 +5,12 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerVolumeRenderingModuleExport.h"
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
-#include "vtkMRMLVolumePropertyNode.h"
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLScalarVolumeNode;
+class vtkMRMLViewNode;
+class vtkMRMLVolumeRenderingDisplayNode;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget :
@@ -22,6 +23,10 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerVolumeRenderingModuleWidget(QWidget *parent=0);
   virtual ~qSlicerVolumeRenderingModuleWidget();
+
+  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
+  vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLViewNode* mrmlViewNode()const;
 
 public slots:
 
@@ -41,14 +46,10 @@ public slots:
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
-  
-  virtual void setup();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);
   Q_DISABLE_COPY(qSlicerVolumeRenderingModuleWidget);
-  bool settingVolumeNode;
-  bool settingDisplayNode;
 };
 
 #endif
