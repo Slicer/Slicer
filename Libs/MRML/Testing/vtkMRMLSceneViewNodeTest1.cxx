@@ -42,20 +42,20 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
 
   TEST_SET_GET_STRING(node1, SceneViewDescription);
 
-  node1->SetScreenshot(NULL);
-  vtkImageData *nullImage = node1->GetScreenshot();
+  node1->SetScreenShot(NULL);
+  vtkImageData *nullImage = node1->GetScreenShot();
   if (nullImage != NULL)
     {
     std::cerr << "Error setting/getting a null screen shot" << std::endl;
     return EXIT_FAILURE;
     }
   vtkImageData *imageData = vtkImageData::New();
-  node1->SetScreenshot(imageData);
-  imageData = node1->GetScreenshot();
+  node1->SetScreenShot(imageData);
+  imageData = node1->GetScreenShot();
 
   imageData->Delete();
   
-  TEST_SET_GET_INT_RANGE(node1, ScreenshotType, 0, 4);
+  TEST_SET_GET_INT_RANGE(node1, ScreenShotType, 0, 4);
   
   // scene->AddNode(node1);
 
