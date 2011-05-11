@@ -285,6 +285,7 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser SlicerBaseCLI vtkHybrid
   INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
+  EXECUTABLE_ONLY
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
