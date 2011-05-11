@@ -476,6 +476,53 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   return 1;
 }
 
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newControl[3])
+{
+  // cout << "vtkMRMLAnnotationControlPointsNode::SetControlPoint: ID:  " << id << " CtrlPt: " <<  newControl[0] << " " <<  newControl[1] << " " <<  newControl[2] << endl;
+  if (id < 0)
+  {
+    vtkErrorMacro("Invalid ID");
+    return 0;
+  }
+
+  // Create if not there
+  if (!this->PolyData || !this->PolyData->GetPoints()) {
+    this->ResetControlPoints();
+  }
+
+  int selectedFlag = this->GetAnnotationAttribute(id, CP_SELECTED);
+  if (selectedFlag == -1)
+    {
+    // default value
+    selectedFlag = 0;
+    }
+  int visibleFlag = this->GetAnnotationAttribute(id, CP_VISIBLE);
+  if (visibleFlag == -1)
+    {
+    // default value
+    visibleFlag = 1;
+    }
+
+  vtkPoints *points = this->PolyData->GetPoints();
+  points->InsertPoint(id, newControl);
+  // cout << "New ControlPoints Coord:" << this->GetControlPointCoordinates(id)[0] << " " << this->GetControlPointCoordinates(id)[1] << " " << this->GetControlPointCoordinates(id)[2] << endl;
+  //vtkIndent blub;
+  // points->PrintSelf(cout,blub);
+
+
+  for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
+    {
+      this->SetAttributeSize(j,points->GetNumberOfPoints());
+    }
+  this->SetAnnotationAttribute(id, CP_SELECTED, selectedFlag);
+  this->SetAnnotationAttribute(id, CP_VISIBLE, visibleFlag);
+  this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
+
+  return 1;
+}
+
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsNode::AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag)
 {

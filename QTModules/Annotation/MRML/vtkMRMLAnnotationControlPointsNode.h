@@ -79,6 +79,7 @@ public:
 
   int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
   int  SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag);
+  int SetControlPoint(int id, double newControl[3]);
 
   void DeleteControlPoint(int id);
   /// Return the RAS coordinates of point ID.
