@@ -159,7 +159,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -169,7 +169,7 @@
        <item row="0" column="0" rowspan="3" colspan="2">
         <widget class="QTextEdit" name="annotationTextEdit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -192,7 +192,7 @@
        </item>
        <item row="2" column="2">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="textScaleLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -208,7 +208,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="textOpacityLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -221,7 +221,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -234,7 +234,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="ctkSliderWidget" name="textOpacitySliderSpinBoxWidget" native="true">
            <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
@@ -243,6 +243,19 @@
             <double>1.000000000000000</double>
            </property>
           </widget>
+         </item>
+         <item row="3" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -439,6 +452,19 @@
            </property>
           </widget>
          </item>
+         <item row="6" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </item>
        <item row="1" column="2">
@@ -597,6 +623,19 @@
             <double>10.000000000000000</double>
            </property>
           </widget>
+         </item>
+         <item row="5" column="0">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
