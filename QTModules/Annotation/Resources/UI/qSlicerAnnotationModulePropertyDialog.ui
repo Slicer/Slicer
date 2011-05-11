@@ -418,19 +418,32 @@
          <item row="3" column="1">
           <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget" native="true">
            <property name="maximum" stdset="0">
-            <double>10.000000000000000</double>
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
           <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget" native="true">
            <property name="maximum" stdset="0">
-            <double>10.000000000000000</double>
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
            </property>
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget" native="true"/>
+          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget" native="true">
+           <property name="maximum" stdset="0">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget" native="true"/>
@@ -592,7 +605,10 @@
          <item row="2" column="1">
           <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget_2" native="true">
            <property name="maximum" stdset="0">
-            <double>10.000000000000000</double>
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
            </property>
           </widget>
          </item>
@@ -606,7 +622,10 @@
          <item row="3" column="1">
           <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget_2" native="true">
            <property name="maximum" stdset="0">
-            <double>10.000000000000000</double>
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
            </property>
           </widget>
          </item>
@@ -620,7 +639,10 @@
          <item row="4" column="1">
           <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget_2" native="true">
            <property name="maximum" stdset="0">
-            <double>10.000000000000000</double>
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep" stdset="0">
+            <double>0.100000000000000</double>
            </property>
           </widget>
          </item>
