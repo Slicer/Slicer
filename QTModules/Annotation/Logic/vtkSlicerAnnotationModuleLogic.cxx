@@ -2664,3 +2664,65 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
   return this->m_StringHolder.c_str();
 
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationTextDisplayNode *vtkSlicerAnnotationModuleLogic::GetTextDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationNode *textNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!textNode)
+    {
+    return NULL;
+    }
+  return textNode->GetAnnotationTextDisplayNode();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationPointDisplayNode *vtkSlicerAnnotationModuleLogic::GetPointDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return NULL;
+    }
+  // get the point display node
+ return pointsNode->GetAnnotationPointDisplayNode();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationLineDisplayNode *vtkSlicerAnnotationModuleLogic::GetLineDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationLinesNode *linesNode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!linesNode)
+    {
+    return NULL;
+    }
+  
+  return linesNode->GetAnnotationLineDisplayNode();
+}

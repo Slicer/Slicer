@@ -63,6 +63,19 @@ public:
   /// Check if node id corresponds to an annotaton node
   bool IsAnnotationNode(const char* id);
 
+  /// Return the text display node for the annotation mrml node with this id,
+  /// null if not a valid node, not an annotation node, or doesn't have a text
+  /// display node
+  vtkMRMLAnnotationTextDisplayNode *GetTextDisplayNode(const char *id);
+  /// Return the point display node for the annotation mrml node with this id,
+  /// null if not a valid node, not an annotation node, or doesn't have a point
+  /// display node
+  vtkMRMLAnnotationPointDisplayNode *GetPointDisplayNode(const char *id);
+  /// Return the line display node for the annotation mrml node with this id,
+  /// null if not a valid node, not an annotation node, or doesn't have a line
+  /// display node
+  vtkMRMLAnnotationLineDisplayNode *GetLineDisplayNode(const char *id);
+  
   /// Get the name of an Annotation MRML node
   const char * GetAnnotationName(const char * id);
 
