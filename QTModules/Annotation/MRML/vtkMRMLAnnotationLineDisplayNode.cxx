@@ -38,6 +38,7 @@ vtkMRMLNode* vtkMRMLAnnotationLineDisplayNode::CreateNodeInstance()
 vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
 {
   this->LineThickness = 1.0;
+  this->LabelPosition = 0.2;
 }
 
 
@@ -50,6 +51,7 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
   of << " lineThickness =\"" << this->LineThickness << "\"";
+  of << " labelPosition =\"" << this->LabelPosition << "\"";
 }
 
 
@@ -70,10 +72,16 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
 
       if (!strcmp(attName, "lineThickness"))
       {
-    std::stringstream ss;
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LineThickness;
+      }
+      else if (!strcmp(attName, "labelPosition"))
+        {
+        std::stringstream ss;
         ss << attValue;
-        ss >> this->LineThickness;
-      }        
+        ss >> this->LabelPosition;
+        }
     }
   this->EndModify(disabledModify);
 }
@@ -89,6 +97,7 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLAnnotationLineDisplayNode *node = (vtkMRMLAnnotationLineDisplayNode *) anode;
   this->SetLineThickness(node->LineThickness);
+  this->SetLabelPosition(node->LabelPosition);
 
   this->EndModify(disabledModify);
 }
@@ -98,6 +107,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   os << indent << "Line Thickness : " << this->LineThickness << "\n";
+  os << indent << "Label Position : " << this->LabelPosition << "\n";
 }
 
 //---------------------------------------------------------------------------

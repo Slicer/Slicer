@@ -59,13 +59,18 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   void SetLineThickness(double thickness);
   vtkGetMacro(LineThickness,double);
 
+  /// Get/Set for LabelPosition
+  vtkSetMacro(LabelPosition, double);
+  vtkGetMacro(LabelPosition, double);
+
  protected:
   vtkMRMLAnnotationLineDisplayNode();
   ~vtkMRMLAnnotationLineDisplayNode() { };
   vtkMRMLAnnotationLineDisplayNode( const vtkMRMLAnnotationLineDisplayNode& );
   void operator= ( const vtkMRMLAnnotationLineDisplayNode& );
-
+  
   double LineThickness;
+  double LabelPosition;
 };
 
 #endif
