@@ -66,7 +66,7 @@ vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
   this->HideFromEditors = 0;
 
   this->Nodes = NULL;
-  this->m_ScreenShot = NULL;
+  this->ScreenShot = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -77,10 +77,10 @@ vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
     this->Nodes->GetCurrentScene()->RemoveAllItems();
     this->Nodes->Delete();
     }
-  if (this->m_ScreenShot)
+  if (this->ScreenShot)
     {
-    this->m_ScreenShot->Delete();
-    this->m_ScreenShot = NULL;
+    this->ScreenShot->Delete();
+    this->ScreenShot = NULL;
     }
 }
 
@@ -91,7 +91,7 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << " screenshotType=\"" << this->GetScreenshotType() << "\"";
+  of << indent << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   vtkStdString description = this->GetSceneViewDescription();
   vtksys::SystemTools::ReplaceString(description,"\n","[br]");
@@ -144,7 +144,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       int screenshotType;
       ss >> screenshotType;
-      this->SetScreenshotType(screenshotType);
+      this->SetScreenShotType(screenshotType);
       }
     else if(!strcmp(attName, "sceneViewDescription"))
       {
@@ -246,8 +246,8 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSceneViewNode *snode = (vtkMRMLSceneViewNode *) anode;
 
-  this->SetScreenshot(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenshot());
-  this->SetScreenshotType(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenshotType());
+  this->SetScreenShot(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenShot());
+  this->SetScreenShotType(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenShotType());
   this->SetSceneViewDescription(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetSceneViewDescription());
 
   if (this->Nodes == NULL)

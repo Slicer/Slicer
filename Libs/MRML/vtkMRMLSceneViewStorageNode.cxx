@@ -225,10 +225,10 @@ int vtkMRMLSceneViewStorageNode::ReadData(vtkMRMLNode *refNode)
     result = 0;
     }
   
-  sceneViewNode->SetScreenshot(imageData);
-  sceneViewNode->GetScreenshot()->SetSpacing(1.0, 1.0, 1.0);
-  sceneViewNode->GetScreenshot()->SetOrigin(0.0, 0.0, 0.0);
-  sceneViewNode->GetScreenshot()->SetScalarType(VTK_UNSIGNED_CHAR);
+  sceneViewNode->SetScreenShot(imageData);
+  sceneViewNode->GetScreenShot()->SetSpacing(1.0, 1.0, 1.0);
+  sceneViewNode->GetScreenShot()->SetOrigin(0.0, 0.0, 0.0);
+  sceneViewNode->GetScreenShot()->SetScalarType(VTK_UNSIGNED_CHAR);
   imageData->Delete();
 
   this->SetReadStateIdle();
@@ -256,7 +256,7 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
 
   vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(refNode);
 
-  if (sceneViewNode->GetScreenshot() == NULL)
+  if (sceneViewNode->GetScreenShot() == NULL)
     {
     // nothing to write
     return 1;
@@ -276,7 +276,7 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
     writer->SetFileName(fullName.c_str());
-    writer->SetInput( sceneViewNode->GetScreenshot() );
+    writer->SetInput( sceneViewNode->GetScreenShot() );
     try
       {
       writer->Write();
@@ -290,7 +290,7 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkJPEGWriter> writer = vtkSmartPointer<vtkJPEGWriter>::New();
     writer->SetFileName(fullName.c_str());
-    writer->SetInput( sceneViewNode->GetScreenshot() );
+    writer->SetInput( sceneViewNode->GetScreenShot() );
     try
       {
       writer->Write();
@@ -304,7 +304,7 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkTIFFWriter> writer = vtkSmartPointer<vtkTIFFWriter>::New();
         writer->SetFileName(fullName.c_str());
-    writer->SetInput( sceneViewNode->GetScreenshot() );
+    writer->SetInput( sceneViewNode->GetScreenShot() );
     try
       {
       writer->Write();
@@ -318,7 +318,7 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkBMPWriter> writer = vtkSmartPointer<vtkBMPWriter>::New();
         writer->SetFileName(fullName.c_str());
-    writer->SetInput( sceneViewNode->GetScreenshot() );
+    writer->SetInput( sceneViewNode->GetScreenShot() );
     try
       {
       writer->Write();
