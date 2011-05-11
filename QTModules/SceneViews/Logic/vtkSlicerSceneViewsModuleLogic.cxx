@@ -279,12 +279,12 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
   vtkStdString descriptionString = vtkStdString(description);
 
   newSceneViewNode->SetSceneViewDescription(descriptionString);
-  newSceneViewNode->SetScreenshotType(screenshotType);
+  newSceneViewNode->SetScreenShotType(screenshotType);
 
   // make a new vtk image data, as the set macro is taking the pointer
-  vtkSmartPointer<vtkImageData> copyScreenshot = vtkSmartPointer<vtkImageData>::New();
-  copyScreenshot->DeepCopy(screenshot);
-  newSceneViewNode->SetScreenshot(copyScreenshot);
+  vtkSmartPointer<vtkImageData> copyScreenShot = vtkSmartPointer<vtkImageData>::New();
+  copyScreenShot->DeepCopy(screenshot);
+  newSceneViewNode->SetScreenShot(copyScreenShot);
   newSceneViewNode->StoreScene();
   //newSceneViewNode->HideFromEditorsOff();
   
@@ -336,8 +336,8 @@ void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id, const char
 
   vtkStdString descriptionString = vtkStdString(description);
   viewNode->SetSceneViewDescription(descriptionString);
-  viewNode->SetScreenshotType(screenshotType);
-  viewNode->SetScreenshot(screenshot);
+  viewNode->SetScreenShotType(screenshotType);
+  viewNode->SetScreenShot(screenshot);
 
   // TODO why two events?
   viewNode->Modified();
@@ -402,7 +402,7 @@ int vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotType(const char* id)
     return -1;
     }
 
-  return viewNode->GetScreenshotType();
+  return viewNode->GetScreenShotType();
 }
 
 //---------------------------------------------------------------------------
@@ -422,7 +422,7 @@ vtkImageData* vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshot(const char*
     return 0;
     }
 
-  return viewNode->GetScreenshot();
+  return viewNode->GetScreenShot();
 }
 
 //---------------------------------------------------------------------------
@@ -438,7 +438,7 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id)
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!")
+    vtkErrorMacro("RestoreSceneView: Could not get sceneView node!")
     return;
     }
 
@@ -520,7 +520,7 @@ const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewDown(const char* id)
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!")
+    vtkErrorMacro("MoveSceneViewDown: Could not get sceneView node!")
     return this->m_StringHolder.c_str();
     }
 

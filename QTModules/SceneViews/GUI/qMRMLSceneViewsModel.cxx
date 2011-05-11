@@ -88,10 +88,10 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
     case qMRMLSceneViewsModel::ThumbnailColumn:
       if (viewNode)
         {
-        if (viewNode->GetScreenshot())
+        if (viewNode->GetScreenShot())
           {
           QImage qimage;
-          qMRMLUtils::vtkImageDataToQImage(viewNode->GetScreenshot(),qimage);
+          qMRMLUtils::vtkImageDataToQImage(viewNode->GetScreenShot(),qimage);
           QSize imageSize = qimage.size();
 //          std::cout << "Image size = " << imageSize.width() << "x" << imageSize.height() << std::endl;
           QPixmap screenshot;
