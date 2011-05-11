@@ -207,6 +207,7 @@ void  vtkMRMLAnnotationPointDisplayNode::SetGlyphType(int type)
     {
     // invoke a display modified event
     // this->InvokeEvent(vtkMRMLAnnotationPointDisplayNode::DisplayModifiedEvent);
+    this->Modified();
     }
   this->ModifiedSinceReadOn();
 }
@@ -225,6 +226,7 @@ void vtkMRMLAnnotationPointDisplayNode::SetGlyphScale(double scale)
       {
       // invoke a display modified event
       // KP this->InvokeEvent(vtkMRMLAnnotationPointDisplayNode::DisplayModifiedEvent);
+      this->Modified();
       }
     this->ModifiedSinceReadOn();
 }

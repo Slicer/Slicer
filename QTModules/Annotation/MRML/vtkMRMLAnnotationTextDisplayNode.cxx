@@ -136,6 +136,7 @@ vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
     {
       // invoke a display modified event
       // this->InvokeEvent(vtkMRMLAnnotationTextDisplayNode::DisplayModifiedEvent);
+      this->Modified();
     }
   //this->InvokeEvent(vtkCommand::ModifiedEvent);
   this->ModifiedSinceReadOn();

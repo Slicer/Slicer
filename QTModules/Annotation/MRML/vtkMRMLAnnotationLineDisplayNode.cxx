@@ -129,8 +129,8 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
       {
       // invoke a display modified event
       // KP this->InvokeEvent(vtkMRMLAnnotationLineDisplayNode::DisplayModifiedEvent);
+      this->Modified();
       }
-    this->InvokeEvent(vtkCommand::ModifiedEvent);
     this->ModifiedSinceReadOn();
 }
 
