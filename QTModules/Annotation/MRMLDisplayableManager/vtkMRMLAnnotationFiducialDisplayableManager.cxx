@@ -386,6 +386,12 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       // use the unselected color
       handleRep->GetProperty()->SetColor(displayNode->GetColor());
       }
+    // material properties
+    handleRep->GetProperty()->SetOpacity(displayNode->GetOpacity());
+    handleRep->GetProperty()->SetAmbient(displayNode->GetAmbient());
+    handleRep->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
+    handleRep->GetProperty()->SetSpecular(displayNode->GetSpecular());
+    
 //    handleRep->SetHandle(glyphSource->GetOutput());
 
     // the following check is only needed since we require a different uniform scale depending on 2D and 3D
@@ -423,20 +429,18 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         // scale the text
         double textscale[3] = {textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale()};
         handleRep->SetLabelTextScale(textscale);
-        // set the colours
-        if (fiducialNode->GetSelected())
+        if (handleRep->GetLabelTextActor())
           {
-          if (handleRep->GetLabelTextActor())
+          // set the colours
+          if (fiducialNode->GetSelected())
             {
             handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetSelectedColor());
             }        
-          }
-        else
-          {
-          if (handleRep->GetLabelTextActor())
+          else
             {
             handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetColor());
             }
+          handleRep->GetLabelTextActor()->GetProperty()->SetOpacity(textDisplayNode->GetOpacity());
           }
         }
       handleRep->LabelVisibilityOn();
