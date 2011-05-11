@@ -974,6 +974,26 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
       this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::FiducialNode;
       d->fiducialTypeButton->setChecked(true);
       }
+    else if (activeAnnotationType == QString("vtkMRMLAnnotationRulerNode"))
+      {
+      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::RulerNode;
+      d->rulerTypeButton->setChecked(true);
+      }
+    else if (activeAnnotationType == QString("vtkMRMLAnnotationBidimensionalNode"))
+      {
+      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::BidimensionalNode;
+      d->bidimensionalTypeButton->setChecked(true);
+      }
+    else if (activeAnnotationType == QString("vtkMRMLAnnotationTextNode"))
+      {
+      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
+      d->textTypeButton->setChecked(true);
+      }
+    else if (activeAnnotationType == QString("vtkMRMLAnnotationROINode"))
+      {
+      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::ROINode;
+      d->roiTypeButton->setChecked(true);
+      }
     else
       {
       std::cout << "Unhandled annotation type " << activeAnnotationType.toLatin1().data() << std::endl;
