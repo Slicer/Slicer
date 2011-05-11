@@ -182,10 +182,6 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(deleteSelectedButtonClicked()));
 
   // Save Panel
-  this->connect(d->saveScene, SIGNAL(clicked()),
-      SLOT(onSaveMRMLSceneButtonClicked()));
-  this->connect(d->saveAnnotation, SIGNAL(clicked()), this,
-      SLOT(onSaveAnnotationButtonClicked()));
   this->connect(d->screenShot, SIGNAL(clicked()), this,
       SLOT(onSnapShotButtonClicked()));
   this->connect(d->generateReport, SIGNAL(clicked()), this,
@@ -218,12 +214,6 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 
   d->hierarchyTreeView->clearSelection();
   d->hierarchyTreeView->setSelectedNode(mrmlId);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
-{
-  //Q_D(qSlicerAnnotationModuleWidget);
 }
 
 //-----------------------------------------------------------------------------
@@ -364,35 +354,6 @@ void qSlicerAnnotationModuleWidget::propertyAccepted()
 
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
-{
-
-  // TODO
-  /*
-  QString filename = QFileDialog::getSaveFileName(this, "Save Annotation",
-      QDir::currentPath(), "Annotations (*.txt)");
-
-  // save the documents...
-  if (!filename.isNull())
-    {
-    QFile file(filename);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-      {
-      std::cerr << "Error: Cannot save file " << qPrintable(filename) << ": "
-          << qPrintable(file.errorString()) << std::endl;
-      return;
-      }
-
-    QTextStream out(&file);
-    // m_report has the contents for output
-    out << m_report;
-
-    }
-
-    */
-
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()

@@ -17,6 +17,8 @@ SET(module_mrml_include_directories
 SET(module_mrml_SRCS
   vtkMRMLAnnotationSnapshotNode.cxx
   vtkMRMLAnnotationSnapshotNode.h
+  vtkMRMLAnnotationSnapshotStorageNode.cxx
+  vtkMRMLAnnotationSnapshotStorageNode.h
   vtkMRMLAnnotationHierarchyNode.cxx
   vtkMRMLAnnotationHierarchyNode.h
   vtkMRMLAnnotationNode.cxx

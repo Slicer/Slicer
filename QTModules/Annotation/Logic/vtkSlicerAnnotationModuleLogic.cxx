@@ -17,6 +17,7 @@
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
+#include "vtkMRMLAnnotationSnapshotStorageNode.h"
 
 #include "qSlicerCoreApplication.h"
 
@@ -556,6 +557,10 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   vtkMRMLAnnotationSnapshotNode* annotationSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationSnapshotNode);
   annotationSnapshotNode->Delete();
+
+  vtkMRMLAnnotationSnapshotStorageNode* annotationSnapshotStorageNode = vtkMRMLAnnotationSnapshotStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationSnapshotStorageNode);
+  annotationSnapshotStorageNode->Delete();
 
   // Text annotation
   vtkMRMLAnnotationTextNode* annotationTextNode = vtkMRMLAnnotationTextNode::New();
@@ -2391,8 +2396,8 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
     newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Screenshot"));
     }
   newSnapshotNode->SetSnapshotDescription(description);
-  newSnapshotNode->SetScreenshotType(screenshotType);
-  newSnapshotNode->SetScreenshot(screenshot);
+  newSnapshotNode->SetScreenShotType(screenshotType);
+  newSnapshotNode->SetScreenShot(screenshot);
   newSnapshotNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSnapshotNode);
 
@@ -2439,8 +2444,8 @@ void vtkSlicerAnnotationModuleLogic::ModifySnapShot(vtkStdString id, const char*
     snapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
     }
   snapshotNode->SetSnapshotDescription(description);
-  snapshotNode->SetScreenshotType(screenshotType);
-  snapshotNode->SetScreenshot(screenshot);
+  snapshotNode->SetScreenShotType(screenshotType);
+  snapshotNode->SetScreenShot(screenshot);
 
   snapshotNode->Modified();
   snapshotNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, snapshotNode);
@@ -2492,7 +2497,7 @@ int vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshotType(const char* id)
     return 0;
     }
 
-  return snapshotNode->GetScreenshotType();
+  return snapshotNode->GetScreenShotType();
 }
 
 //---------------------------------------------------------------------------
@@ -2516,7 +2521,7 @@ vtkImageData* vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshot(const char* 
     return 0;
     }
 
-  return snapshotNode->GetScreenshot();
+  return snapshotNode->GetScreenShot();
 }
 
 //---------------------------------------------------------------------------

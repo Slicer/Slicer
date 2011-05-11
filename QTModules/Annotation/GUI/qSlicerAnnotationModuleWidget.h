@@ -79,11 +79,6 @@ protected slots:
     void moveUpSelected();  
 
 
-    // Save
-    void onSaveMRMLSceneButtonClicked();
-    void onSaveAnnotationButtonClicked();
-
-
   //------------------------------------------------------------------
   // Daniel's approved code starting here
 

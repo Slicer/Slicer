@@ -32,17 +32,36 @@ public:
 
   virtual const char* GetIcon() {return ":/Icons/ViewCamera.png";};
 
-  void SetSnapshotDescription(vtkStdString newDescription) {this->m_Description = newDescription;}
-  vtkStdString GetSnapshotDescription() {return this->m_Description;}
-
-  void SetScreenshot(vtkImageData* screenshot) {this->m_ScreenShot = screenshot;}
-  vtkImageData* GetScreenshot() {return this->m_ScreenShot;}
+  void SetSnapshotDescription(vtkStdString newDescription) {this->Description = newDescription;}
+  vtkStdString GetSnapshotDescription() {return this->Description;}
 
   void WriteXML(ostream& of, int nIndent);
   void ReadXMLAttributes(const char** atts);
 
-  void SetScreenshotType(int type) {this->m_ScreenShotType = type;}
-  int GetScreenshotType() {return this->m_ScreenShotType;}
+  ///
+  /// The attached screenshot of this sceneView
+  vtkSetObjectMacro(ScreenShot, vtkImageData);
+  vtkGetObjectMacro(ScreenShot, vtkImageData);
+
+  ///
+  /// The screenshot type of this sceneView
+  /// 0: 3D View
+  /// 1: Red Slice View
+  /// 2: Yellow Slice View
+  /// 3: Green Slice View
+  /// 4: Full layout
+  // TODO use an enum for the types
+  void SetScreenShotType(int type) {this->ScreenShotType = type;}
+  int GetScreenShotType() {return this->ScreenShotType;}
+
+  ///
+  /// Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
+  /// Utility transformable methods
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
 
   enum
   {
@@ -57,10 +76,10 @@ protected:
   void operator=(const vtkMRMLAnnotationSnapshotNode&);
 
   /// The associated Description
-  vtkStdString m_Description;
+  vtkStdString Description;
 
   /// The vtkImageData of the screenshot
-  vtkImageData* m_ScreenShot;
+  vtkImageData* ScreenShot;
 
   /// The type of the screenshot
   /// 0: 3D View
@@ -68,7 +87,7 @@ protected:
   /// 2: Yellow Slice View
   /// 3: Green Slice View
   /// 4: Full layout
-  int m_ScreenShotType;
+  int ScreenShotType;
 
 };
 
