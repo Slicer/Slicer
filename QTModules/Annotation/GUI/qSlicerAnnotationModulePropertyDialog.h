@@ -74,6 +74,7 @@ protected slots:
   void onTextUnselectedColorChanged(QColor qcolor);
   void onTextSelectedColorChanged(QColor qcolor);
   void onTextScaleChanged(double value);
+  void onTextOpacityChanged(double value);
 
   void onLockUnlockButtonClicked();
   void onVisibleInvisibleButtonClicked();

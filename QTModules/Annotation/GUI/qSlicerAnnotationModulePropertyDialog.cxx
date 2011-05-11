@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QTabWidget>
+#include <QTableWidget>
 
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationNode.h"
@@ -70,10 +72,16 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.annotationTextEdit->setText(text.c_str());
 
   // load the current annotation text scale
-  double textScale = this->m_logic->GetAnnotationTextScale(this->m_id.c_str());
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (textDisplayNode)
+    {
+    double textScale = textDisplayNode->GetTextScale();
+    ui.textScaleSliderSpinBoxWidget->setMaximum(120);
+    ui.textScaleSliderSpinBoxWidget->setValue(textScale);
 
-  ui.textScaleSliderSpinBoxWidget->setMaximum(120);
-  ui.textScaleSliderSpinBoxWidget->setValue(textScale);
+    double opacity = textDisplayNode->GetOpacity();
+    ui.textOpacitySliderSpinBoxWidget->setValue(opacity);
+    }
 
   // load the current measurement
   const char * measurement = this->m_logic->GetAnnotationMeasurement(
@@ -140,21 +148,44 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     {
     // get the point display node
     pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+
+    // point values
+    // clear out the table first?
+    //ui.pointsTableWidget->clear();
+    for (int p = 0; p < pointsNode->GetNumberOfControlPoints(); p++)
+      {
+      ui.pointsTableWidget->insertRow(p);
+      const char *name = pointsNode->GetName();
+      if (name)
+        {
+        ui.pointsTableWidget->setItem(p,0,new QTableWidgetItem(name));
+        }
+      double *coord = pointsNode->GetControlPointCoordinates(p);
+      
+      if (coord)
+        {
+        QString qnum;
+        qnum.setNum(coord[0]);
+        ui.pointsTableWidget->setItem(p,1,new QTableWidgetItem(qnum));
+        qnum.setNum(coord[1]);
+        ui.pointsTableWidget->setItem(p,2,new QTableWidgetItem(qnum));
+        qnum.setNum(coord[2]);
+        ui.pointsTableWidget->setItem(p,3,new QTableWidgetItem(qnum));
+        }
+      }
     }
   if (pointDisplayNode)
     {
-
-    // load the point colours
+    
   
-  
-    // unselected
+    // unselected color
     double *pointUnSelColor = pointDisplayNode->GetColor();
     QColor pointUnSelQColor;
     this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
     ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
     ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
     
-    // selected
+    // selected color
     double *pointSelColor = pointDisplayNode->GetSelectedColor();
     QColor pointSelQColor;
     this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
@@ -211,8 +242,15 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     lineDisplayNode = linesNode->GetAnnotationLineDisplayNode();
     }
 
-  if (lineDisplayNode)
+  if (!lineDisplayNode)
     {
+    // disable the lines tab
+    ui.tabWidget->setTabEnabled(2, false);
+    }
+  else
+    {
+    // enable the lines tab
+    ui.tabWidget->setTabEnabled(2, true);
     // colours
 
     // unselected
@@ -653,6 +691,9 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.textUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
       this, SLOT(onTextUnselectedColorChanged(QColor)));
 
+  this->connect(ui.textOpacitySliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+      this, SLOT(onTextOpacityChanged(double)));
+
   // point 
   this->connect(ui.pointUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onPointColorChanged(QColor)));
@@ -665,6 +706,15 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.pointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                 this, SLOT(onPointGlyphChanged(QString)));
 
+  this->connect(ui.pointOpacitySliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onPointOpacityChanged(double)));
+  this->connect(ui.pointAmbientSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onPointAmbientChanged(double)));
+  this->connect(ui.pointDiffuseSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onPointDiffuseChanged(double)));
+  this->connect(ui.pointSpecularSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onPointSpecularChanged(double)));
+  
   // line
   this->connect(ui.lineUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onLineColorChanged(QColor)));
@@ -1051,6 +1101,18 @@ void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)
 }
 
 //------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onTextOpacityChanged(double value)
+{
+  // get the text display node
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (!textDisplayNode)
+    {
+    return;
+    }
+  textDisplayNode->SetOpacity(value);
+}
+
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
 {
   // toggle the lock flag
@@ -1135,30 +1197,89 @@ void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
 {
-  Q_UNUSED(value);
+  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+  pointDisplayNode->SetOpacity(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
 {
-  Q_UNUSED(value);
-  //  this->m_logic->ModifyPropertiesAndWidget(
-  //     this->m_logic->GetMRMLScene()->GetNodeByID(
-  //        m_nodeId),
-  //   this->m_logic->POINT_AMBIENT,
-  //  &value);
+  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+  pointDisplayNode->SetAmbient(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
 {
-  Q_UNUSED(value);
+  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+  pointDisplayNode->SetDiffuse(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 {
-  Q_UNUSED(value);
+ vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
+    {
+    return;
+    }
+  pointDisplayNode->SetSpecular(value);
 }
 
 //------------------------------------------------------------------------------
