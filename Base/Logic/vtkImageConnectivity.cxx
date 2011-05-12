@@ -19,6 +19,7 @@
 #include <string.h>
 #include <limits.h>
 #include <assert.h>
+#include <stddef.h>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkImageConnectivity, "$Revision$");
