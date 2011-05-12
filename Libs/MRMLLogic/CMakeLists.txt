@@ -28,6 +28,8 @@ SET(include_dirs
   ${MRML_BINARY_DIR}
   ${vtkTeem_SOURCE_DIR}
   ${vtkTeem_BINARY_DIR}
+  ${RemoteIO_SOURCE_DIR}
+  ${RemoteIO_BINARY_DIR}
   )
 INCLUDE_DIRECTORIES(${include_dirs})
 
@@ -60,6 +62,7 @@ SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
   vtkMRMLApplicationLogic.cxx
   vtkMRMLColorLogic.cxx
+  vtkMRMLRemoteIOLogic.cxx
   vtkMRMLLayoutLogic.cxx
   vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
@@ -86,6 +89,7 @@ ADD_LIBRARY(${lib_name} ${srcs})
 SET(libs
   MRML
   vtkTeem
+  RemoteIO
   ${VTK_LIBRARIES}
   )
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})

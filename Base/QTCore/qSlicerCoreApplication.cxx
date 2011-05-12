@@ -63,6 +63,7 @@
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLRemoteIOLogic.h>
 
 // MRML includes
 #include "vtkCacheManager.h"
@@ -121,6 +122,7 @@ public:
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
   vtkSmartPointer< vtkMRMLApplicationLogic >    MRMLApplicationLogic;
+  vtkSmartPointer< vtkMRMLRemoteIOLogic >       MRMLRemoteIOLogic;
 
   /// Data manager
   vtkSmartPointer< vtkDataIOManagerLogic>       DataIOManagerLogic;
@@ -467,6 +469,9 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   // Create MRMLApplicationLogic
   d->MRMLApplicationLogic = vtkSmartPointer<vtkMRMLApplicationLogic>::New();
 
+  // Create MRMLRemoteIOLogic
+  d->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
+
   // --- First scene needs a crosshair to be added manually
   VTK_CREATE(vtkMRMLCrosshairNode, crosshair);
   crosshair->SetCrosshairName("default");
@@ -710,6 +715,14 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     {
     d->MRMLApplicationLogic->SetMRMLScene(newMRMLScene);
     }
+  if (d->MRMLRemoteIOLogic.GetPointer())
+    {
+    if (d->MRMLScene)
+      {
+      d->MRMLRemoteIOLogic->RemoveDataIOFromScene();
+      }
+    d->MRMLRemoteIOLogic->SetMRMLScene(newMRMLScene);
+    }
   if (d->CacheManager.GetPointer())
     {
     d->CacheManager->SetMRMLScene(newMRMLScene);
@@ -731,7 +744,11 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
       {
       d->MRMLScene->SetCacheManager(d->CacheManager);
       }
+    if (d->MRMLRemoteIOLogic.GetPointer())
+      {
+      d->MRMLRemoteIOLogic->AddDataIOToScene();
       }
+    }
 
   emit this->mrmlSceneChanged(newMRMLScene);
 }
