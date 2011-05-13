@@ -164,6 +164,9 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromDisplayNode(vtkMRMLV
   {
     return;
   }
+
+  int disabledModify = vspNode->StartModify();
+
   double range[2];
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
   input->GetScalarRange(range);
@@ -263,10 +266,14 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromDisplayNode(vtkMRMLV
   prop->SetDiffuse(0.60);
   prop->SetSpecular(0.50);
   prop->SetSpecularPower(40);
+
+  vspNode->EndModify(disabledModify);
 }
 
 void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  int disabledModify = vspNode->StartModify();
+
   this->UpdateTranferFunctionRangeFromImage(vspNode);
   //this->SetupHistograms(vspNode);
 
@@ -381,10 +388,14 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVol
       vspNode->SetThreshold(scalarRange);
     }
   }
+
+  vspNode->EndModify(disabledModify);
 }
 
 void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  int disabledModify = vspNode->StartModify();
+
   this->UpdateFgTranferFunctionRangeFromImage(vspNode);
   //this->SetupHistogramsFg(vspNode);
 
@@ -496,12 +507,17 @@ void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVo
         vspNode->SetThreshold(scalarRange);
     }
   }
+  vspNode->EndModify(disabledModify);
+
 }
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+
   // resize the ROI to fit the volume
   vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
   vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+
+  int disabledModify = roiNode->StartModify();
 
   if (volumeNode && roiNode)
   {
@@ -517,6 +533,9 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     roiNode->SetXYZ(center);
     roiNode->SetRadiusXYZ(xyz);
   }
+
+  roiNode->EndModify(disabledModify);
+
 }
 
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()
