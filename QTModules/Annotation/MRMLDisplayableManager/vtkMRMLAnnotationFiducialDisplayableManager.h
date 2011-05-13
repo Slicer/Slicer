@@ -61,6 +61,9 @@ protected:
   virtual void AdditionnalInitializeStep();
   /// respond to the interactor style event
 //  virtual void OnInteractorStyleEvent(int eventid);
+
+  // respond to control point modified events
+  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
   
 private:
 

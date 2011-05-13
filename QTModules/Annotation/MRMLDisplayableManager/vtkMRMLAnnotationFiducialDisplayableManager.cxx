@@ -26,6 +26,8 @@
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSphereSource.h>
+#include <vtkMath.h>
+
 
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyle.h>
@@ -506,7 +508,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   double worldCoordinates1[4];
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
     // 2D widget was changed
 
@@ -522,18 +524,42 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
     }
 
-  fiducialNode->SetFiducialCoordinates(worldCoordinates1);
+  // was there a change?
+  bool positionChanged = false;
+  double *currentCoordinates = fiducialNode->GetFiducialCoordinates();
+  if (currentCoordinates)
+    {
+    double currentCoords[3];
+    currentCoords[0] = currentCoordinates[0];
+    currentCoords[1] = currentCoordinates[1];
+    currentCoords[2] = currentCoordinates[2];
+    double newCoords[3];
+    newCoords[0] = worldCoordinates1[0];
+    newCoords[1] = worldCoordinates1[1];
+    newCoords[2] = worldCoordinates1[2];
+    double distance = sqrt(vtkMath::Distance2BetweenPoints(currentCoords, newCoords));
+    if (distance > 0.1)
+      {
+      vtkWarningMacro("PropagateWidgetToMRML: Distance = " << distance << ", position changed.");
+      positionChanged = true;
+      }
+    }
+  if (positionChanged)
+    {
+    fiducialNode->SetFiducialCoordinates(worldCoordinates1);
 
-  fiducialNode->SaveView();
-
+    fiducialNode->SaveView();
+    }
   seedWidget->CompleteInteraction();
 
   // enable processing of modified events
   fiducialNode->DisableModifiedEventOff();
 
-  fiducialNode->Modified();
-  fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
-
+  if (positionChanged)
+    {
+    fiducialNode->Modified();
+    fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
+    }
   // This displayableManager should now consider ModifiedEvent again
   this->m_Updating = 0;
 }
@@ -637,3 +663,63 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
     }
 }
 */
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
+{
+//  vtkWarningMacro("UpdatePosition, node is " << (node == NULL ? "null" : node->GetID()));
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    vtkErrorMacro("UpdatePosition - Can not access control points node from node with id " << node->GetID());
+    return;
+    }
+  // get the widget
+  if (!widget)
+    {
+    vtkErrorMacro("UpdatePosition: no widget associated with points node " << pointsNode->GetID());
+    return;
+    }
+  // cast to a seed widget
+  vtkSeedWidget* seedWidget = vtkSeedWidget::SafeDownCast(widget);
+
+  if (!seedWidget)
+   {
+   vtkErrorMacro("UpdatePosition: Could not get seed widget!")
+   return;
+   }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
+
+  double displayCoordinates1[4];
+  double displayCoordinatesBuffer1[4];
+
+  seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
+
+  this->GetWorldToDisplayCoordinates(pointsNode->GetControlPointCoordinates(0),displayCoordinates1);
+
+  if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+    {
+    // only update when really changed
+    if (!this->Is2DDisplayableManager())
+      {
+      vtkDebugMacro("UpdatePosition (3D): display position changed. updating seed 0 display position to " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", " << displayCoordinates1[2]);
+      }
+    seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+    seedRepresentation->NeedToRenderOn();
+    seedWidget->Modified();
+
+    seedWidget->CompleteInteraction();
+    }
+  
+  // enable processing of modified events
+  this->m_Updating = 0;
+}

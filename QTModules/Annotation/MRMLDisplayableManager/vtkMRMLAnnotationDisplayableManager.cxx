@@ -93,6 +93,7 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 {
   VTK_CREATE(vtkIntArray, nodeEvents);
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::CancelPlacementEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
@@ -217,6 +218,9 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       {
       case vtkCommand::ModifiedEvent:
         this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
+        break;
+      case vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent:
+        this->OnMRMLAnnotationControlPointModifiedEvent(annotationNode);
         break;
       case vtkMRMLTransformableNode::TransformModifiedEvent:
         this->OnMRMLAnnotationNodeTransformModifiedEvent(annotationNode);
@@ -499,9 +503,34 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node)
+{
+  vtkDebugMacro("OnMRMLAnnotationNodeControlPointModifiedEvent");
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+  vtkAbstractWidget *widget = this->Helper->GetWidget(annotationNode);
+  if (widget)
+    {
+    // Update the standard settings of all widgets.
+    this->UpdatePosition(widget, node);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLAnnotationNodeTransformModifiedEvent");
+  if (!node)
+    {
+    return;
+    }
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {

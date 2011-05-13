@@ -115,6 +115,7 @@ protected:
   void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
+  void OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node);
   //
   // Handling of interaction within the RenderWindow
   //
@@ -126,6 +127,8 @@ protected:
   /// Counter for clicks in Render Window
   vtkMRMLAnnotationClickCounter* m_ClickCounter;
 
+  /// Update just the position for the widget, implemented by subclasses.
+  virtual void UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *vtkNotUsed(node)) {};
   //
   // Seeds for widget placement
   //
