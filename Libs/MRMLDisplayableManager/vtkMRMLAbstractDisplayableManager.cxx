@@ -117,7 +117,6 @@ public:
 vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(
     vtkMRMLAbstractDisplayableManager* external):External(external)
 {
-  this->Initialized = false;
   this->Created = false;
   this->UpdateFromMRMLRequested = false;
   this->Renderer = 0;
@@ -423,8 +422,6 @@ void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
     }
 
   this->AdditionnalInitializeStep();
-
-  this->Internal->Initialized = true;
 
   this->Modified();
 }
