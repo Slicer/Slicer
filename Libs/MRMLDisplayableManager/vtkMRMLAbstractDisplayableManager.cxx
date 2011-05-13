@@ -89,7 +89,8 @@ public:
   /// Called after MRML DisplayableNode is set, it will add/remove interactor style observer
   /// according to the state of the current MRML InteractionNode
   /// \sa DoMRMLInteractionNodeCallback
-  void UpdateInteractorStyle();
+  void UpdateInteractorStyle(int eventIdToObserve = vtkCommand::NoEvent,
+                             int eventIdToUnObserve = vtkCommand::NoEvent);
 
   vtkMRMLAbstractDisplayableManager*        External;
   bool                                      Initialized;
@@ -304,18 +305,76 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoInteractorStyleCallback(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle()
+void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int eventIdToObserve, int eventIdToUnObserve)
 {
-  int currentInteractionMode = this->MRMLInteractionNode->GetCurrentInteractionMode();
-  switch (currentInteractionMode)
+  // TODO The following code could be factorized in shorter and simpler functions
+  bool updateObserver = false;
+  if (this->MRMLInteractionNode)
     {
-    case vtkMRMLInteractionNode::Place:
-    case vtkMRMLInteractionNode::PickManipulate:
-      this->SetAndObserveInteractorStyle(
-          this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
-      break;
-    default:
-      this->SetAndObserveInteractorStyle(0);
+    int currentInteractionMode = this->MRMLInteractionNode->GetCurrentInteractionMode();
+    switch (currentInteractionMode)
+      {
+      case vtkMRMLInteractionNode::Place:
+      case vtkMRMLInteractionNode::PickManipulate:
+        this->SetAndObserveInteractorStyle(
+            this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
+        updateObserver = (this->InteractorStyle != 0);
+        break;
+      default:
+        this->SetAndObserveInteractorStyle(0);
+      }
+    }
+
+  // Update observe if it applies
+  if (updateObserver)
+    {
+    if (eventIdToObserve != vtkCommand::NoEvent)
+      {
+      assert(!this->InteractorStyle->HasObserver(eventIdToObserve, this->InteractorStyleCallBackCommand));
+      this->InteractorStyle->AddObserver(eventIdToObserve, this->InteractorStyleCallBackCommand);
+      }
+    if (eventIdToUnObserve != vtkCommand::NoEvent)
+      {
+      assert(this->InteractorStyle->HasObserver(eventIdToUnObserve, this->InteractorStyleCallBackCommand));
+      this->InteractorStyle->RemoveObservers(eventIdToUnObserve, this->InteractorStyleCallBackCommand);
+      }
+    }
+
+  // Update InteractorStyleObservableEvents vector
+  if (eventIdToObserve != vtkCommand::NoEvent)
+    {
+    // Check if the ObservableEvent has already been registered
+    std::vector<int>::iterator it = std::find(
+        this->InteractorStyleObservableEvents.begin(),
+        this->InteractorStyleObservableEvents.end(),
+        eventIdToUnObserve);
+
+    if (it != this->InteractorStyleObservableEvents.end())
+      {
+      vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToUnObserve
+                                << " has already been added to the list of observable events !");
+      return;
+      }
+
+    this->InteractorStyleObservableEvents.push_back(eventIdToUnObserve);
+    }
+
+  if (eventIdToUnObserve != vtkCommand::NoEvent)
+    {
+    // Check if the ObservableEvent has already been registered
+    std::vector<int>::iterator it = std::find(
+        this->InteractorStyleObservableEvents.begin(),
+        this->InteractorStyleObservableEvents.end(),
+        eventIdToUnObserve);
+
+    if (it == this->InteractorStyleObservableEvents.end())
+      {
+      vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToUnObserve
+                                << " has already NOT been added to the list of observable events !");
+      return;
+      }
+
+    this->InteractorStyleObservableEvents.erase(it);
     }
 }
 
@@ -592,43 +651,13 @@ void vtkMRMLAbstractDisplayableManager::RemoveMRMLObservers()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::AddInteractorStyleObservableEvent(int eventid)
 {
-  if (this->Internal->InteractorStyle->HasObserver(eventid,
-                                                   this->Internal->InteractorStyleCallBackCommand))
-    {
-    vtkWarningMacro(<< "AddInteractorStyleObservableEvent - eventid:"
-                    << eventid << " is already observed !");
-    return;
-    }
-
-  this->Internal->InteractorStyle->AddObserver(eventid,
-                                               this->Internal->InteractorStyleCallBackCommand);
-
-  this->Internal->InteractorStyleObservableEvents.push_back(eventid);
+  this->Internal->UpdateInteractorStyle(eventid, vtkCommand::NoEvent);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::RemoveInteractorStyleObservableEvent(int eventid)
 {
-  if (!this->Internal->InteractorStyle->HasObserver(eventid,
-                                                   this->Internal->InteractorStyleCallBackCommand))
-    {
-    vtkWarningMacro(<< "RemoveInteractorStyleObservableEvent - eventid:"
-                    << eventid << " is NOT observed !");
-    return;
-    }
-
-  this->Internal->InteractorStyle->RemoveObservers(eventid,
-                                                   this->Internal->InteractorStyleCallBackCommand);
-
-  // Check if the DisplayableManager has already been registered
-  std::vector<int>::iterator it = std::find(
-      this->Internal->InteractorStyleObservableEvents.begin(),
-      this->Internal->InteractorStyleObservableEvents.end(),
-      eventid);
-
-  assert(it != this->Internal->InteractorStyleObservableEvents.end());
-
-  this->Internal->InteractorStyleObservableEvents.erase(it);
+  this->Internal->UpdateInteractorStyle(vtkCommand::NoEvent, eventid);
 }
 
 //---------------------------------------------------------------------------
