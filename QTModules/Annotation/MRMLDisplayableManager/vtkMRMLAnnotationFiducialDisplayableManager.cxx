@@ -540,7 +540,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     double distance = sqrt(vtkMath::Distance2BetweenPoints(currentCoords, newCoords));
     if (distance > 0.1)
       {
-      vtkWarningMacro("PropagateWidgetToMRML: Distance = " << distance << ", position changed.");
+      vtkDebugMacro("PropagateWidgetToMRML: Distance = " << distance << ", position changed.");
       positionChanged = true;
       }
     }
