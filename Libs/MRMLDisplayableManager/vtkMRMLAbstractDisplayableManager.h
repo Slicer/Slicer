@@ -49,16 +49,13 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
-  ///
   /// Return True if Create() method has been invoked
   /// \sa CreateIfPossible() Create()
   bool IsCreated();
 
-  ///
   /// Get Renderer
   vtkRenderer* GetRenderer();
 
-  ///
   /// Convenient method to get the WindowInteractor associated with the Renderer
   vtkRenderWindowInteractor* GetInteractor();
 
@@ -73,23 +70,22 @@ protected:
   vtkMRMLAbstractDisplayableManager();
   virtual ~vtkMRMLAbstractDisplayableManager();
 
-  ///
   /// Get MRML Displayable Node
   vtkMRMLNode * GetMRMLDisplayableNode();
 
   //BTX
-  /// Access to Initialize, SetMRMLDisplayableNode and CreateIfPossible methods
+  /// Access to SetRenderer, SetMRMLDisplayableNode and CreateIfPossible methods
   friend class vtkMRMLDisplayableManagerGroup;
   //ETX
 
   virtual void SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup* group);
   virtual void SetRenderer(vtkRenderer* newRenderer);
 
-  /// Called by SetRenderer();
   /// Sub-class could overload that function and perform additional initialization steps
+  /// \note Called by SetRenderer()
   /// \note Initialization occurs before the MRMLDisplayableNode is set and observed
   /// \warning That function should NOT be used directly !
-  /// \sa Initialize
+  /// \sa SetRenderer
   virtual void AdditionnalInitializeStep(){}
 
   virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void * callData);
