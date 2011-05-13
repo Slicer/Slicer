@@ -694,7 +694,9 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.textOpacitySliderSpinBoxWidget, SIGNAL(valueChanged(double)),
       this, SLOT(onTextOpacityChanged(double)));
 
-  // point 
+  // point
+  this->connect(ui.pointsTableWidget, SIGNAL(itemChanged(QTableWidgetItem *)),
+                this, SLOT(onPointsTableWidgetChanged(QTableWidgetItem *)));
   this->connect(ui.pointUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onPointColorChanged(QColor)));
   this->connect(ui.pointSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
@@ -1155,6 +1157,70 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 }
 
 //------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWidgetItem *tableItem)
+{
+  if (tableItem == NULL)
+    {
+    return;
+    }
+  int row = tableItem->row();
+  int col = tableItem->column();
+  QString newString = tableItem->text();
+  double newValue = newString.toDouble();
+  vtkMRMLNode *node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return;
+    }
+//  std::cout << "onPointsTableWidgetChanged: row = " << row << ", col = " << col << ", newValue = " << newValue << std::endl;
+  // get the point coordinates corresponding to this row
+  double *oldCoords = pointsNode->GetControlPointCoordinates(row);
+  double newCoords[3];
+  newCoords[0] = oldCoords[0];
+  newCoords[1] = oldCoords[1];
+  newCoords[2] = oldCoords[2];
+  if (!oldCoords)
+    {
+    return;
+    }
+  if (col == 1)
+    {
+    // x
+    if (newCoords[0] != newValue)
+      {
+      newCoords[0] = newValue;
+      }
+    }
+  else if (col == 2)
+    {
+    // y
+    if (newCoords[1] != newValue)
+      {
+      newCoords[1] = newValue;
+      }
+    }
+  else if (col == 3)
+    {
+    // z
+    if (newCoords[2] != newValue)
+      {
+      newCoords[2] = newValue;
+      }
+    }
+  if (newCoords[0] != oldCoords[0] ||
+      newCoords[1] != oldCoords[1] ||
+      newCoords[2] != oldCoords[2])
+    {
+    //std::cout << "Setting control point for point " << row << ", to " << newCoords[0] << ", " << newCoords[1] << ", " << newCoords[2] << std::endl;
+    pointsNode->SetControlPoint(row, newCoords);
+    }
+}
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 {
   double color[3];
@@ -1433,13 +1499,16 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   lock = !lock;
 
   ui.annotationTextEdit->setEnabled(lock);
+  ui.pointsTableWidget->setEnabled(lock);
   ui.measurementLineEdit->setEnabled(lock);
   ui.textSelectedColorPickerButton->setEnabled(lock);
   ui.textUnselectedColorPickerButton->setEnabled(lock);
   ui.textScaleSliderSpinBoxWidget->setEnabled(lock);
+  ui.textOpacitySliderSpinBoxWidget->setEnabled(lock);
   ui.visibleInvisibleButton->setEnabled(lock);
   ui.pointSelectedColorPickerButton->setEnabled(lock);
   ui.pointUnselectedColorPickerButton->setEnabled(lock);
+  ui.pointGlyphTypeComboBox->setEnabled(lock);
   ui.lineSelectedColorPickerButton->setEnabled(lock);
   ui.lineUnselectedColorPickerButton->setEnabled(lock);
   ui.pointAmbientSliderSpinBoxWidget->setEnabled(lock);

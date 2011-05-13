@@ -51,7 +51,7 @@ protected slots:
 
     void onCoordinateChanged(QString text);
 
-
+    void onPointsTableWidgetChanged(QTableWidgetItem *tableItem);
     void onPointColorChanged(QColor qcolor);
     void onPointSelectedColorChanged(QColor qcolor);
     void onPointSizeChanged(double value);
@@ -87,7 +87,7 @@ signals:
     void dialogAccepted();
     void doublePropertyChanged(double, char*, int);
     void colorPropertyChanged(QColor, char*, int);
-
+    void itemChanged(QTableWidgetItem *);
 
 private:
 
