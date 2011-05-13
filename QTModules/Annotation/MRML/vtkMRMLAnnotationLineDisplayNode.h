@@ -60,8 +60,17 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   vtkGetMacro(LineThickness,double);
 
   /// Get/Set for LabelPosition
-  vtkSetMacro(LabelPosition, double);
+  vtkSetClampMacro(LabelPosition, double, 0.0, 1.0);
   vtkGetMacro(LabelPosition, double);
+
+  /// Get/Set for LabelVisibility
+  vtkBooleanMacro(LabelVisibility, int);
+  vtkSetMacro(LabelVisibility, int);
+  vtkGetMacro(LabelVisibility, int);
+
+  /// Get/Set for TickSpacing
+  vtkSetMacro(TickSpacing, double);
+  vtkGetMacro(TickSpacing, double);
 
  protected:
   vtkMRMLAnnotationLineDisplayNode();
@@ -71,6 +80,8 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   
   double LineThickness;
   double LabelPosition;
+  int LabelVisibility;
+  double TickSpacing;
 };
 
 #endif

@@ -39,6 +39,8 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
 {
   this->LineThickness = 1.0;
   this->LabelPosition = 0.2;
+  this->LabelVisibility = 1;
+  this->TickSpacing = 1.0;
 }
 
 
@@ -50,8 +52,10 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-  of << " lineThickness =\"" << this->LineThickness << "\"";
-  of << " labelPosition =\"" << this->LabelPosition << "\"";
+  of << " lineThickness=\"" << this->LineThickness << "\"";
+  of << " labelPosition=\"" << this->LabelPosition << "\"";
+  of << " labelVisibility=\"" << (this->LabelVisibility ? "true" : "false") << "\"";
+  of << " tickSpacing=\"" << this->TickSpacing << "\"";
 }
 
 
@@ -82,6 +86,23 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
         ss << attValue;
         ss >> this->LabelPosition;
         }
+      else if (!strcmp(attName, "labelVisibility"))
+        {
+        if (!strcmp(attValue,"true")) 
+          {
+          this->LabelVisibility = 1;
+          }
+        else
+          {
+          this->LabelVisibility = 0;
+          }
+        }
+      else if (!strcmp(attName, "tickSpacing"))
+        {
+        std::stringstream ss;
+        ss << attValue;
+        ss >> this->TickSpacing;
+        }
     }
   this->EndModify(disabledModify);
 }
@@ -98,6 +119,8 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLAnnotationLineDisplayNode *node = (vtkMRMLAnnotationLineDisplayNode *) anode;
   this->SetLineThickness(node->LineThickness);
   this->SetLabelPosition(node->LabelPosition);
+  this->SetLabelVisibility(node->LabelVisibility);
+  this->SetTickSpacing(node->TickSpacing);
 
   this->EndModify(disabledModify);
 }
@@ -106,8 +129,10 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  os << indent << "Line Thickness : " << this->LineThickness << "\n";
-  os << indent << "Label Position : " << this->LabelPosition << "\n";
+  os << indent << "Line Thickness   : " << this->LineThickness << "\n";
+  os << indent << "Label Position   : " << this->LabelPosition << "\n";
+  os << indent << "Label Visibility : " << (this->LabelVisibility ? "true" : "false") << "\n";
+  os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
 }
 
 //---------------------------------------------------------------------------

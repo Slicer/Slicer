@@ -9,68 +9,19 @@ int vtkMRMLAnnotationLineDisplayNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode > node1 = vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode >::New();
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLAnnotationLineDisplayNode, node1);
 
-  node1->UpdateReferences();
+  TEST_SET_GET_DOUBLE_RANGE(node1, LineThickness, -1.0, 10.0);
 
-  vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode > node2 = vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode >::New();
+  // LabelPosition is clamped, so test manually
+  TEST_SET_GET_DOUBLE(node1, LabelPosition, 0.0);
+  TEST_SET_GET_DOUBLE(node1, LabelPosition, 0.01);
+  TEST_SET_GET_DOUBLE(node1, LabelPosition, 0.5);
+  TEST_SET_GET_DOUBLE(node1, LabelPosition, 0.99);
+  TEST_SET_GET_DOUBLE(node1, LabelPosition, 1.0);
 
-  node2->Copy( node1 );
-
-  node2->Reset();
-
-  node2->StartModify();
-
-  std::string nodeTagName = node1->GetNodeTagName();
-
-  std::cout << "Node Tag Name = " << nodeTagName << std::endl;
-
-  std::string attributeName;
-  std::string attributeValue;
-
-  node1->SetAttribute( attributeName.c_str(), attributeValue.c_str() );
-
-  std::string attributeValue2 = node1->GetAttribute( attributeName.c_str() );
-
-  if( attributeValue != attributeValue2 )
-    {
-    std::cerr << "Error in Set/GetAttribute() " << std::endl;
-    return EXIT_FAILURE;
-    }
+  TEST_SET_GET_BOOLEAN(node1, LabelVisibility);
+  TEST_SET_GET_DOUBLE_RANGE(node1, TickSpacing, 0.0, 100.0);
   
-  TEST_SET_GET_BOOLEAN( node1, HideFromEditors );
-  TEST_SET_GET_BOOLEAN( node1, Selectable );
-
-  TEST_SET_GET_STRING( node1, Description );
-  TEST_SET_GET_STRING( node1, SceneRootDir );
-  TEST_SET_GET_STRING( node1, Name );
-  TEST_SET_GET_STRING( node1, SingletonTag );
-
-  TEST_SET_GET_BOOLEAN( node1, ModifiedSinceRead );
-  TEST_SET_GET_BOOLEAN( node1, SaveWithScene );
-  TEST_SET_GET_BOOLEAN( node1, AddToScene );
-  TEST_SET_GET_BOOLEAN( node1, Selected );
-
-  node1->Modified();
-
-  vtkMRMLScene * scene = node1->GetScene();
-
-  if( scene != NULL )
-    {
-    std::cerr << "Error in GetScene() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  std::string stringToEncode = "Thou Shall Test !";
-  std::string stringURLEncoded = node1->URLEncodeString( stringToEncode.c_str() );
-
-  std::string stringDecoded = node1->URLDecodeString( stringURLEncoded.c_str() );
-
-  if( stringDecoded != stringToEncode )
-    {
-    std::cerr << "Error in URLEncodeString/URLDecodeString() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
   return EXIT_SUCCESS;
 }
