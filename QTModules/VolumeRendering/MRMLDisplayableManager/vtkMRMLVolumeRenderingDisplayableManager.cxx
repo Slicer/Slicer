@@ -1081,8 +1081,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnVolumeRenderingDisplayNodeModif
   vtkMRMLVolumeRenderingDisplayNode* dnode = this->GetDisplayNode();
   if (dnode && this->GetMRMLViewNode())
   {
-    if (dnode->GetViewNodeIDs().size() == 0 || 
-      strcmp(dnode->GetNthViewNodeID(0), this->GetMRMLViewNode()->GetID()))
+    if (!dnode->IsViewNodeIDPresent(this->GetMRMLViewNode()->GetID()))
     {
       this->RemoveVolumeFromViewers();
       //this->SetAndObserveDisplayNode(NULL);
@@ -1119,7 +1118,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::Create()
 void vtkMRMLVolumeRenderingDisplayableManager::OnCreate()
 {
   vtkSetAndObserveMRMLNodeMacro(this->ViewNode, this->GetMRMLViewNode());
-  if (this->ViewNode)
+  if (this->ViewNode && this->ViewNode->HasObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand()))
     {
     this->ViewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
     }
@@ -1190,7 +1189,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
       {
         vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(node);
         vtkSetAndObserveMRMLNodeMacro(this->ViewNode, viewNode);
-        if (this->ViewNode)
+        if (this->ViewNode && ! this->ViewNode->HasObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand()))
           {
           this->ViewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
           }
@@ -1278,8 +1277,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromDisplayNode
 
   if (vspNode->GetROINode())
   {
-    vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
     vspNode->GetROINode()->InsideOutOn();
+    if (!vspNode->GetROINode()->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand()))
+      {
+      vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
+      }
 
     this->SetROI(vspNode);
   }
@@ -1294,16 +1296,28 @@ void vtkMRMLVolumeRenderingDisplayableManager::InitializePipelineFromDisplayNode
   //Add observer to trigger update of transform
   if (volumeNode)
     {
-    volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
-    volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+    if (!volumeNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand()))
+      {
+      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+    }
+    if (!volumeNode->HasObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() ))
+      {
+      volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+      }
     }
 
   volumeNode = vspNode->GetFgVolumeNode();
   if (volumeNode)
     {
     //Add observer to trigger update of transform
-    volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
-    volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+    if (!volumeNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand()))
+      {
+      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLCallbackCommand());
+      }
+    if(!volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() ))
+      {
+      volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand() );
+      }
     }
 
 

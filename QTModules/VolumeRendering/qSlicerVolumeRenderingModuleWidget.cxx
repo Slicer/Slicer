@@ -264,6 +264,20 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
       }
     }
 
+  if (viewNode)
+    {
+    // remove view from the old selected display node
+    vtkMRMLVolumeRenderingDisplayNode* displayNodeOld = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
+            d->DisplayNodeComboBox->currentNode());
+    if (displayNodeOld)
+    {
+      displayNodeOld->RemoveAllViewNodeIDs();
+    }
+
+    // set view in the currently selected display node
+    dnode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+    }
+
   //d->DisplayNodeComboBox->setCurrentNode(dnode);
   this->setMRMLDisplayNode(dnode);
 }

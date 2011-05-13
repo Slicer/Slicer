@@ -682,12 +682,9 @@ void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
     return;
     }
 
-  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  if (IsViewNodeIDPresent(viewNodeID))
     {
-    if (std::string(viewNodeID) == this->ViewNodeIDs[i])
-      {
-      return; // already exists, do nothing
-      }
+    return; // already exists, do nothing
     }
 
   ViewNodeIDs.push_back(std::string(viewNodeID));
