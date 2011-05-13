@@ -63,6 +63,9 @@ protected slots:
     void onLineColorChanged(QColor qcolor);
     void onLineSelectedColorChanged(QColor qcolor);
     void onLineWidthChanged(double value);
+    void onLineLabelPositionChanged(double value);
+    void onLineLabelVisibilityStateChanged(int state);
+    void onLineTickSpacingChanged();
     void onLineOpacityChanged(double value);
     void onLineAmbientChanged(double value);
     void onLineDiffuseChanged(double value);

@@ -269,6 +269,15 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     
     // width
     ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
+    // label position
+    ui.lineLabelPositionSliderSpinBoxWidget->setValue(lineDisplayNode->GetLabelPosition());
+    // label visibility
+    ui.lineLabelVisibilityCheckBox->setChecked(lineDisplayNode->GetLabelVisibility());
+    // tick spacing
+    QString plainText;
+    plainText.setNum(lineDisplayNode->GetTickSpacing());
+    ui.lineTickSpacingPlainTextEdit->setPlainText(plainText);
+
     // line material properties
     ui.lineOpacitySliderSpinBoxWidget_2->setValue(lineDisplayNode->GetOpacity());
     ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
@@ -723,6 +732,23 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.lineSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onLineSelectedColorChanged(QColor)));
 
+  this->connect(ui.lineLabelPositionSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineLabelPositionChanged(double)));
+  this->connect(ui.lineLabelVisibilityCheckBox, SIGNAL(stateChanged(int)),
+                this, SLOT(onLineLabelVisibilityStateChanged(int)));
+  this->connect(ui.lineTickSpacingPlainTextEdit, SIGNAL(textChanged()),
+                this, SLOT(onLineTickSpacingChanged()));
+
+  // line material properties
+  this->connect(ui.lineOpacitySliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineOpacityChanged(double)));
+  this->connect(ui.lineAmbientSliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineAmbientChanged(double)));
+  this->connect(ui.lineDiffuseSliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineDiffuseChanged(double)));
+  this->connect(ui.lineSpecularSliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineSpecularChanged(double)));
+  
   this->connect(ui.lockUnlockButton, SIGNAL(clicked()), this, SLOT(onLockUnlockButtonClicked()));
   this->connect(ui.visibleInvisibleButton, SIGNAL(clicked()), this, SLOT(onVisibleInvisibleButtonClicked()));
    /*
@@ -1263,18 +1289,8 @@ void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
 {
-  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (!node)
-    {
-    return;
-    }
-  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
-  if (!pointsNode)
-    {
-    return;
-    }
   // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (!pointDisplayNode)
     {
     return;
@@ -1285,18 +1301,8 @@ void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
 {
-  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (!node)
-    {
-    return;
-    }
-  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
-  if (!pointsNode)
-    {
-    return;
-    }
   // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (!pointDisplayNode)
     {
     return;
@@ -1307,18 +1313,8 @@ void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
 {
-  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (!node)
-    {
-    return;
-    }
-  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
-  if (!pointsNode)
-    {
-    return;
-    }
   // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (!pointDisplayNode)
     {
     return;
@@ -1329,18 +1325,8 @@ void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 {
- vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (!node)
-    {
-    return;
-    }
-  vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
-  if (!pointsNode)
-    {
-    return;
-    }
   // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = pointsNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (!pointDisplayNode)
     {
     return;
@@ -1376,31 +1362,106 @@ void qSlicerAnnotationModulePropertyDialog::onLineSelectedColorChanged(QColor qc
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineWidthChanged(double value)
 {
-  Q_UNUSED(value);
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetLineThickness(value);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onLineLabelPositionChanged(double value)
+{
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetLabelPosition(value);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onLineLabelVisibilityStateChanged(int state)
+{
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  if (state)
+    {
+    lineDisplayNode->LabelVisibilityOn();
+    }
+  else
+    {
+    lineDisplayNode->LabelVisibilityOff();
+    }
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onLineTickSpacingChanged()
+{
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  QString plainText = ui.lineTickSpacingPlainTextEdit->toPlainText();
+  double value = plainText.toDouble();
+  lineDisplayNode->SetTickSpacing(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineOpacityChanged(double value)
 {
-  Q_UNUSED(value);
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetOpacity(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineAmbientChanged(double value)
 {
-  Q_UNUSED(value);
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetAmbient(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineDiffuseChanged(double value)
 {
-  Q_UNUSED(value);
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetDiffuse(value);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onLineSpecularChanged(double value)
 {
-  Q_UNUSED(value);
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetSpecular(value);
 }
 
 //------------------------------------------------------------------------------
@@ -1521,5 +1582,8 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineOpacitySliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineSpecularSliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineWidthSliderSpinBoxWidget_2->setEnabled(lock);
+  ui.lineLabelPositionSliderSpinBoxWidget->setEnabled(lock);
+  ui.lineLabelVisibilityCheckBox->setEnabled(lock);
+  ui.lineTickSpacingPlainTextEdit->setEnabled(lock);
 }
 
