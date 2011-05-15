@@ -137,7 +137,7 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
   boxRepresentation->PlaceWidget(bounds);
 
   boxRepresentation->NeedToRenderOn();
-  this->RequestRender();
+  //this->RequestRender();
   // end of starting placement
 
   // now, we move the widget to the position according to the MRML node
