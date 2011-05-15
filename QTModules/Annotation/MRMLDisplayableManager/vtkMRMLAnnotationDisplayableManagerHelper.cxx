@@ -51,6 +51,16 @@ vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerH
     this->RemoveSeeds();
     }
 }
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromNodes()
+{
+  // iterate through the node list
+  for (unsigned int i = 0; i < this->AnnotationNodeList.size(); i++)
+    {
+    vtkMRMLAnnotationNode *annotationNode = this->AnnotationNodeList[i];
+    this->UpdateLocked(annotationNode);
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgets(bool locked)

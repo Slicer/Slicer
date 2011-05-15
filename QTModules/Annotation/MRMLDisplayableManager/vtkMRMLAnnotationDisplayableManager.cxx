@@ -1033,6 +1033,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
   if (x < windowWidth && y < windowHeight)
     {
     this->OnClickInRenderWindow(x, y);
+    this->Helper->UpdateLockedAllWidgetsFromNodes();
     }
 }
 

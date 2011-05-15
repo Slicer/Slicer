@@ -40,6 +40,8 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Lock/Unlock all widgets based on the state of the nodes
+  void UpdateLockedAllWidgetsFromNodes();
   /// Lock/Unlock all widgets
   void UpdateLockedAllWidgets(bool locked);
   /// Lock/Unlock a widget
