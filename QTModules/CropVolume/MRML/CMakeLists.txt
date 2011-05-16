@@ -1,5 +1,9 @@
 PROJECT(vtkSlicer${qt_module_name}ModuleMRML)
 
+#
+# See CMake/SlicerMacroBuildModuleMRML.cmake for details
+#
+
 SET(module_mrml_name "${PROJECT_NAME}")
 
 # The header '${module_mrml_name}Export.h' will be automatically configured.
@@ -12,6 +16,7 @@ SET(module_mrml_include_directories
 # Source files
 SET(module_mrml_SRCS
   vtkMRMLCropVolumeParametersNode.cxx
+  vtkMRMLCropVolumeParametersNode.h
   )
 
 # Additional Target libraries
