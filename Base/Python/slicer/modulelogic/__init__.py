@@ -2,8 +2,8 @@
 
 import glob, os
 
-#Import the CLI logic
-from libqSlicerBaseQTCLIPython import vtkSlicerCLIModuleLogic
+# Import the CLI logic
+from qSlicerBaseQTCLIPython import vtkSlicerCLIModuleLogic
 
 # Retrieve list of modules
 for fname in glob.glob(__path__[0] + "/vtkSlicer*ModuleLogic.py"):
