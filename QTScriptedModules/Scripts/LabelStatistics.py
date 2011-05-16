@@ -270,7 +270,7 @@ class LabelStatisticsLogic:
       
 
 class Slicelet(object):
-  """A slicer modlet is a module widget that comes up in stand alone mode
+  """A slicer slicelet is a module widget that comes up in stand alone mode
   implemented as a python class.
   This class provides common wrapper functionality used by all slicer modlets.
   """
@@ -283,18 +283,20 @@ class Slicelet(object):
     self.parent.setLayout( qt.QVBoxLayout() )
 
     # TODO: should have way to pop up python interactor
+    self.buttons = qt.QFrame()
+    self.buttons.setLayout( qt.QHBoxLayout() )
+    self.parent.layout().addWidget(self.buttons)
     self.addDataButton = qt.QPushButton("Add Data")
-    self.parent.layout().addWidget(self.addDataButton)
-    self.addDataButton.connect("clicked()",self.onAddData)
+    self.buttons.layout().addWidget(self.addDataButton)
+    self.addDataButton.connect("clicked()",slicer.app.ioManager().openAddDataDialog)
+    self.loadSceneButton = qt.QPushButton("Load Scene")
+    self.buttons.layout().addWidget(self.loadSceneButton)
+    self.loadSceneButton.connect("clicked()",slicer.app.ioManager().openLoadSceneDialog)
 
     if widgetClass:
       self.widget = widgetClass(self.parent)
       self.widget.setup()
     self.parent.show()
-
-  def onAddData(self):
-    slicer.app.ioManager().openAddDataDialog()
-
 
 class LabelStatisticsSlicelet(Slicelet):
   """ Creates the interface when module is run as a stand alone gui app.
@@ -308,4 +310,7 @@ if __name__ == "__main__":
   # TODO: need a way to access and parse command line arguments
   # TODO: ideally command line args should handle --xml
 
-  modlet = LabelStatisticsSlicelet()
+  import sys
+  print( sys.argv )
+
+  slicelet = LabelStatisticsSlicelet()
