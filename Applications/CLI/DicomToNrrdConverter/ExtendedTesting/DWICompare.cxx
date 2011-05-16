@@ -63,7 +63,7 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
   // If the angle between two gradients differs more than this value they are
   // considered to be non-colinear
   double gradientToleranceForSameness = 1;
-  int bValueTolerance = 1;
+  float bValueTolerance = 0.5;
 
   while( itr != end )
     {
