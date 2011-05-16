@@ -21,7 +21,14 @@ SET(KIT_include_directories
   )
 
 # Source files
+SET(KIT_VTK_SRCS
+  vtkSlicerCLIModuleLogic.cxx
+  vtkSlicerCLIModuleLogic.h
+  )
+
+# Source files
 SET(KIT_SRCS
+  ${KIT_VTK_SRCS}
   qSlicerCLIExecutableModuleFactory.cxx
   qSlicerCLIExecutableModuleFactory.h
   qSlicerCLILoadableModuleFactory.cxx
@@ -35,8 +42,6 @@ SET(KIT_SRCS
   qSlicerCLIModuleWidget.cxx
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
-  vtkSlicerCLIModuleLogic.cxx
-  vtkSlicerCLIModuleLogic.h
   )
 
 # Headers that should run through moc
@@ -50,11 +55,11 @@ SET(KIT_MOC_SRCS
 # UI files
 SET(KIT_UI_SRCS
   Resources/UI/qSlicerCLIModuleWidget.ui
-)
+  )
 
 # Resources
 SET(KIT_resources
-)
+  )
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
@@ -63,11 +68,6 @@ SET(KIT_target_libraries
   ModuleDescriptionParser
   MRMLCLI
   )
-
-SET(KIT_ToPythonWrap_SRCS
-  vtkSlicerCLIModuleLogic.cxx
-  vtkSlicerCLIModuleLogic.h
-)
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}
@@ -84,44 +84,21 @@ SlicerMacroBuildBaseQtLibrary(
 #ADD_SUBDIRECTORY(Plugins)
 
 # --------------------------------------------------------------------------
-# Create Python wrappers if VTK is wrapped in Python
-#
+# Python Wrapping
+# --------------------------------------------------------------------------
+IF(VTK_WRAP_PYTHON)
+  vtkMacroKitPythonWrap(
+    KIT_NAME ${PROJECT_NAME}
+    KIT_SRCS ${KIT_VTK_SRCS}
+    KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
+    KIT_PYTHON_LIBRARIES SlicerBaseLogicPythonD
+    )
+ENDIF()
 
-IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
-
-  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
-
-  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
-  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${KIT_ToPythonWrap_SRCS}")
-  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
-  SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES LABELS ${lib_name})
-  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
-  SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES LABELS ${lib_name})
-  
-  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name} SlicerBaseLogicPythonD)
-  #  TARGET_LINK_LIBRARIES(${lib_name}PythonD MRMLLogicPythonD)
-  
-  FOREACH(c ${KIT_PYTHON_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
-  ENDFOREACH(c)
-
-  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
-  #  TARGET_LINK_LIBRARIES(${lib_name}Python MRMLLogicPythonD)
-
-  ## Python modules on Windows must have the extension ".pyd"
-  IF(WIN32 AND NOT CYGWIN)
-    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
-  ENDIF(WIN32 AND NOT CYGWIN)
-
-  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development)
-
-ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
-
-
+# --------------------------------------------------------------------------
 # Testing
+# --------------------------------------------------------------------------
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()
