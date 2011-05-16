@@ -32,6 +32,11 @@
     <file>Icons/Large/SlicerAddScene.png</file>
     <file>Icons/XLarge/SlicerAddScene.png</file>
 
+    <file>Icons/Small/SlicerDownloadMRHead.png</file>
+    <file>Icons/Medium/SlicerDownloadMRHead.png</file>
+    <file>Icons/Large/SlicerDownloadMRHead.png</file>
+    <file>Icons/XLarge/SlicerDownloadMRHead.png</file>
+
     <file>Icons/Small/SlicerAddTransform.png</file>
     <file>Icons/Medium/SlicerAddTransform.png</file>
     <file>Icons/Large/SlicerAddTransform.png</file>
