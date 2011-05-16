@@ -33,17 +33,17 @@ LIST(APPEND dirs
 #-----------------------------------------------------------------------------
 # CUDA
 #-----------------------------------------------------------------------------
-INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
-IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
-   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
-ELSE()
-   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
-ENDIF()
+#IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+#   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
+#ELSE()
+#   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
+#ENDIF()
 
-IF(CUDA_SUPPORT_ENABLED)
-  LIST(APPEND dirs CudaSupport)
-ENDIF()
+#IF(CUDA_SUPPORT_ENABLED)
+#  LIST(APPEND dirs CudaSupport)
+#ENDIF()
 
 #-----------------------------------------------------------------------------
 # Set library properties
