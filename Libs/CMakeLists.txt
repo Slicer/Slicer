@@ -20,12 +20,12 @@ LIST(APPEND dirs
   FreeSurfer
   MRML
   MRMLCLI
+  RemoteIO
   MRMLLogic
   MRMLDisplayableManager
   MRMLIDImageIO
   MGHImageIO
   IGT
-  RemoteIO
   #SIGN
   qMRMLWidgets
   )
