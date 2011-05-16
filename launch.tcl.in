@@ -387,8 +387,8 @@ proc launch_SetEnvironment {} {
         set ::env(CTK_DIR)         "$::Slicer_HOME/bin"
       }
       set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
-      set ::env(PYTHONQT_DIR)       [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
-      set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
+      set ::env(PYTHONQT_DIR)       [file normalize "@CTK_DIR@/PythonQt-build/$::CTK_BUILD_SUBDIR"]
+      set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/PythonQt-build/$::CTK_BUILD_SUBDIR"]
     
       if { "@QT_LIBRARY_DIR@" != "" } {
         set ::env(QT_LIB_DIR)         [file normalize "@QT_LIBRARY_DIR@"]

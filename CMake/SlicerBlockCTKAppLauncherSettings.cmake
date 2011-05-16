@@ -74,7 +74,6 @@ ENDIF()
 SET(SLICER_LIBRARY_PATHS_BUILD
   ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
-  ${CTK_DIR}/CMakeExternals/Build/PythonQt/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
   ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
@@ -112,7 +111,10 @@ ENDIF()
 
 IF(Slicer_USE_PYTHONQT)
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
-  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD ${SLICER_PYTHON_LIB_DIR})
+  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD 
+    ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
+    ${SLICER_PYTHON_LIB_DIR}
+    )
 ENDIF()
 
 #-----------------------------------------------------------------------------
