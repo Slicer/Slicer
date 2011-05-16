@@ -9,7 +9,7 @@ import qt, ctk
 class SampleData:
   def __init__(self, parent):
     parent.title = "SampleData"
-    parent.category = "Informatcs"
+    parent.category = "Informatics"
     parent.contributor = "Steve Pieper"
     parent.helpText = """
 The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.  
