@@ -1447,7 +1447,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 #-----------------------------------------------------------------------------
 # SparseFieldLevelSetContour tests
 #-----------------------------------------------------------------------------
-set (CLP SparseFieldLevelSetContour1)
+set (CLP SparseFieldLevelSetContour)
 
 include_directories( ${SlicerBaseCLI_BINARY_DIR} 
                      ${CMAKE_CURRENT_BINARY_DIR}/../SparseFieldLevelSetContour  
