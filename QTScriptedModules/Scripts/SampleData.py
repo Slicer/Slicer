@@ -79,6 +79,7 @@ class SampleDataWidget:
         ( 'MRHead', self.downloadMRHead ),
         ( 'CTChest', self.downloadCTChest ),
         ( 'CTACardio', self.downloadCTACardio ),
+        ( 'DTIBrain', self.downloadDTIBrain ),
         ( 'MRBrainTumor1', self.downloadMRBrainTumor1 ),
         ( 'MRBrainTumor2', self.downloadMRBrainTumor2 ),
       )
@@ -99,6 +100,9 @@ class SampleDataWidget:
   def downloadCTACardio(self):
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
 
+  def downloadDTIBrain(self):
+    self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
+
   def downloadMRBrainTumor1(self):
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
 
@@ -108,25 +112,12 @@ class SampleDataWidget:
   def downloadVolume(self, uri, name):
     #TODO: this should probably just call AddArchetypeScalarVolume directly and then 
     #set the composite nodes using the PropagateVolumeSelection api.
-    mrmlXML = r"""
-<MRML  version="16608" userTags="">
- <VolumeArchetypeStorage
-  id="vtkMRMLVolumeArchetypeStorageNode1"  name="vtkMRMLVolumeArchetypeStorageNode1"  hideFromEditors="true"  selectable="true"  selected="false"  uri="%s"  useCompression="1"  readState="0"  writeState="4"  centerImage="1"  singleFile="0"  UseOrientationFromFile="1" ></VolumeArchetypeStorage>
- <Volume
-  id="vtkMRMLScalarVolumeNode1"  name="%s"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1"  userTags=""  displayNodeRef="vtkMRMLScalarVolumeDisplayNode1"  ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 "  spacing="1 1 1.3"  origin="-83.8497 127.5 127.5"  labelMap="0" ></Volume>
- <VolumeDisplay
-  id="vtkMRMLScalarVolumeDisplayNode1"  name="vtkMRMLScalarVolumeDisplayNode1"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.5 0.5 0.5"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  autoScalarRange="true"  scalarRange="0 100"  colorNodeRef="vtkMRMLColorTableNodeGrey"   window="128"  level="67"  upperThreshold="279"  lowerThreshold="16"  interpolate="1"  autoWindowLevel="1"  applyThreshold="0"  autoThreshold="1" ></VolumeDisplay>
- <SliceComposite
-  id="vtkMRMLSliceCompositeNode1"  name="vtkMRMLSliceCompositeNode1"  hideFromEditors="true"  selectable="true"  selected="false"  backgroundVolumeID="vtkMRMLScalarVolumeNode1"  foregroundVolumeID=""  labelVolumeID=""  compositing="0"  foregroundOpacity="0"  labelOpacity="1"  linkedControl="0"  foregroundGrid="0"  backgroundGrid="0"  labelGrid="0"  fiducialVisibility="1"  fiducialLabelVisibility="1"  sliceIntersectionVisibility="0"  layoutName="Green"  annotationMode="All"  doPropagateVolumeSelection="1" ></SliceComposite>
- <SliceComposite
-  id="vtkMRMLSliceCompositeNode2"  name="vtkMRMLSliceCompositeNode2"  hideFromEditors="true"  selectable="true"  selected="false"  backgroundVolumeID="vtkMRMLScalarVolumeNode1"  foregroundVolumeID=""  labelVolumeID=""  compositing="0"  foregroundOpacity="0"  labelOpacity="1"  linkedControl="0"  foregroundGrid="0"  backgroundGrid="0"  labelGrid="0"  fiducialVisibility="1"  fiducialLabelVisibility="1"  sliceIntersectionVisibility="0"  layoutName="Red"  annotationMode="All"  doPropagateVolumeSelection="1" ></SliceComposite>
- <SliceComposite
-  id="vtkMRMLSliceCompositeNode3"  name="vtkMRMLSliceCompositeNode3"  hideFromEditors="true"  selectable="true"  selected="false"  backgroundVolumeID="vtkMRMLScalarVolumeNode1"  foregroundVolumeID=""  labelVolumeID=""  compositing="0"  foregroundOpacity="0"  labelOpacity="1"  linkedControl="0"  foregroundGrid="0"  backgroundGrid="0"  labelGrid="0"  fiducialVisibility="1"  fiducialLabelVisibility="1"  sliceIntersectionVisibility="0"  layoutName="Yellow"  annotationMode="All"  doPropagateVolumeSelection="1" ></SliceComposite>
-</MRML>
-""" % (uri, name)
-
-    slicer.mrmlScene.SetLoadFromXMLString(True)
-    slicer.mrmlScene.SetSceneXMLString(mrmlXML)
-    slicer.mrmlScene.Import()
-    slicer.mrmlScene.SetSceneXMLString("")
-    slicer.mrmlScene.SetLoadFromXMLString(False)
+    # start the download
+    vl = slicer.modules.volumes.logic()
+    volumeNode = vl.AddArchetypeVolume(uri, name, 0)
+    # automatically select the volume to display
+    if volumeNode:
+      mrmlLogic = slicer.app.mrmlApplicationLogic()
+      selNode = mrmlLogic.GetSelectionNode()
+      selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
+      mrmlLogic.PropagateVolumeSelection(1)
