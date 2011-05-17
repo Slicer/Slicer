@@ -24,14 +24,14 @@
 
 #include <vector>
 
-#if defined(WIN32) && !defined(SparseFieldLevelSetContour_STATIC)
- #if defined(SparseFieldLevelSetContour_EXPORTS)
-  #define SPARSEFIELDLEVELSETCONOUR_EXPORT __declspec( dllexport ) 
+#if defined(WIN32) && !defined(SparseFieldLevelSetContourLib_STATIC)
+ #if defined(SparseFieldLevelSetContourLib_EXPORTS)
+  #define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT __declspec( dllexport ) 
  #else
-  #define SPARSEFIELDLEVELSETCONOUR_EXPORT __declspec( dllimport ) 
+  #define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT __declspec( dllimport ) 
  #endif
 #else
- #define SPARSEFIELDLEVELSETCONOUR_EXPORT
+ #define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT
 #endif
 
 namespace MeshContourEvolver {
@@ -46,17 +46,17 @@ int rightHandMesh;
 
 // Input: mesh and indices of vertices for initialization
 //vtkPolyData* entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, bool bForceRecompute = false);
-void SPARSEFIELDLEVELSETCONOUR_EXPORT entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, vtkPolyData *outputMesh, InitParam init, bool bForceRecompute = false );
+void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, vtkPolyData *outputMesh, InitParam init, bool bForceRecompute = false );
 
 
 // Input: mesh and 3D points for initialization. This is what you get
 // when inputting 'fiducials' in Slicer GUI. The 3D points
 // are not on the mesh, you need to first find closest points on the mesh.
-void SPARSEFIELDLEVELSETCONOUR_EXPORT entry_main( vtkPolyData* inputMesh, std::vector< std::vector<float> >& initPoints3D, vtkPolyData* outputMesh, InitParam init, bool bForceRecompute = false);
+void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh, std::vector< std::vector<float> >& initPoints3D, vtkPolyData* outputMesh, InitParam init, bool bForceRecompute = false);
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-void SPARSEFIELDLEVELSETCONOUR_EXPORT entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init);
+void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init);
 
 }
 
