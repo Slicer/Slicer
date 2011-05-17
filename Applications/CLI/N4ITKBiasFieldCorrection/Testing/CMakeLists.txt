@@ -21,9 +21,6 @@ mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
 SET(CLP N4ITKBiasFieldCorrection)
 
-#
-# Slicer3 is needed to resolve shared libraries
-#
 set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")

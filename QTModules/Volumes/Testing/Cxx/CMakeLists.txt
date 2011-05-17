@@ -27,9 +27,6 @@ SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
 SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )
 TEST_WITH_ARG( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )
 
-#ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
-
-# SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data
 
 file(GLOB MRMLFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.mrml")

@@ -23,9 +23,6 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 # Testing
 #-----------------------------------------------------------------------------
 
-#
-# Slicer3 is needed to resolve shared libraries
-#
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
