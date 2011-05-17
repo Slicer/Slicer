@@ -15,14 +15,6 @@ if(POLICY CMP0017)
 endif()
 
 # --------------------------------------------------------------------------
-# Find Slicer3
-
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer3 REQUIRED)
-  include(${Slicer_USE_FILE})
-endif(NOT Slicer_SOURCE_DIR)
-
-# --------------------------------------------------------------------------
 
 SET(Tractography_libs
   Logic

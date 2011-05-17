@@ -15,15 +15,6 @@ if(POLICY CMP0017)
 endif()
 
 # --------------------------------------------------------------------------
-# Find Slicer3
-
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer3 REQUIRED)
-  include(${Slicer_USE_FILE})
-  slicer3_set_default_install_prefix_for_external_projects()
-endif(NOT Slicer_SOURCE_DIR)
-
-# --------------------------------------------------------------------------
 # OpenCV stuff
 
 # Chinzei; Next 1 line is to include here to find FindXX.cmake files.

@@ -9,15 +9,6 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # --------------------------------------------------------------------------
-# Find Slicer3
-
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer3 REQUIRED)
-  include(${Slicer_USE_FILE})
-  slicer3_set_default_install_prefix_for_external_projects()
-endif(NOT Slicer_SOURCE_DIR)
-
-# --------------------------------------------------------------------------
 # ProstateNav_REVISION
 
 set(ProstateNav_REVISION "")

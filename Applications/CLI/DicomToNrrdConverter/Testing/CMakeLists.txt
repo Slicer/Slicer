@@ -5,11 +5,6 @@ include_regular_expression("^.*$")
 
 enable_testing()
 
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer3 REQUIRED)
-  include(${Slicer_USE_FILE})
-endif(NOT Slicer_SOURCE_DIR)
-
 find_package(GenerateCLP REQUIRED)
 include(${GenerateCLP_USE_FILE})
 

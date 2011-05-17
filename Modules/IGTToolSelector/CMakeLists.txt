@@ -5,15 +5,6 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# --------------------------------------------------------------------------
-# Find Slicer3
-
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer3 REQUIRED)
-  include(${Slicer_USE_FILE})
-  slicer3_set_default_install_prefix_for_external_projects()
-endif(NOT Slicer_SOURCE_DIR)
-
 
 # --------------------------------------------------------------------------
 # Include dirs
