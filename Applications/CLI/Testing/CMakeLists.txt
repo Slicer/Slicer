@@ -1456,11 +1456,7 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR}
                      ${vtkTeem_BINARY_DIR} 
                      ) 
 add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test SparseFieldLevelSetContour)
-target_link_libraries(${CLP}Test SparseFieldLevelSetContourLib
-  vtkITK  vtkIO SlicerBaseCLI
-  ModuleDescriptionParser
-  )
+target_link_libraries(${CLP}Test ${CLP}Lib vtkITK vtkIO SlicerBaseCLI ModuleDescriptionParser)
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 # leaks from tcl file
@@ -1475,8 +1471,6 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 # use a helper to compare the baseline and output, running it from the launcher to set up the paths
 
-# the test code doesn't link on windows
-if (NOT WIN32 AND NOT APPLE)
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test> ${testname}
   --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
@@ -1489,8 +1483,6 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test> 
   --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-
-endif (NOT WIN32 AND NOT APPLE)
 
 #-----------------------------------------------------------------------------
 # MergeModels tests
