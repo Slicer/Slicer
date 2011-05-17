@@ -22,15 +22,21 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
+    # trigger the menu to be added when application has started up
+    qt.QTimer.singleShot(0, self.addMenu);
+    
+
+  def addMenu(self):
     i = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
     a = qt.QAction(i, 'Download Sample Data', slicer.util.mainWindow())
     a.setToolTip('Go to the SampleData module to download data from the network')
     a.connect('triggered()', self.select)
 
     menuFile = slicer.util.lookupTopLevelWidget('menuFile')
-    for action in menuFile.actions():
-      if action.text == 'Add Data':
-        menuFile.insertAction(action,a)
+    if menuFile:
+      for action in menuFile.actions():
+        if action.text == 'Add Data':
+          menuFile.insertAction(action,a)
 
 
   def select(self):
