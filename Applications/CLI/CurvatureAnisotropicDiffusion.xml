@@ -46,7 +46,7 @@ Performs anisotropic diffusion on an image using a modified curvature diffusion 
     <double>
       <name>timeStep</name>
       <longflag>--timeStep</longflag>
-      <description>The time step depends on the dimensionality of the image. In Slicer3 the images are 3D and the default (.0625) time step will provide a stable solution.</description>
+      <description>The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution.</description>
       <description>Time Step</description>
       <label>Time Step</label>
       <default>0.0625</default>

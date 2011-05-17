@@ -386,7 +386,7 @@ void vtkBrainlabModuleNavigationStep::Timer(int yes)
 void vtkBrainlabModuleNavigationStep::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* transform)
 {
 
-  // NOTES: In Slicer3 ver. 3.2 and higher, a slice orientation information in
+  // NOTES: In Slicer ver. 3.2 and higher, a slice orientation information in
   // a slice nodes classes are automaticall set to "Reformat", whenever
   // SetSliceToRASByNTP() function is called.
   // The OpenIGTLinkIF module saves the slice orientations in SliceOrientation[]

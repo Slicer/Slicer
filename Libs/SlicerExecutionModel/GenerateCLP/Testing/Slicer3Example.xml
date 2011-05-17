@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Application</category>
-  <title>Slicer3 Example</title>
+  <title>Slicer Example</title>
   <description>The ultimate 3D Segmentation, Registration and Visualization System</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
@@ -10,7 +10,7 @@
 
   <parameters>
     <label>Command Line Parameters</label>
-    <description>Parameters used to start up Slicer3</description>
+    <description>Parameters used to start up Slicer</description>
 
       <boolean>
       <name>Threads</name>

@@ -10,7 +10,7 @@
 
   <parameters>
     <label>Command Line Parameters</label>
-    <description>Parameters used to start up Slicer3</description>
+    <description>Parameters used to start up Slicer</description>
 
       <boolean>
       <name>Threads</name>

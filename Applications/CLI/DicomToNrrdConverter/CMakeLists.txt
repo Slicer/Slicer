@@ -32,7 +32,7 @@ if (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
 endif (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
 
 if (Slicer_SOURCE_DIR)
-  ##There's limited testing from within Slicer3.  There's extensive testing when run 
+  ##There's limited testing from within Slicer.  There's extensive testing when run 
   ##at UIowa but the testing data isn't publicly accessible yet.  Other packages that 
   ##use this tool will not run either set of tests
   ADD_SUBDIRECTORY(Testing)

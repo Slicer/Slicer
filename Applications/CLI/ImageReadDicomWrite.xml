@@ -2,7 +2,7 @@
 <executable>
   <category>Converters</category>
   <title>Create a DICOM Series</title>
-  <description>Create a DICOM Series from a Slicer3 volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.</description>
+  <description>Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:CreateaDicomSeries-Documentation-3.6</documentation-url>
   <license></license>
