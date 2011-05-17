@@ -628,6 +628,32 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
+# DiffusionWeightedMasking tests
+#-----------------------------------------------------------------------------
+set (CLP DiffusionWeightedMasking)
+
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
+include_directories(
+  ${vtkITK_SOURCE_DIR} 
+  ${vtkITK_BINARY_DIR} 
+  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
+  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  DiffusionWeightedMaskingTest
+    --otsuomegathreshold 0.5
+    --removeislands 
+    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
+    ${TEMP}/DiffusionWeightedMaskingTest_output.nhdr
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
+#-----------------------------------------------------------------------------
 # DiffusionTensorEstimation tests
 #-----------------------------------------------------------------------------
 set (CLP DiffusionTensorEstimation)
@@ -645,12 +671,11 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   DiffusionTensorEstimationTest
-    --otsuomegathreshold 0.5
+    -m ${MRML_TEST_DATA}/helix-DWI-otsu-no_islands-05.nrrd
     ${MRML_TEST_DATA}/helix-DWI.nhdr
     ${TEMP}/DiffusionTensorEstimationTest_dti.nhdr
     ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_otsu.nhdr
-  )
+      )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------

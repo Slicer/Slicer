@@ -25,6 +25,14 @@
       <index>0</index>
       <description>Input DWI volume</description>
     </image>
+    <image type ="label">
+      <name>inputMaskVolume</name>
+      <flag>m</flag>
+      <longflag>mask</longflag>
+      <label>Diffusion Tensor Mask</label>
+      <channel>input</channel>
+      <description>Mask where the tensors will be computed</description>
+    </image> 
     <image type="tensor">
       <name>outputTensor</name>
       <label>Output DTI Volume</label>
@@ -39,13 +47,6 @@
       <index>2</index>
       <description>Estimated baseline volume</description>
     </image>
-    <image type ="label">
-      <name>thresholdMask</name>
-      <label>Otsu Threshold Mask</label>
-      <channel>output</channel>
-      <index>3</index>
-      <description>Otsu Threshold Mask</description>
-    </image> 
   </parameters>
   <parameters>
     <label>Estimation Parameters</label>
@@ -66,33 +67,6 @@
       <description>Shift eigenvalues so all are positive (accounts for bad tensors related to noise or acquisition error)</description>
       <label>Shift Negative Eigenvalues</label>
       <default>false</default>
-    </boolean>
-    <double>
-      <name>otsuOmegaThreshold</name>
-      <label>Otsu Omega Threshold Parameter</label>
-      <flag>o</flag>
-      <longflag>otsuomegathreshold</longflag>
-      <description>Control the sharpness of the threshold in the Otsu computation. 0: lower threshold, 1: higher threhold</description>
-      <default>0.5</default>
-      <constraints>
-      	<minimum>0.0</minimum>
-	<maximum>1.0</maximum>
-	<step>0.1</step>
-      </constraints>
-    </double>
-    <boolean>
-     <name>removeIslands</name>
-     <label>Remove Islands in Threshold Mask</label>
-     <longflag>--removeislands</longflag>
-     <description>Remove Islands in Threshold Mask?</description>
-     <default>true</default>
-    </boolean>
-    <boolean>
-     <name>applyMask</name>
-     <label>Apply Mask to Tensor Image</label>
-     <longflag>--applymask</longflag>
-     <description>Apply Threshold Mask to Tensor?</description>
-     <default>true</default>
     </boolean>
   </parameters>
 </executable>
