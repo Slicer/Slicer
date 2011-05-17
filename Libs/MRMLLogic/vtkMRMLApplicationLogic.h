@@ -47,8 +47,13 @@ public:
   void SetSliceLogics(vtkCollection* sliceLogics);
   vtkCollection* GetSliceLogics()const;
 
+  /// 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
-  void PropagateVolumeSelection();
+  /// Perform the default behavior related to selecting a volume
+  /// (in this case, making it the background for all SliceCompositeNodes)
+  void PropagateVolumeSelection(int fit);
+  void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}; 
+
 
   /// Fit all the volumes into their views
   void FitSliceToAll();

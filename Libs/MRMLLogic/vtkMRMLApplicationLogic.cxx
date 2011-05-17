@@ -256,7 +256,7 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode *interac
 //}
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic::PropagateVolumeSelection()
+void vtkMRMLApplicationLogic::PropagateVolumeSelection(int fit)
 {
   if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
     {
@@ -282,6 +282,10 @@ void vtkMRMLApplicationLogic::PropagateVolumeSelection()
     cnode->SetForegroundVolumeID( secondID );
     cnode->SetLabelVolumeID( labelID );
     }
+
+  if (fit) {
+    this->FitSliceToAll();
+  }
 }
 
 
