@@ -1350,7 +1350,6 @@ class MakeModelOptions(EditOptions):
   def create(self):
     super(MakeModelOptions,self).create()
 
-    # TODO: how to switch to a different module?
     self.goToModelMaker = qt.QPushButton("Go To Model Maker", self.frame)
     self.goToModelMaker.setToolTip( "The Model Maker interface contains a whole range of options for building sets of models and controlling the parameters." )
     self.frame.layout().addWidget(self.goToModelMaker)
@@ -1391,6 +1390,11 @@ class MakeModelOptions(EditOptions):
     self.frame.layout().addStretch(1)
 
     self.apply.connect('clicked()', self.onApply)
+    self.goToModelMaker.connect('clicked()', self.onGoToModelMaker)
+
+  def onGoToModelMaker(self):
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModuleByTitle('Model Maker')
 
   def onApply(self):
     #
