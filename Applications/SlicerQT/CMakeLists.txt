@@ -224,24 +224,24 @@ ENDIF()
 # --------------------------------------------------------------------------
 # Command line parsing tests
 #
-# add_test(Slicer3CLTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --help)
-# add_test(Slicer3CLTest2 ${Slicer_BINARY_DIR}/Slicer3 --xml --test-mode)
-# add_test(Slicer3CLTest3 ${Slicer_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-# add_test(Slicer3CLTest4 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --eval "puts testing ,. exit 0")
-# add_test(Slicer3CLTest5 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --exec "puts testing ,. exit 0")
-# add_test(Slicer3CLTest6 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-# add_test(Slicer3CLTest7 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
-# add_test(Slicer3ScrollTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
+# add_test(SlicerCLTest1 ${Slicer_EXECUTABLE} --test-mode --help)
+# add_test(SlicerCLTest2 ${Slicer_EXECUTABLE} --xml --test-mode)
+# add_test(SlicerCLTest3 ${Slicer_EXECUTABLE} --test-mode -f ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+# add_test(SlicerCLTest4 ${Slicer_EXECUTABLE} --test-mode --eval "puts testing ,. exit 0")
+# add_test(SlicerCLTest5 ${Slicer_EXECUTABLE} --test-mode --exec "puts testing ,. exit 0")
+# add_test(SlicerCLTest6 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+# add_test(SlicerCLTest7 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
+# add_test(SlicerScrollTest ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
 
 # --------------------------------------------------------------------------
 # MRML Tests
 #
-# add_test(Slicer3MRMLUndo ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
-# add_test(Slicer3MRMLVolume ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
+# add_test(SlicerMRMLUndo ${Slicer_EXECUTABLE} --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
+# add_test(SlicerMRMLVolume ${Slicer_EXECUTABLE} --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
 
 # --------------------------------------------------------------------------
 # Testing
 #
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()

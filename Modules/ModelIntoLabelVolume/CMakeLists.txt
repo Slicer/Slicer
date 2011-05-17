@@ -36,8 +36,8 @@ install(
 # Testing
 
 if(BUILD_TESTING)
-  add_test(ModelIntoLabelVolumeTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/ModelIntoLabelVolumeTest.tcl)
-endif(BUILD_TESTING)
+  add_test(ModelIntoLabelVolumeTest ${Slicer_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/ModelIntoLabelVolumeTest.tcl)
+endif()
 
 # --------------------------------------------------------------------------
 # Install the testing data

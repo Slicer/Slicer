@@ -4,29 +4,27 @@ project(GUITesting)
 # --------------------------------------------------------------------------
 # Command line parsing tests
 #
-add_test(Slicer3CLTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --help)
-add_test(Slicer3CLTest2 ${Slicer_BINARY_DIR}/Slicer3 --xml --test-mode)
-add_test(Slicer3CLTest3 ${Slicer_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-add_test(Slicer3CLTest4 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --eval "puts testing ,. exit 0")
-add_test(Slicer3CLTest5 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --exec "puts testing ,. exit 0")
-add_test(Slicer3CLTest6 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-add_test(Slicer3CLTest7 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
-add_test(Slicer3CLTest8 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-modules --eval exit)
-add_test(Slicer3CLTest9 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-modules --exec "exit")
-add_test(Slicer3ScrollTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
+add_test(SlicerCLTest1 ${Slicer_EXECUTABLE} --test-mode --help)
+add_test(SlicerCLTest2 ${Slicer_EXECUTABLE} --xml --test-mode)
+add_test(SlicerCLTest3 ${Slicer_EXECUTABLE} --test-mode -f ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+add_test(SlicerCLTest4 ${Slicer_EXECUTABLE} --test-mode --eval "puts testing ,. exit 0")
+add_test(SlicerCLTest5 ${Slicer_EXECUTABLE} --test-mode --exec "puts testing ,. exit 0")
+add_test(SlicerCLTest6 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+add_test(SlicerCLTest7 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
+add_test(SlicerCLTest8 ${Slicer_EXECUTABLE} --test-mode --no-modules --eval exit)
+add_test(SlicerCLTest9 ${Slicer_EXECUTABLE} --test-mode --no-modules --exec "exit")
+add_test(SlicerScrollTest ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
 
 # --------------------------------------------------------------------------
 # MRML Tests
 #
-add_test(Slicer3MRMLUndo ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
-add_test(Slicer3MRMLVolume ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
+add_test(SlicerMRMLUndo ${Slicer_EXECUTABLE} --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
+add_test(SlicerMRMLVolume ${Slicer_EXECUTABLE} --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
 
 
 # --------------------------------------------------------------------------
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
 
 find_package(vtkITK REQUIRED)
 
@@ -56,4 +54,4 @@ include_directories(
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 add_test(EventBrokerTest 
-  ${Slicer_BINARY_DIR}/Slicer3 --launch EventBrokerTest --logFileName ${TEMP}/EventLog.dot --graphFile ${TEMP}/EventBroker.dot)
+  ${LAUNCH_EXE} EventBrokerTest --logFileName ${TEMP}/EventLog.dot --graphFile ${TEMP}/EventBroker.dot)
