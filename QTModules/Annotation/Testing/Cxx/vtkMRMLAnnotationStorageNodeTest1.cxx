@@ -47,15 +47,28 @@ int vtkMRMLAnnotationStorageNodeTest1(int , char * [] )
   node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationStorageNodeTest.acsv");
-  node2->WriteData(annNode);
+  int writeResult = node2->WriteData(annNode);
+  if (!writeResult)
+    {
+    std::cerr << "Error writing data to file " << node2->GetFileName() << ", return value = " << writeResult << std::endl;
+    return EXIT_FAILURE;
+    }
 
   vtkIndent in;
   std::stringstream initialAnnotation, afterAnnotation;
   annNode->PrintAnnotationInfo(initialAnnotation,in);
+  std::cout << "initialAnnotation (after write data called):" << std::endl << initialAnnotation.str() << std::endl;
   annNode->ResetAnnotations();
-  node2->ReadData(annNode);
+  int readResult = node2->ReadData(annNode);
+  if (!readResult)
+    {
+    std::cerr << "Error reading data from file " << node2->GetFileName() << ", result = " << readResult << std::endl;
+    return EXIT_FAILURE;
+    }
+  
   annNode->PrintAnnotationInfo(afterAnnotation,in);
-
+  std::cout << "afterAnnotation (after read data called):" << std::endl << afterAnnotation.str() << std::endl;
+    
   if (initialAnnotation.str().compare(afterAnnotation.str())) 
   {
     std::cerr << endl << "Error in WriteData() or ReadData()" << std::endl;
