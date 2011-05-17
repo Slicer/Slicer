@@ -112,13 +112,14 @@ void qSlicerCropVolumeModuleWidget::setup()
       qDebug() << "Fatal error";
       abort();
     }   
-
+    //InitializeEventListeners(this->parametersNode);
   } else {
     qDebug() << "No CropVolume parameter nodes found!";
     this->parametersNode = vtkMRMLCropVolumeParametersNode::New();
     scene->AddNodeNoNotify(this->parametersNode);
     this->parametersNode->Delete();
   }
+
   pnc->Delete();
 
   this->updateWidget();
@@ -132,8 +133,13 @@ void qSlicerCropVolumeModuleWidget::initializeNode(vtkMRMLNode *n)
 }
 
 void qSlicerCropVolumeModuleWidget::onApply(){
-//  QMessageBox::information(this, tr("CropVolume"),
-//                       tr("This module is under development and not ready for your use at this time."));
+
+  if(!strcmp(this->parametersNode->GetInputVolumeNodeID(),
+             this->parametersNode->GetOutputVolumeNodeID())){
+    QMessageBox::warning(this, QString("CropVolume"),
+       QString("Output and input volumes cannot be the same!"));
+    return;
+  };
 
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkSlicerCropVolumeLogic *l = vtkSlicerCropVolumeLogic::SafeDownCast(d->logic());
@@ -156,8 +162,10 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged(){
 
   Q_D(qSlicerCropVolumeModuleWidget);
   vtkMRMLNode* n = d->InputROIComboBox->currentNode();
-  if(n)
+  if(n){
     this->parametersNode->SetAndObserveROINodeID(n->GetID());
+    this->updateWidget();
+  }
 }
 
 void qSlicerCropVolumeModuleWidget::onOutputVolumeChanged(){
@@ -223,4 +231,10 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     {
     this->parametersNode->GetROINode()->SetVisibility(p->GetROIVisibility());
     }
+}
+
+void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n){
+  //vtkIntArray *events = vtkIntArray::New();
+  //events->InsertNextValue(vtkCommand::ModifiedEvent);
+  //
 }

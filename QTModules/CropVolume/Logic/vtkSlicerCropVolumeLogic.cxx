@@ -39,6 +39,11 @@
 
 #include <vtkMRMLCropVolumeParametersNode.h>
 
+#include <QDebug>
+#include <QMessageBox>
+#include <QString>
+
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerCropVolumeLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerCropVolumeLogic);
@@ -79,6 +84,9 @@ void vtkSlicerCropVolumeLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
+
+
+
   vtkMRMLVolumeNode *inputVolume = pnode->GetInputVolumeNode();
   vtkMRMLAnnotationROINode *inputROI = pnode->GetROINode();
   vtkMRMLVolumeNode *outputVolume = pnode->GetOutputVolumeNode();

@@ -72,7 +72,7 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->ROINode = NULL;
 
   this->ROIVisibility = false;
-  this->InterpolationMode = 0;
+  this->InterpolationMode = 2;
 }
 
 //----------------------------------------------------------------------------
