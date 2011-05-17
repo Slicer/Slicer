@@ -45,7 +45,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestAxial.nrrd
   ${TEMP}/OrientImageTestAxial.nrrd
   ModuleEntryPoint
-  --orientation Axial ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
+  --orientation Axial ${MRML_TEST_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
@@ -54,7 +54,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestCoronal.nrrd
   ${TEMP}/OrientImageTestCoronal.nrrd
   ModuleEntryPoint
-  --orientation Coronal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
+  --orientation Coronal ${MRML_TEST_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
@@ -63,7 +63,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestSagittal.nrrd
   ${TEMP}/OrientImageTestSagittal.nrrd
   ModuleEntryPoint
-  --orientation Sagittal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestSagittal.nrrd
+  --orientation Sagittal ${MRML_TEST_DATA}/fixed.nrrd ${TEMP}/OrientImageTestSagittal.nrrd
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
