@@ -22,8 +22,20 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
-    iconDir = os.environ['Slicer_HOME'] + '/lib/Slicer3/SlicerBaseGUI/Tcl/ImageData/'
-    parent.icon = qt.QIcon("%s/ToolbarSampleData.png" % iconDir)
+    i = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
+    a = qt.QAction(i, 'Download Sample Data', slicer.util.mainWindow())
+    a.setToolTip('Go to the SampleData module to download data from the network')
+    a.connect('triggered()', self.select)
+
+    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
+    for action in menuFile.actions():
+      if action.text == 'Add Data':
+        menuFile.insertAction(action,a)
+
+
+  def select(self):
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModuleByTitle('SampleData')
 
 
 #
@@ -55,15 +67,8 @@ class SampleDataWidget:
   def updateGUIFromMRML(self, caller, event):
     pass
 
-
   # sets up the widget
   def setup(self):
-
-    # TODO: how to add this action to the toolbar?
-    i = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
-    a = qt.QAction(i, 'Download Sample Data', slicer.util.mainWindow())
-    a.setToolTip('Go to the SampleData module to download data from the network')
-
     samples = (
         ( 'MRHead', self.downloadMRHead ),
         ( 'CTChest', self.downloadCTChest ),
