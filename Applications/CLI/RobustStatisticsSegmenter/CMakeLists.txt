@@ -32,11 +32,9 @@ if(BUILD_TESTING)
   add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
   target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})
   SET_TARGET_PROPERTIES(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
-  
-  set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
+
   set(testname ${CLP}Test)
-  add_test(${testname} ${Slicer_EXE}
-    --launch SFLSRobustStat3DTestConsole 
+  add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
       ${CMAKE_CURRENT_SOURCE_DIR}/grayscale.nrrd 
       ${CMAKE_CURRENT_SOURCE_DIR}/grayscale-label.nrrd 
       ${CMAKE_CURRENT_BINARY_DIR}/rss-test-seg.nrrd 50 0.1 0.2)

@@ -12,6 +12,10 @@ include_directories(${Slicer_BINARY_DIR}/Applications/CLI)
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 include_directories (${TCLAP_SOURCE_DIR}/include)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # Configure the default SLICER_BRAINWEB_DATA_ROOT for the location of BrainWeb Data.
 # When this data is available, additional 3D tests are enabled.
@@ -21,8 +25,6 @@ mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
 SET(CLP N4ITKBiasFieldCorrection)
 
-set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
-
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
 set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
@@ -31,7 +33,7 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
 set(testname ${CLP}Test)
-add_test(${testname} ${Slicer_EXE} --launch N4ITKBiasFieldCorrectionTest
+add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/he3corrected.nii ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
   --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz 
@@ -39,6 +41,3 @@ add_test(${testname} ${Slicer_EXE} --launch N4ITKBiasFieldCorrectionTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})

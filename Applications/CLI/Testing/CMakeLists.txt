@@ -19,21 +19,10 @@ find_path(SLICER_BRAINWEB_DATA_ROOT brainweb165a10f17.mha
   DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
 mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
-
-#
-# Slicer3 is needed to resolve shared libraries
-#
-set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
-
-set(ValgrindScript "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
-
+set(Launcher_Command ${LAUNCH_EXE})
 if(USE_VALGRIND)
-  set(Launcher_Command ${ValgrindScript})
-  set(TestLocation "${Slicer_BINARY_DIR}/bin/")
-else(USE_VALGRIND)
-  set(Launcher_Command ${Slicer_EXE} --launch)
-  set(TestLocation "")
-endif(USE_VALGRIND)
+  set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+endif()
 
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
@@ -47,8 +36,12 @@ set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 #-----------------------------------------------------------------------------
 set (CLP OrientImage)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname OrientImageTest1)
-add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestAxial.nrrd
   ${TEMP}/OrientImageTestAxial.nrrd
   ModuleEntryPoint
@@ -57,7 +50,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname OrientImageTest2)
-add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestCoronal.nrrd
   ${TEMP}/OrientImageTestCoronal.nrrd
   ModuleEntryPoint
@@ -66,7 +59,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname OrientImageTest3)
-add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OrientImageTestSagittal.nrrd
   ${TEMP}/OrientImageTestSagittal.nrrd
   ModuleEntryPoint
@@ -74,17 +67,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}OrientImageTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Add tests
 #-----------------------------------------------------------------------------
 set (CLP Add)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}AddTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/AddTest.nhdr
   ${TEMP}/AddTest.nhdr
   ModuleEntryPoint
@@ -92,7 +85,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}AddTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 function(Add_module_test pixeltype)
-  add_test(AddTest_${pixeltype} ${Launcher_Command} ${TestLocation}AddTest
+  add_test(NAME AddTest_${pixeltype} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     --compare ${BASELINE}/AddTest_${pixeltype}.mha
     ${TEMP}/AddTest_${pixeltype}.mha
     ModuleEntryPoint
@@ -111,17 +104,17 @@ Add_module_test( ULONG )
 Add_module_test( FLOAT )
 Add_module_test( DOUBLE )
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Mask tests
 #-----------------------------------------------------------------------------
 set (CLP Mask)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MaskTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/MaskedVolume.nrrd
   ${TEMP}/MaskedVolume.nrrd
   ModuleEntryPoint --label 1
@@ -129,17 +122,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}MaskTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Threshold tests
 #-----------------------------------------------------------------------------
 set (CLP Threshold)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ThresholdTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/ThresholdTest.nhdr
   ${TEMP}/ThresholdTest.nhdr
   ModuleEntryPoint --upper 3800 --lower 1400 --outsidevalue 0 --thresholdtype Outside
@@ -147,17 +140,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ThresholdTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Cast tests
 #-----------------------------------------------------------------------------
 set (CLP Cast)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 function(Cast_module_test pixeltype)
-  add_test(CastTest_${pixeltype} ${Launcher_Command} ${TestLocation}CastTest
+  add_test(NAME CastTest_${pixeltype} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     --compare ${BASELINE}/CastTest${pixeltype}.nrrd
               ${TEMP}/CastTest${pixeltype}.nrrd
     ModuleEntryPoint --type ${pixeltype}
@@ -174,17 +167,17 @@ Cast_module_test( UnsignedInt )
 Cast_module_test( Float )
 Cast_module_test( Double )
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # CheckerBoard tests
 #-----------------------------------------------------------------------------
 set (CLP CheckerBoard)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}CheckerBoardTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/CheckerBoardTest.nhdr
   ${TEMP}/CheckerBoardTest.nhdr
   ModuleEntryPoint --checkerPattern 5,3,2
@@ -192,17 +185,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}CheckerBoardTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Median tests
 #-----------------------------------------------------------------------------
 set (CLP MedianImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MedianImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
   ${TEMP}/MedianImageFilterTest.nhdr
   ModuleEntryPoint
@@ -211,23 +204,23 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}MedianImageFilterTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test2)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MedianImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --help
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 # GaussianBlur tests
 #-----------------------------------------------------------------------------
 set (CLP GaussianBlurImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}GaussianBlurImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/GaussianBlurImageFilterTest.nhdr
   ${TEMP}/GaussianBlurImageFilterTest.nhdr
   ModuleEntryPoint
@@ -235,17 +228,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}GaussianBlurImageFilterT
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # LinearRegistration tests
 #-----------------------------------------------------------------------------
 set (CLP LinearRegistration)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test00)
-add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
@@ -261,7 +254,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test01)
-add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
@@ -276,7 +269,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test02)
-add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
@@ -291,7 +284,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test03)
-add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest03.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest03Transform.txt 
@@ -306,7 +299,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test04)
-add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest04.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest04Transform.txt 
@@ -320,13 +313,9 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 if(SLICER_BRAINWEB_DATA_ROOT)
   set(testname ${CLP}Test05)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/LinearRegistrationTest05.nhdr
     --outputtransform ${TEMP}/LinearRegistrationTest05Transform.txt 
@@ -341,7 +330,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test06)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/LinearRegistrationTest06.nhdr
     --outputtransform ${TEMP}/LinearRegistrationTest06Transform.txt 
@@ -356,7 +345,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test07)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/LinearRegistrationTest07.nhdr
     --outputtransform ${TEMP}/LinearRegistrationTest07Transform.txt 
@@ -372,7 +361,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test08)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/LinearRegistrationTest08.nhdr
     --outputtransform ${TEMP}/LinearRegistrationTest08Transform.txt 
@@ -388,7 +377,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test09)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}LinearRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/LinearRegistrationTest09.nhdr
     --outputtransform ${TEMP}/LinearRegistrationTest09Transform.txt 
@@ -410,8 +399,12 @@ endif(SLICER_BRAINWEB_DATA_ROOT)
 #-----------------------------------------------------------------------------
 set (CLP BSplineDeformableRegistration)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test00)
-add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest00.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest00Transform.txt 
@@ -427,18 +420,14 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistr
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 if(SLICER_BRAINWEB_DATA_ROOT)
 
   add_executable(BSplineWarping3DTest BSplineWarping3DTest.cxx)
   target_link_libraries(BSplineWarping3DTest ${ITK_LIBRARIES})
+  SET_TARGET_PROPERTIES(BSplineWarping3DTest PROPERTIES LABELS ${CLP})
   
   set(testname BSplineWarping3DTest00)
-  add_test(${testname} 
-    ${Slicer_BINARY_DIR}/bin/BSplineWarping3DTest
+  add_test(NAME ${testname} COMMAND $<TARGET_FILE:BSplineWarping3DTest>
     ${TEST_DATA}/BSplineDisplacements3D_00.txt
     ${SLICER_BRAINWEB_DATA_ROOT}/brainweb1e1a10f20.mha
     ${SLICER_BRAINWEB_DATA_ROOT}/brainweb1e1a10f20.mha
@@ -447,7 +436,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test01)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest01.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest01Transform.txt 
@@ -464,7 +453,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test02)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest02.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest02Transform.txt 
@@ -481,7 +470,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test03)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest03.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest03Transform.txt 
@@ -498,7 +487,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
   set(testname ${CLP}Test04)
-  add_test(${testname} ${Launcher_Command} ${TestLocation}BSplineDeformableRegistrationTest
+  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest04.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest04Transform.txt 
@@ -520,8 +509,12 @@ endif(SLICER_BRAINWEB_DATA_ROOT)
 #-----------------------------------------------------------------------------
 set (CLP TestGridTransformRegistration)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test00)
-add_test(${testname} ${Launcher_Command} ${TestLocation}TestGridTransformRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --gridSize 5 
   --outputtransform ${TEMP}/TestGridTransformRegistrationTest00Transform.txt 
@@ -530,22 +523,22 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}TestGridTransformRegistr
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # AffineRegistration tests
 #-----------------------------------------------------------------------------
 set (CLP AffineRegistration)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test000)
-add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint  --help
   )
 
 set(testname ${CLP}Test00)
-add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest00.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest00Transform.txt 
@@ -560,7 +553,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test01)
-add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest01.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest01Transform.txt 
@@ -574,7 +567,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test02)
-add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest02.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest02Transform.txt 
@@ -587,17 +580,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}AffineRegistrationTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ConfidenceConnected tests
 #-----------------------------------------------------------------------------
 set (CLP ConfidenceConnected)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ConfidenceConnectedTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/ConfidenceConnectedTest.nhdr
             ${TEMP}/ConfidenceConnectedTest.nhdr
     ModuleEntryPoint
@@ -613,10 +606,6 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ConfidenceConnectedTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # CurvatureAnisotropicDiffusion tests
 #-----------------------------------------------------------------------------
@@ -626,7 +615,7 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 #target_link_libraries(${CLP}Test ${CLP}Lib)
 
 #set(testname ${CLP}Test)
-#add_test(${testname} ${Launcher_Command} ${TestLocation}${CLP}Test
+#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/${CLP}Test.nhdr
 #            ${TEMP}/${CLP}Test.nhdr
 #    ModuleEntryPoint
@@ -643,17 +632,6 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 #-----------------------------------------------------------------------------
 set (CLP DiffusionTensorEstimation)
 
-set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}DiffusionTensorEstimationTest
-  DiffusionTensorEstimationTest
-    --otsuomegathreshold 0.5
-    ${MRML_TEST_DATA}/helix-DWI.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_dti.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_otsu.nhdr
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
@@ -664,13 +642,29 @@ include_directories(
   ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  DiffusionTensorEstimationTest
+    --otsuomegathreshold 0.5
+    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_dti.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_otsu.nhdr
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # DiffusionTensorMathematics tests
 #-----------------------------------------------------------------------------
 set (CLP DiffusionTensorMathematics)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test MRML vtkTeem SlicerBaseLogic)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}DiffusionTensorMathematicsTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   DiffusionTensorMathematicsTest
     --enumeration FractionalAnisotropy
     ${MRML_TEST_DATA}/helix-DTI.nhdr
@@ -678,68 +672,68 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}DiffusionTensorMathemati
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test MRML vtkTeem SlicerBaseLogic)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # DiffusionTensorTest tests
 #-----------------------------------------------------------------------------
 set (CLP DiffusionTensorTest)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}${CLP}Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
     ${MRML_TEST_DATA}/helix-DTI.nhdr
     ${TEMP}/DiffusionTensorTestTest.nhdr
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # DiffusionWeightedTest tests
 #-----------------------------------------------------------------------------
 #set (CLP DiffusionWeightedTest)
 
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#target_link_libraries(${CLP}Test ${CLP}Lib)
+#SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 #set(testname ${CLP}Test)
-#add_test(${testname} ${Launcher_Command} ${TestLocation}DiffusionWeightedTestTest
+#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 #  ModuleEntryPoint
 #    ${MRML_TEST_DATA}/helix-DWI.nhdr
 #    ${TEMP}/DiffusionWeightedTestTest.nhdr
 #  )
 #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-#add_executable(${CLP}Test ${CLP}Test.cxx)
-#target_link_libraries(${CLP}Test ${CLP}Lib)
-#SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # DWIDicomLoad tests
 #-----------------------------------------------------------------------------
 # set (CLP DWIDicomLoad)
-
-# set(testname ${CLP}Test)
-# add_test(${testname} ${Launcher_Command} ${TestLocation}DWIDicomLoadTest
-#  DWIDicomLoadTest --help
-#  )
-#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 # add_executable(${CLP}Test ${CLP}Test.cxx)
 # add_dependencies(${CLP}Test ${CLP})
 # target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 # SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
+# set(testname ${CLP}Test)
+# add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+#  DWIDicomLoadTest --help
+#  )
+#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # ExecutionModelTour tests
 #-----------------------------------------------------------------------------
 set (CLP ExecutionModelTour)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test MRML)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ExecutionModelTourTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ExecutionModelTourTest
     --integer 30
     --double 30
@@ -754,34 +748,33 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ExecutionModelTourTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test MRML)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # FreesurferSurfaceSectionExtraction tests
 #-----------------------------------------------------------------------------
 #set (CLP FreesurferSurfaceSectionExtraction)
-
-#set(testname ${CLP}Test)
-#add_test(${testname} ${Launcher_Command} ${TestLocation}FreesurferSurfaceSectionExtractionTest
-#  FreesurferSurfaceSectionExtractionTest --help
-#  )
-#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #add_executable(${CLP}Test ${CLP}Test.cxx)
 #add_dependencies(${CLP}Test ${CLP})
 #target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 #SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
+#set(testname ${CLP}Test)
+#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+#  FreesurferSurfaceSectionExtractionTest --help
+#  )
+#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # GradientAnisotropicDiffusion tests
 #-----------------------------------------------------------------------------
 set (CLP GradientAnisotropicDiffusion)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}GradientAnisotropicDiffusionTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/GradientAnisotropicDiffusionTest.nhdr
             ${TEMP}/GradientAnisotropicDiffusionTest.nhdr
   ModuleEntryPoint
@@ -793,17 +786,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}GradientAnisotropicDiffu
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # GrayscaleFillHoleImageFilter tests
 #-----------------------------------------------------------------------------
 set (CLP GrayscaleFillHoleImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}GrayscaleFillHoleImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/GrayscaleFillHoleTest.nhdr
             ${TEMP}/GrayscaleFillHoleTest.nhdr
   ModuleEntryPoint
@@ -812,17 +805,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}GrayscaleFillHoleImageFi
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # GrayscaleGrindPeakImageFilter tests
 #-----------------------------------------------------------------------------
 set (CLP GrayscaleGrindPeakImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}GrayscaleGrindPeakImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/GrayscaleGrindPeakTest.nhdr
             ${TEMP}/GrayscaleGrindPeakTest.nhdr
   ModuleEntryPoint
@@ -831,28 +824,10 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}GrayscaleGrindPeakImageF
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # GrayscaleModelMaker tests
 #-----------------------------------------------------------------------------
 set (CLP GrayscaleModelMaker)
-
-set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}GrayscaleModelMakerTest
-  GrayscaleModelMakerTest
-    --threshold 300
-    --name CTFace
-    --smooth 15
-    --decimate 0.95
-    --splitnormals
-    --pointnormals
-    ${TEST_DATA}/CTHeadAxial.nhdr
-    ${TEMP}GrayscaleModelMakerTest.vtp
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
@@ -865,13 +840,31 @@ target_link_libraries(${CLP}Test
   )
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  GrayscaleModelMakerTest
+    --threshold 300
+    --name CTFace
+    --smooth 15
+    --decimate 0.95
+    --splitnormals
+    --pointnormals
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEMP}GrayscaleModelMakerTest.vtp
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # HistogramMatching tests
 #-----------------------------------------------------------------------------
 set (CLP HistogramMatching)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}HistogramMatchingTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/HistogramMatchingTest.nhdr
             ${TEMP}/HistogramMatchingTest.nhdr
   ModuleEntryPoint
@@ -883,33 +876,33 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}HistogramMatchingTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ImageLabelCombine tests
 #-----------------------------------------------------------------------------
 set (CLP ImageLabelCombine)
-
-set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ImageLabelCombineTest
-  ImageLabelCombineTest --help
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  ImageLabelCombineTest --help
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 #-----------------------------------------------------------------------------
 # ImageReadDicomWrite tests
 #-----------------------------------------------------------------------------
 set (CLP ImageReadDicomWrite)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ImageReadDicomWriteTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/ImageReadDicomWriteTest.dcm
             ${TEMP}/CTHeadAxialDicom0040.dcm
   ModuleEntryPoint
@@ -931,17 +924,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ImageReadDicomWriteTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # LabelMapSmoothing tests
 #-----------------------------------------------------------------------------
 set (CLP LabelMapSmoothing)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} LabelMapSmoothingTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/LabelMapSmoothingTest.nhdr
             ${TEMP}/LabelMapSmoothingTest.nhdr
   ModuleEntryPoint
@@ -954,20 +947,27 @@ add_test(${testname} ${Launcher_Command} LabelMapSmoothingTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ModelMaker tests
 #-----------------------------------------------------------------------------
 set (CLP ModelMaker)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkITK
+  ModuleDescriptionParser
+  MRML
+  SlicerBaseLogic
+  SlicerBaseCLI
+  )
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 CONFIGURE_FILE(${TEST_DATA}/ModelMakerTest.mrml
     ${TEMP}/ModelMakerTest.mrml) 
     
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --labels 2
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -976,7 +976,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}GenerateAllOneLabelTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -985,7 +985,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
 set(testname ${CLP}GenerateAllThreeLabelsTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -994,7 +994,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}GenerateAllThreeLabelsPadTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -1005,7 +1005,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 set(testname ${CLP}StartEndTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --start 1 --end 5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -1014,7 +1014,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}LabelsTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModelMakerTest
     --labels 3,1,5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
@@ -1022,28 +1022,11 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
-  )
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # MultipleModelsExample tests
 #-----------------------------------------------------------------------------
 set (CLP MultipleModelsExample)
 
-set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MultipleModelsExampleTest
-  MultipleModelsExampleTest --help
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
@@ -1054,14 +1037,25 @@ target_link_libraries(${CLP}Test
   SlicerBaseCLI
   )
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  MultipleModelsExampleTest --help
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 # OtsuThresholdImageFilter tests
 #-----------------------------------------------------------------------------
 set (CLP OtsuThresholdImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}OtsuThresholdImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
             ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
    ModuleEntryPoint
@@ -1073,18 +1067,18 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}OtsuThresholdImageFilter
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # OtsuThresholdSegmentation tests
 #-----------------------------------------------------------------------------
 set (CLP OtsuThresholdSegmentation)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}OtsuThresholdSegmentationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OtsuThresholdSegmentationTest.nhdr 
             ${TEMP}/OtsuThresholdSegmentationTest.nhdr 
   ModuleEntryPoint
@@ -1097,20 +1091,19 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}OtsuThresholdSegmentatio
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ResampleVolume2 tests
 #-----------------------------------------------------------------------------
 set (CLP ResampleVolume2)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(TRANSFORMS_DIR ${Slicer_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
 
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare 
     ${TEST_DATA}/MRHeadResampled.nhdr
     ${TEMP}/ResampleVolume2Test.nrrd
@@ -1132,7 +1125,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformFile ${TRANSFORMS_DIR}/rotation.tfm)
 set(testname ${CLP}RotationNNTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare
     ${TEST_DATA}/MRHeadResampledRotationNN.nrrd
     ${TEMP}/ResampleVolume2Test2.nrrd
@@ -1148,7 +1141,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(RotationAndAffineFile ${TRANSFORMS_DIR}/rotationAndAffine.tfm)
 set(testname ${CLP}RotationAndAffineTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare
     ${TEST_DATA}/MRHeadResampledRotationAndAffine.nrrd
     ${TEMP}/ResampleVolume2Test3.nrrd
@@ -1164,7 +1157,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(BSplineFile ${Slicer_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledBSplineTransform.tfm)
 set(testname ${CLP}BSplineWSInterpolationTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare
     ${TEST_DATA}/MRHeadResampledBSplineWSInterpolationTest.nrrd
     ${TEMP}/ResampleVolume2Test4.nrrd
@@ -1180,7 +1173,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(AffineFile ${TRANSFORMS_DIR}/affine.tfm)
 set(testname ${CLP}BSplineInterpolationTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare
     ${TEST_DATA}/MRHeadResampledBSplineInterpolationTest.nrrd
     ${TEMP}/ResampleVolume2Test5.nrrd
@@ -1195,7 +1188,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(HFieldFile ${Slicer_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledHField.nrrd)
 set(testname ${CLP}HFieldTest)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare
     ${TEST_DATA}/MRHeadResampledHFieldTest.nrrd
     ${TEMP}/ResampleVolume2Test6.nrrd
@@ -1206,17 +1199,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolume2Test
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ResampleVolume tests
 #-----------------------------------------------------------------------------
 set (CLP ResampleVolume)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolumeTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/ResampleVolumeTest.nhdr
             ${TEMP}/ResampleVolumeTest.nhdr
   ModuleEntryPoint
@@ -1227,23 +1220,23 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ResampleVolumeTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # RigidRegistration tests
 #-----------------------------------------------------------------------------
 set (CLP RigidRegistration)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test000)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint --help
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test00)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest00.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest00Transform.txt 
@@ -1259,7 +1252,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test01)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest01.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest01Transform.txt 
@@ -1274,7 +1267,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test02)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt 
@@ -1289,7 +1282,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test03)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest03.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest03Transform.txt 
@@ -1304,7 +1297,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test04)
-add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest04.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest04Transform.txt 
@@ -1325,7 +1318,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 # corner (as compared to the transform passed with --initialtransform) exceeds
 # 0.1
 #set(testname ${CLP}Test02)
-#add_test(${testname} ${Launcher_Command} ${TestLocation}RigidRegistrationTest
+#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/RigidRegistrationTest02.nrrd
 #   ${TEMP}/RigidRegistrationTest02.nrrd
 #  RigidRegistrationTest
@@ -1345,17 +1338,17 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 #  )
 #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Subtract tests
 #-----------------------------------------------------------------------------
 set (CLP Subtract)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}SubtractTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/SubtractTest.nhdr
             ${TEMP}/SubtractTest.nhdr
   ModuleEntryPoint
@@ -1365,17 +1358,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}SubtractTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # Multiply tests
 #-----------------------------------------------------------------------------
 set (CLP Multiply)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MultiplyTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/MultiplyTest.nrrd
             ${TEMP}/MultiplyTest.nrrd
   ModuleEntryPoint
@@ -1386,17 +1379,18 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}MultiplyTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # VotingBinaryHoleFillingImageFilter tests
 #-----------------------------------------------------------------------------
 set (CLP VotingBinaryHoleFillingImageFilter)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}VotingBinaryHoleFillingImageFilterTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/VotingBinaryHoleFillingImageFilterTest.nhdr
             ${TEMP}/VotingBinaryHoleFillingImageFilterTest.nhdr
   ModuleEntryPoint
@@ -1409,18 +1403,18 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}VotingBinaryHoleFillingI
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ZeroCrossingBasedEdgeDetectionImageFilter tests
 #-----------------------------------------------------------------------------
+#
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#target_link_libraries(${CLP}Test ${CLP}Lib)
+#SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+#
 # culled from Slicer 3.6
 #set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 #set(testname ${CLP}Test)
-#add_test(${testname} ${Launcher_Command} ${TestLocation}ZeroCrossingBasedEdgeDetectionImageFilterTest
+#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
 #            ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
 #  ModuleEntryPoint
@@ -1429,17 +1423,17 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 #  )
 #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-#add_executable(${CLP}Test ${CLP}Test.cxx)
-#target_link_libraries(${CLP}Test ${CLP}Lib)
-#SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # PolyDataToLabelmap tests
 #-----------------------------------------------------------------------------
 set (CLP PolyDataToLabelmap)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}PolyDataToLabelmapTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/OAS10001.mha
             ${TEMP}/PolyDataToLabelmapTestOutput.mha
   --compareNumberOfPixelsTolerance 20
@@ -1450,41 +1444,10 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}PolyDataToLabelmapTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # SparseFieldLevelSetContour tests
 #-----------------------------------------------------------------------------
 set (CLP SparseFieldLevelSetContour1)
-
-# leaks from tcl file
-# set(testname ${CLP}Test2)
-# add_test(${testname} ${Slicer_BINARY_DIR}/Slicer3 
-#  --test-mode 
-#  --script ${Slicer_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  
-#  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp 
-#  ${TEMP}/SparseFieldLevelSetContourTest.vtp   
-#  ${BASELINE}/SparseFieldLevelSetContourTest.vtp
-#  )
-#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-# use a helper to compare the baseline and output, running it from the launcher to set up the paths
-
-# the test code doesn't link on windows
-if (NOT WIN32 AND NOT APPLE)
-set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command}  ${TestLocation}SparseFieldLevelSetContour1Test ${testname}
-  --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
-  --contourpoints 132.059,-3.68759,-378.683
-  --contourpoints 127.652,-16.0285,-381.549
-  --contourpoints 120.15,-27.4267,-382.79
-  --contourpoints 117.438,-26.4077,-394.14
-  --contourpoints 128.782,-14.2639,-389.404
-  --contourpoints 134.297,1.63338,-387.623
-  --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 include_directories( ${SlicerBaseCLI_BINARY_DIR} 
                      ${CMAKE_CURRENT_BINARY_DIR}/../SparseFieldLevelSetContour  
@@ -1499,6 +1462,34 @@ target_link_libraries(${CLP}Test SparseFieldLevelSetContourLib
   ModuleDescriptionParser
   )
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
+# leaks from tcl file
+# set(testname ${CLP}Test2)
+# add_test(NAME ${testname} COMMAND ${Slicer_EXECUTABLE} 
+#  --test-mode 
+#  --script ${Slicer_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  
+#  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp 
+#  ${TEMP}/SparseFieldLevelSetContourTest.vtp   
+#  ${BASELINE}/SparseFieldLevelSetContourTest.vtp
+#  )
+#SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+# use a helper to compare the baseline and output, running it from the launcher to set up the paths
+
+# the test code doesn't link on windows
+if (NOT WIN32 AND NOT APPLE)
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test> ${testname}
+  --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
+  --contourpoints 132.059,-3.68759,-378.683
+  --contourpoints 127.652,-16.0285,-381.549
+  --contourpoints 120.15,-27.4267,-382.79
+  --contourpoints 117.438,-26.4077,-394.14
+  --contourpoints 128.782,-14.2639,-389.404
+  --contourpoints 134.297,1.63338,-387.623
+  --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
 endif (NOT WIN32 AND NOT APPLE)
 
 #-----------------------------------------------------------------------------
@@ -1506,8 +1497,17 @@ endif (NOT WIN32 AND NOT APPLE)
 #-----------------------------------------------------------------------------
 set (CLP MergeModels)
 
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkIO
+  ${ITK_LIBRARIES}
+  vtkGraphics
+  )
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MergeModelsTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   MergeModelsTest
     ${MRML_TEST_DATA}/sphere.vtk
     ${MRML_TEST_DATA}/cube.vtk
@@ -1516,7 +1516,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}MergeModelsTest
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
   
 set(testname ${CLP}TestVtp)
-add_test(${testname} ${Launcher_Command} ${TestLocation}MergeModelsTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   MergeModelsTest
     ${MRML_TEST_DATA}/sphere.vtp
     ${MRML_TEST_DATA}/cube.vtp
@@ -1526,7 +1526,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 # add a test that compares the outline to a baseline .vtp
 set(testname ${CLP}TestCompare)
-add_test(${testname} ${Launcher_Command} ${CMAKE_COMMAND}
+add_test(NAME ${testname} COMMAND ${Launcher_Command} ${CMAKE_COMMAND}
   -Dtest_cmd=MergeModelsTest
   -Dtest_name=MergeModelsTest
   -Dmodel1=${MRML_TEST_DATA}/sphere.vtp
@@ -1538,19 +1538,14 @@ add_test(${testname} ${Launcher_Command} ${CMAKE_COMMAND}
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test
-  vtkIO
-  ${ITK_LIBRARIES}
-  vtkGraphics
-  )
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
-
 #-----------------------------------------------------------------------------
 # ACPC Realign test
 #-----------------------------------------------------------------------------
 set(CLP ACPC)
+
+add_executable(${CLP}Test ${CLP}Test.cxx)
+target_link_libraries(${CLP}Test  RealignLib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 # configure the input mrml file to copy it to the binary TEMP dir so
 # the test doesn't modify the source tree one
@@ -1561,14 +1556,10 @@ configure_file(
   )
 
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command} ${TestLocation}ACPCTest
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
 #  --acpc ${TEST_DATA}/ACPC.fcsv --midline ${TEST_DATA}/midsag.fcsv 
   --acpc 0.5,-21.5,-9.5 --acpc -2.5,4.5,-16.5 --midline 12.5,-93.5,7.5 --midline 12.5,-93.5,-12.5 --midline 5.5,-93.5,-25.5 --midline 9.5,-83.5,-22.5 --midline 9.5,-83.5,-12.5 --midline 10.5,-83.5,10.5 --midline 10.5,-83.5,26.5 --midline 7.5,-68.5,38.5 --midline 7.5,-68.5,13.5 --midline 6.5,-68.5,-9.5 --midline 5.5,-68.5,-30.5 --midline 5.5,-68.5,-48.5 --midline 3.5,-49.5,50.5 --midline 4.5,-49.5,25.5 --midline 3.5,-49.5,5.5 --midline 4.5,-49.5,-32.5 --midline 3.5,-34.5,54.5 --midline 1.5,-34.5,30.5 --midline 1.5,-34.5,17.5 --midline 3.5,-34.5,-22.5 --midline 1.5,-19.5,58.5 --midline 0.5,-19.5,34.5 --midline 0.5,-19.5,18.5 --midline 0.5,-19.5,-13.5 --midline 1.5,-19.5,-25.5 --midline -1.5,-4.5,62.5 --midline -2.5,-4.5,36.5 --midline -1.5,-4.5,19.5 --midline -1.5,-4.5,0.5 --midline -1.5,-4.5,-12.5 --midline -1.5,-4.5,-24.5 --midline -1.5,-4.5,-39.5 --midline -3.5,10.5,49.5 --midline -1.5,10.5,28.5 --midline -3.5,10.5,14.5 --midline -2.5,10.5,5.5 --midline -3.5,10.5,-15.5 --midline -1.5,10.5,-33.5 --midline -5.5,26.5,44.5 --midline -6.5,26.5,25.5 --midline -5.5,26.5,3.5 --midline -5.5,26.5,-11.5 --midline -5.5,26.5,-21.5 --midline -5.5,26.5,-35.5 --midline -5.5,41.5,35.5 --midline -7.5,41.5,12.5 --midline -6.5,41.5,-4.5 --midline -7.5,41.5,-27.5 --midline -7.5,41.5,-41.5 --midline -7.5,56.5,24.5 --midline -9.5,56.5,-0.5 --midline -9.5,56.5,-12.5 --midline -9.5,56.5,-29.5 --midline -10.5,71.5,3.5 --midline -10.5,71.5,-12.5 --midline -11.5,71.5,-26.5 --outputTransform ${TEMP}/ACPCTest.mrml\#vtkMRMLLinearTransformNode1
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test  RealignLib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 

@@ -36,8 +36,6 @@ slicerMacroBuildCLI(
 #-----------------------------------------------------------------------------
 # Testing
 
-set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3)
-
 set(TEST_DATA_DIR ${PROJECT_SOURCE_DIR}/TestData)
 set(BASELINE_DIR ${PROJECT_SOURCE_DIR}/Baseline)
 set(OUTPUT_DIR ${Slicer_BINARY_DIR}/Testing)
@@ -50,11 +48,8 @@ if (BUILD_TESTING)
   #  )
   #SET_TARGET_PROPERTIES(ImageCompare PROPERTIES LABELS ${CLP})
 
-  set(testname ${PROJECT_NAME}_N3_Brain2D)
-  add_test(${testname}
-    ${Slicer_EXE}
-    --launch
-    ${PROJECT_NAME}
+  set(testname ${PROJECT_NAME}_N3_Brain2D_1)
+  add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
     ${TEST_DATA_DIR}/t81slice.nii.gz 
     --inputMask
@@ -70,24 +65,19 @@ if (BUILD_TESTING)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
   
   #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareImage)
-  #add_test(${testname}
-  #  ImageCompare
+  #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
   #  ${OUTPUT_DIR}/t81corrected.nii.gz 
   #  ${BASELINE_DIR}/t81corrected.nii.gz)
   #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareField)
-  #add_test(${testname}
-  #  ImageCompare
+  #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
   #  ${OUTPUT_DIR}/t81biasfield.nii.gz 
   #  ${BASELINE_DIR}/t81biasfield.nii.gz)
   #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  set(testname ${PROJECT_NAME}_N3_Brain2D)
-  add_test(${testname}
-    ${Slicer_EXE}
-    --launch
-    ${PROJECT_NAME}
+  set(testname ${PROJECT_NAME}_N3_Brain2D_2)
+  add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
     ${TEST_DATA_DIR}/he3volume.nii.gz 
     --inputMask
@@ -102,24 +92,19 @@ if (BUILD_TESTING)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareImage)
-  #add_test(${testname}
-  #  ImageCompare
+  #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
   #  ${OUTPUT_DIR}/he3corrected.nii.gz 
   #  ${BASELINE_DIR}/he3corrected.nii.gz)
   #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareField)
-  #add_test(${testname}
-  #  ImageCompare
+  #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
   #  ${OUTPUT_DIR}/he3biasfield.nii.gz 
   #  ${BASELINE_DIR}/he3biasfield.nii.gz)
   #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   set(testname ${PROJECT_NAME}_N4_Brain2D)
-  add_test(${testname}
-    ${Slicer_EXE}
-    --launch
-    ${PROJECT_NAME}
+  add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
     ${TEST_DATA_DIR}/t81slice.nii.gz 
     --inputMask
@@ -135,4 +120,4 @@ if (BUILD_TESTING)
     --convergenceThreshold 0.001)
   SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-endif (BUILD_TESTING)
+endif()

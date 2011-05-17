@@ -3,8 +3,6 @@
 #
 include_regular_expression("^.*$")
 
-enable_testing()
-
 find_package(GenerateCLP REQUIRED)
 include(${GenerateCLP_USE_FILE})
 

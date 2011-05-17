@@ -29,25 +29,17 @@ SIMPLE_TEST( vtkChangeTrackerGUITest )
 SIMPLE_TEST( vtkMRMLChangeTrackerNodeTest )
 
 
-
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-  endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
 
-  include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
-  include_directories(${Slicer_BINARY_DIR}/Applications/CLI)
-  include_directories(${ModuleDescriptionParser_SOURCE_DIR})
-  include_directories (${TCLAP_SOURCE_DIR}/include)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../CommandLineApplication
-                      ${ChangeTracker_BINARY_DIR}/CommandLineApplication  #
-                      CLP.h will be there
-                                         )
-
-#
-# Slicer3 is needed to resolve shared libraries
-#
-set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
+include_directories(
+  ${Slicer_SOURCE_DIR}/Applications/CLI
+  ${Slicer_BINARY_DIR}/Applications/CLI
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${TCLAP_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../CommandLineApplication
+  ${ChangeTracker_BINARY_DIR}/CommandLineApplication  #CLP.h will be there
+  )
 
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
@@ -65,11 +57,11 @@ target_link_libraries(ChangeTrackerTest
 )
 
 add_test(ChangeTrackerCL_Help 
-   ${Slicer_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest 
+   ${LAUNCH_EXE} ChangeTrackerTest 
    ChangeTrackerTest --help)
 
 add_test(ChangeTrackerCL_TestFull_Intensity
-   ${Slicer_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest
+   ${LAUNCH_EXE} ChangeTrackerTest
    ChangeTrackerTest --sensitivity 0.95
    --roi_xyz -4,27,28
    --roi_radius 21,22,24
