@@ -287,71 +287,73 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
 {
   if (!refNode)
     {
-      return;
+    vtkErrorMacro("ReadAnnotationTextData: reference node is null.");
+    return;
     }
 
   if (typeColumn)
     {
-      vtkErrorMacro("Type column has to be zero but is" << typeColumn);
-      return;
+    vtkErrorMacro("Type column has to be zero but is" << typeColumn);
+    return;
     }
   // is it empty?
   if (line[0] == '\0')
     {
-      vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
-      return;
+    vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
+    return;
     }
 
   vtkDebugMacro("got a line: \n\"" << line << "\"");
+  std::cout << "Read Annotation Text Data: got a line: \n\"" << line << "\"" << std::endl;
            
   std::string attValue(line);
   int size = std::string(this->GetAnnotationStorageType()).size();
  
   if (!attValue.compare(0,size,this->GetAnnotationStorageType()))
     {
-      int sel = 1, vis = 1;
-      std::string annotation;
+    int sel = 1, vis = 1;
+    std::string annotation;
       
-      // Jump over type 
-      size_t  startPos =attValue.find("|",0) +1;
-      size_t  endPos =attValue.find("|",startPos);
-      int columnNumber = 1;
-      while (startPos != std::string::npos && (columnNumber < numColumns)) 
-        {
+    // Jump over type 
+    size_t  startPos =attValue.find("|",0) +1;
+    size_t  endPos =attValue.find("|",startPos);
+    int columnNumber = 1;
+    while (startPos != std::string::npos && (columnNumber < numColumns)) 
+      {
       if (startPos != endPos) 
         {
-          const char* ptr;
-          if (endPos == std::string::npos) 
-        {
+        const char* ptr;
+        if (endPos == std::string::npos) 
+          {
           ptr = attValue.substr(startPos,endPos).c_str();
-        }
-          else
-        {
+          }
+        else
+          {
           ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
-        }
-          
-          if (columnNumber == annotationColumn)
-        {
+          }
+        
+        if (columnNumber == annotationColumn)
+          {
           annotation = ptr;
-        }
-          else if (columnNumber == selColumn)
-        {
+          }
+        else if (columnNumber == selColumn)
+          {
           sel = atoi(ptr);
-        }
-          else if (columnNumber == visColumn)
-        {
+          }
+        else if (columnNumber == visColumn)
+          {
           vis = atoi(ptr);
-        }
+          }
         }
       startPos = endPos +1;
       endPos =attValue.find("|",startPos);
       columnNumber ++;
-    }
-
-      if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
-        {
+      }
+    
+    if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
+      {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
-        }
+      }
     }
 }
 //----------------------------------------------------------------------------
@@ -465,17 +467,17 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
         // Property
     if (line[0] == '#')
       {
-        if (line[1] == ' ') 
-          {
+      if (line[1] == ' ') 
+        {
         if (this->ReadAnnotationTextProperties(annotationNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns) < 0 )
           { 
-            return 0;
+          return 0;
           }
-          }
+        }
       }
-        else
-          {
-        this->ReadAnnotationTextData(annotationNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns);
+    else
+      {
+      this->ReadAnnotationTextData(annotationNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns);
       }
     }         
   annotationNode->SetDisableModifiedEvent(modFlag);
