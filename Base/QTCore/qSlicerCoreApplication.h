@@ -143,7 +143,7 @@ public:
   ctkErrorLogModel* errorLogModel()const;
 
   /// Get application settings
-  /// \note It will also instanciate a QSettings object if required.
+  /// \note It will also instantiate a QSettings object if required.
   QSettings* settings()const;
 
   /// Disable application settings

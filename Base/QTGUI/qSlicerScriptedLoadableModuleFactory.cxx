@@ -43,7 +43,7 @@ bool ctkFactoryScriptedItem::load()
 //----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 {
-  // Using a scoped pointer ensures the memory will be cleaned if instanciator
+  // Using a scoped pointer ensures the memory will be cleaned if instantiator
   // fails before returning the module. See QScopedPointer::take()
   QScopedPointer<qSlicerScriptedLoadableModule> module(new qSlicerScriptedLoadableModule());
 

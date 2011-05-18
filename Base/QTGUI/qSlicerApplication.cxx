@@ -192,7 +192,7 @@ void qSlicerApplication::initialize(bool& exitWhenDone)
   this->setCoreCommandOptions(new qSlicerCommandOptions(this->settings()));
 
   // Proceed to initialization of the Core
-  // It mainly instanciates the vtkMRMLScene
+  // It mainly instantiates the vtkMRMLScene
   this->Superclass::initialize(exitWhenDone);
 }
 

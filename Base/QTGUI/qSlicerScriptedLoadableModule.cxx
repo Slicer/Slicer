@@ -161,7 +161,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   if (!self)
     {
     qCritical() << "setPythonSource" << newPythonSource
-        << "- Failed to instanciate scripted pythonqt class" << className << classToInstantiate;
+        << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
     return false;
     }
 

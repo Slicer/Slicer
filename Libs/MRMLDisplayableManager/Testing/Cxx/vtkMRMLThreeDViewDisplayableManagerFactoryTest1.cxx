@@ -251,7 +251,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     }
 
   //----------------------------------------------------------------------------
-  // Register a DisplayableManager after the DisplayableManagerGroup has been instanciated
+  // Register a DisplayableManager after the DisplayableManagerGroup has been instantiated
   factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
 
   if (factory->GetRegisteredDisplayableManagerCount() != 2)
@@ -309,7 +309,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     }
 
   //----------------------------------------------------------------------------
-  // Attempt to UnRegister a DisplayableManager already instanciated in a Group
+  // Attempt to UnRegister a DisplayableManager already instantiated in a Group
   success = factory->UnRegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
 
   if (factory->GetRegisteredDisplayableManagerCount() != 1)

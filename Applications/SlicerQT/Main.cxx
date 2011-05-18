@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
 
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
   
-  // Register and instanciate modules
+  // Register and instantiate modules
   moduleFactoryManager->registerAllModules();
   moduleFactoryManager->instantiateAllModules();
 

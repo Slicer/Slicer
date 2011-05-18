@@ -71,7 +71,7 @@ public:
   typedef QObject Superclass;
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
-  /// The modules can typically be instanciated before the application
+  /// The modules can typically be instantiated before the application
   /// is initialized (module manager, iomanager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
   qSlicerAbstractCoreModule(QObject *parent=0);

@@ -645,7 +645,7 @@ QSettings* qSlicerCoreApplication::settings()const
   Q_D(const qSlicerCoreApplication);
   qSlicerCoreApplicationPrivate* mutable_d =
     const_cast<qSlicerCoreApplicationPrivate*>(d);
-  // If required, instanciate Settings
+  // If required, instantiate Settings
   if(!mutable_d->Settings)
     {
     mutable_d->Settings = mutable_d->instantiateSettings("", false);

@@ -90,7 +90,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* mrmlScene);
 
 signals:
-  /// Fired right after the instanciation of the node
+  /// Fired right after the instantiation of the node
   /// (before any initialization)
   /// Connecting to the following signal allows a custom node creation
   void nodeInstantiated(vtkMRMLNode* node);

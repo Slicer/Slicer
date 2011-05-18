@@ -152,7 +152,7 @@ void qSlicerAbstractCoreModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
     return;
     }
   d->MRMLScene = _mrmlScene;
-  // Since we don't want 'setMRMLScene' to instanciate explicitly the logic,
+  // Since we don't want 'setMRMLScene' to instantiate explicitly the logic,
   // we just check the pointer (instead of calling 'this->logic()')
   if (d->Logic)
     {// logic should be updated first (because it doesn't depends on the widget

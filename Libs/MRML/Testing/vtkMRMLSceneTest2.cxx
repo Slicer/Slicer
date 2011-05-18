@@ -437,7 +437,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // If additional nodes have been instanciated, let's update expectedNumberOfNode
+  // If additional nodes have been instantiated, let's update expectedNumberOfNode
   if (static_cast<int>(nodeAddedClassNames.size()) > expectedNumberOfNode)
     {
     expectedNumberOfNode = static_cast<int>(nodeAddedClassNames.size());

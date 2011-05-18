@@ -291,7 +291,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   Py_DECREF(arguments);
   if (!self)
     {
-    vtkErrorMacro(<< "SetPythonSource - Failed to instanciate displayable manager:"
+    vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:"
                   << classToInstantiate);
     return;
     }

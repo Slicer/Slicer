@@ -60,7 +60,7 @@ public:
   /// a VTK class registered using the CMake macro VTK_MAKE_INSTANTIATOR3
   /// a python script having the extension .py
   /// Internally for each registered python script, a scripted displayable manager
-  /// will be instanciated.
+  /// will be instantiated.
   bool RegisterDisplayableManager(const char* vtkClassOrScriptName);
 
   /// UnRegister Displayable Manager identified by \a vtkClassOrScriptName.

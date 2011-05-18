@@ -40,7 +40,7 @@ bool qSlicerCLIExecutableModuleFactoryItem::load()
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 {
-  // Using a scoped pointer ensures the memory will be cleaned if instanciator
+  // Using a scoped pointer ensures the memory will be cleaned if instantiator
   // fails before returning the module. See QScopedPointer::take()
   QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
   module->setModuleType("CommandLineModule");

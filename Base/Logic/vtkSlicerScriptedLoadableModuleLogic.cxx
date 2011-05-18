@@ -220,7 +220,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
   Py_DECREF(arguments);
   if (!self)
     {
-    vtkErrorMacro(<< "SetPythonSource - Failed to instanciate displayable manager:"
+    vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:"
                   << classToInstantiate);
     return false;
     }

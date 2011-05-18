@@ -676,7 +676,7 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
   // Replace the previously registered node if any.
   // By doing so we make sure there is no more than 1 node matching a given
   // XML tag. It allows plugins to MRML to overide default behavior when
-  // instanciating nodes via XML tags.
+  // instantiating nodes via XML tags.
   for (unsigned int i = 0; i < this->RegisteredNodeTags.size(); ++i)
     {
     if (this->RegisteredNodeTags[i] == xmlTag)

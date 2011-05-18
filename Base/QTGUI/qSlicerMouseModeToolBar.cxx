@@ -53,7 +53,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
 {
   logger.setTrace();
 
-  // MRMLApplicationLogic should be instanciated
+  // MRMLApplicationLogic should be instantiated
   ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
   this->MRMLAppLogic = qSlicerApplication::application() ? qSlicerApplication::application()->mrmlApplicationLogic(): 0;
 

@@ -181,7 +181,7 @@ void vtkMRMLNonlinearTransformNode::SetAndObserveWarpTransformToParent(vtkWarpTr
     {
     // We return for 2 reasons:
     //   - there is nothing to do
-    //   - the remaining of the function could uninstanciate warp (when calling
+    //   - the remaining of the function could uninstantiate warp (when calling
     //     this->SetWarpTransformToParent(NULL)) but try to register it after
     //     in this->SetWarpTransformToParent. One must use Register carefully
     return;
