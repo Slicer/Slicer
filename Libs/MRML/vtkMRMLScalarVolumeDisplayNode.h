@@ -158,6 +158,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// Return a specific preset, returns 0 if p out of range
   double GetWindowPreset(int p);
   double GetLevelPreset(int p);
+
+  /// 
+  /// Defines the expected range of the output data for given imageData after 
+  /// having been mapped through the current display options
+  virtual void GetDisplayScalarRange(vtkImageData *imageData, double range[2]);
   
 protected:
   vtkMRMLScalarVolumeDisplayNode();

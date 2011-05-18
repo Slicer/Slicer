@@ -148,6 +148,14 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
     vtkErrorMacro("Shouldn't be calling this");
     }
 
+  /// 
+  /// Defines the expected range of the output data for given imageData after 
+  /// having been mapped through the current display options
+  virtual void GetDisplayScalarRange(vtkImageData *imageData, double range[2])
+    {
+    Superclass::GetDisplayScalarRange(imageData, range);
+    };
+
 protected:
   vtkMRMLGlyphableVolumeDisplayNode();
   ~vtkMRMLGlyphableVolumeDisplayNode();

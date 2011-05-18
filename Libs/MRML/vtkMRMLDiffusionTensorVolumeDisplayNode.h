@@ -172,6 +172,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData();
 
+  /// 
+  /// Defines the expected range of the output data for given imageData after 
+  /// having been mapped through the current display options
+  virtual void GetDisplayScalarRange(vtkImageData *imageData, double range[2]);
+
 
 protected:
   vtkMRMLDiffusionTensorVolumeDisplayNode();

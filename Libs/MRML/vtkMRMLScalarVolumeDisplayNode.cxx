@@ -600,3 +600,14 @@ void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 {
   this->WindowLevelPresets.clear();
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(vtkImageData *imageData, double range[2])
+{
+  range[0] = 0;
+  range[1] = 255.;
+  if ( imageData )
+    {
+    imageData->GetScalarRange(range);
+    }
+}
