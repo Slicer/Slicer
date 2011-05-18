@@ -110,8 +110,6 @@ class SampleDataWidget:
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_2.nrrd', 'MRBrainTumor1')
 
   def downloadVolume(self, uri, name):
-    #TODO: this should probably just call AddArchetypeScalarVolume directly and then 
-    #set the composite nodes using the PropagateVolumeSelection api.
     # start the download
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeVolume(uri, name, 0)
