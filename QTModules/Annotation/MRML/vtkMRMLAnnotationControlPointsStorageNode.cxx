@@ -166,35 +166,35 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
     {
     if (startPos != endPos) 
       {
-      std::string ptr;
+      std::string tokenString;
       if (endPos == std::string::npos) 
         {
-        ptr = attValue.substr(startPos,endPos).c_str();
+        tokenString = attValue.substr(startPos,endPos);
         }
       else
         {
-        ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+        tokenString = attValue.substr(startPos,endPos-startPos); 
         }
       
       if (columnNumber == xColumn)
         {
-        coord[0] = atof(ptr.c_str());
+        coord[0] = atof(tokenString.c_str());
         }
       else if (columnNumber == yColumn)
         {
-        coord[1] = atof(ptr.c_str());
+        coord[1] = atof(tokenString.c_str());
         }
       else if (columnNumber == zColumn)
         {
-        coord[2] = atof(ptr.c_str());
+        coord[2] = atof(tokenString.c_str());
         }
       else if (columnNumber == selColumn)
         {
-        sel = atoi(ptr.c_str());
+        sel = atoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(ptr.c_str());
+        vis = atoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;

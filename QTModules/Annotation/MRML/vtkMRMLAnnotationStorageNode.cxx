@@ -323,27 +323,27 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       if (startPos != endPos) 
         {
         vtkDebugMacro("ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", annotation column = " << annotationColumn);
-        std::string ptr;
+        std::string tokenString;
         if (endPos == std::string::npos) 
           {
-          ptr = attValue.substr(startPos,endPos).c_str();
+          tokenString = attValue.substr(startPos,endPos);
           }
         else
           {
-          ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+          tokenString = attValue.substr(startPos,endPos-startPos);
           }
         if (columnNumber == annotationColumn)
           {
-          annotation = ptr;
+          annotation = tokenString;
           vtkDebugMacro("ReadAnnotationTextData: annotation = " << annotation.c_str());
           }
         else if (columnNumber == selColumn)
           {
-          sel = atoi(ptr.c_str());
+          sel = atoi(tokenString.c_str());
           }
         else if (columnNumber == visColumn)
           {
-          vis = atoi(ptr.c_str());
+          vis = atoi(tokenString.c_str());
           }
         }
       startPos = endPos +1;

@@ -125,27 +125,27 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
     {
     if (startPos != endPos) 
       {
-      std::string ptr;
+      std::string tokenString;
       if (endPos == std::string::npos) 
         {
-        ptr = attValue.substr(startPos,endPos).c_str();
+        tokenString = attValue.substr(startPos,endPos);
         }
       else
         {
-        ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+        tokenString = attValue.substr(startPos,endPos-startPos);
         }
       
       if (columnNumber == line1IDColumn)
         {
-        lineID = atoi(ptr.c_str());
+        lineID = atoi(tokenString.c_str());
         }
      else if (columnNumber == selColumn)
         {
-        sel = atoi(ptr.c_str());
+        sel = atoi(tokenString.c_str());
         }
       else if (columnNumber == visColumn)
         {
-        vis = atoi(ptr.c_str());
+        vis = atoi(tokenString.c_str());
         }
       }
     startPos = endPos +1;
