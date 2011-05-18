@@ -416,9 +416,15 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 
   if (persistent)
     {
-    // if persistent placement was activated, we want to reset it
+    // if persistent placement was activated in the Annotation GUI, we do not want to reset it
+    interactionNode->SetPlaceModePersistence(1);
+    }
+  else
+    {
+    // if persistent placement was not activated in the Annotation GUI, then we want to reset it
     interactionNode->SetPlaceModePersistence(0);
     }
+
   interactionNode->SetCurrentInteractionMode(
       vtkMRMLInteractionNode::ViewTransform);
 

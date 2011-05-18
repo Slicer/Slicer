@@ -411,7 +411,7 @@ p, li { white-space: pre-wrap; }
            <item row="0" column="0">
             <widget class="QCheckBox" name="persistentCheckBox">
              <property name="text">
-              <string>Create-and-Place persistently</string>
+              <string>Create-and-Place persistently when using the Annotation module</string>
              </property>
             </widget>
            </item>
