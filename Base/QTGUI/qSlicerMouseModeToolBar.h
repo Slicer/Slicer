@@ -57,6 +57,8 @@ public slots:
   void switchToSinglePlaceMode();
   void switchToViewTransformMode();
 
+  void changeCursorTo(QCursor cursor);
+
 
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;

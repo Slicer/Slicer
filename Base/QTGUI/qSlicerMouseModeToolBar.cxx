@@ -24,12 +24,17 @@
 #include <QIcon>
 #include <QMenu>
 #include <QActionGroup>
+#include <QCursor>
 
 // CTK includes
 #include <ctkLogger.h>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
+#include "qMRMLLayoutManager.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLSliceWidget.h"
 #include "qSlicerMouseModeToolBar.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
@@ -340,6 +345,9 @@ void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
     
     interactionNode->SwitchToPersistentPlaceMode();
 
+    // set cursor to persistent place mode, -1,0 means the hot spot is at the top middle
+    this->changeCursorTo(QCursor(QPixmap(":/Icons/MousePlaceMode.png"),-1,0));
+
     d->PersistentPlaceModeAction->setChecked(true);
     }
 }
@@ -368,6 +376,9 @@ void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
     
     interactionNode->SwitchToSinglePlaceMode();
 
+    // set cursor to single place mode, -1,0 means the hot spot is at the top middle
+    this->changeCursorTo(QCursor(QPixmap(":/Icons/MouseSinglePlaceMode.png"),-1,0));
+
     d->SinglePlaceModeAction->setChecked(true);
     }
   
@@ -385,11 +396,49 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
     
     interactionNode->SwitchToViewTransformMode();
     
+    // reset cursor to default
+    this->changeCursorTo(QCursor());
+
     d->ViewTransformModeAction->setChecked(true);
     }
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
+{
 
+  qMRMLLayoutManager *layoutManager = qSlicerApplication::application()->layoutManager();
+
+  if (!layoutManager)
+    {
+    return;
+    }
+
+  // loop through all existing threeDViews
+  for (int i=0; i < layoutManager->threeDViewCount(); ++i)
+    {
+    layoutManager->threeDView(i)->setCursor(cursor);
+    }
+
+  // the slice viewers
+  qMRMLSliceWidget *greenSliceView = layoutManager->sliceWidget("Green");
+  qMRMLSliceWidget *redSliceView = layoutManager->sliceWidget("Red");
+  qMRMLSliceWidget *yellowSliceView = layoutManager->sliceWidget("Yellow");
+
+  if (greenSliceView)
+    {
+    greenSliceView->setCursor(cursor);
+    }
+  if (redSliceView)
+    {
+    redSliceView->setCursor(cursor);
+    }
+  if (yellowSliceView)
+    {
+    yellowSliceView->setCursor(cursor);
+    }
+
+}
 
 
 
