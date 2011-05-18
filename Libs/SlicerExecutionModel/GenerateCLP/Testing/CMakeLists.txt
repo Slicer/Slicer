@@ -23,10 +23,9 @@ TARGET_LINK_LIBRARIES ( PointExample1 ITKEXPAT)
 SET ( SLICEREXAMPLE_SOURCE Slicer3Example.cxx )
 GENERATECLP(SLICEREXAMPLE_SOURCE Slicer3Example.xml)
 ADD_EXECUTABLE ( SlicerExample ${SLICEREXAMPLE_SOURCE})
-TARGET_LINK_LIBRARIES ( SlicerExample)
 
-ADD_TEST(SlicerCLPExample1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example --help)
-ADD_TEST(SlicerCLPExample2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example --echo --load_freesurfer_volume FSV --stereo)
-ADD_TEST(SlicerCLPExample3 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example)
+ADD_TEST(NAME SlicerCLPExample1 COMMAND $<TARGET_FILE:SlicerExample> --help)
+ADD_TEST(NAME SlicerCLPExample2 COMMAND $<TARGET_FILE:SlicerExample> --echo --load_freesurfer_volume FSV --stereo)
+ADD_TEST(NAME SlicerCLPExample3 COMMAND $<TARGET_FILE:SlicerExample>)
 
 
