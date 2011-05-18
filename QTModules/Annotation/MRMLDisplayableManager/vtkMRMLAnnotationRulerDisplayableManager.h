@@ -57,6 +57,9 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
+  // update the ruler end point positions from the MRML node
+  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
+
 private:
 
   vtkMRMLAnnotationRulerDisplayableManager(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not implemented

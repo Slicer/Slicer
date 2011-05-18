@@ -10,6 +10,8 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 
+#include "vtkMRMLInteractionNode.h"
+
 // Annotation widget includes
 #include "Widgets/vtkAnnotationRulerWidget.h"
 #include "Widgets/vtkAnnotationRulerRepresentation.h"
@@ -706,6 +708,108 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     // reset updating state
     this->m_Updating = 0;
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+  
     }
 
   }
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
+{
+    if (!widget)
+    {
+    vtkErrorMacro("UpdatePosition: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("UpdatePosition: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkAnnotationRulerWidget* rulerWidget = vtkAnnotationRulerWidget::SafeDownCast(widget);
+
+  if (!rulerWidget)
+    {
+    vtkErrorMacro("UpdatePosition: Could not get ruler widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+    // cast to the specific mrml node
+  vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+
+  if (!rulerNode)
+    {
+    vtkErrorMacro("UpdatePosition: Could not get ruler node!")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
+  double worldCoordinates1[4];
+  worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
+  worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
+  worldCoordinates1[2] = rulerNode->GetControlPointCoordinates(0)[2];
+  worldCoordinates1[3] = 1;
+
+  double worldCoordinates2[4];
+  worldCoordinates2[0] = rulerNode->GetControlPointCoordinates(1)[0];
+  worldCoordinates2[1] = rulerNode->GetControlPointCoordinates(1)[1];
+  worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
+  worldCoordinates2[3] = 1;
+
+  double displayCoordinates1[4];
+  double displayCoordinates2[4];
+  double displayCoordinatesBuffer1[4];
+  double displayCoordinatesBuffer2[4];
+
+  // update the location
+  if (this->Is2DDisplayableManager())
+    {
+    // get the 2d representation
+    vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+    
+    // change the 2D location
+    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
+
+    // only update the position, if coordinates really change
+    rep->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
+    rep->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
+
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint1DisplayPosition(displayCoordinates1);
+      }
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint2DisplayPosition(displayCoordinates2);
+      }
+    }
+  else
+    {
+    /// 3d case
+    // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+    vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+    // change the 3D location
+    rep->SetPoint1WorldPosition(worldCoordinates1);
+    rep->SetPoint2WorldPosition(worldCoordinates2);
+    
+    rep->NeedToRenderOn();
+    }
+  
+  rulerWidget->Modified();
+  
+  // enable processing of modified events
+  this->m_Updating = 0;
+}
