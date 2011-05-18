@@ -1357,7 +1357,11 @@ itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
   set rasText [format "RAS: (%.1f, %.1f, %.1f)," $r $a $s]
 
   set statusText "$backgroundname $rasText$ijkText$labelText$voxelText"
-  [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $statusText
+  if { $::slicer3::ApplicationGUI != ""} {
+      if { [$::slicer3::ApplicationGUI GetMainSlicerWindow] != ""} {
+          [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $statusText
+      }
+  }
 }
 
 
