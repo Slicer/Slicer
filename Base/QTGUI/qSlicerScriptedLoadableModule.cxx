@@ -119,7 +119,6 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
-
   // Load class definition if needed
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
   if (!classToInstantiate)
@@ -138,7 +137,8 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   if (!classToInstantiate)
     {
     qCritical()
-        << "Failed to load scripted pythonqt module class definition from" << newPythonSource;
+        << "Failed to load scripted pythonqt module class definition"
+        << className << "from" << newPythonSource;
     return false;
     }
 

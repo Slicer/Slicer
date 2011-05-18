@@ -139,8 +139,8 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   if (!classToInstantiate)
     {
     qCritical()
-        << "setPythonSource - Failed to load scripted pythonqt module class definition from"
-        << newPythonSource;
+        << "setPythonSource - Failed to load scripted pythonqt module class definition"
+        << className << "from" << newPythonSource;
     return false;
     }
 
