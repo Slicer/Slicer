@@ -177,16 +177,20 @@ protected:
   /// Disable processing when updating is in progress.
   int m_Updating;
 
+  /// Respond to interactor style events
+  virtual void OnInteractorStyleEvent(int eventid);
+
+  /// Accessor for internal flag that disables interactor style event processing
+  vtkGetMacro(DisableInteractorStyleEventsProcessing, int);
+  
 private:
 
   vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
 
-  virtual void OnInteractorStyleEvent(int eventid);
-
   vtkMRMLAnnotationDisplayableManagerHelper * Helper;
 
-  int m_DisableInteractorStyleEventsProcessing;
+  int DisableInteractorStyleEventsProcessing;
 
   vtkMRMLSliceNode * m_SliceNode;
 

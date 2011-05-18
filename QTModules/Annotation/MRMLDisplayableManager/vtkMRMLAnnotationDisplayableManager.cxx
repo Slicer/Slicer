@@ -58,7 +58,7 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 {
   this->Helper = vtkMRMLAnnotationDisplayableManagerHelper::New();
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
-  this->m_DisableInteractorStyleEventsProcessing = 0;
+  this->DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
 
   this->m_Focus = "vtkMRMLAnnotationNode";
@@ -72,7 +72,7 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
 
-  this->m_DisableInteractorStyleEventsProcessing = 0;
+  this->DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
   this->m_Focus = 0;
 
@@ -981,7 +981,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
-  if (this->m_DisableInteractorStyleEventsProcessing == 1)
+  if (this->GetDisableInteractorStyleEventsProcessing())
     {
     vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
     return;
