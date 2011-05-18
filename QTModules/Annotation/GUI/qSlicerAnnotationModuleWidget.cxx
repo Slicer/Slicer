@@ -471,7 +471,12 @@ void qSlicerAnnotationModuleWidget::onPauseButtonClicked()
 
   d->resumeButton->setChecked(false);
   d->pauseButton->setChecked(true);
-  d->logic()->StopPlaceMode();
+  bool persistent = false;
+  if (d->persistentCheckBox->checkState() == Qt::Checked)
+    {
+    persistent = true;
+    }
+  d->logic()->StopPlaceMode(persistent);
 
 }
 
@@ -526,7 +531,12 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
 
   this->resetAllAnnotationButtons();
 
-  d->logic()->StopPlaceMode();
+  bool persistent = false;
+  if (d->persistentCheckBox->checkState() == Qt::Checked)
+    {
+    persistent = true;
+    }
+  d->logic()->StopPlaceMode(persistent);
 
   this->disableMouseModeButtons();
 
