@@ -74,90 +74,90 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
   double coord[3];
   while (startPos != std::string::npos && (columnNumber < numColumns)) 
     {
-      if (startPos != endPos) 
-    {
-      const char* ptr;
+    if (startPos != endPos) 
+      {
+      std::string ptr;
       if (endPos == std::string::npos) 
         {
-          ptr = attValue.substr(startPos,endPos).c_str();
+        ptr = attValue.substr(startPos,endPos).c_str();
         }
       else
         {
-          ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+        ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
         }
       
       if (columnNumber == labelColumn)
         {
-                 label = std::string(ptr);
+        label = ptr;
         }
       else if (columnNumber == xColumn)
         {
-          coord[0] = atof(ptr);
+        coord[0] = atof(ptr.c_str());
         }
       else if (columnNumber == yColumn)
         {
-          coord[1] = atof(ptr);
+        coord[1] = atof(ptr.c_str());
         }
       else if (columnNumber == zColumn)
         {
-          coord[2] = atof(ptr);
+        coord[2] = atof(ptr.c_str());
         }
       else if (columnNumber == selColumn)
         {
-          sel = atoi(ptr);
+        sel = atoi(ptr.c_str());
         }
       else if (columnNumber == visColumn)
         {
-          vis = atoi(ptr);
+        vis = atoi(ptr.c_str());
         }
+      }
+    startPos = endPos +1;
+    endPos =attValue.find(",",startPos);
+    columnNumber ++;
     }
-      startPos = endPos +1;
-      endPos =attValue.find(",",startPos);
-      columnNumber ++;
-    }
-
+  
   // Add Fiducials
   if (!this->GetScene())
     {
-      vtkErrorMacro("Cannot add Fiducial as MRML Scene is not defined");
-      return -1;
+    vtkErrorMacro("Cannot add Fiducial as MRML Scene is not defined");
+    return -1;
     }
-
-
+  
+  
   vtkMRMLAnnotationFiducialNode *newNode = vtkMRMLAnnotationFiducialNode::New();
   this->GetScene()->AddNode(newNode);
   newNode->Delete();
-
+  
   vtkMRMLAnnotationTextDisplayNode *newDisplayNode = newNode->GetAnnotationTextDisplayNode();
   if (!newDisplayNode)
     {
-      vtkErrorMacro("Cannot add Fiducial as AnnotationDisplay Node could not be created!");
-      return -1;
+    vtkErrorMacro("Cannot add Fiducial as AnnotationDisplay Node could not be created!");
+    return -1;
     }
   newDisplayNode->Copy(refNode->GetAnnotationTextDisplayNode());
   
   vtkMRMLAnnotationPointDisplayNode *newCPDisplayNode = newNode->GetAnnotationPointDisplayNode();
   if (!newCPDisplayNode)
     {
-      vtkErrorMacro("Cannot add Fiducial as AnnotationControlPointDisplayNode could not be created!");
-      return -1;
+    vtkErrorMacro("Cannot add Fiducial as AnnotationControlPointDisplayNode could not be created!");
+    return -1;
     }
   newCPDisplayNode->Copy(refNode->GetAnnotationPointDisplayNode());
-
+  
   if (newNode->SetFiducial(label.c_str(),coord, sel, vis) < 0)
     {
-      vtkErrorMacro("Error adding control point to list, coord = " << coord[0] << " " << coord[1] << " " << coord[2]);
-      return -1;
+    vtkErrorMacro("Error adding control point to list, coord = " << coord[0] << " " << coord[1] << " " << coord[2]);
+    return -1;
     }
-
- // make sure that the list node points to this storage node
+  
+  // make sure that the list node points to this storage node
   newNode->SetAndObserveStorageNodeID(this->GetID());
   
   // mark it unmodified since read
   newNode->ModifiedSinceReadOff();
-
+  
   newNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, newCPDisplayNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
-
+  
   return 1;
 }
 

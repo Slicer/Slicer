@@ -122,44 +122,44 @@ int vtkMRMLAnnotationAngleStorageNode::ReadAnnotationAngleData(vtkMRMLAnnotation
   vtkIdType lineID[2] = {-1, -1};
   while (startPos != std::string::npos && (columnNumber < numColumns)) 
     {
-      if (startPos != endPos) 
-    {
-      const char* ptr;
+    if (startPos != endPos) 
+      {
+      std::string ptr;
       if (endPos == std::string::npos) 
         {
-          ptr = attValue.substr(startPos,endPos).c_str();
+        ptr = attValue.substr(startPos,endPos).c_str();
         }
       else
         {
-          ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+        ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
         }
       
       if (columnNumber == line1IDColumn)
         {
-          lineID[0] = atoi(ptr);
+        lineID[0] = atoi(ptr.c_str());
         }
       else if (columnNumber == line2IDColumn)
         {
-          lineID[1] = atoi(ptr);
+        lineID[1] = atoi(ptr.c_str());
         }
-     else if (columnNumber == selColumn)
+      else if (columnNumber == selColumn)
         {
-          sel = atoi(ptr);
+        sel = atoi(ptr.c_str());
         }
       else if (columnNumber == visColumn)
         {
-          vis = atoi(ptr);
+        vis = atoi(ptr.c_str());
         }
+      }
+    startPos = endPos +1;
+    endPos =attValue.find("|",startPos);
+    columnNumber ++;
     }
-      startPos = endPos +1;
-      endPos =attValue.find("|",startPos);
-      columnNumber ++;
-    }
-
+  
   if (refNode->SetAngle(lineID[0],lineID[1], sel, vis) < 0 ) 
     {
-      vtkErrorMacro("Error setting angle , lineID = " << lineID[0] << " " << lineID[1]);
-      return -1;
+    vtkErrorMacro("Error setting angle , lineID = " << lineID[0] << " " << lineID[1]);
+    return -1;
     }
   return 1;
 }
@@ -367,7 +367,7 @@ void vtkMRMLAnnotationAngleStorageNode::WriteAnnotationAngleData(fstream& of, vt
 {
   if (!refNode)
     {
-      return;
+    return;
     }
   int sel = refNode->GetSelected();
   int vis = refNode->GetVisible();

@@ -152,44 +152,44 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
   vtkIdType coordID[2] = {-1, -1};
   while (startPos != std::string::npos && (columnNumber < numColumns)) 
     {
-      if (startPos != endPos) 
-    {
-      const char* ptr;
+    if (startPos != endPos) 
+      {
+      std::string ptr;
       if (endPos == std::string::npos) 
         {
-          ptr = attValue.substr(startPos,endPos).c_str();
+        ptr = attValue.substr(startPos,endPos).c_str();
         }
       else
         {
-          ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
+        ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
         }
       
       if (columnNumber == startIDColumn)
         {
-          coordID[0] = atof(ptr);
+        coordID[0] = atof(ptr.c_str());
         }
       else if (columnNumber == endIDColumn)
         {
-          coordID[1] = atof(ptr);
+        coordID[1] = atof(ptr.c_str());
         }
-     else if (columnNumber == selColumn)
+      else if (columnNumber == selColumn)
         {
-          sel = atoi(ptr);
+        sel = atoi(ptr.c_str());
         }
       else if (columnNumber == visColumn)
         {
-          vis = atoi(ptr);
+        vis = atoi(ptr.c_str());
         }
+      }
+    startPos = endPos +1;
+    endPos =attValue.find("|",startPos);
+    columnNumber ++;
     }
-      startPos = endPos +1;
-      endPos =attValue.find("|",startPos);
-      columnNumber ++;
-    }
-
+  
   if (refNode->AddLine(coordID[0],coordID[1], sel, vis) < 0 ) 
     {
-      vtkErrorMacro("Error adding list to list, coordID = " << coordID[0] << " " << coordID[1]);
-      return -1;
+    vtkErrorMacro("Error adding list to list, coordID = " << coordID[0] << " " << coordID[1]);
+    return -1;
     }
   return 1;
 }
