@@ -46,9 +46,9 @@ public:
     };
 
   static int          APIMethodCount;
-  static const char * APIMethodNames[7];
+  static const char * APIMethodNames[3];
 
-  PyObject*  PythonAPIMethods[7];
+  PyObject*  PythonAPIMethods[3];
   PyObject*  PythonSelf;
   QString    PythonSource;
 };
@@ -60,7 +60,7 @@ public:
 int qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodCount = 3;
 
 //---------------------------------------------------------------------------
-const char* qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodNames[7] =
+const char* qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodNames[3] =
 {
   "setup",
   "enter",
