@@ -219,4 +219,6 @@ SET(CTEST_CUSTOM_ERROR_EXCEPTION
   "NUMPY._configtest.*undefined reference"
   "_configtest.*error"
   "collect2: ld returned 1 exit status"
+  # See http://www.cmake.org/pipermail/cmake/2011-May/044448.html
+  "([^ :]+):([0-9]+): ([^ \\t])"
   )
