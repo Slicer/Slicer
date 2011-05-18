@@ -27,13 +27,13 @@ public:
   void InitializeEventListeners();
 
   // Start the place mode for annotations
-  void StartPlaceMode();
+  void StartPlaceMode(bool persistent=false);
 
   // Exit the place mode for annotations
   void StopPlaceMode();
 
   // Start adding a new annotation Node
-  void AddAnnotationNode(const char * nodeDescriptor);
+  void AddAnnotationNode(const char * nodeDescriptor, bool persistent=false);
 
   // After a node was added, propagate to widget
   void AddNodeCompleted(vtkMRMLAnnotationNode* annotationNode);

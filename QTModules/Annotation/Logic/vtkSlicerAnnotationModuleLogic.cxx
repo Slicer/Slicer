@@ -308,7 +308,7 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
 //-----------------------------------------------------------------------------
 // Add Annotation Node
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescriptor)
+void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescriptor, bool persistent)
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -321,14 +321,14 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
 
   selectionNode->SetActiveAnnotationID(nodeDescriptor);
 
-  this->StartPlaceMode();
+  this->StartPlaceMode(persistent);
 
 }
 
 //---------------------------------------------------------------------------
 // Start the place mouse mode
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
+void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
 {
 
   vtkMRMLInteractionNode *interactionNode =
@@ -343,7 +343,15 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 //  this->InitializeEventListeners();
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
-  interactionNode->SetPlaceModePersistence(1);
+
+  if (persistent)
+    {
+    interactionNode->SetPlaceModePersistence(1);
+    }
+  else
+    {
+    interactionNode->SetPlaceModePersistence(0);
+    }
 
   if (interactionNode->GetCurrentInteractionMode()
       != vtkMRMLInteractionNode::Place)
