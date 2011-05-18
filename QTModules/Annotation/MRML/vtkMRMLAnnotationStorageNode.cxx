@@ -302,8 +302,6 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
     vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
     return;
     }
-
-  this->DebugOn();
   
   vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"");
            
@@ -358,7 +356,6 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
       }
     }
-  this->DebugOff();
 }
 //----------------------------------------------------------------------------
  
