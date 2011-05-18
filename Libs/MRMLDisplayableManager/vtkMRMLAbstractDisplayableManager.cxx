@@ -356,7 +356,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
       return;
       }
 
-    this->InteractorStyleObservableEvents.push_back(eventIdToUnObserve);
+    this->InteractorStyleObservableEvents.push_back(eventIdToObserve);
     }
 
   if (eventIdToUnObserve != vtkCommand::NoEvent)
