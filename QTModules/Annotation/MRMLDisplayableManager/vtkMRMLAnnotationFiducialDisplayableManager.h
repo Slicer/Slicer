@@ -60,7 +60,7 @@ protected:
   /// set up an observer on the interactor style to watch for key press events
   virtual void AdditionnalInitializeStep();
   /// respond to the interactor style event
-//  virtual void OnInteractorStyleEvent(int eventid);
+  virtual void OnInteractorStyleEvent(int eventid);
 
   // respond to control point modified events
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);

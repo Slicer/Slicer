@@ -538,7 +538,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     newCoords[1] = worldCoordinates1[1];
     newCoords[2] = worldCoordinates1[2];
     double distance = sqrt(vtkMath::Distance2BetweenPoints(currentCoords, newCoords));
-    if (distance > 0.1)
+    if (this->GetWorldCoordinatesChanged(currentCoords, newCoords))
       {
       vtkDebugMacro("PropagateWidgetToMRML: Distance = " << distance << ", position changed.");
       positionChanged = true;
@@ -577,7 +577,6 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
   // place the seed where the user clicked
   vtkDebugMacro("OnClickInRenderWindow: placing seed at " << x << ", " << y);
-
   // switch to updating state to avoid events mess
   this->m_Updating = 1;
 
@@ -620,49 +619,50 @@ void vtkMRMLAnnotationFiducialDisplayableManager::AdditionnalInitializeStep()
 {
   // don't add the key press event, as it triggers a crash on start up
   //vtkDebugMacro("Adding an observer on the key press event");
-  //this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
+  this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
 }
 
-/*
+
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
-  std::cout << "Fiducial DisplayableManager: event = " << eventid << std::endl;
-  return;
-//  if (this->m_DisableInteractorStyleEventsProcessing == 1)
-//    {
-//    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
-//    return;
-//    }
+  this->Superclass::OnInteractorStyleEvent(eventid);
 
-//  std::cout << "vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent " << eventid << std::endl;
-
+  if (this->GetDisableInteractorStyleEventsProcessing())
+    {
+    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    return;
+    }
+  
   if (eventid == vtkCommand::KeyPressEvent)
     {
-    vtkWarningMacro("OnInteractorStyleEvent: TBD: handle key press event");
-    vtkInteractorStyle *style = NULL;
-    vtkInteractorObserver *obs = this->GetInteractor()->GetInteractorStyle();
-    if (obs)
+    double x = this->GetInteractor()->GetEventPosition()[0];
+    double y = this->GetInteractor()->GetEventPosition()[1];
+    char *keySym = this->GetInteractor()->GetKeySym();
+    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? "2D" : "3D") << ": key press event position = " << x << ", " << y << ", key sym = " << (keySym == NULL ? "null" : keySym));
+    if (!keySym)
       {
-      style = vtkInteractorStyle::SafeDownCast(obs);
-      vtkSliceViewInteractorStyle *sliceViewStyle = vtkSliceViewInteractorStyle::SafeDownCast(obs);
-      if (sliceViewStyle)
+      return;
+      }
+    if (strcmp(keySym, "p") == 0)
+      {
+      if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
         {
-        std::cout << "vtkMRMLAnnotationFiducialDisplayableManager: GetChar = " << sliceViewStyle->GetChar() << std::endl;
+        this->OnClickInRenderWindowGetCoordinates();
+        }
+      else
+        {
+        vtkDebugMacro("Fiducial DisplayableManager: key press p, but not in Place mode! Returning.");
+        return;
         }
       }
     }
   else if (eventid == vtkCommand::KeyReleaseEvent)
     {
-    vtkWarningMacro("Got a key release event");
-    }
-  else
-    {
-    //vtkWarningMacro("OnInteractorStyleEvent: unhandled event " << eventid);
-    std::cout << "vtkMRMLAnnotationFiducialDisplayableManager: OnInteractorStyleEvent: unhandled event " << eventid << std::endl;
-    }
+    vtkDebugMacro("Got a key release event");
+    }  
 }
-*/
+
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
