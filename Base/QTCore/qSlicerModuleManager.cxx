@@ -136,7 +136,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
   qSlicerAbstractCoreModule * _module = d->ModuleFactoryManager.instantiateModule(name);
   if (!_module)
     {
-    qWarning() << "Failed to instanciate module: " << name;
+    //qWarning() << "Failed to instantiate module:" << name;
     return 0;
     }
 
