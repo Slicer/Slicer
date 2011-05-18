@@ -303,8 +303,9 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
     return;
     }
 
-  vtkDebugMacro("got a line: \n\"" << line << "\"");
-  std::cout << "Read Annotation Text Data: got a line: \n\"" << line << "\"" << std::endl;
+  this->DebugOn();
+  
+  vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"");
            
   std::string attValue(line);
   int size = std::string(this->GetAnnotationStorageType()).size();
@@ -322,6 +323,7 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       {
       if (startPos != endPos) 
         {
+        vtkDebugMacro("ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", annotation column = " << annotationColumn);
         const char* ptr;
         if (endPos == std::string::npos) 
           {
@@ -335,6 +337,7 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
         if (columnNumber == annotationColumn)
           {
           annotation = ptr;
+          vtkDebugMacro("ReadAnnotationTextData: annotation = " << annotation.c_str());
           }
         else if (columnNumber == selColumn)
           {
@@ -349,12 +352,13 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       endPos =attValue.find("|",startPos);
       columnNumber ++;
       }
-    
+    vtkDebugMacro("ReadAnnotationTextData: text string = " << annotation.c_str());
     if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
       {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
       }
     }
+  this->DebugOff();
 }
 //----------------------------------------------------------------------------
  
@@ -593,11 +597,11 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnot
   // if change the ones being included, make sure to update the parsing in ReadData
   for (int i = 0; i < refNode->GetNumberOfTexts(); i++)
     {
-      vtkStdString nodeText = refNode->GetText(i);
-      std::cout << "WriteAnnotationData: nodeText " << i << " is " << nodeText.c_str() << std::endl;
-      int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_SELECTED);
-      int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_VISIBLE);
-      of << this->GetAnnotationStorageType() << "|" << nodeText.c_str() << "|" << sel << "|" << vis << endl;   
+    vtkStdString nodeText = refNode->GetText(i);
+    vtkDebugMacro("WriteAnnotationData: nodeText " << i << " is " << nodeText.c_str());
+    int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_SELECTED);
+    int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_VISIBLE);
+    of << this->GetAnnotationStorageType() << "|" << nodeText.c_str() << "|" << sel << "|" << vis << endl;   
     }  
 }
 
