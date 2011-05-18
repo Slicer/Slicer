@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
+    <width>716</width>
     <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Annotation</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
     <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
      <property name="text" stdset="0">
@@ -390,6 +390,32 @@ p, li { white-space: pre-wrap; }
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="advancedCollapsibleGroupBox">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="persistentCheckBox">
+             <property name="text">
+              <string>Create-and-Place persistently</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
