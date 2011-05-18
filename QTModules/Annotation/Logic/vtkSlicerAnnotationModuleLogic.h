@@ -30,7 +30,7 @@ public:
   void StartPlaceMode(bool persistent=false);
 
   // Exit the place mode for annotations
-  void StopPlaceMode();
+  void StopPlaceMode(bool persistent=false);
 
   // Start adding a new annotation Node
   void AddAnnotationNode(const char * nodeDescriptor, bool persistent=false);

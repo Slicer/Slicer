@@ -392,7 +392,7 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode* ann
 //---------------------------------------------------------------------------
 // Exit the place mode
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
+void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -414,7 +414,11 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
     return;
     }
 
-  interactionNode->SetPlaceModePersistence(0);
+  if (persistent)
+    {
+    // if persistent placement was activated, we want to reset it
+    interactionNode->SetPlaceModePersistence(0);
+    }
   interactionNode->SetCurrentInteractionMode(
       vtkMRMLInteractionNode::ViewTransform);
 
