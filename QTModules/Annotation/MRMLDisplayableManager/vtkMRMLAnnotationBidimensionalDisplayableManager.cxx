@@ -11,6 +11,8 @@
 #include "Widgets/vtkAnnotationBidimensionalWidget.h"
 #include "Widgets/vtkAnnotationBidimensionalRepresentation.h"
 
+#include <vtkMRMLInteractionNode.h>
+
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
@@ -704,6 +706,12 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     // reset updating state
     this->m_Updating = 0;
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
     }
 
   }

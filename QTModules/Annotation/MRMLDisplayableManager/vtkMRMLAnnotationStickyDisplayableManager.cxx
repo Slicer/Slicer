@@ -7,6 +7,8 @@
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
+#include <vtkMRMLInteractionNode.h>
+
 // VTK includes
 #include <vtkObject.h>
 #include <vtkPNGReader.h>
@@ -356,6 +358,12 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
     // reset updating state
     this->m_Updating = 0;
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
     }
 
   }
