@@ -238,7 +238,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoMRMLInteractionNodeCallba
 {
   //std::cout << "DoMRMLInteractionNodeCallback " << event << std::endl;
 
-  // ModifiedEvent is expected
+  // InteractionModeChangedEvent is expected
   assert(event == vtkMRMLInteractionNode::InteractionModeChangedEvent);
 #ifndef _DEBUG
   (void)event;
