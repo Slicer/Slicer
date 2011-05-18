@@ -323,32 +323,32 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       if (startPos != endPos) 
         {
         vtkDebugMacro("ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", annotation column = " << annotationColumn);
-        std::cout << "ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << std::endl;
-        const char* ptr;
+//        std::cout << "ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", start pos = " << startPos << ", endPos = " << endPos << std::endl;
+        std::string ptr;
         if (endPos == std::string::npos) 
           {
+//          std::cout << "\tend pos at end of string" << std::endl;
           ptr = attValue.substr(startPos,endPos).c_str();
           }
         else
           {
           ptr = attValue.substr(startPos,endPos-startPos).c_str(); 
           }
-        
         if (columnNumber == annotationColumn)
           {
           annotation = ptr;
           vtkDebugMacro("ReadAnnotationTextData: annotation = " << annotation.c_str());
-          std::cout << "\tannotation = '" << annotation.c_str() << "'" << std::endl;
+//          std::cout << "\tannotation = '" << annotation.c_str() << "'" << std::endl;
           }
         else if (columnNumber == selColumn)
           {
-          sel = atoi(ptr);
-          std::cout << "\tsel = " << sel << std::endl;
+          sel = atoi(ptr.c_str());
+//          std::cout << "\tsel = " << sel << std::endl;
           }
         else if (columnNumber == visColumn)
           {
-          vis = atoi(ptr);
-          std::cout << "\tvis = " << vis << std::endl;
+          vis = atoi(ptr.c_str());
+//          std::cout << "\tvis = " << vis << std::endl;
           }
         }
       startPos = endPos +1;
