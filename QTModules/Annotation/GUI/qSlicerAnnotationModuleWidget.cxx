@@ -958,6 +958,9 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
 
   QString activeAnnotationType(selectionNode->GetActiveAnnotationID());
 
+  // don't update the persistentCheckBox from the node, as the check box is
+  // only for changes triggered from the Annotation GUI
+  /*
   int placeModePersistence = iNode->GetPlaceModePersistence();
   if (placeModePersistence)
     {
@@ -967,7 +970,7 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
     {
     d->persistentCheckBox->setCheckState(Qt::Unchecked);
     }
-  
+  */
   //std::cout << "updatewidgetFromInteractionMode" << std::endl;
   if (iNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
     {
