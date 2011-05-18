@@ -138,6 +138,8 @@ void qSlicerAnnotationModuleWidget::setup()
   d->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
   d->hierarchyTreeView->hideScene();
 
+  this->connect(d->persistentCheckBox, SIGNAL(stateChanged(int)), this,
+                SLOT(onPersistentCheckBoxStateChanged(int)));
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
@@ -427,31 +429,36 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
   d->pauseButton->setChecked(false);
   d->resumeButton->setChecked(true);
 
+  bool persistent = false;
+  if (d->persistentCheckBox->checkState() == Qt::Checked)
+    {
+    persistent = true;
+    }
   switch (this->m_CurrentAnnotationType)
     {
     case qSlicerAnnotationModuleWidget::TextNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationTextNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationTextNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::AngleNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationAngleNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationAngleNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::FiducialNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationFiducialNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationFiducialNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::StickyNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationStickyNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationStickyNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::SplineNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationSplineNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationSplineNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::RulerNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationRulerNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationRulerNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::BidimensionalNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationBidimensionalNode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationBidimensionalNode", persistent);
       break;
     case qSlicerAnnotationModuleWidget::ROINode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationROINode");
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationROINode", persistent);
       break;
     }
 
@@ -690,6 +697,22 @@ void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onPersistentCheckBoxStateChanged(int state)
+{
+  vtkMRMLInteractionNode *iNode = NULL;
+  if (this->logic()->GetMRMLScene() != NULL)
+    {
+    iNode = vtkMRMLInteractionNode::SafeDownCast(
+             this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    }
+  if (!iNode)
+    {
+    return;
+    }
+  iNode->SetPlaceModePersistence(state);
+}
+
+//-----------------------------------------------------------------------------
 // Fiducial Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
@@ -924,6 +947,17 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
     }
 
   QString activeAnnotationType(selectionNode->GetActiveAnnotationID());
+
+  int placeModePersistence = iNode->GetPlaceModePersistence();
+  if (placeModePersistence)
+    {
+    d->persistentCheckBox->setCheckState(Qt::Checked);
+    }
+  else
+    {
+    d->persistentCheckBox->setCheckState(Qt::Unchecked);
+    }
+  
   //std::cout << "updatewidgetFromInteractionMode" << std::endl;
   if (iNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
     {

@@ -144,6 +144,9 @@ protected slots:
   // Text Node
   void onTextNodeButtonClicked();
 
+  // Persistent place check box
+  void onPersistentCheckBoxStateChanged(int state);
+
   // Fiducial Node
   void onFiducialNodeButtonClicked();
 
