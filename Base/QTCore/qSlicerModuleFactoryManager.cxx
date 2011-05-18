@@ -311,7 +311,6 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::instantiateModule(const 
     {
     qCritical() << "Failed to instantiate module:" << name;
     }
-  Q_ASSERT(module);
   
   return module;
 }
