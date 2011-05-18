@@ -80,17 +80,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "generic.itk_(option|archetype).*warning"
   "generic.itcl_.*warning"
   
-  # Blt
-  "blt(Bgexec|Tree|TreeCmd|UnixPipe|Util|GrAxis|GrBar|GrMisc|Color|Config|Container|Hierbox|UnixImage|Table|TreeView|TreeViewCmd|TreeViewStyle|ObjConfig|Ted).c.*warning: cast"
-  # warning: overflow in implicit constant conversion
-  "blt(List|NsUtil|Bind|Table|TreeViewCmd).c.*warning: overflow"
-  "bltCanvEps.*warning: (initialization|assignment) from incompatible pointer type"
-  # warning: implicit declaration of function ‘...’
-  # warning: ‘...’ defined but not used
-  "blt(TreeViewStyle|Ted|Color).c.*warning:.*(implicit declaration|defined but not used)"
-  # Mac
-  "ranlib: file: libBLT.*has no symbols"
-  
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
   # the following warnings when built with the MS compilers. Qt guys should
