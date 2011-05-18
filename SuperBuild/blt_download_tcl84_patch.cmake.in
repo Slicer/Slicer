@@ -1,3 +1,0 @@
-
-file(DOWNLOAD https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch @tcl_base@/blt/bltpatch)
-

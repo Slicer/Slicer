@@ -68,7 +68,6 @@ set(tcl_DEPENDENCIES)
 set(tk_DEPENDENCIES tcl)
 set(incrTcl_DEPENDENCIES tcl tk)
 set(iwidgets_DEPENDENCIES tcl itcl)
-set(blt_DEPENDENCIES tcl tk)
 set(python_DEPENDENCIES)
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
@@ -168,7 +167,7 @@ endif()
 # List of external projects
 #------------------------------------------------------------------------------  
 
-#set(external_project_list tk tcl incrTcl iwidgets blt python weave CLAPACK NUMPY scipy VTK CTK  Insight BatchMake OpenIGTLink teem cmcurl slicer)
+#set(external_project_list tk tcl incrTcl iwidgets python weave CLAPACK NUMPY scipy VTK CTK  Insight BatchMake OpenIGTLink teem cmcurl slicer)
 
 #-----------------------------------------------------------------------------
 # Dump external project dependencies
