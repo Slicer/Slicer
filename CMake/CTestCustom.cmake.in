@@ -148,9 +148,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
   "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
   
-  # CTK Documentation warning
-  "CMake Warning at Documentation/CMakeLists.txt:62"
-  
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
   
