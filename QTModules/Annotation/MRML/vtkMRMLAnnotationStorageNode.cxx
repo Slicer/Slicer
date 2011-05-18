@@ -593,10 +593,11 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnot
   // if change the ones being included, make sure to update the parsing in ReadData
   for (int i = 0; i < refNode->GetNumberOfTexts(); i++)
     {
-      const char*  text = refNode->GetText(i);
+      const char*  nodeText = refNode->GetText(i);
+      std::cout << "WriteAnnotationData: nodeText " << i << " is " << (nodeText == NULL ? "null" : nodeText) << std::endl;
       int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_SELECTED);
       int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_VISIBLE);
-      of << this->GetAnnotationStorageType() << "|" << text << "|" << sel << "|" << vis << endl;   
+      of << this->GetAnnotationStorageType() << "|" << nodeText << "|" << sel << "|" << vis << endl;   
     }  
 }
 
