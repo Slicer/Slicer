@@ -304,7 +304,8 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
     }
   
   vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"");
-           
+  std::cout << "ReadAnnotationTextData: got a line: \n\"" << line << "\"" << std::endl;
+  
   std::string attValue(line);
   int size = std::string(this->GetAnnotationStorageType()).size();
  
@@ -322,6 +323,7 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       if (startPos != endPos) 
         {
         vtkDebugMacro("ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", annotation column = " << annotationColumn);
+        std::cout << "ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << std::endl;
         const char* ptr;
         if (endPos == std::string::npos) 
           {
@@ -336,14 +338,17 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
           {
           annotation = ptr;
           vtkDebugMacro("ReadAnnotationTextData: annotation = " << annotation.c_str());
+          std::cout << "\tannotation = '" << annotation.c_str() << "'" << std::endl;
           }
         else if (columnNumber == selColumn)
           {
           sel = atoi(ptr);
+          std::cout << "\tsel = " << sel << std::endl;
           }
         else if (columnNumber == visColumn)
           {
           vis = atoi(ptr);
+          std::cout << "\tvis = " << vis << std::endl;
           }
         }
       startPos = endPos +1;
