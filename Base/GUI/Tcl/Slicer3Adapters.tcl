@@ -283,7 +283,7 @@ namespace eval Slicer3Adapters {
 
     # methods
     method SetStatusText {arg} {
-      py_eval [format "slicer.util.mainWindow().statusBar().showMessage('%s')" $arg]
+      py_eval [format "slicer.util.showStatusMessage('%s')" $arg]
     }
     method GetProgressGauge {} {
       return $_progressGauge

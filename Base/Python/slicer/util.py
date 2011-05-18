@@ -25,6 +25,11 @@ def mainWindow(verbose = True):
 def pythonShell(verbose = True):
   return lookupTopLevelWidget('pythonConsole', verbose)
 
+def showStatusMessage(message, duration=0):
+  mw = mainWindow(verbose=False)
+  if mw:
+    mw.statusBar().showMessage(message, duration)
+
 #
 # IO
 #
