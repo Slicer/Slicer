@@ -112,26 +112,34 @@ class SampleDataWidget:
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_2.nrrd', 'MRBrainTumor1')
+    self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
 
   def downloadVolume(self, uri, name):
     # start the download
-    self.log.insertHtml('<b>Requesting download</b> <i>%s</i> from %s\n' % (name,uri))
-    self.log.insertPlainText('\n')
+    self.log.insertHtml('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
     self.log.repaint()
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeVolume(uri, name, 0)
-    storageNode = volumeNode.GetStorageNode()
-    storageNode.DebugOn()
-    storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
-    self.processStorageEvents(storageNode, 'ModifiedEvent')
-    # automatically select the volume to display
     if volumeNode:
+      storageNode = volumeNode.GetStorageNode()
+      storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
+      # automatically select the volume to display
+      self.log.insertHtml('<i>Displaying...</i>')
+      self.log.insertPlainText('\n')
+      self.log.repaint()
       mrmlLogic = slicer.app.mrmlApplicationLogic()
       selNode = mrmlLogic.GetSelectionNode()
       selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
       mrmlLogic.PropagateVolumeSelection(1)
+      self.log.insertHtml('<i>finished.</i>\n')
+      self.log.insertPlainText('\n')
+      self.log.repaint()
+    else:
+      self.log.insertHtml('<b>Download failed!</b>\n')
+      self.log.insertPlainText('\n')
+      self.log.repaint()
+    self.processStorageEvents(storageNode, 'ModifiedEvent')
 
   def processStorageEvents(self, node, event):
     state = node.GetReadStateAsString()
