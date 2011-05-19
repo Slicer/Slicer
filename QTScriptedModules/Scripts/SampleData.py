@@ -88,6 +88,11 @@ class SampleDataWidget:
       self.layout.addWidget(b)
       b.connect('clicked()', sample[1])
 
+    self.log = qt.QTextEdit()
+    self.layout.addWidget(self.log)
+    self.log.insertHtml('<p>Status: <i>Idle</i>\n')
+    self.log.insertPlainText('\n')
+
     # Add spacer to layout
     self.layout.addStretch(1)
 
@@ -111,11 +116,34 @@ class SampleDataWidget:
 
   def downloadVolume(self, uri, name):
     # start the download
+    self.log.insertHtml('<b>Requesting download</b> <i>%s</i> from %s\n' % (name,uri))
+    self.log.insertPlainText('\n')
+    self.log.repaint()
+    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeVolume(uri, name, 0)
+    storageNode = volumeNode.GetStorageNode()
+    storageNode.DebugOn()
+    storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
+    self.processStorageEvents(storageNode, 'ModifiedEvent')
     # automatically select the volume to display
     if volumeNode:
       mrmlLogic = slicer.app.mrmlApplicationLogic()
       selNode = mrmlLogic.GetSelectionNode()
       selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
       mrmlLogic.PropagateVolumeSelection(1)
+
+  def processStorageEvents(self, node, event):
+    state = node.GetReadStateAsString()
+    if state == 'TransferDone':
+      self.log.insertHtml('<i>Transfer Done</i>\n')
+      self.log.insertPlainText('\n\n')
+      self.log.insertHtml('Status: <b>Idle</b>\n')
+      self.log.insertPlainText('\n')
+      node.RemoveObserver('ModifiedEvent', self.processStorageEvents)
+    else:
+      self.log.insertHtml('Status: <i>%s</i>\n' % state)
+      self.log.insertPlainText('\n')
+    self.log.repaint()
+    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
+
