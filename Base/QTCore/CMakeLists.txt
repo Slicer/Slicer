@@ -72,6 +72,7 @@ SET(KIT_target_libraries
   SlicerBaseLogic
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
+  CTKDICOMCore
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore
   )
@@ -86,6 +87,7 @@ IF(Slicer_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
     CTKCorePythonQt
+    CTKDICOMCorePythonQt
     CTKVisualizationVTKCorePythonQt
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils

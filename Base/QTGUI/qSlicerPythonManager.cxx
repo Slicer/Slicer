@@ -16,6 +16,7 @@
 // CTK includes
 #include <ctkLogger.h>
 #include <ctkWidgetsPythonQtDecorators.h>
+#include <ctkDICOMWidgetsPythonQtDecorators.h>
 
 // SlicerQt includes
 #include "qSlicerPythonManager.h"
@@ -29,6 +30,7 @@
 
 // PythonQt wrapper initialization methods
 void PythonQt_init_org_commontk_CTKWidgets(PyObject*);
+void PythonQt_init_org_commontk_CTKDICOMWidgets(PyObject*);
 void PythonQt_init_org_commontk_CTKScriptingPythonWidgets(PyObject*);
 void PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(PyObject*);
 void PythonQt_init_org_slicer_libs_qMRMLWidgets(PyObject*);
@@ -67,12 +69,14 @@ void qSlicerPythonManager::preInitialization()
   
   // Initialize wrappers
   PythonQt_init_org_commontk_CTKWidgets(0);
+  PythonQt_init_org_commontk_CTKDICOMWidgets(0);
   PythonQt_init_org_commontk_CTKScriptingPythonWidgets(0);
   PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(0);
   PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
 
   // Register decorators
   this->registerPythonQtDecorator(new ctkWidgetsPythonQtDecorators());
+  this->registerPythonQtDecorator(new ctkDICOMWidgetsPythonQtDecorators());
   this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));
 }
 

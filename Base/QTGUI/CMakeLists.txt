@@ -177,6 +177,7 @@ IF(Slicer_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
+    CTKDICOMWidgetsPythonQt
     CTKScriptingPythonWidgetsPythonQt
     CTKVisualizationVTKWidgetsPythonQt
     )
