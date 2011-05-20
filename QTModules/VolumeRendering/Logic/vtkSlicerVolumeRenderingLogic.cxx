@@ -514,13 +514,14 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 {
 
   // resize the ROI to fit the volume
-  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(vspNode->GetROINode());
+  vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(vspNode->GetROINode());
   vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
 
-  int disabledModify = roiNode->StartModify();
 
   if (volumeNode && roiNode)
   {
+    int disabledModify = roiNode->StartModify();
+  
     double xyz[3];
     double center[3];
 
@@ -532,9 +533,10 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 
     roiNode->SetXYZ(center);
     roiNode->SetRadiusXYZ(xyz);
+
+    roiNode->EndModify(disabledModify);
   }
 
-  roiNode->EndModify(disabledModify);
 
 }
 
@@ -692,13 +694,13 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 
 // Description:
 // Update vtkMRMLVolumeRenderingDisplayNode from VolumeNode,
-// if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
+// if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
 // and initioalize them from VolumeNode
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
                                           vtkMRMLVolumeRenderingDisplayNode *DisplayNode, 
                                           vtkMRMLVolumeNode *volumeNode, 
                                           vtkMRMLVolumePropertyNode **propNode,
-                                          vtkMRMLROINode **roiNode)
+                                          vtkMRMLAnnotationROINode **roiNode)
 {
 
   if (volumeNode == NULL) 
@@ -719,7 +721,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
 
   if (*roiNode == NULL)
   {
-    *roiNode = vtkMRMLROINode::New();
+    *roiNode = vtkMRMLAnnotationROINode::New();
     this->GetMRMLScene()->AddNode(*roiNode);
     (*roiNode)->Delete();
   }

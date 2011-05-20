@@ -5,12 +5,16 @@
 #include <cmath>
 
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLTransformNode.h"
 #include "vtkMatrix4x4.h"
 #include "vtkAbstractTransform.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMath.h"
+#include "vtkPlanes.h"
+#include "vtkDoubleArray.h"
+#include "vtkGeneralTransform.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationROINode* vtkMRMLAnnotationROINode::New()
@@ -108,10 +112,10 @@ void vtkMRMLAnnotationROINode::WriteXML(ostream& of, int nIndent)
 
   // we do not have to write out the coordinates since the controlPointNode does that
   /*of << indent << " xyz=\""
-    << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
+    << XYZ[0] << " " << XYZ[1] << " " << XYZ[2] << "\"";
 
   of << indent << " radiusXYZ=\""
-    << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
+    << RadiusXYZ[0] << " " << RadiusXYZ[1] << " " << RadiusXYZ[2] << "\"";
   */
 
   of << indent << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
@@ -535,3 +539,124 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
     }
 }
 
+#define AVERAGE_ABC(a,b,c) \
+  c[0] = (a[0] + b[0])/2.0; \
+  c[1] = (a[1] + b[1])/2.0; \
+  c[2] = (a[2] + b[2])/2.0;
+
+void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
+{
+  double bounds[6];
+  int i;
+
+  double XYZ[3];
+  double RadiusXYZ[3];
+
+  this->GetXYZ(XYZ);
+  this->GetRadiusXYZ(RadiusXYZ);
+
+  for (i=0; i<3; i++)
+    {
+    bounds[2*i  ] = XYZ[i] - RadiusXYZ[i];
+    bounds[2*i+1] = XYZ[i] + RadiusXYZ[i];
+    }
+  vtkPoints *boxPoints = vtkPoints::New(VTK_DOUBLE);
+  boxPoints->SetNumberOfPoints(8);
+
+  boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]);
+  boxPoints->SetPoint(1, bounds[1], bounds[2], bounds[4]);
+  boxPoints->SetPoint(2, bounds[1], bounds[3], bounds[4]);
+  boxPoints->SetPoint(3, bounds[0], bounds[3], bounds[4]);
+  boxPoints->SetPoint(4, bounds[0], bounds[2], bounds[5]);
+  boxPoints->SetPoint(5, bounds[1], bounds[2], bounds[5]);
+  boxPoints->SetPoint(6, bounds[1], bounds[3], bounds[5]);
+  boxPoints->SetPoint(7, bounds[0], bounds[3], bounds[5]);
+
+  vtkPoints *points = vtkPoints::New(VTK_DOUBLE);
+  points->SetNumberOfPoints(6);
+
+  double *pts =
+     static_cast<vtkDoubleArray *>(boxPoints->GetData())->GetPointer(0);
+  double *p0 = pts;
+  double *p1 = pts + 3*1;
+  double *p2 = pts + 3*2;
+  double *p3 = pts + 3*3;
+  //double *p4 = pts + 3*4;
+  double *p5 = pts + 3*5;
+  double *p6 = pts + 3*6;
+  double *p7 = pts + 3*7;
+  double x[3];
+
+  AVERAGE_ABC(p0,p7,x);
+  points->SetPoint(0, x);
+  AVERAGE_ABC(p1,p6,x);
+  points->SetPoint(1, x);
+  AVERAGE_ABC(p0,p5,x);
+  points->SetPoint(2, x);
+  AVERAGE_ABC(p2,p7,x);
+  points->SetPoint(3, x);
+  AVERAGE_ABC(p1,p3,x);
+  points->SetPoint(4, x);
+  AVERAGE_ABC(p5,p7,x);
+  points->SetPoint(5, x);
+
+  planes->SetPoints(points);
+
+    
+  vtkDoubleArray *normals = vtkDoubleArray::New();
+  normals->SetNumberOfComponents(3);
+  normals->SetNumberOfTuples(6);
+
+  p0 = pts;
+  double *px = pts + 3*1;
+  double *py = pts + 3*3;
+  double *pz = pts + 3*4;
+
+  double N[6][3];
+  for (i=0; i<3; i++)
+    {
+    N[0][i] = p0[i] - px[i];
+    N[2][i] = p0[i] - py[i];
+    N[4][i] = p0[i] - pz[i];
+    }
+  vtkMath::Normalize(N[0]);
+  vtkMath::Normalize(N[2]);
+  vtkMath::Normalize(N[4]);
+  for (i=0; i<3; i++)
+    {
+    N[1][i] = -N[0][i];
+    N[3][i] = -N[2][i];
+    N[5][i] = -N[4][i];
+    }
+
+  double factor = (this->InsideOut ? -1.0 : 1.0);
+
+  for (i=0; i<6; i++)
+    {
+    normals->SetTuple3(i, factor*N[i][0], factor*N[i][1], factor*N[i][2]);
+    }
+  planes->SetNormals(normals);
+
+  
+  normals->Delete();
+  boxPoints->Delete();  
+  points->Delete();  
+
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode != NULL) // && tnode->IsLinear())
+    {
+    //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    //transformToWorld->Identity();
+    //vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    //lnode->GetMatrixTransformToWorld(transformToWorld);
+
+    vtkGeneralTransform *transform = vtkGeneralTransform::New();
+    tnode->GetTransformToWorld(transform);
+   
+    transform->Inverse();
+    planes->SetTransform(transform);
+    transform->Delete();
+  }
+  planes->Modified();
+
+}

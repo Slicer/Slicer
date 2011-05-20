@@ -27,6 +27,7 @@ SET(module_logic_SRCS
 SET(module_logic_target_libraries
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
+  vtkSlicerAnnotationModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(

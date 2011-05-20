@@ -78,7 +78,7 @@
        <widget class="qMRMLNodeComboBox" name="ROINodeComboBox">
         <property name="nodeTypes">
          <stringlist>
-          <string>vtkMRMLROINode</string>
+          <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
         <property name="noneEnabled">

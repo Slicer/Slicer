@@ -5,6 +5,7 @@
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;
+class vtkPlanes;
 class vtkAbstractTransform;
 class vtkMRMLScene;
 
@@ -95,6 +96,7 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void GetTransformedPlanes(vtkPlanes *planes);
 
   void Initialize(vtkMRMLScene* mrmlScene);
 

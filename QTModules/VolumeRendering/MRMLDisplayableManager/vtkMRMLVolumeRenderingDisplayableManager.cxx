@@ -20,7 +20,7 @@
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLTransformNode.h"
-#include "vtkMRMLROINode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -1172,9 +1172,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
     vtkMRMLVolumeRenderingDisplayNode* vspNode = this->GetDisplayNode();
     this->VolumeRenderingLogic->UpdateVolumePropertyFromDisplayNode(vspNode);
   }
-  else if(event == vtkCommand::ModifiedEvent && vtkMRMLROINode::SafeDownCast(caller))
+  else if(event == vtkCommand::ModifiedEvent && vtkMRMLAnnotationROINode::SafeDownCast(caller))
   {
-    vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(caller);
+    vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(caller);
     vtkMRMLVolumeRenderingDisplayNode* vspNode = this->GetDisplayNode();
 
     if (roiNode == vspNode->GetROINode())
@@ -1387,7 +1387,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRML
   if (!node->IsA("vtkMRMLVolumeNode") &&
       !node->IsA("vtkMRMLVolumeRenderingDisplayNode") &&
       !node->IsA("vtkMRMLVolumePropertyNode") &&
-      node->IsA("vtkMRMLROINode"))
+      node->IsA("vtkMRMLAnnotationROINode"))
     {
     return;
     }

@@ -64,6 +64,7 @@ SET(qt_module_target_libraries
   vtkSlicerVolumeRenderingModuleLogic
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
+  vtkSlicerAnnotationModuleMRML
   )
 
 # Resources

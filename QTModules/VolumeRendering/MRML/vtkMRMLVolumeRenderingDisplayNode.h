@@ -23,8 +23,9 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLROINode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkSlicerVolumeRenderingModuleMRMLExport.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
@@ -115,7 +116,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
 
   // Description:
   // Associated transform MRML node
-  vtkMRMLROINode* GetROINode();
+  vtkMRMLAnnotationROINode* GetROINode();
 
   // Description:
   // Is cropping enabled?
@@ -226,7 +227,7 @@ protected:
 
   char *ROINodeID;
   vtkSetReferenceStringMacro(ROINodeID);
-  vtkMRMLROINode* ROINode;
+  vtkMRMLAnnotationROINode* ROINode;
 
   int CroppingEnabled;
 

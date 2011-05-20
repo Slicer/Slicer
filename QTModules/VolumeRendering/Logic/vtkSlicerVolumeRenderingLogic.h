@@ -28,7 +28,7 @@
 #include <vtkMRML.h>
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
-#include <vtkMRMLROINode.h>
+#include <vtkMRMLAnnotationROINode.h>
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
@@ -72,17 +72,17 @@ public:
 
   // Description:
   // Update DisplayNode from VolumeNode,
-  // if needed create vtkMRMLVolumePropertyNode and vtkMRMLROINode
+  // if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
   // and initialize them from VolumeNode
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
                                           vtkMRMLVolumeNode *volumeNode, 
                                           vtkMRMLVolumePropertyNode **propNode,
-                                          vtkMRMLROINode **roiNode);
+                                          vtkMRMLAnnotationROINode **roiNode);
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
                                           vtkMRMLVolumeNode *volumeNode)
     {
     vtkMRMLVolumePropertyNode *propNode = NULL;
-    vtkMRMLROINode            *roiNode = NULL;
+    vtkMRMLAnnotationROINode            *roiNode = NULL;
     this->UpdateDisplayNodeFromVolumeNode(paramNode, volumeNode, &propNode, &roiNode);
     };
 

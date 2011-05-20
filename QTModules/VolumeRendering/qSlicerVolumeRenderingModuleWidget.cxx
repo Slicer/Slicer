@@ -12,6 +12,7 @@
 // MRML includes
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
@@ -83,8 +84,8 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
   //vtkMRMLVolumePropertyNode *propNode = vtkMRMLVolumePropertyNode::SafeDownCast(d->VolumePropertyNodeComboBox->currentNode());
   vtkMRMLVolumePropertyNode *propNode = NULL;
 
-  //vtkMRMLROINode            *roiNode = vtkMRMLROINode::SafeDownCast(d->ROINodeComboBox->currentNode());
-  vtkMRMLROINode            *roiNode = NULL;
+  //vtkMRMLAnnotationROINode            *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(d->ROINodeComboBox->currentNode());
+  vtkMRMLAnnotationROINode            *roiNode = NULL;
 
   logic->UpdateDisplayNodeFromVolumeNode(displayNode, q->mrmlVolumeNode(),
                                          &propNode, &roiNode);
@@ -313,7 +314,7 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode* node)
 {
-  vtkMRMLROINode *roiNode = vtkMRMLROINode::SafeDownCast(node);
+  vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
   if (displayNode)
     {

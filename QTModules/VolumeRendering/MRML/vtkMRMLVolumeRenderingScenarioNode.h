@@ -23,7 +23,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLROINode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
 #include "vtkSlicerVolumeRenderingModuleMRMLExport.h"

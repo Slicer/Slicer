@@ -592,13 +592,13 @@ void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveROINodeID(const char *ROINo
 
   this->SetROINodeID(ROINodeID);
 
-  vtkMRMLROINode *node = this->GetROINode();
+  vtkMRMLAnnotationROINode *node = this->GetROINode();
 
   vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
+vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
 {
   if (this->ROINodeID == NULL)
     {
@@ -609,7 +609,7 @@ vtkMRMLROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
             (this->ROINode == NULL)) )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ROINodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLROINode::SafeDownCast(snode));
+    vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLAnnotationROINode::SafeDownCast(snode));
     }
   return this->ROINode;
 }
