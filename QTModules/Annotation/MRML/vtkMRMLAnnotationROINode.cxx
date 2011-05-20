@@ -241,7 +241,17 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 void vtkMRMLAnnotationROINode::Copy(vtkMRMLNode *anode)
 {
 
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
+
+  //  vtkObject::Copy(anode);
+  vtkMRMLAnnotationROINode *node = (vtkMRMLAnnotationROINode *) anode;
+  this->SetLabelText(node->GetLabelText());
+  this->SetInteractiveMode(node->InteractiveMode);
+  this->SetInsideOut(node->InsideOut);
+
+  this->EndModify(disabledModify);
 
 }
 

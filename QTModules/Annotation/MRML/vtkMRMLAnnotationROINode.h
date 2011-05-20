@@ -50,12 +50,18 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  // not implemented yet
   /// 
   /// Indicates if the ROI is updated interactively
   vtkBooleanMacro(InteractiveMode, int);
   vtkGetMacro(InteractiveMode, int);
   vtkSetMacro(InteractiveMode, int);
+
+
+  /// 
+  /// Indicates if the ROI box is inside out
+  vtkBooleanMacro(InsideOut, int);
+  vtkGetMacro(InsideOut, int);
+  vtkSetMacro(InsideOut, int);
 
   // Description:
   // KP Define - should be part of AnnotationRulerDisplayNode 
