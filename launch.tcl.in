@@ -349,12 +349,16 @@ proc launch_SetEnvironment {} {
           }
         }
       } else {
-        set slicer3Real "$::Slicer_HOME/bin/Slicer3-real"
-        set slicerQTReal "$::Slicer_HOME/bin/SlicerQT-real"
-        if { [file exists "$slicer3Real"] } {
-            set ::Slicer_REAL $slicer3Real
-        } elseif { [file exists "$slicerQTReal"] } {
-            set ::Slicer_REAL $slicerQTReal
+        if {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
+          set ::Slicer_REAL "$::Slicer_HOME/bin/SlicerQT.app/Contents/MacOS/SlicerQT"
+        } else {
+          set slicer3Real "$::Slicer_HOME/bin/Slicer3-real"
+          set slicerQTReal "$::Slicer_HOME/bin/SlicerQT-real"
+          if { [file exists "$slicer3Real"] } {
+              set ::Slicer_REAL $slicer3Real
+          } elseif { [file exists "$slicerQTReal"] } {
+              set ::Slicer_REAL $slicerQTReal
+          }
         }
       }
       set ::env(SANDBOX_BIN_DIR)   ""
