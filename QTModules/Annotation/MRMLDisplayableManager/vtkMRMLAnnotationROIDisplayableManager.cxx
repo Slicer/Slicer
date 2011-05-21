@@ -15,8 +15,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkBoxRepresentation.h>
-#include <vtkBoxWidget2.h>
+#include <vtkSlicerBoxRepresentation.h>
+#include <vtkSlicerBoxWidget2.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkAbstractWidget.h>
@@ -117,7 +117,7 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
     return 0;
     }
 
-  vtkBoxWidget2* boxWidget = vtkBoxWidget2::New();
+  vtkSlicerBoxWidget2* boxWidget = vtkSlicerBoxWidget2::New();
 
   boxWidget->SetInteractor(this->GetInteractor());
   boxWidget->SetCurrentRenderer(this->GetRenderer());
@@ -126,7 +126,7 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   boxWidget->CreateDefaultRepresentation();
 
-  vtkBoxRepresentation * boxRepresentation = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkSlicerBoxRepresentation * boxRepresentation = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   // we place the widget around 0,0,0
   double bounds[6] = {0,0,0,0,0,0};
@@ -258,7 +258,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     }
 
   // cast to the specific widget
-  vtkBoxWidget2* boxWidget = vtkBoxWidget2::SafeDownCast(widget);
+  vtkSlicerBoxWidget2* boxWidget = vtkSlicerBoxWidget2::SafeDownCast(widget);
 
   if (!boxWidget)
     {
@@ -285,7 +285,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkSlicerBoxRepresentation * rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   vtkTransform* transform = vtkTransform::New();
   rep->GetTransform(transform);
@@ -348,7 +348,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
     }
 
   // cast to the specific widget
-  vtkBoxWidget2* boxWidget = vtkBoxWidget2::SafeDownCast(widget);
+  vtkSlicerBoxWidget2* boxWidget = vtkSlicerBoxWidget2::SafeDownCast(widget);
 
   if (!boxWidget)
     {
@@ -376,7 +376,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   roiNode->DisableModifiedEventOn();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkSlicerBoxRepresentation * rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
 
   vtkTransform* transform = vtkTransform::New();
