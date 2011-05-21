@@ -857,6 +857,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const ch
     return 0;
     }
 
+  if (!annotationNode->GetAnnotationTextDisplayNode())
+    {
+    return 0;
+    }
+
   return annotationNode->GetAnnotationTextDisplayNode()->GetSelectedColor();
 
 }
@@ -917,6 +922,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextUnselectedColor(const 
   if (!annotationNode)
     {
     vtkErrorMacro("GetAnnotationTextUnselectedColor: Could not get the annotation MRML node.")
+    return 0;
+    }
+
+  if (!annotationNode->GetAnnotationTextDisplayNode())
+    {
     return 0;
     }
 

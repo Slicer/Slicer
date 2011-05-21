@@ -93,7 +93,10 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   double * unselectedColor = this->m_logic->GetAnnotationTextUnselectedColor(
       this->m_id.c_str());
   QColor unselectedQColor;
-  this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
+  if (unselectedColor)
+  {
+    this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
+  }
 
   ui.textUnselectedColorPickerButton->setDisplayColorName(false);
   ui.textUnselectedColorPickerButton->setColor(unselectedQColor);
@@ -102,7 +105,10 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
       this->m_id.c_str());
   QColor selectedQColor;
-  this->TurnColorArrayToQColor(selectedColor,selectedQColor);
+  if (selectedColor)
+  {
+    this->TurnColorArrayToQColor(selectedColor,selectedQColor);
+  }
 
   ui.textSelectedColorPickerButton->setDisplayColorName(false);
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
