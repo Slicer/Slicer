@@ -19,11 +19,10 @@ if(NOT DEFINED ITK_DIR)
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${ep_common_args}
+      ${ep_common_flags}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DBUILD_TESTING:BOOL=OFF
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DITK_INSTALL_LIB_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DITK_USE_REVIEW:BOOL=ON
       -DITK_USE_REVIEW_STATISTICS:BOOL=ON

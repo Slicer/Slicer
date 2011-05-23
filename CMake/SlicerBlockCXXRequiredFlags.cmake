@@ -27,7 +27,7 @@
 #        will set appropriately.
 #
 
-IF(NOT DEFINED Slicer_REQUIRED_C_FLAGS} OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
+IF(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
   
   INCLUDE(SlicerFunctionCheckCompilerFlags)
   INCLUDE(SlicerFunctionGetGccVersion)
@@ -57,6 +57,12 @@ IF(NOT DEFINED Slicer_REQUIRED_C_FLAGS} OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS
     SET(tmp_c_flags "${cflags} ${tmp_c_flags}")
     SET(tmp_cxx_flags "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${tmp_cxx_flags}")
   ELSEIF(MSVC)
+     # if 64-bit Windows link with /bigobj
+    IF(CMAKE_SIZEOF_VOID_P MATCHES 8)
+       SET(tmp_c_flags /bigobj)
+       SET(tmp_cxx_flags /bigobj)
+    ENDIF()
+
     SET(cflags "/Zm1000 /W3")
     SET(tmp_c_flags "${cflags} ${tmp_c_flags}")
     SET(tmp_cxx_flags "${cflags} /EHsc /GR ${tmp_cxx_flags}")

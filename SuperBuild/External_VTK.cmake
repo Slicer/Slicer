@@ -104,10 +104,9 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${ep_common_args}
+      ${ep_common_flags}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DVTK_USE_PARALLEL:BOOL=ON
       -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}

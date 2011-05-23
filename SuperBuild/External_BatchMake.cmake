@@ -9,6 +9,7 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
+    ${ep_common_flags}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DUSE_FLTK:BOOL=OFF
     -DDASHBOARD_SUPPORT:BOOL=OFF
