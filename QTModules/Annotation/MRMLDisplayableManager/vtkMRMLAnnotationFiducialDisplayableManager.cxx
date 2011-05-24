@@ -137,6 +137,8 @@ public:
 void vtkMRMLAnnotationFiducialDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+
+  os << indent << "ScaleFactor2D = " << this->ScaleFactor2D << std::endl;
 }
 
 //---------------------------------------------------------------------------
@@ -150,6 +152,8 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
+  this->ScaleFactor2D = 300.0;
+  
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
   if (!fiducialNode)
@@ -397,10 +401,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 //    handleRep->SetHandle(glyphSource->GetOutput());
 
     // the following check is only needed since we require a different uniform scale depending on 2D and 3D
-    if (this->GetSliceNode())
+    if (this->Is2DDisplayableManager())
       {
       
-      handleRep->SetUniformScale(displayNode->GetGlyphScale()/300);
+      handleRep->SetUniformScale(displayNode->GetGlyphScale()/this->GetScaleFactor2D());
       
       }
     else
@@ -424,12 +428,20 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         textString.append(fiducialNode->GetText(i));
         }
       handleRep->SetLabelText(textString.c_str());
+
       // get the text display node
       vtkMRMLAnnotationTextDisplayNode *textDisplayNode = fiducialNode->GetAnnotationTextDisplayNode();
       if (textDisplayNode)
         {
         // scale the text
         double textscale[3] = {textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale(), textDisplayNode->GetTextScale()};
+        if (this->Is2DDisplayableManager())
+          {
+          // scale it down for the 2d windows
+          textscale[0] /= this->GetScaleFactor2D();
+          textscale[1] /= this->GetScaleFactor2D();
+          textscale[2] /= this->GetScaleFactor2D();
+          }
         handleRep->SetLabelTextScale(textscale);
         if (handleRep->GetLabelTextActor())
           {

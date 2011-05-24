@@ -64,12 +64,18 @@ protected:
 
   // respond to control point modified events
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
+
+  /// Set/Get the 2d scale factor for glyphs and text
+  vtkSetMacro(ScaleFactor2D, double);
+  vtkGetMacro(ScaleFactor2D, double);
   
 private:
 
   vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not Implemented
 
+  /// Scale factor for 2d windows
+  double ScaleFactor2D;
 };
 
 #endif
