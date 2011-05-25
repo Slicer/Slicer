@@ -145,7 +145,15 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   inputROI->GetXYZ(roiXYZ);
 
   double* inputSpacing = inputVolume->GetSpacing();
-  double minSpacing = fmin(inputSpacing[0],fmin(inputSpacing[1],inputSpacing[2]));
+  double minSpacing = inputSpacing[0];
+  if (minSpacing > inputSpacing[1])
+    {
+    minSpacing = inputSpacing[1];
+    }
+  if (minSpacing > inputSpacing[2])
+    {
+    minSpacing = inputSpacing[2];
+    }
 
   int outputExtent[3];
 
