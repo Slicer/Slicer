@@ -692,9 +692,9 @@ bool qSlicerCoreApplication::isInstalled()const
   // TODO: make the check more robust (using an environment variable?)
   // If you change here, change also in launch.tcl.in
 #ifdef _WIN32
-  return QFile::exists(d->SlicerBin+"/unu.exe");
+  return QFile::exists(d->SlicerBin + "/unu.exe");
 #else
-  return QFile::exists(d->SlicerBin+"/unu");
+  return QFile::exists(d->SlicerBin + "/unu");
 #endif
 }
 
