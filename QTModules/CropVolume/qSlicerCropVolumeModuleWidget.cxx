@@ -233,8 +233,8 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
   //    d->OutputVolumeComboBox->setDisabled();
 }
 
-void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n){
-  //vtkIntArray *events = vtkIntArray::New();
-  //events->InsertNextValue(vtkCommand::ModifiedEvent);
-  //
-}
+//void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n){
+//  //vtkIntArray *events = vtkIntArray::New();
+//  //events->InsertNextValue(vtkCommand::ModifiedEvent);
+//  //
+//}

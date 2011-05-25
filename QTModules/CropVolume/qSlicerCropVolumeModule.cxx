@@ -46,13 +46,13 @@ qSlicerCropVolumeModule::~qSlicerCropVolumeModule()
 //-----------------------------------------------------------------------------
 QString qSlicerCropVolumeModule::helpText()const
 {
-  return QString();
+  return "CropVolume module extracts subvolume of the image described by Region of Interest widget.";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCropVolumeModule::acknowledgementText()const
 {
-  return "This work was supported by ...";
+  return "This module was developed by Andrey Fedorov and Ron Kikinis. This work was supported by NIH grants CA111288 and CA151261, NA-MIC, NAC and Slicer community.";
 }
 
 //-----------------------------------------------------------------------------
