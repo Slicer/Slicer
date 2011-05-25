@@ -70,7 +70,7 @@ public:
       // sanity checks end
 
 
-      if (this->m_DisplayableManager->GetSliceNode())
+      if (this->m_DisplayableManager->Is2DDisplayableManager())
         {
 
         // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
@@ -156,55 +156,23 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   vtkCaptionWidget* captionWidget = vtkCaptionWidget::New();
   VTK_CREATE(vtkCaptionRepresentation, captionRep);
 
+  vtkCaptionActor2D *captionActor = captionRep->GetCaptionActor2D();
+
   captionRep->SetMoving(1);
   
-  if (textNode->GetTextLabel())
+  if (!textNode->GetTextLabel())
     {
-    captionRep->GetCaptionActor2D()->SetCaption(textNode->GetTextLabel());
+    textNode->SetTextLabel("New text");
     }
-  else
-    {
-    captionRep->GetCaptionActor2D()->SetCaption("New text");
-    }
-
-
-  double* tmpPtr = textNode->GetControlPointCoordinates(0);
-  double worldCoordinates1[4] = {tmpPtr[0], tmpPtr[1], tmpPtr[2], 1};
-
-  double displayCoordinates1[4];
-
-  if (this->GetSliceNode())
-     {
-
-     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
-
-     captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
-     captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
-
-     // turn off the three dimensional leader
-     captionRep->GetCaptionActor2D()->ThreeDimensionalLeaderOff();
-
-     }
-   else
-     {
-     captionRep->SetAnchorPosition(worldCoordinates1);
-     // turn on the three dimensional leader
-     captionRep->GetCaptionActor2D()->ThreeDimensionalLeaderOn();
-
-     }
-
-  double *captionWorldCoordinates = textNode->GetControlPointCoordinates(1);
-  double captionViewportCoordinates[4];
-  double captionDisplayCoordinates[4];
-  this->GetWorldToDisplayCoordinates(captionWorldCoordinates,captionDisplayCoordinates);
-  this->GetDisplayToViewportCoordinates(captionDisplayCoordinates[0], captionDisplayCoordinates[1], captionViewportCoordinates);
-  captionRep->SetPosition(captionViewportCoordinates);
   
   captionWidget->SetInteractor(this->GetInteractor());
 
   captionWidget->SetRepresentation(captionRep);
 
   captionWidget->On();
+
+  // now set it up from the node
+  this->PropagateMRMLToWidget(textNode, captionWidget);
 
   vtkDebugMacro("CreateWidget: Widget was set up")
 
@@ -282,53 +250,114 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   // disable processing of modified events
   this->m_Updating = 1;
 
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = textNode->GetAnnotationTextDisplayNode();
+  if (!textDisplayNode)
+    {
+    // no display node yet, create one
+    textNode->CreateAnnotationTextDisplayNode();
+    textDisplayNode = textNode->GetAnnotationTextDisplayNode();
+    if (!textDisplayNode)
+      {
+      vtkErrorMacro("PropagateMRMLToWidget: Error creating a new text display node for text node " << textNode->GetID());
+      return;
+      }
+    }
+
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
+  vtkCaptionActor2D *captionActor = rep->GetCaptionActor2D();
 
   double* tmpPtr = textNode->GetControlPointCoordinates(0);
   double worldCoordinates1[4] = {tmpPtr[0], tmpPtr[1], tmpPtr[2], 1};
 
   double displayCoordinates1[4];
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
      {
 
      this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
 
-     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
-     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
+     captionActor->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+     captionActor->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
 
+     // turn off the three dimensional leader
+     captionActor->ThreeDimensionalLeaderOff();
      }
    else
      {
      rep->SetAnchorPosition(worldCoordinates1);
-
+     captionActor->SetThreeDimensionalLeader(textDisplayNode->GetUseThreeDimensionalLeader());
      }
 
+  double *captionWorldCoordinates = textNode->GetControlPointCoordinates(1);
+  double captionViewportCoordinates[4];
+  double captionDisplayCoordinates[4];
+  this->GetWorldToDisplayCoordinates(captionWorldCoordinates,captionDisplayCoordinates);
+  this->GetDisplayToViewportCoordinates(captionDisplayCoordinates[0], captionDisplayCoordinates[1], captionViewportCoordinates);
+  rep->SetPosition(captionViewportCoordinates);
+
   // update widget text
-  rep->GetCaptionActor2D()->SetCaption(textNode->GetText(0).c_str());
+  if (textDisplayNode->GetUseLineWrap())
+    {
+    std::string wrappedText = std::string(textNode->GetText(0));
+    size_t maxCharPerLine = (size_t)(textDisplayNode->GetMaxCharactersPerLine());
+    int numLines = 1;
+    // loop over lines
+    while (wrappedText.length() > numLines*maxCharPerLine)
+      {
+      // find the last space before the max characters per line for this line
+      size_t lastSpace = wrappedText.find_last_of(" ", numLines*maxCharPerLine);
+      if (lastSpace = std::string::npos)
+        {
+        // no space in the string before the max char limit, force a line break midword
+        wrappedText = wrappedText.insert(numLines*maxCharPerLine, std::string("\n"));
+        }
+      else
+        {
+        // change the space to a line feed
+        wrappedText = wrappedText.replace(lastSpace, 1, std::string("\n"));
+        }
+      ++numLines;
+      }
+    captionActor->SetCaption(wrappedText.c_str());
+    }
+  else
+    {
+    captionActor->SetCaption(textNode->GetText(0).c_str());
+    }
   // TODO: trigger resizing the boundary around it if it's on and text changed
 
-  
-  if (!textNode->GetAnnotationTextDisplayNode())
-    {
-    // no display node yet, create one
-    textNode->CreateAnnotationTextDisplayNode();
-    }
 
   // update widget textscale
-  rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
+  captionActor->GetTextActor()->GetScaledTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
 
   if (textNode->GetSelected())
     {
     // update widget selected color
-    rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
+    captionActor->GetTextActor()->GetScaledTextProperty()->SetColor(textDisplayNode->GetSelectedColor());
     }
   else
     {
     // update widget color
-    rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
+    captionActor->GetTextActor()->GetScaledTextProperty()->SetColor(textDisplayNode->GetColor());
     }
+
+  captionActor->SetBorder(textDisplayNode->GetShowBorder());
+  captionActor->SetLeader(textDisplayNode->GetShowLeader());
+  if (textDisplayNode->GetShowLeader())
+    {
+    if (textDisplayNode->GetShowArrowHead())
+      {
+      captionActor->SetLeaderGlyphSize(textDisplayNode->GetLeaderGlyphSize());
+      }
+    else
+      {
+      captionActor->SetLeaderGlyphSize(0.0);
+      }
+    captionActor->SetMaximumLeaderGlyphSize(textDisplayNode->GetMaximumLeaderGlyphSize());
+    }
+  captionActor->SetPadding(textDisplayNode->GetPadding());
+  captionActor->SetAttachEdgeOnly(textDisplayNode->GetAttachEdgeOnly());
 
   // at least one value has changed, so set the widget to modified
   rep->NeedToRenderOn();
@@ -380,6 +409,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
+  vtkCaptionActor2D *captionActor = rep->GetCaptionActor2D();
 
   double worldCoordinates1[4];
   double displayCoordinates1[4];
@@ -390,12 +420,13 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
   bool allowMovement = true;
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
-
-    rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
-    rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->GetValue(displayCoordinates1);
-
+    if (captionActor)
+      {
+      captionActor->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+      captionActor->GetAttachmentPointCoordinate()->GetValue(displayCoordinates1);
+      }
     
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
 
@@ -434,22 +465,33 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   textNode->SetCaptionCoordinates(worldCoordinates2);
   
   // update mrml text
-  textNode->SetText(0,rep->GetCaptionActor2D()->GetCaption(),1,1);
-
-  if (!textNode->GetAnnotationTextDisplayNode())
+  if (captionActor)
+    {
+    textNode->SetText(0,captionActor->GetCaption(),1,1);
+    }
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = textNode->GetAnnotationTextDisplayNode();
+  if (!textDisplayNode)
     {
     // no display node yet, create one
     textNode->CreateAnnotationTextDisplayNode();
+    textDisplayNode = textNode->GetAnnotationTextDisplayNode();
+    if (!textDisplayNode)
+      {
+      vtkErrorMacro("PropagateWidgetToMRML: error creating a text display node for text node " << textNode->GetID());
+      return;
+      }
     }
 
   // update mrml textscale
-  textNode->SetTextScale(rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->GetFontSize());
-
+  if (captionActor)
+    {
+    textDisplayNode->SetTextScale(captionActor->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+    }
   // update mrml selected color
-  //textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+  //textDisplayNode->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
   // update mrml color
-  //textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+  //textDisplayNode->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
 
   // save the current view
@@ -486,7 +528,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
 
   // offset the caption
   double displayCoordinates2[4];
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
    {
    // offset by 50
    displayCoordinates2[0] = displayCoordinates1[0] - 50.0;
@@ -532,7 +574,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
   // if this was a one time place, go back to view transform mode
   vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
   if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-    {
+   {
     interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
     }
 }

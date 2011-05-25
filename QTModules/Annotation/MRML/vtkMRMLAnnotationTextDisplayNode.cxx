@@ -41,6 +41,18 @@ vtkMRMLAnnotationTextDisplayNode::CreateNodeInstance()
 vtkMRMLAnnotationTextDisplayNode::vtkMRMLAnnotationTextDisplayNode()
 {
   this->TextScale = 4.5;
+
+  this->UseLineWrap = 0;
+  this->MaxCharactersPerLine = 20;
+
+  this->ShowArrowHead = 1;  
+  this->ShowBorder = 1;
+  this->ShowLeader = 1;
+  this->UseThreeDimensionalLeader = 1;
+  this->LeaderGlyphSize = 0.025;
+  this->MaximumLeaderGlyphSize = 20;
+  this->Padding = 3;
+  this->AttachEdgeOnly = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -53,8 +65,17 @@ vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  // of << " symbolScale=\"" << this->GlyphScale << "\"";
   of << " textScale=\"" << this->TextScale << "\"";
+  of << " useLineWrap=\"" << (this->UseLineWrap ? "true" : "false") << "\"";
+  of << " maxCharactersPerLine=\"" << this->MaxCharactersPerLine<< "\"";
+  of << " showBorder=\"" << (this->ShowBorder ? "true" : "false") << "\"";
+  of << " showLeader=\"" << (this->ShowLeader ? "true" : "false") << "\"";
+  of << " showArrowHead=\"" << (this->ShowArrowHead ? "true" : "false") << "\"";
+  of << " useThreeDimensionalLeader=\"" << (this->UseThreeDimensionalLeader ? "true" : "false") << "\"";
+  of << " leaderGlyphSize=\"" << this->LeaderGlyphSize << "\"";
+  of << " maximumLeaderGlyphSize=\"" << this->MaximumLeaderGlyphSize << "\"";
+  of << " padding=\"" << this->Padding << "\"";
+  of << " attachEdgeOnly=\"" << (this->AttachEdgeOnly ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -69,15 +90,105 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
   const char* attValue;
   while (*atts != NULL)
     {
-      attName = *(atts++);
-      attValue = *(atts++);
+    attName = *(atts++);
+    attValue = *(atts++);
 
-      if (!strcmp(attName, "textScale"))
+    if (!strcmp(attName, "textScale"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->TextScale;
+      }
+    else if (!strcmp(attName, "useLineWrap"))
+      {
+      if (!strcmp(attValue,"true"))
         {
-          std::stringstream ss;
-          ss << attValue;
-          ss >> this->TextScale;
+        this->UseLineWrap = 1;
         }
+      else
+        {
+        this->UseLineWrap = 0;
+        }
+      }
+    else if (!strcmp(attName, "maxCharactersPerLine"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MaxCharactersPerLine;
+      }
+    else if (!strcmp(attName, "showBorder"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->ShowBorder = 1;
+        }
+      else
+        {
+        this->ShowBorder = 0;
+        }
+      }
+    else if (!strcmp(attName, "showLeader"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->ShowLeader = 1;
+        }
+      else
+        {
+        this->ShowLeader = 0;
+        }
+      }
+    else if (!strcmp(attName, "showArrowHead"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->ShowArrowHead = 1;
+        }
+      else
+        {
+        this->ShowArrowHead = 0;
+        }
+      }
+    else if (!strcmp(attName, "useThreeDimensionalLeader"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->UseThreeDimensionalLeader = 1;
+        }
+      else
+        {
+        this->UseThreeDimensionalLeader = 0;
+        }
+      }
+    else if (!strcmp(attName, "leaderGlyphSize"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LeaderGlyphSize;
+      }
+    else if (!strcmp(attName, "maximumLeaderGlyphSize"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MaximumLeaderGlyphSize;
+      }
+    else if (!strcmp(attName, "padding"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->Padding;
+      }
+    else if (!strcmp(attName, "attachEdgeOnly"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->AttachEdgeOnly = 1;
+        }
+      else
+        {
+        this->AttachEdgeOnly = 0;
+        }
+      }
     }
 
   this->EndModify(disabledModify);
@@ -96,6 +207,17 @@ vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode *anode)
       (vtkMRMLAnnotationTextDisplayNode *) anode;
 
   this->SetTextScale(node->TextScale);
+  this->SetUseLineWrap(node->UseLineWrap);
+  this->SetMaxCharactersPerLine(node->MaxCharactersPerLine);
+  this->SetShowBorder(node->ShowBorder);
+  this->SetShowLeader(node->ShowLeader);
+  this->SetShowArrowHead(node->ShowArrowHead);
+  this->SetUseThreeDimensionalLeader(node->UseThreeDimensionalLeader);
+  this->SetLeaderGlyphSize(node->LeaderGlyphSize);
+  this->SetMaximumLeaderGlyphSize(node->MaximumLeaderGlyphSize);
+  this->SetPadding(node->Padding);
+  this->SetAttachEdgeOnly(node->AttachEdgeOnly);
+
   this->EndModify(disabledModify);
 }
 
@@ -106,6 +228,19 @@ vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
   os << indent << "Text scale: (";
   os << this->TextScale << ")\n";
+
+  os << indent << "UseLineWrap: " << (this->UseLineWrap ? "true" : "false") << std::endl;
+  os << indent << "MaxCharactersPerLine: " << this->MaxCharactersPerLine << std::endl;
+
+  os << indent << "ShowBorder: " << (this->ShowBorder ? "true" : "false") << std::endl;
+  os << indent << "ShowLeader: " << (this->ShowLeader ? "true" : "false") << std::endl;
+  os << indent << "ShowArrowHead: " << (this->ShowArrowHead ? "true" : "false") << std::endl;
+  os << indent << "UseThreeDimensionalLeader" << (this->UseThreeDimensionalLeader ? "true" : "false") << std::endl;
+  os << indent << "LeaderGlyphSize: " << this->LeaderGlyphSize << std::endl;
+  os << indent << "MaximumLeaderGlyphSize: " << this->MaximumLeaderGlyphSize << std::endl;
+  os << indent << "Padding: " << this->Padding << std::endl;
+  os << indent << "AttachEdgeOnly: " << (this->AttachEdgeOnly ? "true" : "false") << std::endl;
+
 }
 
 //---------------------------------------------------------------------------

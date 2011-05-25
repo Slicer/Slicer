@@ -9,6 +9,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationControlPointsNodeTest1.cxx
   vtkMRMLAnnotationPointDisplayNodeTest1.cxx
   vtkMRMLAnnotationControlPointsStorageNodeTest1.cxx
+  vtkMRMLAnnotationTextDisplayNodeTest1.cxx
   vtkMRMLAnnotationLinesNodeTest1.cxx
   vtkMRMLAnnotationLineDisplayNodeTest1.cxx
   vtkMRMLAnnotationLinesStorageNodeTest1.cxx
