@@ -156,8 +156,6 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   vtkCaptionWidget* captionWidget = vtkCaptionWidget::New();
   VTK_CREATE(vtkCaptionRepresentation, captionRep);
 
-  vtkCaptionActor2D *captionActor = captionRep->GetCaptionActor2D();
-
   captionRep->SetMoving(1);
   
   if (!textNode->GetTextLabel())
@@ -307,7 +305,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
       {
       // find the last space before the max characters per line for this line
       size_t lastSpace = wrappedText.find_last_of(" ", numLines*maxCharPerLine);
-      if (lastSpace = std::string::npos)
+      if (lastSpace == std::string::npos)
         {
         // no space in the string before the max char limit, force a line break midword
         wrappedText = wrappedText.insert(numLines*maxCharPerLine, std::string("\n"));

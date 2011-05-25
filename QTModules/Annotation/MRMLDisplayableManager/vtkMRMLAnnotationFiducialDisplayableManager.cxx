@@ -647,10 +647,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
   
   if (eventid == vtkCommand::KeyPressEvent)
     {
-    double x = this->GetInteractor()->GetEventPosition()[0];
-    double y = this->GetInteractor()->GetEventPosition()[1];
     char *keySym = this->GetInteractor()->GetKeySym();
-    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? "2D" : "3D") << ": key press event position = " << x << ", " << y << ", key sym = " << (keySym == NULL ? "null" : keySym));
+    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? "2D" : "3D") << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1] << ", key sym = " << (keySym == NULL ? "null" : keySym));
     if (!keySym)
       {
       return;

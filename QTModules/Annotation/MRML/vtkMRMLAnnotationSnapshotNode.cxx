@@ -108,7 +108,7 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
       this->SetSnapshotDescription(sceneViewDescription);
       }
     }
-
+  this->EndModify(disabledModify);
 }
 
 
