@@ -28,7 +28,7 @@ SET(qtmodules
   TractographyDisplay
   TractographyFiducialSeeding
   Volumes
-  #CropVolume
+  CropVolume
   VolumeRendering
   )
 IF(BUILD_TESTING)
