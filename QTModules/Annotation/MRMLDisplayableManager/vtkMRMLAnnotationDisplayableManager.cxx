@@ -66,6 +66,8 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
   // by default, this displayableManager handles a ThreeDView
   this->m_SliceNode = 0;
 
+  // by default, multiply the display node scale by this when setting scale on elements in 2d windows
+  this->ScaleFactor2D = 0.00333;
 }
 
 //---------------------------------------------------------------------------
@@ -86,6 +88,22 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+
+  os << indent << "DisableInteractorStyleEventsProcessing = " << this->DisableInteractorStyleEventsProcessing << std::endl;
+  if (this->m_SliceNode && 
+      this->m_SliceNode->GetID())
+    {
+    os << indent << "Slice node id = " << this->m_SliceNode->GetID() << std::endl;
+    }
+  else
+    {
+    os << indent << "No slice node" << std::endl;
+    }
+  if (this->m_Focus)
+    {
+    os << indent << "Focus = " << this->m_Focus << std::endl;
+    }
+  os << indent << "ScaleFactor2D = " << this->ScaleFactor2D << std::endl;
 }
 
 //---------------------------------------------------------------------------

@@ -137,8 +137,6 @@ public:
 void vtkMRMLAnnotationFiducialDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-
-  os << indent << "ScaleFactor2D = " << this->ScaleFactor2D << std::endl;
 }
 
 //---------------------------------------------------------------------------
@@ -152,7 +150,8 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
-  this->ScaleFactor2D = 300.0;
+  // 2d glyphs and text need to be scaled by 1/300 to show up properly in the 2d slice windows
+  this->SetScaleFactor2D(0.0033);
   
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
@@ -404,7 +403,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     if (this->Is2DDisplayableManager())
       {
       
-      handleRep->SetUniformScale(displayNode->GetGlyphScale()/this->GetScaleFactor2D());
+      handleRep->SetUniformScale(displayNode->GetGlyphScale()*this->GetScaleFactor2D());
       
       }
     else
@@ -438,9 +437,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         if (this->Is2DDisplayableManager())
           {
           // scale it down for the 2d windows
-          textscale[0] /= this->GetScaleFactor2D();
-          textscale[1] /= this->GetScaleFactor2D();
-          textscale[2] /= this->GetScaleFactor2D();
+          textscale[0] *= this->GetScaleFactor2D();
+          textscale[1] *= this->GetScaleFactor2D();
+          textscale[2] *= this->GetScaleFactor2D();
           }
         handleRep->SetLabelTextScale(textscale);
         if (handleRep->GetLabelTextActor())

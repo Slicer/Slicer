@@ -73,6 +73,10 @@ public:
   void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
   void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
+  /// Set/Get the 2d scale factor to divide 3D scale by to show 2D elements appropriately (usually set to 300)
+  vtkSetMacro(ScaleFactor2D, double);
+  vtkGetMacro(ScaleFactor2D, double);
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();
@@ -194,6 +198,8 @@ private:
 
   vtkMRMLSliceNode * m_SliceNode;
 
+  /// Scale factor for 2d windows
+  double ScaleFactor2D;
 };
 
 #endif
