@@ -25,7 +25,7 @@ def mainWindow(verbose = True):
 def pythonShell(verbose = True):
   return lookupTopLevelWidget('pythonConsole', verbose)
 
-def showStatusMessage(message, duration=0):
+def showStatusMessage(message, duration = 0):
   mw = mainWindow(verbose=False)
   if mw:
     mw.statusBar().showMessage(message, duration)
@@ -121,25 +121,25 @@ def getModuleGui(module):
 # MRML
 #
 
-def getNodes(pattern=""):
-    """ return a dictionary of nodes where the name or id matches the pattern 
-        - empty string matches all
+def getNodes(pattern = ""):
+    """Return a dictionary of nodes where the name or id matches the 'pattern'.
+    Providing an empty 'pattern' string will return all nodes.
     """
     import slicer
     nodes = {}
     scene = slicer.mrmlScene
     count = scene.GetNumberOfNodes()
     for idx in range(count):
-        node = scene.GetNthNode(idx)
-        name = node.GetName()
-        id = node.GetID()
-        if name.find(pattern) >= 0 or id.find(pattern) >= 0:
-          nodes[node.GetName()] = node
+      node = scene.GetNthNode(idx)
+      name = node.GetName()
+      id = node.GetID()
+      if name.find(pattern) >= 0 or id.find(pattern) >= 0:
+        nodes[node.GetName()] = node
     return nodes
 
-def getNode(pattern="", index=0):
-    """ return the indexth node where name or id matches pattern
-        - empty string matches any
+def getNode(pattern = "", index = 0):
+    """Return the indexth node where name or id matches 'pattern'.
+    Providing an empty 'pattern' string will return all nodes.
     """
     nodes = getNodes(pattern)
     try:
