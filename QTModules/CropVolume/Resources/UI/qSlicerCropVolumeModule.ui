@@ -128,37 +128,48 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QCheckBox" name="IsotropicCheckbox">
-           <property name="text">
-            <string>isotropic resampling</string>
-           </property>
-           <property name="tristate">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QRadioButton" name="NNRadioButton">
+            <widget class="QCheckBox" name="IsotropicCheckbox">
              <property name="text">
-              <string>Nearest Neighbor</string>
+              <string>isotropic output voxel</string>
+             </property>
+             <property name="tristate">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="LinearRadioButton">
-             <property name="text">
-              <string>Linear</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="CubicRadioButton">
-             <property name="text">
-              <string>Cubic</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QRadioButton" name="NNRadioButton">
+               <property name="text">
+                <string>Nearest Neighbor</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="LinearRadioButton">
+               <property name="text">
+                <string>Linear</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="WSRadioButton">
+               <property name="text">
+                <string>WindowedSinc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="BSRadioButton">
+               <property name="text">
+                <string>B-spline</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

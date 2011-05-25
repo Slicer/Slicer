@@ -2,6 +2,7 @@
 #include <QDebug>
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerCropVolumeModuleWidget.h"
 #include "qMRMLNodeFactory.h"
 #include "ui_qSlicerCropVolumeModule.h"
@@ -11,6 +12,9 @@
 
 #include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkSlicerCropVolumeLogic.h>
+#include <vtkMRMLSelectionNode.h>
+
+#include <vtkMRMLApplicationLogic.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_CropVolume
@@ -96,7 +100,9 @@ void qSlicerCropVolumeModuleWidget::setup()
     this, SLOT(onInterpolationModeChanged()));
   connect( d->NNRadioButton, SIGNAL(toggled(bool)),
     this, SLOT(onInterpolationModeChanged()));
-  connect( d->CubicRadioButton, SIGNAL(toggled(bool)),
+  connect( d->WSRadioButton, SIGNAL(toggled(bool)),
+    this, SLOT(onInterpolationModeChanged()));
+  connect( d->BSRadioButton, SIGNAL(toggled(bool)),
     this, SLOT(onInterpolationModeChanged()));
   connect( d->IsotropicCheckbox, SIGNAL(toggled(bool)),
     this, SLOT(onInterpolationModeChanged()));
@@ -143,7 +149,13 @@ void qSlicerCropVolumeModuleWidget::onApply(){
 
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkSlicerCropVolumeLogic *l = vtkSlicerCropVolumeLogic::SafeDownCast(d->logic());
-  l->Apply(this->parametersNode);
+  if(!l->Apply(this->parametersNode)){
+    vtkMRMLApplicationLogic *appLogic =
+      qSlicerCoreApplication::application()->mrmlApplicationLogic();
+    vtkMRMLSelectionNode *selectionNode = appLogic->GetSelectionNode();
+    selectionNode->SetReferenceActiveVolumeID(this->parametersNode->GetOutputVolumeNodeID());
+    appLogic->PropagateVolumeSelection();
+  }
 }
 
 void qSlicerCropVolumeModuleWidget::onInputVolumeChanged(){
@@ -200,8 +212,10 @@ void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
     p->SetInterpolationMode(1);
   if(d->LinearRadioButton->isChecked())
     p->SetInterpolationMode(2);
-  if(d->CubicRadioButton->isChecked())
+  if(d->WSRadioButton->isChecked())
     p->SetInterpolationMode(3);
+  if(d->BSRadioButton->isChecked())
+    p->SetInterpolationMode(4);
 }
 
 void qSlicerCropVolumeModuleWidget::updateWidget()
@@ -222,7 +236,8 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
   switch(p->GetInterpolationMode()){
     case 1: d->NNRadioButton->setChecked(1); break;
     case 2: d->LinearRadioButton->setChecked(1); break;
-    case 3: d->CubicRadioButton->setChecked(1); break;
+    case 3: d->WSRadioButton->setChecked(1); break;
+    case 4: d->BSRadioButton->setChecked(1); break;
   }
   d->IsotropicCheckbox->setChecked(p->GetIsotropicResampling());
   if (this->parametersNode->GetROINode())

@@ -180,6 +180,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     outputDisplay->Copy(inputDisplay);
     this->GetMRMLScene()->AddNodeNoNotify(outputDisplay);
     outputVolume->SetAndObserveDisplayNodeID(outputDisplay->GetID());
+    outputDisplay->Delete();
   }
 
   inputRASToIJK->Delete();
@@ -210,7 +211,20 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
   cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetID());
   cmdNode->SetParameterAsString("outputVolume",outputVolume->GetID());
+  std::string interp = "linear";
+  switch(pnode->GetInterpolationMode()){
+    case 1: interp = "nn"; break;
+    case 2: interp = "linear"; break;
+    case 3: interp = "ws"; break;
+    case 4: interp = "bs"; break;
+  }
+
+  cmdNode->SetParameterAsString("interpolationType", interp.c_str());
   cliModule->run(cmdNode, true);
+
+  std::string outputVolumeName = inputVolume->GetName();
+  outputVolumeName += "-subvolume";
+  outputVolume->SetName(outputVolumeName.c_str());
 
   outputVolume->ModifiedSinceReadOn();
 
