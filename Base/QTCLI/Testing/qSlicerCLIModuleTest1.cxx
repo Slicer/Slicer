@@ -48,9 +48,10 @@ qSlicerCLIModule * CLIModule;
 QString            ErrorString;
 
 //-----------------------------------------------------------------------------
-void runCli()
+void runCli(void * data)
 {
   Q_ASSERT(CLIModule);
+  Q_UNUSED(data);
 
   QTemporaryFile outputFile("qSlicerCLIModuleTest1-outputFile-XXXXXX");
   if (!outputFile.open())
