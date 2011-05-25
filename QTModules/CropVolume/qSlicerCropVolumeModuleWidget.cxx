@@ -165,24 +165,19 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged(){
   if(n){
     this->parametersNode->SetAndObserveROINodeID(n->GetID());
     this->parametersNode->SetROIVisibility(this->parametersNode->GetROINode()->GetVisibility());
-    this->updateWidget();
-    std::cout << "ROI changed -- updating widget. Visibility was set to " <<
-      this->parametersNode->GetROIVisibility() << std::endl;
+    this->updateWidget();    
   }
 }
 
 void qSlicerCropVolumeModuleWidget::onOutputVolumeChanged(){
-  //std::cerr << "Output volume changed!" << std::endl;
   if(!this->parametersNode)
     return;
 
   Q_D(qSlicerCropVolumeModuleWidget);
   vtkMRMLNode* n = d->OutputVolumeComboBox->currentNode();
-  //std::cerr << "Got current node" << std::endl;
 
   if(n){
     this->parametersNode->SetAndObserveOutputVolumeNodeID(n->GetID());
-    //std::cerr << "Output volume node is now " << n->GetID() << std::endl;
   }
 }
 
@@ -231,11 +226,11 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
   }
   d->IsotropicCheckbox->setChecked(p->GetIsotropicResampling());
   if (this->parametersNode->GetROINode())
-    {
-    std::cout << "Setting ROI visibitlity button to " << p->GetROIVisibility() << std::endl;
+    {   
     d->VisibilityButton->setChecked(p->GetROIVisibility());
-    //this->parametersNode->GetROINode()->SetVisibility(p->GetROIVisibility());
     }
+  //if(!p->GetInputVolumeNode())
+  //    d->OutputVolumeComboBox->setDisabled();
 }
 
 void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n){
