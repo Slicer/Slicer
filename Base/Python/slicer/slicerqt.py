@@ -46,19 +46,23 @@ class _Internal():
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
     setattr(slicer, 'mrmlScene', slicer.app.mrmlScene())
     
-    # HACK - Since qt.QTimer.singleShot doesn't work as expected, let's overwrite it's value.
-    # Ideally this should be fixed in PythonQt itself
+    # HACK - Since qt.QTimer.singleShot is both a property and a static method, the property
+    # is wrapped in python and prevent the call to the convenient static method having
+    # the same name. To fix the problem, let's overwrite it's value.
+    # Ideally this should be fixed in PythonQt itself.
     def _singleShot(msec, receiverOrCallable, member = None):
       """Calls either a python function or a slot after a given time interval."""
-      from slicer import app
-      # Add 'app' as parent to prevent the premature destruction of the timer
-      timer = qt.QTimer(app)
+      # Add 'moduleManager' as parent to prevent the premature destruction of the timer.
+      # Doing so, we ensure that the QTimer will be deleted before PythonQt is cleanup.
+      # Indeed, the moduleManager is destroyed before the pythonManager.
+      timer = qt.QTimer(slicer.app.moduleManager())
       timer.setSingleShot(True)
       if callable(receiverOrCallable):
         timer.connect("timeout()", receiverOrCallable)
       else:
         timer.connect("timeout()", receiverOrCallable, member)
       timer.start(msec)
+
     qt.QTimer.singleShot = staticmethod(_singleShot)
   
   def setSlicerModuleNames(self):
