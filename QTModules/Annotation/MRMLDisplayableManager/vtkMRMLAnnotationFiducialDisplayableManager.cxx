@@ -301,19 +301,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-  double displayCoordinates1[4];
-  double displayCoordinatesBuffer1[4];
-
-  seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
-
-  this->GetWorldToDisplayCoordinates(fiducialNode->GetControlPointCoordinates(0),displayCoordinates1);
-
-  if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
-    {
-    // only update when really changed
-    seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
-    }
-
+    
   vtkMRMLAnnotationPointDisplayNode *displayNode = fiducialNode->GetAnnotationPointDisplayNode();
 
   if (!displayNode)
@@ -463,6 +451,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       handleRep->LabelVisibilityOff();
       }
     }
+
+  // now update the position
+  this->UpdatePosition(widget, node);
   
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
@@ -525,14 +516,15 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
     double displayCoordinates1[4];
     seedRepresentation->GetSeedDisplayPosition(0,displayCoordinates1);
+    vtkDebugMacro("PropagateWidgetToMRML: 2d displayable manager: widget display coords = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", " << displayCoordinates1[2]);
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
-
+    vtkDebugMacro("PropagateWidgetToMRML: 2d: widget world coords = " << worldCoordinates1[0] << ", " << worldCoordinates1[1] << ", "<< worldCoordinates1[2]);
     }
   else
     {
 
     seedRepresentation->GetSeedWorldPosition(0,worldCoordinates1);
-
+vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordinates1[0] << ", " << worldCoordinates1[1] << ", "<< worldCoordinates1[2]);
     }
 
   // was there a change?
@@ -540,6 +532,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   double *currentCoordinates = fiducialNode->GetFiducialCoordinates();
   if (currentCoordinates)
     {
+    vtkDebugMacro("PropagateWidgetToMRML: fiducial current world coordinates = " << currentCoordinates[0] << ", " << currentCoordinates[1] << ", " << currentCoordinates[2]);
     double currentCoords[3];
     currentCoords[0] = currentCoordinates[0];
     currentCoords[1] = currentCoordinates[1];
@@ -557,6 +550,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     }
   if (positionChanged)
     {
+    vtkDebugMacro("PropagateWidgetToMRML: position changed, setting fiducial coordinates");
     fiducialNode->SetFiducialCoordinates(worldCoordinates1);
 
     fiducialNode->SaveView();
@@ -568,6 +562,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   if (positionChanged)
     {
+    vtkDebugMacro("PropagateWidgetToMRML: position changed, calling modified on the fiducial node");
     fiducialNode->Modified();
     fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
     }
@@ -648,7 +643,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
   if (eventid == vtkCommand::KeyPressEvent)
     {
     char *keySym = this->GetInteractor()->GetKeySym();
-    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? "2D" : "3D") << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1] << ", key sym = " << (keySym == NULL ? "null" : keySym));
+    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1] << ", key sym = " << (keySym == NULL ? "null" : keySym));
     if (!keySym)
       {
       return;
@@ -703,32 +698,58 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
    }
 
   // disable processing of modified events
-  this->m_Updating = 1;
+  //this->m_Updating = 1;
+  bool positionChanged = false;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-  double displayCoordinates1[4];
-  double displayCoordinatesBuffer1[4];
-
-  seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
-
-  this->GetWorldToDisplayCoordinates(pointsNode->GetControlPointCoordinates(0),displayCoordinates1);
-
-  if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+  if (this->Is2DDisplayableManager())
     {
-    // only update when really changed
-    if (!this->Is2DDisplayableManager())
+    // for 2d managers, compare the display positions
+    double displayCoordinates1[4];
+    double displayCoordinatesBuffer1[4];
+
+    seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
+
+    this->GetWorldToDisplayCoordinates(pointsNode->GetControlPointCoordinates(0),displayCoordinates1);
+
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
       {
-      vtkDebugMacro("UpdatePosition (3D): display position changed. updating seed 0 display position to " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", " << displayCoordinates1[2]);
+      // only update when really changed
+      vtkDebugMacro("UpdatePosition: " << this->GetSliceNode()->GetName() << ": display coordinates changed:\n\tseed display = " << displayCoordinatesBuffer1[0] << ", " << displayCoordinatesBuffer1[1] << "\n\tfid display =  " << displayCoordinates1[0] << ", " << displayCoordinates1[1] );
+      seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+      positionChanged = true;
       }
-    seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+    else
+      {
+      vtkDebugMacro("UpdatePosition: " <<  this->GetSliceNode()->GetName() << ": display coordinates unchanged!");
+      }
+    }
+  else
+    {
+    // for 3d managers, compare world positions
+    double seedWorldCoord[4];
+    seedRepresentation->GetSeedWorldPosition(0,seedWorldCoord);
+    double *fidWorldCoord = pointsNode->GetControlPointCoordinates(0);
+    if (this->GetWorldCoordinatesChanged(seedWorldCoord, fidWorldCoord))
+      {
+      vtkDebugMacro("UpdatePosition: " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": world coordinates changed:\n\tseed = " << seedWorldCoord[0] << ", " << seedWorldCoord[1] << ", " << seedWorldCoord[2] << "\n\tfid =  " << fidWorldCoord[0] << ", " << fidWorldCoord[1] << ", " << fidWorldCoord[2]);
+      seedRepresentation->GetHandleRepresentation(0)->SetWorldPosition(fidWorldCoord);
+      positionChanged = true;
+      }
+    else
+      {
+      vtkDebugMacro("UpdatePosition: " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": world coordinates unchanged!");
+      }
+    }
+  if (positionChanged && this->m_Updating == 0)
+    {
+    // not already updating from propagate mrml to widget, so trigger a render
     seedRepresentation->NeedToRenderOn();
     seedWidget->Modified();
-
     seedWidget->CompleteInteraction();
     }
-  
   // enable processing of modified events
-  this->m_Updating = 0;
+  //this->m_Updating = 0;
 }
