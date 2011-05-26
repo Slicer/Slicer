@@ -1110,7 +1110,7 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
     double displayCoordinates[4];
     displayCoordinates[0] = x - pokedRenderer->GetOrigin()[0];
     displayCoordinates[1] = y - pokedRenderer->GetOrigin()[1];
-    displayCoordinates[2] = z;
+    displayCoordinates[2] = 0;
     displayCoordinates[3] = 1;
 
     xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
@@ -1322,9 +1322,11 @@ bool vtkMRMLAnnotationDisplayableManager::GetDisplayCoordinatesChanged(double * 
 {
   bool changed = false;
 
-  if (fabs(displayCoordinates1[0]-displayCoordinates2[0])>0.1 || fabs(displayCoordinates1[1]-displayCoordinates2[1])>0.1) {
+  if (sqrt( ( displayCoordinates1[0] - displayCoordinates2[0] ) * ( displayCoordinates1[0] - displayCoordinates2[0] )
+           + ( displayCoordinates1[1] - displayCoordinates2[1] ) * ( displayCoordinates1[1] - displayCoordinates2[1] ))>1.0)
+    {
     changed = true;
-  }
+    }
 
   return changed;
 }
@@ -1335,11 +1337,12 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 {
   bool changed = false;
 
-  if (fabs(worldCoordinates1[0]-worldCoordinates2[0])>0.1 ||
-      fabs(worldCoordinates1[1]-worldCoordinates2[1])>0.1 ||
-      fabs(worldCoordinates1[2]-worldCoordinates2[2])>0.1) {
+  double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+
+  if (distance>1.0)
+    {
     changed = true;
-  }
+    }
 
   return changed;
 }
