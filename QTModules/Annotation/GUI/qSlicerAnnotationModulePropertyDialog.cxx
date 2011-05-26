@@ -48,8 +48,7 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
 void qSlicerAnnotationModulePropertyDialog::initialize()
 {
   // backup the current annotationNode
-  // TODO does not work with displayableNodes
-  //this->m_logic->BackupAnnotationNode(this->m_id);
+  this->m_logic->BackupAnnotationNode(this->m_id);
 
   // build the typeLabelText including name and id of the annotation
   QString * typeLabelText = new QString("Name: ");
@@ -1549,7 +1548,11 @@ void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color
 void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 {
   // the user clicked cancel, now restore the backuped node
-  //this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
+  this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
+
+  // delete all backups
+  this->m_logic->DeleteBackupNodes(this->m_id.c_str());
+
 
   emit dialogRejected();
 }
@@ -1557,6 +1560,10 @@ void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
 {
+
+  // delete all backups
+  this->m_logic->DeleteBackupNodes(this->m_id.c_str());
+
   emit dialogAccepted();
 }
 

@@ -163,6 +163,8 @@ public:
   void BackupAnnotationNode(const char * id);
   /// Restore a backup of an Annotation MRML node
   void RestoreAnnotationNode(const char * id);
+  /// Deletes a backup of an Annotation MRML node
+  void DeleteBackupNodes(const char * id);
 
   /// Restore view of an Annotation MRML node
   void RestoreAnnotationView(const char* id);

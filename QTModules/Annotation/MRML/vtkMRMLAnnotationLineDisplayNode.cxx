@@ -171,5 +171,36 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
 
 
 
+//----------------------------------------------------------------------------
+// Create a backup of this node and store it with the node.
+void vtkMRMLAnnotationLineDisplayNode::CreateBackup()
+{
+
+  vtkMRMLAnnotationLineDisplayNode * backupNode = vtkMRMLAnnotationLineDisplayNode::New();
+
+  backupNode->CopyWithoutModifiedEvent(this);
+
+  this->m_Backup = backupNode;
+
+}
+
+//----------------------------------------------------------------------------
+// Restores the backup of this node.
+void vtkMRMLAnnotationLineDisplayNode::RestoreBackup()
+{
+
+  if (this->m_Backup)
+    {
+    this->CopyWithSingleModifiedEvent(this->m_Backup);
+    }
+  else
+    {
+    vtkErrorMacro("RestoreBackup - could not get the attached backup")
+    }
+
+}
+
+
+
 
 

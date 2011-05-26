@@ -98,6 +98,11 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
   void SetGlyphScale(double scale);
   vtkGetMacro(GlyphScale,double);
 
+  /// Create a backup of this node and attach it.
+  void CreateBackup();
+  /// Restore an attached backup of this node.
+  void RestoreBackup();
+
  protected:
   vtkMRMLAnnotationPointDisplayNode();
   ~vtkMRMLAnnotationPointDisplayNode() { };

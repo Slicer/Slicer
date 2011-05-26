@@ -86,6 +86,12 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
     this->m_GreenSliceNode->Delete();
     this->m_GreenSliceNode = 0;
     }
+
+  if (this->m_Backup)
+    {
+    this->m_Backup->Delete();
+    this->m_Backup = 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -670,11 +676,22 @@ void vtkMRMLAnnotationNode::CreateBackup()
 
   vtkMRMLAnnotationNode * backupNode = vtkMRMLAnnotationNode::New();
 
-  backupNode->Copy(this);
+  backupNode->CopyWithoutModifiedEvent(this);
 
   this->m_Backup = backupNode;
 
 
+}
+
+//----------------------------------------------------------------------------
+// Clears the backup of this node.
+void vtkMRMLAnnotationNode::ClearBackup()
+{
+  if (this->m_Backup)
+    {
+    this->m_Backup->Delete();
+    this->m_Backup = 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -683,6 +700,22 @@ vtkMRMLAnnotationNode * vtkMRMLAnnotationNode::GetBackup()
 {
 
   return this->m_Backup;
+
+}
+
+//----------------------------------------------------------------------------
+// Restores the backup of this node.
+void vtkMRMLAnnotationNode::RestoreBackup()
+{
+
+  if (this->m_Backup)
+    {
+    this->CopyWithSingleModifiedEvent(this->m_Backup);
+    }
+  else
+    {
+    vtkErrorMacro("RestoreBackup - could not get the attached backup")
+    }
 
 }
 

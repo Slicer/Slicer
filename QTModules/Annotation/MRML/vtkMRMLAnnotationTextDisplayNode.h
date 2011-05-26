@@ -117,6 +117,11 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
   vtkGetMacro(AttachEdgeOnly,int);
   vtkBooleanMacro(AttachEdgeOnly,int);
  
+  /// Create a backup of this node and attach it.
+  void CreateBackup();
+  /// Restore an attached backup of this node.
+  void RestoreBackup();
+
 protected:
   vtkMRMLAnnotationTextDisplayNode();
   ~vtkMRMLAnnotationTextDisplayNode() { }

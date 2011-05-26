@@ -56,9 +56,12 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : p
 
   // Functionality for backups of this node
   /// Creates a backup of the current MRML state of this node and keeps a reference
-  void CreateBackup();
+  virtual void CreateBackup(){};
+  virtual void RestoreBackup(){};
+  void ClearBackup();
   /// Returns the associated backup of this node
   vtkMRMLAnnotationDisplayNode * GetBackup();
+
 
  protected:
   vtkMRMLAnnotationDisplayNode();

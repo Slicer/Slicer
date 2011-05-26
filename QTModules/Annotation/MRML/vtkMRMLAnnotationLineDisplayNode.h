@@ -72,6 +72,11 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   vtkSetMacro(TickSpacing, double);
   vtkGetMacro(TickSpacing, double);
 
+  /// Create a backup of this node and attach it.
+  void CreateBackup();
+  /// Restore an attached backup of this node.
+  void RestoreBackup();
+
  protected:
   vtkMRMLAnnotationLineDisplayNode();
   ~vtkMRMLAnnotationLineDisplayNode() { };

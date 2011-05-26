@@ -51,12 +51,19 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->Specular = 0;
   this->Power = 1;
 
+  this->m_Backup = 0;
+
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
 {
 
+  if (this->m_Backup)
+    {
+    this->m_Backup->Delete();
+    this->m_Backup = 0;
+    }
 
 }
 
@@ -107,21 +114,14 @@ void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //----------------------------------------------------------------------------
-// Create a backup of this node and store it with the node.
-void vtkMRMLAnnotationDisplayNode::CreateBackup()
+// Clears the backup of this node.
+void vtkMRMLAnnotationDisplayNode::ClearBackup()
 {
-
-  if (this->IsA("vtkMRMLAnnotationTextDisplayNode"))
+  if (this->m_Backup)
     {
-    vtkMRMLAnnotationTextDisplayNode * backupNode = vtkMRMLAnnotationTextDisplayNode::New();
-
-    backupNode->Copy(this);
-
-    this->m_Backup = backupNode;
+    this->m_Backup->Delete();
+    this->m_Backup = 0;
     }
-
-  // TODO other displayNodes
-
 }
 
 //----------------------------------------------------------------------------
