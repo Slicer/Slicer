@@ -22,7 +22,7 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests
   )
 
 MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 ENDMACRO()
 
 SIMPLE_TEST( vtkChangeTrackerGUITest )
@@ -57,11 +57,11 @@ target_link_libraries(ChangeTrackerTest
 )
 
 add_test(ChangeTrackerCL_Help 
-   ${LAUNCH_EXE} ChangeTrackerTest 
+   ${Slicer_LAUNCH_COMMAND} ChangeTrackerTest 
    ChangeTrackerTest --help)
 
 add_test(ChangeTrackerCL_TestFull_Intensity
-   ${LAUNCH_EXE} ChangeTrackerTest
+   ${Slicer_LAUNCH_COMMAND} ChangeTrackerTest
    ChangeTrackerTest --sensitivity 0.95
    --roi_xyz -4,27,28
    --roi_radius 21,22,24

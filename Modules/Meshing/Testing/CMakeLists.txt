@@ -24,7 +24,7 @@ macro(MIMX_ADD_TEST TESTNAME SOURCE_FILE)
   get_filename_component(mimx_test_executable ${SOURCE_FILE} NAME_WE)
   add_executable(${TESTNAME} ${SOURCE_FILE})
   target_link_libraries(${TESTNAME} ${MIMX_LIBRARIES} ${VTK_LIBRARIES} ${ITK_LIBRARIES})
-  add_test(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${TESTNAME}> ${ARGN})
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${TESTNAME}> ${ARGN})
 endmacro()
 
 # MIMX_ADD_TEST(vtkRebinMaterialPropertyTest vtkRebinMaterialPropertyTest.cxx)

@@ -27,7 +27,7 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 # DicomToNrrdConverter tests
 add_test(
     NAME ${CLP}Test 
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${CLP}Test>
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --inputDicomDirectory ${TEST_DATA}/DWIDicom
     --outputDirectory ${TEMP}

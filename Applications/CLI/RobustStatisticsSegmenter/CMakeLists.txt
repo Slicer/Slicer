@@ -34,7 +34,7 @@ if(BUILD_TESTING)
   SET_TARGET_PROPERTIES(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
 
   set(testname ${CLP}Test)
-  add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
+  add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
       ${CMAKE_CURRENT_SOURCE_DIR}/grayscale.nrrd 
       ${CMAKE_CURRENT_SOURCE_DIR}/grayscale-label.nrrd 
       ${CMAKE_CURRENT_BINARY_DIR}/rss-test-seg.nrrd 50 0.1 0.2)

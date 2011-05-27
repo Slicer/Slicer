@@ -24,7 +24,7 @@ TARGET_LINK_LIBRARIES (VTKITKVectorReader
   vtkITK)
 ADD_TEST (
   NAME VTKITKVectorReader 
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VTKITKVectorReader>
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKVectorReader>
     ${MRML_TEST_DATA_DIR}/fixed.nrrd
   )
 
@@ -34,5 +34,5 @@ TARGET_LINK_LIBRARIES (VTKITKBSplineTransform
   vtkITK)
 ADD_TEST (
   NAME VTKITKBSplineTransform
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VTKITKBSplineTransform> VTKITKBSplineTransform
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKBSplineTransform> VTKITKBSplineTransform
   )

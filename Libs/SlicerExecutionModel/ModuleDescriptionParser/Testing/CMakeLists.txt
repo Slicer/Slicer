@@ -38,16 +38,16 @@ target_link_libraries(Parser1Test ModuleDescriptionParser )
 set(TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
 add_test(
   NAME Parser1Test1 
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest1.xml
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest1.xml
   )
 
 add_test(
   NAME Parser1Test2 
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest2.xml)
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest2.xml)
 
 #add_test(
 #  NAME ModuleFactoryTest 
-#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ModuleFactoryTest> 
+#  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:ModuleFactoryTest> 
 #    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/
 #  )
 

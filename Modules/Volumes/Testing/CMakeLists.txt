@@ -25,6 +25,6 @@ set(SHORT_TEST_TIMEOUT 300)
 set_tests_properties(DiffusionEditorTensor PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT})
 
 add_test(NAME DiffusionTensorEditorTest1 
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> DiffusionTensorEditorTest1
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> DiffusionTensorEditorTest1
   ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTensorTest.tcl
   )

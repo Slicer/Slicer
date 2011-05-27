@@ -19,7 +19,7 @@ find_path(SLICER_BRAINWEB_DATA_ROOT brainweb165a10f17.mha
   DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
 mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
-set(Launcher_Command ${LAUNCH_EXE})
+set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
 if(USE_VALGRIND)
   set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
 endif()

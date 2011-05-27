@@ -54,4 +54,4 @@ include_directories(
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 add_test(EventBrokerTest 
-  ${LAUNCH_EXE} EventBrokerTest --logFileName ${TEMP}/EventLog.dot --graphFile ${TEMP}/EventBroker.dot)
+  ${Slicer_LAUNCH_COMMAND} EventBrokerTest --logFileName ${TEMP}/EventLog.dot --graphFile ${TEMP}/EventBroker.dot)

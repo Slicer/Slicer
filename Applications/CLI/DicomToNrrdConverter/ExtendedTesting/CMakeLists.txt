@@ -29,8 +29,8 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO ITKBasicFilters) 
 
-set (DicomToNrrdConverterEXE ${LAUNCH_EXE} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP} )
-set (DicomToNrrdConverter_TESTS ${LAUNCH_EXE} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP}Test )
+set (DicomToNrrdConverterEXE ${Slicer_LAUNCH_COMMAND} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP} )
+set (DicomToNrrdConverter_TESTS ${Slicer_LAUNCH_COMMAND} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP}Test )
 
 if(NOT SETIFEMPTY)
 macro(SETIFEMPTY)
@@ -52,7 +52,7 @@ add_test(DicomToNrrdConverterTest ${DicomToNrrdConverter_TESTS}
     --help
   )
 
-add_test(DicomToNrrdConverterDWICompareTest ${LAUNCH_EXE} ${DWICompareEXE}
+add_test(DicomToNrrdConverterDWICompareTest ${Slicer_LAUNCH_COMMAND} ${DWICompareEXE}
     --help
   )
 

@@ -33,7 +33,7 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/he3corrected.nii ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
   --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz 

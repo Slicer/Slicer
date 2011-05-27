@@ -14,7 +14,7 @@ target_link_libraries(BRAINSResampleTest BRAINSCommonLib ${ITK_LIBRARIES})
 set_target_properties(BRAINSResampleTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(BRAINSResampleTest BRAINSResample)
 
-set(BRAINSResample_TESTS ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTest>)
+set(BRAINSResample_TESTS ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSResampleTest>)
 
 SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
 include(${BRAINS_CMAKE_HELPER_DIR}/MIDAS.cmake)

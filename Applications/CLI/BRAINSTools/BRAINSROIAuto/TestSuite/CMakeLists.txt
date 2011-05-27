@@ -17,14 +17,14 @@ set(MIDAS_KEY_DIR "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData")
 
 #add_test(
 #  NAME BRATestImage 
-#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRATestImage>
+#  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRATestImage>
 #    ${BRAINSROIAuto_BINARY_DIR}/sphere.nii.gz 
 #    ${BRAINSROIAuto_BINARY_DIR}/GeneratedMaskSphere.nii.gz
 #  )
 
 midas_add_test(
   NAME BRAINSROIAutoTest_GenerateBrainMask
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSROIAuto>
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSROIAuto>
   --inputVolume MIDAS{test.nii.gz.md5}
   --outputROIMaskVolume ${TESTING_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrainMask.nii.gz
   --ROIAutoDilateSize 10 
@@ -34,7 +34,7 @@ set_tests_properties ( BRAINSROIAutoTest_GenerateBrainMask PROPERTIES DEPENDS BR
 
 midas_add_test(
   NAME BRAINSROIAutoTest_CompareBrainMasks
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRATestCompare>
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRATestCompare>
   MIDAS{BRAINSROIAutoTest_GenerateBrainMask.result.nii.gz.md5}
   ${TESTING_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrainMask.nii.gz
   )

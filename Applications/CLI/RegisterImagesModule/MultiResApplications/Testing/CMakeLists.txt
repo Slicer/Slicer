@@ -26,7 +26,7 @@ TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMult
 SET_TARGET_PROPERTIES(RegisterImagesMultiResApplicationsTests PROPERTIES LABELS ${CLP})
 
 MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME})
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME})
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${CLP})
 ENDMACRO()
 
@@ -44,7 +44,7 @@ target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
 SET_TARGET_PROPERTIES(RegisterImagesMultiResTest PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
-add_test(${testname} ${LAUNCH_EXE} RegisterImagesMultiResTest
+add_test(${testname} ${Slicer_LAUNCH_COMMAND} RegisterImagesMultiResTest
   --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
   --compareIntensityTolerance 20

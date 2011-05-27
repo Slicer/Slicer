@@ -33,7 +33,7 @@ set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData
 set(MIDAS_KEY_DIR "${BRAINSCommonLib_DATA_DIRS}")
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -61,7 +61,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -85,7 +85,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -112,7 +112,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -136,7 +136,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -163,7 +163,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -188,7 +188,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -215,7 +215,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineOnlyRescaleHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -246,7 +246,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 ## NOTE: 7.3 above was computed explicitly through testing.
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -273,7 +273,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -301,7 +301,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -331,7 +331,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 
 
 set(BRAINSFitTestName BRAINSFitTest_RigidAnisotropicMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
 ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -351,7 +351,7 @@ ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidMedianRotationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -376,7 +376,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotGeomNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -400,7 +400,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotaRotaRotNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -424,7 +424,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationHeadMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -449,7 +449,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -476,7 +476,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -500,7 +500,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -526,7 +526,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleRotationRescaleHeadMasksNoInit)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -551,7 +551,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -578,7 +578,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -602,7 +602,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -629,7 +629,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -653,7 +653,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -679,7 +679,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksInit)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -705,7 +705,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -732,7 +732,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -756,7 +756,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -783,7 +783,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleNoMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -807,7 +807,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 if(Test_SignedDistanceData)
-midas_add_test(NAME BRAINSFitTest_SignedDistanceData COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME BRAINSFitTest_SignedDistanceData COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{TEST_output.nii.gz.md5} ${BRAINSFit_BINARY_DIR}/Testing/TEST_output.nii.gz
   BRAINSFitTest
   --costMetric MMI
@@ -824,7 +824,7 @@ midas_add_test(NAME BRAINSFitTest_SignedDistanceData COMMAND ${LAUNCH_EXE} $<TAR
 endif(Test_SignedDistanceData)
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHeadMasksUShort)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 2505
@@ -852,7 +852,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasksUShort)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -881,7 +881,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCMetricBrainToItself)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{test.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -904,7 +904,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCAffineRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -932,7 +932,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCScaleSkewVersorRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -960,7 +960,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 
 
 set(BRAINSFitTestName BRAINSFitTest_MSEMetricBrainToItself)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{test.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -983,7 +983,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEAffineRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -1011,7 +1011,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEScaleSkewVersorRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -1038,7 +1038,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricBrainToItself)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{test.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -1061,7 +1061,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricMaskBrainToItself)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{testMask.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
   --compareIntensityTolerance 9
@@ -1084,7 +1084,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCAffineRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -1112,7 +1112,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCScaleSkewVersorRotationMasks)
-midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -1146,7 +1146,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   # which is different from the other metrics, making it much harder to incorporate into the
   # BRAINSFIT framework.  This test and the relevant code has been commented out for now.
   #set(BRAINSFitTestName BRAINSFitTest_KLMetricBrainToItself)
-  #add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  #add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
   #  --compare ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
   #            ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   #  --compareIntensityTolerance 9
@@ -1175,7 +1175,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   # to converge even when given many iterations (which it shouldn't need, since
   # it's registering the same image to itself).
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1198,7 +1198,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainMaskToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{testMask.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
     --compareIntensityTolerance 9
@@ -1223,7 +1223,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
 
   set(BRAINSFitTestName BRAINSFitTest_KSAffineRotationMasks)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -1251,7 +1251,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSScaleSkewVersorRotationMasks)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -1279,7 +1279,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_MRSDMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1303,7 +1303,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MIHMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1327,7 +1327,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_GDMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1351,7 +1351,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_CCHMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1375,7 +1375,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MSEHMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1399,7 +1399,7 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_NMIHMetricBrainToItself)
-  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+  midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSFitTest>
     --compare MIDAS{test.nii.gz.md5}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9

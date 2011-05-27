@@ -1,5 +1,5 @@
 
-set(Launcher_Command ${LAUNCH_EXE})
+set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
 if(USE_VALGRIND)
   set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
 endif()

@@ -7,5 +7,5 @@ set_target_properties(PrettyPrintTableTest
   PROPERTIES RUNTIME_OUTPUT_DIRECTORY
   ${BRAINSCommonLibProject_BINARY_DIR})
 
-add_test(NAME PrettyPrintTableTest COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>)
+add_test(NAME PrettyPrintTableTest COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:PrettyPrintTableTest>)
 

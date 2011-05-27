@@ -30,7 +30,7 @@ IF(WIN32)
   SET(BaseGUI_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
 
-ADD_TEST(FastMarchingTest1 ${LAUNCH_EXE} ${KIT}CxxTests vtkPichonFastMarchingTest)
-ADD_TEST(FastMarchingTest2 ${LAUNCH_EXE} ${KIT}CxxTests vtkPichonFastMarchingTest
+ADD_TEST(FastMarchingTest1 ${Slicer_LAUNCH_COMMAND} ${KIT}CxxTests vtkPichonFastMarchingTest)
+ADD_TEST(FastMarchingTest2 ${Slicer_LAUNCH_COMMAND} ${KIT}CxxTests vtkPichonFastMarchingTest
   ${TEST_DATA}/MRMeningioma0.nrrd 132 101 72 10 ${TEMP_DIR}/FastMarchingTest2Output.nrrd)
 
