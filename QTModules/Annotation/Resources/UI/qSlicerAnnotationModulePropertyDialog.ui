@@ -741,7 +741,7 @@
   <customwidget>
    <class>qMRMLAnnotationROIWidget</class>
    <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
+   <header>GUI/qMRMLAnnotationROIWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
