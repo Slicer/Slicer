@@ -1,9 +1,17 @@
-def quit():
-  exit()
 
-def exit():
+#
+# General
+#
+
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
+
+def quit():
+  exit(EXIT_SUCCESS)
+
+def exit(status):
   from slicer import app
-  app.quit()
+  app.exit(status)
 
 #
 # UI
