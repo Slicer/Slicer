@@ -133,6 +133,12 @@ slicerMacroBuildCLI(
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
+  NAME BSplineToDeformationField
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
   NAME TestGridTransformRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
