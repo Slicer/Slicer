@@ -31,6 +31,14 @@
 int qSlicerApplicationTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
+  bool exitWhenDone = false;
+  app.initialize(exitWhenDone);
+
+  if (exitWhenDone)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with initialize()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
