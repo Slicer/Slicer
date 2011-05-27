@@ -22,8 +22,12 @@ namespace eval SWidget {
 namespace eval SWidget set CALLBACK_LEVEL 0
 namespace eval SWidget set VERBOSE_CALLBACKS 0
 namespace eval SWidget set DEBUG_CALLBACKS 1
+namespace eval SWidget set DISABLE_CALLBACKS 0
 namespace eval SWidget {
   proc ProtectedCallback {instance args} {
+    if { $::SWidget::DISABLE_CALLBACKS } {
+      return
+    }
     if { $::SWidget::VERBOSE_CALLBACKS } {
       for {set sp 0} {$sp < $::SWidget::CALLBACK_LEVEL} {incr sp} {
         puts -nonewline " "

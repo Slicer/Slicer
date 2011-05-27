@@ -114,7 +114,11 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   $o(rasToXY) Invert
   set xyRadius "10 0 0"
   if { $radius != "" } {
-    set xyRadius [$o(rasToXY) MultiplyPoint $radius 0 0 0]
+    if { [$o(rasToXY) GetElement 0 0] != 0 } {
+      set xyRadius [$o(rasToXY) MultiplyPoint $radius 0 0 0]
+    } else {
+      set xyRadius [$o(rasToXY) MultiplyPoint 0 $radius 0 0]
+    }
   }
   puts $xyRadius
   foreach {xRadius yRadius zRadius zero} $xyRadius {}
