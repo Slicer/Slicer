@@ -29,6 +29,7 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // CTK includes
+#include <ctkCallback.h>
 #include <ctkLogger.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
@@ -74,6 +75,24 @@ void PythonPreInitialization()
   PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(0);
 }
 #endif
+
+namespace
+{
+//----------------------------------------------------------------------------
+void popupDisclaimerDialog(void * data)
+{
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+    {
+    QString message = QString("Thank you for trying %1!\n\n"
+                              "Please be aware that this software is under active "
+                              "development and has not been tested for accuracy. "
+                              "Many important features are still missing.\n\n"
+                              "This software is not intended for clinical use.")
+      .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
+    QMessageBox::information(reinterpret_cast<qSlicerMainWindow*>(data), "3D Slicer", message);
+    }
+}
+} // end of anonymous namespace
 
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -241,15 +260,13 @@ int main(int argc, char* argv[])
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
+  // Popup disclaimer
+  ctkCallback popupDisclaimerDialogCallback;
   if (window)
     {
-    QString message = QString("Thank you for trying %1!\n\n"
-                              "Please be aware that this software is under active "
-                              "development and has not been tested for accuracy. "
-                              "Many important features are still missing.\n\n"
-                              "This software is not intended for clinical use.")
-      .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
-    QMessageBox::information(window.data(), "3D Slicer", message);
+    popupDisclaimerDialogCallback.setCallback(popupDisclaimerDialog);
+    popupDisclaimerDialogCallback.setCallbackData(window.data());
+    QTimer::singleShot(0, &popupDisclaimerDialogCallback, SLOT(invoke()));
     }
 
 #ifdef Slicer_USE_PYTHONQT
