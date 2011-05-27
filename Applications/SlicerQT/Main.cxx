@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
   QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
   foreach(const QString& name, moduleNames)
     {
-    if ( name.isNull() )
+    if (name.isNull())
       {
       qWarning() << "Encountered null module name";
       continue;
@@ -247,8 +247,6 @@ int main(int argc, char* argv[])
   if (window)
     {
     window->setHomeModuleCurrent();
-
-    // Show main window
     window->show();
     }
 
