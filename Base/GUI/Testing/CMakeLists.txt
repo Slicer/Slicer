@@ -18,13 +18,13 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 
-ADD_TEST(Slicer3GUITest1 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
-ADD_TEST(Slicer3GUITest2 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
-ADD_TEST(Slicer3FiducialsTest1 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
-ADD_TEST(Slicer3FiducialsTest2 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAdd.tcl)
-ADD_TEST(Slicer3FiducialsTestGlyphs ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsGlyphs.tcl)
-ADD_TEST(Slicer3FiducialsTestChangeGlyphs ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAddSymbolScale.tcl)
-ADD_TEST(Slicer3RestoreSceneSnapshotCompareViewTest1 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestRestoreSceneSnapshotCompareView.tcl)
+ADD_TEST(Slicer3GUITest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
+ADD_TEST(Slicer3GUITest2 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
+ADD_TEST(Slicer3FiducialsTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
+ADD_TEST(Slicer3FiducialsTest2 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAdd.tcl)
+ADD_TEST(Slicer3FiducialsTestGlyphs ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsGlyphs.tcl)
+ADD_TEST(Slicer3FiducialsTestChangeGlyphs ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestFiducialsAddSymbolScale.tcl)
+ADD_TEST(Slicer3RestoreSceneSnapshotCompareViewTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestRestoreSceneSnapshotCompareView.tcl)
 
 SET_TESTS_PROPERTIES( Slicer3FiducialsTest1 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )
 SET_TESTS_PROPERTIES( Slicer3FiducialsTest2 PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )

@@ -12,13 +12,13 @@ ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests SlicerBaseGUI)
 
 
-add_test(NAME DiffusionEditorTest COMMAND ${Slicer_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTest.tcl)
+add_test(NAME DiffusionEditorTest COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTest.tcl)
 
-add_test(NAME DiffusionEditorGradients COMMAND ${Slicer_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditor_GradientsTest.tcl)
+add_test(NAME DiffusionEditorGradients COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditor_GradientsTest.tcl)
 
-add_test(NAME DiffusionEditorGlyphsTracts COMMAND ${Slicer_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorGlyphsTractsTest.tcl)
+add_test(NAME DiffusionEditorGlyphsTracts COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorGlyphsTractsTest.tcl)
 
-add_test(NAME DiffusionEditorTensor COMMAND ${Slicer_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTensorTest.tcl)
+add_test(NAME DiffusionEditorTensor COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/DiffusionEditorTensorTest.tcl)
 # Sometimes when the GUI crashes, it won't exit properly, and then 
 # the tests have to wait until they reach 1500 seconds before they time out
 set(SHORT_TEST_TIMEOUT 300)

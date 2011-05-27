@@ -3,7 +3,7 @@ set(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit pr
 
 ADD_TEST(
   NeuroNavTestDependency
-  ${Slicer_EXECUTABLE} --test-mode --script ${NeuroNav_SOURCE_DIR}/Testing/TestDependency.tcl
+  ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${NeuroNav_SOURCE_DIR}/Testing/TestDependency.tcl
   )
 
 set_tests_properties( NeuroNavTestDependency PROPERTIES TIMEOUT ${SHORT_TEST_TIMEOUT} )

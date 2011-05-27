@@ -64,7 +64,7 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 #SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
 
-#ADD_TEST(SlicerAnnotationRulerTest1 ${Slicer_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
+#ADD_TEST(SlicerAnnotationRulerTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
 
 # SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data

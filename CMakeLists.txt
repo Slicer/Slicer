@@ -280,8 +280,8 @@ MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 #-----------------------------------------------------------------------------
 IF(BUILD_TESTING)
   
-  SET(Slicer_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer4)
-  SET(LAUNCH_EXE ${Slicer_EXECUTABLE} --launch)
+  SET(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer4)
+  SET(LAUNCH_EXE ${Slicer_LAUNCHER_EXECUTABLE} --launch)
   
   ENABLE_TESTING()
   

@@ -1486,7 +1486,7 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 # leaks from tcl file
 # set(testname ${CLP}Test2)
-# add_test(NAME ${testname} COMMAND ${Slicer_EXECUTABLE} 
+# add_test(NAME ${testname} COMMAND ${Slicer_LAUNCHER_EXECUTABLE} 
 #  --test-mode 
 #  --script ${Slicer_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  
 #  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp 
