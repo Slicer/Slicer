@@ -566,9 +566,6 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
-  bool testing = false;
-  bool success = true;
-
 #ifdef Slicer_USE_PYTHONQT
 
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
@@ -611,13 +608,13 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       }
 
     // Execute python script
+    bool exitStatus = EXIT_FAILURE;
     if(!pythonScript.isEmpty())
       {
       if (QFile::exists(pythonScript))
         {
-        // TODO Retrieve test status ...
         this->corePythonManager()->executeFile(pythonScript);
-        testing = true;
+        exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
         }
       else
         {
@@ -627,16 +624,18 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     QString pythonCode = options->pythonCode();
     if(!pythonCode.isEmpty())
       {
-      success = this->corePythonManager()->executeString(pythonCode).toBool();
-      testing = true;
+      bool success = this->corePythonManager()->executeString(pythonCode).toBool();
+      if (success)
+        {
+        exitStatus = EXIT_SUCCESS;
+        }
+      }
+    if (this->testAttribute(AA_EnableTesting))
+      {
+      qSlicerCoreApplication::exit(exitStatus);
       }
     }
 #endif
-
-  if (testing)
-    {
-    QApplication::instance()->exit(success? EXIT_SUCCESS : EXIT_FAILURE);
-    }
 }
 
 //-----------------------------------------------------------------------------

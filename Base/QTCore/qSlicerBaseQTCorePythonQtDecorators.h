@@ -47,15 +47,21 @@ public:
 
 public slots:
 
-  // static methods
-  QList<QWidget*> static_qSlicerCoreApplication_allWidgets()
-    { 
-    return qSlicerCoreApplication::allWidgets();
-    }
-
   //----------------------------------------------------------------------------
   // qSlicerCoreApplication
+  
+  // static methods
+  void static_qSlicerCoreApplication_setTestingEnabled()
+    {
+    qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::AA_EnableTesting, true);
+    }
 
+  bool static_qSlicerCoreApplication_testingEnabled()
+    {
+    return qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+    }
+
+  // instance methods
   void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event)
     {
     app->sendEvent(_receiver, _event);

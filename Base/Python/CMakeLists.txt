@@ -5,6 +5,7 @@ SET(Slicer_PYTHON_SCRIPTS
   slicer/cli
   slicer/logic
   slicer/slicerqt
+  slicer/testing
   slicer/util
   slicer/modulelogic/__init__
   slicer/modulemrml/__init__
