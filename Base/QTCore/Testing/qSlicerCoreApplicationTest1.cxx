@@ -18,11 +18,17 @@
 
 ==============================================================================*/
 
+// Slicer includes
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
 // SlicerQT includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerCoreCommandOptions.h"
+#include "qSlicerModuleManager.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerCorePythonManager.h"
+#endif
 
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
@@ -147,6 +153,40 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     std::cerr << "Error in mrmlScene() " << std::endl;
     return EXIT_FAILURE;
     }
+
+#ifdef Slicer_USE_PYTHONQT
+
+  qSlicerCorePythonManager * pythonManager = app.corePythonManager();
+  if (pythonManager)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with  corePythonManager()"
+              << " - NULL pointer is expected." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
+  // will be responsible to delete it
+  app.setCorePythonManager(new qSlicerCorePythonManager());
+
+  pythonManager = app.corePythonManager();
+  if (!pythonManager)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with corePythonManager()"
+              << " - Return a NULL pointer." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QObject * foo = new QObject(&app);
+  foo->setProperty("something", QVariant(7));
+  pythonManager->addObjectToPythonMain("foo", foo);
+  pythonManager->executeString("value = foo.something");
+  if (pythonManager->getVariable("value").toInt() != 7)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with getVariable()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+#endif
 
   std::cout << "TEST PASSED !" << std::endl;
 
