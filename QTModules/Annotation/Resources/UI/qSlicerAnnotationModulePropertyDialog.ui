@@ -159,7 +159,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -222,24 +222,24 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>40.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="textOpacitySliderSpinBoxWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="textOpacitySliderSpinBoxWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -308,12 +308,6 @@
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>4</number>
          </attribute>
          <column>
           <property name="text">
@@ -412,47 +406,47 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget"/>
+          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget" native="true"/>
          </item>
          <item row="1" column="1">
           <widget class="QComboBox" name="pointGlyphTypeComboBox">
@@ -541,21 +535,6 @@
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
-         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderCascadingSectionResizes">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>4</number>
-         </attribute>
-         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
          <column>
           <property name="text">
            <string>Name</string>
@@ -593,8 +572,8 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget_2">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget_2" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
           </widget>
@@ -607,11 +586,11 @@
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget_2">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget_2" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -624,11 +603,11 @@
           </widget>
          </item>
          <item row="5" column="2">
-          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget_2">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget_2" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -641,11 +620,11 @@
           </widget>
          </item>
          <item row="6" column="2">
-          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget_2">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget_2" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -658,11 +637,11 @@
           </widget>
          </item>
          <item row="7" column="2">
-          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget_2">
-           <property name="singleStep">
+          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget_2" native="true">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -688,14 +667,14 @@
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="ctkSliderWidget" name="lineLabelPositionSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineLabelPositionSliderSpinBoxWidget" native="true">
            <property name="toolTip">
             <string>Position the label along the line</string>
            </property>
-           <property name="singleStep">
+           <property name="singleStep" stdset="0">
             <double>0.100000000000000</double>
            </property>
-           <property name="maximum">
+           <property name="maximum" stdset="0">
             <double>1.000000000000000</double>
            </property>
           </widget>
@@ -734,6 +713,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="ROI">
+      <attribute name="title">
+       <string>ROI</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="qMRMLAnnotationROIWidget" name="ROIWidget" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -749,8 +738,15 @@
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qSlicerAnnotationModule.qrc"/>
   <include location="../qSlicerAnnotationModule.qrc"/>
  </resources>
  <connections>

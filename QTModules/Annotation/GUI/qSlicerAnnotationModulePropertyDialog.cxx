@@ -20,6 +20,8 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationLinesNode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLFiducialListNode.h"
 
 //------------------------------------------------------------------------------
@@ -288,6 +290,20 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
     ui.lineDiffuseSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetDiffuse());
     ui.lineSpecularSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetSpecular());
+    }
+ 
+  /// ROI
+  // get the line version of the node
+  vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(mrmlNode);
+  if (roiNode)
+    {
+    ui.tabWidget->setTabEnabled(3, true);
+    ui.ROIWidget->setMRMLAnnotationROINode(roiNode);
+    }
+
+  else
+    {
+    ui.tabWidget->setTabEnabled(3, false);
     }
     /*
    this->setWindowTitle(

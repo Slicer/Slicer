@@ -64,6 +64,8 @@ SET(GUI_SRCS
   GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.cxx
   GUI/qSlicerAnnotationModuleWidget.h
+  GUI/qMRMLAnnotationROIWidget.cxx
+  GUI/qMRMLAnnotationROIWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.cxx
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.cxx
@@ -102,11 +104,14 @@ SET(qt_module_MOC_SRCS
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
+  GUI/qMRMLAnnotationROIWidget.h
+
   )
 
 # UI files
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
+  Resources/UI/qMRMLAnnotationROIWidget.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
   Resources/UI/qSlicerAnnotationModuleSnapShotDialog.ui

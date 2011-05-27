@@ -251,7 +251,10 @@ void vtkMRMLAnnotationROINode::Copy(vtkMRMLNode *anode)
 
   //  vtkObject::Copy(anode);
   vtkMRMLAnnotationROINode *node = (vtkMRMLAnnotationROINode *) anode;
-  this->SetLabelText(node->GetLabelText());
+  if (node->GetLabelText())
+    {
+    this->SetLabelText(node->GetLabelText());
+    }
   this->SetInteractiveMode(node->InteractiveMode);
   this->SetInsideOut(node->InsideOut);
 
