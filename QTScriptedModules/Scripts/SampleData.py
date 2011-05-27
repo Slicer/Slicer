@@ -12,7 +12,7 @@ class SampleData:
     parent.category = "Informatics"
     parent.contributor = "Steve Pieper"
     parent.helpText = """
-The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.  
+The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
     """
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
@@ -22,7 +22,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
-    # trigger the menu to be added when application has started up
+    # Trigger the menu to be added when application has started up
     qt.QTimer.singleShot(0, self.addMenu);
     
 
@@ -73,7 +73,6 @@ class SampleDataWidget:
   def updateGUIFromMRML(self, caller, event):
     pass
 
-  # sets up the widget
   def setup(self):
     samples = (
         ( 'MRHead', self.downloadMRHead ),
@@ -115,7 +114,6 @@ class SampleDataWidget:
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
 
   def downloadVolume(self, uri, name):
-    # start the download
     self.log.insertHtml('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
     self.log.repaint()
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
@@ -124,7 +122,7 @@ class SampleDataWidget:
     if volumeNode:
       storageNode = volumeNode.GetStorageNode()
       storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
-      # automatically select the volume to display
+      # Automatically select the volume to display
       self.log.insertHtml('<i>Displaying...</i>')
       self.log.insertPlainText('\n')
       self.log.repaint()
