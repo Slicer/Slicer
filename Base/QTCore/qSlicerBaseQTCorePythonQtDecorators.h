@@ -19,14 +19,6 @@
 // CTK includes
 #include <ctkAbstractPythonManager.h>
 
-// VTK includes
-#include <vtkInstantiator.h>
-#include <vtkPythonUtil.h>
-#include <vtkPython.h>
-
-// PythonQT includes
-#include <PythonQtObjectPtr.h>
-
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractCoreModule.h"
