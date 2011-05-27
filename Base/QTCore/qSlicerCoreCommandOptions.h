@@ -38,7 +38,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(QString pythonScript READ pythonScript)
   Q_PROPERTY(QString extraPythonScript READ extraPythonScript)
   Q_PROPERTY(QString pythonCode READ pythonCode)
-  Q_PROPERTY(bool exitAppWhenTestsDone READ exitAppWhenTestsDone)
   Q_PROPERTY(bool disableLoadableModule READ disableLoadableModule)
   Q_PROPERTY(bool displayVersionAndExit READ displayVersionAndExit)
   Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit)
@@ -78,9 +77,6 @@ public:
 
   /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;
-
-  /// Return True if application should exit after test are done
-  bool exitAppWhenTestsDone()const;
 
   /// Return True if the loading of Loadable Modules should be disabled
   bool disableLoadableModule()const;

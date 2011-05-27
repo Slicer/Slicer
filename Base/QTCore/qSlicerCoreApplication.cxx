@@ -633,7 +633,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     }
 #endif
 
-  if (options->exitAppWhenTestsDone() && testing)
+  if (testing)
     {
     QApplication::instance()->exit(success? EXIT_SUCCESS : EXIT_FAILURE);
     }
