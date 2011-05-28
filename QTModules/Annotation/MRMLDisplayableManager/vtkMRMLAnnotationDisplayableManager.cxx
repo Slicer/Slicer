@@ -201,6 +201,18 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
         vtkAbstractWidget *widget = this->CreateWidget(annotationNode);
         if (widget)
           {
+          // Add widget to the list
+          this->Helper->Widgets[annotationNode] = widget;
+
+          // Add the node to the list.
+          this->Helper->AnnotationNodeList.push_back(annotationNode);
+
+          // Refresh observers
+          this->SetAndObserveNodes();
+
+          // tear down widget creation
+          this->OnWidgetCreated(widget, annotationNode);
+
           // update the new widget from the node
           this->PropagateMRMLToWidget(annotationNode, widget);
           }
@@ -538,6 +550,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationControlPointModifiedEv
     {
     // Update the standard settings of all widgets.
     this->UpdatePosition(widget, node);
+
+    // Propagate MRML changes to widget
+    this->PropagateMRMLToWidget(annotationNode, widget);
+
     }
 }
 
