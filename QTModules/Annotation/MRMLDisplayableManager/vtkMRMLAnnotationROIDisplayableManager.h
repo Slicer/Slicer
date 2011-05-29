@@ -54,8 +54,13 @@ protected:
 
   /// Propagate properties of MRML node to widget.
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
+
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
+
+  /// Set mrml parent transform to widgets
+  virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget);
+
 
 private:
 

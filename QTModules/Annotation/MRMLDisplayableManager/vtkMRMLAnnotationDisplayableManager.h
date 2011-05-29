@@ -73,6 +73,13 @@ public:
   void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
   void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
+  /// Convert world coordinates to local using mrml parent transform
+  virtual void GetWorldToLocalCoordiantes(vtkMRMLAnnotationNode *node, 
+                                  double *worldCoordinates, double *localCoordinates);
+
+  /// Set mrml parent transform to widgets
+  virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget){};
+
   /// Set/Get the 2d scale factor to divide 3D scale by to show 2D elements appropriately (usually set to 300)
   vtkSetMacro(ScaleFactor2D, double);
   vtkGetMacro(ScaleFactor2D, double);

@@ -571,6 +571,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedE
     vtkErrorMacro("OnMRMLAnnotationNodeTransformModifiedEvent - Can not access node.")
     return;
     }
+
+  vtkAbstractWidget *widget = this->Helper->GetWidget(annotationNode);
+  if (widget)
+    {
+    // Propagate MRML changes to widget
+    this->PropagateMRMLToWidget(annotationNode, widget);
+    }
+
   // Update the standard settings of all widgets.
   this->Helper->UpdateWidget(annotationNode);
 }
@@ -1430,3 +1438,46 @@ void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidge
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateWidgetToMRML should be overloaded!");
 }
+  /// Convert world coordinates to local using mrml parent transform
+void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordiantes(vtkMRMLAnnotationNode *node, 
+                                                                     double *worldCoordinates, 
+                                                                     double *localCoordinates)
+{
+  if (node == NULL)
+    {
+    vtkErrorMacro("GetWorldToLocalCoordiantes: node is null");
+    return;
+    }
+
+  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    transformToWorld->Invert();
+    
+    double p[4];
+    p[3] = 1;
+    int i;
+    for (i=0; i<3; i++)
+      {
+      p[i] = worldCoordinates[i];
+      }
+    double *xyz = transformToWorld->MultiplyDoublePoint(p);
+    for (i=0; i<3; i++)
+      {
+      localCoordinates[i] = xyz[i];
+      }
+    }
+  else
+    {
+    for (int i=0; i<3; i++)
+      {
+      localCoordinates[i] = worldCoordinates[i];
+      }
+    }
+
+}
+

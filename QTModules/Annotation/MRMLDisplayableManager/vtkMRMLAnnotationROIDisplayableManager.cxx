@@ -3,6 +3,9 @@
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
+
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
@@ -66,9 +69,13 @@ public:
       // sanity checks end
 
       // the interaction with the widget ended, now propagate the changes to MRML
-      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
-
-      }
+      vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(m_Node);
+      if (roiNode->GetInteractiveMode() || 
+           (!roiNode->GetInteractiveMode() && event == vtkCommand::EndInteractionEvent))
+        {
+        this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
+        }
+    }
   }
 
   void SetWidget(vtkAbstractWidget *w)
@@ -126,7 +133,9 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   boxWidget->CreateDefaultRepresentation();
 
-  vtkSlicerBoxRepresentation * boxRepresentation = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkSlicerBoxRepresentation *boxRepresentation = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+
+  boxRepresentation->SetPlaceFactor(1.0);
 
   // we place the widget around 0,0,0
   double bounds[6] = {0,0,0,0,0,0};
@@ -286,44 +295,37 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSlicerBoxRepresentation * rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
-
-  vtkTransform* transform = vtkTransform::New();
-  rep->GetTransform(transform);
-
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-
-  // we need to save the origin here in the matrix
-  //double origin[3] = {0,0,0};
-  double origin[3];
-  if (roiNode->GetXYZ(origin))
+  
+  if (rep) 
     {
-    matrix->SetElement(0,3,origin[0]);
-    matrix->SetElement(1,3,origin[1]);
-    matrix->SetElement(2,3,origin[2]);
-    }
-  // we need to save the radius here in the matrix
-  //double radius[3] = {0,0,0};
-  double radius[3];
-  if (roiNode->GetRadiusXYZ(radius))
-    {
-    matrix->SetElement(0,0,radius[0]*2.0);
-    matrix->SetElement(1,1,radius[1]*2.0);
-    matrix->SetElement(2,2,radius[2]*2.0);
-    }
-  // we set the matrix to the transform
-  transform->SetMatrix(matrix);
+    // update widget from mrml
+    double xyz[3];
+    double rxyz[3];
+    roiNode->GetXYZ(xyz);
+    roiNode->GetRadiusXYZ(rxyz);
 
-  // we set the transform to the boxRepresentation
-  // the transform includes the matrix with the values from MRML
-  rep->SetTransform(transform);
+    double bounds[6];
+    for (int i=0; i<3; i++)
+      {
+      bounds[  i] = xyz[i]-rxyz[i];
+      bounds[3+i] = xyz[i]+rxyz[i];
+      }
+    double b[6];
+    b[0] = bounds[0];
+    b[1] = bounds[3];
+    b[2] = bounds[1];
+    b[3] = bounds[4];
+    b[4] = bounds[2];
+    b[5] = bounds[5];
+
+    rep->PlaceWidget(b);
+    }
+
+  this->SetParentTransformToWidget(roiNode, boxWidget);
 
   // re-render the widget
   rep->NeedToRenderOn();
   boxWidget->Modified();
-
-  // cleanup
-  matrix->Delete();
-  transform->Delete();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -378,55 +380,23 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkSlicerBoxRepresentation * rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
+  double extents[3];
+  double center[3];
+  rep->GetExtents(extents);
+  rep->GetCenter(center);
 
-  vtkTransform* transform = vtkTransform::New();
-  rep->GetTransform(transform);
+  this->GetWorldToLocalCoordiantes(roiNode, center, center);
 
-  vtkMatrix4x4* matrix = transform->GetMatrix();
-
-  //std::cout << "Just the matrix before saving to MRML." << std::endl;
-  //matrix->PrintSelf(std::cout,vtkIndent(1));
-
-  // we need to save the origin here in the matrix
-  double origin[3] = {0,0,0};
-  origin[0] = matrix->GetElement(0,3);
-  origin[1] = matrix->GetElement(1,3);
-  origin[2] = matrix->GetElement(2,3);
-
-  double roiNodeOrigin[3];
-  roiNode->GetXYZ(roiNodeOrigin);
-  if (this->GetWorldCoordinatesChanged(origin,roiNodeOrigin))
-    {
-    // save only if the coordinates really changed
-    roiNode->SetXYZ(origin);
-    }
-
-  // we need to save the radius here in the matrix
-  double radius[3] = {0,0,0};
-  radius[0] = matrix->GetElement(0,0)/2.0;
-  radius[1] = matrix->GetElement(1,1)/2.0;
-  radius[2] = matrix->GetElement(2,2)/2.0;
-
-  double roiNodeRadius[3];
-  roiNode->GetRadiusXYZ(roiNodeRadius);
-  if (this->GetWorldCoordinatesChanged(radius,roiNodeRadius))
-    {
-    // save only if the radius really changed
-    roiNode->SetRadiusXYZ(radius);
-    }
-
-  //roiNode->PrintAnnotationInfo(std::cout, vtkIndent(1), 1);
-
-  // cleanup
-  transform->Delete();
+  roiNode->SetXYZ(center[0], center[1], center[2] );
+  roiNode->SetRadiusXYZ(0.5*extents[0], 0.5*extents[1], 0.5*extents[2] );
 
   // save the current view
   roiNode->SaveView();
 
   // enable processing of modified events
   roiNode->DisableModifiedEventOff();
-
   roiNode->Modified();
+
   roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
 
   // This displayableManager should now consider ModifiedEvent again
@@ -509,3 +479,31 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     }
 
   }
+
+void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget)
+{
+  if (!node || !widget)
+    {
+    return;
+    }
+
+  vtkSlicerBoxRepresentation *rep = vtkSlicerBoxRepresentation::SafeDownCast(widget->GetRepresentation());
+
+  // get the nodes's transform node
+  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
+  if (rep != NULL && tnode != NULL && tnode->IsLinear())
+    {
+    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+
+    vtkSmartPointer<vtkTransform> xform =  vtkSmartPointer<vtkTransform>::New();
+    xform->Identity();
+    xform->SetMatrix(transformToWorld);
+    rep->SetTransform(xform);
+
+    widget->InvokeEvent(vtkCommand::EndInteractionEvent);
+    }
+}
+
