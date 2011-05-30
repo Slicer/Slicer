@@ -111,8 +111,8 @@ public:
   void AddColorFile(const char *fileName, std::vector<std::string> *Files);
 //ETX
   ///
-  /// load in a color file, creating a storage node. Returns 1 on success,
-  /// 0 on failure.
+  /// load in a color file, creating a storage node. Returns a pointer to the
+  /// created node on success, 0 on failure.
   vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = NULL);
 
   ///

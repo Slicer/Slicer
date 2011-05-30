@@ -190,9 +190,10 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
   if (fstr.is_open())
     {
     // clear out the table
+    int wasModifying = colorNode->StartModify();
     colorNode->SetTypeToFile();
-    colorNode->GetLookupTable()->SetNumberOfTableValues(0);
-    colorNode->ClearNames();
+    colorNode->NamesInitialisedOff();
+
     char line[1024];
     // save the valid lines in a vector, parse them once know the max id
     std::vector<std::string>lines;
@@ -233,17 +234,20 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkDebugMacro("The largest id is " << maxID);
     if (maxID > this->MaximumColorID)
       {
-      vtkErrorMacro("ReadData: maximum color id " << maxID << " is > " << this->MaximumColorID << ", invalid color file: " << this->GetFileName());
+      vtkErrorMacro("ReadData: maximum color id " << maxID << " is > "
+                    << this->MaximumColorID << ", invalid color file: "
+                    << this->GetFileName());
+      colorNode->SetNumberOfColors(0);
+      colorNode->EndModify(wasModifying);
       return 0;
       }
-    colorNode->SetNumberOfColors(maxID + 1); // extra one for zero, also
-                                             // resizes the names array
-    colorNode->GetLookupTable()->SetNumberOfColors(maxID + 1);
+    // extra one for zero, also resizes the names array
+    colorNode->SetNumberOfColors(maxID + 1);
     colorNode->GetLookupTable()->SetTableRange(0, maxID);
     // init the table to black/opactity 0, just in case we're missing values
     for (int i = 0; i < maxID+1; i++)
       {
-      colorNode->GetLookupTable()->SetTableValue(i, 0.0, 0.0, 0.0, 0.0);
+      colorNode->SetColor(i, 0.0, 0.0, 0.0, 0.0);
       } 
     for (unsigned int i = 0; i < lines.size(); i++)
       {
@@ -268,17 +272,15 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
         {
         vtkDebugMacro("(first ten) Adding colour at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
         }
-      if (colorNode->SetColorName(id, name.c_str()) != 0)
-        {
-        colorNode->GetLookupTable()->SetTableValue(id, r, g, b, a);
-        }
-      else
+      if (colorNode->SetColor(id, name.c_str(), r, g, b, a) == 0)
         {
         vtkWarningMacro("ReadData: unable to set color " << id << " with name " << name.c_str() << ", breaking the loop over " << lines.size() << " lines in the file " << this->FileName);
+        colorNode->EndModify(wasModifying);
         return 0;
         }
       }
     colorNode->NamesInitialisedOn();
+    colorNode->EndModify(wasModifying);
     }
   else
     {

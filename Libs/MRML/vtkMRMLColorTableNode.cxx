@@ -1510,9 +1510,10 @@ void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, doubl
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, double g, double b, double a)
 {
-  if (this->GetType() != this->User)
+  if (this->GetType() != this->User &&
+      this->GetType() != this->File)
     {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
+      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
       return 0;
     }
   if (entry < 0 ||
@@ -1533,16 +1534,17 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, doubl
     }
 
   // trigger a modified event
-  this->InvokeEvent (vtkCommand::ModifiedEvent);
+  this->Modified();
   return 1;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, double a)
 {
-  if (this->GetType() != this->User)
+  if (this->GetType() != this->User &&
+      this->GetType() != this->File)
     {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
+      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
       return 0;
     }
   if (entry < 0 ||
@@ -1560,16 +1562,17 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
   this->SetNameFromColor(entry);
 
   // trigger a modified event
-  this->InvokeEvent (vtkCommand::ModifiedEvent);
+  this->Modified();
   return 1;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 {
-  if (this->GetType() != this->User)
+  if (this->GetType() != this->User &&
+      this->GetType() != this->File)
     {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
+      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
       return 0;
     }
   if (entry < 0 ||
@@ -1587,16 +1590,17 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
   this->SetNameFromColor(entry);
 
   // trigger a modified event
-  this->InvokeEvent (vtkCommand::ModifiedEvent);
+  this->Modified();
   return 1;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
 {
-  if (this->GetType() != this->User)
+  if (this->GetType() != this->User &&
+      this->GetType() != this->File)
     {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User\n");
+      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
       return 0;
     }
   if (entry < 0 ||
@@ -1614,7 +1618,7 @@ int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
   this->SetNameFromColor(entry);
 
   // trigger a modified event
-  this->InvokeEvent (vtkCommand::ModifiedEvent);
+  this->Modified();
   return 1;
 }
 

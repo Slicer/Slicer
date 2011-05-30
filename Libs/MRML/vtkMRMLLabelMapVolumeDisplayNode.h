@@ -25,7 +25,8 @@
 
 #include "vtkImageData.h"
 #include "vtkImageMapToColors.h"
-
+#include <vtkLookupTable.h>
+#include <cassert>
 
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
@@ -67,6 +68,9 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
       {
       return NULL;
       }
+    assert(!this->MapToColors->GetLookupTable() ||
+           !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
+           vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
     this->MapToColors->Update();
     return this->MapToColors->GetOutput();
     };
