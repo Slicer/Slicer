@@ -36,6 +36,7 @@ SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 #
 # Python scripts
 #
+
 SET(TEST_NOMAINWINDOW_SCRIPTS
   SlicerTestingExitSuccessTest.py
   SlicerTestingExitFailureTest.py
@@ -54,7 +55,7 @@ MACRO(SLICER_ADD_PYTHON_TEST)
   ADD_TEST(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-    --no-splash ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
+    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
 ENDMACRO()
 
