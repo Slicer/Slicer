@@ -284,6 +284,7 @@ IF(BUILD_TESTING)
   SET(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
   INCLUDE(CTest)
+  INCLUDE(SlicerMacroPythonTesting)
 
   INCLUDE(MIDAS)
   SET(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")

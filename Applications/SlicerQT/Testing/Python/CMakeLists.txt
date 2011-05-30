@@ -1,6 +1,6 @@
 
 #
-# Python code
+# Check if '--python-code' / 'slicer.testing' works as expected
 #
 
 ADD_TEST(
@@ -34,62 +34,26 @@ ADD_TEST(
 SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
 
 #
-# Python scripts
+# Check if '--python-scripts' / 'slicer.testing' works as expected
 #
 
-SET(TEST_NOMAINWINDOW_SCRIPTS
-  SlicerTestingExitSuccessTest.py
-  SlicerTestingExitFailureTest.py
-  )
+SLICER_ADD_PYTHON_TEST(
+  SCRIPT SlicerTestingExitSuccessTest.py
+  SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
 
-SET(TEST_SCRIPTS
-  ${TEST_NOMAINWINDOW_SCRIPTS}
-  )
-
-MACRO(SLICER_ADD_PYTHON_TEST)
-  set(options)
-  set(oneValueArgs TESTNAME_PREFIX SLICER_ARGS SCRIPT)
-  set(multiValueArgs SCRIPT_ARGS)
-  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
-  ADD_TEST(
-    NAME py_${MY_TESTNAME_PREFIX}${test_name}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
-    )
-ENDMACRO()
-
-FOREACH(script ${TEST_NOMAINWINDOW_SCRIPTS})
-  SLICER_ADD_PYTHON_TEST(SCRIPT ${script} SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
-  #SET_TESTS_PROPERTIES(py_${test_name} PROPERTIES RUN_SERIAL TRUE)
-ENDFOREACH()
-
+SLICER_ADD_PYTHON_TEST(
+  SCRIPT SlicerTestingExitFailureTest.py
+  SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
 SET_TESTS_PROPERTIES(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
-FOREACH(script ${TEST_SCRIPTS})
-  SLICER_ADD_PYTHON_TEST(SCRIPT ${script})
-  #SET_TESTS_PROPERTIES(py_${test_name} PROPERTIES RUN_SERIAL TRUE)
-ENDFOREACH()
+SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitSuccessTest.py)
 
+SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitFailureTest.py)
 SET_TESTS_PROPERTIES(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 #
-# Unittests
+# Check if 'slicer.testing.runUnitTest()' works as expected
 #
-
-MACRO(SLICER_ADD_PYTHON_UNITTEST)
-  set(options)
-  set(oneValueArgs TESTNAME_PREFIX SCRIPT)
-  set(multiValueArgs SLICER_ARGS)
-  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
-  ADD_TEST(
-    NAME py_${MY_TESTNAME_PREFIX}${test_name}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS}
-    --python-code "import slicer.testing; slicer.testing.runUnitTest('${CMAKE_CURRENT_SOURCE_DIR}', '${test_name}')"
-    )
-ENDMACRO()
 
 SLICER_ADD_PYTHON_UNITTEST(
   SCRIPT SlicerUnitTestTest.py
