@@ -48,8 +48,8 @@ SET(TEST_SCRIPTS
 
 MACRO(SLICER_ADD_PYTHON_TEST)
   set(options)
-  set(oneValueArgs TESTNAME_PREFIX SLICER_ARGS SCRIPT SCRIPT_ARGS)
-  set(multiValueArgs)
+  set(oneValueArgs TESTNAME_PREFIX SLICER_ARGS SCRIPT)
+  set(multiValueArgs SCRIPT_ARGS)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   ADD_TEST(
