@@ -1116,16 +1116,16 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
 
     // we will get the transformation matrix to convert display coordinates to RAS
 
-    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
-    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+//    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+//    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
 
-    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
-    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
+//    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
+//    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
 
-    float tempX = x / windowWidth;
-    float tempY = (windowHeight - y) / windowHeight;
+//    float tempX = x / windowWidth;
+//    float tempY = (windowHeight - y) / windowHeight;
 
-    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
+//    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
 
     vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
 
@@ -1438,14 +1438,16 @@ void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidge
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateWidgetToMRML should be overloaded!");
 }
-  /// Convert world coordinates to local using mrml parent transform
-void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordiantes(vtkMRMLAnnotationNode *node, 
+
+//---------------------------------------------------------------------------
+/// Convert world coordinates to local using mrml parent transform
+void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnnotationNode *node, 
                                                                      double *worldCoordinates, 
                                                                      double *localCoordinates)
 {
   if (node == NULL)
     {
-    vtkErrorMacro("GetWorldToLocalCoordiantes: node is null");
+    vtkErrorMacro("GetWorldToLocalCoordinates: node is null");
     return;
     }
 

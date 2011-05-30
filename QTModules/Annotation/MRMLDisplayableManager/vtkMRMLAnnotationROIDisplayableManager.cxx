@@ -385,7 +385,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   rep->GetExtents(extents);
   rep->GetCenter(center);
 
-  this->GetWorldToLocalCoordiantes(roiNode, center, center);
+  this->GetWorldToLocalCoordinates(roiNode, center, center);
 
   roiNode->SetXYZ(center[0], center[1], center[2] );
   roiNode->SetRadiusXYZ(0.5*extents[0], 0.5*extents[1], 0.5*extents[2] );
