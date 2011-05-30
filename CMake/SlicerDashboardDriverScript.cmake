@@ -169,9 +169,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Build top level
     #-----------------------------------------------------------------------------
+    set(build_errors)
     if (run_ctest_with_build)
       message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
-      ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
+      ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
       ctest_submit(PARTS Build)
     endif()
     
@@ -223,46 +224,49 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     if (WITH_PACKAGES AND run_ctest_with_packages)
       message("----------- [ WITH_PACKAGES ] -----------")
-      
-      #-----------------------------------------------------------------------------
-      # Build and upload Slicer packages
-      #-----------------------------------------------------------------------------
-      include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
-      set(packages)
-      message("Packaging ...")
-      SlicerFunctionCTestPackage(
-        BINARY_DIR ${slicer_build_dir} 
-        CONFIG ${CTEST_BUILD_CONFIGURATION}
-        RETURN_VAR packages)
-      message("Uploading ...")
-      foreach(p ${packages})
-        ctest_upload(FILES ${p})
-        ctest_submit(PARTS Upload)
-      endforeach()
-      
-      #-----------------------------------------------------------------------------
-      # Build and upload extension packages
-      #-----------------------------------------------------------------------------
-      if(WITH_EXTENSIONS)
-        # Collect extension description file (*.s4ext)
-        file(GLOB_RECURSE s4extfiles "${CTEST_SOURCE_DIRECTORY}/Extensions/*.s4ext")
-        foreach(file ${s4extfiles})
-          # Extract file basename
-          get_filename_component(extension_name ${file} NAME_WE)
-          message("Packaging extension ${extension_name} ...")
-          set(extension_packages)
-          SlicerFunctionCTestPackage(
-            BINARY_DIR ${CTEST_BINARY_DIRECTORY}/Extensions/${extension_name}-build
-            CONFIG ${CTEST_BUILD_CONFIGURATION}
-            RETURN_VAR extension_packages)
-          message("Uploading extension ${extension_name} ...")
-          foreach(p ${extension_packages})
-            ctest_upload(FILES ${p})
-            ctest_submit(PARTS Upload)
-          endforeach()
+
+      if (build_errors GREATER "0")
+        message("Build Errors Detected: ${build_errors}. Aborting package generation")
+      else()
+        #-----------------------------------------------------------------------------
+        # Build and upload Slicer packages
+        #-----------------------------------------------------------------------------
+        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
+        set(packages)
+        message("Packaging ...")
+        SlicerFunctionCTestPackage(
+          BINARY_DIR ${slicer_build_dir} 
+          CONFIG ${CTEST_BUILD_CONFIGURATION}
+          RETURN_VAR packages)
+        message("Uploading ...")
+        foreach(p ${packages})
+          ctest_upload(FILES ${p})
+          ctest_submit(PARTS Upload)
         endforeach()
+        
+        #-----------------------------------------------------------------------------
+        # Build and upload extension packages
+        #-----------------------------------------------------------------------------
+        if(WITH_EXTENSIONS)
+          # Collect extension description file (*.s4ext)
+          file(GLOB_RECURSE s4extfiles "${CTEST_SOURCE_DIRECTORY}/Extensions/*.s4ext")
+          foreach(file ${s4extfiles})
+            # Extract file basename
+            get_filename_component(extension_name ${file} NAME_WE)
+            message("Packaging extension ${extension_name} ...")
+            set(extension_packages)
+            SlicerFunctionCTestPackage(
+              BINARY_DIR ${CTEST_BINARY_DIRECTORY}/Extensions/${extension_name}-build
+              CONFIG ${CTEST_BUILD_CONFIGURATION}
+              RETURN_VAR extension_packages)
+            message("Uploading extension ${extension_name} ...")
+            foreach(p ${extension_packages})
+              ctest_upload(FILES ${p})
+              ctest_submit(PARTS Upload)
+            endforeach()
+          endforeach()
+        endif()
       endif()
-      
     endif()
     
     #-----------------------------------------------------------------------------
