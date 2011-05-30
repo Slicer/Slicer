@@ -73,3 +73,25 @@ ENDFOREACH()
 
 SET_TESTS_PROPERTIES(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
+#
+# Unittests
+#
+
+MACRO(SLICER_ADD_PYTHON_UNITTEST)
+  set(options)
+  set(oneValueArgs TESTNAME_PREFIX SCRIPT)
+  set(multiValueArgs SLICER_ARGS)
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
+  ADD_TEST(
+    NAME py_${MY_TESTNAME_PREFIX}${test_name}
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS}
+    --python-code "import slicer.testing; slicer.testing.runUnitTest('${CMAKE_CURRENT_SOURCE_DIR}', '${test_name}')"
+    )
+ENDMACRO()
+
+SLICER_ADD_PYTHON_UNITTEST(
+  SCRIPT SlicerUnitTestTest.py
+  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
+  TESTNAME_PREFIX nomainwindow_)

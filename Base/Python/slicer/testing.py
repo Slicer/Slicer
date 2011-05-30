@@ -24,3 +24,16 @@ def exitFailure(message = ""):
   _status = EXIT_FAILURE
   raise Exception(message)
 
+def runUnitTest(path, testname):
+  import sys
+  import unittest
+  setEnabled()
+  sys.path.append(path)
+  print "-------------------------------------------"
+  print "path: %s\ntestname: %s" % (path, testname)
+  print "-------------------------------------------"
+  suite = unittest.TestLoader().loadTestsFromName(testname)
+  result = unittest.TextTestRunner(verbosity=2).run(suite)
+  if result.wasSuccessful():
+    global _status
+    _status = EXIT_SUCCESS
