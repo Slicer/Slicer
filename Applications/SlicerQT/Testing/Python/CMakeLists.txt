@@ -1,4 +1,41 @@
 
+#
+# Python code
+#
+
+ADD_TEST(
+  NAME py_nomainwindow_SlicerPythonCodeTest1
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "exit(slicer.util.EXIT_SUCCESS)"
+  )
+
+ADD_TEST(
+  NAME py_nomainwindow_SlicerPythonCodeTest2
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "exit(slicer.util.EXIT_FAILURE)"
+  )
+SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
+
+ADD_TEST(
+  NAME py_nomainwindow_SlicerPythonCodeTest3
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitSuccess()"
+  )
+
+ADD_TEST(
+  NAME py_nomainwindow_SlicerPythonCodeTest4
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitFailure('Should fail !')"
+  )
+SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
+
+#
+# Python scripts
+#
 SET(TEST_NOMAINWINDOW_SCRIPTS
   SlicerTestingExitSuccessTest.py
   SlicerTestingExitFailureTest.py

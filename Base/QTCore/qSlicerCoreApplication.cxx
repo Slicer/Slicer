@@ -624,11 +624,8 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     QString pythonCode = options->pythonCode();
     if(!pythonCode.isEmpty())
       {
-      bool success = this->corePythonManager()->executeString(pythonCode).toBool();
-      if (success)
-        {
-        exitStatus = EXIT_SUCCESS;
-        }
+      this->corePythonManager()->executeString(pythonCode);
+      exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
       }
     if (this->testAttribute(AA_EnableTesting))
       {
