@@ -116,7 +116,6 @@ void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 {
-  this->ReadData(parentNode);
 }
 
 //----------------------------------------------------------------------------
