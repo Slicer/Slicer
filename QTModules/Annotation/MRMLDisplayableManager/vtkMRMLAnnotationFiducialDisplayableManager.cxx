@@ -541,10 +541,9 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
     newCoords[0] = worldCoordinates1[0];
     newCoords[1] = worldCoordinates1[1];
     newCoords[2] = worldCoordinates1[2];
-    double distance = sqrt(vtkMath::Distance2BetweenPoints(currentCoords, newCoords));
     if (this->GetWorldCoordinatesChanged(currentCoords, newCoords))
       {
-      vtkDebugMacro("PropagateWidgetToMRML: Distance = " << distance << ", position changed.");
+      vtkDebugMacro("PropagateWidgetToMRML: position changed.");
       positionChanged = true;
       }
     }

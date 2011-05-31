@@ -336,13 +336,13 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
       }
     return wrappedText;
     }
-  int spaceLeft = maxCharPerLine;
+  size_t spaceLeft = maxCharPerLine;
   vtkDebugMacro("spaceLeft = " << spaceLeft );
   char *line = (char *)(inputText.c_str());
   char *ptr = strtok(line, " ");
   while (ptr != NULL)
     {
-    int wordWidth = strlen(ptr);
+    size_t wordWidth = strlen(ptr);
     vtkDebugMacro("ptr = '" << ptr << "', len = " << wordWidth << ", spaceLeft = " << spaceLeft << ", wrappedText is currently = \n'" << wrappedText.c_str() << "'" );
     // check if adding this word plus a space goes over the line limit
     if (wordWidth + 1 <= spaceLeft)

@@ -277,8 +277,7 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     if (this->IsCorrectDisplayableManager())
       {
       int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
-      int persistence =  interactionNode->GetPlaceModePersistence();
-      vtkDebugMacro("Annotation DisplayableManager " << this->m_Focus << ": Processing mrml events, got an event on the interaction node, currentInteractionMode = " << currentInteractionMode << ", persistence = " << persistence);
+      vtkDebugMacro("Annotation DisplayableManager " << this->m_Focus << ": Processing mrml events, got an event on the interaction node, currentInteractionMode = " << currentInteractionMode);
       if (currentInteractionMode == vtkMRMLInteractionNode::PickManipulate)
         {
         // turn on processing events on the widgets
