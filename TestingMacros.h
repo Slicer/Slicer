@@ -158,6 +158,29 @@
       }                                                     \
   }
 
+/// Test an unsigned integer variable on object over the range, calls test set get in
+/// with min - epsilon, min, min + epsilon, (min+max)/2, max - epsilon, max,
+/// max + epsilon, where first and last test should report errors
+/// epsilon defined as 1
+#define TEST_SET_GET_UNSIGNED_INT_RANGE( object, variable, min, max ) \
+  {                                                         \
+    unsigned int epsilon = 1;                               \
+    unsigned int val = min - epsilon;                      \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = min;                                              \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = min + epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = (min + max) / 2;                                  \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max - epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max;                                              \
+    TEST_SET_GET_INT( object, variable, val);               \
+    val = max + epsilon;                                    \
+    TEST_SET_GET_INT( object, variable, val);               \
+  }
+
 /// test a double variable on the object by setting it to input value using Set, and
 /// testing it via the Get
 #define TEST_SET_GET_DOUBLE( object, variable, value )    \
