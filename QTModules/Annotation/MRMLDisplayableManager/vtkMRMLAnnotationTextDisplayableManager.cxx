@@ -297,26 +297,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   // update widget text
   if (textDisplayNode->GetUseLineWrap())
     {
-    std::string wrappedText = std::string(textNode->GetText(0));
-    size_t maxCharPerLine = (size_t)(textDisplayNode->GetMaxCharactersPerLine());
-    int numLines = 1;
-    // loop over lines
-    while (wrappedText.length() > numLines*maxCharPerLine)
-      {
-      // find the last space before the max characters per line for this line
-      size_t lastSpace = wrappedText.find_last_of(" ", numLines*maxCharPerLine);
-      if (lastSpace == std::string::npos)
-        {
-        // no space in the string before the max char limit, force a line break midword
-        wrappedText = wrappedText.insert(numLines*maxCharPerLine, std::string("\n"));
-        }
-      else
-        {
-        // change the space to a line feed
-        wrappedText = wrappedText.replace(lastSpace, 1, std::string("\n"));
-        }
-      ++numLines;
-      }
+    std::string wrappedText = textDisplayNode->GetLineWrappedText(textNode->GetText(0));
     captionActor->SetCaption(wrappedText.c_str());
     }
   else
@@ -462,10 +443,11 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
   textNode->SetCaptionCoordinates(worldCoordinates2);
   
-  // update mrml text
+  // don't update mrml text, it can't be edited in 3D and this may take the
+  // line wrapped text and put it into the node
   if (captionActor)
     {
-    textNode->SetText(0,captionActor->GetCaption(),1,1);
+//    textNode->SetText(0,captionActor->GetCaption(),1,1);
     }
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = textNode->GetAnnotationTextDisplayNode();
   if (!textDisplayNode)
@@ -483,7 +465,9 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   // update mrml textscale
   if (captionActor)
     {
-    textDisplayNode->SetTextScale(captionActor->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+    double fontSize = captionActor->GetTextActor()->GetScaledTextProperty()->GetFontSize();
+    std::cout << "WidgetToMRML: fontSize = " << fontSize << std::endl;
+    textDisplayNode->SetTextScale(fontSize);
     }
   // update mrml selected color
   //textDisplayNode->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());

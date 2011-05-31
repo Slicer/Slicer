@@ -122,6 +122,13 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
   /// Restore an attached backup of this node.
   void RestoreBackup();
 
+  /// Utility function to return a new string with \n's inserted in the input
+  /// string to bring each line down below the MaxCharactersPerLine. Tries to
+  /// insert breaks between words, but will force breaks where there are no
+  /// spaces if necessary
+//BTX
+  std::string GetLineWrappedText(std::string inputText);
+//ETX
 protected:
   vtkMRMLAnnotationTextDisplayNode();
   ~vtkMRMLAnnotationTextDisplayNode() { }

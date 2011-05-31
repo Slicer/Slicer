@@ -235,7 +235,7 @@ vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ShowBorder: " << (this->ShowBorder ? "true" : "false") << std::endl;
   os << indent << "ShowLeader: " << (this->ShowLeader ? "true" : "false") << std::endl;
   os << indent << "ShowArrowHead: " << (this->ShowArrowHead ? "true" : "false") << std::endl;
-  os << indent << "UseThreeDimensionalLeader" << (this->UseThreeDimensionalLeader ? "true" : "false") << std::endl;
+  os << indent << "UseThreeDimensionalLeader: " << (this->UseThreeDimensionalLeader ? "true" : "false") << std::endl;
   os << indent << "LeaderGlyphSize: " << this->LeaderGlyphSize << std::endl;
   os << indent << "MaximumLeaderGlyphSize: " << this->MaximumLeaderGlyphSize << std::endl;
   os << indent << "Padding: " << this->Padding << std::endl;
@@ -308,3 +308,130 @@ void vtkMRMLAnnotationTextDisplayNode::RestoreBackup()
 
 }
 
+//----------------------------------------------------------------------------
+// returns the line wrapped version of the input string, using the current
+// setting of MaxCharactersPerLine
+std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inputText)
+{
+  std::string wrappedText;
+  size_t maxCharPerLine = (size_t)(this->GetMaxCharactersPerLine());
+  
+  
+  if (inputText.find_first_of(' ') == std::string::npos)
+    {
+    vtkDebugMacro("There are no spaces in the line '" << inputText.c_str() << "'" );
+    // there are no spaces in the line, so grab max chars at a time and line
+    // break
+    size_t currentChar = 0;
+    while (currentChar < inputText.size())
+      {
+      std::string oneLine = inputText.substr(currentChar, maxCharPerLine);
+      wrappedText.append(oneLine);
+      currentChar += maxCharPerLine;
+      if (currentChar < inputText.size())
+        {
+        wrappedText.push_back('\n');
+        }
+      vtkDebugMacro("\tAppended a line '" << oneLine << "', currentChar = " << currentChar );
+      }
+    return wrappedText;
+    }
+  int spaceLeft = maxCharPerLine;
+  vtkDebugMacro("spaceLeft = " << spaceLeft );
+  char *line = (char *)(inputText.c_str());
+  char *ptr = strtok(line, " ");
+  while (ptr != NULL)
+    {
+    int wordWidth = strlen(ptr);
+    vtkDebugMacro("ptr = '" << ptr << "', len = " << wordWidth << ", spaceLeft = " << spaceLeft << ", wrappedText is currently = \n'" << wrappedText.c_str() << "'" );
+    // check if adding this word plus a space goes over the line limit
+    if (wordWidth + 1 <= spaceLeft)
+      {
+      // add this word and a space
+      vtkDebugMacro("space to add this word '" << ptr << "' and a space" );
+      wrappedText.append(std::string(ptr));
+      wrappedText.push_back(' ');
+      spaceLeft = spaceLeft - (wordWidth + 1);
+      }
+    else if (wordWidth <= spaceLeft)
+      {
+      // room to add this word but no space
+      vtkDebugMacro("wordWidth " << wordWidth << " is less than space left " << spaceLeft << ", adding it" );
+      wrappedText.append(std::string(ptr));
+      wrappedText.push_back('\n');
+      spaceLeft = maxCharPerLine;
+      }
+    else if (wordWidth > maxCharPerLine)
+      {
+      // start it on it's own line and break it up
+      // remove any extra space from the line before
+      size_t lastSpace = wrappedText.find_last_of(' ');
+      if (lastSpace == wrappedText.size()-1)
+        {
+        wrappedText.erase(lastSpace);
+        }
+      // now add the new line
+      wrappedText.push_back('\n');
+      std::string bigWord = std::string(ptr);
+      size_t currentChar = 0;
+      while (currentChar < bigWord.size())
+        {
+        std::string oneLine = bigWord.substr(currentChar, maxCharPerLine);
+        wrappedText.append(oneLine);
+        spaceLeft = maxCharPerLine - oneLine.length();
+        currentChar += oneLine.length();
+        if (currentChar < bigWord.size())
+          {
+          wrappedText.push_back('\n');
+          spaceLeft = maxCharPerLine;
+          }
+        else
+          {
+          // finish with a space
+          wrappedText.push_back(' ');
+          spaceLeft--;
+          }
+            
+        }
+      }
+    else
+      {
+      // insert a line break before this word
+      vtkDebugMacro("Adding a line break and this word and a space, width + 1 " << wordWidth + 1 << ", space left " << spaceLeft );
+      // remove any extra space from the line before
+      size_t lastSpace = wrappedText.find_last_of(' ');
+      if (lastSpace == wrappedText.size()-1)
+        {
+        wrappedText.erase(lastSpace);
+        }
+      // now add the new line and word
+      wrappedText.push_back('\n');
+      wrappedText.append(std::string(ptr));
+      spaceLeft = maxCharPerLine - wordWidth;
+      // don't add a space if we're already over the line limit on a single word
+      if (spaceLeft > 0)
+        {
+        wrappedText.push_back(' ');
+        spaceLeft--;
+        }
+      }
+    ptr = strtok(NULL, " ");
+    }
+  // if the last thing on the line is a space or newline, remove it
+  size_t lastLineFeed = wrappedText.find_last_of('\n');
+  vtkDebugMacro("\tlast line feed = " << lastLineFeed << ", text size = " <<  wrappedText.size() );
+  if (lastLineFeed == wrappedText.size()-1)
+    {
+    vtkDebugMacro("\tRemoving trailing newline" );
+    wrappedText.erase(lastLineFeed);
+    }
+  size_t lastSpace = wrappedText.find_last_of(' ');
+  vtkDebugMacro("\tlast space = " << lastSpace << ", text size =  " <<  wrappedText.size() );
+  if (lastSpace == wrappedText.size()-1)
+    {
+    vtkDebugMacro("\tRemoving trailing space" );
+    wrappedText.erase(lastSpace);
+    }
+
+  return wrappedText;
+}
