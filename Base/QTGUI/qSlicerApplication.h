@@ -101,9 +101,6 @@ public:
   void setToolTipsEnabled(bool enable);
 
 protected:
-  QScopedPointer<qSlicerApplicationPrivate> d_ptr;
-
-  ///
   /// Reimplemented from qSlicerCoreApplication
   virtual QSettings* newSettings(const QString& fileName = QString());
   virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);

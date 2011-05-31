@@ -26,6 +26,7 @@ SET(KIT_SRCS
   qSlicerAbstractModuleRepresentation.h
   qSlicerCoreApplication.cxx
   qSlicerCoreApplication.h
+  qSlicerCoreApplication_p.h
   qSlicerCoreCommandOptions.cxx
   qSlicerCoreCommandOptions.h
   qSlicerCoreIOManager.cxx

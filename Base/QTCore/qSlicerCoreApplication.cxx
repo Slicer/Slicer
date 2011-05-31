@@ -22,8 +22,6 @@
 #include <QDebug>
 #include <QDir>
 #include <QProcessEnvironment>
-#include <QSettings>
-#include <QSharedPointer>
 #include <QStringList>
 #include <QTimer>
 #include <QVector>
@@ -34,6 +32,7 @@
 #include <ctkErrorLogQtMessageHandler.h>
 #include <ctkErrorLogStreamMessageHandler.h>
 #include <ctkITKErrorLogMessageHandler.h>
+#include <ctkPimpl.h>
 #include <ctkVTKErrorLogMessageHandler.h>
 
 // For:
@@ -50,9 +49,10 @@
 
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerCoreIOManager.h"
+#include "qSlicerCoreApplication_p.h"
 #include "qSlicerCoreCommandOptions.h"
+#include "qSlicerCoreIOManager.h"
+#include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
 #endif
@@ -66,15 +66,14 @@
 #include <vtkMRMLRemoteIOLogic.h>
 
 // MRML includes
-#include "vtkCacheManager.h"
-#include "vtkDataIOManager.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLCrosshairNode.h"
-#include "vtkMRMLCommandLineModuleNode.h"
+#include <vtkCacheManager.h>
+#include <vtkDataIOManager.h>
+#include <vtkMRMLCrosshairNode.h>
+#include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
 
 // Slicer includes
@@ -84,92 +83,6 @@
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
   
-//-----------------------------------------------------------------------------
-class qSlicerCoreApplicationPrivate
-{
-  Q_DECLARE_PUBLIC(qSlicerCoreApplication);
-protected:
-  qSlicerCoreApplication* q_ptr;
-public:
-  qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object);
-  ~qSlicerCoreApplicationPrivate();
-  
-  typedef qSlicerCoreApplicationPrivate Self;
-
-  void initialize();
-  
-  /// Instanciate settings object
-  QSettings* instantiateSettings(const QString& suffix, bool useTmp);
-
-  /// Given the program name, should return Slicer Home Directory
-  void discoverSlicerHomeDirectory();
-
-  /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
-  /// \sa QCoreApplication::applicationDirPath
-  void discoverSlicerBinDirectory();
-
-  /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
-  void discoverITKFactoriesDirectory();
-
-  /// Set variable 'Repository{Url, Revision, Url}' and Platform extracting information
-  /// from SlicerVersion.txt
-  void discoverRepository();
-
-  /// Parse arguments
-  void parseArguments();
-
-  /// Set the ExitWhenDone flag to True
-  void terminate();
-
-  /// MRMLScene and AppLogic pointers
-  vtkSmartPointer< vtkMRMLScene >               MRMLScene;
-  vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
-  vtkSmartPointer< vtkMRMLApplicationLogic >    MRMLApplicationLogic;
-  vtkSmartPointer< vtkMRMLRemoteIOLogic >       MRMLRemoteIOLogic;
-
-  /// Data manager
-  vtkSmartPointer< vtkDataIOManagerLogic>       DataIOManagerLogic;
-  vtkSmartPointer< vtkCacheManager>             CacheManager;
-
-  /// SlicerBin doesn't contain Debug/Release/... (see IntDir)
-  QString                                       SlicerBin;
-  QString                                       SlicerHome;
-  QString                                       ITKFactoriesDir;
-  /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
-  /// IntDir should be set to either Debug,
-  /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
-  QString                                       IntDir;
-  
-  /// Variable set extracting information from SlicerVersion.txt
-  /// \sa discoverRepository
-  QString                                       RepositoryUrl;
-  QString                                       RepositoryBranch;
-  QString                                       RepositoryRevision;
-  QString                                       Platform;
-  
-  QSettings*                                    Settings;
-
-  /// ModuleManager - It should exist only one instance of the factory
-  QSharedPointer<qSlicerModuleManager>       ModuleManager;
-
-  /// CoreIOManager - It should exist only one instance of the IOManager
-  QSharedPointer<qSlicerCoreIOManager>       CoreIOManager;
-
-  /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
-  QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
-
-  /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
-  QSharedPointer<ctkErrorLogModel>           ErrorLogModel;
-
-  /// ExitWhenDone flag
-  bool                                 ExitWhenDone;
-
-#ifdef Slicer_USE_PYTHONQT
-  /// CorePythonManager - It should exist only one instance of the CorePythonManager
-  QSharedPointer<qSlicerCorePythonManager> CorePythonManager;
-#endif
-};
-
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
 
@@ -200,7 +113,7 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::initialize()
+void qSlicerCoreApplicationPrivate::init()
 {
   Q_Q(qSlicerCoreApplication);
 
@@ -441,7 +354,16 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   , d_ptr(new qSlicerCoreApplicationPrivate(*this))
 {
   Q_D(qSlicerCoreApplication);
-  d->initialize();
+  d->init();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreApplication::qSlicerCoreApplication(
+  qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv)
+  : Superclass(argc, argv), d_ptr(pimpl)
+{
+  Q_D(qSlicerCoreApplication);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------

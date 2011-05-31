@@ -43,6 +43,7 @@
 
 // QTGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerCoreApplication_p.h"
 #include "qSlicerWidget.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerCommandOptions.h"
@@ -63,20 +64,18 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerApplicationPrivate
+class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerApplication);
 protected:
   qSlicerApplication* const q_ptr;
 public:
   qSlicerApplicationPrivate(qSlicerApplication& object);
-  ~qSlicerApplicationPrivate();
+  virtual ~qSlicerApplicationPrivate();
 
-  ///
   /// Convenient method regrouping all initialization code
   void init();
 
-  ///
   /// Initialize application style
   void initStyle();
 
@@ -93,7 +92,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object)
-  : q_ptr(&object)
+  : qSlicerCoreApplicationPrivate(object), q_ptr(&object)
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
@@ -159,8 +158,8 @@ void qSlicerApplicationPrivate::initStyle()
 // qSlicerApplication methods
 
 //-----------------------------------------------------------------------------
-qSlicerApplication::qSlicerApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
-  , d_ptr(new qSlicerApplicationPrivate(*this))
+qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
+  : Superclass(new qSlicerApplicationPrivate(*this), _argc, _argv)
 {
   Q_D(qSlicerApplication);
   d->init();

@@ -25,7 +25,6 @@
 #include <QApplication>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // SlicerCore includes
@@ -196,6 +195,7 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 
 protected:
+  qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv);
   QScopedPointer<qSlicerCoreApplicationPrivate> d_ptr;
 
 private:
