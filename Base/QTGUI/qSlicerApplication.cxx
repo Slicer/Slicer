@@ -70,11 +70,13 @@ class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 protected:
   qSlicerApplication* const q_ptr;
 public:
+  typedef qSlicerCoreApplicationPrivate Superclass;
+
   qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions * commandOptions, qSlicerIOManager * ioManager);
   virtual ~qSlicerApplicationPrivate();
 
   /// Convenient method regrouping all initialization code
-  void init();
+  virtual void init();
 
   /// Initialize application style
   void initStyle();
@@ -108,6 +110,8 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
+
+  this->Superclass::init();
 
   this->initStyle();
 
@@ -163,7 +167,6 @@ qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
   //       qSlicerIOManager is not added to the constructor initialization list.
   //       Indeed, internally qSlicerIOManager registers qSlicerDataDialog, ...
   d->CoreIOManager = QSharedPointer<qSlicerIOManager>(new qSlicerIOManager);
-  d->init();
 }
 
 //-----------------------------------------------------------------------------

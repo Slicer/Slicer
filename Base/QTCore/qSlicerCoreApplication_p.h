@@ -50,7 +50,7 @@ public:
                                 qSlicerCoreIOManager * coreIOManager);
   virtual ~qSlicerCoreApplicationPrivate();
 
-  void init();
+  virtual void init();
   
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
