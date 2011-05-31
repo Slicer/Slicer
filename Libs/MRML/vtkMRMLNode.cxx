@@ -172,6 +172,7 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     this->SetSingletonTag( node->GetSingletonTag() );
     }
   this->SetDescription(node->GetDescription());
+  this->Attributes = node->Attributes;
 
   this->EndModify(disabledModify);
 }
@@ -241,7 +242,22 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
   of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
-
+  if (this->Attributes.size())
+    {
+    of << indent << " attributes=\"";
+    AttributesType::const_iterator it;
+    AttributesType::const_iterator begin = this->Attributes.begin();
+    AttributesType::const_iterator end = this->Attributes.end();
+    for (it = begin; it != end; ++it)
+      {
+      if (it != begin)
+        {
+        of << ';';
+        }
+      of << it->first << ':' << it->second;
+      }
+    of << "\"";
+    }
 }
 
 
@@ -318,7 +334,19 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
         this->Selected = 0;
         }
       }
-    } 
+     else if (!strcmp(attName, "attributes"))
+       {
+       std::stringstream attributes(attValue);
+       std::string attribute;
+       while (std::getline(attributes, attribute, ';'))
+         {
+         int colonIndex = attribute.find(':');
+         std::string name = attribute.substr(0, colonIndex);
+         std::string value = attribute.substr(colonIndex + 1);
+         this->SetAttribute(name.c_str(), value.c_str());
+         }
+       }
+    }
   this->EndModify(disabledModify);
 
   return;
@@ -327,7 +355,8 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 {
-  Attributes[std::string(name)] = std::string(value);
+  this->Attributes[std::string(name)] = std::string(value);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -337,7 +366,8 @@ const char* vtkMRMLNode::GetAttribute(const char* name)
     {
     return NULL;
     }
-  std::map< std::string, std::string >::iterator iter = Attributes.find(std::string(name));
+  AttributesType::const_iterator iter =
+    this->Attributes.find(std::string(name));
   if (iter == Attributes.end()) 
     {
     return NULL;

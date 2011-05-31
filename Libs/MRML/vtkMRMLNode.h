@@ -417,7 +417,8 @@ protected:
   vtkMRMLScene *Scene;
 
   //BTX
-  std::map< std::string, std::string > Attributes;
+  typedef std::map< std::string, std::string > AttributesType;
+  AttributesType Attributes;
   //ETX
 
   vtkObserverManager *MRMLObserverManager;
