@@ -33,7 +33,6 @@ protected slots:
   void initializeNode(vtkMRMLNode*);
   void onInputVolumeChanged();
   void onInputROIChanged();
-  void onOutputVolumeChanged();
   void onROIVisibilityChanged();
   void onInterpolationModeChanged();
   void onApply();

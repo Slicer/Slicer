@@ -24,6 +24,7 @@ SET(module_logic_target_libraries
   ${ITK_LIBRARIES}
   vtkSlicerCropVolumeModuleMRML
   vtkSlicerAnnotationModuleMRML
+  vtkSlicerVolumesModuleLogic
   )
 
 SlicerMacroBuildModuleLogic(

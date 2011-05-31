@@ -25,6 +25,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="InputVolumeLabel">
           <property name="text">
@@ -69,36 +72,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="OutputVolumeLabel">
-          <property name="text">
-           <string>Output volume</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="1">
-         <widget class="qMRMLNodeComboBox" name="OutputVolumeComboBox">
-          <property name="nodeTypes">
-           <stringlist>
-            <string>vtkMRMLScalarVolumeNode</string>
-           </stringlist>
-          </property>
-          <property name="editEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="renameEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="ROIVisibilityLabel">
-          <property name="text">
-           <string>ROI visibility</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
          <widget class="QToolButton" name="VisibilityButton">
           <property name="text">
            <string/>
@@ -110,6 +84,13 @@
           </property>
           <property name="checkable">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="ROIVisibilityLabel">
+          <property name="text">
+           <string>ROI visibility</string>
           </property>
          </widget>
         </item>
@@ -222,7 +203,7 @@
  </customwidgets>
  <resources>
   <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
-  <include location="../../../AndreyTest/Resources/qSlicerAndreyTestModule.qrc"/>
+  <include location="../qSlicerCropVolumeModule.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -254,22 +235,6 @@
     <hint type="destinationlabel">
      <x>483</x>
      <y>148</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerCropVolumeModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>OutputVolumeComboBox</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>438</x>
-     <y>8</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>576</x>
-     <y>185</y>
     </hint>
    </hints>
   </connection>

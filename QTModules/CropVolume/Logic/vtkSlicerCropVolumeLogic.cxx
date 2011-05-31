@@ -15,6 +15,7 @@
 // 
 #include "vtkSlicerCropVolumeLogic.h"
 #include "vtkSlicerColorLogic.h"
+#include "vtkSlicerVolumesLogic.h"
 
 // Qt includes
 #include <QDebug>
@@ -39,6 +40,7 @@
 #include <qSlicerCLIModule.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkSlicerCLIModuleLogic.h>
+//#include <qSlicerVolumesModule.h>
 
 #include <math.h>
 
@@ -90,6 +92,7 @@ void vtkSlicerCropVolumeLogic::PrintSelf(ostream& os, vtkIndent indent)
 int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
   vtkMRMLVolumeNode *inputVolume = pnode->GetInputVolumeNode();
+  vtkMRMLScalarVolumeNode *refVolume;
   vtkMRMLAnnotationROINode *inputROI = pnode->GetROINode();
   vtkMRMLVolumeNode *outputVolume = pnode->GetOutputVolumeNode();
   vtkMatrix4x4 *inputRASToIJK = vtkMatrix4x4::New();
@@ -98,7 +101,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
 
   // make sure inputs are initialized
-  if(!inputVolume || !inputROI || !outputVolume){
+  if(!inputVolume || !inputROI ){
     std::cerr << "CropVolume: Inputs are not initialized" << std::endl;
     return -1;
   }
@@ -109,29 +112,44 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMRMLVectorVolumeNode *vvnode= vtkMRMLVectorVolumeNode::SafeDownCast(inputVolume);
   vtkMRMLScalarVolumeNode *svnode = vtkMRMLScalarVolumeNode::SafeDownCast(inputVolume);
 
+  qSlicerModuleManager * moduleManager =
+          qSlicerCoreApplication::application()->moduleManager();
+  qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
+  QStringList moduleNames = moduleFactoryManager->moduleNames();
+
+  qSlicerAbstractCoreModule * volumesModule = moduleManager->module("volumes");
+  if(!volumesModule){
+    qWarning() << "CropVolume: ERROR: volumes module reference was not found!";
+    return -3;
+  }
+
+  vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
+  if(!volumesLogic){
+      qWarning() << "CropVolume: ERROR: failed to get hold of Volumes logic";
+      return -2;
+  }
   if(dtvnode){
-    qWarning() << "CropVolume: ERROR: Diffusion tensor volumes are not supported!";
+    qWarning() << "CropVolume: ERROR: Diffusion tensor volumes are not supported by this module!";
     return -2;
   }
-  if(dwvnode && !vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(outputVolume)){
-    qWarning() << "CropVolume: ERROR: Output volume node must be the same type as input volume node (DiffusionWightedVolume)";
-    return -2;
+  if(dwvnode){
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_dwv");
   }
-  if(vvnode && !vtkMRMLVectorVolumeNode::SafeDownCast(outputVolume)){
-    qWarning() << "CropVolume: ERROR: Output volume node must be the same type as input volume node (VectorVolume)";
-    return -2;
+  if(vvnode){
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_vv");
   }
-  if(svnode && !vtkMRMLScalarVolumeNode::SafeDownCast(outputVolume)){
-    qWarning() << "CropVolume: ERROR: Output volume node must be the same type as input volume node (ScalarVolume)";
-    return -2;
+  if(svnode){
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_sv");
   }
+  refVolume = volumesLogic->CreateLabelVolume(this->GetMRMLScene(), inputVolume, "CropVolume_ref_volume");
+  refVolume->HideFromEditorsOn();
 
   //vtkMatrix4x4 *volumeXform = vtkMatrix4x4::New();
   //vtkMatrix4x4 *roiXform = vtkMatrix4x4::New();
   //vtkMatrix4x4 *T = vtkMatrix4x4::New();
 
-  inputVolume->GetRASToIJKMatrix(inputRASToIJK);
-  inputVolume->GetIJKToRASMatrix(inputIJKToRAS);
+  refVolume->GetRASToIJKMatrix(inputRASToIJK);
+  refVolume->GetIJKToRASMatrix(inputIJKToRAS);
   outputRASToIJK->Identity();
   outputIJKToRAS->Identity();
 
@@ -176,12 +194,13 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputImageData->SetDimensions(outputExtent[0], outputExtent[1], outputExtent[2]);
   outputImageData->AllocateScalars();
 
-  outputVolume->SetAndObserveImageData(outputImageData);
+  refVolume->SetAndObserveImageData(outputImageData);
   outputImageData->Delete();
 
-  outputVolume->SetIJKToRASMatrix(outputIJKToRAS);
-  outputVolume->SetRASToIJKMatrix(outputRASToIJK);
+  refVolume->SetIJKToRASMatrix(outputIJKToRAS);
+  refVolume->SetRASToIJKMatrix(outputRASToIJK);
 
+  /*
   vtkMRMLDisplayNode* inputDisplay = inputVolume->GetDisplayNode();
   if(inputDisplay){
     vtkMRMLDisplayNode* outputDisplay = inputDisplay->NewInstance();
@@ -190,6 +209,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     outputVolume->SetAndObserveDisplayNodeID(outputDisplay->GetID());
     outputDisplay->Delete();
   }
+  */
 
   inputRASToIJK->Delete();
   inputIJKToRAS->Delete();
@@ -197,10 +217,6 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputIJKToRAS->Delete();
 
   // use the prepared volume as the reference for resampling
-  qSlicerModuleManager * moduleManager =
-          qSlicerCoreApplication::application()->moduleManager();
-  qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
-  QStringList moduleNames = moduleFactoryManager->moduleNames();
 
   if(!moduleNames.contains("resamplevolume2")){
       qWarning() << "CropVolume: ERROR: resamplevolume2 module name was not found in the list of registered modules!";
@@ -217,7 +233,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMRMLCommandLineModuleNode* cmdNode = cliModule->createNode();
 
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
-  cmdNode->SetParameterAsString("referenceVolume",outputVolume->GetID());
+  cmdNode->SetParameterAsString("referenceVolume",refVolume->GetID());
   cmdNode->SetParameterAsString("outputVolume",outputVolume->GetID());
   std::string interp = "linear";
   switch(pnode->GetInterpolationMode()){
@@ -230,12 +246,14 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   cmdNode->SetParameterAsString("interpolationType", interp.c_str());
   cliModule->run(cmdNode, true);
 
+  this->GetMRMLScene()->RemoveNode(refVolume);
+
   std::string outputVolumeName = inputVolume->GetName();
   outputVolumeName += "-subvolume";
   outputVolume->SetName(outputVolumeName.c_str());
 
   outputVolume->ModifiedSinceReadOn();
-
+  pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
   return 0;
 }
 

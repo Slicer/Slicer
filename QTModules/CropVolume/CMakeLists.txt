@@ -12,6 +12,12 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_CROPVOLUME_EXPORT")
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+  ${Slicer_SOURCE_DIR}/QTModules/Volumes
+  ${Slicer_BINARY_DIR}/QTModules/Volumes
+  ${qSlicerVolumesModule_SOURCE_DIR}
+  ${qSlicerVolumesModule_BINARY_DIR}
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   )
 
 # Source files
@@ -37,7 +43,8 @@ SET(qt_module_UI_SRCS
 SET(qt_module_target_libraries
   vtkSlicerCropVolumeModuleMRML
   vtkSlicerCropVolumeModuleLogic
-  )
+  vtkSlicerVolumesModuleLogic
+)
 
 # Resources
 SET(qt_module_resources

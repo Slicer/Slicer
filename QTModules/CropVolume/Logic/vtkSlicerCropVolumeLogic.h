@@ -26,13 +26,13 @@
 
 // MRML includes
 #include <vtkMRML.h>
-#include <vtkMRMLVolumeNode.h>
 
 // STD includes
 #include <cstdlib>
 
 #include "vtkSlicerCropVolumeModuleLogicExport.h"
 
+class vtkMRMLVolumeNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
