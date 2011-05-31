@@ -29,6 +29,7 @@ public:
   ///
   /// Help to use the module
   virtual QString helpText()const;
+  virtual QString category() const { return QString("Converters"); };
 
   ///
   /// Return acknowledgements
