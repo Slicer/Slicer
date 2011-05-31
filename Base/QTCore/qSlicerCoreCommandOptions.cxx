@@ -37,7 +37,7 @@ public:
   qSlicerCoreCommandOptionsPrivate();
 
   QHash<QString, QVariant> ParsedArgs;
-  QSettings *              Settings;
+  QSettings                Settings;
   QString                  ExtraPythonScript;
 };
 
@@ -47,18 +47,15 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 {
-  this->Settings = 0;
 }
 
 //-----------------------------------------------------------------------------
 // qSlicerCoreCommandOptions methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* _settings):Superclass(_settings)
+qSlicerCoreCommandOptions::qSlicerCoreCommandOptions():Superclass()
   , d_ptr(new qSlicerCoreCommandOptionsPrivate)
 {
-  Q_D(qSlicerCoreCommandOptions);
-  d->Settings = _settings;
   // Use Unix-style argument names
   this->setArgumentPrefix("--", "-");
   // Enable QSettings support
@@ -191,11 +188,7 @@ bool qSlicerCoreCommandOptions::disableMessageHandlers() const
 QString qSlicerCoreCommandOptions::tempDirectory() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  if (d->Settings)
-    {
-    return d->Settings->value("temp-directory", QVariant(QDir::tempPath())).toString();
-    }
-  return QDir::tempPath();
+  return d->Settings.value("temp-directory", QVariant(QDir::tempPath())).toString();
 }
 
 //-----------------------------------------------------------------------------

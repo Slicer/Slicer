@@ -56,15 +56,9 @@ int qSlicerCamerasModuleTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions(settings);
-
-  app.setCoreCommandOptions( coreCommandOptions );
-
-  qSlicerCoreCommandOptions * coreCommandOptions2 = app.coreCommandOptions();
-
-  if( coreCommandOptions2 != coreCommandOptions )
+  if( app.coreCommandOptions() == 0)
     {
-    std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
+    std::cerr << "Problem with coreCommandOptions()" << std::endl;
     return EXIT_FAILURE;
     }
 

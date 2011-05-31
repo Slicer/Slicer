@@ -32,7 +32,23 @@
 int qSlicerApplicationTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
-  app.setCoreCommandOptions(new qSlicerCommandOptions(app.settings()));
+
+  if (app.commandOptions() == 0)
+    {
+    std::cerr << "Problem with commandOptions()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerCommandOptions * commandOptions = new qSlicerCommandOptions;
+  app.setCoreCommandOptions(commandOptions);
+
+  qSlicerCommandOptions * commandOptions2 = app.commandOptions();
+  if (commandOptions2 != commandOptions)
+    {
+    std::cerr << "Problem with setCommandOptions()/commandOptions()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   bool exitWhenDone = false;
   app.parseArguments(exitWhenDone);
   if (exitWhenDone)

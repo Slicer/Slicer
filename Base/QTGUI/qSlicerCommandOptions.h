@@ -26,7 +26,6 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
-class QSettings;
 class qSlicerCommandOptionsPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreCommandOptions
@@ -37,7 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
   Q_PROPERTY(bool showPythonInteractor READ showPythonInteractor)
 public:
   typedef qSlicerCoreCommandOptions Superclass;
-  qSlicerCommandOptions(QSettings* _settings);
+  qSlicerCommandOptions();
   virtual ~qSlicerCommandOptions(){}
 
   bool noSplash()const;

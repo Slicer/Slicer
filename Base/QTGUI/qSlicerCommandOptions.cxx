@@ -28,7 +28,7 @@
 // qSlicerCommandOptions methods
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions::qSlicerCommandOptions(QSettings* _settings):Superclass(_settings)
+qSlicerCommandOptions::qSlicerCommandOptions():Superclass()
 {
 }
 

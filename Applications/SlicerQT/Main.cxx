@@ -210,7 +210,6 @@ int main(int argc, char* argv[])
 
   qSlicerApplication app(argc, argv);
 
-  app.setCoreCommandOptions(new qSlicerCommandOptions(app.settings()));
   bool exitWhenDone = false;
   app.parseArguments(exitWhenDone);
   if (exitWhenDone)

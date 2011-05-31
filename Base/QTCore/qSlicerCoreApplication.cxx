@@ -87,13 +87,14 @@
 // qSlicerCoreApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object)
-  : q_ptr(&object)
+qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
+  qSlicerCoreApplication& object, qSlicerCoreCommandOptions * coreCommandOptions) : q_ptr(&object)
 {
   this->AppLogic = 0;
   this->MRMLScene = 0;
   this->Settings = 0;
   this->ExitWhenDone = false;
+  this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
 }
 
 //-----------------------------------------------------------------------------
@@ -351,7 +352,7 @@ void qSlicerCoreApplicationPrivate::terminate()
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
-  , d_ptr(new qSlicerCoreApplicationPrivate(*this))
+  , d_ptr(new qSlicerCoreApplicationPrivate(*this, new qSlicerCoreCommandOptions))
 {
   Q_D(qSlicerCoreApplication);
   d->init();

@@ -45,7 +45,8 @@ protected:
 public:
   typedef qSlicerCoreApplicationPrivate Self;
 
-  qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object);
+  qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object,
+                                qSlicerCoreCommandOptions * coreCommandOptions);
   virtual ~qSlicerCoreApplicationPrivate();
 
   void init();
@@ -72,10 +73,6 @@ public:
 
   /// Set the ExitWhenDone flag to True
   void terminate();
-
-private:
-//  qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object,
-//                                qSlicerCoreCommandOptions * coreCommandOptions);
 
 public:
   /// MRMLScene and AppLogic pointers

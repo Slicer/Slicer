@@ -70,7 +70,7 @@ class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 protected:
   qSlicerApplication* const q_ptr;
 public:
-  qSlicerApplicationPrivate(qSlicerApplication& object);
+  qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions * commandOptions);
   virtual ~qSlicerApplicationPrivate();
 
   /// Convenient method regrouping all initialization code
@@ -91,8 +91,9 @@ public:
 // qSlicerApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object)
-  : qSlicerCoreApplicationPrivate(object), q_ptr(&object)
+qSlicerApplicationPrivate::qSlicerApplicationPrivate(
+  qSlicerApplication& object, qSlicerCommandOptions * commandOptions)
+  : qSlicerCoreApplicationPrivate(object, commandOptions), q_ptr(&object)
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
@@ -159,7 +160,7 @@ void qSlicerApplicationPrivate::initStyle()
 
 //-----------------------------------------------------------------------------
 qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
-  : Superclass(new qSlicerApplicationPrivate(*this), _argc, _argv)
+  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions), _argc, _argv)
 {
   Q_D(qSlicerApplication);
   d->init();

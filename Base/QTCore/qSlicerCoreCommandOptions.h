@@ -48,7 +48,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(QString tempDirectory READ tempDirectory)
 public:
   typedef ctkCommandLineParser Superclass;
-  qSlicerCoreCommandOptions(QSettings* _settings);
+  qSlicerCoreCommandOptions();
   virtual ~qSlicerCoreCommandOptions();
 
   /// Convenient method allowing to parse arguments

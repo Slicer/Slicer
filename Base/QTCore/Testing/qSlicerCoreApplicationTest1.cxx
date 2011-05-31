@@ -92,13 +92,17 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions(settings);
+  if (app.coreCommandOptions() == 0)
+    {
+    std::cerr << "Problem with coreCommandOptions()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  app.setCoreCommandOptions( coreCommandOptions );
+  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions;
+  app.setCoreCommandOptions(coreCommandOptions);
 
   qSlicerCoreCommandOptions * coreCommandOptions2 = app.coreCommandOptions();
-
-  if( coreCommandOptions2 != coreCommandOptions )
+  if (coreCommandOptions2 != coreCommandOptions)
     {
     std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
     return EXIT_FAILURE;
