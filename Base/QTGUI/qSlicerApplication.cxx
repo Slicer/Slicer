@@ -70,7 +70,7 @@ class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 protected:
   qSlicerApplication* const q_ptr;
 public:
-  qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions * commandOptions);
+  qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions * commandOptions, qSlicerIOManager * ioManager);
   virtual ~qSlicerApplicationPrivate();
 
   /// Convenient method regrouping all initialization code
@@ -92,8 +92,8 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate(
-  qSlicerApplication& object, qSlicerCommandOptions * commandOptions)
-  : qSlicerCoreApplicationPrivate(object, commandOptions), q_ptr(&object)
+  qSlicerApplication& object, qSlicerCommandOptions * commandOptions, qSlicerIOManager * ioManager)
+  : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
@@ -111,10 +111,6 @@ void qSlicerApplicationPrivate::init()
 
   this->initStyle();
 
-  // Note: qSlicerCoreApplication class takes ownership of the ioManager and
-  // will be responsible to delete it
-  q->setCoreIOManager(new qSlicerIOManager);
-  
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
@@ -160,9 +156,13 @@ void qSlicerApplicationPrivate::initStyle()
 
 //-----------------------------------------------------------------------------
 qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
-  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions), _argc, _argv)
+  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, 0), _argc, _argv)
 {
   Q_D(qSlicerApplication);
+  // Note: Since QWidget/QDialog requires a QApplication to be successfully instantiated,
+  //       qSlicerIOManager is not added to the constructor initialization list.
+  //       Indeed, internally qSlicerIOManager registers qSlicerDataDialog, ...
+  d->CoreIOManager = QSharedPointer<qSlicerIOManager>(new qSlicerIOManager);
   d->init();
 }
 

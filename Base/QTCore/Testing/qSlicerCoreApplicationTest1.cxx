@@ -73,13 +73,17 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
+  if (app.coreIOManager() == 0)
+    {
+    std::cerr << "Problem with coreIOManager()" << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  app.setCoreIOManager( coreIOManager );
+  qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
+  app.setCoreIOManager(coreIOManager);
 
   qSlicerCoreIOManager * coreIOManager2 = app.coreIOManager();
-
-  if( coreIOManager2 != coreIOManager )
+  if (coreIOManager2 != coreIOManager)
     {
     std::cerr << "Problem with setCoreIOManager()/coreIOManager()" << std::endl;
     return EXIT_FAILURE;

@@ -46,7 +46,8 @@ public:
   typedef qSlicerCoreApplicationPrivate Self;
 
   qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object,
-                                qSlicerCoreCommandOptions * coreCommandOptions);
+                                qSlicerCoreCommandOptions * coreCommandOptions,
+                                qSlicerCoreIOManager * coreIOManager);
   virtual ~qSlicerCoreApplicationPrivate();
 
   void init();

@@ -88,13 +88,16 @@
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
-  qSlicerCoreApplication& object, qSlicerCoreCommandOptions * coreCommandOptions) : q_ptr(&object)
+  qSlicerCoreApplication& object,
+  qSlicerCoreCommandOptions * coreCommandOptions,
+  qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
   this->AppLogic = 0;
   this->MRMLScene = 0;
   this->Settings = 0;
   this->ExitWhenDone = false;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
+  this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,9 +126,6 @@ void qSlicerCoreApplicationPrivate::init()
 
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
-  // Note: qSlicerCoreApplication class takes ownership of the ioManager and
-  // will be responsible to delete it
-  q->setCoreIOManager(new qSlicerCoreIOManager);
   if (q->arguments().isEmpty())
     {
     qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
@@ -352,7 +352,7 @@ void qSlicerCoreApplicationPrivate::terminate()
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
-  , d_ptr(new qSlicerCoreApplicationPrivate(*this, new qSlicerCoreCommandOptions))
+  , d_ptr(new qSlicerCoreApplicationPrivate(*this, new qSlicerCoreCommandOptions, new qSlicerCoreIOManager))
 {
   Q_D(qSlicerCoreApplication);
   d->init();

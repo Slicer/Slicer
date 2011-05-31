@@ -25,6 +25,7 @@
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerCommandOptions.h"
+#include "qSlicerIOManager.h"
 
 // STD includes
 #include <cstdlib>
@@ -46,6 +47,22 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
   if (commandOptions2 != commandOptions)
     {
     std::cerr << "Problem with setCommandOptions()/commandOptions()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (app.ioManager() == 0)
+    {
+    std::cerr << "Problem with ioManager()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qSlicerIOManager * ioManager = new qSlicerIOManager;
+  app.setCoreIOManager(ioManager);
+
+  qSlicerIOManager * ioManager2 = app.ioManager();
+  if(ioManager2 != ioManager)
+    {
+    std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
     return EXIT_FAILURE;
     }
 
