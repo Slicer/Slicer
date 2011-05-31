@@ -39,8 +39,6 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
   qSlicerApplication app(argc, argv);
-  bool exitWhenDone;
-  app.initialize(exitWhenDone);
 
   // Register core module factories for testing purpose
   qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();

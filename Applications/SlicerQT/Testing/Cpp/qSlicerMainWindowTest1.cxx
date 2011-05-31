@@ -42,9 +42,7 @@
 
 int qSlicerMainWindowTest1(int argc, char * argv[] )
 {
-  bool ok = false;
   qSlicerApplication app(argc, argv);
-  app.initialize(ok);
 
   qSlicerMainWindow mainWindow;
   mainWindow.show();

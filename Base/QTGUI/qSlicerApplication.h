@@ -56,9 +56,6 @@ public:
   /// Return a reference to the application singleton
   static qSlicerApplication* application();
 
-  ///
-  void initialize(bool& exitWhenDone);
-
   /// Get commandOptions
   Q_INVOKABLE qSlicerCommandOptions* commandOptions();
 

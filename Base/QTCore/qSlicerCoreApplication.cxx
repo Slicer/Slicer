@@ -73,7 +73,8 @@
 #include "vtkMRMLCommandLineModuleNode.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
 
 // Slicer includes
@@ -94,6 +95,8 @@ public:
   ~qSlicerCoreApplicationPrivate();
   
   typedef qSlicerCoreApplicationPrivate Self;
+
+  void initialize();
   
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
@@ -113,7 +116,7 @@ public:
   void discoverRepository();
 
   /// Parse arguments
-  bool parseArguments();
+  void parseArguments();
 
   /// Set the ExitWhenDone flag to True
   void terminate();
@@ -161,9 +164,6 @@ public:
   /// ExitWhenDone flag
   bool                                 ExitWhenDone;
 
-  /// Indicate if initialize() method has been called.
-  bool               Initialized;
-
 #ifdef Slicer_USE_PYTHONQT
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
   QSharedPointer<qSlicerCorePythonManager> CorePythonManager;
@@ -180,7 +180,6 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(qSlicerCoreApplicat
   this->AppLogic = 0;
   this->MRMLScene = 0;
   this->Settings = 0;
-  this->Initialized = false;
   this->ExitWhenDone = false;
 }
 
@@ -198,6 +197,91 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 #ifdef Slicer_USE_PYTHONQT
   this->CorePythonManager.clear();
 #endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::initialize()
+{
+  Q_Q(qSlicerCoreApplication);
+
+  QCoreApplication::setOrganizationDomain("www.na-mic.org");
+  QCoreApplication::setOrganizationName("NA-MIC");
+
+  QSettings::setDefaultFormat(QSettings::IniFormat);
+
+  // Note: qSlicerCoreApplication class takes ownership of the ioManager and
+  // will be responsible to delete it
+  q->setCoreIOManager(new qSlicerCoreIOManager);
+  if (q->arguments().isEmpty())
+    {
+    qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
+    }
+  this->discoverSlicerBinDirectory();
+  // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
+  // in order to be used in the constructor of qSlicerApplication (to initialize the
+  // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
+  this->discoverSlicerHomeDirectory();
+  this->discoverITKFactoriesDirectory();
+  this->discoverRepository();
+
+  // Qt can't set environment variables for child processes that are not QProcess.
+  // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
+  // be able to read Slicer volumes, we need to change the current process env.
+  QString setEnv = QString("Slicer_HOME=") + this->SlicerHome;
+  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
+  setEnv = QString("ITK_AUTOLOAD_PATH=") + this->ITKFactoriesDir;
+  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
+
+  // Instantiate ErrorLogModel
+  this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
+  this->ErrorLogModel->setLogEntryGrouping(true);
+  this->ErrorLogModel->setTerminalOutputEnabled(true);
+
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
+
+  this->ErrorLogModel->setAllMsgHandlerEnabled(true);
+
+  // Create the application Logic object,
+  VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
+  this->AppLogic = _appLogic;
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+
+  // pass through event handling once without observing the scene
+  // -- allows any dependent nodes to be created
+  // Note that Interaction and Selection Node are now created
+  // in MRMLApplicationLogic.
+  //_appLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
+  //_appLogic->SetAndObserveMRMLScene(scene);
+  _appLogic->CreateProcessingThread();
+
+  // Create MRMLApplicationLogic
+  this->MRMLApplicationLogic = vtkSmartPointer<vtkMRMLApplicationLogic>::New();
+
+  // Create MRMLRemoteIOLogic
+  this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
+
+  this->CacheManager = vtkSmartPointer<vtkCacheManager>::New();
+  vtkNew<vtkDataIOManager> dataIOManager;
+  dataIOManager->SetCacheManager(this->CacheManager);
+  this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
+  this->DataIOManagerLogic->SetApplicationLogic(this->AppLogic);
+  this->DataIOManagerLogic->SetAndObserveDataIOManager(dataIOManager.GetPointer());
+
+  // Create MRML scene
+  vtkNew<vtkMRMLScene> scene;
+  q->setMRMLScene(scene.GetPointer());
+
+  // Instantiate moduleManager
+  this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
 }
 
 //-----------------------------------------------------------------------------
@@ -321,28 +405,26 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplicationPrivate::parseArguments()
+void qSlicerCoreApplicationPrivate::parseArguments()
 {
   Q_Q(qSlicerCoreApplication);
-  
+
   qSlicerCoreCommandOptions* options = this->CoreCommandOptions.data();
   if (!options)
     {
     qWarning() << "Failed to parse arguments - "
                   "it seems you forgot to call setCoreCommandOptions()";
     this->terminate();
-    return false;
+    return;
     }
   if (!options->parse(q->arguments()))
     {
     qCritical("Problem parsing command line arguments.  Try with --help.");
     this->terminate();
-    return false;
+    return;
     }
 
   q->handlePreApplicationCommandLineArguments();
-  
-  return true; 
 }
 
 //-----------------------------------------------------------------------------
@@ -359,34 +441,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   , d_ptr(new qSlicerCoreApplicationPrivate(*this))
 {
   Q_D(qSlicerCoreApplication);
-
-  QCoreApplication::setOrganizationDomain("www.na-mic.org");
-  QCoreApplication::setOrganizationName("NA-MIC");
-
-  QSettings::setDefaultFormat(QSettings::IniFormat);
-
-  // Note: qSlicerCoreApplication class takes ownership of the ioManager and
-  // will be responsible to delete it
-  this->setCoreIOManager(new qSlicerCoreIOManager);
-  if (this->arguments().isEmpty())
-    {
-    qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
-    }
-  d->discoverSlicerBinDirectory();
-  // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
-  // in order to be used in the constructor of qSlicerApplication (to initialize the
-  // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
-  d->discoverSlicerHomeDirectory();
-  d->discoverITKFactoriesDirectory();
-  d->discoverRepository();
-
-  // Qt can't set environment variables for child processes that are not QProcess.
-  // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
-  // be able to read Slicer volumes, we need to change the current process env.
-  QString setEnv = QString("Slicer_HOME=") + d->SlicerHome;
-  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
-  setEnv = QString("ITK_AUTOLOAD_PATH=") + d->ITKFactoriesDir;
-  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
+  d->initialize();
 }
 
 //-----------------------------------------------------------------------------
@@ -414,98 +469,10 @@ bool qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::ApplicationAt
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerCoreApplication, bool, initialized, Initialized);
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplication::initialize(bool& exitWhenDone)
+void qSlicerCoreApplication::parseArguments(bool& exitWhenDone)
 {
   Q_D(qSlicerCoreApplication);
-
-  // Instantiate ErrorLogModel
-  d->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
-  d->ErrorLogModel->setLogEntryGrouping(true);
-  d->ErrorLogModel->setTerminalOutputEnabled(true);
-
-  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
-  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
-  d->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
-  d->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
-  d->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
-
-  d->ErrorLogModel->setAllMsgHandlerEnabled(true);
-  
-  // Create MRML scene
-  VTK_CREATE(vtkMRMLScene, scene);
-
-  // TODO: Most of the following should be done in the setMRMLScene function !
-
-  QString workingDirectory = QDir::currentPath();
-  scene->SetRootDirectory(workingDirectory.toLatin1());
-  vtkMRMLScene::SetActiveScene( scene );
-
-  // Register the node type for the command line modules
-  // TODO: should probably done in the command line logic
-  VTK_CREATE(vtkMRMLCommandLineModuleNode, clmNode);
-  scene->RegisterNodeClass(clmNode);
-
-  // Create the application Logic object,
-  VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
-  d->AppLogic = _appLogic;
-  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
-              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
-  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
-              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
-  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
-              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
-
-  // pass through event handling once without observing the scene
-  // -- allows any dependent nodes to be created
-  // Note that Interaction and Selection Node are now created
-  // in MRMLApplicationLogic.
-  //_appLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
-  //_appLogic->SetAndObserveMRMLScene(scene);
-  _appLogic->CreateProcessingThread();
-
-  // Create MRMLApplicationLogic
-  d->MRMLApplicationLogic = vtkSmartPointer<vtkMRMLApplicationLogic>::New();
-
-  // Create MRMLRemoteIOLogic
-  d->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
-
-  // --- First scene needs a crosshair to be added manually
-  VTK_CREATE(vtkMRMLCrosshairNode, crosshair);
-  crosshair->SetCrosshairName("default");
-  scene->AddNode(crosshair);
-
-  d->CacheManager = vtkSmartPointer<vtkCacheManager>::New();
-  VTK_CREATE(vtkDataIOManager, dataIOManager);
-  dataIOManager->SetCacheManager(d->CacheManager);
-  d->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
-  d->DataIOManagerLogic->SetApplicationLogic(d->AppLogic);
-  d->DataIOManagerLogic->SetAndObserveDataIOManager(dataIOManager);
-
-  this->setMRMLScene(scene);
-
-  // Initialization done !
-  d->Initialized = true;
-
-  // Instantiate moduleManager
-  d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
-
-#ifdef Slicer_USE_PYTHONQT
-  // Initialize Python
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
-    if (this->corePythonManager())
-      {
-      this->corePythonManager()->mainContext();
-      }
-    }
-#endif
-
-  // Parse command line arguments
   d->parseArguments();
-    
   exitWhenDone = d->ExitWhenDone;
 }
 
@@ -702,6 +669,21 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     {
     return;
     }
+
+  QString workingDirectory = QDir::currentPath();
+  newMRMLScene->SetRootDirectory(workingDirectory.toLatin1());
+
+  vtkMRMLScene::SetActiveScene( newMRMLScene );
+
+  // Register the node type for the command line modules
+  // TODO: should probably done in the command line logic
+  vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
+  newMRMLScene->RegisterNodeClass(clmNode.GetPointer());
+
+  // First scene needs a crosshair to be added manually
+  vtkNew<vtkMRMLCrosshairNode> crosshair;
+  crosshair->SetCrosshairName("default");
+  newMRMLScene->AddNode(crosshair.GetPointer());
 
   if (d->AppLogic.GetPointer())
     {

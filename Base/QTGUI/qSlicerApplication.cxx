@@ -179,24 +179,6 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::initialize(bool& exitWhenDone)
-{
-  // If specific command line option are required for the different Slicer apps
-  // (SlicerQT, SlicerBatch, SlicerDaemon, ...).
-  // The class qSlicerCommandOptions could be subclassed into, for example,
-  // qSlicerGUICommandOptions, qSlicerDaemonCommandOptions, ...
-  // Each subclass should be added in their respective Applications/Slicer{Batch, Daemon}
-  // directory.
-  // The following line should also be moved into the 'Main.cxx' specific to each app.
-  // This comment should also be deleted !
-  this->setCoreCommandOptions(new qSlicerCommandOptions(this->settings()));
-
-  // Proceed to initialization of the Core
-  // It mainly instantiates the vtkMRMLScene
-  this->Superclass::initialize(exitWhenDone);
-}
-
-//-----------------------------------------------------------------------------
 qSlicerCommandOptions* qSlicerApplication::commandOptions()
 {
   qSlicerCommandOptions* _commandOptions =

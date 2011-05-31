@@ -24,6 +24,7 @@
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerCommandOptions.h"
 
 // STD includes
 #include <cstdlib>
@@ -31,12 +32,12 @@
 int qSlicerApplicationTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
+  app.setCoreCommandOptions(new qSlicerCommandOptions(app.settings()));
   bool exitWhenDone = false;
-  app.initialize(exitWhenDone);
-
+  app.parseArguments(exitWhenDone);
   if (exitWhenDone)
     {
-    std::cerr << "Line " << __LINE__ << " - Problem with initialize()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with parseArguments()" << std::endl;
     return EXIT_FAILURE;
     }
 

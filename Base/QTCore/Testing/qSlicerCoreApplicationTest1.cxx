@@ -105,10 +105,10 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     }
 
   bool exitWhenDone = false;
-  app.initialize(exitWhenDone);
+  app.parseArguments(exitWhenDone);
   if (exitWhenDone == true)
     {
-    std::cerr << "Problem with the application::initialize function" << std::endl;
+    std::cerr << "Problem with the application::parseArguments function" << std::endl;
     return EXIT_FAILURE;
     }
 

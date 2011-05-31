@@ -69,10 +69,10 @@ int qSlicerTransformsModuleTest1(int argc, char * argv [] )
     }
 
   bool exitWhenDone = false;
-  aptr->initialize(exitWhenDone);
+  aptr->parseArguments(exitWhenDone);
   if (exitWhenDone == true)
     {
-    std::cerr << "Problem with the application::initialize function" << std::endl;
+    std::cerr << "Problem with the application::parseArguments function" << std::endl;
     return EXIT_FAILURE;
     }
 

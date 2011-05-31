@@ -33,8 +33,6 @@
 int qSlicerModulePanelTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
-  bool exitWhenDone;
-  app.initialize(exitWhenDone);
 
   qSlicerModulePanel modulePanel;
   modulePanel.setModuleManager(app.moduleManager());

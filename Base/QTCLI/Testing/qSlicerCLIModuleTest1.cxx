@@ -102,8 +102,6 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
   qSlicerApplication app(argc, argv);
-  bool exitWhenDone = false;
-  app.initialize(exitWhenDone);
 
   qSlicerModuleManager * moduleManager = app.moduleManager();
   if (!moduleManager)

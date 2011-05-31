@@ -70,17 +70,9 @@ public:
   /// \sa QCoreApplication::testAttribute
   static bool testAttribute(qSlicerCoreApplication::ApplicationAttribute attribute);
 
-  /// Instantiate MRMLScene and Application logic.
-  ///  - Configure scene
-  ///  - AppLogic is set as a scene observer.
-  ///  - Create processing thread
-  /// If exitWhenDone is True, it's your responsability to exit the application
-  void initialize(bool& exitWhenDone);
-
-  /// Return true if the application has been initialized
-  /// \note initialize() should be called only one time.
-  /// \sa initialize()
-  bool initialized() const;
+  /// Parse arguments
+  /// \note If exitWhenDone is True, it's your responsability to exit the application
+  void parseArguments(bool& exitWhenDone);
 
   /// Get MRML Scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;

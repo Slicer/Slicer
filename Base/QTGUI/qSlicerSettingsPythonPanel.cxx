@@ -82,7 +82,6 @@ void qSlicerSettingsPythonPanelPrivate::init()
     qWarning() << "qSlicerSettingsPythonPanelPrivate requires a python console";
     return;
     }
-  Q_ASSERT(!this->PythonConsole.isNull());
 
   // Set default properties
 

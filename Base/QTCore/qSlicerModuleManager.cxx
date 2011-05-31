@@ -57,8 +57,6 @@ qSlicerModuleManager::qSlicerModuleManager(QObject* newParent)
 
   // The module manager should be instantiated only if a qSlicerCoreApplication exists
   Q_ASSERT(qSlicerCoreApplication::application());
-  // and has been initialized
-  Q_ASSERT(qSlicerCoreApplication::application()->initialized());
 }
 
 //-----------------------------------------------------------------------------
