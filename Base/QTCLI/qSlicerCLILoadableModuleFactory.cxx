@@ -26,9 +26,13 @@
 #include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerCoreCommandOptions.h"
 #include "qSlicerUtils.h"
+
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
+  const QString& newTempDirectory) : TempDirectory(newTempDirectory)
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
@@ -76,9 +80,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setModuleType("SharedObjectModule");
 
   module->setXmlModuleDescription(QString(xmlDescription));
-
-  module->setTempDirectory(
-    qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
+  module->setTempDirectory(this->TempDirectory);
 
   return module.take();
 }
@@ -94,6 +96,8 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
   cmdLineModuleSymbols << "XMLModuleDescription";
   cmdLineModuleSymbols << "ModuleEntryPoint";
   this->setSymbols(cmdLineModuleSymbols);
+
+  this->TempDirectory = QDir::tempPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -107,11 +111,17 @@ void qSlicerCLILoadableModuleFactory::registerItems()
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
 createFactoryFileBasedItem()
 {
-  return new qSlicerCLILoadableModuleFactoryItem();
+  return new qSlicerCLILoadableModuleFactoryItem(this->TempDirectory);
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName)const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(fileName);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDirectory)
+{
+  this->TempDirectory = newTempDirectory;
 }

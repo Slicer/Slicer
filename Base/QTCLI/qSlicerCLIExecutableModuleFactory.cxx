@@ -27,9 +27,13 @@
 #include "qSlicerCLIExecutableModuleFactory.h"
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerCoreCommandOptions.h"
 #include "qSlicerUtils.h"
+
+//-----------------------------------------------------------------------------
+qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
+  const QString& newTempDirectory) : TempDirectory(newTempDirectory)
+{
+}
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIExecutableModuleFactoryItem::load()
@@ -71,14 +75,20 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
     }
 
   module->setXmlModuleDescription(xmlDescription.toLatin1());
-  module->setTempDirectory(
-    qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
+  module->setTempDirectory(this->TempDirectory);
 
   return module.take();
 }
 
 //-----------------------------------------------------------------------------
 // qSlicerCLIExecutableModuleFactory
+
+//-----------------------------------------------------------------------------
+qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
+{
+  this->TempDirectory = QDir::tempPath();
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
@@ -97,11 +107,17 @@ bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
 ::createFactoryFileBasedItem()
 {
-  return new qSlicerCLIExecutableModuleFactoryItem();
+  return new qSlicerCLIExecutableModuleFactoryItem(this->TempDirectory);
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& executableName)const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(executableName);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIExecutableModuleFactory::setTempDirectory(const QString& newTempDirectory)
+{
+  this->TempDirectory = newTempDirectory;
 }

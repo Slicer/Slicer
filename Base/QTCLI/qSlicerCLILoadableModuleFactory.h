@@ -34,8 +34,12 @@
 class qSlicerCLILoadableModuleFactoryItem
   : public ctkFactoryLibraryItem<qSlicerAbstractCoreModule>
 {
+public:
+  qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory);
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
+private:
+  QString TempDirectory;
 };
 
 //-----------------------------------------------------------------------------
@@ -48,12 +52,22 @@ public:
   /// Reimplemented to scan the directory of the command line modules
   virtual void registerItems();
 
-  ///
+  /// Extract module name given \a libraryName
+  /// For example:
+  ///  libThresholdLib.so -> threshold
+  ///  libThresholdLib.{dylib, bundle, so} -> threshold
+  ///  ThresholdLib.dll -> threshold
+  /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   QString fileNameToKey(const QString& fileName)const;
+
+  void setTempDirectory(const QString& newTempDirectory);
 
 protected:
   virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
     createFactoryFileBasedItem();
+
+private:
+  QString TempDirectory;
 };
 
 #endif

@@ -178,11 +178,15 @@ int main(int argc, char* argv[])
     {
     qSlicerCLILoadableModuleFactory* cliLoadableModuleFactory =
       new qSlicerCLILoadableModuleFactory();
+    cliLoadableModuleFactory->setTempDirectory(
+          qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
     cliLoadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
     moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
                                           cliLoadableModuleFactory);
     qSlicerCLIExecutableModuleFactory* cliExecutableModuleFactory =
       new qSlicerCLIExecutableModuleFactory();
+    cliExecutableModuleFactory->setTempDirectory(
+          qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
     cliExecutableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
     moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
                                           cliExecutableModuleFactory);
