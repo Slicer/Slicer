@@ -75,6 +75,9 @@ void qSlicerDataModuleWidget::setup()
           this, SLOT(setMRMLIDsVisible(bool)));
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
+
+  // Filter on all the columns
+  d->MRMLTreeView->sortFilterProxyModel()->setFilterKeyColumn(-1);
   connect(d->FilterLineEdit, SIGNAL(textChanged(const QString&)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(const QString&)));
   // hide the IDs by default
