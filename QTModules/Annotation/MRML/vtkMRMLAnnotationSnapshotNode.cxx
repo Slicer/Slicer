@@ -18,6 +18,7 @@
 vtkMRMLAnnotationSnapshotNode::vtkMRMLAnnotationSnapshotNode()
 {
   this->ScreenShot = NULL;
+  this->ScaleFactor = 1.0;
 }
 
 //------------------------------------------------------------------------------
@@ -71,6 +72,8 @@ void vtkMRMLAnnotationSnapshotNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " snapshotDescription=\"" << description << "\"";
 
+  of << indent << " scaleFactor=\"" << this->GetScaleFactor() << "\"";
+
 }
 
 
@@ -95,6 +98,14 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
       int screenshotType;
       ss >> screenshotType;
       this->SetScreenShotType(screenshotType);
+      }
+    else if (!strcmp(attName, "scaleFactor"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double scaleFactor;
+      ss >> scaleFactor;
+      this->SetScaleFactor(scaleFactor);
       }
     else if(!strcmp(attName, "snapshotDescription"))
       {

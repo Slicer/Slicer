@@ -298,9 +298,11 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
     if (this->m_PropertyDialog)
       {
-      QMessageBox::warning(d->hierarchyTreeView,
-          QString("Modify Annotation Properties"), QString(
-              "The property dialog is already open."));
+      //QMessageBox::warning(d->hierarchyTreeView,
+      //    QString("Modify Annotation Properties"), QString(
+      //        "The property dialog is already open."));
+
+      this->m_PropertyDialog->activateWindow();
 
       return;
       }

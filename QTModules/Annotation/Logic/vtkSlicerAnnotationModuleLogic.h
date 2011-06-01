@@ -177,10 +177,10 @@ public:
   //
   /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
   /// a multiline text description and the creation of a Scene SnapShot.
-  void CreateSnapShot(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+  void CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
 
   /// Modify an existing snapShot.
-  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
 
   /// Return the name of an existing annotation snapShot.
   vtkStdString GetSnapShotName(const char* id);
@@ -190,6 +190,9 @@ public:
 
   /// Return the screenshotType of an existing annotation snapShot.
   int GetSnapShotScreenshotType(const char* id);
+
+  /// Return the scaleFactor of an existing annotation snapShot.
+  double GetSnapShotScaleFactor(const char* id);
 
   /// Return the screenshot of an existing annotation snapShot.
   vtkImageData* GetSnapShotScreenshot(const char* id);

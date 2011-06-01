@@ -39,12 +39,17 @@ public:
   void ReadXMLAttributes(const char** atts);
 
   ///
-  /// The attached screenshot of this sceneView
+  /// The attached screenshot
   vtkSetObjectMacro(ScreenShot, vtkImageData);
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
   ///
-  /// The screenshot type of this sceneView
+  /// The ScaleFactor of the Screenshot
+  vtkGetMacro(ScaleFactor, double);
+  vtkSetMacro(ScaleFactor, double);
+
+  ///
+  /// The screenshot type
   /// 0: 3D View
   /// 1: Red Slice View
   /// 2: Yellow Slice View
@@ -88,6 +93,8 @@ protected:
   /// 3: Green Slice View
   /// 4: Full layout
   int ScreenShotType;
+
+  double ScaleFactor;
 
 };
 

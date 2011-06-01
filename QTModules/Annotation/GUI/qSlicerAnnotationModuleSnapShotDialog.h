@@ -34,6 +34,7 @@ protected slots:
   void onYellowSliceViewRadioClicked();
   void onGreenSliceViewRadioClicked();
   void onFullLayoutRadioClicked();
+  void onScaleFactorSpinBoxChanged();
 
 signals:
   void dialogRejected();
