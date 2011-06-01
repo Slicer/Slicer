@@ -24,6 +24,48 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLSelectionNode, node1);
-  
+
+  TEST_SET_GET_STRING(node1, ActiveVolumeID);
+  TEST_SET_GET_STRING(node1, SecondaryVolumeID);
+  TEST_SET_GET_STRING(node1, ActiveLabelVolumeID);
+  TEST_SET_GET_STRING(node1, ActiveFiducialListID);
+  TEST_SET_GET_STRING(node1, ActiveAnnotationID);
+  TEST_SET_GET_STRING(node1, ActiveROIListID);
+  TEST_SET_GET_STRING(node1, ActiveCameraID);
+  TEST_SET_GET_STRING(node1, ActiveViewID);
+  TEST_SET_GET_STRING(node1, ActiveLayoutID);
+
+
+  node1->AddNewAnnotationIDToList(NULL, NULL);
+  node1->AddNewAnnotationIDToList("invalid string", NULL);
+  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", NULL);
+  node1->AddNewAnnotationIDToList(NULL, ":/Icons/AnnotationROI.png");
+  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
+  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
+
+  std::string id;
+  std::cout << "Checking for id '" << id.c_str() << "' in list, got index: " << node1->AnnotationIDInList(id) << std::endl;
+  id = std::string("vtkMRMLAnnotationFiducialNode");
+  int index = node1->AnnotationIDInList(id);
+  std::cout << "Checking for id '" << id.c_str() << "' in list, got index: " << index << std::endl;
+  if (index != -1)
+    {
+    std::string idstring = node1->GetAnnotationIDFromList(index);
+    if (idstring.compare(id) != 0)
+      {
+      std::cerr << "Error! Set id '" << id.c_str() << "' to list at index " << index << ", but got back '" << idstring.c_str() << "'" << std::endl;
+      node1->Print(std::cout);
+      return EXIT_FAILURE;
+      }
+    std::string resource = node1->GetAnnotationResourceFromList(index);
+    if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
+      {
+      std::cout << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+      node1->Print(std::cout);
+      return EXIT_FAILURE;
+      }
+    std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
+    }
+  node1->Print(std::cout);
   return EXIT_SUCCESS;
 }

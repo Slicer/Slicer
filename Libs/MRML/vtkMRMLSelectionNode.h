@@ -116,8 +116,29 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// the ID of a MRMLLayoutNode
   vtkGetStringMacro (ActiveLayoutID );
   vtkSetReferenceStringMacro ( ActiveLayoutID );
-  void SetReferenceActiveLayoutID (char *id) { this->SetActiveLayoutID(id); };
+  void SetReferenceActiveLayoutID (char *id) { this->SetActiveLayoutID(id); this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent); };
 
+  /// Description
+  /// a list of events that this node can throw
+  enum
+  {
+    ActiveAnnotationIDChangedEvent = 19001,
+    AnnotationIDListModifiedEvent,
+  };
+
+  /// Description:
+  /// Add a new valid annotation id to the list, with optional qt resource
+  /// reference string for updating GUI elements
+  void AddNewAnnotationIDToList(const char *newID, const char *resource = NULL);
+  /// Return nth annotation id/resource string from the list, emptry string if
+  /// out of bounds
+//BTX
+  std::string GetAnnotationIDFromList(int n);
+  std::string GetAnnotationResourceFromList(int n);
+  /// Check for an id in the list, returning it's index, -1 if not in list
+  int AnnotationIDInList(std::string id);
+//ETX
+  
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
@@ -133,7 +154,9 @@ protected:
   char *ActiveCameraID;
   char *ActiveViewID;
   char *ActiveLayoutID;
-  
+
+  std::vector<std::string> AnnotationIDList;
+  std::vector<std::string> AnnotationResourceList;
 };
 
 #endif

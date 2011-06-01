@@ -303,11 +303,102 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
   os << "ActiveAnnotationID: " << ( (this->ActiveAnnotationID) ? this->ActiveAnnotationID : "None" ) << "\n";
+  if (this->AnnotationIDList.size() > 0)
+    {
+    os << "Valid Annotation IDs: \n";
+    for (unsigned int i = 0; i < this->AnnotationIDList.size(); ++i)
+      {
+      os << indent.GetNextIndent() << i << ": " << this->AnnotationIDList[i]<< "\n";
+      }
+    }
+  if (this->AnnotationResourceList.size() > 0)
+    {
+    os << "Annotation Resources: \n";
+    for (unsigned int i = 0; i < this->AnnotationResourceList.size(); ++i)
+      {
+      os << indent.GetNextIndent() << i << ": " << this->AnnotationResourceList[i] << "\n";
+      }
+    }
   os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
   os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
   os << "ActiveLayoutID: " << ( (this->ActiveLayoutID) ? this->ActiveLayoutID : "None" ) << "\n";
 
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const char *resource)
+{
+  if (newID == NULL)
+    {
+    return;
+    }
+  vtkDebugMacro("AddNewAnnotationIDToList: newID = " << newID);
 
-// End
+  std::string idString = std::string(newID);
+  std::string resourceString;
+  if (resource)
+    {
+    resourceString = std::string(resource);
+    }
+  int index = this->AnnotationIDInList(idString);
+  if (index == -1)
+    {
+    vtkDebugMacro("Annotation id " << idString << " not in list, adding it");
+    this->AnnotationIDList.push_back(idString);
+    this->AnnotationResourceList.push_back(resourceString);
+    this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);
+    }
+  else
+    {
+    // check if the resource needs to be updated
+    if (resourceString.compare(this->GetAnnotationResourceFromList(index)) != 0)
+      {
+      vtkDebugMacro("Updating resource for id " << idString << ", at index " << index << " to " << resourceString);
+      this->AnnotationResourceList[index] = resourceString;
+      this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSelectionNode::GetAnnotationIDFromList(int n)
+{
+  std::string id;
+  if (this->AnnotationIDList.size() > (unsigned int)n && n >= 0)
+    {
+    id = this->AnnotationIDList[n];
+    }
+  else
+    {
+    vtkWarningMacro("GetAnnotationIDFromList: index " << n << " is out of bounds of 0-" << this->AnnotationIDList.size());
+    }
+  return id;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSelectionNode::GetAnnotationResourceFromList(int n)
+{
+  std::string resource;
+  if (this->AnnotationResourceList.size() > (unsigned int)n && n >= 0)
+    {
+    resource = this->AnnotationResourceList[n];
+    }
+  else
+    {
+    vtkWarningMacro("GetAnnotationResourceFromList: index " << n << " is out of bounds of 0-" << this->AnnotationResourceList.size());
+    }
+  return resource;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLSelectionNode::AnnotationIDInList(std::string id)
+{
+  for (unsigned int i = 0; i < this->AnnotationIDList.size(); ++i)
+    {
+    if (this->AnnotationIDList[i].compare(id) == 0)
+      {
+      return i;
+      }
+    }
+  return -1;
+}
