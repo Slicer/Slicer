@@ -66,6 +66,7 @@ protected slots:
     void onLineLabelPositionChanged(double value);
     void onLineLabelVisibilityStateChanged(int state);
     void onLineTickSpacingChanged();
+    void onLineMaxTicksChanged(double value);
     void onLineOpacityChanged(double value);
     void onLineAmbientChanged(double value);
     void onLineDiffuseChanged(double value);
@@ -85,7 +86,8 @@ protected slots:
 
 signals:
     void coordinateChanged(QString, char*);
-    void textChanged(QString text, char*);
+    void textChanged();
+    void textChanged(const QString &);
     void dialogRejected();
     void dialogAccepted();
     void doublePropertyChanged(double, char*, int);

@@ -283,8 +283,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // tick spacing
     QString plainText;
     plainText.setNum(lineDisplayNode->GetTickSpacing());
-    ui.lineTickSpacingPlainTextEdit->setPlainText(plainText);
+    ui.lineTickSpacingLineEdit->setText(plainText);
 
+    // max ticks
+    ui.lineMaxTicksSliderSpinBoxWidget->setValue(lineDisplayNode->GetMaxTicks());
+    
     // line material properties
     ui.lineOpacitySliderSpinBoxWidget_2->setValue(lineDisplayNode->GetOpacity());
     ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
@@ -757,8 +760,11 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
                 this, SLOT(onLineLabelPositionChanged(double)));
   this->connect(ui.lineLabelVisibilityCheckBox, SIGNAL(stateChanged(int)),
                 this, SLOT(onLineLabelVisibilityStateChanged(int)));
-  this->connect(ui.lineTickSpacingPlainTextEdit, SIGNAL(textChanged()),
+  this->connect(ui.lineTickSpacingLineEdit, SIGNAL(textChanged(const QString &)),
                 this, SLOT(onLineTickSpacingChanged()));
+
+  this->connect(ui.lineMaxTicksSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+                this, SLOT(onLineMaxTicksChanged(double)));
 
   // line material properties
   this->connect(ui.lineOpacitySliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
@@ -1432,9 +1438,21 @@ void qSlicerAnnotationModulePropertyDialog::onLineTickSpacingChanged()
     {
     return;
     }
-  QString plainText = ui.lineTickSpacingPlainTextEdit->toPlainText();
+  QString plainText = ui.lineTickSpacingLineEdit->text();
   double value = plainText.toDouble();
   lineDisplayNode->SetTickSpacing(value);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onLineMaxTicksChanged(double value)
+{
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (!lineDisplayNode)
+    {
+    return;
+    }
+  lineDisplayNode->SetMaxTicks(int(value));
 }
 
 //------------------------------------------------------------------------------
@@ -1613,6 +1631,7 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineWidthSliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineLabelPositionSliderSpinBoxWidget->setEnabled(lock);
   ui.lineLabelVisibilityCheckBox->setEnabled(lock);
-  ui.lineTickSpacingPlainTextEdit->setEnabled(lock);
+  ui.lineTickSpacingLineEdit->setEnabled(lock);
+  ui.lineMaxTicksSliderSpinBoxWidget->setEnabled(lock);
 }
 
