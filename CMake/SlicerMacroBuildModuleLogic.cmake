@@ -45,7 +45,7 @@ MACRO(SlicerMacroBuildModuleLogic)
     qSlicerBaseQTCLI
     )
   
-  SlicerMacroBuildModuleLibrary(
+  SlicerMacroBuildModuleVTKLibrary(
     NAME ${MODULELOGIC_NAME}
     EXPORT_DIRECTIVE ${MODULELOGIC_EXPORT_DIRECTIVE}
     SRCS ${MODULELOGIC_SRCS}

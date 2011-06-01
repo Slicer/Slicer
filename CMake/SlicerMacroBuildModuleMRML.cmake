@@ -34,7 +34,7 @@ MACRO(SlicerMacroBuildModuleMRML)
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )
   
-  SlicerMacroBuildModuleLibrary(
+  SlicerMacroBuildModuleVTKLibrary(
     NAME ${MODULEMRML_NAME}
     EXPORT_DIRECTIVE ${MODULEMRML_EXPORT_DIRECTIVE}
     SRCS ${MODULEMRML_SRCS}
