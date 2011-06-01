@@ -6,6 +6,11 @@ PROJECT(qMRMLWidgetsPlugin)
 
 # Source files
 SET(designer_plugin_SRCS
+  qMRMLWidgetsAbstractPlugin.cxx
+  qMRMLWidgetsAbstractPlugin.h
+  qMRMLWidgetsPlugin.cxx
+  qMRMLWidgetsPlugin.h
+
   qMRMLClipNodeWidgetPlugin.cxx
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.cxx
@@ -64,12 +69,8 @@ SET(designer_plugin_SRCS
   qMRMLVolumePropertyNodeWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.cxx
   qMRMLVolumeThresholdWidgetPlugin.h
-  qMRMLWidgetsAbstractPlugin.cxx
-  qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetPlugin.cxx
   qMRMLWidgetPlugin.h
-  qMRMLWidgetsPlugin.cxx
-  qMRMLWidgetsPlugin.h
   qMRMLWindowLevelWidgetPlugin.cxx
   qMRMLWindowLevelWidgetPlugin.h
   )

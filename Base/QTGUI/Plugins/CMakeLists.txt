@@ -10,17 +10,22 @@ SET(designer_plugin_SRCS
   qSlicerQTGUIAbstractPlugin.h
   qSlicerQTGUIPlugins.cxx
   qSlicerQTGUIPlugins.h
-  qSlicerWidgetPlugin.cxx
-  qSlicerWidgetPlugin.h
+
   qSlicerModulePanelPlugin.cxx
   qSlicerModulePanelPlugin.h
   qSlicerMouseModeToolBarPlugin.cxx
   qSlicerMouseModeToolBarPlugin.h
+  qSlicerWidgetPlugin.cxx
+  qSlicerWidgetPlugin.h
   )
 
 # Headers that should run through moc
 SET(designer_plugin_MOC_SRCS
   qSlicerQTGUIPlugins.h
+
+  qSlicerModulePanelPlugin.h
+  qSlicerMouseModeToolBarPlugin.h
+  qSlicerWidgetPlugin.h
   )
 
 SET(designer_plugin_TARGET_LIBRARIES
