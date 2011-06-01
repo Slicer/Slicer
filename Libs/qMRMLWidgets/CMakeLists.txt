@@ -252,15 +252,6 @@ SET(include_dirs
   ${MRMLDisplayableManager_SOURCE_DIR}
   ${MRMLDisplayableManager_BINARY_DIR}
   )
-
-SET(QT_INCLUDE_DIRS
-  ${QT_INCLUDE_DIR}
-  ${QT_QTWEBKIT_INCLUDE_DIR}
-  ${QT_QTGUI_INCLUDE_DIR}
-  ${QT_QTCORE_INCLUDE_DIR}
-  ${QT_QTXML_INCLUDE_DIR}
-  )
-SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
 # --------------------------------------------------------------------------

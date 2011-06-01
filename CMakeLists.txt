@@ -197,7 +197,7 @@ SET(Slicer_BUNDLE_LOCATION ".")
 #-----------------------------------------------------------------------------
 # Module name should be specified as they appear in FindQt4.cmake
 # For example, the module name associated with the variable QT_USE_QTXML is XML.
-SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK)
+SET(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK XML WEBKIT)
 IF(BUILD_TESTING)
   LIST(APPEND Slicer_REQUIRED_QT_MODULES TEST)
 ENDIF()

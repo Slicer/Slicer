@@ -81,16 +81,8 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
-  SET(QT_INCLUDE_DIRS
-    ${QT_INCLUDE_DIR}
-    ${QT_QTWEBKIT_INCLUDE_DIR}
-    ${QT_QTGUI_INCLUDE_DIR}
-    ${QT_QTCORE_INCLUDE_DIR}
-    ${QT_QTXML_INCLUDE_DIR}
-    )
-
+  
   SET(include_dirs
-    ${QT_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${SlicerBaseLogic_SOURCE_DIR}
@@ -172,12 +164,6 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
   ENDIF()
-
-  SET(QT_LIBRARIES
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
-    ${QT_QTWEBKIT_LIBRARY}
-    )
 
   TARGET_LINK_LIBRARIES(${lib_name}
     ${QT_LIBRARIES}
