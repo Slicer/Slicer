@@ -22,7 +22,8 @@
 
 // RemoteIO includes
 #include "vtkMRMLApplicationLogic.h"
-//#include "vtkDataIOManagerLogic.h"
+#include "vtkDataIOManager.h"
+#include "vtkCacheManager.h"
 #include "vtkHTTPHandler.h"
 #include "vtkSRBHandler.h"
 #include "vtkXNATHandler.h"
@@ -38,11 +39,23 @@ vtkStandardNewMacro(vtkMRMLRemoteIOLogic);
 //----------------------------------------------------------------------------
 vtkMRMLRemoteIOLogic::vtkMRMLRemoteIOLogic()
 {
+  this->CacheManager = vtkCacheManager::New();
+  this->DataIOManager = vtkDataIOManager::New();
+  this->DataIOManager->SetCacheManager(this->CacheManager);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLRemoteIOLogic::~vtkMRMLRemoteIOLogic()
 {
+  if (this->DataIOManager)
+    {
+    this->DataIOManager->SetCacheManager(NULL);
+    this->SetDataIOManager(NULL);
+    }
+  if (this->CacheManager)
+    {
+    this->SetCacheManager(NULL);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -63,7 +76,13 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("Cannot add DataIOHandlers -- scene not set");
+    return;
     }
+
+  // hook our cache and dataIO managers into the MRML scene
+  this->CacheManager->SetMRMLScene(this->GetMRMLScene());
+  this->GetMRMLScene()->SetCacheManager(this->CacheManager);
+  this->GetMRMLScene()->SetDataIOManager(this->DataIOManager);
 
   vtkCollection *uriHandlerCollection = vtkCollection::New();
   // add some new handlers

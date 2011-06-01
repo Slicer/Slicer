@@ -66,7 +66,6 @@
 #include <vtkMRMLRemoteIOLogic.h>
 
 // MRML includes
-#include <vtkCacheManager.h>
 #include <vtkDataIOManager.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLCommandLineModuleNode.h>
@@ -183,12 +182,9 @@ void qSlicerCoreApplicationPrivate::init()
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
 
-  this->CacheManager = vtkSmartPointer<vtkCacheManager>::New();
-  vtkNew<vtkDataIOManager> dataIOManager;
-  dataIOManager->SetCacheManager(this->CacheManager);
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
   this->DataIOManagerLogic->SetApplicationLogic(this->AppLogic);
-  this->DataIOManagerLogic->SetAndObserveDataIOManager(dataIOManager.GetPointer());
+  this->DataIOManagerLogic->SetAndObserveDataIOManager(this->MRMLRemoteIOLogic->GetDataIOManager());
 
   // Create MRML scene
   vtkNew<vtkMRMLScene> scene;
@@ -624,10 +620,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
       }
     d->MRMLRemoteIOLogic->SetMRMLScene(newMRMLScene);
     }
-  if (d->CacheManager.GetPointer())
-    {
-    d->CacheManager->SetMRMLScene(newMRMLScene);
-    }
   if (d->DataIOManagerLogic.GetPointer())
     {
     d->DataIOManagerLogic->SetMRMLScene(newMRMLScene);
@@ -637,14 +629,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 
   if (d->MRMLScene)
     {
-    if (d->DataIOManagerLogic.GetPointer())
-      {
-      d->MRMLScene->SetDataIOManager(d->DataIOManagerLogic->GetDataIOManager());
-      }
-    if (d->CacheManager.GetPointer())
-      {
-      d->MRMLScene->SetCacheManager(d->CacheManager);
-      }
     if (d->MRMLRemoteIOLogic.GetPointer())
       {
       d->MRMLRemoteIOLogic->AddDataIOToScene();

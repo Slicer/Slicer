@@ -84,7 +84,6 @@ public:
 
   /// Data manager
   vtkSmartPointer<vtkDataIOManagerLogic>      DataIOManagerLogic;
-  vtkSmartPointer<vtkCacheManager>            CacheManager;
 
   /// SlicerBin doesn't contain Debug/Release/... (see IntDir)
   QString                                     SlicerBin;

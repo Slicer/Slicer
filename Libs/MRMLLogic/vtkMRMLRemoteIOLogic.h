@@ -29,6 +29,9 @@
 // STD includes
 #include <stdlib.h>
 
+class vtkCacheManager;
+class vtkDataIOManager;
+
 class VTK_MRML_LOGIC_EXPORT vtkMRMLRemoteIOLogic : public vtkMRMLAbstractLogic
 {
 public:
@@ -40,12 +43,28 @@ public:
   void AddDataIOToScene();
   void RemoveDataIOFromScene();
 
+  /// 
+  /// Accessors for the comonents of the remote IO infrascucture
+  /// Note that the internal instances are created in the constructor
+  /// and used when calling AddDataIOToScene
+  /// and RemoveDataIOFromScene
+  /// The Get methods can be used elsewhere, but the set methods
+  /// should only be used for debuggin
+  vtkGetObjectMacro (CacheManager, vtkCacheManager);
+  vtkSetObjectMacro (CacheManager, vtkCacheManager);
+  vtkGetObjectMacro (DataIOManager, vtkDataIOManager);
+  vtkSetObjectMacro (DataIOManager, vtkDataIOManager);
+
 protected:
   vtkMRMLRemoteIOLogic();
   virtual ~vtkMRMLRemoteIOLogic();
   // disable copy constructor and operator
   vtkMRMLRemoteIOLogic(const vtkMRMLRemoteIOLogic&);
   void operator=(const vtkMRMLRemoteIOLogic&);
+
+  vtkCacheManager *          CacheManager;
+  vtkDataIOManager *         DataIOManager;
+
 
 };
 
