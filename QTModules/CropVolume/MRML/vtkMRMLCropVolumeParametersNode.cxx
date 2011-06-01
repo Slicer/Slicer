@@ -22,7 +22,7 @@ Version:   $Revision: 1.2 $
 // CropModuleMRML includes
 #include "vtkMRMLCropVolumeParametersNode.h"
 
-// AnnotationMRML includes
+// AnnotationModuleMRML includes
 #include "vtkMRMLAnnotationROINode.h"
 
 // STD includes
