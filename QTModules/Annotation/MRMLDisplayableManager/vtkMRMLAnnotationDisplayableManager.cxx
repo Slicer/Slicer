@@ -704,9 +704,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     // check if the annotation is displayable according to the current selected Slice
     bool visibleOnSlice = this->IsWidgetDisplayable(sliceNode, annotationNode);
     // check if the annotation is visible according to the current mrml state
-    bool visibleOnNode = annotationNode->GetVisible();
+    bool visibleOnNode = (annotationNode->GetVisible() == 1 ? true : false);
     // check if the widget is visible according to the widget state
-    bool visibleOnWidget = widget->GetEnabled();
+    bool visibleOnWidget = (widget->GetEnabled() == 1 ? true : false);
 
 
     // now this is the magical part
