@@ -170,6 +170,10 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
       case vtkCommand::ModifiedEvent:
         this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
         break;
+      case vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent:
+        std::cout << "Got a ControlPointModifiedEvent" << std::endl;
+        this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
+        break;
       }
     return;
     }
@@ -307,6 +311,20 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
     }
   vtkDebugMacro("InitializeEventListeners: listeners added");
 
+  // add known annotation types to the selection node
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (selectionNode)
+    {
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistance.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensional.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationStickyNode", "");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png");
+    }
 }
 
 //-----------------------------------------------------------------------------
