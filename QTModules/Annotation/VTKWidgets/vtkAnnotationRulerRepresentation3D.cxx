@@ -1,4 +1,3 @@
-
 // AnnotationModule/VTKWidgets includes
 #include "VTKWidgets/vtkAnnotationRulerRepresentation3D.h"
 
@@ -15,6 +14,12 @@
 #include <vtkVectorText.h>
 #include <vtkWindow.h>
 
+#include <vtkBox.h>
+#include <vtkPointData.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransform.h>
+#include <vtkSmartPointer.h>
+
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -27,14 +32,23 @@ vtkCxxRevisionMacro (vtkAnnotationRulerRepresentation3D, "$Revision: 1.0 $");
 void vtkAnnotationRulerRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+
+  os << indent << "Distance: " << this->m_Distance << endl;
+  os << indent << "LabelScaleSpecified: " << (this->LabelScaleSpecified ? "true" : "false") << endl;
+  os << indent << "LabelPosition: " << this->LabelPosition << endl;
+  os << indent << "MaxTicks: " << this->MaxTicks << endl;
+  os << indent << "GlyphScaleSpecified: " << (this->GlyphScaleSpecified ? "true" : "false") << endl;
+  os << indent << "GlyphScale: " << this->GlyphScale << endl;
 }
 
 //---------------------------------------------------------------------------
 vtkAnnotationRulerRepresentation3D::vtkAnnotationRulerRepresentation3D()
 {
-
   this->m_Distance = 0;
-
+  this->GlyphScaleSpecified = false;
+  this->LabelPosition = 0.5;
+  this->MaxTicks = 99;
+  this->GlyphScale = 1.0;
 }
 
 //---------------------------------------------------------------------------
@@ -49,6 +63,10 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
   if ( this->GetMTime() > this->BuildTime ||
        this->Point1Representation->GetMTime() > this->BuildTime ||
        this->Point2Representation->GetMTime() > this->BuildTime ||
+       this->LabelActor->GetMTime() > this->BuildTime ||
+       this->BoundingBox->GetMTime() > this->BuildTime ||
+       this->GlyphActor->GetMTime() > this->BuildTime ||
+       this->LineActor->GetMTime() > this->BuildTime ||
        (this->Renderer && this->Renderer->GetVTKWindow() &&
         this->Renderer->GetVTKWindow()->GetMTime() > this->BuildTime) )
     {
@@ -77,11 +95,9 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
 
     // Label
     char string[512];
-    double pos[3];
     sprintf(string, this->LabelFormat, this->Distance);
     this->LabelText->SetText(string);
-    pos[0] = (p1[0]+p2[0])/2.0; pos[1] = (p1[1]+p2[1])/2.0; pos[2] = (p1[2]+p2[2])/2.0;
-    this->LabelActor->SetPosition(pos);
+    this->UpdateLabelActorPosition();
     if (this->Renderer) //make the label face the camera
       {
       this->LabelActor->SetCamera( this->Renderer->GetActiveCamera() );
@@ -103,12 +119,20 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
     this->GlyphPoints->Reset();
     this->GlyphPoints->Modified();
     this->GlyphVectors->Reset();
-    this->Glyph3D->SetScaleFactor(this->Distance/40);
+    if (this->GlyphScaleSpecified)
+      {
+      this->Glyph3D->SetScaleFactor(this->GlyphScale);
+      }
+    else
+      {
+      this->Glyph3D->SetScaleFactor(this->Distance/40);
+      }
+
     double distance;
     if ( this->RulerMode ) // specified tick separation
       {
       numTicks = (this->RulerDistance <= 0.0 ? 1 : (this->Distance / this->RulerDistance));
-      numTicks = (numTicks > 99 ? 99 : numTicks);
+      numTicks = (numTicks > this->MaxTicks ? this->MaxTicks : numTicks);
       distance = this->RulerDistance;
       }
     else //evenly spaced
@@ -133,4 +157,103 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
 void vtkAnnotationRulerRepresentation3D::SetDistance(double distance)
 {
   this->m_Distance = distance;
+}
+
+//----------------------------------------------------------------------
+void vtkAnnotationRulerRepresentation3D::SetGlyphScale( double scale )
+{
+  this->GlyphScale = scale;
+  this->GlyphScaleSpecified = true;
+}
+
+//----------------------------------------------------------------------------
+vtkProperty * vtkAnnotationRulerRepresentation3D::GetLineProperty()
+{
+  return this->LineActor->GetProperty();
+}
+
+//----------------------------------------------------------------------
+void vtkAnnotationRulerRepresentation3D::SetLabelPosition(double labelPosition)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelPosition to " << labelPosition); 
+
+  if (this->LabelPosition == labelPosition)
+    {
+//    std::cout << "SetLabelPosition: no change: " << this->LabelPosition << std::endl;
+    }
+  else
+    {
+    this->LabelPosition = labelPosition;
+    }
+  this->UpdateLabelActorPosition();
+  // this->Modified();
+}
+
+//----------------------------------------------------------------------
+void vtkAnnotationRulerRepresentation3D::UpdateLabelActorPosition()
+{
+  if (!this->Point1Representation ||
+      !this->Point2Representation)
+    {
+    return;
+    }
+
+  // get the end points
+  double p1[3], p2[3];
+  this->Point1Representation->GetWorldPosition(p1);
+  this->Point2Representation->GetWorldPosition(p2);
+  double pos[3];
+
+//  std::cout << "UpdateLabelActorPosition: p1 = " << p1[0] << ", " << p1[1] << ", " << p1[2] << ". p2 = " << p2[0] << ", " << p2[1] << ", " << p2[2] << std::endl;
+  // calculate the label position
+  /*
+  pos[0] = (p1[0]+p2[0])*this->LabelPosition;
+  pos[1] = (p1[1]+p2[1])*this->LabelPosition;
+  pos[2] = (p1[2]+p2[2])*this->LabelPosition;
+  */
+  pos[0] = p1[0] + (p2[0] - p1[0]) * this->LabelPosition;
+  pos[1] = p1[1] + (p2[1] - p1[1]) * this->LabelPosition;
+  pos[2] = p1[2] + (p2[2] - p1[2]) * this->LabelPosition;
+  
+
+  // and set it on the actor
+  double * actorPos = this->LabelActor->GetPosition();
+  //std::cout << "UpdateLabelActorPosition: LabelPos = " << this->LabelPosition << ", current label actor position = "  << actorPos[0] << ", " << actorPos[1] << ", " << actorPos[2] << ", calculated pos = " << pos[0] << ", " << pos[1] << ", " << pos[2] << std::endl;
+
+  double diff = sqrt(vtkMath::Distance2BetweenPoints(pos, actorPos));
+  if (diff > 0.001)
+    {
+    this->LabelActor->SetPosition(pos);
+   
+//  this->Modified();
+    }
+  else
+    {
+    //  std::cout << "\tlabel actor current position not different enough from calculated, diff = " << diff << ", not setting position" << std::endl;
+    }
+}
+
+//----------------------------------------------------------------------
+void vtkAnnotationRulerRepresentation3D::UpdateGlyphPolyData(vtkPolyData *polyData)
+{
+  if (!polyData)
+    {
+    vtkErrorMacro("UpdateGlyphPolyData: invalid poly data!");
+    return;
+    }
+  vtkWarningMacro("UpdateGlyphPolyData: not implemented yet!");
+  return;
+  /*
+  this->GlyphPolyData->DeepCopy(polyData);
+  this->GlyphPolyData->SetPoints(this->GlyphPoints);
+  this->GlyphPolyData->GetPointData()->SetVectors(this->GlyphVectors);
+
+  this->GlyphXForm->SetInput(this->GlyphPolyData);
+  vtkSmartPointer<vtkTransform> xform = vtkSmartPointer<vtkTransform>::New();
+  this->GlyphXForm->SetTransform(xform);
+  
+  this->Glyph3D->SetInput(this->GlyphPolyData);
+  // set the transform to identity
+  this->Glyph3D->SetSourceConnection(this->GlyphXForm->GetOutputPort());  
+  */
 }
