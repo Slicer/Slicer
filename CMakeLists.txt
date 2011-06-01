@@ -520,7 +520,7 @@ ADD_SUBDIRECTORY(Resources)
 #-----------------------------------------------------------------------------
 # Macro useful to build ModuleLogic and ModuleMRML libraries
 #-----------------------------------------------------------------------------
-
+INCLUDE(SlicerMacroBuildModuleQtLibrary)
 INCLUDE(SlicerMacroBuildModuleVTKLibrary)
 INCLUDE(SlicerMacroPythonWrapModuleVTKLibrary)
 INCLUDE(SlicerMacroBuildModuleLogic)
