@@ -72,12 +72,16 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   vtkSetMacro(TickSpacing, double);
   vtkGetMacro(TickSpacing, double);
 
+  /// Get/Set for maximum number of ticks
+  vtkSetMacro(MaxTicks, int);
+  vtkGetMacro(MaxTicks, int);
+  
   /// Create a backup of this node and attach it.
   void CreateBackup();
   /// Restore an attached backup of this node.
   void RestoreBackup();
 
- protected:
+protected:
   vtkMRMLAnnotationLineDisplayNode();
   ~vtkMRMLAnnotationLineDisplayNode() { };
   vtkMRMLAnnotationLineDisplayNode( const vtkMRMLAnnotationLineDisplayNode& );
@@ -87,6 +91,7 @@ class  VTK_SLICER_ANNOTATION_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode
   double LabelPosition;
   int LabelVisibility;
   double TickSpacing;
+  int MaxTicks;
 };
 
 #endif

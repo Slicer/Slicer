@@ -40,7 +40,8 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LineThickness = 1.0;
   this->LabelPosition = 0.2;
   this->LabelVisibility = 1;
-  this->TickSpacing = 1.0;
+  this->TickSpacing = 5.0;
+  this->MaxTicks = 99;
 }
 
 
@@ -56,6 +57,7 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " labelPosition=\"" << this->LabelPosition << "\"";
   of << " labelVisibility=\"" << (this->LabelVisibility ? "true" : "false") << "\"";
   of << " tickSpacing=\"" << this->TickSpacing << "\"";
+  of << " maxTicks=\"" << this->MaxTicks << "\"";
 }
 
 
@@ -103,6 +105,12 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
         ss << attValue;
         ss >> this->TickSpacing;
         }
+      else if (!strcmp(attName, "maxTicks"))
+        {
+        std::stringstream ss;
+        ss << attValue;
+        ss >> this->MaxTicks;
+        }
     }
   this->EndModify(disabledModify);
 }
@@ -121,6 +129,7 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetLabelPosition(node->LabelPosition);
   this->SetLabelVisibility(node->LabelVisibility);
   this->SetTickSpacing(node->TickSpacing);
+  this->SetMaxTicks(node->MaxTicks);
 
   this->EndModify(disabledModify);
 }
@@ -133,6 +142,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Label Position   : " << this->LabelPosition << "\n";
   os << indent << "Label Visibility : " << (this->LabelVisibility ? "true" : "false") << "\n";
   os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
+  os << indent << "Max Ticks        : " << this->MaxTicks << "\n";
 }
 
 //---------------------------------------------------------------------------
