@@ -268,12 +268,12 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
   if (titleFlag) 
     {
       
-      os <<indent << "vtkMRMLAnnotationNode: Annotation Summary";
-      if (this->GetName()) 
-    {
+    os <<indent << "vtkMRMLAnnotationNode: Annotation Summary";
+    if (this->GetName()) 
+      {
       os << " of " << this->GetName();
-    }
-      os << endl;
+      }
+    os << endl;
     }
 
 
@@ -284,13 +284,13 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
   os << indent << "textList: "; 
   if  (!this->TextList || !this->GetNumberOfTexts()) 
     {
-      os << indent << "None"  << endl;
+    os << indent << "None"  << endl;
     }
   else 
     {
-      os << endl;
-      for (int i = 0 ; i < this->GetNumberOfTexts() ; i++) 
-    {
+    os << endl;
+    for (int i = 0 ; i < this->GetNumberOfTexts() ; i++) 
+      {
       os << indent << "  " << i <<": " <<  (TextList->GetValue(i) ? TextList->GetValue(i) : "(none)") << endl;
     }
     }
@@ -458,33 +458,39 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
 void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag, int visibleFlag)
 {
   if (id < 0) 
-  {
+    {
     vtkErrorMacro("Invalid ID");
     return;
-  }
+    }
   if (!this->TextList) 
     {
-      vtkErrorMacro("TextList is NULL");
-      return;
+    vtkErrorMacro("TextList is NULL");
+    return;
+    }
+  
+  if (!this->PolyData || !this->PolyData->GetPointData())
+    {
+    this->ResetTextAttributesAll(); 
     }
 
-  if (!this->PolyData || !this->PolyData->GetPointData()) {
-     this->ResetTextAttributesAll(); 
-  }
-
-  this->TextList->InsertValue(id,newText);
+  vtkStdString newString;
+  if (newText)
+    {
+    newString = vtkStdString(newText);
+    }
+  this->TextList->InsertValue(id,newString);
  
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
     {
-      this->SetAttributeSize(j,this->GetNumberOfTexts());
+    this->SetAttributeSize(j,this->GetNumberOfTexts());
     }
   this->SetAnnotationAttribute(id, TEXT_SELECTED, selectedFlag);
   this->SetAnnotationAttribute(id, TEXT_VISIBLE, visibleFlag);
 
   if(!this->GetDisableModifiedEvent())
   {
-    // invoke a display modified event
-    this->InvokeEvent(vtkCommand::ModifiedEvent);
+  // invoke a display modified event
+  this->InvokeEvent(vtkCommand::ModifiedEvent);
   }
 
 }
