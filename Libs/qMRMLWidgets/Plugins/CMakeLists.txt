@@ -11,6 +11,8 @@ SET(designer_plugin_SRCS
   qMRMLWidgetsPlugin.cxx
   qMRMLWidgetsPlugin.h
 
+  qMRMLCheckableNodeComboBoxPlugin.cxx
+  qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeWidgetPlugin.cxx
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.cxx
@@ -79,6 +81,7 @@ SET(designer_plugin_SRCS
 SET(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
+  qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorListViewPlugin.h

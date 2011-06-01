@@ -35,6 +35,8 @@ SET(qMRMLWidgets_SRCS
   qCTKFlowLayout.h
   qMRMLActionSignalMapper.cxx
   qMRMLActionSignalMapper.h
+  qMRMLCheckableNodeComboBox.cxx
+  qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.cxx
@@ -74,6 +76,7 @@ SET(qMRMLWidgets_SRCS
   qMRMLNavigationView.h
   qMRMLNodeComboBox.cxx
   qMRMLNodeComboBox.h
+  qMRMLNodeComboBox_p.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
   qMRMLRangeWidget.cxx
@@ -143,6 +146,7 @@ SET(qMRMLWidgets_SRCS
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLActionSignalMapper.h
+  qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h
   qMRMLColorListView.h

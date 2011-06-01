@@ -37,6 +37,22 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   qMRMLNodeComboBox nodeSelector;
+  
+  // default state
+  bool addEnabled = nodeSelector.addEnabled();
+  bool removeEnabled = nodeSelector.removeEnabled();
+  bool editEnabled = nodeSelector.editEnabled();
+  // Add button should be enabled
+  if (!(addEnabled && removeEnabled && !editEnabled))
+    {
+    std::cerr << __LINE__ << " - Incorrect state" << std::endl
+                          << " Expected => Add[1], Remove[1], Edit[0]" << std::endl
+                          << " Current => Add[" << addEnabled << "], "
+                          << "Remove[" << removeEnabled << "], "
+                          << "Edit[" << editEnabled << "]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   qMRMLSceneFactoryWidget sceneFactory;
 
   sceneFactory.generateScene();
@@ -261,20 +277,6 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  bool addEnabled = nodeSelector.addEnabled();
-  bool removeEnabled = nodeSelector.removeEnabled();
-  bool editEnabled = nodeSelector.editEnabled();
-  // Add button should be enabled
-  if (!(addEnabled && removeEnabled && !editEnabled))
-    {
-    std::cerr << __LINE__ << " - Incorrect state" << std::endl
-                          << " Expected => Add[1], Remove[1], Edit[0]" << std::endl
-                          << " Current => Add[" << addEnabled << "], "
-                          << "Remove[" << removeEnabled << "], "
-                          << "Edit[" << editEnabled << "]" << std::endl;
     return EXIT_FAILURE;
     }
     
