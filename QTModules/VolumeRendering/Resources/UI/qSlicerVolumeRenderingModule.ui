@@ -175,6 +175,24 @@
          <attribute name="title">
           <string>ROI</string>
          </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="MiscTab">
          <attribute name="title">
@@ -190,12 +208,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -206,9 +218,20 @@
    <header>qMRMLVolumePropertyNodeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -291,8 +314,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel">
-     <x>563</x>
-     <y>208</y>
+     <x>606</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -309,6 +332,22 @@
     <hint type="destinationlabel">
      <x>205</x>
      <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>ROIWidget</receiver>
+   <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>347</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>

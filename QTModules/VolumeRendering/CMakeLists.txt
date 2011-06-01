@@ -19,6 +19,8 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingReplacements
   ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingReplacements
+  ${qSlicerAnnotationModuleWidgets_SOURCE_DIR}
+  ${qSlicerAnnotationModuleWidgets_BINARY_DIR}
   )
 
 # Displayable manager sources
@@ -65,6 +67,7 @@ SET(qt_module_target_libraries
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
   vtkSlicerAnnotationModuleMRML
+  qSlicerAnnotationModuleWidgets
   )
 
 # Resources
