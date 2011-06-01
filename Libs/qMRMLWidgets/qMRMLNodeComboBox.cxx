@@ -35,6 +35,7 @@
 
 // qMRMLWidgets includes
 #include "qMRMLNodeComboBox.h"
+#include "qMRMLNodeComboBox_p.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
@@ -42,35 +43,6 @@
 // MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
-
-// -----------------------------------------------------------------------------
-class qMRMLNodeComboBoxPrivate
-{
-  Q_DECLARE_PUBLIC(qMRMLNodeComboBox);
-protected:
-  qMRMLNodeComboBox* const q_ptr;
-public:
-  qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object);
-  void init(QAbstractItemModel* model);
-  vtkMRMLNode* mrmlNode(int row)const;
-  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
-  void updateDefaultText();
-  void updateNoneItem(bool resetRootIndex = true);
-  void updateActionItems(bool resetRootIndex = true);
-  QString nodeTypeLabel()const;
-
-  QComboBox*        ComboBox;
-  qMRMLNodeFactory* MRMLNodeFactory;
-  qMRMLSceneModel*  MRMLSceneModel;
-  bool              SelectNodeUponCreation;
-  bool              NoneEnabled;
-  bool              AddEnabled;
-  bool              RemoveEnabled;
-  bool              EditEnabled;
-  bool              RenameEnabled;
-private:
-  void setModel(QAbstractItemModel* model);
-};
 
 // -----------------------------------------------------------------------------
 qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
@@ -92,19 +64,25 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
-  ctkComboBox* comboBox = new ctkComboBox(q);
-  comboBox->setElideMode(Qt::ElideMiddle);
-  this->ComboBox = comboBox;
 
   q->setLayout(new QHBoxLayout);
-  q->layout()->addWidget(this->ComboBox);
   q->layout()->setContentsMargins(0,0,0,0);
   q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
                                QSizePolicy::Fixed,
                                QSizePolicy::ComboBox));
-  this->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
-                                            QSizePolicy::Expanding,
-                                            QSizePolicy::DefaultType));
+
+  if (this->ComboBox == 0)
+    {
+    ctkComboBox* comboBox = new ctkComboBox(q);
+    comboBox->setElideMode(Qt::ElideMiddle);
+    q->setComboBox(comboBox);
+    }
+  else
+    {
+    QComboBox* comboBox = this->ComboBox;
+    this->ComboBox = 0;
+    q->setComboBox(comboBox);
+    }
 
   this->MRMLNodeFactory = new qMRMLNodeFactory(q);
 
@@ -128,11 +106,6 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   // nodeTypeLabel() works only when the model is set.
   this->updateDefaultText();
 
-  q->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)),
-             q, SLOT(emitCurrentNodeChanged(int)));
-  q->connect(this->ComboBox, SIGNAL(activated(int)),
-             q, SLOT(emitNodeActivated(int)));
-
   q->setEnabled(q->mrmlScene() != 0);
 }
 
@@ -140,7 +113,10 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
-  this->ComboBox->setModel(model);
+  if (this->ComboBox->model() != model)
+    {
+    this->ComboBox->setModel(model);
+    }
   q->connect(model, SIGNAL(rowsInserted(const QModelIndex&, int,int)),
              q, SLOT(emitNodesAdded(const QModelIndex&, int, int)));
   q->connect(model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int,int)),
@@ -315,17 +291,26 @@ qMRMLNodeComboBox::qMRMLNodeComboBox(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBox::~qMRMLNodeComboBox()
-{
-}
-
-// --------------------------------------------------------------------------
 qMRMLNodeComboBox::qMRMLNodeComboBox(QAbstractItemModel* sceneModel, QWidget* parentWidget)
   : Superclass(parentWidget)
   , d_ptr(new qMRMLNodeComboBoxPrivate(*this))
 {
   Q_D(qMRMLNodeComboBox);
   d->init(sceneModel);
+}
+
+// --------------------------------------------------------------------------
+qMRMLNodeComboBox::qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(pimpl)
+{
+  Q_D(qMRMLNodeComboBox);
+  d->init(new qMRMLSceneModel(this));
+}
+
+// --------------------------------------------------------------------------
+qMRMLNodeComboBox::~qMRMLNodeComboBox()
+{
 }
 
 // --------------------------------------------------------------------------
@@ -781,6 +766,11 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
           this, SLOT(emitCurrentNodeChanged(int)));
+  connect(d->ComboBox, SIGNAL(activated(int)),
+          this, SLOT(emitNodeActivated(int)));
+  d->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                         QSizePolicy::Expanding,
+                                         QSizePolicy::DefaultType));
   delete oldComboBox;
 }
 

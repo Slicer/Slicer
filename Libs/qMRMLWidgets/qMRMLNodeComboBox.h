@@ -25,8 +25,8 @@
 #include <QComboBox>
 
 // qMRML includes
-#include "qMRMLWidgetsExport.h"
 #include "qMRMLSortFilterProxyModel.h"
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -274,6 +274,7 @@ signals:
 protected:
   /// qMRMLNodeComboBox will not take ownership on the model.
   qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);
+  qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* parent = 0);
   QAbstractItemModel* rootModel()const;
 
   void setComboBox(QComboBox* comboBox);
