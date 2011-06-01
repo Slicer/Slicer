@@ -85,12 +85,8 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   SET(include_dirs
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR}
-    ${SlicerBaseLogic_BINARY_DIR}
-    ${qMRMLWidgets_SOURCE_DIR}
-    ${qMRMLWidgets_BINARY_DIR}
-    ${MRML_SOURCE_DIR}
-    ${MRML_BINARY_DIR}
+    ${Slicer_Base_INCLUDE_DIRS}
+    ${Slicer_Libs_INCLUDE_DIRS}
     ${SLICERQTBASELIB_INCLUDE_DIRECTORIES}
     )
 
