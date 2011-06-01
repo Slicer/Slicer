@@ -9,7 +9,7 @@ EXIT_FAILURE = 1
 def quit():
   exit(EXIT_SUCCESS)
 
-def exit(status):
+def exit(status=EXIT_SUCCESS):
   from slicer import app
   app.exit(status)
 
