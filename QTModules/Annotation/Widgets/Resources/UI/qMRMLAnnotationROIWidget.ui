@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>196</height>
+    <width>382</width>
+    <height>202</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,7 @@
        <property name="spinBoxAlignment">
         <set>Qt::AlignTop</set>
        </property>
-       <property name="minimumHandlePalette">
+       <property name="minimumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -467,7 +467,7 @@
          </disabled>
         </palette>
        </property>
-       <property name="maximumHandlePalette">
+       <property name="maximumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -911,7 +911,7 @@
        <property name="spinBoxAlignment">
         <set>Qt::AlignTop</set>
        </property>
-       <property name="minimumHandlePalette">
+       <property name="minimumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -1326,7 +1326,7 @@
          </disabled>
         </palette>
        </property>
-       <property name="maximumHandlePalette">
+       <property name="maximumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -1770,7 +1770,7 @@
        <property name="spinBoxAlignment">
         <set>Qt::AlignTop</set>
        </property>
-       <property name="minimumHandlePalette">
+       <property name="minimumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -2185,7 +2185,7 @@
          </disabled>
         </palette>
        </property>
-       <property name="maximumHandlePalette">
+       <property name="maximumHandlePalette" stdset="0">
         <palette>
          <active>
           <colorrole role="WindowText">
@@ -2622,7 +2622,7 @@
      <item>
       <widget class="QToolButton" name="DisplayClippingBoxButton">
        <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
+        <iconset resource="../../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
          <normaloff>:/Icons/VisibleOff.png</normaloff>
          <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
        </property>
@@ -2697,7 +2697,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerAnnotationModule.qrc"/>
+  <include location="../../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections/>
 </ui>

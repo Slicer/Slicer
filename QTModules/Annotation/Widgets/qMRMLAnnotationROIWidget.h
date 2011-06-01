@@ -24,18 +24,18 @@
 // Qt includes
 #include <QWidget>
 
+// AnnotationWidgets includes
+#include "qSlicerAnnotationModuleWidgetsExport.h"
+
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
-
-
-#include "qSlicerAnnotationModuleExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLAnnotationROINode;
 class qMRMLAnnotationROIWidgetPrivate;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLAnnotationROIWidget : public QWidget
+class Q_SLICER_MODULE_ANNOTATION_WIDGETS_EXPORT qMRMLAnnotationROIWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
