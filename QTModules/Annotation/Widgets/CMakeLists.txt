@@ -1,7 +1,7 @@
 PROJECT(qSlicer${qt_module_name}ModuleWidgets)
 
 #
-# See CMake/SlicerMacroBuildModuleQtLibrary.cmake for details
+# See CMake/SlicerMacroBuildModuleWidgets.cmake for details
 #
 
 SET(module_widgets_name "${PROJECT_NAME}")
@@ -38,7 +38,7 @@ SET(module_widgets_target_libraries
   vtkSlicerAnnotationModuleMRML
   )
 
-SlicerMacroBuildModuleQtLibrary(
+SlicerMacroBuildModuleWidgets(
   NAME ${module_widgets_name}
   EXPORT_DIRECTIVE ${module_widgets_export_directive}
   INCLUDE_DIRECTORIES ${module_widgets_include_directories}

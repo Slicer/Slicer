@@ -65,6 +65,7 @@ include(SlicerMacroBuildModuleVTKLibrary)
 #include(SlicerMacroPythonWrapModuleVTKLibrary)
 include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildModuleMRML)
+include(SlicerMacroBuildModuleWidgets)
 include(SlicerMacroBuildQtModule)
 
 #-----------------------------------------------------------------------------
