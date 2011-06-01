@@ -113,6 +113,10 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
+  if (model == 0)
+    {// it's invalid to set a null model to a combobox
+    return;
+    }
   if (this->ComboBox->model() != model)
     {
     this->ComboBox->setModel(model);
