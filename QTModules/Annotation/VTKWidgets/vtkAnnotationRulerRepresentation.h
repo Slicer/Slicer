@@ -33,6 +33,10 @@ public:
 
   void SetDistance(double distance);
 
+  // Description:
+  // Return the property of the axis actor
+  virtual vtkProperty2D *GetLineProperty();
+
 protected:
 
   vtkAnnotationRulerRepresentation();

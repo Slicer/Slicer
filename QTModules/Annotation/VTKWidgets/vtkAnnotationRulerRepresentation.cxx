@@ -9,6 +9,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkWindow.h>
+#include <vtkTextProperty.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -39,9 +40,24 @@ vtkAnnotationRulerRepresentation::~vtkAnnotationRulerRepresentation()
 }
 
 //----------------------------------------------------------------------
+vtkProperty2D *vtkAnnotationRulerRepresentation::GetLineProperty()
+{
+  if (this->GetAxis())
+    {
+    return this->GetAxis()->GetProperty();
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+//----------------------------------------------------------------------
 void vtkAnnotationRulerRepresentation::BuildRepresentation()
 {
   if ( this->GetMTime() > this->BuildTime ||
+       this->AxisActor->GetMTime() > this->BuildTime ||
+       this->AxisActor->GetTitleTextProperty()->GetMTime()  > this->BuildTime ||
        this->Point1Representation->GetMTime() > this->BuildTime ||
        this->Point2Representation->GetMTime() > this->BuildTime ||
        (this->Renderer && this->Renderer->GetVTKWindow() &&
