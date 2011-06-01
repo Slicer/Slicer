@@ -171,7 +171,6 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
         this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
         break;
       case vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent:
-        std::cout << "Got a ControlPointModifiedEvent" << std::endl;
         this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
         break;
       }
