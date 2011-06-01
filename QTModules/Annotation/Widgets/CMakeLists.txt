@@ -48,3 +48,6 @@ SlicerMacroBuildModuleWidgets(
   TARGET_LIBRARIES ${module_widgets_target_libraries}
   RESOURCES ${module_widgets_resources}
   )
+
+# Plugin
+ADD_SUBDIRECTORY(Plugins)

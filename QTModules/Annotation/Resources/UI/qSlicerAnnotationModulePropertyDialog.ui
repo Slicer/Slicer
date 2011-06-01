@@ -719,7 +719,7 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="qMRMLAnnotationROIWidget" name="ROIWidget" native="true"/>
+        <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
        </item>
       </layout>
      </widget>
@@ -729,6 +729,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkColorPickerButton</class>
    <extends>QPushButton</extends>
    <header>ctkColorPickerButton.h</header>
@@ -737,12 +743,6 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLAnnotationROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
