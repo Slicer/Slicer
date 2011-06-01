@@ -33,24 +33,35 @@
 //-----------------------------------------------------------------------------
 class qMRMLColorTableComboBoxPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLColorTableComboBox);
+protected:
+  qMRMLColorTableComboBox* const q_ptr;
 public:
+  qMRMLColorTableComboBoxPrivate(qMRMLColorTableComboBox& object);
+  void init();
 };
 
-// --------------------------------------------------------------------------
-qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
-  : Superclass(this->createSceneModel(), parentWidget)
-  , d_ptr(new qMRMLColorTableComboBoxPrivate)
+// -----------------------------------------------------------------------------
+qMRMLColorTableComboBoxPrivate
+::qMRMLColorTableComboBoxPrivate(qMRMLColorTableComboBox& object)
+  : q_ptr(&object)
 {
-  this->rootModel()->setParent(this);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLColorTableComboBoxPrivate::init()
+{
+  Q_Q(qMRMLColorTableComboBox);
+  q->rootModel()->setParent(q);
   ctkTreeComboBox* comboBox = new ctkTreeComboBox;
-  this->setComboBox(comboBox);
-  this->setShowHidden(true);
+  q->setComboBox(comboBox);
+  q->setShowHidden(true);
   QStringList nodeTypes;
   nodeTypes << QString("vtkMRMLColorTableNode");
   nodeTypes << QString("vtkMRMLProceduralColorNode");
-  this->setNodeTypes(nodeTypes);
-  this->setAddEnabled(false);
-  this->setRemoveEnabled(false);
+  q->setNodeTypes(nodeTypes);
+  q->setAddEnabled(false);
+  q->setRemoveEnabled(false);
 
   QIcon defaultIcon(":blankLUT");
   QList<QSize> iconSizes(defaultIcon.availableSizes());
@@ -58,6 +69,15 @@ qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
     {
     comboBox->setIconSize(iconSizes[0]);
     }
+}
+
+// --------------------------------------------------------------------------
+qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
+  : Superclass(this->createSceneModel(), parentWidget)
+  , d_ptr(new qMRMLColorTableComboBoxPrivate(*this))
+{
+  Q_D(qMRMLColorTableComboBox);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
