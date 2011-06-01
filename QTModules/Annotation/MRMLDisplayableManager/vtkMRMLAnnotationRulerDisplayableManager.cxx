@@ -27,6 +27,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
 #include <vtkProperty2D.h>
+#include <vtkTextProperty.h>
 #include <vtkMath.h>
 #include <vtkRenderer.h>
 #include <vtkAxisActor2D.h>
@@ -38,6 +39,8 @@
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkLineRepresentation.h>
+#include <vtkGlyph3D.h>
+#include <vtkCubeSource.h>
 
 // std includes
 #include <string>
@@ -218,6 +221,14 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep2->RulerModeOn();
     dRep2->SetRulerDistance(10);
 
+    // change ticks to a stretched cube
+    VTK_CREATE(vtkCubeSource, cubeSource);
+    cubeSource->SetXLength(1.0);
+    cubeSource->SetYLength(0.1);
+    cubeSource->SetZLength(1.0);
+    cubeSource->Update();
+    //dRep2->UpdateGlyphPolyData(cubeSource->GetOutput());
+
     rulerWidget->SetRepresentation(dRep2);
 
     rulerWidget->SetWidgetStateToManipulate();
@@ -372,7 +383,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   this->m_Updating = 1;
 
 
-
+  // get the points, to calculate the distance between them
   double worldCoordinates1[4];
   worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
   worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
@@ -385,16 +396,12 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
   worldCoordinates2[3] = 1;
 
-  double displayCoordinates1[4];
-  double displayCoordinates2[4];
-  double displayCoordinatesBuffer1[4];
-  double displayCoordinatesBuffer2[4];
-
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = rulerNode->GetAnnotationTextDisplayNode();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = rulerNode->GetAnnotationPointDisplayNode();
   vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
   
   // update the location
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
 
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
@@ -402,23 +409,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
     // update the distance measurement
     rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
-
-    // change the 2D location
-    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
-    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
-
-    // only update the position, if coordinates really change
-    rep->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
-    rep->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
-
-    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
-      {
-      rep->SetPoint1DisplayPosition(displayCoordinates1);
-      }
-    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
-      {
-      rep->SetPoint2DisplayPosition(displayCoordinates2);
-      }
 
     // set the color
     vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
@@ -443,38 +433,60 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         handle2->GetProperty()->SetColor(pointDisplayNode->GetColor());
         }
       }
+    if (textDisplayNode)
+      {
+      if (rulerNode->GetSelected())
+        {
+        rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetColor());
+        }
+      // TODO: get this working
+      rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
+      }
     if (lineDisplayNode)
       {
-      vtkLineRepresentation *lineRep = vtkLineRepresentation::SafeDownCast(rep);
-       // for now, set the colour from the point display node
-      if (pointDisplayNode && lineRep && lineRep->GetLineProperty())
+      if (rep && rep->GetLineProperty())
         {
         if (rulerNode->GetSelected())
           {
-          lineRep->GetLineProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+          rep->GetLineProperty()->SetColor(lineDisplayNode->GetSelectedColor());
           }
         else
           {
-          // lineRep->SetLineColor
-          double *col = pointDisplayNode->GetColor();
-          if (col)
-            {
-            lineRep->SetLineColor(col[0], col[1], col[1]);
-            }
+          rep->GetLineProperty()->SetColor(lineDisplayNode->GetColor());
           }
+        rep->GetLineProperty()->SetLineWidth(lineDisplayNode->GetLineThickness());
+        rep->GetLineProperty()->SetOpacity(lineDisplayNode->GetOpacity());
+//        rep->GetLineProperty()->SetAmbient(lineDisplayNode->GetAmbient());
+//        rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
+//        rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
         }
-      //lineDisplayNode->GetLineThickness();
+      rep->GetAxis()->SetTitlePosition(lineDisplayNode->GetLabelPosition());
+      rep->GetAxis()->SetTickLength(lineDisplayNode->GetTickSpacing());
+      rep->GetAxis()->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
       }
     rep->NeedToRenderOn();
     }
   else
     {
+    /// 3d case
+    
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
     vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
 
     // update the distance measurement
     rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
+    rep->SetLabelPosition(lineDisplayNode->GetLabelPosition());
+
+    if (textDisplayNode)
+      {
+      double textScale = textDisplayNode->GetTextScale();
+      rep->SetLabelScale(textScale,textScale,textScale);
+      }
     // set the color
     vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
     vtkHandleRepresentation *pointrep2 = rep->GetPoint2Representation();
@@ -498,34 +510,90 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         handle2->GetProperty()->SetColor(pointDisplayNode->GetColor());
         }
       }
+    if (pointDisplayNode)
+      {
+      // use this scale for the ticks
+      rep->SetGlyphScale(pointDisplayNode->GetGlyphScale());
+      }
     if (lineDisplayNode)
       {
-      // get the line representation
-      vtkDistanceRepresentation *lineRep = vtkDistanceRepresentation::SafeDownCast(rep);
-      // for now, set the colour from the point display node
-      if (pointDisplayNode && lineRep)
+      if (rulerNode->GetSelected())
+        {
+        rep->GetGlyphActor()->GetProperty()->SetColor(lineDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        rep->GetGlyphActor()->GetProperty()->SetColor(lineDisplayNode->GetColor());
+        }
+      if (textDisplayNode)
         {
         if (rulerNode->GetSelected())
           {
-//          lineRep->SetColor(pointDisplayNode->GetSelectedColor());
+          rep->GetLabelProperty()->SetColor(textDisplayNode->GetSelectedColor());
           }
         else
           {
-//          lineRep->SetColor(pointDisplayNode->GetColor());
+          rep->GetLabelProperty()->SetColor(textDisplayNode->GetColor());
+          }
+        // if the line node says not to show the label, use the label
+        // property to set it invisible, otherwise, use the text display
+        // node's opacity setting.
+        if (!lineDisplayNode->GetLabelVisibility())
+          {
+          rep->GetLabelProperty()->SetOpacity(0);
+          }
+        else
+          {
+          rep->GetLabelProperty()->SetOpacity(textDisplayNode->GetOpacity());
           }
         }
+      if (rep->GetLineProperty())
+        {
+        if (rulerNode->GetSelected())
+          {
+          rep->GetLineProperty()->SetColor(lineDisplayNode->GetSelectedColor());
+          }
+        else
+          {
+          rep->GetLineProperty()->SetColor(lineDisplayNode->GetColor());
+          }
+        rep->GetLineProperty()->SetLineWidth(lineDisplayNode->GetLineThickness());
+        rep->GetLineProperty()->SetOpacity(lineDisplayNode->GetOpacity());
+        // vtkProperty2D only defines opacity, color and line width
+        //rep->GetLineProperty()->SetAmbient(lineDisplayNode->GetAmbient());
+        //rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
+        //rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
+        }
       //double thickness = lineDisplayNode->GetLineThickness();
+      rep->SetRulerDistance(lineDisplayNode->GetTickSpacing());
+      rep->SetMaxTicks(lineDisplayNode->GetMaxTicks());
       }
     //vtkProperty *labelProperty = rep->GetLabelProperty();
-  
-    // change the 3D location
-    rep->SetPoint1WorldPosition(worldCoordinates1);
-    rep->SetPoint2WorldPosition(worldCoordinates2);
 
     rep->NeedToRenderOn();
     }
+  // update the label format
+  vtkDistanceRepresentation *rep = vtkDistanceRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+  if (rep)
+    {
+    if (rulerNode->GetNumberOfTexts() > 0)
+      {
+      std::string format = std::string("%-#6.3g\n");
+      for (int i = 0; i < rulerNode->GetNumberOfTexts(); i++)
+        {
+        format += std::string(rulerNode->GetText(i));
+        }
+      rep->SetLabelFormat(format.c_str());
+      }
+    else
+      {
+      rep->SetLabelFormat("%-#6.3g");
+      }
+    }
 
   
+  // update the position
+  this->UpdatePosition(widget, node);
 
   rulerWidget->Modified();
 
@@ -641,10 +709,18 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     return;
     }
 
-  // save worldCoordinates to MRML
-  rulerNode->SetPosition1(worldCoordinates1);
-  rulerNode->SetPosition2(worldCoordinates2);
-
+  // save worldCoordinates to MRML if no change
+  double p1[3], p2[3];
+  rulerNode->GetPosition1(p1);
+  rulerNode->GetPosition2(p2);
+  if (this->GetWorldCoordinatesChanged(worldCoordinates1, p1))
+    {
+    rulerNode->SetPosition1(worldCoordinates1);
+    }
+  if (this->GetWorldCoordinatesChanged(worldCoordinates2, p2))
+    {
+    rulerNode->SetPosition2(worldCoordinates2);
+    }
   // save distance to mrml
   rulerNode->SetDistanceMeasurement(distance);
 
@@ -713,12 +789,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     this->m_Updating = 0;
 
     // if this was a one time place, go back to view transform mode
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-      {
-      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-      }
-  
+     vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+     if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+       {
+       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+       }
     }
 
   }
