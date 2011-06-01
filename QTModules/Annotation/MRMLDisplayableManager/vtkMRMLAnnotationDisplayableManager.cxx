@@ -466,27 +466,22 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
   //std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
 
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
-  if (widget)
-    {
-    // Propagate MRML changes to widget
-    this->PropagateMRMLToWidget(annotationNode, widget);
-    }
+
   if(this->m_SliceNode)
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
     this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
-
-    // Update the standard settings of all widgets if the widget is displayable in the current geoemtry
-    if (this->IsWidgetDisplayable(this->m_SliceNode, annotationNode))
-      {
-      // in 2D, the widget is displayable at this point so check its visibility or lock status from MRML
-      this->Helper->UpdateWidget(annotationNode);
-      }
     }
   else
     {
     // in 3D, always update the widget according to the mrml settings of lock and visibility status
     this->Helper->UpdateWidget(annotationNode);
+    }
+
+  if (widget)
+    {
+    // Propagate MRML changes to widget
+    this->PropagateMRMLToWidget(annotationNode, widget);
     }
 
   this->RequestRender();
@@ -523,10 +518,20 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
   if (widget)
     {
+
+    if(this->m_SliceNode)
+      {
+      // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
+      this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+      }
+    else
+      {
+      // in 3D, always update the widget according to the mrml settings of lock and visibility status
+      this->Helper->UpdateWidget(annotationNode);
+      }
+
     // Propagate MRML changes to widget
     this->PropagateMRMLToWidget(annotationNode, widget);
-    
-    this->Helper->UpdateWidget(annotationNode);
     
     this->RequestRender();
     }
@@ -572,15 +577,24 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedE
     return;
     }
 
+
+  if(this->m_SliceNode)
+    {
+    // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
+    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+    }
+  else
+    {
+    // in 3D, always update the widget according to the mrml settings of lock and visibility status
+    this->Helper->UpdateWidget(annotationNode);
+    }
+
   vtkAbstractWidget *widget = this->Helper->GetWidget(annotationNode);
   if (widget)
     {
     // Propagate MRML changes to widget
     this->PropagateMRMLToWidget(annotationNode, widget);
     }
-
-  // Update the standard settings of all widgets.
-  this->Helper->UpdateWidget(annotationNode);
 }
 
 //---------------------------------------------------------------------------
@@ -594,7 +608,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
     return;
     }
   // Update the standard settings of all widgets.
-  this->Helper->UpdateWidget(annotationNode);
+  this->Helper->UpdateLocked(annotationNode);
 }
 
 //---------------------------------------------------------------------------
@@ -676,50 +690,87 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
   it = this->Helper->AnnotationNodeList.begin();
   while(it != this->Helper->AnnotationNodeList.end())
     {
-    // by default, we want to show the associated widget
-    bool showWidget = true;
 
     // we loop through all nodes
     vtkMRMLAnnotationNode * annotationNode = *it;
 
-    // check if the widget is displayable
-    showWidget = this->IsWidgetDisplayable(sliceNode, annotationNode);
-
-    // now this is the magical part
-    // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
-    // thus we will only enable the widget if they are
     vtkAbstractWidget* widget = this->Helper->GetWidget(annotationNode);
-
     if (!widget)
       {
       vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: We could not get the widget to the node: " << annotationNode->GetID());
       return;
       }
 
-    // check if the widget is visible according to its mrml node
-    if (annotationNode->GetVisible())
+    // check if the annotation is displayable according to the current selected Slice
+    bool visibleOnSlice = this->IsWidgetDisplayable(sliceNode, annotationNode);
+    // check if the annotation is visible according to the current mrml state
+    bool visibleOnNode = annotationNode->GetVisible();
+    // check if the widget is visible according to the widget state
+    bool visibleOnWidget = widget->GetEnabled();
+
+
+    // now this is the magical part
+    // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
+    // thus we will only enable the widget if they are
+
+    // first case: the node says it is not visible, but the widget is
+    if (!visibleOnNode && visibleOnWidget)
       {
-      // only then update the visibility according to the geometry
-      // and only adjust the widget settings if there was a change
-      if ((widget->GetEnabled() && !showWidget) || (!widget->GetEnabled() && showWidget))
+      // hide the widget immediately
+      widget->SetEnabled(0);
+      vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+      if (seedWidget)
         {
-        widget->SetEnabled(showWidget);
-        if (showWidget)
+        seedWidget->CompleteInteraction();
+        vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
+        }
+      }
+
+    // second case: the node says it is visible, but the widget is not
+    else if (visibleOnNode && !visibleOnWidget)
+      {
+
+      // now we have to check if the annotation is visible on the current slice
+      // if it is, we have to show it
+      if (visibleOnSlice)
+        {
+        // show the widget immediately
+        widget->SetEnabled(1);
+        vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+        if (seedWidget)
           {
-          vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
-          if (seedWidget)
-            {
-            seedWidget->CompleteInteraction();
-            vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
-            }
+          seedWidget->CompleteInteraction();
+          vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
           }
         }
 
       }
 
-    // if the widget is not displayable, show at least the intersection
-    if (!showWidget)
+    // third case: the node and the widget say they are visible, but it's not according
+    // to the slice
+    else if (visibleOnNode && visibleOnWidget)
       {
+
+      if (!visibleOnSlice)
+        {
+        // hide the widget immediately
+        widget->SetEnabled(0);
+        vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+        if (seedWidget)
+          {
+          seedWidget->CompleteInteraction();
+          vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
+          }
+        }
+
+      }
+
+
+    // if the widget is not shown on the slice, show at least the intersection
+    if (!visibleOnSlice)
+      {
+
+      // only implemented for ruler yet
 
       vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
       if (rulerNode)
@@ -876,8 +927,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
       }
 
-    this->PropagateMRMLToWidget(annotationNode,widget);
-
     ++it;
     }
 
@@ -990,7 +1039,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
           vtkDebugMacro("SeedWidget: Complete interaction");
           seedWidget->CompleteInteraction();
           }
-        
+
         // we need to render again
         currentRenderer->Render();
 

@@ -102,11 +102,15 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNo
     return;
     }
 
-  if (node->GetLocked())
+  bool isLockedOnNode = node->GetLocked();
+  bool isLockedOnWidget = widget->GetProcessEvents();
+
+  // only update the processEvents state of the widget if it is different than on the node
+  if (isLockedOnNode && !isLockedOnWidget)
     {
     widget->ProcessEventsOff();
     }
-  else
+  else if (!isLockedOnNode && isLockedOnWidget)
     {
     widget->ProcessEventsOn();
     }
@@ -128,7 +132,11 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
     return;
     }
 
-  if (node->GetVisible())
+  bool isVisibleOnNode = node->GetVisible();
+  bool isVisibleOnWidget = widget->GetEnabled();
+
+  // only update the visibility of the widget if it is different than on the node
+  if (isVisibleOnNode && !isVisibleOnWidget)
     {
     widget->EnabledOn();
     vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
@@ -137,7 +145,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
       seedWidget->CompleteInteraction();
       }
     }
-  else
+  else if (!isVisibleOnNode && isVisibleOnWidget)
     {
     widget->EnabledOff();
     }
