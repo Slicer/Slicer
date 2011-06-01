@@ -28,6 +28,7 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
+#include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
 
 /// SlicerQt includes
@@ -65,7 +66,7 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   headerView->setStretchLastSection(previousHeaderView->stretchLastSection());
   // Propagate to top-level items only (depth = 1),no need to go deeper
   // (depth = -1 or 2, 3...) as it is a flat list.
-  headerView->setPropagateDepth(1);
+  headerView->checkableModelHelper()->setPropagateDepth(1);
   // Finally assign the new header to the view
   this->FileWidget->setHorizontalHeader(headerView);
 
