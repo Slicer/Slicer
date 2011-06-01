@@ -61,7 +61,7 @@ MACRO(SlicerMacroBuildModuleMRML)
     SET(Slicer_Wrapped_LIBRARIES
       )
     
-    SlicerMacroPythonWrapModuleLibrary(
+    SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULEMRML_NAME}
       SRCS ${MODULEMRML_SRCS}
       WRAPPED_TARGET_LIBRARIES ${Slicer_Wrapped_LIBRARIES}

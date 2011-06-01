@@ -73,7 +73,7 @@ MACRO(SlicerMacroBuildModuleLogic)
       SlicerBaseLogicPythonD
       )
     
-    SlicerMacroPythonWrapModuleLibrary(
+    SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULELOGIC_NAME}
       SRCS ${MODULELOGIC_SRCS}
       WRAPPED_TARGET_LIBRARIES ${Slicer_Wrapped_LIBRARIES}

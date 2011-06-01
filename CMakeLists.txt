@@ -522,7 +522,7 @@ ADD_SUBDIRECTORY(Resources)
 #-----------------------------------------------------------------------------
 
 INCLUDE(SlicerMacroBuildModuleVTKLibrary)
-INCLUDE(SlicerMacroPythonWrapModuleLibrary)
+INCLUDE(SlicerMacroPythonWrapModuleVTKLibrary)
 INCLUDE(SlicerMacroBuildModuleLogic)
 INCLUDE(SlicerMacroBuildModuleMRML)
 
