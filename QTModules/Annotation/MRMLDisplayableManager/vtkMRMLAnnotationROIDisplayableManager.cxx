@@ -1,17 +1,18 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+// AnnotationModule/Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLLinearTransformNode.h"
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationROINode.h>
 
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationNode.h"
+// AnnotationModule/DisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationROIDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkObject.h>

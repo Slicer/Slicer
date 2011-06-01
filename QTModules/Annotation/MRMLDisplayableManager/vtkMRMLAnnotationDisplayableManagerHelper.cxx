@@ -1,27 +1,28 @@
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationNode.h"
+#include <vtkMRMLAnnotationNode.h>
+
+// AnnotationModule/MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 #include <vtkAbstractWidget.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSeedWidget.h>
 #include <vtkHandleWidget.h>
-#include <vtkSphereHandleRepresentation.h>
-#include <vtkSeedRepresentation.h>
+#include <vtkObjectFactory.h>
 #include <vtkProperty.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkSeedWidget.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereHandleRepresentation.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
 
 // STD includes
-#include <vector>
-#include <map>
 #include <algorithm>
+#include <map>
+#include <vector>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

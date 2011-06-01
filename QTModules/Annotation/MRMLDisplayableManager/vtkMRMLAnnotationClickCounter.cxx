@@ -1,10 +1,10 @@
-#include "MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.h"
+
+// AnnotationModule/MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationClickCounter.h"
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

@@ -1,33 +1,35 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+
+// AnnotationModule/Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationTextNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationNode.h"
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationTextDisplayNode.h>
+#include <vtkMRMLAnnotationTextNode.h>
+
+// AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationTextDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkProperty.h>
-#include <vtkCaptionWidget.h>
-#include <vtkCaptionRepresentation.h>
-#include <vtkCaptionActor2D.h>
-#include <vtkRenderer.h>
-#include <vtkHandleRepresentation.h>
 #include <vtkAbstractWidget.h>
+#include <vtkCaptionActor2D.h>
+#include <vtkCaptionRepresentation.h>
+#include <vtkCaptionWidget.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkObjectFactory.h>
+#include <vtkProperty.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
 
-// std includes
+// STD includes
 #include <string>
 
 // Convenient macro

@@ -19,7 +19,6 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkDistanceRepresentation2D.h>
 
 /// \ingroup Slicer_QtModules_Annotation

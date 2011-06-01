@@ -19,8 +19,8 @@
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
-// MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+// AnnotationModule/MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationBidimensionalNode;
 class vtkSlicerViewerWidget;

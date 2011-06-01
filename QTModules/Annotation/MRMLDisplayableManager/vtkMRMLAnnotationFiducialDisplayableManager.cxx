@@ -1,41 +1,46 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+
+// AnnotationModule/Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkMRMLAnnotationNode.h"
+#include <vtkMRMLAnnotationFiducialNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationDisplayNode.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+
+// AnnotationModule/MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
+
+// AnnotationModule/VTKWidgets includes
+#include <vtkAnnotationGlyphSource2D.h>
+
+// MRMLDisplayableManager includes
+#include <vtkSliceViewInteractorStyle.h>
+
+// MRML includes
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
-#include "vtkMRMLAnnotationDisplayNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkAnnotationGlyphSource2D.h"
 
 // VTK includes
-#include <vtkObject.h>
+#include <vtkAbstractWidget.h>
+#include <vtkFollower.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkInteractorStyle.h>
+#include <vtkMath.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
+#include <vtkOrientedPolygonalHandleRepresentation3D.h>
+#include <vtkPointHandleRepresentation2D.h>
 #include <vtkProperty2D.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
-#include <vtkSeedWidget.h>
-#include <vtkHandleRepresentation.h>
-#include <vtkSeedRepresentation.h>
-#include <vtkPointHandleRepresentation2D.h>
-#include <vtkOrientedPolygonalHandleRepresentation3D.h>
-#include <vtkAbstractWidget.h>
-#include <vtkMatrix4x4.h>
-#include <vtkSphereSource.h>
-#include <vtkMath.h>
-
-
 #include <vtkRenderWindowInteractor.h>
-#include <vtkInteractorStyle.h>
-#include "vtkSliceViewInteractorStyle.h"
+#include <vtkSeedWidget.h>
+#include <vtkSmartPointer.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkSphereSource.h>
 
-#include <vtkFollower.h>
-
-// std includes
+// STD includes
 #include <string>
 
 // Convenient macro

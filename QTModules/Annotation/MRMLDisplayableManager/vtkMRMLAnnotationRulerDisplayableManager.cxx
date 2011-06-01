@@ -1,21 +1,25 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+
+// AnnotationModule/Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationRulerNode.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
+#include <vtkMRMLAnnotationRulerNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationDisplayableManager.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationLineDisplayNode.h>
+#include <vtkMRMLAnnotationTextDisplayNode.h>
 
-#include "vtkMRMLInteractionNode.h"
+// AnnotationModule/MRMLDisplayableManager includes
+#include "MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.h"
 
-// Annotation widget includes
-#include "Widgets/vtkAnnotationRulerWidget.h"
-#include "Widgets/vtkAnnotationRulerRepresentation.h"
-#include "Widgets/vtkAnnotationRulerRepresentation3D.h"
+// AnnotationModule/VTKWidgets includes
+#include <vtkAnnotationRulerRepresentation.h>
+#include <vtkAnnotationRulerRepresentation3D.h>
+#include <vtkAnnotationRulerWidget.h>
+
+// MRML includes
+#include <vtkMRMLInteractionNode.h>
 
 // VTK includes
 #include <vtkObject.h>

@@ -9,10 +9,14 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories
-  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
+  ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
+  ${CMAKE_CURRENT_BINARY_DIR}/MRMLDisplayableManager
+  ${CMAKE_CURRENT_SOURCE_DIR}/VTKWidgets
+  ${CMAKE_CURRENT_BINARY_DIR}/VTKWidgets
   )
 
 SET(DisplayableManager_SRCS
@@ -22,15 +26,15 @@ SET(DisplayableManager_SRCS
   
   MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.cxx  
+  #MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.cxx
   #MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx  
-  MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx   
+  #MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx 
+  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx
 
-  MRMLDisplayableManager/vtkSlicerBoxRepresentation.cxx  
-  MRMLDisplayableManager/vtkSlicerBoxWidget2.cxx 
+  MRMLDisplayableManager/vtkSlicerBoxRepresentation.cxx
+  MRMLDisplayableManager/vtkSlicerBoxWidget2.cxx
   )
   
 SET(Logic_SRCS
@@ -38,23 +42,23 @@ SET(Logic_SRCS
   Logic/vtkSlicerAnnotationModuleLogic.h
   )
   
-SET(Widget_SRCS
+SET(VTKWidget_SRCS
   # Ruler VTK widget
-  Widgets/vtkAnnotationRulerWidget.cxx
-  Widgets/vtkAnnotationRulerWidget.h
-  Widgets/vtkAnnotationRulerRepresentation.cxx
-  Widgets/vtkAnnotationRulerRepresentation.h
-  Widgets/vtkAnnotationRulerRepresentation3D.cxx
-  Widgets/vtkAnnotationRulerRepresentation3D.h  
+  VTKWidgets/vtkAnnotationRulerWidget.cxx
+  VTKWidgets/vtkAnnotationRulerWidget.h
+  VTKWidgets/vtkAnnotationRulerRepresentation.cxx
+  VTKWidgets/vtkAnnotationRulerRepresentation.h
+  VTKWidgets/vtkAnnotationRulerRepresentation3D.cxx
+  VTKWidgets/vtkAnnotationRulerRepresentation3D.h
   
   # Bidimensional VTK widget
-  Widgets/vtkAnnotationBidimensionalWidget.cxx
-  Widgets/vtkAnnotationBidimensionalWidget.h
-  Widgets/vtkAnnotationBidimensionalRepresentation.cxx
-  Widgets/vtkAnnotationBidimensionalRepresentation.h
+  VTKWidgets/vtkAnnotationBidimensionalWidget.cxx
+  VTKWidgets/vtkAnnotationBidimensionalWidget.h
+  VTKWidgets/vtkAnnotationBidimensionalRepresentation.cxx
+  VTKWidgets/vtkAnnotationBidimensionalRepresentation.h
   
-  Widgets/vtkAnnotationGlyphSource2D.cxx
-  Widgets/vtkAnnotationGlyphSource2D.h
+  VTKWidgets/vtkAnnotationGlyphSource2D.cxx
+  VTKWidgets/vtkAnnotationGlyphSource2D.h
   )
   
 SET(GUI_SRCS
@@ -89,7 +93,7 @@ SET(qt_module_SRCS
   ${DisplayableManager_SRCS}
   ${DisplayableManagerInstantiator_SRCS}
   ${Logic_SRCS}
-  ${Widget_SRCS}
+  ${VTKWidget_SRCS}
   ${GUI_SRCS}
   qSlicerAnnotationModule.cxx
   qSlicerAnnotationModule.h

@@ -1,18 +1,19 @@
-#include "Widgets/vtkAnnotationRulerRepresentation3D.h"
+
+// AnnotationModule/VTKWidgets includes
+#include "VTKWidgets/vtkAnnotationRulerRepresentation3D.h"
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkMath.h>
-#include <vtkRenderer.h>
 #include <vtkAxisActor2D.h>
-#include <vtkWindow.h>
-#include <vtkPoints.h>
-#include <vtkHandleRepresentation.h>
-#include <vtkVectorText.h>
-#include <vtkFollower.h>
 #include <vtkDoubleArray.h>
+#include <vtkFollower.h>
 #include <vtkGlyph3D.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPoints.h>
+#include <vtkRenderer.h>
+#include <vtkVectorText.h>
+#include <vtkWindow.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

@@ -6,31 +6,30 @@
  or http://www.slicer.org/copyright/copyright.txt for details.
 
  Program:   3D Slicer
- Module:    $RCSfile: vtkMRMLAnnotationDisplayableManagerHelper,v $
+ Module:    $RCSfile: vtkAnnotationBidimensionalWidget,v $
  Date:      $Date: Aug 4, 2010 10:44:52 AM $
  Version:   $Revision: 1.0 $
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONRULERWIDGET_H_
-#define VTKANNOTATIONRULERWIDGET_H_
+#ifndef VTKANNOTATIONBIDIMENSIONALWIDGET_H_
+#define VTKANNOTATIONBIDIMENSIONALWIDGET_H_
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkAbstractWidget.h>
-#include <vtkDistanceWidget.h>
+#include <vtkBiDimensionalWidget.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerWidget :
-    public vtkDistanceWidget
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationBidimensionalWidget :
+    public vtkBiDimensionalWidget
 {
 public:
 
-  static vtkAnnotationRulerWidget *New();
-  vtkTypeRevisionMacro(vtkAnnotationRulerWidget, vtkDistanceWidget);
+  static vtkAnnotationBidimensionalWidget *New();
+  vtkTypeRevisionMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void CreateDefaultRepresentation();
@@ -38,14 +37,14 @@ public:
 
 protected:
 
-  vtkAnnotationRulerWidget();
-  virtual ~vtkAnnotationRulerWidget();
+  vtkAnnotationBidimensionalWidget();
+  virtual ~vtkAnnotationBidimensionalWidget();
 
 private:
 
-  vtkAnnotationRulerWidget(const vtkAnnotationRulerWidget&); /// Not implemented
-  void operator=(const vtkAnnotationRulerWidget&); /// Not Implemented
+  vtkAnnotationBidimensionalWidget(const vtkAnnotationBidimensionalWidget&); /// Not implemented
+  void operator=(const vtkAnnotationBidimensionalWidget&); /// Not Implemented
 
 };
 
-#endif /* VTKANNOTATIONRULERWIDGET_H_ */
+#endif /* VTKANNOTATIONBIDIMENSIONALWIDGET_H_ */

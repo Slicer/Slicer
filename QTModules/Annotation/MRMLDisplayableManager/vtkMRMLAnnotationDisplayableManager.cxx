@@ -1,47 +1,48 @@
-// AnnotationModule includes
-#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationControlPointsNode.h"
-#include "vtkMRMLAnnotationRulerNode.h"
+#include <vtkMRMLAnnotationControlPointsNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationRulerNode.h>
+
+// AnnotationModule/MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationDisplayableManager.h"
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLModelDisplayableManager.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
 
 // MRML includes
-#include <vtkMRMLTransformNode.h>
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
 
-#include "vtkMRMLModelDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
-
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
 #include <vtkAbstractWidget.h>
 #include <vtkCallbackCommand.h>
-#include <vtkSmartPointer.h>
-#include <vtkProperty.h>
 #include <vtkCamera.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
-#include <vtkMath.h>
-#include <vtkRendererCollection.h>
-#include <vtkPropCollection.h>
-#include <vtkWidgetRepresentation.h>
 #include <vtkHandleRepresentation.h>
-#include <vtkPointHandleRepresentation2D.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPropCollection.h>
+#include <vtkProperty.h>
+#include <vtkProperty2D.h>
+#include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSeedWidget.h>
 #include <vtkSeedRepresentation.h>
-#include <vtkProperty2D.h>
+#include <vtkSmartPointer.h>
+#include <vtkWidgetRepresentation.h>
+#include <vtkPointHandleRepresentation2D.h>
 
 // STD includes
-#include <vector>
-#include <map>
 #include <algorithm>
+#include <map>
+#include <vector>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

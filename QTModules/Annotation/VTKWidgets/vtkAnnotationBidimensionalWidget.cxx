@@ -1,9 +1,9 @@
-#include "Widgets/vtkAnnotationBidimensionalWidget.h"
-#include "Widgets/vtkAnnotationBidimensionalRepresentation.h"
 
+// AnnotationModule/VTKWidgets includes
+#include "VTKWidgets/vtkAnnotationBidimensionalWidget.h"
+#include "VTKWidgets/vtkAnnotationBidimensionalRepresentation.h"
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkAbstractWidget.h>
 #include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>

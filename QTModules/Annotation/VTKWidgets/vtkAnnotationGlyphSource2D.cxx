@@ -12,19 +12,23 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
+// AnnotationModule/VTKWidgets includes
 #include "vtkAnnotationGlyphSource2D.h"
 
-#include "vtkCellArray.h"
-#include "vtkCellData.h"
-#include "vtkMath.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
-#include "vtkUnsignedCharArray.h"
+// MRML includes
+#include <vtkMRMLFiducialListNode.h>
 
-#include "vtkSmartPointer.h"
-#include "vtkMRMLFiducialListNode.h"
+// VTK includes
+#include <vtkCellArray.h>
+#include <vtkCellData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkUnsignedCharArray.h>
 
 vtkCxxRevisionMacro(vtkAnnotationGlyphSource2D, "$Revision: 12554 $");
 vtkStandardNewMacro(vtkAnnotationGlyphSource2D);

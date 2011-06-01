@@ -1,9 +1,10 @@
-#include "Widgets/vtkAnnotationRulerWidget.h"
-#include "Widgets/vtkAnnotationRulerRepresentation.h"
-#include "Widgets/vtkAnnotationRulerRepresentation3D.h"
+
+// AnnotationModule/VTKWidgets includes
+#include "VTKWidgets/vtkAnnotationRulerRepresentation.h"
+#include "VTKWidgets/vtkAnnotationRulerRepresentation3D.h"
+#include "VTKWidgets/vtkAnnotationRulerWidget.h"
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkAbstractWidget.h>
 #include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>

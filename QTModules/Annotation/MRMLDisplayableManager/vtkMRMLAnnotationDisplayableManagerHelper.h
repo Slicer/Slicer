@@ -18,13 +18,13 @@
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
-#include "vtkMRMLAnnotationNode.h"
+// AnnotationModule/MRML includes
+#include <vtkMRMLAnnotationNode.h>
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkAbstractWidget.h>
-#include <vtkSeedWidget.h>
 #include <vtkHandleWidget.h>
+#include <vtkSeedWidget.h>
 #include <vtkSmartPointer.h>
 
 // MRML includes

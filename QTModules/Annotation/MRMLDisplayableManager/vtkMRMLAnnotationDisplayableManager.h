@@ -18,16 +18,18 @@
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
+
+// AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationClickCounter.h"
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // VTK includes
-#include <vtkSeedWidget.h>
 #include <vtkHandleWidget.h>
+#include <vtkSeedWidget.h>
 
 class vtkMRMLAnnotationNode;
 class vtkSlicerViewerWidget;

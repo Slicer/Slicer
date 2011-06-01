@@ -1,14 +1,14 @@
-#include "Widgets/vtkAnnotationRulerRepresentation.h"
+
+// AnnotationModule/VTKWidgets includes
+#include "VTKWidgets/vtkAnnotationRulerRepresentation.h"
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkMath.h>
-#include <vtkRenderer.h>
-#include <vtkAxisActor2D.h>
-#include <vtkWindow.h>
 #include <vtkAxisActor2D.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkRenderer.h>
+#include <vtkWindow.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
