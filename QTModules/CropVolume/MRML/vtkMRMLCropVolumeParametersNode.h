@@ -82,13 +82,13 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   void SetAndObserveROINodeID(const char *ROINodeID);
   vtkMRMLAnnotationROINode* GetROINode();
 
-  vtkSetMacro(IsotropicResampling,int);
-  vtkGetMacro(IsotropicResampling,int);
-  vtkBooleanMacro(IsotropicResampling,int);
+  vtkSetMacro(IsotropicResampling,bool);
+  vtkGetMacro(IsotropicResampling,bool);
+  vtkBooleanMacro(IsotropicResampling,bool);
 
-  vtkSetMacro(ROIVisibility,int);
-  vtkGetMacro(ROIVisibility,int);
-  vtkBooleanMacro(ROIVisibility,int);
+  vtkSetMacro(ROIVisibility,bool);
+  vtkGetMacro(ROIVisibility,bool);
+  vtkBooleanMacro(ROIVisibility,bool);
 
   typedef enum {NearestNeighbor, Linear, Cubic}
    InterpolationModeType;

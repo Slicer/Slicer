@@ -180,8 +180,8 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged(){
     return;
 
   Q_D(qSlicerCropVolumeModuleWidget);
-  this->parametersNode->SetROIVisibility((int)d->VisibilityButton->isChecked());
-  this->parametersNode->GetROINode()->SetVisibility((int)d->VisibilityButton->isChecked());
+  this->parametersNode->SetROIVisibility(d->VisibilityButton->isChecked());
+  this->parametersNode->GetROINode()->SetVisibility(d->VisibilityButton->isChecked());
 }
 
 void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
