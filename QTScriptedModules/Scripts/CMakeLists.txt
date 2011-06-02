@@ -3,6 +3,7 @@ SET(KIT_PYTHON_SCRIPTS
     Editor.py
     LabelStatistics.py
     SampleData.py
+    DICOM.py
   )
 
 IF(Slicer_USE_NUMPY)
