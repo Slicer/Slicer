@@ -21,6 +21,9 @@
 #ifndef __qSlicerTractographyDisplayModule_h
 #define __qSlicerTractographyDisplayModule_h
 
+// CTK includes
+#include <ctkPimpl.h>
+
 /// SlicerQT includes
 #include "qSlicerLoadableModule.h"
 
