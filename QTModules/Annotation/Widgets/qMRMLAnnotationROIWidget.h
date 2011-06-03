@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_ANNOTATION_WIDGETS_EXPORT qMRMLAnnotationROIWidget : publi
 
 public:
   /// Constructors
-  explicit qMRMLAnnotationROIWidget(QWidget* parent);
+  explicit qMRMLAnnotationROIWidget(QWidget* parent = 0);
   virtual ~qMRMLAnnotationROIWidget();
 
   /// Returns the current MRML ROI node
@@ -73,8 +73,6 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLAnnotationROIWidgetPrivate> d_ptr;
-
-  int IsProcessingOnMRMLNodeModified;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationROIWidget);
