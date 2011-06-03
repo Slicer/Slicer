@@ -72,6 +72,14 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->ViewCheckableNodeComboBox,
                    SIGNAL(checkedNodesChanged()),
                    q, SLOT(onCheckedViewNodesChanged()));
+                   
+  // Rendering
+  QObject::connect(this->ROICropCheckBox,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onCropToggled(bool)));
+  QObject::connect(this->ROIFitPushButton,
+                   SIGNAL(clicked()),
+                   q, SLOT(fitROIToVolume()));
 }
 
 // --------------------------------------------------------------------------
@@ -248,6 +256,8 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
   this->setMRMLROINode(d->DisplayNode ? d->DisplayNode->GetROINode() : 0);
   d->VisibilityCheckBox->setChecked(
     d->DisplayNode ? d->DisplayNode->GetVisibility() : false);
+  d->ROICropCheckBox->setChecked(
+    d->DisplayNode ? d->DisplayNode->GetCroppingEnabled() : false);
 }
 
 // --------------------------------------------------------------------------
@@ -296,6 +306,30 @@ void qSlicerVolumeRenderingModuleWidget::onVisibilityChanged(bool visible)
     return;
     }
   displayNode->SetVisibility(visible);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCropToggled(bool crop)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  displayNode->SetCroppingEnabled(crop);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget
+::fitROIToVolume()
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic())
+    ->FitROIToVolume(displayNode);
 }
 
 // --------------------------------------------------------------------------

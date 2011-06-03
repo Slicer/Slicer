@@ -171,7 +171,7 @@
       <item>
        <widget class="QTabWidget" name="RenderingTabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="TechniquesTab">
          <attribute name="title">
@@ -195,22 +195,33 @@
          <attribute name="title">
           <string>ROI</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
+         <layout class="QFormLayout" name="formLayout_3">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="ROICropLabel">
+            <property name="text">
+             <string>Crop:</string>
+            </property>
+           </widget>
           </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="ROICropCheckBox">
+            <property name="text">
+             <string/>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget" native="true"/>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QPushButton" name="ROIFitPushButton">
+            <property name="text">
+             <string>Fit ROI to Volume</string>
             </property>
-           </spacer>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -234,11 +245,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -249,15 +255,20 @@
    <header>qMRMLVolumePropertyNodeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLAnnotationROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -271,12 +282,12 @@
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>81</y>
+     <x>323</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
-     <x>227</x>
-     <y>519</y>
+     <x>180</x>
+     <y>456</y>
     </hint>
    </hints>
   </connection>
@@ -287,12 +298,12 @@
    <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>493</x>
-     <y>79</y>
+     <x>554</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>318</x>
-     <y>358</y>
+     <x>246</x>
+     <y>159</y>
     </hint>
    </hints>
   </connection>
@@ -308,7 +319,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>307</x>
-     <y>80</y>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -319,12 +330,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>181</x>
-     <y>77</y>
+     <x>242</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>186</x>
-     <y>79</y>
+     <x>247</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
@@ -335,12 +346,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>77</y>
+     <x>223</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>164</x>
-     <y>81</y>
+     <x>225</x>
+     <y>65</y>
     </hint>
    </hints>
   </connection>
@@ -351,12 +362,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>412</x>
-     <y>77</y>
+     <x>473</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>386</x>
-     <y>75</y>
+     <x>447</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>
@@ -367,12 +378,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>77</y>
+     <x>298</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>238</x>
-     <y>83</y>
+     <x>299</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
@@ -403,8 +414,8 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>155</x>
-     <y>83</y>
+     <x>216</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
@@ -419,8 +430,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>512</x>
-     <y>79</y>
+     <x>573</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
@@ -436,7 +447,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>606</x>
-     <y>81</y>
+     <y>65</y>
     </hint>
    </hints>
   </connection>
@@ -451,8 +462,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>468</x>
-     <y>77</y>
+     <x>529</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
@@ -467,8 +478,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>402</x>
-     <y>28</y>
+     <x>445</x>
+     <y>19</y>
     </hint>
    </hints>
   </connection>

@@ -44,9 +44,12 @@ public slots:
 
   void addVolumeIntoView(vtkMRMLNode* node);
 
+  void fitROIToVolume();
 protected slots:
   void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
   void onVisibilityChanged(bool);
+  void onCropToggled(bool);
+
   void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
