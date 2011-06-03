@@ -129,7 +129,10 @@ namespace eval tpycl {
       } 
       "Delete" {
         py_del "$instanceName"
-        rename ::$instanceName ""
+        
+        if {[string equal ::$instanceName [info procs ::$instanceName]]} {
+          rename ::$instanceName ""
+        }
         return
       } 
 

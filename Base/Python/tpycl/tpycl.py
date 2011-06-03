@@ -92,7 +92,11 @@ class tpycl(object):
   def py_del(self,instanceName):
     """ deletes a named instance
     """
-    exec( "del(%s)"%instanceName, globals() )
+    
+    # only delete if the instanceName exists
+    if globals().has_key(instanceName):
+      exec( "del(%s)"%instanceName, globals() )
+        
     return None
 
   def py_eval(self,cmd):
