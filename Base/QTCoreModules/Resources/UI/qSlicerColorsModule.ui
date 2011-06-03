@@ -48,6 +48,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="CopyColorNodeButton">
+          <property name="toolTip">
+           <string>Duplicate the current color table to edit the color entrees as built-in color tables don't allow user edition.</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -93,6 +96,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QCheckBox" name="HideInvalidColorsCheckBox">
+        <property name="toolTip">
+         <string>Show/Hide the unnamed color entries in the list below.</string>
+        </property>
         <property name="text">
          <string/>
         </property>
