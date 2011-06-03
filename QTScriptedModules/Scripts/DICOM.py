@@ -1,6 +1,7 @@
 import os
 import glob
 import subprocess
+import sqlite3
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -39,11 +40,12 @@ class DICOMWidget:
   """
 
   def __init__(self, parent=None):
-    self.logic = None
+    self.testingServer = None
+    self.database = None
 
     # TODO: are these wrapped so we can avoid magic numbers?
-    self.qtUserRole = 32
-    self.dicomModelTypeRole = self.qtUserRole + 1
+    self.dicomModelUIDRole = 32
+    self.dicomModelTypeRole = self.dicomModelUIDRole + 1
     self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
 
     if not parent:
@@ -96,7 +98,9 @@ class DICOMWidget:
     tree = self.findChildren(self.dicomApp, 'treeView')[0]
     g = tree.geometry
     g.setHeight(100)
+    self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
 
+    self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
     tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
 
     userFrame = self.findChildren(self.dicomApp, 'userFrame')[0]
@@ -109,11 +113,14 @@ class DICOMWidget:
     # Add spacer to layout
     self.layout.addStretch(1)
 
+  def onDatabaseDirectoryChanged(self,databaseDirectory):
+    self.database = DICOMDatabase(databaseDirectory)
+
   def onTreeClicked(self,index):
     self.model = index.model()
     self.selection = index.sibling(index.row(), 0)
     typeRole = self.selection.data(self.dicomModelTypeRole)
-    if typeRole == 3:
+    if typeRole > 0:
       self.loadButton.text = 'Load Selected %s to Slicer' % self.dicomModelTypes[typeRole]
       self.loadButton.enabled = True
     else:
@@ -121,17 +128,41 @@ class DICOMWidget:
       self.loadButton.enabled = False 
 
   def onLoadButton(self):
-    pass
+    uid = self.selection.data(self.dicomModelUIDRole)
+    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
+    if role == "Patient":
+      pass
+    elif role == "Study":
+      pass
+    elif role == "Series":
+      name = self.selection.data()
+      seriesUID = uid
+      self.loadFiles(self.database.filesForSeries(seriesUID), name)
+    elif role == "Image":
+      pass
+
+  def loadFiles(self, files, name):
+    fileList = vtk.vtkStringArray()
+    for f in files:
+      fileList.InsertNextValue(f[0])
+    vl = slicer.modules.volumes.logic()
+    # TODO: pass in fileList once it is known to be in the right order
+    volumeNode = vl.AddArchetypeVolume( files[0][0], name, 0 )
+    # automatically select the volume to display
+    mrmlLogic = slicer.app.mrmlApplicationLogic()
+    selNode = mrmlLogic.GetSelectionNode()
+    selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
+    mrmlLogic.PropagateVolumeSelection()
 
   def onToggleServer(self):
-    if self.logic and self.logic.qrRunning():
-      self.logic.stop()
+    if self.testingServer and self.testingServer.qrRunning():
+      self.testingServer.stop()
       self.toggleServer.text = "Start Server"
     else:
       #
-      # create&configure the logic if needed, start the server, and populate it
+      # create&configure the testingServer if needed, start the server, and populate it
       #
-      if not self.logic:
+      if not self.testingServer:
         # find the helper executables (only works on build trees
         # with standard naming conventions)
         self.exeDir = os.environ['Slicer_HOME'] + '/../CTK-build/DCMTK-build/bin'
@@ -144,7 +175,7 @@ class DICOMWidget:
         self.tmpDir = tmpDir + '/DICOM'
         if not os.path.exists(self.tmpDir):
           os.mkdir(self.tmpDir)
-        self.logic = DICOMLogic(exeDir=self.exeDir,tmpDir=self.tmpDir)
+        self.testingServer = DICOMTestingServer(exeDir=self.exeDir,tmpDir=self.tmpDir)
 
       # look for the sample data to load (only works on build trees
       # with standard naming conventions)
@@ -152,7 +183,7 @@ class DICOMWidget:
       files = glob.glob(self.dataDir+'/*.dcm')
 
       # now start the server
-      self.logic.start(verbose=self.verboseServer.checked,initialFiles=files)
+      self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
       self.toggleServer.text = "Stop Server"
 
   def findChildren(self,widget,name):
@@ -169,7 +200,7 @@ class DICOMWidget:
     return children
 
 
-class DICOMLogic(object):
+class DICOMTestingServer(object):
   """helper class to set up the DICOM servers
   Code here depends only on python and DCMTK executables
   TODO: it might make sense to refactor this as a generic tool
@@ -263,3 +294,19 @@ AETable END
     fp = open(configFile,'w')
     fp.write(config)
     fp.close()
+
+class DICOMDatabase(object):
+  """
+  Helper class for interacting with the sqlite3 database
+  created and populated by ctkDICOMDatabase
+  """
+
+  def __init__(self,databaseDirectory):
+    self.databaseDirectory = databaseDirectory
+    self.databaseFile = databaseDirectory + "/ctkDICOM.sql"
+    self.connection = sqlite3.connect(self.databaseFile)
+
+  def filesForSeries(self,seriesUID):
+    c = self.connection.cursor()
+    c.execute('''SELECT Filename FROM Images WHERE SeriesInstanceUID=?''', (seriesUID,))
+    return c.fetchall()
