@@ -323,6 +323,7 @@ void qSlicerVolumeRenderingModuleWidget::onCropToggled(bool crop)
 void qSlicerVolumeRenderingModuleWidget
 ::fitROIToVolume()
 {
+  Q_D(qSlicerVolumeRenderingModuleWidget);
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
   if (!displayNode)
     {
@@ -330,6 +331,28 @@ void qSlicerVolumeRenderingModuleWidget
     }
   vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic())
     ->FitROIToVolume(displayNode);
+
+  Q_ASSERT(d->ROIWidget->mrmlROINode() == this->mrmlROINode());
+  Q_ASSERT(d->ROIWidget->mrmlROINode() == displayNode->GetROINode());
+
+  if (d->ROIWidget->mrmlROINode())
+    {
+    double xyz[3];
+    double rxyz[3];
+
+    d->ROIWidget->mrmlROINode()->GetXYZ(xyz);
+    d->ROIWidget->mrmlROINode()->GetRadiusXYZ(rxyz);
+
+    double bounds[6];
+    for (int i=0; i < 3; ++i)
+      {
+      bounds[i]   = xyz[i]-rxyz[i];
+      bounds[3+i] = xyz[i]+rxyz[i];
+      }
+    d->ROIWidget->setExtent(bounds[0], bounds[3],
+                            bounds[1], bounds[4],
+                            bounds[2], bounds[5]);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -351,6 +374,15 @@ void qSlicerVolumeRenderingModuleWidget
     displayNode->SetAndObserveVolumePropertyNodeID(
       volumePropertyNode ? volumePropertyNode->GetID() : 0);
     }
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLAnnotationROINode* qSlicerVolumeRenderingModuleWidget
+::mrmlROINode()const
+{
+  Q_D(const qSlicerVolumeRenderingModuleWidget);
+  return vtkMRMLAnnotationROINode::SafeDownCast(
+    d->ROINodeComboBox->currentNode());
 }
 
 // --------------------------------------------------------------------------

@@ -49,6 +49,9 @@ public:
   vtkMRMLAnnotationROINode* mrmlROINode()const;
 
   void setExtent(double min, double max);
+  void setExtent(double minLR, double maxLR,
+                 double minPA, double maxPA,
+                 double minIS, double maxIS);
 public slots:
   /// Set the MRML node of interest
   void setMRMLAnnotationROINode(vtkMRMLAnnotationROINode* node);

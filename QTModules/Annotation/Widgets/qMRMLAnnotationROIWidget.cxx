@@ -44,6 +44,7 @@ public:
 
   vtkMRMLAnnotationROINode* ROINode;
   bool IsProcessingOnMRMLNodeModified;
+  bool AutoRange;
 };
 
 // --------------------------------------------------------------------------
@@ -52,6 +53,7 @@ qMRMLAnnotationROIWidgetPrivate::qMRMLAnnotationROIWidgetPrivate(qMRMLAnnotation
 {
   this->ROINode = 0;
   this->IsProcessingOnMRMLNodeModified = false;
+  this->AutoRange = true;
 }
 
 // --------------------------------------------------------------------------
@@ -149,6 +151,20 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
     bounds[i]   = xyz[i]-rxyz[i];
     bounds[3+i] = xyz[i]+rxyz[i];
     }
+
+  if (d->AutoRange)
+    {
+    d->LRRangeWidget->setRange(
+      qMin(bounds[0], d->LRRangeWidget->minimum()),
+      qMax(bounds[3], d->LRRangeWidget->maximum()));
+    d->PARangeWidget->setRange(
+      qMin(bounds[1], d->PARangeWidget->minimum()),
+      qMax(bounds[4], d->PARangeWidget->maximum()));
+    d->ISRangeWidget->setRange(
+      qMin(bounds[2], d->ISRangeWidget->minimum()),
+      qMax(bounds[5], d->ISRangeWidget->maximum()));
+    }
+
   d->LRRangeWidget->setValues(bounds[0], bounds[3]);
   d->PARangeWidget->setValues(bounds[1], bounds[4]);
   d->ISRangeWidget->setValues(bounds[2], bounds[5]);
@@ -159,10 +175,18 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
 // --------------------------------------------------------------------------
 void qMRMLAnnotationROIWidget::setExtent(double min, double max)
 {
+  this->setExtent(min, max, min, max, min, max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLAnnotationROIWidget::setExtent(double minLR, double maxLR,
+                                         double minPA, double maxPA,
+                                         double minIS, double maxIS)
+{
   Q_D(qMRMLAnnotationROIWidget);
-  d->LRRangeWidget->setRange(min, max);
-  d->PARangeWidget->setRange(min, max);
-  d->ISRangeWidget->setRange(min, max);
+  d->LRRangeWidget->setRange(minLR, maxLR);
+  d->PARangeWidget->setRange(minPA, maxPA);
+  d->ISRangeWidget->setRange(minIS, maxIS);
 }
 
 // --------------------------------------------------------------------------

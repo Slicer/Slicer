@@ -9,6 +9,7 @@
 #include "qSlicerVolumeRenderingModuleExport.h"
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
+class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLViewNode;
@@ -28,6 +29,7 @@ public:
 
   vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
   vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLAnnotationROINode* mrmlROINode()const;
   QList<vtkMRMLViewNode*> mrmlViewNodes()const;
 
 public slots:
