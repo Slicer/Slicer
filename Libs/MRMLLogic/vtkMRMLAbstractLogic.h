@@ -106,9 +106,10 @@ public:
   /// Set MRMLScene
   void SetMRMLScene(vtkMRMLScene * newScene);
 
-  /// Set and observe MRML Scene. In order to provide a single method to set the scene,
-  /// please consider overloading SetMRMLSceneInternal() instead.
+  /// Set and observe MRML Scene. In order to provide a single method to set
+  /// the scene, consider overloading SetMRMLSceneInternal().
   /// \note After each module are ported to Qt, these methods will be removed.
+  ///  Use SetMRMLScene() instead.
   /// \deprecated
   /// \sa SetMRMLSceneInternal()
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()

@@ -137,7 +137,14 @@ public:
     {
     return this->GetNthStorageNode(0);
     };
-  
+
+//BTX
+  std::vector<vtkMRMLStorageNode*> GetStorageNodes()const
+    {
+    return this->StorageNodes;
+    };
+//ETX
+
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return NULL;

@@ -57,17 +57,20 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
-                                            void * /*callData*/)
+void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject* caller,
+                                            unsigned long event,
+                                            void* callData)
 {
-  // TODO: implement if needed
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  this->Superclass::SetMRMLSceneInternal(newScene);
+  vtkIntArray* sceneEvents = vtkIntArray::New();
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+
   if (newScene && newScene->GetNthNodeByClass(0, "vtkMRMLClipModelsNode") == 0)
     {
     // vtkMRMLClipModelsNode is a singleton
@@ -75,6 +78,30 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
     newScene->AddNode(clipNode);
     clipNode->Delete();
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
+  if (!modelNode || this->GetMRMLScene()->GetIsUpdating())
+    {
+    return;
+    }
+  std::cout << "REmove" <<std::endl;
+  std::vector<vtkMRMLDisplayNode*> displayNodes = modelNode->GetDisplayNodes();
+  for (unsigned int i = 0; i < displayNodes.size(); ++i)
+    {
+    assert(displayNodes[i]);
+    this->GetMRMLScene()->RemoveNode(displayNodes[i]);
+    }
+  std::vector<vtkMRMLStorageNode*> storageNodes = modelNode->GetStorageNodes();
+  for (unsigned int i = 0; i < storageNodes.size(); ++i)
+    {
+    assert(storageNodes[i]);
+    this->GetMRMLScene()->RemoveNode(storageNodes[i]);
+    }
+
 }
 
 //----------------------------------------------------------------------------

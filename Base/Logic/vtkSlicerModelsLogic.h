@@ -83,6 +83,10 @@ protected:
   /// instantiated
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
+  /// Reimplemented to delete the storage/display nodes when a displayable
+  /// node is being removed.
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/);
+
   /// 
   //
   vtkMRMLModelNode *ActiveModelNode;
