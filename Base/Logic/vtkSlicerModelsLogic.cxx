@@ -88,7 +88,6 @@ void vtkSlicerModelsLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
     {
     return;
     }
-  std::cout << "REmove" <<std::endl;
   std::vector<vtkMRMLDisplayNode*> displayNodes = modelNode->GetDisplayNodes();
   for (unsigned int i = 0; i < displayNodes.size(); ++i)
     {
