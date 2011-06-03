@@ -250,13 +250,16 @@ void vtkMRMLAnnotationROINode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   //  vtkObject::Copy(anode);
-  vtkMRMLAnnotationROINode *node = (vtkMRMLAnnotationROINode *) anode;
-  if (node->GetLabelText())
+  vtkMRMLAnnotationROINode *node = vtkMRMLAnnotationROINode::SafeDownCast( anode);
+  if (node)
     {
-    this->SetLabelText(node->GetLabelText());
+    if (node->GetLabelText())
+      {
+      this->SetLabelText(node->GetLabelText());
+      }
+    this->SetInteractiveMode(node->InteractiveMode);
+    this->SetInsideOut(node->InsideOut);
     }
-  this->SetInteractiveMode(node->InteractiveMode);
-  this->SetInsideOut(node->InsideOut);
 
   this->EndModify(disabledModify);
 

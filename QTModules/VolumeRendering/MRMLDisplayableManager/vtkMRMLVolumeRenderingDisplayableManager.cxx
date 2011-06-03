@@ -1408,7 +1408,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMR
     return;
     }
 
-  if (!node->IsA("vtkMRMLVolumeRenderingDisplayNode"))
+  if (node->IsA("vtkMRMLVolumeRenderingDisplayNode"))
     {
     this->RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
     }

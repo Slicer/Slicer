@@ -558,7 +558,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationControlPointModifiedEv
 
     // Propagate MRML changes to widget
     this->PropagateMRMLToWidget(annotationNode, widget);
-
+    this->RequestRender();
     }
 }
 

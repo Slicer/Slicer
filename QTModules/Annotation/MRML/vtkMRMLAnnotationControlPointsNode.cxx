@@ -12,6 +12,8 @@
 #include "vtkStringArray.h"
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 
+#define NUMERIC_ZERO 1.0e-6
+
 // KPs Todos 
 // - create specific event for node modification
 // - talk to Steve if we have to do anything when UpdatingScene 
@@ -454,9 +456,21 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   }
 
   // Create if not there
-  if (!this->PolyData || !this->PolyData->GetPoints()) {
-    this->ResetControlPoints();
-  }
+  if (!this->PolyData || !this->PolyData->GetPoints()) 
+    {
+      this->ResetControlPoints();
+    }
+  else 
+    {
+    // check if is different to prevent recursive event loops
+    double *pnt = this->PolyData->GetPoints()->GetPoint(id);
+    if (pnt && fabs(pnt[0]-newControl[0]) < NUMERIC_ZERO &&
+               fabs(pnt[1]-newControl[1]) < NUMERIC_ZERO &&
+               fabs(pnt[2]-newControl[2]) < NUMERIC_ZERO)
+      {
+      return 1;
+      }
+    }
 
   vtkPoints *points = this->PolyData->GetPoints(); 
   points->InsertPoint(id, newControl);
@@ -471,8 +485,10 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     }
   this->SetAnnotationAttribute(id, CP_SELECTED, selectedFlag);
   this->SetAnnotationAttribute(id, CP_VISIBLE, visibleFlag);
+
   this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
- 
+  this->Modified();
+
   return 1;
 }
 

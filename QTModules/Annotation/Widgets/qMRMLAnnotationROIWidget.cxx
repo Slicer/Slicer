@@ -75,6 +75,7 @@ qMRMLAnnotationROIWidget::qMRMLAnnotationROIWidget(QWidget* _parent)
   , d_ptr(new qMRMLAnnotationROIWidgetPrivate(*this))
 {
   Q_D(qMRMLAnnotationROIWidget);
+  this->IsProcessingOnMRMLNodeModified = 0;
   d->init();
 }
 
@@ -116,6 +117,14 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
     {
     return;
     }
+
+  if (IsProcessingOnMRMLNodeModified)
+  {
+    return;
+  }
+
+  this->IsProcessingOnMRMLNodeModified = 1;
+
   // Visibility
   d->DisplayClippingBoxButton->setChecked(d->ROINode->GetVisibility());
 
@@ -142,6 +151,8 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
   d->LRRangeWidget->setValues(bounds[0], bounds[3]);
   d->PARangeWidget->setValues(bounds[1], bounds[4]);
   d->ISRangeWidget->setValues(bounds[2], bounds[5]);
+
+  this->IsProcessingOnMRMLNodeModified = 0;
 }
 
 // --------------------------------------------------------------------------

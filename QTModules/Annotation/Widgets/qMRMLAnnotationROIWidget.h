@@ -74,6 +74,8 @@ protected slots:
 protected:
   QScopedPointer<qMRMLAnnotationROIWidgetPrivate> d_ptr;
 
+  int IsProcessingOnMRMLNodeModified;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationROIWidget);
   Q_DISABLE_COPY(qMRMLAnnotationROIWidget);
