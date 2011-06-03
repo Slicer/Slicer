@@ -88,5 +88,5 @@ slicerMacroBuildQtModule(
 
 
 if(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif()
