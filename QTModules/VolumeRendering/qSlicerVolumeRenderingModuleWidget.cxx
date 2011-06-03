@@ -56,6 +56,10 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->VolumeNodeComboBox,
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLVolumeNodeChanged(vtkMRMLNode*)));
+  // Inputs
+  QObject::connect(this->VisibilityCheckBox,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onVisibilityChanged(bool)));
   QObject::connect(this->DisplayNodeComboBox,
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLDisplayNodeChanged(vtkMRMLNode*)));
@@ -65,9 +69,9 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->VolumePropertyNodeComboBox,
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode*)));
-  QObject::connect(this->ViewNodeComboBox,
-                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(onCurrentMRMLViewNodeChanged(vtkMRMLNode*)));
+  QObject::connect(this->ViewCheckableNodeComboBox,
+                   SIGNAL(checkedNodesChanged()),
+                   q, SLOT(onCheckedViewNodesChanged()));
 }
 
 // --------------------------------------------------------------------------
@@ -130,33 +134,49 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLViewNode* qSlicerVolumeRenderingModuleWidget::mrmlViewNode()const
+QList<vtkMRMLViewNode*> qSlicerVolumeRenderingModuleWidget::mrmlViewNodes()const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
-  return vtkMRMLViewNode::SafeDownCast(d->ViewNodeComboBox->currentNode());
+  QList<vtkMRMLViewNode*> res;
+  foreach(vtkMRMLNode* checkedNode, d->ViewCheckableNodeComboBox->checkedNodes())
+    {
+    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
+    }
+  return res;
 }
-
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLViewNode(vtkMRMLNode* viewNode)
+void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->ViewNodeComboBox->setCurrentNode(viewNode);
+  d->ViewCheckableNodeComboBox->check(viewNode);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLViewNodeChanged(vtkMRMLNode* viewNode)
+void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
 {
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  qDebug() << "qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()";
   // set view in the currently selected display node
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (displayNode)
+  if (!displayNode)
     {
-    if (viewNode && displayNode->IsViewNodeIDPresent(viewNode->GetID()))
-      {
-      return;
-      }
-    displayNode->RemoveAllViewNodeIDs();
-    displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+    return;
     }
+  int wasModifying = displayNode->StartModify();
+  displayNode->RemoveAllViewNodeIDs();
+  if (!d->ViewCheckableNodeComboBox->allChecked() &&
+      !d->ViewCheckableNodeComboBox->noneChecked())
+    {
+    foreach (vtkMRMLViewNode* viewNode, this->mrmlViewNodes())
+      {
+      displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+      }
+    }
+  else
+    {
+    qDebug() << "all is visible";
+    }
+  displayNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------
@@ -172,57 +192,62 @@ void qSlicerVolumeRenderingModuleWidget
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  if (d->DisplayNode)
-    {
-    //d->DisplayNode->RemoveAllViewNodeIDs();
-    d->DisplayNode->SetVisibility(false);
-    }
-
   vtkMRMLVolumeRenderingDisplayNode* displayNode =
     vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
-  d->DisplayNode = displayNode;
-
 
   // update view node references
   vtkMRMLScalarVolumeNode* volumeNode = this->mrmlVolumeNode();
-  vtkSlicerVolumeRenderingLogic *logic =
-    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
-  vtkMRMLVolumeRenderingDisplayNode* dnode = 0;
 
   // if display node is not referenced by current volume, add the refrence
   if (volumeNode && displayNode)
     {
-    dnode = logic->GetVolumeRenderingDisplayNodeByID(volumeNode,
-                                                     displayNode->GetID());
+    vtkSlicerVolumeRenderingLogic *logic =
+      vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+    vtkMRMLVolumeRenderingDisplayNode* dnode =
+      logic->GetVolumeRenderingDisplayNodeByID(volumeNode,
+                                               displayNode->GetID());
     if (dnode != displayNode)
       {
       volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
       }
     }
 
-  vtkMRMLViewNode *viewNode = this->mrmlViewNode();
+  this->qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateFromMRMLDisplayNode()));
 
-  dnode =
-    logic->GetVolumeRenderingDisplayNodeForViewNode(volumeNode, viewNode);
-  if (viewNode && volumeNode && dnode != displayNode)
-    {
-    logic->RemoveViewFromVolumeDisplayNodes(volumeNode, viewNode);
-    }
+  d->DisplayNode = displayNode;
 
-  if (displayNode)
+  this->updateFromMRMLDisplayNode();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  // We don't want to update ViewCheckableNodeComboBox if it's checked nodes
+  // are good. Otherwise it would lead to an inconsistent state.
+  if (d->DisplayNode &&
+      !(d->DisplayNode->GetNumberOfViewNodeIDs() == 0 &&
+      (d->ViewCheckableNodeComboBox->allChecked() ||
+       d->ViewCheckableNodeComboBox->noneChecked())))
     {
-    displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+    for (int i = 0; i < d->ViewCheckableNodeComboBox->nodeCount(); ++i)
+      {
+      vtkMRMLNode* view = d->ViewCheckableNodeComboBox->nodeFromIndex(i);
+      Q_ASSERT(view);
+      d->ViewCheckableNodeComboBox->setCheckState(
+        view,
+        d->DisplayNode && d->DisplayNode->IsViewNodeIDPresent(view->GetID()) ? Qt::Checked : Qt::Unchecked);
+      }
     }
 
   // set display node from current GUI state
   this->setMRMLVolumePropertyNode(
-    displayNode ? displayNode->GetVolumePropertyNode() : 0);
-  this->setMRMLROINode(displayNode ? displayNode->GetROINode() : 0);
-
-  if (displayNode)
-    {
-    displayNode->SetVisibility(true);
-    }
+    d->DisplayNode ? d->DisplayNode->GetVolumePropertyNode() : 0);
+  this->setMRMLROINode(d->DisplayNode ? d->DisplayNode->GetROINode() : 0);
+  d->VisibilityCheckBox->setChecked(
+    d->DisplayNode ? d->DisplayNode->GetVisibility() : false);
 }
 
 // --------------------------------------------------------------------------
@@ -249,13 +274,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
 
   // see if the volume has any display node for a current viewer
-  vtkMRMLViewNode *viewNode = this->mrmlViewNode();
   vtkMRMLVolumeRenderingDisplayNode *dnode =
-    logic->GetVolumeRenderingDisplayNodeForViewNode(volumeNode, viewNode);
-  if (!dnode)
-    {
-    //dnode = logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
-    }
+    logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
   if (!dnode)
     {
     dnode = d->createVolumeRenderingDisplayNode();
@@ -264,23 +284,18 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
       volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());
       }
     }
-
-  if (viewNode)
-    {
-    // remove view from the old selected display node
-    vtkMRMLVolumeRenderingDisplayNode* displayNodeOld = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
-            d->DisplayNodeComboBox->currentNode());
-    if (displayNodeOld)
-    {
-      displayNodeOld->RemoveAllViewNodeIDs();
-    }
-
-    // set view in the currently selected display node
-    dnode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
-    }
-
-  //d->DisplayNodeComboBox->setCurrentNode(dnode);
   this->setMRMLDisplayNode(dnode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onVisibilityChanged(bool visible)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  displayNode->SetVisibility(visible);
 }
 
 // --------------------------------------------------------------------------

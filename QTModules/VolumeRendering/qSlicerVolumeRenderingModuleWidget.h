@@ -1,9 +1,11 @@
 #ifndef __qSlicerVolumeRenderingModuleWidget_h
 #define __qSlicerVolumeRenderingModuleWidget_h
 
+// CTK includes
+#include <ctkVTKObject.h>
+
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-
 #include "qSlicerVolumeRenderingModuleExport.h"
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
@@ -17,7 +19,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidg
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
-
+  QVTK_OBJECT
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
@@ -26,7 +28,7 @@ public:
 
   vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
   vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
-  vtkMRMLViewNode* mrmlViewNode()const;
+  QList<vtkMRMLViewNode*> mrmlViewNodes()const;
 
 public slots:
 
@@ -40,14 +42,17 @@ public slots:
 
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
 
-  void setMRMLViewNode(vtkMRMLNode* node);
+  void addVolumeIntoView(vtkMRMLNode* node);
 
 protected slots:
   void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
+  void onVisibilityChanged(bool);
   void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
-  void onCurrentMRMLViewNodeChanged(vtkMRMLNode* node);
+  void onCheckedViewNodesChanged();
+
+  void updateFromMRMLDisplayNode();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
