@@ -742,9 +742,8 @@ const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
   return ViewNodeIDs[index].c_str();
 }
 
-
 //-------------------------------------------------------
-bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)
+bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
 {
   if (viewNodeID == 0)
     {
@@ -754,4 +753,11 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)
   std::vector< std::string >::const_iterator it =
     std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
   return it != this->ViewNodeIDs.end();
+}
+
+//-------------------------------------------------------
+bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
+{
+  return this->GetNumberOfViewNodeIDs() == 0
+    || this->IsViewNodeIDPresent(viewNodeID);
 }

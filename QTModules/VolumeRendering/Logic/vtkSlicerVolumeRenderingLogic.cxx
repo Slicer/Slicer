@@ -322,7 +322,8 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVol
 
       colorTransfer->RemoveAllPoints();
 
-      vtkLookupTable* pLut = vpNode->GetColorNode()->GetLookupTable();
+      vtkMRMLColorNode* colorNode = vpNode->GetColorNode();
+      vtkLookupTable* pLut = colorNode ? colorNode->GetLookupTable() : 0;
 
       if (pLut == NULL)
       {
@@ -691,6 +692,28 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   return NULL;
 }
 
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
+::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode* roiNode)
+{
+  if (roiNode == NULL || roiNode->GetScene() == NULL)
+    {
+    return NULL;
+    }
+  std::vector<vtkMRMLNode *> nodes;
+  roiNode->GetScene()->GetNodesByClass("vtkMRMLVolumeRenderingDisplayNode", nodes);
+
+  for (unsigned int i = 0; i < nodes.size(); ++i)
+    {
+    vtkMRMLVolumeRenderingDisplayNode *dnode =
+      vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]);
+    if (dnode && dnode->GetROINodeID() &&
+        !strcmp(dnode->GetROINodeID(), roiNode->GetID()))
+      {
+      return dnode;
+      }
+    }
+  return NULL;
+}
 
 // Description:
 // Update vtkMRMLVolumeRenderingDisplayNode from VolumeNode,

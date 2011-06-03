@@ -232,7 +232,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
-  int GetNumberOfViewNodeIDs()
+  int GetNumberOfViewNodeIDs()const
   {
     return ViewNodeIDs.size();
   }
@@ -243,13 +243,18 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
-  std::vector< std::string > GetViewNodeIDs()
+  std::vector< std::string > GetViewNodeIDs()const
   {
     return ViewNodeIDs;
   }
   /// True if the view node id is present in the viewnodeid list
   /// false if not found
-  bool IsViewNodeIDPresent(const char* viewNodeID);
+  bool IsViewNodeIDPresent(const char* viewNodeID)const;
+
+  /// Returns true if the viewNodeID is present in the ViewNodeId list
+  /// or there is no ViewNodeId in the list (meaning all the views display the
+  /// node)
+  bool IsDisplayableInView(const char* viewNodeID)const;
 
 protected:
   vtkMRMLDisplayNode() ;

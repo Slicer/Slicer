@@ -45,8 +45,8 @@ public:
   
   // Description:
   // Get, Set and Observe DisplayNode
-  vtkGetObjectMacro (DisplayNode, vtkMRMLVolumeRenderingDisplayNode);
-  void SetAndObserveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  //vtkGetObjectMacro (DisplayNode, vtkMRMLVolumeRenderingDisplayNode);
+  //void SetAndObserveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 
   // Description:
@@ -113,11 +113,11 @@ public:
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
-  void RemoveMRMLObservers();
+  void UpdateDisplayNodeList();
 
-  void UpdateDisplayNodeObservers();
-
-  void RemoveDisplayNodeObservers();
+  void AddDisplayNode(vtkMRMLVolumeRenderingDisplayNode* dnode);
+  void RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* dnode);
+  void RemoveDisplayNodes();
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager();
@@ -174,26 +174,28 @@ protected:
 
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
-  vtkMRMLVolumeRenderingDisplayNode*    DisplayNode;
+  vtkMRMLVolumeRenderingDisplayNode*    DisplayedNode;
 
   int SceneIsLoadingFlag;
   int ProcessingMRMLFlag;
   int UpdatingFromMRML;
 
-  std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *>      DisplayNodes;
+  typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;
+  DisplayNodesType      DisplayNodes;
 
 
 protected:
   void OnScenarioNodeModified();
-  void OnVolumeRenderingDisplayNodeModified();
+  void OnVolumeRenderingDisplayNodeModified(vtkMRMLVolumeRenderingDisplayNode* dnode);
 
 
   void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void RemoveVolumeFromViewers();
-  void AddVolumeToViewers();
-  void InitializePipelineFromDisplayNode();
+  void AddVolumeToView();
+  void RemoveVolumeFromView();
+  void RemoveVolumeFromView(vtkVolume* volume);
+  void InitializePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   int ValidateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 };
