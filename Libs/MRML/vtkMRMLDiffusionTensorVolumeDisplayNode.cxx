@@ -349,7 +349,8 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetImageData()
 };
 
 //---------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeDisplayNode::GetDisplayScalarRange(vtkImageData *imageData, double range[2])
+void vtkMRMLDiffusionTensorVolumeDisplayNode
+::GetDisplayScalarRange(vtkImageData *vtkNotUsed(imageData), double range[2])
 {
   int operation = this->GetScalarInvariant();
   this->DTIMathematics->SetOperation(operation);

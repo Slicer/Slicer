@@ -114,11 +114,6 @@ void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-}
-
-//----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   if (refNode == NULL)
