@@ -118,7 +118,7 @@ void qMRMLAnnotationROIWidget::setMRMLAnnotationROINode(vtkMRMLNode* roiNode)
 void qMRMLAnnotationROIWidget::onMRMLNodeModified()
 {
   Q_D(qMRMLAnnotationROIWidget);
-  qDebug() << "qMRMLAnnotationROIWidget::onMRMLNodeModified";
+
   if (!d->ROINode)
     {
     return;
@@ -154,7 +154,6 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
   d->ISRangeWidget->setValues(bounds[2], bounds[5]);
 
   d->IsProcessingOnMRMLNodeModified = false;
-  this->updateROI();
 }
 
 // --------------------------------------------------------------------------
@@ -185,8 +184,9 @@ void qMRMLAnnotationROIWidget::updateROI()
 {
   Q_D(qMRMLAnnotationROIWidget);
 
-  // Ignore the calls made in onMRMLNodeModified() (except the last) as it
-  // would set the node in an inconsistent state.
+  // Ignore the calls from onMRMLNodeModified() as it
+  // could set the node in an inconsistent state (except for
+  // ISRangeWidget->setValues()).
   if (d->IsProcessingOnMRMLNodeModified)
     {
     return;
@@ -197,38 +197,12 @@ void qMRMLAnnotationROIWidget::updateROI()
   d->PARangeWidget->values(bounds[2],bounds[3]);
   d->ISRangeWidget->values(bounds[4],bounds[5]);
 
-  double xyz[3];
-  xyz[0] = 0.5*(bounds[1]+bounds[0]);
-  xyz[1] = 0.5*(bounds[3]+bounds[2]);
-  xyz[2] = 0.5*(bounds[5]+bounds[4]);
-
   int wasModifying = d->ROINode->StartModify();
-
-  double nodeXYZ[3];
-  d->ROINode->GetXYZ(nodeXYZ);
-  // Qt sliders truncates decimals, we don't want to change the node if it's
-  // the same values but with only different unsignificant decimals.
-  if (fabs(nodeXYZ[0] - xyz[0]) > SLIDERS_EPSILON ||
-      fabs(nodeXYZ[1] - xyz[1]) > SLIDERS_EPSILON ||
-      fabs(nodeXYZ[2] - xyz[2]) > SLIDERS_EPSILON)
-    {
-    d->ROINode->SetXYZ(xyz);
-    }
-
-  double rxyz[3];
-  rxyz[0] = 0.5*(bounds[1]-bounds[0]);
-  rxyz[1] = 0.5*(bounds[3]-bounds[2]);
-  rxyz[2] = 0.5*(bounds[5]-bounds[4]);
-
-  double nodeRXYZ[3];
-  d->ROINode->GetRadiusXYZ(nodeRXYZ);
-  // Qt sliders truncates decimals, we don't want to change the node if it's
-  // the same values but with only different unsignificant decimals.
-  if (fabs(nodeRXYZ[0] - rxyz[0]) > SLIDERS_EPSILON ||
-      fabs(nodeRXYZ[1] - rxyz[1]) > SLIDERS_EPSILON ||
-      fabs(nodeRXYZ[2] - rxyz[2]) > SLIDERS_EPSILON)
-    {
-    d->ROINode->SetRadiusXYZ(rxyz);
-    }
+  d->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),
+                     0.5*(bounds[3]+bounds[2]),
+                     0.5*(bounds[5]+bounds[4]));
+  d->ROINode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),
+                           0.5*(bounds[3]-bounds[2]),
+                           0.5*(bounds[5]-bounds[4]));
   d->ROINode->EndModify(wasModifying);
 }
