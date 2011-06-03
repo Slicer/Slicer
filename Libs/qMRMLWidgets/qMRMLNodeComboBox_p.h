@@ -43,6 +43,8 @@ public:
 
   vtkMRMLNode* mrmlNode(int row)const;
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
+  QModelIndexList indexesFromMRMLNodeID(const QString& nodeID)const;
+
   void updateDefaultText();
   void updateNoneItem(bool resetRootIndex = true);
   void updateActionItems(bool resetRootIndex = true);

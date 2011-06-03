@@ -30,16 +30,6 @@ class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox
   : public qMRMLNodeComboBox
 {
   Q_OBJECT
-  /*
-  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
-  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
-  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
-  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
-  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
-  Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
-  */
 public:
   /// Superclass typedef
   typedef qMRMLNodeComboBox Superclass;
@@ -49,9 +39,35 @@ public:
   explicit qMRMLCheckableNodeComboBox(QWidget* parent = 0);
   virtual ~qMRMLCheckableNodeComboBox();
 
+  QList<vtkMRMLNode*> checkedNodes()const;
+  bool allChecked()const;
+  bool noneChecked()const;
+
+  Qt::CheckState checkState(vtkMRMLNode* node)const;
+  void setCheckState(vtkMRMLNode* node, Qt::CheckState check);
+
+public slots:
+  inline void check(vtkMRMLNode* node);
+  inline void uncheck(vtkMRMLNode* node);
+
+signals:
+  void checkedNodesChanged();
+
 private:
   Q_DECLARE_PRIVATE(qMRMLCheckableNodeComboBox);
   Q_DISABLE_COPY(qMRMLCheckableNodeComboBox);
 };
+
+//-----------------------------------------------------------------------------
+void qMRMLCheckableNodeComboBox::check(vtkMRMLNode* node)
+{
+  this->setCheckState(node, Qt::Checked);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLCheckableNodeComboBox::uncheck(vtkMRMLNode* node)
+{
+  this->setCheckState(node, Qt::Unchecked);
+}
 
 #endif

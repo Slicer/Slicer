@@ -177,6 +177,14 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
 }
 
 // --------------------------------------------------------------------------
+QModelIndexList qMRMLNodeComboBoxPrivate::indexesFromMRMLNodeID(const QString& nodeID)const
+{
+  return this->ComboBox->model()->match(
+    this->ComboBox->model()->index(0, 0), qMRMLSceneModel::UIDRole, nodeID, 1,
+    Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateDefaultText()
 {
   ctkComboBox* cb = qobject_cast<ctkComboBox*>(this->ComboBox);
@@ -571,9 +579,7 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   // However it doesn't work for custom comboxboxes that display non-flat lists
   // (typically if it is a tree model/view)
   // let's use a more generic one
-  QModelIndexList indexes = d->ComboBox->model()->match(
-    d->ComboBox->model()->index(0, 0), qMRMLSceneModel::UIDRole, nodeID, 1,
-    Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
+  QModelIndexList indexes = d->indexesFromMRMLNodeID(nodeID);
   if (indexes.size() == 0)
     {
     d->ComboBox->setRootModelIndex(d->ComboBox->model()->index(0, 0));
