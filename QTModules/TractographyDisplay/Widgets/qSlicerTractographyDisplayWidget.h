@@ -11,14 +11,15 @@
 #include <qSlicerWidget.h>
 
 // qMRML includes
-#include "qMRMLWidgetsExport.h"
+#include "qSlicerTractographyDisplayModuleWidgetsExport.h"
 
 class qSlicerTractographyDisplayWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLFiberBundleDisplayNode;
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
-class QMRML_WIDGETS_EXPORT qSlicerTractographyDisplayWidget : public qSlicerWidget
+class Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS_EXPORT qSlicerTractographyDisplayWidget
+ : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT

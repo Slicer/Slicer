@@ -22,14 +22,14 @@
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerTractographyDisplayModuleExport.h"
+#include "qSlicerTractographyDisplayModuleWidgetsExport.h"
 
 class qSlicerTractographyDisplayModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLFiberBundleNode;
 
 /// \ingroup Slicer_QtModules_Volumes
-class Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT qSlicerTractographyDisplayModuleWidget :
+class Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS_EXPORT qSlicerTractographyDisplayModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

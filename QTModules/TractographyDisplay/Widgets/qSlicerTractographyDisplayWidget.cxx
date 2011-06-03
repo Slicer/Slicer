@@ -135,7 +135,7 @@ void qSlicerTractographyDisplayWidget::setVisibility(int state)
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
-  if (not d->FiberBundleDisplayNode)
+  if (!d->FiberBundleDisplayNode)
     {
     return;
     }
@@ -148,7 +148,7 @@ void qSlicerTractographyDisplayWidget::setColorBySolid(int state)
   Q_UNUSED(state);
   Q_D(qSlicerTractographyDisplayWidget);
   
-  if (not d->FiberBundleDisplayNode) 
+  if (!d->FiberBundleDisplayNode) 
     {
     return;
     }
@@ -161,7 +161,7 @@ void qSlicerTractographyDisplayWidget::onColorBySolidChanged(const QColor &color
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
-  if (not d->FiberBundleDisplayNode) 
+  if (!d->FiberBundleDisplayNode) 
     {
     return;
     }
@@ -173,7 +173,7 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariant(int)
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
-  if (not d->FiberBundleDisplayNode)
+  if (!d->FiberBundleDisplayNode)
     {
     return;
     }
@@ -185,7 +185,7 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariant(int)
 void qSlicerTractographyDisplayWidget::setColorByScalarInvariantDisplayRange(double min, double max)
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  if (not d->FiberBundleDisplayNode)
+  if (!d->FiberBundleDisplayNode)
     {
     return;
     }
@@ -196,7 +196,7 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariantDisplayRange(dou
 void qSlicerTractographyDisplayWidget::onColorByScalarInvariantChanged(int scalarInvariantIndex)
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  if (not d->FiberBundleDisplayNode)
+  if (!d->FiberBundleDisplayNode)
     {
     return;
     }
@@ -215,7 +215,7 @@ void qSlicerTractographyDisplayWidget::setColorByCellScalars(int state)
   Q_UNUSED(state);
   Q_D(qSlicerTractographyDisplayWidget);
   
-  if (not d->FiberBundleDisplayNode) 
+  if (!d->FiberBundleDisplayNode) 
     { 
     return;
     }

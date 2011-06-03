@@ -38,7 +38,7 @@
 // Setup PythonQt wrapping if enabled
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQt.h>
-void PythonQt_init_org_slicer_libs_qSlicerTractographyDisplayWidgets(PyObject*);
+//void PythonQt_init_org_slicer_libs_qSlicerTractographyDisplayWidgets(PyObject*);
 #endif 
 
 //-----------------------------------------------------------------------------
@@ -58,7 +58,7 @@ void qSlicerTractographyDisplayModule::setup()
     new qSlicerFiberBundleIO(this));
 
   #ifdef Slicer_USE_PYTHONQT
-    PythonQt_init_org_slicer_libs_qSlicerTractographyDisplayWidgets(0);
+    //PythonQt_init_org_slicer_libs_qSlicerTractographyDisplayWidgets(0);
   #endif
     
 }

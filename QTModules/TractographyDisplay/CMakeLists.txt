@@ -7,7 +7,8 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT")
 SET(qt_module_include_directories
   ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyDisplayModuleLogic_BINARY_DIR}
-  Widgets
+  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
 # Source files
@@ -31,11 +32,11 @@ SET(qt_module_UI_SRCS
 # Additional Target libraries
 SET(qt_module_target_libraries
   vtkSlicerTractographyDisplayModuleLogic
-  qSlicerTractographyDisplayWidgets
+  qSlicerTractographyDisplayModuleWidgets
   )
 
 IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND qt_module_target_libraries qSlicerTractographyDisplayWidgetsPythonQt)
+  #LIST(APPEND qt_module_target_libraries qSlicerTractographyDisplayModuleWidgetsPythonQt)
 ENDIF()
 
 # Resources

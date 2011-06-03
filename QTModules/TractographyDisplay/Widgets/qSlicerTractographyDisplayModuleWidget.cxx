@@ -36,13 +36,21 @@ protected:
   qSlicerTractographyDisplayModuleWidget* const q_ptr;
 
 public:
+  qSlicerTractographyDisplayModuleWidgetPrivate(qSlicerTractographyDisplayModuleWidget& object);
   vtkMRMLFiberBundleNode* FiberBundleNode;
 };
 
 //-----------------------------------------------------------------------------
+qSlicerTractographyDisplayModuleWidgetPrivate
+::qSlicerTractographyDisplayModuleWidgetPrivate(qSlicerTractographyDisplayModuleWidget& object)
+  :q_ptr(&object)
+{
+}
+
+//-----------------------------------------------------------------------------
 qSlicerTractographyDisplayModuleWidget::qSlicerTractographyDisplayModuleWidget(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerTractographyDisplayModuleWidgetPrivate)
+  , d_ptr(new qSlicerTractographyDisplayModuleWidgetPrivate(*this))
 {
 }
 
