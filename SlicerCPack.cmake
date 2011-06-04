@@ -79,23 +79,22 @@ if(FILE_EXTENSIONS)
 endif()
 
 # -------------------------------------------------------------------------
-# Disable generator enabled by default
+# Disable source generator enabled by default
 # -------------------------------------------------------------------------
-set(CPACK_BINARY_TZ   OFF CACHE BOOL "Enable to build TZ packages" FORCE)
-set(CPACK_BINARY_STGZ OFF CACHE BOOL "Enable to build STGZ packages" FORCE)
 set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages" FORCE)
 set(CPACK_SOURCE_TGZ  OFF CACHE BOOL "Enable to build TGZ source packages" FORCE)
 set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
 
-if(APPLE)
-  set(CPACK_BINARY_PACKAGEMAKER OFF CACHE BOOL "Enable to build PackageMaker packages" FORCE)
-endif()
-
 # -------------------------------------------------------------------------
-# Enable generator disabled by default
+# Enable generator
 # -------------------------------------------------------------------------
-if(APPLE)
-  set(CPACK_BINARY_DRAGNDROP ON CACHE BOOL "Enable to build OSX Drag And Drop packages" FORCE)
+if(UNIX)
+  set(CPACK_GENERATOR "TGZ")
+  if(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+  endif()
+elseif(WIN32)
+  set(CPACK_GENERATOR "NSIS")
 endif()
 
 include(CPack)
