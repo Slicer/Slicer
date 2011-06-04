@@ -340,16 +340,16 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverPythonPath()
 {
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    QString pythonPath = env.value("PYTHONPATH");
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  QString pythonPath = env.value("PYTHONPATH");
 
-    // If there is no PYTHONPATH attempt to generate one.
-    if (pythonPath.isEmpty())
-      {
-      qSlicerCorePythonManager tempPythonManager;
-      pythonPath = QString("PYTHONPATH=") + tempPythonManager.pythonPaths().join(":");
-      vtksys::SystemTools::PutEnv(pythonPath.toLatin1());
-      }
+  // If there is no PYTHONPATH attempt to generate one.
+  if (pythonPath.isEmpty())
+    {
+    qSlicerCorePythonManager tempPythonManager;
+    pythonPath = QString("PYTHONPATH=") + tempPythonManager.pythonPaths().join(":");
+    vtksys::SystemTools::PutEnv(pythonPath.toLatin1());
+    }
 }
 
 //-----------------------------------------------------------------------------
