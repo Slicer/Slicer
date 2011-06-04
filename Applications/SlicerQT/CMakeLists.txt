@@ -191,6 +191,18 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 IF(Slicer_USE_CTKAPPLAUNCHER)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
+
+  # Define list of extra 'application to launch' to associate with the launched
+  SET(extraApplicationToLaunchListForBuildTree)
+  IF(EXISTS "${QT_DESIGNER_EXECUTABLE}")
+    ctkAppLauncherAppendExtraAppToLaunchToList(
+      LONG_ARG designer
+      HELP "Start Qt designer using Slicer plugins"
+      PATH ${QT_DESIGNER_EXECUTABLE}
+      OUTPUTVAR extraApplicationToLaunchListForBuildTree
+      )
+  ENDIF()
+
   INCLUDE(SlicerBlockCTKAppLauncherSettings)
   ctkAppLauncherConfigure(
     TARGET SlicerQT${SlicerQT_EXE_SUFFIX}
@@ -202,6 +214,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     HELP_SHORT_ARG "-h"
     HELP_LONG_ARG "--help"
     NOSPLASH_LONG_ARG "--no-splash"
+    EXTRA_APPLICATION_TO_LAUNCH_BUILD ${extraApplicationToLaunchListForBuildTree}
     DESTINATION_DIR ${Slicer_BINARY_DIR}
     LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
     PATHS_BUILD "${SLICER_PATHS_BUILD}"
