@@ -687,16 +687,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Package slicer
 #-----------------------------------------------------------------------------
-
 INCLUDE(SlicerCPack.cmake)
-
-# IMPORTANT:
-# Keep this chunk of code here at the very bottom of the main
-# CMakeLists.txt file so that the install rules that install the
-# bundles and any files inside of them are already run before these
-# script steps are run.
-ADD_SUBDIRECTORY(Utilities/Package)
-
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as
