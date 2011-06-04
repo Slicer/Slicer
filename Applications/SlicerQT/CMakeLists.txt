@@ -213,7 +213,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     SPLASHSCREEN_HIDE_DELAY_MS 3000
     HELP_SHORT_ARG "-h"
     HELP_LONG_ARG "--help"
-    NOSPLASH_LONG_ARG "--no-splash"
+    NOSPLASH_ARGS "--no-splash,--help,--version,--home,--program-path,--no-main-window"
     EXTRA_APPLICATION_TO_LAUNCH_BUILD ${extraApplicationToLaunchListForBuildTree}
     DESTINATION_DIR ${Slicer_BINARY_DIR}
     LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
