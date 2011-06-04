@@ -28,12 +28,6 @@ set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-
-#if(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#  set(include_dirs ${include_dirs} "${ITK_DIR}/Utilities/zlib")
-#else(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#endif(EXISTS "${ITK_DIR}/CMakeCache.txt")
-
 include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
