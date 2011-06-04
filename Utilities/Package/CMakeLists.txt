@@ -55,6 +55,8 @@ if(APPLE)
 
   set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
+  set(executable_path @executable_path)
+
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/CompleteBundles.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/CompleteBundles.cmake"
