@@ -202,6 +202,22 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
       OUTPUTVAR extraApplicationToLaunchListForBuildTree
       )
   ENDIF()
+  SET(executables)
+  IF(UNIX)
+    SET(executables gnome-terminal xterm ddd gdb)
+  ELSEIF(WIN32)
+  ENDIF()
+  FOREACH(executable ${executables})
+    FIND_PROGRAM(${executable}_EXECUTABLE ${executable})
+    IF(${executable}_EXECUTABLE)
+      ctkAppLauncherAppendExtraAppToLaunchToList(
+        LONG_ARG ${executable}
+        HELP "Start ${executable}"
+        PATH ${${executable}_EXECUTABLE}
+        OUTPUTVAR extraApplicationToLaunchListForBuildTree
+        )
+    ENDIF()
+  ENDFOREACH()
 
   INCLUDE(SlicerBlockCTKAppLauncherSettings)
   ctkAppLauncherConfigure(
