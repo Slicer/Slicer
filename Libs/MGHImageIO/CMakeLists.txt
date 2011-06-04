@@ -102,22 +102,21 @@ INSTALL(TARGETS ${lib_name}
 # in a special directory to speed up the searching for ImageIO
 # factories (which improves the speed at which plugins run).
 
+if(NOT DEFINED MGHImageIO_ITKFACTORIES_DIR)
+  set(MGHImageIO_ITKFACTORIES_DIR lib/ITKFactories)
+endif()
 if(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
-  set(MGHImageIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
-endif(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
+  set(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${MGHImageIO_ITKFACTORIES_DIR})
+endif()
 
 add_library(MGHIOPlugin SHARED 
   itkMGHIOPlugin.cxx
   )
 
-set_target_properties(MGHIOPlugin
-  PROPERTIES 
-  RUNTIME_OUTPUT_DIRECTORY 
-  "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}"
-  LIBRARY_OUTPUT_DIRECTORY 
-  "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}"
-  ARCHIVE_OUTPUT_DIRECTORY 
-  "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}"
+set_target_properties(MGHIOPlugin PROPERTIES 
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}"
   )
 target_link_libraries(MGHIOPlugin 
   ${lib_name}
@@ -144,15 +143,15 @@ install(TARGETS MGHIOPlugin
 if(APPLE)
   add_custom_command(
     TARGET MGHIOPlugin
-    DEPENDS "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
+    DEPENDS "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
-    "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
+    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
+    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
     VERBATIM
     )
   install(FILES
-    "${CMAKE_BINARY_DIR}/${Slicer_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
+    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
     DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR}
     )
 endif()
