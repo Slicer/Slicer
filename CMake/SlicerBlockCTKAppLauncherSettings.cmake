@@ -214,8 +214,12 @@ IF(Slicer_USE_PYTHONQT)
 ENDIF()
 
 IF(Slicer_USE_PYTHONQT_WITH_TCL)
+  SET(tcllib_subdir lib)
+  IF(WIN32)
+    SET(tcllib_subdir bin)
+  ENDIF()
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    ./lib/TclTk/lib
+    ./lib/TclTk/${tcllib_subdir}
     ./lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
     ./lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
     )
