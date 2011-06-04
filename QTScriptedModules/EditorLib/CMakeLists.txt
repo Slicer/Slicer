@@ -16,7 +16,7 @@ ctkMacroCompilePythonScript(
   SCRIPTS "${EditorLib_PYTHON_SCRIPTS}"
   RESOURCES "${EditorLib_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python/EditorLib
-  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
+  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}/Python
   )
 
 #-----------------------------------------------------------------------------
