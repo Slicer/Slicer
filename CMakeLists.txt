@@ -429,8 +429,15 @@ ENDIF()
 # never will, so this is always likely to work.
 # This is needed so the launcher can set the paths to the correct subdirectories
 # for incrTcl and incrTk
-SET(TCL_TK_VERSION_DOT "8.4")
-SET(TCL_TK_VERSION "84")
+
+# On 64bit Windows we use a prebuilt tcl 8.5.
+IF(WIN32 AND "${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+  SET(TCL_TK_VERSION_DOT "8.5")
+  SET(TCL_TK_VERSION "85")
+ELSE()
+  SET(TCL_TK_VERSION_DOT "8.4")
+  SET(TCL_TK_VERSION "84")
+ENDIF()
 SET(INCR_TCL_VERSION_DOT "3.2")
 SET(INCR_TCL_VERSION "32")
 
