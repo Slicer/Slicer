@@ -132,6 +132,12 @@ MARK_AS_ADVANCED(Slicer_ITK_GIT_REPOSITORY)
 SET(Slicer_ITK_GIT_TAG "origin/slicer-4.0" CACHE STRING "ITK git tag to use")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 
+# TODO: Option allowing to enable/disable specific module should be automatically added
+# The following option has been added for conveniency so that BRAINSTOOL module can be 
+# enabled/disabled at the superbuild level.
+OPTION(Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." OFF)
+MARK_AS_ADVANCED(Slicer_BUILD_BRAINSTOOLS)
+
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
