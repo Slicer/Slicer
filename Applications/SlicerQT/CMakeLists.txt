@@ -148,6 +148,11 @@ ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX} MACOSX_BUNDLE
   ${qt_menu_nib_sources}
   )
 SET_TARGET_PROPERTIES(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS SlicerQT)
+
+IF(APPLE)
+  SET_TARGET_PROPERTIES(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES OUTPUT_NAME Slicer)
+ENDIF(APPLE)
+
 TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
   ${lib_name}
   )
@@ -174,7 +179,7 @@ SET(dynamicHeaders
 IF(NOT APPLE)
   SET(SlicerQT_INSTALL_DESTINATION_ARGS RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR})
 ELSE()
-  SET(SlicerQT_INSTALL_DESTINATION_ARGS BUNDLE DESTINATION ${Slicer_BUNDLE_LOCATION})
+  SET(SlicerQT_INSTALL_DESTINATION_ARGS BUNDLE DESTINATION ".")
 
   #INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/qt.conf
   #    DESTINATION "${ProjectManager_BUNDLE_LOCATION}/${PROJECT_NAME}.app/Contents/Resources")
@@ -188,7 +193,8 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # Configure Slicer Launcher (Linux & Windows Only)
 # --------------------------------------------------------------------------
 
-IF(Slicer_USE_CTKAPPLAUNCHER AND NOT APPLE)
+
+IF(Slicer_USE_CTKAPPLAUNCHER)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
   INCLUDE(SlicerBlockCTKAppLauncherSettings)
   ctkAppLauncherConfigure(
@@ -209,16 +215,19 @@ IF(Slicer_USE_CTKAPPLAUNCHER AND NOT APPLE)
     PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
     ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
     )
-  INSTALL(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
-  INSTALL(
-    FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png"
-    DESTINATION ${Slicer_INSTALL_BIN_DIR}
-    )
-  INSTALL(
-    FILES "${Slicer_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini"
-    DESTINATION ${Slicer_INSTALL_BIN_DIR}
-    RENAME SlicerLauncherSettings.ini
-    )
+  IF(NOT APPLE)
+    INSTALL(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+
+     INSTALL(
+      FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png"
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
+      )
+    INSTALL(
+      FILES "${Slicer_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini"
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
+      RENAME SlicerLauncherSettings.ini
+      )
+  ENDIF()
 ENDIF()
 
 # --------------------------------------------------------------------------
