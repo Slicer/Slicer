@@ -22,7 +22,7 @@ file(GLOB TCLFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "Tcl/*.tcl")
 foreach(tclfile ${TCLFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${tclfile}
-    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/${PROJECT_NAME}/${tclfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/${PROJECT_NAME}/${tclfile}
     COPYONLY)
 endforeach(tclfile)
 
@@ -35,7 +35,7 @@ file(GLOB IMAGEFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/ImageData/*.png
 foreach(file ${IMAGEFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
 endforeach(file)

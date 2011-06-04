@@ -242,9 +242,9 @@ TARGET_LINK_LIBRARIES(qSlicerIconEnginePlugin
 
 # Install rules
 INSTALL(TARGETS qSlicerIconEnginePlugin
-  RUNTIME DESTINATION lib/Slicer3/iconengines COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/Slicer3/iconengines COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/Slicer3/iconengines COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT Development
   )
 # Since Qt expects the plugin to be directly located under the
 # directory 'lib/Slicer3/iconengines', let's copy them.

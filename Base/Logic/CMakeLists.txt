@@ -204,7 +204,7 @@ file(GLOB COLORFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/ColorFile
 foreach(colorfile ${COLORFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${colorfile}
-    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
     COPYONLY
     )
 endforeach()

@@ -144,9 +144,10 @@ foreach(file ${RESFILES})
     COPYONLY
     )
 endforeach()
+
 install(
   FILES ${RESFILES}
-  DESTINATION share/${PROJECT_NAME}
+  DESTINATION ${Slicer_INSTALL_ROOT}/share/${PROJECT_NAME}
   )
 
 # --------------------------------------------------------------------------
@@ -183,7 +184,7 @@ IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
 
   install(DIRECTORY
     Testing
-    DESTINATION share/${PROJECT_NAME} COMPONENT Development
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
     PATTERN "*.cxx" EXCLUDE
     PATTERN ".svn" EXCLUDE
     PATTERN "*.tcl" EXCLUDE

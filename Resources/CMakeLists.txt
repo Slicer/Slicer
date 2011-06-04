@@ -17,7 +17,7 @@ IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   foreach(pngfile ${PNGFILES})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/${pngfile}
-      "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/${pngfile}"
+      "${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Resources/${pngfile}"
       COPYONLY
       )
   endforeach()
@@ -35,7 +35,7 @@ file(GLOB PARAMETERSETS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ParameterSets/*.
 foreach(parameterset ${PARAMETERSETS})
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${parameterset}
-    "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/${parameterset}"
+    "${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Resources/${parameterset}"
     COPYONLY
     )
 endforeach()

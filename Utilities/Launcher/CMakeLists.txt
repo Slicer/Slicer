@@ -46,16 +46,16 @@ SET(launcher_binary
 # MESSAGE(STATUS "launcher_source: ${launcher_source}")
 # MESSAGE(STATUS "launcher_binary: ${launcher_binary}")
 
-if(EXISTS "${launcher_source}")
+if(EXISTS "${launcher_source}" AND NOT APPLE)
   configure_file("${launcher_source}" "${launcher_binary}" COPYONLY)
   install(PROGRAMS "${launcher_binary}" DESTINATION ".")
-endif(EXISTS "${launcher_source}")
+endif(EXISTS "${launcher_source}" AND NOT APPLE)
 
 # Should this location change, change Application/GUI/Slicer3.cxx as well
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-  "${Slicer_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
+  "${Slicer_BINARY_DIR}/${Slicer_SHARE_DIR}/Resources/slicer3.ico"
   COPYONLY)
 install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"

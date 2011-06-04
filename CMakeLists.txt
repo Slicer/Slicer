@@ -184,13 +184,31 @@ INCLUDE(SlicerBlockCXXRequiredFlags)
 #-----------------------------------------------------------------------------
 # Slicer install directories
 #------------------------------------------------------------------------------
-SET(Slicer_INSTALL_BIN_DIR "bin")
-SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
-SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
-SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
-SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
-# Set to create Bundle in a directory
-SET(Slicer_BUNDLE_LOCATION ".")
+
+SET(Slicer_BIN_DIR "bin")
+SET(Slicer_LIB_DIR "lib/Slicer3")
+SET(Slicer_INCLUDE_DIR "include/Slicer")
+SET(Slicer_SHARE_DIR "share/Slicer")
+SET(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
+SET(Slicer_INSTALL_ROOT "")
+
+IF(APPLE)
+  # Set to create Bundle
+  SET(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
+  SET(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}")
+
+  SET(Slicer_INSTALL_BIN_DIR "${Slicer_BUNDLE_LOCATION}/${Slicer_BIN_DIR}")
+  SET(Slicer_INSTALL_LIB_DIR "${Slicer_BUNDLE_LOCATION}/${Slicer_LIB_DIR}")
+  SET(Slicer_INSTALL_INCLUDE_DIR "${Slicer_BUNDLE_LOCATION}/${Slicer_INCLUDE_DIR}")
+  SET(Slicer_PYTHON_INSTALL_DIR "${Slicer_INSTALL_BIN_DIR}")
+  SET(Slicer_INSTALL_SHARE_DIR "${Slicer_BUNDLE_LOCATION}/${Slicer_SHARE_DIR}")
+  SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
+ELSE()
+  SET(Slicer_INSTALL_BIN_DIR "bin")
+  SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
+  SET(Slicer_PYTHON_INSTALL_DIR ${Slicer_INSTALL_BIN_DIR})
+  SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
@@ -243,7 +261,14 @@ SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 #-----------------------------------------------------------------------------
 # Plugins and Modules install directories
 #------------------------------------------------------------------------------
-SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
+
+SET(Slicer_PLUGINS_BIN_DIR "${Slicer_BIN_DIR}")
+SET(Slicer_PLUGINS_LIB_DIR "${Slicer_LIB_DIR}/Plugins")
+SET(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/Plugins")
+SET(Slicer_PLUGINS_SHARE_DIR "${Slicer_SHARE_DIR}/Plugins")
+SET(Slicer_PLUGINS_CACHE_DIR "${Slicer_LIB_DIR}/PluginsCache")
+
+SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_BIN_DIR}")
 SET(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
@@ -297,7 +322,7 @@ IF(BUILD_TESTING)
     
   CONFIGURE_FILE(
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
-    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake 
+    ${Slicer_BINARY_DIR}/${Slicer_BIN_DIR}/CTestConfig.cmake 
     COPYONLY)
     
 ENDIF()
@@ -309,6 +334,12 @@ ENDIF()
 IF(Slicer_USE_PYTHONQT)
   FIND_PACKAGE(PythonLibs REQUIRED)
   FIND_PACKAGE(PythonInterp REQUIRED)
+
+  EXECUTE_PROCESS(
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.version[:3]"
+    OUTPUT_VARIABLE Slicer_PYTHON_VERSION_DOT
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  STRING(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -412,6 +443,11 @@ SET(INCR_TCL_VERSION_DOT "3.2")
 SET(INCR_TCL_VERSION "32")
 
 #-----------------------------------------------------------------------------
+# Python Version info
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 SET(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
@@ -424,17 +460,29 @@ SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 # Qt Loadable and Scripted Modules
 #-----------------------------------------------------------------------------
 IF(Slicer_BUILD_QTLOADABLEMODULES)
+  SET(Slicer_QTLOADABLEMODULES_BIN_DIR "${Slicer_BIN_DIR}/QTLoadableModules")
+  SET(Slicer_QTLOADABLEMODULES_LIB_DIR "${Slicer_LIB_DIR}/QTLoadableModules")
+  SET(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/QTLoadableModules")
+  SET(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/QTLoadableModules")
+
   SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
   SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
   SET(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
   SET(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
 ENDIF()
+
 IF(Slicer_BUILD_QTSCRIPTEDMODULES)
-  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
+  SET(Slicer_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_BIN_DIR}/QTScriptedModules")
+  SET(Slicer_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_LIB_DIR}/QTScriptedModules")
+  SET(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/QTScriptedModules")
+  SET(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/QTScriptedModules")
+
+  SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_BIN_DIR}/QTScriptedModules")
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTScriptedModules")
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTScriptedModules")
 ENDIF()
+
 
 # --------------------------------------------------------------------------
 # Configure and install headers
@@ -611,10 +659,10 @@ ENDIF()
 
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/launch.tcl.in
-  "${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
+  "${Slicer_BINARY_DIR}/${Slicer_LIB_DIR}/launch.tcl"
   )
 INSTALL(
-  FILES "${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
+  FILES "${Slicer_BINARY_DIR}/${Slicer_LIB_DIR}/launch.tcl"
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   )
 
@@ -647,7 +695,16 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Package slicer
 #-----------------------------------------------------------------------------
+
 INCLUDE(SlicerCPack.cmake)
+
+# IMPORTANT:
+# Keep this chunk of code here at the very bottom of the main
+# CMakeLists.txt file so that the install rules that install the
+# bundles and any files inside of them are already run before these
+# script steps are run.
+ADD_SUBDIRECTORY(Utilities/Package)
+
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as
