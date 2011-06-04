@@ -1,3 +1,6 @@
+
+if(NOT APPLE)
+
 # -------------------------------------------------------------------------
 # Find and install Tcl
 # -------------------------------------------------------------------------
@@ -32,6 +35,8 @@ IF (Slicer_USE_PYTHONQT_WITH_TCL)
       REGEX "demos/" EXCLUDE
       PATTERN "*.sh" EXCLUDE
       PATTERN "*.c" EXCLUDE
+      PATTERN "tclsh${TCL_TK_VERSION_DOT}" EXCLUDE
+      PATTERN "wish${TCL_TK_VERSION_DOT}" EXCLUDE
       )
   endif()
 ENDIF()
@@ -190,6 +195,7 @@ if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;Runtime;/")
 endif()
 
+endif(NOT APPLE)
 # -------------------------------------------------------------------------
 # Package properties
 # -------------------------------------------------------------------------
@@ -197,8 +203,6 @@ endif()
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
 
 SET(CPACK_MONOLITHIC_INSTALL ON)
-#append RuntimeExecutables
-#SET(CPACK_COMPONENTS_ALL "Development;Runtime;RuntimeLibraries;Unspecified;RuntimeExecutables;")
 
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer_SOURCE_DIR}/README.txt")

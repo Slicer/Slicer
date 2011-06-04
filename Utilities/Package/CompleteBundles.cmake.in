@@ -1,0 +1,138 @@
+
+# Make sure this CMake has BundleUtilities.cmake:
+#
+if(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
+  message(FATAL_ERROR "error: BundleUtilities.cmake not found. Use CMake 2.8.3 or later.")
+endif(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
+
+# Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
+#
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0009 NEW)
+
+  if(POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+  endif(POLICY CMP0011)
+endif(COMMAND CMAKE_POLICY)
+
+
+# gp_item_default_embedded_path_override item default_embedded_path_var
+#
+# Return the path that others should refer to the item by when the item
+# is embedded inside a bundle.
+#
+# This is a project-specific override of BundleUtilities.cmake's
+# gp_item_default_embedded_path
+#
+function(gp_item_default_embedded_path_override item default_embedded_path_var)
+
+  # By default, embed items as set by gp_item_default_embedded_path:
+  #
+  set(path "${${default_embedded_path_var}}")
+
+  if(item MATCHES "\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3")
+  endif(item MATCHES "\\.dylib$")
+
+  if(item MATCHES "libpython.*\\.dylib$")
+    set(path "@executable_path/../lib/Python/lib")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/.*Python\\.so$")
+    set(path "@executable_path/../lib/Slicer3")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/designer/\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3/designer")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/iconengines/\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3/iconengines")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/ITKFactories/.*Plugin\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3/ITKFactories")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/ITKFactories/.*Plugin\\.so$")
+    set(path "@executable_path/../lib/Slicer3/ITKFactories")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/Plugins/.*\\.dylib$")
+    set(path "@executable_path/../lib/Slicer3/Plugins")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/QTLoadableModules/.*\\.dylib$")
+    message("QTLoadable ${item}")
+    set(path "@executable_path/../lib/Slicer3/QTLoadableModules")
+  endif()
+
+  if(item MATCHES "lib/Slicer3/QTLoadableModules/.*Python\\.so$")
+    message("QTLoadable ${item}")
+    set(path "@executable_path/../lib/Slicer3/QTLoadableModules")
+  endif()
+
+  if(item MATCHES "Plugins/imageformats/[^/]+\\.dylib$")
+    set(path "@executable_path/../Plugins/imageformats")
+  endif()
+
+  set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
+endfunction(gp_item_default_embedded_path_override)
+
+
+# Fixup the .app bundles in the install tree:
+#
+include(BundleUtilities)
+
+function(fixup_bundle_with_plugins location app)
+  set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
+  set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
+
+  set(libs "")
+  file(GLOB_RECURSE candidates
+    "${app_dir}/Contents/lib/Slicer3/QTLoadableModules/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/QTLoadableModules/*Python.so"
+    "${app_dir}/Contents/lib/Slicer3/designer/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/iconengines/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/ITKFactories/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/ITKFactories/*Plugin.so"
+    "${app_dir}/Contents/lib/Slicer3/Plugins/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/*${suffix}"
+    "${app_dir}/Contents/lib/Slicer3/*Python.so"
+    "${app_dir}/Contents/lib/Python/lib/*${suffix}"
+    "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
+    "${app_dir}/Contents/Plugins/imageformats/*${suffix}"
+    )
+  foreach(lib ${candidates})
+    if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
+      set(libs ${libs} "${lib}")
+    endif()
+  endforeach()
+
+  # Additional libs may be found in:
+  #
+  set(libs_path "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
+  list(APPEND libs_path "@VTK_DIR@/bin;@ITK_DIR@/bin;@Teem_DIR@/bin;@BatchMake_DIR@/bin;@OpenIGTLink_DIR@/bin;@CTK_DIR@/bin")
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3;@Slicer_BINARY_DIR@/lib/Slicer3/QTLoadableModules;@Slicer_BINARY_DIR@/lib/Slicer3/Plugins;@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
+
+  list(REMOVE_DUPLICATES libs)
+  list(REMOVE_DUPLICATES libs_path)
+
+  message("Calling fixup_bundle with")
+  message("app=${app_dir}")
+  message("libs=${libs}")
+  message("libs_path=${libs_path}")
+
+  fixup_bundle(
+    "${app_dir}"
+    "${libs}"
+    "${libs_path}"
+    )
+endfunction()
+
+fixup_bundle_with_plugins("" "Slicer.app")
+#verify_app("/Users/partyd/Kitware/Slicer4-trunk/build/Slicer-build/_CPack_Packages/Darwin/DragNDrop/Slicer-4.0.gamma-2011-05-10-Darwin/Slicer.app")
