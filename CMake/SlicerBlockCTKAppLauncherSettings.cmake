@@ -78,9 +78,9 @@ SET(SLICER_LIBRARY_PATHS_BUILD
   ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${LibArchive_DIR}/${LIB_SUBDIR}
-  ./bin/<CMAKE_CFG_INTDIR>
-  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
   )
 
 
@@ -121,9 +121,9 @@ ENDIF()
 # PATHS
 #-----------------------------------------------------------------------------
 SET(SLICER_PATHS_BUILD
-  ./bin/<CMAKE_CFG_INTDIR>
-  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${QT_BINARY_DIR}
   )
@@ -138,7 +138,7 @@ ENDIF()
 # ENVVARS
 #-----------------------------------------------------------------------------
 SET(SLICER_ENVVARS_BUILD
-  "QT_PLUGIN_PATH=./bin<PATHSEP>${CTK_DIR}/CTK-build/bin"
+  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin"
   )
   
 IF(Slicer_USE_PYTHONQT)
@@ -180,33 +180,33 @@ ENDIF()
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 SET(SLICER_LIBRARY_PATHS_INSTALLED
-  ./${Slicer_INSTALL_BIN_DIR}
-  ./${Slicer_INSTALL_LIB_DIR}
-  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_LIB_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
   # External projects
-  ./lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
+  <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
   )
 
 IF(Slicer_USE_OPENIGTLINK)
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     # External projects 
-    ./lib/igtl
+    <APPLAUNCHER_DIR>/lib/igtl
     )
 ENDIF()
 
 IF(Slicer_USE_BatchMake)
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    ./lib/BatchMake
-    ./lib/bmModuleDescriptionParser
+    <APPLAUNCHER_DIR>/lib/BatchMake
+    <APPLAUNCHER_DIR>/lib/bmModuleDescriptionParser
     )
 ENDIF()
 
 IF(UNIX AND Slicer_USE_PYTHONQT)
   # On windows, both pythonQt and python libraries are installed allong with the executable
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    ./lib/Python/lib
-    ./lib/PythonQt
+    <APPLAUNCHER_DIR>/lib/Python/lib
+    <APPLAUNCHER_DIR>/lib/PythonQt
     )
 ENDIF()
 
@@ -216,9 +216,9 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
     SET(tcllib_subdir bin)
   ENDIF()
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    ./lib/TclTk/${tcllib_subdir}
-    ./lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
-    ./lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
+    <APPLAUNCHER_DIR>/lib/TclTk/${tcllib_subdir}
+    <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
+    <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
     )
 ENDIF()
 
@@ -226,9 +226,9 @@ ENDIF()
 # PATHS
 #-----------------------------------------------------------------------------
 SET(SLICER_PATHS_INSTALLED
-  ./${Slicer_INSTALL_BIN_DIR}
-  ./${Slicer_INSTALL_PLUGINS_BIN_DIR}
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
   )
 
 
