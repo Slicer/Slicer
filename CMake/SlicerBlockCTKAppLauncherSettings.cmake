@@ -142,7 +142,7 @@ SET(SLICER_ENVVARS_BUILD
   )
   
 IF(Slicer_USE_PYTHONQT)
-  SET(pythonpath_subdir python2.6)
+  SET(pythonpath_subdir python${Slicer_PYTHON_VERSION_DOT})
   IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     SET(pythonpath_subdir "../Lib")
   ENDIF()
@@ -239,7 +239,7 @@ SET(SLICER_ENVVARS_INSTALLED
   )
   
 IF(Slicer_USE_PYTHONQT)
-  SET(pythonpath_subdir lib/python2.6)
+  SET(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
   IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     SET(pythonpath_subdir "Lib")
   ENDIF()
