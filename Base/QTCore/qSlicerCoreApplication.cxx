@@ -147,11 +147,11 @@ void qSlicerCoreApplicationPrivate::init()
   vtksys::SystemTools::PutEnv(setEnv.toLatin1());
 
 #if defined(Q_WS_MAC)
-  // Override the Qt plugin search path
-  // Used to locate the Qt imageformat plugins.
-  QStringList pluginSearchPaths;
-  pluginSearchPaths << this->SlicerHome + "/Plugins";
-  QCoreApplication::setLibraryPaths(pluginSearchPaths);
+  // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
+  // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
+  QStringList qtPluginsSearchPaths;
+  qtPluginsSearchPaths << this->SlicerHome + "lib/QtPlugins";
+  QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
 #endif
 
   // Instantiate ErrorLogModel

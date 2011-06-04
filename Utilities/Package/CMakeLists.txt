@@ -37,21 +37,7 @@ if(APPLE)
           DESTINATION ${Slicer_INSTALL_LIB_DIR}
           COMPONENT Runtime)
 
-  if(NOT "${QT_PLUGINS_DIR}" STREQUAL "")
-    set(qt_plugins_dir "${QT_PLUGINS_DIR}/imageformats")
-    file(GLOB plugin_candidates "${qt_plugins_dir}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    foreach(p ${plugin_candidates})
-      if(NOT p MATCHES "(_debug|d[0-9])${CMAKE_SHARED_LIBRARY_SUFFIX}$")
-        set(qt_plugins ${qt_plugins} "${p}")
-      endif()
-    endforeach()
-  endif()
-
-  foreach(qpi ${qt_plugins})
-    install(PROGRAMS ${qpi}
-      DESTINATION ${Slicer_INSTALL_ROOT}/Plugins/imageformats
-      )
-  endforeach()
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
 
   set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
@@ -67,4 +53,3 @@ if(APPLE)
   set(CPACK_GENERATOR "DragNDrop")
 
 endif(APPLE)
-

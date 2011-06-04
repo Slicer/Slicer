@@ -74,8 +74,8 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/imageformats/[^/]+\\.dylib$")
-    set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@/imageformats")
+  if(item MATCHES "lib/QtPlugins/imageformats/[^/]+\\.dylib$")
+    set(path "@executable_path@/../lib/QtPlugins/imageformats")
   endif()
 
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
@@ -103,7 +103,7 @@ function(fixup_bundle_with_plugins location app)
     "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
     "${app_dir}/Contents/lib/Python/lib/*${suffix}"
     "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
-    "${app_dir}/Contents/@Slicer_PLUGINS_LIB_DIR@/imageformats/*${suffix}"
+    "${app_dir}/Contents/lib/QtPlugins/imageformats/*${suffix}"
     )
   foreach(lib ${candidates})
     if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
