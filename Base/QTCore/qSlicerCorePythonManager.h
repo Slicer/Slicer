@@ -40,10 +40,12 @@ public:
 
   /// Convenient function allowing to add a VTK object to the interpreter main module
   void addVTKObjectToPythonMain(const QString& name, vtkObject * object);
+
+  /// List of directories containing Python modules.
+  virtual QStringList pythonPaths();
   
 protected:
 
-  virtual QStringList pythonPaths();
   virtual void preInitialization();
 
 };

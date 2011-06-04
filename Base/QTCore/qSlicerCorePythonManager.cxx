@@ -17,6 +17,10 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
+// Qt includes
+#include <QDebug>
+#include <QDir>
+#include <QStringList>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -64,8 +68,22 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   
   QStringList paths;  
   paths << Superclass::pythonPaths();
-  paths << app->slicerHome() + "/bin/" + app->intDir();
-  paths << app->slicerHome() + "/bin/Python";
+  paths << app->slicerHome() + "/" Slicer_INSTALL_BIN_DIR "/" + app->intDir();
+  paths << app->slicerHome() + "/" Slicer_INSTALL_BIN_DIR "/Python";
+
+  paths << app->slicerHome() + "/" Slicer_INSTALL_LIB_DIR;
+  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT;
+  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/lib-dynload";
+  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/lib-tk";
+  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/site-packages";
+
+#ifdef Slicer_BUILD_QTLOADABLEMODULES
+  paths << app->slicerHome() + "/" Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+#endif
+
+#ifdef Slicer_BUILD_QTSCRIPTEDMODULES
+  paths << app->slicerHome() + "/" Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR;
+#endif
 
   QString executableExtension = qSlicerUtils::executableExtension();
   if (!app->isInstalled())
