@@ -114,6 +114,7 @@ SET(Slicer_Libs_VTK_WRAPPED_LIBRARIES
 FOREACH(dir ${dirs})
   SET(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
   SET(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
+  SET(${dir}_INSTALL_SHARE_DIR ${Slicer_INSTALL_ROOT}share/${dir})
   SET(${dir}_INSTALL_NO_DEVELOPMENT ${Slicer_INSTALL_NO_DEVELOPMENT})
   SET(${dir}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
   ADD_SUBDIRECTORY(${dir})
