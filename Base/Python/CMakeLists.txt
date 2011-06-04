@@ -37,7 +37,7 @@ ctkMacroCompilePythonScript(
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
-  INSTALL_DIR ${Slicer_PYTHON_INSTALL_DIR}
+  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
   )
 
 #-----------------------------------------------------------------------------
