@@ -132,7 +132,7 @@ MACRO(slicerMacroBuildQtModule)
     ${QTMODULE_QRC_SRCS}
     )
 
-  # Set qt loadable modules output path
+  # Set loadable modules output path
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${Slicer_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY "${Slicer_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"

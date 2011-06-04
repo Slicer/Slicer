@@ -2,14 +2,10 @@
 # Set the default output paths for one or more plugins/CLP
 # 
 macro(slicer3_set_plugins_output_path)
-  set_target_properties(${ARGN}
-    PROPERTIES 
-    RUNTIME_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
-    LIBRARY_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
-    ARCHIVE_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+  set_target_properties(${ARGN} PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
     )
 endmacro(slicer3_set_plugins_output_path)
 
