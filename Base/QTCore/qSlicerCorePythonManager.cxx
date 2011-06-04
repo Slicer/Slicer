@@ -72,10 +72,6 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   paths << app->slicerHome() + "/" Slicer_INSTALL_BIN_DIR "/Python";
 
   paths << app->slicerHome() + "/" Slicer_INSTALL_LIB_DIR;
-  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT;
-  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/lib-dynload";
-  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/lib-tk";
-  paths << app->slicerHome() + "/lib/Python/lib/python" Slicer_PYTHON_VERSION_DOT + "/site-packages";
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
   paths << app->slicerHome() + "/" Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
@@ -98,6 +94,15 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   else
     {
     // Add here python path specific to the INSTALLED tree
+#if defined(Q_WS_WIN)
+    QString pythonLibSubDirectory("/Lib");
+#elif defined(Q_WS_X11) || defined(Q_WS_MAC)
+    QString pythonLibSubDirectory("/lib/python"Slicer_PYTHON_VERSION_DOT);
+#endif
+    paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory;
+    paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/lib-dynload";
+    paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/lib-tk";
+    paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/site-packages";
     }
   
   return paths; 
