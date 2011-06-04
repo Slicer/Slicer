@@ -62,18 +62,20 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path/../lib/Slicer3/ITKFactories")
   endif()
 
-  if(item MATCHES "lib/Slicer3/Plugins/.*\\.dylib$")
-    set(path "@executable_path/../lib/Slicer3/Plugins")
+  set(Slicer_PLUGINS_LIB_DIR "@Slicer_PLUGINS_LIB_DIR@")
+  if(item MATCHES "${Slicer_PLUGINS_LIB_DIR}/.*\\.dylib$")
+    set(path "@executable_path/../${Slicer_PLUGINS_LIB_DIR}")
   endif()
 
-  if(item MATCHES "lib/Slicer3/QTLoadableModules/.*\\.dylib$")
+  set(Slicer_QTLOADABLEMODULES_LIB_DIR "@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+  if(item MATCHES "${Slicer_QTLOADABLEMODULES_LIB_DIR}/.*\\.dylib$")
     message("QTLoadable ${item}")
-    set(path "@executable_path/../lib/Slicer3/QTLoadableModules")
+    set(path "@executable_path/../${Slicer_QTLOADABLEMODULES_LIB_DIR}")
   endif()
 
-  if(item MATCHES "lib/Slicer3/QTLoadableModules/.*Python\\.so$")
+  if(item MATCHES "${Slicer_QTLOADABLEMODULES_LIB_DIR}/.*Python\\.so$")
     message("QTLoadable ${item}")
-    set(path "@executable_path/../lib/Slicer3/QTLoadableModules")
+    set(path "@executable_path/../${Slicer_QTLOADABLEMODULES_LIB_DIR}")
   endif()
 
   if(item MATCHES "Plugins/imageformats/[^/]+\\.dylib$")
@@ -94,13 +96,13 @@ function(fixup_bundle_with_plugins location app)
 
   set(libs "")
   file(GLOB_RECURSE candidates
-    "${app_dir}/Contents/lib/Slicer3/QTLoadableModules/*${suffix}"
-    "${app_dir}/Contents/lib/Slicer3/QTLoadableModules/*Python.so"
+    "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
+    "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
     "${app_dir}/Contents/lib/Slicer3/designer/*${suffix}"
     "${app_dir}/Contents/lib/Slicer3/iconengines/*${suffix}"
     "${app_dir}/Contents/lib/Slicer3/ITKFactories/*${suffix}"
     "${app_dir}/Contents/lib/Slicer3/ITKFactories/*Plugin.so"
-    "${app_dir}/Contents/lib/Slicer3/Plugins/*${suffix}"
+    "${app_dir}/Contents/@Slicer_PLUGINS_LIB_DIR@/*${suffix}"
     "${app_dir}/Contents/lib/Slicer3/*${suffix}"
     "${app_dir}/Contents/lib/Slicer3/*Python.so"
     "${app_dir}/Contents/lib/Python/lib/*${suffix}"
@@ -117,7 +119,7 @@ function(fixup_bundle_with_plugins location app)
   #
   set(libs_path "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
   list(APPEND libs_path "@VTK_DIR@/bin;@ITK_DIR@/bin;@Teem_DIR@/bin;@BatchMake_DIR@/bin;@OpenIGTLink_DIR@/bin;@CTK_DIR@/bin")
-  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3;@Slicer_BINARY_DIR@/lib/Slicer3/QTLoadableModules;@Slicer_BINARY_DIR@/lib/Slicer3/Plugins;@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3;@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@;@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@;@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
 
   list(REMOVE_DUPLICATES libs)
   list(REMOVE_DUPLICATES libs_path)

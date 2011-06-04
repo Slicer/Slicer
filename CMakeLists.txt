@@ -256,10 +256,10 @@ SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 # Plugins and Modules install directories
 #------------------------------------------------------------------------------
 
-SET(Slicer_PLUGINS_BIN_DIR "${Slicer_LIB_DIR}/Plugins")
-SET(Slicer_PLUGINS_LIB_DIR "${Slicer_LIB_DIR}/Plugins")
-SET(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/Plugins")
-SET(Slicer_PLUGINS_SHARE_DIR "${Slicer_SHARE_DIR}/Plugins")
+SET(Slicer_PLUGINS_BIN_DIR "plugins")
+SET(Slicer_PLUGINS_LIB_DIR "plugins")
+SET(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/plugins")
+SET(Slicer_PLUGINS_SHARE_DIR "${Slicer_SHARE_DIR}/plugins")
 
 SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_BIN_DIR}")
 SET(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_LIB_DIR}")
@@ -452,10 +452,10 @@ SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 # Qt Loadable and Scripted Modules
 #-----------------------------------------------------------------------------
 IF(Slicer_BUILD_QTLOADABLEMODULES)
-  SET(Slicer_QTLOADABLEMODULES_BIN_DIR "${Slicer_LIB_DIR}/QTLoadableModules")
-  SET(Slicer_QTLOADABLEMODULES_LIB_DIR "${Slicer_LIB_DIR}/QTLoadableModules")
-  SET(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/QTLoadableModules")
-  SET(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/QTLoadableModules")
+  SET(Slicer_QTLOADABLEMODULES_BIN_DIR "qt-loadable-modules")
+  SET(Slicer_QTLOADABLEMODULES_LIB_DIR "qt-loadable-modules")
+  SET(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-loadable-modules")
+  SET(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-loadable-modules")
 
   SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_BIN_DIR}")
   SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_LIB_DIR}")
@@ -464,10 +464,10 @@ IF(Slicer_BUILD_QTLOADABLEMODULES)
 ENDIF()
 
 IF(Slicer_BUILD_QTSCRIPTEDMODULES)
-  SET(Slicer_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_LIB_DIR}/QTScriptedModules")
-  SET(Slicer_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_LIB_DIR}/QTScriptedModules")
-  SET(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/QTScriptedModules")
-  SET(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/QTScriptedModules")
+  SET(Slicer_QTSCRIPTEDMODULES_BIN_DIR "qt-scripted-modules")
+  SET(Slicer_QTSCRIPTEDMODULES_LIB_DIR "qt-scripted-modules")
+  SET(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-scripted-modules")
+  SET(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-scripted-modules")
 
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_BIN_DIR}")
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
