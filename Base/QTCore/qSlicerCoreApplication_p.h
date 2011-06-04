@@ -69,6 +69,9 @@ public:
   /// from SlicerVersion.txt
   void discoverRepository();
 
+  /// Detect PythonPath. If one doesn't exist attempt to generate one.
+  void discoverPythonPath();
+
   /// Parse arguments
   void parseArguments();
 

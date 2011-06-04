@@ -136,6 +136,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->discoverSlicerHomeDirectory();
   this->discoverITKFactoriesDirectory();
   this->discoverRepository();
+  this->discoverPythonPath();
 
   // Qt can't set environment variables for child processes that are not QProcess.
   // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
@@ -144,6 +145,14 @@ void qSlicerCoreApplicationPrivate::init()
   vtksys::SystemTools::PutEnv(setEnv.toLatin1());
   setEnv = QString("ITK_AUTOLOAD_PATH=") + this->ITKFactoriesDir;
   vtksys::SystemTools::PutEnv(setEnv.toLatin1());
+
+#if defined(Q_WS_MAC)
+  // Override the Qt plugin search path
+  // Used to locate the Qt imageformat plugins.
+  QStringList pluginSearchPaths;
+  pluginSearchPaths << this->SlicerHome + "/Plugins";
+  QCoreApplication::setLibraryPaths(pluginSearchPaths);
+#endif
 
   // Instantiate ErrorLogModel
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
@@ -252,6 +261,20 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     return ;
     }
   QDir slicerLibDir = slicerBinDir;
+
+#if defined(Q_WS_MAC)
+  // App bundle case.
+  if (slicerBinDir.cd( QString("../") + Slicer_INSTALL_BIN_DIR))
+    {
+    this->SlicerBin = slicerBinDir.absolutePath();
+    return;
+    }
+  if (slicerBinDir.cd( QString("../../../../") + Slicer_INSTALL_BIN_DIR))
+    {
+    this->SlicerBin = slicerBinDir.absolutePath();
+    return;
+    }
+#endif
   if (slicerLibDir.cd( QString("../") + Slicer_INSTALL_LIB_DIR))
     {
     this->SlicerBin = slicerBinDir.absolutePath();
@@ -312,6 +335,21 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
   slicerVersionStream >> repositoryRevision >> this->RepositoryRevision;
 
   this->RepositoryBranch = QFileInfo(this->RepositoryUrl).fileName();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::discoverPythonPath()
+{
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString pythonPath = env.value("PYTHONPATH");
+
+    // If there is no PYTHONPATH attempt to generate one.
+    if (pythonPath.isEmpty())
+      {
+      qSlicerCorePythonManager tempPythonManager;
+      pythonPath = QString("PYTHONPATH=") + tempPythonManager.pythonPaths().join(":");
+      vtksys::SystemTools::PutEnv(pythonPath.toLatin1());
+      }
 }
 
 //-----------------------------------------------------------------------------
@@ -574,9 +612,9 @@ bool qSlicerCoreApplication::isInstalled()const
   // TODO: make the check more robust (using an environment variable?)
   // If you change here, change also in launch.tcl.in
 #ifdef _WIN32
-  return QFile::exists(d->SlicerBin + "/unu.exe");
+  return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
 #else
-  return QFile::exists(d->SlicerBin + "/unu");
+  return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
 #endif
 }
 
