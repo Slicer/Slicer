@@ -202,13 +202,10 @@ IF(Slicer_USE_BatchMake)
     )
 ENDIF()
 
-IF(Slicer_USE_PYTHONQT)
-  SET(python_subdir "/lib")
-  IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(python_subdir "/PCbuild")
-  ENDIF()
+IF(UNIX AND Slicer_USE_PYTHONQT)
+  # On windows, both pythonQt and python libraries are installed allong with the executable
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    ./lib/Python${python_subdir}
+    ./lib/Python/lib
     ./lib/PythonQt
     )
 ENDIF()
@@ -247,8 +244,8 @@ IF(Slicer_USE_PYTHONQT)
   IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     SET(pythonpath_subdir "Lib")
   ENDIF()
-  SET(PYTHONPATH "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
+  SET(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
+  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
