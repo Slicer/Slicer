@@ -112,11 +112,6 @@ protected slots:
   void updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode*);
   void hideRangeWidget();
 
-  void onWindowValueChanged(double);
-  void onLevelValueChanged(double);
-  void onMinValueChanged(double);
-  void onMaxValueChanged(double);
-  void onMinMaxValuesChanged(double, double);
 protected:
   /// 
   /// Return the current MRML display node
