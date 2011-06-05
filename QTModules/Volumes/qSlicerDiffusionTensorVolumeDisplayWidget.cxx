@@ -185,6 +185,10 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
     return;
     }
   d->ScalarInvariantComboBox->setScalarInvariant(displayNode->GetScalarInvariant());
+  d->ScalarVolumeDisplayWidget->setColorTableComboBoxEnabled(
+    displayNode->GetScalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation &&
+    displayNode->GetScalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector &&
+    displayNode->GetScalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector);
 }
 
 // --------------------------------------------------------------------------

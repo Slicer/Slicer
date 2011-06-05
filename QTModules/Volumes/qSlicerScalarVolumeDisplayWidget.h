@@ -19,10 +19,12 @@ class vtkMRMLScalarVolumeNode;
 class qSlicerScalarVolumeDisplayWidgetPrivate;
 
 /// \ingroup Slicer_QtModules_Volumes
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerScalarVolumeDisplayWidget : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerScalarVolumeDisplayWidget
+  : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(bool enableColorTableComboBox READ isColorTableComboBoxEnabled WRITE setColorTableComboBoxEnabled )
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
@@ -31,6 +33,10 @@ public:
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode()const;
+
+  bool isColorTableComboBoxEnabled()const;
+  void setColorTableComboBoxEnabled(bool);
+
 public slots:
 
   /// 

@@ -122,6 +122,20 @@ vtkMRMLScalarVolumeNode* qSlicerScalarVolumeDisplayWidget::volumeNode()const
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerScalarVolumeDisplayWidget::isColorTableComboBoxEnabled()const
+{
+  Q_D(const qSlicerScalarVolumeDisplayWidget);
+  return d->ColorTableComboBox->isEnabled();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerScalarVolumeDisplayWidget::setColorTableComboBoxEnabled(bool enable)
+{
+  Q_D(qSlicerScalarVolumeDisplayWidget);
+  d->ColorTableComboBox->setEnabled(enable);
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode* qSlicerScalarVolumeDisplayWidget::volumeDisplayNode()const
 {
   vtkMRMLVolumeNode* volumeNode = this->volumeNode();
