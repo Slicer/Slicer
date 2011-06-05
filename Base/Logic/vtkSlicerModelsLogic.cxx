@@ -67,7 +67,7 @@ void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject* caller,
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkIntArray* sceneEvents = vtkIntArray::New();
+  vtkSmartPointer<vtkIntArray> sceneEvents = vtkSmartPointer<vtkIntArray>::New();
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
 
