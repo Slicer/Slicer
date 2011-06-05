@@ -43,6 +43,7 @@ protected:
 public:
   qMRMLScalarInvariantComboBoxPrivate(qMRMLScalarInvariantComboBox& object);
   void init();
+  void setScalarInvariantToComboBox(int scalarInvariant);
 
   QComboBox*                                   ComboBox;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DisplayPropertiesNode;
@@ -92,6 +93,20 @@ void qMRMLScalarInvariantComboBoxPrivate::populateComboBox()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLScalarInvariantComboBoxPrivate::setScalarInvariantToComboBox(int scalarInvariant)
+{ // The combobox has been populated on the assumption that all the scalar
+  // invariant were comprised between GetFirstScalarInvariant() and
+  // GetLastScalarInvariant().
+  Q_ASSERT(scalarInvariant >=
+           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant());
+  Q_ASSERT(scalarInvariant <=
+           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant());
+  int index = this->ComboBox->findData(QVariant(scalarInvariant));
+  Q_ASSERT(index >= 0);
+  this->ComboBox->setCurrentIndex(index);
+}
+
+//------------------------------------------------------------------------------
 qMRMLScalarInvariantComboBox::qMRMLScalarInvariantComboBox(QWidget* parentWidget)
   : QWidget(parentWidget)
   , d_ptr(new qMRMLScalarInvariantComboBoxPrivate(*this))
@@ -138,16 +153,7 @@ void qMRMLScalarInvariantComboBox::updateWidgetFromMRML()
     {
     return;
     }
-  // The combobox has been populated on the assumption that all the scalar
-  // invariant were comprised between GetFirstScalarInvariant() and
-  // GetLastScalarInvariant().
-  Q_ASSERT(d->DisplayPropertiesNode->GetScalarInvariant() >=
-           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant());
-  Q_ASSERT(d->DisplayPropertiesNode->GetScalarInvariant() <=
-           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant());
-  int index = d->ComboBox->findData(QVariant(d->DisplayPropertiesNode->GetColorGlyphBy()));
-  Q_ASSERT(index >= 0);
-  d->ComboBox->setCurrentIndex(index);
+  d->setScalarInvariantToComboBox(d->DisplayPropertiesNode->GetColorGlyphBy());
 }
 
 //------------------------------------------------------------------------------
@@ -155,10 +161,7 @@ void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 {
   Q_D(qMRMLScalarInvariantComboBox);
   int scalarInvariant = d->ComboBox->itemData(index).toInt();
-  if (d->DisplayPropertiesNode)
-    {
-    d->DisplayPropertiesNode->SetColorGlyphBy(scalarInvariant);
-    }
+  this->setScalarInvariant(scalarInvariant);
   emit scalarInvariantChanged(scalarInvariant);
 }
 
@@ -176,7 +179,11 @@ void qMRMLScalarInvariantComboBox::setScalarInvariant(int value)
   Q_D(qMRMLScalarInvariantComboBox);
   if (!d->DisplayPropertiesNode)
     {
-    return;
+    d->setScalarInvariantToComboBox(value);
     }
-  d->DisplayPropertiesNode->SetColorGlyphBy(value);
+  else
+    {
+    // SetColorGlyphBy will eventually call updateWidgetFromMRML
+    d->DisplayPropertiesNode->SetColorGlyphBy(value);
+    }
 }
