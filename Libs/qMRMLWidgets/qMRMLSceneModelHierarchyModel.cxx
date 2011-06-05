@@ -105,7 +105,8 @@ vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
     {
     modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
     }
-  return modelHierarchyNode ? modelHierarchyNode->GetParentNode() : 0;
+  return vtkMRMLModelHierarchyNode::SafeDownCast(
+    modelHierarchyNode ? modelHierarchyNode->GetParentNode() : 0);
 }
 
 //------------------------------------------------------------------------------
