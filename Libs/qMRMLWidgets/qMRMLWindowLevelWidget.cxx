@@ -36,6 +36,7 @@ public:
   void init();
   void openRangeWidget();
   void closeRangeWidget();
+  bool blockSignals(bool block);
   
   vtkMRMLScalarVolumeNode*        VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
@@ -109,6 +110,17 @@ void qMRMLWindowLevelWidgetPrivate::init()
   this->RangeWidget->setToolTip("Set the range boundaries of Window/Level to control large numbers or allow fine tuning");
   this->RangeWidgetAnimation = new QPropertyAnimation(this->RangeWidget, "geometry");
   this->RangeWidgetAnimation->setDuration(100);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLWindowLevelWidgetPrivate::blockSignals(bool block)
+{
+  this->WindowLevelRangeSlider->blockSignals(block);
+  this->WindowSpinBox->blockSignals(block);
+  this->LevelSpinBox->blockSignals(block);
+  this->MinSpinBox->blockSignals(block);
+  this->MaxSpinBox->blockSignals(block);
+  return this->RangeWidget->blockSignals(block);
 }
 
 // --------------------------------------------------------------------------
@@ -453,13 +465,21 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
 
   double window = d->VolumeDisplayNode->GetWindow();
   double level = d->VolumeDisplayNode->GetLevel();
-  d->WindowSpinBox->setValue(window);
-  d->LevelSpinBox->setValue(level);
   double min = d->VolumeDisplayNode->GetWindowLevelMin();
   double max = d->VolumeDisplayNode->GetWindowLevelMax();
+
+  // We block here to prevent the widgets to call setWindowLevel wich could
+  // change the AutoLevel from Auto into Manual.
+  bool blocked = d->blockSignals(true);
+
+  d->WindowSpinBox->setValue(window);
+  d->LevelSpinBox->setValue(level);
   d->WindowLevelRangeSlider->setValues(min, max);
   d->MinSpinBox->setValue(min);
   d->MaxSpinBox->setValue(max);
+
+  d->blockSignals(blocked);
+
   switch (d->VolumeDisplayNode->GetAutoWindowLevel())
     {
     case 1:
@@ -535,19 +555,9 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
     range[0] = qMin(-600., range[0]);
     range[1] = qMax(600., range[1]);
     }
-  d->WindowLevelRangeSlider->blockSignals(true);
-  d->WindowSpinBox->blockSignals(true);
-  d->LevelSpinBox->blockSignals(true);
-  d->MinSpinBox->blockSignals(true);
-  d->MaxSpinBox->blockSignals(true);
-  d->RangeWidget->blockSignals(true);
+  bool blocked = d->blockSignals(true);
   this->setRange(range[0], range[1]);
-  d->WindowLevelRangeSlider->blockSignals(false);
-  d->WindowSpinBox->blockSignals(false);
-  d->LevelSpinBox->blockSignals(false);
-  d->MinSpinBox->blockSignals(false);
-  d->MaxSpinBox->blockSignals(false);
-  d->RangeWidget->blockSignals(false);
+  d->blockSignals(blocked);
 }
 
 // --------------------------------------------------------------------------
@@ -634,7 +644,6 @@ void qMRMLWindowLevelWidget::onMinMaxValuesChanged(double minValue, double maxVa
     }
   this->setMinMaxRangeValue(minValue, maxValue);
 }
-
 
 // --------------------------------------------------------------------------
 bool qMRMLWindowLevelWidget::eventFilter(QObject* obj, QEvent* event)
