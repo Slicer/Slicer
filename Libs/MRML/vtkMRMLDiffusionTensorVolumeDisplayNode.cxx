@@ -350,10 +350,9 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetImageData()
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode
-::GetDisplayScalarRange(vtkImageData *vtkNotUsed(imageData), double range[2])
+::GetDisplayScalarRange(double range[2])
 {
   int operation = this->GetScalarInvariant();
-  this->DTIMathematics->SetOperation(operation);
   switch (operation)
     {
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:

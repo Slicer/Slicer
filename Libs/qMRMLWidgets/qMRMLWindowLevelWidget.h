@@ -108,7 +108,8 @@ protected slots:
   void updateWidgetFromMRMLVolumeNode();
 
   /// update widget GUI from MRML node
-  void updateWidgetFromMRML();
+  void updateWidgetFromMRMLDisplayNode();
+  void updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode*);
   void hideRangeWidget();
 
   void onWindowValueChanged(double);

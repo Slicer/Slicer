@@ -41,6 +41,7 @@ public:
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
   ctkRangeWidget*                 RangeWidget;
   QPropertyAnimation*             RangeWidgetAnimation;
+  double                          DisplayScalarRange[2];
 };
 
 // --------------------------------------------------------------------------
@@ -51,6 +52,8 @@ qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate(
   this->VolumeNode = 0;
   this->VolumeDisplayNode = 0;
   this->RangeWidget = 0;
+  this->DisplayScalarRange[0] = 0;
+  this->DisplayScalarRange[1] = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -358,13 +361,13 @@ void qMRMLWindowLevelWidget::setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplay
 
   // each time the node is modified, the qt widgets are updated
   this->qvtkReconnect(d->VolumeDisplayNode, node,
-                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRMLDisplayNode()));
 
   d->VolumeDisplayNode = node;
 
   this->setEnabled(node != 0);
 
-  this->updateWidgetFromMRML();
+  this->updateWidgetFromMRMLDisplayNode();
 }
 
 // --------------------------------------------------------------------------
@@ -422,73 +425,30 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
   vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
       d->VolumeNode->GetVolumeDisplayNode()) :0;
+/*
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
-    double range[2];
-    d->VolumeNode->GetImageData()->GetScalarRange(range);
-    // we don't want RangeWidget to fire any signal because we don't have
-    // a display node correctly set here (it's done )
-    d->RangeWidget->blockSignals(true);
-    double interval = qAbs(range[1] - range[0]);
-    double min, max;
-    if (interval < 10.)
-      {
-      min = qMin(-10., range[0] - 2.*interval);
-      max = qMax(10., range[1] + 2.*interval);
-      }
-    else
-      {
-      min = qMin(-1200., range[0] - 2.*interval);
-      max = qMax(900., range[1] + 2.*interval);
-      }
-    d->RangeWidget->setRange(min, max);
-    d->RangeWidget->blockSignals(false);
-    if (d->VolumeDisplayNode != newVolumeDisplayNode)
-      {
-      if (interval < 10.)
-        {
-        d->WindowLevelRangeSlider->setSingleStep(0.01);
-        d->WindowSpinBox->setSingleStep(0.01);
-        d->LevelSpinBox->setSingleStep(0.01);
-        d->MinSpinBox->setSingleStep(0.01);
-        d->MaxSpinBox->setSingleStep(0.01);
-        d->RangeWidget->setSingleStep(0.01);
-        
-        //give us some space
-        range[0] = qMin(-5., range[0]);
-        range[1] = qMax(5., range[1]);
-        }
-      else
-        {
-        //give us some space
-        range[0] = qMin(-600., range[0]);
-        range[1] = qMax(450., range[1]);
-        }
-      d->WindowLevelRangeSlider->blockSignals(true);
-      d->WindowSpinBox->blockSignals(true);
-      d->LevelSpinBox->blockSignals(true);
-      d->MinSpinBox->blockSignals(true);
-      d->MaxSpinBox->blockSignals(true);
-      d->RangeWidget->blockSignals(true);
-      this->setRange(range[0], range[1]);
-      d->WindowLevelRangeSlider->blockSignals(false);
-      d->WindowSpinBox->blockSignals(false);
-      d->LevelSpinBox->blockSignals(false);
-      d->MinSpinBox->blockSignals(false);
-      d->MaxSpinBox->blockSignals(false);
-      d->RangeWidget->blockSignals(false);
-      }
+    this->updateRangeForVolumeDisplayNode(newVolumeDisplayNode);
     }
+*/
   this->setMRMLVolumeDisplayNode( newVolumeDisplayNode );
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateWidgetFromMRML()
+void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLWindowLevelWidget);
   if (!d->VolumeDisplayNode)
     {
     return;
+    }
+
+  double range[2];
+  d->VolumeDisplayNode->GetDisplayScalarRange(range);
+  if (range[0] != d->DisplayScalarRange[0] ||
+      range[1] != d->DisplayScalarRange[1])
+    {
+    this->updateRangeForVolumeDisplayNode(d->VolumeDisplayNode);
     }
 
   double window = d->VolumeDisplayNode->GetWindow();
@@ -512,6 +472,82 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
         }
       break;
     }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* dNode)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  double range[2];
+  if (dNode)
+    {
+    dNode->GetDisplayScalarRange(range);
+    }
+  else
+    {
+    d->VolumeNode->GetImageData()->GetScalarRange(range);
+    }
+  d->DisplayScalarRange[0] = range[0];
+  d->DisplayScalarRange[1] = range[1];
+  // we don't want RangeWidget to fire any signal because we don't have
+  // a display node correctly set here (it's done )
+  d->RangeWidget->blockSignals(true);
+  double interval = range[1] - range[0];
+  Q_ASSERT(interval >= 0.);
+  double min, max;
+
+  if (interval <= 10.)
+    {
+    min = qMin(-10., range[0] - 2.*interval);
+    max = qMax(10., range[1] + 2.*interval);
+    }
+  else
+    {
+    min = qMin(-1200., range[0] - 2.*interval);
+    max = qMax(900., range[1] + 2.*interval);
+    }
+  d->RangeWidget->setRange(min, max);
+  d->RangeWidget->blockSignals(false);
+
+  if (interval < 10.)
+    {
+    d->WindowLevelRangeSlider->setSingleStep(0.01);
+    d->WindowSpinBox->setSingleStep(0.01);
+    d->LevelSpinBox->setSingleStep(0.01);
+    d->MinSpinBox->setSingleStep(0.01);
+    d->MaxSpinBox->setSingleStep(0.01);
+    d->RangeWidget->setSingleStep(0.01);
+
+    //give us some space
+    range[0] = range[0] - interval*0.1;
+    range[1] = range[1] + interval*0.1;
+    }
+  else
+    {
+    d->WindowLevelRangeSlider->setSingleStep(1.0);
+    d->WindowSpinBox->setSingleStep(1.0);
+    d->LevelSpinBox->setSingleStep(1.0);
+    d->MinSpinBox->setSingleStep(1.0);
+    d->MaxSpinBox->setSingleStep(1.0);
+    d->RangeWidget->setSingleStep(1.0);
+
+    //give us some space
+    range[0] = qMin(-600., range[0]);
+    range[1] = qMax(600., range[1]);
+    }
+  d->WindowLevelRangeSlider->blockSignals(true);
+  d->WindowSpinBox->blockSignals(true);
+  d->LevelSpinBox->blockSignals(true);
+  d->MinSpinBox->blockSignals(true);
+  d->MaxSpinBox->blockSignals(true);
+  d->RangeWidget->blockSignals(true);
+  this->setRange(range[0], range[1]);
+  d->WindowLevelRangeSlider->blockSignals(false);
+  d->WindowSpinBox->blockSignals(false);
+  d->LevelSpinBox->blockSignals(false);
+  d->MinSpinBox->blockSignals(false);
+  d->MaxSpinBox->blockSignals(false);
+  d->RangeWidget->blockSignals(false);
 }
 
 // --------------------------------------------------------------------------
