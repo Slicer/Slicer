@@ -153,9 +153,10 @@ class DICOMWidget:
 
   def loadSeries(self,seriesUID):
     files = self.dicomDatabase.filesForSeries(seriesUID)
-    self.dicomDatabase.loadHeader(files[0])
+    self.dicomDatabase.loadFileHeader(files[0])
     seriesDescrition = "0008,103e"
-    name = self.dicomDatabase.headerValue(seriesDescrition)
+    d = self.dicomDatabase.headerValue(seriesDescrition)
+    name = d[d.index('[')+1:d.index(']')]
     self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
