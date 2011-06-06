@@ -15,14 +15,14 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerExtensionTemplateLogic - slicer logic class for volumes manipulation
+// .NAME vtkSlicerLoadableExtensionTemplateLogic - slicer logic class for volumes manipulation
 // .SECTION Description
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
 
-#ifndef __vtkSlicerExtensionTemplateLogic_h
-#define __vtkSlicerExtensionTemplateLogic_h
+#ifndef __vtkSlicerLoadableExtensionTemplateLogic_h
+#define __vtkSlicerLoadableExtensionTemplateLogic_h
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
@@ -32,17 +32,17 @@
 // STD includes
 #include <cstdlib>
 
-#include "vtkSlicerExtensionTemplateModuleLogicExport.h"
+#include "vtkSlicerLoadableExtensionTemplateModuleLogicExport.h"
 
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class VTK_SLICER_EXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerExtensionTemplateLogic :
+class VTK_SLICER_LOADABLEEXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerLoadableExtensionTemplateLogic :
   public vtkSlicerModuleLogic
 {
 public:
 
-  static vtkSlicerExtensionTemplateLogic *New();
-  vtkTypeMacro(vtkSlicerExtensionTemplateLogic, vtkSlicerModuleLogic);
+  static vtkSlicerLoadableExtensionTemplateLogic *New();
+  vtkTypeMacro(vtkSlicerLoadableExtensionTemplateLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Initialize listening to MRML events
@@ -55,13 +55,13 @@ public:
   virtual void RegisterNodes();
 
 protected:
-  vtkSlicerExtensionTemplateLogic();
-  virtual ~vtkSlicerExtensionTemplateLogic();
+  vtkSlicerLoadableExtensionTemplateLogic();
+  virtual ~vtkSlicerLoadableExtensionTemplateLogic();
 
 private:
 
-  vtkSlicerExtensionTemplateLogic(const vtkSlicerExtensionTemplateLogic&); // Not implemented
-  void operator=(const vtkSlicerExtensionTemplateLogic&);               // Not implemented
+  vtkSlicerLoadableExtensionTemplateLogic(const vtkSlicerLoadableExtensionTemplateLogic&); // Not implemented
+  void operator=(const vtkSlicerLoadableExtensionTemplateLogic&);               // Not implemented
 };
 
 #endif

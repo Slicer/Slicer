@@ -13,7 +13,7 @@ if(POLICY CMP0017)
 endif()
 
 # Module name (usually identique to the directory name)
-SET(EXTENSION_NAME ExtensionTemplate)
+SET(EXTENSION_NAME LoadableExtensionTemplate)
 
 IF(NOT Slicer_SOURCE_DIR)
 
@@ -38,7 +38,7 @@ ENDIF()
 # Add subdirectories
 ADD_SUBDIRECTORY(Logic)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_EXTENSIONTEMPLATE_EXPORT")
+SET(qt_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories
@@ -48,31 +48,31 @@ SET(qt_module_include_directories
 
 # Source files
 SET(qt_module_SRCS
-  qSlicerExtensionTemplateModule.cxx
-  qSlicerExtensionTemplateModule.h
-  qSlicerExtensionTemplateModuleWidget.cxx
-  qSlicerExtensionTemplateModuleWidget.h
+  qSlicerLoadableExtensionTemplateModule.cxx
+  qSlicerLoadableExtensionTemplateModule.h
+  qSlicerLoadableExtensionTemplateModuleWidget.cxx
+  qSlicerLoadableExtensionTemplateModuleWidget.h
   )
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
-  qSlicerExtensionTemplateModule.h
-  qSlicerExtensionTemplateModuleWidget.h
+  qSlicerLoadableExtensionTemplateModule.h
+  qSlicerLoadableExtensionTemplateModuleWidget.h
   )
 
 # UI files
 SET(qt_module_UI_SRCS
-  Resources/UI/qSlicerExtensionTemplateModule.ui
+  Resources/UI/qSlicerLoadableExtensionTemplateModule.ui
 )
 
 # Additional Target libraries
 SET(qt_module_target_libraries
-  vtkSlicerExtensionTemplateModuleLogic
+  vtkSlicerLoadableExtensionTemplateModuleLogic
   )
 
 # Resources
 SET(qt_module_resources
-  Resources/qSlicerExtensionTemplateModule.qrc
+  Resources/qSlicerLoadableExtensionTemplateModule.qrc
 )
 
 slicerMacroBuildQtModule(

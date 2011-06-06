@@ -19,78 +19,78 @@
 #include <QtPlugin>
 
 // ExtensionTemplate Logic includes
-#include <vtkSlicerExtensionTemplateLogic.h>
+#include <vtkSlicerLoadableExtensionTemplateLogic.h>
 
 // ExtensionTemplate includes
-#include "qSlicerExtensionTemplateModule.h"
-#include "qSlicerExtensionTemplateModuleWidget.h"
+#include "qSlicerLoadableExtensionTemplateModule.h"
+#include "qSlicerLoadableExtensionTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-Q_EXPORT_PLUGIN2(qSlicerExtensionTemplateModule, qSlicerExtensionTemplateModule);
+Q_EXPORT_PLUGIN2(qSlicerLoadableExtensionTemplateModule, qSlicerLoadableExtensionTemplateModule);
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerExtensionTemplateModulePrivate
+class qSlicerLoadableExtensionTemplateModulePrivate
 {
 public:
-  qSlicerExtensionTemplateModulePrivate();
+  qSlicerLoadableExtensionTemplateModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerExtensionTemplateModulePrivate methods
+// qSlicerLoadableExtensionTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionTemplateModulePrivate::qSlicerExtensionTemplateModulePrivate()
+qSlicerLoadableExtensionTemplateModulePrivate::qSlicerLoadableExtensionTemplateModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerExtensionTemplateModule methods
+// qSlicerLoadableExtensionTemplateModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionTemplateModule::qSlicerExtensionTemplateModule(QObject* _parent)
+qSlicerLoadableExtensionTemplateModule::qSlicerLoadableExtensionTemplateModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerExtensionTemplateModulePrivate)
+  , d_ptr(new qSlicerLoadableExtensionTemplateModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionTemplateModule::~qSlicerExtensionTemplateModule()
+qSlicerLoadableExtensionTemplateModule::~qSlicerLoadableExtensionTemplateModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerExtensionTemplateModule::helpText()const
+QString qSlicerLoadableExtensionTemplateModule::helpText()const
 {
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerExtensionTemplateModule::acknowledgementText()const
+QString qSlicerLoadableExtensionTemplateModule::acknowledgementText()const
 {
   return "This work was supported by ...";
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerExtensionTemplateModule::icon()const
+QIcon qSlicerLoadableExtensionTemplateModule::icon()const
 {
-  return QIcon(":/Icons/ExtensionTemplate.png");
+  return QIcon(":/Icons/LoadableExtensionTemplate.png");
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExtensionTemplateModule::setup()
+void qSlicerLoadableExtensionTemplateModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerExtensionTemplateModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerLoadableExtensionTemplateModule::createWidgetRepresentation()
 {
-  return new qSlicerExtensionTemplateModuleWidget;
+  return new qSlicerLoadableExtensionTemplateModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerExtensionTemplateModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerLoadableExtensionTemplateModule::createLogic()
 {
-  return vtkSlicerExtensionTemplateLogic::New();
+  return vtkSlicerLoadableExtensionTemplateLogic::New();
 }

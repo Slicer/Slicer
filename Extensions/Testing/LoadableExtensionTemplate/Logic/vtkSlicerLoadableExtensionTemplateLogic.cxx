@@ -16,7 +16,7 @@
 ==============================================================================*/
 
 // ModuleTemplate includes
-#include "vtkSlicerExtensionTemplateLogic.h"
+#include "vtkSlicerLoadableExtensionTemplateLogic.h"
 
 // MRML includes
 
@@ -25,26 +25,26 @@
 
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerExtensionTemplateLogic);
+vtkStandardNewMacro(vtkSlicerLoadableExtensionTemplateLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerExtensionTemplateLogic::vtkSlicerExtensionTemplateLogic()
+vtkSlicerLoadableExtensionTemplateLogic::vtkSlicerLoadableExtensionTemplateLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerExtensionTemplateLogic::~vtkSlicerExtensionTemplateLogic()
+vtkSlicerLoadableExtensionTemplateLogic::~vtkSlicerLoadableExtensionTemplateLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerExtensionTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerLoadableExtensionTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerExtensionTemplateLogic::InitializeEventListeners()
+void vtkSlicerLoadableExtensionTemplateLogic::InitializeEventListeners()
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -55,7 +55,7 @@ void vtkSlicerExtensionTemplateLogic::InitializeEventListeners()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerExtensionTemplateLogic::RegisterNodes()
+void vtkSlicerLoadableExtensionTemplateLogic::RegisterNodes()
 {
   if(!this->GetMRMLScene())
     {
@@ -65,7 +65,7 @@ void vtkSlicerExtensionTemplateLogic::RegisterNodes()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerExtensionTemplateLogic::ProcessMRMLEvents(
+void vtkSlicerLoadableExtensionTemplateLogic::ProcessMRMLEvents(
   vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void * vtkNotUsed(callData))
 {
 }

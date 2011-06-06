@@ -7,7 +7,7 @@ PROJECT(vtkSlicer${EXTENSION_NAME}ModuleLogic)
 SET(module_logic_name "${PROJECT_NAME}")
 
 # The header '${module_logic_name}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_EXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT")
+SET(module_logic_export_directive "VTK_SLICER_LOADABLEEXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
 SET(module_logic_include_directories
@@ -15,8 +15,8 @@ SET(module_logic_include_directories
 
 # Source files
 SET(module_logic_SRCS
-  vtkSlicerExtensionTemplateLogic.cxx
-  vtkSlicerExtensionTemplateLogic.h
+  vtkSlicerLoadableExtensionTemplateLogic.cxx
+  vtkSlicerLoadableExtensionTemplateLogic.h
   )
 
 # Additional Target libraries

@@ -6,7 +6,7 @@
 
 # This is source code manager (i.e. svn)
 scm local
-scmurl Testing/ExtensionTemplate
+scmurl Testing/LoadableExtensionTemplate
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files 
