@@ -21,6 +21,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     ${ep_common_args}
     ${ep_common_flags}
+    -DBUILD_TESTING:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF

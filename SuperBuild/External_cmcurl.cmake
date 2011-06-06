@@ -11,6 +11,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     ${ep_common_args}
     #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Unused
+    -DSLICERLIBCURL_TESTING:BOOL=OFF
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DBUILD_SHARED_LIBS:BOOL=ON
   INSTALL_COMMAND ""
