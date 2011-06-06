@@ -136,7 +136,7 @@ public:
 
   /// Get application settings
   /// \note It will also instantiate a QSettings object if required.
-  QSettings* settings()const;
+  Q_INVOKABLE QSettings* settings()const;
 
   /// Disable application settings
   /// Instanciate a new empty ctkSettings object and associate it with this instance.
