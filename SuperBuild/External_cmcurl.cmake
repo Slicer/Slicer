@@ -9,7 +9,7 @@ ExternalProject_Add(${proj}
   BINARY_DIR cmcurl-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    ${ep_common_args}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Unused
     -DSLICERLIBCURL_TESTING:BOOL=OFF
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}

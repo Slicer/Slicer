@@ -10,8 +10,8 @@ ExternalProject_Add(${proj}
   BINARY_DIR OpenIGTLink-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    ${ep_common_args}
     ${ep_common_flags}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
     -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON

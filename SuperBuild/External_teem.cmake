@@ -19,8 +19,8 @@ ExternalProject_Add(${proj}
   BINARY_DIR teem-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    ${ep_common_args}
     ${ep_common_flags}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
