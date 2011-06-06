@@ -152,7 +152,11 @@ class DICOMWidget:
       self.loadSeries(serie)
 
   def loadSeries(self,seriesUID):
-    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), "xx")
+    files = self.dicomDatabase.filesForSeries(seriesUID)
+    self.dicomDatabase.loadHeader(files[0])
+    seriesDescrition = "0008,103e"
+    name = self.dicomDatabase.headerValue(seriesDescrition)
+    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
     fileList = vtk.vtkStringArray()
