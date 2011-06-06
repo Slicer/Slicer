@@ -1,7 +1,6 @@
 import os
 import glob
 import subprocess
-import sqlite3
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -41,7 +40,7 @@ class DICOMWidget:
 
   def __init__(self, parent=None):
     self.testingServer = None
-    self.database = None
+    self.dicomDatabase = ctk.ctkDICOMDatabase()
 
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
@@ -114,7 +113,7 @@ class DICOMWidget:
     self.layout.addStretch(1)
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
-    self.database = DICOMDatabase(databaseDirectory)
+    self.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
 
   def onTreeClicked(self,index):
     self.model = index.model()
@@ -130,24 +129,38 @@ class DICOMWidget:
   def onLoadButton(self):
     uid = self.selection.data(self.dicomModelUIDRole)
     role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
+    toLoad = {}
     if role == "Patient":
-      pass
+      self.loadPatient(uid)
     elif role == "Study":
-      pass
+      self.loadStudy(uid)
     elif role == "Series":
       name = self.selection.data()
       seriesUID = uid
-      self.loadFiles(self.database.filesForSeries(seriesUID), name)
+      self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
     elif role == "Image":
       pass
+
+  def loadPatient(self,patientUID):
+    studies = self.dicomDatabase.studiesForPatient(patientUID)
+    for study in studies:
+      self.loadStudy(study)
+
+  def loadStudy(self,studyUID):
+    series = self.dicomDatabase.seriesForStudy(studyUID)
+    for serie in series:
+      self.loadSeries(serie)
+
+  def loadSeries(self,seriesUID):
+    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), "xx")
 
   def loadFiles(self, files, name):
     fileList = vtk.vtkStringArray()
     for f in files:
-      fileList.InsertNextValue(f[0])
+      fileList.InsertNextValue(f)
     vl = slicer.modules.volumes.logic()
     # TODO: pass in fileList once it is known to be in the right order
-    volumeNode = vl.AddArchetypeVolume( files[0][0], name, 0 )
+    volumeNode = vl.AddArchetypeVolume( files[0], name, 0 )
     # automatically select the volume to display
     mrmlLogic = slicer.app.mrmlApplicationLogic()
     selNode = mrmlLogic.GetSelectionNode()
@@ -295,18 +308,3 @@ AETable END
     fp.write(config)
     fp.close()
 
-class DICOMDatabase(object):
-  """
-  Helper class for interacting with the sqlite3 database
-  created and populated by ctkDICOMDatabase
-  """
-
-  def __init__(self,databaseDirectory):
-    self.databaseDirectory = databaseDirectory
-    self.databaseFile = databaseDirectory + "/ctkDICOM.sql"
-    self.connection = sqlite3.connect(self.databaseFile)
-
-  def filesForSeries(self,seriesUID):
-    c = self.connection.cursor()
-    c.execute('''SELECT Filename FROM Images WHERE SeriesInstanceUID=?''', (seriesUID,))
-    return c.fetchall()
