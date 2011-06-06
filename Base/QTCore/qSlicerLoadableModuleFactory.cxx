@@ -49,8 +49,6 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
-
-  // slicerHome shouldn't be empty
   Q_ASSERT(!app->slicerHome().isEmpty());
   
   // On Win32, *both* paths have to be there, since scripts are installed
@@ -65,23 +63,12 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
      defaultQTModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + app->intDir();
      }
 
-  // add the default modules directory (based on the slicer
-  // installation or build tree) to the user paths
-  QStringList qtModulePaths = /*userModulePaths + PathSep + */defaultQTModulePaths;
+  QStringList userModulePaths = QSettings().value("Modules/Extensions").toStringList();
+  QStringList qtModulePaths =  userModulePaths + defaultQTModulePaths;
   foreach(const QString& path, qtModulePaths)
     {
     app->addLibraryPath(path);
     }
-
-  QSettings settings;
-  foreach(const QString& path, settings.value("Modules/Extensions", QStringList()).toStringList())
-    {
-    app->addLibraryPath(path);
-    }
-//   foreach (QString path, app->libraryPaths())
-//     {
-//     qDebug() << "libraryPath:" << path;
-//     }
 
   //qDebug() << "qtModulePaths:" << qtModulePaths;
   
