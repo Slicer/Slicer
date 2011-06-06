@@ -82,12 +82,12 @@ void qSlicerSettingsModulesPanelPrivate::init()
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowHiddenModulesChanged(bool)));
 
-  // default values
+  // Default values
   this->ModulesMenu->setCurrentModule("welcome");
   this->ExtensionInstallDirectoryButton->setDirectory( qSlicerCoreApplication::application()->extensionsPath());
   this->TemporaryDirectoryButton->setDirectory( qSlicerCoreApplication::application()->temporaryPath());
 
-  // register settings
+  // Register settings
   q->registerProperty("disable-loadable-module", this->LoadModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("disable-cli-module", this->LoadCommandLineModulesCheckBox,
