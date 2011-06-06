@@ -18,11 +18,12 @@
 #ifndef __vtkMRMLVolumeDisplayNode_h
 #define __vtkMRMLVolumeDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+// MRML includes
 #include "vtkMRMLDisplayNode.h"
+class vtkMRMLScene;
+class vtkMRMLVolumeNode;
 
+// VTK includes
 class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
@@ -84,6 +85,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   /// 
   /// set gray colormap or override in subclass
   virtual void SetDefaultColorMap();
+
+  ///
+  /// Search in the scene the volume node vtkMRMLVolumeDisplayNode is associated
+  /// to
+  vtkMRMLVolumeNode* GetVolumeNode();
 
 protected:
   vtkMRMLVolumeDisplayNode();

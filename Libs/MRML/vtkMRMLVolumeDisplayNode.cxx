@@ -20,7 +20,7 @@ Version:   $Revision: 1.2 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeNode.h"
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
@@ -108,4 +108,10 @@ void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLVolumeDisplayNode::SetDefaultColorMap()
 {
   this->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode* vtkMRMLVolumeDisplayNode::GetVolumeNode()
+{
+  return vtkMRMLVolumeNode::SafeDownCast(this->GetDisplayableNode());
 }

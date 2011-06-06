@@ -37,6 +37,7 @@ public:
   void openRangeWidget();
   void closeRangeWidget();
   bool blockSignals(bool block);
+  void scalarRange(vtkMRMLScalarVolumeDisplayNode* displayNode, double range[2]);
   
   vtkMRMLScalarVolumeNode*        VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
@@ -121,6 +122,24 @@ bool qMRMLWindowLevelWidgetPrivate::blockSignals(bool block)
   this->MinSpinBox->blockSignals(block);
   this->MaxSpinBox->blockSignals(block);
   return this->RangeWidget->blockSignals(block);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::scalarRange(vtkMRMLScalarVolumeDisplayNode* dNode, double range[2])
+{
+  // vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange() can be a bit
+  // slow if there is no input as it searches the scene for the associated
+  // volume node.
+  // Here we already know the volumenode so we can manually use it to
+  // retrieve the scalar range.
+  if (dNode && dNode->GetInput())
+    {
+    dNode->GetDisplayScalarRange(range);
+    }
+  else
+    {
+    this->VolumeNode->GetImageData()->GetScalarRange(range);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -456,7 +475,7 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
     }
 
   double range[2];
-  d->VolumeDisplayNode->GetDisplayScalarRange(range);
+  d->scalarRange(d->VolumeDisplayNode, range);
   if (range[0] != d->DisplayScalarRange[0] ||
       range[1] != d->DisplayScalarRange[1])
     {
@@ -499,14 +518,7 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
 {
   Q_D(qMRMLWindowLevelWidget);
   double range[2];
-  if (dNode)
-    {
-    dNode->GetDisplayScalarRange(range);
-    }
-  else
-    {
-    d->VolumeNode->GetImageData()->GetScalarRange(range);
-    }
+  d->scalarRange(dNode, range);
   d->DisplayScalarRange[0] = range[0];
   d->DisplayScalarRange[1] = range[1];
   // we don't want RangeWidget to fire any signal because we don't have
@@ -526,6 +538,7 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
     min = qMin(-1200., range[0] - 2.*interval);
     max = qMax(900., range[1] + 2.*interval);
     }
+
   d->RangeWidget->setRange(min, max);
   d->RangeWidget->blockSignals(false);
 
@@ -552,8 +565,8 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
     d->RangeWidget->setSingleStep(1.0);
 
     //give us some space
-    range[0] = qMin(-600., range[0]);
-    range[1] = qMax(600., range[1]);
+    range[0] = qMin(-600., range[0] - interval*0.1);
+    range[1] = qMax(600., range[1] + interval*0.1);
     }
   bool blocked = d->blockSignals(true);
   this->setRange(range[0], range[1]);

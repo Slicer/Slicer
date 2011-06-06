@@ -13,8 +13,8 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -133,6 +133,7 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetImageData(vtkImageData *imageData)
 {
+  std::cout << "vtkMRMLScalarVolumeDisplayNode::SetImageData" << imageData << std::endl;
   this->Threshold->SetInput(imageData);
   this->MapToWindowLevelColors->SetInput(imageData);
 }
@@ -153,7 +154,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetImageData() 
 {
   this->UpdateImageDataPipeline();
-  if (this->Threshold->GetInput() == NULL)
+  if (this->GetInput() == NULL)
     {
     return NULL;
     }
@@ -606,9 +607,17 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
 {
   range[0] = 0;
   range[1] = 255.;
-  vtkImageData *imageData = this->GetImageData();
+  vtkImageData *imageData = this->GetInput();
   if (imageData)
     {
     imageData->GetScalarRange(range);
+    return;
     }
+  vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode();
+  if (volumeNode && volumeNode->GetImageData())
+    {
+    volumeNode->GetImageData()->GetScalarRange(range);
+    return;
+    }
+  vtkWarningMacro( << "No valid image data, returning default values [0, 255]");
 }

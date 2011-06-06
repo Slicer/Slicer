@@ -160,8 +160,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   double GetLevelPreset(int p);
 
   /// 
-  /// Defines the expected range of the output data for given imageData after 
+  /// Defines the expected range of the output data after
   /// having been mapped through the current display options
+  /// If no input is set, then it searches the scene to find the associated
+  /// Volume node and returns its image data scalar range.
   virtual void GetDisplayScalarRange(double range[2]);
   
 protected:
