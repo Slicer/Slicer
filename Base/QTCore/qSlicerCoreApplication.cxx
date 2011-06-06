@@ -611,11 +611,7 @@ bool qSlicerCoreApplication::isInstalled()const
   Q_D(const qSlicerCoreApplication);
   // TODO: make the check more robust (using an environment variable?)
   // If you change here, change also in launch.tcl.in
-#ifdef _WIN32
   return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
-#else
-  return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
-#endif
 }
 
 //-----------------------------------------------------------------------------
