@@ -326,21 +326,6 @@ IF(BUILD_TESTING)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Python
-#-----------------------------------------------------------------------------
-
-IF(Slicer_USE_PYTHONQT)
-  FIND_PACKAGE(PythonLibs REQUIRED)
-  FIND_PACKAGE(PythonInterp REQUIRED)
-
-  EXECUTE_PROCESS(
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.version[:3]"
-    OUTPUT_VARIABLE Slicer_PYTHON_VERSION_DOT
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  STRING(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
-ENDIF()
-
-#-----------------------------------------------------------------------------
 # ITK
 #-----------------------------------------------------------------------------
 FIND_PACKAGE(ITK REQUIRED)
@@ -374,6 +359,27 @@ SET(CMAKE_MODULE_PATH
   ${CTK_CMAKE_DIR} 
   ${CMAKE_MODULE_PATH} 
   ${CTK_CMAKE_UTILITIES_DIR})
+
+#-----------------------------------------------------------------------------
+# Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
+#-----------------------------------------------------------------------------
+IF(Slicer_USE_PYTHONQT)
+  FIND_PACKAGE(PythonLibs REQUIRED)
+  FIND_PACKAGE(PythonInterp REQUIRED)
+  # Extract python lib path
+  get_filename_component(PYTHON_DIR_PATH ${PYTHON_EXECUTABLE} PATH)
+  SET(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../lib)
+  IF(WIN32)
+    SET(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH})
+  ENDIF()
+  ctkMacroSetPaths("${PYTHON_LIBRARY_PATH}")
+  EXECUTE_PROCESS(
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.version[:3]"
+    OUTPUT_VARIABLE Slicer_PYTHON_VERSION_DOT
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  STRING(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
+  MESSAGE(STATUS "Configuring Slicer with python ${Slicer_PYTHON_VERSION_DOT}")
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # PythonQt
