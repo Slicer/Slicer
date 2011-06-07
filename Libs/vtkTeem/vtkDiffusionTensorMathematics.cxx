@@ -334,6 +334,77 @@ inline Type tensor_math_clamp(const Type a,
                   const Type b,
                   const Type c) { return (a) > (b) ? ((a) < (c) ? (a) : (c)) : (b) ; }
 
+
+//----------------------------------------------------------------------------
+// This method computes the increments from the MemoryOrder and the extent.
+// This is a WORKAROUND a VTK bug that assumes only Scalars
+
+static void ComputeIncrements(vtkImageData *img, vtkIdType inc[3])
+{
+  int idx;
+  vtkIdType incr = 0;
+  // make sure we have data before computing incrments to traverse it
+  if (img->GetPointData()->GetScalars())
+    {
+    incr = img->GetPointData()->GetScalars()->GetNumberOfComponents();
+    }
+  else if (img->GetPointData()->GetTensors())
+    {
+    incr = img->GetPointData()->GetTensors()->GetNumberOfComponents();
+    }
+  else
+    {
+    std::cerr << "ComputeIncrements(): invalid image data\n";
+    return;
+    }
+
+  const int* extent = img->GetExtent();
+
+  for (idx = 0; idx < 3; ++idx)
+    {
+    inc[idx] = incr;
+    incr *= (extent[idx*2+1] - extent[idx*2] + 1);
+    }
+}
+
+//----------------------------------------------------------------------------
+static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType &incX,
+                                    vtkIdType &incY, vtkIdType &incZ)
+{
+  int e0, e1, e2, e3;
+
+  incX = 0;
+  const int* selfExtent = img->GetExtent();
+
+  e0 = extent[0];
+  if (e0 < selfExtent[0])
+    {
+    e0 = selfExtent[0];
+    }
+  e1 = extent[1];
+  if (e1 > selfExtent[1])
+    {
+    e1 = selfExtent[1];
+    }
+  e2 = extent[2];
+  if (e2 < selfExtent[2])
+    {
+    e2 = selfExtent[2];
+    }
+  e3 = extent[3];
+  if (e3 > selfExtent[3])
+    {
+    e3 = selfExtent[3];
+    }
+
+  // Make sure the increments are up to date
+  vtkIdType inc[3];
+  ComputeIncrements(img, inc);
+
+  incY = inc[1] - (e1 - e0 + 1)*inc[0];
+  incZ = inc[2] - (e3 - e2 + 1)*inc[1];
+}
+
 //----------------------------------------------------------------------------
 // This templated function executes the filter for any type of data.
 // Handles the one input operations.
@@ -407,7 +478,10 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   
   // Get increments to march through output data 
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
-  in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
+
+  // Call special version of GetContinuousIncrements that works for Tensors
+  // This is a WORKAROUND a VTK bug that assumes only Scalars
+  GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
   vtkIdType inInc[3];
