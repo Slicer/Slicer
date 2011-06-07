@@ -27,8 +27,6 @@ public:
     qSlicerSceneViewsModuleWidget(QWidget *parent=0);
     ~qSlicerSceneViewsModuleWidget();
 
-    void refreshTree();
-
 public slots:
     /// a public slot allowing other modules to open up the scene view capture
     /// dialog (get the module manager, get the module sceneviews, get the
@@ -41,6 +39,9 @@ public slots:
     /// User clicked on property edit button
     void editSceneView(const QString& mrmlId);
 
+    /// Refresh the tree from MRML
+    void refreshTree();
+                                       
 protected slots:
 
   void moveDownSelected();

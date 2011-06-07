@@ -108,6 +108,8 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->sceneView, SIGNAL(clicked()),
                    q, SLOT(showSceneViewDialog()));
 
+  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
+
   // update from the mrml scene
   q->refreshTree();
 }
@@ -190,6 +192,14 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 void qSlicerSceneViewsModuleWidget::refreshTree()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
+
+  if (d->logic() && d->logic()->GetMRMLScene() &&
+      d->logic()->GetMRMLScene()->GetIsUpdating())
+    {
+    // scene is updating, return
+    return;
+    }
+
   d->hierarchyTreeView->setMRMLScene(d->logic()->GetMRMLScene());
   d->hierarchyTreeView->hideScene();
 }
