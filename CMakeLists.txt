@@ -297,7 +297,7 @@ SET(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets incl
 # Get sytem name and architecture
 #-----------------------------------------------------------------------------
 SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX Slicer)
-MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
+MESSAGE(STATUS "Configuring Slicer for architecture ${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
 # Testing
