@@ -40,9 +40,9 @@ vtkSlicerSceneViewsModuleLogic::~vtkSlicerSceneViewsModuleLogic()
     this->m_Widget = 0;
     }
 
+  // let go of pointer to the last added node
   if (this->m_LastAddedSceneViewNode)
     {
-    this->m_LastAddedSceneViewNode->Delete();
     this->m_LastAddedSceneViewNode = 0;
     }
 
