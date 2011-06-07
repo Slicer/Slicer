@@ -204,12 +204,15 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   ENDIF()
   SET(executables)
   IF(UNIX)
-    SET(executables gnome-terminal xterm ddd gdb)
+    LIST(APPEND executables gnome-terminal xterm ddd gdb)
   ELSEIF(WIN32)
+    LIST(APPEND executables VisualStudio)
+    SET(VisualStudio_EXECUTABLE ${CMAKE_BUILD_TOOL})
   ENDIF()
   FOREACH(executable ${executables})
     FIND_PROGRAM(${executable}_EXECUTABLE ${executable})
     IF(${executable}_EXECUTABLE)
+      message("FOUND: ${executable}")
       ctkAppLauncherAppendExtraAppToLaunchToList(
         LONG_ARG ${executable}
         HELP "Start ${executable}"
