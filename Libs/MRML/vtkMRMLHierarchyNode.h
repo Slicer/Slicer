@@ -92,7 +92,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   /// Returns the number of immediate children in the hierarchy
   int GetNumberOfChildrenNodes()
   {
-    return this->GetChildrenNodes().size();
+    return static_cast<int>(this->GetChildrenNodes().size());
   }
 
   /// Get n-th child node sorted in the order of their SortingValue

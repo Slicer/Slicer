@@ -234,7 +234,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   /// If 0, display in all views
   int GetNumberOfViewNodeIDs()const
   {
-    return ViewNodeIDs.size();
+    return static_cast<int>(ViewNodeIDs.size());
   }
 
   /// Get View Node ID's for the view to display this node in.

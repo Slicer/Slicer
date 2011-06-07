@@ -422,7 +422,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
-  int ndnodes = node->GetNumberOfViewNodeIDs();
+  const int ndnodes = node->GetNumberOfViewNodeIDs();
   for (int i=0; i<ndnodes; i++)
     {
     this->AddViewNodeID(node->ViewNodeIDs[i].c_str());

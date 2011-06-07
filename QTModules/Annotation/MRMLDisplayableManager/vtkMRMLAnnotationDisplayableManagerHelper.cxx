@@ -102,8 +102,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNo
     return;
     }
 
-  bool isLockedOnNode = node->GetLocked();
-  bool isLockedOnWidget = widget->GetProcessEvents();
+  bool isLockedOnNode = (node->GetLocked() != 0 ? true : false);
+  bool isLockedOnWidget = (widget->GetProcessEvents() != 0 ? true : false);
 
   // only update the processEvents state of the widget if it is different than on the node
   if (isLockedOnNode && !isLockedOnWidget)
@@ -132,8 +132,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
     return;
     }
 
-  bool isVisibleOnNode = node->GetVisible();
-  bool isVisibleOnWidget = widget->GetEnabled();
+  bool isVisibleOnNode = (node->GetVisible() != 0 ? true : false);
+  bool isVisibleOnWidget = (widget->GetEnabled() != 0 ? true : false);
 
   // only update the visibility of the widget if it is different than on the node
   if (isVisibleOnNode && !isVisibleOnWidget)
