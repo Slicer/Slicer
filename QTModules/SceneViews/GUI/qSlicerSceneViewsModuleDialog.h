@@ -12,7 +12,7 @@ public:
   qSlicerSceneViewsModuleDialog();
   ~qSlicerSceneViewsModuleDialog();
 
-  /// Set the Annotation module logic.
+  /// Set the SceneViews module logic.
   void setLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
   /// Initialize this dialog with values from an existing annotation Snapshot node.

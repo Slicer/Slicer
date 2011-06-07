@@ -6,7 +6,7 @@
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>
 
-// AnnotationModule includes
+// SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
 #include "GUI/qSlicerSceneViewsModuleWidget.h"
 

@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QTreeView>
-// Annotation QT includes
+// SceneViews QT includes
 #include "GUI/qSlicerSceneViewsModuleWidget.h"
 
 // CTK includes
