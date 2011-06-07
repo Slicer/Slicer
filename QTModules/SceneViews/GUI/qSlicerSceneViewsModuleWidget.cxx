@@ -107,6 +107,9 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   QObject::connect(this->sceneView, SIGNAL(clicked()),
                    q, SLOT(showSceneViewDialog()));
+
+  // update from the mrml scene
+  q->refreshTree();
 }
 
 //-----------------------------------------------------------------------------
