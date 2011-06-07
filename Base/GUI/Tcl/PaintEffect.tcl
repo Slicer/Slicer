@@ -120,7 +120,6 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
       set xyRadius [$o(rasToXY) MultiplyPoint 0 $radius 0 0]
     }
   }
-  puts $xyRadius
   foreach {xRadius yRadius zRadius zero} $xyRadius {}
   set xyRadius [expr sqrt( $xRadius * $xRadius + $yRadius * $yRadius + $zRadius * $zRadius )]
 
