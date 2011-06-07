@@ -62,7 +62,7 @@ public:
 
   /// 
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName()  {return "SceneViewStorage";};
+  virtual const char* GetNodeTagName()  {return "AnnotationSnapshotStorage";};
 
   /// 
   /// Check to see if this storage node can handle the file type in the input

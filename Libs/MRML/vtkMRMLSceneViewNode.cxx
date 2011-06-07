@@ -148,13 +148,9 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
       }
     else if(!strcmp(attName, "sceneViewDescription"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      vtkStdString sceneViewDescription;
-      ss >> sceneViewDescription;
-
+      // can have spaces in the description, don't use stringstream
+      vtkStdString sceneViewDescription = vtkStdString(attValue);
       vtksys::SystemTools::ReplaceString(sceneViewDescription,"[br]","\n");
-
       this->SetSceneViewDescription(sceneViewDescription);
       }
     }
