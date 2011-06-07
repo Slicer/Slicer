@@ -40,6 +40,7 @@ class vtkRenderer;
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewsControllerWidget : public qMRMLWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool disableMagnification READ disableMagnification WRITE setDisableMagnification)
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
@@ -50,6 +51,12 @@ public:
 
   /// Provide access to the magnify widget
   ctkVTKMagnifyView * magnifyView();
+
+  /// Boolean property to determine if magnification mode 
+  /// on entering a view should be ignored
+  /// (false by default)
+  bool disableMagnification()const;
+  void setDisableMagnification(const bool);
 
 public slots:
 

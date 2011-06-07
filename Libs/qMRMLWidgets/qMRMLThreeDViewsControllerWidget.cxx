@@ -54,6 +54,7 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 {
   this->ActiveMRMLThreeDViewNode = 0;
   this->SceneViewMenu = 0;
+  this->DisableMagnification = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -178,14 +179,9 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->SpinButton, SIGNAL(toggled(bool)), SLOT(onSpinViewButtonToggled(bool)));
   connect(this->RockButton, SIGNAL(toggled(bool)), SLOT(onRockViewButtonToggled(bool)));
 
-  // Connect the magnify widget to the MRMLThreeDViewsControllerWidget to
-  // toggle between navigation (3D) and magnification (2D) modes depending
-  // on whether the mouse is within an observed QVTKWidget (i.e. within a
-  // ctkVTKSliceView).
-  connect(this->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
-          q, SLOT(setDisplayModeToMagnification()));
-  connect(this->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
-          q, SLOT(setDisplayModeToNavigation()));
+  // toggle the property so signals are connected at startup
+  q->setDisableMagnification(true);
+  q->setDisableMagnification(false);
   this->setDisplayMode(NavigationDisplayMode);
 }
 
@@ -480,4 +476,32 @@ void qMRMLThreeDViewsControllerWidget::setDisplayModeToMagnification()
 {
   Q_D(qMRMLThreeDViewsControllerWidget);
   d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::MagnificationDisplayMode);
+}
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLThreeDViewsControllerWidget, bool, disableMagnification, DisableMagnification)
+
+void qMRMLThreeDViewsControllerWidget::setDisableMagnification(bool disableMagnification)
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+
+  if (disableMagnification)
+    {
+    disconnect(d->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
+            this, SLOT(setDisplayModeToMagnification()));
+    disconnect(d->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
+            this, SLOT(setDisplayModeToNavigation()));
+    }
+  else
+    {
+    // Connect the magnify widget to the MRMLThreeDViewsControllerWidget to
+    // toggle between navigation (3D) and magnification (2D) modes depending
+    // on whether the mouse is within an observed QVTKWidget (i.e. within a
+    // ctkVTKSliceView).
+    connect(d->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
+            this, SLOT(setDisplayModeToMagnification()));
+    connect(d->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
+            this, SLOT(setDisplayModeToNavigation()));
+    }
+  d->DisableMagnification = disableMagnification;
 }

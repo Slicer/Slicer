@@ -102,6 +102,8 @@ public:
   qMRMLActionSignalMapper*         StereoTypesMapper;
   qMRMLSceneViewMenu*              SceneViewMenu;
   ctkButtonGroup*                  AnimateViewButtonGroup;
+
+  bool                             DisableMagnification;
   
 };
 
