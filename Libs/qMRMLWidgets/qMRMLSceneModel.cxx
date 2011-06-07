@@ -643,7 +643,9 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
     }
   int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  return this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
+  nodeItem = this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
+  Q_ASSERT(this->itemFromNode(node) == nodeItem); 
+  return nodeItem;
 }
 
 //------------------------------------------------------------------------------
