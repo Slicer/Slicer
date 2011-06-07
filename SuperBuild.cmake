@@ -251,8 +251,6 @@ ExternalProject_Add(${proj}
     -DVTK_DIR:PATH=${VTK_DIR}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
     # TCL/Tk
-    -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
-    -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
     -DSlicer_TCL_DIR:PATH=${tcl_build}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
