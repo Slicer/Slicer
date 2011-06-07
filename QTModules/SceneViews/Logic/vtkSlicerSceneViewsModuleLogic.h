@@ -107,21 +107,19 @@ public:
   /// a parent to the new hierarchy node. Return 1 on sucess 0 on failure.
   int AddHierarchy();
 
-  /// Return the toplevel hierarchy node or create one if there is none:
+  /// Return the toplevel hierarchy node ID or create one and add it to the
+  /// scene if there is none:
   /// If an optional node is given, insert the new toplevel hierarchy before it. If not,
   /// just add the new toplevel hierarchy node.
-  vtkMRMLHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLNode* node=0);
+  char * GetTopLevelHierarchyNodeID(vtkMRMLNode* node=0);
 
-  /// Set the active hierarchy node which will be used as a parent for new
+  /// Get the active hierarchy node which will be used as a parent for new
   /// scene views
-  void SetActiveHierarchyNode(vtkMRMLHierarchyNode* hierarchyNode);
+  vtkMRMLHierarchyNode *GetActiveHierarchyNode();
 
-  /// Set the active hierarchy node which will be used as a parent for new
-  /// scene views
-  void SetActiveHierarchyNodeByID(const char* id);
-
-  /// return the id of the currently active hierarchy node, or null if none
-  const char *GetActiveHierarchyNodeID();
+  /// get/set the id of the currently active hierarchy node
+  vtkGetStringMacro(ActiveHierarchyNodeID);
+  vtkSetStringMacro(ActiveHierarchyNodeID);
   
 protected:
 
@@ -138,7 +136,7 @@ private:
   vtkMRMLSceneViewNode* m_LastAddedSceneViewNode;
 
   
-  vtkMRMLHierarchyNode* m_ActiveHierarchy;
+  char *ActiveHierarchyNodeID;
 
   //
   // Private hierarchy functionality.

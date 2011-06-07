@@ -153,7 +153,7 @@ void qMRMLSceneViewsTreeView::onSelectionChanged(const QItemSelection& index,con
     {
     // the user clicked in empty space of the treeView
     // so we set the active hierarchy to the top level one
-    this->m_Logic->SetActiveHierarchyNode(0);
+    this->m_Logic->SetActiveHierarchyNodeID(NULL);
     }
   // TBD: what if index.size() > 0 ?
   // should probably synchronized with onClicked...
@@ -176,7 +176,7 @@ void qMRMLSceneViewsTreeView::onClicked(const QModelIndex& index)
   // as childs of this one
   if(d->SortFilterModel->mrmlNodeFromIndex(index)->IsA("vtkMRMLHierarchyNode"))
     {
-    this->m_Logic->SetActiveHierarchyNode(vtkMRMLHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(index)));
+    this->m_Logic->SetActiveHierarchyNodeID(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID());
     }
   
   // check if user clicked on icon, this can happen even after we marked a hierarchy as active
@@ -308,7 +308,7 @@ void qMRMLSceneViewsTreeView::deleteSelected()
       vtkMRMLSceneViewNode* sceneViewNodeToDelete = vtkMRMLSceneViewNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
       this->m_Logic->RemoveSceneViewNode(sceneViewNodeToDelete);
       }
-    this->m_Logic->SetActiveHierarchyNode(0);
+    this->m_Logic->SetActiveHierarchyNodeID(NULL);
     }
 
 }
@@ -392,8 +392,12 @@ void qMRMLSceneViewsTreeView::hideScene()
    if (this->m_Logic)
     {
     // if the logic is already registered, we look for the first HierarchyNode
-    vtkMRMLNode* toplevelNode = this->m_Logic->GetTopLevelHierarchyNode(0);
-    //GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode");
+    vtkMRMLNode* toplevelNode = NULL;
+    char *toplevelNodeID = this->m_Logic->GetTopLevelHierarchyNodeID(0);
+    if (toplevelNodeID)
+      {
+      toplevelNode = this->mrmlScene()->GetNodeByID(toplevelNodeID);
+      }
     if (toplevelNode)
       {
       // if we find it, we use it as the root index

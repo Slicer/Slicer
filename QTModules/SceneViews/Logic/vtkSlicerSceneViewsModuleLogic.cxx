@@ -29,7 +29,7 @@ vtkSlicerSceneViewsModuleLogic::vtkSlicerSceneViewsModuleLogic()
 {
   this->m_Widget = 0;
   this->m_LastAddedSceneViewNode = 0;
-  this->m_ActiveHierarchy = 0;
+  this->ActiveHierarchyNodeID = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -46,10 +46,10 @@ vtkSlicerSceneViewsModuleLogic::~vtkSlicerSceneViewsModuleLogic()
     this->m_LastAddedSceneViewNode = 0;
     }
 
-  if (this->m_ActiveHierarchy)
+  if (this->ActiveHierarchyNodeID != NULL)
     {
-    this->m_ActiveHierarchy->Delete();
-    this->m_ActiveHierarchy = 0;
+    delete [] this->ActiveHierarchyNodeID;
+    this->ActiveHierarchyNodeID = NULL;
     }
 }
 
@@ -210,9 +210,9 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneClosedEvent()
     this->m_LastAddedSceneViewNode = 0;
     }
 
-  if (this->m_ActiveHierarchy)
+  if (this->GetActiveHierarchyNodeID())
     {
-    this->m_ActiveHierarchy = 0;
+    this->SetActiveHierarchyNodeID(NULL);
     }
   if (this->m_Widget)
     {
@@ -580,30 +580,29 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
       return true;
       }
     }
-  if (!this->m_ActiveHierarchy)
+  if (!this->GetActiveHierarchyNodeID())
     {
     vtkDebugMacro("AddHierarchyNodeForNode: no active hierarchy...");
     // no active hierarchy node, this means we create the new node directly under the top-level hierarchy node
-    vtkMRMLHierarchyNode* toplevelHierarchyNode = 0;
+    char * toplevelHierarchyNodeID = NULL;
     if (!node)
       {
       // we just add a new toplevel hierarchy node
-      toplevelHierarchyNode = this->GetTopLevelHierarchyNode(0);
+      toplevelHierarchyNodeID = this->GetTopLevelHierarchyNodeID(0);
       }
     else
       {
       // we need to insert the new toplevel hierarchy before the given node
-      toplevelHierarchyNode = this->GetTopLevelHierarchyNode(node);
+      toplevelHierarchyNodeID = this->GetTopLevelHierarchyNodeID(node);
       }
 
-    this->m_ActiveHierarchy = toplevelHierarchyNode;
-
-    if (!toplevelHierarchyNode)
+    if (!toplevelHierarchyNodeID)
       {
       vtkErrorMacro("AddHierarchyNodeForNode: Toplevel hierarchy node was NULL.")
       return 0;
       }
 
+    this->SetActiveHierarchyNodeID(toplevelHierarchyNodeID);
     }
 
   // Create a hierarchy node
@@ -614,7 +613,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
     return 0;
     }
 
-  hierarchyNode->SetParentNodeID(this->m_ActiveHierarchy->GetID());
+  hierarchyNode->SetParentNodeID(this->GetActiveHierarchyNodeID());
   hierarchyNode->SetScene(this->GetMRMLScene());
 
   if (!node)
@@ -629,7 +628,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
     this->GetMRMLScene()->AddNode(hierarchyNode);
 
     // we want it to be the active hierarchy from now on
-    this->m_ActiveHierarchy = hierarchyNode;
+    this->SetActiveHierarchyNodeID(hierarchyNode->GetID());
     }
   else
     {
@@ -656,7 +655,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchy()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLHierarchyNode* vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNode(vtkMRMLNode* node)
+char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* node)
 {
 
   if (this->GetMRMLScene() == NULL)
@@ -664,6 +663,7 @@ vtkMRMLHierarchyNode* vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNode(v
     return NULL;
     }
   const char *toplevelName = "SceneViewToplevelHierarchyNode";
+  char *toplevelNodeID = NULL;
   //vtkMRMLHierarchyNode* toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode"));
   vtkCollection *col = this->GetMRMLScene()->GetNodesByClass("vtkMRMLHierarchyNode");
   vtkMRMLHierarchyNode* toplevelNode = NULL;
@@ -702,56 +702,40 @@ vtkMRMLHierarchyNode* vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNode(v
       {
       this->GetMRMLScene()->InsertBeforeNode(node,toplevelNode);
       }
-    }
-  col->RemoveAllItems();
-  col->Delete();
-  // if delete it when created it, get a seg fault on clearing the scene, no
-  // leaks like this so far
-  return toplevelNode;
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::SetActiveHierarchyNode(vtkMRMLHierarchyNode* hierarchyNode)
-{
-  if (!hierarchyNode)
-    {
-    // there was no node as input
-    // we then use the toplevel hierarchyNode
-    vtkMRMLHierarchyNode* toplevelNode = this->GetTopLevelHierarchyNode();
-
-    if (!toplevelNode)
-      {
-      vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find or create any hierarchy.")
-      return;
-      }
-
-    this->m_ActiveHierarchy = toplevelNode;
-
-    return;
-    }
-
-  this->m_ActiveHierarchy = hierarchyNode;
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::SetActiveHierarchyNodeByID(const char* id)
-{
-  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-
-  this->SetActiveHierarchyNode(hierarchyNode);
-}
-
-//---------------------------------------------------------------------------
-const char *vtkSlicerSceneViewsModuleLogic::GetActiveHierarchyNodeID()
-{
-  if (this->m_ActiveHierarchy)
-    {
-    return this->m_ActiveHierarchy->GetID();
+    toplevelNodeID = toplevelNode->GetID();
+    toplevelNode->Delete();
     }
   else
     {
+    toplevelNodeID = toplevelNode->GetID();
+    }
+  col->RemoveAllItems();
+  col->Delete();
+  return toplevelNodeID;
+}
+
+//--------------------------------------------------------------------------- 
+vtkMRMLHierarchyNode * vtkSlicerSceneViewsModuleLogic::GetActiveHierarchyNode()
+{
+  if (!this->GetActiveHierarchyNodeID())
+    {
+    // there was no active hierarchy
+    // we then use the toplevel hierarchyNode
+    char* toplevelNodeID = this->GetTopLevelHierarchyNodeID();
+
+    if (!toplevelNodeID)
+      {
+      vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find or create any hierarchy.")
+      return NULL;
+      }
+
+    this->SetActiveHierarchyNodeID(toplevelNodeID);
+    }
+  if (this->GetMRMLScene()->GetNodeByID(this->GetActiveHierarchyNodeID()) == NULL)
+    {
     return NULL;
     }
+  return vtkMRMLHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetActiveHierarchyNodeID()));
 }
 
 //---------------------------------------------------------------------------
