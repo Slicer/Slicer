@@ -212,7 +212,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   FOREACH(executable ${executables})
     FIND_PROGRAM(${executable}_EXECUTABLE ${executable})
     IF(${executable}_EXECUTABLE)
-      message("FOUND: ${executable}")
+      MESSAGE(STATUS "Enabling Slicer launcher option: --${executable}")
       ctkAppLauncherAppendExtraAppToLaunchToList(
         LONG_ARG ${executable}
         HELP "Start ${executable}"
@@ -245,7 +245,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   IF(NOT APPLE)
     INSTALL(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
 
-     INSTALL(
+    INSTALL(
       FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png"
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       )
