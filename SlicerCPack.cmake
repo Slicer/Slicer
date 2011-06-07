@@ -16,10 +16,10 @@ else()
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
   set(executable_path @executable_path)
   configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SlicerCompleteBundles.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SlicerCompleteBundles.cmake"
+    "${Slicer_SOURCE_DIR}/SlicerCompleteBundles.cmake.in"
+    "${Slicer_BINARY_DIR}/SlicerCompleteBundles.cmake"
     @ONLY)
-  install(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/SlicerCompleteBundles.cmake")
+  install(SCRIPT "${Slicer_BINARY_DIR}/SlicerCompleteBundles.cmake")
 endif()
 
 # -------------------------------------------------------------------------
