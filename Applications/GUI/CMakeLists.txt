@@ -1,5 +1,13 @@
 project(GUI)
 
+if(NOT DEFINED INCR_TCL_LIBRARY)
+  message(FATAL_ERROR "error: INCR_TCL_LIBRARY is not defined - see commit r16845")
+endif()
+
+if(NOT DEFINED INCR_TK_LIBRARY)
+  message(FATAL_ERROR "error: INCR_TK_LIBRARY is not defined - see commit r16845")
+endif()
+
 # --------------------------------------------------------------------------
 # Enable shared link forwarding support if needed.
 #
