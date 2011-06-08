@@ -9,6 +9,7 @@
 
 // CTK includes
 #include <ctkRangeWidget.h>
+#include <ctkUtils.h>
 
 // qMRML includes
 #include "qMRMLUtils.h"
@@ -38,6 +39,7 @@ public:
   void closeRangeWidget();
   bool blockSignals(bool block);
   void scalarRange(vtkMRMLScalarVolumeDisplayNode* displayNode, double range[2]);
+  void updateSingleStep(double min, double max);
   
   vtkMRMLScalarVolumeNode*        VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
@@ -140,6 +142,36 @@ void qMRMLWindowLevelWidgetPrivate::scalarRange(vtkMRMLScalarVolumeDisplayNode* 
     {
     this->VolumeNode->GetImageData()->GetScalarRange(range);
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::updateSingleStep(double min, double max)
+{
+  double interval = max - min;
+  int order = interval != 0. ? ctk::orderOfMagnitude(interval) : -2;
+
+  int ratio = 2;
+  double singleStep = pow(10., order - ratio);
+  int decimals = qMax(0, -order + ratio);
+
+  this->WindowSpinBox->setDecimals(decimals);
+  this->LevelSpinBox->setDecimals(decimals);
+  this->MinSpinBox->setDecimals(decimals);
+  this->MaxSpinBox->setDecimals(decimals);
+
+  this->WindowLevelRangeSlider->setSingleStep(singleStep);
+  this->WindowSpinBox->setSingleStep(singleStep);
+  this->LevelSpinBox->setSingleStep(singleStep);
+  this->MinSpinBox->setSingleStep(singleStep);
+  this->MaxSpinBox->setSingleStep(singleStep);
+
+  // The RangeWidget doesn't have to be as precise as the sliders/spinboxes.
+  ratio = 1;
+  singleStep = pow(10., order - ratio);
+  decimals = qMax(0, -order + ratio);
+
+  this->RangeWidget->setDecimals(decimals);
+  this->RangeWidget->setSingleStep(singleStep);
 }
 
 // --------------------------------------------------------------------------
@@ -544,26 +576,12 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
 
   if (interval < 10.)
     {
-    d->WindowLevelRangeSlider->setSingleStep(0.01);
-    d->WindowSpinBox->setSingleStep(0.01);
-    d->LevelSpinBox->setSingleStep(0.01);
-    d->MinSpinBox->setSingleStep(0.01);
-    d->MaxSpinBox->setSingleStep(0.01);
-    d->RangeWidget->setSingleStep(0.01);
-
     //give us some space
     range[0] = range[0] - interval*0.1;
     range[1] = range[1] + interval*0.1;
     }
   else
     {
-    d->WindowLevelRangeSlider->setSingleStep(1.0);
-    d->WindowSpinBox->setSingleStep(1.0);
-    d->LevelSpinBox->setSingleStep(1.0);
-    d->MinSpinBox->setSingleStep(1.0);
-    d->MaxSpinBox->setSingleStep(1.0);
-    d->RangeWidget->setSingleStep(1.0);
-
     //give us some space
     range[0] = qMin(-600., range[0] - interval*0.1);
     range[1] = qMax(600., range[1] + interval*0.1);
@@ -577,6 +595,9 @@ void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolume
 void qMRMLWindowLevelWidget::setRange(double min, double max)
 {
   Q_D(qMRMLWindowLevelWidget);
+
+  d->updateSingleStep(min, max);
+
   d->WindowLevelRangeSlider->setRange(min, max);
   d->WindowSpinBox->setRange(0, max - min);
   d->LevelSpinBox->setRange(min, max);
