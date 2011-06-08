@@ -22,6 +22,7 @@
 #define __qSlicerCoreApplication_p_h
 
 // Qt includes
+#include <QProcessEnvironment>
 #include <QSettings>
 #include <QSharedPointer>
 
@@ -128,6 +129,9 @@ public:
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
   QSharedPointer<qSlicerCorePythonManager>    CorePythonManager;
 #endif
+
+  QProcessEnvironment                         Environment;
+
 };
 
 #endif

@@ -21,7 +21,6 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
-#include <QProcessEnvironment>
 #include <QStringList>
 #include <QTimer>
 #include <QVector>
@@ -119,6 +118,14 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 void qSlicerCoreApplicationPrivate::init()
 {
   Q_Q(qSlicerCoreApplication);
+
+  // Minimize the number of call to 'systemEnvironment()' by keeping
+  // a reference to 'Environment'. Indeed, re-creating QProcessEnvironment is a non-trivial
+  // operation. See http://doc.qt.nokia.com/4.7/qprocessenvironment.html#systemEnvironment
+  // Note also that since environment variables are set using 'setEnvironmentVariable()',
+  // 'Environment' is maintained 'up-to-date'. Nevertheless, if the environment
+  // is udpated solely using 'putenv(...)' function, 'Environment' won't be updated.
+  this->Environment = QProcessEnvironment::systemEnvironment();
 
   QCoreApplication::setOrganizationDomain("www.na-mic.org");
   QCoreApplication::setOrganizationName("NA-MIC");
@@ -240,8 +247,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::setEnvironmentVariable(const QString& key, const QString& value)
 {
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  env.insert(key, value);
+  this->Environment.insert(key, value);
   // Since QProcessEnvironment can't be used to update the environment of the
   // current process, let's use 'putenv()'.
   // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
@@ -332,8 +338,7 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverPythonPath()
 {
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  QString pythonPath = env.value("PYTHONPATH");
+  QString pythonPath = this->Environment.value("PYTHONPATH");
 
   // If there is no PYTHONPATH attempt to generate one.
   if (pythonPath.isEmpty())
