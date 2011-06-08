@@ -83,7 +83,6 @@ public:
   Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
   /// Get slicer home directory
-  /// Valid only if qSlicerCoreApplication is initialized. 
   QString slicerHome() const;
 
   /// Get slicer temporary directory

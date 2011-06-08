@@ -130,10 +130,9 @@ void qSlicerCoreApplicationPrivate::init()
     qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
     }
   this->discoverSlicerBinDirectory();
-  // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
-  // in order to be used in the constructor of qSlicerApplication (to initialize the
-  // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
-  this->discoverSlicerHomeDirectory();
+
+  this->SlicerHome = this->discoverSlicerHomeDirectory();
+  this->setSlicerHomeEnvironmentVariable(this->SlicerHome);
   this->discoverITKFactoriesDirectory();
   this->discoverRepository();
   this->discoverPythonPath();
@@ -141,10 +140,7 @@ void qSlicerCoreApplicationPrivate::init()
   // Qt can't set environment variables for child processes that are not QProcess.
   // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
   // be able to read Slicer volumes, we need to change the current process env.
-  QString setEnv = QString("Slicer_HOME=") + this->SlicerHome;
-  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
-  setEnv = QString("ITK_AUTOLOAD_PATH=") + this->ITKFactoriesDir;
-  vtksys::SystemTools::PutEnv(setEnv.toLatin1());
+  vtksys::SystemTools::PutEnv(QString("ITK_AUTOLOAD_PATH=%1").arg(this->ITKFactoriesDir).toLatin1());
 
 #if defined(Q_WS_MAC)
   // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
@@ -230,22 +226,26 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
+QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  this->SlicerHome = env.value("Slicer_HOME");
-  if (!this->SlicerHome.isEmpty())
-    {
-    return;
-    }
   QDir slicerBinDir(this->SlicerBin);
   bool cdUpRes = slicerBinDir.cdUp();
   if (!cdUpRes)
     {
     qDebug() << "Warning, can't cdUp in " << slicerBinDir;
     }
-  this->SlicerHome = slicerBinDir.absolutePath();
-  env.insert("Slicer_HOME", this->SlicerHome);
+  return slicerBinDir.absolutePath();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::setSlicerHomeEnvironmentVariable(const QString& value)
+{
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  env.insert("Slicer_HOME", value);
+  // Since QProcessEnvironment can't be used to update the environment of the
+  // current process, let's use 'putenv()'.
+  // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
+  vtksys::SystemTools::PutEnv(QString("Slicer_HOME=%1").arg(value).toLatin1());
 }
 
 //-----------------------------------------------------------------------------
@@ -686,7 +686,6 @@ CTK_GET_CPP(qSlicerCoreApplication, vtkMRMLApplicationLogic*,
 QString qSlicerCoreApplication::slicerHome() const
 {
   Q_D(const qSlicerCoreApplication);
-  // TODO Use QCoreApplication::applicationDirPath
   return d->SlicerHome;
 }
 

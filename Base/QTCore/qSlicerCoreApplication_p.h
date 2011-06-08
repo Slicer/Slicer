@@ -56,7 +56,10 @@ public:
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
 
   /// Given the program name, should return Slicer Home Directory
-  void discoverSlicerHomeDirectory();
+  QString discoverSlicerHomeDirectory();
+
+  /// Set Slicer_HOME environment variable
+  void setSlicerHomeEnvironmentVariable(const QString& value);
 
   /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
   /// \sa QCoreApplication::applicationDirPath
