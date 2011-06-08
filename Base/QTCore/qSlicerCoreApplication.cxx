@@ -252,6 +252,11 @@ void qSlicerCoreApplicationPrivate::setEnvironmentVariable(const QString& key, c
   // current process, let's use 'putenv()'.
   // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
   vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toLatin1());
+
+#if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
+  // Cache environment variable
+  this->EnvironmentVariablesCache[key] = value;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -484,11 +489,15 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handleCommandLineArguments()
 {
+  Q_D(qSlicerCoreApplication);
+
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
-#ifdef Slicer_USE_PYTHONQT
-
+#ifndef Slicer_USE_PYTHONQT
+  Q_UNUSED(d);
+  Q_UNUSED(options);
+#else
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
     // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
@@ -517,11 +526,17 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
     delete[] pythonArgv;
 
-#ifdef Q_WS_WIN
+#ifndef Q_WS_WIN
+  Q_UNUSED(d);
+#else
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate
     //        to the environment initialized in python, let's force the value of SLICER_HOME.
-    this->corePythonManager()->executeString(
-          QString("import os; os.environ['SLICER_HOME']='%1'; del os").arg(this->slicerHome()));
+    foreach(const QString& key, d->EnvironmentVariablesCache.keys())
+      {
+      this->corePythonManager()->executeString(
+            QString("import os; os.environ['%1']='%2'; del os").arg(
+              key).arg(d->EnvironmentVariablesCache.value(key)));
+      }
 #endif
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
