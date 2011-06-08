@@ -17,11 +17,11 @@
 
 void RegisterTests()
 {
-REGISTER_TEST(SparseFieldLevelSetContour1Test);
+REGISTER_TEST(SparseFieldLevelSetContourTest);
 }
 
 #undef main
-#define main SparseFieldLevelSetContour1Test
+#define main SparseFieldLevelSetContourTest
 #include "SparseFieldLevelSetContour/SparseFieldLevelSetContour.cxx"
 
 
