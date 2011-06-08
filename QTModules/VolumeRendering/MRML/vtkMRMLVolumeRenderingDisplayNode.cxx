@@ -72,7 +72,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->EstimatedSampleDistance = 1.0;
 
   this->CurrentVolumeMapper = -1;
-  this->GPUMemorySize = 1;
+  this->GPUMemorySize = 256;
 
   this->CPURaycastMode = 0;
 

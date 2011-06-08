@@ -246,17 +246,9 @@ protected:
    */
   int CurrentVolumeMapper;
 
-  /* tracking GPU memory size, not saved into scene file
+  /* tracking GPU memory size (in Mo), not saved into scene file
    * because different machines may have different GPU memory
-   * values
-   * 0: 128M
-   * 1: 256M (default)
-   * 2: 512M
-   * 3: 1.0G
-   * 4: 1.5G
-   * 5: 2.0G
-   * 6: 3.0G
-   * 7: 4.0G
+   * values.
    */
   int GPUMemorySize;
 

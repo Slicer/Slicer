@@ -752,61 +752,66 @@ void vtkVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRe
   }
 }
 
-void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)
+void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int memory)
 {
-  switch(index)
-  {
-  case 0://128M
+  if (memory <= 128)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(200);
     this->MapperGPURaycastII->SetInternalVolumeSize(200);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(128*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
-    break;
-  case 1://256M
+    }
+  else if (memory <= 256)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
     this->MapperGPURaycastII->SetInternalVolumeSize(320);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(256*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
-    break;
-  case 2://512M
+    }
+  else if (memory <= 512)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(320);
     this->MapperGPURaycastII->SetInternalVolumeSize(500);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(512*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
-    break;
-  case 3://1024M
+    }
+  else if (memory <= 1024)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(400);
     this->MapperGPURaycastII->SetInternalVolumeSize(620);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(1024*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
-    break;
-  case 4://1.5G
+    }
+  else if (memory <= 1536)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(460);
     this->MapperGPURaycastII->SetInternalVolumeSize(700);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(1536*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
-    break;
-  case 5://2.0G
+    }
+  else if (memory <= 2048)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(512);
     this->MapperGPURaycastII->SetInternalVolumeSize(775);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
-    break;
-  case 6://3.0G
+    }
+  else if (memory <= 3072)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(700);
     this->MapperGPURaycastII->SetInternalVolumeSize(900);
 //    this->MapperGPURaycast3->SetMaxMemoryInBytes(3071*1024*1024);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
-    break;
-  case 7://4.0G
+    }
+  else if (memory <= 4096)
+    {
     this->MapperGPURaycast->SetInternalVolumeSize(800);
     this->MapperGPURaycastII->SetInternalVolumeSize(1000);
 //    this->MapperGPURaycast3->SetMaxMemoryInBytes(4095*1024*1024);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
-    break;
-  }
+    }
 }
 
 void vtkVolumeRenderingLogic::CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output)
