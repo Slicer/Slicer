@@ -510,7 +510,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
     delete[] pythonArgv;
 
-#if Q_WS_WIN
+#ifdef Q_WS_WIN
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate
     //        to the environment initialized in python, let's force the value of Slicer_HOME.
     this->corePythonManager()->executeString(
