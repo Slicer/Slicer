@@ -44,7 +44,7 @@ target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
 SET_TARGET_PROPERTIES(RegisterImagesMultiResTest PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
-add_test(${testname} ${Slicer_LAUNCH_COMMAND} RegisterImagesMultiResTest
+add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:RegisterImagesMultiResTest>
   --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
   --compareIntensityTolerance 20
