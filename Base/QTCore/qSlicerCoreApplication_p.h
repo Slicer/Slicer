@@ -66,7 +66,7 @@ public:
   void discoverSlicerBinDirectory();
 
   /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
-  void discoverITKFactoriesDirectory();
+  QString discoverITKFactoriesDirectory();
 
   /// Set variable 'Repository{Url, Revision, Url}' and Platform extracting information
   /// from SlicerVersion.txt

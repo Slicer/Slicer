@@ -132,15 +132,13 @@ void qSlicerCoreApplicationPrivate::init()
   this->discoverSlicerBinDirectory();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
-  this->discoverITKFactoriesDirectory();
   this->setEnvironmentVariable("Slicer_HOME", this->SlicerHome);
+
+  this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
+  this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
+
   this->discoverRepository();
   this->discoverPythonPath();
-
-  // Qt can't set environment variables for child processes that are not QProcess.
-  // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
-  // be able to read Slicer volumes, we need to change the current process env.
-  vtksys::SystemTools::PutEnv(QString("ITK_AUTOLOAD_PATH=%1").arg(this->ITKFactoriesDir).toLatin1());
 
 #if defined(Q_WS_MAC)
   // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
@@ -290,27 +288,19 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
+QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
 {
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
-  QDir itkFactoriesDir (this->SlicerHome);
+  QDir itkFactoriesDir(this->SlicerHome);
   itkFactoriesDir.cd(Slicer_INSTALL_ITKFACTORIES_DIR);
   if (!this->IntDir.isEmpty())
     {
     itkFactoriesDir.cd(this->IntDir);
     }
-  QString relativeAutoLoadPath = env.value("ITK_AUTOLOAD_PATH");
-  if (relativeAutoLoadPath.isEmpty())
-    {
-    itkFactoriesDir.cd(relativeAutoLoadPath);
-    }
-  this->ITKFactoriesDir = itkFactoriesDir.absolutePath();
   if (!itkFactoriesDir.exists())
     {
     qWarning() << "ITK_AUTOLOAD_PATH doesn't exists:"<< this->ITKFactoriesDir;
     }
-  env.insert("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
+  return itkFactoriesDir.absolutePath();
 }
 
 //-----------------------------------------------------------------------------
