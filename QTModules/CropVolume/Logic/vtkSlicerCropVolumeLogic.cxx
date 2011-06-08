@@ -163,6 +163,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   inputROI->GetXYZ(roiXYZ);
 
   double* inputSpacing = inputVolume->GetSpacing();
+  double outputSpacing[3], spacingScaleConst = pnode->GetSpacingScalingConst();
   double minSpacing = inputSpacing[0];
   if (minSpacing > inputSpacing[1])
     {
@@ -173,19 +174,29 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     minSpacing = inputSpacing[2];
     }
 
+  if(pnode->GetIsotropicResampling()){
+      outputSpacing[0] = minSpacing*spacingScaleConst;
+      outputSpacing[1] = minSpacing*spacingScaleConst;
+      outputSpacing[2] = minSpacing*spacingScaleConst;
+  } else {
+      outputSpacing[0] = inputSpacing[0]*spacingScaleConst;
+      outputSpacing[1] = inputSpacing[1]*spacingScaleConst;
+      outputSpacing[2] = inputSpacing[2]*spacingScaleConst;
+  }
+
   int outputExtent[3];
 
-  outputExtent[0] = roiRadius[0]/minSpacing*2.;
-  outputExtent[1] = roiRadius[1]/minSpacing*2.;
-  outputExtent[2] = roiRadius[2]/minSpacing*2.;
+  outputExtent[0] = roiRadius[0]/outputSpacing[0]*2.;
+  outputExtent[1] = roiRadius[1]/outputSpacing[1]*2.;
+  outputExtent[2] = roiRadius[2]/outputSpacing[2]*2.;
 
-  outputIJKToRAS->SetElement(0,0,minSpacing);
-  outputIJKToRAS->SetElement(1,1,minSpacing);
-  outputIJKToRAS->SetElement(2,2,minSpacing);
+  outputIJKToRAS->SetElement(0,0,outputSpacing[0]);
+  outputIJKToRAS->SetElement(1,1,outputSpacing[1]);
+  outputIJKToRAS->SetElement(2,2,outputSpacing[2]);
 
-  outputIJKToRAS->SetElement(0,3,roiXYZ[0]-roiRadius[0]+minSpacing*.5);
-  outputIJKToRAS->SetElement(1,3,roiXYZ[1]-roiRadius[1]+minSpacing*.5);
-  outputIJKToRAS->SetElement(2,3,roiXYZ[2]-roiRadius[2]+minSpacing*.5);
+  outputIJKToRAS->SetElement(0,3,roiXYZ[0]-roiRadius[0]+outputSpacing[0]*.5);
+  outputIJKToRAS->SetElement(1,3,roiXYZ[1]-roiRadius[1]+outputSpacing[1]*.5);
+  outputIJKToRAS->SetElement(2,3,roiXYZ[2]-roiRadius[2]+outputSpacing[2]*.5);
 
   outputRASToIJK->DeepCopy(outputIJKToRAS);
   outputRASToIJK->Invert();

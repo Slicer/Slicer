@@ -103,7 +103,9 @@ void qSlicerCropVolumeModuleWidget::setup()
   connect( d->BSRadioButton, SIGNAL(toggled(bool)),
     this, SLOT(onInterpolationModeChanged()));
   connect( d->IsotropicCheckbox, SIGNAL(toggled(bool)),
-    this, SLOT(onInterpolationModeChanged()));
+    this, SLOT(onIsotropicModeChanged()));
+  connect( d->SpacingScalingSpinBox, SIGNAL(valueChanged(double)),
+    this, SLOT(onSpacingScalingValueChanged()));
 
 {
 
@@ -200,6 +202,24 @@ void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
     p->SetInterpolationMode(4);
 }
 
+void qSlicerCropVolumeModuleWidget::onSpacingScalingValueChanged()
+{
+  if(!this->parametersNode)
+    return;
+  vtkMRMLCropVolumeParametersNode *p = this->parametersNode;
+  Q_D(qSlicerCropVolumeModuleWidget);
+  p->SetSpacingScalingConst(d->SpacingScalingSpinBox->value());
+}
+
+void qSlicerCropVolumeModuleWidget::onIsotropicModeChanged()
+{
+  if(!this->parametersNode)
+    return;
+  vtkMRMLCropVolumeParametersNode *p = this->parametersNode;
+  Q_D(qSlicerCropVolumeModuleWidget);
+  p->SetIsotropicResampling(d->IsotropicCheckbox->isChecked());
+}
+
 void qSlicerCropVolumeModuleWidget::updateWidget()
 {
   if(!this->parametersNode)
@@ -223,6 +243,8 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     {   
     d->VisibilityButton->setChecked(p->GetROIVisibility());
     }
+
+  d->SpacingScalingSpinBox->setValue(p->GetSpacingScalingConst());
 }
 
 //void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n){

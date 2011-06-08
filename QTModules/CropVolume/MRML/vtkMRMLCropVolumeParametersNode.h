@@ -101,6 +101,13 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
     return this->InterpolationMode;
   };
 
+  double GetSpacingScalingConst() const{
+    return this->SpacingScalingConst;
+  }
+
+  void SetSpacingScalingConst(double s) {
+    this->SpacingScalingConst = s;
+  }
   
 protected:
   vtkMRMLCropVolumeParametersNode();
@@ -126,6 +133,7 @@ protected:
   bool ROIVisibility;
   int InterpolationMode;
   bool IsotropicResampling;
+  double SpacingScalingConst;
 };
 
 #endif

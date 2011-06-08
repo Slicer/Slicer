@@ -105,7 +105,7 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>Interpolation mode</string>
+         <string>Interpolation options</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -121,7 +121,44 @@
             </widget>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="toolTip">
+                <string>In not equal to 1, this will result in upsampling (&lt;1) or downlsampling (&gt;1) relative to the voxel spacing of the input volume.</string>
+               </property>
+               <property name="text">
+                <string>Input spacing scaling constant</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="SpacingScalingSpinBox">
+               <property name="toolTip">
+                <string>The voxel spacing in the output volume will be scaled by this value.</string>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Interpolator:</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="QRadioButton" name="NNRadioButton">
                <property name="text">

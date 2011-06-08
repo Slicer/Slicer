@@ -37,6 +37,8 @@ protected slots:
   void onInterpolationModeChanged();
   void onApply();
   void updateWidget();
+  void onSpacingScalingValueChanged();
+  void onIsotropicModeChanged();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
