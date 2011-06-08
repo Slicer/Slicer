@@ -107,7 +107,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   
   this->BgFgRatio = 0.0f;//default display bg volume
   
-  this->GPURaycastIIFusion = 0;
+  this->MultiVolumeFusionMethod = vtkMRMLVolumeRenderingDisplayNode::AlphaBlendingOR;
 
   this->FollowVolumeDisplayNode = 0;// by default do not follow volume display node
   this->UseSingleVolumeProperty = 0;
@@ -300,11 +300,11 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
       continue;
     }
 */
-    if (!strcmp(attName,"gpuRaycastIIFusion"))
+    if (!strcmp(attName,"multiVolumeFusionMethod"))
     {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->GPURaycastIIFusion;
+      ss >> this->MultiVolumeFusionMethod;
       continue;
     }
     if (!strcmp(attName,"threshold"))
@@ -382,7 +382,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " gpuRaycastTechniqueIIFg=\"" << this->GPURaycastTechniqueIIFg << "\"";
   of << indent << " gpuRaycastTechnique3=\"" << this->GPURaycastTechnique3 << "\"";
 */
-  of << indent << " gpuRaycastIIFusion=\"" << this->GPURaycastIIFusion << "\"";
+  of << indent << " multiVolumeFusionMethod=\"" << this->MultiVolumeFusionMethod << "\"";
   of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
   of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
   of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
@@ -482,7 +482,7 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetThresholdFg(node->GetThresholdFg());
   this->SetUseFgThreshold(node->GetUseFgThreshold());
   this->SetBgFgRatio(node->GetBgFgRatio());
-  this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
+  this->SetMultiVolumeFusionMethod(node->GetMultiVolumeFusionMethod());
   this->SetWindowLevel(node->GetWindowLevel());
   this->SetWindowLevelFg(node->GetWindowLevelFg());
   this->SetFollowVolumeDisplayNode(node->GetFollowVolumeDisplayNode());

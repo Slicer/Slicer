@@ -63,6 +63,14 @@ protected slots:
   void onCurrentFramerateChanged(double fps);
   void onCurrentRenderingTechniqueChanged(int index);
 
+  void onCurrentDistanceColorBlendingChanged(double value);
+  void onCurrentICPEScaleChanged(double value);
+  void onCurrentICPESmoothnessChanged(double value);
+  void onCurrentDepthPeelingThreshold(double value);
+  void onCurrentRenderingTechniqueFgChanged(int index);
+  void onCurrentFusionChanged(int index);
+  void onCurrentBgFgRatioChanged(double value);
+
   void updateFromMRMLDisplayNode();
 
 protected:

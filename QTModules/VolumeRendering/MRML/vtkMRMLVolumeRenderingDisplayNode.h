@@ -145,7 +145,8 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkSetMacro(PerformanceControl,int);
   vtkGetMacro(PerformanceControl,int);
 
-  enum{
+  enum VolumeMapperType
+  {
     None=-1,
     VTKCPURayCast=0,
     VTKGPURayCast,
@@ -172,7 +173,8 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkGetMacro (ICPESmoothness, float);
   vtkSetMacro (ICPESmoothness, float);
 
-  enum{
+  enum RayCastType
+  {
     Composite = 0, // composite with directional lighting (default)
     CompositeEdgeColoring, // composite with fake lighting (edge coloring, faster)
     MaximumIntensityProjection,
@@ -187,23 +189,14 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkGetMacro (RaycastTechniqueFg, int);
   vtkSetMacro (RaycastTechniqueFg, int);
 
-  //vtkGetMacro (CPURaycastMode, int);
-  //vtkSetMacro (CPURaycastMode, int);
-
-  //vtkGetMacro (GPURaycastTechnique, int);
-  //vtkSetMacro (GPURaycastTechnique, int);
-
-  //vtkGetMacro (GPURaycastTechniqueII, int);
-  //vtkSetMacro (GPURaycastTechniqueII, int);
-
-  //vtkGetMacro (GPURaycastTechniqueIIFg, int);
-  //vtkSetMacro (GPURaycastTechniqueIIFg, int);
-
-  vtkGetMacro (GPURaycastIIFusion, int);
-  vtkSetMacro (GPURaycastIIFusion, int);
-
-  //vtkGetMacro (GPURaycastTechnique3, int);
-  //vtkSetMacro (GPURaycastTechnique3, int);
+  enum FusionType
+  {
+    AlphaBlendingOR = 0, // (default)
+    AlphaBlendingAND,
+    AlphaBlendingNOT
+  };
+  vtkGetMacro (MultiVolumeFusionMethod, int);
+  vtkSetMacro (MultiVolumeFusionMethod, int);
 
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
@@ -335,7 +328,7 @@ protected:
    * 1: Alpha Blending AND
    * 2: Alpha Blending NOT
    * */
-  int GPURaycastIIFusion;
+  int MultiVolumeFusionMethod;
 
   /* techniques in GPU ray cast 3
    * 0: composite (default)

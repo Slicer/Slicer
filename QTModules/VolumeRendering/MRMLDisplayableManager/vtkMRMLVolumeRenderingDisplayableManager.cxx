@@ -491,7 +491,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycastIIParameters(vtkMRML
   this->MapperGPURaycastII->SetFgBgRatio(vspNode->GetBgFgRatio());
   this->MapperGPURaycastII->SetTechniques(
     vspNode->GetRaycastTechnique(), vspNode->GetRaycastTechniqueFg());
-  this->MapperGPURaycastII->SetColorOpacityFusion(vspNode->GetGPURaycastIIFusion());
+  this->MapperGPURaycastII->SetColorOpacityFusion(vspNode->GetMultiVolumeFusionMethod());
 }
 
 void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycast3Parameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
