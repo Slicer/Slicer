@@ -270,6 +270,9 @@ int main(int argc, char* argv[])
     {
     window.reset(new qSlicerMainWindow);
     window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
+#ifdef Slicer_USE_PYTHONQT
+    pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
+#endif
     }
 
   // Load all available modules
