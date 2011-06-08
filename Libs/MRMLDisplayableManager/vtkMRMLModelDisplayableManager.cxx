@@ -455,18 +455,22 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
   bool isUpdating = this->GetMRMLScene()->GetIsUpdating();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
+    // There is no need to request a render (which can be expensive if the
+    // volume rendering is on) if nothing visible has changed.
+    bool requestRender = true;
     switch (event)
       {
       case vtkCommand::ModifiedEvent:
       case vtkMRMLDisplayableNode::PolyDataModifiedEvent:
       case vtkMRMLDisplayableNode::DisplayModifiedEvent:
-        this->OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode::SafeDownCast(caller));
+        requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(
+          vtkMRMLDisplayableNode::SafeDownCast(caller));
         break;
       default:
         this->SetUpdateFromMRMLRequested(1);
         break;
       }
-    if (!isUpdating)
+    if (!isUpdating && requestRender)
       {
       this->RequestRender();
       }
@@ -484,14 +488,19 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
   else if (vtkMRMLSliceNode::SafeDownCast(caller))
     {
+    bool requestRender = true;
     if (event == vtkCommand::ModifiedEvent)
       {
       if (this->UpdateClipSlicesFromMRML() || this->Internal->ClippingOn)
         {
         this->SetUpdateFromMRMLRequested(1);
         }
+      else
+        {
+        requestRender = vtkMRMLSliceNode::SafeDownCast(caller)->GetSliceVisible();
+        }
       }
-    if (!isUpdating)
+    if (!isUpdating && requestRender)
       {
       this->RequestRender();
       }
@@ -618,7 +627,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* no
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
+bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     vtkMRMLDisplayableNode * modelNode)
 {
   assert(modelNode);
@@ -631,17 +640,19 @@ void vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
   for (unsigned int i=0; i<dnodes.size(); i++)
     {
     vtkMRMLDisplayNode *dnode = dnodes[i];
+    assert(dnode);
     int visibility = dnode->GetVisibility();
-    //if (hdnode)
-    //  {
-    //  visibility = hdnode->GetVisibility();
-    //  }
-    if (this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
+    // If the displayNode is visible and doesn't have actors yet, then request
+    // an updated
+    if (visibility == 1 &&
+        this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
       {
       updateMRML = true;
       break;
       }
-    if (!(dnode && visibility == 0 && this->GetDisplayedModelsVisibility(dnode) == 0))
+    // If the displayNode visibility has changed or displayNode is visible, then
+    // update the model.
+    if (!(visibility == 0 && this->GetDisplayedModelsVisibility(dnode) == 0))
       {
       updateModel = true;
       break;
@@ -657,6 +668,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     {
     this->SetUpdateFromMRMLRequested(1);
     }
+  return updateModel || updateMRML;
 }
 
 //---------------------------------------------------------------------------
