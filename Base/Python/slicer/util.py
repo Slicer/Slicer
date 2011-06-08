@@ -38,6 +38,21 @@ def showStatusMessage(message, duration = 0):
   if mw:
     mw.statusBar().showMessage(message, duration)
 
+def findChildren(widget=None,name=""):
+  """ return a list of child widgets that match the passed name """
+  # TODO: figure out why the native QWidget.findChildren method
+  # does not seem to work from PythonQt
+  if not widget:
+    widget = mainWindow()
+  children = []
+  parents = [widget]
+  while parents != []:
+    p = parents.pop()
+    parents += p.children()
+    if p.name == name:
+      children.append(p)
+  return children
+
 #
 # IO
 #
