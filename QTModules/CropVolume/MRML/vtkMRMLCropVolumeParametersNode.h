@@ -93,22 +93,12 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   typedef enum {NearestNeighbor, Linear, Cubic}
    InterpolationModeType;
 
-  void SetInterpolationMode(int itype){
-    this->InterpolationMode = itype;
-  };
+  vtkSetMacro(InterpolationMode, int);
+  vtkGetMacro(InterpolationMode, int);
 
-  int GetInterpolationMode() const {
-    return this->InterpolationMode;
-  };
+  vtkSetMacro(SpacingScalingConst, double);
+  vtkGetMacro(SpacingScalingConst, double);
 
-  double GetSpacingScalingConst() const{
-    return this->SpacingScalingConst;
-  }
-
-  void SetSpacingScalingConst(double s) {
-    this->SpacingScalingConst = s;
-  }
-  
 protected:
   vtkMRMLCropVolumeParametersNode();
   ~vtkMRMLCropVolumeParametersNode();

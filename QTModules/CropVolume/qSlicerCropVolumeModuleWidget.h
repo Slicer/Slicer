@@ -37,7 +37,7 @@ protected slots:
   void onInterpolationModeChanged();
   void onApply();
   void updateWidget();
-  void onSpacingScalingValueChanged();
+  void onSpacingScalingValueChanged(double);
   void onIsotropicModeChanged();
 
 private:

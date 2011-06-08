@@ -105,7 +105,7 @@ void qSlicerCropVolumeModuleWidget::setup()
   connect( d->IsotropicCheckbox, SIGNAL(toggled(bool)),
     this, SLOT(onIsotropicModeChanged()));
   connect( d->SpacingScalingSpinBox, SIGNAL(valueChanged(double)),
-    this, SLOT(onSpacingScalingValueChanged()));
+    this, SLOT(onSpacingScalingValueChanged(double)));
 
 {
 
@@ -202,13 +202,12 @@ void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
     p->SetInterpolationMode(4);
 }
 
-void qSlicerCropVolumeModuleWidget::onSpacingScalingValueChanged()
+void qSlicerCropVolumeModuleWidget::onSpacingScalingValueChanged(double s)
 {
   if(!this->parametersNode)
     return;
   vtkMRMLCropVolumeParametersNode *p = this->parametersNode;
-  Q_D(qSlicerCropVolumeModuleWidget);
-  p->SetSpacingScalingConst(d->SpacingScalingSpinBox->value());
+  p->SetSpacingScalingConst(s);
 }
 
 void qSlicerCropVolumeModuleWidget::onIsotropicModeChanged()
