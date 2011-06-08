@@ -8,7 +8,7 @@
 proc ClipModelClone { moduleName {slicerSourceDir ""} {targetDir ""} } {
 
   if { $slicerSourceDir == "" } {
-    set slicerSourceDir $::env(Slicer_HOME)/../Slicer3
+    set slicerSourceDir $::env(SLICER_HOME)/../Slicer3
   }
   if { $targetDir == "" } {
     set targetDir $slicerSourceDir/Modules/$moduleName

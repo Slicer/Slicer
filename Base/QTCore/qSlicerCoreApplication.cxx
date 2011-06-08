@@ -132,7 +132,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->discoverSlicerBinDirectory();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
-  this->setEnvironmentVariable("Slicer_HOME", this->SlicerHome);
+  this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
   this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
@@ -512,9 +512,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
 #ifdef Q_WS_WIN
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate
-    //        to the environment initialized in python, let's force the value of Slicer_HOME.
+    //        to the environment initialized in python, let's force the value of SLICER_HOME.
     this->corePythonManager()->executeString(
-          QString("import os; os.environ['Slicer_HOME']='%1'; del os").arg(this->slicerHome()));
+          QString("import os; os.environ['SLICER_HOME']='%1'; del os").arg(this->slicerHome()));
 #endif
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True

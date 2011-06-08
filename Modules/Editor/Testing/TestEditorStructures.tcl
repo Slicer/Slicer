@@ -157,7 +157,7 @@ update
 
 if {$argc == 0} {
     # when use source ../Slicer3/Modules/Editor/Testing/TestEditorStructures.tcl
-    set backgroundFile $::env(Slicer_HOME)/../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd
+    set backgroundFile $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd
     set ::thisDebug 1
 } else {
     # puts "argv = $argv"

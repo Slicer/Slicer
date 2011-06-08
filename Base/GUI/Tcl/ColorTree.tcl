@@ -271,6 +271,6 @@ proc ::ColorTree::vtkColorToHex  {color} {
 
 proc cccccc {} {
   itcl::delete class ColorTree
-  source $::env(Slicer_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ColorTree.tcl
+  source $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ColorTree.tcl
   ::ColorTree::ShowDialog
 }

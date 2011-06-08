@@ -168,11 +168,11 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
 
   //
   // Get the sample data from a known spot in the build tree
-  // (relies on Slicer_HOME being set correctly, which it
+  // (relies on SLICER_HOME being set correctly, which it
   // will be when the launcher is used).
   //
   QProcessEnvironment env;
-  QString qarchetype = env.value( "Slicer_HOME", "" );
+  QString qarchetype = env.value("SLICER_HOME", "");
   qarchetype.append("share/MRML/Testing/TestData/fixed.nrrd");
   QByteArray archetype = qarchetype.toAscii();
 

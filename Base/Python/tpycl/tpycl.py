@@ -29,7 +29,7 @@ class tpycl(object):
     self.tcl.createcommand("py_del", self.py_del)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
     # this path is slicer-specific
-    self.tcl.eval("source $::env(Slicer_HOME)/bin/Python/tpycl/tpycl.tcl")
+    self.tcl.eval("source $::env(SLICER_HOME)/bin/Python/tpycl/tpycl.tcl")
 
   def usage(self):
     print "tpycl [options] [file.tcl] [arg] [arg]"

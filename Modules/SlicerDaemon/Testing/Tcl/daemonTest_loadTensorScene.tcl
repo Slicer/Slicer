@@ -4,15 +4,15 @@
 # Write tcl output to a file
 #
 
-# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
+# TODO: $::env(SLICER_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
-# not inside env(Slicer_HOME). Fix this by using 
+# not inside env(SLICER_HOME). Fix this by using 
 # vtkSlicerModuleLogic::GetModuleShareDirectory (i.e. find the SlicerDeamon
 # module reference, its logic, and call this method to retrive the full
 # path to the share/ directory for this module)
 
-#set outfile [open "$::env(Slicer_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/DaemonTest_loadTensor.txt" w]
+#set outfile [open "$::env(SLICER_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/DaemonTest_loadTensor.txt" w]
 #puts  $outfile "This is a Slicer Daemon tensor test"
 #puts  $outfile "-------------------------------------\n"
 
@@ -34,15 +34,15 @@
 #puts $outfile "There is no other SlicerDaemon running at the moment."
 #close $outfile
 
-# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
+# TODO: $::env(SLICER_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
-# not inside env(Slicer_HOME). Fix this by using 
+# not inside env(SLICER_HOME). Fix this by using 
 # vtkSlicerModuleLogic::GetModuleShareDirectory (i.e. find the SlicerDeamon
 # module reference, its logic, and call this method to retrive the full
 # path to the share/ directory for this module)
 
-#$::slicer3::MRMLScene SetURL  $::env(Slicer_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
+#$::slicer3::MRMLScene SetURL  $::env(SLICER_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
 $::slicer3::MRMLScene SetURL  /projects/schiz/guest/kquintus/data/testVolumes/testscene.mrml
 $::slicer3::MRMLScene Connect
 #$::slicer3::MRMLScene SetErrorCode 0

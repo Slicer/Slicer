@@ -438,13 +438,13 @@ int Slicer_main(int& argc, char *argv[])
 
   slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
 
-  // set the Slicer_HOME variable if it doesn't already exist from the launcher
+  // set the SLICER_HOME variable if it doesn't already exist from the launcher
   vtksys_stl::string slicerHome;
-  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
     {
     slicerHome = slicerBinDir + "/..";
     slicerHome = vtksys::SystemTools::CollapseFullPath(slicerHome.c_str());
-    std::string homeEnv = "Slicer_HOME=" + slicerHome;
+    std::string homeEnv = "SLICER_HOME=" + slicerHome;
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
     }
@@ -614,7 +614,7 @@ int Slicer_main(int& argc, char *argv[])
 
   // Make sure Slicer_HOME is available
 
-  sprintf(cmd, "set ::env(Slicer_HOME) {%s};", slicerHome.c_str());
+  sprintf(cmd, "set ::env(SLICER_HOME) {%s};", slicerHome.c_str());
   Slicer_Tcl_Eval(interp, cmd);
 
   sprintf(cmd, "set ::Slicer_HOME {%s};", slicerHome.c_str());

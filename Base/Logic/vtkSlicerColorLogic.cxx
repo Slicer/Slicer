@@ -73,7 +73,7 @@ void vtkSlicerColorLogic::FindColorFiles()
 {
     // get the slicer home dir
   vtksys_stl::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("Slicer_HOME") == NULL)
+  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
     {
     if (vtksys::SystemTools::GetEnv("PWD") != NULL)
       {
@@ -86,7 +86,7 @@ void vtkSlicerColorLogic::FindColorFiles()
     }
   else
     {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer_HOME"));
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
     }
   // build up the vector
   vtksys_stl::vector<vtksys_stl::string> filesVector;

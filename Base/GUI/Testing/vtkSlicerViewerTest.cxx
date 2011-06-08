@@ -47,7 +47,7 @@ int vtkSlicerViewerTest( int argc, char *argv[] )
 
 
   vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
-  std::string testScene(vtksys::SystemTools::GetEnv("Slicer_HOME"));
+  std::string testScene(vtksys::SystemTools::GetEnv("SLICER_HOME"));
   testScene += "/share/MRML/Testing/vol_and_cube_camera.mrml";
   mrmlScene->SetURL(testScene.c_str());
   mrmlScene->Connect();

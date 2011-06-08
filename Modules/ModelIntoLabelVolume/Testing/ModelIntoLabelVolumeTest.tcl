@@ -3,18 +3,18 @@ proc TestUsingCTHeadAxial {} {
 # get the volumes logic
 set volLogic [$::slicer3::VolumesGUI GetLogic]
 # add the testing volume 
-set volumeNode [$volLogic AddArchetypeVolume $::env(Slicer_HOME)/../Slicer3/Testing/Data/Input/CTHeadAxial.nhdr "CTHeadAxial" 0]
+set volumeNode [$volLogic AddArchetypeVolume $::env(SLICER_HOME)/../Slicer3/Testing/Data/Input/CTHeadAxial.nhdr "CTHeadAxial" 0]
 
 # get the models logic
 set modLogic [$::slicer3::ModelsGUI GetLogic]
 # add the testing model, can I get it from $::env(Slicer_MODULES_DIR)
-set modelNode [$modLogic AddModel $::env(Slicer_HOME)/../Slicer3/Modules/ModelIntoLabelVolume/Testing/TestData/Neck.vtk]
+set modelNode [$modLogic AddModel $::env(SLICER_HOME)/../Slicer3/Modules/ModelIntoLabelVolume/Testing/TestData/Neck.vtk]
 
 # do it
 set labelVolume [ModelIntoLabelVolumeIntersect  $modelNode $volumeNode]
 
 # test it
-set testVolumeNode [$volLogic AddArchetypeVolume $::env(Slicer_HOME)/../Slicer3/Modules/ModelIntoLabelVolume/Testing/TestData/ModelIntoLabelVolumeTest.nrrd "ModelIntoLabelVolumeTest" 1]
+set testVolumeNode [$volLogic AddArchetypeVolume $::env(SLICER_HOME)/../Slicer3/Modules/ModelIntoLabelVolume/Testing/TestData/ModelIntoLabelVolumeTest.nrrd "ModelIntoLabelVolumeTest" 1]
 
 # there should be 2100 2's in each image
 

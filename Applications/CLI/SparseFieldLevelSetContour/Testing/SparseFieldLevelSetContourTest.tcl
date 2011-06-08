@@ -3,8 +3,8 @@ set ::thisDebug 0
 proc SparseFieldLevelSetContourTest { {modelFile ""} {outputModelFile ""} {baselineModelFile ""}} {
 
     if {$modelFile == ""} {
-        if {[info exists ::env(Slicer_HOME)] == 1} {
-            set sourcePath $::env(Slicer_HOME)/../Slicer3
+        if {[info exists ::env(SLICER_HOME)] == 1} {
+            set sourcePath $::env(SLICER_HOME)/../Slicer3
         }
         set modelFile  "${sourcePath}/Testing/Data/Input/SparseFieldLevelSetContourTest.vtp"
     }
@@ -208,9 +208,9 @@ update
 
 if {$argc == 0} {
     # when use source into tkcon
-    set modelFile $::env(Slicer_HOME)/../Slicer3/Testing/Data/Input/SparseFieldLevelSetContourTest.vtp
-    set modelOutputFile $::env(Slicer_HOME)/Testing/Temporary/SparseFieldLevelSetContourTest.vtp
-    set baselineModelFile  $::env(Slicer_HOME)/../Slicer3/Testing/Data/Baseline/CLI/SparseFieldLevelSetContourTest.vtp
+    set modelFile $::env(SLICER_HOME)/../Slicer3/Testing/Data/Input/SparseFieldLevelSetContourTest.vtp
+    set modelOutputFile $::env(SLICER_HOME)/Testing/Temporary/SparseFieldLevelSetContourTest.vtp
+    set baselineModelFile  $::env(SLICER_HOME)/../Slicer3/Testing/Data/Baseline/CLI/SparseFieldLevelSetContourTest.vtp
 
 #    set modelFile /spl/tmp/nicole/cube.vtp 
 #    set modelOutputFile /spl/tmp/nicole/cubeOut.vtp

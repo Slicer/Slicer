@@ -5,8 +5,8 @@
 set CLP "HelloWorld"
 
 set cpath "${CLP}.jar"
-if {[info exists ::env(Slicer_HOME)] == 1} {
-    set cpath "$::env(Slicer_HOME)/lib/Slicer3/Plugins/${CLP}.jar"
+if {[info exists ::env(SLICER_HOME)] == 1} {
+    set cpath "$::env(SLICER_HOME)/lib/Slicer3/Plugins/${CLP}.jar"
 }
 if {[file exists $cpath] == 0} {
   # try guessing on a location next to this script

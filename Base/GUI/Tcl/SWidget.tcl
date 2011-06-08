@@ -485,7 +485,7 @@ itcl::body SWidget::getInAnySliceSWidget { } {
 proc sssss {} {
   itcl::delete class SWidget
 
-  set dir $::env(Slicer_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
+  set dir $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
   source $dir/SWidget.tcl
   foreach sw [glob $dir/*SWidget.tcl] {
     source $sw

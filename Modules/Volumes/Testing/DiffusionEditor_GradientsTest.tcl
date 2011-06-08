@@ -10,17 +10,17 @@ editor SetParent t
 editor SetAndObserveMRMLScene scene
 editor Create
 
-# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
+# TODO: $::env(SLICER_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
-# not inside env(Slicer_HOME). Fix this by using 
+# not inside env(SLICER_HOME). Fix this by using 
 # vtkSlicerModuleLogic::GetModuleShareDirectory (i.e. find the Volumes
 # module reference, its logic, and call this method to retrive the full
 # path to the share/ directory for this module)
 
-set grads $::env(Slicer_HOME)/share/Slicer/Modules/Volumes/Testing/gradients.txt
+set grads $::env(SLICER_HOME)/share/Slicer/Modules/Volumes/Testing/gradients.txt
 
-set grads2 $::env(Slicer_HOME)/share/Slicer/Modules/Volumes/Testing/gradients_bad.txt
+set grads2 $::env(SLICER_HOME)/share/Slicer/Modules/Volumes/Testing/gradients_bad.txt
 
 vtkDoubleArray newBValue
 vtkDoubleArray newGradients

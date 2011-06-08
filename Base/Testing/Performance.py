@@ -1,7 +1,7 @@
 
 comment = """
 import os
-execfile(os.environ['Slicer_HOME'] + "/../../Slicer4/Base/Testing/Performance.py")
+execfile(os.environ['SLICER_HOME'] + "/../../Slicer4/Base/Testing/Performance.py")
 """
 
 global timeSteps

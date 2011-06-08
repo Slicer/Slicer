@@ -107,7 +107,7 @@ update
 
 if {$argc == 0} {
     # when use source ../Slicer3/Modules/Editor/Testing/TestEditorModelMaker.tcl
-    set labelFile $::env(Slicer_HOME)/../Slicer3/Libs/MRML/Testing/TestData/helixMask.nrrd
+    set labelFile $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/TestData/helixMask.nrrd
     set ::thisDebug 1
 } else {
     # puts "argv = $argv"

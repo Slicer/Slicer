@@ -1426,8 +1426,8 @@ namespace eval ChangeTrackerTcl {
     ############################################
     ##I add the deformation analysis right HERE. WRITE THE WHOLE THING IN TCL TO PUT IT HERE.
     # registering the two images. 
-    set EXE_DIR "$::env(Slicer_HOME)/bin"
-    set PLUGINS_DIR "$::env(Slicer_HOME)/lib/Slicer3/Plugins"
+    set EXE_DIR "$::env(SLICER_HOME)/bin"
+    set PLUGINS_DIR "$::env(SLICER_HOME)/lib/Slicer3/Plugins"
 
     # set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 

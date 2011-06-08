@@ -97,7 +97,7 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
       }
     else
       {
-      const char *env = vtksys::SystemTools::GetEnv("Slicer_HOME");
+      const char *env = vtksys::SystemTools::GetEnv("SLICER_HOME");
       if (!env)
         {
         env = vtksys::SystemTools::GetEnv("PWD");
@@ -165,7 +165,7 @@ vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
 {
   // get the slicer home dir
   vtksys_stl::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("Slicer_HOME") == NULL)
+  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
     {
     if (vtksys::SystemTools::GetEnv("PWD") != NULL)
       {
@@ -178,7 +178,7 @@ vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
     }
   else
     {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer_HOME"));
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
     }
   // build up the vector
   vtksys_stl::vector<vtksys_stl::string> filesVector;

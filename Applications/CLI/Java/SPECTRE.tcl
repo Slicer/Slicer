@@ -6,9 +6,9 @@ set CLP "SPECTRE"
 
 # set the path to the MIPAV install directory
 # set the full path to the SPECTRE plugins directory
-if {[info exists ::env(Slicer_HOME)] == 1} {
-    set pathToMipav "$::env(Slicer_HOME)/../Slicer3/Applications/CLI/Java/SPECTRE/mipav"
-    set pathToSPECTREPlugins "$::env(Slicer_HOME)/lib/Slicer3/Plugins/SPECTRE_2010-04-01.jar"
+if {[info exists ::env(SLICER_HOME)] == 1} {
+    set pathToMipav "$::env(SLICER_HOME)/../Slicer3/Applications/CLI/Java/SPECTRE/mipav"
+    set pathToSPECTREPlugins "$::env(SLICER_HOME)/lib/Slicer3/Plugins/SPECTRE_2010-04-01.jar"
 } else {
     set pathToMipav "/projects/birn/nicole/Slicer3VTKHead/Slicer3/Applications/CLI/Java/SPECTRE/mipav"
     set pathToSPECTREPlugins "/projects/birn/nicole/Slicer3FC10/Slicer3/Applications/CLI/Java/SPECTRE_2010-04-01.jar"

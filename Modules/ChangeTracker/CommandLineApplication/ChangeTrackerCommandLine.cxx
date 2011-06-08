@@ -189,7 +189,7 @@ void tgWriteVolume(const char *fileName, vtkMatrix4x4 *export_matrix, vtkImageDa
 vtksys_stl::string tgGetSLICER_HOME(char** argv)  
 { 
   vtksys_stl::string slicerHome = "";
-  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
@@ -203,20 +203,20 @@ vtksys_stl::string tgGetSLICER_HOME(char** argv)
 int tgSetSLICER_HOME(char** argv)  
 { 
   vtksys_stl::string slicerHome = "";
-  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
 
     if ( !vtksys::SystemTools::FindProgramPath(argv[0], programPath, errorMessage) ) return 1;
 
-    std::string homeEnv = "Slicer_HOME=";
+    std::string homeEnv = "SLICER_HOME=";
     homeEnv += vtksys::SystemTools::GetFilenamePath(programPath.c_str()) + "/../../../";
    
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
   } else {
-    cout << "Slicer_HOME found: " << slicerHome << endl;
+    cout << "SLICER_HOME found: " << slicerHome << endl;
   }
   return 0;
 }

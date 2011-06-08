@@ -9,7 +9,7 @@ proc TestColorStorageNodeInScene {  } {
     if { [info script] != ""} {
        set colorFileName "[file dirname [info script]]/Libs/MRML/Testing/TestData/ColorTest.ctbl"
     } else {
-        set colorFileName [file normalize $::env(Slicer_HOME)/../Slicer3/Libs/MRML/Testing/TestData/ColorTest.ctbl]
+        set colorFileName [file normalize $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/TestData/ColorTest.ctbl]
     }
     if {$::csnDebug} {
         puts "colorFileName = $colorFileName"
@@ -45,7 +45,7 @@ proc TestColorStorageNodeInScene {  } {
     # load a volume file
     set volLogic [$::slicer3::VolumesGUI GetLogic]
     if {$volLogic != ""} {
-      set volFileName "[file normalize $::env(Slicer_HOME)/../Slicer3/Libs/MRML/Testing/TestData/helixMask3Labels.nrrd]"
+      set volFileName "[file normalize $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/TestData/helixMask3Labels.nrrd]"
       set volName "helixMask3Labels"
     
       set label 1

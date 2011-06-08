@@ -12,7 +12,7 @@ proc SetupConnector {} {
   ##$::seed OverwritePolyDataWarningOff
   #set ::logic [$::gui GetLogic]
 
-  #set testData $::env(Slicer_HOME)/share/Slicer/Modules/OpenIGTLinkIF/Testing/TestData/twoFibers.vtk
+  #set testData $::env(SLICER_HOME)/share/Slicer/Modules/OpenIGTLinkIF/Testing/TestData/twoFibers.vtk
   #set testData c:/data/tracts/Seeding1.vtp
 
   set conNode [vtkMRMLIGTLConnectorNode New]
