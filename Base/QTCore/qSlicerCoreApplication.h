@@ -77,32 +77,32 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get application logic
-  vtkSlicerApplicationLogic* appLogic() const;
+  Q_INVOKABLE vtkSlicerApplicationLogic* appLogic() const;
 
   /// Get MRML ApplicationLogic
   Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
   /// Get slicer home directory
-  QString slicerHome() const;
+  Q_INVOKABLE QString slicerHome() const;
 
   /// Get slicer temporary directory
-  QString temporaryPath() const;
+  Q_INVOKABLE QString temporaryPath() const;
 
   /// Set slicer temporary directory
-  void setTemporaryPath(const QString& path);
+  Q_INVOKABLE void setTemporaryPath(const QString& path);
   
   /// Get slicer extension directory
-  QString extensionsPath() const;
+  Q_INVOKABLE QString extensionsPath() const;
 
   /// Set slicer extension directory
-  void setExtensionsPath(const QString& path);
+  Q_INVOKABLE void setExtensionsPath(const QString& path);
 
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
-  QString intDir()const;
+  Q_INVOKABLE QString intDir()const;
 
   /// Return true is this instance of Slicer is running from an installed directory
-  bool isInstalled()const;
+  Q_INVOKABLE bool isInstalled()const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Get python manager
@@ -131,7 +131,7 @@ public:
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
 
   /// Get errorLogModel
-  ctkErrorLogModel* errorLogModel()const;
+  Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
 
   /// Get application settings
   /// \note It will also instantiate a QSettings object if required.
@@ -150,19 +150,19 @@ public:
 
   /// Return the source repository URL associated to this build
   /// \sa discoverRepository
-  QString repositoryUrl()const;
+  Q_INVOKABLE QString repositoryUrl()const;
 
   /// Return the source repository Branch associated to this build
   /// \sa discoverRepository
-  QString repositoryBranch()const;
+  Q_INVOKABLE QString repositoryBranch()const;
 
   /// Return the source repository Revision associated to this build
   /// \sa discoverRepository
-  QString repositoryRevision()const;
+  Q_INVOKABLE QString repositoryRevision()const;
 
   /// Return the source repository Platform associated to this build
   /// \sa discoverRepository
-  QString platform()const;
+  Q_INVOKABLE QString platform()const;
 
 public slots:
 
