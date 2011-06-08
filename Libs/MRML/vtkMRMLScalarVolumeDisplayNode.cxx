@@ -133,7 +133,6 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetImageData(vtkImageData *imageData)
 {
-  std::cout << "vtkMRMLScalarVolumeDisplayNode::SetImageData" << imageData << std::endl;
   this->Threshold->SetInput(imageData);
   this->MapToWindowLevelColors->SetInput(imageData);
 }
