@@ -259,9 +259,9 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   this->GetMRMLScene()->RemoveNode(refVolume);
 
-  std::string outputVolumeName = inputVolume->GetName();
-  outputVolumeName += "-subvolume";
-  outputVolume->SetName(outputVolumeName.c_str());
+  std::ostringstream outSS;
+  outSS << inputVolume->GetName() << "-subvolume-scale_" << spacingScaleConst;
+  outputVolume->SetName(outSS.str().c_str());
 
   outputVolume->ModifiedSinceReadOn();
   pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
