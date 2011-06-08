@@ -192,7 +192,7 @@ void qSlicerCoreApplicationPrivate::init()
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
 
-  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->temporaryPath().toLatin1().data());
+  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->temporaryPath().toLatin1());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
   this->DataIOManagerLogic->SetApplicationLogic(this->AppLogic);
@@ -512,11 +512,11 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     int pythonArgc = 1 /*scriptname*/ + options->unparsedArguments().count();
     char** pythonArgv = new char*[pythonArgc];
     pythonArgv[0] = new char[pythonScript.size() + 1];
-    strcpy(pythonArgv[0], pythonScript.toAscii().data());
+    strcpy(pythonArgv[0], pythonScript.toLatin1());
     for(int i = 0; i < options->unparsedArguments().count(); ++i)
       {
       pythonArgv[i + 1] = new char[options->unparsedArguments().at(i).size() + 1];
-      strcpy(pythonArgv[i + 1], options->unparsedArguments().at(i).toAscii().data());
+      strcpy(pythonArgv[i + 1], options->unparsedArguments().at(i).toLatin1());
       }
 
     // See http://docs.python.org/c-api/init.html
