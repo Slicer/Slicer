@@ -5,11 +5,6 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkImageLabelChange.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 ///  vtkImageLabelChange -  Change one label value to another
 /// 

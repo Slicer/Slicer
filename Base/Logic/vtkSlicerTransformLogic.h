@@ -5,11 +5,6 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerTransformLogic.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 
 ///  vtkSlicerTransformLogic - slicer logic class for volumes manipulation

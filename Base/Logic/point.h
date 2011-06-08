@@ -5,11 +5,6 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: point.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 #ifndef __point_h
 #define __point_h

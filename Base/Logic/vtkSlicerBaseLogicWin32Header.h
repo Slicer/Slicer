@@ -5,11 +5,6 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerBaseLogicWin32Header.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 ///  vtkSlicerBaseLogicWin32Header - manage Windows system differences
 /// 

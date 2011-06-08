@@ -5,11 +5,6 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerGlyphSource2D.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 ///  vtkSlicerGlyphSource2D - copies and extends vtkGlyphSource2D to
 /// provide Slicer glyphs represented by poly data
