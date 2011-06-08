@@ -1544,7 +1544,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 # add a test that compares the outline to a baseline .vtp
 set(testname ${CLP}TestCompare)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} ${CMAKE_COMMAND}
-  -Dtest_cmd=MergeModelsTest
+  -Dtest_cmd=$<TARGET_FILE:${CLP}Test>
   -Dtest_name=MergeModelsTest
   -Dmodel1=${MRML_TEST_DATA}/sphere.vtp
   -Dmodel2=${MRML_TEST_DATA}/cube.vtp
