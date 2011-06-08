@@ -720,39 +720,41 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 // if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
 // and initioalize them from VolumeNode
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
-                                          vtkMRMLVolumeRenderingDisplayNode *DisplayNode, 
-                                          vtkMRMLVolumeNode *volumeNode, 
+                                          vtkMRMLVolumeRenderingDisplayNode *displayNode,
+                                          vtkMRMLVolumeNode *volumeNode,
                                           vtkMRMLVolumePropertyNode **propNode,
                                           vtkMRMLAnnotationROINode **roiNode)
 {
 
-  if (volumeNode == NULL) 
-  {
-    DisplayNode->SetAndObserveVolumeNodeID(NULL);
+  if (volumeNode == NULL)
+    {
+    displayNode->SetAndObserveVolumeNodeID(NULL);
     return;
-  }
+    }
 
-  DisplayNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
+  displayNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
 
   if (*propNode == NULL)
-  {
+    {
     *propNode = vtkMRMLVolumePropertyNode::New();
     this->GetMRMLScene()->AddNode(*propNode);
     (*propNode)->Delete();
-  }
-  DisplayNode->SetAndObserveVolumePropertyNodeID((*propNode)->GetID());
+    }
+  displayNode->SetAndObserveVolumePropertyNodeID((*propNode)->GetID());
 
   if (*roiNode == NULL)
-  {
+    {
     *roiNode = vtkMRMLAnnotationROINode::New();
+    // by default, show the ROI only if cropping is enabled
+    (*roiNode)->SetVisibility(displayNode->GetCroppingEnabled());
     this->GetMRMLScene()->AddNode(*roiNode);
     (*roiNode)->Delete();
-  }
-  DisplayNode->SetAndObserveROINodeID((*roiNode)->GetID());
+    }
+  displayNode->SetAndObserveROINodeID((*roiNode)->GetID());
 
-  this->UpdateVolumePropertyFromImageData(DisplayNode);
+  this->UpdateVolumePropertyFromImageData(displayNode);
 
-  this->FitROIToVolume(DisplayNode);
+  this->FitROIToVolume(displayNode);
 }
 
 //----------------------------------------------------------------------------
