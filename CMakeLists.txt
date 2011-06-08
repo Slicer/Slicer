@@ -541,8 +541,8 @@ INCLUDE(ITKPlatformSpecificChecks)
 #-----------------------------------------------------------------------------
 # Set CMAKE_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${VTK_REQUIRED_C_FLAGS} ${COVERAGE_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${VTK_REQUIRED_C_FLAGS} ${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
 # Generate SlicerVersion.txt
