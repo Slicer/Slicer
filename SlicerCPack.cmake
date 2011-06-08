@@ -15,11 +15,17 @@ else()
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
   set(executable_path @executable_path)
+  set(slicer_complete_bundle_directory ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles)
   configure_file(
-    "${Slicer_SOURCE_DIR}/SlicerCompleteBundles.cmake.in"
-    "${Slicer_BINARY_DIR}/SlicerCompleteBundles.cmake"
+    "${Slicer_SOURCE_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in"
+    "${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake"
     @ONLY)
-  install(SCRIPT "${Slicer_BINARY_DIR}/SlicerCompleteBundles.cmake")
+  # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first, 
+  #        let's make sure the following install rule is evaluated within its own directory.
+  #        Otherwise, the associated script will be executed before any other relevant install rules.
+  file(WRITE ${slicer_complete_bundle_directory}/CMakeLists.txt
+    "install(SCRIPT \"${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake\")")
+  add_subdirectory(${slicer_complete_bundle_directory} ${slicer_complete_bundle_directory}-binary)
 endif()
 
 # -------------------------------------------------------------------------
