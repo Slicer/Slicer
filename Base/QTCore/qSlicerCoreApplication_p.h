@@ -58,8 +58,8 @@ public:
   /// Given the program name, should return Slicer Home Directory
   QString discoverSlicerHomeDirectory();
 
-  /// Set Slicer_HOME environment variable
-  void setSlicerHomeEnvironmentVariable(const QString& value);
+  /// Set environment variable
+  void setEnvironmentVariable(const QString& key, const QString& value);
 
   /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
   /// \sa QCoreApplication::applicationDirPath

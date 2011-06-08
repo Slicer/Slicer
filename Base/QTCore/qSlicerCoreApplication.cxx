@@ -132,8 +132,8 @@ void qSlicerCoreApplicationPrivate::init()
   this->discoverSlicerBinDirectory();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
-  this->setSlicerHomeEnvironmentVariable(this->SlicerHome);
   this->discoverITKFactoriesDirectory();
+  this->setEnvironmentVariable("Slicer_HOME", this->SlicerHome);
   this->discoverRepository();
   this->discoverPythonPath();
 
@@ -238,14 +238,14 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::setSlicerHomeEnvironmentVariable(const QString& value)
+void qSlicerCoreApplicationPrivate::setEnvironmentVariable(const QString& key, const QString& value)
 {
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  env.insert("Slicer_HOME", value);
+  env.insert(key, value);
   // Since QProcessEnvironment can't be used to update the environment of the
   // current process, let's use 'putenv()'.
   // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
-  vtksys::SystemTools::PutEnv(QString("Slicer_HOME=%1").arg(value).toLatin1());
+  vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toLatin1());
 }
 
 //-----------------------------------------------------------------------------
