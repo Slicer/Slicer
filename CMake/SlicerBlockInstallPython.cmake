@@ -22,6 +22,7 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
     REGEX "plat-*" EXCLUDE
     REGEX "test/" EXCLUDE
     REGEX "wsgiref*" EXCLUDE
+    REGEX "distutils/" EXCLUDE
     )
   # Install python library
   if(UNIX)
