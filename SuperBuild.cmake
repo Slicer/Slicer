@@ -218,9 +218,15 @@ ENDFOREACH()
 #------------------------------------------------------------------------------
 
 set(slicer_superbuild_extra_args)
+
 if(DEFINED CTEST_CONFIGURATION_TYPE)
   LIST(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
 endif()
+
+IF(Slicer_BUILD_CLI)
+  # BRAINSTOOLS module
+  LIST(APPEND slicer_superbuild_extra_args -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS})
+ENDIF()
 
 set(proj Slicer)
 ExternalProject_Add(${proj}
@@ -274,8 +280,6 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # CTKAppLauncher
     -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
-    # BRAINSTOOLS module
-    -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS}
   INSTALL_COMMAND ""
   )
   
