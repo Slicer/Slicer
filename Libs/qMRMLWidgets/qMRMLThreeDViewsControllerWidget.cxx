@@ -54,7 +54,7 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 {
   this->ActiveMRMLThreeDViewNode = 0;
   this->SceneViewMenu = 0;
-  this->DisableMagnification = 0;
+  this->DisableMagnification = true;
 }
 
 // --------------------------------------------------------------------------
@@ -179,9 +179,9 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->SpinButton, SIGNAL(toggled(bool)), SLOT(onSpinViewButtonToggled(bool)));
   connect(this->RockButton, SIGNAL(toggled(bool)), SLOT(onRockViewButtonToggled(bool)));
 
-  // toggle the property so signals are connected at startup
-  q->setDisableMagnification(true);
+  // Enable magnification by default
   q->setDisableMagnification(false);
+
   this->setDisplayMode(NavigationDisplayMode);
 }
 
