@@ -91,10 +91,10 @@ public:
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
   
-  /// Get slicer temporary directory
+  /// Get slicer extension directory
   QString extensionsPath() const;
 
-  /// Set slicer temporary directory
+  /// Set slicer extension directory
   void setExtensionsPath(const QString& path);
 
   /// If any, this method return the build intermediate directory
