@@ -204,9 +204,9 @@ class DICOMWidget:
       if not self.testingServer:
         # find the helper executables (only works on build trees
         # with standard naming conventions)
-        self.exeDir = slicer.app.slicerHome() 
-        if slicer.app.intDir():
-          self.exeDir = self.exeDir + '/' + slicer.app.intDir()
+        self.exeDir = slicer.app.slicerHome 
+        if slicer.app.intDir:
+          self.exeDir = self.exeDir + '/' + slicer.app.intDir
         self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build/bin'
 
         # TODO: deal with Debug/RelWithDebInfo on windows
@@ -222,7 +222,7 @@ class DICOMWidget:
 
       # look for the sample data to load (only works on build trees
       # with standard naming conventions)
-      self.dataDir =  slicer.app.slicerHome() + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
+      self.dataDir =  slicer.app.slicerHome + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
       files = glob.glob(self.dataDir+'/*.dcm')
 
       # now start the server

@@ -31,7 +31,7 @@ class tpycl(object):
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
 
     # This path is Slicer-specific
-    self.tcl.eval("set ::env(SLICER_HOME) \"%s\"" % slicer.app.slicerHome())
+    self.tcl.eval("set ::env(SLICER_HOME) \"%s\"" % slicer.app.slicerHome)
     self.tcl.eval("source $::env(SLICER_HOME)/bin/Python/tpycl/tpycl.tcl")
 
   def usage(self):
