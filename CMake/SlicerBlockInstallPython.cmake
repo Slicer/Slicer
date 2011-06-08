@@ -15,7 +15,7 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
   install(
     DIRECTORY "${PYTHON_DIR}${python_lib_subdir}"
-    DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_lib_subdir}
+    DESTINATION ${Slicer_INSTALL_ROOT}/lib/Python${python_lib_subdir}
     USE_SOURCE_PERMISSIONS
     REGEX "lib2to3/" EXCLUDE
     REGEX "lib-old/" EXCLUDE
@@ -28,7 +28,7 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   if(UNIX)
     slicerInstallLibrary(
       FILE ${PYTHON_LIBRARY}
-      DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/lib
+      DESTINATION ${Slicer_INSTALL_ROOT}/lib/Python/lib
       COMPONENT Runtime
       PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
   elseif(WIN32)
