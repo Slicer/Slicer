@@ -217,6 +217,11 @@ ENDFOREACH()
 # Configure and build Slicer
 #------------------------------------------------------------------------------
 
+set(slicer_superbuild_extra_args)
+if(DEFINED CTEST_CONFIGURATION_TYPE)
+  LIST(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
+endif()
+
 set(proj Slicer)
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDENCIES}
@@ -226,6 +231,7 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${slicer_superbuild_boolean_args}
+    ${slicer_superbuild_extra_args}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
@@ -236,7 +242,6 @@ ExternalProject_Add(${proj}
     -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     -DSlicer_SUPERBUILD:BOOL=OFF
-    -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE}
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
     # ITK
