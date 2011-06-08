@@ -48,6 +48,15 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(QString slicerHome READ slicerHome)
+  Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
+  Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
+  Q_PROPERTY(QString intDir READ intDir)
+  Q_PROPERTY(QString isInstalled READ isInstalled)
+  Q_PROPERTY(QString repositoryUrl READ repositoryUrl)
+  Q_PROPERTY(QString repositoryBranch READ repositoryBranch)
+  Q_PROPERTY(QString repositoryRevision READ repositoryRevision)
+  Q_PROPERTY(QString platform READ platform)
 public:
 
   typedef QApplication Superclass;
@@ -83,26 +92,26 @@ public:
   Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
   /// Get slicer home directory
-  Q_INVOKABLE QString slicerHome() const;
+  QString slicerHome() const;
 
   /// Get slicer temporary directory
-  Q_INVOKABLE QString temporaryPath() const;
+  QString temporaryPath() const;
 
   /// Set slicer temporary directory
-  Q_INVOKABLE void setTemporaryPath(const QString& path);
+  void setTemporaryPath(const QString& path);
   
   /// Get slicer extension directory
-  Q_INVOKABLE QString extensionsPath() const;
+  QString extensionsPath() const;
 
   /// Set slicer extension directory
-  Q_INVOKABLE void setExtensionsPath(const QString& path);
+  void setExtensionsPath(const QString& path);
 
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
-  Q_INVOKABLE QString intDir()const;
+  QString intDir()const;
 
   /// Return true is this instance of Slicer is running from an installed directory
-  Q_INVOKABLE bool isInstalled()const;
+  bool isInstalled()const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Get python manager
@@ -150,19 +159,19 @@ public:
 
   /// Return the source repository URL associated to this build
   /// \sa discoverRepository
-  Q_INVOKABLE QString repositoryUrl()const;
+  QString repositoryUrl()const;
 
   /// Return the source repository Branch associated to this build
   /// \sa discoverRepository
-  Q_INVOKABLE QString repositoryBranch()const;
+  QString repositoryBranch()const;
 
   /// Return the source repository Revision associated to this build
   /// \sa discoverRepository
-  Q_INVOKABLE QString repositoryRevision()const;
+  QString repositoryRevision()const;
 
   /// Return the source repository Platform associated to this build
   /// \sa discoverRepository
-  Q_INVOKABLE QString platform()const;
+  QString platform()const;
 
 public slots:
 
