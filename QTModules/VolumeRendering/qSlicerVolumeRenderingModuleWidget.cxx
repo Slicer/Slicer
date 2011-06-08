@@ -1,5 +1,6 @@
 // Qt includes
 #include <QDebug>
+#include <QSettings>
 
 // qMRMLWidgets include
 #include "qMRMLNodeComboBox.h"
@@ -32,8 +33,10 @@ public:
   qSlicerVolumeRenderingModuleWidgetPrivate(qSlicerVolumeRenderingModuleWidget& object);
   virtual void setupUi(qSlicerVolumeRenderingModuleWidget*);
   vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode();
+  void populateRenderingTechniqueComboBox();
 
   vtkMRMLVolumeRenderingDisplayNode* DisplayNode;
+  QMap<int, int>                     LastTechniques;
 };
 
 //-----------------------------------------------------------------------------
@@ -80,6 +83,28 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->ROIFitPushButton,
                    SIGNAL(clicked()),
                    q, SLOT(fitROIToVolume()));
+
+  // Techniques
+  QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(onCurrentRenderingMethodChanged(int)));
+
+  this->MemorySizeComboBox->addItem("128 Mo", 128);
+  this->MemorySizeComboBox->addItem("256 Mo", 256);
+  this->MemorySizeComboBox->addItem("512 Mo", 512);
+  this->MemorySizeComboBox->addItem("1024 Mo", 1024);
+  this->MemorySizeComboBox->addItem("1.5 Go", 1536);
+  this->MemorySizeComboBox->addItem("2 Go", 2048);
+  this->MemorySizeComboBox->addItem("3 Go", 3072);
+  this->MemorySizeComboBox->addItem("4 Go", 4096);
+  QObject::connect(this->MemorySizeComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(onCurrentMemorySizeChanged(int)));
+
+  QObject::connect(this->QualityControlComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(onCurrentQualityControlChanged(int)));
+  QObject::connect(this->FramerateSliderWidget, SIGNAL(valueChanged(double)),
+                   q, SLOT(onCurrentFramerateChanged(double)));
+  QObject::connect(this->RenderingTechniqueComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(onCurrentRenderingTechniqueChanged(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -103,6 +128,50 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
                                          &propNode, &roiNode);
 
   return displayNode;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidgetPrivate
+::populateRenderingTechniqueComboBox()
+{
+  Q_Q(qSlicerVolumeRenderingModuleWidget);
+  this->RenderingTechniqueComboBox->clear();
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = q->mrmlDisplayNode();
+  int volumeMapper = displayNode ?
+    displayNode->GetCurrentVolumeMapper() : vtkMRMLVolumeRenderingDisplayNode::None;
+  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::None)
+    {
+    return;
+    }
+  this->RenderingTechniqueComboBox->addItem(
+    "Composite With Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
+  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast ||
+      volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume)
+    {
+    this->RenderingTechniqueComboBox->addItem(
+      "Composite Pseudo Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
+    }
+  if (volumeMapper != vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping)
+    {
+    this->RenderingTechniqueComboBox->addItem(
+      "Maximum Intensity Projection",
+      vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection);
+    this->RenderingTechniqueComboBox->addItem(
+      "Minimum Intensity Projection",
+      vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection);
+    }
+  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast ||
+      volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume)
+    {
+    this->RenderingTechniqueComboBox->addItem(
+      "Gradient Magnitude Opacity Modulation",
+      vtkMRMLVolumeRenderingDisplayNode::GradiantMagnitudeOpacityModulation);
+    this->RenderingTechniqueComboBox->addItem(
+      "Illustrative Context Preserving Exploration",
+      vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
+    }
+  this->RenderingTechniqueComboBox->setEnabled(
+    volumeMapper != vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping);
 }
 
 //-----------------------------------------------------------------------------
@@ -163,14 +232,16 @@ void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode
 void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  qDebug() << "qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()";
+
   // set view in the currently selected display node
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
   if (!displayNode)
     {
     return;
     }
+
   int wasModifying = displayNode->StartModify();
+
   displayNode->RemoveAllViewNodeIDs();
   if (!d->ViewCheckableNodeComboBox->allChecked() &&
       !d->ViewCheckableNodeComboBox->noneChecked())
@@ -180,10 +251,7 @@ void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
       displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
       }
     }
-  else
-    {
-    qDebug() << "all is visible";
-    }
+
   displayNode->EndModify(wasModifying);
 }
 
@@ -258,6 +326,37 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     d->DisplayNode ? d->DisplayNode->GetVisibility() : false);
   d->ROICropCheckBox->setChecked(
     d->DisplayNode ? d->DisplayNode->GetCroppingEnabled() : false);
+
+  // Techniques tab
+  int currentVolumeMapper = d->DisplayNode ?
+    d->DisplayNode->GetCurrentVolumeMapper() : -1;
+  d->RenderingMethodComboBox->setCurrentIndex( currentVolumeMapper );
+  int index = d->DisplayNode ?
+    d->MemorySizeComboBox->findData(QVariant(d->DisplayNode->GetGPUMemorySize())) : -1;
+  d->MemorySizeComboBox->setCurrentIndex(index);
+  d->QualityControlComboBox->setCurrentIndex(
+    d->DisplayNode ? d->DisplayNode->GetPerformanceControl() : -1);
+  if (d->DisplayNode)
+    {
+    d->FramerateSliderWidget->setValue(d->DisplayNode->GetExpectedFPS());
+    }
+  // Rendering technique
+  d->RenderingTechniqueComboBox->blockSignals(true);
+  d->populateRenderingTechniqueComboBox();
+  int technique = d->DisplayNode ? d->DisplayNode->GetRaycastTechnique() : -1;
+  index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
+  if (index == -1 && d->LastTechniques.contains(currentVolumeMapper))
+    {
+    index = d->RenderingTechniqueComboBox->findData(
+      d->LastTechniques[currentVolumeMapper]);
+    }
+  if (index == -1)
+    {
+    index = 0;
+    }
+  d->RenderingTechniqueComboBox->setCurrentIndex(-1);
+  d->RenderingTechniqueComboBox->blockSignals(false);
+  d->RenderingTechniqueComboBox->setCurrentIndex(index);
 }
 
 // --------------------------------------------------------------------------
@@ -403,3 +502,75 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode
     }
 }
 
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int index)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  displayNode->SetCurrentVolumeMapper(index);
+
+  QSettings settings;
+  settings.setValue("VolumeRenderingMethod", d->RenderingMethodComboBox->itemText(index));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged(int index)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+  int gpuMemorySize = d->MemorySizeComboBox->itemData(index).toInt();
+  Q_ASSERT(gpuMemorySize >= 0 && gpuMemorySize < 10000);
+  displayNode->SetGPUMemorySize(gpuMemorySize);
+
+  QSettings settings;
+  settings.setValue("GPUMemorySize", gpuMemorySize);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentQualityControlChanged(int index)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+
+  displayNode->SetPerformanceControl(index);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentFramerateChanged(double fps)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+
+  displayNode->SetExpectedFPS(fps);
+  
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingTechniqueChanged(int index)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+
+  int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
+  displayNode->SetRaycastTechnique(technique);
+
+  d->LastTechniques[displayNode->GetCurrentVolumeMapper()] = technique;
+}

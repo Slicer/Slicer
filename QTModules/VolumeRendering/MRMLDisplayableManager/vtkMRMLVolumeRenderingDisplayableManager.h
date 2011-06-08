@@ -14,7 +14,7 @@
 #include "qSlicerVolumeRenderingModuleExport.h"
 
 class vtkSlicerVolumeTextureMapper3D;
-class vtkSlicerFixedPointVolumeRayCastMapper;
+class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeMapper;
 class vtkSlicerGPURayCastMultiVolumeMapper;
 class vtkGPUVolumeRayCastMapper;
@@ -60,9 +60,12 @@ public:
 
   // Description:
   // Update MRML events
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                  unsigned long /*event*/,
-                                  void * /*callData*/ );
+  virtual void ProcessMRMLEvents(vtkObject * caller,
+                                 unsigned long event,
+                                 void * callData);
+  virtual void ProcessLogicEvents(vtkObject * caller,
+                                  unsigned long event,
+                                  void * callData);
 
   virtual void UpdateFromMRML();
 
@@ -76,7 +79,7 @@ public:
   void SetupHistogramsFg(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
 
-  void SetExpectedFPS(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetExpectedFPS(double fps);
   void SetGPUMemorySize(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -94,11 +97,7 @@ public:
 
   void SetVolumeVisibility(int isVisible);
 
-  /* return values:
-   * 0: cpu ray cast not used
-   * 1: success
-   */
-  int SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingDisplayNode* vspNode, int buttonDown);
+  //void SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingDisplayNode* vspNode, int buttonDown);
 
   /* return values:
    * 0: mapper not supported
@@ -148,7 +147,7 @@ protected:
 
   // Description:
   // The software accelerated software mapper
-  vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
+  vtkFixedPointVolumeRayCastMapper *MapperRaycast;
 
   // Description:
   // The gpu ray cast mapper.

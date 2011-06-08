@@ -68,13 +68,11 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->ROINodeID = NULL;
   this->ROINode = NULL;
 
-  this->ExpectedFPS = 8;
+  this->ExpectedFPS = 8.;
   this->EstimatedSampleDistance = 1.0;
 
   this->CurrentVolumeMapper = -1;
   this->GPUMemorySize = 256;
-
-  this->CPURaycastMode = 0;
 
   this->DepthPeelingThreshold = 0.0f;
   this->DistanceColorBlending = 0.0f;
@@ -82,12 +80,18 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->ICPEScale = 1.0f;
   this->ICPESmoothness = 0.5f;
 
+  this->RaycastTechnique = vtkMRMLVolumeRenderingDisplayNode::Composite;
+  this->RaycastTechniqueFg = vtkMRMLVolumeRenderingDisplayNode::Composite;
+  /*
+  this->CPURaycastMode = 0;
+
   this->GPURaycastTechnique = 0;
   
   this->GPURaycastTechniqueII = 0;
   this->GPURaycastTechniqueIIFg = 0;
 
   this->GPURaycastTechnique3 = 0;
+  */
   
   this->CroppingEnabled = 0;//by default cropping is not enabled
   
@@ -101,7 +105,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   
   this->UseFgThreshold = 0; // by default volume property widget is used
   
-  this->GPURaycastIIBgFgRatio = 0.0f;//default display bg volume
+  this->BgFgRatio = 0.0f;//default display bg volume
   
   this->GPURaycastIIFusion = 0;
 
@@ -210,13 +214,6 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> this->CurrentVolumeMapper;
       continue;
     }
-    if (!strcmp(attName,"cpuRaycastMode"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->CPURaycastMode;
-      continue;
-    }
     if (!strcmp(attName,"depthPeelingThreshold"))
     {
       std::stringstream ss;
@@ -245,11 +242,33 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> this->ICPESmoothness;
       continue;
     }
-    if (!strcmp(attName,"gpuRaycastIIBgFgRatio"))
+    if (!strcmp(attName,"bgFgRatio"))
     {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->GPURaycastIIBgFgRatio;
+      ss >> this->BgFgRatio;
+      continue;
+    }
+    if (!strcmp(attName,"raycastTechnique"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->RaycastTechnique;
+      continue;
+    }
+    if (!strcmp(attName,"raycastTechniqueFg"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->RaycastTechniqueFg;
+      continue;
+    }
+/*
+    if (!strcmp(attName,"cpuRaycastMode"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->CPURaycastMode;
       continue;
     }
     if (!strcmp(attName,"gpuRaycastTechnique"))
@@ -273,18 +292,19 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> this->GPURaycastTechniqueIIFg;
       continue;
     }
-    if (!strcmp(attName,"gpuRaycastIIFusion"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->GPURaycastIIFusion;
-      continue;
-    }
     if (!strcmp(attName,"gpuRaycastTechnique3"))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GPURaycastTechnique3;
+      continue;
+    }
+*/
+    if (!strcmp(attName,"gpuRaycastIIFusion"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->GPURaycastIIFusion;
       continue;
     }
     if (!strcmp(attName,"threshold"))
@@ -349,21 +369,25 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " volumePropertyNodeID=\"" << (this->VolumePropertyNodeID ? this->VolumePropertyNodeID : "NULL") << "\"";
   of << indent << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
   of << indent << " currentVolumeMapper=\"" << this->CurrentVolumeMapper << "\"";
-  of << indent << " cpuRaycastMode=\"" << this->CPURaycastMode << "\"";
   of << indent << " depthPeelingThreshold=\"" << this->DepthPeelingThreshold << "\"";
   of << indent << " distanceColorBlending=\"" << this->DistanceColorBlending << "\"";
   of << indent << " icpeScale=\"" << this->ICPEScale << "\"";
   of << indent << " icpeSmoothness=\"" << this->ICPESmoothness << "\"";
+  of << indent << " raycastTechnique=\"" << this->RaycastTechnique << "\"";
+  of << indent << " raycastTechniqueFg=\"" << this->RaycastTechniqueFg << "\"";
+/*
+  of << indent << " cpuRaycastMode=\"" << this->CPURaycastMode << "\"";
   of << indent << " gpuRaycastTechnique=\"" << this->GPURaycastTechnique << "\"";
   of << indent << " gpuRaycastTechniqueII=\"" << this->GPURaycastTechniqueII << "\"";
   of << indent << " gpuRaycastTechniqueIIFg=\"" << this->GPURaycastTechniqueIIFg << "\"";
-  of << indent << " gpuRaycastIIFusion=\"" << this->GPURaycastIIFusion << "\"";
   of << indent << " gpuRaycastTechnique3=\"" << this->GPURaycastTechnique3 << "\"";
+*/
+  of << indent << " gpuRaycastIIFusion=\"" << this->GPURaycastIIFusion << "\"";
   of << indent << " threshold=\"" << this->Threshold[0] << " " << this->Threshold[1] << "\"";
   of << indent << " useThreshold=\"" << this->UseThreshold << "\"";
   of << indent << " thresholdFg=\"" << this->ThresholdFg[0] << " " << this->ThresholdFg[1] << "\"";
   of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
-  of << indent << " gpuRaycastIIBgFgRatio=\"" << this->GPURaycastIIBgFgRatio << "\"";
+  of << indent << " bgFgRatio=\"" << this->BgFgRatio << "\"";
   of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
   of << indent << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
   of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
@@ -444,16 +468,20 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetDistanceColorBlending(node->GetDistanceColorBlending());
   this->SetICPEScale(node->GetICPEScale());
   this->SetICPESmoothness(node->GetICPESmoothness());
+  this->SetRaycastTechnique(node->GetRaycastTechnique());
+  this->SetRaycastTechniqueFg(node->GetRaycastTechniqueFg());
+/*
   this->SetCPURaycastMode(node->GetCPURaycastMode());
   this->SetGPURaycastTechnique(node->GetGPURaycastTechnique());
   this->SetGPURaycastTechniqueII(node->GetGPURaycastTechniqueII());
   this->SetGPURaycastTechniqueIIFg(node->GetGPURaycastTechniqueIIFg());
   this->SetGPURaycastTechnique3(node->GetGPURaycastTechnique3());
+*/
   this->SetThreshold(node->GetThreshold());
   this->SetUseThreshold(node->GetUseThreshold());
   this->SetThresholdFg(node->GetThresholdFg());
   this->SetUseFgThreshold(node->GetUseFgThreshold());
-  this->SetGPURaycastIIBgFgRatio(node->GetGPURaycastIIBgFgRatio());
+  this->SetBgFgRatio(node->GetBgFgRatio());
   this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
   this->SetWindowLevel(node->GetWindowLevel());
   this->SetWindowLevelFg(node->GetWindowLevelFg());

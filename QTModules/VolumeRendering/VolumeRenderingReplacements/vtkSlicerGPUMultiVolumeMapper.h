@@ -46,6 +46,7 @@ class vtkMultiThreader;
 class vtkImageData;
 class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
+class vtkRenderWindow;
 class vtkVolumeProperty;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
@@ -90,7 +91,7 @@ public:
   // render using 3D texture mapping. This indicates if 3D texture
   // mapping is supported by the hardware, and if the other extensions
   // necessary to support the specific properties are available.
-  virtual int IsRenderSupported( vtkVolumeProperty * ) {return 0;};
+  virtual int IsRenderSupported(vtkRenderWindow *, vtkVolumeProperty *) {return 0;};
 
 //BTX
 

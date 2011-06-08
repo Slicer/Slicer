@@ -139,20 +139,26 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
 
   // Description:
   // Expected FPS
-  vtkSetMacro(ExpectedFPS,int);
-  vtkGetMacro(ExpectedFPS,int);
+  vtkSetMacro(ExpectedFPS,double);
+  vtkGetMacro(ExpectedFPS,double);
 
   vtkSetMacro(PerformanceControl,int);
   vtkGetMacro(PerformanceControl,int);
+
+  enum{
+    None=-1,
+    VTKCPURayCast=0,
+    VTKGPURayCast,
+    VTKGPUTextureMapping,
+    NCIGPURayCast,
+    NCIGPURayCastMultiVolume
+  };
 
   vtkGetMacro (CurrentVolumeMapper, int);
   vtkSetMacro (CurrentVolumeMapper, int);
 
   vtkGetMacro (GPUMemorySize, int);
   vtkSetMacro (GPUMemorySize, int);
-
-  vtkGetMacro (CPURaycastMode, int);
-  vtkSetMacro (CPURaycastMode, int);
 
   vtkGetMacro (DepthPeelingThreshold, float);
   vtkSetMacro (DepthPeelingThreshold, float);
@@ -166,20 +172,38 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkGetMacro (ICPESmoothness, float);
   vtkSetMacro (ICPESmoothness, float);
 
-  vtkGetMacro (GPURaycastTechnique, int);
-  vtkSetMacro (GPURaycastTechnique, int);
+  enum{
+    Composite = 0, // composite with directional lighting (default)
+    CompositeEdgeColoring, // composite with fake lighting (edge coloring, faster)
+    MaximumIntensityProjection,
+    MinimumIntensityProjection,
+    GradiantMagnitudeOpacityModulation,
+    IllustrativeContextPreservingExploration
+  };
 
-  vtkGetMacro (GPURaycastTechniqueII, int);
-  vtkSetMacro (GPURaycastTechniqueII, int);
+  vtkGetMacro (RaycastTechnique, int);
+  vtkSetMacro (RaycastTechnique, int);
 
-  vtkGetMacro (GPURaycastTechniqueIIFg, int);
-  vtkSetMacro (GPURaycastTechniqueIIFg, int);
+  vtkGetMacro (RaycastTechniqueFg, int);
+  vtkSetMacro (RaycastTechniqueFg, int);
+
+  //vtkGetMacro (CPURaycastMode, int);
+  //vtkSetMacro (CPURaycastMode, int);
+
+  //vtkGetMacro (GPURaycastTechnique, int);
+  //vtkSetMacro (GPURaycastTechnique, int);
+
+  //vtkGetMacro (GPURaycastTechniqueII, int);
+  //vtkSetMacro (GPURaycastTechniqueII, int);
+
+  //vtkGetMacro (GPURaycastTechniqueIIFg, int);
+  //vtkSetMacro (GPURaycastTechniqueIIFg, int);
 
   vtkGetMacro (GPURaycastIIFusion, int);
   vtkSetMacro (GPURaycastIIFusion, int);
 
-  vtkGetMacro (GPURaycastTechnique3, int);
-  vtkSetMacro (GPURaycastTechnique3, int);
+  //vtkGetMacro (GPURaycastTechnique3, int);
+  //vtkSetMacro (GPURaycastTechnique3, int);
 
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
@@ -187,8 +211,8 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkSetVector2Macro(ThresholdFg, double);
   vtkGetVectorMacro(ThresholdFg, double, 2);
 
-  vtkGetMacro (GPURaycastIIBgFgRatio, float);
-  vtkSetMacro (GPURaycastIIBgFgRatio, float);
+  vtkGetMacro (BgFgRatio, float);
+  vtkSetMacro (BgFgRatio, float);
 
   vtkGetMacro(FollowVolumeDisplayNode, int);
   vtkSetMacro(FollowVolumeDisplayNode, int);
@@ -232,7 +256,7 @@ protected:
   int CroppingEnabled;
 
   double  EstimatedSampleDistance;
-  int     ExpectedFPS;
+  double  ExpectedFPS;
 
   /* tracking which mapper to use, not saved into scene file
    * because different machines may or maybe not support the same mapper
@@ -252,11 +276,22 @@ protected:
    */
   int GPUMemorySize;
 
+  /* techniques in GPU ray cast
+   * 0: composite with directional lighting (default)
+   * 1: composite with fake lighting (edge coloring, faster)
+   * 2: MIP
+   * 3: MINIP
+   * 4: Gradient Magnitude Opacity Modulation
+   * 5: Illustrative Context Preserving Exploration
+   * */
+  int RaycastTechnique;
+  int RaycastTechniqueFg;
+
   /* possible values
    * 0: composite (default)
    * 1: MIP
    */
-  int CPURaycastMode;
+  //int CPURaycastMode;
 
   float DepthPeelingThreshold;
   float DistanceColorBlending;
@@ -272,7 +307,7 @@ protected:
    * 4: Gradient Magnitude Opacity Modulation
    * 5: Illustrative Context Preserving Exploration
    * */
-  int GPURaycastTechnique;
+  //int GPURaycastTechnique;
 
   /* techniques in GPU ray cast II (bg)
    * 0: composite with directional lighting (default)
@@ -282,7 +317,7 @@ protected:
    * 4: Gradient Magnitude Opacity Modulation
    * 5: Illustrative Context Preserving Exploration
    * */
-  int GPURaycastTechniqueII;
+  //int GPURaycastTechniqueII;
 
   /* techniques in GPU ray cast II (fg)
    * 0: composite with directional lighting (default)
@@ -292,7 +327,7 @@ protected:
    * 4: Gradient Magnitude Opacity Modulation
    * 5: Illustrative Context Preserving Exploration
    * */
-  int GPURaycastTechniqueIIFg;
+  //int GPURaycastTechniqueIIFg;
 
   /*
    * fusion method in GPU ray cast II
@@ -307,7 +342,7 @@ protected:
    * 2: MIP
    * 3: MINIP
    * */
-  int GPURaycastTechnique3;
+  //int GPURaycastTechnique3;
 
   double Threshold[2];
   double ThresholdFg[2];
@@ -315,7 +350,7 @@ protected:
   int UseThreshold;
   int UseFgThreshold;
 
-  float GPURaycastIIBgFgRatio;
+  float BgFgRatio;
 
   //follow window/level and thresholding setting in volume display node
   int FollowVolumeDisplayNode;

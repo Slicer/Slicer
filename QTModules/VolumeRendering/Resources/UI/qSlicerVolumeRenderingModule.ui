@@ -171,12 +171,158 @@
       <item>
        <widget class="QTabWidget" name="RenderingTabWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="TechniquesTab">
          <attribute name="title">
           <string>Techniques</string>
          </attribute>
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="RenderingMethodLabel">
+            <property name="text">
+             <string>Rendering Method:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="RenderingMethodComboBox">
+            <item>
+             <property name="text">
+              <string>VTK CPU Ray Casting</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>VTK GPU Ray Casting</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>VTK OpenGL 3D Texture Mapping</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NCI GPU Ray Casting</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NCI GPU Ray Casting (Multi-Volume)</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="MemorySizeLabel">
+            <property name="text">
+             <string>GPU Memory Size:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="MemorySizeComboBox">
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="QualityControlLabel">
+            <property name="text">
+             <string>Quality Control:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="QualityControlComboBox">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Adaptative</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Maximum Quality</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Fixed Framerate</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="FramerateLabel">
+            <property name="text">
+             <string>Interactive Speed:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="ctkSliderWidget" name="FramerateSliderWidget">
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>20.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>8.000000000000000</double>
+            </property>
+            <property name="suffix">
+             <string> fps</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="ctkCollapsibleGroupBox" name="AdvancedGroupBox">
+            <property name="title">
+             <string>Advanced Rendering Properties</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout_7">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="RenderingTechniqueLabel">
+               <property name="text">
+                <string>Technique (bg):</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="RenderingTechniqueComboBox"/>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="QStackedWidget" name="stackedWidget">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <widget class="QWidget" name="VTKCPUPage">
+                <layout class="QFormLayout" name="formLayout_4">
+                 <property name="fieldGrowthPolicy">
+                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                 </property>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="VKTGPUPage">
+                <layout class="QFormLayout" name="formLayout_6"/>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="VolumePropertyTab">
          <attribute name="title">
@@ -214,7 +360,7 @@
            </widget>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget" native="true"/>
+           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
           </item>
           <item row="2" column="0" colspan="2">
            <widget class="QPushButton" name="ROIFitPushButton">
@@ -239,10 +385,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
@@ -255,20 +400,32 @@
    <header>qMRMLVolumePropertyNodeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLAnnotationROIWidget</class>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -282,8 +439,8 @@
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>323</x>
-     <y>65</y>
+     <x>396</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>180</x>
@@ -298,12 +455,12 @@
    <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>554</x>
-     <y>63</y>
+     <x>606</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>246</x>
-     <y>159</y>
+     <x>257</x>
+     <y>314</y>
     </hint>
    </hints>
   </connection>
@@ -330,12 +487,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>242</x>
-     <y>61</y>
+     <x>315</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>247</x>
-     <y>63</y>
+     <x>320</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>
@@ -346,12 +503,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>223</x>
-     <y>61</y>
+     <x>296</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>225</x>
-     <y>65</y>
+     <x>298</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -362,12 +519,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>61</y>
+     <x>546</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>447</x>
-     <y>59</y>
+     <x>520</x>
+     <y>75</y>
     </hint>
    </hints>
   </connection>
@@ -378,12 +535,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>298</x>
-     <y>61</y>
+     <x>371</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>299</x>
-     <y>67</y>
+     <x>372</x>
+     <y>83</y>
     </hint>
    </hints>
   </connection>
@@ -414,8 +571,8 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>216</x>
-     <y>67</y>
+     <x>289</x>
+     <y>83</y>
     </hint>
    </hints>
   </connection>
@@ -430,8 +587,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>573</x>
-     <y>63</y>
+     <x>606</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>
@@ -447,7 +604,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>606</x>
-     <y>65</y>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -462,8 +619,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>529</x>
-     <y>61</y>
+     <x>602</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -480,6 +637,22 @@
     <hint type="destinationlabel">
      <x>445</x>
      <y>19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RenderingMethodComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>329</y>
     </hint>
    </hints>
   </connection>
