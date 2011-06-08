@@ -127,29 +127,50 @@ class DICOMWidget:
       self.loadButton.enabled = False 
 
   def onLoadButton(self):
+    self.progress = qt.QProgressDialog()
+    self.progress.minimumDuration = 0
+    self.progress.show()
+    self.progress.setValue(0)
     uid = self.selection.data(self.dicomModelUIDRole)
     role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
     toLoad = {}
     if role == "Patient":
+      self.progress.show()
       self.loadPatient(uid)
     elif role == "Study":
+      self.progress.show()
       self.loadStudy(uid)
     elif role == "Series":
-      name = self.selection.data()
-      seriesUID = uid
-      self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
+      self.loadSeries(uid)
     elif role == "Image":
       pass
+    self.progress = None
 
   def loadPatient(self,patientUID):
     studies = self.dicomDatabase.studiesForPatient(patientUID)
+    s = 1
+    self.progress.setLabelText("Loading Studies")
+    self.progress.setValue(1)
     for study in studies:
+      self.progress.setLabelText("Loading Study %d of %d" % (s, len(studies)))
+      slicer.app.processEvents()
+      s += 1
       self.loadStudy(study)
+      if self.progress.wasCanceled:
+        break
 
   def loadStudy(self,studyUID):
     series = self.dicomDatabase.seriesForStudy(studyUID)
+    s = 1
+    origText = self.progress.labelText
     for serie in series:
+      self.progress.setLabelText(origText + "\nLoading Series %d of %d" % (s, len(series)))
+      slicer.app.processEvents()
+      s += 1
+      self.progress.setValue(100.*s/len(series))
       self.loadSeries(serie)
+      if self.progress.wasCanceled:
+        break
 
   def loadSeries(self,seriesUID):
     files = self.dicomDatabase.filesForSeries(seriesUID)
@@ -183,7 +204,11 @@ class DICOMWidget:
       if not self.testingServer:
         # find the helper executables (only works on build trees
         # with standard naming conventions)
-        self.exeDir = os.environ['SLICER_HOME'] + '/../CTK-build/DCMTK-build/bin'
+        self.exeDir = slicer.app.slicerHome() 
+        if slicer.app.intDir():
+          self.exeDir = self.exeDir + '/' + slicer.app.intDir()
+        self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build/bin'
+
         # TODO: deal with Debug/RelWithDebInfo on windows
 
         # set up temp dir
@@ -197,7 +222,7 @@ class DICOMWidget:
 
       # look for the sample data to load (only works on build trees
       # with standard naming conventions)
-      self.dataDir = os.environ['SLICER_HOME'] + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
+      self.dataDir =  slicer.app.slicerHome() + '/../../Slicer4/Testing/Data/Input/CTHeadAxialDicom'
       files = glob.glob(self.dataDir+'/*.dcm')
 
       # now start the server
