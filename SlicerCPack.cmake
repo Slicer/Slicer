@@ -51,7 +51,7 @@ endif()
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
 set(APPLICATION_NAME "Slicer")
-set(EXECUTABLE_NAME "Slicer4")
+set(EXECUTABLE_NAME "Slicer")
 set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
 
 # -------------------------------------------------------------------------
