@@ -62,7 +62,7 @@ int main( int argc, char * argv[] )
       }
 
     //Compute the mean baseline image
-    vtkSmartPointer<vtkImageWeightedSum> imageWeightedSum = vtkImageWeightedSum::New();
+    vtkSmartPointer<vtkImageWeightedSum> imageWeightedSum = vtkSmartPointer<vtkImageWeightedSum>::New();
     imageWeightedSum->NormalizeByWeightOn();
 
     int b0_count = 0;
@@ -71,7 +71,7 @@ int main( int argc, char * argv[] )
       double* gradient = grads->GetTuple3(gradient_n);
       if (abs(gradient[0]) + abs(gradient[1]) + abs(gradient[2]) < GRAD_0_TOL)
         {
-          vtkSmartPointer<vtkImageExtractComponents> extractComponents = vtkImageExtractComponents::New();
+          vtkSmartPointer<vtkImageExtractComponents> extractComponents = vtkSmartPointer<vtkImageExtractComponents>::New();
           extractComponents->SetInput(reader->GetOutput());
           extractComponents->SetComponents(gradient_n);
           extractComponents->Update();
