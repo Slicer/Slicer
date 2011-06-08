@@ -29,6 +29,12 @@
 #
 #  COMPONENT ....: Usually Runtime or RuntimeLibraries
 #
+#  PERMISSIONS ..: Specify permissions for installed files. Valid permissions are OWNER_READ,
+#                  OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_WRITE, GROUP_EXECUTE, WORLD_READ,
+#                  WORLD_WRITE, WORLD_EXECUTE, SETUID, and SETGID. 
+#                  Permissions that do not make sense on certain platforms are ignored 
+#                  on those platforms.
+#
 
 #
 # When installing system libraries, on non-windows machines, the CMake variable
@@ -38,23 +44,26 @@
 
 FUNCTION(slicerInstallLibrary)
   SLICER_PARSE_ARGUMENTS(_slicerInstallLibrary
-    "FILE;DESTINATION;COMPONENT"
+    "FILE;DESTINATION;COMPONENT;PERMISSIONS"
     ""
     ${ARGN}
     )
 
   IF(NOT WIN32)
   
+    SET(install_permissions)
+    IF(DEFINED _slicerInstallLibrary_PERMISSIONS)
+      SET(install_permissions PERMISSIONS ${_slicerInstallLibrary_PERMISSIONS})
+    ENDIF()
+  
     GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
     SET(name_tmp)
-    # libs symlinks are always named lib.*.dylib on mac
-    # libs symlinks are always named lib.so.* on linux
-
+    # Note: Library symlinks are always named "lib.*.dylib" on mac or "lib.so.*" on linux
     GET_FILENAME_COMPONENT(lib_dir ${_slicerInstallLibrary_FILE} PATH)
     GET_FILENAME_COMPONENT(lib_name ${_slicerInstallLibrary_FILE} NAME_WE)
     INSTALL(DIRECTORY ${lib_dir}/ 
       DESTINATION ${_slicerInstallLibrary_DESTINATION} COMPONENT ${_slicerInstallLibrary_COMPONENT}
-      FILES_MATCHING PATTERN "${lib_name}*"
+      FILES_MATCHING PATTERN "${lib_name}*" ${install_permissions}
       PATTERN "${lib_name}*.a" EXCLUDE)
   ENDIF()
 ENDFUNCTION()
