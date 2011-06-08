@@ -1,23 +1,26 @@
 
+#
 # Make sure this CMake has BundleUtilities.cmake:
 #
 if(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
   message(FATAL_ERROR "error: BundleUtilities.cmake not found. Use CMake 2.8.3 or later.")
-endif(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
+endif()
+include(BundleUtilities)
 
+#
 # Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
 #
 if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0009 NEW)
-
   if(POLICY CMP0011)
     cmake_policy(SET CMP0011 NEW)
-  endif(POLICY CMP0011)
-endif(COMMAND CMAKE_POLICY)
+  endif()
+endif()
 
 
+#-----------------------------------------------------------------------------
 # gp_item_default_embedded_path_override item default_embedded_path_var
-#
+#-----------------------------------------------------------------------------
 # Return the path that others should refer to the item by when the item
 # is embedded inside a bundle.
 #
@@ -27,12 +30,11 @@ endif(COMMAND CMAKE_POLICY)
 function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   # By default, embed items as set by gp_item_default_embedded_path:
-  #
   set(path "${${default_embedded_path_var}}")
 
   if(item MATCHES "\\.dylib$")
     set(path "@executable_path@/../lib/Slicer3")
-  endif(item MATCHES "\\.dylib$")
+  endif()
 
   if(item MATCHES "libpython.*\\.dylib$")
     set(path "@executable_path@/../lib/Python/lib")
@@ -79,13 +81,11 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   endif()
 
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
-endfunction(gp_item_default_embedded_path_override)
+endfunction()
 
-
+#-----------------------------------------------------------------------------
 # Fixup the .app bundles in the install tree:
-#
-include(BundleUtilities)
-
+#-----------------------------------------------------------------------------
 function(fixup_bundle_with_plugins location app)
   set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
@@ -110,14 +110,23 @@ function(fixup_bundle_with_plugins location app)
       set(libs ${libs} "${lib}")
     endif()
   endforeach()
+  
+  list(REMOVE_DUPLICATES libs)
 
   # Additional libs may be found in:
-  #
   set(libs_path "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
-  list(APPEND libs_path "@VTK_DIR@/bin;@ITK_DIR@/bin;@Teem_DIR@/bin;@BatchMake_DIR@/bin;@OpenIGTLink_DIR@/bin;@CTK_DIR@/bin")
-  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3;@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@;@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@;@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
+  list(APPEND libs_path "@VTK_DIR@/bin")
+  list(APPEND libs_path "@ITK_DIR@/bin")
+  list(APPEND libs_path "@Teem_DIR@/bin")
+  list(APPEND libs_path "@BatchMake_DIR@/bin")
+  list(APPEND libs_path "@OpenIGTLink_DIR@/bin")
+  list(APPEND libs_path "@CTK_DIR@/bin")
+  
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3")
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@")
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
 
-  list(REMOVE_DUPLICATES libs)
   list(REMOVE_DUPLICATES libs_path)
 
   message("Calling fixup_bundle with")
