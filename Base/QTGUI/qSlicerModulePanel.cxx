@@ -45,9 +45,8 @@
 class qSlicerModulePanelPrivate: public Ui_qSlicerModulePanel
 {
 public:
+  void setupUi(qSlicerWidget* widget);
   /*
-  void setupUi(QWidget * widget);
-
   QTextBrowser*          HelpLabel;
   //QWebView*              HelpLabel;
   QBoxLayout*            Layout;
@@ -235,10 +234,16 @@ void qSlicerModulePanel::removeAllModules()
 
 //---------------------------------------------------------------------------
 // qSlicerModulePanelPrivate methods
-/*
+
 //---------------------------------------------------------------------------
-void qSlicerModulePanelPrivate::setupUi(QWidget * widget)
+void qSlicerModulePanelPrivate::setupUi(qSlicerWidget * widget)
 {
+  this->Ui_qSlicerModulePanel::setupUi(widget);
+  this->HelpLabel->setOpenExternalLinks(true);
+  this->AcknowledgementLabel->setOpenExternalLinks(true);
+}
+
+/*
   QWidget* panel = new QWidget;
   this->HelpCollapsibleButton = new ctkCollapsibleButton("Help");
   this->HelpCollapsibleButton->setCollapsed(true);
