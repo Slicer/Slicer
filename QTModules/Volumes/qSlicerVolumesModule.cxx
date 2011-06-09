@@ -59,13 +59,17 @@ qSlicerVolumesModule::~qSlicerVolumesModule()
 QString qSlicerVolumesModule::helpText()const
 {
   QString help = QString(
-    "The Volumes Module loads and adjusts display parameters of volume data.\n"
-    "<a>%1/Documentation-3.6</a>\n\nThe Diffusion Editor allows modifying "
+    "The Volumes Module loads and adjusts display parameters of volume data.<br>"
+    "<a href=\"%1/Modules:Volumes-Documentation-3.6\">"
+    "%1/Modules:Volumes-Documentation-4.0</a><br>"
+    "The Diffusion Editor allows modifying "
     "parameters (gradients, bValues, measurement frame) of DWI data and "
     "provides a quick way to interpret them. "
     "For that it estimates a tensor and shows glyphs and tracts "
-    "for visual exploration. Help for Diffusion Editor: "
-    "<a>%1/Modules:Volumes:Diffusion_Editor-Documentation</a>");
+    "for visual exploration.<br><br>"
+    "Help for Diffusion Editor: "
+    "<a href=\"%1/Modules:Volumes:Diffusion_Editor-Documentation\">"
+    "%1/Modules:Volumes:Diffusion_Editor-Documentation</a>");
   return help.arg(this->slicerWikiUrl());
 }
 
@@ -73,10 +77,19 @@ QString qSlicerVolumesModule::helpText()const
 QString qSlicerVolumesModule::acknowledgementText()const
 {
   QString acknowledgement = QString(
+    "<center><table border=\"0\"><tr>"
+    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+    "</tr><tr>"
+    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+    "</tr></table></center>"
     "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community. See <a>http://www.slicer.org</a> for details.\n"
+    "Community. See <a href=\"http://www.slicer.org\">http://www.slicer.org"
+    "</a> for details.<br>"
     "The Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. "
-    "(Steve Pieper) with help from others at SPL, BWH (Ron Kikinis). \n\n"
+    "(Steve Pieper) and Julien Finet, Kitware Inc. with help from others at "
+    "SPL, BWH (Ron Kikinis).<br><br>"
     "The Diffusion Editor was developed by Kerstin Kessel.");
   return acknowledgement;
 }

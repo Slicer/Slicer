@@ -98,7 +98,7 @@ void qSlicerCoreModuleFactory::registerItems()
   Q_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
   // if you disable the color module, it would not initialize the color logic
-  d->registerCoreModule<qSlicerColorsModule>();
+  //d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   //d->registerCoreModule<qSlicerMRMLTreeModule>();
   // vtkMRMLROINode are obsolete, one should use the Annotation module to
