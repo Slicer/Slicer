@@ -179,7 +179,8 @@ class tpycl(object):
   def tcl_putenv(self, key, value):
     """ Set environment variable
     """
-    self.tcl.eval("global env; set env(%s) \"%s\""%(key, value))
+    import re
+    self.tcl.eval("global env; set env(%s) \"%s\""%(key, re.escape(value)))
 
   def main(self, argv):
     """ main loop for the interpreter shell
