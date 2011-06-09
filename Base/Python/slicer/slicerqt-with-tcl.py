@@ -6,12 +6,6 @@
 def tcl(cmd):
   global _tpycl
   try:
-    import os
-    os.environ['SLICER_HOME']
-  except KeyError:
-    home = os.path.dirname(os.path.dirname(sys.executable))
-    os.environ['SLICER_HOME'] = home
-  try:
     _tpycl
   except NameError:
     # no tcl yet, so first bring in the adapters, then the actual code
