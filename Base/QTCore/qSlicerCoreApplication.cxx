@@ -207,6 +207,19 @@ void qSlicerCoreApplicationPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+#if defined(Slicer_USE_PYTHONQT) &&  defined(Q_WS_WIN)
+void qSlicerCoreApplicationPrivate::updatePythonOsEnviron()
+{
+  foreach(const QString& key, this->EnvironmentVariablesCache.keys())
+    {
+    this->CorePythonManager->executeString(
+          QString("import os; os.environ['%1']='%2'; del os").arg(
+            key).arg(this->EnvironmentVariablesCache.value(key)));
+    }
+}
+#endif
+
+//-----------------------------------------------------------------------------
 QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suffix,
                                                                 bool useTmp)
 {
@@ -489,13 +502,10 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handleCommandLineArguments()
 {
-  Q_D(qSlicerCoreApplication);
-
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
 #ifndef Slicer_USE_PYTHONQT
-  Q_UNUSED(d);
   Q_UNUSED(options);
 #else
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
@@ -525,19 +535,6 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     // Clean memory
     for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
     delete[] pythonArgv;
-
-#ifndef Q_WS_WIN
-  Q_UNUSED(d);
-#else
-    // HACK - Since on windows setting an environment variable using putenv doesn't propagate
-    //        to the environment initialized in python, let's force the value of SLICER_HOME.
-    foreach(const QString& key, d->EnvironmentVariablesCache.keys())
-      {
-      this->corePythonManager()->executeString(
-            QString("import os; os.environ['%1']='%2'; del os").arg(
-              key).arg(d->EnvironmentVariablesCache.value(key)));
-      }
-#endif
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
     if (!(options->displayHelpAndExit() ||
@@ -764,6 +761,14 @@ void qSlicerCoreApplication::setCorePythonManager(qSlicerCorePythonManager* mana
 {
   Q_D(qSlicerCoreApplication);
   d->CorePythonManager = QSharedPointer<qSlicerCorePythonManager>(manager);
+#ifdef Q_WS_WIN
+  // HACK - Since on windows setting an environment variable using putenv doesn't propagate
+  // to the environment initialized in python, let's make sure 'os.environ' is updated.
+  if (!d->CorePythonManager.isNull())
+    {
+    d->updatePythonOsEnviron();
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------

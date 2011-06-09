@@ -133,6 +133,7 @@ public:
   QProcessEnvironment                         Environment;
 
 #if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
+  void updatePythonOsEnviron();
   QHash<QString, QString>                     EnvironmentVariablesCache;
 #endif
 };
