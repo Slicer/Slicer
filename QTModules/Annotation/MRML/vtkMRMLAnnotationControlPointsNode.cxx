@@ -460,7 +460,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     {
       this->ResetControlPoints();
     }
-  else 
+  else  if (this->PolyData->GetNumberOfPoints() > id)
     {
     // check if is different to prevent recursive event loops
     double *pnt = this->PolyData->GetPoints()->GetPoint(id);
