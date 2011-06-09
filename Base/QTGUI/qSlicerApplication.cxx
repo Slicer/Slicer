@@ -111,6 +111,11 @@ void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
 
+  this->ColorDialogPickerWidget =
+    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
+  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
+                                "Labels", SIGNAL(colorSelected(const QColor&)));
+
   this->Superclass::init();
 
   this->initStyle();
@@ -126,11 +131,6 @@ void qSlicerApplicationPrivate::init()
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setEnabled(false);
-
-  this->ColorDialogPickerWidget =
-    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
-  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
-                                "Labels", SIGNAL(colorSelected(const QColor&)));
 }
 /*
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
@@ -163,6 +163,7 @@ qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
   : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, 0), _argc, _argv)
 {
   Q_D(qSlicerApplication);
+  d->init();
   // Note: Since QWidget/QDialog requires a QApplication to be successfully instantiated,
   //       qSlicerIOManager is not added to the constructor initialization list.
   //       Indeed, internally qSlicerIOManager registers qSlicerDataDialog, ...

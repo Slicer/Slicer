@@ -412,8 +412,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(
   qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv)
   : Superclass(argc, argv), d_ptr(pimpl)
 {
-  Q_D(qSlicerCoreApplication);
-  d->init();
+  // Note: You are responsible to call init() in the constructor of derived class.
 }
 
 //-----------------------------------------------------------------------------
