@@ -36,8 +36,13 @@ int vtkDataIOManagerLogicTest1(int , char * [] )
   node1->GetApplicationLogic()->Print(std::cout);
   TEST_SET_GET_STRING(node1, ModuleName);
   TEST_SET_GET_STRING(node1, ModuleLocation);
-  std::cout << "ModuleShareDirectory: " << node1->GetModuleShareDirectory() << std::endl;
-  std::cout << "ModuleLibDirectory: " << node1->GetModuleLibDirectory() << std::endl;
+  // ERROR because SLICER_HOME is only defined in qSlicerCoreApplication()
+  std::cout << "ModuleShareDirectory: "
+            << (node1->GetModuleShareDirectory() ?
+                node1->GetModuleShareDirectory() : "ERROR") << std::endl;
+  std::cout << "ModuleLibDirectory: "
+            << (node1->GetModuleLibDirectory() ?
+                node1->GetModuleLibDirectory() : "ERROR") << std::endl;
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   node1->LoadDefaultParameterSets(scene);
 
