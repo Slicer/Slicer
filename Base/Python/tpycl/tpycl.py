@@ -30,13 +30,13 @@ class tpycl(object):
     self.tcl.createcommand("py_del", self.py_del)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
 
-   import platform
-   if platform.system() == "Windows":
-     # Update environment variables set by application - unlike other platforms,
-     # on windows this does not happen automatically so we do it here
-     # Note that subsquent env changes will not be reflected
-     for key in os.environ.keys():
-       self.tcl_putenv(key, os.environ[key])
+    import platform
+    if platform.system() == "Windows":
+      # Update environment variables set by application - unlike other platforms,
+      # on windows this does not happen automatically so we do it here
+      # Note that subsquent env changes will not be reflected
+      for key in os.environ.keys():
+        self.tcl_putenv(key, os.environ[key])
 
     # This path is Slicer-specific
     self.tcl.eval("source $::env(SLICER_HOME)/bin/Python/tpycl/tpycl.tcl")
