@@ -182,7 +182,6 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   vtkDataArray *inTensors;
   double tensor[3][3];
   vtkPointData *pd;
-  int numPts, inPtId;
   // time
   clock_t tStart=0;
   tStart = clock();
@@ -198,9 +197,8 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   // find the input region to loop over
   pd = in1Data->GetPointData();
   inTensors = pd->GetTensors();
-  numPts = in1Data->GetNumberOfPoints();
 
-  if ( !inTensors || numPts < 1 )
+  if ( !inTensors || in1Data->GetNumberOfPoints() < 1 )
     {
     vtkGenericWarningMacro(<<"No input tensor data to filter!");
     return;
@@ -225,34 +223,19 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  vtkIdType *inInc;
-  int *inFullUpdateExt;
-  inInc = in1Data->GetIncrements();
-  inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
-  inPtId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
-          + (outExt[2] - inFullUpdateExt[2]) * inInc[1]
-          + (outExt[4] - inFullUpdateExt[4]) * inInc[2]);
+  T* inPtr = reinterpret_cast<T*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
   
-  int doMasking = 0;
-  vtkDataArray *inMask = NULL;
-  short * inMaskptr = NULL;
-  if (self->GetScalarMask())
+  bool doMasking = false;
+  short * inMaskPtr = 0;
+  vtkIdType maskIncX = 0;
+  vtkIdType maskIncY = 0;
+  vtkIdType maskIncZ = 0;
+  if (self->GetMaskWithScalars() && self->GetScalarMask())
     {
-    inMask = self->GetScalarMask()->GetPointData()->GetScalars();
-    inMaskptr = (short *) inMask->GetVoidPointer(0);
+    self->GetScalarMask()->GetContinuousIncrements(outExt, maskIncX, maskIncY, maskIncZ);
+    inMaskPtr = reinterpret_cast<short *>(self->GetScalarMask()->GetScalarPointerForExtent(outExt));
+    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != 0;
     }
-
-  if (self->GetMaskWithScalars())
-    {
-    if (inMask) {
-      doMasking = 1;
-    }
-    else {
-      doMasking = 0;
-      //vtkWarningMacro("User has not set input mask, but has requested MaskWithScalars.\n Avoiding masking");
-    }
-    }
-
 
   for (idxZ = 0; idxZ <= maxZ; idxZ++)
     {
@@ -271,7 +254,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
       for (idxR = 0; idxR < rowLength; idxR++)
         {
 
-        if (doMasking && *(inMaskptr+inPtId) != self->GetMaskLabelValue())
+        if (doMasking && *inMaskPtr != self->GetMaskLabelValue())
           {
           *outPtr = 0;
           }
@@ -279,7 +262,15 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
           {
 
           // tensor at this voxel
-          inTensors->GetTuple(inPtId,(double *)tensor);
+          tensor[0][0] = static_cast<double>(inPtr[0]);
+          tensor[0][1] = static_cast<double>(inPtr[1]);
+          tensor[0][2] = static_cast<double>(inPtr[2]);
+          tensor[1][0] = static_cast<double>(inPtr[3]);
+          tensor[1][1] = static_cast<double>(inPtr[4]);
+          tensor[1][2] = static_cast<double>(inPtr[5]);
+          tensor[2][0] = static_cast<double>(inPtr[6]);
+          tensor[2][1] = static_cast<double>(inPtr[7]);
+          tensor[2][2] = static_cast<double>(inPtr[8]);
 
           // pixel operation
           switch (op)
@@ -311,18 +302,17 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
             }
         }
 
-        if (inPtId > numPts) 
-          {
-          vtkGenericWarningMacro(<<"not enough input pts for output extent "<<numPts<<" "<<inPtId);
-          }
         outPtr++;
-        inPtId++;
+        inPtr+=9;
+        inMaskPtr++;
         }
       outPtr += outIncY;
-      inPtId += inIncY;
+      inPtr += inIncY;
+      inMaskPtr += maskIncY;
       }
     outPtr += outIncZ;
-    inPtId += outIncZ;
+    inPtr += inIncZ;
+    inMaskPtr += maskIncZ;
     }
 
   //cout << "tensor math time: " << clock() - tStart << endl;
@@ -335,38 +325,6 @@ inline Type tensor_math_clamp(const Type a,
                   const Type b,
                   const Type c) { return (a) > (b) ? ((a) < (c) ? (a) : (c)) : (b) ; }
 
-
-//----------------------------------------------------------------------------
-// This method computes the increments from the MemoryOrder and the extent.
-// This is a WORKAROUND a VTK bug that assumes only Scalars
-
-static void ComputeIncrements(vtkImageData *img, vtkIdType inc[3])
-{
-  int idx;
-  vtkIdType incr = 0;
-  // make sure we have data before computing incrments to traverse it
-  if (img->GetPointData()->GetScalars())
-    {
-    incr = img->GetPointData()->GetScalars()->GetNumberOfComponents();
-    }
-  else if (img->GetPointData()->GetTensors())
-    {
-    incr = img->GetPointData()->GetTensors()->GetNumberOfComponents();
-    }
-  else
-    {
-    std::cerr << "ComputeIncrements(): invalid image data\n";
-    return;
-    }
-
-  const int* extent = img->GetExtent();
-
-  for (idx = 0; idx < 3; ++idx)
-    {
-    inc[idx] = incr;
-    incr *= (extent[idx*2+1] - extent[idx*2] + 1);
-    }
-}
 
 //----------------------------------------------------------------------------
 static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType &incX,
@@ -400,7 +358,8 @@ static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType 
 
   // Make sure the increments are up to date
   vtkIdType inc[3];
-  ComputeIncrements(img, inc);
+  img->GetArrayIncrements(img->GetPointData()->GetTensors(), inc);
+  //ComputeIncrements(img, inc);
 
   incY = inc[1] - (e1 - e0 + 1)*inc[0];
   incZ = inc[2] - (e3 - e2 + 1)*inc[1];
@@ -432,7 +391,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   vtkDataArray *inTensors;
   double tensor[3][3];
   vtkPointData *pd;
-  int numPts, inPtId;
+  int numPts;
   // time
   clock_t tStart=0;
   tStart = clock();
@@ -479,19 +438,11 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   
   // Get increments to march through output data 
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
-
   // Call special version of GetContinuousIncrements that works for Tensors
-  // This is a WORKAROUND a VTK bug that assumes only Scalars
   GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
-  //Initialize ptId to walk through tensor volume
-  vtkIdType inInc[3];
-  int *inFullUpdateExt;
-  self->ComputeTensorIncrements(in1Data, inInc);
-  inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
-  inPtId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
-     + (outExt[2] - inFullUpdateExt[2]) * inInc[1]
-     + (outExt[4] - inFullUpdateExt[4]) * inInc[2]);
+  //Initialize inPtr to walk through tensor volume
+  T* inPtr = reinterpret_cast<T*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
 
   // decide whether to extract eigenfunctions or just use input cols
   extractEigenvalues = self->GetExtractEigenvalues();
@@ -508,24 +459,16 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
     }
 
   // Check for masking
-  int doMasking = 0;
-  vtkDataArray *inMask = NULL;
-  if (self->GetScalarMask())
+  bool doMasking = false;
+  short * inMaskPtr = 0;
+  vtkIdType maskIncX = 0;
+  vtkIdType maskIncY = 0;
+  vtkIdType maskIncZ = 0;
+  if (self->GetMaskWithScalars() && self->GetScalarMask())
     {
-    inMask = self->GetScalarMask()->GetPointData()->GetScalars();
-    }
-
-  if (self->GetMaskWithScalars())
-    {
-    if (inMask)
-      {
-      doMasking = 1;
-      }
-    else
-      {
-      doMasking = 0;
-      //vtkWarningMacro("User has not set input mask, but has requested MaskWithScalars.\n Avoiding masking");
-      }
+    self->GetScalarMask()->GetContinuousIncrements(outExt, maskIncX, maskIncY, maskIncZ);
+    inMaskPtr = reinterpret_cast<short *>(self->GetScalarMask()->GetScalarPointerForExtent(outExt));
+    doMasking = self->GetScalarMask()->GetPointData()->GetScalars() != 0;
     }
 
    //vtkGenericWarningMacro( "Do masking: " << doMasking );
@@ -548,8 +491,8 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 
       for (idxR = 0; idxR < rowLength; idxR++)
         {
-
-        if (doMasking && inMask->GetTuple1(inPtId) != self->GetMaskLabelValue()) {
+        if (doMasking && *inMaskPtr != self->GetMaskLabelValue())
+          {
           *outPtr = 0;
 
           if (op ==  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE || 
@@ -565,7 +508,15 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
         else {   
 
           // tensor at this voxel
-          inTensors->GetTuple(inPtId,(double *)tensor);
+          tensor[0][0] = static_cast<double>(inPtr[0]);
+          tensor[0][1] = static_cast<double>(inPtr[1]);
+          tensor[0][2] = static_cast<double>(inPtr[2]);
+          tensor[1][0] = static_cast<double>(inPtr[3]);
+          tensor[1][1] = static_cast<double>(inPtr[4]);
+          tensor[1][2] = static_cast<double>(inPtr[5]);
+          tensor[2][0] = static_cast<double>(inPtr[6]);
+          tensor[2][1] = static_cast<double>(inPtr[7]);
+          tensor[2][2] = static_cast<double>(inPtr[8]);
 
           // get eigenvalues and eigenvectors appropriately
           if (extractEigenvalues) 
@@ -731,16 +682,20 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             {
             *outPtr = (T) ((*outPtr) * scaleFactor);
             }
-        }
+          }
+
 
         outPtr++;
-        inPtId++;
+        inPtr+=9;
+        inMaskPtr++;
         }
       outPtr += outIncY;
-      inPtId += inIncY;
+      inPtr += inIncY;
+      inMaskPtr += maskIncY;
       }
     outPtr += outIncZ;
-    inPtId += outIncZ;
+    inPtr += inIncZ;
+    inMaskPtr += maskIncZ;
     }
   // Cleanup     
   trans->Delete();     

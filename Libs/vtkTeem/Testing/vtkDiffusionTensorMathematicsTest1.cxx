@@ -34,7 +34,7 @@
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  vtkMultiThreader::SetGlobalMaximumNumberOfThreads(2);
+  vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
   // Generate a 2x2x2 tensor image with identity at each voxel
   vtkSmartPointer<vtkImageData> tensorImage = vtkSmartPointer<vtkImageData>::New();
   int dimensions[3] = {2, 2, 2};
@@ -68,26 +68,61 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   // so the trace would be 4.f not 3.f
   ptr[dimensions[0]*dimensions[1]*dimensions[2]*9-1] = 2.f;
 
-  // Execute the filter
-  vtkSmartPointer<vtkDiffusionTensorMathematics> filter =
-    vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
-  filter->SetOperationToTrace();
-  filter->SetInput(tensorImage);
-  filter->Update();
+  // Generate mask
+  // Generate a 2x2x2 tensor image with identity at each voxel
+  vtkSmartPointer<vtkImageData> maskImage = vtkSmartPointer<vtkImageData>::New();
+  maskImage->SetDimensions(dimensions);
+  maskImage->SetSpacing(1.5, 10., 100.);
+  maskImage->SetOrigin(-10., 40, 0.1);
+  maskImage->SetScalarTypeToShort();
+  maskImage->SetNumberOfScalarComponents(9);
+  maskImage->AllocateScalars();
 
-  // Checkout the results
-  vtkImageData* output = filter->GetOutput();
-  ptr = reinterpret_cast<float*>(output->GetScalarPointer());
+  short* maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
   for (int z=0; z < dimensions[2]; ++z )
     {
     for (int y=0; y < dimensions[1]; ++y )
       {
       for (int x=0; x < dimensions[0]; ++x )
         {
-        std::cout << '(' << x << ',' << y << ',' << z << ")=" << *ptr << std::endl;
-        ++ptr;
+        *maskPtr++ = 0;
         }
       }
+    }
+  // Mask the 2nd voxel
+  maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
+  maskPtr[1] = 1;
+
+  // Execute the filter
+  vtkSmartPointer<vtkDiffusionTensorMathematics> filter =
+    vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
+  filter->SetInput(tensorImage);
+  filter->SetScalarMask(maskImage);
+  filter->SetMaskLabelValue(0);  // mask all the labels different from 0
+  filter->SetMaskWithScalars(1); // turn on masking
+  for (int i = vtkDiffusionTensorMathematics::VTK_TENS_TRACE;
+       i <=vtkDiffusionTensorMathematics::VTK_TENS_PERPENDICULAR_DIFFUSIVITY;
+       ++i)
+    {
+    filter->SetOperation(i);
+    filter->Update();
+    
+    std::cout << "Operation " << i << ":" << std::endl;
+    // Checkout the results
+    vtkImageData* output = filter->GetOutput();
+    ptr = reinterpret_cast<float*>(output->GetScalarPointer());
+    for (int z=0; z < dimensions[2]; ++z )
+      {
+      for (int y=0; y < dimensions[1]; ++y )
+        {
+        for (int x=0; x < dimensions[0]; ++x )
+          {
+          std::cout << '(' << x << ',' << y << ',' << z << ")=" << *ptr << std::endl;
+          ++ptr;
+          }
+        }
+      }
+    std::cout << std::endl << std::endl;
     }
   return EXIT_SUCCESS;
 }
