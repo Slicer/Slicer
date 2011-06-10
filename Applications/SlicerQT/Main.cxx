@@ -290,12 +290,13 @@ int main(int argc, char* argv[])
       continue;
       }
     qWarning() << "checking module " << name;
-    moduleManager->loadModule(name);
     if (enableSplash)
       {
-      splash.showMessage("Loading module " + name, Qt::AlignBottom | Qt::AlignHCenter);
+      splash.showMessage("Loading module " + name + "...",
+                         Qt::AlignBottom | Qt::AlignHCenter);
       splash.repaint();
       }
+    moduleManager->loadModule(name);
     }
 
   if (enableSplash)
