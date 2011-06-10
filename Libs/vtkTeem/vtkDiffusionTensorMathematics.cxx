@@ -158,6 +158,45 @@ int vtkDiffusionTensorMathematics
 }
 
 //----------------------------------------------------------------------------
+static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType &incX,
+                                    vtkIdType &incY, vtkIdType &incZ)
+{
+  int e0, e1, e2, e3;
+
+  incX = 0;
+  const int* selfExtent = img->GetExtent();
+
+  e0 = extent[0];
+  if (e0 < selfExtent[0])
+    {
+    e0 = selfExtent[0];
+    }
+  e1 = extent[1];
+  if (e1 > selfExtent[1])
+    {
+    e1 = selfExtent[1];
+    }
+  e2 = extent[2];
+  if (e2 < selfExtent[2])
+    {
+    e2 = selfExtent[2];
+    }
+  e3 = extent[3];
+  if (e3 > selfExtent[3])
+    {
+    e3 = selfExtent[3];
+    }
+
+  // Make sure the increments are up to date
+  vtkIdType inc[3];
+  img->GetArrayIncrements(img->GetPointData()->GetTensors(), inc);
+  //ComputeIncrements(img, inc);
+
+  incY = inc[1] - (e1 - e0 + 1)*inc[0];
+  incZ = inc[2] - (e3 - e2 + 1)*inc[1];
+}
+
+//----------------------------------------------------------------------------
 // This templated function executes the filter for any type of data.
 // Handles the one input operations.
 // Handles the ops where eigensystems are not computed.
@@ -324,46 +363,6 @@ template <class Type>
 inline Type tensor_math_clamp(const Type a,
                   const Type b,
                   const Type c) { return (a) > (b) ? ((a) < (c) ? (a) : (c)) : (b) ; }
-
-
-//----------------------------------------------------------------------------
-static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType &incX,
-                                    vtkIdType &incY, vtkIdType &incZ)
-{
-  int e0, e1, e2, e3;
-
-  incX = 0;
-  const int* selfExtent = img->GetExtent();
-
-  e0 = extent[0];
-  if (e0 < selfExtent[0])
-    {
-    e0 = selfExtent[0];
-    }
-  e1 = extent[1];
-  if (e1 > selfExtent[1])
-    {
-    e1 = selfExtent[1];
-    }
-  e2 = extent[2];
-  if (e2 < selfExtent[2])
-    {
-    e2 = selfExtent[2];
-    }
-  e3 = extent[3];
-  if (e3 > selfExtent[3])
-    {
-    e3 = selfExtent[3];
-    }
-
-  // Make sure the increments are up to date
-  vtkIdType inc[3];
-  img->GetArrayIncrements(img->GetPointData()->GetTensors(), inc);
-  //ComputeIncrements(img, inc);
-
-  incY = inc[1] - (e1 - e0 + 1)*inc[0];
-  incZ = inc[2] - (e3 - e2 + 1)*inc[1];
-}
 
 //----------------------------------------------------------------------------
 // This templated function executes the filter for any type of data.
