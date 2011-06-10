@@ -1,0 +1,27 @@
+SET(KIT vtkTeem)
+
+CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  vtkDiffusionTensorMathematicsTest1.cxx
+  )
+
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+
+SET(LIBRARY_NAME ${PROJECT_NAME})
+
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
+
+MACRO(SIMPLE_TEST TESTNAME)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
+ENDMACRO()
+
+MACRO(TEST_FILE TEST_NAME FILENAME)
+  ADD_TEST(
+    NAME ${TEST_NAME}_${SCENEFILENAME} 
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TEST_NAME}
+      ${FILENAME}
+    )
+ENDMACRO()
+
+SIMPLE_TEST( vtkDiffusionTensorMathematicsTest1 )
