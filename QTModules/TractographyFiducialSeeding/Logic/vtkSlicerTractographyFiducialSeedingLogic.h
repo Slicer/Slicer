@@ -48,7 +48,6 @@ public:
   void CreateTractsForOneSeed(vtkSeedTracts *seed,
                               vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                               vtkMRMLTransformableNode *transformableNode,
-                              vtkMRMLFiberBundleNode *fiberNode,
                               int stoppingMode, 
                               double stoppingValue, 
                               double stoppingCurvature, 

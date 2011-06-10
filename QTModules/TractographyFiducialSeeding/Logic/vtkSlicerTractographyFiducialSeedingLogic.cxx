@@ -142,7 +142,6 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
 void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLTransformableNode *transformableNode,
-                                                            vtkMRMLFiberBundleNode *fiberNode,
                                                             int stoppingMode, 
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
@@ -374,7 +373,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
         }
 
 
-      this->CreateTractsForOneSeed(seed, volumeNode, annotationNode, fiberNode,
+      this->CreateTractsForOneSeed(seed, volumeNode, annotationNode, 
                                    stoppingMode, stoppingValue, stoppingCurvature, 
                                    integrationStepLength, mnimumPathLength, regionSize, 
                                    sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
@@ -386,7 +385,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // loop over points in the models
   if (modelNode) 
     {
-    this->CreateTractsForOneSeed(seed, volumeNode, modelNode, fiberNode,
+    this->CreateTractsForOneSeed(seed, volumeNode, modelNode,
                                  stoppingMode, stoppingValue, stoppingCurvature, 
                                  integrationStepLength, mnimumPathLength, regionSize, 
                                  sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
