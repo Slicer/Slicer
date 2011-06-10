@@ -160,7 +160,9 @@ void qSlicerCoreApplicationPrivate::init()
   this->ErrorLogModel->setLogEntryGrouping(true);
   this->ErrorLogModel->setTerminalOutputEnabled(true);
 
+#ifndef Q_WS_MAC
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+#endif
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
