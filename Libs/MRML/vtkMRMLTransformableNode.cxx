@@ -128,6 +128,8 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
+  // TODO: here Modified() is called twice, once in vtkSetAndObserveMRMLObjectMacro()
+  // and once in SetTransformNodeID().
   vtkSetAndObserveMRMLObjectMacro(this->TransformNode, NULL);
 
   this->SetTransformNodeID(transformNodeID);
