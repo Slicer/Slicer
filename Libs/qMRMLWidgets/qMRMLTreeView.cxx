@@ -61,9 +61,9 @@ public:
   QString                    SceneModelType;
   bool                       FitSizeToVisibleIndexes;
   mutable QSize              TreeViewSizeHint;
-  
+
   QMenu*                     NodeMenu;
-  vtkMRMLNode*               CurrentNode;
+  QAction*                   EditAction;
 };
 
 //------------------------------------------------------------------------------
@@ -73,9 +73,9 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->SceneModel = 0;
   this->SortFilterModel = 0;
   this->FitSizeToVisibleIndexes = true;
-  this->NodeMenu = 0;
-  this->CurrentNode = 0;
   this->TreeViewSizeHint = QSize();
+  this->NodeMenu = 0;
+  this->EditAction = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -103,10 +103,16 @@ void qMRMLTreeViewPrivate::init()
   q->horizontalScrollBar()->installEventFilter(q);
   
   this->NodeMenu = new QMenu(q);
-  QAction* deleteAction = new QAction("Delete",this->NodeMenu);
+  QAction* deleteAction =
+    new QAction(qMRMLTreeView::tr("Delete"),this->NodeMenu);
   this->NodeMenu->addAction(deleteAction);
   QObject::connect(deleteAction, SIGNAL(triggered()),
                    q, SLOT(deleteCurrentNode()));
+  // EditAction is hidden by default
+  this->EditAction =
+    new QAction(qMRMLTreeView::tr("Edit properties..."), this->NodeMenu);
+  QObject::connect(this->EditAction, SIGNAL(triggered()),
+                   q, SLOT(editCurrentNode()));
 }
 
 //------------------------------------------------------------------------------
@@ -296,11 +302,18 @@ vtkMRMLScene* qMRMLTreeView::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLTreeView::currentNode()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->SortFilterModel->mrmlNodeFromIndex(this->selectionModel()->currentIndex());
+}
+
+//------------------------------------------------------------------------------
 void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
 {
   Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
-  emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
+  emit currentNodeChanged(this->currentNode());
 }
 
 //------------------------------------------------------------------------------
@@ -330,6 +343,41 @@ void qMRMLTreeView::setNodeTypes(const QStringList& _nodeTypes)
   this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLTreeView::isEditMenuItemVisible()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->NodeMenu->actions().contains(d->EditAction);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setEditMenuItemVisible(bool show)
+{
+  Q_D(qMRMLTreeView);
+  if (show)
+    {
+    // Prepend the action in the menu
+    d->NodeMenu->insertAction(d->NodeMenu->actions()[0],d->EditAction);
+    }
+  else
+    {
+    d->NodeMenu->removeAction(d->EditAction);
+    }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::editCurrentNode()
+{
+  Q_D(qMRMLTreeView);
+  if (!this->currentNode())
+    {
+    // not sure if it's a request to have a valid node.
+    Q_ASSERT(this->currentNode());
+    return;
+    }
+  emit editNodeRequested(this->currentNode());
+}
+  
 //--------------------------------------------------------------------------
 qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel()const
 {
@@ -414,22 +462,19 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
     return;
     }
 
-  d->CurrentNode = node;
   d->NodeMenu->exec(e->globalPos());
-  d->CurrentNode = 0;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLTreeView::deleteCurrentNode()
 {
   Q_D(qMRMLTreeView);
-  if (!d->CurrentNode)
+  if (!this->currentNode())
     {
-    qWarning() << "No node to delete";
+    Q_ASSERT(this->currentNode());
     return;
     }
-  this->mrmlScene()->RemoveNode(d->CurrentNode);
-  d->CurrentNode = 0;
+  this->mrmlScene()->RemoveNode(this->currentNode());
 }
 
 //------------------------------------------------------------------------------

@@ -43,11 +43,15 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
+  Q_PROPERTY(bool editMenuItemVisible READ isEditMenuItemVisible WRITE setEditMenuItemVisible)
+
 public:
   qMRMLTreeView(QWidget *parent=0);
   virtual ~qMRMLTreeView();
 
   vtkMRMLScene* mrmlScene()const;
+  
+  vtkMRMLNode* currentNode()const;
 
   /// Could be Transform, Displayable, ModelHierarchy or ""
   QString sceneModelType()const;
@@ -66,6 +70,11 @@ public:
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
+
+  ///
+  /// Show/Hide the "Edit properties..." menu item on right context menu
+  bool isEditMenuItemVisible()const;
+  void setEditMenuItemVisible(bool show);
 
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort
@@ -94,11 +103,14 @@ public slots:
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
+  void editNodeRequested(vtkMRMLNode* node);
 
 protected slots:
   virtual void onCurrentRowChanged(const QModelIndex& index);
   void onNumberOfVisibleIndexChanged();
   void deleteCurrentNode();
+  void editCurrentNode();
+
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
 

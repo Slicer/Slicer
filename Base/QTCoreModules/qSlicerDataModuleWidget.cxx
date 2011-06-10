@@ -64,12 +64,15 @@ qSlicerDataModuleWidget::~qSlicerDataModuleWidget()
 void qSlicerDataModuleWidget::setup()
 {
   Q_D(qSlicerDataModuleWidget);
+
   d->setupUi(this);
 
+  connect(d->MRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)),
+          qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));   
+
+  // Connection with TreeView is done in UI file
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
   d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
-//  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
-//          d->MRMLTreeView, SLOT(setSceneModel(QString*)));
           
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));

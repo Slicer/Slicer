@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QCleanlooksStyle>
 #include <QColor>
 #include <QDebug>
@@ -35,29 +36,34 @@
 
 // CTK includes
 #include <ctkColorDialog.h>
-#include "ctkErrorLogModel.h"
+#include <ctkErrorLogModel.h>
 #include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
 #include <ctkSettings.h>
 #include <ctkToolTipTrapper.h>
 
 // QTGUI includes
+#include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
-#include "qSlicerCoreApplication_p.h"
-#include "qSlicerWidget.h"
-#include "qSlicerIOManager.h"
 #include "qSlicerCommandOptions.h"
+#include "qSlicerCoreApplication_p.h"
+#include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
-#include "qSlicerStyle.h"
+#include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
+#include "qSlicerStyle.h"
+#include "qSlicerWidget.h"
 
 // qMRMLWidget includes
 #include "qMRMLColorPickerWidget.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
+
+// MRML includes
+#include <vtkMRMLNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
@@ -290,4 +296,80 @@ void qSlicerApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   // is sent.
   d->ColorDialogPickerWidget->setMRMLScene(newMRMLScene);
   this->Superclass::setMRMLScene(newMRMLScene);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
+{
+  QString nodeClassName = node->GetClassName();
+  if (node->IsA("vtkMRMLCameraNode") || 
+      node->IsA("vtkMRMLViewNode"))
+    {
+    return "cameras";
+    }
+  else if (node->IsA("vtkMRMLSliceNode") ||
+           node->IsA("vtkMRMLSliceCompositeNode") ||
+           node->IsA("vtkMRMLSliceLayerNode"))
+    {
+    return "slicecontroller";
+    }
+  else if (node->IsA("vtkMRMLAnnotationNode") ||
+           node->IsA("vtkMRMLAnnotationDisplayNode") ||
+           node->IsA("vtkMRMLAnnotationStorageNode") ||
+           node->IsA("vtkMRMLAnnotationHierarchyNode"))
+    {
+    return "annotation";
+    }
+  else if (node->IsA("vtkMRMLTransformNode") ||
+           node->IsA("vtkMRMLTransformStorageNode"))
+    {
+    return "transforms";
+    }
+  else if (node->IsA("vtkMRMLColorNode"))
+    {
+    return "colors";
+    }
+  else if (nodeClassName.contains("vtkMRMLFiberBundle"))
+    {
+    return "tractographydisplay";
+    }
+  else if (node->IsA("vtkMRMLModelNode") ||
+           node->IsA("vtkMRMLModelDisplayNode") ||
+           node->IsA("vtkMRMLModelHierarchyNode") ||
+           node->IsA("vtkMRMLModelStorageNode"))
+    {
+    return "models";
+    }
+  else if (node->IsA("vtkMRMLSceneViewNode") ||
+           node->IsA("vtkMRMLSceneViewStorageNode"))
+    {
+    return "sceneviews";
+    }
+  else if (node->IsA("vtkMRMLVolumeNode") ||
+           node->IsA("vtkMRMLVolumeDisplayNode") ||
+           node->IsA("vtkMRMLVolumeArchetypeStorageNode") ||
+           node->IsA("vtkMRMLVolumeHeaderlessStorageNode"))
+    {
+    return "volumes";
+    }
+  else if (node->IsA("vtkMRMLVolumePropertyNode") ||
+           node->IsA("vtkMRMLVolumePropertyStorageNode") ||
+           node->IsA("vtkMRMLVolumeRenderingDisplayNode"))
+    {
+    return "volumerendering";
+    }
+  qWarning() << "Couldn't find a module for node class" << node->GetClassName();
+  return "data";
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
+{
+  QString moduleName = this->nodeModule(node);
+  qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
+  qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module); 
+  if (moduleWithAction)
+    {
+    moduleWithAction->action()->trigger();
+    }
 }

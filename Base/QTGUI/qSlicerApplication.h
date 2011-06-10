@@ -43,6 +43,9 @@ class qSlicerPythonManager;
 class qSlicerLayoutManager;
 class qSlicerWidget;
 
+// MRML includes
+class vtkMRMLNode;
+
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
 {
   Q_OBJECT
@@ -84,6 +87,22 @@ public:
   ///
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
+
+  ///
+  /// Return the best module name for a given node.
+  /// qSlicerApplication is a temporary host for the function as it should be
+  /// moved into a DataManager where module can register new node 
+  /// types/modules
+  QString nodeModule(vtkMRMLNode* node)const;
+
+public slots:
+  ///
+  /// Utility function that retrive the best module for a node and trigger
+  /// its associated QAction which eventually opens the module.
+  /// qSlicerApplication is a temporary host for the function as it should be
+  /// moved into a DataManager where module can register new node 
+  /// types/modules
+  void openNodeModule(vtkMRMLNode* node);
 
 protected:
   /// Reimplemented from qSlicerCoreApplication
