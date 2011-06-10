@@ -313,7 +313,8 @@ void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
 {
   Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
-  emit currentNodeChanged(this->currentNode());
+  Q_ASSERT(this->currentNode() == d->SortFilterModel->mrmlNodeFromIndex(index));
+  emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
 }
 
 //------------------------------------------------------------------------------
@@ -368,7 +369,6 @@ void qMRMLTreeView::setEditMenuItemVisible(bool show)
 //--------------------------------------------------------------------------
 void qMRMLTreeView::editCurrentNode()
 {
-  Q_D(qMRMLTreeView);
   if (!this->currentNode())
     {
     // not sure if it's a request to have a valid node.
@@ -468,7 +468,6 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 void qMRMLTreeView::deleteCurrentNode()
 {
-  Q_D(qMRMLTreeView);
   if (!this->currentNode())
     {
     Q_ASSERT(this->currentNode());
