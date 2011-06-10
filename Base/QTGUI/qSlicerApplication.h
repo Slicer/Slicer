@@ -72,21 +72,6 @@ public:
   void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
   ///
-  /// Set the visibility of the top level widgets.
-  /// If set to 'False', the state of the widget will be saved.
-  /// If set to 'True, if possible the saved state will be restored.
-  void setTopLevelWidgetsVisible(bool visible);
-
-  ///
-  /// Set the visibility of a given top level widgets
-  void setTopLevelWidgetVisible(qSlicerWidget* widget, bool visible);
-
-  ///
-  /// Set/Get default window flags that could be used when displaying top level widgets
-  void setDefaultWindowFlags(Qt::WindowFlags defaultWindowFlags);
-  Qt::WindowFlags defaultWindowFlags() const;
-
-  ///
   /// Return a pointer on the main window of the application if any.
   QMainWindow* mainWindow()const;
 

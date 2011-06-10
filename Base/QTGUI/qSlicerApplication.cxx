@@ -81,8 +81,6 @@ public:
   /// Initialize application style
   void initStyle();
 
-  QMap<QWidget*,bool>                 TopLevelWidgetsSavedVisibilityState;
-  Qt::WindowFlags                     DefaultWindowFlags;
   qSlicerLayoutManager*               LayoutManager;
   ctkToolTipTrapper*                  ToolTipTrapper;
   QSharedPointer<qMRMLColorPickerWidget> ColorDialogPickerWidget;
@@ -245,61 +243,6 @@ QMainWindow* qSlicerApplication::mainWindow()const
       }
     }
   return 0;
-}
-
-//-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
-CTK_GET_CPP(qSlicerApplication, Qt::WindowFlags, defaultWindowFlags, DefaultWindowFlags);
-
-//-----------------------------------------------------------------------------
-void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)
-{
-  Q_D(qSlicerApplication);
-  foreach(QWidget * widget, this->topLevelWidgets())
-    {
-    // Store current visibility state
-    if (!visible)
-      {
-      if (!d->TopLevelWidgetsSavedVisibilityState.contains(widget))
-        {
-        d->TopLevelWidgetsSavedVisibilityState[widget] = widget->isVisible();
-        }
-      widget->hide();
-      }
-    else
-      {
-      QMap<QWidget*,bool>::const_iterator it = d->TopLevelWidgetsSavedVisibilityState.find(widget);
-
-      // If widget state was saved, restore it. Otherwise skip.
-      if (it != d->TopLevelWidgetsSavedVisibilityState.end())
-        {
-        widget->setVisible(it.value());
-        }
-      }
-    }
-
-  // Each time widget are set visible. Internal Map can be cleared.
-  if (visible)
-    {
-    d->TopLevelWidgetsSavedVisibilityState.clear();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool visible)
-{
-  if (!widget) { return; }
-  Q_ASSERT(!widget->parent());
-  Q_D(qSlicerApplication);
-  // When internal Map is empty, it means top widget are visible
-  if (d->TopLevelWidgetsSavedVisibilityState.empty())
-    {
-    widget->setVisible(visible);
-    }
-  else
-    {
-    d->TopLevelWidgetsSavedVisibilityState[widget] = visible;
-    }
 }
 
 //-----------------------------------------------------------------------------
