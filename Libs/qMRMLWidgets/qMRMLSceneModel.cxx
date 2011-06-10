@@ -537,7 +537,7 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
       }
     d->DraggedNodes << this->mrmlNodeFromIndex(index);
     }
-  //qDebug() <<allColumnsIndexes.size() << allColumnsIndexes[0] << allColumnsIndexes[1];
+  // Remove duplicates
   allColumnsIndexes = allColumnsIndexes.toSet().toList();
   return this->QStandardItemModel::mimeData(allColumnsIndexes);
 }
@@ -548,7 +548,8 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 {
   Q_D(qMRMLSceneModel);
   Q_UNUSED(column);
-  bool res = this->Superclass::dropMimeData(data, action, row, 0, parent);
+  bool res = this->Superclass::dropMimeData(
+    data, action, row, 0, parent.sibling(parent.row(), 0));
   d->DraggedNodes.clear();
   return res;
 }
