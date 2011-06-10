@@ -19,7 +19,8 @@
 #include <vtkMRMLTransformableNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLFiducialListNode.h>
+#include <vtkMRMLAnnotationHierarchyNode.h>
+#include <vtkMRMLAnnotationControlPointsNode.h>
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -51,7 +52,6 @@ vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingL
 {
   this->MaskPoints = vtkMaskPoints::New();
   this->TractographyFiducialSeedingNode = NULL;
-  this->TransformableNode = NULL;
   this->DiffusionTensorVolumeNode = NULL;
 }
 
@@ -59,11 +59,20 @@ vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingL
 vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
 {
   this->MaskPoints->Delete();
+  this->RemoveTransformableNodesObservers();
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
-  vtkSetAndObserveMRMLNodeMacro(this->TransformableNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::RemoveTransformableNodesObservers()
+{
+  for (unsigned int i=0; i<this->TransformableNodes.size(); i++)
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->TransformableNodes[i], NULL);
+    }
+  this->TransformableNodes.clear();
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -76,31 +85,62 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
 void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
 {
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
+  this->RemoveTransformableNodesObservers();
   if (node)
     {
     vtkMRMLDiffusionTensorVolumeNode *dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
           this->GetMRMLScene()->GetNodeByID(node->GetInputVolumeRef()));
     vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, dtiNode);
 
-    vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(node->GetInputFiducialRef()));
+    vtkMRMLNode *seedinNode = this->GetMRMLScene()->GetNodeByID(node->GetInputFiducialRef());
 
-    vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-    events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
-    events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
-    events->InsertNextValue ( vtkMRMLFiducialListNode::FiducialModifiedEvent );
-    vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNode, transformableNode, events);
+    vtkMRMLAnnotationHierarchyNode *annotationHierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedinNode);
+    vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(seedinNode);
+
+    if (annotationHierarchyNode)
+      {
+      vtkCollection *annotationNodes = vtkCollection::New();
+      annotationHierarchyNode->GetDirectChildren(annotationNodes);
+      int nf = annotationNodes->GetNumberOfItems();
+      for (int f=0; f<nf; f++)
+        {
+        vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(
+                                                      annotationNodes->GetItemAsObject(f));   
+        if (annotationNode)
+          {
+          this->TransformableNodes.push_back(NULL);
+          vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+          events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
+          events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
+          events->InsertNextValue ( vtkCommand::ModifiedEvent );
+          vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNodes[this->TransformableNodes.size()-1], 
+                                              annotationNode, events);
+          }
+        }
+      annotationNodes->Delete();
+      }
+    else if (transformableNode)
+      {
+      this->TransformableNodes.push_back(NULL);
+      vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+      events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
+      events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
+      events->InsertNextValue ( vtkCommand::ModifiedEvent );
+      vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNodes[this->TransformableNodes.size()-1], 
+                                          transformableNode, events);
+      }
     }
   else
     {
-    vtkSetAndObserveMRMLNodeMacro(this->TransformableNode, NULL);
     vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
     }
   return;
 }
 
+
 //----------------------------------------------------------------------------
-int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
+                                                            vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLTransformableNode *transformableNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
                                                             int stoppingMode, 
@@ -110,36 +150,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double mnimumPathLength,
                                                             double regionSize, double sampleStep,
                                                             int maxNumberOfSeeds,
-                                                            int seedSelectedFiducials,
-                                                            int vtkNotUsed(displayMode))
+                                                            int seedSelectedFiducials)
 {
-  // 0. check inputs
-  if (volumeNode == NULL || transformableNode == NULL || fiberNode == NULL ||
-      volumeNode->GetImageData() == NULL)
-    {
-    if (fiberNode && fiberNode->GetPolyData())
-      {
-      fiberNode->GetPolyData()->Reset();
-      }
-    return 0;
-    }
-    
-  vtkPolyData *oldPoly = fiberNode->GetPolyData();
-   
-  vtkSeedTracts *seed = vtkSeedTracts::New();
-  
-  //1. Set Input
-  
-  //Do scale IJK
   double sp[3];
   volumeNode->GetSpacing(sp);
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-  ici->SetOutputSpacing(sp);
-  ici->SetInput(volumeNode->GetImageData());
-  ici->GetOutput()->Update();
 
-  seed->SetInputTensorField(ici->GetOutput());
-  
   //2. Set Up matrices
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
   vtkMRMLTransformNode* fxformNode = transformableNode->GetParentTransformNode();
@@ -235,43 +250,33 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
   
-  vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(transformableNode);
+  vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(transformableNode);
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(transformableNode);
 
 
-  // loop over fiducials
-  if (fiducialListNode) 
+  // if annotation
+  if (annotationNode && annotationNode->GetControlPointCoordinates(0) &&
+     (!seedSelectedFiducials || (seedSelectedFiducials && annotationNode->GetSelected())) ) 
     {
-    int nf = fiducialListNode->GetNumberOfFiducials();
-    for (int f=0; f<nf; f++)
+    double *xyzf = annotationNode->GetControlPointCoordinates(0);
+    for (double x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
       {
-      if (seedSelectedFiducials && !fiducialListNode->GetNthFiducialSelected(f))
+      for (double y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
         {
-        continue;
-        }
-
-      float *xyzf = fiducialListNode->GetNthFiducialXYZ(f);
-      for (float x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
-        {
-        for (float y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
+        for (double z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
           {
-          for (float z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
-            {
-            float newXYZ[3];
-            newXYZ[0] = xyzf[0] + x;
-            newXYZ[1] = xyzf[1] + y;
-            newXYZ[2] = xyzf[2] + z;
-            float *xyz = transFiducial->TransformFloatPoint(newXYZ);
-            //Run the thing
-            seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
-            }
+          float newXYZ[3];
+          newXYZ[0] = xyzf[0] + x;
+          newXYZ[1] = xyzf[1] + y;
+          newXYZ[2] = xyzf[2] + z;
+          float *xyz = transFiducial->TransformFloatPoint(newXYZ);
+          //Run the thing
+          seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
           }
         }
       }
     }
-
-  // loop over points in the models
-  if (modelNode) 
+  else if (modelNode) 
     {
     this->MaskPoints->SetInput(modelNode->GetPolyData());
     this->MaskPoints->SetRandomMode(1);
@@ -289,6 +294,103 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       //Run the thing
       seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
       }
+    }
+
+  // Delete everything: Still trying to figure out what is going on
+
+  TensorRASToIJK->Delete();
+  TensorRASToIJKRotation->Delete();
+  trans2->Delete();
+  trans->Delete();
+  streamer->Delete();
+  transformVolumeToFiducial->Delete();
+  transFiducial->Delete();
+
+}
+
+
+
+
+//----------------------------------------------------------------------------
+int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+                                                            vtkMRMLNode *seedingyNode,
+                                                            vtkMRMLFiberBundleNode *fiberNode,
+                                                            int stoppingMode, 
+                                                            double stoppingValue, 
+                                                            double stoppingCurvature, 
+                                                            double integrationStepLength,
+                                                            double mnimumPathLength,
+                                                            double regionSize, double sampleStep,
+                                                            int maxNumberOfSeeds,
+                                                            int seedSelectedFiducials,
+                                                            int vtkNotUsed(displayMode))
+{
+  // 0. check inputs
+  if (volumeNode == NULL || seedingyNode == NULL || fiberNode == NULL ||
+      volumeNode->GetImageData() == NULL)
+    {
+    if (fiberNode && fiberNode->GetPolyData())
+      {
+      fiberNode->GetPolyData()->Reset();
+      }
+    return 0;
+    }
+    
+  vtkPolyData *oldPoly = fiberNode->GetPolyData();
+   
+  vtkSeedTracts *seed = vtkSeedTracts::New();
+  
+  //1. Set Input
+  
+  //Do scale IJK
+  double sp[3];
+  volumeNode->GetSpacing(sp);
+  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+  ici->SetOutputSpacing(sp);
+  ici->SetInput(volumeNode->GetImageData());
+  ici->GetOutput()->Update();
+
+  seed->SetInputTensorField(ici->GetOutput());
+
+  vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
+
+  vtkMRMLAnnotationHierarchyNode *annotationListNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedingyNode);
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(seedingyNode);
+
+
+  // loop over fiducials
+  if (annotationListNode) 
+    {
+    vtkCollection *annotationNodes = vtkCollection::New();
+    annotationListNode->GetDirectChildren(annotationNodes);
+    int nf = annotationNodes->GetNumberOfItems();
+    for (int f=0; f<nf; f++)
+      {
+      vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(
+                                                    annotationNodes->GetItemAsObject(f));
+      if (!annotationNode || (seedSelectedFiducials && !annotationNode->GetSelected()))
+        {
+        continue;
+        }
+
+
+      this->CreateTractsForOneSeed(seed, volumeNode, annotationNode, fiberNode,
+                                   stoppingMode, stoppingValue, stoppingCurvature, 
+                                   integrationStepLength, mnimumPathLength, regionSize, 
+                                   sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
+
+      }
+      annotationNodes->Delete();
+    }
+
+  // loop over points in the models
+  if (modelNode) 
+    {
+    this->CreateTractsForOneSeed(seed, volumeNode, modelNode, fiberNode,
+                                 stoppingMode, stoppingValue, stoppingCurvature, 
+                                 integrationStepLength, mnimumPathLength, regionSize, 
+                                 sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
+
     }
 
     
@@ -363,13 +465,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   outFibers->Delete();
   ici->Delete();
   seed->Delete();
-  TensorRASToIJK->Delete();
-  TensorRASToIJKRotation->Delete();
-  trans2->Delete();
-  trans->Delete();
-  streamer->Delete();
-  transformVolumeToFiducial->Delete();
-  transFiducial->Delete();
   return 1;
 }
 
@@ -394,17 +489,16 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtk
 
   vtkMRMLDiffusionTensorVolumeNode *volumeNode = 
         vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(scene->GetNodeByID(snode->GetInputVolumeRef()));
-  vtkMRMLTransformableNode *transformableNode = 
-        vtkMRMLTransformableNode::SafeDownCast(scene->GetNodeByID(snode->GetInputFiducialRef()));
+  vtkMRMLNode *seedingNode = scene->GetNodeByID(snode->GetInputFiducialRef());
   vtkMRMLFiberBundleNode *fiberNode = 
         vtkMRMLFiberBundleNode::SafeDownCast(scene->GetNodeByID(snode->GetOutputFiberRef()));
 
-  if(volumeNode == NULL || transformableNode == NULL || fiberNode == NULL) 
+  if(volumeNode == NULL || seedingNode == NULL || fiberNode == NULL) 
     {
     return;
     }
   
-  this->CreateTracts(volumeNode, transformableNode, fiberNode,
+  this->CreateTracts(volumeNode, seedingNode, fiberNode,
                      snode->GetStoppingMode(), 
                      snode->GetStoppingValue(),
                      snode->GetStoppingCurvature(),

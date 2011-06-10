@@ -12,7 +12,6 @@
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLFiberBundleNode;
-class vtkMRMLTransformableNode;
 class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLTractographyFiducialSeedingNode;
 
@@ -33,7 +32,7 @@ public:
   };
 
   /// Get current seeding node
-  vtkMRMLTransformableNode* transformableNode(); 
+  vtkMRMLNode* seedingNode(); 
 
   /// Get current DTI volume node
   vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode(); 
@@ -51,7 +50,7 @@ public slots:
   void setTractographyFiducialSeedingNode(vtkMRMLNode *node);
 
   /// Set current seeding node
-  void setTransformableNode(vtkMRMLNode *node);
+  void setSeedingNode(vtkMRMLNode *node);
 
   /// Set current DTI volume node
   void setDiffusionTensorVolumeNode(vtkMRMLNode *node);

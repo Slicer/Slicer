@@ -61,7 +61,7 @@ SET(modules
 #  ScriptedModuleExample <- Moved into Attic
   SlicerDaemon
   Statistics
-  Tractography
+# Tractography
 # TumorGrowth
   Volumes
   ChangeTracker # AF: refactoring TumorGrowth...

@@ -69,7 +69,7 @@
     <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector">
      <property name="nodeTypes">
       <stringlist>
-       <string>vtkMRMLFiducialListNode</string>
+       <string>vtkMRMLAnnotationHierarchyNode</string>
        <string>vtkMRMLModelNode</string>
       </stringlist>
      </property>

@@ -29,10 +29,11 @@
 
 class vtkMRMLTractographyFiducialSeedingNode;
 class vtkMRMLDiffusionTensorVolumeNode;
-class vtkMRMLFiducialListNode;
+class vtkMRMLAnnotationHierarchyNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLTransformableNode;
 class vtkMaskPoints;
+class vtkSeedTracts;
 
 class VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
   public vtkSlicerModuleLogic
@@ -44,8 +45,21 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  void CreateTractsForOneSeed(vtkSeedTracts *seed,
+                              vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+                              vtkMRMLTransformableNode *transformableNode,
+                              vtkMRMLFiberBundleNode *fiberNode,
+                              int stoppingMode, 
+                              double stoppingValue, 
+                              double stoppingCurvature, 
+                              double integrationStepLength,
+                              double mnimumPathLength,
+                              double regionSize, double sampleStep,
+                              int maxNumberOfSeeds,
+                              int seedSelectedFiducials);
+
   int CreateTracts( vtkMRMLDiffusionTensorVolumeNode *volumeNode,
-                    vtkMRMLTransformableNode *fiducialListNode,
+                    vtkMRMLNode *seedingNode,
                     vtkMRMLFiberBundleNode *fiberNode,
                     int stoppinMode,
                     double stoppingValue, double stoppingCurvature, 
@@ -70,11 +84,13 @@ protected:
   /// Register node classes into the mrml scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes();
+
+  void RemoveTransformableNodesObservers();
   
   vtkMaskPoints *MaskPoints;
 
   vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
-  vtkMRMLTransformableNode               *TransformableNode;
+  std::vector<vtkMRMLTransformableNode *> TransformableNodes;
   vtkMRMLDiffusionTensorVolumeNode       *DiffusionTensorVolumeNode;
 
 };

@@ -1,3 +1,0 @@
-Name: Slicer Tractography Fiducial Seeding
-GUIName: FiducialSeeding
-Dependency: Slicer Tractography Display

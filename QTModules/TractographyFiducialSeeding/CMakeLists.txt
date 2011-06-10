@@ -1,6 +1,8 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "TractographyFiducialSeeding")
 
+ADD_SUBDIRECTORY(Logic)
+
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
@@ -31,6 +33,7 @@ SET(qt_module_UI_SRCS
 # Additional Target libraries
 SET(qt_module_target_libraries
   vtkSlicerTractographyModuleLogic
+  vtkSlicerAnnotationModuleMRML
   )
 
 # Resources

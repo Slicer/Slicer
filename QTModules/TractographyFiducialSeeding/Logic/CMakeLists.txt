@@ -15,15 +15,17 @@ SET(module_logic_include_directories
 
 # Source files
 SET(module_logic_SRCS
+  vtkSlicerTractographyFiducialSeedingLogic.h
   vtkSlicerTractographyFiducialSeedingLogic.cxx
+  vtkMRMLTractographyFiducialSeedingNode.h
   vtkMRMLTractographyFiducialSeedingNode.cxx
   )
 
 # Additional Target libraries
 SET(module_logic_target_libraries
   ${ITK_LIBRARIES}
+  vtkSlicerAnnotationModuleMRML
   )
-
 
 SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}
