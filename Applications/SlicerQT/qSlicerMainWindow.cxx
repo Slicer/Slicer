@@ -433,7 +433,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(FileSaveScene);
   qSlicerMainWindowCore_connect(FileCloseScene);
   this->connect(d->actionFileExit, SIGNAL(triggered()),
-                this, SLOT(close()));
+                qApp, SLOT(closeAllWindows()));
 
   qSlicerMainWindowCore_connect(EditUndo);
   qSlicerMainWindowCore_connect(EditRedo);
