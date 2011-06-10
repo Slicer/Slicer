@@ -200,6 +200,17 @@ void showMRMLEventLoggerWidget()
   logger.show();
 }
 
+//----------------------------------------------------------------------------
+void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& message)
+{
+  if (splashScreen.isNull())
+    {
+    return;
+    }
+  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
+  //splashScreen->repaint();
+}
+
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
@@ -233,14 +244,15 @@ int main(int argc, char* argv[])
 
   bool enableMainWindow = !app.commandOptions()->noMainWindow();
   enableMainWindow = enableMainWindow && app.commandOptions()->extraPythonScript().isEmpty();
+  bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
 
-  QPixmap pixmap(":Images/SlicerSplashScreen.png");
-  QSplashScreen splash(pixmap/*, Qt::WindowStaysOnTopHint*/);
-  bool enableSplash = !app.commandOptions()->noSplash();
-  enableSplash = enableSplash && enableMainWindow;
-  if (enableSplash)
+  QScopedPointer<QSplashScreen> splashScreen;
+  if (showSplashScreen)
     {
-    splash.show();
+    QPixmap pixmap(":Images/SlicerSplashScreen.png");
+    splashScreen.reset(new QSplashScreen(pixmap));
+    splashScreen->show();
+    splashMessage(splashScreen, "Initializing...");
     }
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
@@ -266,10 +278,14 @@ int main(int argc, char* argv[])
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
   
   // Register and instantiate modules
+  splashMessage(splashScreen, "Registering modules...");
   moduleFactoryManager->registerAllModules();
+
+  splashMessage(splashScreen, "Instantiating modules...");
   moduleFactoryManager->instantiateAllModules();
 
   // Create main window
+  splashMessage(splashScreen, "Initializing user interface...");
   QScopedPointer<qSlicerMainWindow> window;
   if (enableMainWindow)
     {
@@ -290,19 +306,11 @@ int main(int argc, char* argv[])
       continue;
       }
     qWarning() << "checking module " << name;
-    if (enableSplash)
-      {
-      splash.showMessage("Loading module " + name + "...",
-                         Qt::AlignBottom | Qt::AlignHCenter);
-      splash.repaint();
-      }
+    splashMessage(splashScreen, "Loading module \"" + name + "\"...");
     moduleManager->loadModule(name);
     }
 
-  if (enableSplash)
-    {
-    splash.clearMessage();
-    }
+  splashMessage(splashScreen, QString());
 
   if (window)
     {
@@ -310,9 +318,9 @@ int main(int argc, char* argv[])
     window->show();
     }
 
-  if (enableSplash && window)
+  if (splashScreen && window)
     {
-    splash.finish(window.data());
+    splashScreen->finish(window.data());
     }
 
   // Process command line argument after the event loop is started
