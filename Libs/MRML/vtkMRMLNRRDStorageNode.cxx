@@ -248,7 +248,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   // Check type
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
-    if ( ! (reader->GetPointDataType() == TENSORS))
+    if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::TENSORS))
       {
       vtkDebugMacro("MRMLVolumeNode does not match file kind");
       return 0;
@@ -262,7 +262,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
       {
       return 0;
       }
-    if ( ! (reader->GetPointDataType() == SCALARS &&
+    if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
             !strcmp(value,"DWMRI") ) )
       {
       vtkErrorMacro("MRMLVolumeNode does not match file kind");
@@ -271,7 +271,8 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
     {
-    if (! (reader->GetPointDataType() == VECTORS || reader->GetPointDataType() == NORMALS))
+    if (! (reader->GetPointDataType() == vtkDataSetAttributes::VECTORS
+           || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
       {
       vtkDebugMacro("MRMLVolumeNode does not match file kind");
       return 0;
@@ -279,7 +280,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     }  
   else if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
     {
-    if (!(reader->GetPointDataType() == SCALARS && 
+    if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS && 
         (reader->GetNumberOfComponents() == 1 || reader->GetNumberOfComponents()==3) ))
       {
       vtkErrorMacro("MRMLVolumeNode does not match file kind");

@@ -43,19 +43,14 @@
 
 #include "vtkTeemConfigure.h"
 #include "vtkMedicalImageReader2.h"
-#include "vtkMatrix4x4.h"
 
 //#include "vtkDataObject.h"
 //#include "vtkImageData.h"
 
-#include "vtkPointData.h"
+#include <vtkMatrix4x4.h>
+#include <vtkPointData.h>
 
 #include "teem/nrrd.h"
-
-#define SCALARS 1
-#define VECTORS 2
-#define NORMALS 3
-#define TENSORS 4
 
 class VTK_Teem_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
 {

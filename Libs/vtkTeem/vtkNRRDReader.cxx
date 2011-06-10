@@ -32,6 +32,7 @@
 #include "vtkByteSwap.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include <vtkDataSetAttributes.h> // for data types
 #include "vtkImageData.h"
 
 
@@ -345,7 +346,7 @@ void vtkNRRDReader::ExecuteInformation()
      //dimension is some vtk object
      
       // we don't have any non-scalar data
-      this->SetPointDataType(SCALARS);
+      this->SetPointDataType(vtkDataSetAttributes::SCALARS);
       this->SetNumberOfComponents(1);
       
       
@@ -382,51 +383,51 @@ void vtkNRRDReader::ExecuteInformation()
       case nrrdKind4Vector:
       case nrrdKindList:
       case nrrdKindPoint:  // thanks to Luis
-        this->SetPointDataType(SCALARS);
+        this->SetPointDataType(vtkDataSetAttributes::SCALARS);
         this->SetNumberOfComponents(size);
         break;
       case nrrdKind3Vector:
       case nrrdKind3Gradient:
-    this->SetPointDataType(VECTORS);
+    this->SetPointDataType(vtkDataSetAttributes::VECTORS);
     this->SetNumberOfComponents(size);
     break;
       case nrrdKindVector:
       case nrrdKindCovariantVector:
     if (3 == size) {
-      this->SetPointDataType(VECTORS);
+      this->SetPointDataType(vtkDataSetAttributes::VECTORS);
       this->SetNumberOfComponents(3);
     }
     else {
-      this->SetPointDataType(SCALARS);
+      this->SetPointDataType(vtkDataSetAttributes::SCALARS);
       this->SetNumberOfComponents(size);
     }
     break;
       case nrrdKindNormal:
       case nrrdKind3Normal:
     if (3 == size) {
-      this->SetPointDataType(NORMALS);
+      this->SetPointDataType(vtkDataSetAttributes::NORMALS);
       this->SetNumberOfComponents(size);
     }
     else {
-      this->SetPointDataType(SCALARS);
+      this->SetPointDataType(vtkDataSetAttributes::SCALARS);
       this->SetNumberOfComponents(size);
     }
     break;
       case nrrdKind3DMaskedSymMatrix:
     // NOTE: we will crop out the mask in Read() below and expand
     // the 6 values into 9, so NumberOfComponents != size
-    this->SetPointDataType(TENSORS);
+    this->SetPointDataType(vtkDataSetAttributes::TENSORS);
     this->SetNumberOfComponents(9);
     break;
       case nrrdKind3DSymMatrix:
     // NOTE: another case where NumberOfComponents != size, this
     // time because we will expand the 6 values into 9
-    this->SetPointDataType(TENSORS);
+    this->SetPointDataType(vtkDataSetAttributes::TENSORS);
     this->SetNumberOfComponents(9);         
     break;
       case nrrdKind3DMatrix:
     // this time we really do have 9 values coming in
-    this->SetPointDataType(TENSORS);
+    this->SetPointDataType(vtkDataSetAttributes::TENSORS);
     this->SetNumberOfComponents(9);
     break;
       default:
@@ -691,16 +692,16 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
 
   // if we currently have scalars then just adjust the size
   switch (this->PointDataType) {
-    case SCALARS:
+    case vtkDataSetAttributes::SCALARS:
        pd = out->GetPointData()->GetScalars();
        break;
-    case VECTORS:
+    case vtkDataSetAttributes::VECTORS:
        pd = out->GetPointData()->GetVectors();
        break;
-    case NORMALS:
+    case vtkDataSetAttributes::NORMALS:
        pd = out->GetPointData()->GetNormals();
        break;
-    case TENSORS:
+    case vtkDataSetAttributes::TENSORS:
        pd = out->GetPointData()->GetTensors();
        break;
     default:
@@ -770,17 +771,17 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
                       (Extent[5] - Extent[4] + 1));
 
     switch (this->PointDataType) {
-    case SCALARS:
+    case vtkDataSetAttributes::SCALARS:
        out->GetPointData()->SetScalars(pd);
        out->SetNumberOfScalarComponents(this->GetNumberOfComponents());
        break;
-    case VECTORS:
+    case vtkDataSetAttributes::VECTORS:
        out->GetPointData()->SetVectors(pd);
        break;
-    case NORMALS:
+    case vtkDataSetAttributes::NORMALS:
        out->GetPointData()->SetNormals(pd);
        break;
-    case TENSORS:
+    case vtkDataSetAttributes::TENSORS:
        out->GetPointData()->SetTensors(pd);
        break;
     default:
@@ -896,21 +897,21 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
     }
   void *ptr = NULL;
   switch(PointDataType) {
-    case SCALARS:
+    case vtkDataSetAttributes::SCALARS:
       data->GetPointData()->GetScalars()->SetName("NRRDImage");
       //get pointer
       ptr = data->GetPointData()->GetScalars()->GetVoidPointer(0);
       break;
-    case VECTORS:
+    case vtkDataSetAttributes::VECTORS:
       data->GetPointData()->GetVectors()->SetName("NRRDImage");
       //get pointer
       ptr = data->GetPointData()->GetVectors()->GetVoidPointer(0);
       break;
-    case NORMALS:
+    case vtkDataSetAttributes::NORMALS:
       data->GetPointData()->GetNormals()->SetName("NRRDImage");
       ptr = data->GetPointData()->GetNormals()->GetVoidPointer(0); 
       break;
-    case TENSORS:
+    case vtkDataSetAttributes::TENSORS:
       data->GetPointData()->GetTensors()->SetName("NRRDImage");
       ptr = data->GetPointData()->GetTensors()->GetVoidPointer(0); 
       break;
