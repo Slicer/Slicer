@@ -120,6 +120,11 @@ public:
   /// Set the IO manager
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
+
+#ifdef Q_WS_WIN
+  void updatePythonOsEnviron();
+#endif
+
 #endif
 
   /// Get the module manager
