@@ -221,7 +221,8 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   
   // Get increments to march through output data 
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
-  in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
+  // Call special version of GetContinuousIncrements that works for Tensors
+  GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
   vtkIdType *inInc;
