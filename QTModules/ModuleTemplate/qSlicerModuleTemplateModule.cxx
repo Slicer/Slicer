@@ -55,6 +55,12 @@ qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerModuleTemplateModule::category()const
+{
+  return "Developer Tools";
+}
+
+//-----------------------------------------------------------------------------
 qSlicerModuleTemplateModule::~qSlicerModuleTemplateModule()
 {
 }
@@ -62,13 +68,19 @@ qSlicerModuleTemplateModule::~qSlicerModuleTemplateModule()
 //-----------------------------------------------------------------------------
 QString qSlicerModuleTemplateModule::helpText()const
 {
-  return "Write some help here...";
+  QString help = 
+    "This template module is meant to be used with the"
+    "with the ModuleWizard.py script distributed with the"
+    "Slicer source code (starting with version 4)."
+    "Developers can generate their own source code using the"
+    "wizard and then customize it to fit their needs.";
+  return help;
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerModuleTemplateModule::acknowledgementText()const
 {
-  return "This work was supported by ...";
+  return "This work was supported by NAMIC, NAC, and the Slicer Community...";
 }
 
 //-----------------------------------------------------------------------------
