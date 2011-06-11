@@ -426,11 +426,6 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
     }
 
   vtkMRMLAnnotationPointDisplayNode *annPointDisNode = refNode->GetAnnotationPointDisplayNode();
-  if (annPointDisNode == NULL)
-    {
-      return 0;
-    }
-
 
   of << "# " << this->GetAnnotationStorageType() << "NumberingScheme = " << refNode->GetNumberingScheme() << endl;
   this->WriteAnnotationPointDisplayProperties(of, annPointDisNode, this->GetAnnotationStorageType());

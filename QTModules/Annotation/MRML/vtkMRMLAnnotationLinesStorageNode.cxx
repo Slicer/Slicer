@@ -396,11 +396,6 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
     }
 
   vtkMRMLAnnotationLineDisplayNode *annDisNode = refNode->GetAnnotationLineDisplayNode();
-  if (annDisNode == NULL)
-    {
-    vtkErrorMacro("WriteAnnotationLinesProperties: no annotation line display node");
-    return 0;
-    }
 
   this->WriteAnnotationLineDisplayProperties(of, annDisNode, this->GetAnnotationStorageType());
   of << "# " << this->GetAnnotationStorageType() << "Columns = type|startPointID|endPointID|sel|vis" << endl;
