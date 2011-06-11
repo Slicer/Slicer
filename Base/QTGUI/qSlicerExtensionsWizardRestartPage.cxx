@@ -88,9 +88,10 @@ qSlicerExtensionsWizardRestartPage::~qSlicerExtensionsWizardRestartPage()
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardRestartPage::initializePage()
 {
-  QStringList extensions = this->field("installedExtensions").toStringList();
+  QStringList installedExtensions = this->field("installedExtensions").toStringList();
 
   QSettings settings;
-  settings.setValue("Modules/Extensions", extensions);
+  settings.setValue("Modules/AdditionalPaths",
+                    installedExtensions + settings.value("Modules/AdditionalPaths").toStringList());
 }
 

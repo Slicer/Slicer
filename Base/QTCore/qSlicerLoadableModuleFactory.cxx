@@ -51,20 +51,18 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   Q_ASSERT(app);
   Q_ASSERT(!app->slicerHome().isEmpty());
   
-  // On Win32, *both* paths have to be there, since scripts are installed
-  // in the install location, and exec/libs are *automatically* installed
-  // in intDir.
   QStringList defaultQTModulePaths;
-  defaultQTModulePaths << app->slicerHome() + "/"
-                                             + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  defaultQTModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  if (!app->intDir().isEmpty())
+    {
+    // On Win32, *both* paths have to be there, since scripts are installed
+    // in the install location, and exec/libs are *automatically* installed
+    // in intDir.
+    defaultQTModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + app->intDir();
+    }
 
-   if (!app->intDir().isEmpty())
-     {
-     defaultQTModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + app->intDir();
-     }
-
-  QStringList userModulePaths = QSettings().value("Modules/Extensions").toStringList();
-  QStringList qtModulePaths =  userModulePaths + defaultQTModulePaths;
+  QStringList additionalModulePaths = QSettings().value("Modules/AdditionalPaths").toStringList();
+  QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
   foreach(const QString& path, qtModulePaths)
     {
     app->addLibraryPath(path);
