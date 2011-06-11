@@ -53,8 +53,21 @@ public:
     vtkTypeMacro(vtkMRMLVolumePropertyNode,vtkMRMLStorableNode);
     void PrintSelf(ostream& os, vtkIndent indent);
 
-    vtkVolumeProperty* GetVolumeProperty(){return VolumeProperty;};
-    //vtkGetObjectMacro(VolumeProperty,vtkVolumeProperty);
+    ///
+    /// Don't change its scalarOpacity, gradientOpacity or color on the volumeproperty
+    /// but use the methods below. It wouldn't observe them.
+    vtkGetObjectMacro(VolumeProperty,vtkVolumeProperty);
+
+    ///
+    /// Set the scalar opacity to the volume property
+    void SetScalarOpacity(vtkPiecewiseFunction* newScalarOpacity, int component = 0);
+    ///
+    /// Set the gradient opacity to the volume property
+    void SetGradientOpacity(vtkPiecewiseFunction* newGradientOpacity, int component = 0);
+    ///
+    /// Set the color function to the volume property
+    void SetColor(vtkColorTransferFunction* newColorFunction, int component = 0);
+
 
     //--------------------------------------------------------------------------
     /// MRMLNode methods

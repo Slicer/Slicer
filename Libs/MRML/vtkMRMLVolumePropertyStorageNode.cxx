@@ -221,7 +221,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
     vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity), 
-    vpNode->GetVolumeProperty()->SetScalarOpacity(scalarOpacity);
+    vpNode->SetScalarOpacity(scalarOpacity);
     scalarOpacity->Delete();
     }
 
@@ -231,7 +231,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
     vpNode->GetPiecewiseFunctionFromString(sline, gradientOpacity);
-    vpNode->GetVolumeProperty()->SetGradientOpacity(gradientOpacity);
+    vpNode->SetGradientOpacity(gradientOpacity);
     gradientOpacity->Delete();
     }
 
@@ -241,7 +241,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
     vpNode->GetColorTransferFunctionFromString(sline, colorTransfer);
-    vpNode->GetVolumeProperty()->SetColor(colorTransfer);
+    vpNode->SetColor(colorTransfer);
     colorTransfer->Delete();
     }
   ifs.close();

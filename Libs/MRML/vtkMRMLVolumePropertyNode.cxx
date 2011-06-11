@@ -97,21 +97,21 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
         {
           vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
           this->GetPiecewiseFunctionFromString(attValue,scalarOpacity);
-          this->VolumeProperty->SetScalarOpacity(scalarOpacity);
+          this->SetScalarOpacity(scalarOpacity);
           scalarOpacity->Delete();
         }
         else if(!strcmp(attName,"gradientOpacity"))
         {
           vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
           this->GetPiecewiseFunctionFromString(attValue,gradientOpacity);
-          this->VolumeProperty->SetGradientOpacity(gradientOpacity);
+          this->SetGradientOpacity(gradientOpacity);
           gradientOpacity->Delete();
         }
         else if(!strcmp(attName,"colorTransfer"))
         {
           vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
           this->GetColorTransferFunctionFromString(attValue,colorTransfer);
-          this->VolumeProperty->SetColor(colorTransfer);
+          this->SetColor(colorTransfer);
           colorTransfer->Delete();
         }
         else if(!strcmp(attName,"interpolation"))
@@ -191,7 +191,7 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
 
     //VolumeProperty
     for (int i=0;i<VTK_MAX_VRCOMP;i++)
-    {
+      {
         this->VolumeProperty->SetComponentWeight(i,node->GetVolumeProperty()->GetComponentWeight(i));
         //TODO problem no set method
         // vtkPiecewiseFunction *gray=node->GetVolumeProperty()->GetGrayTransferFunction=());L
@@ -201,27 +201,30 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
         //mapping functions
         vtkColorTransferFunction *rgbTransfer=vtkColorTransferFunction::New();
         rgbTransfer->DeepCopy(node->GetVolumeProperty()->GetRGBTransferFunction(i));
-        this->VolumeProperty->SetColor(i,rgbTransfer);
+        this->SetColor(rgbTransfer, i);
         rgbTransfer->Delete();
 
         vtkPiecewiseFunction *scalar=vtkPiecewiseFunction::New();
         scalar->DeepCopy(node->GetVolumeProperty()->GetScalarOpacity(i));
-        this->VolumeProperty->SetScalarOpacity(i,scalar);
+        this->SetScalarOpacity(scalar, i);
         scalar->Delete();
-        this->VolumeProperty->SetScalarOpacityUnitDistance(i,this->VolumeProperty->GetScalarOpacityUnitDistance(i));
+        this->VolumeProperty->SetScalarOpacityUnitDistance(
+          i,this->VolumeProperty->GetScalarOpacityUnitDistance(i));
 
         vtkPiecewiseFunction *gradient=vtkPiecewiseFunction::New();
         gradient->DeepCopy(node->GetVolumeProperty()->GetGradientOpacity(i));
-        this->VolumeProperty->SetGradientOpacity(i,gradient);
+        this->SetGradientOpacity(gradient, i);
         gradient->Delete();
+
         //TODO Copy default gradient?
-        this->VolumeProperty->SetDisableGradientOpacity(i,node->GetVolumeProperty()->GetDisableGradientOpacity(i));
+        this->VolumeProperty->SetDisableGradientOpacity(
+          i,node->GetVolumeProperty()->GetDisableGradientOpacity(i));
         this->VolumeProperty->SetShade(i,node->GetVolumeProperty()->GetShade(i));
-        this->VolumeProperty->SetAmbient(node->VolumeProperty->GetAmbient(i));
-        this->VolumeProperty->SetDiffuse(node->VolumeProperty->GetDiffuse(i));
-        this->VolumeProperty->SetSpecular(node->VolumeProperty->GetSpecular(i));
-        this->VolumeProperty->SetSpecularPower(node->VolumeProperty->GetSpecularPower(i));
-    }
+        this->VolumeProperty->SetAmbient(i, node->VolumeProperty->GetAmbient(i));
+        this->VolumeProperty->SetDiffuse(i, node->VolumeProperty->GetDiffuse(i));
+        this->VolumeProperty->SetSpecular(i, node->VolumeProperty->GetSpecular(i));
+        this->VolumeProperty->SetSpecularPower(i, node->VolumeProperty->GetSpecularPower(i));
+      }
 }
 
 //----------------------------------------------------------------------------
@@ -332,4 +335,31 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(std::string s
 vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
 {
   return vtkMRMLVolumePropertyStorageNode::New();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumePropertyNode
+::SetScalarOpacity(vtkPiecewiseFunction* newScalarOpacity, int component)
+{
+  vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity(component));
+  this->VolumeProperty->SetScalarOpacity(component, newScalarOpacity);
+  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity(component));
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumePropertyNode
+::SetGradientOpacity(vtkPiecewiseFunction* newGradientOpacity, int component)
+{
+  vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity(component));
+  this->VolumeProperty->SetGradientOpacity(component, newGradientOpacity);
+  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity(component));
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumePropertyNode
+::SetColor(vtkColorTransferFunction* newColorFunction, int component)
+{
+  vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction(component));
+  this->VolumeProperty->SetColor(component, newColorFunction);
+  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction(component));
 }
