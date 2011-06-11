@@ -42,13 +42,16 @@
    <item row="2" column="0" colspan="2">
     <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Inputs</string>
      </property>
-     <property name="collapsed">
+     <property name="checked">
       <bool>true</bool>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="1" column="0">
@@ -158,6 +161,9 @@
    </item>
    <item row="3" column="0" colspan="2">
     <widget class="ctkCollapsibleButton" name="RenderingCollapsibleButton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="text">
       <string>Rendering</string>
      </property>
@@ -510,7 +516,11 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget"/>
+           <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -531,6 +541,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QCheckBox" name="ROICropCheckBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -541,6 +554,9 @@
           </item>
           <item row="2" column="0" colspan="2">
            <widget class="QPushButton" name="ROIFitPushButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Fit ROI to Volume</string>
             </property>
@@ -617,7 +633,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>396</x>
-     <y>81</y>
+     <y>179</y>
     </hint>
     <hint type="destinationlabel">
      <x>180</x>
@@ -633,11 +649,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>606</x>
-     <y>79</y>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
-     <y>314</y>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -665,11 +681,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>315</x>
-     <y>77</y>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>320</x>
-     <y>79</y>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -681,11 +697,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>296</x>
-     <y>77</y>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>298</x>
-     <y>81</y>
+     <y>179</y>
     </hint>
    </hints>
   </connection>
@@ -697,11 +713,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>546</x>
-     <y>77</y>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>520</x>
-     <y>75</y>
+     <y>80</y>
     </hint>
    </hints>
   </connection>
@@ -713,11 +729,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>371</x>
-     <y>77</y>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>372</x>
-     <y>83</y>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -749,7 +765,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>289</x>
-     <y>83</y>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -765,7 +781,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>606</x>
-     <y>79</y>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -781,7 +797,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>606</x>
-     <y>81</y>
+     <y>179</y>
     </hint>
    </hints>
   </connection>
@@ -797,7 +813,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>602</x>
-     <y>77</y>
+     <y>105</y>
     </hint>
    </hints>
   </connection>
@@ -825,11 +841,91 @@
    <hints>
     <hint type="sourcelabel">
      <x>300</x>
-     <y>169</y>
+     <y>339</y>
     </hint>
     <hint type="destinationlabel">
      <x>169</x>
-     <y>329</y>
+     <y>541</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumeNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>RenderingCollapsibleButton</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>104</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumeNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>RenderingCollapsibleButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>233</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>240</x>
+     <y>276</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ROICropCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>93</x>
+     <y>157</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ROIFitPushButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>578</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumePropertyNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>VolumePropertyNodeWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>138</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>144</x>
+     <y>391</y>
     </hint>
    </hints>
   </connection>

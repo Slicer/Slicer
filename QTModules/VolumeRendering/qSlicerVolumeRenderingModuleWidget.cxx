@@ -137,6 +137,12 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->RenderingTechniqueFgComboBox->addItem(
     "Illustrative Context Preserving Exploration",
     vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
+
+  // Default values
+  this->InputsCollapsibleButton->setCollapsed(true);
+  this->InputsCollapsibleButton->setEnabled(false);;
+  this->RenderingCollapsibleButton->setCollapsed(true);
+  this->RenderingCollapsibleButton->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
