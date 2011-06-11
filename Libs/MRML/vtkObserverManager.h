@@ -20,21 +20,22 @@
 #ifndef __vtkObserverManager_h
 #define __vtkObserverManager_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkUnsignedLongArray.h"
-#include "vtkIntArray.h"
-
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkObject.h>
+
+// STD includes
 #include <map>
 
 class vtkCallbackCommand;
+class vtkIntArray;
+class vtkUnsignedLongArray;
 
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
-
 
 class VTK_MRML_EXPORT vtkObserverManager : public vtkObject 
 {
@@ -57,9 +58,12 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   /// remove all observers for all events
   void RemoveObjectEvents(vtkObject *nodePtr);
 
+  /// Observe ModifiedEvent on the object
+  void ObserveObject(vtkObject *node);
+
   /// add observers for specified events
   void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events);
-  
+
   /// accessors for the owner class
   /// - note we do not hold a registered pointer to the owner
   ///   to avoid reference loops

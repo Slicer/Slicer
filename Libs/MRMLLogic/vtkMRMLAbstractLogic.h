@@ -44,7 +44,7 @@
   this->GetMRMLObserverManager()->SetObject(vtkObjectPointer(&(node)), (value));   \
   if (oldNode != (node))                                                           \
     {                                                                              \
-    this->InvokeEvent(vtkCommand::ModifiedEvent);                                  \
+    this->Modified();                                                              \
     }                                                                              \
 };
 #endif
@@ -56,7 +56,7 @@
   this->GetMRMLObserverManager()->SetAndObserveObject(vtkObjectPointer(&(node)), (value)); \
   if (oldNode != (node))                                                                   \
     {                                                                                      \
-    this->InvokeEvent(vtkCommand::ModifiedEvent);                                          \
+    this->Modified();                                                                      \
     }                                                                                      \
 };
 #endif
@@ -76,7 +76,7 @@
      vtkObjectPointer(&(node)), (value), (events));                                     \
   if (oldNode != (node))                                                                \
     {                                                                                   \
-    this->InvokeEvent(vtkCommand::ModifiedEvent);                                       \
+    this->Modified();                                                                   \
     }                                                                                   \
 };
 #endif

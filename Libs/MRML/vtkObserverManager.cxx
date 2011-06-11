@@ -12,12 +12,16 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkObserverManager.h"
-#include "vtkEventBroker.h"
-#include "vtkObservation.h"
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkIntArray.h>
+#include <vtkObjectFactory.h>
+#include <vtkObservation.h>
+#include <vtkUnsignedLongArray.h>
 
-#include "vtkCallbackCommand.h"
+// MRML includes
+#include "vtkEventBroker.h"
+#include "vtkObserverManager.h"
 
 vtkCxxRevisionMacro(vtkObserverManager, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkObserverManager);
@@ -95,53 +99,20 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     {
     return;
     }
-  vtkObject *nodePtrOld = *nodePtr;
-
-  this->RemoveObjectEvents(*nodePtr);
-
-  *nodePtr  = node ;
-
-  if ( node )
-    {
-    node->Register(this);
-
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkCommand::ModifiedEvent);
-    this->AddObjectEvents(node, events);
-    events->Delete();   
-    }
-  if (nodePtrOld)
-    {
-    (nodePtrOld)->UnRegister(this);
-    }
-
+  this->SetObject(nodePtr, node);
+  this->ObserveObject(node);
 }
 
 //----------------------------------------------------------------------------
 void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
 {
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
-  if (*nodePtr == node && node == NULL)
+  if (*nodePtr == node)
     {
     return;
     }
-  
-  this->RemoveObjectEvents(*nodePtr);
-  
-  vtkObject *nodePtrOld = *nodePtr;
-  
-  *nodePtr  = node ;
-  
-  if ( node  )
-    {
-    vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
-    node->Register(this);
-    this->AddObjectEvents(node, events);
-    }
-  if (nodePtrOld)
-    {
-    (nodePtrOld)->UnRegister(this);
-    }
+  this->SetObject(nodePtr, node);
+  this->AddObjectEvents(node, events);
 }
 
 //----------------------------------------------------------------------------
@@ -161,6 +132,15 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
       objTags->Reset();
       }
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkObserverManager::ObserveObject(vtkObject* node)
+{
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->AddObjectEvents(node, events);
+  events->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -190,7 +170,16 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
       {
       for (int i=0; i<events->GetNumberOfTuples(); i++)
         {
-        
+#ifndef NDEBUG
+        // Make sure we are not adding an already existing connection. It's
+        // not a big issue but it just shows poor design.
+        if (broker->GetObservations(nodePtr, events->GetValue(i), observer, this->CallbackCommand).size() != 0)
+          {
+          vtkWarningMacro(<< "Observation between" << nodePtr->GetClassName()
+                          << " and " << observer->GetClassName()
+                          << " already exists.");
+          }
+#endif
         vtkObservation *observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
         unsigned long tag = observation->GetEventTag();
         
