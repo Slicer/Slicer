@@ -254,23 +254,26 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
 
 
   // if annotation
-  if (annotationNode && annotationNode->GetControlPointCoordinates(0) &&
+  if (annotationNode && annotationNode->GetNumberOfControlPoints() &&
      (!seedSelectedFiducials || (seedSelectedFiducials && annotationNode->GetSelected())) ) 
     {
-    double *xyzf = annotationNode->GetControlPointCoordinates(0);
-    for (double x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
+    for (int i=0; i < annotationNode->GetNumberOfControlPoints(); i++)
       {
-      for (double y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
+      double *xyzf = annotationNode->GetControlPointCoordinates(i);
+      for (double x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
         {
-        for (double z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
+        for (double y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
           {
-          float newXYZ[3];
-          newXYZ[0] = xyzf[0] + x;
-          newXYZ[1] = xyzf[1] + y;
-          newXYZ[2] = xyzf[2] + z;
-          float *xyz = transFiducial->TransformFloatPoint(newXYZ);
-          //Run the thing
-          seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+          for (double z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
+            {
+            float newXYZ[3];
+            newXYZ[0] = xyzf[0] + x;
+            newXYZ[1] = xyzf[1] + y;
+            newXYZ[2] = xyzf[2] + z;
+            float *xyz = transFiducial->TransformFloatPoint(newXYZ);
+            //Run the thing
+            seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+            }
           }
         }
       }
@@ -354,11 +357,10 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
 
   vtkMRMLAnnotationHierarchyNode *annotationListNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedingyNode);
+  vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(seedingyNode);
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(seedingyNode);
 
-
-  // loop over fiducials
-  if (annotationListNode) 
+  if (annotationListNode) // loop over annotation nodes
     {
     vtkCollection *annotationNodes = vtkCollection::New();
     annotationListNode->GetDirectChildren(annotationNodes);
@@ -381,9 +383,16 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       }
       annotationNodes->Delete();
     }
+  else if (annotationNode) // loop over points in the models
+    {
+    this->CreateTractsForOneSeed(seed, volumeNode, annotationNode,
+                                 stoppingMode, stoppingValue, stoppingCurvature, 
+                                 integrationStepLength, mnimumPathLength, regionSize, 
+                                 sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
 
-  // loop over points in the models
-  if (modelNode) 
+    }
+
+  else if (modelNode) // loop over points in the models
     {
     this->CreateTractsForOneSeed(seed, volumeNode, modelNode,
                                  stoppingMode, stoppingValue, stoppingCurvature, 
