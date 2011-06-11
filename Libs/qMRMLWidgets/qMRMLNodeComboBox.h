@@ -205,7 +205,7 @@ public slots:
   /// into the list. If \a index is 0, the first node will be selected (even if
   /// "NoneEnabled" is true).
   /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNode(const QString&)
-  void setCurrentNode(int index);
+  void setCurrentNodeIndex(int index);
 
   ///
   /// Creates a node of the same type than on the "node types" properties.

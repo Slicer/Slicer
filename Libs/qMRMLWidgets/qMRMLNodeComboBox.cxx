@@ -582,7 +582,15 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   QModelIndexList indexes = d->indexesFromMRMLNodeID(nodeID);
   if (indexes.size() == 0)
     {
-    d->ComboBox->setRootModelIndex(d->ComboBox->model()->index(0, 0));
+    QModelIndex sceneIndex = d->ComboBox->model()->index(0, 0);
+    d->ComboBox->setRootModelIndex(sceneIndex);
+    // The combobox updates the current index of the view only when he needs
+    // it (in popup()), however we want the view to be always synchronized
+    // with the currentIndex as we use it to know if it has changed. This is 
+    // why we set it here.
+    QModelIndex noneIndex = sceneIndex.child(0, d->ComboBox->modelColumn());
+    d->ComboBox->view()->setCurrentIndex(
+      d->NoneEnabled ? noneIndex : sceneIndex);
     d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);
     return;
     }
@@ -600,7 +608,7 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox::setCurrentNode(int index)
+void qMRMLNodeComboBox::setCurrentNodeIndex(int index)
 {
   Q_D(qMRMLNodeComboBox);
   if (index >= this->nodeCount())
