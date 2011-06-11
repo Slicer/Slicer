@@ -52,6 +52,9 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// qSlicerIOManagerPrivate methods
+
+//-----------------------------------------------------------------------------
 qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
   :q_ptr(&object)
 {
@@ -114,6 +117,8 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
   this->ProgressDialog = 0;
 }
 
+//-----------------------------------------------------------------------------
+// qSlicerIOManager methods
 
 //-----------------------------------------------------------------------------
 qSlicerIOManager::qSlicerIOManager(QObject* _parent):Superclass(_parent)
