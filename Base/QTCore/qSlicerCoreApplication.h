@@ -94,12 +94,18 @@ public:
   /// Get slicer home directory
   QString slicerHome() const;
 
+  /// Get slicer default temporary directory
+  QString defaultTemporaryPath() const;
+
   /// Get slicer temporary directory
   QString temporaryPath() const;
 
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
   
+  /// Get slicer default extensions path
+  QString defaultExtensionsPath() const;
+
   /// Get slicer extension directory
   QString extensionsPath() const;
 
