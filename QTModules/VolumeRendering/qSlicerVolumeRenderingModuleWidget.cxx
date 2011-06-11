@@ -404,7 +404,7 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     d->DisplayNode ? d->DisplayNode->GetDepthPeelingThreshold() : 0.);
   technique = d->DisplayNode ? d->DisplayNode->GetRaycastTechniqueFg() : -1;
   index = d->RenderingTechniqueFgComboBox->findData(QVariant(technique));
-  d->RenderingTechniqueComboBox->setCurrentIndex(index);
+  d->RenderingTechniqueFgComboBox->setCurrentIndex(index);
   d->FusionComboBox->setCurrentIndex(
     d->DisplayNode ? d->DisplayNode->GetMultiVolumeFusionMethod() :
     vtkMRMLVolumeRenderingDisplayNode::AlphaBlendingOR);
