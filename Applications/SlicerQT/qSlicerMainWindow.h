@@ -60,6 +60,7 @@ protected slots:
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
   void onViewExtensionManagerActionTriggered();
   void onViewApplicationSettingsActionTriggered();
+  void onSettingDialogAccepted();
 
   void onMRMLSceneModified(vtkObject*);
   void onLayoutActionTriggered(QAction* action);

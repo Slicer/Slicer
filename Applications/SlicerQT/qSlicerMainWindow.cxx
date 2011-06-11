@@ -275,10 +275,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // Settings Dialog
   //----------------------------------------------------------------------------
   // Initialize the Settings widget
+  qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog = new ctkSettingsDialog(q);
   this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
-  this->SettingsDialog->addPanel("Modules settings", new qSlicerSettingsModulesPanel);
+  this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
   this->SettingsDialog->addPanel("Python settings", new qSlicerSettingsPythonPanel);
+  settingsModulesPanel->setRestartRequested(false);
+  QObject::connect(this->SettingsDialog, SIGNAL(accepted()), q, SLOT(onSettingDialogAccepted()));
 }
 
 //-----------------------------------------------------------------------------
@@ -494,6 +497,21 @@ void qSlicerMainWindow::onViewApplicationSettingsActionTriggered()
 {
   Q_D(qSlicerMainWindow);
   d->SettingsDialog->exec();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerMainWindow::onSettingDialogAccepted()
+{
+  Q_D(qSlicerMainWindow);
+  qSlicerSettingsModulesPanel *settingsModulesPanel =
+      qobject_cast<qSlicerSettingsModulesPanel*>(d->SettingsDialog->panel("Modules settings"));
+  Q_ASSERT(settingsModulesPanel);
+  if (settingsModulesPanel->restartRequested())
+    {
+    QString reason = tr("Since the module paths have been updated, the application should be restarted.\n\n"
+                        "Do you want to restart now?\n");
+    qSlicerApplication::application()->confirmRestart(reason);
+    }
 }
 
 //---------------------------------------------------------------------------
