@@ -76,6 +76,10 @@ public:
   /// Detect PythonPath. If one doesn't exist attempt to generate one.
   void discoverPythonPath();
 
+  /// Convenient function used to create a \a path.
+  /// If it fails, print an error message using given \a description
+  bool createDirectory(const QString& path, const QString& description) const;
+
   /// Parse arguments
   void parseArguments();
 

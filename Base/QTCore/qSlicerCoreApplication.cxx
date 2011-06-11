@@ -357,6 +357,25 @@ void qSlicerCoreApplicationPrivate::discoverPythonPath()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreApplicationPrivate::createDirectory(const QString& path, const QString& description) const
+{
+  if (path.isEmpty())
+    {
+    return false;
+    }
+  if (QDir(path).exists())
+    {
+    return true;
+    }
+  if (!QDir::root().mkpath(path))
+    {
+    qCritical() << QObject::tr("Failed to create %1 directory").arg(description) << path;
+    return false;
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::parseArguments()
 {
   Q_Q(qSlicerCoreApplication);
