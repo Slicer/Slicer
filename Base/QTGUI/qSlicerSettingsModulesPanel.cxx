@@ -72,20 +72,21 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   this->setupUi(q);
 
+  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
   this->ModulesMenu = new qSlicerModulesMenu(q);
   this->ModulesMenu->setDuplicateActions(true);
   this->HomeModuleButton->setMenu(this->ModulesMenu);
   QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(const QString&)),
                    q, SLOT(onHomeModuleChanged(const QString&)));
-  this->ModulesMenu->setModuleManager(qSlicerCoreApplication::application()->moduleManager());
+  this->ModulesMenu->setModuleManager(coreApp->moduleManager());
 
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowHiddenModulesChanged(bool)));
 
   // Default values
   this->ModulesMenu->setCurrentModule("welcome");
-  this->ExtensionInstallDirectoryButton->setDirectory( qSlicerCoreApplication::application()->extensionsPath());
-  this->TemporaryDirectoryButton->setDirectory( qSlicerCoreApplication::application()->temporaryPath());
+  this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
+  this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
 
   // Register settings
   q->registerProperty("disable-loadable-module", this->LoadModulesCheckBox,
