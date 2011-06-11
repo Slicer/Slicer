@@ -251,8 +251,8 @@ int main(int argc, char* argv[])
     {
     QPixmap pixmap(":Images/SlicerSplashScreen.png");
     splashScreen.reset(new QSplashScreen(pixmap));
-    splashScreen->show();
     splashMessage(splashScreen, "Initializing...");
+    splashScreen->show();
     }
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
