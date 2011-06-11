@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>395</width>
-    <height>148</height>
+    <width>402</width>
+    <height>182</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,14 +69,14 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="ConfirmExitLabel">
      <property name="text">
       <string>Confirm on exit:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <widget class="QCheckBox" name="ConfirmExitCheckBox">
      <property name="text">
       <string/>
@@ -97,6 +97,23 @@
     <widget class="QCheckBox" name="ShowToolButtonTextCheckBox">
      <property name="text">
       <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="ConfirmRestartLabel">
+     <property name="text">
+      <string>Confirm on restart:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QCheckBox" name="ConfirmRestartCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

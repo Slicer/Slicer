@@ -80,6 +80,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
                       SIGNAL(toggled(bool)));
+  q->registerProperty("MainWindow/ConfirmRestart", this->ConfirmRestartCheckBox, "checked",
+                      SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/ConfirmExit", this->ConfirmExitCheckBox, "checked",
                       SIGNAL(toggled(bool)));
 }

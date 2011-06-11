@@ -36,6 +36,7 @@
 
 // CTK includes
 #include <ctkColorDialog.h>
+#include <ctkConfirmExitDialog.h>
 #include <ctkErrorLogModel.h>
 #include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
@@ -285,6 +286,31 @@ void qSlicerApplication::setToolTipsEnabled(bool enable)
 {
   Q_D(qSlicerApplication);
   d->ToolTipTrapper->setEnabled(!enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::confirmRestart(const QString& reason)
+{
+  QString reasonText(reason);
+  if (reasonText.isEmpty())
+    {
+    reasonText = tr("Are you sure you want to restart?");
+    }
+
+  bool restart = true;
+  QSettings settings;
+  bool confirm = settings.value("MainWindow/ConfirmRestart", true).toBool();
+  if (confirm)
+    {
+    ctkConfirmExitDialog dialog;
+    dialog.setText(reasonText);
+    restart = (dialog.exec() == QDialog::Accepted);
+    settings.setValue("MainWindow/ConfirmRestart", !dialog.dontShowAnymore());
+    }
+  if (restart)
+    {
+    this->restart();
+    }
 }
 
 //-----------------------------------------------------------------------------

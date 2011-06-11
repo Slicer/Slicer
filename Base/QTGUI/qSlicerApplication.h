@@ -88,21 +88,26 @@ public:
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
 
-  ///
   /// Return the best module name for a given node.
-  /// qSlicerApplication is a temporary host for the function as it should be
+  /// \note qSlicerApplication is a temporary host for the function as it should be
   /// moved into a DataManager where module can register new node 
   /// types/modules
   QString nodeModule(vtkMRMLNode* node)const;
 
 public slots:
-  ///
-  /// Utility function that retrive the best module for a node and trigger
+
+  /// Utility function that retrieve the best module for a node and trigger
   /// its associated QAction which eventually opens the module.
-  /// qSlicerApplication is a temporary host for the function as it should be
+  /// \note qSlicerApplication is a temporary host for the function as it should be
   /// moved into a DataManager where module can register new node 
   /// types/modules
   void openNodeModule(vtkMRMLNode* node);
+
+public slots:
+
+  /// Popup a dialog asking the user if the application should be restarted.
+  /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"
+  void confirmRestart(const QString& reason = QString());
 
 protected:
   /// Reimplemented from qSlicerCoreApplication
