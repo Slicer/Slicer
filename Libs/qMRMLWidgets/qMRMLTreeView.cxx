@@ -345,25 +345,33 @@ void qMRMLTreeView::setNodeTypes(const QStringList& _nodeTypes)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::isEditMenuItemVisible()const
+bool qMRMLTreeView::isEditMenuActionVisible()const
 {
   Q_D(const qMRMLTreeView);
   return d->NodeMenu->actions().contains(d->EditAction);
 }
 
 //--------------------------------------------------------------------------
-void qMRMLTreeView::setEditMenuItemVisible(bool show)
+void qMRMLTreeView::setEditMenuActionVisible(bool show)
 {
   Q_D(qMRMLTreeView);
   if (show)
     {
     // Prepend the action in the menu
-    d->NodeMenu->insertAction(d->NodeMenu->actions()[0],d->EditAction);
+    this->prependMenuAction(d->EditAction);
     }
   else
     {
     d->NodeMenu->removeAction(d->EditAction);
     }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::prependMenuAction(QAction* action)
+{
+  Q_D(qMRMLTreeView);
+  // Prepend the action in the menu
+  d->NodeMenu->insertAction(d->NodeMenu->actions()[0], action);
 }
 
 //--------------------------------------------------------------------------

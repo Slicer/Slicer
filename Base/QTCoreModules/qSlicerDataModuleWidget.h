@@ -63,6 +63,9 @@ protected slots:
   void onMRMLNodeModified();
   void validateNodeName();
 */
+public slots:
+  void insertTransformNode();
+
 protected:
   virtual void setup();
 

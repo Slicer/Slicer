@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
-  Q_PROPERTY(bool editMenuItemVisible READ isEditMenuItemVisible WRITE setEditMenuItemVisible)
+  Q_PROPERTY(bool editMenuActionVisible READ isEditMenuActionVisible WRITE setEditMenuActionVisible)
 
 public:
   qMRMLTreeView(QWidget *parent=0);
@@ -73,8 +73,12 @@ public:
 
   ///
   /// Show/Hide the "Edit properties..." menu item on right context menu
-  bool isEditMenuItemVisible()const;
-  void setEditMenuItemVisible(bool show);
+  bool isEditMenuActionVisible()const;
+  void setEditMenuActionVisible(bool show);
+  
+  ///
+  /// Add a custom QAction to add into the context menu on a right click
+  void prependMenuAction(QAction* action);
 
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort

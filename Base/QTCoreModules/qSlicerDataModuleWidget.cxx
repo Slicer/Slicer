@@ -32,7 +32,8 @@
 #include <qMRMLSortFilterProxyModel.h>
 
 // MRML includes
-#include "vtkMRMLNode.h"
+#include <vtkMRMLNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModule
@@ -67,8 +68,14 @@ void qSlicerDataModuleWidget::setup()
 
   d->setupUi(this);
 
+  // Edit properties...
   connect(d->MRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)),
-          qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));   
+          qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));
+  // Insert transform
+  QAction* insertTransformAction = new QAction(tr("Insert transform"),this);
+  d->MRMLTreeView->prependMenuAction(insertTransformAction);
+  connect(insertTransformAction, SIGNAL(triggered()),
+          this, SLOT(insertTransformNode()));
 
   // Connection with TreeView is done in UI file
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
@@ -149,6 +156,23 @@ void qSlicerDataModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qSlicerDataModuleWidget);
   this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
   this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModuleWidget::insertTransformNode()
+{
+  Q_D(qSlicerDataModuleWidget);
+  vtkMRMLTransformNode* linearTransform = vtkMRMLLinearTransformNode::New();
+
+  vtkMRMLNode* parent = vtkMRMLTransformNode::SafeDownCast(d->MRMLTreeView->currentNode());
+  if (parent)
+    {
+    linearTransform->SetAndObserveTransformNodeID( parent->GetID() );
+    linearTransform->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+    }
+
+  this->mrmlScene()->AddNode(linearTransform);
+  linearTransform->Delete();
 }
 
 /* Hidden to the UI

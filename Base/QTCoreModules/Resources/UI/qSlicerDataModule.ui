@@ -38,13 +38,10 @@
         <property name="indentation">
          <number>10</number>
         </property>
-        <property name="uniformRowHeights">
-         <bool>true</bool>
-        </property>
         <property name="listenNodeModifiedEvent">
          <bool>true</bool>
         </property>
-        <property name="editMenuItemVisible">
+        <property name="editMenuActionVisible">
          <bool>true</bool>
         </property>
        </widget>
