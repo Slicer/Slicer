@@ -13,6 +13,10 @@ def exit(status=EXIT_SUCCESS):
   from slicer import app
   app.exit(status)
 
+def restart():
+  from slicer import app
+  app.restart()
+
 #
 # UI
 #
