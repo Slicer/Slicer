@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QMainWindow>
+#include <QSettings>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -53,6 +54,7 @@ public:
   void init();
 
   qSlicerModulesMenu* ModulesMenu;
+  bool RestartRequested;
 };
 
 // --------------------------------------------------------------------------
@@ -63,6 +65,7 @@ qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSe
   :q_ptr(&object)
 {
   this->ModulesMenu = 0;
+  this->RestartRequested = false;
 }
 
 // --------------------------------------------------------------------------
@@ -73,6 +76,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->setupUi(q);
 
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+
   this->ModulesMenu = new qSlicerModulesMenu(q);
   this->ModulesMenu->setDuplicateActions(true);
   this->HomeModuleButton->setMenu(this->ModulesMenu);
@@ -95,18 +99,31 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
                       "currentModule", SIGNAL(currentModuleChanged(const QString&)));
-  q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(const QString&)));
   q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
                       "directory", SIGNAL(directoryChanged(const QString&)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton,
+                      "directory", SIGNAL(directoryChanged(const QString&)));
+  q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
+                      "directoryList", SIGNAL(directoryListChanged()));
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(const QString&)),
                    q, SLOT(onExensionsPathChanged(const QString&)));
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(const QString&)),
                    q, SLOT(onTemporaryPathChanged(const QString&)));
+  QObject::connect(this->AdditionalModulePathsView, SIGNAL(directoryListChanged()),
+                   q, SLOT(onAdditionalModulePathsChanged()));
+
+  // Connect AdditionalModulePaths buttons
+  QObject::connect(this->AddAdditionalModulePathButton, SIGNAL(clicked()),
+                   q, SLOT(onAddModulesAdditionalPathClicked()));
+  QObject::connect(this->RemoveAdditionalModulePathButton, SIGNAL(clicked()),
+                   q, SLOT(onRemoveModulesAdditionalPathClicked()));
+
+  // Hide 'Restart requested' label
+  q->setRestartRequested(false);
 }
 
 // --------------------------------------------------------------------------
@@ -124,6 +141,41 @@ qSlicerSettingsModulesPanel::qSlicerSettingsModulesPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanel::~qSlicerSettingsModulesPanel()
 {
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerSettingsModulesPanel::restartRequested()const
+{
+  Q_D(const qSlicerSettingsModulesPanel);
+  return d->RestartRequested;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::setRestartRequested(bool value)
+{
+  Q_D(qSlicerSettingsModulesPanel);
+  d->RestartRequested = value;
+  d->RestartRequestedLabel->setVisible(value);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::resetSettings()
+{
+  this->Superclass::resetSettings();
+  this->setRestartRequested(false);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::restoreDefaultSettings()
+{
+  bool shouldRestart = false;
+  if (this->defaultPropertyValue("Modules/AdditionalPaths").toStringList()
+      != this->previousPropertyValue("Modules/AdditionalPaths").toStringList())
+    {
+    shouldRestart = true;
+    }
+  this->Superclass::restoreDefaultSettings();
+  this->setRestartRequested(shouldRestart);
 }
 
 // --------------------------------------------------------------------------
@@ -160,5 +212,37 @@ void qSlicerSettingsModulesPanel::onShowHiddenModulesChanged(bool show)
     toolBar->modulesMenu()->setModuleManager(
       toolBar->modulesMenu()->moduleManager());
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
+{
+  Q_D(qSlicerSettingsModulesPanel);
+  d->RemoveAdditionalModulePathButton->setEnabled(
+        d->AdditionalModulePathsView->directoryList().count() > 0);
+  this->setRestartRequested(true);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
+{
+  Q_D(qSlicerSettingsModulesPanel);
+  QString path = QFileDialog::getExistingDirectory(
+        this, tr("Select folder"),
+        QSettings().value("Modules/ExtensionsInstallDirectory").toString());
+  // An empty directory means that the user cancelled the dialog.
+  if (path.isEmpty())
+    {
+    return;
+    }
+  d->AdditionalModulePathsView->addDirectory(path);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onRemoveModulesAdditionalPathClicked()
+{
+  Q_D(qSlicerSettingsModulesPanel);
+  // Remove all selected
+  d->AdditionalModulePathsView->removeSelectedDirectories();
 }
 
