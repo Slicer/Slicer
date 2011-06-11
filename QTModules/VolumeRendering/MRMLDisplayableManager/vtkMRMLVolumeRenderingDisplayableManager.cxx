@@ -770,56 +770,57 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetVolumeVisibility(int isVisible
 
 void vtkMRMLVolumeRenderingDisplayableManager::SetROI(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  if (!vspNode || vspNode->GetROINode() == NULL)
+  if (!vspNode
+      || vspNode->GetROINode() == NULL
+      || !vspNode->GetCroppingEnabled())
     {
+    this->MapperTexture->RemoveAllClippingPlanes();
+    this->MapperRaycast->RemoveAllClippingPlanes();
+    this->MapperGPURaycast->RemoveAllClippingPlanes();
+    this->MapperGPURaycast->ClippingOff();
+    this->MapperGPURaycastII->RemoveAllClippingPlanes();
+    this->MapperGPURaycastII->ClippingOff();
+    this->MapperGPURaycast3->RemoveAllClippingPlanes();
+
     return;
     }
 
-  this->MapperTexture->RemoveAllClippingPlanes();
-  this->MapperRaycast->RemoveAllClippingPlanes();
-  this->MapperGPURaycast->RemoveAllClippingPlanes();
-  this->MapperGPURaycast->ClippingOff();
-  this->MapperGPURaycastII->RemoveAllClippingPlanes();
-  this->MapperGPURaycastII->ClippingOff();
-  this->MapperGPURaycast3->RemoveAllClippingPlanes();
-
-  if (vspNode->GetCroppingEnabled())
-  {
-    vtkPlanes *planes = vtkPlanes::New();
+  vtkPlanes *planes = vtkPlanes::New();
+  vspNode->GetROINode()->GetTransformedPlanes(planes);
+  if ( planes->GetTransform() )
+    {
     double zero[3] = {0,0,0};
     double translation[3];
-    vspNode->GetROINode()->GetTransformedPlanes(planes);
-    if ( planes->GetTransform() )
+    planes->GetTransform()->TransformPoint(zero, translation);
+
+    // apply the translation to the planes
+
+    int numPlanes = planes->GetNumberOfPlanes();
+    vtkPoints *points = planes->GetPoints();
+    for (int i=0; i<numPlanes && i<6; i++)
       {
-      planes->GetTransform()->TransformPoint(zero, translation);
-
-      // apply the translation to the planes
-      vtkPlane *plane;
-
-      int numPlanes = planes->GetNumberOfPlanes();
-      vtkPoints *points = planes->GetPoints();
-      for (int i=0; i<numPlanes && i<6; i++)
-        {
-        double origin[3];
-        plane = planes->GetPlane(i);
-        plane->GetOrigin(origin);
-        points->GetData()->SetTuple3(i, origin[0]-translation[0], origin[1]-translation[1], origin[2]-translation[2] );
-        }
+      vtkPlane *plane = planes->GetPlane(i);
+      double origin[3];
+      plane->GetOrigin(origin);
+      points->GetData()->SetTuple3(i,
+                                   origin[0]-translation[0],
+                                   origin[1]-translation[1],
+                                   origin[2]-translation[2]);
       }
-    
-    this->MapperTexture->SetClippingPlanes(planes);
-    this->MapperRaycast->SetClippingPlanes(planes);
+    }
 
-    this->MapperGPURaycast->SetClippingPlanes(planes);
-    this->MapperGPURaycast->ClippingOn();
+  this->MapperTexture->SetClippingPlanes(planes);
+  this->MapperRaycast->SetClippingPlanes(planes);
 
-    this->MapperGPURaycastII->SetClippingPlanes(planes);
-    this->MapperGPURaycastII->ClippingOn();
-    
-    this->MapperGPURaycast3->SetClippingPlanes(planes);
+  this->MapperGPURaycast->SetClippingPlanes(planes);
+  this->MapperGPURaycast->ClippingOn();
 
-    planes->Delete();
-  }
+  this->MapperGPURaycastII->SetClippingPlanes(planes);
+  this->MapperGPURaycastII->ClippingOn();
+
+  this->MapperGPURaycast3->SetClippingPlanes(planes);
+
+  planes->Delete();
 }
 
 void vtkMRMLVolumeRenderingDisplayableManager::TransformModified(vtkMRMLVolumeRenderingDisplayNode* vspNode)
@@ -1182,9 +1183,8 @@ void vtkMRMLVolumeRenderingDisplayableManager
       {
       vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLCallbackCommand());
       }
-
-    this->SetROI(vspNode);
     }
+  this->SetROI(vspNode);
 
 
   //prepare rendering frame
