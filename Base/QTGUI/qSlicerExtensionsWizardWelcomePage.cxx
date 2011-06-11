@@ -90,7 +90,7 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   QObject::connect(this->SearchURLComboBox, SIGNAL(currentIndexChanged(const QString&)),
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
-                   q, SLOT(deleteTemporaryZipFiles()));
+                   q, SLOT(deleteTemporaryArchiveFiles()));
   
   QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
                    q, SLOT(downloadFinished(QNetworkReply*)));
@@ -207,7 +207,7 @@ bool qSlicerExtensionsWizardWelcomePage::isComplete()const
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
+void qSlicerExtensionsWizardWelcomePage::deleteTemporaryArchiveFiles()
 {
   if (!qSlicerCoreApplication::application())
     {

@@ -49,7 +49,7 @@ public:
   virtual bool validatePage();
 
 public slots:
-  void deleteTemporaryZipFiles();
+  void deleteTemporaryArchiveFiles();
 
 protected slots:
   void downloadFinished(QNetworkReply*);
