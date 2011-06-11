@@ -32,6 +32,8 @@ SET(KIT_SRCS
   qSlicerCommandOptions.h
   qSlicerDataDialog.cxx
   qSlicerDataDialog.h
+  qSlicerDirectoryListView.cxx
+  qSlicerDirectoryListView.h
   
   qSlicerExtensionsWizard.cxx
   qSlicerExtensionsWizard.h
@@ -114,6 +116,7 @@ SET(KIT_MOC_SRCS
   qSlicerCommandOptions.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
+  qSlicerDirectoryListView.h
   qSlicerExtensionsWizard.h
   qSlicerExtensionsWizardOverviewPage.h
   qSlicerExtensionsWizardRestartPage.h
