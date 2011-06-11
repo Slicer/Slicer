@@ -658,9 +658,19 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     unsigned long event,
                                                     void *callData )
 {
-    Superclass::ProcessMRMLEvents(caller, event, callData);
-    //this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    return;
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  if (this->VolumePropertyNode == node)
+    {
+    this->Modified();
+    }
+  if (this->FgVolumePropertyNode == node &&
+      this->CurrentVolumeMapper == NCIGPURayCastMultiVolume &&
+      this->BgFgRatio > 0.)
+    {
+    this->Modified();
+    }
+  return;
 }
 
 //----------------------------------------------------------------------------

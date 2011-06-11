@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyNode::New()
 {
     // First try to create the object from the vtkObjectFactory
@@ -20,6 +21,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyNode::New()
     return new vtkMRMLVolumePropertyNode;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLVolumePropertyNode::CreateNodeInstance(void)
 {
     // First try to create the object from the vtkObjectFactory
@@ -32,22 +34,34 @@ vtkMRMLNode* vtkMRMLVolumePropertyNode::CreateNodeInstance(void)
     return new vtkMRMLVolumePropertyNode;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
-{   
+{
     this->VolumeProperty = NULL;
+
     vtkVolumeProperty *node  = vtkVolumeProperty::New();
     vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, node);
+    vtkObserveMRMLObjectMacro(node->GetScalarOpacity());
+    vtkObserveMRMLObjectMacro(node->GetGradientOpacity());
+    vtkObserveMRMLObjectMacro(node->GetRGBTransferFunction());
     node->Delete();
+
     this->HideFromEditors = 0;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
 {
-    if(this->VolumeProperty)
+  if(this->VolumeProperty)
     {
-      vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
+    vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity());
+    vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity());
+    vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction());
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
     }
 }
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::WriteXML(ostream& of, int nIndent)
 {
     // Write all attributes not equal to their defaults
@@ -219,20 +233,16 @@ void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
     this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
 }
 
-//-----------------------------------------------------------
-
-
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event, 
+                                                    unsigned long event,
                                                     void *callData )
 {
-    Superclass::ProcessMRMLEvents(caller, event, callData);
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    return;
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  this->Modified();
 }
 
-
+//---------------------------------------------------------------------------
 std::string vtkMRMLVolumePropertyNode::GetPiecewiseFunctionString(vtkPiecewiseFunction* function)
 {
     std::stringstream resultStream;
@@ -250,6 +260,8 @@ std::string vtkMRMLVolumePropertyNode::GetPiecewiseFunctionString(vtkPiecewiseFu
     }
     return resultStream.str();
 }
+
+//---------------------------------------------------------------------------
 std::string  vtkMRMLVolumePropertyNode::GetColorTransferFunctionString(vtkColorTransferFunction* function)
 {
 
@@ -270,6 +282,8 @@ std::string  vtkMRMLVolumePropertyNode::GetColorTransferFunctionString(vtkColorT
     }
     return resultStream.str();
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(std::string str,vtkPiecewiseFunction* result)
 {
     std::stringstream stream;
@@ -290,6 +304,8 @@ void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(std::string str,v
     result->FillFromDataPointer(size/2,data);
     delete[] data;
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(std::string str, vtkColorTransferFunction* result)
 {
     std::stringstream stream;
@@ -312,6 +328,7 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(std::string s
 
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
 {
   return vtkMRMLVolumePropertyStorageNode::New();
