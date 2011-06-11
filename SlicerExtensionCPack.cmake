@@ -77,6 +77,20 @@ set(CPACK_PACKAGE_FILE_NAME "${Slicer_WC_REVISION}-${Slicer_BUILD}-${EXTENSION_N
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
 # -------------------------------------------------------------------------
+# Prepare s4ext file
+# -------------------------------------------------------------------------
+configure_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}.s4ext
+  ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext
+  COPYONLY
+  )
+
+# -------------------------------------------------------------------------
+# Simulate generation of package named: ${CPACK_PACKAGE_FILE_NAME}.s4ext
+# -------------------------------------------------------------------------
+install(CODE "MESSAGE(\"CPack: - package: ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext generated.\")")
+
+# -------------------------------------------------------------------------
 # Disable source generator enabled by default
 # -------------------------------------------------------------------------
 set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages")
