@@ -77,12 +77,15 @@ set(CPACK_PACKAGE_FILE_NAME "${Slicer_WC_REVISION}-${Slicer_BUILD}-${EXTENSION_N
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
 # -------------------------------------------------------------------------
-# Disable generator enabled by default
+# Disable source generator enabled by default
 # -------------------------------------------------------------------------
-set(CPACK_BINARY_TZ   OFF CACHE BOOL "Enable to build TZ packages")
-set(CPACK_BINARY_STGZ OFF CACHE BOOL "Enable to build STGZ packages")
 set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages")
 set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages")
+
+# -------------------------------------------------------------------------
+# Enable generator
+# -------------------------------------------------------------------------
+set(CPACK_GENERATOR "TGZ")
 
 include(CPack)
 
