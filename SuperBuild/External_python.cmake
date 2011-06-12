@@ -12,7 +12,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     set(python_DEPENDENCIES tcl)
   else()
-    set(python_DEPENDENCIES incrTcl tcl tk)
+    set(python_DEPENDENCIES tcl tk)
   endif()
 endif()
 
