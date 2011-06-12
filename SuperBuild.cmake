@@ -61,9 +61,9 @@ else()
 endif()
 
 #------------------------------------------------------------------------------
-# Slicer dependency list - Make sure dependency are topologically ordered
+# Slicer dependency list
 #------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem)
+set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
@@ -82,7 +82,6 @@ if(Slicer_USE_PYTHONQT)
     endif()
   endif()
 endif()
-list(APPEND Slicer_DEPENDENCIES  VTK Insight CTK)
 
 SlicerMacroCheckExternalProjectDependency(Slicer)
 
