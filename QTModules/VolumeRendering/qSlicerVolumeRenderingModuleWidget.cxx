@@ -237,57 +237,75 @@ vtkMRMLScalarVolumeNode* qSlicerVolumeRenderingModuleWidget
 }
 
 // --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  d->VolumeNodeComboBox->setCurrentNode(volumeNode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+
+  if (!volumeNode)
+    {
+    this->setMRMLDisplayNode(0);
+    return;
+    }
+
+  vtkSlicerVolumeRenderingLogic *logic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+
+  // see if the volume has any display node for a current viewer
+  vtkMRMLVolumeRenderingDisplayNode *dnode =
+    logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
+  if (!dnode)
+    {
+    dnode = d->createVolumeRenderingDisplayNode();
+    if (volumeNode)
+      {
+      volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());
+      }
+    }
+
+  // DepthPeelingThresholdSliderWidget depends on the scalar range of the volume
+  // Set the range here before the display node is set and the
+  // DepthPeelingThreshold slider value updated.
+  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
+  if (imageData)
+    {
+    double range[2];
+    imageData->GetScalarRange(range);
+    bool oldBlockSignals =
+      d->DepthPeelingSliderWidget->blockSignals(true);
+    d->DepthPeelingSliderWidget->setRange(range[0], range[1]);
+    d->DepthPeelingSliderWidget->blockSignals(oldBlockSignals);
+    }
+
+  this->setMRMLDisplayNode(dnode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onVisibilityChanged(bool visible)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  if (!d->DisplayNode)
+    {
+    return;
+    }
+  d->DisplayNode->SetVisibility(visible);
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget
 ::mrmlDisplayNode()const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   return vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
     d->DisplayNodeComboBox->currentNode());
-}
-
-// --------------------------------------------------------------------------
-QList<vtkMRMLViewNode*> qSlicerVolumeRenderingModuleWidget::mrmlViewNodes()const
-{
-  Q_D(const qSlicerVolumeRenderingModuleWidget);
-  QList<vtkMRMLViewNode*> res;
-  foreach(vtkMRMLNode* checkedNode, d->ViewCheckableNodeComboBox->checkedNodes())
-    {
-    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
-    }
-  return res;
-}
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->ViewCheckableNodeComboBox->check(viewNode);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-
-  // set view in the currently selected display node
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (!displayNode)
-    {
-    return;
-    }
-
-  int wasModifying = displayNode->StartModify();
-
-  displayNode->RemoveAllViewNodeIDs();
-  if (!d->ViewCheckableNodeComboBox->allChecked() &&
-      !d->ViewCheckableNodeComboBox->noneChecked())
-    {
-    foreach (vtkMRMLViewNode* viewNode, this->mrmlViewNodes())
-      {
-      displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
-      }
-    }
-
-  displayNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------
@@ -413,67 +431,48 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
+QList<vtkMRMLViewNode*> qSlicerVolumeRenderingModuleWidget::mrmlViewNodes()const
+{
+  Q_D(const qSlicerVolumeRenderingModuleWidget);
+  QList<vtkMRMLViewNode*> res;
+  foreach(vtkMRMLNode* checkedNode, d->ViewCheckableNodeComboBox->checkedNodes())
+    {
+    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
+    }
+  return res;
+}
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->VolumeNodeComboBox->setCurrentNode(volumeNode);
+  d->ViewCheckableNodeComboBox->check(viewNode);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node)
+void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
-
-  if (!volumeNode)
+  // set view in the currently selected display node
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
     {
-    this->setMRMLDisplayNode(0);
     return;
     }
 
-  vtkSlicerVolumeRenderingLogic *logic =
-    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  int wasModifying = displayNode->StartModify();
 
-  // see if the volume has any display node for a current viewer
-  vtkMRMLVolumeRenderingDisplayNode *dnode =
-    logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
-  if (!dnode)
+  displayNode->RemoveAllViewNodeIDs();
+  if (!d->ViewCheckableNodeComboBox->allChecked() &&
+      !d->ViewCheckableNodeComboBox->noneChecked())
     {
-    dnode = d->createVolumeRenderingDisplayNode();
-    if (volumeNode)
+    foreach (vtkMRMLViewNode* viewNode, this->mrmlViewNodes())
       {
-      volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());
+      displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
       }
     }
 
-  // DepthPeelingThresholdSliderWidget depends on the scalar range of the volume
-  // Set the range here before the display node is set and the
-  // DepthPeelingThreshold slider value updated.
-  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-  if (imageData)
-    {
-    double range[2];
-    imageData->GetScalarRange(range);
-    bool oldBlockSignals =
-      d->DepthPeelingSliderWidget->blockSignals(true);
-    d->DepthPeelingSliderWidget->setRange(range[0], range[1]);
-    d->DepthPeelingSliderWidget->blockSignals(oldBlockSignals);
-    }
-
-  this->setMRMLDisplayNode(dnode);
-
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onVisibilityChanged(bool visible)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-  d->DisplayNode->SetVisibility(visible);
+  displayNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------
