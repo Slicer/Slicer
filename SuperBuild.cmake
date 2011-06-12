@@ -142,7 +142,7 @@ include(SuperBuild/External_libarchive.cmake)
 
 if (Slicer_USE_PYTHONQT_WITH_TCL)
   if(UNIX)
-    list(APPEND slicer_DEPENDENCIES itcl)
+    list(APPEND slicer_DEPENDENCIES incrTcl)
   endif()
 endif()
 

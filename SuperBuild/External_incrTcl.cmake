@@ -1,48 +1,47 @@
 
-#-----------------------------------------------------------------------------
-set(proj itcl)
+set(proj incrTcl)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
-set(itcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
-set(itcl_BUILD_IN_SOURCE 0)
-set(itcl_CONFIGURE_COMMAND "")
-set(itcl_BUILD_COMMAND "")
-set(itcl_INSTALL_COMMAND "")
-set(itcl_PATCH_COMMAND "")
+set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
+set(incrTcl_BUILD_IN_SOURCE 0)
+set(incrTcl_CONFIGURE_COMMAND "")
+set(incrTcl_BUILD_COMMAND "")
+set(incrTcl_INSTALL_COMMAND "")
+set(incrTcl_PATCH_COMMAND "")
 
 if(APPLE)
-  set(itcl_BUILD_IN_SOURCE 1)
+  set(incrTcl_BUILD_IN_SOURCE 1)
 
-  set(itcl_configure ${tcl_base}/incrTcl/itcl/configure)
-  set(itcl_configure_find "*.c | *.o | *.obj) \;\;")
-  set(itcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
+  set(incrTcl_configure ${tcl_base}/incrTcl/itcl/configure)
+  set(incrTcl_configure_find "*.c | *.o | *.obj) \;\;")
+  set(incrTcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
 
   set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/StringFindReplace.cmake)
-  set(in ${itcl_configure})
-  set(out ${itcl_configure})
+  set(in ${incrTcl_configure})
+  set(out ${incrTcl_configure})
 
-  set(itcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${itcl_configure_find} -Dreplace=${itcl_configure_replace} -P ${script})
+  set(incrTcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${incrTcl_configure_find} -Dreplace=${incrTcl_configure_replace} -P ${script})
 
-  set(itcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(itcl_BUILD_COMMAND make)
-  set(itcl_INSTALL_COMMAND make install)
+  set(incrTcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+  set(incrTcl_BUILD_COMMAND make)
+  set(incrTcl_INSTALL_COMMAND make install)
   
 else()
-  set(itcl_BUILD_IN_SOURCE 1)
-  set(itcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(itcl_BUILD_COMMAND make ${parallelism_level} all)
-  set(itcl_INSTALL_COMMAND make install)
+  set(incrTcl_BUILD_IN_SOURCE 1)
+  set(incrTcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
+  set(incrTcl_BUILD_COMMAND make ${parallelism_level} all)
+  set(incrTcl_INSTALL_COMMAND make install)
 endif()
 
 if(NOT WIN32)
   ExternalProject_Add(${proj}
-    SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
+    SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
     SOURCE_DIR tcl/incrTcl
-    BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
-    PATCH_COMMAND ${itcl_PATCH_COMMAND}
-    CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
-    BUILD_COMMAND ${itcl_BUILD_COMMAND}
-    INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
+    BUILD_IN_SOURCE ${incrTcl_BUILD_IN_SOURCE}
+    PATCH_COMMAND ${incrTcl_PATCH_COMMAND}
+    CONFIGURE_COMMAND ${incrTcl_CONFIGURE_COMMAND}
+    BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
+    INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
     DEPENDS 
       ${incrTcl_DEPENDENCIES}
   )
