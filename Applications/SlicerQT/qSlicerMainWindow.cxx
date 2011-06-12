@@ -407,6 +407,10 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
     {
     event->ignore();
     }
+  if (event->isAccepted())
+    {
+    qApp->closeAllWindows();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -436,7 +440,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(FileSaveScene);
   qSlicerMainWindowCore_connect(FileCloseScene);
   this->connect(d->actionFileExit, SIGNAL(triggered()),
-                qApp, SLOT(closeAllWindows()));
+                this, SLOT(close()));
 
   qSlicerMainWindowCore_connect(EditUndo);
   qSlicerMainWindowCore_connect(EditRedo);
