@@ -109,7 +109,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  include(SuperBuild/External_Python26.cmake)
+  include(SuperBuild/External_python.cmake)
   if(Slicer_USE_NUMPY)
     include(SuperBuild/External_CLAPACK.cmake)
     include(SuperBuild/External_NUMPY.cmake)
