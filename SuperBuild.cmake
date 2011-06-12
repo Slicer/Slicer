@@ -97,7 +97,7 @@ set(OpenIGTLink_DEPENDENCIES)
 set(teem_DEPENDENCIES VTK)
 set(cmcurl_DEPENDENCIES)
 set(libarchive_DEPENDENCIES)
-set(slicer_DEPENDENCIES VTK Insight OpenIGTLink teem cmcurl libarchive)
+set(slicer_DEPENDENCIES CTK VTK Insight OpenIGTLink teem cmcurl libarchive)
 
 #------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
@@ -147,7 +147,6 @@ if (Slicer_USE_PYTHONQT_WITH_TCL)
   endif()
 endif()
 
-list(APPEND slicer_DEPENDENCIES CTK)
 if (Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
