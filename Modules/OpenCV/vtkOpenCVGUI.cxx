@@ -385,15 +385,13 @@ void vtkOpenCVGUI::ProcessGUIEvents(vtkObject *caller,
             vtkMRMLNode* node2 = scene->GetNodeByID("vtkMRMLLinearTransformNode5");
             vtkMRMLLinearTransformNode* tnode2 = vtkMRMLLinearTransformNode::SafeDownCast(node2);
             
-            vtkMRMLNode *nnode = NULL; // TODO: is this OK?
             vtkIntArray* nodeEvents = vtkIntArray::New();
             nodeEvents->InsertNextValue(vtkMRMLLinearTransformNode::TransformModifiedEvent);
-            vtkSetAndObserveMRMLNodeEventsMacro(nnode,tnode,nodeEvents);
+            vtkObserveMRMLNodeEventsMacro(tnode,nodeEvents);
 
-            vtkMRMLNode *nnode2 = NULL; // TODO: is this OK?
             vtkIntArray* nodeEvents2 = vtkIntArray::New();
             nodeEvents2->InsertNextValue(vtkMRMLLinearTransformNode::TransformModifiedEvent);
-            vtkSetAndObserveMRMLNodeEventsMacro(nnode2,tnode2,nodeEvents2);
+            vtkObserveMRMLNodeEventsMacro(tnode2,nodeEvents2);
             
             nodeEvents->Delete();
             nodeEvents2->Delete();

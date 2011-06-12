@@ -81,6 +81,28 @@
 };
 #endif
 
+#ifndef vtkObserveMRMLNodeMacro
+#define vtkObserveMRMLNodeMacro(node)                                         \
+{                                                                             \
+  this->GetMRMLObserverManager()->ObserveObject( (node) );                    \
+};
+#endif
+
+
+#ifndef vtkObserveMRMLNodeEventsMacro
+#define vtkObserveMRMLNodeEventsMacro(node, events)                           \
+{                                                                             \
+  this->GetMRMLObserverManager()->AddObjectEvents ( (node), (events) );       \
+};
+#endif
+
+#ifndef vtkUnObserveMRMLNodeMacro
+#define vtkUnObserveMRMLNodeMacro(node)                                       \
+{                                                                             \
+  this->GetMRMLObserverManager()->RemoveObjectEvents ( (node) );              \
+};
+#endif
+
 //ETX
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject

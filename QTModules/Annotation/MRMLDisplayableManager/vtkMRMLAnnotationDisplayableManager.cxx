@@ -120,14 +120,13 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 
   // run through all associated nodes
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
-  it = this->Helper->AnnotationNodeList.begin();
-  while(it != this->Helper->AnnotationNodeList.end())
+  for(it = this->Helper->AnnotationNodeList.begin();
+      it != this->Helper->AnnotationNodeList.end();
+      ++it)
     {
     //vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast((*it).GetPointer());
-
-    vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, nodeEvents);
-
-    ++it;
+//vtkSetAndObserveMRMLNodeEventsMacro 
+    vtkObserveMRMLNodeEventsMacro(*it, nodeEvents);
     }
 
   // also observe the interaction node
@@ -140,7 +139,7 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
     vtkIntArray *interactionEvents = vtkIntArray::New();
     interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
     interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(interactionNode, interactionNode, interactionEvents);
+    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
     interactionEvents->Delete();
     }
   else { vtkWarningMacro("SetAndObserveNodes: No interaction node!"); }
@@ -165,7 +164,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveMRMLObservers()
   it = this->Helper->AnnotationNodeList.begin();
   while(it != this->Helper->AnnotationNodeList.end())
     {
-    vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, NULL);
+    vtkUnObserveMRMLNodeMacro(*it);
     ++it;
     }
 }
@@ -350,9 +349,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   if (node->IsA("vtkMRMLAnnotationDisplayNode"))
     {
     // have a display node, need to observe it
-    VTK_CREATE(vtkIntArray, nodeEvents);
-    nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(node, node, nodeEvents);
+    vtkObserveMRMLNodeMacro(node);
     return;
     }
   if (!node->IsA(this->m_Focus))

@@ -23,7 +23,7 @@ Version:   $Revision: 1.2 $
 #include "vtkProstateNavStep.h"
 #include "vtkMRMLRobotNode.h"
 
-#include "vtkSlicerComponentGUI.h" // for vtkSetAndObserveMRMLNodeEventsMacro
+//#include "vtkSlicerComponentGUI.h" // for vtkSetAndObserveMRMLNodeEventsMacro
 #include "vtkSmartPointer.h"
 
 

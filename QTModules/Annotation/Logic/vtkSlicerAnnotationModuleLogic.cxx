@@ -301,7 +301,7 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
         vtkMRMLInteractionNode::InteractionModeChangedEvent);
     interactionEvents->InsertNextValue(
         vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(interactionNode, interactionNode, interactionEvents);
+    vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
     interactionEvents->Delete();
     }
   else

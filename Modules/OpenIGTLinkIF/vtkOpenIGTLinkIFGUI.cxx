@@ -1248,7 +1248,6 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
             }
           }
 
-        vtkMRMLNode *nnode = NULL; // TODO: is this OK?
         vtkIntArray* nodeEvents = vtkIntArray::New();
         nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ConnectedEvent);
         nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DisconnectedEvent);
@@ -1256,8 +1255,7 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
         nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DeactivatedEvent);
         nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ReceiveEvent);
         nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-        vtkSetAndObserveMRMLNodeEventsMacro(nnode,cnode,nodeEvents);
-        nnode->Delete();
+        vtkObserveMRMLNodeEventsMacro(cnode,nodeEvents);
         nodeEvents->Delete();
         
         // obtain the list of connectors in the scene
@@ -1289,7 +1287,6 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
     for (iter = nodes.begin(); iter != nodes.end(); iter ++)
       {
       vtkMRMLIGTLConnectorNode* cnode = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
-      vtkMRMLNode *nnode = NULL; // TODO: is this OK?
       vtkIntArray* nodeEvents = vtkIntArray::New();
       nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ConnectedEvent);
       nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DisconnectedEvent);
@@ -1297,8 +1294,7 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
       nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DeactivatedEvent);
       nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ReceiveEvent);
       nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-      vtkSetAndObserveMRMLNodeEventsMacro(nnode,cnode,nodeEvents);
-      nnode->Delete();
+      vtkObserveMRMLNodeEventsMacro(cnode,nodeEvents);
       nodeEvents->Delete();
       }      
     

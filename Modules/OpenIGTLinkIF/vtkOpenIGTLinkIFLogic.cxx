@@ -316,10 +316,9 @@ int vtkOpenIGTLinkIFLogic::SetRealTimeImageSource(const char* nodeID)
   if (volNode && strcmp(volNode->GetNodeTagName(), "Volume") == 0)
     {
     // register the volume node in event observer
-    vtkMRMLNode *node = NULL; // TODO: is this OK?
     vtkIntArray* nodeEvents = vtkIntArray::New();
     nodeEvents->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent); 
-    vtkSetAndObserveMRMLNodeEventsMacro(node,volNode,nodeEvents);
+    vtkObserveMRMLNodeEventsMacro(volNode,nodeEvents);
     nodeEvents->Delete();
     this->RealTimeImageSourceNodeID = nodeID;
     return 1;

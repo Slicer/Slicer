@@ -45,6 +45,10 @@
 #define vtkObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->ObserveObject ( (node) );};
 #endif
 
+#ifndef vtkObserveMRMLObjectEventsMacro
+#define vtkObserveMRMLObjectEventsMacro(node, events)  {this->MRMLObserverManager->AddObjectEvents ( (node), (events) );};
+#endif
+
 #ifndef vtkUnObserveMRMLObjectMacro
 #define vtkUnObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->RemoveObjectEvents ( (node) );};
 #endif
