@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------
 # Find and install python
 # -------------------------------------------------------------------------
-if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
 
   get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-build")
