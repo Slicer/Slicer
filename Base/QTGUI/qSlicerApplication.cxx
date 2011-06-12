@@ -157,7 +157,7 @@ void qSlicerApplicationPrivate::initStyle()
   // subdirectory of Slicer lib dir (typically lib/Slicer3).
   // By adding the path to the lib dir, Qt automatically loads the icon engine
   // plugin
-  q->addLibraryPath(q->slicerHome() + "/" + Slicer_INSTALL_LIB_DIR);
+  q->addLibraryPath(q->slicerHome() + "/" + Slicer_LIB_DIR);
 }
 
 //-----------------------------------------------------------------------------

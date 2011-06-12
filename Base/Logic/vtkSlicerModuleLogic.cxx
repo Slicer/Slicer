@@ -20,7 +20,7 @@
 #include <errno.h>
 #endif
 
-#include "vtkSlicerConfigure.h" /* for Slicer_INSTALL_* */
+#include "vtkSlicerConfigure.h" /* for Slicer_* */
 
 vtkCxxRevisionMacro(vtkSlicerModuleLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModuleLogic);
@@ -83,8 +83,8 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
 #endif
       vtksys::SystemTools::ReplaceString(
         library_directory,
-        Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR,
-        Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR
+        Slicer_QTLOADABLEMODULES_LIB_DIR,
+        Slicer_QTLOADABLEMODULES_SHARE_DIR
         );
       vtksys_stl::string share_directory = 
         library_directory + "/" + module_name;
@@ -101,7 +101,7 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
         {
         vtksys_stl::string directory(env);
         vtksys::SystemTools::ConvertToUnixSlashes(directory);
-        directory = directory + '/' + Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR;
+        directory = directory + '/' + Slicer_QTLOADABLEMODULES_SHARE_DIR;
         if (this->GetModuleName())
           {
           directory = directory + '/' + this->GetModuleName();
@@ -131,8 +131,8 @@ const char* vtkSlicerModuleLogic::GetModuleLibDirectory()
       vtksys_stl::string directory(share_dir);
       vtksys::SystemTools::ReplaceString(
         directory,
-        Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR,
-        Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
+        Slicer_QTLOADABLEMODULES_SHARE_DIR,
+        Slicer_QTLOADABLEMODULES_LIB_DIR
         );
       this->SetModuleLibDirectory(directory.c_str());
       }
@@ -180,7 +180,7 @@ vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
   vtksys_stl::vector<vtksys_stl::string> filesToLoad;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string(Slicer_INSTALL_SHARE_DIR) + "/Resources/ParameterSets");
+  filesVector.push_back(vtksys_stl::string(Slicer_SHARE_DIR) + "/Resources/ParameterSets");
   vtksys_stl::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in

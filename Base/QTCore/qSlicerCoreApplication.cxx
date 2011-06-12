@@ -35,10 +35,10 @@
 #include <ctkVTKErrorLogMessageHandler.h>
 
 // For:
-//  - Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
-//  - Slicer_INSTALL_PLUGINS_BIN_DIR
-//  - Slicer_INSTALL_LIB_DIR
-//  - Slicer_INSTALL_QtPlugins_DIR
+//  - Slicer_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer_PLUGINS_BIN_DIR
+//  - Slicer_LIB_DIR
+//  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
@@ -156,7 +156,7 @@ void qSlicerCoreApplicationPrivate::init()
     // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
     // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
     QStringList qtPluginsSearchPaths;
-    qtPluginsSearchPaths << this->SlicerHome + Slicer_INSTALL_QtPlugins_DIR;
+    qtPluginsSearchPaths << this->SlicerHome + Slicer_QtPlugins_DIR;
     QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
     }
 #endif
@@ -219,7 +219,7 @@ void qSlicerCoreApplicationPrivate::setupQtConf()
 {
   QSettings qtConfSettings(":/qt/etc/qt.conf", QSettings::IniFormat);
   qtConfSettings.beginGroup("Paths");
-  qtConfSettings.setValue("Plugins", Slicer_INSTALL_QtPlugins_DIR);
+  qtConfSettings.setValue("Plugins", Slicer_QtPlugins_DIR);
   qtConfSettings.endGroup();
 }
 
@@ -292,23 +292,23 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 
 #if defined(Q_WS_MAC)
   // App bundle case.
-  if (slicerBinDir.cd( QString("../") + Slicer_INSTALL_BIN_DIR))
+  if (slicerBinDir.cd( QString("../") + Slicer_BIN_DIR))
     {
     this->SlicerBin = slicerBinDir.absolutePath();
     return;
     }
-  if (slicerBinDir.cd( QString("../../../../") + Slicer_INSTALL_BIN_DIR))
+  if (slicerBinDir.cd( QString("../../../../") + Slicer_BIN_DIR))
     {
     this->SlicerBin = slicerBinDir.absolutePath();
     return;
     }
 #endif
-  if (slicerLibDir.cd( QString("../") + Slicer_INSTALL_LIB_DIR))
+  if (slicerLibDir.cd( QString("../") + Slicer_LIB_DIR))
     {
     this->SlicerBin = slicerBinDir.absolutePath();
     return ;
     }
-  if (slicerLibDir.cd( QString("../../") + Slicer_INSTALL_LIB_DIR))
+  if (slicerLibDir.cd( QString("../../") + Slicer_LIB_DIR))
     {
     this->IntDir = slicerBinDir.dirName();
     slicerBinDir.cdUp();
@@ -321,7 +321,7 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
 {
   QDir itkFactoriesDir(this->SlicerHome);
-  itkFactoriesDir.cd(Slicer_INSTALL_ITKFACTORIES_DIR);
+  itkFactoriesDir.cd(Slicer_ITKFACTORIES_DIR);
   if (!this->IntDir.isEmpty())
     {
     itkFactoriesDir.cd(this->IntDir);
@@ -337,7 +337,7 @@ QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
 void qSlicerCoreApplicationPrivate::discoverRepository()
 {
   QDir libSlicerDir(this->SlicerHome);
-  libSlicerDir.cd(Slicer_INSTALL_LIB_DIR);
+  libSlicerDir.cd(Slicer_LIB_DIR);
   QFileInfo slicerVersion(libSlicerDir, "SlicerVersion.txt");
   QFile slicerVersionFile(slicerVersion.absoluteFilePath());
   if (!slicerVersionFile.open(QIODevice::ReadOnly | QIODevice::Text))

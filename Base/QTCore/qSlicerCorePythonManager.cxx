@@ -68,17 +68,17 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   
   QStringList paths;  
   paths << Superclass::pythonPaths();
-  paths << app->slicerHome() + "/" Slicer_INSTALL_BIN_DIR "/" + app->intDir();
-  paths << app->slicerHome() + "/" Slicer_INSTALL_BIN_DIR "/Python";
+  paths << app->slicerHome() + "/" Slicer_BIN_DIR "/" + app->intDir();
+  paths << app->slicerHome() + "/" Slicer_BIN_DIR "/Python";
 
-  paths << app->slicerHome() + "/" Slicer_INSTALL_LIB_DIR;
+  paths << app->slicerHome() + "/" Slicer_LIB_DIR;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
-  paths << app->slicerHome() + "/" Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+  paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR;
 #endif
 
 #ifdef Slicer_BUILD_QTSCRIPTEDMODULES
-  paths << app->slicerHome() + "/" Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR;
+  paths << app->slicerHome() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR;
 #endif
 
   QString executableExtension = qSlicerUtils::executableExtension();

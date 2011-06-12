@@ -414,7 +414,7 @@ int Slicer_main(int& argc, char *argv[])
   bool hasIntDir = false;
   std::string intDir = "";
 
-  std::string tmpName = slicerBinDir + "/../" + Slicer_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
+  std::string tmpName = slicerBinDir + "/../" + Slicer_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
   if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
     {
     // Handle Visual Studio IntDir
@@ -422,7 +422,7 @@ int Slicer_main(int& argc, char *argv[])
     vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
 
     slicerBinDir = slicerBinDir + "/..";
-    tmpName = slicerBinDir + "/../" + Slicer_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
+    tmpName = slicerBinDir + "/../" + Slicer_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
     if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
       {
       slicerCerr("Error: Cannot find Slicer3 libraries" << endl);
@@ -456,7 +456,7 @@ int Slicer_main(int& argc, char *argv[])
   // ITK factories dir
 
   std::string slicerITKFactoriesDir;
-  slicerITKFactoriesDir = slicerHome + "/" + Slicer_INSTALL_ITKFACTORIES_DIR;
+  slicerITKFactoriesDir = slicerHome + "/" + Slicer_ITKFACTORIES_DIR;
   if (hasIntDir)
     {
     slicerITKFactoriesDir += "/" + intDir;
@@ -515,8 +515,8 @@ int Slicer_main(int& argc, char *argv[])
     pythonEnv += std::string ( existingPythonEnv ) + PathSep;
     }
 
-  pythonEnv += slicerHome + "/" + Slicer_INSTALL_LIB_DIR + "/SlicerBaseGUI/Python" + PathSep;
-  pythonEnv += slicerHome + "/" + Slicer_INSTALL_PLUGINS_BIN_DIR + PathSep;
+  pythonEnv += slicerHome + "/" + Slicer_LIB_DIR + "/SlicerBaseGUI/Python" + PathSep;
+  pythonEnv += slicerHome + "/" + Slicer_PLUGINS_BIN_DIR + PathSep;
   vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
 
   Py_Initialize();
@@ -540,18 +540,18 @@ int Slicer_main(int& argc, char *argv[])
   pythonInitStrings.push_back(std::string("import sys;"));
   pythonInitStrings.push_back(std::string("from os.path import join as j;"));
   pythonInitStrings.push_back(std::string("tk = Tkinter.Tk();"));
-  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_INSTALL_LIB_DIR + "', 'SlicerBaseGUI', 'Python')" + " );"));
-  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_INSTALL_PLUGINS_BIN_DIR + "') );"));
+  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_LIB_DIR + "', 'SlicerBaseGUI', 'Python')" + " );"));
+  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_PLUGINS_BIN_DIR + "') );"));
 
   /*
   std::string TkinitString = "import Tkinter, sys;"
     "from os.path import join as j;"
     "tk = Tkinter.Tk();"
     "sys.path.append ( j('"
-    + slicerHome + "','" + Slicer_INSTALL_LIB_DIR + "', 'SlicerBaseGUI', 'Python')"
+    + slicerHome + "','" + Slicer_LIB_DIR + "', 'SlicerBaseGUI', 'Python')"
     + " );\n"
     "sys.path.append ( j('"
-    + slicerHome + "','" + Slicer_INSTALL_PLUGINS_BIN_DIR
+    + slicerHome + "','" + Slicer_PLUGINS_BIN_DIR
     + "') );\n";
     */
   
@@ -693,7 +693,7 @@ int Slicer_main(int& argc, char *argv[])
 
   // Pass arguments to the Tcl script
   tclCmd =  "lappend auto_path \"" + slicerHome + "/"
-    Slicer_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl\"; ";
+    Slicer_LIB_DIR + "/SlicerBaseGUI/Tcl\"; ";
   //cmd += "puts $auto_path; ";
   tclCmd += "package require SlicerBaseGUITcl; ";
   returnCode = Slicer_Tcl_Eval( interp, tclCmd.c_str() );
@@ -713,7 +713,7 @@ int Slicer_main(int& argc, char *argv[])
   std::string tclCmd;
   int returnCode;
 
-  tclCmd =  "wm iconbitmap . -default \""+ slicerHome + "/" + Slicer_INSTALL_SHARE_DIR + "/Resources/slicer3.ico\"";
+  tclCmd =  "wm iconbitmap . -default \""+ slicerHome + "/" + Slicer_SHARE_DIR + "/Resources/slicer3.ico\"";
   returnCode = Slicer_Tcl_Eval( interp, tclCmd.c_str() );
   if ( returnCode )
     {
@@ -1124,11 +1124,11 @@ int Slicer_main(int& argc, char *argv[])
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  defaultModulePaths = slicerHome + "/" + Slicer_INSTALL_MODULES_LIB_DIR;
+  defaultModulePaths = slicerHome + "/" + Slicer_MODULES_LIB_DIR;
   if (hasIntDir)
     {
     defaultModulePaths = defaultModulePaths + PathSep +
-      slicerHome + "/" + Slicer_INSTALL_MODULES_LIB_DIR + "/" + intDir;
+      slicerHome + "/" + Slicer_MODULES_LIB_DIR + "/" + intDir;
     }
 
   // add the default modules directory (based on the slicer
@@ -1172,11 +1172,11 @@ int Slicer_main(int& argc, char *argv[])
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  defaultPluginsPaths = slicerHome + "/" + Slicer_INSTALL_PLUGINS_BIN_DIR;
+  defaultPluginsPaths = slicerHome + "/" + Slicer_PLUGINS_BIN_DIR;
   if (hasIntDir)
     {
     defaultPluginsPaths = defaultPluginsPaths + PathSep +
-      slicerHome + "/" + Slicer_INSTALL_PLUGINS_BIN_DIR + "/" + intDir;
+      slicerHome + "/" + Slicer_PLUGINS_BIN_DIR + "/" + intDir;
     }
 
   // add the default plugins directory (based on the slicer
@@ -1196,7 +1196,7 @@ int Slicer_main(int& argc, char *argv[])
   std::string userCachePath;
 
   // define a default cache for module information
-  defaultCachePath = std::string(slicerApp->GetTemporaryDirectory()) + "/" + Slicer_INSTALL_PLUGINS_CACHE_DIR;
+  defaultCachePath = std::string(slicerApp->GetTemporaryDirectory()) + "/" + Slicer_PLUGINS_CACHE_DIR;
   if (hasIntDir)
     {
     defaultCachePath += "/" + intDir;
@@ -1612,7 +1612,7 @@ int Slicer_main(int& argc, char *argv[])
     slicerApp->SplashMessage("Initializing Slicer Daemon...");
     std::string tclCmd;
     tclCmd =  "source \"" + slicerHome + "/"
-      Slicer_INSTALL_MODULES_LIB_DIR "/SlicerDaemon/Tcl/slicerd.tcl\"; slicerd_start; ";
+      Slicer_MODULES_LIB_DIR "/SlicerDaemon/Tcl/slicerd.tcl\"; slicerd_start; ";
     Slicer_Tcl_Eval(interp, tclCmd.c_str());
     }
 #endif

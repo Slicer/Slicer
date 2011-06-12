@@ -23,7 +23,7 @@
 
 #include "vtkMRMLColorTableStorageNode.h"
 
-#include "vtkSlicerConfigure.h" // for Slicer_INSTALL_SHARE_DIR
+#include "vtkSlicerConfigure.h" // for Slicer_SHARE_DIR
 
 #ifdef WIN32
 #include <windows.h>
@@ -87,7 +87,7 @@ void vtkSlicerColorLogic::FindColorFiles()
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string(Slicer_INSTALL_SHARE_DIR) + "/SlicerBaseLogic/Resources/ColorFiles");
+  filesVector.push_back(vtksys_stl::string(Slicer_SHARE_DIR) + "/SlicerBaseLogic/Resources/ColorFiles");
   vtksys_stl::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in

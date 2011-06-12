@@ -34,8 +34,6 @@
 #include "qSlicerSettingsModulesPanel.h"
 #include "ui_qSlicerSettingsModulesPanel.h"
 
-// Default defines Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
-#include <vtkSlicerConfigure.h>
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsModulesPanel");
 
