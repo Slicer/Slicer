@@ -38,6 +38,7 @@
 //  - Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_INSTALL_PLUGINS_BIN_DIR
 //  - Slicer_INSTALL_LIB_DIR
+//  - Slicer_INSTALL_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
@@ -209,6 +210,15 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Instantiate moduleManager
   this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::setupQtConf()
+{
+  QSettings qtConfSettings(":/qt/etc/qt.conf", QSettings::IniFormat);
+  qtConfSettings.group("Paths");
+  qtConfSettings.setValue("Plugins", Slicer_INSTALL_QtPlugins_DIR);
+  qtConfSettings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
