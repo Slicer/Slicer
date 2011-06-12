@@ -730,8 +730,6 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::defaultTemporaryPath() const
 {
-  QSettings* appSettings = this->settings();
-  Q_ASSERT(appSettings);
   return QFileInfo(QDir::tempPath(), this->applicationName()).absoluteFilePath();
 }
 
