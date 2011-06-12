@@ -1,6 +1,5 @@
-#-----------------------------------------------------------------------------
 
-if(NOT python_EXTERNAL_PROJECT_INCLUDED)
+if(NOT External_python_win_PROJECT_INCLUDED)
   message(FATAL_ERROR "This file shouldn't be included directly !")
 endif()
 

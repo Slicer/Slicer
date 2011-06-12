@@ -9,11 +9,11 @@ SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 # Set dependency list
 set(teem_DEPENDENCIES VTK)
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(teem)
 set(proj teem)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 
 if(WIN32)
   set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkzlib.lib)

@@ -15,9 +15,9 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   # Set dependency list
   set(CTKAPPLAUNCHER_DEPENDENCIES "")
   
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(CTKAPPLAUNCHER)
   set(proj CTKAPPLAUNCHER)
-  include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-  set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
   
   IF(NOT DEFINED CTKAPPLAUNCHER_DIR)
     SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX CTKAPPLAUNCHER)
@@ -25,7 +25,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     # Use 32bits launcher on both win32 and win64 architecture
     STRING(REPLACE "win64" "win32" launcher_architecture ${launcher_architecture})
     SET(launcher_version "0.1.4")
-    #message(STATUS "Adding project '${proj}'")
+    #message(STATUS "${__indent}Adding project ${proj}")
     ExternalProject_Add(${proj}
       URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${launcher_architecture}.tar.gz
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}

@@ -17,12 +17,12 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(CTK)
 set(proj CTK)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED CTK_DIR)
-  #message(STATUS "Adding project '${proj}'")
+  #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
     GIT_TAG "origin/master"

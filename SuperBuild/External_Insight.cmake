@@ -14,12 +14,12 @@ endif()
 # Set dependency list
 set(Insight_DEPENDENCIES "")
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(Insight)
 set(proj Insight)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED ITK_DIR)
-  #message(STATUS "Adding project '${proj}'")
+  #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://${Slicer_ITK_GIT_REPOSITORY}"
     GIT_TAG ${Slicer_ITK_GIT_TAG}

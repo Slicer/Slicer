@@ -17,11 +17,11 @@ else()
   set(libarchive_MD5 f43382413b4457d0e192771b100a66e7)
 endif()
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(libarchive)
 set(proj libarchive)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 
 ExternalProject_Add(${proj}
   URL ${libarchive_URL}

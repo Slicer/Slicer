@@ -11,11 +11,11 @@ if(NOT WIN32)
   # Set dependency list
   set(tk_DEPENDENCIES tcl)
 
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(tk)
   set(proj tk)
-  include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-  set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
-  #message(STATUS "Adding project '${proj}'")
+  #message(STATUS "${__indent}Adding project ${proj}")
   
   set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
   set(tk_SOURCE_DIR "")

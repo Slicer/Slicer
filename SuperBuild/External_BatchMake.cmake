@@ -9,11 +9,11 @@ SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 # Set dependency list
 set(BatchMake_DEPENDENCIES Insight)
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(BatchMake)
 set(proj BatchMake)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
   GIT_TAG "origin/master"
@@ -33,7 +33,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS 
     ${BatchMake_DEPENDENCIES}
-)
+  )
 
 set(BatchMake_DIR ${CMAKE_BINARY_DIR}/BatchMake-build)
 

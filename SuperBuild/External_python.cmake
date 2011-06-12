@@ -12,15 +12,15 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     set(python_DEPENDENCIES tcl)
   else()
-    set(python_DEPENDENCIES tk)
+    set(python_DEPENDENCIES incrTcl tcl tk)
   endif()
 endif()
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(python)
 set(proj python)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
@@ -31,9 +31,13 @@ set(python_MD5 b2f209df270a33315e62c1ffac1937f0)
 get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 if(WIN32)
+  SET(External_python_win_PROJECT_INCLUDED 1)
   include(${CMAKE_CURRENT_LIST_DIR}/External_python_win.cmake)
+  SET(External_python_win_PROJECT_INCLUDED 0)
 else()
+  SET(External_python_unix_PROJECT_INCLUDED 1)
   include(${CMAKE_CURRENT_LIST_DIR}/External_python_unix.cmake)
+  SET(External_python_unix_PROJECT_INCLUDED 0)
 endif()
 
 #message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")

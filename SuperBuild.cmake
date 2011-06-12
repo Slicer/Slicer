@@ -40,6 +40,7 @@ INCLUDE(SlicerBlockFindQtAndCheckVersion)
 #-----------------------------------------------------------------------------
 
 INCLUDE(ExternalProject)
+INCLUDE(SlicerMacroCheckExternalProjectDependency)
 
 set(ep_base        "${CMAKE_BINARY_DIR}")
 #set(ep_install_dir "${ep_base}/Install")
@@ -60,86 +61,40 @@ else()
 endif()
 
 #------------------------------------------------------------------------------
-# Conditionnaly include ExternalProject Target
+# Slicer dependency list - Make sure dependency are topologically ordered
 #------------------------------------------------------------------------------
-
-if(Slicer_USE_PYTHONQT_WITH_TCL)
-  include(SuperBuild/External_tcl.cmake)
-  include(SuperBuild/External_tk.cmake)
-  include(SuperBuild/External_incrTcl.cmake)
-endif()
-
-if(Slicer_USE_PYTHONQT)
-  include(SuperBuild/External_python.cmake)
-  if(Slicer_USE_NUMPY)
-    include(SuperBuild/External_CLAPACK.cmake)
-    include(SuperBuild/External_NUMPY.cmake)
-    if(Slicer_USE_WEAVE)
-      include(SuperBuild/External_weave.cmake)
-    endif()
-    if(Slicer_USE_SCIPY)
-      include(SuperBuild/External_SciPy.cmake)
-    endif()
-  endif()
-endif()
-
-include(SuperBuild/External_VTK.cmake)
-include(SuperBuild/External_Insight.cmake)
-include(SuperBuild/External_CTK.cmake)
-if (Slicer_USE_CTKAPPLAUNCHER)
-  include(SuperBuild/External_CTKAPPLAUNCHER.cmake)
-endif()
-include(SuperBuild/External_teem.cmake)
-include(SuperBuild/External_OpenIGTLink.cmake)
-if(Slicer_USE_BatchMake)
-  include(SuperBuild/External_BatchMake.cmake)
-endif()
-include(SuperBuild/External_cmcurl.cmake)
-include(SuperBuild/External_libarchive.cmake)
-
-#------------------------------------------------------------------------------
-# Slicer dependency list
-#------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES CTK VTK Insight OpenIGTLink teem cmcurl libarchive)
+set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
-
-if(Slicer_USE_PYTHONQT_WITH_TCL)
-  if(UNIX)
-    list(APPEND Slicer_DEPENDENCIES incrTcl)
-  endif()
-endif()
-
 if (Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
-
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES python)
   if(Slicer_USE_NUMPY)
     list(APPEND Slicer_DEPENDENCIES NUMPY)
+    if(Slicer_USE_WEAVE)
+      list(APPEND Slicer_DEPENDENCIES weave)
+    endif()
     if(Slicer_USE_SCIPY)
       list(APPEND Slicer_DEPENDENCIES scipy)
     endif()
   endif()
 endif()
+list(APPEND Slicer_DEPENDENCIES  VTK Insight CTK)
 
-#------------------------------------------------------------------------------
-# List of external projects
-#------------------------------------------------------------------------------  
-
-#set(external_project_list tk tcl incrTcl python weave CLAPACK NUMPY scipy VTK CTK  Insight BatchMake OpenIGTLink teem cmcurl slicer)
+SlicerMacroCheckExternalProjectDependency(Slicer)
 
 #-----------------------------------------------------------------------------
-# Dump external project dependencies
+# Dump Slicer external project dependencies
 #------------------------------------------------------------------------------
-
 #set(ep_dependency_graph "# External project dependencies")
-#foreach(ep ${external_project_list})
+#foreach(ep ${Slicer_DEPENDENCIES})
 #  set(ep_dependency_graph "${ep_dependency_graph}\n${ep}:${${ep}_DEPENDENCIES}")
 #endforeach()
-#file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ExternalProjectDependencies.txt "${ep_dependency_graph}\n")
+#file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt "${ep_dependency_graph}\n")
+#MESSAGE(STATUS "Generated ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt")
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
@@ -192,7 +147,6 @@ IF(Slicer_BUILD_CLI)
 ENDIF()
 
 set(proj Slicer)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
 ExternalProject_Add(${proj}
   DEPENDS ${Slicer_DEPENDENCIES}

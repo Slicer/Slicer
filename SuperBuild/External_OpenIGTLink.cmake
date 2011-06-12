@@ -9,11 +9,11 @@ SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 # Set dependency list
 set(OpenIGTLink_DEPENDENCIES "")
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(OpenIGTLink)
 set(proj OpenIGTLink)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"

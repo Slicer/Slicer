@@ -9,11 +9,11 @@ SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 # Set dependency list
 set(CLAPACK_DEPENDENCIES "")
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(CLAPACK)
 set(proj CLAPACK)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-#message(STATUS "Adding project '${proj}'")
+#message(STATUS "${__indent}Adding project ${proj}")
 
 set(CLAPACK_version 3.2.1)
 #set(CLAPACK_file "http://www.netlib.org/clapack/clapack-${clapack_version}-CMAKE.tgz")

@@ -9,11 +9,11 @@ SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 # Set dependency list
 set(incrTcl_DEPENDENCIES tcl tk)
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(incrTcl)
 set(proj incrTcl)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 
-#message(STATUS "Adding project '${proj}'")
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+#message(STATUS "${__indent}Adding project ${proj}")
 
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
 set(incrTcl_BUILD_IN_SOURCE 0)

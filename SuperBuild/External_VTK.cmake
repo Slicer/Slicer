@@ -17,19 +17,21 @@ endif()
 
 # Set dependency list
 set(VTK_DEPENDENCIES "")
+if (Slicer_USE_PYTHONQT)
+  list(APPEND VTK_DEPENDENCIES python)
+endif()
 
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(VTK)
 set(proj VTK)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
-  #message(STATUS "Adding project '${proj}'")
+  #message(STATUS "${__indent}Adding project ${proj}")
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
 
   if (Slicer_USE_PYTHONQT)
     set(VTK_WRAP_PYTHON ON)
-    list(APPEND VTK_DEPENDENCIES python)
   endif()
 
   set(VTK_PYTHON_ARGS)
