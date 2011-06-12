@@ -5,6 +5,7 @@ if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
 endif()
 
 set(proj CTK)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED CTK_DIR)

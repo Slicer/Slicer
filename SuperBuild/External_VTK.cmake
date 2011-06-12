@@ -12,6 +12,7 @@ if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
 endif()
 
 set(proj VTK)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)

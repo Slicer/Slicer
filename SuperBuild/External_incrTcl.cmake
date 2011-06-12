@@ -1,5 +1,6 @@
 
 set(proj incrTcl)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")

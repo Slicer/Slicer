@@ -1,6 +1,7 @@
 
 #-----------------------------------------------------------------------------
 set(proj tcl)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 set(tcl_SVN_REPOSITORY)

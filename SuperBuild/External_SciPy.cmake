@@ -1,5 +1,7 @@
 
 set(proj scipy)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 ExternalProject_Add(${proj}
   DEPENDS ${scipy_DEPENDENCIES}

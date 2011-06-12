@@ -1,6 +1,7 @@
 # The Numpy external project 
 
 set(proj NUMPY)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 set(NUMPY_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")

@@ -1,5 +1,6 @@
 #-----------------------------------------------------------------------------
 set(proj python)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)

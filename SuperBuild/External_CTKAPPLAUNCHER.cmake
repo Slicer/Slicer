@@ -8,6 +8,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   ENDIF()
   
   set(proj CTKAPPLAUNCHER)
+  include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
   set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
   
   IF(NOT DEFINED CTKAPPLAUNCHER_DIR)
