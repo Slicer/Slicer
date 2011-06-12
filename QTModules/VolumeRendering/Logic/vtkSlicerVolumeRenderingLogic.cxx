@@ -548,7 +548,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
   if (this->GetMRMLScene())
   {
     node = vtkMRMLVolumeRenderingDisplayNode::New();
-    node->SetCurrentVolumeMapper(0);
+    node->SetCurrentVolumeMapper(vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast);
     this->GetMRMLScene()->AddNode(node);
     node->Delete();
   }
