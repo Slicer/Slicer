@@ -22,11 +22,11 @@ endif()
 file(WRITE "@NUMPY_binary@/site.cfg"
 "
 [blas]
-library_dirs = @CLAPACK_binary@/BLAS/SRC/${CONFIG_TYPE}/${path_sep}@CLAPACK_binary@/F2CLIBS/libf2c/${CONFIG_TYPE}/
+library_dirs = @CLAPACK_DIR@/BLAS/SRC/${CONFIG_TYPE}/${path_sep}@CLAPACK_DIR@/F2CLIBS/libf2c/${CONFIG_TYPE}/
 libraries = blas,${f2c_libname}
 
 [lapack]
-library_dirs = @CLAPACK_binary@/SRC/${CONFIG_TYPE}/
+library_dirs = @CLAPACK_DIR@/SRC/${CONFIG_TYPE}/
 lapack_libs = lapack
 ")
 

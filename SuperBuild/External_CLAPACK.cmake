@@ -22,11 +22,6 @@ set(CLAPACK_version 3.2.1)
 set(CLAPACK_file http://svn.slicer.org/Slicer3-lib-mirrors/trunk/clapack-${CLAPACK_version}-CMAKE.tgz)
 set(CLAPACK_MD5 4fd18eb33f3ff8c5d65a7d43913d661b)
 
-# The CLAPACK external project for Titan
-
-set(CLAPACK_source "${CMAKE_CURRENT_BINARY_DIR}/CLAPACK")
-set(CLAPACK_binary "${CMAKE_CURRENT_BINARY_DIR}/CLAPACK-build")
-
 # Turn off the warnings for CLAPACK on windows
 string(REPLACE "/W3" "/W0" CMAKE_CXX_FLAGS_CLAPACK "${ep_common_cxx_flags}")
 string(REPLACE "/W4" "/W0" CMAKE_CXX_FLAGS_CLAPACK "${CMAKE_CXX_FLAGS_CLAPACK}")
@@ -43,9 +38,9 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 endif()
   
 ExternalProject_Add(${proj}
-  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
-  SOURCE_DIR ${CLAPACK_source}
-  BINARY_DIR ${CLAPACK_binary}
+  DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+  SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+  BINARY_DIR ${proj}-build
   URL ${CLAPACK_file}
   URL_MD5 ${CLAPACK_MD5}
   CMAKE_GENERATOR ${gen}
@@ -58,7 +53,5 @@ ExternalProject_Add(${proj}
   DEPENDS 
     ${CLAPACK_DEPENDENCIES}
   )
-set(CLAPACK_DIR "${CLAPACK_binary}" CACHE PATH 
-  "CLAPACK binary directory" FORCE)
-mark_as_advanced(CLAPACK_DIR)
+set(CLAPACK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
