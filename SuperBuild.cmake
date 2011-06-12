@@ -103,8 +103,8 @@ set(slicer_DEPENDENCIES CTK VTK Insight OpenIGTLink teem cmcurl libarchive)
 #------------------------------------------------------------------------------
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  include(SuperBuild/External_Tcl.cmake)
-  include(SuperBuild/External_Tk.cmake)
+  include(SuperBuild/External_tcl.cmake)
+  include(SuperBuild/External_tk.cmake)
   include(SuperBuild/External_incrTcl.cmake)
 endif()
 
