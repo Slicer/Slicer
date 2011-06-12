@@ -218,7 +218,7 @@ void qSlicerCoreApplicationPrivate::init()
 void qSlicerCoreApplicationPrivate::setupQtConf()
 {
   QSettings qtConfSettings(":/qt/etc/qt.conf", QSettings::IniFormat);
-  qtConfSettings.group("Paths");
+  qtConfSettings.beginGroup("Paths");
   qtConfSettings.setValue("Plugins", Slicer_INSTALL_QtPlugins_DIR);
   qtConfSettings.endGroup();
 }
