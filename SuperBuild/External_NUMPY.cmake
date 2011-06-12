@@ -15,24 +15,28 @@ set(proj NUMPY)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
-set(NUMPY_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
 set(numpy_url http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
 set(numpy_md5 5c7b5349dc3161763f7f366ceb96516b)
 
-# to configure numpy we run a cmake -P script
+# Note: Both NUMPY_configure_step.cmake and NUMPY_make_step.cmake expects 
+#       this variable to be defined.
+set(NUMPY_DIR "${CMAKE_BINARY_DIR}/NUMPY")
+
+# To configure numpy we run a cmake -P script
 # the script will create a site.cfg file
 # then run python setup.py config to verify setup
 configure_file(
   SuperBuild/NUMPY_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_configure_step.cmake @ONLY)
-# to build numpy we also run a cmake -P script.
+
+# To build numpy we also run a cmake -P script.
 # the script will set LD_LIBRARY_PATH so that 
 # python can run after it is built on linux
 configure_file(
   SuperBuild/NUMPY_make_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake @ONLY)
 
-# create an external project to download numpy,
+# Create an external project to download numpy,
 # and configure and build it
 ExternalProject_Add(${proj}
   URL ${numpy_url}

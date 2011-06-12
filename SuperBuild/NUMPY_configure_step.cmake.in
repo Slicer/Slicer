@@ -1,4 +1,4 @@
-message("Configuring NUMPY:\n@NUMPY_binary@")
+message("Configuring NUMPY:\n@NUMPY_DIR@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
@@ -19,7 +19,7 @@ if(WIN32)
 endif()
 
 # setup the site.cfg file
-file(WRITE "@NUMPY_binary@/site.cfg"
+file(WRITE "@NUMPY_DIR@/site.cfg"
 "
 [blas]
 library_dirs = @CLAPACK_DIR@/BLAS/SRC/${CONFIG_TYPE}/${path_sep}@CLAPACK_DIR@/F2CLIBS/libf2c/${CONFIG_TYPE}/
@@ -32,7 +32,7 @@ lapack_libs = lapack
 
 execute_process(
   COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py config
-  WORKING_DIRECTORY "@NUMPY_binary@"
+  WORKING_DIRECTORY "@NUMPY_DIR@"
   RESULT_VARIABLE res
   )
 
