@@ -117,7 +117,6 @@ SET(slicer_cmake_boolean_args
   Slicer_USE_BatchMake
   Slicer_USE_MIDAS
   Slicer_USE_OPENIGTLINK
-  Slicer_USE_OPENCV
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
