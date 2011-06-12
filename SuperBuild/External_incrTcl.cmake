@@ -46,6 +46,13 @@ else()
   set(incrTcl_INSTALL_COMMAND make install)
 endif()
 
+
+#-----------------------------------------------------------------------------
+# WARNING - Since the likelihood of updating that project is close to zero, 
+#           let's disable its UPDATE_COMMAND. Doing so will avoid unnecessary 
+#           configure/make/install cycle.
+#-----------------------------------------------------------------------------
+
 if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
@@ -55,14 +62,15 @@ if(NOT WIN32)
     CONFIGURE_COMMAND ${incrTcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
     INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
+    UPDATE_COMMAND ""
     DEPENDS 
       ${incrTcl_DEPENDENCIES}
   )
 
   ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
     COMMAND chmod +x ${tcl_base}/incrTcl/configure
-    DEPENDEES update
+    DEPENDEES patch
     DEPENDERS configure
-  )
+    )
 endif()
 
