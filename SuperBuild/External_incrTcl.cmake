@@ -29,7 +29,7 @@ if(APPLE)
   set(incrTcl_configure_find "*.c | *.o | *.obj) \;\;")
   set(incrTcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
 
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/StringFindReplace.cmake)
+  set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerBlockStringFindReplace.cmake)
   set(in ${incrTcl_configure})
   set(out ${incrTcl_configure})
 
