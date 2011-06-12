@@ -38,9 +38,6 @@ if(NOT WIN32)
     @ONLY)
 
   set(tk_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake)
-endif()
-
-if(NOT WIN32)
 
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
