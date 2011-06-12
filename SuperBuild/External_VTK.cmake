@@ -100,10 +100,10 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   
   set(VTK_BUILD_STEP "")
   if(UNIX)
-    configure_file(SuperBuild/vtk_build_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/vtk_build_step.cmake
+    configure_file(SuperBuild/VTK_build_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake
       @ONLY)
-    set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/vtk_build_step.cmake)
+    set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
   
   ExternalProject_Add(${proj}
