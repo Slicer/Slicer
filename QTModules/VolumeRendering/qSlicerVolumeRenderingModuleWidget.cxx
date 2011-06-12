@@ -264,7 +264,9 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
   if (!dnode)
     {
+    bool wasLastVolumeVisible = d->VisibilityCheckBox->isChecked();
     dnode = d->createVolumeRenderingDisplayNode();
+    dnode->SetVisibility(wasLastVolumeVisible);
     if (volumeNode)
       {
       volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());
