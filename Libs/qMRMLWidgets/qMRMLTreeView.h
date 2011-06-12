@@ -78,7 +78,8 @@ public:
   
   ///
   /// Add a custom QAction to add into the context menu on a right click
-  void prependMenuAction(QAction* action);
+  void prependNodeMenuAction(QAction* action);
+  void prependSceneMenuAction(QAction* action);
 
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort

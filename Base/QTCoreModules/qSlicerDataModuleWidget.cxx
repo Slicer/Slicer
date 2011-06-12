@@ -73,7 +73,8 @@ void qSlicerDataModuleWidget::setup()
           qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));
   // Insert transform
   QAction* insertTransformAction = new QAction(tr("Insert transform"),this);
-  d->MRMLTreeView->prependMenuAction(insertTransformAction);
+  d->MRMLTreeView->prependNodeMenuAction(insertTransformAction);
+  d->MRMLTreeView->prependSceneMenuAction(insertTransformAction);
   connect(insertTransformAction, SIGNAL(triggered()),
           this, SLOT(insertTransformNode()));
 

@@ -64,6 +64,7 @@ public:
 
   QMenu*                     NodeMenu;
   QAction*                   EditAction;
+  QMenu*                     SceneMenu;
 };
 
 //------------------------------------------------------------------------------
@@ -76,6 +77,7 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->TreeViewSizeHint = QSize();
   this->NodeMenu = 0;
   this->EditAction = 0;
+  this->SceneMenu = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -113,6 +115,7 @@ void qMRMLTreeViewPrivate::init()
     new QAction(qMRMLTreeView::tr("Edit properties..."), this->NodeMenu);
   QObject::connect(this->EditAction, SIGNAL(triggered()),
                    q, SLOT(editCurrentNode()));
+  this->SceneMenu = new QMenu(q);
 }
 
 //------------------------------------------------------------------------------
@@ -358,7 +361,7 @@ void qMRMLTreeView::setEditMenuActionVisible(bool show)
   if (show)
     {
     // Prepend the action in the menu
-    this->prependMenuAction(d->EditAction);
+    this->prependNodeMenuAction(d->EditAction);
     }
   else
     {
@@ -367,11 +370,21 @@ void qMRMLTreeView::setEditMenuActionVisible(bool show)
 }
 
 //--------------------------------------------------------------------------
-void qMRMLTreeView::prependMenuAction(QAction* action)
+void qMRMLTreeView::prependNodeMenuAction(QAction* action)
 {
   Q_D(qMRMLTreeView);
   // Prepend the action in the menu
   d->NodeMenu->insertAction(d->NodeMenu->actions()[0], action);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::prependSceneMenuAction(QAction* action)
+{
+  Q_D(qMRMLTreeView);
+  // Prepend the action in the menu
+  QAction* beforeAction =
+    d->SceneMenu->actions().size() ? d->SceneMenu->actions()[0] : 0;
+  d->SceneMenu->insertAction(beforeAction, action);
 }
 
 //--------------------------------------------------------------------------
@@ -465,12 +478,14 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
   
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   
-  if (!node)
+  if (node)
     {
-    return;
+    d->NodeMenu->exec(e->globalPos());
     }
-
-  d->NodeMenu->exec(e->globalPos());
+  else if (index == this->sortFilterProxyModel()->mrmlSceneIndex())
+    {
+    d->SceneMenu->exec(e->globalPos());
+    }
 }
 
 //------------------------------------------------------------------------------
