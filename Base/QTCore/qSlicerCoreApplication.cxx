@@ -151,6 +151,8 @@ void qSlicerCoreApplicationPrivate::init()
 #if defined(Q_WS_MAC)
   if (q->isInstalled())
     {
+    this->setupQtConf();
+
     // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
     // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
     QStringList qtPluginsSearchPaths;
