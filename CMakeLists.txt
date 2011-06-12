@@ -263,9 +263,14 @@ SET(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
-# Plugins and Modules install directories
+# Qt plugins (imageformats, ...) relative directories
 #------------------------------------------------------------------------------
+SET(Slicer_QtPlugins_DIR "lib/QtPlugins")
+SET(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QtPlugins_DIR}")
 
+#-----------------------------------------------------------------------------
+# Plugins and Modules relative directories
+#------------------------------------------------------------------------------
 SET(Slicer_PLUGINS_BIN_DIR "plugins")
 SET(Slicer_PLUGINS_LIB_DIR "plugins")
 SET(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/plugins")

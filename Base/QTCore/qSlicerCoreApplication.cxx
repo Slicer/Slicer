@@ -148,11 +148,11 @@ void qSlicerCoreApplicationPrivate::init()
   this->discoverPythonPath();
 
 #if defined(Q_WS_MAC)
-  // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
-  // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
-  QStringList qtPluginsSearchPaths;
-  qtPluginsSearchPaths << this->SlicerHome + "lib/QtPlugins";
-  QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
+    // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
+    // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
+    QStringList qtPluginsSearchPaths;
+    qtPluginsSearchPaths << this->SlicerHome + Slicer_INSTALL_QtPlugins_DIR;
+    QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
 #endif
 
   // Instantiate ErrorLogModel

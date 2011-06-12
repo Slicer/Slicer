@@ -36,6 +36,8 @@
 #define Slicer_INSTALL_SHARE_DIR "@Slicer_SHARE_DIR@"
 #define Slicer_INSTALL_ITKFACTORIES_DIR "@Slicer_ITKFACTORIES_DIR@"
 
+#define Slicer_INSTALL_QtPlugins_DIR "@Slicer_QtPlugins_DIR@"
+
 #define Slicer_INSTALL_PLUGINS_BIN_DIR "@Slicer_PLUGINS_BIN_DIR@"
 #define Slicer_INSTALL_PLUGINS_LIB_DIR "@Slicer_PLUGINS_LIB_DIR@"
 #define Slicer_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer_PLUGINS_INCLUDE_DIR@"

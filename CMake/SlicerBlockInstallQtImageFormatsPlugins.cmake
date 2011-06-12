@@ -17,6 +17,6 @@ endif()
 
 foreach(qpi ${qt_plugins})
   install(PROGRAMS ${qpi}
-    DESTINATION ${Slicer_INSTALL_ROOT}/lib/QtPlugins/imageformats
+    DESTINATION ${Slicer_INSTALL_QtPlugins_DIR}/imageformats
     )
 endforeach()
