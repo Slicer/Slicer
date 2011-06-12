@@ -34,6 +34,8 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_flags}
+    #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Unused
+    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
