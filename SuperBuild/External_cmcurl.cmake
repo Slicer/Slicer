@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(cmcurl_DEPENDENCIES "")
 
@@ -6,6 +13,7 @@ set(proj cmcurl)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
+#message(STATUS "Adding project '${proj}'")
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"
   SOURCE_DIR cmcurl
@@ -23,3 +31,4 @@ ExternalProject_Add(${proj}
 )
 
 set(SLICERLIBCURL_DIR ${CMAKE_BINARY_DIR}/cmcurl-build)
+

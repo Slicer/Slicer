@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+  
 # Set dependency list
 set(BatchMake_DEPENDENCIES Insight)
 
@@ -6,6 +13,7 @@ set(proj BatchMake)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
+#message(STATUS "Adding project '${proj}'")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
   GIT_TAG "origin/master"
@@ -28,3 +36,4 @@ ExternalProject_Add(${proj}
 )
 
 set(BatchMake_DIR ${CMAKE_BINARY_DIR}/BatchMake-build)
+

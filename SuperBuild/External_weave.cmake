@@ -1,10 +1,19 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(weave_DEPENDENCIES python NUMPY)
 
 set(proj weave)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+#message(STATUS "Adding project '${proj}'")
 
 set(weave_binary "${CMAKE_CURRENT_BINARY_DIR}/weave/")
 
@@ -36,3 +45,4 @@ ExternalProject_Add(weave
   DEPENDS 
     ${weave_DEPENDENCIES}
   )
+

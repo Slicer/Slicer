@@ -1,10 +1,19 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(tcl_DEPENDENCIES "")
 
 set(proj tcl)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+#message(STATUS "Adding project '${proj}'")
 
 set(tcl_SVN_REPOSITORY)
 set(tcl_SOURCE_DIR "")
@@ -65,4 +74,5 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
   DEPENDS
     ${tcl_DEPENDENCIES}
-)
+  )
+ 

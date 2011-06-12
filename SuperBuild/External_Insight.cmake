@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
   message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
@@ -12,7 +19,7 @@ include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED ITK_DIR)
-#  message(STATUS "Adding project:${proj}")
+  #message(STATUS "Adding project '${proj}'")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://${Slicer_ITK_GIT_REPOSITORY}"
     GIT_TAG ${Slicer_ITK_GIT_TAG}
@@ -45,3 +52,4 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${Insight_DEPENDENCIES}")
 endif()
+

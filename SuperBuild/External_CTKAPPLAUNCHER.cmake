@@ -1,6 +1,11 @@
-#
-# CTKAPPLAUNCHER
-#
+
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 IF(Slicer_USE_CTKAPPLAUNCHER)
   # Sanity checks
   IF(DEFINED CTKAPPLAUNCHER_DIR AND NOT EXISTS ${CTKAPPLAUNCHER_DIR})
@@ -20,6 +25,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     # Use 32bits launcher on both win32 and win64 architecture
     STRING(REPLACE "win64" "win32" launcher_architecture ${launcher_architecture})
     SET(launcher_version "0.1.4")
+    #message(STATUS "Adding project '${proj}'")
     ExternalProject_Add(${proj}
       URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${launcher_architecture}.tar.gz
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -37,3 +43,4 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   ENDIF()
   
 ENDIF()
+

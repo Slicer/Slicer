@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Sanity checks
 if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
   message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
@@ -16,8 +23,7 @@ include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
-#  message(STATUS "Adding project:${proj}")
-
+  #message(STATUS "Adding project '${proj}'")
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
 
@@ -134,3 +140,4 @@ else()
   # project may depend on VTK, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
 endif()
+

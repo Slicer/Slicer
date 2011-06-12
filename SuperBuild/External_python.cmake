@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(python_DEPENDENCIES "")
 if(Slicer_USE_PYTHONQT_WITH_TCL)
@@ -11,7 +18,9 @@ endif()
 
 set(proj python)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+#message(STATUS "Adding project '${proj}'")
 
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
@@ -30,3 +39,4 @@ endif()
 #message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")
 #message(STATUS "slicer_PYTHON_LIBRARY:${slicer_PYTHON_LIBRARY}")
 #message(STATUS "slicer_PYTHON_EXECUTABLE:${slicer_PYTHON_EXECUTABLE}")
+

@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 if(NOT WIN32)
 
   # Set dependency list
@@ -8,6 +15,8 @@ if(NOT WIN32)
   include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
   set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
+  #message(STATUS "Adding project '${proj}'")
+  
   set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
   set(tk_SOURCE_DIR "")
   set(tk_BINARY_DIR "")
@@ -54,15 +63,16 @@ if(NOT WIN32)
     INSTALL_COMMAND ${tk_INSTALL_COMMAND}
     DEPENDS
       ${tk_DEPENDENCIES}
-  )
+    )
 
   ExternalProject_Add_Step(${proj} Install_default.h
     COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/generic/default.h ${tcl_build}/include
     DEPENDEES install
-  )
+    )
 
   ExternalProject_Add_Step(${proj} Install_tkUnixDefault.h
     COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/unix/tkUnixDefault.h ${tcl_build}/include
     DEPENDEES install
-  )
+    )
 endif()
+

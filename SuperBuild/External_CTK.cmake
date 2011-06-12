@@ -1,4 +1,11 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Sanity checks
 if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
   message(FATAL_ERROR "CTK_DIR variable is defined but corresponds to non-existing directory")
@@ -15,7 +22,7 @@ include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED CTK_DIR)
-#    message(STATUS "Adding project:${proj}")
+  #message(STATUS "Adding project '${proj}'")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
     GIT_TAG "origin/master"

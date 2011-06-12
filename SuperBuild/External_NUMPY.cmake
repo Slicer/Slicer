@@ -1,10 +1,19 @@
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  RETURN()
+ENDIF()
+SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(NUMPY_DEPENDENCIES CLAPACK python)
 
 set(proj NUMPY)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
+#message(STATUS "Adding project '${proj}'")
 
 set(NUMPY_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
 set(numpy_url http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
@@ -40,3 +49,4 @@ ExternalProject_Add(${proj}
   DEPENDS 
     ${NUMPY_DEPENDENCIES}
   )
+
