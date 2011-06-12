@@ -1,4 +1,7 @@
 
+# Set dependency list
+set(BatchMake_DEPENDENCIES Insight)
+
 set(proj BatchMake)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

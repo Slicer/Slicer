@@ -4,6 +4,12 @@ if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
   message(FATAL_ERROR "CTK_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
+# Set dependency list
+set(CTK_DEPENDENCIES VTK Insight)
+if(Slicer_USE_PYTHONQT)
+  list(APPEND CTK_DEPENDENCIES python)
+endif()
+
 set(proj CTK)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

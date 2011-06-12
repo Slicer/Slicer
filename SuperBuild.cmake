@@ -60,45 +60,6 @@ else()
 endif()
 
 #------------------------------------------------------------------------------
-# Establish Target Dependencies based on Selected Options
-#------------------------------------------------------------------------------
-
-set(tcl_DEPENDENCIES "")
-set(tk_DEPENDENCIES tcl)
-set(incrTcl_DEPENDENCIES tcl tk)
-set(python_DEPENDENCIES)
-if(Slicer_USE_PYTHONQT_WITH_TCL)
-  if(WIN32)
-    set(python_DEPENDENCIES tcl)
-  else()
-    set(python_DEPENDENCIES tk)
-  endif()
-endif()
-set(CLAPACK_DEPENDENCIES "")
-set(NUMPY_DEPENDENCIES CLAPACK python)
-set(scipy_DEPENDENCIES NUMPY)
-set(weave_DEPENDENCIES python NUMPY)
-
-set(VTK_DEPENDENCIES "")
-set(CTKAPPLAUNCHER_DEPENDENCIES "")
-set(CTK_DEPENDENCIES VTK Insight)
-if(Slicer_USE_PYTHONQT)
-  list(APPEND CTK_DEPENDENCIES python)
-endif()
-set(Insight_DEPENDENCIES "")
-
-if(Slicer_USE_BatchMake)
-  set(BatchMake_DEPENDENCIES Insight)
-  list(APPEND slicer_DEPENDENCIES BatchMake)
-endif()
-
-set(OpenIGTLink_DEPENDENCIES "")
-set(teem_DEPENDENCIES VTK)
-set(cmcurl_DEPENDENCIES "")
-set(libarchive_DEPENDENCIES "")
-set(slicer_DEPENDENCIES CTK VTK Insight OpenIGTLink teem cmcurl libarchive)
-
-#------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
@@ -136,26 +97,30 @@ endif()
 include(SuperBuild/External_cmcurl.cmake)
 include(SuperBuild/External_libarchive.cmake)
 
-#-----------------------------------------------------------------------------
-# Update external project dependencies
 #------------------------------------------------------------------------------
+# Slicer dependency list
+#------------------------------------------------------------------------------
+set(Slicer_DEPENDENCIES CTK VTK Insight OpenIGTLink teem cmcurl libarchive)
+if(Slicer_USE_BatchMake)
+  list(APPEND Slicer_DEPENDENCIES BatchMake)
+endif()
 
-if (Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(UNIX)
-    list(APPEND slicer_DEPENDENCIES incrTcl)
+    list(APPEND Slicer_DEPENDENCIES incrTcl)
   endif()
 endif()
 
 if (Slicer_USE_CTKAPPLAUNCHER)
-  list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
+  list(APPEND Slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  list(APPEND slicer_DEPENDENCIES python)
+  list(APPEND Slicer_DEPENDENCIES python)
   if(Slicer_USE_NUMPY)
-    list(APPEND slicer_DEPENDENCIES NUMPY)
+    list(APPEND Slicer_DEPENDENCIES NUMPY)
     if(Slicer_USE_SCIPY)
-      list(APPEND slicer_DEPENDENCIES scipy)
+      list(APPEND Slicer_DEPENDENCIES scipy)
     endif()
   endif()
 endif()
@@ -227,8 +192,10 @@ IF(Slicer_BUILD_CLI)
 ENDIF()
 
 set(proj Slicer)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+
 ExternalProject_Add(${proj}
-  DEPENDS ${slicer_DEPENDENCIES}
+  DEPENDS ${Slicer_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR Slicer-build

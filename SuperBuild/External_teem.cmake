@@ -1,4 +1,7 @@
 
+# Set dependency list
+set(teem_DEPENDENCIES VTK)
+
 set(proj teem)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

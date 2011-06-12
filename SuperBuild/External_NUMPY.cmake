@@ -1,4 +1,6 @@
-# The Numpy external project 
+
+# Set dependency list
+set(NUMPY_DEPENDENCIES CLAPACK python)
 
 set(proj NUMPY)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)

@@ -1,5 +1,7 @@
 
-#-----------------------------------------------------------------------------
+# Set dependency list
+set(tcl_DEPENDENCIES "")
+
 set(proj tcl)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

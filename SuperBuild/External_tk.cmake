@@ -1,18 +1,21 @@
 
-#-----------------------------------------------------------------------------
-set(proj tk)
-include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
-set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
-
-set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
-set(tk_SOURCE_DIR "")
-set(tk_BINARY_DIR "")
-set(tk_BUILD_IN_SOURCE 0)
-set(tk_CONFIGURE_COMMAND "")
-set(tk_BUILD_COMMAND "")
-set(tk_INSTALL_COMMAND "")
-
 if(NOT WIN32)
+
+  # Set dependency list
+  set(tk_DEPENDENCIES tcl)
+
+  set(proj tk)
+  include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
+  set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
+  set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
+  set(tk_SOURCE_DIR "")
+  set(tk_BINARY_DIR "")
+  set(tk_BUILD_IN_SOURCE 0)
+  set(tk_CONFIGURE_COMMAND "")
+  set(tk_BUILD_COMMAND "")
+  set(tk_INSTALL_COMMAND "")
+
   set(tk_SOURCE_DIR tcl/tk)
   set(tk_BUILD_IN_SOURCE 1)
 

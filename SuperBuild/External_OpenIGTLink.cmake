@@ -1,6 +1,6 @@
 
-#-----------------------------------------------------------------------------
-# Get and build OpenIGTLink 
+# Set dependency list
+set(OpenIGTLink_DEPENDENCIES "")
 
 set(proj OpenIGTLink)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)

@@ -1,5 +1,6 @@
-#-----------------------------------------------------------------------------
-# Get and build LIBARCHIVE (libarchive)
+
+# Set dependency list
+set(libarchive_DEPENDENCIES "")
 
 if(WIN32)
   set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)

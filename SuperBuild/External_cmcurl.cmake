@@ -1,5 +1,6 @@
-#-----------------------------------------------------------------------------
-# Get and build SLICERLIBCURL (slicerlibcurl)
+
+# Set dependency list
+set(cmcurl_DEPENDENCIES "")
 
 set(proj cmcurl)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)

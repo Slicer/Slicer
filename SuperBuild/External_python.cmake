@@ -1,7 +1,18 @@
-#-----------------------------------------------------------------------------
+
+# Set dependency list
+set(python_DEPENDENCIES "")
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  if(WIN32)
+    set(python_DEPENDENCIES tcl)
+  else()
+    set(python_DEPENDENCIES tk)
+  endif()
+endif()
+
 set(proj python)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
 set(PYVER_SHORT 26)

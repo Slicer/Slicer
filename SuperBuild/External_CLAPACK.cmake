@@ -1,4 +1,7 @@
 
+# Set dependency list
+set(CLAPACK_DEPENDENCIES "")
+
 set(proj CLAPACK)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
 set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

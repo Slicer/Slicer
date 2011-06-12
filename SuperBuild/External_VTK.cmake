@@ -1,6 +1,3 @@
-#-----------------------------------------------------------------------------
-# Get and build VTK
-#
 
 # Sanity checks
 if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
@@ -10,6 +7,9 @@ endif()
 if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
   message(FATAL_ERROR "VTK_SOURCE_DIR variable is defined but corresponds to non-existing directory")
 endif()
+
+# Set dependency list
+set(VTK_DEPENDENCIES "")
 
 set(proj VTK)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)

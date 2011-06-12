@@ -7,6 +7,9 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     MESSAGE(FATAL_ERROR "CTKAPPLAUNCHER_DIR variable is defined but corresponds to non-existing directory")
   ENDIF()
   
+  # Set dependency list
+  set(CTKAPPLAUNCHER_DEPENDENCIES "")
+  
   set(proj CTKAPPLAUNCHER)
   include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
   set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)

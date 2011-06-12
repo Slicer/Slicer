@@ -1,4 +1,6 @@
-# The Weave external project 
+
+# Set dependency list
+set(weave_DEPENDENCIES python NUMPY)
 
 set(proj weave)
 include(${Slicer_SOURCE_DIR}/CMake/SlicerBlockCheckExternalProjectDependencyList.cmake)
