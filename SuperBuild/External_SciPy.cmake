@@ -7,11 +7,11 @@ ENDIF()
 SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(scipy_DEPENDENCIES NUMPY)
+set(SciPy_DEPENDENCIES NUMPY)
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(scipy)
-set(proj scipy)
+SlicerMacroCheckExternalProjectDependency(SciPy)
+set(proj SciPy)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
@@ -22,6 +22,6 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS 
-    ${scipy_DEPENDENCIES}
+    ${SciPy_DEPENDENCIES}
   )
 
