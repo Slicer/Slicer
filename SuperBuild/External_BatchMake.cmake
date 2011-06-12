@@ -1,5 +1,6 @@
 
 set(proj BatchMake)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"

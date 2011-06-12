@@ -3,6 +3,7 @@
 # Get and build OpenIGTLink 
 
 set(proj OpenIGTLink)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"

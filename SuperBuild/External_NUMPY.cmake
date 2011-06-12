@@ -1,5 +1,8 @@
 # The Numpy external project 
 
+set(proj NUMPY)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
 set(NUMPY_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
 set(numpy_url http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
 set(numpy_md5 5c7b5349dc3161763f7f366ceb96516b)
@@ -19,7 +22,7 @@ configure_file(
 
 # create an external project to download numpy,
 # and configure and build it
-ExternalProject_Add(NUMPY
+ExternalProject_Add(${proj}
   URL ${numpy_url}
   URL_MD5 ${numpy_md5}
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}

@@ -1,5 +1,6 @@
 
 set(proj teem)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(WIN32)
   set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkzlib.lib)

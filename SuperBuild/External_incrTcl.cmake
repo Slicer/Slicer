@@ -1,6 +1,7 @@
 
 #-----------------------------------------------------------------------------
 set(proj itcl)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 set(itcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
 set(itcl_BUILD_IN_SOURCE 0)

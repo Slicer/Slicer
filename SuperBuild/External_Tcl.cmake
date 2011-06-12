@@ -1,7 +1,7 @@
 
 #-----------------------------------------------------------------------------
-set(tcl_build)
 set(proj tcl)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 set(tcl_SVN_REPOSITORY)
 set(tcl_SOURCE_DIR "")

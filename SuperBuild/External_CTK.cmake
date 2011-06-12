@@ -5,6 +5,7 @@ if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
 endif()
 
 set(proj CTK)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 if(NOT DEFINED CTK_DIR)
 #    message(STATUS "Adding project:${proj}")

@@ -1,4 +1,7 @@
 
+set(proj CLAPACK)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
 set(CLAPACK_version 3.2.1)
 #set(CLAPACK_file "http://www.netlib.org/clapack/clapack-${clapack_version}-CMAKE.tgz")
 # Since the netlib.org server has been down several time, especially when the nightly dashboard 
@@ -26,7 +29,7 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   set(CMAKE_C_FLAGS_CLAPACK "-fPIC ${CMAKE_C_FLAGS_CLAPACK}")
 endif()
   
-ExternalProject_Add(CLAPACK
+ExternalProject_Add(${proj}
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR ${CLAPACK_source}
   BINARY_DIR ${CLAPACK_binary}

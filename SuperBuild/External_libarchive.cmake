@@ -10,6 +10,7 @@ else()
 endif()
 
 set(proj libarchive)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 ExternalProject_Add(${proj}
   URL ${libarchive_URL}

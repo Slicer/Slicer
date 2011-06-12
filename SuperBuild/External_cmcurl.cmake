@@ -2,6 +2,7 @@
 # Get and build SLICERLIBCURL (slicerlibcurl)
 
 set(proj cmcurl)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"

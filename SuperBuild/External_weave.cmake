@@ -1,5 +1,8 @@
 # The Weave external project 
 
+set(proj weave)
+set(${proj}_EXTERNAL_PROJECT_INCLUDED TRUE)
+
 set(weave_binary "${CMAKE_CURRENT_BINARY_DIR}/weave/")
 
 # to configure weave we run a cmake -P script
