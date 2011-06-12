@@ -259,8 +259,8 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
               BINARY_DIR ${CTEST_BINARY_DIRECTORY}/Extensions/${extension_name}-build
               CONFIG ${CTEST_BUILD_CONFIGURATION}
               RETURN_VAR extension_packages)
-            message("Uploading extension ${extension_name} ...")
             foreach(p ${extension_packages})
+              message("Uploading extension package ${p} ...")
               ctest_upload(FILES ${p})
               ctest_submit(PARTS Upload)
             endforeach()
