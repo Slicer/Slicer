@@ -19,7 +19,7 @@ if(Slicer_USE_PYTHONQT)
     USE_SOURCE_PERMISSIONS
     REGEX "lib2to3/" EXCLUDE
     REGEX "lib-old/" EXCLUDE
-    REGEX "plat-*" EXCLUDE
+    REGEX "plat[-].*" EXCLUDE
     REGEX "test/" EXCLUDE
     REGEX "wsgiref*" EXCLUDE
     REGEX "distutils/" EXCLUDE
