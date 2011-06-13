@@ -54,11 +54,15 @@ public:
   void removeAllExtraItems(QStandardItem* parent, const QString extraType);
   bool isExtraItem(const QStandardItem* item)const;
   void listenNodeModifiedEvent();
+  void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   bool ListenNodeModifiedEvent;
   vtkMRMLScene* MRMLScene;
   mutable QList<vtkMRMLNode*>  DraggedNodes;
+  // We keep a list of QStandardItem instead of vtkMRMLNode* because they are
+  // likely to be unreachable when browsing the model
+  QList<QList<QStandardItem*> > Orphans;
 };
 
 #endif

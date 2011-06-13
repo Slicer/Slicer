@@ -192,6 +192,17 @@ bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item)const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::reparentItems(
+  QList<QStandardItem*>& children, int newIndex, QStandardItem* newParentItem)
+{
+  Q_Q(qMRMLSceneModel);
+  int min = q->preItems(newParentItem).count();
+  int max = newParentItem->rowCount() - q->postItems(newParentItem).count();
+  int pos = qMin(min + newIndex, max);
+  newParentItem->insertRow(pos, children);
+}
+
+//------------------------------------------------------------------------------
 // qMRMLSceneModel
 //------------------------------------------------------------------------------
 qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
@@ -683,6 +694,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
+  Q_D(qMRMLSceneModel);
   item->setFlags(this->nodeFlags(node, column));
   // set UIDRole and set PointerRole need to be atomic
   bool blocked  = this->blockSignals(true);
@@ -711,11 +723,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
       newIndex != item->row())
     {
     QList<QStandardItem*> children = parentItem->takeRow(item->row());
-    int min = this->preItems(newParentItem).count();
-    int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
-    int pos = qMin(min + newIndex, max);
-    newParentItem->insertRow(pos, children);
-    //printStandardItem(this->invisibleRootItem(), "  ");
+    d->reparentItems(children, newIndex, newParentItem);
     }
 }
 
@@ -902,6 +910,23 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
                                         Qt::MatchExactly | Qt::MatchRecursive);
   if (indexes.count())
     {
+    QStandardItem* item = this->itemFromIndex(indexes[0].sibling(indexes[0].row(),0));
+    // The children may be lost if not reparented, we ensure they got reparented.
+    while (item->rowCount())
+      {
+      // we need to remove the children from the node to remove because they 
+      // would be automatically deleted in QStandardItemModel::removeRow()
+      d->Orphans.push_back(item->takeRow(0));
+      }
+    // Remove the item from any orphan list if it exist as we don't want to
+    // add it back later in onMRMLSceneNodeRemoved
+    foreach(QList<QStandardItem*> orphans, d->Orphans)
+      {
+      if (orphans.contains(item))
+        {
+        d->Orphans.removeAll(orphans);
+        }
+      }
     this->removeRow(indexes[0].row(), indexes[0].parent());
     }
 }
@@ -909,8 +934,34 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
+  Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   Q_UNUSED(node);
+  // The removed node may had children, if they haven't been updated, they
+  // are likely to be lost (not reachable when browsing the model), we need
+  // to reparent them.
+  foreach(QList<QStandardItem*> orphans, d->Orphans)
+    {
+    QStandardItem* orphan = orphans[0];
+    // Make sure that the orphans have not already been reparented.
+    if (orphan->parent())
+      {
+      // Not sure how it is possible, but if it is, then we might want to
+      // review the logic behind.
+      Q_ASSERT(orphan->parent() == 0);
+      continue;
+      }
+    vtkMRMLNode* node = this->mrmlNodeFromItem(orphan);
+    int newIndex = this->nodeIndex(node);
+    QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
+    if (newParentItem == 0)
+      {
+      newParentItem = this->mrmlSceneItem();
+      }
+    Q_ASSERT(newParentItem);
+    d->reparentItems(orphans, newIndex, newParentItem);
+    }
+  d->Orphans.clear();
 }
 
 //------------------------------------------------------------------------------
