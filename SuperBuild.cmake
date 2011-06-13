@@ -63,7 +63,7 @@ endif()
 #------------------------------------------------------------------------------
 # Slicer dependency list
 #------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK)
+set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
@@ -200,6 +200,8 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # CTKAppLauncher
     -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
+    # qCDashAPI
+    -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
   INSTALL_COMMAND ""
   )
   
