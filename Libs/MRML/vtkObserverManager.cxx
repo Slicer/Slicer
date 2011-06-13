@@ -109,7 +109,11 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
     {
-    return;
+    if (node == 0)
+      {
+      return;
+      }
+    vtkWarningMacro( << "Setting the same object should be a no-op.");
     }
   this->SetObject(nodePtr, node);
   this->AddObjectEvents(node, events);
@@ -175,7 +179,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
         // not a big issue but it just shows poor design.
         if (broker->GetObservations(nodePtr, events->GetValue(i), observer, this->CallbackCommand).size() != 0)
           {
-          vtkWarningMacro(<< "Observation between" << nodePtr->GetClassName()
+          vtkWarningMacro(<< "Observation between " << nodePtr->GetClassName()
                           << " and " << observer->GetClassName()
                           << " already exists.");
           }

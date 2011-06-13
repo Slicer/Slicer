@@ -24,7 +24,7 @@ public:
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   // Initialize listening to MRML events
-  void InitializeEventListeners();
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
   // Start the place mode for annotations
   void StartPlaceMode(bool persistent=false);

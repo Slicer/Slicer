@@ -112,10 +112,6 @@ void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModule
     }
 
   this->m_Widget = widget;
-
-  // be sure to listen to the mrml events, will undo any other observed events
-  // to add new ones (double call doesn't hurt)
-  this->InitializeEventListeners();
 }
 
 //-----------------------------------------------------------------------------
@@ -273,22 +269,22 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vt
 //---------------------------------------------------------------------------
 // Start the place mouse mode
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
+void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
-  if (this->GetMRMLScene() == NULL)
-    {
-    vtkWarningMacro("InitializeEventListeners: no scene to listen to!");
-    return;
-    }
-
   // a good time to add the observed events!
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
+
+  if (this->GetMRMLScene() == NULL)
+    {
+    vtkWarningMacro("SetMRMLSceneInternal: no scene to listen to!");
+    return;
+    }
 
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
@@ -306,9 +302,9 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
     }
   else
     {
-    vtkWarningMacro("InitializeEventListeners: No interaction node!");
+    vtkWarningMacro("SetMRMLSceneInternal: No interaction node!");
     }
-  vtkDebugMacro("InitializeEventListeners: listeners added");
+  vtkDebugMacro("SetMRMLSceneInternal: listeners added");
 
   // add known annotation types to the selection node
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -662,9 +658,6 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       vtkMRMLAnnotationHierarchyNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
-
-  // set up the event listeners now
-  this->InitializeEventListeners();
 }
 
 //---------------------------------------------------------------------------

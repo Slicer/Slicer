@@ -46,7 +46,7 @@ public:
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   // Initialize listening to MRML events
-  void InitializeEventListeners();
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
   
   // MRML events
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );

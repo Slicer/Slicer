@@ -74,7 +74,7 @@ void vtkSlicerSceneViewsModuleLogic::SetAndObserveWidget(qSlicerSceneViewsModule
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::InitializeEventListeners()
+void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkDebugMacro("InitializeEventListeners");
   // a good time to add the observed events!
@@ -84,7 +84,7 @@ void vtkSlicerSceneViewsModuleLogic::InitializeEventListeners()
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
 }
 
@@ -239,11 +239,6 @@ void vtkSlicerSceneViewsModuleLogic::RegisterNodes()
   vtkMRMLSceneViewStorageNode *storageNode = vtkMRMLSceneViewStorageNode::New();
   this->GetMRMLScene()->RegisterNodeClass ( storageNode );
   storageNode->Delete();
-  
-  // set up the event listeners now
-  this->InitializeEventListeners();
-
-
 }
 
 //---------------------------------------------------------------------------

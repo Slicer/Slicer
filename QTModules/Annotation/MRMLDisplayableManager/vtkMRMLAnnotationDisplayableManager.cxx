@@ -125,7 +125,6 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
       ++it)
     {
     //vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast((*it).GetPointer());
-//vtkSetAndObserveMRMLNodeEventsMacro 
     vtkObserveMRMLNodeEventsMacro(*it, nodeEvents);
     }
 
