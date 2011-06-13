@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>149</height>
+    <width>431</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <string>Welcome</string>
   </property>
   <property name="subTitle">
-   <string>This wizard lets you search for extensions to add to 3D slicer, download and install them and uninstall existing extensions. You will need a network connection to access remote extension repositories.</string>
+   <string>This wizard allows you to search, download and install/uninstall extensions. You will need a network connection to access the extension server.</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="fieldGrowthPolicy">
@@ -43,7 +43,7 @@
    <item row="4" column="1">
     <widget class="QPushButton" name="DeleteTempPushButton">
      <property name="text">
-      <string>Delete zip files from temporary directory</string>
+      <string>Delete packages from temporary directory</string>
      </property>
     </widget>
    </item>

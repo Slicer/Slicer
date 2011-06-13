@@ -55,6 +55,7 @@ qSlicerExtensionsWizardPrivate::qSlicerExtensionsWizardPrivate(qSlicerExtensions
 void qSlicerExtensionsWizardPrivate::init()
 {
   Q_Q(qSlicerExtensionsWizard);
+  q->setWizardStyle(QWizard::ClassicStyle);
 
   q->addPage(new qSlicerExtensionsWizardWelcomePage);
   q->addPage(new qSlicerExtensionsWizardOverviewPage);

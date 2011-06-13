@@ -9,12 +9,16 @@
 #include <vtkHTTPHandler.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // ITKsys includes
 #include <itksys/SystemTools.hxx>
 #include <vtksys/ios/sstream>
+
+namespace
+{
 
 //----------------------------------------------------------------------------
 std::string ltrim(const std::string& str)
@@ -61,24 +65,25 @@ std::string trim(const std::string& str)
 }
 
 //----------------------------------------------------------------------------
-bool UnzipPackage(const std::string& zipfile, 
+bool ExtractPackage(const std::string& file,
                   const std::string& vtkNotUsed(target),
                   const std::string& vtkNotUsed(tmpdir))
 {
-  return extract_tar(zipfile.c_str(), true, true);
+  return extract_tar(file.c_str(), true, true);
 }
 
+} // end of anonymous namespace
+
 //----------------------------------------------------------------------------
-vtkStandardNewMacro( vtkSlicerExtensionsLogic );
+// vtkSlicerExtensionsLogic methods
+
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkSlicerExtensionsLogic);
 vtkCxxRevisionMacro(vtkSlicerExtensionsLogic, "$Revision: 12830 $");
 
 //----------------------------------------------------------------------------
 vtkSlicerExtensionsLogic::vtkSlicerExtensionsLogic()
 {
-  this->Messages["READY"] = "Select extensions, then click uninstall to remove them from\nyour version of 3D Slicer, or click download to retrieve them.";
-  this->Messages["DOWNLOAD"] = "Download in progress... Clicking the cancel button will stop\nthe process after the current extension operation is finished.";
-  this->Messages["FINISHED"] = "Continue selecting extensions for download or removal,\nor click finish to complete the operation.";
-
   this->InstallPath = 0;
   this->RepositoryURL = 0;
   this->TemporaryDirectory = 0;
@@ -94,35 +99,6 @@ vtkSlicerExtensionsLogic::~vtkSlicerExtensionsLogic()
 const std::vector<ManifestEntry*>& vtkSlicerExtensionsLogic::GetModules()const
 {
   return this->Modules;
-}
-
-//--------------------vtkNotUsed(--------------------------------------------------------
-bool vtkSlicerExtensionsLogic
-::UpdateModulesFromRepository(const std::string& manifestFile)
-{
-  std::ifstream ifs(manifestFile.c_str());
-
-  if (ifs.fail())
-    {
-    return false;
-    }
-
-  char *HTML = 0;
-  ifs.seekg(0, std::ios::end);
-  size_t len = ifs.tellg();
-  ifs.seekg(0, std::ios::beg);
-  HTML = new char[len+1];
-  ifs.read(HTML, len);
-  HTML[len] = '\n';
-  
-  ifs.close();
-
-  std::vector<ManifestEntry*> modules = this->ParseManifest(HTML);
-  this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
-
-  delete[] HTML;
-
-  return modules.size() > 0;
 }
 
 //----------------------------------------------------------------------------
@@ -193,114 +169,6 @@ bool vtkSlicerExtensionsLogic::UpdateModulesFromDisk(const std::string& paths)
 }
 
 //----------------------------------------------------------------------------
-std::vector<ManifestEntry*> vtkSlicerExtensionsLogic::ParseManifest(const std::string& txt)
-{
-  std::vector<ManifestEntry*> result;
-
-  if (txt.empty()) {
-    return result;
-  }
-
-  std::string baseURL = this->GetRepositoryURL();
-
-  std::string zip_key(".zip\">");
-  std::string ext_key(".s3ext\">");
-  std::string atag_key("</a>");
-  std::string svn_key("-svn");
-  std::string cvs_key("-cvs");
-
-  std::string::size_type zip = txt.find(zip_key, 0);
-  std::string::size_type atag = txt.find(atag_key, zip);
-  std::string::size_type dash = txt.find(svn_key, zip);
-
-  bool cvs = false;
-  if (std::string::npos == dash || dash > atag)
-    {
-    cvs = true;
-    dash = txt.find(cvs_key, zip);
-    }
-
-  std::string::size_type dash2;
-  if (cvs)
-    {
-    dash2 = (dash + 3 + 10);
-    }
-  else
-    {
-    dash2 = txt.find("-", dash + 1);
-    }
-
-  std::string::size_type ext = txt.find(ext_key, dash2);
-  std::string::size_type atag2 = txt.find(atag_key, ext);
-
-  ManifestEntry* entry;
-
-  // :NOTE: 20081003 tgl: Put in a sanity check of 10,000 to
-  // prevent an infinite loop.  Get Out The Vote 2008!
-
-  std::string s3ext;
-  int count = 0;
-  while (zip != std::string::npos && count < 10000)
-    {
-    entry = new ManifestEntry;
-
-    if (std::string::npos != atag2)
-      {
-      entry->URL = baseURL;
-      entry->URL += "/";
-      entry->URL += txt.substr(zip + zip_key.size(), atag - (zip + zip_key.size()));
-      
-      if (cvs)
-        {
-        entry->Name = txt.substr(zip + zip_key.size(), dash - (zip + zip_key.size()));
-        }
-      else
-        {
-        entry->Name = txt.substr(zip + zip_key.size(), dash - (zip + zip_key.size()));
-        }
-
-      if (cvs)
-        {
-        // :NOTE: 20090519 tgl: CVS controlled extensions use an ISO date.
-        entry->Revision = txt.substr(dash + cvs_key.size(), 10);
-        }
-      else
-        {
-        entry->Revision = txt.substr(dash + svn_key.size(), dash2 - (dash + svn_key.size()));
-        }
-
-      s3ext = baseURL;
-      s3ext += "/";
-      s3ext += txt.substr(ext + ext_key.size(), atag2 - (ext + ext_key.size()));
-
-      this->DownloadParseS3ext(s3ext, entry);
-
-      zip = txt.find(zip_key, zip + 1);
-
-      dash = txt.find(svn_key, zip);
-      atag = txt.find(atag_key, zip);
-
-      cvs = false;
-      if (std::string::npos == dash || dash > atag)
-        {
-        cvs = true;
-        dash = txt.find(cvs_key, zip);
-        }
-
-      dash2 = txt.find("-", dash + 1);
-      ext = txt.find(ext_key, dash );
-      atag2 = txt.find(atag_key, ext);
-
-      this->AddEntry(result, entry);
-      }
-      
-    count++;
-    }
-
-  return result;
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerExtensionsLogic::AddEntry(std::vector<ManifestEntry*> &entries,
                                         ManifestEntry *entry)
 {
@@ -312,7 +180,6 @@ void vtkSlicerExtensionsLogic::AddEntry(std::vector<ManifestEntry*> &entries,
       break;
       }
     }
-
   if (iter == entries.end())
     {
     entries.push_back(entry);
@@ -330,26 +197,25 @@ void vtkSlicerExtensionsLogic::AddEntry(std::vector<ManifestEntry*> &entries,
       entry = 0;
       }
     }
-  
-}// AddEntry
+}
 
 //----------------------------------------------------------------------------
-bool vtkSlicerExtensionsLogic::DownloadParseS3ext(const std::string& s3ext,
-                                              ManifestEntry* entry)
+bool vtkSlicerExtensionsLogic::DownloadAndParseS4ext(const std::string& s4ext,
+                                                     ManifestEntry* entry)
 {
-  vtkSmartPointer<vtkHTTPHandler> handler = vtkSmartPointer<vtkHTTPHandler>::New();
+  vtkNew<vtkHTTPHandler> handler;
   handler->SetForbidReuse(1);
 
-  if (handler->CanHandleURI(s3ext.c_str()) == 0)
+  if (handler->CanHandleURI(s4ext.c_str()) == 0)
     {
     return false;
     }
-  std::string::size_type pos = s3ext.rfind("/");
-  std::string s3extname = s3ext.substr(pos + 1);
+  std::string::size_type pos = s4ext.rfind("/");
+  std::string s3extname = s4ext.substr(pos + 1);
     
   std::string tmpfile(std::string(this->GetTemporaryDirectory()) + std::string("/") + s3extname);
     
-  handler->StageFileRead(s3ext.c_str(), tmpfile.c_str());
+  handler->StageFileRead(s4ext.c_str(), tmpfile.c_str());
 
   std::ifstream ifs(tmpfile.c_str());
   std::string line;
@@ -402,27 +268,27 @@ bool vtkSlicerExtensionsLogic::DownloadExtension(const std::string& vtkNotUsed(E
 
 
 //----------------------------------------------------------------------------
-bool vtkSlicerExtensionsLogic::InstallExtension(const std::string& ExtensionName,
-                                                const std::string& ExtensionBinaryURL)
+bool vtkSlicerExtensionsLogic::InstallExtension(const std::string& extensionName,
+                                                const std::string& extensionBinaryURL)
 {
-  this->UninstallExtension(ExtensionName);
+  this->UninstallExtension(extensionName);
 
-  std::string::size_type pos = ExtensionBinaryURL.rfind("/");
-  std::string zipname = ExtensionBinaryURL.substr(pos + 1);     
+  std::string::size_type pos = extensionBinaryURL.rfind("/");
+  std::string archivename = extensionBinaryURL.substr(pos + 1);
 
-  std::string tmpfile(std::string(this->GetTemporaryDirectory()) + std::string("/") + zipname);
+  std::string tmpfile(std::string(this->GetTemporaryDirectory()) + std::string("/") + archivename);
   
   std::string installdir = this->GetInstallPath();
 
-  std::string libdir(installdir + std::string("/") + ExtensionName);
+  std::string libdir(installdir + std::string("/") + extensionName);
 
-  std::string searchdir(std::string(this->GetInstallPath()) + std::string("/") + ExtensionName);
+//  std::string searchdir(std::string(this->GetInstallPath()) + std::string("/") + extensionName);
 
   std::string tmpdir(std::string(this->GetTemporaryDirectory()) + std::string("/extension"));
 
-  if (!UnzipPackage(tmpfile, libdir, tmpdir))
+  if (!ExtractPackage(tmpfile, libdir, tmpdir))
     {
-    std::cerr << "Can't extract zip file" << std::endl;
+    std::cerr << "Can't extract extension package" << std::endl;
     return false;
     }
   return true;

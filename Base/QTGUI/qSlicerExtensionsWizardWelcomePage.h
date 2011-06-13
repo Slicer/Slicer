@@ -26,9 +26,9 @@
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
+#include "qSlicerQListQVariantMapMetaType.h"
 
 class qSlicerExtensionsWizardWelcomePagePrivate;
-class QNetworkReply;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsWizardWelcomePage
   : public QWizardPage
@@ -52,7 +52,7 @@ public slots:
   void deleteTemporaryArchiveFiles();
 
 protected slots:
-  void downloadFinished(QNetworkReply*);
+  void onProjectFilesReceived(const QString& queryUuid, const QList<QVariantMap>& files);
 
 protected:
   QScopedPointer<qSlicerExtensionsWizardWelcomePagePrivate> d_ptr;

@@ -17,7 +17,7 @@
    <string>Extensions</string>
   </property>
   <property name="subTitle">
-   <string>Select extensions, then uninstall to remove them from your version of 3D Slicer, or click download to retrieve them</string>
+   <string>This panel allows you to install or uninstall extensions. After selecting an extension, click on &lt;b&gt;Download&lt;/b&gt; to install it.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">

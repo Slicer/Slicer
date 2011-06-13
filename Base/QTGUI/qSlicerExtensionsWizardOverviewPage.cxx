@@ -30,6 +30,7 @@
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QUrl>
+#include <QVector>
 
 // CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -47,9 +48,26 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <algorithm>
+
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardOverviewPage");
 
-// qSlicerExtensionsWizardOverviewPagePrivate
+namespace
+{
+
+enum
+{
+  StatusSuccess = 0,
+  StatusDownloading,
+  StatusInstalling,
+  StatusUninstalling,
+  StatusCancelled,
+  StatusError,
+  StatusFoundOnDisk,
+  StatusNotFoundOnDisk,
+  StatusUnknown
+};
 
 enum Columns
 {
@@ -64,6 +82,133 @@ enum Roles
 {
   IsExtensionRole = Qt::UserRole
 };
+
+//-----------------------------------------------------------------------------
+// See http://stackoverflow.com/questions/2536524/copy-directory-using-qt
+bool rmDir(const QString &dirPath)
+{
+  QDir dir(dirPath);
+  if (!dir.exists()) { return true; }
+  foreach(const QFileInfo &info, dir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+    {
+    if (info.isDir())
+      {
+      if (!rmDir(info.filePath())){ return false; }
+      }
+    else
+      {
+      if (!dir.remove(info.fileName())) { return false; }
+      }
+    }
+  QDir parentDir(QFileInfo(dirPath).path());
+  return parentDir.rmdir(QFileInfo(dirPath).fileName());
+}
+
+//-----------------------------------------------------------------------------
+// See http://stackoverflow.com/questions/2536524/copy-directory-using-qt
+bool cpDir(const QString &srcPath, const QString &dstPath)
+{
+  rmDir(dstPath);
+  QDir parentDstDir(QFileInfo(dstPath).path());
+  if (!parentDstDir.mkdir(QFileInfo(dstPath).fileName()))
+    {
+    return false;
+    }
+
+  QDir srcDir(srcPath);
+  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+    {
+    QString srcItemPath = srcPath + "/" + info.fileName();
+    QString dstItemPath = dstPath + "/" + info.fileName();
+    if (info.isDir())
+      {
+      if (!cpDir(srcItemPath, dstItemPath))
+        {
+        return false;
+        }
+      }
+    else if (info.isFile())
+      {
+      if (!QFile::copy(srcItemPath, dstItemPath))
+        {
+        return false;
+        }
+      }
+    else
+      {
+      qDebug() << "Unhandled item" << info.filePath() << "in cpDir";
+      }
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+QList<ManifestEntry*> UpdateModulesFromRepository(const QString& extensionServerURL,
+                                                 const QList<QVariantMap>& retrievedListOfS4extFiles,
+                                                 const QList<QVariantMap>& retrievedListOfPackageFiles,
+                                                 vtkSlicerExtensionsLogic * extensionLogic)
+{
+  Q_ASSERT(extensionLogic);
+
+  // Generate map of s4ext filename to the corresponding URL
+  QHash<QString, QVariantMap> s4extFileNameToMap;
+  foreach(const QVariantMap& file, retrievedListOfS4extFiles)
+    {
+    s4extFileNameToMap.insert(file.value("filename").toString(), file);
+    }
+
+  // The following regex has been developer with the help of http://rexv.org/
+  // Matching group 1: Slicer revision - Could be 'svn revision' or 'git sha1'
+  // Matching group 2: <platform>-<arch>
+  // Matching group 3: Extension name
+  // Matching group 4: (git|svn|local)
+  // Matching group 5: (sha1|revision|"")
+  QRegExp regex("^((?:[a-f0-9]{5,40})|(?:\\d+))\\-((?:linux|macosx|win32|win64|na)-(?:i386|amd64|x86|na))\\-([a-zA-Z0-9_]+)\\-(svn|git|local)((?:[a-f0-9]{5,40})|(?:\\d*))\\-\\d{4}\\-\\d{2}\\-\\d{2}\\.tar.gz$");
+
+  std::vector<ManifestEntry*> updatedManifestEntries;
+  QStringList processedS4extFileNames;
+  foreach(const QVariantMap& packageFile, retrievedListOfPackageFiles)
+    {
+    // file attributes: id, filename, filesize, sha1sum, url
+    QString packageFileName = packageFile.value("filename").toString();
+    if (!regex.exactMatch(packageFileName))
+      {
+      qWarning() << "The file name is not formatted properly:" << packageFileName;
+      continue;
+      }
+    // Skip filename if it has already been processed
+    if (processedS4extFileNames.contains(packageFileName))
+      {
+      continue;
+      }
+    processedS4extFileNames << packageFileName;
+
+    QStringList capturedTexts = regex.capturedTexts();
+    Q_ASSERT(capturedTexts.count() == 6);
+
+    ManifestEntry * entry = new ManifestEntry;
+    QString url = packageFile.value("url").toString();
+    entry->URL = (extensionServerURL + "/" + url).toStdString();
+    entry->Name = capturedTexts.at(3).toStdString();
+    entry->Revision = capturedTexts.at(5).toStdString();
+
+    // Lookup url of the associated s4ext files
+    QString s4extFileName = QString(packageFileName).replace(QFileInfo(packageFileName).completeSuffix(), "s4ext");
+    QHash<QString, QVariantMap>::const_iterator i =s4extFileNameToMap.find(s4extFileName);
+    if (i != s4extFileNameToMap.end())
+      {
+      QString s4extURL = extensionServerURL + "/" + i.value().value("url").toString();
+      extensionLogic->DownloadAndParseS4ext(s4extURL.toStdString(), entry);
+      }
+    extensionLogic->AddEntry(updatedManifestEntries, entry);
+    }
+  return QVector<ManifestEntry*>::fromStdVector(updatedManifestEntries).toList();
+}
+
+} // end of anonymous namespace
+
+//-----------------------------------------------------------------------------
+// qSlicerExtensionsWizardOverviewPagePrivate
 
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsWizardOverviewPagePrivate
@@ -138,7 +283,24 @@ QStringList qSlicerExtensionsWizardOverviewPagePrivate::scanExistingExtensions()
   QFileInfoList entries = this->ExtensionsDir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::Executable);
   foreach(const QFileInfo& entry, entries)
     {
-    extensions << entry.absoluteFilePath();
+    if (QFile::exists(entry.absoluteFilePath() + "/qt-loadable-modules"))
+      {
+      extensions << entry.absoluteFilePath() + "/qt-loadable-modules";
+      }
+    if (QFile::exists(entry.absoluteFilePath() + "/qt-scripted-modules"))
+      {
+      extensions << entry.absoluteFilePath() + "/qt-scripted-modules";
+      }
+    if(QFile::exists(entry.absoluteFilePath() + "/plugins"))
+      {
+      extensions << entry.absoluteFilePath() + "/plugins";
+      }
+    if (!QFile::exists(entry.absoluteFilePath() + "/qt-loadable-modules") &&
+        !QFile::exists(entry.absoluteFilePath() + "/qt-scripted-modules") &&
+        !QFile::exists(entry.absoluteFilePath() + "/plugins"))
+      {
+      extensions << entry.absoluteFilePath();
+      }
     }
   return extensions;
 }
@@ -167,7 +329,6 @@ QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::categoryItem(const 
     }
   return matchingCategories[0];
 }
-
 
 // --------------------------------------------------------------------------
 QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::item(const QUrl& url)const
@@ -205,9 +366,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate::addExtension(ManifestEntry* ext
   extensionItem->setText(ExtensionColumn, extension->Name.c_str());
   extensionItem->setToolTip(ExtensionColumn, extension->Description.c_str());
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
-    this->isExtensionInstalled(extension->Name.c_str()) ?
-      vtkSlicerExtensionsLogic::StatusFoundOnDisk :
-      vtkSlicerExtensionsLogic::StatusNotFoundOnDisk));
+    this->isExtensionInstalled(extension->Name.c_str()) ? StatusFoundOnDisk : StatusNotFoundOnDisk));
   extensionItem->setText(StatusColumn, extension->ExtensionStatus.c_str());
   extensionItem->setText(DescriptionColumn, extension->Description.c_str());
   extensionItem->setToolTip(DescriptionColumn, extension->Description.c_str());
@@ -224,27 +383,27 @@ QIcon qSlicerExtensionsWizardOverviewPagePrivate::iconFromStatus(int status)cons
   Q_Q(const qSlicerExtensionsWizardOverviewPage);
   switch(status)
     {
-    case vtkSlicerExtensionsLogic::StatusSuccess:
+    case StatusSuccess:
       return q->style()->standardIcon(QStyle::SP_DialogYesButton);
       break;
-    case vtkSlicerExtensionsLogic::StatusDownloading:
-    case vtkSlicerExtensionsLogic::StatusInstalling:
-    case vtkSlicerExtensionsLogic::StatusUninstalling:
+    case StatusDownloading:
+    case StatusInstalling:
+    case StatusUninstalling:
       return q->style()->standardIcon(QStyle::SP_BrowserReload);
       break;
-    case vtkSlicerExtensionsLogic::StatusCancelled:
+    case StatusCancelled:
       return q->style()->standardIcon(QStyle::SP_DialogCancelButton);
       break;
-    case vtkSlicerExtensionsLogic::StatusError:
+    case StatusError:
       return q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
       break;
-    case vtkSlicerExtensionsLogic::StatusFoundOnDisk:
+    case StatusFoundOnDisk:
       return q->style()->standardIcon(QStyle::SP_DriveHDIcon);
       break;
-    case vtkSlicerExtensionsLogic::StatusNotFoundOnDisk:
+    case StatusNotFoundOnDisk:
       return q->style()->standardIcon(QStyle::SP_DriveNetIcon);
       break;
-    case vtkSlicerExtensionsLogic::StatusUnknown:
+    case StatusUnknown:
     default:
       break;
     };
@@ -263,8 +422,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
     }
 
   // Set the icon before the progress bar for update issues
-  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
-    vtkSlicerExtensionsLogic::StatusDownloading));
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(StatusDownloading));
 
   QProgressBar* progressBar = new QProgressBar(q);
   progressBar->setAutoFillBackground(true);
@@ -290,21 +448,49 @@ void qSlicerExtensionsWizardOverviewPagePrivate
   this->uninstallExtension(extensionItem);
 
   extensionItem->setIcon(ExtensionColumn,
-    this->iconFromStatus(vtkSlicerExtensionsLogic::StatusInstalling));
+    this->iconFromStatus(StatusInstalling));
 
   QString extensionName = extensionItem->text(ExtensionColumn);
-  QString currentPath = QDir::currentPath();
+
+  // Make extension output directory
   QDir extensionsDir(qSlicerCoreApplication::application()->extensionsPath());
   extensionsDir.mkdir(extensionName);
   extensionsDir.cd(extensionName);
+
+  // Save current directory
+  QString currentPath = QDir::currentPath();
+
+  // Set extension directory as current directory
   QDir::setCurrent(extensionsDir.absolutePath());
+
+  // Extract into <extensionsPath>/<extensionName>/<archiveBaseName>/
   extract_tar(archive.toLatin1(), true, true);
+
+  extensionsDir.cdUp();
+
+  // Restore current directory
   QDir::setCurrent(currentPath);
+
+  // Name of the sub-folder <archiveBaseName>
+  QString archiveBaseName = QFileInfo(archive).baseName();
+
+  // Rename <extensionName>/<archiveBaseName> into <extensionName>
+  // => Such operation can't be done directly, we need intermediate steps ...
+
+  //  Step1: <extensionName>/<archiveBaseName> -> <extensionName>-XXXXXX
+  cpDir(extensionsDir.absolutePath() + "/" + extensionName + "/" + archiveBaseName,
+        extensionsDir.absolutePath() + "/" + extensionName + "XXXXXX");
+
+  //  Step2: <extensionName>-XXXXXX -> <extensionName>
+  cpDir(extensionsDir.absolutePath() + "/" + extensionName + "XXXXXX",
+        extensionsDir.absolutePath() + "/" + extensionName);
+
+  //  Step3: Remove <extensionName>-XXXXXX
+  rmDir(extensionsDir.absolutePath() + "/" + extensionName + "XXXXXX");
 
   bool installed = this->isExtensionInstalled(extensionName);
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
-    installed ? vtkSlicerExtensionsLogic::StatusFoundOnDisk :
-                vtkSlicerExtensionsLogic::StatusError));
+    installed ? StatusFoundOnDisk : StatusError));
   if (installed)
     {
     this->UninstallPushButton->setEnabled(true);
@@ -321,35 +507,13 @@ void qSlicerExtensionsWizardOverviewPagePrivate
     return;
     }
 
-  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(vtkSlicerExtensionsLogic::StatusUninstalling));
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(StatusUninstalling));
 
   QString extensionName = extensionItem->text(ExtensionColumn);
-  QDir extensionsDir(qSlicerCoreApplication::application()->extensionsPath());
-  QFileInfo extensionFileInfo(extensionsDir, extensionName);
-  QDir extensionDir(extensionFileInfo.absoluteFilePath());
-  // delete all files
-  QDirIterator fileIt (extensionDir.absolutePath(), QDir::Files, QDirIterator::Subdirectories);
-  while(fileIt.hasNext())
-    {
-    fileIt.next();
-    QFileInfo file(fileIt.fileInfo());
-    file.dir().remove(file.fileName());
-    }
-  // delete all empty directories
-  QDirIterator dirIt (extensionDir.absolutePath(), QDir::Dirs, QDirIterator::Subdirectories);
-  while(dirIt.hasNext())
-    {
-    dirIt.next();
-    QFileInfo dir(dirIt.fileInfo());
-    dir.dir().rmdir(dir.fileName());
-    }
-
-  extensionsDir.rmpath(extensionName);
+  rmDir(qSlicerCoreApplication::application()->extensionsPath() + "/" + extensionName);
 
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
-    this->isExtensionInstalled(extensionName) ?
-      vtkSlicerExtensionsLogic::StatusError:
-      vtkSlicerExtensionsLogic::StatusNotFoundOnDisk));
+    this->isExtensionInstalled(extensionName) ? StatusError: StatusNotFoundOnDisk));
   if (extensionItem->text(BinaryURLColumn).isEmpty())
     {
     delete extensionItem;
@@ -360,6 +524,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
     }
 }
 
+// --------------------------------------------------------------------------
 // qSlicerExtensionsWizardOverviewPage
 
 // --------------------------------------------------------------------------
@@ -368,7 +533,6 @@ qSlicerExtensionsWizardOverviewPage::qSlicerExtensionsWizardOverviewPage(QWidget
   , d_ptr(new qSlicerExtensionsWizardOverviewPagePrivate(*this))
 {
   Q_D(qSlicerExtensionsWizardOverviewPage);
-
   d->init();
 }
 
@@ -382,19 +546,25 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
 {
   Q_D(qSlicerExtensionsWizardOverviewPage);
 
+  // Retrieve parameters set in the previous wizzard page
   d->ExtensionsDir = QDir(this->field("installPath").toString());
-  QString extensionsURL = this->field("extensionsURL").toString();
-  QString manifestFile = this->field("manifestFile").toString();
+
+  QString extensionsServerURL = this->field("extensionsServerURL").toString();
+
+  QList<QVariantMap> retrievedListOfS4extFiles = this->field("retrievedListOfS4extFiles").value< QList<QVariantMap> >();
+  QList<QVariantMap> retrievedListOfPackageFiles = this->field("retrievedListOfPackageFiles").value< QList<QVariantMap> >();
 
   bool install = this->field("installEnabled").toBool();
   bool uninstall = this->field("uninstallEnabled").toBool();
 
+  // Clear list of extensions
   foreach(QTreeWidgetItem* item, d->ExtensionsTreeWidget->invisibleRootItem()->takeChildren())
     {
     delete item;
     }
   d->Logic->ClearModules();
-  d->Logic->SetRepositoryURL(extensionsURL.toLatin1());
+
+  d->Logic->SetRepositoryURL(extensionsServerURL.toLatin1());
   d->Logic->SetTemporaryDirectory(qSlicerCoreApplication::application()->temporaryPath().toLatin1());
   d->Logic->SetInstallPath(d->ExtensionsDir.absolutePath().toLatin1());
 
@@ -402,14 +572,12 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
   progressDialog.setLabelText("Populate server extensions");
   progressDialog.setRange(0,0);
   progressDialog.open();
+
+  QList<ManifestEntry*> modules;
   if (install)
     {
-    bool res = d->Logic->UpdateModulesFromRepository(manifestFile.toStdString());
-    if (!res)
-      {
-      qWarning() << "Failed to retrieve server modules";
-      }
-    d->InstallPushButton->setEnabled(res);
+    modules = UpdateModulesFromRepository(extensionsServerURL, retrievedListOfS4extFiles, retrievedListOfPackageFiles, d->Logic);
+    d->InstallPushButton->setEnabled(modules.count() > 0);
     }
   else
     {
@@ -430,12 +598,11 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
     }
   qApp->processEvents();
   d->ExtensionsTreeWidget->setSortingEnabled(false);
-  const std::vector<ManifestEntry*>& modules = d->Logic->GetModules();
-  std::vector<ManifestEntry*>::const_iterator it;
-  for( it = modules.begin(); it != modules.end(); ++it)
+  foreach(ManifestEntry* entry, modules)
     {
-    d->addExtension(*it);
+    d->addExtension(entry);
     }
+
   d->ExtensionsTreeWidget->setSortingEnabled(true);
   d->ExtensionsTreeWidget->expandAll();
   d->ExtensionsTreeWidget->sortItems(ExtensionColumn, Qt::AscendingOrder);
@@ -445,7 +612,7 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
     d->ExtensionsTreeWidget->frameWidth()
     + d->ExtensionsTreeWidget->header()->length()
     + d->ExtensionsTreeWidget->frameWidth(),
-    d->ExtensionsTreeWidget->height() );
+    d->ExtensionsTreeWidget->height());
   progressDialog.close();
 }
 
@@ -453,9 +620,7 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
 bool qSlicerExtensionsWizardOverviewPage::validatePage()
 {
   Q_D(qSlicerExtensionsWizardOverviewPage);
-
   this->setProperty("installedExtensions", d->scanExistingExtensions());
-
   return true;
 }
 
@@ -510,8 +675,7 @@ void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
     {
     qWarning() << "Failed downloading: " << extensionUrl.toString();
     d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn,0);
-    item->setIcon(ExtensionColumn, d->iconFromStatus(
-      vtkSlicerExtensionsLogic::StatusError));
+    item->setIcon(ExtensionColumn, d->iconFromStatus(StatusError));
     return;
     }
 
@@ -524,8 +688,7 @@ void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
     qWarning() << "Could not open " << fileInfo.absoluteFilePath() << " for writing: %s" << file.errorString();
     // remove progress bar
     d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn, 0);
-    item->setIcon(ExtensionColumn, d->iconFromStatus(
-      vtkSlicerExtensionsLogic::StatusError));
+    item->setIcon(ExtensionColumn, d->iconFromStatus(StatusError));
     return;
     }
 

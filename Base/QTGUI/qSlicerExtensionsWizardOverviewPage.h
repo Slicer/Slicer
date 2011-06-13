@@ -26,6 +26,7 @@
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
+#include "qSlicerQListQVariantMapMetaType.h"
 
 class QTreeWidgetItem;
 class QNetworkReply;

@@ -70,6 +70,7 @@ SET(KIT_SRCS
   qSlicerMouseModeToolBar.cxx
   qSlicerMouseModeToolBar.h
   qSlicerMouseModeToolBar_p.h
+  qSlicerQListQVariantMapMetaType.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
   qSlicerSettingsModulesPanel.cxx
@@ -170,6 +171,7 @@ SET(KIT_UI_SRCS
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
   MRMLDisplayableManager
+  qCDashAPI
   qSlicerBaseQTCore
   qMRMLWidgets
   )

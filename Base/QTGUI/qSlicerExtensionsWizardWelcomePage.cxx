@@ -21,12 +21,14 @@
 // Qt includes
 #include <QDebug>
 #include <QFile>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
+#include <QHash>
 #include <QProgressDialog>
 #include <QSettings>
 #include <QUrl>
+#include <QVariant>
+
+// qCDashAPI includes
+#include <qCDashAPI.h>
 
 // CTK includes
 #include "ctkLogger.h"
@@ -52,7 +54,9 @@ public:
   qSlicerExtensionsWizardWelcomePagePrivate(qSlicerExtensionsWizardWelcomePage& object);
   void init();
 
-  QNetworkAccessManager NetworkManager;
+  qCDashAPI             CDashAPI;
+  QString               RetrieveS4extQueryUuid;
+  QString               RetrievePackageQueryUuid;
   QProgressDialog*      ProgressDialog;
 };
 
@@ -77,9 +81,13 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   q->registerField("installEnabled", this->InstallExtensionsCheckBox);
   q->registerField("uninstallEnabled", this->UninstallExtensionsCheckBox);
   q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(const QString&)));
-  q->registerField("extensionsURL", this->SearchURLComboBox, "currentText", SIGNAL(editTextChanged(const QString&)));
-  q->setProperty("manifestFile", QString());
-  q->registerField("manifestFile", q, "manifestFile");
+  q->registerField("extensionsServerURL", this->SearchURLComboBox, "currentText", SIGNAL(editTextChanged(const QString&)));
+
+  q->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(QList<QVariantMap>()));
+  q->registerField("retrievedListOfS4extFiles", q, "retrievedListOfS4extFiles");
+
+  q->setProperty("retrievedListOfPackageFiles", QVariant::fromValue(QList<QVariantMap>()));
+  q->registerField("retrievedListOfPackageFiles", q, "retrievedListOfPackageFiles");
 
   QObject::connect(this->InstallExtensionsCheckBox, SIGNAL(toggled(bool)),
                    q, SIGNAL(completeChanged()));
@@ -92,8 +100,9 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
                    q, SLOT(deleteTemporaryArchiveFiles()));
   
-  QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
-                   q, SLOT(downloadFinished(QNetworkReply*)));
+  qRegisterMetaType<QList<QVariantMap> >("QList<QVariantMap>");
+  QObject::connect(&this->CDashAPI, SIGNAL(projectFilesReceived(const QString&, const QList<QVariantMap>&)),
+                   q, SLOT(onProjectFilesReceived(const QString&, const QList<QVariantMap>&)));
 }
 
 // --------------------------------------------------------------------------
@@ -114,26 +123,17 @@ qSlicerExtensionsWizardWelcomePage::~qSlicerExtensionsWizardWelcomePage()
 void qSlicerExtensionsWizardWelcomePage::initializePage()
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
-
-  if (!qSlicerCoreApplication::application())
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (!app)
     {
     return;
     }
 
-  d->InstallPathDirectoryButton->setDirectory(
-    qSlicerCoreApplication::application()->extensionsPath());
+  d->InstallPathDirectoryButton->setDirectory(app->extensionsPath());
 
-  QString url("http://ext.slicer.org/ext/");
-  url += qSlicerCoreApplication::application()->repositoryBranch();
-  url += "/";
-  url += qSlicerCoreApplication::application()->repositoryRevision();
-  url += "-";
-  url += qSlicerCoreApplication::application()->platform();
-
-  QSettings settings;
-  QStringList urls = settings.value("Modules/ExtensionsUrls").toStringList();
-
-  d->SearchURLComboBox->addItems(urls);
+  QString url("http://www.cdash.org/slicer4");
+  //QStringList urls = QSettings().value("Modules/ExtensionsUrls").toStringList();
+  //d->SearchURLComboBox->addItems(urls);
   d->SearchURLComboBox->setEditText(url);
 }
 
@@ -145,42 +145,45 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
   // Make sure the Extensions directory exists.
   QString extensionsPath = this->field("installPath").toString();
   QDir::root().mkpath(extensionsPath);
-  
-  // Set manifestFile as a dynamic property
-  this->setProperty("manifestFile", extensionsPath + "/manifest.html");
 
-  // Download manifest file that contains the list of the remote extensions
-  QString manifestURL = d->SearchURLComboBox->currentText();
-  if (manifestURL.right(1) != "/")
-    {
-    manifestURL += "/";
-    }
-  QUrl manifestUrl(manifestURL);
-  QNetworkRequest request(manifestUrl);
-  // When the NetworkManager will be done, it will close the progress dialog
-  d->NetworkManager.get(request);
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  d->CDashAPI.setUrl(d->SearchURLComboBox->currentText());
+
+  // Prepare matching pattern arguments
+  QString retrieveS4extPattern("%1-%2-.*.s4ext");
+  retrieveS4extPattern = retrieveS4extPattern.arg(app->repositoryRevision()).arg(app->platform());
+
+  QString retrievePackagePattern("%1-%2-.*.tar.gz");
+  retrievePackagePattern = retrievePackagePattern.arg(app->repositoryRevision()).arg(app->platform());
+
+  // Query CDash server
+  d->CDashAPI.setLogLevel(qCDashAPI::SILENT);
+  d->RetrieveS4extQueryUuid = d->CDashAPI.queryProjectFiles("Slicer4", retrieveS4extPattern);
+
+  d->CDashAPI.setLogLevel(qCDashAPI::SILENT);
+  d->RetrievePackageQueryUuid = d->CDashAPI.queryProjectFiles("Slicer4", retrievePackagePattern);
+
+
   if (d->ProgressDialog->exec() == QDialog::Rejected)
     {
-    // Failed to download the file
-    return false;
+    return false; // Failed to retrieve list of files
     }
   
   // Save the url into the favorite box so it can be used next time
-  int index = d->SearchURLComboBox->findText(manifestURL);
-  if (index == -1)
-    {
-    d->SearchURLComboBox->addItem(manifestURL);
-    }
+//  int index = d->SearchURLComboBox->findText(manifestURL);
+//  if (index == -1)
+//    {
+//    d->SearchURLComboBox->addItem(manifestURL);
+//    }
 
   // Save all the favorite urls for next sessions
-  QStringList urls;
-  for (int i = 0; i < d->SearchURLComboBox->count(); ++i)
-    {
-    urls << d->SearchURLComboBox->itemText(i);
-    }
+//  QStringList urls;
+//  for (int i = 0; i < d->SearchURLComboBox->count(); ++i)
+//    {
+//    urls << d->SearchURLComboBox->itemText(i);
+//    }
 
-  QSettings settings;
-  settings.setValue("Modules/ExtensionsUrls", urls);  
+  //QSettings().setValue("Modules/ExtensionsUrls", urls);
 
   return true;
 }
@@ -197,9 +200,7 @@ bool qSlicerExtensionsWizardWelcomePage::isComplete()const
     }
   
   QUrl searchURL(d->SearchURLComboBox->currentText());
-
-  if (d->InstallExtensionsCheckBox->isChecked() &&
-      !searchURL.isValid())
+  if (d->InstallExtensionsCheckBox->isChecked() && !searchURL.isValid())
     {
     return false;
     }
@@ -214,33 +215,30 @@ void qSlicerExtensionsWizardWelcomePage::deleteTemporaryArchiveFiles()
     return;
     }
   QDir tempDir(qSlicerCoreApplication::application()->temporaryPath());
-  foreach(QString zipFile, tempDir.entryList(QStringList() << "*.zip"))
+  foreach(const QString& file, tempDir.entryList(QStringList() << "*.tar.gz"))
     {
-    tempDir.remove(zipFile);
+    tempDir.remove(file);
     }
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsWizardWelcomePage::downloadFinished(QNetworkReply* reply)
+void qSlicerExtensionsWizardWelcomePage::onProjectFilesReceived(const QString& queryUuid,
+                                                                const QList<QVariantMap>& files)
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
-  if (reply->error())
+  // Set manifestFile as a dynamic property
+  if (queryUuid == d->RetrieveS4extQueryUuid)
     {
-    qWarning() << "Failed downloading: " << reply->url().toString();
-    d->ProgressDialog->cancel();
-    return;
+    this->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(files));
+    d->RetrieveS4extQueryUuid.clear();
     }
-  QString fileName = this->field("manifestFile").toString();
-  QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly))
+  else if (queryUuid == d->RetrievePackageQueryUuid)
     {
-    qWarning() << "Could not open " << fileName << " for writing: %s" << file.errorString();
-    d->ProgressDialog->cancel();
-    return;
+    this->setProperty("retrievedListOfPackageFiles", QVariant::fromValue(files));
+    d->RetrievePackageQueryUuid.clear();
     }
-
-  file.write(reply->readAll());
-  file.close();
-
-  d->ProgressDialog->accept();
+  if (d->RetrieveS4extQueryUuid.isEmpty() && d->RetrievePackageQueryUuid.isEmpty())
+    {
+    d->ProgressDialog->accept();
+    }
 }
