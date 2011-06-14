@@ -123,6 +123,9 @@ namespace eval tpycl {
     # construct a python command with the args
     # TODO: deal with special cases in a more general way
     switch $method {
+      "Print" {
+        set pycmd "str($instanceName)"
+      }
       "IsA" {
         set fmt "$instanceName.IsA('%s')"
         set pycmd [eval format $fmt $args]
