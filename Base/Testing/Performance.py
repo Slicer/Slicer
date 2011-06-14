@@ -77,17 +77,17 @@ class sliceLogicTest:
   def __init__(self):
     self.step = 0
     self.sliceLogic = slicer.vtkMRMLSliceLayerLogic()
-    self.sliceLogic.SetName('TestingSliceLogic')
     self.sliceLogic.SetMRMLScene(slicer.mrmlScene)
     self.sliceNode = slicer.vtkMRMLSliceNode()
+    self.sliceNode.SetLayoutName("Black")
     slicer.mrmlScene.AddNode(self.sliceNode)
-    self.sliceLogic.Initialize(self.sliceNode)
+    self.sliceLogic.SetSliceNode(self.sliceNode)
 
   def stepSliceLogic(self):
-    self.sliceNodeLogic.setSliceOffsetValue( -1*step*10)
-    step = 1^step
+    self.sliceNode.SetSliceOffset( -1*self.step*10)
+    self.step = 1^self.step
 
   def testSliceLogic(self, iters):
-    timeSteps(iters, stepSliceLogic)
+    timeSteps(iters, self.stepSliceLogic)
 
 

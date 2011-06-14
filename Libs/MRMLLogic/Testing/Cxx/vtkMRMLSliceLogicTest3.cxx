@@ -103,7 +103,7 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   sliceLogic->SetBackgroundLayer(sliceLayerLogic);
 
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene);
-  if (scalarNode == 0)
+  if (scalarNode == 0 || scalarNode->GetImageData() == 0)
     {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;
     return EXIT_FAILURE;

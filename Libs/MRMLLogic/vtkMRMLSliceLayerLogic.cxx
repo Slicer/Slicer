@@ -41,6 +41,26 @@
 vtkCxxRevisionMacro(vtkMRMLSliceLayerLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
+bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)
+{
+  return first->GetElement(0,0) == second->GetElement(0,0) &&
+         first->GetElement(0,1) == second->GetElement(0,1) &&
+         first->GetElement(0,2) == second->GetElement(0,2) &&
+         first->GetElement(0,3) == second->GetElement(0,3) &&
+         first->GetElement(1,0) == second->GetElement(1,0) &&
+         first->GetElement(1,1) == second->GetElement(1,1) &&
+         first->GetElement(1,2) == second->GetElement(1,2) &&
+         first->GetElement(1,3) == second->GetElement(1,3) &&
+         first->GetElement(2,0) == second->GetElement(2,0) &&
+         first->GetElement(2,1) == second->GetElement(2,1) &&
+         first->GetElement(2,2) == second->GetElement(2,2) &&
+         first->GetElement(2,3) == second->GetElement(2,3) &&
+         first->GetElement(3,0) == second->GetElement(3,0) &&
+         first->GetElement(3,1) == second->GetElement(3,1) &&
+         first->GetElement(3,2) == second->GetElement(3,2) &&
+         first->GetElement(3,3) == second->GetElement(3,3);
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
 {
@@ -409,7 +429,14 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK); 
   }
 
-  this->XYToIJKTransform->SetMatrix( xyToIJK );
+  // Optimisation: If there is no volume, calling or not Modified() won't
+  // have any visual impact. the transform has no sense if there is no volume
+  bool transformModified = this->VolumeNode &&
+    !AreMatricesEqual(this->XYToIJKTransform->GetMatrix(), xyToIJK);
+  if (transformModified)
+    {
+    this->XYToIJKTransform->SetMatrix( xyToIJK );
+    }
 
   this->Slice->SetOutputDimensions( dimensions[0], dimensions[1], dimensions[2]);
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
@@ -423,9 +450,10 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
 
   this->UpdatingTransforms = 0; 
 
-  this->Modified();
-
-
+  if (transformModified)
+    {
+    this->Modified();
+    }
 }
 
 void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
@@ -439,7 +467,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
     return;
     }
-  if ( this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode )
+  if ( (this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) ||
+       (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0))
     {
     this->Slice->SetInterpolationModeToNearestNeighbor();
     this->Reslice->SetInterpolationModeToNearestNeighbor();
@@ -508,11 +537,6 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       volumeDisplayNode->SetImageData(slicedImageData);
       volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
       }
-    }
-
-  if (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0  )
-    {
-    this->Reslice->SetInterpolationModeToNearestNeighbor();
     }
 
   this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
