@@ -156,10 +156,11 @@ vtkImageResliceMask::vtkImageResliceMask()
 
   // There is an optional second input.
   this->SetNumberOfInputPorts(2);
+  this->SetNumberOfOutputPorts(2);
 
   // There is an optional second output with the mask where valid data is available
-  this->BackgroundMask = vtkImageData::New();
-  this->BackgroundMask->SetScalarTypeToUnsignedChar ();
+  //this->BackgroundMask = vtkImageData::New();
+  //this->BackgroundMask->SetScalarTypeToUnsignedChar ();
 }
 
 //----------------------------------------------------------------------------
@@ -176,11 +177,11 @@ vtkImageResliceMask::~vtkImageResliceMask()
     this->OptimizedTransform->Delete();
     }
   this->SetInformationInput(NULL);
-  if( this->BackgroundMask)
-    {
-    this->BackgroundMask->Delete();
-    this->BackgroundMask = NULL;
-    }
+  //if( this->BackgroundMask)
+  //  {
+  //  this->BackgroundMask->Delete();
+  //  this->BackgroundMask = NULL;
+  //  }
 }
 
 //----------------------------------------------------------------------------
@@ -377,12 +378,21 @@ int vtkImageResliceMask::RequestUpdateExtent(
   vtkInformationVector *outputVector)
 {
   // RSierra: TODO why is this called 3 times for all slices if we are only changing one slice?
-  int inExt[6], outExt[6];
+  int inExt[6], outExt[6], outExt2[6];
   int i,j,k;
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *outInfo2 = outputVector->GetInformationObject(1);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
 
   outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), outExt);
+  outInfo2->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), outExt2);
+
+  outExt[0] = std::min(outExt[0], outExt2[0]);
+  outExt[1] = std::max(outExt[1], outExt2[1]);
+  outExt[2] = std::min(outExt[2], outExt2[2]);
+  outExt[3] = std::max(outExt[3], outExt2[3]);
+  outExt[4] = std::min(outExt[4], outExt2[4]);
+  outExt[5] = std::max(outExt[5], outExt2[5]);
 
   if (this->ResliceTransform)
     {
@@ -681,18 +691,28 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
     }
 }
  
-vtkImageData *vtkImageResliceMask::GetBackgroundMask() 
+vtkImageData *vtkImageResliceMask::GetBackgroundMask()
+{
+  return this->GetOutput(1);
+}
+
+/*
 {// cout <<"//----------------------------------------------------------------------------Calling vtkImageResliceMask::GetBackgroundMask"<<endl;
 //cout <<"outext:\t"<<OutputExtent[0]<<","<<OutputExtent[1]<<","<<OutputExtent[2]<<","<<OutputExtent[3]<<","<<OutputExtent[4]<<","<<OutputExtent[5]<<endl;
   //this->BackgroundMask->DeleteScalers();
+  int oldMTime = this->BackgroundMask->GetMTime();
   this->BackgroundMask->SetExtent(OutputExtent);
   this->BackgroundMask->SetWholeExtent(OutputExtent);
-  this->BackgroundMask->AllocateScalars ();/*
-  vtkIndent bb;
-  this->BackgroundMask->Modified();
-  this->BackgroundMask->GetInformation()->PrintSelf(cout,bb);  */
+  if (this->BackgroundMask->GetMTime() != oldMTime)
+    {
+    this->BackgroundMask->AllocateScalars ();
+    }
+  //vtkIndent bb;
+  //this->BackgroundMask->Modified();
+  //this->BackgroundMask->GetInformation()->PrintSelf(cout,bb);
   return BackgroundMask;
 }
+*/
 //----------------------------------------------------------------------------
 int vtkImageResliceMask::RequestInformation(
   vtkInformation *vtkNotUsed(request),
@@ -708,6 +728,7 @@ int vtkImageResliceMask::RequestInformation(
 
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *outInfo2 = outputVector->GetInformationObject(1);
 
   if (this->InformationInput)
     {
@@ -844,6 +865,11 @@ int vtkImageResliceMask::RequestInformation(
   outInfo->Set(vtkDataObject::SPACING(), outSpacing, 3);
   outInfo->Set(vtkDataObject::ORIGIN(), outOrigin, 3);
 
+  outInfo2->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),outWholeExt,6);
+  outInfo2->Set(vtkDataObject::SPACING(), outSpacing, 3);
+  outInfo2->Set(vtkDataObject::ORIGIN(), outOrigin, 3);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo2, VTK_UNSIGNED_CHAR, 1);
+  
   this->GetIndexMatrix(inInfo, outInfo);
 
   if (this->GetNumberOfInputConnections(1) > 0)
@@ -855,9 +881,15 @@ int vtkImageResliceMask::RequestInformation(
                      inInfo->Get(vtkDataObject::ORIGIN()), 3);
     }
 
+/*
+  int oldMTime = this->BackgroundMask->GetMTime();
   this->BackgroundMask->SetExtent(outWholeExt);
   this->BackgroundMask->SetWholeExtent(outWholeExt);
-  this->BackgroundMask->AllocateScalars ();
+  if ( this->BackgroundMask->GetMTime() != oldMTime)
+    {
+    this->BackgroundMask->AllocateScalars ();
+    }
+  */
   return 1;
 }
 
@@ -3341,9 +3373,10 @@ void vtkImageResliceMask::ThreadedRequestData(
     return;
     }
 
+  vtkImageData* backgroundMask = outData[1];
   // Get the output pointer
   void *outPtr = outData[0]->GetScalarPointerForExtent(outExt);
-  void *BackgroundMaskPtr = BackgroundMask->GetScalarPointerForExtent(outExt);
+  void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   if (this->HitInputExtent == 0)
     {
@@ -3377,18 +3410,18 @@ void vtkImageResliceMask::ThreadedRequestData(
     if (vtkIsPermutationMatrix(newmat) && newtrans == NULL)
       {
       vtkReslicePermuteExecute(this, inData[0][0], inPtr, outData[0], outPtr,
-                               outExt, id, newmat, BackgroundMask, BackgroundMaskPtr);
+                               outExt, id, newmat, backgroundMask, backgroundMaskPtr);
       }
     else
       {
       vtkOptimizedExecute(this, inData[0][0], inPtr, outData[0], outPtr,
-                          outExt, id, newmat, newtrans, BackgroundMask, BackgroundMaskPtr);
+                          outExt, id, newmat, newtrans, backgroundMask, backgroundMaskPtr);
       }
     }
   else
     {
     vtkImageResliceMaskExecute(this, inData[0][0], inPtr, outData[0], outPtr,
-                           outExt, id, BackgroundMask, BackgroundMaskPtr);
+                           outExt, id, backgroundMask, backgroundMaskPtr);
     }
 }
 

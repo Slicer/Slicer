@@ -324,7 +324,7 @@ protected:
   vtkMatrix4x4 *IndexMatrix;
   vtkAbstractTransform *OptimizedTransform;
 
-  vtkImageData *BackgroundMask;
+  //vtkImageData *BackgroundMask;
 
   void GetAutoCroppedOutputBounds(vtkInformation *inInfo, double bounds[6]);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
@@ -363,7 +363,7 @@ inline const char *vtkImageResliceMask::GetInterpolationModeAsString()
       return "";
     }
 }  
-void SetBackgroundMask(bool *&BackgroundMaskPositionPtr, const int NumberOfPixels, const bool flag);
+//void SetBackgroundMask(bool *&BackgroundMaskPositionPtr, const int NumberOfPixels, const bool flag);
 #endif
 
 
