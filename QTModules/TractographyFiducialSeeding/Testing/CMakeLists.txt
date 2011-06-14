@@ -1,6 +1,7 @@
 SET(KIT TractographyFiducialSeeding)
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qSlicerTractographyFiducialSeedingModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -16,3 +17,4 @@ MACRO(SIMPLE_TEST TESTNAME)
   ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
 ENDMACRO()
 
+SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest1 )
