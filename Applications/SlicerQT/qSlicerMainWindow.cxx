@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QStringList>
+#include <QTimer>
 #include <QToolButton>
 
 // CTK includes
@@ -409,7 +410,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
     }
   if (event->isAccepted())
     {
-    qApp->closeAllWindows();
+    QTimer::singleShot(0, qApp, SLOT(closeAllWindows()));
     }
 }
 
