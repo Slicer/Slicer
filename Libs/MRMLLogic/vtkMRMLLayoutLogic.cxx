@@ -721,7 +721,9 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
   vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass(className.c_str());
   if (nodes == NULL || nodes->GetNumberOfItems() == 0)
     {
-    vtkWarningMacro("Couldn't find nodes matching class: " << className);
+    // It is not necessarilly a bug to not find nodes. It just means they
+    // are not in the scene and will be then created by CreateMissingViews()
+    vtkDebugMacro("Couldn't find nodes matching class: " << className);
     if (nodes)
       {
       nodes->Delete();
