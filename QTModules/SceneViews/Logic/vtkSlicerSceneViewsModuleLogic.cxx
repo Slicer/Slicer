@@ -282,6 +282,8 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
   newSceneViewNode->SetScreenShot(copyScreenShot);
   newSceneViewNode->StoreScene();
   //newSceneViewNode->HideFromEditorsOff();
+  // mark it modified since read so that the screen shot will get saved to disk
+  newSceneViewNode->ModifiedSinceReadOn();
   
   this->GetMRMLScene()->AddNode(newSceneViewNode);
 
@@ -333,6 +335,7 @@ void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id, const char
   viewNode->SetSceneViewDescription(descriptionString);
   viewNode->SetScreenShotType(screenshotType);
   viewNode->SetScreenShot(screenshot);
+  viewNode->ModifiedSinceReadOn();
 
   // TODO why two events?
   viewNode->Modified();
