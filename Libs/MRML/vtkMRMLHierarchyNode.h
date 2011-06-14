@@ -24,7 +24,7 @@
 
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLHierarchyNode *New();
   vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -152,6 +152,13 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   vtkGetMacro(SortingValue, double);
 
 
+  /// turn off if only want to have one child associated with this hierarchy
+  /// node, as with the leaf type nodes that are pointing to a single mrml
+  /// node. Used first in checking drag and drop targets. Default to true.
+  vtkGetMacro(AllowMultipleChildren, int);
+  vtkSetMacro(AllowMultipleChildren, int);
+  vtkBooleanMacro(AllowMultipleChildren, int);
+
 protected:
   vtkMRMLHierarchyNode();
   ~vtkMRMLHierarchyNode();
@@ -208,6 +215,8 @@ protected:
 
   void UpdateChildrenMap();
 
+  /// is this a node that's only supposed to have one child?
+  int AllowMultipleChildren;
 };
 
 #endif

@@ -63,7 +63,9 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
   pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
 
+  TEST_SET_GET_DOUBLE_RANGE(node1, SortingValue, 0.0, 10.0);
 
+  TEST_SET_GET_BOOLEAN(node1, AllowMultipleChildren);
 
   return EXIT_SUCCESS;
 }

@@ -311,6 +311,7 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (selectionNode)
     {
+    std::cout << "vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list" << std::endl;
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistance.png");
@@ -2431,9 +2432,11 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
     else
       {
       // this is the 1-1 hierarchy node for a given annotation node
-
+      hierarchyNode->AllowMultipleChildrenOff();
+      
       // we do not want to see that!
       hierarchyNode->HideFromEditorsOn();
+
 
       hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(
           "AnnotationHierarchy"));

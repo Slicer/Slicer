@@ -71,6 +71,8 @@ vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 
   this->SortingValue = 0;
 
+  this->AllowMultipleChildren = 1;
+
 }
 
 //----------------------------------------------------------------------------
@@ -119,6 +121,7 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
     of << indent << " associatedNodeRef=\"" << this->AssociatedNodeIDReference << "\"";
     }
   of << indent << " sortingValue=\"" << this->SortingValue << "\"";
+  of << indent << " allowMultipleChildren=\"" << (this->AllowMultipleChildren ? "true" : "false") << "\"";
 
 }
 
@@ -151,9 +154,9 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "parentNodeRef")) 
       {
       // dont reset SortingValue
-      double soringValue = this->GetSortingValue();
+      double sortingValue = this->GetSortingValue();
       this->SetParentNodeID(attValue);
-      this->SetSortingValue(soringValue);
+      this->SetSortingValue(sortingValue);
       //this->Scene->AddReferencedNodeID(this->ParentNodeIDReference, this);
       }
     if (!strcmp(attName, "associatedNodeRef")) 
@@ -165,6 +168,17 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> SortingValue;
+      }
+    else if (!strcmp(attName, "allowMultipleChildren"))
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->AllowMultipleChildren = 1;
+        }
+      else
+        {
+        this->AllowMultipleChildren = 0;
+        }
       }
   }
 
@@ -184,6 +198,7 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode *anode)
   this->SetParentNodeID(node->ParentNodeIDReference);
   this->SetAssociatedNodeID(node->AssociatedNodeIDReference);
   this->SetSortingValue(node->SortingValue);
+  this->SetAllowMultipleChildren(node->AllowMultipleChildren);
 
   this->EndModify(disabledModify);
 }
@@ -197,6 +212,7 @@ void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ParentNodeID: " <<
     (this->ParentNodeIDReference ? this->ParentNodeIDReference : "(none)") << "\n";
   os << indent << "SortingValue:     " << this->SortingValue << "\n";
+  os << indent << "AllowMultipleChildren: " << (this->AllowMultipleChildren ? "true" : "false") << "\n";
 
 }
 
