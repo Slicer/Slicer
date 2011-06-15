@@ -1994,6 +1994,33 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool
 }
 
 //---------------------------------------------------------------------------
+// find all annotation nodes and annotation hierarchy nodes and set the selected flag on them
+void vtkSlicerAnnotationModuleLogic::SetAllAnnotationsSelected(bool selected)
+{
+  if (this->GetMRMLScene() == NULL)
+    {
+    return;
+    }
+
+  int numberOfHierarchyNodes =  this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+  for (int i = 0; i < numberOfHierarchyNodes; i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLAnnotationHierarchyNode");
+    node->SetSelected(selected);
+    }
+  
+  int numberOfAnnotationNodes =  this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationNode");
+  for (int i = 0; i < numberOfAnnotationNodes; i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLAnnotationNode");
+    // use the helper method to localise special cases on annotation nodes
+    this->SetAnnotationSelected(node->GetID(), selected);
+    }
+
+  
+}
+
+//---------------------------------------------------------------------------
 // Backup an AnnotationMRML node
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)

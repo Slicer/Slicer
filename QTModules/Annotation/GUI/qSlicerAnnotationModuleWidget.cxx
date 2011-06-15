@@ -224,6 +224,7 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->hierarchyTreeView->selectAll();
+  d->logic()->SetAllAnnotationsSelected(1);
   d->logic()->SetActiveHierarchyNode(0);
 }
 

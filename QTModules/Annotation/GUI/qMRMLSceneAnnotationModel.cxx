@@ -88,10 +88,26 @@ void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStand
 //------------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
+  if (!node)
+    {
+    return;
+    }
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
-
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
   switch (column)
     {
+    case 0:
+      // selected check box
+      if (annotationNode)
+        {
+        item->setData(annotationNode->GetSelected(), Qt::CheckStateRole);
+        }
+      else if (hnode)
+        {
+        item->setData(hnode->GetSelected(), Qt::CheckStateRole);
+        }
+             
+      break;
     case qMRMLSceneAnnotationModel::VisibilityColumn:
       // the visibility icon
 
@@ -105,9 +121,8 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
           {
           item->setData(QPixmap(":/Icons/SlicerInvisible.png"),Qt::DecorationRole);
           }
-        break;
         }
-      if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      else if (hnode)
         {
         item->setData(QPixmap(":/Icons/SlicerVisibleInvisible.png"),Qt::DecorationRole);
         }
@@ -125,9 +140,8 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
           {
           item->setData(QPixmap(":/Icons/SlicerUnlock.png"),Qt::DecorationRole);
           }
-        break;
         }
-      if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      else if (hnode)
         {
         item->setData(QPixmap(":/Icons/SlicerLockUnlock.png"),Qt::DecorationRole);
         }
@@ -141,9 +155,8 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         // the annotation measurement
         item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
-        break;
         }
-      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      else if (hnode)
         {
         item->setText(QString(""));
         }
@@ -153,9 +166,8 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         // the annotation text
         item->setText(QString(this->m_Logic->GetAnnotationText(annotationNode->GetID())));
-        break;
         }
-      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      else if (hnode)
         {
         item->setText(QString(node->GetName()));
         }

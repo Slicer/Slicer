@@ -158,7 +158,9 @@ public:
 
   /// Set the selected flag of an Annotation MRML node
   void SetAnnotationSelected(const char * id, bool selected);
-
+  /// Set the selected flag of all annotation mrml nodes
+  void SetAllAnnotationsSelected(bool selected);
+  
   /// Backup an Annotation MRML node
   void BackupAnnotationNode(const char * id);
   /// Restore a backup of an Annotation MRML node
