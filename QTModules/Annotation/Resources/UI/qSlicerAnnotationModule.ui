@@ -293,7 +293,7 @@
            <item>
             <widget class="QPushButton" name="restoreViewButton">
              <property name="toolTip">
-              <string>Resets 3D and slice views to when the highlighted annotation was last modified.</string>
+              <string>Reset sliceViews to the first coordinate of the highlighted annotation.</string>
              </property>
              <property name="text">
               <string/>

@@ -2213,6 +2213,23 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
 
     this->GetMRMLScene()->SaveStateForUndo();
 
+    vtkMRMLAnnotationControlPointsNode* controlpointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(annotationNode);
+
+    if (!controlpointsNode)
+      {
+      // we don't have a controlpointsNode so we can not jump the slices
+      return;
+      }
+
+    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));
+    if (sliceNode)
+      {
+      // TODO for now only consider the first control point
+      double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
+      sliceNode->JumpAllSlices(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
+      }
+
+
     annotationNode->RestoreView();
 
   }
