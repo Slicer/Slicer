@@ -450,7 +450,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
 
   this->UpdatingTransforms = 0; 
 
-  if (transformModified)
+  //if (transformModified)
     {
     this->Modified();
     }
