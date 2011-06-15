@@ -52,6 +52,7 @@ vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerH
     this->RemoveSeeds();
     }
 }
+
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromNodes()
 {
@@ -60,6 +61,33 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromNodes(
     {
     vtkMRMLAnnotationNode *annotationNode = this->AnnotationNodeList[i];
     this->UpdateLocked(annotationNode);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromInteractionNode(vtkMRMLInteractionNode *interactionNode)
+{
+  if (!interactionNode)
+    {
+    return;
+    }
+
+  int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
+  vtkDebugMacro("Annotation DisplayableManager Helper: updateLockedAllWidgetsFromInteractionNode, currentInteractionMode = " << currentInteractionMode);
+  if (currentInteractionMode == vtkMRMLInteractionNode::PickManipulate)
+    {
+    // turn on processing events on the widgets
+    this->UpdateLockedAllWidgets(false);
+    }
+  else if (currentInteractionMode == vtkMRMLInteractionNode::Place)
+    {
+    // turn off processing events on the 3d widgets
+    this->UpdateLockedAllWidgets(true);
+    }
+  else if (currentInteractionMode == vtkMRMLInteractionNode::ViewTransform)
+    {
+    // turn on processing events on the 3d widgets
+    this->UpdateLockedAllWidgets(false);
     }
 }
 
@@ -167,7 +195,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateWidget(
     return;
     }
 
-  this->UpdateLocked(node);
+  //this->UpdateLocked(node);
   this->UpdateVisible(node);
 
 }

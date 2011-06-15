@@ -29,6 +29,7 @@
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLInteractionNode.h>
 
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManagerHelper :
@@ -42,6 +43,8 @@ public:
 
   /// Lock/Unlock all widgets based on the state of the nodes
   void UpdateLockedAllWidgetsFromNodes();
+  /// Lock/Unlock all widgets from interaction node
+  void UpdateLockedAllWidgetsFromInteractionNode(vtkMRMLInteractionNode* interactionNode);
   /// Lock/Unlock all widgets
   void UpdateLockedAllWidgets(bool locked);
   /// Lock/Unlock a widget

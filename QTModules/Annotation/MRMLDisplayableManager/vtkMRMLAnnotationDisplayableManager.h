@@ -123,6 +123,9 @@ protected:
   /// Observe all associated nodes.
   void SetAndObserveNodes();
 
+  /// Observe the interaction node.
+  void AddObserversToInteractionNode();
+
   /// Preset functions for certain events.
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
