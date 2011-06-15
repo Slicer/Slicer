@@ -189,8 +189,11 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
         int x = this->Interactor->GetEventPosition()[0];
         int rawY = this->Interactor->GetEventPosition()[1];
         this->Interactor->SetEventPositionFlipY(x, rawY);
-        int y = this->Interactor->GetEventPosition()[1];
-        vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
+        if (this->GetDebug())
+          {
+          int y = this->Interactor->GetEventPosition()[1];
+          vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
+          }
         // now throw the events
         if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
           {
