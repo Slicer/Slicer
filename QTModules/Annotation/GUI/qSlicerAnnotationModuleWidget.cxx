@@ -165,6 +165,9 @@ void qSlicerAnnotationModuleWidget::setup()
   // edit panel
   this->connect(d->selectAllButton, SIGNAL(clicked()),
         SLOT(selectAllButtonClicked()));
+  this->connect(d->unselectAllButton, SIGNAL(clicked()),
+        SLOT(unselectAllButtonClicked()));
+
   this->connect(d->visibleSelectedButton, SIGNAL(clicked()),
       SLOT(visibleSelectedButtonClicked()));
   this->connect(d->lockSelectedButton, SIGNAL(clicked()), this,
@@ -225,6 +228,16 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
 
   d->hierarchyTreeView->selectAll();
   d->logic()->SetAllAnnotationsSelected(1);
+  d->logic()->SetActiveHierarchyNode(0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::unselectAllButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->hierarchyTreeView->clearSelection();
+  d->logic()->SetAllAnnotationsSelected(0);
   d->logic()->SetActiveHierarchyNode(0);
 }
 

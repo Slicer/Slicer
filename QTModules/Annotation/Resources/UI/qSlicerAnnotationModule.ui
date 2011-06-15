@@ -25,25 +25,120 @@
         <property name="title">
          <string>Create</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="2">
-          <widget class="QPushButton" name="rulerTypeButton">
-           <property name="toolTip">
-            <string>Distance measurement</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationDistance.png</normaloff>:/Icons/AnnotationDistance.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="textTypeButton">
+             <property name="toolTip">
+              <string>Text annotation</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="fiducialTypeButton">
+             <property name="toolTip">
+              <string>Fiducial point</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rulerTypeButton">
+             <property name="toolTip">
+              <string>Distance measurement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationDistance.png</normaloff>:/Icons/AnnotationDistance.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="roiTypeButton">
+             <property name="toolTip">
+              <string>Region of Interest. This is a 3D only annotation.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="bidimensionalTypeButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Bidimensional orthogonal measurement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="screenShot">
+             <property name="toolTip">
+              <string>Create screenshot</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/ViewCamera.png</normaloff>:/Icons/ViewCamera.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
-         <item row="2" column="0" colspan="5">
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QPushButton" name="resumeButton">
@@ -121,83 +216,6 @@
            </item>
           </layout>
          </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="textTypeButton">
-           <property name="toolTip">
-            <string>Text annotation</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="fiducialTypeButton">
-           <property name="toolTip">
-            <string>Fiducial point</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QPushButton" name="roiTypeButton">
-           <property name="toolTip">
-            <string>Region of Interest. This is a 3D only annotation.</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <widget class="QPushButton" name="bidimensionalTypeButton">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Bidimensional orthogonal measurement</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -212,8 +230,8 @@
         <property name="title">
          <string>Edit</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
           <layout class="QHBoxLayout" name="selectedLayout">
            <item>
             <widget class="QPushButton" name="selectAllButton">
@@ -227,6 +245,20 @@
               <iconset resource="../qSlicerAnnotationModule.qrc">
                <normaloff>:/Icons/AnnotationSelectAll.png</normaloff>
                <normalon>:/Icons/AnnotationDeselectAll.png</normalon>:/Icons/AnnotationSelectAll.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="unselectAllButton">
+             <property name="toolTip">
+              <string>Unselect all annotations and hierarchies</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationDeselectAll.png</normaloff>:/Icons/AnnotationDeselectAll.png</iconset>
              </property>
             </widget>
            </item>
@@ -315,20 +347,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="screenShot">
-             <property name="toolTip">
-              <string>Create screenshot</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/ViewCamera.png</normaloff>:/Icons/ViewCamera.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="generateReport">
              <property name="toolTip">
               <string>Display a report of highlighted annotations</string>
@@ -358,7 +376,7 @@
            </item>
           </layout>
          </item>
-         <item>
+         <item row="1" column="0">
           <widget class="qMRMLAnnotationTreeView" name="hierarchyTreeView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -370,7 +388,7 @@
             <enum>QAbstractItemView::InternalMove</enum>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::ContiguousSelection</enum>
+            <enum>QAbstractItemView::ExtendedSelection</enum>
            </property>
            <property name="indentation">
             <number>10</number>

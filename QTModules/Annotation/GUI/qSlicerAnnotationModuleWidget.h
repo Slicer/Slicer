@@ -91,6 +91,9 @@ protected slots:
   /// Select all annotations
   void selectAllButtonClicked();
 
+  /// Unselect all annotations
+  void unselectAllButtonClicked();
+
   /// Toggle the visibility of selected Annotations
   void visibleSelectedButtonClicked();
 
