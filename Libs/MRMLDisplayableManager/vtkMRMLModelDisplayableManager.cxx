@@ -497,8 +497,14 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
         }
       else
         {
-        requestRender = static_cast<bool>(vtkMRMLSliceNode::SafeDownCast(caller)
-          ->GetSliceVisible());
+        if (vtkMRMLSliceNode::SafeDownCast(caller)->GetSliceVisible())
+          {
+          requestRender = true;
+          }
+        else
+          {
+          requestRender = false;
+          }
         }
       }
     if (!isUpdating && requestRender)
