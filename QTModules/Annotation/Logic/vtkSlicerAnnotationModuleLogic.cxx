@@ -421,8 +421,6 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
     return;
     }
 
-  selectionNode->SetActiveAnnotationID("");
-
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
           this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
@@ -443,17 +441,17 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
     interactionNode->SetPlaceModePersistence(0);
     }
 
-  interactionNode->SetCurrentInteractionMode(
-      vtkMRMLInteractionNode::ViewTransform);
-
+  interactionNode->SwitchToViewTransformMode();
   if (interactionNode->GetCurrentInteractionMode()
       != vtkMRMLInteractionNode::ViewTransform)
     {
 
-    vtkErrorMacro("AddTextNode: Could not set transform mode!");
+    vtkErrorMacro("StopPlaceMode: Could not set transform mode!");
 
     }
-
+  // reset the active annotation id after switching to view transform mode,
+  // since this is checked in the displayable managers
+  selectionNode->SetActiveAnnotationID("");
 }
 
 //---------------------------------------------------------------------------
