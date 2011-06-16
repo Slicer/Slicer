@@ -113,3 +113,11 @@ QIcon qSlicerAnnotationModule::icon() const
 {
   return QIcon(":/Icons/Annotation.png");
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModule::showScreenshotDialog()
+{
+  Q_ASSERT(this->widgetRepresentation());
+  dynamic_cast<qSlicerAnnotationModuleWidget*>(this->widgetRepresentation())
+      ->onSnapShotButtonClicked();
+}

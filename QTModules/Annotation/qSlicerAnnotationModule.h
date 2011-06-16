@@ -49,6 +49,13 @@ protected:
   // Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 
+public slots:
+  /// a public slot to open up the screen  capture
+  /// dialog (get the module manager, get the module annotation, get the
+  /// widget representation, then invoke this method
+  /// \sa qSlicerIOManager::openScreenshotDialog
+  void showScreenshotDialog();
+  
 protected:
   QScopedPointer<qSlicerAnnotationModulePrivate> d_ptr;
 

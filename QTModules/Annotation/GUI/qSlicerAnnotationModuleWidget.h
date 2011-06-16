@@ -72,6 +72,11 @@ public:
     
 protected:
 
+public slots:
+    /// a public slot allowing other modules to open up the screen capture
+    /// dialog
+    void onSnapShotButtonClicked();
+
 protected slots:
 
     // Table and Property Modify
@@ -110,7 +115,6 @@ protected slots:
   // Snapshot dialog
   void snapshotRejected();
   void snapshotAccepted();
-  void onSnapShotButtonClicked();
 
   // Report dialog
   void reportDialogRejected();
