@@ -474,6 +474,7 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
   vtkMRMLAnnotationNode* tmpNode = vtkMRMLAnnotationNode::New();
   tmpNode->SetScene(this->GetMRMLScene());
   this->GetMRMLScene()->AddNode(tmpNode);
+  tmpNode->Delete();
   this->GetMRMLScene()->RemoveNode(tmpNode);
   // end of cancel placement event
 
@@ -2606,10 +2607,11 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
     newSnapshotNode->SetSnapshotDescription(description);
     newSnapshotNode->SetScreenShotType(screenshotType);
     newSnapshotNode->SetScreenShot(screenshot);
+    newSnapshotNode->ModifiedSinceReadOn();
     newSnapshotNode->SetScaleFactor(scaleFactor);
     newSnapshotNode->HideFromEditorsOff();
     this->GetMRMLScene()->AddNode(newSnapshotNode);
-
+    newSnapshotNode->Delete();
   }
 
   //---------------------------------------------------------------------------
@@ -2657,6 +2659,7 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
     snapshotNode->SetSnapshotDescription(description);
     snapshotNode->SetScreenShotType(screenshotType);
     snapshotNode->SetScreenShot(screenshot);
+    snapshotNode->ModifiedSinceReadOn();
     snapshotNode->SetScaleFactor(scaleFactor);
     snapshotNode->Modified();
     snapshotNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,
