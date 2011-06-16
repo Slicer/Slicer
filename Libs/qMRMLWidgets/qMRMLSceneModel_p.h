@@ -58,6 +58,7 @@ public:
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   bool ListenNodeModifiedEvent;
+  bool CheckableItems;
   vtkMRMLScene* MRMLScene;
   mutable QList<vtkMRMLNode*>  DraggedNodes;
   // We keep a list of QStandardItem instead of vtkMRMLNode* because they are

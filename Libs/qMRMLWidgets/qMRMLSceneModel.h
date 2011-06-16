@@ -43,6 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY (bool checkableItems READ checkableItems WRITE setCheckableItems)
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
@@ -82,6 +83,9 @@ public:
   /// False by default.
   void setListenNodeModifiedEvent(bool listen);
   bool listenNodeModifiedEvent()const;
+  
+  void setCheckableItems(bool);
+  bool checkableItems()const;
 
   ///
   /// Extra items that are prepended to the node list

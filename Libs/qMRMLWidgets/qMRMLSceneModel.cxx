@@ -50,6 +50,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->ListenNodeModifiedEvent = false;
+  this->CheckableItems = false;
   this->MRMLScene = 0;
 }
 
@@ -753,9 +754,14 @@ QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)co
 void qMRMLSceneModel::updateItemDataFromNode(
   QStandardItem* item, vtkMRMLNode* node, int column)
 {
+  Q_D(qMRMLSceneModel);
   switch (column)
     {
     case qMRMLSceneModel::NameColumn:
+      if (d->CheckableItems)
+        {
+        item->setCheckState(node->GetSelected() ? Qt::Checked : Qt::Unchecked);
+        }  
       item->setText(QString(node->GetName()));
       break;
     case qMRMLSceneModel::IDColumn:
@@ -808,9 +814,14 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
+  Q_D(qMRMLSceneModel);
   if (item->column() == qMRMLSceneModel::NameColumn)
     {
     node->SetName(item->text().toLatin1());
+    if (d->CheckableItems)
+      {
+      node->SetSelected(item->checkState() == Qt::Checked ? 1 : 0);
+      }
     }
 }
 
@@ -1091,110 +1102,22 @@ void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-//QMimeData *qMRMLSceneModel::mimeData(const QModelIndexList &indexes)const
-//{
-//}
-
-//------------------------------------------------------------------------------
-//QStringList qMRMLSceneModel::mimeTypes()const
-//{
-//}
-/*
-//------------------------------------------------------------------------------
-QModelIndex qMRMLSceneModel::parent(const QModelIndex &_index)const
-{
-  Q_D(const qMRMLSceneModel);
-  if (!_index.isValid())
-    {
-    return QModelIndex();
-    }
-  QSharedPointer<const qMRMLAbstractItemHelper> item = 
-    QSharedPointer<const qMRMLAbstractItemHelper>(d->itemFromIndex(_index));
-  Q_ASSERT(!item.isNull());
-  if (item.isNull())
-    {
-    return QModelIndex();
-    }
-  // let polymorphism plays its role here...
-  QSharedPointer<const qMRMLAbstractItemHelper> parentItem =
-    QSharedPointer<const qMRMLAbstractItemHelper>(item->parent());
-  if (parentItem.isNull())
-    {
-    return QModelIndex();
-    }
-  QModelIndex _parent = this->indexFromItem(parentItem.data());
-  return _parent;
-}
-*/
-//------------------------------------------------------------------------------
-//bool qMRMLSceneModel::removeColumns(int column, int count, const QModelIndex &parent=QModelIndex())
-//{
-//}
-
-//------------------------------------------------------------------------------
-//bool qMRMLSceneModel::removeRows(int row, int count, const QModelIndex &parent)
-//{
-//}
-/*
-//------------------------------------------------------------------------------
-int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
-{
-  Q_D(const qMRMLSceneModel);
-  QSharedPointer<qMRMLAbstractItemHelper> item =
-    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_parent));
-  Q_ASSERT(!item.isNull());
-  if (dynamic_cast<qMRMLAbstractNodeItemHelper*>(item.data()))
-    {
-    return 0;
-    }
-//  std::ofstream rowCountDebugFile("rowCount.txt", std::ios_base::app);
-//  rowCountDebugFile << _parent.row() << " " << _parent.column()
-//                    << " " << _parent.parent().row() << " " << _parent.parent().column()
-//                    << " : " << item->childCount() << std::endl;
-//  rowCountDebugFile.close();
-  int count = !item.isNull() ? item->childCount() : 0;
-  if (d->MRMLNodeToBeAdded)
-    {
-    --count;
-    }
-  if (d->MRMLNodeToBe)
-    {
-    --count;
-    }
-  Q_ASSERT(count >= 0);
-
-  return count;
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLSceneModel::setData(const QModelIndex &modelIndex, const QVariant &value, int role)
-{
-#ifndef QT_NO_DEBUG
-  Q_D(const qMRMLSceneModel);
-#endif
-  if (!modelIndex.isValid())
-    {
-    return false;
-    }
-  Q_ASSERT(d->MRMLScene);
-  QSharedPointer<qMRMLAbstractItemHelper> item =
-    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(modelIndex));
-  Q_ASSERT(!item.isNull());
-  bool changed = !item.isNull() ? item->setData(value, role) : false;
-  if (changed)
-    {
-    emit dataChanged(modelIndex, modelIndex);
-    }
-  return changed;
-}
-*/
-//------------------------------------------------------------------------------
-//bool qMRMLSceneModel::setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles)
-//{
-//}
-
-//------------------------------------------------------------------------------
 Qt::DropActions qMRMLSceneModel::supportedDropActions()const
 {
   return Qt::IgnoreAction;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel::checkableItems()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->CheckableItems;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setCheckableItems(bool checkable)
+{
+  Q_D(qMRMLSceneModel);
+  d->CheckableItems = checkable;
+  /// TODO: refresh the items
 }
