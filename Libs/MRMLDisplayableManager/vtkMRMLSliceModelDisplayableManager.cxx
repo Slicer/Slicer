@@ -477,6 +477,7 @@ void vtkMRMLSliceModelDisplayableManager::vtkInternal::UpdateActor(
     mapper->SetInput( polyData );
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
+    mapper->SetScalarRange(dtiDisplayNode->GetScalarRange());
     }
   actor->SetVisibility(this->IsVisible(displayNode));
   // TBD: Not sure a render request has to systematically be called
