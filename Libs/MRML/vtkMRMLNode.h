@@ -177,13 +177,16 @@ public:
   /// 
   /// End modifying the node. Enable Modify events if the 
   /// previous state of DisableModifiedEvent flag is 0.
-  virtual void EndModify(int previousDisableModifiedEventState) 
+  /// Return the number of pending events (even if 
+  /// InvokePendingModifiedEvent is not called.
+  virtual int EndModify(int previousDisableModifiedEventState) 
     {
     this->SetDisableModifiedEvent(previousDisableModifiedEventState);
     if (!previousDisableModifiedEventState)
       {
-      this->InvokePendingModifiedEvent();
+      return this->InvokePendingModifiedEvent();
       }
+    return this->ModifiedEventPending;
     };
 
 
@@ -316,20 +319,24 @@ public:
       }
     else
       {
-      this->ModifiedEventPending = 1;
+      ++this->ModifiedEventPending;
       }
     }
 
   /// 
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
-  void InvokePendingModifiedEvent ()
+  /// Returns the old flag state.
+  int InvokePendingModifiedEvent ()
     {
     if ( this->ModifiedEventPending )
       {
+      int oldModifiedEventPending = this->ModifiedEventPending;
       this->ModifiedEventPending = 0;
       Superclass::Modified();
+      return oldModifiedEventPending;
       }
+    return this->ModifiedEventPending;
     }
 
   void CopyWithSingleModifiedEvent (vtkMRMLNode *node)
