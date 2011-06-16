@@ -7,6 +7,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
   vtkMRMLSliceLogicTest3.cxx
+  vtkMRMLSliceLogicTest4.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 
@@ -33,3 +34,4 @@ SIMPLE_TEST( vtkMRMLLayoutLogicTest2 )
 SIMPLE_TEST( vtkMRMLSliceLogicTest1 )
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)
+SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest4 fixed.nrrd)
