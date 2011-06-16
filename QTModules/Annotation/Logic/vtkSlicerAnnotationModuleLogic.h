@@ -23,9 +23,6 @@ public:
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
-
   // Start the place mode for annotations
   void StartPlaceMode(bool persistent=false);
 
@@ -244,6 +241,9 @@ protected:
   vtkSlicerAnnotationModuleLogic();
 
   virtual ~vtkSlicerAnnotationModuleLogic();
+
+  // Initialize listening to MRML events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
 private:
 

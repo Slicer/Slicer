@@ -44,9 +44,6 @@ public:
   static vtkSlicerSceneViewsModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerSceneViewsModuleLogic,vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
-
-  // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
   
   // MRML events
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
@@ -126,6 +123,9 @@ protected:
   vtkSlicerSceneViewsModuleLogic();
 
   virtual ~vtkSlicerSceneViewsModuleLogic();
+
+  // Initialize listening to MRML events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
 private:
 
