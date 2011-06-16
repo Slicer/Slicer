@@ -142,7 +142,6 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
     {
     return;
     }
-  // also observe the interaction node
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
@@ -163,6 +162,22 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
   else { vtkDebugMacro("AddObserversToInteractionNode: No interaction node!"); }
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromInteractionNode()
+{
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  
+  // find the interaction node
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
+    {
+    vtkUnObserveMRMLNodeMacro(interactionNode);
+    }
+}
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
@@ -248,8 +263,15 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
   // after a new scene got associated, we want to make sure everything old is gone
   this->OnMRMLSceneClosedEvent();
 
-  this->AddObserversToInteractionNode();
-
+  if (newScene)
+    {
+    this->AddObserversToInteractionNode();
+    }
+  else
+    {
+    // there's no scene to get the interaction node from, so this won't do anything
+    this->RemoveObserversFromInteractionNode();
+    }
   vtkDebugMacro("SetMRMLSceneInternal: add observer on interaction node now?");
 
 }
