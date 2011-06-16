@@ -122,7 +122,7 @@ int main( int argc, char * argv[] )
 
     //Read the tensor mask
     vtkSmartPointer<vtkImageData> mask = vtkSmartPointer<vtkImageData>::New();
-    if (strlen(inputMaskVolume.c_str()) == 0)
+    if (strlen(inputMaskVolume.c_str()) > 0)
       {
       vtkSmartPointer<vtkNRRDReader> maskReader =
         vtkSmartPointer<vtkNRRDReader>::New();
