@@ -138,7 +138,10 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
 {
-
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
   // also observe the interaction node
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
