@@ -133,9 +133,8 @@ ENDFOREACH()
 # ENDFOREACH()
   
 #-----------------------------------------------------------------------------
-# Configure and build Slicer
+# Define list of additional options used to configure Slicer
 #------------------------------------------------------------------------------
-
 set(slicer_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
@@ -143,10 +142,37 @@ if(DEFINED CTEST_CONFIGURATION_TYPE)
 endif()
 
 IF(Slicer_BUILD_CLI)
-  # BRAINSTOOLS module
   LIST(APPEND slicer_superbuild_extra_args -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS})
 ENDIF()
 
+if(Slicer_USE_PYTHONQT)
+  LIST(APPEND slicer_superbuild_extra_args
+    -DSlicer_USE_SYSTEM_PYTHON:BOOL=OFF
+    -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
+    -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    )
+endif()
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  LIST(APPEND slicer_superbuild_extra_args -DSlicer_TCL_DIR:PATH=${tcl_build})
+endif()
+
+if(Slicer_USE_BatchMake)
+  LIST(APPEND slicer_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
+endif()
+
+if(Slicer_USE_OPENIGTLINK)
+  LIST(APPEND slicer_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+endif()
+
+if(Slicer_USE_CTKAPPLAUNCHER)
+  LIST(APPEND slicer_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
+endif()
+
+#------------------------------------------------------------------------------
+# Configure and build Slicer
+#------------------------------------------------------------------------------
 set(proj Slicer)
 
 ExternalProject_Add(${proj}
@@ -174,32 +200,19 @@ ExternalProject_Add(${proj}
     -DITK_DIR:PATH=${ITK_DIR}
     # Teem
     -DTeem_DIR:PATH=${Teem_DIR}
-    # OpenIGTLink
-    -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR}
-    # BatchMake
-    -DBatchMake_DIR:PATH=${BatchMake_DIR}
     # VTK
     -DVTK_DIR:PATH=${VTK_DIR}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
-    # TCL/Tk
-    -DSlicer_TCL_DIR:PATH=${tcl_build}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
     # libarchive
     -DLibArchive_DIR:PATH=${LIBARCHIVE_DIR}
     -DLibArchive_INCLUDE_DIR:PATH=${LIBARCHIVE_INCLUDE_DIR}
     -DLibArchive_LIBRARY:PATH=${LIBARCHIVE_LIBRARY}
-    # Python
-    -DSlicer_USE_SYSTEM_PYTHON:BOOL=OFF
-    -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
-    -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
-    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
     # Qt
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     # CTK
     -DCTK_DIR:PATH=${CTK_DIR}
-    # CTKAppLauncher
-    -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
     # qCDashAPI
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
   INSTALL_COMMAND ""
