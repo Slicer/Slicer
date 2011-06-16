@@ -90,7 +90,7 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Capture a screenshot of the 3D view.</string>
+        <string>Capture a screenshot of the full layout, 3D view or slice views.</string>
        </property>
        <property name="text">
         <string/>
