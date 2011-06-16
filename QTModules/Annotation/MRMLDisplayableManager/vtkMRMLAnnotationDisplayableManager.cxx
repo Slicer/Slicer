@@ -291,12 +291,13 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
   else if (interactionNode)
     {
-
     if (this->IsCorrectDisplayableManager())
       {
-
-      this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
-
+      if (event == vtkMRMLInteractionNode::InteractionModeChangedEvent)
+        {
+        // don't update locking on persistence changed event
+        this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
+        }
       }
     }
   else
