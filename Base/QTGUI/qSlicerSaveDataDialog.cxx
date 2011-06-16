@@ -633,10 +633,11 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
   QFileInfo file = this->sceneFile();
   if (file.exists())
     {
-    QMessageBox::StandardButton answer =
+    QMessageBox::StandardButton answer = 
       QMessageBox::question(this, "Saving scene", "Scene file \""
                             + file.absoluteFilePath() +"\" already exists. "
-                            "Do you want to replace it ?");
+                            "Do you want to replace it ?",
+                            QMessageBox::Cancel | QMessageBox::Ok,  QMessageBox::Cancel);
     if (answer != QMessageBox::Ok)
       {
       return false;
