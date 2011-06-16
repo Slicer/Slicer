@@ -392,7 +392,9 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     }
    **/
 
-  if (event != vtkMRMLScene::NewSceneEvent) 
+  if ((vtkMRMLScene::SafeDownCast(caller) || 
+      vtkMRMLSliceCompositeNode::SafeDownCast(caller)) &&
+      event != vtkMRMLScene::NewSceneEvent) 
     {
     this->UpdatePipeline();
     }
@@ -425,6 +427,20 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
       crosshair->NavigationOn();
       scene->AddNode( crosshair );
       crosshair->Delete();
+      }
+    }
+
+  // Update from SliceNode
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
+  if (sliceNode && !this->GetMRMLScene()->GetIsUpdating())
+    {
+    assert (event == vtkCommand::ModifiedEvent);
+    assert (sliceNode == this->SliceNode);
+    vtkMRMLDisplayNode* sliceDisplayNode =
+      this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
+    if ( sliceDisplayNode)
+      {
+      sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       }
     }
 }
@@ -499,7 +515,6 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
       {
-      modelDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       if ( this->SliceCompositeNode != 0 )
         {
         modelDisplayNode->SetSliceIntersectionVisibility( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
@@ -520,11 +535,12 @@ void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
     return;
     }
 
-  // Don't directly observe the slice node -- the layers will observe it and
-  // will notify us when things have changed.
+  // Observe the slice node for general properties like slice visibility.
+  // But the slice layers will also notify us when things like transforms have
+  // changed.
   // This class takes care of passing the one slice node to each of the layers
   // so that users of this class only need to set the node one place.
-  vtkSetMRMLNodeMacro( this->SliceNode, newSliceNode );
+  vtkSetAndObserveMRMLNodeMacro( this->SliceNode, newSliceNode );
 
   if (this->BackgroundLayer)
     {
@@ -554,6 +570,7 @@ void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCo
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLayer)
 {
+  // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->SetAndObserveMRMLScene( 0 );
@@ -565,13 +582,7 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
     {
     this->BackgroundLayer->Register(this);
 
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    this->BackgroundLayer->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-    events->Delete();
+    this->BackgroundLayer->SetMRMLScene(this->GetMRMLScene());
 
     this->BackgroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
@@ -584,6 +595,7 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLayer)
 {
+  // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->SetAndObserveMRMLScene( 0 );
@@ -594,14 +606,7 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->Register(this);
-
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    this->ForegroundLayer->SetAndObserveMRMLSceneEvents( this->GetMRMLScene(), events);
-    events->Delete();
+    this->ForegroundLayer->SetMRMLScene( this->GetMRMLScene());
 
     this->ForegroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
@@ -614,6 +619,7 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
 {
+  // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->LabelLayer)
     {
     this->LabelLayer->SetAndObserveMRMLScene( 0 );
@@ -625,13 +631,7 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
     {
     this->LabelLayer->Register(this);
 
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    this->LabelLayer->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-    events->Delete();
+    this->LabelLayer->SetMRMLScene(this->GetMRMLScene());
 
     this->LabelLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
@@ -784,16 +784,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       }
 
     // update the slice intersection visibility to track the composite node setting
-    if ( this->SliceModelNode )
+    vtkMRMLModelDisplayNode *modelDisplayNode =
+      this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
+    if ( modelDisplayNode )
       {
-      vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
-      if ( modelDisplayNode )
-        {
-        if ( this->SliceCompositeNode != 0 )
-          {
-          modelDisplayNode->SetSliceIntersectionVisibility( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
-          }
-        }
+      modelDisplayNode->SetSliceIntersectionVisibility(
+        this->SliceCompositeNode->GetSliceIntersectionVisibility() );
       }
 
     // Now update the image blend with the background and foreground and label

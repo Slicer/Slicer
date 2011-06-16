@@ -175,7 +175,7 @@ public:
   /// of the VolumeNode and the SliceNode
   void UpdateTransforms();
 
-  void UpdateGlyphs(vtkImageData *sliceImage); 
+  void UpdateGlyphs(); 
 
 
   /// 
@@ -192,6 +192,11 @@ protected:
   virtual ~vtkMRMLSliceLayerLogic();
   vtkMRMLSliceLayerLogic(const vtkMRMLSliceLayerLogic&);
   void operator=(const vtkMRMLSliceLayerLogic&);
+
+  // Initialize listening to MRML events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  vtkImageData* GetSliceImageData();
 
   /// 
   /// the MRML Nodes that define this Logic's parameters
