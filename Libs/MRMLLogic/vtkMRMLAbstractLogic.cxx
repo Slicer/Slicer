@@ -41,6 +41,9 @@ public:
 
   vtkCallbackCommand * LogicCallbackCommand;
   int                  InLogicCallbackFlag;
+  
+  bool                 DisableModifiedEvent;
+  int                  ModifiedEventPending;
 };
 
 //----------------------------------------------------------------------------
@@ -57,6 +60,9 @@ vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 
   this->InLogicCallbackFlag = false;
   this->LogicCallbackCommand = vtkCallbackCommand::New();
+  
+  this->DisableModifiedEvent = false;
+  this->ModifiedEventPending = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -350,4 +356,46 @@ void vtkMRMLAbstractLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long ev
       this->OnMRMLSceneNodeRemovedEvent(node);
       break;
     }
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractLogic::GetDisableModifiedEvent()const
+{
+  return this->Internal->DisableModifiedEvent;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::SetDisableModifiedEvent(bool onOff)
+{
+  this->Internal->DisableModifiedEvent = onOff;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::Modified() 
+{
+  if (this->GetDisableModifiedEvent())
+    {
+    ++this->Internal->ModifiedEventPending;
+    return;
+    }
+  this->Superclass::Modified();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractLogic::InvokePendingModifiedEvent ()
+{
+  if ( this->Internal->ModifiedEventPending )
+    {
+    int oldModifiedEventPending = this->Internal->ModifiedEventPending;
+    this->Internal->ModifiedEventPending = 0;
+    this->Superclass::Modified();
+    return oldModifiedEventPending;
+    }
+  return this->Internal->ModifiedEventPending;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractLogic::GetPendingModifiedEventCount()const
+{
+  return this->Internal->ModifiedEventPending;
 }

@@ -220,6 +220,36 @@ protected:
   static void LogicCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
   //ETX
   
+  /// 
+  /// Start modifying the logic. Disable Modify events. 
+  /// Returns the previous state of DisableModifiedEvent flag
+  /// that should be passed to EndModify() method
+  inline bool StartModify() ;
+
+  /// 
+  /// End modifying the node. Enable Modify events if the 
+  /// previous state of DisableModifiedEvent flag is 0.
+  /// Return the number of pending ModifiedEvent;
+  inline int EndModify(bool wasModifying);
+
+  bool GetDisableModifiedEvent()const;
+  void SetDisableModifiedEvent(bool onOff);
+  
+  /// 
+  /// overrides the vtkObject method so that all changes to the node which would normally 
+  /// generate a ModifiedEvent can be grouped into an 'atomic' operation.  Typical usage
+  /// would be to disable modified events, call a series of Set* operations, and then re-enable
+  /// modified events and call InvokePendingModifiedEvent to invoke the event (if any of the Set*
+  /// calls actually changed the values of the instance variables).
+  virtual void Modified();
+
+  /// 
+  /// Invokes any modified events that are 'pending', meaning they were generated
+  /// while the DisableModifiedEvent flag was nonzero.
+  int InvokePendingModifiedEvent();
+  
+  int GetPendingModifiedEventCount()const;
+
 private:
 
   vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&); // Not implemented
@@ -231,6 +261,25 @@ private:
   //ETX
 
 };
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAbstractLogic::StartModify() 
+{
+  bool disabledModify = this->GetDisableModifiedEvent();
+  this->SetDisableModifiedEvent(true);
+  return disabledModify;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractLogic::EndModify(bool previousDisableModifiedEventState) 
+{
+  this->SetDisableModifiedEvent(previousDisableModifiedEventState);
+  if (!previousDisableModifiedEventState)
+    {
+    return this->InvokePendingModifiedEvent();
+    }
+  return this->GetPendingModifiedEventCount();
+}
 
 #endif
 
