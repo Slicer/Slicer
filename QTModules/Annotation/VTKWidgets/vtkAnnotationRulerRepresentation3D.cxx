@@ -206,16 +206,16 @@ void vtkAnnotationRulerRepresentation3D::UpdateLabelActorPosition()
 
 //  std::cout << "UpdateLabelActorPosition: p1 = " << p1[0] << ", " << p1[1] << ", " << p1[2] << ". p2 = " << p2[0] << ", " << p2[1] << ", " << p2[2] << std::endl;
   // calculate the label position
-  /*
-  pos[0] = (p1[0]+p2[0])*this->LabelPosition;
-  pos[1] = (p1[1]+p2[1])*this->LabelPosition;
-  pos[2] = (p1[2]+p2[2])*this->LabelPosition;
-  */
-  pos[0] = p1[0] + (p2[0] - p1[0]) * this->LabelPosition;
-  pos[1] = p1[1] + (p2[1] - p1[1]) * this->LabelPosition;
-  pos[2] = p1[2] + (p2[2] - p1[2]) * this->LabelPosition;
-  
 
+  // position the label at a distance from p1 that's the difference between p1
+  // and p2 multiplied by the label position, and offset it from the line by
+  // the tick length
+  double tickLength =  this->Glyph3D->GetScaleFactor();
+ 
+  pos[0] = p1[0] + ((p2[0] - p1[0]) * this->LabelPosition) + tickLength;
+  pos[1] = p1[1] + ((p2[1] - p1[1]) * this->LabelPosition) + tickLength;
+  pos[2] = p1[2] + ((p2[2] - p1[2]) * this->LabelPosition) + tickLength;
+  
   // and set it on the actor
   double * actorPos = this->LabelActor->GetPosition();
   //std::cout << "UpdateLabelActorPosition: LabelPos = " << this->LabelPosition << ", current label actor position = "  << actorPos[0] << ", " << actorPos[1] << ", " << actorPos[2] << ", calculated pos = " << pos[0] << ", " << pos[1] << ", " << pos[2] << std::endl;
