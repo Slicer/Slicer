@@ -99,9 +99,6 @@ private:
 
   qSlicerAnnotationModuleWidget* m_Widget;
   vtkSlicerAnnotationModuleLogic* m_Logic;
-
-  // toggle the selected state of an annotation
-  void onSelectedColumnClicked(vtkMRMLNode* node);
   
   // toggle the visibility of an annotation
   void onVisibilityColumnClicked(vtkMRMLNode* node);

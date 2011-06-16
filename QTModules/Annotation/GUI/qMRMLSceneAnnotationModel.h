@@ -51,7 +51,7 @@ public:
 
   // Enum for the different columns
   enum Columns{
-    DummyColumn = 0,
+    CheckedColumn = 0,
     VisibilityColumn = 1,
     LockColumn = 2,
     EditColumn = 3,

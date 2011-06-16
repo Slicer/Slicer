@@ -60,27 +60,68 @@ qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
 //------------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
-  if (item->column() == qMRMLSceneAnnotationModel::TextColumn)
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  switch (item->column())
     {
-    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
-    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
-    vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+    case qMRMLSceneAnnotationModel::CheckedColumn:
+      {
+      int checked = item->checkState() == Qt::Checked ? 1 : 0;
+      if (annotationNode)
+        {
+        annotationNode->SetSelected(checked);
+        }
+      else if (hierarchyNode)
+        {
+        int oldChecked = hierarchyNode->GetSelected();
+        hierarchyNode->SetSelected(checked);
+        if (checked != oldChecked)
+          {
+          // TODO move to logic ?
+          vtkCollection* children = vtkCollection::New();
+          hierarchyNode->GetChildrenDisplayableNodes(children);
 
-    if (annotationNode)
-      {
-      // if we have an annotation node, the text can be changed by editing the textcolumn
-      annotationNode->SetText(0,item->text().toLatin1(),0,1);
+          children->InitTraversal();
+          for (int i=0; i<children->GetNumberOfItems(); ++i)
+            {
+            vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+            if (childNode)
+              {
+              // this is a valid annotation child node
+              // set all children to have same selected as the hierarchy
+              childNode->SetSelected(checked);
+              }
+            } // for loop
+          }// if hierarchyNode
+        }
+      else if (snapshotNode)
+        {
+        //snapshotNode->SetChecked(checked);
+        }
+      break;
       }
-    else if (hierarchyNode)
+    case qMRMLSceneAnnotationModel::TextColumn:
       {
-      // if we have a hierarchy node, the name can be changed by editing the textcolumn
-      hierarchyNode->SetName(item->text().toLatin1());
+      if (annotationNode)
+        {
+        // if we have an annotation node, the text can be changed by editing the textcolumn
+        annotationNode->SetText(0,item->text().toLatin1(),0,1);
+        }
+      else if (hierarchyNode)
+        {
+        // if we have a hierarchy node, the name can be changed by editing the textcolumn
+        hierarchyNode->SetName(item->text().toLatin1());
+        }
+      else if (snapshotNode)
+        {
+        // if we have a snapshot node, the name can be changed by editing the textcolumn
+        snapshotNode->SetName(item->text().toLatin1());
+        }
+      break;
       }
-    else if (snapshotNode)
-      {
-      // if we have a snapshot node, the name can be changed by editing the textcolumn
-      snapshotNode->SetName(item->text().toLatin1());
-      }
+    default:
+      break;
     }
   //this->m_Widget->refreshTree();
 }
@@ -96,18 +137,20 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
   vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
   switch (column)
     {
-    case 0:
+    case qMRMLSceneAnnotationModel::CheckedColumn:
+      {
+      Qt::CheckState checkState = node->GetSelected() ? Qt::Checked : Qt::Unchecked;
       // selected check box
       if (annotationNode)
         {
-        item->setData(annotationNode->GetSelected(), Qt::CheckStateRole);
+        item->setData(checkState, Qt::CheckStateRole);
         }
       else if (hnode)
         {
-        item->setData(hnode->GetSelected(), Qt::CheckStateRole);
+        item->setData(checkState, Qt::CheckStateRole);
         }
-             
       break;
+      }
     case qMRMLSceneAnnotationModel::VisibilityColumn:
       // the visibility icon
 
