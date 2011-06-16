@@ -19,6 +19,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkSmartPointer.h>
+#include <vtkCylinderSource.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -49,6 +50,7 @@ vtkAnnotationRulerRepresentation3D::vtkAnnotationRulerRepresentation3D()
   this->LabelPosition = 0.5;
   this->MaxTicks = 99;
   this->GlyphScale = 1.0;
+  this->GlyphCylinder->SetRadius(0.25);
 }
 
 //---------------------------------------------------------------------------
@@ -210,7 +212,7 @@ void vtkAnnotationRulerRepresentation3D::UpdateLabelActorPosition()
   // position the label at a distance from p1 that's the difference between p1
   // and p2 multiplied by the label position, and offset it from the line by
   // the tick length
-  double tickLength =  this->Glyph3D->GetScaleFactor();
+  double tickLength =  this->GlyphCylinder->GetRadius() * this->Glyph3D->GetScaleFactor();
  
   pos[0] = p1[0] + ((p2[0] - p1[0]) * this->LabelPosition) + tickLength;
   pos[1] = p1[1] + ((p2[1] - p1[1]) * this->LabelPosition) + tickLength;
