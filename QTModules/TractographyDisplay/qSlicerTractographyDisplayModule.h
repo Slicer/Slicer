@@ -46,9 +46,7 @@ public:
   /// Category of the module
   virtual QString category() const;
 
-  ///
-  /// Display name for the module
-  virtual QString title()const;
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   ///
   /// Help text of the module

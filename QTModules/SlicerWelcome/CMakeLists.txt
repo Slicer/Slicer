@@ -1,7 +1,7 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Welcome")
 
-SET(qt_module_title "SlicerWelcome")
+SET(qt_module_title "Welcome to Slicer")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_WELCOME_EXPORT")
 

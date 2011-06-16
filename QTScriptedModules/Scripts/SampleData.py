@@ -8,7 +8,7 @@ import qt, ctk
 
 class SampleData:
   def __init__(self, parent):
-    parent.title = "SampleData"
+    parent.title = "Sample Data"
     parent.category = "Informatics"
     parent.contributor = "Steve Pieper"
     parent.helpText = """

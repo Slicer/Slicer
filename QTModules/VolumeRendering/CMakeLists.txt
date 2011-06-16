@@ -1,6 +1,7 @@
 
 # Module name (usually identique to the directory name)
 SET(qt_module_name "VolumeRendering")
+SET(qt_module_title "Volume Rendering")
 
 # Build module sub libraries
 ADD_SUBDIRECTORY(MRML)

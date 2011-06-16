@@ -70,12 +70,6 @@ QString qSlicerTractographyDisplayModule::category() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTractographyDisplayModule::title()const
-{
-  return "Fiber Bundles";
-}
-
-//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTractographyDisplayModule::createWidgetRepresentation()
 {
   return new qSlicerTractographyDisplayModuleWidget;

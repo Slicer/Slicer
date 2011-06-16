@@ -1,5 +1,6 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "TractographyFiducialSeeding")
+SET(qt_module_title "Fiducial Seeding")
 
 ADD_SUBDIRECTORY(Logic)
 

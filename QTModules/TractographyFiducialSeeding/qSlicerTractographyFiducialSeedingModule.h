@@ -23,9 +23,7 @@ public:
   /// Category of the module
   virtual QString category() const {return "Diffusion.Tractography";}
 
-  ///
-  /// Display name for the module
-  virtual QString title()const {return "FiducialSeeding";}
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   ///
   /// Help text of the module

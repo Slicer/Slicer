@@ -1,6 +1,7 @@
 
 # Module name (usually identique to the directory name)
 SET(qt_module_name "ModuleTemplate")
+SET(qt_module_title "Module Template")
 
 # Build module sub libraries
 ADD_SUBDIRECTORY(Logic)

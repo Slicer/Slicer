@@ -6,7 +6,7 @@
 # Module name (usually identique to the directory name)
 SET(qt_module_name "SceneViews")
 
-SET(qt_module_title "SceneViews")
+SET(qt_module_title "Scene Views")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT")
 

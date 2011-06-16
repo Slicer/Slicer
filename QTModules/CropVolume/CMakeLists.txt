@@ -1,6 +1,7 @@
 
 # Module name (usually identique to the directory name)
 SET(qt_module_name "CropVolume")
+SET(qt_module_title "Crop Volume")
 
 # Build module sub libraries
 ADD_SUBDIRECTORY(MRML)
