@@ -98,7 +98,7 @@ IF(Slicer_WITH_LIBRARY_VERSION)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Additional Slicer Options
+# General Slicer Options
 #-----------------------------------------------------------------------------
 OPTION(BUILD_TESTING "Test the project" ON)
 OPTION(WITH_MEMCHECK "Run tests through valgrind." OFF)
@@ -110,6 +110,10 @@ OPTION(Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON)
 MARK_AS_ADVANCED(Slicer_BUILD_QTSCRIPTEDMODULES)
 OPTION(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
 OPTION(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
+
+#-----------------------------------------------------------------------------
+# External projects related options
+#-----------------------------------------------------------------------------
 OPTION(Slicer_USE_PYTHONQT    "Integrate a python-QT interpreter into Slicer." ON)
 CMAKE_DEPENDENT_OPTION(
   Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON
