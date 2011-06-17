@@ -33,8 +33,13 @@ ComputeStatisticsWherePositiveFilter<TInputImage, TOutputImage>
 }
 
 template< class TInputImage, class TOutputImage>
+#if ITK_VERSION_MAJOR < 4
 void ComputeStatisticsWherePositiveFilter< TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
+#else
+void ComputeStatisticsWherePositiveFilter< TInputImage, TOutputImage>
+::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId )
+#endif
 {
   // Allocate images:
   typename OutputImageType::Pointer     output = this->GetOutput();

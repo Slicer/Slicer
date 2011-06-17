@@ -40,9 +40,15 @@ SeparateComponentsOfADiffusionTensorImage< TInput,TOutput >
 
 template< class TInput , class TOutput >
 void
+#if ITK_VERSION_MAJOR < 4
 SeparateComponentsOfADiffusionTensorImage< TInput , TOutput >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
                                                      int itkNotUsed(threadId) )
+#else
+SeparateComponentsOfADiffusionTensorImage< TInput , TOutput >
+::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
+                                                     ThreadIdType itkNotUsed(threadId) )
+#endif
 {
   InputIteratorType it( this->GetInput() , outputRegionForThread ) ;
   std::vector< OutputIteratorType > out ;

@@ -92,9 +92,15 @@ DiffusionTensor3DResample< TInput , TOutput >
 
 template< class TInput , class TOutput >
 void
+#if ITK_VERSION_MAJOR < 4
 DiffusionTensor3DResample< TInput , TOutput >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
                                                      int itkNotUsed(threadId) )
+#else
+DiffusionTensor3DResample< TInput , TOutput >
+::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
+                                                     ThreadIdType itkNotUsed(threadId) )
+#endif
 {
   OutputImagePointerType outputImagePtr = this->GetOutput( 0 ) ;
   IteratorType it( outputImagePtr , outputRegionForThread ) ;

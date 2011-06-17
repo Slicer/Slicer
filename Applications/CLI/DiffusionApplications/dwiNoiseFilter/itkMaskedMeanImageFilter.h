@@ -99,7 +99,13 @@ protected:
    *
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
-  void ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId );
+#if ITK_VERSION_MAJOR < 4
+void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
+                           int threadId ) ;
+#else
+void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
+                           ThreadIdType threadId ) ;
+#endif
 private:
   MaskedMeanImageFilter(const Self&); // purposely not implemented
   void operator=(const Self&);        // purposely not implemented

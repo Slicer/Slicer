@@ -115,9 +115,13 @@ protected:
    *
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData()  */
+#if ITK_VERSION_MAJOR < 4
   void ThreadedGenerateData(const OutputImageRegionType& threadRegion,
                             int threadId);
-
+#else
+  void ThreadedGenerateData(const OutputImageRegionType& threadRegion,
+                            ThreadIdType threadId);
+#endif
   void BeforeThreadedGenerateData();
   void AfterThreadedGenerateData();
   InputPixelType ApplyMeasurementFrameToTensor( InputPixelType tensor , const MatrixType &measurementFrame ) ;
