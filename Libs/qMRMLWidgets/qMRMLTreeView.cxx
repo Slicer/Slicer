@@ -270,6 +270,10 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
     newModel = new qMRMLSceneModelHierarchyModel(this);
     newFilterModel = new qMRMLSortFilterModelHierarchyProxyModel(this);
     }
+  else if (modelName == QString(""))
+    {
+    newModel = new qMRMLSceneModel(this);
+    }
   if (newModel)
     {
     d->SceneModelType = modelName;
