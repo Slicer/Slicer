@@ -188,16 +188,17 @@ void registerCLIModuleFactory(
 //----------------------------------------------------------------------------
 void showMRMLEventLoggerWidget()
 {
-  qMRMLEventLoggerWidget logger;
-  logger.setConsoleOutputEnabled(false);
-  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  qMRMLEventLoggerWidget* logger = new qMRMLEventLoggerWidget(0);
+  logger->setAttribute(Qt::WA_DeleteOnClose);
+  logger->setConsoleOutputEnabled(false);
+  logger->setMRMLScene(qSlicerApplication::application()->mrmlScene());
 
   QObject::connect(qSlicerApplication::application(),
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   &logger,
+                   logger,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  logger.show();
+  logger->show();
 }
 
 //----------------------------------------------------------------------------
