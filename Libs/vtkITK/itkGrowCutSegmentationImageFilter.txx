@@ -841,9 +841,15 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 template <class TInputImage, class TOutputImage, class TWeightPixelType>
 void 
+#if ITK_VERSION_MAJOR < 4
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, 
    int itkNotUsed(threadId))
+#else
+GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
+::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, 
+   ThreadIdType itkNotUsed(threadId))
+#endif
 {
   
 

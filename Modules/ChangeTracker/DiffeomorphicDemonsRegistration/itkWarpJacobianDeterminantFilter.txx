@@ -150,9 +150,15 @@ WarpJacobianDeterminantFilter<TInputImage, TOutputImage>
 
 template<typename TInputImage, typename TOutputImage>
 void
+#if ITK_VERSION_MAJOR < 4
 WarpJacobianDeterminantFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                        int threadId)
+#else
+WarpJacobianDeterminantFilter<TInputImage, TOutputImage>
+::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
+                       ThreadIdType threadId)
+#endif
 {
 
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
