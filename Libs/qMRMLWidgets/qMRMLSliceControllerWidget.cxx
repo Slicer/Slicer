@@ -577,6 +577,7 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
     {
     return;
     }
+  bool wasBlocking = this->SliceOffsetSlider->blockSignals(true);
 
   // Set the scale increments to match the z spacing (rotated into slice space)
   const double * sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
@@ -593,6 +594,7 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 
   // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
+  this->SliceOffsetSlider->blockSignals(wasBlocking);
 }
 
 //---------------------------------------------------------------------------
