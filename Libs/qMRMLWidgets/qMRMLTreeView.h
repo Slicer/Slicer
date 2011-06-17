@@ -27,10 +27,11 @@
 // CTK includes
 #include <ctkPimpl.h>
 
+// qMRMLWidgets includes
+#include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLSceneModel;
-class qMRMLSortFilterProxyModel;
 class qMRMLTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -44,6 +45,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
   Q_PROPERTY(bool editMenuActionVisible READ isEditMenuActionVisible WRITE setEditMenuActionVisible)
+  Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
 
 public:
   qMRMLTreeView(QWidget *parent=0);
@@ -81,6 +83,12 @@ public:
   void prependNodeMenuAction(QAction* action);
   void prependSceneMenuAction(QAction* action);
 
+  ///
+  /// If a vtkMRMLNode has the property HideFromEditors set to true,
+  /// bypass the property and show the node anyway.
+  inline void setShowHidden(bool);
+  inline bool showHidden()const;
+  
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
@@ -126,5 +134,17 @@ private:
   Q_DECLARE_PRIVATE(qMRMLTreeView);
   Q_DISABLE_COPY(qMRMLTreeView);
 };
+
+// --------------------------------------------------------------------------
+void qMRMLTreeView::setShowHidden(bool enable)
+{
+  this->sortFilterProxyModel()->setShowHidden(enable);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLTreeView::showHidden()const
+{
+  return this->sortFilterProxyModel()->showHidden();
+}
 
 #endif
