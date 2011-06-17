@@ -347,6 +347,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #if { $caller == $_sliceNode &&
+  #      $event == "AnyEvent"} {
+  #  return 
+  #}
+
   if { [$::slicer3::MRMLScene GetIsClosing] ||
         [$::slicer3::MRMLScene GetIsConnecting] ||
         [$::slicer3::MRMLScene GetIsImporting] ||
