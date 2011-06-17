@@ -111,9 +111,12 @@ MARK_AS_ADVANCED(Slicer_BUILD_QTSCRIPTEDMODULES)
 OPTION(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
 OPTION(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
 OPTION(Slicer_USE_PYTHONQT    "Integrate a python-QT interpreter into Slicer." ON)
-OPTION(Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
-#MARK_AS_ADVANCED(Slicer_USE_PYTHONQT_WITH_TCL)
-OPTION(Slicer_USE_NUMPY       "Build Slicer with NumPy" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON
+  "Slicer_USE_PYTHONQT" OFF)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_NUMPY "Build Slicer with NumPy" ON
+  "Slicer_USE_PYTHONQT" OFF)
 #OPTION(Slicer_USE_WEAVE       "Build Slicer with Weave" OFF)
 #MARK_AS_ADVANCED(Slicer_USE_WEAVE)
 # OPTION(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
