@@ -21,24 +21,16 @@
 // Qt includes
 #include <QDebug>
 #include <QIcon>
-#include <QFile>
-#include <QPainter>
-
-// CTK includes
-#include <ctkVTKColorTransferFunction.h>
-#include <ctkVTKLookupTable.h>
-#include <ctkTransferFunctionRepresentation.h>
+#include <QPixmap>
 
 // qMRML includes
 #include "qMRMLSceneColorTableModel.h"
 
 // MRML includes
-#include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLColorNode.h>
 
 // VTK includes
-#include <vtkColorTransferFunction.h>
-#include <vtkLookupTable.h>
+#include <vtkScalarsToColors.h>
 
 //------------------------------------------------------------------------------
 class qMRMLSceneColorTableModelPrivate
@@ -47,10 +39,12 @@ public:
   struct ColorGradient
   {
     ColorGradient();
+    void updatePixmap(vtkScalarsToColors* scalarsToColors);
+
     unsigned long MTime;
-    QGradient     Gradient;
     QPixmap       Pixmap;
   };
+
   mutable QMap<QString, ColorGradient> GradientCache;
 };
 
@@ -59,6 +53,43 @@ qMRMLSceneColorTableModelPrivate::ColorGradient::ColorGradient()
 {
   this->MTime = 0;
   this->Pixmap = QPixmap(50, 31);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToColors* scalarsToColors)
+{
+  const int width = this->Pixmap.width();
+  const int height = this->Pixmap.height();
+
+  double* values = new double[width];
+  const double* range = scalarsToColors->GetRange();
+  for (int i = 0; i < width; ++i)
+    {
+    values[i] = range[0] + i * (range[1] - range[0]) / (width - 1);
+    }
+
+  QImage transferFunctionImage(width, height, QImage::Format_RGB32);
+  unsigned char* colors = transferFunctionImage.bits();
+  // Map the first line
+  scalarsToColors->MapScalarsThroughTable2(
+    values, colors, VTK_DOUBLE, width, 1, VTK_RGBA);
+  delete [] values;
+  // Pixels are not correctly ordered, reorder them correctly
+  unsigned char* colorsPtr = colors;
+  QRgb* rgbPtr = reinterpret_cast<QRgb*>(colors);
+  for (int i = 0; i < width; ++i)
+    {
+    *(rgbPtr++) = QColor(colorsPtr[0], colorsPtr[1], colorsPtr[2]).rgb();
+    colorsPtr += 4;
+    }
+  // Fill the other lines
+  for (int i = 1; i < height; ++i)
+    {
+    memcpy(colors + i*VTK_RGBA*width, colors, VTK_RGBA*width);
+    }
+
+  this->Pixmap = QPixmap::fromImage( transferFunctionImage );
+  this->MTime = scalarsToColors->GetMTime();
 }
 
 //------------------------------------------------------------------------------
@@ -85,24 +116,11 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
   if (colorNode && column == 0)
     {
-    /*
-    QString iconFileName(":" + QString(colorNode->GetName()));
-    if (!QFile::exists(iconFileName))
-      {
-      iconFileName = ":" + QString(colorNode->GetTypeAsString());
-      }
-    if (!QFile::exists(iconFileName))
-      {
-      iconFileName = ":blankLUT";
-      }
-    QPixmap lutPixmap(iconFileName);
-    item->setIcon(QIcon(lutPixmap));
-    */
     if (this->updateGradientFromNode(colorNode))
       {
       qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
         d->GradientCache[colorNode->GetID()];
-      item->setBackground(colorGradient.Gradient);
+      //item->setBackground(colorGradient.Gradient);
       item->setIcon(colorGradient.Pixmap);
       }
     }
@@ -113,42 +131,14 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
 {
   Q_D(const qMRMLSceneColorTableModel);
   Q_ASSERT(node);
+  /// TODO: Improve the cache of the pixmaps, right now, they are not shared
+  /// between the different qMRMLSceneColorTableModels.
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
-  vtkMRMLProceduralColorNode* proceduralNode = vtkMRMLProceduralColorNode::SafeDownCast(node);
   if (!node->GetScalarsToColors() ||
       colorGradient.MTime >= node->GetScalarsToColors()->GetMTime())
     {
     return false;
     }
-  //qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
-  ctkTransferFunction* lt = 0;
-  if (vtkLookupTable::SafeDownCast(node->GetScalarsToColors()))
-    {
-    lt = new ctkVTKLookupTable(node->GetLookupTable());
-    }
-  else
-    {
-    lt = new ctkVTKColorTransferFunction(proceduralNode->GetColorTransferFunction());
-    }
-  ctkTransferFunctionRepresentation  tfr(lt);
-  colorGradient.Gradient = tfr.gradient();
-  delete lt;
-  //qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
-  colorGradient.Gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  QPainter pixmapPainter;
-  pixmapPainter.begin(&colorGradient.Pixmap);
-  pixmapPainter.fillRect(0,0,
-                         colorGradient.Pixmap.width(),
-                         colorGradient.Pixmap.height(),
-                         colorGradient.Gradient);
-  pixmapPainter.end();
-  QGradientStops gradientStops = colorGradient.Gradient.stops();
-  int count = gradientStops.count();
-  for (int i = 0; i < count; ++i)
-    {
-    gradientStops[i].second.setAlpha(64);
-    }
-  colorGradient.Gradient.setStops(gradientStops);
-  colorGradient.MTime = node->GetScalarsToColors()->GetMTime();
+  colorGradient.updatePixmap(node->GetScalarsToColors());
   return true;
 }
