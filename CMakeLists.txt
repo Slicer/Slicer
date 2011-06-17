@@ -122,6 +122,7 @@ OPTION(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
 OPTION(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." ON)
 OPTION(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 MARK_AS_ADVANCED(Slicer_USE_CTKAPPLAUNCHER)
+
 SET(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK")
 MARK_AS_ADVANCED(Slicer_VTK_GIT_REPOSITORY)
 SET(Slicer_VTK_GIT_TAG "origin/slicer-4.0-gamma" CACHE STRING "VTK git tag to use")
@@ -131,15 +132,14 @@ MARK_AS_ADVANCED(Slicer_ITK_GIT_REPOSITORY)
 SET(Slicer_ITK_GIT_TAG "origin/slicer-4.0" CACHE STRING "ITK git tag to use")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 
-IF(Slicer_BUILD_CLI)
-  # TODO: Option allowing to enable/disable specific module should be automatically added
-  # The following option has been added for conveniency so that BRAINSTOOL module can be 
-  # enabled/disabled at the superbuild level.
-  OPTION(Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." OFF)
-  MARK_AS_ADVANCED(Slicer_BUILD_BRAINSTOOLS)
-ELSE()
-  UNSET(Slicer_BUILD_BRAINSTOOLS CACHE)
-ENDIF()
+#-----------------------------------------------------------------------------
+# TODO: Option allowing to enable/disable specific module should be automatically added
+# The following option has been added for conveniency so that BRAINSTOOL module can be
+# enabled/disabled at the superbuild level.
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." OFF
+  "Slicer_BUILD_CLI" OFF)
+MARK_AS_ADVANCED(Slicer_BUILD_BRAINSTOOLS)
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
