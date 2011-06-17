@@ -116,9 +116,15 @@ void UNLMFilter< TInputImage, TOutputImage >
   
   
 template< class TInputImage, class TOutputImage >
+#if ITK_VERSION_MAJOR < 4
 void UNLMFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread,
                         int itkNotUsed(threadId) )
+#else
+void UNLMFilter< TInputImage, TOutputImage >
+::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread,
+                        ThreadIdType itkNotUsed(threadId) )
+#endif
 {
   // Boundary conditions for this filter; Neumann conditions are fine
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;  
