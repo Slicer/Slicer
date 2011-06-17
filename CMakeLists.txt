@@ -26,7 +26,6 @@ SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 #------------------------------------------------------------------------------
 SET(CMAKE_MODULE_PATH
   ${Slicer_SOURCE_DIR}/CMake
-  ${Slicer_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
   
