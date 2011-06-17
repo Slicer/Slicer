@@ -18,11 +18,19 @@
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkImageData.h"
+
+#if ITK_VERSION_MAJOR >= 4
+#include "itkFloatingPointExceptions.h"
+#endif
+
 #include "DiffusionTensorMathematicsCLP.h"
 
 
 int main( int argc, char * argv[] )
 {
+#if ITK_VERSION_MAJOR >= 4
+  itk::FloatingPointExceptions::Disable();
+#endif
 
   PARSE_ARGS;
 
