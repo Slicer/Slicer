@@ -81,7 +81,7 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   q->registerField("installEnabled", this->InstallExtensionsCheckBox);
   q->registerField("uninstallEnabled", this->UninstallExtensionsCheckBox);
   q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(const QString&)));
-  q->registerField("extensionsServerURL", this->SearchURLComboBox, "currentText", SIGNAL(editTextChanged(const QString&)));
+  q->registerField("extensionsServerURL", this->ExtensionServerURL, "currentText", SIGNAL(textChanged(const QString&)));
 
   q->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(QList<QVariantMap>()));
   q->registerField("retrievedListOfS4extFiles", q, "retrievedListOfS4extFiles");
@@ -93,9 +93,7 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->UninstallExtensionsCheckBox, SIGNAL(toggled(bool)),
                    q, SIGNAL(completeChanged()));
-  QObject::connect(this->SearchURLComboBox, SIGNAL(editTextChanged(const QString&)),
-                   q, SIGNAL(completeChanged()));
-  QObject::connect(this->SearchURLComboBox, SIGNAL(currentIndexChanged(const QString&)),
+  QObject::connect(this->ExtensionServerURL, SIGNAL(textChanged(const QString&)),
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
                    q, SLOT(deleteTemporaryArchiveFiles()));
@@ -132,9 +130,7 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
   d->InstallPathDirectoryButton->setDirectory(app->extensionsPath());
 
   QString url("http://www.cdash.org/slicer4");
-  //QStringList urls = QSettings().value("Modules/ExtensionsUrls").toStringList();
-  //d->SearchURLComboBox->addItems(urls);
-  d->SearchURLComboBox->setEditText(url);
+  d->ExtensionServerURL->setText(url);
   d->PlatformArchitectureValueLabel->setText(app->platform());
   d->SlicerRevisionLineEdit->setText(app->repositoryRevision());
 }
@@ -149,7 +145,7 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
   QDir::root().mkpath(extensionsPath);
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  d->CDashAPI.setUrl(d->SearchURLComboBox->currentText());
+  d->CDashAPI.setUrl(d->ExtensionServerURL->text());
 
   QString revision = d->SlicerRevisionLineEdit->text();
 
@@ -172,22 +168,6 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
     {
     return false; // Failed to retrieve list of files
     }
-  
-  // Save the url into the favorite box so it can be used next time
-//  int index = d->SearchURLComboBox->findText(manifestURL);
-//  if (index == -1)
-//    {
-//    d->SearchURLComboBox->addItem(manifestURL);
-//    }
-
-  // Save all the favorite urls for next sessions
-//  QStringList urls;
-//  for (int i = 0; i < d->SearchURLComboBox->count(); ++i)
-//    {
-//    urls << d->SearchURLComboBox->itemText(i);
-//    }
-
-  //QSettings().setValue("Modules/ExtensionsUrls", urls);
 
   return true;
 }
@@ -203,7 +183,7 @@ bool qSlicerExtensionsWizardWelcomePage::isComplete()const
     return false;
     }
   
-  QUrl searchURL(d->SearchURLComboBox->currentText());
+  QUrl searchURL(d->ExtensionServerURL->text());
   if (d->InstallExtensionsCheckBox->isChecked() && !searchURL.isValid())
     {
     return false;
