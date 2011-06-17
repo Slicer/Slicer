@@ -305,7 +305,7 @@ void qMRMLEventBrokerWidget::onItemChanged(QTreeWidgetItem* item, int column)
     {
     return;
     }
-  if (column == TotalTimeColumn)
+  if (column == TotalTimeColumn || column == ElapsedTimeColumn)
     {
     QString newTotalTime = item->text(column);
     if (newTotalTime.endsWith("s"))
@@ -316,7 +316,14 @@ void qMRMLEventBrokerWidget::onItemChanged(QTreeWidgetItem* item, int column)
     double newTotal = newTotalTime.toDouble(&ok); 
     if (ok)
       {
-      observation->SetTotalElapsedTime(newTotal);
+      if ( column == TotalTimeColumn )
+        {
+        observation->SetTotalElapsedTime(newTotal);
+        }
+      else if (column == ElapsedTimeColumn )
+        {
+        observation->SetLastElapsedTime(newTotal);
+        }
       }
     }
 }
