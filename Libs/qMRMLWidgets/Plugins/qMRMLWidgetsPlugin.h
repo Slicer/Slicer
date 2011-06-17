@@ -28,6 +28,7 @@
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLColorTableViewPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
+#include "qMRMLEventBrokerWidgetPlugin.h"
 #include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
@@ -75,9 +76,10 @@ public:
             << new qMRMLColorListViewPlugin
             << new qMRMLColorTableComboBoxPlugin
             << new qMRMLColorTableViewPlugin
-            << new qMRMLLabelComboBoxPlugin
             << new qMRMLColorTableViewPlugin
             << new qMRMLDisplayNodeWidgetPlugin
+            << new qMRMLEventBrokerWidgetPlugin
+            << new qMRMLLabelComboBoxPlugin
             << new qMRMLLayoutWidgetPlugin
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin

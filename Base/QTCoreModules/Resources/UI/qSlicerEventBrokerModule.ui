@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerEventBrokerModule</class>
+ <widget class="qSlicerWidget" name="qSlicerEventBrokerModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Event Broker</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPushButton" name="RefreshPushButton">
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="qMRMLEventBrokerWidget" name="EventBrokerWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="ResetElapsedTimesPushButton">
+     <property name="text">
+      <string>Reset Times</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="ShowElapsedTimesPushButton">
+     <property name="text">
+      <string>Show observations with Elapsed Times &gt; 0</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLEventBrokerWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLEventBrokerWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>RefreshPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EventBrokerWidget</receiver>
+   <slot>refresh()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ResetElapsedTimesPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EventBrokerWidget</receiver>
+   <slot>resetElapsedTimes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ShowElapsedTimesPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EventBrokerWidget</receiver>
+   <slot>expandElapsedTimeItems()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>380</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>213</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

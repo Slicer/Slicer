@@ -18,35 +18,56 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QDebug>
-
 // SlicerQt includes
-#include "qSlicerMRMLTreeModuleWidget.h"
-#include "ui_qSlicerMRMLTreeModule.h"
+#include "qSlicerEventBrokerModule.h"
+#include "qSlicerEventBrokerModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMRMLTreeModuleWidgetPrivate: public Ui_qSlicerMRMLTreeModule
+class qSlicerEventBrokerModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMRMLTreeModuleWidget::qSlicerMRMLTreeModuleWidget(QWidget* _parent)
+qSlicerEventBrokerModule::qSlicerEventBrokerModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerMRMLTreeModuleWidgetPrivate)
+  , d_ptr(new qSlicerEventBrokerModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMRMLTreeModuleWidget::~qSlicerMRMLTreeModuleWidget()
+qSlicerEventBrokerModule::~qSlicerEventBrokerModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMRMLTreeModuleWidget::setup()
+qSlicerAbstractModuleRepresentation * qSlicerEventBrokerModule::createWidgetRepresentation()
 {
-  Q_D(qSlicerMRMLTreeModuleWidget);
-  d->setupUi(this);
+  return new qSlicerEventBrokerModuleWidget;
+}
 
+//-----------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qSlicerEventBrokerModule::createLogic()
+{
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerEventBrokerModule::category()const
+{
+  return "Developer Tools";
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerEventBrokerModule::helpText()const
+{
+  QString help = "%1";
+  return help.arg(this->slicerWikiUrl());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerEventBrokerModule::acknowledgementText()const
+{
+  QString acknowledgement = "";
+  return acknowledgement;
 }

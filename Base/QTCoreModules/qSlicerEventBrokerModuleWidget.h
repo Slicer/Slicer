@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMRMLTreeModuleWidget_h
-#define __qSlicerMRMLTreeModuleWidget_h
+#ifndef __qSlicerEventBrokerModuleWidget_h
+#define __qSlicerEventBrokerModuleWidget_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -29,9 +29,9 @@
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class qSlicerMRMLTreeModuleWidgetPrivate;
+class qSlicerEventBrokerModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerMRMLTreeModuleWidget :
+class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerEventBrokerModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
@@ -39,18 +39,18 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerMRMLTreeModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerMRMLTreeModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerMRMLTreeModuleWidget();
+  qSlicerEventBrokerModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerEventBrokerModuleWidget();
 
 protected:
   virtual void setup();
 
 protected:
-  QScopedPointer<qSlicerMRMLTreeModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerEventBrokerModuleWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerMRMLTreeModuleWidget);
-  Q_DISABLE_COPY(qSlicerMRMLTreeModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerEventBrokerModuleWidget);
+  Q_DISABLE_COPY(qSlicerEventBrokerModuleWidget);
 };
 
 #endif

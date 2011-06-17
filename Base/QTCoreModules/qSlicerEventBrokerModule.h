@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMRMLTreeModule_h
-#define __qSlicerMRMLTreeModule_h
+#ifndef __qSlicerEventBrokerModule_h
+#define __qSlicerEventBrokerModule_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -29,21 +29,23 @@
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class qSlicerMRMLTreeModulePrivate;
+class qSlicerEventBrokerModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerMRMLTreeModule :
+class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerEventBrokerModule :
   public qSlicerCoreModule
 {
   Q_OBJECT
 public:
 
   typedef qSlicerCoreModule Superclass;
-  qSlicerMRMLTreeModule(QObject *parent=0);
-  virtual ~qSlicerMRMLTreeModule();
+  qSlicerEventBrokerModule(QObject *parent=0);
+  virtual ~qSlicerEventBrokerModule();
+  
+  virtual QString category()const;
 
   ///
   /// Display name for the module
-  qSlicerGetTitleMacro("MRMLTree");
+  qSlicerGetTitleMacro("Event Broker");
 
   ///
   /// Help text of the module
@@ -62,10 +64,10 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 
-  QScopedPointer<qSlicerMRMLTreeModulePrivate> d_ptr;
+  QScopedPointer<qSlicerEventBrokerModulePrivate> d_ptr;
 private:
-  Q_DECLARE_PRIVATE(qSlicerMRMLTreeModule);
-  Q_DISABLE_COPY(qSlicerMRMLTreeModule);
+  Q_DECLARE_PRIVATE(qSlicerEventBrokerModule);
+  Q_DISABLE_COPY(qSlicerEventBrokerModule);
 };
 
 #endif

@@ -24,8 +24,8 @@
 #include "qSlicerColorIO.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerDataModule.h"
+#include "qSlicerEventBrokerModule.h"
 #include "qSlicerFiducialsIO.h"
-#include "qSlicerMRMLTreeModule.h"
 //#include "qSlicerROIModule.h"
 #include "qSlicerTransformsIO.h"
 #include "qSlicerTransformsModule.h"
@@ -100,7 +100,7 @@ void qSlicerCoreModuleFactory::registerItems()
   // if you disable the color module, it would not initialize the color logic
   d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
-  //d->registerCoreModule<qSlicerMRMLTreeModule>();
+  d->registerCoreModule<qSlicerEventBrokerModule>();
   // vtkMRMLROINode are obsolete, one should use the Annotation module to
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();

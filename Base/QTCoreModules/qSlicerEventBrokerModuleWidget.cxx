@@ -18,50 +18,34 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QDebug>
+
 // SlicerQt includes
-#include "qSlicerMRMLTreeModule.h"
-#include "qSlicerMRMLTreeModuleWidget.h"
+#include "qSlicerEventBrokerModuleWidget.h"
+#include "ui_qSlicerEventBrokerModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMRMLTreeModulePrivate
+class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModule
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerMRMLTreeModule::qSlicerMRMLTreeModule(QObject* _parent)
+qSlicerEventBrokerModuleWidget::qSlicerEventBrokerModuleWidget(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerMRMLTreeModulePrivate)
+  , d_ptr(new qSlicerEventBrokerModuleWidgetPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMRMLTreeModule::~qSlicerMRMLTreeModule()
+qSlicerEventBrokerModuleWidget::~qSlicerEventBrokerModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerMRMLTreeModule::createWidgetRepresentation()
+void qSlicerEventBrokerModuleWidget::setup()
 {
-  return new qSlicerMRMLTreeModuleWidget;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerMRMLTreeModule::createLogic()
-{
-  return 0;
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerMRMLTreeModule::helpText()const
-{
-  QString help = "%1";
-  return help.arg(this->slicerWikiUrl());
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerMRMLTreeModule::acknowledgementText()const
-{
-  QString acknowledgement = "";
-  return acknowledgement;
+  Q_D(qSlicerEventBrokerModuleWidget);
+  d->setupUi(this);
 }

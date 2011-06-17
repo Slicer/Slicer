@@ -39,13 +39,13 @@ SET(KIT_SRCS
   qSlicerDataModuleWidget.cxx
   qSlicerDataModuleWidget.h
 
+  qSlicerEventBrokerModule.cxx
+  qSlicerEventBrokerModule.h
+  qSlicerEventBrokerModuleWidget.cxx
+  qSlicerEventBrokerModuleWidget.h
+
   qSlicerFiducialsIO.cxx
   qSlicerFiducialsIO.h
-
-  qSlicerMRMLTreeModule.cxx
-  qSlicerMRMLTreeModule.h
-  qSlicerMRMLTreeModuleWidget.cxx
-  qSlicerMRMLTreeModuleWidget.h
 
   qSlicerROIModule.cxx
   qSlicerROIModule.h
@@ -84,10 +84,10 @@ SET(KIT_MOC_SRCS
   qSlicerDataModule.h
   qSlicerDataModuleWidget.h
 
-  qSlicerFiducialsIO.h
+  qSlicerEventBrokerModule.h
+  qSlicerEventBrokerModuleWidget.h
 
-  qSlicerMRMLTreeModule.h
-  qSlicerMRMLTreeModuleWidget.h
+  qSlicerFiducialsIO.h
 
   qSlicerROIModule.h
   qSlicerROIModuleWidget.h
@@ -108,7 +108,7 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerColorsModule.ui
   Resources/UI/qSlicerDataModule.ui
-  Resources/UI/qSlicerMRMLTreeModule.ui
+  Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   Resources/UI/qSlicerSliceControllerModule.ui

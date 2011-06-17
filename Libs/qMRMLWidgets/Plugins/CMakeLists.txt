@@ -25,6 +25,8 @@ SET(designer_plugin_SRCS
   qMRMLColorTableViewPlugin.h
   qMRMLDisplayNodeWidgetPlugin.cxx
   qMRMLDisplayNodeWidgetPlugin.h
+  qMRMLEventBrokerWidgetPlugin.cxx
+  qMRMLEventBrokerWidgetPlugin.h
   qMRMLLabelComboBoxPlugin.cxx
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.cxx
@@ -88,6 +90,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h
+  qMRMLEventBrokerWidgetPlugin.h
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.h
   qMRMLLinearTransformSliderPlugin.h
