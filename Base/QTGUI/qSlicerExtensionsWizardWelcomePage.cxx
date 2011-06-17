@@ -135,6 +135,8 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
   //QStringList urls = QSettings().value("Modules/ExtensionsUrls").toStringList();
   //d->SearchURLComboBox->addItems(urls);
   d->SearchURLComboBox->setEditText(url);
+  d->PlatformArchitectureValueLabel->setText(app->platform());
+  d->SlicerRevisionLineEdit->setText(app->repositoryRevision());
 }
 
 // --------------------------------------------------------------------------
@@ -149,12 +151,14 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   d->CDashAPI.setUrl(d->SearchURLComboBox->currentText());
 
+  QString revision = d->SlicerRevisionLineEdit->text();
+
   // Prepare matching pattern arguments
   QString retrieveS4extPattern("%1-%2-.*.s4ext");
-  retrieveS4extPattern = retrieveS4extPattern.arg(app->repositoryRevision()).arg(app->platform());
+  retrieveS4extPattern = retrieveS4extPattern.arg(revision).arg(app->platform());
 
   QString retrievePackagePattern("%1-%2-.*.tar.gz");
-  retrievePackagePattern = retrievePackagePattern.arg(app->repositoryRevision()).arg(app->platform());
+  retrievePackagePattern = retrievePackagePattern.arg(revision).arg(app->platform());
 
   // Query CDash server
   d->CDashAPI.setLogLevel(qCDashAPI::SILENT);

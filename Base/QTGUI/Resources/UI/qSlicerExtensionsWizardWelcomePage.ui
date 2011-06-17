@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>180</height>
+    <width>508</width>
+    <height>242</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,6 +27,26 @@
     <widget class="QLabel" name="ExtensionsLabel">
      <property name="text">
       <string>Action:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="InstallExtensionsCheckBox">
+     <property name="text">
+      <string>Find &amp;&amp; install new extensions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="UninstallExtensionsCheckBox">
+     <property name="text">
+      <string>Uninstall existing extensions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -61,23 +81,34 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="InstallExtensionsCheckBox">
+   <item row="7" column="0">
+    <widget class="QLabel" name="PlatformArchitectureLabel">
      <property name="text">
-      <string>Find &amp;&amp; install new extensions</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
+      <string>&lt;platform&gt;-&lt;architecture&gt;:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="UninstallExtensionsCheckBox">
+   <item row="7" column="1">
+    <widget class="QLabel" name="PlatformArchitectureValueLabel">
      <property name="text">
-      <string>Uninstall existing extensions</string>
+      <string/>
      </property>
-     <property name="checked">
-      <bool>true</bool>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="SlicerRevisionLabel">
+     <property name="text">
+      <string>Slicer revision:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="SlicerRevisionLineEdit">
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
