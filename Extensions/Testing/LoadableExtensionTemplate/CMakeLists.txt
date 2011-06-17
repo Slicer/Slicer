@@ -32,6 +32,8 @@ IF(NOT Slicer_SOURCE_DIR)
   SET(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
   SET(EXTENSION_README_FILE ${Slicer_README_FILE})
 
+  INCLUDE(CTest)
+
 ENDIF()
 
 
@@ -88,8 +90,8 @@ slicerMacroBuildQtModule(
 
 
 if(BUILD_TESTING)
-  #add_subdirectory(Testing)
-endif(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
 IF(NOT Slicer_SOURCE_DIR)
   INCLUDE(SlicerFunctionGenerateExtensionDescription)

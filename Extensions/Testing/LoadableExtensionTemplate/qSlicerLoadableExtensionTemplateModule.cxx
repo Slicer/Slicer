@@ -62,7 +62,8 @@ qSlicerLoadableExtensionTemplateModule::~qSlicerLoadableExtensionTemplateModule(
 //-----------------------------------------------------------------------------
 QString qSlicerLoadableExtensionTemplateModule::helpText()const
 {
-  return QString();
+  return "This LoadableExtensionTemplate module illustrates how a loadable module should "
+      "be implemented.";
 }
 
 //-----------------------------------------------------------------------------
