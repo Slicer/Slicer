@@ -1,0 +1,16 @@
+
+# Compute -G arg for configuring external projects with the same CMake generator:
+if(CMAKE_EXTRA_GENERATOR)
+  set(Slicer_EXTENSION_CMAKE_GENERATOR "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
+else()
+  set(Slicer_EXTENSION_CMAKE_GENERATOR "${CMAKE_GENERATOR}")
+endif()
+
+# Get EXTENSION_BITNESS, EXTENSION_COMPILER and Slicer_WC_REVISION
+INCLUDE(SlicerMacroGetCompilerName)
+SlicerMacroGetCompilerName(EXTENSION_COMPILER)
+SET(EXTENSION_BITNESS 32)
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  SET(EXTENSION_BITNESS 64)
+ENDIF()
+

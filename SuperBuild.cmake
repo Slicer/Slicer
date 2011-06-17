@@ -222,5 +222,11 @@ ExternalProject_Add(${proj}
 # Slicer extensions
 #-----------------------------------------------------------------------------
 IF(Slicer_BUILD_EXTENSIONS)
-  ADD_SUBDIRECTORY(Extensions)
+  SET(Slicer_EXTENSION_DESCRIPTION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Extensions)
+  SET(Slicer_LOCAL_EXTENSIONS_DIR ${Slicer_EXTENSION_DESCRIPTION_DIR})
+  SET(Slicer_DIR ${CMAKE_CURRENT_BINARY_DIR}/Slicer-build)
+  INCLUDE(SlicerMacroExtractRepositoryInfo)
+  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
+  SET(CMAKE_CTEST_COMMAND "/home/jchris/Projects/CMake-upload-built-file/bin/ctest")
+  INCLUDE(SlicerBlockBuildPackageAndUploadExtensions)
 ENDIF()
