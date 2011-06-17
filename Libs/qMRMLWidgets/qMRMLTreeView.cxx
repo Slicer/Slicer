@@ -392,6 +392,13 @@ void qMRMLTreeView::prependSceneMenuAction(QAction* action)
 }
 
 //--------------------------------------------------------------------------
+void qMRMLTreeView::removeNodeMenuAction(QAction* action)
+{
+  Q_D(qMRMLTreeView);
+  d->NodeMenu->removeAction(action);
+}
+
+//--------------------------------------------------------------------------
 void qMRMLTreeView::editCurrentNode()
 {
   if (!this->currentNode())

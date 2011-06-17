@@ -82,6 +82,10 @@ public:
   /// Add a custom QAction to add into the context menu on a right click
   void prependNodeMenuAction(QAction* action);
   void prependSceneMenuAction(QAction* action);
+  
+  ///
+  /// Remove action from the "NodeMenu"
+  void removeNodeMenuAction(QAction* action);
 
   ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,

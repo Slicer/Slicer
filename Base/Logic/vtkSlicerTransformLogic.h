@@ -23,6 +23,7 @@
 
 // MRML includes
 class vtkMRMLScene;
+class vtkMRMLTransformableNode;
 class vtkMRMLTransformNode;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstractLogic
@@ -34,6 +35,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 
+  ///
+  /// Apply the associated transform to the transformable node. Return true
+  /// on success, false otherwise.
+  static bool hardenTransform(vtkMRMLTransformableNode* node);
+  
   /// 
   /// Read transform from file 
   vtkMRMLTransformNode* AddTransform (const char* filename, vtkMRMLScene *scene);

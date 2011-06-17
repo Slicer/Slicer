@@ -28,6 +28,9 @@
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 
+// SlicerLibs includes
+#include <vtkSlicerTransformLogic.h>
+
 // qMRMLWidgets includes
 #include <qMRMLSortFilterProxyModel.h>
 
@@ -41,12 +44,14 @@ class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModule
 public:
   qSlicerDataModuleWidgetPrivate();
   vtkMRMLNode*  MRMLNode;
+  QAction*      HardenTransformAction;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate()
 {
   this->MRMLNode = 0;
+  this->HardenTransformAction = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -71,12 +76,19 @@ void qSlicerDataModuleWidget::setup()
   // Edit properties...
   connect(d->MRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)),
           qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));
+
   // Insert transform
   QAction* insertTransformAction = new QAction(tr("Insert transform"),this);
   d->MRMLTreeView->prependNodeMenuAction(insertTransformAction);
   d->MRMLTreeView->prependSceneMenuAction(insertTransformAction);
   connect(insertTransformAction, SIGNAL(triggered()),
           this, SLOT(insertTransformNode()));
+  // Harden transform
+  connect( d->MRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+           this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
+  d->HardenTransformAction = new QAction(tr("Harden transform"), this);
+  connect( d->HardenTransformAction, SIGNAL(triggered()),
+           this, SLOT(hardenTransformOnCurrentNode()) );
 
   // Connection with TreeView is done in UI file
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
@@ -176,48 +188,35 @@ void qSlicerDataModuleWidget::insertTransformNode()
   linearTransform->Delete();
 }
 
-/* Hidden to the UI
 //-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::onMRMLNodeChanged(vtkMRMLNode* node)
+void qSlicerDataModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
 {
   Q_D(qSlicerDataModuleWidget);
-  qvtkDisconnect(d->MRMLNode, vtkCommand::ModifiedEvent,
-                 this, SLOT(onMRMLNodeModified()));
-  if (node)
+  vtkMRMLTransformableNode* transformableNode =
+    vtkMRMLTransformableNode::SafeDownCast(newCurrentNode);
+  vtkMRMLTransformNode* transformNode =
+    transformableNode ? transformableNode->GetParentTransformNode() : 0;
+  if (transformNode &&
+      (transformNode->CanApplyNonLinearTransforms() ||
+      transformNode->IsTransformToWorldLinear()))
     {
-    qvtkConnect(node, vtkCommand::ModifiedEvent,
-                this,SLOT(onMRMLNodeModified()));
+    d->MRMLTreeView->prependNodeMenuAction(d->HardenTransformAction);
     }
-  d->MRMLNode = node;
-  this->onMRMLNodeModified();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::onMRMLNodeModified()
-{
-  Q_D(qSlicerDataModuleWidget);
-  d->NodeIDLineEdit->setText(d->MRMLNode ? d->MRMLNode->GetID() : "");
-  d->NodeNameLineEdit->setText(d->MRMLNode ? d->MRMLNode->GetName() : "");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::validateNodeName()
-{
-  Q_D(qSlicerDataModuleWidget);
-  this->setCurrentNodeName(d->NodeNameLineEdit->text());
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::setCurrentNodeName(const QString& name)
-{
-  Q_D(qSlicerDataModuleWidget);
-  if (d->MRMLNode == 0)
+  else
     {
-    return;
+    d->MRMLTreeView->removeNodeMenuAction(d->HardenTransformAction);
     }
-  d->MRMLNode->SetName(name.toLatin1().data());
 }
-*/
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModuleWidget::hardenTransformOnCurrentNode()
+{
+  Q_D(qSlicerDataModuleWidget);
+  vtkMRMLNode* node = d->MRMLTreeView->currentNode();
+  vtkSlicerTransformLogic::hardenTransform(
+    vtkMRMLTransformableNode::SafeDownCast(node));
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::loadScene()
 {

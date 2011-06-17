@@ -20,8 +20,11 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 
-#include "vtkStringArray.h"
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
+// ITK includes
 #include "itkAffineTransform.h"
 #include "itkBSplineDeformableTransform.h"
 #include "itkCenteredAffineTransform.h"
@@ -60,6 +63,33 @@ vtkSlicerTransformLogic::~vtkSlicerTransformLogic()
 {
 }
 
+//-----------------------------------------------------------------------------
+bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transformableNode)
+{
+  vtkMRMLTransformNode* transformNode =
+    transformableNode ? transformableNode->GetParentTransformNode() : 0;
+  if (!transformNode)
+    {
+    return false;
+    }
+  if (transformNode->IsTransformToWorldLinear())
+    {
+    vtkSmartPointer<vtkMatrix4x4> hardeningMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    transformNode->GetMatrixTransformToWorld(hardeningMatrix);
+    transformableNode->ApplyTransform(hardeningMatrix);
+    }
+  else
+    {
+    vtkSmartPointer<vtkGeneralTransform> hardeningTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    transformNode->GetTransformToWorld(hardeningTransform);
+    transformableNode->ApplyTransform(hardeningTransform);
+    }
+
+  transformableNode->SetAndObserveTransformNodeID(NULL);
+  transformableNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+  transformableNode->SetModifiedSinceRead(1);
+  return true;
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filename, vtkMRMLScene *scene)

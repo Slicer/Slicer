@@ -65,12 +65,15 @@ protected slots:
 */
 public slots:
   void insertTransformNode();
+  void hardenTransformOnCurrentNode();
 
-protected:
-  virtual void setup();
-
+protected slots:
+  void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
+  
 protected:
   QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;
+
+  virtual void setup();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerDataModuleWidget);
