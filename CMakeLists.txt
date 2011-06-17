@@ -33,6 +33,7 @@ SET(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
+INCLUDE(CMakeDependentOption)
 INCLUDE(CMakeParseArguments)
 INCLUDE(Slicer3PluginsMacros)
 INCLUDE(SlicerMacroDiscoverSystemNameAndBits)
