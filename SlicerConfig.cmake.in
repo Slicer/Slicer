@@ -56,10 +56,12 @@ endforeach()
 
 # Slicer CMake macros and functions directory
 set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
+set(Slicer_EXTENSIONS_CMAKE_DIR "@Slicer_EXTENSIONS_CMAKE_DIR@")
 
 # Update CMake module path
 set(CMAKE_MODULE_PATH
   ${Slicer_CMAKE_DIR}
+  ${Slicer_EXTENSIONS_CMAKE_DIR}
   ${VTK_CMAKE_DIR}
   ${CTK_CMAKE_DIR}
   ${CTK_CMAKE_UTILITIES_DIR}

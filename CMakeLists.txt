@@ -26,10 +26,13 @@ SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 #------------------------------------------------------------------------------
 SET(CMAKE_MODULE_PATH
   ${Slicer_SOURCE_DIR}/CMake
+  ${Slicer_SOURCE_DIR}/Extensions/CMake
   ${CMAKE_MODULE_PATH}
   )
 
 SET(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
+SET(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
+
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
