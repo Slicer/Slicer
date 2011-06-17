@@ -112,7 +112,7 @@ set(Slicer_CORE_LIBRARY @Slicer_CORE_LIBRARY_CONFIG@)
 # Slicer GUI library
 set(Slicer_GUI_LIBRARY @Slicer_GUI_LIBRARY_CONFIG@)
 
-# MRML libraries
+# MRML libraries - This variable regroup all related MRML libraries
 set(MRML_LIBRARIES @MRML_LIBRARIES@)
 
 # Slicer Libs VTK wrapped libraries
