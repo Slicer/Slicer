@@ -28,9 +28,8 @@ SET(CMAKE_MODULE_PATH
   ${Slicer_SOURCE_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
-  
-SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 
+SET(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
