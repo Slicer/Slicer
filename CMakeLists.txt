@@ -336,8 +336,17 @@ IF(BUILD_TESTING)
   SET(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
   SET(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
+  SET_PROPERTY(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
   INCLUDE(CTest)
   INCLUDE(SlicerMacroPythonTesting)
+
+  # Add Experimental target - Adapted from CTestTargets.cmake
+  SET(__conf_types "")
+  IF(CMAKE_CONFIGURATION_TYPES)
+    # We need to pass the configuration type on the test command line.
+    SET(__conf_types -C "${CMAKE_CFG_INTDIR}")
+  ENDIF()
+  ADD_CUSTOM_TARGET(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
   INCLUDE(MIDAS)
   SET(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
