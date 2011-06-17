@@ -58,6 +58,11 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
+# Note: This block should be added after VTK and CTK are found.
+#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE 
+#       are valid.
+INCLUDE(SlicerBlockFindQtAndCheckVersion)
+
 # Slicer version number
 set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
 set(Slicer_VERSION_MINOR "@Slicer_VERSION_MINOR@")

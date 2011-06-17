@@ -12,14 +12,6 @@
 FOREACH(proj ${Slicer_EXTERNAL_PROJECTS})
   INCLUDE(${${proj}_USE_FILE})
 ENDFOREACH()
-  
-# --------------------------------------------------------------------------
-# Qt
-# --------------------------------------------------------------------------
-# Note: This block should be added after VTK and CTK are found.
-#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE 
-#       are valid.
-INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
 # --------------------------------------------------------------------------
 # Platform check
