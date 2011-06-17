@@ -45,7 +45,11 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   qSlicerApplication* slicer = qSlicerApplication::application();
-  d->CreditsTextEdit->append(slicer->applicationName() + " " + slicer->applicationVersion());
+  d->CreditsTextEdit->append(
+    slicer->applicationName() + " "
+    + slicer->applicationVersion()+ " "
+    + "r" + slicer->repositoryRevision());
+  d->CreditsTextEdit->append("");
   d->CreditsTextEdit->append(slicer->copyrights());
   d->CreditsTextEdit->moveCursor(QTextCursor::Start,QTextCursor::MoveAnchor);
 }
