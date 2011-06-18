@@ -20,7 +20,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
   set(proj CTKAPPLAUNCHER)
   
   IF(NOT DEFINED CTKAPPLAUNCHER_DIR)
-    SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX CTKAPPLAUNCHER)
+    SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
     # On windows, use i386 launcher unconditionally
     IF("${CTKAPPLAUNCHER_PLATFORM}" STREQUAL "win")
       SET(CTKAPPLAUNCHER_ARCHITECTURE "i386")

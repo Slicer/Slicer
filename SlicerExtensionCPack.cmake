@@ -36,10 +36,10 @@ FOREACH(var ${expected_existing_vars})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Get sytem name and architecture
+# Get platform, architecture and bitness
 #-----------------------------------------------------------------------------
-INCLUDE(SlicerMacroDiscoverSystemNameAndBits)
-SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX ${EXTENSION_NAME})
+INCLUDE(SlicerMacroGetPlatformArchitectureBitness)
+SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX ${EXTENSION_NAME})
 
 #-----------------------------------------------------------------------------
 # Get working copy information

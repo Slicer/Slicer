@@ -19,7 +19,7 @@
 ################################################################################
 
 #
-# SlicerMacroDiscoverSystemNameAndBits(<var-prefix>)
+# SlicerMacroGetPlatformArchitectureBitness(<var-prefix>)
 # is used to extract information associated with the current platform.
 #
 # The macro defines the following variables:
@@ -27,7 +27,7 @@
 #  <var-prefix>_PLATFORM - which is on the this value: linux, macosx, win
 #  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
 
-MACRO(SlicerMacroDiscoverSystemNameAndBits)
+MACRO(SlicerMacroGetPlatformArchitectureBitness)
   SET(options)
   SET(oneValueArgs VAR_PREFIX)
   SET(multiValueArgs)

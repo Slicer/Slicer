@@ -50,8 +50,8 @@ SET(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 INCLUDE(CMakeDependentOption)
 INCLUDE(CMakeParseArguments)
 INCLUDE(Slicer3PluginsMacros)
-INCLUDE(SlicerMacroDiscoverSystemNameAndBits)
 INCLUDE(SlicerMacroExtractRepositoryInfo)
+INCLUDE(SlicerMacroGetPlatformArchitectureBitness)
 INCLUDE(SlicerMacroParseArguments)
 INCLUDE(SlicerMacroBuildCLI)
 INCLUDE(SlicerMacroEmptyExternalProject)
@@ -327,9 +327,9 @@ SET(Slicer_ModuleMRML_INCLUDE_DIRS CACHE INTERNAL "Slicer Module MRML includes" 
 SET(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
 
 #-----------------------------------------------------------------------------
-# Get sytem name and architecture
+# Get platform, architecture and bitness
 #-----------------------------------------------------------------------------
-SlicerMacroDiscoverSystemNameAndBits(VAR_PREFIX Slicer)
+SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX Slicer)
 MESSAGE(STATUS "Configuring Slicer for ${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}")
 
 #-----------------------------------------------------------------------------
