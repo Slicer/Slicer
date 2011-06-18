@@ -118,7 +118,7 @@ endif()
 
 # Package extension
 if(run_ctest_with_packages)
-  if(build_errors)
+  if(build_errors GREATER "0")
     message(WARNING "Skip extension packaging: ${build_errors} build error(s) occured !")
   else()
     #message("----------- [ Packaging extension ${EXTENSION_NAME} ] -----------")
