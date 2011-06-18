@@ -113,7 +113,7 @@ MACRO(run_ctest)
 
     if(WITH_EXTENSIONS)
       SET(ADDITIONAL_CMAKECACHE_OPTION
-        "${ADDITIONAL_CMAKECACHE_OPTION} -DCTEST_MODEL:STRING=${model}")
+        "${ADDITIONAL_CMAKECACHE_OPTION} CTEST_MODEL:STRING=${model}")
     endif()
 
     #-----------------------------------------------------------------------------
