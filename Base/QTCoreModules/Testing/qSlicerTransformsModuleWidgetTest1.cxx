@@ -27,16 +27,7 @@
 
 int qSlicerTransformsModuleWidgetTest1(int argc, char * argv [] )
 {
-  if( argc < 2 )
-    {
-    std::cerr << "Missing arguments" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  int argc2 = argc - 1;
-  char ** argv2 = argv + 1;
-
-  qSlicerCoreApplication app( argc2, argv2 );
+  qSlicerCoreApplication app(argc, argv);
 
   qSlicerCoreApplication * aptr = app.application();
 

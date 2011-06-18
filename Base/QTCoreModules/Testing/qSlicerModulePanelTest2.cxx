@@ -21,19 +21,21 @@
 // Qt includes
 #include <QApplication>
 #include <QDockWidget>
-#include <QTimer>
 #include <QHBoxLayout>
+#include <QMainWindow>
+#include <QTimer>
+
 // SlicerQt includes
-#include "qSlicerApplication.h"
-#include "qSlicerCoreModuleFactory.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactoryManager.h"
-#include "qSlicerModulePanel.h"
+#include <qSlicerApplication.h>
+#include <qSlicerCoreModuleFactory.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerModuleFactoryManager.h>
+#include <qSlicerModulePanel.h>
 #include <qSlicerStyle.h>
 
 // STD includes
 #include <cstdlib>
-#include <QMainWindow>
+
 int qSlicerModulePanelTest2(int argc, char * argv[] )
 {
   QApplication::setDesktopSettingsAware(false);

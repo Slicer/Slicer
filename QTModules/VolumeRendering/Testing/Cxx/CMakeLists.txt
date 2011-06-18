@@ -26,18 +26,14 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name} vtkSlicerVolumesModuleLogic)
 SET(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
 MACRO(SIMPLE_TEST  TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
-ENDMACRO()
-
-MACRO(TEST_WITH_ARG  TESTNAME ARG)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARG})
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 ENDMACRO()
 
 FOREACH(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 ENDFOREACH()
 SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest1 )
-TEST_WITH_ARG( qSlicerVolumeRenderingModuleWidgetTest2 ${VOLUME_FILE} )
+SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest2 ${VOLUME_FILE} )
 
 # Install the testing data
 

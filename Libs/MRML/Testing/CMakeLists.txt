@@ -102,7 +102,7 @@ ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
 MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 ENDMACRO()
 
 SIMPLE_TEST( vtkMRMLArrayPlotNodeTest1 )
@@ -221,9 +221,9 @@ SET( ScenesToTest
   volScene.mrml
   )
 
-FOREACH( SceneToTest ${ScenesToTest} )
+FOREACH(SceneToTest ${ScenesToTest})
   TEST_SCENE( ${SceneToTest} )
-ENDFOREACH( SceneToTest )
+ENDFOREACH()
 
 IF(Slicer_USE_KWWIDGETS)
   # add a tcl test to check that colour files get loaded and saved properly to mrml files and loaded again

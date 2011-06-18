@@ -24,16 +24,14 @@
 
 #include "TestingMacros.h"
 
-int vtkSlicerTransformLogicTest1(int argc, char * argv [] )
+int vtkSlicerTransformLogicTest1(int argc, char * argv [])
 {
-  if( argc < 2 )
+  if(argc < 2)
     {
-    std::cerr << "Missing arguments" << std::endl;
+    std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
     }
-
-  int argc2 = argc - 1;
-  char ** argv2 = argv + 1;
+    
   vtkMRMLScene* scene = vtkMRMLScene::New();
   
   vtkSlicerTransformLogic* transformModuleLogic = vtkSlicerTransformLogic::New();
@@ -43,17 +41,11 @@ int vtkSlicerTransformLogicTest1(int argc, char * argv [] )
     std::cerr << "A MRML Scene must be set to go further." << std::endl;
     return EXIT_FAILURE;
     }
-  
-  if (argc2 < 1) 
-    {
-    std::cerr << "Missing transform file name." << std::endl;
-    return EXIT_FAILURE;
-    }
 
-  vtkMRMLTransformNode* transform = transformModuleLogic->AddTransform(argv2[0], scene);
+  vtkMRMLTransformNode* transform = transformModuleLogic->AddTransform(argv[1], scene);
   if (transform == 0)
     {
-    std::cerr << "Could not read transform file: " << argv2[0] << std::endl;
+    std::cerr << "Could not read transform file: " << argv[1] << std::endl;
     return EXIT_FAILURE;
     }
 

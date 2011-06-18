@@ -38,17 +38,14 @@ ADD_EXECUTABLE(${KIT}CxxTests
   ${DisplayableManagerInstantiatorTest_SRCS})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
-#MACRO(SIMPLE_TEST  TESTNAME)
-#  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
+#MACRO(SIMPLE_TEST TESTNAME)
+#  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 #ENDMACRO()
-
-#SIMPLE_TEST( vtkMRMLCameraDisplayableManagerTest1 )
-
-set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 #
 # Add all the tests
 #
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 FOREACH (test ${TestsToRun})
   GET_FILENAME_COMPONENT(TESTNAME ${test} NAME_WE)
   ADD_TEST(

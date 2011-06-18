@@ -27,9 +27,9 @@
 
 #include "TestingMacros.h"
 
-int qSlicerCoreIOManagerTest1(int argc, char * argv [] )
+int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 {
-  if( argc < 2 )
+  if(argc < 2)
     {
     std::cerr << "Missing arguments" << std::endl;
     return EXIT_FAILURE;
