@@ -1,4 +1,4 @@
-build @Slicer_BUILD@
+build @Slicer_PLATFORM@-@Slicer_ARCHITECTURE@
 buildDate @Slicer_BUILDDATE@
 svnurl @Slicer_WC_URL@
 svnrevision @Slicer_WC_REVISION@

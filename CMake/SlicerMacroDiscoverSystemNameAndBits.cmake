@@ -23,8 +23,9 @@
 # is used to extract information associated with the current platform.
 #
 # The macro defines the following variables:
-#  <var-prefix>_BUILD_BITS - bitness of the platform: 32 or 64
-#  <var-prefix>_BUILD - which is on the this value: linux-i386, linux-amd64, macosx-ppc, macosx-i386, macosx-amd64, win32-x86, win64-x86
+#  <var-prefix>_BITNESS - bitness of the platform: 32 or 64
+#  <var-prefix>_PLATFORM - which is on the this value: linux, macosx, win
+#  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
 
 MACRO(SlicerMacroDiscoverSystemNameAndBits)
   SET(options)
@@ -37,36 +38,25 @@ MACRO(SlicerMacroDiscoverSystemNameAndBits)
     message(FATAL_ERROR "error: VAR_PREFIX should be specified !")
   endif()
 
-  SET(${MY_VAR_PREFIX}_BUILD "")
+  SET(${MY_VAR_PREFIX}_ARCHITECTURE "")
 
-  SET(${MY_VAR_PREFIX}_BUILD_BITS "32")
+  SET(${MY_VAR_PREFIX}_ARCHITECTURE i386)
+  SET(${MY_VAR_PREFIX}_BITNESS 32)
   IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    SET(${MY_VAR_PREFIX}_BUILD_BITS "64")
+    SET(${MY_VAR_PREFIX}_BITNESS 64)
+    SET(${MY_VAR_PREFIX}_ARCHITECTURE amd64)
   ENDIF()
 
   IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-
-    SET(${MY_VAR_PREFIX}_BUILD "win32-x86")
-    IF(${MY_VAR_PREFIX}_BUILD_BITS STREQUAL "64")
-      SET(${MY_VAR_PREFIX}_BUILD "win64-x86")
-    ENDIF()
+    SET(${MY_VAR_PREFIX}_PLATFORM "win")
 
   ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  
-    SET(${MY_VAR_PREFIX}_BUILD "linux-i386")
-    IF(${MY_VAR_PREFIX}_BUILD_BITS STREQUAL "64")
-      SET(${MY_VAR_PREFIX}_BUILD "linux-amd64")
-    ENDIF()
+    SET(${MY_VAR_PREFIX}_PLATFORM "linux")
 
   ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-
+    SET(${MY_VAR_PREFIX}_PLATFORM "macosx")
     IF(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
-      SET(${MY_VAR_PREFIX}_BUILD "macosx-ppc")
-    ELSE()
-      SET(${MY_VAR_PREFIX}_BUILD "macosx-i386")
-      IF (${MY_VAR_PREFIX}_BUILD_BITS STREQUAL "64")
-        SET(${MY_VAR_PREFIX}_BUILD "macosx-amd64")
-      ENDIF()
+      SET(${MY_VAR_PREFIX}_ARCHITECTURE "ppc")
     ENDIF()
 
   #ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Solaris")

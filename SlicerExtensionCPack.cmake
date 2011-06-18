@@ -21,7 +21,7 @@
 # -------------------------------------------------------------------------
 # Sanity checks
 # -------------------------------------------------------------------------
-SET(expected_nonempty_vars EXTENSION_NAME EXTENSION_DESCRIPTION Slicer_WC_REVISION Slicer_BUILD)
+SET(expected_nonempty_vars EXTENSION_NAME EXTENSION_DESCRIPTION Slicer_WC_REVISION Slicer_PLATFORM Slicer_ARCHITECTURE)
 FOREACH(var ${expected_nonempty_vars})
   IF("${${var}}" STREQUAL "")
     MESSAGE(FATAL_ERROR "error: ${var} is either NOT defined or empty.")
@@ -64,7 +64,7 @@ set(CMAKE_PROJECT_NAME ${EXTENSION_NAME})
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${EXTENSION_README_FILE}")
 set(CPACK_RESOURCE_FILE_LICENSE "${EXTENSION_LICENSE_FILE}")
-set(CPACK_PACKAGE_FILE_NAME "${Slicer_WC_REVISION}-${Slicer_BUILD}-${EXTENSION_NAME}-${${EXTENSION_NAME}_WC_TYPE}${${EXTENSION_NAME}_WC_REVISION}-${${EXTENSION_NAME}_BUILDDATE}")
+set(CPACK_PACKAGE_FILE_NAME "${Slicer_WC_REVISION}-${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}-${EXTENSION_NAME}-${${EXTENSION_NAME}_WC_TYPE}${${EXTENSION_NAME}_WC_REVISION}-${${EXTENSION_NAME}_BUILDDATE}")
 #set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_MAJOR_VERSION}")
 #set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_MINOR_VERSION}")
 #set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_PATCH_VERSION}")
