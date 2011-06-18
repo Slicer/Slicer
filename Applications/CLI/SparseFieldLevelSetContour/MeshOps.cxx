@@ -508,31 +508,43 @@ void ComputeNormals( MeshData* meshdata )
       double y = -v0[0]*v1[2] + v0[2]*v1[0];
       double z = v0[0]*v1[1] - v0[1]*v1[0];
       double norm = sqrt(x*x+y*y+z*z);
-      fnx[pts[0]] += x/norm;
-      fny[pts[0]] += y/norm;
-      fnz[pts[0]] += z/norm;
-      fnx[pts[1]] += x/norm;
-      fny[pts[1]] += y/norm;
-      fnz[pts[1]] += z/norm;
-      fnx[pts[2]] += x/norm;
-      fny[pts[2]] += y/norm;
-      fnz[pts[2]] += z/norm;
-      vertcount[pts[0]] += 1;
-      vertcount[pts[1]] += 1;
-      vertcount[pts[2]] += 1;
+      if (norm > 0.0)
+        {
+        fnx[pts[0]] += x/norm;
+        fny[pts[0]] += y/norm;
+        fnz[pts[0]] += z/norm;
+        fnx[pts[1]] += x/norm;
+        fny[pts[1]] += y/norm;
+        fnz[pts[1]] += z/norm;
+        fnx[pts[2]] += x/norm;
+        fny[pts[2]] += y/norm;
+        fnz[pts[2]] += z/norm;
+        vertcount[pts[0]] += 1;
+        vertcount[pts[1]] += 1;
+        vertcount[pts[2]] += 1;
+        }
       }
-
-    if( ! bTextInputNormals ) {
+    if( ! bTextInputNormals )
+      {
       meshdata->nx = std::valarray<double>(numverts);
       meshdata->ny = std::valarray<double>(numverts);
       meshdata->nz = std::valarray<double>(numverts);
       for( int i = 0;  i < numverts; i++ )
-      {
-        meshdata->nx[i] = fnx[i] / vertcount[i] ;
-        meshdata->ny[i] = fny[i] / vertcount[i] ;
-        meshdata->nz[i] = fnz[i] / vertcount[i] ;
+        {
+        if (vertcount[i] != 0)
+          {
+          meshdata->nx[i] = fnx[i] / vertcount[i] ;
+          meshdata->ny[i] = fny[i] / vertcount[i] ;
+          meshdata->nz[i] = fnz[i] / vertcount[i] ;
+          }
+        else
+          {
+          meshdata->nx[i] = fnx[i];
+          meshdata->ny[i] = fny[i];
+          meshdata->nz[i] = fnz[i];
+          }
+        }
       }
-    }
     else
       {
       std::cerr << "Normals not computed for mesh data, numverts = " << numverts << ", normal array sizes were allocated to be x = " << meshdata->nx.size() << ", y = " << meshdata->ny.size() << ", z = " << meshdata->nz.size() << "\n";
