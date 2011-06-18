@@ -10,8 +10,13 @@
 
 =========================================================================auto=*/
 
+#ifndef __vtkSlicerVersionConfigure_h
+#define __vtkSlicerVersionConfigure_h
+
 #define Slicer_VERSION_MAJOR @Slicer_VERSION_MAJOR@
 #define Slicer_VERSION_MINOR @Slicer_VERSION_MINOR@
 #define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
 #define Slicer_VERSION "@Slicer_VERSION@"
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
+
+#endif // __vtkSlicerVersionConfigure_h

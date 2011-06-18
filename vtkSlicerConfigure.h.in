@@ -3,6 +3,9 @@
  * These values should only change when the target compile platform changes.
  */
 
+#ifndef __vtkSlicerConfigure_h
+#define __vtkSlicerConfigure_h
+
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
@@ -79,3 +82,5 @@
 #define VTK_DIR "@VTK_DIR@"
 #define CTK_DIR "@CTK_DIR@"
 //#define Teem_DIR "@Teem_DIR@"
+
+#endif //__vtkSlicerConfigure_h
