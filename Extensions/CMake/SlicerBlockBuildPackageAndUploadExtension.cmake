@@ -46,6 +46,8 @@ include(${Slicer_CMAKE_DIR}/SlicerFunctionCTestPackage.cmake)
 
 # Set site name
 SITE_NAME(CTEST_SITE)
+# Force to lower case
+STRING(TOLOWER "${CTEST_SITE}" CTEST_SITE)
 
 # Set build name
 set(CTEST_BUILD_NAME "${Slicer_WC_REVISION}-${EXTENSION_NAME}-${EXTENSION_COMPILER}-${EXTENSION_BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
