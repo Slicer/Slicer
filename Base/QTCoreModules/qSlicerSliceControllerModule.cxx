@@ -47,6 +47,14 @@ qSlicerSliceControllerModule::~qSlicerSliceControllerModule()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSliceControllerModule::acknowledgementText()const
+{
+  return "This module was developed by Jean-Christophe Fillion-Robin, Kitware Inc. "
+         "This work was supported by NIH grant 3P41RR013218-12S1, "
+         "NA-MIC, NAC and Slicer community.";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSliceControllerModule::setup()
 {
   this->Superclass::setup();
