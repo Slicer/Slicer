@@ -76,7 +76,8 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
   Q_D(qSlicerTractographyDisplayModuleWidget);
   if (vtkMRMLFiberBundleNode::SafeDownCast(FiberBundleNode))
     {
-    //BUG: need to handle all possible display node types. Right now pops the default.
-    d->TractographyDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetDisplayNode());
+    d->LineDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetLineDisplayNode());
+    d->TubeDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetTubeDisplayNode());
+    d->GlyphDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());
     }
 }

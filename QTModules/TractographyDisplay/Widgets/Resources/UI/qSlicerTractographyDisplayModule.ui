@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="SelectFiberBundleLabel">
      <property name="text">
@@ -36,77 +36,66 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0" colspan="2">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>208</width>
-       <height>15</height>
-      </size>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-    </spacer>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="TractDisplayCollapsibleButton">
-     <property name="text">
-      <string>Tract Display</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <property name="collapsed">
-      <bool>false</bool>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="qSlicerTractographyDisplayWidget" name="TractographyDisplayWidget" native="true">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="qMRMLNodeComboBox" name="FiberBundleDisplayNodeSelector">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLFiberBundleLineDisplayNode</string>
-       <string>vtkMRMLFiberBundleGlyphDisplayNode</string>
-       <string>vtkMRMLFiberBundleTubeDisplayNode</string>
-      </stringlist>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>DisplayNode:</string>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Line</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="qSlicerTractographyDisplayWidget" name="LineDisplayWidget" native="true">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+      <zorder>LineDisplayWidget</zorder>
+      <zorder>verticalSpacer</zorder>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Tube</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="qSlicerTractographyDisplayWidget" name="TubeDisplayWidget" native="true">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Glyph</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="qSlicerTractographyDisplayWidget" name="GlyphDisplayWidget" native="true">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
@@ -130,7 +119,7 @@
   <connection>
    <sender>qSlicerTractographyDisplayModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>TractographyDisplayWidget</receiver>
+   <receiver>LineDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -172,6 +161,38 @@
     <hint type="destinationlabel">
      <x>161</x>
      <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyDisplayModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GlyphDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyDisplayModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TubeDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>87</y>
     </hint>
    </hints>
   </connection>

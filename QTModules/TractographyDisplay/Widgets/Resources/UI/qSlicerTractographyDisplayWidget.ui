@@ -140,6 +140,12 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
             <string>Set range:</string>
            </property>
@@ -149,6 +155,18 @@
           <widget class="qMRMLRangeWidget" name="ColorByScalarInvariantDisplayRange">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>0</height>
+            </size>
            </property>
           </widget>
          </item>
