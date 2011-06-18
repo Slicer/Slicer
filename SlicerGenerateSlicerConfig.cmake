@@ -20,6 +20,10 @@
 
 SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
 
+# Launcher command
+SET(Slicer_LAUNCHER_EXECUTABLE_CONFIG ${Slicer_LAUNCHER_EXECUTABLE})
+SET(Slicer_LAUNCH_COMMAND_CONFIG ${Slicer_LAUNCH_COMMAND})
+
 # License and Readme file
 SET(Slicer_LICENSE_FILE_CONFIG ${Slicer_SOURCE_DIR}/License.txt)
 SET(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)

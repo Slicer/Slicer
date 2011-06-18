@@ -73,6 +73,10 @@ set(CMAKE_MODULE_PATH
 #       are valid.
 INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
+# Launcher command
+set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
+set(Slicer_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
+
 # Slicer version number
 set(Slicer_MAJOR_VERSION "@Slicer_MAJOR_VERSION@")
 set(Slicer_MINOR_VERSION "@Slicer_MINOR_VERSION@")
