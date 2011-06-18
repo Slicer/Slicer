@@ -43,24 +43,19 @@ public:
   
   virtual QString category()const;
 
-  ///
   /// Display name for the module
   qSlicerGetTitleMacro("Event Broker");
 
-  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  ///
-  /// Acknowledgement of the module
+  /// Acknowledgement text of the module
   virtual QString acknowledgementText()const;
 
 protected:
-  ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 
