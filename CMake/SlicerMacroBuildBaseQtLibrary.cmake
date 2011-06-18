@@ -95,7 +95,10 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
   #-----------------------------------------------------------------------------
   # Update Slicer_Base_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} ${include_dirs} CACHE INTERNAL "Slicer Base includes" FORCE)
+  SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    CACHE INTERNAL "Slicer Base includes" FORCE)
 
   #-----------------------------------------------------------------------------
   # Configure

@@ -48,8 +48,10 @@ QT4_ADD_RESOURCES(SlicerQT_QRC_SRCS ${qt_module_resources})
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  #${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
+  ${MRML_INCLUDE_DIRS}
+  ${MRMLLogic_INCLUDE_DIRS}
+  ${qMRMLWidgets_INCLUDE_DIRS}
   )
 
 INCLUDE_DIRECTORIES(${include_dirs})
