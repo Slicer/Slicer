@@ -140,6 +140,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # The following variable can be used while testing the driver scripts
     #-----------------------------------------------------------------------------
+    set(run_ctest_submit TRUE)
     set(run_ctest_with_update TRUE)
     set(run_ctest_with_configure TRUE)
     set(run_ctest_with_build TRUE)
@@ -152,7 +153,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Update
     #-----------------------------------------------------------------------------
-    if(run_ctest_with_update)
+    if(run_ctest_with_update AND run_ctest_submit)
       ctest_submit(PARTS Update)
     endif()
     
@@ -169,7 +170,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
        
       ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
       ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
-      ctest_submit(PARTS Configure)
+      if(run_ctest_submit)
+        ctest_submit(PARTS Configure)
+      endif()
     endif()
 
     #-----------------------------------------------------------------------------
@@ -179,7 +182,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     if (run_ctest_with_build)
       message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
       ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
-      ctest_submit(PARTS Build)
+      if(run_ctest_submit)
+        ctest_submit(PARTS Build)
+      endif()
     endif()
     
     #-----------------------------------------------------------------------------
@@ -198,7 +203,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
         EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
       # runs only tests that have a LABELS property matching "${label}"
-      ctest_submit(PARTS Test)
+      if(run_ctest_submit)
+        ctest_submit(PARTS Test)
+      endif()
     endif()
     
     #-----------------------------------------------------------------------------
@@ -212,8 +219,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
         message("----------- [ Global coverage ] -----------")
         ctest_coverage(BUILD "${slicer_build_dir}")
-        ctest_submit(PARTS Coverage)
-      endif ()
+        if(run_ctest_submit)
+          ctest_submit(PARTS Coverage)
+        endif()
+      endif()
     endif()
     
     #-----------------------------------------------------------------------------
@@ -222,8 +231,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
         message("----------- [ Global memcheck ] -----------")
         ctest_memcheck(BUILD "${slicer_build_dir}")
-        ctest_submit(PARTS MemCheck)
-    endif ()
+        if(run_ctest_submit)
+          ctest_submit(PARTS MemCheck)
+        endif()
+    endif()
     
     #-----------------------------------------------------------------------------
     # Create packages / installers ...
@@ -247,7 +258,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         message("Uploading ...")
         foreach(p ${packages})
           ctest_upload(FILES ${p})
-          ctest_submit(PARTS Upload)
+          if(run_ctest_submit)
+            ctest_submit(PARTS Upload)
+          endif()
         endforeach()
       endif()
     endif()
@@ -255,7 +268,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Note should be at the end
     #-----------------------------------------------------------------------------
-    if (run_ctest_with_notes)
+    if (run_ctest_with_notes AND run_ctest_submit)
       ctest_submit(PARTS Notes)
     endif()
   
