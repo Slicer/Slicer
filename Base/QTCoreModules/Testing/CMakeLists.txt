@@ -1,7 +1,14 @@
 SET(KIT QTCoreModules)
+
+SET(KIT_TEST_SRCS)
+SET(KIT_TEST_NAMES)
+SET(KIT_TEST_NAMES_CXX)
+SET(modulenames Cameras Colors Data EventBroker ROI SliceController Transforms)
+SlicerMacroAddGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qSlicerCamerasModuleTest1.cxx
+  ${KIT_TEST_NAMES_CXX}
   qSlicerCamerasModuleWidgetTest1.cxx
   qSlicerColorsModuleWidgetTest1.cxx
   qSlicerCoreModuleTest1.cxx
@@ -12,8 +19,11 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+LIST(APPEND Tests ${KIT_TEST_SRCS})
+
+#SET(TestsToRun ${Tests})
+#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
@@ -30,12 +40,13 @@ MACRO(SIMPLE_TEST TESTNAME)
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
 ENDMACRO()
 
-SIMPLE_TEST( qSlicerCamerasModuleTest1 )
+FOREACH(testname ${KIT_TEST_NAMES})
+  SIMPLE_TEST( ${testname} )
+ENDFOREACH()
 SIMPLE_TEST( qSlicerCamerasModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerColorsModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerCoreModuleTest1 )
 SIMPLE_TEST( qSlicerCoreModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerModulePanelTest2 )
-SIMPLE_TEST( qSlicerTransformsModuleTest1 )
 SIMPLE_TEST( qSlicerTransformsModuleWidgetTest1 )
 

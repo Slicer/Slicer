@@ -59,6 +59,6 @@ slicerMacroBuildQtModule(
 ADD_SUBDIRECTORY(Widgets/Plugins)
 
 if(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
   ADD_SUBDIRECTORY(Widgets/Testing)
-  #ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)

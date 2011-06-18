@@ -1,4 +1,4 @@
-SET(KIT Welcome)
+SET(KIT TractographyDisplay)
 
 SET(KIT_TEST_SRCS)
 SET(KIT_TEST_NAMES)
@@ -10,7 +10,6 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   EXTRA_INCLUDE TestingMacros.h
   )
-
 LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 LIST(APPEND Tests ${KIT_TEST_SRCS})
 
@@ -29,3 +28,4 @@ ENDMACRO()
 FOREACH(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 ENDFOREACH()
+

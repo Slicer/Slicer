@@ -1,7 +1,13 @@
 SET(KIT Annotation)
 
+SET(KIT_TEST_SRCS)
+SET(KIT_TEST_NAMES)
+SET(KIT_TEST_NAMES_CXX)
+SlicerMacroAddGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  ${KIT_TEST_NAMES_CXX}
   #qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1
   qMRMLAnnotationROIWidgetTest1.cxx
   vtkMRMLAnnotationNodeTest1.cxx
@@ -33,8 +39,11 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+LIST(APPEND Tests ${KIT_TEST_SRCS})
+
+SET(TestsToRun ${Tests})
+LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
@@ -111,7 +120,7 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 #
 # Add all the tests
 #
-FOREACH (test ${TestsToRun})
+FOREACH(test ${TestsToRun})
   GET_FILENAME_COMPONENT(TESTNAME ${test} NAME_WE)
   ADD_TEST(
     NAME ${TESTNAME} 

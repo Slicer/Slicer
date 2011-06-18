@@ -1,12 +1,21 @@
 SET(KIT TractographyFiducialSeeding)
+
+SET(KIT_TEST_SRCS)
+SET(KIT_TEST_NAMES)
+SET(KIT_TEST_NAMES_CXX)
+SlicerMacroAddGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  ${KIT_TEST_NAMES_CXX}
   qSlicerTractographyFiducialSeedingModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
+LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+LIST(APPEND Tests ${KIT_TEST_SRCS})
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+#SET(TestsToRun ${Tests})
+#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
@@ -17,4 +26,7 @@ MACRO(SIMPLE_TEST TESTNAME)
   ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
 ENDMACRO()
 
+FOREACH(testname ${KIT_TEST_NAMES})
+  SIMPLE_TEST( ${testname} )
+ENDFOREACH()
 SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest1 )

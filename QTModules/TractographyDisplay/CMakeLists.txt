@@ -2,7 +2,9 @@
 SET(qt_module_name "TractographyDisplay")
 SET(qt_module_title "Tractography Display")
 
+# Build module sub libraries
 ADD_SUBDIRECTORY(Logic)
+ADD_SUBDIRECTORY(Widgets)
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT")
 
@@ -58,9 +60,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-if(BUILD_TESTING)
-#  add_subdirectory(Testing)
-endif(BUILD_TESTING)
-
-ADD_SUBDIRECTORY(Widgets)
-
+IF(BUILD_TESTING)
+  add_subdirectory(Testing)
+ENDIF()

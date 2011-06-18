@@ -1,32 +1,32 @@
 SET(KIT SceneViews)
 
+SET(KIT_TEST_SRCS)
+SET(KIT_TEST_NAMES)
+SET(KIT_TEST_NAMES_CXX)
+SlicerMacroAddGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  ${KIT_TEST_NAMES_CXX}
 #  vtkMRMLSceneViewNodeTest1.cxx
   vtkSlicerSceneViewsModuleLogicTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
+LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+LIST(APPEND Tests ${KIT_TEST_SRCS})
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+#SET(TestsToRun ${Tests})
+#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
-MACRO(SIMPLE_TEST  TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
-ENDMACRO()
-
-#SIMPLE_TEST( vtkMRMLSceneViewNodeTest1 )
-#SIMPLE_TEST( vtkSlicerSceneViewsModuleLogicTest1 )
-
-set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
-
 #
 # Add all the tests
 #
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 FOREACH (test ${TestsToRun})
   GET_FILENAME_COMPONENT(TESTNAME ${test} NAME_WE)
   ADD_TEST(
