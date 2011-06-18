@@ -145,10 +145,11 @@ void qSlicerColorsModuleWidget::setup()
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
 
-  if (qSlicerApplication::application()->layoutManager())
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (app && app->layoutManager())
     {
-    qMRMLThreeDView* threeDView = qSlicerApplication::application()->layoutManager()->threeDView(0);
-    vtkRenderer* activeRenderer = qSlicerApplication::application()->layoutManager()->activeThreeDRenderer();
+    qMRMLThreeDView* threeDView = app->layoutManager()->threeDView(0);
+    vtkRenderer* activeRenderer = app->layoutManager()->activeThreeDRenderer();
     if (activeRenderer)
       {
       d->ScalarBarWidget->SetInteractor(activeRenderer->GetRenderWindow()->GetInteractor());

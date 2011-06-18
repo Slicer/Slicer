@@ -62,19 +62,22 @@ QString qSlicerColorsModule::title()const
 //-----------------------------------------------------------------------------
 void qSlicerColorsModule::setup()
 {
-  QStringList paths = qSlicerApplication::application()->settings()
-    ->value("QTCoreModules/Colors/ColorFilePaths").toStringList();
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (!app)
+    {
+    return;
+    }
+  QStringList paths = app->settings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList();
 #ifdef Q_OS_WIN32
   QString joinedPaths = paths.join(";");
 #else
   QString joinedPaths = paths.join(":");
 #endif
-  vtkSlicerColorLogic* colorLogic =
-    vtkSlicerColorLogic::SafeDownCast(this->logic());
-  // Warning, if the logic has already created the color nodes (AddDefaultColorNodes),
+  vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
+  // Warning: If the logic has already created the color nodes (AddDefaultColorNodes),
   // setting the user color file paths doesn't trigger any action to add new nodes.
   // It's something that must be fixed into the logic, not here
-  colorLogic->SetUserColorFilePaths(joinedPaths.toLatin1().data());
+  colorLogic->SetUserColorFilePaths(joinedPaths.toLatin1());
 }
 
 //-----------------------------------------------------------------------------
