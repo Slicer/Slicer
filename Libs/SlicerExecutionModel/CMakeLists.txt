@@ -57,3 +57,16 @@ ADD_SUBDIRECTORY(ModuleDescriptionParser)
 
 SETIFEMPTY(GenerateCLP_DIR ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLP CACHE PATH "Location of GenerateCLPConfig.cmake" FORCE)
 ADD_SUBDIRECTORY(GenerateCLP)
+
+# --------------------------------------------------------------------------
+# Set INCLUDE_DIRS variable
+# --------------------------------------------------------------------------
+SET(${PROJECT_NAME}_INCLUDE_DIRS
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
+  ${GenerateCLP_SOURCE_DIR}
+  ${GenerateCLP_BINARY_DIR}
+  ${TCLAP_SOURCE_DIR}
+  ${TCLAP_BINARY_DIR}
+  CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE
+  )

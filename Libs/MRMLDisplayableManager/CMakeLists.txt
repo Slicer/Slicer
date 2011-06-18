@@ -191,3 +191,9 @@ ENDIF()
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
 ENDIF()
+
+# --------------------------------------------------------------------------
+# Set INCLUDE_DIRS variable
+# --------------------------------------------------------------------------
+SET(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+  CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)
