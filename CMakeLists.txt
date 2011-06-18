@@ -542,35 +542,6 @@ IF(Slicer_BUILD_QTSCRIPTEDMODULES)
   SET(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
 ENDIF()
 
-
-# --------------------------------------------------------------------------
-# Configure and install headers
-# --------------------------------------------------------------------------
-SET(files 
-  vtkSlicerConfigure.h
-  vtkSlicerVersionConfigure.h
-  Scripts/runValgrind.sh
-  Scripts/runValgrindForOneModule.sh
-  Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
-  Scripts/computeCodeCoverageLocally.sh
-  Scripts/computeCodeCoverageForOneTest.sh
-  Scripts/runExperimentalOffScreen.sh
-  )
-FOREACH(f ${files})
-  CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${f}.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${f}
-    )
-ENDFOREACH()
-
-IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
-  INSTALL(FILES 
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
-    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
-ENDIF()
-
 #-----------------------------------------------------------------------------
 # Set COVERAGE_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
@@ -607,6 +578,34 @@ INSTALL(FILES
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )
+
+# --------------------------------------------------------------------------
+# Configure and install headers
+# --------------------------------------------------------------------------
+SET(files
+  vtkSlicerConfigure.h
+  vtkSlicerVersionConfigure.h
+  Scripts/runValgrind.sh
+  Scripts/runValgrindForOneModule.sh
+  Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
+  Scripts/computeCodeCoverageLocally.sh
+  Scripts/computeCodeCoverageForOneTest.sh
+  Scripts/runExperimentalOffScreen.sh
+  )
+FOREACH(f ${files})
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${f}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${f}
+    )
+ENDFOREACH()
+
+IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  INSTALL(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
+    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
+    )
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Includes

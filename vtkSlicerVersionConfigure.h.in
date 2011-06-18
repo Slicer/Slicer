@@ -19,4 +19,9 @@
 #define Slicer_VERSION "@Slicer_VERSION@"
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
 
+#define Slicer_BUILD "@Slicer_BUILD@"
+#define Slicer_BUILDDATE "@Slicer_BUILDDATE@"
+#define Slicer_WC_URL "@Slicer_WC_URL@"
+#define Slicer_WC_REVISION "@Slicer_WC_REVISION@"
+
 #endif // __vtkSlicerVersionConfigure_h
