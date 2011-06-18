@@ -191,7 +191,7 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 # Configure Slicer Launcher (Linux & Windows Only)
 # --------------------------------------------------------------------------
-IF(NOT APPLE AND Slicer_USE_CTKAPPLAUNCHER)
+IF(Slicer_USE_CTKAPPLAUNCHER)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
 
   # Define list of extra 'application to launch' to associate with the launched
