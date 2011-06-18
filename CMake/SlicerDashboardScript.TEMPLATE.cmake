@@ -34,9 +34,9 @@ set(WITH_MEMCHECK FALSE)
 set(WITH_COVERAGE FALSE)
 set(WITH_DOCUMENTATION FALSE)
 #set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ) # for example: $ENV{HOME}/Projects/Doxygen
+set(WITH_PACKAGES FALSE)
 set(WITH_EXTENSIONS FALSE) # Indicates if 'trusted' Slicer extensions should be
                            # built, tested, packaged and uploaded.
-set(WITH_PACKAGES FALSE)
 set(CTEST_BUILD_CONFIGURATION "Release")
 set(CTEST_TEST_TIMEOUT 100)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
