@@ -63,7 +63,12 @@ void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   this->Superclass::setMRMLScene(newScene);
 
-  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (!app)
+    {
+    return;
+    }
+  qSlicerLayoutManager * layoutManager = app->layoutManager();
   if (!layoutManager)
     {
     return;
