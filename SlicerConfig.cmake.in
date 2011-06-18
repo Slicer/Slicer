@@ -166,6 +166,9 @@ IF(Slicer_BUILD_QTSCRIPTEDMODULES)
   set(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "@Slicer_QTSCRIPTEDMODULES_SHARE_DIR@")
 ENDIF()
 
+# Slicer install root
+set(Slicer_INSTALL_ROOT "@Slicer_INSTALL_ROOT@")
+
 # Slicer relative install directories.
 set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")
 set(Slicer_INSTALL_LIB_DIR "@Slicer_INSTALL_LIB_DIR@")
