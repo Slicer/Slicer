@@ -163,9 +163,9 @@ ENDIF()
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable

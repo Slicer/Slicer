@@ -191,7 +191,7 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 #IF(BUILD_TESTING)
 #  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTestingMacros.cmake")
 #  KWWidgets_ADD_TEST_FROM_C_EXAMPLE(KWWidgets-${PROJECT_NAME} ${EXE_NAME})
-#ENDIF(BUILD_TESTING)
+#ENDIF()
 
 # Apply user-defined properties to the library target.
 IF(Slicer_LIBRARY_PROPERTIES)

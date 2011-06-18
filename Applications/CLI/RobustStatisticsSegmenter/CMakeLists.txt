@@ -27,7 +27,7 @@ slicerMacroBuildCLI(
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
 
   add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
   target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})

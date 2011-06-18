@@ -129,9 +129,9 @@ slicer3_install_modules(${lib_name})
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(Testing)
-endif(BUILD_TESTING)
+ENDIF()
 
 # Install testing data
 

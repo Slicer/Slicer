@@ -22,5 +22,5 @@ ctkMacroCompilePythonScript(
 #-----------------------------------------------------------------------------
 # Testing
 #
-if(BUILD_TESTING)
-endif(BUILD_TESTING)
+IF(BUILD_TESTING)
+ENDIF()

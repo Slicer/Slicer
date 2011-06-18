@@ -120,7 +120,7 @@ endif (Slicer_SOURCE_DIR)
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTS add_directory( Test_FindCenterOfBrainFilter )
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+ENDIF()
 

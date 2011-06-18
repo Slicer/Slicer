@@ -115,9 +115,9 @@ INSTALL(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Testing
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Install support files

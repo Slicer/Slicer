@@ -35,7 +35,7 @@ install(
 # --------------------------------------------------------------------------
 # Testing
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_test(ModelIntoLabelVolumeTest ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/ModelIntoLabelVolumeTest.tcl)
 endif()
 

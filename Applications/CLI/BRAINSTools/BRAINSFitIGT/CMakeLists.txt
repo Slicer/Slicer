@@ -49,9 +49,9 @@ target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEB
 INSTALL(TARGETS BRAINSFitIGT DESTINATION bin)
 
 # not yet
-#if(BUILD_TESTING)
+#IF(BUILD_TESTING)
 #  add_subdirectory(TestSuite)
-#endif(BUILD_TESTING)
+#ENDIF()
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BRAINSFitIGT Image Registration")

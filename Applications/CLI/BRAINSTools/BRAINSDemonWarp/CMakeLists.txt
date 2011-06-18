@@ -104,9 +104,9 @@ set(${CLP}_PRIMARY_SOURCE VBRAINSDemonWarpPrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} VBRAINSDemonWarpPrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "VBRAINSDemonWarpPrimary" "BRAINSDemonWarpCommonLib")
 
 ### Add the Testing Subdirectory.
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+ENDIF()
 if(NOT Slicer3_SOURCE_DIR)
   add_subdirectory(Example)
 endif(NOT Slicer3_SOURCE_DIR)

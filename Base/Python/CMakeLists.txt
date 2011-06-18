@@ -43,8 +43,8 @@ ctkMacroCompilePythonScript(
 #-----------------------------------------------------------------------------
 # Testing
 #
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   IF(Slicer_USE_PYTHONQT_WITH_TCL)
     add_subdirectory(tpycl/Testing)
   ENDIF()
-endif(BUILD_TESTING)
+ENDIF()

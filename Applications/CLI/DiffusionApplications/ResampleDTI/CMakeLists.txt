@@ -20,6 +20,6 @@ slicerMacroBuildCLI(
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+ENDIF()

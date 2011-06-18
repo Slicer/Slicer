@@ -143,7 +143,7 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing/Cxx)
 endif()
 

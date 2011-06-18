@@ -114,7 +114,7 @@ slicerMacroBuildQtModule(
 # TESTING
 #
 #-----------------------------------------------------------------------
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing/Cxx)
-endif(BUILD_TESTING)
+ENDIF()
 

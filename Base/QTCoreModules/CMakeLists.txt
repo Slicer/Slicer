@@ -141,4 +141,4 @@ SlicerMacroBuildBaseQtLibrary(
 # Testing
 IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(BUILD_TESTING)
+ENDIF()

@@ -65,9 +65,9 @@ target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_
 
 INSTALL(TARGETS BRAINSFit DESTINATION ${Slicer_INSTALL_BIN_DIR})
 
-if(BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+ENDIF()
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BRAINSFit Image Registration")
