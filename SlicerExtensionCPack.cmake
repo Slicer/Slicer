@@ -36,12 +36,6 @@ FOREACH(var ${expected_existing_vars})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
-# Get platform, architecture and bitness
-#-----------------------------------------------------------------------------
-INCLUDE(SlicerMacroGetPlatformArchitectureBitness)
-SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX ${EXTENSION_NAME})
-
-#-----------------------------------------------------------------------------
 # Get working copy information
 #-----------------------------------------------------------------------------
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX ${EXTENSION_NAME})
