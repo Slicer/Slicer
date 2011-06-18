@@ -73,8 +73,11 @@ CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 Slicer_DIR:PATH=${Slicer_DIR}
 ")
 
-file(READ ${EXTENSION_BINARY_DIR}/CMakeCache.txt cmakecache_current)
-if (NOT ${cmakecache_content} STREQUAL "${cmakecache_current}")
+set(cmakecache_current "")
+if(EXISTS ${EXTENSION_BINARY_DIR}/CMakeCache.txt)
+  file(READ ${EXTENSION_BINARY_DIR}/CMakeCache.txt cmakecache_current)
+endif()
+if(NOT ${cmakecache_content} STREQUAL "${cmakecache_current}")
   file(WRITE ${EXTENSION_BINARY_DIR}/CMakeCache.txt ${cmakecache_content})
 endif()
 
