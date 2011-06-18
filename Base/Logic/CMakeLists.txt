@@ -20,7 +20,6 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${SlicerBase_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}

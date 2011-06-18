@@ -12,10 +12,6 @@ if(POLICY CMP0017)
   CMAKE_POLICY(SET CMP0017 OLD)
 endif()
 
-
-# Calling PROJECT() defines projectname_SOURCE_DIR and projectname_BINARY_DIR
-PROJECT(SlicerBase)
-
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerMacroBuildBaseQtLibrary.cmake)
 
 INCLUDE_DIRECTORIES(
