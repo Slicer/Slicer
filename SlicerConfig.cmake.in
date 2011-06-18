@@ -9,7 +9,7 @@
 
 # Macro allowing to set a variable or complain if already defined
 macro(__SLICER_SET_OR_COMPLAIN_IF_DEFINED var value)
-  if(DEFINED ${var})
+  if(DEFINED ${var} AND NOT SlicerConfig_INCLUDED_ONCE)
     message(FATAL_ERROR "Variable ${var} has been defined prior calling FIND_PACKAGE(Slicer) !")
   endif()
   set(${var} "${value}")
@@ -184,4 +184,6 @@ set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 IF(EXISTS "@Slicer_TARGETS_FILE@")
   INCLUDE("@Slicer_TARGETS_FILE@")
 ENDIF()
+
+SET(SlicerConfig_INCLUDED_ONCE 1 CACHE INTERNAL "True if SlicerConfig has already been included")
 
