@@ -13,8 +13,8 @@ slicerMacroBuildCLI(
     vtkPrincipalAxesAlign.cxx
   TARGET_LIBRARIES ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI
   INCLUDE_DIRECTORIES 
-    ${vtkTeem_SOURCE_DIR}       ${vtkTeem_BINARY_DIR}
-    ${MRML_SOURCE_DIR}          ${MRML_BINARY_DIR}
+    ${vtkTeem_INCLUDE_DIRS}
+    ${MRML_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   LINK_DIRECTORIES
     ${ModuleDescriptionParser_BINARY_DIR} 

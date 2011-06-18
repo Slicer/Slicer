@@ -24,10 +24,8 @@ endif()
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
+  ${MRML_INCLUDE_DIRS}
+  ${ModuleDescriptionParser_INCLUDE_DIRS}
   )
 INCLUDE_DIRECTORIES(${include_dirs})
 

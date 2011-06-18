@@ -22,8 +22,8 @@ slicerMacroBuildCLI(
     SFLSRobustStatSegmentor3DLabelMap_single.h 
     SFLSRobustStatSegmentor3DLabelMap_single.txx
   INCLUDE_DIRECTORIES 
-    ${MRML_SOURCE_DIR}          ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR}       ${vtkTeem_BINARY_DIR}
+    ${MRML_INCLUDE_DIRS}
+    ${vtkTeem_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
 

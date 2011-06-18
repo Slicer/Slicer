@@ -21,8 +21,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters
   ${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
-  ${vtkTeem_SOURCE_DIR} 
-  ${vtkTeem_BINARY_DIR}
+  ${vtkTeem_INCLUDE_DIRS} 
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}

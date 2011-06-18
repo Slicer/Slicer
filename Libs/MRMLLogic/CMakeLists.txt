@@ -24,12 +24,9 @@ endif()
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${RemoteIO_SOURCE_DIR}
-  ${RemoteIO_BINARY_DIR}
+  ${MRML_INCLUDE_DIRS}
+  ${vtkTeem_INCLUDE_DIRS}
+  ${RemoteIO_INCLUDE_DIRS}
   )
 INCLUDE_DIRECTORIES(${include_dirs})
 

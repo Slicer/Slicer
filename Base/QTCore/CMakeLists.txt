@@ -8,14 +8,10 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
-  ${MRMLCLI_SOURCE_DIR}
-  ${MRMLCLI_BINARY_DIR}
-  ${MRMLLogic_SOURCE_DIR}
-  ${MRMLLogic_BINARY_DIR}
-  ${FreeSurfer_SOURCE_DIR} # for qSlicerXcedeCatalogIO
-  ${FreeSurfer_BINARY_DIR} # for qSlicerXcedeCatalogIO
+  ${ModuleDescriptionParser_INCLUDE_DIRS}
+  ${MRMLCLI_INCLUDE_DIRS}
+  ${MRMLLogic_INCLUDE_DIRS}
+  ${FreeSurfer_INCLUDE_DIRS} # for qSlicerXcedeCatalogIO
   )
 
 # Source files

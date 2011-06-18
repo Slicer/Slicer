@@ -20,21 +20,13 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${MRMLCLI_SOURCE_DIR}
-  ${MRMLCLI_BINARY_DIR}
-  ${MRMLLogic_SOURCE_DIR}
-  ${MRMLLogic_BINARY_DIR}
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${OPENTRACKER_INC_DIR}
-  ${FreeSurfer_SOURCE_DIR}
-  ${FreeSurfer_BINARY_DIR}
-  ${RemoteIO_SOURCE_DIR}
-  ${RemoteIO_BINARY_DIR}
+  ${MRML_INCLUDE_DIRS}
+  ${MRMLCLI_INCLUDE_DIRS}
+  ${MRMLLogic_INCLUDE_DIRS}
+  ${ModuleDescriptionParser_INCLUDE_DIRS}
+  ${vtkTeem_INCLUDE_DIRS}
+  ${FreeSurfer_INCLUDE_DIRS}
+  ${RemoteIO_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
   )
 

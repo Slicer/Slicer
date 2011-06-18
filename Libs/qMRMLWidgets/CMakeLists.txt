@@ -252,12 +252,9 @@ SOURCE_GROUP("Generated" FILES
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${MRMLLogic_SOURCE_DIR}
-  ${MRMLLogic_BINARY_DIR}
-  ${MRMLDisplayableManager_SOURCE_DIR}
-  ${MRMLDisplayableManager_BINARY_DIR}
+  ${MRML_INCLUDE_DIRS}
+  ${MRMLLogic_INCLUDE_DIRS}
+  ${MRMLDisplayableManager_INCLUDE_DIRS}
   )
 INCLUDE_DIRECTORIES(${include_dirs})
 

@@ -11,8 +11,7 @@ PROJECT(MIMXCommon)
 #  ${SlicerBaseLogic_BINARY_DIR}
 #  ${SlicerBaseGUI_SOURCE_DIR}
 #  ${SlicerBaseGUI_BINARY_DIR}
-#  ${vtkITK_SOURCE_DIR}
-#  ${vtkITK_BINARY_DIR}
+#  ${vtkITK_INCLUDE_DIRS}
 #  ${ITK_INCLUDE_DIR}
 #  ${VTK_INCLUDE_DIR}
 #  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 

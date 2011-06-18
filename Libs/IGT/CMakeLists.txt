@@ -30,8 +30,7 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
+  ${MRML_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 

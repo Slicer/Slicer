@@ -39,16 +39,11 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${FreeSurfer_SOURCE_DIR}
-  ${FreeSurfer_BINARY_DIR}
+  ${vtkITK_INCLUDE_DIRS}
+  ${FreeSurfer_INCLUDE_DIRS}
   )
 if(MRML_USE_Teem)
-  list(APPEND include_dirs 
-    ${vtkTeem_SOURCE_DIR}
-    ${vtkTeem_BINARY_DIR}
-    )
+  list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
 endif()
 include_directories(${include_dirs})
 

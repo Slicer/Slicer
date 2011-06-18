@@ -10,8 +10,7 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
 SET(KIT_include_directories
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
-  ${MRMLLogic_SOURCE_DIR}
-  ${MRMLLogic_BINARY_DIR}
+  ${MRMLLogic_INCLUDE_DIRS}
   )
 
 # Source files

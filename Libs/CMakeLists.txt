@@ -68,52 +68,6 @@ SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
 SET(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 
 #-----------------------------------------------------------------------------
-# Generate list of corresponding libraries and include directories
-#-----------------------------------------------------------------------------
-SET(libs)
-SET(include_dirs)
-FOREACH(dir ${dirs})
-  LIST(APPEND include_dirs
-    ${CMAKE_CURRENT_SOURCE_DIR}/${dir}
-    ${CMAKE_CURRENT_BINARY_DIR}/${dir}
-    )
-  LIST(APPEND libs ${dir})
-ENDFOREACH()
-
-# Since there is inconsistency between library name and project/dir name, 
-# let's tweak the list of generated library names
-
-#STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
-#STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
-#LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
-
-# Anticipating the move of MRML related libraries to a standalone project, 
-# let's group these libraries.
-# Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
-SET(MRML_LIBRARIES 
-  MRML MRMLCLI MRMLLogic MRMLDisplayableManager 
-  CACHE INTERNAL "MRML libraries" FORCE)
-
-#-----------------------------------------------------------------------------
-# Set variable Slicer_Libs_INCLUDE_DIRS
-#-----------------------------------------------------------------------------
-SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
-
-#-----------------------------------------------------------------------------
-# Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
-#-----------------------------------------------------------------------------
-SET(Slicer_Libs_VTK_WRAPPED_LIBRARIES 
-  vtkTeem
-  vtkITK
-  FreeSurfer
-  MRML
-  MRMLCLI
-  MRMLLogic
-  MRMLDisplayableManager
-  RemoteIO
-  CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)
-
-#-----------------------------------------------------------------------------
 # Loop over list of directories
 #-----------------------------------------------------------------------------
 FOREACH(dir ${dirs})
@@ -124,3 +78,38 @@ FOREACH(dir ${dirs})
   SET(${dir}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
   ADD_SUBDIRECTORY(${dir})
 ENDFOREACH()
+
+#-----------------------------------------------------------------------------
+# Generate list of include directories
+#-----------------------------------------------------------------------------
+SET(include_dirs)
+FOREACH(dir ${dirs})
+  LIST(APPEND include_dirs ${${dir}_INCLUDE_DIRS})
+ENDFOREACH()
+
+# Set variable Slicer_Libs_INCLUDE_DIRS
+SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
+
+#-----------------------------------------------------------------------------
+# Set MRML_LIBRARIES
+#-----------------------------------------------------------------------------
+# Anticipating the move of MRML related libraries to a standalone project,
+# let's group these libraries.
+# Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
+SET(MRML_LIBRARIES
+  MRML MRMLCLI MRMLLogic MRMLDisplayableManager
+  CACHE INTERNAL "MRML libraries" FORCE)
+
+#-----------------------------------------------------------------------------
+# Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
+#-----------------------------------------------------------------------------
+SET(Slicer_Libs_VTK_WRAPPED_LIBRARIES
+  vtkTeem
+  vtkITK
+  FreeSurfer
+  MRML
+  MRMLCLI
+  MRMLLogic
+  MRMLDisplayableManager
+  RemoteIO
+  CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)
