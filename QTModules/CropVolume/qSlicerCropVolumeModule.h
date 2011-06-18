@@ -1,9 +1,6 @@
 #ifndef __qSlicerCropVolumeModule_h
 #define __qSlicerCropVolumeModule_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerLoadableModule.h"
 
