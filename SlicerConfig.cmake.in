@@ -74,9 +74,9 @@ set(CMAKE_MODULE_PATH
 INCLUDE(SlicerBlockFindQtAndCheckVersion)
 
 # Slicer version number
-set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
-set(Slicer_VERSION_MINOR "@Slicer_VERSION_MINOR@")
-set(Slicer_VERSION_PATCH "@Slicer_VERSION_PATCH@")
+set(Slicer_MAJOR_VERSION "@Slicer_MAJOR_VERSION@")
+set(Slicer_MINOR_VERSION "@Slicer_MINOR_VERSION@")
+set(Slicer_PATCH_VERSION "@Slicer_PATCH_VERSION@")
 
 # Slicer working copy Revision, URL and Root
 set(Slicer_WC_REVISION "@Slicer_WC_REVISION@")

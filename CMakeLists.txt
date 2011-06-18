@@ -276,15 +276,15 @@ TODAY(Slicer_BUILDDATE)
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
-SET(Slicer_VERSION_MAJOR "4")
-SET(Slicer_VERSION_MINOR "0")
+SET(Slicer_MAJOR_VERSION "4")
+SET(Slicer_MINOR_VERSION "0")
 
-IF(NOT Slicer_VERSION_PATCH)
-  SET(Slicer_VERSION_PATCH "gamma-${Slicer_BUILDDATE}")
+IF(NOT Slicer_PATCH_VERSION)
+  SET(Slicer_PATCH_VERSION "gamma-${Slicer_BUILDDATE}")
 ENDIF()
 
-SET(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
+SET(Slicer_VERSION      "${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
+SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_PATCH_VERSION}")
 
 #-----------------------------------------------------------------------------
 # Qt plugins (imageformats, ...) relative directories

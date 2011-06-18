@@ -234,8 +234,8 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
     {
     settingsFileName = QString("%1-%2.%3%4").
       arg(qSlicerCoreApplication::applicationName().replace(":", "")).
-      arg(QString::number(Slicer_VERSION_MAJOR)).
-      arg(QString::number(Slicer_VERSION_MINOR)).
+      arg(QString::number(Slicer_MAJOR_VERSION)).
+      arg(QString::number(Slicer_MINOR_VERSION)).
       arg(suffix);
     settingsFileName += "-tmp";
     }
