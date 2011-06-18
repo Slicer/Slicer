@@ -64,8 +64,8 @@ SET(Tests_UtilityFiles
 
 QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+SET(TestsToRun ${Tests})
+LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 

@@ -4,8 +4,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLModelTransformNodeTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+#SET(TestsToRun ${Tests})
+#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 

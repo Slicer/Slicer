@@ -7,10 +7,10 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
   vtkMRMLSliceModelDisplayableManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
-)
+  )
 
-SET (TestsToRun ${Tests})
-REMOVE (TestsToRun ${KIT}CxxTests.cxx)
+SET(TestsToRun ${Tests})
+LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}
