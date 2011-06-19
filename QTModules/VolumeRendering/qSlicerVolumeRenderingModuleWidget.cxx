@@ -34,6 +34,7 @@ public:
   virtual void setupUi(qSlicerVolumeRenderingModuleWidget*);
   vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode();
   void populateRenderingTechniqueComboBox();
+  void populatePresetsIcons(qMRMLNodeComboBox* presetsNodeComboBox);
 
   vtkMRMLVolumeRenderingDisplayNode* DisplayNode;
   QMap<int, int>                     LastTechniques;
@@ -137,7 +138,15 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->RenderingTechniqueFgComboBox->addItem(
     "Illustrative Context Preserving Exploration",
     vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
-
+  
+  // Volume Properties
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
+  this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
+  this->populatePresetsIcons(this->PresetsNodeComboBox);
+  QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(applyPreset(vtkMRMLNode*)));
+  
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
   this->InputsCollapsibleButton->setEnabled(false);;
@@ -209,6 +218,30 @@ void qSlicerVolumeRenderingModuleWidgetPrivate
     volumeMapper != vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping);
 }
 
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidgetPrivate
+::populatePresetsIcons(qMRMLNodeComboBox* presetsNodeComboBox)
+{
+/*
+  // This is a hack and works only because the presets scene is never modified.
+  for (int i = 0; i < presetsNodeComboBox->nodeCount(); ++i)
+    {
+    vtkMRMLNode* presetNode = presetsNodeComboBox->nodeFromIndex(i);
+    QIcon presetIcon(QString(":/Presets/") + presetNode->GetName());
+    if (!presetIcon.isNull())
+      {
+      presetsNodeComboBox->sortFilterProxyModel()->setData(
+        presetsNodeComboBox->sortFilterProxyModel()->indexFromMRMLNode(presetNode),
+        presetIcon, Qt::DisplayRole);
+      }
+    }
+  // Use a larger size for the icons
+  QComboBox* comboBox = presetsNodeComboBox->findChild<QComboBox*>();
+  int iconSize = presetsNodeComboBox->style()->pixelMetric(QStyle::PM_LargeIconSize);
+  comboBox->view()->setIconSize(QSize(iconSize, iconSize));
+  */
+}
+
 //-----------------------------------------------------------------------------
 // qSlicerVolumeRenderingModuleWidget methods
 
@@ -218,13 +251,19 @@ qSlicerVolumeRenderingModuleWidget
   : Superclass( parentWidget )
     , d_ptr( new qSlicerVolumeRenderingModuleWidgetPrivate(*this) )
 {
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->setupUi(this);
+  // setup the UI only in setup where the logic is available
 }
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingModuleWidget::~qSlicerVolumeRenderingModuleWidget()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setup()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  d->setupUi(this);
 }
 
 // --------------------------------------------------------------------------
@@ -524,6 +563,15 @@ void qSlicerVolumeRenderingModuleWidget
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingModuleWidget
+::mrmlVolumePropertyNode()const
+{
+  Q_D(const qSlicerVolumeRenderingModuleWidget);
+  return vtkMRMLVolumePropertyNode::SafeDownCast(
+    d->VolumePropertyNodeComboBox->currentNode());
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget
 ::setMRMLVolumePropertyNode(vtkMRMLNode* volumePropertyNode)
 {
@@ -724,4 +772,19 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentBgFgRatioChanged(double value)
     }
 
   d->DisplayNode->SetBgFgRatio(value);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::applyPreset(vtkMRMLNode* node)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumePropertyNode* presetNode =
+    vtkMRMLVolumePropertyNode::SafeDownCast(node);
+  vtkMRMLVolumePropertyNode* volumePropertyNode =
+    this->mrmlVolumePropertyNode();
+  if (!presetNode || !volumePropertyNode)
+    {
+    return;
+    }
+  volumePropertyNode->CopyParameterSet(presetNode);
 }

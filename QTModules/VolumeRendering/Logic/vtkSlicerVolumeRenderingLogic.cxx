@@ -57,11 +57,16 @@ vtkStandardNewMacro(vtkSlicerVolumeRenderingLogic);
 //----------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
 {
+  this->PresetsScene = 0;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic::~vtkSlicerVolumeRenderingLogic()
 {
+  if (this->PresetsScene)
+    {
+    this->PresetsScene->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -844,4 +849,31 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     vpStorageNode->Delete();
     }
   return vpNode;  
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLScene* vtkSlicerVolumeRenderingLogic::GetPresetsScene()
+{
+  if (!this->PresetsScene)
+    {
+    this->PresetsScene = vtkMRMLScene::New();
+    this->LoadPresets(this->PresetsScene);
+    }
+  return this->PresetsScene;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
+{
+  vtkMRMLVolumePropertyNode *vrNode = vtkMRMLVolumePropertyNode::New();
+  //Register node class
+  this->PresetsScene->RegisterNodeClass(vrNode);
+  vrNode->Delete();
+
+  vtksys_stl::string presetFileName(
+    this->GetModuleShareDirectory());
+  presetFileName += "/presets.xml";
+
+  this->PresetsScene->SetURL(presetFileName.c_str());
+  return this->PresetsScene->Connect() == 1;
 }

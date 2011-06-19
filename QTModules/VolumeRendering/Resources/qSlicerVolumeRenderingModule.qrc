@@ -3,4 +3,29 @@
     <file>Icons/VolumeRendering.png</file>
     <file>Icons/LoadVolume.png</file>
   </qresource>
+  <qresource prefix="/presets">
+    <file alias="CT-AAA">Icons/CT-AAA.png</file>
+	<file alias="CT-AAA2">Icons/CT-AAA2.png</file>
+	<file alias="CT-Bone">Icons/CT-Bone.png</file>
+	<file alias="CT-Bones">Icons/CT-Bones.png</file>
+	<file alias="CT-Cardiac">Icons/CT-Cardiac.png</file>
+	<file alias="CT-Cardiac2">Icons/CT-Cardiac2.png</file>
+	<file alias="CT-Cardiac3">Icons/CT-Cardiac3.png</file>
+	<file alias="CT-Chest-Contrast-Enhanced">Icons/CT-Chest-Contrast-Enhanced.png</file>
+	<file alias="CT-Chest-Vessels">Icons/CT-Chest-Vessels.png</file>
+	<file alias="CT-Coronary-Arteries">Icons/CT-Coronary-Arteries.png</file>
+	<file alias="CT-Coronary-Arteries-2">Icons/CT-Coronary-Arteries-2.png</file>
+	<file alias="CT-Coronary-Arteries-3">Icons/CT-Coronary-Arteries-3.png</file>
+	<file alias="CT-Cropped-Volume-Bone">Icons/CT-Cropped-Volume-Bone.png</file>
+	<file alias="CT-Fat">Icons/CT-Fat.png</file>
+	<file alias="CT-Liver-Vasculature">Icons/CT-Liver-Vasculature.png</file>
+	<file alias="CT-Lung">Icons/CT-Lung.png</file>
+	<file alias="CT-MIP">Icons/CT-MIP.png</file>
+	<file alias="CT-Muscle">Icons/CT-Muscle.png</file>
+	<file alias="CT-Pulmonary-Arteries">Icons/CT-Pulmonary-Arteries.png</file>
+	<file alias="CT-Soft-Tissue">Icons/CT-Soft-Tissue.png</file>
+	<file alias="MR-Angio-MIP-Rendered">Icons/MR-Angio-MIP-Rendered.png</file>
+	<file alias="MR-Default">Icons/MR-Default.png</file>
+	<file alias="MR-MIP">Icons/MR-MIP.png</file>
+  </qresource>
 </RCC>

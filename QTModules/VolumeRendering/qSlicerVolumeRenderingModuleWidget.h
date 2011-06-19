@@ -14,6 +14,7 @@ class vtkMRMLNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLViewNode;
 class vtkMRMLVolumeRenderingDisplayNode;
+class vtkMRMLVolumePropertyNode;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget :
@@ -30,6 +31,7 @@ public:
   vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
   vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
   vtkMRMLAnnotationROINode* mrmlROINode()const;
+  vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
   QList<vtkMRMLViewNode*> mrmlViewNodes()const;
 
 public slots:
@@ -47,6 +49,8 @@ public slots:
   void addVolumeIntoView(vtkMRMLNode* node);
 
   void fitROIToVolume();
+  
+  void applyPreset(vtkMRMLNode* volumePropertyNode);
 protected slots:
   void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
   void onVisibilityChanged(bool);
@@ -75,6 +79,8 @@ protected slots:
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
+
+  virtual void setup();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);

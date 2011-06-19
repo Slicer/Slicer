@@ -131,10 +131,14 @@ public:
 
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 
+  vtkMRMLScene* GetPresetsScene();
+
 protected:
   vtkSlicerVolumeRenderingLogic();
   virtual ~vtkSlicerVolumeRenderingLogic();
   
+  bool LoadPresets(vtkMRMLScene* scene);
+  vtkMRMLScene* PresetsScene;
 private:
 
   vtkSlicerVolumeRenderingLogic(const vtkSlicerVolumeRenderingLogic&); // Not implemented
