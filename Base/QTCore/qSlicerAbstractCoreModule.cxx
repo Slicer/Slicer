@@ -214,8 +214,8 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
       qDebug() << "Warning, the module "<<this->title()<< "has no widget representation";
       return 0;
       }
+    // internally sets the logic and call setup, 
     d->WidgetRepresentation->setModule(this);
-    d->WidgetRepresentation->setup();
     // Note: setMRMLScene should be called after setup (just to make sure widgets
     // are well written and can handle empty mrmlscene
     d->WidgetRepresentation->setMRMLScene(this->mrmlScene());

@@ -85,4 +85,5 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* m
   Q_D(qSlicerAbstractModuleRepresentation);
   d->Module = module;
   d->Logic = module ? module->logic() : 0;
+  this->setup();
 }

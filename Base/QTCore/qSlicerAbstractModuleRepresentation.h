@@ -53,14 +53,18 @@ public:
   QString moduleName()const;
 
   /// Returns the module the representation belongs to.
+  /// The module is set right before setup() is called.
   qSlicerAbstractCoreModule* module()const;
 
 protected:
   ///
-  /// All inialization code should be done in the setup
+  /// All inialization code (typically setupUi()) must be done in setup()
+  /// The module and the logic are accessible.
   virtual void setup() = 0;
 
   /// Return the logic of the module
+  /// The logic is available (not null) when setup() is called. So you can't
+  /// access it in the constructor of your module widget.
   vtkMRMLAbstractLogic* logic() const;
 
 protected:
