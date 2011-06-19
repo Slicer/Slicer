@@ -67,12 +67,21 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     std::cerr << "Scene must contain a valid vtkMRMLVolumeNode:" << node << std::endl;
     return EXIT_FAILURE;
     }
-  scene->InitTraversal();
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
-    scene->GetNextNodeByClass("vtkMRMLSliceNode"));
-  if (!sliceNode)
+  vtkMRMLSliceNode* redSliceNode = 0;
+  std::vector<vtkMRMLNode*> sliceNodes;
+  int found = scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  for (unsigned int i = 0; i < sliceNodes.size(); ++i)
     {
-    std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << sliceNode << std::endl;
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
+    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+      {
+      redSliceNode = sliceNode;
+      break;
+      }
+    }
+  if (!redSliceNode)
+    {
+    std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -86,7 +95,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
 
   volumeThreshold.setMRMLVolumeNode(volumeNode);
   sliceWidget.setMRMLScene(scene);
-  sliceWidget.setMRMLSliceNode(sliceNode);
+  sliceWidget.setMRMLSliceNode(redSliceNode);
   topLevel.show();
   
   if (argc < 3 || QString(argv[2]) != "-I" )

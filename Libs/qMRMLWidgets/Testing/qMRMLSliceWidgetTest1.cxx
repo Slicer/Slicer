@@ -59,12 +59,22 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
     std::cerr << "Can't load scene:" << argv[1] << " error: " <<scene->GetErrorMessage() << std::endl;
     return EXIT_FAILURE;
     }
-  scene->InitTraversal();
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
-    scene->GetNextNodeByClass("vtkMRMLSliceNode"));
-  if (!sliceNode)
+  vtkMRMLSliceNode* redSliceNode = 0;
+  // search for a red slice node
+  std::vector<vtkMRMLNode*> sliceNodes;
+  int found = scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  for (unsigned int i = 0; i < sliceNodes.size(); ++i)
     {
-    std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << sliceNode << std::endl;
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
+    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+      {
+      redSliceNode = sliceNode;
+      break;
+      }
+    }
+  if (!redSliceNode)
+    {
+    std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
     return EXIT_FAILURE;
     }
   scene->InitTraversal();
@@ -85,9 +95,10 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
     volumeNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
     }
 
+  // "Red" slice by default
   qMRMLSliceWidget sliceWidget;
   sliceWidget.setMRMLScene(scene);
-  sliceWidget.setMRMLSliceNode(sliceNode);
+  sliceWidget.setMRMLSliceNode(redSliceNode);
   sliceWidget.show();
   
   qMRMLNodeObject nodeObject(volumeNode, &sliceWidget);

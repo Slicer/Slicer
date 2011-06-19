@@ -432,10 +432,13 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
 
   // Update from SliceNode
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
-  if (sliceNode && !this->GetMRMLScene()->GetIsUpdating())
+  if (sliceNode &&
+      !this->GetMRMLScene()->GetIsUpdating() &&
+      sliceNode == this->SliceNode)
     {
     assert (event == vtkCommand::ModifiedEvent);
-    assert (sliceNode == this->SliceNode);
+    // assert (sliceNode == this->SliceNode); not an assert because the node 
+    // might have change in CreateSliceModel() or UpdateSliceNode()
     vtkMRMLDisplayNode* sliceDisplayNode =
       this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
     if ( sliceDisplayNode)
@@ -1761,7 +1764,7 @@ void vtkMRMLSliceLogic::SetSliceOffset(double offset)
     return;
     }
 
-  this->GetSliceNode()->SetSliceOffset(offset);
+  sliceNode->SetSliceOffset(offset);
 
 }
 
