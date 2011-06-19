@@ -874,6 +874,6 @@ bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
     this->GetModuleShareDirectory());
   presetFileName += "/presets.xml";
 
-  this->PresetsScene->SetURL(presetFileName.c_str());
-  return this->PresetsScene->Connect() == 1;
+  scene->SetURL(presetFileName.c_str());
+  return scene->Connect() == 1;
 }

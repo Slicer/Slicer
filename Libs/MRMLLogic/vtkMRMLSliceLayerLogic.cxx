@@ -497,10 +497,10 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     return;
     }
   
-  int oldSliceMTime = this->Slice->GetMTime();
-  int oldReSliceMTime = this->Reslice->GetMTime();
-  int oldAssign = this->AssignAttributeTensorsFromScalars->GetMTime();
-  int oldLabel = this->LabelOutline->GetMTime();
+  unsigned long oldSliceMTime = this->Slice->GetMTime();
+  unsigned long oldReSliceMTime = this->Reslice->GetMTime();
+  unsigned long oldAssign = this->AssignAttributeTensorsFromScalars->GetMTime();
+  unsigned long oldLabel = this->LabelOutline->GetMTime();
   
   if ( (this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) ||
        (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0))

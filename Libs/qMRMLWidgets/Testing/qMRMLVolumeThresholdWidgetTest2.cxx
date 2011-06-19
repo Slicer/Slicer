@@ -69,7 +69,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     }
   vtkMRMLSliceNode* redSliceNode = 0;
   std::vector<vtkMRMLNode*> sliceNodes;
-  int found = scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
