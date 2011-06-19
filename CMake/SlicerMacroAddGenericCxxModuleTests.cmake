@@ -16,7 +16,7 @@ MACRO(SlicerMacroAddGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_
     # Note: the variable MODULENAME is used to configure the different tests.
     set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}ModuleTest1.cxx)
     CONFIGURE_FILE(
-      ${Slicer_SOURCE_DIR}/Base/QTCore/Testing/qSlicerModuleTest1.cxx.in
+      ${Slicer_SOURCE_DIR}/Base/QTCore/Testing/Cxx/qSlicerModuleTest1.cxx.in
       ${configured_test_src}
       @ONLY
       )
