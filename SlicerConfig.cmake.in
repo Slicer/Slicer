@@ -95,6 +95,8 @@ set(Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@")
 set(Slicer_LICENSE_FILE "@Slicer_LICENSE_FILE_CONFIG@")
 set(Slicer_README_FILE "@Slicer_README_FILE_CONFIG@")
 
+# Test templates directory
+set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR "@Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG@")
 # Path to extension CPack script
 set(Slicer_EXTENSION_CPACK "@Slicer_EXTENSION_CPACK_CONFIG@")
 

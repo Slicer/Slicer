@@ -5,7 +5,7 @@
 
 MACRO(SlicerMacroAddGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR)
   # Sanity checks
-  set(expected_nonempty_vars MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR)
+  set(expected_nonempty_vars MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR Slicer_CXX_MODULE_TEST_TEMPLATES_DIR)
   foreach(var ${expected_nonempty_vars})
     if("${var}" STREQUAL "")
       message(FATAL_ERROR "error: Variable ${var} is empty !")
@@ -16,7 +16,7 @@ MACRO(SlicerMacroAddGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_
     # Note: the variable MODULENAME is used to configure the different tests.
     set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}ModuleTest1.cxx)
     CONFIGURE_FILE(
-      ${Slicer_SOURCE_DIR}/Base/QTCore/Testing/Cxx/qSlicerModuleTest1.cxx.in
+      ${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR}/qSlicerModuleTest1.cxx.in
       ${configured_test_src}
       @ONLY
       )
