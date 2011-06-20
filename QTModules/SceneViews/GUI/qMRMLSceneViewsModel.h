@@ -39,11 +39,10 @@ public:
 
   // Enum for the different columns
   enum Columns{
-    NameColumn = 0,
-    IdColumn = 1,
-    ThumbnailColumn = 2,
-    RestoreColumn = 3,
-    DescriptionColumn = 4
+    RestoreColumn = 0,
+    ThumbnailColumn = 1,
+    DescriptionColumn = 2,
+    NameColumn = 3,
   };
 
 protected:

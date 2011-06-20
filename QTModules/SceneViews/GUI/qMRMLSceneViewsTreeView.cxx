@@ -114,6 +114,7 @@ void qMRMLSceneViewsTreeViewPrivate::init()
 
   q->header()->moveSection(qMRMLSceneViewsModel::NameColumn, qMRMLSceneViewsModel::RestoreColumn);
   q->hideColumn(qMRMLSceneViewsModel::IDColumn);
+  q->hideColumn(qMRMLSceneViewsModel::NameColumn);
 }
 
 //------------------------------------------------------------------------------
