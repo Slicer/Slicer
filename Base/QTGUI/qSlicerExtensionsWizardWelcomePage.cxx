@@ -81,7 +81,7 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   q->registerField("installEnabled", this->InstallExtensionsCheckBox);
   q->registerField("uninstallEnabled", this->UninstallExtensionsCheckBox);
   q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(const QString&)));
-  q->registerField("extensionsServerURL", this->ExtensionServerURL, "currentText", SIGNAL(textChanged(const QString&)));
+  q->registerField("extensionsServerURL", this->ExtensionServerURL, "text", SIGNAL(textChanged(const QString&)));
 
   q->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(QList<QVariantMap>()));
   q->registerField("retrievedListOfS4extFiles", q, "retrievedListOfS4extFiles");
