@@ -28,7 +28,10 @@ def runUnitTest(path, testname):
   import sys
   import unittest
   setEnabled()
-  sys.path.append(path)
+  if isinstance(path, basestring):
+    sys.path.append(path)
+  else:
+    sys.path.extend(path)
   print "-------------------------------------------"
   print "path: %s\ntestname: %s" % (path, testname)
   print "-------------------------------------------"
