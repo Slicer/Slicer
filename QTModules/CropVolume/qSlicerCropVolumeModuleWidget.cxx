@@ -108,16 +108,25 @@ void qSlicerCropVolumeModuleWidget::setup()
   connect(d->SpacingScalingSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(onSpacingScalingValueChanged(double)));
 
-  {
+}
+
+void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
+  Q_D(qSlicerCropVolumeModuleWidget);
+
+  if(scene == NULL)
+    return;
+
   vtkSlicerCropVolumeLogic *logic = d->logic();
-  vtkMRMLScene* scene = logic->GetMRMLScene();
+  logic->SetMRMLScene(scene);
+
   vtkCollection* parameterNodes = scene->GetNodesByClass("vtkMRMLCropVolumeParametersNode");
+
   if(parameterNodes->GetNumberOfItems() > 0)
     {
     this->parametersNode = vtkMRMLCropVolumeParametersNode::SafeDownCast(parameterNodes->GetItemAsObject(0));
     if(!this->parametersNode)
       {
-      qDebug() << "Fatal error";
+      qDebug() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode" << std::endl;
       abort();
       }
     //InitializeEventListeners(this->parametersNode);
@@ -133,7 +142,6 @@ void qSlicerCropVolumeModuleWidget::setup()
   parameterNodes->Delete();
 
   this->updateWidget();
-  }
 }
 
 //-----------------------------------------------------------------------------
