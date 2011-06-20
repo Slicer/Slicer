@@ -143,7 +143,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
   /// generation crash.
   if (QString(node->GetName()) == "UserDefined")
     {
-    return;
+    return false;
     }
   colorGradient.updatePixmap(node->GetScalarsToColors());
   return true;
