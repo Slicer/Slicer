@@ -126,7 +126,7 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
     this->parametersNode = vtkMRMLCropVolumeParametersNode::SafeDownCast(parameterNodes->GetItemAsObject(0));
     if(!this->parametersNode)
       {
-      qDebug() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode" << std::endl;
+      qDebug() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode";
       abort();
       }
     //InitializeEventListeners(this->parametersNode);
