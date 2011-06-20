@@ -141,7 +141,7 @@ public:
 
   ///
   /// Return a pointer on the MRML scene
-  vtkMRMLScene* mrmlScene() const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   ///
   /// Returns true if the module is enabled.
