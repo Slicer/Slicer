@@ -113,11 +113,9 @@ void qSlicerCropVolumeModuleWidget::setup()
 void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
   Q_D(qSlicerCropVolumeModuleWidget);
 
+  this->Superclass::setMRMLScene(scene);
   if(scene == NULL)
     return;
-
-  vtkSlicerCropVolumeLogic *logic = d->logic();
-  logic->SetMRMLScene(scene);
 
   vtkCollection* parameterNodes = scene->GetNodesByClass("vtkMRMLCropVolumeParametersNode");
 
@@ -126,8 +124,8 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
     this->parametersNode = vtkMRMLCropVolumeParametersNode::SafeDownCast(parameterNodes->GetItemAsObject(0));
     if(!this->parametersNode)
       {
-      qDebug() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode";
-      abort();
+      qCritical() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode";
+      Q_ASSERT(this->parametersNode);
       }
     //InitializeEventListeners(this->parametersNode);
     }
@@ -194,7 +192,8 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
   if(node)
     {
     this->parametersNode->SetAndObserveROINodeID(node->GetID());
-    this->parametersNode->SetROIVisibility(this->parametersNode->GetROINode()->GetVisibility());
+    this->parametersNode->SetROIVisibility(
+      this->parametersNode->GetROINode()->GetVisibility());
     this->updateWidget();
     }
 }
@@ -208,7 +207,11 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged()
     return;
     }
   this->parametersNode->SetROIVisibility(d->VisibilityButton->isChecked());
-  this->parametersNode->GetROINode()->SetVisibility(d->VisibilityButton->isChecked());
+  if (this->parametersNode->GetROINode())
+    {
+    this->parametersNode->GetROINode()->SetVisibility(
+      d->VisibilityButton->isChecked());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -270,11 +273,7 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     return;
     }
   vtkMRMLCropVolumeParametersNode *parameterNode = this->parametersNode;
-  if(vtkMRMLVolumeNode::SafeDownCast(d->InputVolumeComboBox->currentNode())
-      != parameterNode->GetInputVolumeNode())
-    {
-    d->InputVolumeComboBox->setCurrentNode(parameterNode->GetInputVolumeNode());
-    }
+  d->InputVolumeComboBox->setCurrentNode(parameterNode->GetInputVolumeNode());
 
   d->VisibilityButton->setChecked(parameterNode->GetROIVisibility());
   switch(parameterNode->GetInterpolationMode())
@@ -285,10 +284,9 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     case 4: d->BSRadioButton->setChecked(1); break;
     }
   d->IsotropicCheckbox->setChecked(parameterNode->GetIsotropicResampling());
-  if (this->parametersNode->GetROINode())
-    {   
-    d->VisibilityButton->setChecked(parameterNode->GetROIVisibility());
-    }
+  d->VisibilityButton->setChecked(
+    this->parametersNode->GetROINode() &&
+    parameterNode->GetROIVisibility());
 
   d->SpacingScalingSpinBox->setValue(parameterNode->GetSpacingScalingConst());
 }
