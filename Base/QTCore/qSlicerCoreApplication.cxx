@@ -360,6 +360,7 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverPythonPath()
 {
+#ifdef Slicer_USE_PYTHONQT
   QString pythonPath = this->Environment.value("PYTHONPATH");
 
   // If there is no PYTHONPATH attempt to generate one.
@@ -369,6 +370,7 @@ void qSlicerCoreApplicationPrivate::discoverPythonPath()
     pythonPath = QString("PYTHONPATH=") + tempPythonManager.pythonPaths().join(":");
     vtksys::SystemTools::PutEnv(pythonPath.toLatin1());
     }
+#endif
 }
 
 //-----------------------------------------------------------------------------
