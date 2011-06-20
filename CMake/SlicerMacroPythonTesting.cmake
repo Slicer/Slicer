@@ -27,7 +27,7 @@ MACRO(SLICER_ADD_PYTHON_TEST)
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   ADD_TEST(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+    COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash --ignore-slicerrc ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
 ENDMACRO()
@@ -40,7 +40,7 @@ MACRO(SLICER_ADD_PYTHON_UNITTEST)
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   ADD_TEST(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+    COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash --ignore-slicerrc ${MY_SLICER_ARGS}
     --python-code "import slicer.testing; slicer.testing.runUnitTest('${CMAKE_CURRENT_SOURCE_DIR}', '${test_name}')"
     )
