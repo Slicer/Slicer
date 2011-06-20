@@ -132,7 +132,8 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
     // don't add a second Lables node, File node or the old atlas node
     if (i != vtkMRMLColorTableNode::Labels &&
         i != vtkMRMLColorTableNode::File &&
-        i != vtkMRMLColorTableNode::Obsolete)
+        i != vtkMRMLColorTableNode::Obsolete &&
+        i != vtkMRMLColorTableNode::User)
       {
       vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
       node->SetType(i);
