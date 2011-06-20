@@ -47,7 +47,10 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
+
+#ifdef Slicer_USE_PYTHONQT
 #include "qSlicerSettingsPythonPanel.h"
+#endif
 
 // qMRML includes
 #include <qMRMLSliceWidget.h>
@@ -280,7 +283,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->SettingsDialog = new ctkSettingsDialog(q);
   this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
   this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
+#ifdef Slicer_USE_PYTHONQT
   this->SettingsDialog->addPanel("Python settings", new qSlicerSettingsPythonPanel);
+#endif
   settingsModulesPanel->setRestartRequested(false);
   QObject::connect(this->SettingsDialog, SIGNAL(accepted()), q, SLOT(onSettingDialogAccepted()));
 }

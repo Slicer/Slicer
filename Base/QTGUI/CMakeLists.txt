@@ -75,8 +75,6 @@ SET(KIT_SRCS
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.cxx
   qSlicerSettingsGeneralPanel.h
-  qSlicerSettingsPythonPanel.cxx
-  qSlicerSettingsPythonPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerWidget.cxx
@@ -91,6 +89,8 @@ IF(Slicer_USE_PYTHONQT)
     qSlicerScriptedLoadableModuleWidget.h
     qSlicerScriptedLoadableModule.cxx
     qSlicerScriptedLoadableModule.h
+    qSlicerSettingsPythonPanel.cxx
+    qSlicerSettingsPythonPanel.h
     )
 ENDIF()
 
@@ -138,7 +138,6 @@ SET(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.h
-  qSlicerSettingsPythonPanel.h
   qSlicerWidget.h
   )
   
@@ -148,6 +147,7 @@ IF(Slicer_USE_PYTHONQT)
     qSlicerBaseQTGUIPythonQtDecorators.h
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedLoadableModuleWidget.h
+    qSlicerSettingsPythonPanel.h
     )
 ENDIF(Slicer_USE_PYTHONQT)
 
@@ -163,8 +163,14 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerSaveDataDialog.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
   Resources/UI/qSlicerSettingsGeneralPanel.ui
-  Resources/UI/qSlicerSettingsPythonPanel.ui
 )
+
+# PythonQt decorator
+IF(Slicer_USE_PYTHONQT)
+  LIST(APPEND KIT_UI_SRCS
+  Resources/UI/qSlicerSettingsPythonPanel.ui
+  )
+ENDIF()
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
