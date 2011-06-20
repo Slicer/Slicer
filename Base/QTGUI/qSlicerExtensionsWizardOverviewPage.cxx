@@ -163,7 +163,7 @@ QList<ManifestEntry*> UpdateModulesFromRepository(const QString& extensionServer
   // Matching group 3: Extension name
   // Matching group 4: (git|svn|local)
   // Matching group 5: (sha1|revision|"")
-  QRegExp regex("^((?:[a-f0-9]{5,40})|(?:\\d+))\\-((?:linux|macosx|win32|win64|na)-(?:i386|amd64|x86|na))\\-([a-zA-Z0-9_]+)\\-(svn|git|local)((?:[a-f0-9]{5,40})|(?:\\d*))\\-\\d{4}\\-\\d{2}\\-\\d{2}\\.tar.gz$");
+  QRegExp regex("^((?:[a-f0-9]{5,40})|(?:\\d+))\\-((?:linux|macosx|win|na)-(?:i386|amd64|na))\\-([a-zA-Z0-9_]+)\\-(svn|git|local)((?:[a-f0-9]{5,40})|(?:\\d*))\\-\\d{4}\\-\\d{2}\\-\\d{2}\\.tar.gz$");
 
   std::vector<ManifestEntry*> updatedManifestEntries;
   QStringList processedS4extFileNames;
