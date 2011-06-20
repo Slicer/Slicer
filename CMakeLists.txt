@@ -644,23 +644,24 @@ SET(Slicer_GUI_LIBRARY qSlicerBaseQTGUI)
 #-----------------------------------------------------------------------------
 # Module Logic
 #-----------------------------------------------------------------------------
-
-# KWWidgets and Qt modules share the same logics typically located in the
-# kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
-# we need to manually add them:
-# Loop through Modules subdirectory and try to include Logic subdirectory if it exists
-FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
-FOREACH(subdir ${modules_subdirs})
-  IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
-    ADD_SUBDIRECTORY(${subdir}/Logic)
-  ENDIF()
-  FILE(GLOB subsubdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${subdir}/*)
-  FOREACH(subsubdir ${subsubdirs})
-    IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subsubdir}/Logic)
-      ADD_SUBDIRECTORY(${subsubdir}/Logic)
+IF(Slicer_BUILD_QTLOADABLEMODULES)
+  # KWWidgets and Qt modules share the same logics typically located in the
+  # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
+  # we need to manually add them:
+  # Loop through Modules subdirectory and try to include Logic subdirectory if it exists
+  FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
+  FOREACH(subdir ${modules_subdirs})
+    IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
+      ADD_SUBDIRECTORY(${subdir}/Logic)
     ENDIF()
+    FILE(GLOB subsubdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${subdir}/*)
+    FOREACH(subsubdir ${subsubdirs})
+      IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subsubdir}/Logic)
+        ADD_SUBDIRECTORY(${subsubdir}/Logic)
+      ENDIF()
+    ENDFOREACH()
   ENDFOREACH()
-ENDFOREACH()
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
