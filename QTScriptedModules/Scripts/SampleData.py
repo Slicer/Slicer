@@ -41,7 +41,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
   def select(self):
     m = slicer.util.mainWindow()
-    m.moduleSelector().selectModuleByTitle('SampleData')
+    m.moduleSelector().selectModuleByTitle('Sample Data')
 
 
 #
