@@ -1,9 +1,9 @@
 
 #
-# SlicerMacroAddGenericCxxModuleTests
+# SlicerMacroConfigureGenericCxxModuleTests
 #
 
-MACRO(SlicerMacroAddGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR)
+MACRO(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR)
   # Sanity checks
   set(expected_nonempty_vars MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR Slicer_CXX_MODULE_TEST_TEMPLATES_DIR)
   foreach(var ${expected_nonempty_vars})

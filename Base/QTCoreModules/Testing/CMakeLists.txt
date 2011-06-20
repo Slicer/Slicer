@@ -4,7 +4,7 @@ SET(KIT_TEST_SRCS)
 SET(KIT_TEST_NAMES)
 SET(KIT_TEST_NAMES_CXX)
 SET(modulenames Cameras Colors Data EventBroker ROI SliceController Transforms)
-SlicerMacroAddGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+SlicerMacroConfigureGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx

@@ -343,7 +343,7 @@ IF(BUILD_TESTING)
   SET_PROPERTY(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
   INCLUDE(CTest)
   INCLUDE(SlicerMacroPythonTesting)
-  INCLUDE(SlicerMacroAddGenericCxxModuleTests)
+  INCLUDE(SlicerMacroConfigureGenericCxxModuleTests)
 
   # Add Experimental target - Adapted from CTestTargets.cmake
   SET(__conf_types "")
