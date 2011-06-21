@@ -157,7 +157,7 @@ QList<ManifestEntry*> UpdateModulesFromRepository(const QString& extensionServer
     s4extFileNameToMap.insert(file.value("filename").toString(), file);
     }
 
-  // The following regex has been developer with the help of http://rexv.org/
+  // The following regex has been developed with the help of http://rexv.org/
   // Matching group 1: Slicer revision - Could be 'svn revision' or 'git sha1'
   // Matching group 2: <platform>-<arch>
   // Matching group 3: Extension name
