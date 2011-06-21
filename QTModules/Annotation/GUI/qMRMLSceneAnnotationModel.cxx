@@ -158,16 +158,16 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         if (annotationNode->GetVisible())
           {
-          item->setData(QPixmap(":/Icons/SlicerVisible.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/VisibleOn.png"),Qt::DecorationRole);
           }
         else
           {
-          item->setData(QPixmap(":/Icons/SlicerInvisible.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/VisibleOff.png"),Qt::DecorationRole);
           }
         }
       else if (hnode)
         {
-        item->setData(QPixmap(":/Icons/SlicerVisibleInvisible.png"),Qt::DecorationRole);
+        item->setData(QPixmap(":/Icons/VisibleOrInvisible.png"),Qt::DecorationRole);
         }
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
