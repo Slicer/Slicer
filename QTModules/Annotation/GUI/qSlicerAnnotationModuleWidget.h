@@ -44,7 +44,6 @@ public:
     qSlicerAnnotationModuleWidget(QWidget *parent=0);
     ~qSlicerAnnotationModuleWidget();
 
-    void refreshTree();
 
     /// User clicked on property edit button
     void propertyEditButtonClicked(QString mrmlId);
@@ -73,6 +72,8 @@ public:
 protected:
 
 public slots:
+    void refreshTree();
+
     /// a public slot allowing other modules to open up the screen capture
     /// dialog
     void onSnapShotButtonClicked();
