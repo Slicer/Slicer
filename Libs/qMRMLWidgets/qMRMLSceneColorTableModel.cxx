@@ -58,6 +58,11 @@ qMRMLSceneColorTableModelPrivate::ColorGradient::ColorGradient()
 //------------------------------------------------------------------------------
 void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToColors* scalarsToColors)
 {
+  if (!scalarsToColors ||
+      scalarsToColors->GetNumberOfAvailableColors() <= 0)
+    {
+    return;
+    } 
   const int width = this->Pixmap.width();
   const int height = this->Pixmap.height();
 
