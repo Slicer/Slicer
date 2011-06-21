@@ -50,7 +50,7 @@ endif()
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 include(CMakeParseArguments)
-#include(ctkMacroCompilePythonScript)
+include(ctkMacroCompilePythonScript)
 include(SlicerMacroParseArguments)
 include(SlicerMacroBuildModuleQtLibrary)
 include(SlicerMacroBuildModuleVTKLibrary)

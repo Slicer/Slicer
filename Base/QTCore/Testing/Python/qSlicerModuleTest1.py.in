@@ -1,0 +1,38 @@
+import unittest
+
+class qSlicer@MODULENAME@ModuleTest1(unittest.TestCase):
+  
+  def setUp(self):
+    import slicer
+    self.module = slicer.modules.@MODULENAME_LC@
+  
+  def test_module_valid(self):
+    self.assertNotEqual(self.module, None)
+    self.assertEqual(self.module.name, '@MODULENAME_LC@')
+
+  def test_application(self):
+    import slicer
+    self.assertEqual(slicer.app.__class__.__name__, 'qSlicerApplication')
+    
+  def test_settings(self):
+    import slicer
+    import ctk
+    self.assertTrue(isinstance(slicer.app.settings(), ctk.ctkSettings))
+    
+  def test_acknowledgementText(self):
+    self.assertNotEqual(self.module.acknowledgementText, "")
+    
+  def test_logic(self):
+    self.assertEqual(self.module.logic(), self.module.logic())
+
+  def test_widgetRepresentation(self):
+    self.assertEqual(self.module.widgetRepresentation(), self.module.widgetRepresentation())
+
+  def test_setMRMLScene(self):
+    import slicer
+    scene = slicer.vtkMRMLScene()
+    self.module.setMRMLScene(scene)
+    self.assertEqual(self.module.mrmlScene(), scene)
+    self.module.setMRMLScene(slicer.mrmlScene)
+    self.assertEqual(self.module.mrmlScene(), slicer.mrmlScene)
+    

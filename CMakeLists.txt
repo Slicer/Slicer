@@ -344,6 +344,7 @@ IF(BUILD_TESTING)
   INCLUDE(CTest)
   INCLUDE(SlicerMacroPythonTesting)
   INCLUDE(SlicerMacroConfigureGenericCxxModuleTests)
+  INCLUDE(SlicerMacroConfigureGenericPythonModuleTests)
 
   # Add Experimental target - Adapted from CTestTargets.cmake
   SET(__conf_types "")

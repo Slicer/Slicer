@@ -30,6 +30,8 @@ SET(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
 
 # Test templates directory
 SET(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR})
+SET(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR})
+
 # Path to extension CPack script
 set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/SlicerExtensionCPack.cmake)
 

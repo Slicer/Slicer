@@ -15,7 +15,9 @@ ENDIF()
 
 SET_PROPERTY(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
 INCLUDE(CTest)
+INCLUDE(SlicerMacroPythonTesting)
 INCLUDE(SlicerMacroConfigureGenericCxxModuleTests)
+INCLUDE(SlicerMacroConfigureGenericPythonModuleTests)
 
 INCLUDE(SlicerBlockUploadExtensionPrerequisites)
 SET(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
