@@ -33,6 +33,7 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -50,7 +51,15 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->ListenNodeModifiedEvent = false;
-  this->CheckableItems = false;
+  
+  this->NameColumn = -1;
+  this->IDColumn = -1;
+  this->CheckableColumn = -1;
+  this->VisibilityColumn = -1;
+  
+  this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
+  this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
+
   this->MRMLScene = 0;
 }
 
@@ -69,6 +78,10 @@ void qMRMLSceneModelPrivate::init()
   Q_Q(qMRMLSceneModel);
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLSceneModel::onMRMLSceneEvent);
+  
+  this->NameColumn = qMRMLSceneModel::NameColumn;
+  this->IDColumn = qMRMLSceneModel::IDColumn;
+  
   q->setColumnCount(2);
   q->setHorizontalHeaderLabels(QStringList() << "Nodes" << "Ids");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
@@ -731,9 +744,13 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
+  Q_D(const qMRMLSceneModel);
   QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled
-                             | Qt::ItemIsUserCheckable
                              | Qt::ItemIsSelectable;
+  if (column == d->CheckableColumn && node->GetSelectable())
+    {
+    flags = flags | Qt::ItemIsUserCheckable;
+    }
   if (column == 0)
     {
     flags = flags | Qt::ItemIsEditable;
@@ -755,20 +772,22 @@ void qMRMLSceneModel::updateItemDataFromNode(
   QStandardItem* item, vtkMRMLNode* node, int column)
 {
   Q_D(qMRMLSceneModel);
-  switch (column)
+  if (column == d->NameColumn)
     {
-    case qMRMLSceneModel::NameColumn:
-      if (d->CheckableItems)
-        {
-        item->setCheckState(node->GetSelected() ? Qt::Checked : Qt::Unchecked);
-        }  
-      item->setText(QString(node->GetName()));
-      break;
-    case qMRMLSceneModel::IDColumn:
-      item->setText(QString(node->GetID()));
-      break;
-    default:
-      break;
+    item->setText(QString(node->GetName()));
+    }
+  if (column == d->IDColumn)
+    {
+    item->setText(QString(node->GetID()));
+    }
+  if (column == d->CheckableColumn)
+    {
+    item->setCheckState(node->GetSelected() ? Qt::Checked : Qt::Unchecked);
+    }
+  if (column == d->VisibilityColumn && node->IsA("vtkMRMLDisplayNode"))
+    {
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
+    item->setIcon(displayNode->GetVisibility() ? d->VisibleIcon : d->HiddenIcon);
     }
 }
 
@@ -815,13 +834,24 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
   Q_D(qMRMLSceneModel);
-  if (item->column() == qMRMLSceneModel::NameColumn)
+  if (item->column() == d->NameColumn)
     {
     node->SetName(item->text().toLatin1());
-    if (d->CheckableItems)
-      {
-      node->SetSelected(item->checkState() == Qt::Checked ? 1 : 0);
-      }
+    }
+  if (item->column() == d->IDColumn)
+    {
+    // Too dangerous
+    //node->SetName(item->text().toLatin1());
+    }
+  if (item->column() == d->CheckableColumn)
+    {
+    node->SetSelected(item->checkState() == Qt::Checked ? 1 : 0);
+    }
+  if (item->column() == d->VisibilityColumn &&
+      node->IsA("vtkMRMLDisplayNode"))
+    {
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
+    displayNode->SetVisibility(item->icon().cacheKey() == d->VisibleIcon.cacheKey() ? 1 : 0);
     }
 }
 
@@ -1108,16 +1138,61 @@ Qt::DropActions qMRMLSceneModel::supportedDropActions()const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::checkableItems()const
+int qMRMLSceneModel::nameColumn()const
 {
   Q_D(const qMRMLSceneModel);
-  return d->CheckableItems;
+  return d->NameColumn;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::setCheckableItems(bool checkable)
+void qMRMLSceneModel::setNameColumn(int column)
 {
   Q_D(qMRMLSceneModel);
-  d->CheckableItems = checkable;
+  d->NameColumn = column;
+  /// TODO: refresh the items
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneModel::idColumn()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->IDColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setIDColumn(int column)
+{
+  Q_D(qMRMLSceneModel);
+  d->IDColumn = column;
+  /// TODO: refresh the items
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneModel::checkableColumn()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->CheckableColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setCheckableColumn(int column)
+{
+  Q_D(qMRMLSceneModel);
+  d->CheckableColumn = column;
+  /// TODO: refresh the items
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneModel::visibilityColumn()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->VisibilityColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setVisibilityColumn(int column)
+{
+  Q_D(qMRMLSceneModel);
+  d->VisibilityColumn = column;
   /// TODO: refresh the items
 }

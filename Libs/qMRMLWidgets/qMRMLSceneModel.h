@@ -43,7 +43,23 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
-  Q_PROPERTY (bool checkableItems READ checkableItems WRITE setCheckableItems)
+  ///
+  /// Control in which column vtkMRMLNode names are displayed (Qt::DisplayRole).
+  /// A value of -1 hides it. First column (0) by default.
+  Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
+  ///
+  /// Control in which column vtkMRMLNode IDs are displayed (Qt::DisplayRole).
+  /// A value of -1 hides it. Second column (1) by default.
+  Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
+  ///
+  /// Control in which column vtkMRMLNode::Selected are displayed (Qt::CheckStateRole).
+  /// A value of -1 hides it. Hidden by default (value of -1).
+  Q_PROPERTY (int checkableColumn READ checkableColumn WRITE setCheckableColumn)
+  ///
+  /// Control in which column vtkMRMLNode::Visibility are displayed (Qt::DecorationRole).
+  /// A value of -1 hides it. Hidden by default (value of -1).
+  Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
@@ -84,8 +100,17 @@ public:
   void setListenNodeModifiedEvent(bool listen);
   bool listenNodeModifiedEvent()const;
   
-  void setCheckableItems(bool);
-  bool checkableItems()const;
+  int nameColumn()const;
+  void setNameColumn(int column);
+
+  int idColumn()const;
+  void setIDColumn(int column);
+  
+  int checkableColumn()const;
+  void setCheckableColumn(int column);
+
+  int visibilityColumn()const;
+  void setVisibilityColumn(int column);
 
   ///
   /// Extra items that are prepended to the node list
