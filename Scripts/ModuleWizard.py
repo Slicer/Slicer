@@ -62,6 +62,9 @@ def main(argv):
     if arg == "--target":
       target = argv.pop(0)
       continue
+    if arg == "--help":
+      usage()
+      exit()
     moduleName = arg
 
   if moduleName == "":
