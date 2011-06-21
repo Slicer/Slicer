@@ -87,7 +87,84 @@ qSlicerAnnotationModuleWidgetPrivate::~qSlicerAnnotationModuleWidgetPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
+  Q_Q(qSlicerAnnotationModuleWidget);
+
   this->Ui_qSlicerAnnotationModule::setupUi(widget);
+
+
+  // setup the hierarchy treeWidget
+  this->hierarchyTreeView->setAndObserveLogic(this->logic());
+  this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
+  // logic - make sure the logic knows about this widget
+  this->logic()->SetAndObserveWidget(q);
+  this->hierarchyTreeView->hideScene();
+// TODO: this is wrong, fire a signal instead  
+  this->hierarchyTreeView->setAndObserveWidget(q);
+
+
+
+
+  q->connect(this->persistentCheckBox, SIGNAL(stateChanged(int)), q,
+                SLOT(onPersistentCheckBoxStateChanged(int)));
+  // annotation tools
+  q->connect(this->fiducialTypeButton, SIGNAL(clicked()), q,
+      SLOT(onFiducialNodeButtonClicked()));
+  q->connect(this->textTypeButton, SIGNAL(clicked()), q,
+      SLOT(onTextNodeButtonClicked()));
+  q->connect(this->bidimensionalTypeButton, SIGNAL(clicked()), q,
+      SLOT(onBidimensionalNodeButtonClicked()));
+  q->connect(this->rulerTypeButton, SIGNAL(clicked()), q,
+      SLOT(onRulerNodeButtonClicked()));
+  q->connect(this->roiTypeButton, SIGNAL(clicked()), q,
+        SLOT(onROINodeButtonClicked()));
+
+  // mouse modes
+  q->connect(this->pauseButton, SIGNAL(clicked()), q,
+      SLOT(onPauseButtonClicked()));
+  q->connect(this->resumeButton, SIGNAL(clicked()), q,
+      SLOT(onResumeButtonClicked()));
+  q->connect(this->cancelButton, SIGNAL(clicked()), q,
+      SLOT(onCancelButtonClicked()));
+  q->connect(this->doneButton, SIGNAL(clicked()), q,
+      SLOT(onDoneButtonClicked()));
+
+  // edit panel
+  q->connect(this->selectAllButton, SIGNAL(clicked()),
+        SLOT(selectAllButtonClicked()));
+  q->connect(this->unselectAllButton, SIGNAL(clicked()),
+        SLOT(unselectAllButtonClicked()));
+
+  q->connect(this->visibleSelectedButton, SIGNAL(clicked()),
+      SLOT(visibleSelectedButtonClicked()));
+  q->connect(this->lockSelectedButton, SIGNAL(clicked()), q,
+      SLOT(lockSelectedButtonClicked()));
+
+  q->connect(this->restoreViewButton, SIGNAL(clicked()), q,
+      SLOT(onRestoreViewButtonClicked()));
+
+  q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
+      SLOT(moveDownSelected()));
+  q->connect(this->moveUpSelectedButton, SIGNAL(clicked()),
+      SLOT(moveUpSelected()));
+
+  q->connect(this->addHierarchyButton, SIGNAL(clicked()),
+      SLOT(onAddHierarchyButtonClicked()));
+  q->connect(this->deleteSelectedButton, SIGNAL(clicked()),
+      SLOT(deleteSelectedButtonClicked()));
+
+  // Save Panel
+  q->connect(this->screenShot, SIGNAL(clicked()), q,
+      SLOT(onSnapShotButtonClicked()));
+  q->connect(this->generateReport, SIGNAL(clicked()), q,
+      SLOT(onReportButtonClicked()));
+
+  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
+
+  // update from the mrml scene
+  q->refreshTree();
+
+  // update the state according to the interaction node
+  q->updateWidgetFromInteractionMode(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -130,73 +207,8 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
 void qSlicerAnnotationModuleWidget::setup()
 {
   Q_D(qSlicerAnnotationModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
-
-  // setup the hierarchy treeWidget
-  d->hierarchyTreeView->setAndObserveWidget(this);
-  d->hierarchyTreeView->setAndObserveLogic(d->logic());
-  d->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
-  d->hierarchyTreeView->hideScene();
-
-  this->connect(d->persistentCheckBox, SIGNAL(stateChanged(int)), this,
-                SLOT(onPersistentCheckBoxStateChanged(int)));
-  // annotation tools
-  this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
-      SLOT(onFiducialNodeButtonClicked()));
-  this->connect(d->textTypeButton, SIGNAL(clicked()), this,
-      SLOT(onTextNodeButtonClicked()));
-  this->connect(d->bidimensionalTypeButton, SIGNAL(clicked()), this,
-      SLOT(onBidimensionalNodeButtonClicked()));
-  this->connect(d->rulerTypeButton, SIGNAL(clicked()), this,
-      SLOT(onRulerNodeButtonClicked()));
-  this->connect(d->roiTypeButton, SIGNAL(clicked()), this,
-        SLOT(onROINodeButtonClicked()));
-
-  // mouse modes
-  this->connect(d->pauseButton, SIGNAL(clicked()), this,
-      SLOT(onPauseButtonClicked()));
-  this->connect(d->resumeButton, SIGNAL(clicked()), this,
-      SLOT(onResumeButtonClicked()));
-  this->connect(d->cancelButton, SIGNAL(clicked()), this,
-      SLOT(onCancelButtonClicked()));
-  this->connect(d->doneButton, SIGNAL(clicked()), this,
-      SLOT(onDoneButtonClicked()));
-
-  // edit panel
-  this->connect(d->selectAllButton, SIGNAL(clicked()),
-        SLOT(selectAllButtonClicked()));
-  this->connect(d->unselectAllButton, SIGNAL(clicked()),
-        SLOT(unselectAllButtonClicked()));
-
-  this->connect(d->visibleSelectedButton, SIGNAL(clicked()),
-      SLOT(visibleSelectedButtonClicked()));
-  this->connect(d->lockSelectedButton, SIGNAL(clicked()), this,
-      SLOT(lockSelectedButtonClicked()));
-
-  this->connect(d->restoreViewButton, SIGNAL(clicked()), this,
-      SLOT(onRestoreViewButtonClicked()));
-
-  this->connect(d->moveDownSelectedButton, SIGNAL(clicked()),
-      SLOT(moveDownSelected()));
-  this->connect(d->moveUpSelectedButton, SIGNAL(clicked()),
-      SLOT(moveUpSelected()));
-
-  this->connect(d->addHierarchyButton, SIGNAL(clicked()),
-      SLOT(onAddHierarchyButtonClicked()));
-  this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
-      SLOT(deleteSelectedButtonClicked()));
-
-  // Save Panel
-  this->connect(d->screenShot, SIGNAL(clicked()), this,
-      SLOT(onSnapShotButtonClicked()));
-  this->connect(d->generateReport, SIGNAL(clicked()), this,
-      SLOT(onReportButtonClicked()));
-
-  // logic - make sure the logic knows about this widget
-  d->logic()->SetAndObserveWidget(this);
-
-  // update the state according to the interaction node
-  this->updateWidgetFromInteractionMode(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -807,6 +819,12 @@ void qSlicerAnnotationModuleWidget::refreshTree()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
+  if (d->logic() && d->logic()->GetMRMLScene() &&
+      d->logic()->GetMRMLScene()->GetIsUpdating())
+    {
+    // scene is updating, return
+    return;
+    }
   // this gets called on scene closed, can we make sure that the widget is
   // visible?
   
@@ -950,7 +968,8 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
   vtkMRMLInteractionNode *iNode = interactionNode;
   if (iNode == NULL)
     {
-    if (this->logic()->GetMRMLScene() != NULL)
+    if (this->logic()->GetMRMLScene() != NULL &&
+        this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"))
       {
       iNode =
         vtkMRMLInteractionNode::SafeDownCast(

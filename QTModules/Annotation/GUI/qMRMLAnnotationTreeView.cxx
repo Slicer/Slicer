@@ -517,7 +517,8 @@ void qMRMLAnnotationTreeView::hideScene()
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();
 
-  if (this->m_Logic)
+  if (this->m_Logic &&
+      this->m_Logic->GetMRMLScene())
     {
     // if the logic is already registered, we look for the first annotationHierarchyNode
     vtkMRMLNode* toplevelNode = this->m_Logic->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationHierarchyNode");
