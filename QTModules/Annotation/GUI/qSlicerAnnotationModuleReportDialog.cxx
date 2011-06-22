@@ -147,8 +147,15 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
 
   this->m_Html = QString("");
 
-  this->generateReportRecursive(0,this->m_Logic->GetTopLevelHierarchyNode(0));
-
+  vtkMRMLAnnotationHierarchyNode *toplevelNode = NULL;
+  char *toplevelNodeID = this->m_Logic->GetTopLevelHierarchyNodeID(0);
+  if (toplevelNodeID && this->m_Logic->GetMRMLScene() &&
+      this->m_Logic->GetMRMLScene()->GetNodeByID(toplevelNodeID))
+    {
+//    toplevelNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(toplevelNodeID));
+    toplevelNode = this->m_Logic->GetActiveHierarchyNode();
+    this->generateReportRecursive(0,toplevelNode);
+    }
   html.append(this->m_Html);
 
   html.append("</table>\n");

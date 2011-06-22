@@ -145,8 +145,7 @@ void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection& index,con
 
     // the user clicked in empty space of the treeView
     // so we set the active hierarchy to the top level one
-    this->m_Logic->SetActiveHierarchyNode(0);
-    //this->m_Logic->SetActiveHierarchyNodeID(NULL);
+    this->m_Logic->SetActiveHierarchyNodeID(NULL);
     }
 }
 
@@ -167,8 +166,7 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
 
   if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
-    this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode));
-    //this->m_Logic->SetActiveHierarchyNodeID(mrmlNode->GetID());
+    this->m_Logic->SetActiveHierarchyNodeID(mrmlNode->GetID());
     }
   else
     {
@@ -181,8 +179,7 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
       vtkMRMLHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::GetAssociatedHierarchyNode(this->mrmlScene(), mrmlNode->GetID());
       if (hnode && hnode->GetParentNode())
         {
-        this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(hnode->GetParentNode()));
-        //this->m_Logic->SetActiveHierarchyNodeID(hnode->GetParentNode()->GetID());
+        this->m_Logic->SetActiveHierarchyNodeID(hnode->GetParentNode()->GetID());
         }
       }
     }
@@ -400,8 +397,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
 
     }
 
-  this->m_Logic->SetActiveHierarchyNode(0);
-  //this->m_Logic->SetActiveHierarchyNodeID(NULL);
+  this->m_Logic->SetActiveHierarchyNodeID(NULL);
 
 }
 

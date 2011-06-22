@@ -210,19 +210,20 @@ public:
   /// active hierarchy node. Return true on success, false on failure.
   bool AddHierarchy();
 
-  /// Return the toplevel Annotation hierarchy node or create one if there is none:
+  /// Return the toplevel Annotation hierarchy node ID or create one and add it to the scene if there is none:
   /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
   /// just add the new toplevel hierarchy node.
-  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLNode* node=0);
+  char * GetTopLevelHierarchyNodeID(vtkMRMLNode* node=0);
 
-  /// Set the active hierarchy node which will be used as a parent for new annotations
-  void SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
+  /// Return the top level annotation hierarchy node for this node's class, adding one under the top level annotation hierarchy if there is none. If the passed in node is null, return null
+  char * GetTopLevelHierarchyNodeIDForNodeClass(vtkMRMLAnnotationNode *annotationNode);
 
-  /// Set the active hierarchy node which will be used as a parent for new annotations
-  void SetActiveHierarchyNodeByID(const char* id);
+  /// Get the active hierarchy node which will be used as a parent for new annotations
+  vtkMRMLAnnotationHierarchyNode *GetActiveHierarchyNode();
 
-  /// return the id of the active hierarchy node, null if none
-  const char *GetActiveHierarchyNodeID();
+  /// get/set the id of the active hierarchy node
+  vtkGetStringMacro(ActiveHierarchyNodeID);
+  vtkSetStringMacro(ActiveHierarchyNodeID);
 
   //
   // Place Annotations programmatically
@@ -251,12 +252,13 @@ private:
 
   vtkMRMLAnnotationNode* m_LastAddedAnnotationNode;
 
-  vtkMRMLAnnotationHierarchyNode* m_ActiveHierarchy;
-
   vtksys_stl::string m_StringHolder;
 
   char* m_MeasurementFormat;
   char* m_CoordinateFormat;
+
+  // id of the currently active hierarchy node
+  char *ActiveHierarchyNodeID;
 
   //
   // Private hierarchy functionality.
