@@ -13,6 +13,9 @@ FOREACH(proj ${Slicer_EXTERNAL_PROJECTS})
   INCLUDE(${${proj}_USE_FILE})
 ENDFOREACH()
 
+# Set PythonQt 'DIR' variable so that FIND_PACKAGE(PythonQt) works as expected.
+SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+
 # --------------------------------------------------------------------------
 # Platform check
 # --------------------------------------------------------------------------
@@ -51,6 +54,7 @@ endif()
 #-----------------------------------------------------------------------------
 include(CMakeParseArguments)
 include(ctkMacroCompilePythonScript)
+include(ctkMacroWrapPythonQt)
 include(SlicerMacroParseArguments)
 include(SlicerMacroBuildModuleQtLibrary)
 include(SlicerMacroBuildModuleVTKLibrary)
