@@ -108,14 +108,29 @@ void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
+void vtkMRMLAnnotationDisplayableManager::SetAndObserveNode(vtkMRMLAnnotationNode *annotationNode)
 {
+  if (!annotationNode)
+    {
+    return;
+    }
   VTK_CREATE(vtkIntArray, nodeEvents);
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::CancelPlacementEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+
+ if (annotationNode)// && !annotationNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
+   {
+   vtkUnObserveMRMLNodeMacro(annotationNode);
+   vtkObserveMRMLNodeEventsMacro(annotationNode, nodeEvents);
+   }
+}
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
+{
+ 
 
 
   // run through all associated nodes
@@ -125,14 +140,8 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
       ++it)
     {
     vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast((*it));
-
-    if (annotationNode)// && !annotationNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
-      {
-      vtkObserveMRMLNodeEventsMacro(*it, nodeEvents);
-      }
-
+    this->SetAndObserveNode(annotationNode);
     }
-
 }
 
 //---------------------------------------------------------------------------
@@ -241,7 +250,7 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
           this->Helper->AnnotationNodeList.push_back(annotationNode);
 
           // Refresh observers
-          this->SetAndObserveNodes();
+          this->SetAndObserveNode(annotationNode);
 
           // tear down widget creation
           this->OnWidgetCreated(widget, annotationNode);
@@ -253,6 +262,8 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
       }
     node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
     }
+  // set up observers on all the nodes
+//  this->SetAndObserveNodes();
 }
 
 //---------------------------------------------------------------------------
@@ -440,7 +451,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   this->Helper->AnnotationNodeList.push_back(annotationNode);
 
   // Refresh observers
-  this->SetAndObserveNodes();
+  this->SetAndObserveNode(annotationNode);
 
   // TODO do we need this render call?
   this->RequestRender();
@@ -473,7 +484,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
   this->Helper->RemoveWidgetAndNode(annotationNode);
 
   // Refresh observers
-  this->SetAndObserveNodes();
+  vtkUnObserveMRMLNodeMacro(annotationNode);
 
   // and render again after seeds were removed
   this->RequestRender();
@@ -1292,7 +1303,7 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r,
     worldCoordinates[3] = 1;
 
     rasToXyMatrix->MultiplyPoint(worldCoordinates,displayCoordinates);
-
+    xyToRasMatrix = NULL;
     }
   else
     {

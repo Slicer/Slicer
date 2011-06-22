@@ -120,6 +120,8 @@ protected:
   /// Check, if the widget is displayable in the current slice geometry
   bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
 
+  /// Observe one node
+  void SetAndObserveNode(vtkMRMLAnnotationNode *annotationNode);
   /// Observe all associated nodes.
   void SetAndObserveNodes();
 
