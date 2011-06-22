@@ -125,6 +125,13 @@ bool qSlicerCoreCommandOptions::disableLoadableModule() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableScriptedLoadableModule()const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-scripted-loadable-module").toBool();
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::pythonScript() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -217,6 +224,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("disable-loadable-module", "", QVariant::Bool,
                     "Disables the loading of Loadable Modules.");
+
+  this->addArgument("disable-scripted-loadable-module", "", QVariant::Bool,
+                    "Disables the loading of Scripted Loadable Modules.");
 
   this->addArgument("version", "", QVariant::Bool,
                     "Displays version information and exits.");

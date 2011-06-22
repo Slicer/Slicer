@@ -152,7 +152,13 @@ void registerLoadableModuleFactory(
   qSlicerLoadableModuleFactory* loadableModuleFactory = new qSlicerLoadableModuleFactory();
   loadableModuleFactory->setRegisteredItems(coreModuleFactoryRegisteredItems);
   moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory", loadableModuleFactory);
+}
 
+//----------------------------------------------------------------------------
+void registerScriptedLoadableModuleFactory(
+  qSlicerModuleFactoryManager * moduleFactoryManager,
+  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& coreModuleFactoryRegisteredItems)
+{
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
@@ -162,6 +168,9 @@ void registerLoadableModuleFactory(
     moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
                                           scriptedLoadableModuleFactory);
     }
+#else
+  Q_UNUSED(moduleFactoryManager);
+  Q_UNUSED(coreModuleFactoryRegisteredItems);
 #endif
 }
 
@@ -267,7 +276,10 @@ int main(int argc, char* argv[])
     {
     registerLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
     }
-
+  if (!app.commandOptions()->disableScriptedLoadableModule())
+    {
+    registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
+    }
   if (!app.commandOptions()->disableCLIModule())
     {
     registerCLIModuleFactory(

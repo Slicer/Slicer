@@ -81,6 +81,9 @@ public:
   /// Return True if the loading of Loadable Modules should be disabled
   bool disableLoadableModule()const;
 
+  /// Return True if the loading of Scripted Loadable Modules should be disabled
+  bool disableScriptedLoadableModule()const;
+
   /// Return True if slicer should display version and exit
   bool displayVersionAndExit()const;
 

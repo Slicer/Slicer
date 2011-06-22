@@ -18,89 +18,89 @@
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="LoadModulesLabel">
+    <widget class="QLabel" name="LoadLoadableModulesLabel">
      <property name="text">
       <string>Don't load modules:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="LoadModulesCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="LoadCommandLineModuleLabel">
-     <property name="text">
-      <string>Don't load command-line plugins:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
+    <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="HomeModuleLabel">
+    <widget class="QLabel" name="LoadCommandLineModuleLabel">
      <property name="text">
-      <string>Home module:</string>
+      <string>Don't load command-line plugins:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QPushButton" name="HomeModuleButton">
+    <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="ShowHiddenModulesLabel">
+    <widget class="QLabel" name="HomeModuleLabel">
      <property name="text">
-      <string>Show hidden modules:</string>
+      <string>Home module:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
+    <widget class="QPushButton" name="HomeModuleButton">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="4" column="0">
+    <widget class="QLabel" name="ShowHiddenModulesLabel">
+     <property name="text">
+      <string>Show hidden modules:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QLabel" name="TemporaryDirectoryLabel">
      <property name="text">
       <string>Temporary directory:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="ExtensionInstallDirectoryLabel">
      <property name="text">
       <string>Extensions install directory:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="ctkDirectoryButton" name="ExtensionInstallDirectoryButton"/>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="AdditionalModulePathsLabel">
      <property name="text">
       <string>Additional module paths:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
@@ -153,10 +153,24 @@
      </layout>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <widget class="QLabel" name="RestartRequestedLabel">
      <property name="text">
       <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="LoadScriptedLoadableModulesLabel">
+     <property name="text">
+      <string>Don't load scripted modules:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
