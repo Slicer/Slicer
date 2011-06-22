@@ -125,10 +125,16 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   //update scalar range
   vtkColorTransferFunction *functionColor = prop->GetRGBTransferFunction();
 
-  double rangeNew[2];
-  input->GetPointData()->GetScalars()->GetRange(rangeNew);
-  functionColor->AdjustRange(rangeNew);
+  vtkDataArray* scalars = input->GetPointData()->GetScalars();
+  if (!scalars)
+    {
+    return;
+    }
 
+  double rangeNew[2];
+  scalars->GetRange(rangeNew);
+  functionColor->AdjustRange(rangeNew);
+  
   vtkPiecewiseFunction *functionOpacity = prop->GetScalarOpacity();
   functionOpacity->AdjustRange(rangeNew);
 
@@ -385,13 +391,16 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVol
     //TODO label map
     } 
 
-  if (vspNode->GetVolumeNode() && vspNode->GetVolumeNode()->GetImageData())
+  vtkImageData* imageData = vspNode->GetVolumeNode() ? vtkMRMLScalarVolumeNode::SafeDownCast(
+    vspNode->GetVolumeNode())->GetImageData() : 0;
+  vtkDataArray* scalars = (imageData && imageData->GetPointData()) ? imageData->GetPointData()->GetScalars() : 0;
+  if (scalars)
     {
-      double scalarRange[2];
-      vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-      vspNode->SetDepthPeelingThreshold(scalarRange[0]);
+    double scalarRange[2];
+    scalars->GetRange(scalarRange, 0);
+    vspNode->SetDepthPeelingThreshold(scalarRange[0]);
 
-      vspNode->SetThreshold(scalarRange);
+    vspNode->SetThreshold(scalarRange);
     }
   }
 
