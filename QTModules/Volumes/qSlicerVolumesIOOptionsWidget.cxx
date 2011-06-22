@@ -23,7 +23,7 @@
 #include <QFileInfo>
 
 // CTK includes
-#include "qCTKFlowLayout.h"
+#include <ctkFlowLayout.h>
 
 /// Volumes includes
 #include "qSlicerVolumesIOOptionsWidget.h"
@@ -47,7 +47,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   d->setupUi(this);
 
   // Replace the horizontal layout with a flow layout
-  qCTKFlowLayout* flowLayout = new qCTKFlowLayout;
+  ctkFlowLayout* flowLayout = new ctkFlowLayout;
   QLayout* oldLayout = this->layout();
   int margins[4];
   oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);

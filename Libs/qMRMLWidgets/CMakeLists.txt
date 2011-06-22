@@ -31,8 +31,6 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
 # Sources
 #
 SET(qMRMLWidgets_SRCS
-  qCTKFlowLayout.cxx
-  qCTKFlowLayout.h
   qMRMLActionSignalMapper.cxx
   qMRMLActionSignalMapper.h
   qMRMLCheckableNodeComboBox.cxx

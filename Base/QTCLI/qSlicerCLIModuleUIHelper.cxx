@@ -26,8 +26,8 @@
 #include <ctkCollapsibleButton.h>
 #include <ctkDoubleSlider.h>
 #include <ctkDirectoryButton.h>
+#include <ctkFlowLayout.h>
 #include <ctkSliderWidget.h>
-#include <qCTKFlowLayout.h>
 
 // qMRML includes
 #include <qMRMLNodeComboBox.h>
@@ -761,7 +761,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createEnumerationTagWidget(const Modul
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   ButtonGroupWidgetWrapper * widget = new ButtonGroupWidgetWrapper;
-  qCTKFlowLayout * _layout = new qCTKFlowLayout(widget);
+  ctkFlowLayout * _layout = new ctkFlowLayout(widget);
   widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 
   for (ElementConstIterator sIt = sBeginIt; sIt != sEndIt; ++sIt)
