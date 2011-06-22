@@ -146,6 +146,7 @@ void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection& index,con
     // the user clicked in empty space of the treeView
     // so we set the active hierarchy to the top level one
     this->m_Logic->SetActiveHierarchyNode(0);
+    //this->m_Logic->SetActiveHierarchyNodeID(NULL);
     }
 }
 
@@ -167,6 +168,7 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
   if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
     this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode));
+    //this->m_Logic->SetActiveHierarchyNodeID(mrmlNode->GetID());
     }
   else
     {
@@ -177,9 +179,10 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
        !mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
       {
       vtkMRMLHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::GetAssociatedHierarchyNode(this->mrmlScene(), mrmlNode->GetID());
-      if (hnode)
+      if (hnode && hnode->GetParentNode())
         {
         this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(hnode->GetParentNode()));
+        //this->m_Logic->SetActiveHierarchyNodeID(hnode->GetParentNode()->GetID());
         }
       }
     }
@@ -204,7 +207,9 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
   else if (index.column() == qMRMLSceneAnnotationModel::EditColumn)
     {
     // user wants to edit the properties of this annotation
-    this->m_Widget->propertyEditButtonClicked(QString(mrmlNode->GetID()));
+    // signal the widget
+    this->onPropertyEditButtonClicked(QString(mrmlNode->GetID()));
+//    this->m_Widget->propertyEditButtonClicked(QString(mrmlNode->GetID()));
     }
 
 }
@@ -390,12 +395,13 @@ void qMRMLAnnotationTreeView::deleteSelected()
   for (int j=0; j < markedForDeletion.size(); ++j)
     {
 
-    vtkMRMLAnnotationNode* annotationNodeToDelete = vtkMRMLAnnotationNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
+    vtkMRMLAnnotationNode* annotationNodeToDelete = vtkMRMLAnnotationNode::SafeDownCast(this->mrmlScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
     this->m_Logic->RemoveAnnotationNode(annotationNodeToDelete);
 
     }
 
   this->m_Logic->SetActiveHierarchyNode(0);
+  //this->m_Logic->SetActiveHierarchyNodeID(NULL);
 
 }
 
@@ -662,29 +668,9 @@ void qMRMLAnnotationTreeView::mousePressEvent(QMouseEvent* event)
 //------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-/// Set and observe the GUI widget
-//-----------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::setAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
-{
-  if (!widget)
-    {
-    return;
-    }
-
-  Q_D(qMRMLAnnotationTreeView);
-
-  this->m_Widget = widget;
-
-
-  // propagate down to model
-  d->SceneModel->setAndObserveWidget(this->m_Widget);
-
-}
-
-//-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic)
+void qMRMLAnnotationTreeView::setLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
   if (!logic)
     {
@@ -696,6 +682,6 @@ void qMRMLAnnotationTreeView::setAndObserveLogic(vtkSlicerAnnotationModuleLogic*
   this->m_Logic = logic;
 
   // propagate down to model
-  d->SceneModel->setAndObserveLogic(this->m_Logic);
+  d->SceneModel->setLogic(this->m_Logic);
 
 }

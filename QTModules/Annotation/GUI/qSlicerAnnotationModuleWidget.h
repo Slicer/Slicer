@@ -45,8 +45,7 @@ public:
     ~qSlicerAnnotationModuleWidget();
 
 
-    /// User clicked on property edit button
-    void propertyEditButtonClicked(QString mrmlId);
+  
 
 
     //BTX
@@ -79,6 +78,9 @@ public slots:
     void onSnapShotButtonClicked();
 
 protected slots:
+
+    /// User clicked on property edit button
+    void propertyEditButtonClicked(QString mrmlId);
 
     // Table and Property Modify
     void moveDownSelected();

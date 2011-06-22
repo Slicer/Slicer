@@ -43,11 +43,8 @@ public:
   qMRMLSceneAnnotationModel(QObject *parent=0);
   virtual ~qMRMLSceneAnnotationModel();
 
-  // Register the widget
-  void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
-
   // Register the logic
-  void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
+  void setLogic(vtkSlicerAnnotationModuleLogic* logic);
 
   // Enum for the different columns
   enum Columns{
@@ -72,7 +69,6 @@ protected:
 private:
   Q_DISABLE_COPY(qMRMLSceneAnnotationModel);
 
-  qSlicerAnnotationModuleWidget* m_Widget;
   vtkSlicerAnnotationModuleLogic* m_Logic;
 
 };

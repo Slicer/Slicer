@@ -58,11 +58,8 @@ public:
 
   const char* firstSelectedNode();
 
-  // Register the widget
-  void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
-
   // Register the logic
-  void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
+  void setLogic(vtkSlicerAnnotationModuleLogic* logic);
 
 
   void toggleLockForSelected();
@@ -81,6 +78,7 @@ public slots:
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
+  void onPropertyEditButtonClicked(QString id);
 
 protected slots:
   void onClicked(const QModelIndex& index);
@@ -97,7 +95,6 @@ private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);
   Q_DISABLE_COPY(qMRMLAnnotationTreeView);
 
-  qSlicerAnnotationModuleWidget* m_Widget;
   vtkSlicerAnnotationModuleLogic* m_Logic;
   
   // toggle the visibility of an annotation

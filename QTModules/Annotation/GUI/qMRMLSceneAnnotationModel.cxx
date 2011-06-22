@@ -116,7 +116,6 @@ void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStand
     default:
       break;
     }
-  //this->m_Widget->refreshTree();
 }
 
 //------------------------------------------------------------------------------
@@ -259,24 +258,11 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
   return 0;
 }
 
-//-----------------------------------------------------------------------------
-/// Set and observe the GUI widget
-//-----------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::setAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
-{
-  if (!widget)
-    {
-    return;
-    }
-
-  this->m_Widget = widget;
-
-}
 
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic)
+void qMRMLSceneAnnotationModel::setLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
   if (!logic)
     {

@@ -93,14 +93,15 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
 
   // setup the hierarchy treeWidget
-  this->hierarchyTreeView->setAndObserveLogic(this->logic());
+  this->hierarchyTreeView->setLogic(this->logic());
   this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
   // logic - make sure the logic knows about this widget
   this->logic()->SetAndObserveWidget(q);
   this->hierarchyTreeView->hideScene();
-// TODO: this is wrong, fire a signal instead  
-  this->hierarchyTreeView->setAndObserveWidget(q);
 
+  // connect the tree's edit property button to the widget's slot
+  QObject::connect(this->hierarchyTreeView, SIGNAL(onPropertyEditButtonClicked(QString)),
+                   q, SLOT(propertyEditButtonClicked(QString)));
 
 
 
@@ -157,6 +158,7 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       SLOT(onSnapShotButtonClicked()));
   q->connect(this->generateReport, SIGNAL(clicked()), q,
       SLOT(onReportButtonClicked()));
+
 
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
 
@@ -241,6 +243,7 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
   d->hierarchyTreeView->selectAll();
   d->logic()->SetAllAnnotationsSelected(1);
   d->logic()->SetActiveHierarchyNode(0);
+  //d->logic()->SetActiveHierarchyNodeID(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -251,6 +254,7 @@ void qSlicerAnnotationModuleWidget::unselectAllButtonClicked()
   d->hierarchyTreeView->clearSelection();
   d->logic()->SetAllAnnotationsSelected(0);
   d->logic()->SetActiveHierarchyNode(0);
+  //d->logic()->SetActiveHierarchyNodeID(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -604,8 +608,8 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
-
   d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeView->firstSelectedNode());
+  //d->logic()->SetActiveHierarchyNodeID(d->hierarchyTreeView->firstSelectedNode());
   this->refreshTree();
   if (d->logic()->AddHierarchy())
     {
