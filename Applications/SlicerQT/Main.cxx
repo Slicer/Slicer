@@ -272,15 +272,15 @@ int main(int argc, char* argv[])
   qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();
   moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory", coreModuleFactory);
 
-  if (!app.commandOptions()->disableLoadableModule())
+  if (!app.commandOptions()->disableLoadableModules())
     {
     registerLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
     }
-  if (!app.commandOptions()->disableScriptedLoadableModule())
+  if (!app.commandOptions()->disableScriptedLoadableModules())
     {
     registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
     }
-  if (!app.commandOptions()->disableCLIModule())
+  if (!app.commandOptions()->disableCLIModules())
     {
     registerCLIModuleFactory(
           moduleFactoryManager,

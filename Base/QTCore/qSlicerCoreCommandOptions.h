@@ -33,12 +33,12 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
 {
   Q_OBJECT
   Q_PROPERTY(bool displayHelpAndExit READ displayHelpAndExit)
-  Q_PROPERTY(bool disableCLIModule READ disableCLIModule)
+  Q_PROPERTY(bool disableCLIModules READ disableCLIModules)
   Q_PROPERTY(bool ignoreSlicerRC READ ignoreSlicerRC)
   Q_PROPERTY(QString pythonScript READ pythonScript)
   Q_PROPERTY(QString extraPythonScript READ extraPythonScript)
   Q_PROPERTY(QString pythonCode READ pythonCode)
-  Q_PROPERTY(bool disableLoadableModule READ disableLoadableModule)
+  Q_PROPERTY(bool disableLoadableModules READ disableLoadableModules)
   Q_PROPERTY(bool displayVersionAndExit READ displayVersionAndExit)
   Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit)
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit)
@@ -61,7 +61,7 @@ public:
   bool ignoreRest() const;
 
   /// Return True if the loading of Command Line Modules should be disabled
-  bool disableCLIModule()const;
+  bool disableCLIModules()const;
 
   /// Return True if the loading of SlicerRC should be skipped
   bool ignoreSlicerRC()const;
@@ -79,10 +79,10 @@ public:
   QString pythonCode()const;
 
   /// Return True if the loading of Loadable Modules should be disabled
-  bool disableLoadableModule()const;
+  bool disableLoadableModules()const;
 
   /// Return True if the loading of Scripted Loadable Modules should be disabled
-  bool disableScriptedLoadableModule()const;
+  bool disableScriptedLoadableModules()const;
 
   /// Return True if slicer should display version and exit
   bool displayVersionAndExit()const;

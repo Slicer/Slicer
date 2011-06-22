@@ -104,10 +104,10 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableCLIModule() const
+bool qSlicerCoreCommandOptions::disableCLIModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-cli-module").toBool();
+  return d->ParsedArgs.value("disable-cli-modules").toBool();
 }
 
 //-----------------------------------------------------------------------------
@@ -118,17 +118,17 @@ bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableLoadableModule() const
+bool qSlicerCoreCommandOptions::disableLoadableModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-loadable-module").toBool();
+  return d->ParsedArgs.value("disable-loadable-modules").toBool();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableScriptedLoadableModule()const
+bool qSlicerCoreCommandOptions::disableScriptedLoadableModules()const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-scripted-loadable-module").toBool();
+  return d->ParsedArgs.value("disable-scripted-loadable-modules").toBool();
 }
 
 //-----------------------------------------------------------------------------
@@ -219,13 +219,13 @@ void qSlicerCoreCommandOptions::addArguments()
                     "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
 
-  this->addArgument("disable-cli-module", "", QVariant::Bool,
+  this->addArgument("disable-cli-modules", "", QVariant::Bool,
                     "Disables the loading of Command Line Modules.");
 
-  this->addArgument("disable-loadable-module", "", QVariant::Bool,
+  this->addArgument("disable-loadable-modules", "", QVariant::Bool,
                     "Disables the loading of Loadable Modules.");
 
-  this->addArgument("disable-scripted-loadable-module", "", QVariant::Bool,
+  this->addArgument("disable-scripted-loadable-modules", "", QVariant::Bool,
                     "Disables the loading of Scripted Loadable Modules.");
 
   this->addArgument("version", "", QVariant::Bool,

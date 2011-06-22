@@ -91,11 +91,11 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
 
   // Register settings
-  q->registerProperty("disable-loadable-module", this->LoadLoadableModulesCheckBox,
+  q->registerProperty("disable-loadable-modules", this->LoadLoadableModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("disable-scripted-loadable-module", this->LoadScriptedLoadableModulesCheckBox,
+  q->registerProperty("disable-scripted-loadable-modules", this->LoadScriptedLoadableModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("disable-cli-module", this->LoadCommandLineModulesCheckBox,
+  q->registerProperty("disable-cli-modules", this->LoadCommandLineModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
                       "currentModule", SIGNAL(currentModuleChanged(const QString&)));
