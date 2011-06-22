@@ -52,6 +52,7 @@ public:
   QString HelpText;
   QString AcknowledgementText;
   QIcon   Icon;
+  QVariantMap   Extensions;
   
   PyObject * PythonSelf;
   QString    PythonSource;
@@ -238,6 +239,10 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, helpText, HelpText)
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setAcknowledgementText, AcknowledgementText)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, acknowledgementText, AcknowledgementText)
+
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QVariantMap&, setExtensions, Extensions)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QVariantMap, extensions, Extensions)
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QIcon&, setIcon, Icon)
