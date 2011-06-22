@@ -15,49 +15,25 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Slice Controllers</string>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="qMRMLSliceControllerWidget" name="RedSliceControllerWidget"/>
-      </item>
-      <item>
-       <widget class="qMRMLSliceControllerWidget" name="YellowSliceControllerWidget">
-        <property name="sliceViewName">
-         <string>Yellow</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="qMRMLSliceControllerWidget" name="GreenSliceControllerWidget">
-        <property name="sliceViewName">
-         <string>Green</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <layout class="QVBoxLayout" name="SliceControllersLayout"/>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton_2">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton_2" native="true">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>Slice Information</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="SliceInformationLayout">
       <item>
        <layout class="QFormLayout" name="formLayout_2">
         <item row="0" column="0">
@@ -68,25 +44,25 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox">
+         <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox" native="true">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="toolTip">
            <string>Select a slice from the current scene</string>
           </property>
-          <property name="nodeTypes">
+          <property name="nodeTypes" stdset="0">
            <stringlist>
             <string>vtkMRMLSliceNode</string>
            </stringlist>
           </property>
-          <property name="showHidden">
+          <property name="showHidden" stdset="0">
            <bool>true</bool>
           </property>
-          <property name="addEnabled">
+          <property name="addEnabled" stdset="0">
            <bool>false</bool>
           </property>
-          <property name="removeEnabled">
+          <property name="removeEnabled" stdset="0">
            <bool>false</bool>
           </property>
          </widget>
@@ -94,7 +70,7 @@
        </layout>
       </item>
       <item>
-       <widget class="qMRMLSliceInformationWidget" name="MRMLSliceInformationWidget"/>
+       <widget class="qMRMLSliceInformationWidget" name="MRMLSliceInformationWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -127,16 +103,6 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLSliceControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLSliceControllerWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLSliceInformationWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLSliceInformationWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -146,6 +112,12 @@
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliceInformationWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSliceInformationWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -164,54 +136,6 @@
     <hint type="destinationlabel">
      <x>559</x>
      <y>468</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSliceControllerModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>RedSliceControllerWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>68</x>
-     <y>5</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>88</x>
-     <y>61</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSliceControllerModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>YellowSliceControllerWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>5</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>176</x>
-     <y>183</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSliceControllerModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>GreenSliceControllerWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>293</x>
-     <y>3</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>304</x>
-     <y>285</y>
     </hint>
    </hints>
   </connection>

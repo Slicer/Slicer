@@ -45,6 +45,8 @@ public:
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
+  void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
+  void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
 
 protected:
   virtual void setup();
