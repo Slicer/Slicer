@@ -20,7 +20,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="LoadLoadableModulesLabel">
      <property name="text">
-      <string>Don't load modules:</string>
+      <string>Skip loading of &lt;i&gt;qt-loadable-modules&lt;/i&gt;:</string>
      </property>
     </widget>
    </item>
@@ -34,7 +34,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="LoadCommandLineModulesLabel">
      <property name="text">
-      <string>Don't load command-line plugins:</string>
+      <string>Skip loading of command-line &lt;i&gt;plugins&lt;/i&gt;:</string>
      </property>
     </widget>
    </item>
@@ -163,7 +163,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="LoadScriptedLoadableModulesLabel">
      <property name="text">
-      <string>Don't load scripted modules:</string>
+      <string>Skip loading of &lt;i&gt;qt-scripted-loadable-modules&lt;/i&gt;:</string>
      </property>
     </widget>
    </item>

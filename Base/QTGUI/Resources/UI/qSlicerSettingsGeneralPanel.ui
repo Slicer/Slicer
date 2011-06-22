@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>402</width>
-    <height>182</height>
+    <height>207</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="ShowToolTipsLabel">
      <property name="text">
-      <string>Don't show tooltips:</string>
+      <string>Disable tooltips:</string>
      </property>
     </widget>
    </item>
@@ -31,7 +31,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="ShowSplashScreenLabel">
      <property name="text">
-      <string>Don't show splash screen:</string>
+      <string>Disable splash screen:</string>
      </property>
     </widget>
    </item>
