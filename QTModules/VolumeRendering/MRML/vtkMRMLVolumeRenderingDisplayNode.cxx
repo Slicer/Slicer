@@ -496,42 +496,27 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumeNodeID(const char *volumeNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, node);
-  }
+  this->SetVolumeNodeID(volumeNodeID);
+  this->VolumeNode = vtkMRMLVolumeNode::SafeDownCast(
+    this->GetScene() ? this->GetScene()->GetNodeByID(volumeNodeID) : 0);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveFgVolumeNodeID(const char *volumeNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetFgVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetFgVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, node);
-  }
+  this->SetFgVolumeNodeID(volumeNodeID);
+  this->FgVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
+    this->GetScene() ? this->GetScene()->GetNodeByID(volumeNodeID) : 0);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 {
-  if (this->VolumeNodeID == NULL)
+  if (((this->VolumeNode != NULL && strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
+      (this->VolumeNode == NULL)) )
     {
-    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->VolumeNode != NULL && strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
-            (this->VolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->VolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
+    this->VolumeNode = vtkMRMLVolumeNode::SafeDownCast(
+      this->GetScene() ? this->GetScene()->GetNodeByID(this->VolumeNodeID) : 0);
     }
   return this->VolumeNode;
 }
@@ -539,16 +524,11 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumeNode()
 {
-  if (this->FgVolumeNodeID == NULL)
+  if (((this->FgVolumeNode != NULL && strcmp(this->FgVolumeNode->GetID(), this->FgVolumeNodeID)) ||
+      (this->FgVolumeNode == NULL)) )
     {
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->FgVolumeNode != NULL && strcmp(this->FgVolumeNode->GetID(), this->FgVolumeNodeID)) ||
-            (this->FgVolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->FgVolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
+    this->FgVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
+      this->GetScene() ? this->GetScene()->GetNodeByID(this->FgVolumeNodeID) : 0);
     }
   return this->FgVolumeNode;
 }
