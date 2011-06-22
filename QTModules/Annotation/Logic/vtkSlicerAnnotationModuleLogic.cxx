@@ -2552,8 +2552,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
       this->SetActiveHierarchyNodeID(toplevelHierarchyNodeID);
       }
 
-    char *toplevelIDForThisClass = NULL; 
-//this->GetTopLevelHierarchyNodeIDForNodeClass(annotationNode);
+    char *toplevelIDForThisClass = this->GetTopLevelHierarchyNodeIDForNodeClass(annotationNode);
     
     // Create a hierarchy node
     vtkMRMLAnnotationHierarchyNode* hierarchyNode =
