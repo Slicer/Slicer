@@ -195,6 +195,9 @@ public:
   /// get 3 extents along sides of the box 
   void GetExtents(double bounds[]);
 
+  virtual void GetActors(vtkPropCollection *actors);
+
+
 protected:
   vtkSlicerBoxRepresentation();
   ~vtkSlicerBoxRepresentation();

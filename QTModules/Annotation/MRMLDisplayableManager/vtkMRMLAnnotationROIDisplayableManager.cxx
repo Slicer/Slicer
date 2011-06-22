@@ -499,10 +499,20 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
 
-    vtkSmartPointer<vtkTransform> xform =  vtkSmartPointer<vtkTransform>::New();
-    xform->Identity();
-    xform->SetMatrix(transformToWorld);
-    rep->SetTransform(xform);
+    //vtkSmartPointer<vtkTransform> xform =  vtkSmartPointer<vtkTransform>::New();
+    //xform->Identity();
+    //xform->SetMatrix(transformToWorld);
+
+    vtkSmartPointer<vtkPropCollection> actors =  vtkSmartPointer<vtkPropCollection>::New();
+    rep->GetActors(actors);
+    
+    for (int i=0; i<actors->GetNumberOfItems(); i++)
+      {
+      vtkActor *actor = vtkActor::SafeDownCast(actors->GetItemAsObject(i));
+      actor->SetUserMatrix(transformToWorld);
+      }
+
+    //rep->SetTransform(xform);
 
     widget->InvokeEvent(vtkCommand::EndInteractionEvent);
     }

@@ -225,6 +225,21 @@ vtkSlicerBoxRepresentation::~vtkSlicerBoxRepresentation()
 }
 
 //----------------------------------------------------------------------
+void vtkSlicerBoxRepresentation::GetActors(vtkPropCollection *actors)
+{
+  actors->RemoveAllItems();
+  actors->AddItem(this->HexActor);
+  actors->AddItem(this->HexFace);
+  actors->AddItem(this->HexOutline);
+  
+  for (int i=0; i<7; i++)
+    {
+    actors->AddItem(this->Handle[i]);
+    }
+}
+
+
+//----------------------------------------------------------------------
 void vtkSlicerBoxRepresentation::GetPolyData(vtkPolyData *pd)
 {
   pd->SetPoints(this->HexPolyData->GetPoints());

@@ -20,6 +20,8 @@
 // MRML includes
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>
@@ -459,7 +461,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   // now update the position
   this->UpdatePosition(widget, node);
-  
+
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
@@ -708,15 +710,30 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
+  // get the nodes's transform node
+  vtkMRMLTransformNode* tnode = pointsNode->GetParentTransformNode();
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  transformToWorld->Identity();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+
   if (this->Is2DDisplayableManager())
     {
     // for 2d managers, compare the display positions
     double displayCoordinates1[4];
     double displayCoordinatesBuffer1[4];
 
-    seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
+    // transform point using parent transforms
+    double *p = pointsNode->GetControlPointCoordinates(0);
+    double p4[] = {p[0],p[1],p[2],1.0};
+    double *pointTransformed = transformToWorld->MultiplyDoublePoint(p4);
 
-    this->GetWorldToDisplayCoordinates(pointsNode->GetControlPointCoordinates(0),displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(pointTransformed,displayCoordinates1);
+
+    seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
 
     if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
       {
@@ -732,10 +749,15 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
     }
   else
     {
+    // transform fiducial point using parent transforms
+    double *p = pointsNode->GetControlPointCoordinates(0);
+    double p4[] = {p[0],p[1],p[2],1.0};
+    double *fidWorldCoord = transformToWorld->MultiplyDoublePoint(p4);
+
     // for 3d managers, compare world positions
     double seedWorldCoord[4];
     seedRepresentation->GetSeedWorldPosition(0,seedWorldCoord);
-    double *fidWorldCoord = pointsNode->GetControlPointCoordinates(0);
+
     if (this->GetWorldCoordinatesChanged(seedWorldCoord, fidWorldCoord))
       {
       vtkDebugMacro("UpdatePosition: " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": world coordinates changed:\n\tseed = " << seedWorldCoord[0] << ", " << seedWorldCoord[1] << ", " << seedWorldCoord[2] << "\n\tfid =  " << fidWorldCoord[0] << ", " << fidWorldCoord[1] << ", " << fidWorldCoord[2]);
@@ -757,3 +779,4 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
   // enable processing of modified events
   //this->m_Updating = 0;
 }
+
