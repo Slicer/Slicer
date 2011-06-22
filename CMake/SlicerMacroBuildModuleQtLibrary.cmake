@@ -25,7 +25,7 @@
 MACRO(SlicerMacroBuildModuleQtLibrary)
   SLICER_PARSE_ARGUMENTS(MODULEQTLIBRARY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    ""
+    "WRAP_PYTHONQT"
     ${ARGN}
     )
 
@@ -81,7 +81,7 @@ MACRO(SlicerMacroBuildModuleQtLibrary)
     QT4_ADD_RESOURCES(MODULEQTLIBRARY_QRC_SRCS ${MODULEQTLIBRARY_RESOURCES})
   ENDIF()
 
-  IF (NOT EXISTS ${Slicer_LOGOS_RESOURCE})
+  IF(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
     MESSAGE("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
   ENDIF()
   QT4_ADD_RESOURCES(MODULEQTLIBRARY_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
@@ -171,4 +171,18 @@ MACRO(SlicerMacroBuildModuleQtLibrary)
   # Export target
   # --------------------------------------------------------------------------
   SET_PROPERTY(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULEQTLIBRARY_NAME})
+  
+  # --------------------------------------------------------------------------
+  # PythonQt wrapping
+  # --------------------------------------------------------------------------
+  IF(Slicer_USE_PYTHONQT AND MODULEQTLIBRARY_WRAP_PYTHONQT)
+    SET(KIT_PYTHONQT_SRCS) # Clear variable
+    ctkMacroWrapPythonQt("org.slicer.module" ${lib_name}
+      KIT_PYTHONQT_SRCS "${MODULEQTLIBRARY_SRCS}" FALSE)
+    ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonQt ${lib_name})
+    IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+    ENDIF()
+  ENDIF()
 ENDMACRO()
