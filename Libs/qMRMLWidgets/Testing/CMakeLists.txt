@@ -19,8 +19,9 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLLinearTransformSliderTest1.cxx
   qMRMLListWidgetTest1.cxx
   qMRMLMatrixWidgetTest1.cxx
-  qMRMLModelTest1.cxx
   qMRMLModelInfoWidgetTest1.cxx
+  qMRMLModelTest1.cxx
+  qMRMLModelTreeViewTest1.cxx
   qMRMLLabelComboBoxTest1.cxx
   qMRMLNavigationViewTest1.cxx
   qMRMLNodeComboBoxTest1.cxx
@@ -100,8 +101,8 @@ SIMPLE_TEST( qMRMLLayoutManagerTest4 )
 SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )
 SIMPLE_TEST( qMRMLListWidgetTest1 )
 SIMPLE_TEST( qMRMLMatrixWidgetTest1 )
-SIMPLE_TEST( qMRMLModelTest1 )
 SIMPLE_TEST( qMRMLModelInfoWidgetTest1 )
+SIMPLE_TEST( qMRMLModelTreeTest1 )
 SIMPLE_TEST( qMRMLLabelComboBoxTest1 )
 SIMPLE_TEST( qMRMLNavigationViewTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )

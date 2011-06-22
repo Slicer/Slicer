@@ -66,6 +66,7 @@ public:
   
   QIcon VisibleIcon;
   QIcon HiddenIcon;
+  QIcon PartiallyVisibleIcon;
   
   vtkMRMLScene* MRMLScene;
   mutable QList<vtkMRMLNode*>  DraggedNodes;

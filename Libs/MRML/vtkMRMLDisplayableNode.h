@@ -141,6 +141,15 @@ public:
     return Superclass::CreateDefaultStorageNode();
     };
 
+  ///
+  /// TODO: Change it to Get/SetVisibility() for consistency with
+  /// vtkMRMLDisplayNode.
+  /// Utility to return the visibility of all the display nodes.
+  /// Return 0 if they are all hidden, 1 if all are visible and 2 if some are
+  /// visible and some are hidden.
+  virtual int GetDisplayVisibility();
+  virtual void SetDisplayVisibility(int visible);
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();

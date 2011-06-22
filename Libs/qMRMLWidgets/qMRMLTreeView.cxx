@@ -27,9 +27,6 @@
 #include <QScrollBar>
 #include <QMessageBox>
 
-// CTK includes
-//#include "ctkModelTester.h"
-
 // qMRML includes
 #include "qMRMLSceneModel.h"
 #include "qMRMLSceneDisplayableModel.h"
@@ -38,34 +35,18 @@
 #include "qMRMLSortFilterModelHierarchyProxyModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLTreeView.h"
+#include "qMRMLTreeView_p.h"
 
 // MRML includes
+#include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
-class qMRMLTreeViewPrivate
+qMRMLStyledItemDelegate::qMRMLStyledItemDelegate(QObject* object)
+  : QStyledItemDelegate(object)
 {
-  Q_DECLARE_PUBLIC(qMRMLTreeView);
-protected:
-  qMRMLTreeView* const q_ptr;
-public:
-  qMRMLTreeViewPrivate(qMRMLTreeView& object);
-  void init();
-  void setSceneModel(qMRMLSceneModel* newModel);
-  void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
-  QSize sizeHint()const;
-  void recomputeSizeHint(bool forceUpdate = false);
-
-  qMRMLSceneModel*           SceneModel;
-  qMRMLSortFilterProxyModel* SortFilterModel;
-  QString                    SceneModelType;
-  bool                       FitSizeToVisibleIndexes;
-  mutable QSize              TreeViewSizeHint;
-
-  QMenu*                     NodeMenu;
-  QAction*                   EditAction;
-  QMenu*                     SceneMenu;
-};
+}
 
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
@@ -84,6 +65,9 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
 void qMRMLTreeViewPrivate::init()
 {
   Q_Q(qMRMLTreeView);
+
+  q->setItemDelegate(new qMRMLStyledItemDelegate(q));
+
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
   
@@ -496,6 +480,63 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
   else if (index == this->sortFilterProxyModel()->mrmlSceneIndex())
     {
     d->SceneMenu->exec(e->globalPos());
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
+{
+  Q_D(qMRMLTreeView);
+
+  if (e->button() == Qt::LeftButton)
+    {
+    // get the index of the current column
+    QModelIndex index = this->indexAt(e->pos());
+    QStyleOptionViewItemV4 opt = this->viewOptions();
+    opt.rect = this->visualRect(index);
+    qobject_cast<qMRMLStyledItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
+    QRect decorationElement =
+      this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+    //decorationElement.translate(this->visualRect(index).topLeft());
+    if (decorationElement.contains(e->pos()))  
+      {
+      if (this->onDecorationClicked(index))
+        {
+        return;
+        }
+      }
+    }
+
+  this->QTreeView::mouseReleaseEvent(e);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLTreeView::onDecorationClicked(const QModelIndex& index)
+{
+  QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
+  if (sourceIndex.column() == this->sceneModel()->visibilityColumn())
+    {
+    this->toggleVisibility(index);
+    return true;
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
+{
+  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  vtkMRMLDisplayNode* displayNode =
+    vtkMRMLDisplayNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* displayableNode =
+    vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (displayNode)
+    {
+    displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
+    }
+  else if (displayableNode)
+    {
+    displayableNode->SetDisplayVisibility(displayableNode->GetDisplayVisibility() ? 0 : 1);
     }
 }
 

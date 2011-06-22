@@ -75,6 +75,9 @@ int qSlicerVolumeRenderingModuleWidgetTest2( int argc, char * argv[] )
   app.mrmlScene()->AddNode(view2);
 
   moduleWidget->show();
+  
+  // HACK, manually select the node, should be automatic
+  moduleWidget->setMRMLVolumeNode(volumeNode);
 
   if (argc < 3 || QString(argv[2]) != "-I")
     {

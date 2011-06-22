@@ -30,6 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModelHierarchyModel : public qMRMLSceneMode
   Q_OBJECT
 
 public:
+  typedef qMRMLSceneModel Superclass;
   qMRMLSceneModelHierarchyModel(QObject *parent=0);
   virtual ~qMRMLSceneModelHierarchyModel();
 
@@ -49,7 +50,7 @@ public:
 
   virtual Qt::DropActions supportedDropActions()const;
   virtual void setMRMLScene(vtkMRMLScene* scene);
-
+  virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row);
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneModelHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneModelHierarchyModel);

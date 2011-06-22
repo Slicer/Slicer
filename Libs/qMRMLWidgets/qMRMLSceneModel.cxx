@@ -33,6 +33,7 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
+#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
 
@@ -57,8 +58,9 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->CheckableColumn = -1;
   this->VisibilityColumn = -1;
   
-  this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
+  this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
+  this->PartiallyVisibleIcon = QIcon(":Icons/VisiblePartially.png");
 
   this->MRMLScene = 0;
 }
@@ -784,10 +786,34 @@ void qMRMLSceneModel::updateItemDataFromNode(
     {
     item->setCheckState(node->GetSelected() ? Qt::Checked : Qt::Unchecked);
     }
-  if (column == d->VisibilityColumn && node->IsA("vtkMRMLDisplayNode"))
+  if (column == d->VisibilityColumn)
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
-    item->setIcon(displayNode->GetVisibility() ? d->VisibleIcon : d->HiddenIcon);
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(node);
+    int visible = -1;
+    if (displayNode)
+      {
+      visible = displayNode->GetVisibility();
+      }
+    else if (displayableNode)
+      {
+      visible = displayableNode->GetDisplayVisibility();
+      }
+    switch (visible)
+      {
+      case 0:
+        item->setIcon(d->HiddenIcon);
+        break;
+      case 1:
+        item->setIcon(d->VisibleIcon);
+        break;
+      case 2:
+        item->setIcon(d->PartiallyVisibleIcon);
+        break;
+      default:
+        break;
+      }
     }
 }
 
@@ -847,11 +873,31 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
     {
     node->SetSelected(item->checkState() == Qt::Checked ? 1 : 0);
     }
-  if (item->column() == d->VisibilityColumn &&
-      node->IsA("vtkMRMLDisplayNode"))
+  if (item->column() == d->VisibilityColumn)
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
-    displayNode->SetVisibility(item->icon().cacheKey() == d->VisibleIcon.cacheKey() ? 1 : 0);
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+    int visible = -1;
+    if (item->icon().cacheKey() == d->HiddenIcon.cacheKey())
+      {
+      visible = 0;
+      }
+    else if (item->icon().cacheKey() == d->VisibleIcon.cacheKey())
+      {
+      visible = 1;
+      }
+    else if (item->icon().cacheKey() == d->PartiallyVisibleIcon.cacheKey())
+      {
+      visible = 2;
+      }
+    if (displayNode)
+      {
+      displayNode->SetVisibility(visible);
+      }
+    else if (displayableNode)
+      {
+      displayableNode->SetDisplayVisibility(visible);
+      }
     }
 }
 

@@ -401,3 +401,42 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+//---------------------------------------------------------------------------
+int vtkMRMLDisplayableNode::GetDisplayVisibility()
+{
+  std::vector<vtkMRMLDisplayNode*>::iterator it =
+    this->DisplayNodes.begin();
+  if (it == this->DisplayNodes.end())
+    {
+    return 0;
+    }
+  int visible = (*it)->GetVisibility();
+  if (visible == 2)
+    {
+    return 2;
+    }
+  for ( ; it != this->DisplayNodes.end(); ++it)
+    {
+    if ( (*it)->GetVisibility() != visible)
+      {
+      return 2;
+      }
+    }
+  return visible;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
+{
+  if (visible == 2)
+    {
+    return;
+    }
+  std::vector<vtkMRMLDisplayNode*>::iterator it;
+  for (it = this->DisplayNodes.begin();
+       it != this->DisplayNodes.end(); ++it)
+    {
+    (*it)->SetVisibility(visible);
+    }
+}
+

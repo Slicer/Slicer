@@ -62,6 +62,7 @@ qMRMLSceneModelHierarchyModelPrivate
 qMRMLSceneModelHierarchyModel::qMRMLSceneModelHierarchyModel(QObject *vparent)
   :qMRMLSceneModel(new qMRMLSceneModelHierarchyModelPrivate(*this), vparent)
 {
+  this->setVisibilityColumn(qMRMLSceneModel::NameColumn);
 }
 
 //------------------------------------------------------------------------------
@@ -263,4 +264,17 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
       }
     }
   return true;
+}
+
+//------------------------------------------------------------------------------
+QStandardItem* qMRMLSceneModelHierarchyModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
+{
+  Q_D(qMRMLSceneModel);
+  QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
+  if (this->listenNodeModifiedEvent())
+    {
+    qvtkConnect(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                this, SLOT(onMRMLNodeModified(vtkObject*)));
+    }
+  return insertedItem;
 }

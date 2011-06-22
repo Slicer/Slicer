@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QTreeView>
+#include <QStyledItemDelegate>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -134,6 +135,11 @@ protected:
   // reimplemented for performance issues
   virtual void updateGeometries();
   virtual void mousePressEvent(QMouseEvent* event);
+  virtual void mouseReleaseEvent(QMouseEvent* event);
+
+  bool onDecorationClicked(const QModelIndex& index);
+  void toggleVisibility(const QModelIndex& index);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLTreeView);
   Q_DISABLE_COPY(qMRMLTreeView);
