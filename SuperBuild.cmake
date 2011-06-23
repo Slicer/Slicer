@@ -170,6 +170,15 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND slicer_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
+# Set CMake OSX variable to pass down the external project
+set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+if(APPLE)
+  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+endif()
+
 #------------------------------------------------------------------------------
 # Configure and build Slicer
 #------------------------------------------------------------------------------
@@ -184,6 +193,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     ${slicer_superbuild_boolean_args}
     ${slicer_superbuild_extra_args}
+    ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
