@@ -78,14 +78,23 @@ public:
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
 
   int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
+
   int  SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag);
-  int SetControlPoint(int id, double newControl[3]);
+
+  int  SetControlPointWorldCoordinates(int id, double newControl[3], int selectedFlag, int visibleFlag);
+
+  int  SetControlPoint(int id, double newControl[3]);
+
+  int  SetControlPointWorldCoordinates(int id, double newControl[3]);
 
   void DeleteControlPoint(int id);
   /// Return the RAS coordinates of point ID.
   /// Try to limit calling this function because it is performance critical.
   /// Also, when queried again it resets all former pointers. Copying is therefore necessary.
   double* GetControlPointCoordinates(vtkIdType id);
+
+  void GetControlPointWorldCoordinates(vtkIdType id, double *point);
+
   int GetNumberOfControlPoints();
 
   //BTX

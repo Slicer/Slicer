@@ -282,24 +282,18 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
-  worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
-  worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
-  worldCoordinates1[2] = rulerNode->GetControlPointCoordinates(0)[2];
-  worldCoordinates1[3] = 1;
+  rulerNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   double worldCoordinates2[4];
-  worldCoordinates2[0] = rulerNode->GetControlPointCoordinates(1)[0];
-  worldCoordinates2[1] = rulerNode->GetControlPointCoordinates(1)[1];
-  worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
-  worldCoordinates2[3] = 1;
-
-  double displayCoordinates1[4];
-  double displayCoordinates2[4];
+  rulerNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
 
   //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
 
   if (this->GetSliceNode())
     {
+
+    double displayCoordinates1[4];
+    double displayCoordinates2[4];
 
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
@@ -385,16 +379,10 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   // get the points, to calculate the distance between them
   double worldCoordinates1[4];
-  worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
-  worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
-  worldCoordinates1[2] = rulerNode->GetControlPointCoordinates(0)[2];
-  worldCoordinates1[3] = 1;
+  rulerNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   double worldCoordinates2[4];
-  worldCoordinates2[0] = rulerNode->GetControlPointCoordinates(1)[0];
-  worldCoordinates2[1] = rulerNode->GetControlPointCoordinates(1)[1];
-  worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
-  worldCoordinates2[3] = 1;
+  rulerNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
 
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = rulerNode->GetAnnotationTextDisplayNode();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = rulerNode->GetAnnotationPointDisplayNode();
@@ -836,21 +824,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
   this->m_Updating = 1;
 
   double worldCoordinates1[4];
-  worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
-  worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
-  worldCoordinates1[2] = rulerNode->GetControlPointCoordinates(0)[2];
-  worldCoordinates1[3] = 1;
+  rulerNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   double worldCoordinates2[4];
-  worldCoordinates2[0] = rulerNode->GetControlPointCoordinates(1)[0];
-  worldCoordinates2[1] = rulerNode->GetControlPointCoordinates(1)[1];
-  worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
-  worldCoordinates2[3] = 1;
+  rulerNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
 
-  double displayCoordinates1[4];
-  double displayCoordinates2[4];
-  double displayCoordinatesBuffer1[4];
-  double displayCoordinatesBuffer2[4];
 
   // update the location
   if (this->Is2DDisplayableManager())
@@ -859,6 +837,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
     vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
     
     // change the 2D location
+    double displayCoordinates1[4];
+    double displayCoordinates2[4];
+    double displayCoordinatesBuffer1[4];
+    double displayCoordinatesBuffer2[4];
+
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
 

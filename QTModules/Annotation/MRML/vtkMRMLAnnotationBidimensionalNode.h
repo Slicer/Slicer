@@ -74,6 +74,13 @@ public:
 
   int SetControlPoint(double newControl[3], int id);
 
+  int SetControlPointWorldCoordinates(double newControl[3], int id)
+    {
+    double localPoint[4];
+    this->TransformPointFromWorld(newControl, localPoint);
+    return this->SetControlPoint(localPoint, id);
+    }
+
   enum
   {
       BidimensionalNodeAddedEvent = 0,

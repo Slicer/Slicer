@@ -36,23 +36,56 @@ public:
   int  SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag);
   
   // Selected and visible are currently always set to 1 and are controlled by selected and visible flag - we can change this later
-  void SetFiducialLabel(const char* newLabel) {this->SetText(0,newLabel,1,1);}
-  vtkStdString GetFiducialLabel() {return this->GetText(0);}
+  void SetFiducialLabel(const char* newLabel) 
+    {
+    this->SetText(0,newLabel,1,1);
+    }
 
-  void SetFiducialValue(const char* newValue) {this->SetText(1,newValue,1,1);}
+  vtkStdString GetFiducialLabel() 
+    {
+    return this->GetText(0);
+    }
+
+  void SetFiducialValue(const char* newValue) 
+    {
+    this->SetText(1,newValue,1,1);
+    }
+
   // return atoi(this->GetText(1).c_str());
-  int GetFiducialValue() { 
-    return 0;}
+  int GetFiducialValue() 
+    { 
+    return 0;
+    }
 
-  int SetFiducialCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
-  int SetFiducialCoordinates(double x, double y, double z) {
-      double newCoord[3];
-      newCoord[0] = x;
-      newCoord[1] = y;
-      newCoord[2] = z;
-      return this->SetFiducialCoordinates(newCoord);
-  }
-  double* GetFiducialCoordinates() {return this->GetControlPointCoordinates(0);}
+  int SetFiducialCoordinates(double newCoord[3]) 
+    {
+    return this->SetControlPoint(0,newCoord,1,1);
+    }
+
+  int SetFiducialWorldCoordinates(double newCoord[3]) 
+    {
+    return this->SetControlPointWorldCoordinates(0,newCoord,1,1);
+    }
+
+  int SetFiducialCoordinates(double x, double y, double z) 
+    {
+    double newCoord[3];
+    newCoord[0] = x;
+    newCoord[1] = y;
+    newCoord[2] = z;
+    return this->SetFiducialCoordinates(newCoord);
+    }
+
+  double* GetFiducialCoordinates() 
+    {
+    return this->GetControlPointCoordinates(0);
+    }
+
+  void GetFiducialWorldCoordinates(double *point) 
+    {
+    this->GetControlPointWorldCoordinates(0, point);
+    }
+
   /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetFiducialCoordinates(double coord[3]);
 

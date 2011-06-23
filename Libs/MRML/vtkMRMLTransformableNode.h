@@ -92,6 +92,10 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix); 
   virtual void ApplyTransform(vtkAbstractTransform* transform) = 0; 
 
+  virtual void TransformPointToWorld(double *in, double *out);
+  virtual void TransformPointFromWorld(double *in, double *out);
+
+
 protected:
   vtkMRMLTransformableNode();
   ~vtkMRMLTransformableNode();

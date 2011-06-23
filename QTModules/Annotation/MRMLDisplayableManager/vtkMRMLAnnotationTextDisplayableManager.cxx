@@ -267,14 +267,12 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
   vtkCaptionActor2D *captionActor = rep->GetCaptionActor2D();
 
-  double* tmpPtr = textNode->GetControlPointCoordinates(0);
-  double worldCoordinates1[4] = {tmpPtr[0], tmpPtr[1], tmpPtr[2], 1};
-
-  double displayCoordinates1[4];
+  double worldCoordinates1[4];
+  textNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   if (this->Is2DDisplayableManager())
      {
-
+     double displayCoordinates1[4];
      this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
 
      captionActor->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
@@ -289,7 +287,9 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
      captionActor->SetThreeDimensionalLeader(textDisplayNode->GetUseThreeDimensionalLeader());
      }
 
-  double *captionWorldCoordinates = textNode->GetControlPointCoordinates(1);
+  double captionWorldCoordinates[4];
+  textNode->GetControlPointWorldCoordinates(1, captionWorldCoordinates);
+
   double captionViewportCoordinates[4];
   double captionDisplayCoordinates[4];
   this->GetWorldToDisplayCoordinates(captionWorldCoordinates,captionDisplayCoordinates);

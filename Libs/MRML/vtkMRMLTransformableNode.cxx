@@ -20,8 +20,10 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 #include "vtkIntArray.h"
 #include "vtkMatrixToLinearTransform.h"
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -192,5 +194,60 @@ void vtkMRMLTransformableNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   transform->SetInput(transformMatrix);
   this->ApplyTransform(transform);
   transform->Delete();
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::TransformPointToWorld(double *in, double *out)
+{
+  // get the nodes's transform node
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    transformToWorld->MultiplyPoint(in, out);
+    transformToWorld->Delete();
+    }
+  else if (tnode == NULL)
+    {
+    for (int i=0; i<4; i++)
+      {
+      out[i] = in[i];
+      }
+    }
+  else 
+    {
+    vtkErrorMacro("TransformPointToWorld: not a linear transform");
+    }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::TransformPointFromWorld(double *in, double *out)
+{
+  // get the nodes's transform node
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    transformToWorld->Invert();
+    transformToWorld->MultiplyPoint(in, out);
+    transformToWorld->Delete();
+    }
+  else if (tnode == NULL)
+    {
+    for (int i=0; i<4; i++)
+      {
+      out[i] = in[i];
+      }
+    }
+  else 
+    {
+    vtkErrorMacro("TransformPointToWorld: not a linear transform");
+    }
 }
 // End

@@ -230,28 +230,16 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
-  worldCoordinates1[0] = bidimensionalNode->GetControlPointCoordinates(0)[0];
-  worldCoordinates1[1] = bidimensionalNode->GetControlPointCoordinates(0)[1];
-  worldCoordinates1[2] = bidimensionalNode->GetControlPointCoordinates(0)[2];
-  worldCoordinates1[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   double worldCoordinates2[4];
-  worldCoordinates2[0] = bidimensionalNode->GetControlPointCoordinates(1)[0];
-  worldCoordinates2[1] = bidimensionalNode->GetControlPointCoordinates(1)[1];
-  worldCoordinates2[2] = bidimensionalNode->GetControlPointCoordinates(1)[2];
-  worldCoordinates2[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
 
   double worldCoordinates3[4];
-  worldCoordinates3[0] = bidimensionalNode->GetControlPointCoordinates(2)[0];
-  worldCoordinates3[1] = bidimensionalNode->GetControlPointCoordinates(2)[1];
-  worldCoordinates3[2] = bidimensionalNode->GetControlPointCoordinates(2)[2];
-  worldCoordinates3[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(2, worldCoordinates3);
 
   double worldCoordinates4[4];
-  worldCoordinates4[0] = bidimensionalNode->GetControlPointCoordinates(3)[0];
-  worldCoordinates4[1] = bidimensionalNode->GetControlPointCoordinates(3)[1];
-  worldCoordinates4[2] = bidimensionalNode->GetControlPointCoordinates(3)[2];
-  worldCoordinates4[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(3, worldCoordinates4);
 
   double displayCoordinates1[4];
   double displayCoordinates2[4];
@@ -348,28 +336,16 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
   vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
 
   double worldCoordinates1[4];
-  worldCoordinates1[0] = bidimensionalNode->GetControlPointCoordinates(0)[0];
-  worldCoordinates1[1] = bidimensionalNode->GetControlPointCoordinates(0)[1];
-  worldCoordinates1[2] = bidimensionalNode->GetControlPointCoordinates(0)[2];
-  worldCoordinates1[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
   double worldCoordinates2[4];
-  worldCoordinates2[0] = bidimensionalNode->GetControlPointCoordinates(1)[0];
-  worldCoordinates2[1] = bidimensionalNode->GetControlPointCoordinates(1)[1];
-  worldCoordinates2[2] = bidimensionalNode->GetControlPointCoordinates(1)[2];
-  worldCoordinates2[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
 
   double worldCoordinates3[4];
-  worldCoordinates3[0] = bidimensionalNode->GetControlPointCoordinates(2)[0];
-  worldCoordinates3[1] = bidimensionalNode->GetControlPointCoordinates(2)[1];
-  worldCoordinates3[2] = bidimensionalNode->GetControlPointCoordinates(2)[2];
-  worldCoordinates3[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(2, worldCoordinates3);
 
   double worldCoordinates4[4];
-  worldCoordinates4[0] = bidimensionalNode->GetControlPointCoordinates(3)[0];
-  worldCoordinates4[1] = bidimensionalNode->GetControlPointCoordinates(3)[1];
-  worldCoordinates4[2] = bidimensionalNode->GetControlPointCoordinates(3)[2];
-  worldCoordinates4[3] = 1;
+  bidimensionalNode->GetControlPointWorldCoordinates(3, worldCoordinates4);
 
   double displayCoordinates1[4];
   double displayCoordinates2[4];
@@ -510,10 +486,10 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
     }
 
 
-  bidimensionalNode->SetControlPoint(worldCoordinates1,0);
-  bidimensionalNode->SetControlPoint(worldCoordinates2,1);
-  bidimensionalNode->SetControlPoint(worldCoordinates3,2);
-  bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+  bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates1,0);
+  bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates2,1);
+  bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates3,2);
+  bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates4,3);
 
   // save distance to MRML
   double distance1 = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
@@ -659,40 +635,40 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     if (y1 > y2)
       {
       // top to bottom
-      bidimensionalNode->SetControlPoint(worldCoordinates1,0);
-      bidimensionalNode->SetControlPoint(worldCoordinates2,1);
+      bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates1,0);
+      bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates2,1);
 
       if (x3 > x2 || x3 > x1)
         {
         // right side
-        bidimensionalNode->SetControlPoint(worldCoordinates3,2);
-        bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates3,2);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates4,3);
         }
       else
         {
         // left side
-        bidimensionalNode->SetControlPoint(worldCoordinates3,3);
-        bidimensionalNode->SetControlPoint(worldCoordinates4,2);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates3,3);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates4,2);
         }
 
       }
     else
       {
       // bottom to top
-      bidimensionalNode->SetControlPoint(worldCoordinates2,0);
-      bidimensionalNode->SetControlPoint(worldCoordinates1,1);
+      bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates2,0);
+      bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates1,1);
 
       if (x3 > x2 || x3 > x1)
         {
         // right side
-        bidimensionalNode->SetControlPoint(worldCoordinates3,3);
-        bidimensionalNode->SetControlPoint(worldCoordinates4,2);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates3,3);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates4,2);
         }
       else
         {
         // left side
-        bidimensionalNode->SetControlPoint(worldCoordinates3,2);
-        bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates3,2);
+        bidimensionalNode->SetControlPointWorldCoordinates(worldCoordinates4,3);
         }
 
       }

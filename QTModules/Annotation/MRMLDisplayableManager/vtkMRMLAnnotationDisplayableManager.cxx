@@ -825,61 +825,15 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       if (rulerNode)
         {
 
-        double* tmpPtr = rulerNode->GetControlPointCoordinates(0);
-        double p1[3] = { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
+        double transformedP1[4];
+        rulerNode->GetControlPointWorldCoordinates(0, transformedP1);
 
-        tmpPtr = rulerNode->GetControlPointCoordinates(1);
-        double p2[3] = { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
-
-        //std::cout << this->m_SliceNode->GetName() << " original ras1: " << p1[0] << "," << p1[1] << "," << p1[2] << std::endl;
-        //std::cout << this->m_SliceNode->GetName() << " original ras2: " << p2[0] << "," << p2[1] << "," << p2[2] << std::endl;
-
-        VTK_CREATE(vtkMatrix4x4, transformMatrix);
-
-        transformMatrix->Identity();
-
-        if (annotationNode->GetTransformNodeID())
-          {
-          // if annotation is under transform, get the transformation matrix
-
-          vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(annotationNode->GetTransformNodeID()));
-
-          if (transformNode)
-            {
-            transformNode->GetMatrixTransformToWorld(transformMatrix);
-            }
-
-          }
-
-
-        double extendedP1[4];
-        extendedP1[0] = p1[0];
-        extendedP1[1] = p1[1];
-        extendedP1[2] = p1[2];
-        extendedP1[3] = 1;
-
-        double transformedP1[4] = {0,0,0,0};
-
-        double displayP1[4] = {0,0,0,0};
-
-        double extendedP2[4];
-        extendedP2[0] = p2[0];
-        extendedP2[1] = p2[1];
-        extendedP2[2] = p2[2];
-        extendedP2[3] = 1;
-
-        double transformedP2[4] = {0,0,0,0};
-
-        double displayP2[4] = {0,0,0,0};
-
-
-        // now multiply with the transformMatrix
-        // if there is a valid transform, the coordinates get transformed else the transformMatrix is the identity matrix and
-        // does not change the coordinates
-        transformMatrix->MultiplyPoint(extendedP1,transformedP1);
-        transformMatrix->MultiplyPoint(extendedP2,transformedP2);
+        double transformedP2[4];
+        rulerNode->GetControlPointWorldCoordinates(1, transformedP2);
 
         // now get the displayCoordinates for the transformed worldCoordinates
+        double displayP1[4];
+        double displayP2[4];
         this->GetWorldToDisplayCoordinates(transformedP1,displayP1);
         this->GetWorldToDisplayCoordinates(transformedP2,displayP2);
 
@@ -997,23 +951,6 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     return 0;
     }
 
-  VTK_CREATE(vtkMatrix4x4, transformMatrix);
-
-  transformMatrix->Identity();
-
-  if (node->GetTransformNodeID())
-    {
-    // if annotation is under transform, get the transformation matrix
-
-    vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(node->GetTransformNodeID()));
-
-    if (transformNode)
-      {
-      transformNode->GetMatrixTransformToWorld(transformMatrix);
-      }
-
-    }
-
   bool showWidget = true;
 
   // down cast the node as a controlpoints node to get the coordinates
@@ -1028,24 +965,11 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
   for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
     {
     // we loop through all controlpoints of each node
-    double* worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
-
-    double extendedWorldCoordinates[4];
-    extendedWorldCoordinates[0] = worldCoordinates[0];
-    extendedWorldCoordinates[1] = worldCoordinates[1];
-    extendedWorldCoordinates[2] = worldCoordinates[2];
-    extendedWorldCoordinates[3] = 1;
-
     double transformedWorldCoordinates[4];
-
-    double displayCoordinates[4];
-
-    // now multiply with the transformMatrix
-    // if there is a valid transform, the coordinates get transformed else the transformMatrix is the identity matrix and
-    // does not change the coordinates
-    transformMatrix->MultiplyPoint(extendedWorldCoordinates,transformedWorldCoordinates);
+    controlPointsNode->GetControlPointWorldCoordinates(i, transformedWorldCoordinates);
 
     // now get the displayCoordinates for the transformed worldCoordinates
+    double displayCoordinates[4];
     this->GetWorldToDisplayCoordinates(transformedWorldCoordinates,displayCoordinates);
 
     //

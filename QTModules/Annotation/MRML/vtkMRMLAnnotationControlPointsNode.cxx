@@ -5,6 +5,10 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
+
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
+
 #include "vtkBitArray.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkDataSetAttributes.h"
@@ -411,12 +415,32 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
 
   if (!this->PolyData ||
       !this->PolyData->GetPoints() ||
-      this->PolyData->GetNumberOfPoints() == 0) 
+      this->PolyData->GetNumberOfPoints() <= id) 
     {
+    vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
     return 0;
     }
 
   return this->PolyData->GetPoint(id);
+}
+
+//---------------------------------------------------------------------------
+/// Return the RAS coordinates in the World coordinates (including all transformations to parents) of point ID.
+/// Try to limit calling this function because it is performance critical.
+/// Also, when queried again it resets all former pointers. Copying is therefore necessary.
+void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdType id, double *point)
+{
+
+  if (!this->PolyData ||
+      !this->PolyData->GetPoints() ||
+      this->PolyData->GetNumberOfPoints() <= id) 
+    {
+    vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
+    return;
+    }
+  double *p = this->PolyData->GetPoint(id);
+  double localPoint[] = {p[0],p[1],p[2],1};
+  this->TransformPointToWorld(localPoint, point);
 }
 
 
@@ -492,7 +516,27 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   return 1;
 }
 
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationControlPointsNode::SetControlPointWorldCoordinates(int id, double p[3])
+{
+  double worldPoint[] = {p[0],p[1],p[2],1};
+  double localPoint[4];
+  this->TransformPointFromWorld(worldPoint, localPoint);
 
+  return this->SetControlPoint(id, localPoint);
+
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationControlPointsNode::SetControlPointWorldCoordinates(int id, double p[3], int selectedFlag, int visibleFlag)
+{
+  double worldPoint[] = {p[0],p[1],p[2],1};
+  double localPoint[4];
+  this->TransformPointFromWorld(worldPoint, localPoint);
+
+  return this->SetControlPoint(id, localPoint, selectedFlag, visibleFlag);
+
+}
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newControl[3])
 {
