@@ -150,8 +150,23 @@ class EditBox(object):
       self.nonmodal = EditBox.availableNonmodal
       self.disabled = EditBox.availableDisabled
 
+    '''
+    for key in slicer.modules.editorExtensions.keys():
+      e = slicer.modules.editorExtensions[key]()
+      if 'MouseTool' in e.attributes:
+        self.mouseTools.append(key)
+      if 'Nonmodal' in e.attributes:
+        self.operations.append(key)
+      if 'Disabled' in e.attributes:
+        self.disabled.append(key)
+    '''
+
+
     # combined list of all effects
     self.effects = self.mouseTools + self.operations
+
+    # add any extensions that have been registered
+    self.effects = self.effects + tuple(slicer.modules.editorExtensions.keys())
 
     # for each effect
     # - look for implementation class of pattern *Effect
@@ -252,9 +267,12 @@ class EditBox(object):
       self.createButtonRow( ("Paint", "Draw", "LevelTracing", "ImplicitRectangle") )
       self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
       self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
-      # TODO: add back GrowCut and prev/next fiducial
+      extensions = []
+      for k in slicer.modules.editorExtensions:
+        extensions.append(k)
+      self.createButtonRow( extensions )
       self.createButtonRow( ("MakeModel", "GrowCutSegment") )
-      #self.createButtonRow( ("MakeModel", ) )
+      # TODO: add back prev/next fiducial
       #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
       self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
     # if using embedded format: create all of the buttons in the effects list in a single row
@@ -306,16 +324,21 @@ itcl::body EditBox::setButtonState {effect state} {
     
     #
     # if an effect was added, build an options GUI
+    # - check to see if it is an extension effect,
+    # if not, try to create it, else ignore it
     #
     if self.currentOption:
       self.currentOption.__del__()
       self.currentOption = None
-    try:
-      options = eval("%sOptions" % effect)
-      self.currentOption = options(self.optionsFrame)
-    except NameError, AttributeError:
-      print ("No options for %s." % effect)
-      pass
+    if effect in slicer.modules.editorExtensions.keys():
+      self.currentOption = slicer.modules.editorExtensions[effect](self.optionsFrame)
+    else:
+      try:
+        options = eval("%sOptions" % effect)
+        self.currentOption = options(self.optionsFrame)
+      except NameError, AttributeError:
+        print ("No options for %s." % effect)
+        pass
 
     #
     # If there is no background volume or label map, do nothing
