@@ -13,6 +13,15 @@ set(teem_DEPENDENCIES VTK)
 SlicerMacroCheckExternalProjectDependency(teem)
 set(proj teem)
 
+# Set CMake OSX variable to pass down the external project
+set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+if(APPLE)
+  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+endif()
+
 #message(STATUS "${__indent}Adding project ${proj}")
 
 if(WIN32)
@@ -33,6 +42,7 @@ ExternalProject_Add(${proj}
   BINARY_DIR teem-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
+    ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Unused
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
