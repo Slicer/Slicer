@@ -101,8 +101,10 @@ macro(slicerMacroBuildQtModule)
   QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
 
   set_source_files_properties(
+    ${QTMODULE_SRCS} # For now, let's prevent the module widget from being wrapped
     ${QTMODULE_UI_CXX}
-    ${QTMODULE_SRCS}
+    ${QTMODULE_MOC_OUTPUT}
+    ${QTMODULE_QRC_SRCS}
     WRAP_EXCLUDE
     )
 
