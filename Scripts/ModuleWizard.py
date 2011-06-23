@@ -15,6 +15,7 @@ def findSource(dir):
               fnmatch.fnmatch(file, "CMakeLists.txt") or \
               fnmatch.fnmatch(file, "*.ui") or \
               fnmatch.fnmatch(file, "*.qrc") or \
+              fnmatch.fnmatch(file, "*.py") or \
               fnmatch.fnmatch(file, "*.png"):
             file = os.path.join(root,file)
             file = file[len(dir):] # strip common dir 
@@ -39,15 +40,22 @@ def copyAndReplace(inFile, template, target, key, moduleName):
   
 
 def usage():
+  print ""
+  print "Usage:"
   print "ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>"
-  print "--template default ./QTModules/ModuleTemplate"
-  print "--templateKey default ModuleTemplate"
-  print "--target default ./QTModules/<moduleName>"
+  print "  --template default ./QTModules/ModuleTemplate"
+  print "  --templateKey default is dirname of template"
+  print "  --target default ./QTModules/<moduleName>"
+  print "Examples (from Slicer4 source directory):"
+  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
+  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
+  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorTool MyEditorTool"
+  print ""
 
 def main(argv):
 
   template = ""
-  templateKey = "ModuleTemplate"
+  templateKey = ""
   target = ""
   moduleName = ""
 
@@ -77,9 +85,11 @@ def main(argv):
   if template[-1] != '/':
     template += '/'
 
+  if templateKey == "":
+    templateKey = os.path.split(template[:-1])[-1]
+  
   if target == "":
     target = "QTModules/" + moduleName
-
 
   if os.path.exists(target):
     print target, "exists - delete it first"
@@ -98,7 +108,7 @@ def main(argv):
     copyAndReplace(file, template, target, templateKey, moduleName)
   
 
-  print 'Module %s created, add it to the QTModules/CMakeLists.txt to build' % moduleName
+  print '\nModule %s created!' % moduleName
 
 if __name__ == "__main__":
   main(sys.argv[1:])
