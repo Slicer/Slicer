@@ -2,7 +2,7 @@
 
   Program: 3D Slicer
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Unless required by applicable law or agreed to in writing, software

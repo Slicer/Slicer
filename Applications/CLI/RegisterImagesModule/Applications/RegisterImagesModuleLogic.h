@@ -6,7 +6,7 @@ Module:    $RCSfile: config.h,v $
 Copyright (c) Kitware Inc. 28 Corporate Drive,
 Clifton Park, NY, 12065, USA.
 
-See Doc/copyright/copyright.txt
+See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 All rights reserved. 
