@@ -192,6 +192,11 @@ void qSlicerSliceControllerModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
 {
   Q_D(qSlicerSliceControllerModuleWidget);
 
+  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+    {
+    return;
+    }
+
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
     {
@@ -219,6 +224,11 @@ void qSlicerSliceControllerModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
 {
   Q_D(qSlicerSliceControllerModuleWidget);
 
+  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+    {
+    return;
+    }
+
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode)
     {
@@ -234,9 +244,15 @@ void qSlicerSliceControllerModuleWidget::onLayoutChanged(int)
 {
   Q_D(qSlicerSliceControllerModuleWidget);
 
+  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+    {
+    return;
+    }
+
+  logger.trace(QString("onLayoutChanged"));
+
   // add the controllers for any newly visible SliceNodes and remove
   // the controllers for any SliceNodes no longer visible
-
 
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
@@ -253,24 +269,7 @@ void qSlicerSliceControllerModuleWidget::onLayoutChanged(int)
   vtkCollection *visibleViews = layoutLogic->GetViewNodes();
   vtkObject *v;
 
-  // add SliceControllers for SliceNodes not currently being managed
-  for (visibleViews->InitTraversal(); (v = visibleViews->GetNextItemAsObject());)
-    {
-    // Is this a SliceNode
-    vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(v);
-    if (sn)
-      {
-      // is the SliceNode already being managed by the widget?
-      qSlicerSliceControllerModuleWidgetPrivate::ControllerMapType::iterator cit = d->ControllerMap.find(sn);
-      if (cit == d->ControllerMap.end())
-        {
-        // not currently managed, add it
-        d->createSliceController(sn, layoutManager);
-        }
-      }
-    }
-  
-  // remove SliceControllers for SliceNodes not currently visible in
+  // hide SliceControllers for SliceNodes not currently visible in
   // the layout
   qSlicerSliceControllerModuleWidgetPrivate::ControllerMapType::iterator cit;
   for (cit = d->ControllerMap.begin(); cit != d->ControllerMap.end(); ++cit)
@@ -278,7 +277,26 @@ void qSlicerSliceControllerModuleWidget::onLayoutChanged(int)
     // is mananaged SliceNode not currently displayed in the layout?
     if (!visibleViews->IsItemPresent((*cit).first))
       {
-      d->removeSliceController((*cit).first);
+      // hide it
+      (*cit).second->hide();
+      }
+    }
+
+  // show SliceControllers for SliceNodes not currently being managed
+  // by this widget
+  for (visibleViews->InitTraversal(); (v = visibleViews->GetNextItemAsObject());)
+    {
+    // Is this a SliceNode?
+    vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(v);
+    if (sn)
+      {
+      // find the controller
+      qSlicerSliceControllerModuleWidgetPrivate::ControllerMapType::iterator cit = d->ControllerMap.find(sn);
+      if (cit != d->ControllerMap.end())
+        {
+        // show it
+        (*cit).second->show();
+        }
       }
     }
 }
