@@ -42,6 +42,10 @@
 #include <vtkVariantArray.h>
 #include <typeinfo>
 
+// CTK includes
+#include <ctkLogger.h>
+
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSceneDisplayModel");
 
 //------------------------------------------------------------------------------
 class qMRMLSceneDisplayableModelPrivate: public qMRMLSceneModelPrivate
@@ -262,13 +266,27 @@ bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newPar
     return true;
     }
   // we can be reparenting a displayable node to another displayable node or a
-  // hierarchy node.
+  // hierarchy node. 
   else if (displayableNode)
     {
     if (displayableNode->GetScene() &&
         displayableNode->GetID())
       {
       hierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+      if (!hierarchyNode)
+        {
+        // this displayable node doesn't have a hierarchy node, add one
+        vtkMRMLDisplayableHierarchyNode *newHierarchyNode = vtkMRMLDisplayableHierarchyNode::New();
+        // it's a one to one hierarchy node, hide it and disable multiple children
+        newHierarchyNode->HideFromEditorsOn();
+        newHierarchyNode->AllowMultipleChildrenOff();
+        displayableNode->GetScene()->AddNodeNoNotify(newHierarchyNode);
+        newHierarchyNode->SetDisplayableNodeID(displayableNode->GetID());
+        logger.warn(QString("reparent: Added a new hierarchy node ") + QString(newHierarchyNode->GetID()));
+        newHierarchyNode->Delete();
+        // try again
+        hierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+        }
       }
     if (displayableParentNode && displayableParentNode->GetScene() &&  displayableParentNode->GetID())
       {
@@ -287,6 +305,12 @@ bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newPar
         hierarchyNode->SetParentNodeID(NULL);
         }
       return true;
+      }
+    else
+      {
+      // the displayable node doesn't have a hierarchy node
+      logger.error(QString("reparent: Displayable Node ") + QString(displayableNode->GetID()) + QString(" has no hierarchy node!"));
+      return false;
       }
     }
   return false;
