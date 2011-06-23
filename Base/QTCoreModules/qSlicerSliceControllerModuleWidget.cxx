@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkCollection.h>
 
 // qMRMLWidgets includes
 #include <qMRMLSliceWidget.h>
@@ -41,6 +42,10 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLViewNode.h"
+
+// MRMLLogic includes
+#include "vtkMRMLLayoutLogic.h"
 
 // STL include
 #include <map>
@@ -54,12 +59,16 @@ class qSlicerSliceControllerModuleWidgetPrivate:
     public Ui_qSlicerSliceControllerModule
 {
 public:
+  /// Create a SliceController for a SliceNode and pack in the widget
   void createSliceController(vtkMRMLSliceNode *sn, qSlicerLayoutManager *lm);
-  void removeSliceController(vtkMRMLSliceNode *sn);
 
-protected:
+  /// Remove the SliceController for a SliceNode from the widget
+  void removeSliceController(vtkMRMLSliceNode *sn);
+  
   typedef std::map<vtkSmartPointer<vtkMRMLSliceNode>, qMRMLSliceControllerWidget* > ControllerMapType;
   ControllerMapType ControllerMap;
+
+protected:
 };
 
 //-----------------------------------------------------------------------------
@@ -110,7 +119,6 @@ qSlicerSliceControllerModuleWidgetPrivate::removeSliceController(vtkMRMLSliceNod
   // remove entry from the map
   this->ControllerMap.erase(cit);
 }
-
 
 
 //-----------------------------------------------------------------------------
@@ -171,6 +179,12 @@ void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
   // Need to listen for any slice nodes being removed
   this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeRemovedEvent, 
                       this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+
+  // Listen to changes in the Layout so we only show controllers for
+  // the visible SliceNodes
+  QObject::connect(layoutManager, SIGNAL(layoutChanged(int)), this, 
+                   SLOT(onLayoutChanged(int)));
+
 }
 
 // --------------------------------------------------------------------------
@@ -215,3 +229,57 @@ void qSlicerSliceControllerModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
     d->removeSliceController(sliceNode);
     }
 }
+
+void qSlicerSliceControllerModuleWidget::onLayoutChanged(int)
+{
+  Q_D(qSlicerSliceControllerModuleWidget);
+
+  // add the controllers for any newly visible SliceNodes and remove
+  // the controllers for any SliceNodes no longer visible
+
+
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (!app)
+    {
+    return;
+    }
+  qSlicerLayoutManager * layoutManager = app->layoutManager();
+  if (!layoutManager)
+    {
+    return;
+    }
+  
+  vtkMRMLLayoutLogic *layoutLogic = layoutManager->layoutLogic();
+  vtkCollection *visibleViews = layoutLogic->GetViewNodes();
+  vtkObject *v;
+
+  // add SliceControllers for SliceNodes not currently being managed
+  for (visibleViews->InitTraversal(); (v = visibleViews->GetNextItemAsObject());)
+    {
+    // Is this a SliceNode
+    vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(v);
+    if (sn)
+      {
+      // is the SliceNode already being managed by the widget?
+      qSlicerSliceControllerModuleWidgetPrivate::ControllerMapType::iterator cit = d->ControllerMap.find(sn);
+      if (cit == d->ControllerMap.end())
+        {
+        // not currently managed, add it
+        d->createSliceController(sn, layoutManager);
+        }
+      }
+    }
+  
+  // remove SliceControllers for SliceNodes not currently visible in
+  // the layout
+  qSlicerSliceControllerModuleWidgetPrivate::ControllerMapType::iterator cit;
+  for (cit = d->ControllerMap.begin(); cit != d->ControllerMap.end(); ++cit)
+    {
+    // is mananaged SliceNode not currently displayed in the layout?
+    if (!visibleViews->IsItemPresent((*cit).first))
+      {
+      d->removeSliceController((*cit).first);
+      }
+    }
+}
+
