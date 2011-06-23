@@ -28,6 +28,9 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerUtils.h"
 
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
 #include "vtkSlicerConfigure.h"
@@ -69,6 +72,8 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
   foreach(const QString& path, qtModulePaths)
     {
+    QString currentPath(vtksys::SystemTools::GetEnv("PATH"));
+    vtksys::SystemTools::PutEnv(QString("PATH=%1;%2").arg(path).arg(currentPath).toLatin1());
     app->addLibraryPath(path);
     }
 
