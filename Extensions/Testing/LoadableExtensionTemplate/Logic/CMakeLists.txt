@@ -21,10 +21,7 @@ set(module_logic_SRCS
 
 # Additional Target libraries
 set(module_logic_target_libraries
-  ${CTK_LIBRARIES}
   ${ITK_LIBRARIES}
-  ${QT_LIBRARIES}
-  ${VTK_LIBRARIES}
   )
 
 SlicerMacroBuildModuleLogic(
