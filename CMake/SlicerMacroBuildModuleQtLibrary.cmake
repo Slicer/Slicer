@@ -88,7 +88,8 @@ macro(SlicerMacroBuildModuleQtLibrary)
 
   set_source_files_properties(
     ${MODULEQTLIBRARY_UI_CXX}
-    ${MODULEQTLIBRARY_SRCS}
+    ${MODULEQTLIBRARY_MOC_OUTPUT}
+    ${MODULEQTLIBRARY_QRC_SRCS}
     WRAP_EXCLUDE
     )
 
@@ -185,4 +186,5 @@ macro(SlicerMacroBuildModuleQtLibrary)
       set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
     endif()
   endif()
+
 endmacro()
