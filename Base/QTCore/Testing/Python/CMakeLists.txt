@@ -1,7 +1,11 @@
 
+if(BUILD_TESTING)
+  # Code specfic to Slicer testing is added here.
+
+endif()
 
 #
-# Test templates
+# Test templates - Common to both Slicer and the extensions
 #
 
 set(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR ${CMAKE_CURRENT_SOURCE_DIR}
