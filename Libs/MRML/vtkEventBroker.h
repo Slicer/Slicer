@@ -75,7 +75,7 @@ public:
   /// 
   /// Request that an observer be added to the subject (or "observee")
   /// - this is the "Attach" operation
-  vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
+  vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, float priority=0.0f);
 
   /// 
   /// Scripted version of observation

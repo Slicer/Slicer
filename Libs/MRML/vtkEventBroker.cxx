@@ -143,7 +143,7 @@ void vtkEventBroker::DetachObservations()
 
 //----------------------------------------------------------------------------
 vtkObservation *vtkEventBroker::AddObservation (
-  vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify)
+  vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, float priority)
 {
   std::vector<vtkObject *>::iterator siter;
 
@@ -157,6 +157,7 @@ vtkObservation *vtkEventBroker::AddObservation (
   observation->SetEvent( event );
   observation->AssignObserver( observer );
   observation->SetCallbackCommand( notify );
+  observation->SetPriority( priority );
 
   this->AttachObservation( observation );
 
@@ -224,7 +225,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
 
   unsigned long tag;
 
-  tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
+  tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand());
   observation->SetSubjectDeleteEventTag( tag );
 
   if ( observation->GetObserver() != NULL && (observation->GetSubject() != observation->GetObserver()) )
@@ -234,7 +235,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
     observation->SetObserverDeleteEventTag( tag );
     }
 
-  tag = observation->GetSubject()->AddObserver( observation->GetEvent(), observation->GetObservationCallbackCommand() );
+  tag = observation->GetSubject()->AddObserver( observation->GetEvent(), observation->GetObservationCallbackCommand(), observation->GetPriority());
   observation->SetEventTag( tag );
 
 }

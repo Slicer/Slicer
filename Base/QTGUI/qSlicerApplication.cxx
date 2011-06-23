@@ -59,6 +59,7 @@
 
 // qMRMLWidget includes
 #include "qMRMLColorPickerWidget.h"
+#include "qMRMLEventBrokerConnection.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -115,6 +116,12 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
+
+  if (!dynamic_cast<qMRMLConnectionFactory*>(ctkVTKObjectEventsObserver::connectionFactory))
+    {
+    delete ctkVTKObjectEventsObserver::connectionFactory;
+    ctkVTKObjectEventsObserver::connectionFactory = new qMRMLConnectionFactory;
+    }
 
   this->ColorDialogPickerWidget =
     QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));

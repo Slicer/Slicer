@@ -19,8 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QTreeWidget>
 #include <QVBoxLayout>
+
+// CTK includes
+#include <ctkVTKConnection_p.h>
 
 // qMRML includes
 #include "qMRMLEventBrokerWidget.h"
@@ -222,6 +226,13 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
     // Script
     observationItem->setText(NameColumn, "Script");
     observationItem->setToolTip(NameColumn, observation->GetScript());
+    }
+  else if (!observation->GetObserver())
+    {
+    ctkVTKConnectionPrivate* connection = reinterpret_cast<ctkVTKConnectionPrivate*>(
+      observation->GetCallbackCommand()->GetClientData());
+    observationItem->setText(NameColumn, connection->QtObject->metaObject()->className());
+    observationItem->setToolTip(NameColumn, "0x" + QString::number(reinterpret_cast<intptr_t>(connection->QtObject), 16));
     }
   // Elapsed Time
   observationItem->setText(ElapsedTimeColumn, QString::number(observation->GetLastElapsedTime()) + " s");

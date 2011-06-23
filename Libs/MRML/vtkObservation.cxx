@@ -32,6 +32,7 @@ vtkObservation::vtkObservation()
   this->CallbackCommand = NULL;
   this->Script = NULL;
   this->Comment = NULL;
+  this->Priority = 0.0f;
   this->EventTag = 0;
   this->SubjectDeleteEventTag = 0;
   this->ObserverDeleteEventTag = 0;

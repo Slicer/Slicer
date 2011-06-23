@@ -69,6 +69,8 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   void AssignObserver(vtkObject* observer) {this->Observer = observer;};
   vtkSetStringMacro (Comment);
   vtkGetStringMacro (Comment);
+  vtkSetMacro(Priority, float);
+  vtkGetMacro(Priority, float);
 
   vtkGetMacro (EventTag, unsigned long);
   vtkSetMacro (EventTag, unsigned long);
@@ -139,6 +141,10 @@ protected:
   /// 
   /// Holder for comment string
   char *Comment;
+  
+  ///
+  /// Priority of the observer
+  float Priority;
 
   /// 
   /// keep track of the tags returned by vtkObject::AddObserver so this

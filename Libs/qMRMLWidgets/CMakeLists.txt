@@ -53,6 +53,8 @@ set(qMRMLWidgets_SRCS
   qMRMLDisplayNodeWidget.h
   qMRMLLabelComboBox.h
   qMRMLLabelComboBox.cxx
+  qMRMLEventBrokerConnection.cxx
+  qMRMLEventBrokerConnection.h
   qMRMLEventBrokerWidget.cxx
   qMRMLEventBrokerWidget.h
   qMRMLEventLogger.cxx
@@ -156,6 +158,7 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLColorTableView.h
   qMRMLColorModel.h
   qMRMLDisplayNodeWidget.h
+  qMRMLEventBrokerConnection.h
   qMRMLEventBrokerWidget.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
