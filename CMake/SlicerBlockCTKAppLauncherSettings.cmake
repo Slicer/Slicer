@@ -102,7 +102,7 @@ if(Slicer_USE_BatchMake)
     )
 endif()
 
-if(Slicer_USE_OPENIGTLINK)
+if(Slicer_USE_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenIGTLink_DIR}
     ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
@@ -188,7 +188,7 @@ set(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
   )
 
-if(Slicer_USE_OPENIGTLINK)
+if(Slicer_USE_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     # External projects
     <APPLAUNCHER_DIR>/lib/igtl

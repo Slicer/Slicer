@@ -116,7 +116,7 @@ set(slicer_cmake_boolean_args
   Slicer_USE_CTKAPPLAUNCHER
   Slicer_USE_BatchMake
   Slicer_USE_MIDAS
-  Slicer_USE_OPENIGTLINK
+  Slicer_USE_OpenIGTLink
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
@@ -162,7 +162,7 @@ if(Slicer_USE_BatchMake)
   list(APPEND slicer_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()
 
-if(Slicer_USE_OPENIGTLINK)
+if(Slicer_USE_OpenIGTLink)
   list(APPEND slicer_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
 endif()
 
