@@ -65,7 +65,12 @@ set(git_names git eg)
 #
 if(WIN32)
   if(NOT CMAKE_GENERATOR MATCHES "MSYS")
-    set(git_names git.cmd git eg.cmd eg)
+    # Note: Due to a bug in 'git.cmd' preventing it from returning the exit code of 'git',
+    #       we excluded it from the list of executables to search.
+    # See http://code.google.com/p/msysgit/issues/detail?id=428
+    # TODO Check if 'git' exists, get the associated version, if the corresponding version
+    #      is known to have a working version of 'git.cmd', use it.
+    set(git_names git eg.cmd eg)
   endif()
 endif()
 
