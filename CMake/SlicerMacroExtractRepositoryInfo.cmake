@@ -30,7 +30,7 @@
 # If no SOURCE_DIR is provided, it will default to CMAKE_CURRENT_SOURCE_DIR.
 #
 # The macro will define the following variables:
-#  <var-prefix>_WC_TYPE - Either 'git' or 'svn' - The type will also be 'svn' if 'git-svn' is used.
+#  <var-prefix>_WC_TYPE - Either 'git', 'svn' or 'local' - The type will also be 'svn' if 'git-svn' is used.
 #
 # If a GIT repository is associated with SOURCE_DIR, the macro
 # will define the following variables:
@@ -67,7 +67,7 @@ macro(SlicerMacroExtractRepositoryInfo)
   endif()
 
   # Clear variables
-  set(${wc_info_prefix}_WC_TYPE)
+  set(${wc_info_prefix}_WC_TYPE local)
   set(${wc_info_prefix}_WC_INFO)
 
   # Clear SVN, GIT_SVN specific variables
@@ -122,10 +122,6 @@ macro(SlicerMacroExtractRepositoryInfo)
 
         # TODO
         message(AUTHOR_WARNING "CVS info extraction not yet implemented !")
-
-      else()
-
-        message(WARNING "warning: Failed to extract repository info associated with SOURCE_DIR:${MY_SOURCE_DIR}")
 
       endif()
     endif()

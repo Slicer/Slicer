@@ -52,14 +52,15 @@ function(slicerFunctionGenerateExtensionDescription)
 
   #message(MY_SLICER_WC_ROOT:${MY_SLICER_WC_ROOT})
   #message(MY_SLICER_WC_REVISION:${MY_SLICER_WC_REVISION})
+  #message(Extension_WC_TYPE:${Extension_WC_TYPE})
   #message(Extension_WC_ROOT:${Extension_WC_ROOT})
   #message(Extension_WC_REVISION:${Extension_WC_REVISION})
 
   # If both Root and Revision matches, let's assume both Slicer source and Extension source
   # are checkout on the same filesystem.
   # This is useful for testing purposes
-  if(${Extension_WC_ROOT} STREQUAL ${MY_SLICER_WC_ROOT}
-     AND ${Extension_WC_REVISION} STREQUAL ${MY_SLICER_WC_REVISION})
+  if(${Extension_WC_TYPE} STREQUAL "local" OR ("${Extension_WC_ROOT}" STREQUAL ${MY_SLICER_WC_ROOT}
+     AND "${Extension_WC_REVISION}" STREQUAL ${MY_SLICER_WC_REVISION}))
     set(scm_type local)
     #set(scm_path_token localpath)
     set(scm_url ${CMAKE_CURRENT_SOURCE_DIR})
