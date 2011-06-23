@@ -4,6 +4,7 @@
 
 // qMRMLWidgets include
 #include "qMRMLNodeComboBox.h"
+#include "qMRMLSceneModel.h"
 
 // qSlicerVolumeRendering includes
 #include "qSlicerVolumeRenderingModuleWidget.h"
@@ -143,7 +144,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
-  //this->populatePresetsIcons(this->PresetsNodeComboBox);
+  this->populatePresetsIcons(this->PresetsNodeComboBox);
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(applyPreset(vtkMRMLNode*)));
   
@@ -226,12 +227,12 @@ void qSlicerVolumeRenderingModuleWidgetPrivate
   for (int i = 0; i < presetsNodeComboBox->nodeCount(); ++i)
     {
     vtkMRMLNode* presetNode = presetsNodeComboBox->nodeFromIndex(i);
-    QIcon presetIcon(QString(":/Presets/") + presetNode->GetName());
+    QIcon presetIcon(QString(":/presets/") + presetNode->GetName());
+    //QIcon presetIcon(":/Icons/VisibleOff.png");
     if (!presetIcon.isNull())
       {
-      presetsNodeComboBox->sortFilterProxyModel()->setData(
-        presetsNodeComboBox->sortFilterProxyModel()->indexFromMRMLNode(presetNode),
-        presetIcon, Qt::DisplayRole);
+      qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(presetsNodeComboBox->sortFilterProxyModel()->sourceModel());
+      sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
       }
     }
   // Use a larger size for the icons
