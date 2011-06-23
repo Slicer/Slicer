@@ -6,7 +6,7 @@ if(UNIX)
     set(ENV{LDFLAGS} "-undefined dynamic_lookup")
   endif (APPLE)
 
-  EXECUTE_PROCESS( 
+  execute_process(
     COMMAND ${cmd}
     WORKING_DIRECTORY "@python_base@"
     RESULT_VARIABLE rv

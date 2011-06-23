@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 2.8)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 enable_testing()
@@ -63,11 +63,11 @@ set(${CLP}_PRIMARY_SOURCE ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitPrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "BRAINSFitPrimary" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
-INSTALL(TARGETS BRAINSFit DESTINATION ${Slicer_INSTALL_BIN_DIR})
+install(TARGETS BRAINSFit DESTINATION ${Slicer_INSTALL_BIN_DIR})
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-ENDIF()
+endif()
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BRAINSFit Image Registration")

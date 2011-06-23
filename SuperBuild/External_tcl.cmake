@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(tcl_DEPENDENCIES "")
@@ -41,7 +41,7 @@ else()
   # configure, make and make install all need to be executed in tcl/unix. External_Project
   # doesn't provide any way to set the working directory for each step so we do so by
   # configuring a script that has an execute_process command that has the correct working
-  # directory   
+  # directory
   configure_file(
     SuperBuild/tcl_configure_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake
@@ -75,4 +75,4 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${tcl_DEPENDENCIES}
   )
- 
+

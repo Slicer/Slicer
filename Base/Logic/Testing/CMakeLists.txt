@@ -1,25 +1,25 @@
-SET(KIT BaseLogic)
+set(KIT BaseLogic)
 
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkArchiveTest1.cxx
   vtkDataIOManagerLogicTest1.cxx
   vtkSlicerTransformLogicTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
-SET_TARGET_PROPERTIES(${KIT}CxxTests PROPERTIES LABELS ${LIBRARY_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${lib_name})
+set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${LIBRARY_NAME})
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+  set_property(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
+endmacro()
 
 SIMPLE_TEST( vtkArchiveTest1 ${CMAKE_CURRENT_SOURCE_DIR}/vol.zip)
 SIMPLE_TEST( vtkDataIOManagerLogicTest1 )

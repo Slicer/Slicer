@@ -27,10 +27,10 @@
 #  <var-prefix>_PLATFORM - which is on the this value: linux, macosx, win
 #  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
 
-MACRO(SlicerMacroGetPlatformArchitectureBitness)
-  SET(options)
-  SET(oneValueArgs VAR_PREFIX)
-  SET(multiValueArgs)
+macro(SlicerMacroGetPlatformArchitectureBitness)
+  set(options)
+  set(oneValueArgs VAR_PREFIX)
+  set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
@@ -38,32 +38,32 @@ MACRO(SlicerMacroGetPlatformArchitectureBitness)
     message(FATAL_ERROR "error: VAR_PREFIX should be specified !")
   endif()
 
-  SET(${MY_VAR_PREFIX}_ARCHITECTURE "")
+  set(${MY_VAR_PREFIX}_ARCHITECTURE "")
 
-  SET(${MY_VAR_PREFIX}_ARCHITECTURE i386)
-  SET(${MY_VAR_PREFIX}_BITNESS 32)
-  IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    SET(${MY_VAR_PREFIX}_BITNESS 64)
-    SET(${MY_VAR_PREFIX}_ARCHITECTURE amd64)
-  ENDIF()
+  set(${MY_VAR_PREFIX}_ARCHITECTURE i386)
+  set(${MY_VAR_PREFIX}_BITNESS 32)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(${MY_VAR_PREFIX}_BITNESS 64)
+    set(${MY_VAR_PREFIX}_ARCHITECTURE amd64)
+  endif()
 
-  IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(${MY_VAR_PREFIX}_PLATFORM "win")
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(${MY_VAR_PREFIX}_PLATFORM "win")
 
-  ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    SET(${MY_VAR_PREFIX}_PLATFORM "linux")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(${MY_VAR_PREFIX}_PLATFORM "linux")
 
-  ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    SET(${MY_VAR_PREFIX}_PLATFORM "macosx")
-    IF(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
-      SET(${MY_VAR_PREFIX}_ARCHITECTURE "ppc")
-    ENDIF()
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(${MY_VAR_PREFIX}_PLATFORM "macosx")
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
+      set(${MY_VAR_PREFIX}_ARCHITECTURE "ppc")
+    endif()
 
-  #ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
+  #elseif(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
 
-  #  SET(${MY_VAR_PREFIX}_BUILD "solaris8") # What about solaris9 and solaris10 ?
+  #  set(${MY_VAR_PREFIX}_BUILD "solaris8") # What about solaris9 and solaris10 ?
 
-  ENDIF()
+  endif()
 
-ENDMACRO()
+endmacro()
 

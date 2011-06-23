@@ -11,7 +11,7 @@ set(OriginalImage ${SOURCE_DIR}/dt-helix.nrrd )
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
-SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
+set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformFile ${SOURCE_DIR}/rotation.tfm )
@@ -31,7 +31,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${TransformedImage1}
     -n 8
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage2 ${TEMP}/dt-helix-transformed2.nrrd )
@@ -53,7 +53,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     --correction abs
     -n 8
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage3 ${TEMP}/dt-helix-transformed3.nrrd )
@@ -73,7 +73,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     --correction nearest
     -n 8
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage4 ${TEMP}/dt-helix-transformed4.nrrd )
@@ -93,7 +93,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     --correction none
     -o 3
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage5 ${TEMP}/dt-helix-transformed5.nrrd )
@@ -111,7 +111,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${TransformedImage5}
     -n 8
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 #-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${OriginalImage}
     ${TransformedImage}
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage6 ${TEMP}/dt-helix-transformed6.nrrd )
@@ -146,5 +146,5 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${OriginalImage}
     ${TransformedImage6}
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set_tests_properties( itkTestMainExtendedFailedTest PROPERTIES WILL_FAIL true)

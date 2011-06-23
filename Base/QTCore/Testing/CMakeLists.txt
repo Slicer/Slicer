@@ -1,2 +1,2 @@
-ADD_SUBDIRECTORY(Cxx)
-ADD_SUBDIRECTORY(Python)
+add_subdirectory(Cxx)
+add_subdirectory(Python)

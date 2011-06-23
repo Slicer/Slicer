@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(weave_DEPENDENCIES python NUMPY)
@@ -24,7 +24,7 @@ set(weave_binary "${CMAKE_CURRENT_BINARY_DIR}/weave/")
 #   SuperBuild/weave_configure_step.cmake.in
 #   ${CMAKE_CURRENT_BINARY_DIR}/weave_configure_step.cmake @ONLY)
 # to build weave we also run a cmake -P script.
-# the script will set LD_LIBRARY_PATH so that 
+# the script will set LD_LIBRARY_PATH so that
 # python can run after it is built on linux
 configure_file(
   SuperBuild/weave_make_step.cmake.in
@@ -42,7 +42,7 @@ ExternalProject_Add(weave
   CONFIGURE_COMMAND ""
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${weave_DEPENDENCIES}
   )
 

@@ -1,11 +1,11 @@
-PROJECT(qSlicer${qt_module_name}ModuleWidgetsPlugin)
+project(qSlicer${qt_module_name}ModuleWidgetsPlugin)
 
 #
 # See CMake/qCTKDesignerPluginMacros.cmake for details
 #
 
 # Source files
-SET(designer_plugin_SRCS
+set(designer_plugin_SRCS
   qSlicerAnnotationModuleWidgetsAbstractPlugin.cxx
   qSlicerAnnotationModuleWidgetsAbstractPlugin.h
   qSlicerAnnotationModuleWidgetsPlugin.cxx
@@ -17,13 +17,13 @@ SET(designer_plugin_SRCS
 
 
 # Headers that should run through moc
-SET(designer_plugin_MOC_SRCS
+set(designer_plugin_MOC_SRCS
   qSlicerAnnotationModuleWidgetsPlugin.h
-  
+
   qMRMLAnnotationROIWidgetPlugin.h
   )
 
-SET(designer_plugin_TARGET_LIBRARIES
+set(designer_plugin_TARGET_LIBRARIES
   qSlicerAnnotationModuleWidgets
   )
 

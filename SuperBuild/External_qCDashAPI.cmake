@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
 if(DEFINED qCDashAPI_DIR AND NOT EXISTS ${qCDashAPI_DIR})
@@ -33,12 +33,12 @@ if(NOT DEFINED qCDashAPI_DIR)
       -DBUILD_TESTING:BOOL=OFF
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     INSTALL_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${qCDashAPI_DEPENDENCIES}
     )
   set(qCDashAPI_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
-  # The project is provided using qCDashAPI_DIR, nevertheless since other project may depend on qCDashAPI, 
+  # The project is provided using qCDashAPI_DIR, nevertheless since other project may depend on qCDashAPI,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${qCDashAPI_DEPENDENCIES}")
 endif()

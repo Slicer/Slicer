@@ -1,16 +1,16 @@
-PROJECT(vtkSlicer${qt_module_name}ModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
-SET(module_logic_name "${PROJECT_NAME}")
+set(module_logic_name "${PROJECT_NAME}")
 
 # The header '${module_logic_name}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT")
+set(module_logic_export_directive "VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
-SET(module_logic_include_directories
+set(module_logic_include_directories
   ${vtkSlicerVolumeRenderingModuleMRML_SOURCE_DIR}
   ${vtkSlicerVolumeRenderingModuleMRML_BINARY_DIR}
   ${VolumeRenderingReplacements_SOURCE_DIR}
@@ -18,13 +18,13 @@ SET(module_logic_include_directories
   )
 
 # Source files
-SET(module_logic_SRCS
+set(module_logic_SRCS
   vtkSlicerVolumeRenderingLogic.cxx
   vtkSlicerVolumeRenderingLogic.h
   )
 
 # Additional Target libraries
-SET(module_logic_target_libraries
+set(module_logic_target_libraries
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
   vtkSlicerAnnotationModuleMRML
@@ -38,11 +38,11 @@ SlicerMacroBuildModuleLogic(
   TARGET_LIBRARIES ${module_logic_target_libraries}
   )
 
-CONFIGURE_FILE(
+configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/presets.xml
   ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/presets.xml
   COPYONLY)
 
-INSTALL(
+install(
   FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/presets.xml
   DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Runtime)

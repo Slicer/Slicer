@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 2.8)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 enable_testing()
@@ -74,6 +74,6 @@ if(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 endif(BRAINS_BUILD) ## ONLY BUILD FOR BACKWARDS COMPATIBILITY IN BRAINS ENVIRONMENT
 
 ### Add the Testing Subdirectory.
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-ENDIF()
+endif()

@@ -1,6 +1,6 @@
 # Generate the SlicerConfig.cmake file in the build tree and configure one
 # for the installation tree.  This file tells external project how to use
-# Slicer.  This provides a mechanism for third party developers to build 
+# Slicer.  This provides a mechanism for third party developers to build
 # modules against a Slicer installation.
 #
 #
@@ -18,72 +18,72 @@
 #
 #
 
-SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
+set(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
 
 # Launcher command
-SET(Slicer_LAUNCHER_EXECUTABLE_CONFIG ${Slicer_LAUNCHER_EXECUTABLE})
-SET(Slicer_LAUNCH_COMMAND_CONFIG ${Slicer_LAUNCH_COMMAND})
+set(Slicer_LAUNCHER_EXECUTABLE_CONFIG ${Slicer_LAUNCHER_EXECUTABLE})
+set(Slicer_LAUNCH_COMMAND_CONFIG ${Slicer_LAUNCH_COMMAND})
 
 # License and Readme file
-SET(Slicer_LICENSE_FILE_CONFIG ${Slicer_SOURCE_DIR}/License.txt)
-SET(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
+set(Slicer_LICENSE_FILE_CONFIG ${Slicer_SOURCE_DIR}/License.txt)
+set(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
 
 # Test templates directory
-SET(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR})
-SET(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR})
+set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR})
+set(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR})
 
 # Path to extension CPack script
 set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/SlicerExtensionCPack.cmake)
 
-SET(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
-SET(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
+set(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
+set(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
 
-SET(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
-SET(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
-SET(Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG ${Slicer_ModuleLogic_INCLUDE_DIRS})
-SET(Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG ${Slicer_ModuleMRML_INCLUDE_DIRS})
-SET(Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG ${Slicer_ModuleWidgets_INCLUDE_DIRS})
+set(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
+set(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
+set(Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG ${Slicer_ModuleLogic_INCLUDE_DIRS})
+set(Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG ${Slicer_ModuleMRML_INCLUDE_DIRS})
+set(Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG ${Slicer_ModuleWidgets_INCLUDE_DIRS})
 
 # Qt
-SET(QT_QMAKE_EXECUTABLE_CONFIG ${QT_QMAKE_EXECUTABLE})
+set(QT_QMAKE_EXECUTABLE_CONFIG ${QT_QMAKE_EXECUTABLE})
 
 # Slicer libraries
-SET(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-SET(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
+set(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+set(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+set(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
 
 # External project
 if(Slicer_USE_BatchMake)
-  SET(BatchMake_DIR_CONFIG ${BatchMake_DIR})
+  set(BatchMake_DIR_CONFIG ${BatchMake_DIR})
 endif()
-SET(CTK_DIR_CONFIG ${CTK_DIR})
-SET(ITK_DIR_CONFIG ${ITK_DIR})
-SET(qCDashAPI_DIR_CONFIG ${qCDashAPI_DIR})
-SET(PYTHON_INCLUDE_PATH_CONFIG ${PYTHON_INCLUDE_PATH})
-SET(PYTHON_LIBRARIES_CONFIG ${PYTHON_LIBRARIES})
-SET(SLICERLIBCURL_DIR_CONFIG ${SLICERLIBCURL_DIR})
-SET(Teem_DIR_CONFIG ${Teem_DIR})
-SET(VTK_DIR_CONFIG ${VTK_DIR})
+set(CTK_DIR_CONFIG ${CTK_DIR})
+set(ITK_DIR_CONFIG ${ITK_DIR})
+set(qCDashAPI_DIR_CONFIG ${qCDashAPI_DIR})
+set(PYTHON_INCLUDE_PATH_CONFIG ${PYTHON_INCLUDE_PATH})
+set(PYTHON_LIBRARIES_CONFIG ${PYTHON_LIBRARIES})
+set(SLICERLIBCURL_DIR_CONFIG ${SLICERLIBCURL_DIR})
+set(Teem_DIR_CONFIG ${Teem_DIR})
+set(VTK_DIR_CONFIG ${VTK_DIR})
 
 # List all required external project
-SET(Slicer_EXTERNAL_PROJECTS_CONFIG CTK GenerateCLP ITK qCDashAPI SLICERLIBCURL Teem VTK)
-IF(Slicer_USE_BatchMake)
-  LIST(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG BatchMake)
-ENDIF()
+set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK GenerateCLP ITK qCDashAPI SLICERLIBCURL Teem VTK)
+if(Slicer_USE_BatchMake)
+  list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG BatchMake)
+endif()
 
 # Export Targets file.
-SET(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
+set(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
 
 # Configure SlicerConfig.cmake for the build tree.
-CONFIGURE_FILE(
+configure_file(
   ${Slicer_SOURCE_DIR}/SlicerConfig.cmake.in
   ${Slicer_BINARY_DIR}/SlicerConfig.cmake @ONLY)
 
-# Settings specific for installation trees      
-#      
-# (Note we configure from a different file than use for the build tree)      
+# Settings specific for installation trees
+#
+# (Note we configure from a different file than use for the build tree)
 
-# Configure SlicerConfig.cmake for the install tree.      
-CONFIGURE_FILE(
-  ${Slicer_SOURCE_DIR}/SlicerInstallConfig.cmake.in      
+# Configure SlicerConfig.cmake for the install tree.
+configure_file(
+  ${Slicer_SOURCE_DIR}/SlicerInstallConfig.cmake.in
   ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake @ONLY)

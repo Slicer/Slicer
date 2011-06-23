@@ -21,7 +21,7 @@
 #
 # ------------------[ Slicer Launcher settings ] ------------------
 #
-# This file contains variables that can be grouped into two broad categories. 
+# This file contains variables that can be grouped into two broad categories.
 #
 # There are the variables that are used to configure the launcher for a BUILD tree and also
 # the ones for an INSTALLED tree.
@@ -37,30 +37,30 @@
 #   SLICER_LIBRARY_PATHS_INSTALLED
 #   SLICER_PATHS_INSTALLED
 #   SLICER_ENVVARS_INSTALLED
-# 
+#
 
 #
-# Usually, if you are building on a system handling multiple build configrations 
+# Usually, if you are building on a system handling multiple build configrations
 # (i.e Visual studio with Debug, Release, ...), the libraries and executables could be built in a
-# subdirectory matching the active configuration. 
-# 
-# In case of a BUILD tree, each time a path containing such a sub directory should be considered, 
+# subdirectory matching the active configuration.
+#
+# In case of a BUILD tree, each time a path containing such a sub directory should be considered,
 # it's possible to rely on a special string: <CMAKE_CFG_INTDIR>
 #
 # At build time, <CMAKE_CFG_INTDIR> will be replaced by the active configuration name.
-# This happens within the script "ctkAppLauncher-configure.cmake". 
+# This happens within the script "ctkAppLauncher-configure.cmake".
 
 # Note also that script is executed each time the target 'SlicerConfigureLauncher' is built.
 #
-# It means you could manually trigger the reconfiguration of the launcher settings file 
+# It means you could manually trigger the reconfiguration of the launcher settings file
 # by building that target.
 
 # Convenient variable set to the subdirectory containing the libraries.
 # Set to 'lib' on Linux and Darwin, set to 'bin' on Windows
-SET(LIB_SUBDIR lib)
-IF(WIN32)
-  SET(LIB_SUBDIR bin)
-ENDIF()
+set(LIB_SUBDIR lib)
+if(WIN32)
+  set(LIB_SUBDIR bin)
+endif()
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
-SET(SLICER_LIBRARY_PATHS_BUILD
+set(SLICER_LIBRARY_PATHS_BUILD
   ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
@@ -84,91 +84,91 @@ SET(SLICER_LIBRARY_PATHS_BUILD
   )
 
 
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
-  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${Slicer_TCL_DIR}/lib
     )
-  IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    list(APPEND SLICER_LIBRARY_PATHS_BUILD
       ${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}
       ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}
       )
-  ENDIF()
-ENDIF()
+  endif()
+endif()
 
-IF(Slicer_USE_BatchMake)
-  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
+if(Slicer_USE_BatchMake)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${BatchMake_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
-ENDIF()
+endif()
 
-IF(Slicer_USE_OPENIGTLINK)
-  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
+if(Slicer_USE_OPENIGTLINK)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenIGTLink_DIR}
     ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
-ENDIF()
+endif()
 
-IF(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
-  LIST(APPEND SLICER_LIBRARY_PATHS_BUILD 
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
     ${SLICER_PYTHON_LIB_DIR}
     )
-ENDIF()
+endif()
 
 #-----------------------------------------------------------------------------
 # PATHS
 #-----------------------------------------------------------------------------
-SET(SLICER_PATHS_BUILD
+set(SLICER_PATHS_BUILD
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${QT_BINARY_DIR}
   )
-  
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
-  LIST(APPEND SLICER_PATHS_BUILD
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND SLICER_PATHS_BUILD
     ${Slicer_TCL_DIR}/bin
     )
-ENDIF()
+endif()
 
 #-----------------------------------------------------------------------------
 # ENVVARS
 #-----------------------------------------------------------------------------
-SET(SLICER_ENVVARS_BUILD
+set(SLICER_ENVVARS_BUILD
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin"
   )
-  
-IF(Slicer_USE_PYTHONQT)
-  SET(pythonpath_subdir python${Slicer_PYTHON_VERSION_DOT})
-  IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(pythonpath_subdir "../Lib")
-  ENDIF()
-  SET(PYTHONPATH "${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/lib-tk")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/lib")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/core")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
-  
-  LIST(APPEND SLICER_ENVVARS_BUILD "PYTHONPATH=${PYTHONPATH}")
-ENDIF()
-  
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
+
+if(Slicer_USE_PYTHONQT)
+  set(pythonpath_subdir python${Slicer_PYTHON_VERSION_DOT})
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir "../Lib")
+  endif()
+  set(PYTHONPATH "${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/lib-tk")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/lib")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/core")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
+
+  list(APPEND SLICER_ENVVARS_BUILD "PYTHONPATH=${PYTHONPATH}")
+endif()
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
   # Search locations for TCL packages - space separated list
-  SET(TCLLIBPATH "${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
-  SET(TCLLIBPATH "${TCLLIBPATH} ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
-  
-  LIST(APPEND SLICER_ENVVARS_BUILD
+  set(TCLLIBPATH "${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
+  set(TCLLIBPATH "${TCLLIBPATH} ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
+
+  list(APPEND SLICER_ENVVARS_BUILD
     "TCL_LIBRARY=${Slicer_TCL_DIR}/lib/tcl${TCL_TK_VERSION_DOT}"
     "TK_LIBRARY=${Slicer_TCL_DIR}/lib/tk${TCL_TK_VERSION_DOT}"
     "TCLLIBPATH=${TCLLIBPATH}"
     )
-ENDIF()
+endif()
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
@@ -179,7 +179,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
-SET(SLICER_LIBRARY_PATHS_INSTALLED
+set(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_LIB_DIR}
@@ -188,44 +188,44 @@ SET(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
   )
 
-IF(Slicer_USE_OPENIGTLINK)
-  LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    # External projects 
+if(Slicer_USE_OPENIGTLINK)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+    # External projects
     <APPLAUNCHER_DIR>/lib/igtl
     )
-ENDIF()
+endif()
 
-IF(Slicer_USE_BatchMake)
-  LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+if(Slicer_USE_BatchMake)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     <APPLAUNCHER_DIR>/lib/BatchMake
     <APPLAUNCHER_DIR>/lib/bmModuleDescriptionParser
     )
-ENDIF()
+endif()
 
-IF(UNIX AND Slicer_USE_PYTHONQT)
+if(UNIX AND Slicer_USE_PYTHONQT)
   # On windows, both pythonQt and python libraries are installed allong with the executable
-  LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     <APPLAUNCHER_DIR>/lib/Python/lib
     <APPLAUNCHER_DIR>/lib/PythonQt
     )
-ENDIF()
+endif()
 
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
-  SET(tcllib_subdir lib)
-  IF(WIN32)
-    SET(tcllib_subdir bin)
-  ENDIF()
-  LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  set(tcllib_subdir lib)
+  if(WIN32)
+    set(tcllib_subdir bin)
+  endif()
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     <APPLAUNCHER_DIR>/lib/TclTk/${tcllib_subdir}
     <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
     <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
     )
-ENDIF()
+endif()
 
 #-----------------------------------------------------------------------------
 # PATHS
 #-----------------------------------------------------------------------------
-SET(SLICER_PATHS_INSTALLED
+set(SLICER_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_BIN_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
@@ -235,39 +235,39 @@ SET(SLICER_PATHS_INSTALLED
 #-----------------------------------------------------------------------------
 # ENVVARS
 #-----------------------------------------------------------------------------
-SET(SLICER_ENVVARS_INSTALLED
+set(SLICER_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
   )
-  
-IF(Slicer_USE_PYTHONQT)
-  SET(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(pythonpath_subdir "Lib")
-  ENDIF()
-  SET(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
-  
-  LIST(APPEND SLICER_ENVVARS_INSTALLED "PYTHONPATH=${PYTHONPATH}")
-ENDIF()
-  
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
+
+if(Slicer_USE_PYTHONQT)
+  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir "Lib")
+  endif()
+  set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
+
+  list(APPEND SLICER_ENVVARS_INSTALLED "PYTHONPATH=${PYTHONPATH}")
+endif()
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
   # Search locations for TCL packages - space separated list
-  SET(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
-  SET(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
-  
-  LIST(APPEND SLICER_ENVVARS_INSTALLED
+  set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
+  set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
+
+  list(APPEND SLICER_ENVVARS_INSTALLED
     "TCL_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tcl${TCL_TK_VERSION_DOT}"
     "TK_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tk${TCL_TK_VERSION_DOT}"
     "TCLLIBPATH=${TCLLIBPATH}"
     )
-ENDIF()
+endif()
 

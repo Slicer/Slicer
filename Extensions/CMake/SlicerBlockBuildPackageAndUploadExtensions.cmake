@@ -7,73 +7,73 @@ foreach(var ${expected_defined_vars})
   endif()
 endforeach()
 
-INCLUDE(SlicerFunctionExtractExtensionDescription)
+include(SlicerFunctionExtractExtensionDescription)
 
-IF(Slicer_UPLOAD_EXTENSIONS)
-  INCLUDE(SlicerBlockUploadExtensionPrerequisites) # Common to all extensions
-ENDIF()
+if(Slicer_UPLOAD_EXTENSIONS)
+  include(SlicerBlockUploadExtensionPrerequisites) # Common to all extensions
+endif()
 
 #-----------------------------------------------------------------------------
 # Collect extension description file (*.s4ext)
 #-----------------------------------------------------------------------------
-FILE(GLOB_RECURSE s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
+file(GLOB_RECURSE s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
 
-FOREACH(file ${s4extfiles})
+foreach(file ${s4extfiles})
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
-  
+
   #foreach(v SCM SCMURL DEPENDS HOMEPAGE CATEGORY STATUS DESCRIPTION)
   #  message(${v}:${EXTENSION_SEXT_${v}})
   #endforeach()
-  
+
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
-  IF("${EXTENSION_NAME}" STREQUAL "")
-    MESSAGE(WARNING "Failed to extract extension name associated with file: ${file}")
-  ELSE()
-    MESSAGE(STATUS "Configuring extension: ${EXTENSION_NAME} (${file})")
-    IF("${EXTENSION_SEXT_SCM}" STREQUAL "" AND "${EXTENSION_SEXT_SCMURL}" STREQUAL "")
-      MESSAGE(WARNING "Failed to extract extension information associated file: ${file}")
-    ELSE()
+  if("${EXTENSION_NAME}" STREQUAL "")
+    message(WARNING "Failed to extract extension name associated with file: ${file}")
+  else()
+    message(STATUS "Configuring extension: ${EXTENSION_NAME} (${file})")
+    if("${EXTENSION_SEXT_SCM}" STREQUAL "" AND "${EXTENSION_SEXT_SCMURL}" STREQUAL "")
+      message(WARNING "Failed to extract extension information associated file: ${file}")
+    else()
 
-      SET(sext_add_project True)
-      SET(sext_ep_options_repository)
-      SET(sext_ep_option_scm_executable)
-      IF(${EXTENSION_SEXT_SCM} STREQUAL "git")
+      set(sext_add_project True)
+      set(sext_ep_options_repository)
+      set(sext_ep_option_scm_executable)
+      if(${EXTENSION_SEXT_SCM} STREQUAL "git")
         find_package(Git REQUIRED)
-        SET(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
-        SET(sext_ep_options_repository
+        set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
+        set(sext_ep_options_repository
           "GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG \"origin/master\"")
-        SET(sext_ep_option_scm_executable
+        set(sext_ep_option_scm_executable
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
-      ELSEIF(${EXTENSION_SEXT_SCM} STREQUAL "svn")
+      elseif(${EXTENSION_SEXT_SCM} STREQUAL "svn")
         find_package(Subversion REQUIRED)
-        SET(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
-        SET(sext_ep_options_repository
+        set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
+        set(sext_ep_options_repository
           "SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r \"HEAD\"")
-        SET(sext_ep_option_scm_executable
+        set(sext_ep_option_scm_executable
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
-      ELSEIF(${EXTENSION_SEXT_SCM} STREQUAL "local")
-        SET(EXTENSION_SOURCE_DIR ${EXTENSION_SEXT_SCMURL})
-        IF(NOT EXISTS ${EXTENSION_SOURCE_DIR})
-          SET(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
-        ENDIF()
-      ELSE()
-        SET(sext_add_project False)
-        MESSAGE(WARNING "Unknown type of SCM [${EXTENSION_SEXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
-      ENDIF()
-      IF(sext_add_project)
+      elseif(${EXTENSION_SEXT_SCM} STREQUAL "local")
+        set(EXTENSION_SOURCE_DIR ${EXTENSION_SEXT_SCMURL})
+        if(NOT EXISTS ${EXTENSION_SOURCE_DIR})
+          set(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
+        endif()
+      else()
+        set(sext_add_project False)
+        message(WARNING "Unknown type of SCM [${EXTENSION_SEXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
+      endif()
+      if(sext_add_project)
         # Set external project DEPENDS parameter
-        SET(EXTENSION_DEPENDS)
-        IF(Slicer_SOURCE_DIR)
-          SET(EXTENSION_DEPENDS DEPENDS Slicer)
-        ENDIF()
-        IF(Slicer_UPLOAD_EXTENSIONS)
+        set(EXTENSION_DEPENDS)
+        if(Slicer_SOURCE_DIR)
+          set(EXTENSION_DEPENDS DEPENDS Slicer)
+        endif()
+        if(Slicer_UPLOAD_EXTENSIONS)
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: TRUE
           #-----------------------------------------------------------------------------
-          SET(EXTENSION_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
-          INCLUDE(SlicerBlockUploadExtension)
+          set(EXTENSION_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
+          include(SlicerBlockUploadExtension)
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
@@ -93,7 +93,7 @@ FOREACH(file ${s4extfiles})
             DEPENDERS build
             ALWAYS 1
             )
-          IF(Slicer_SOURCE_DIR)
+          if(Slicer_SOURCE_DIR)
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
@@ -112,9 +112,9 @@ FOREACH(file ${s4extfiles})
               DEPENDERS build
               ALWAYS 1
               )
-            SET_PROPERTY(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
-          ENDIF()
-        ELSE()
+            set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
+          endif()
+        else()
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: FALSE
           #-----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ FOREACH(file ${s4extfiles})
             DEPENDERS build
             ALWAYS 1
             )
-          IF(Slicer_SOURCE_DIR)
+          if(Slicer_SOURCE_DIR)
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
@@ -164,10 +164,10 @@ FOREACH(file ${s4extfiles})
               DEPENDERS build
               ALWAYS 1
               )
-            SET_PROPERTY(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
-          ENDIF()
-        ENDIF()
-      ENDIF()
-    ENDIF()
-  ENDIF()
-ENDFOREACH()
+            set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
+          endif()
+        endif()
+      endif()
+    endif()
+  endif()
+endforeach()

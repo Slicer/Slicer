@@ -1,4 +1,4 @@
-PROJECT( MIMXFilter )
+project( MIMXFilter )
 
 
 # Include dirs
@@ -8,9 +8,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
-  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR} 
-  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
-  ${VTK_SOURCE_DIR}/Utilities/verdict/include ${VTK_KITS_DIR}/verdict 
+  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR}
+  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR}
+  ${VTK_SOURCE_DIR}/Utilities/verdict/include ${VTK_KITS_DIR}/verdict
 )
 
 
@@ -18,25 +18,25 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMimxFilterConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkMimxFilterConfigure.h
 )
-  
+
 #
 # Wrapping
 #
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXCommon_BINARY_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXCommon_BINARY_DIR})
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MIMXFilter MIMXFilter_TCL_SRCS "${MIMXFilter_SRCS}" "")
 
-SET(LIB_NAME "mimxFilter")
+set(LIB_NAME "mimxFilter")
 
-SET ( FILTER_SRCS 
-    vtkMimxEdgeToStructuredGrid.cxx            
-    vtkMimxPlanarTransfiniteInterpolation.cxx  
+set( FILTER_SRCS
+    vtkMimxEdgeToStructuredGrid.cxx
+    vtkMimxPlanarTransfiniteInterpolation.cxx
     vtkMimxSubdivideCurve.cxx
-    vtkMimxBoundingBoxSurfaceMesh.cxx    
-    vtkMimxEditUnstructuredHexahedronGrid.cxx  
+    vtkMimxBoundingBoxSurfaceMesh.cxx
+    vtkMimxEditUnstructuredHexahedronGrid.cxx
     vtkMimxSmoothUnstructuredGridFilter.cxx
-    vtkMimxClipImageFromBox.cxx          
-    vtkMimxGenerateHexahedronMesh.cxx          
+    vtkMimxClipImageFromBox.cxx
+    vtkMimxGenerateHexahedronMesh.cxx
     vtkMimxSolidTransfiniteInterpolation.cxx
     vtkMimxCylindricalMesh.cxx
     vtkMimxEdgeToPlanarStructuredGrid.cxx
@@ -87,23 +87,23 @@ SET ( FILTER_SRCS
 )
 
 
-ADD_LIBRARY( ${LIB_NAME} ${FILTER_SRCS} )
+add_library( ${LIB_NAME} ${FILTER_SRCS} )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
+target_link_libraries(${LIB_NAME}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   mimxCommon
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${LIB_NAME} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )

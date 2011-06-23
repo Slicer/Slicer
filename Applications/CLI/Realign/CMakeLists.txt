@@ -9,15 +9,15 @@ include(${VTK_USE_FILE})
 slicerMacroBuildCLI(
   NAME ${PROJECT_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  ADDITIONAL_SRCS 
+  ADDITIONAL_SRCS
     vtkPrincipalAxesAlign.cxx
   TARGET_LIBRARIES ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${vtkTeem_INCLUDE_DIRS}
     ${MRML_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   LINK_DIRECTORIES
-    ${ModuleDescriptionParser_BINARY_DIR} 
+    ${ModuleDescriptionParser_BINARY_DIR}
     ${vtkTeem_LIB_DIR}
   )
 

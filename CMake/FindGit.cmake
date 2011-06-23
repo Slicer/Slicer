@@ -26,8 +26,8 @@
 # If the command line client executable is found the macro
 #  GIT_WC_INFO(<dir> <var-prefix>)
 # is defined to extract information of a git working copy at
-# a given location. 
-# 
+# a given location.
+#
 # The macro defines the following variables:
 #  <var-prefix>_WC_REVISION_HASH - Current SHA1 hash
 #  <var-prefix>_WC_REVISION - Current SHA1 hash
@@ -35,9 +35,9 @@
 #  <var-prefix>_WC_URL - output of command `git config --get remote.origin.url'
 #  <var-prefix>_WC_ROOT - Same value as working copy URL
 #  <var-prefix>_WC_GITSVN - Set to false
-# 
+#
 # ... and also the following ones if it's a git-svn repository:
-#  <var-prefix>_WC_GITSVN - Set to True if it is a 
+#  <var-prefix>_WC_GITSVN - Set to True if it is a
 #  <var-prefix>_WC_INFO - output of command `git svn info'
 #  <var-prefix>_WC_URL - url of the associated SVN repository
 #  <var-prefix>_WC_ROOT - root url of the associated SVN repository
@@ -69,65 +69,65 @@ if(WIN32)
   endif()
 endif()
 
-FIND_PROGRAM(GIT_EXECUTABLE ${git_names}
+find_program(GIT_EXECUTABLE ${git_names}
   PATHS
     "C:/Program Files/Git/bin"
     "C:/Program Files (x86)/Git/bin"
   DOC "git command line client")
-MARK_AS_ADVANCED(GIT_EXECUTABLE)
- 
-IF(GIT_EXECUTABLE)
-  MACRO(GIT_WC_INFO dir prefix)
-    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
+mark_as_advanced(GIT_EXECUTABLE)
+
+if(GIT_EXECUTABLE)
+  macro(GIT_WC_INFO dir prefix)
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
        WORKING_DIRECTORY ${dir}
        ERROR_VARIABLE GIT_error
        OUTPUT_VARIABLE ${prefix}_WC_REVISION_HASH
        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    SET(${prefix}_WC_REVISION ${${prefix}_WC_REVISION_HASH})
+    set(${prefix}_WC_REVISION ${${prefix}_WC_REVISION_HASH})
     if(NOT ${GIT_error} EQUAL 0)
-      MESSAGE(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-list -n 1 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
-    ELSE(NOT ${GIT_error} EQUAL 0)
-      EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
+      message(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-list -n 1 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
+    else(NOT ${GIT_error} EQUAL 0)
+      execute_process(COMMAND ${GIT_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
          WORKING_DIRECTORY ${dir}
          OUTPUT_VARIABLE ${prefix}_WC_REVISION_NAME
           OUTPUT_STRIP_TRAILING_WHITESPACE)
-    ENDIF(NOT ${GIT_error} EQUAL 0)
-    
-    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
+    endif(NOT ${GIT_error} EQUAL 0)
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
        WORKING_DIRECTORY ${dir}
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    
-    SET(${prefix}_WC_ROOT ${${prefix}_WC_URL})
-    SET(${prefix}_WC_GITSVN False)
-    
+
+    set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
+    set(${prefix}_WC_GITSVN False)
+
     # In case git-svn is used, attempt to extract svn info
-    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} svn info
+    execute_process(COMMAND ${GIT_EXECUTABLE} svn info
       WORKING_DIRECTORY ${dir}
       TIMEOUT 3
       ERROR_VARIABLE git_svn_info_error
       OUTPUT_VARIABLE ${prefix}_WC_INFO
       RESULT_VARIABLE git_svn_info_result
       OUTPUT_STRIP_TRAILING_WHITESPACE)
-      
-    IF(${git_svn_info_result} EQUAL 0)
-      SET(${prefix}_WC_GITSVN True)
-      STRING(REGEX REPLACE "^(.*\n)?URL: ([^\n]+).*"
+
+    if(${git_svn_info_result} EQUAL 0)
+      set(${prefix}_WC_GITSVN True)
+      string(REGEX REPLACE "^(.*\n)?URL: ([^\n]+).*"
         "\\2" ${prefix}_WC_URL "${${prefix}_WC_INFO}")
-      STRING(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
+      string(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
         "\\2" ${prefix}_WC_REVISION "${${prefix}_WC_INFO}")
-      STRING(REGEX REPLACE "^(.*\n)?Repository Root: ([^\n]+).*"
+      string(REGEX REPLACE "^(.*\n)?Repository Root: ([^\n]+).*"
         "\\2" ${prefix}_WC_ROOT "${${prefix}_WC_INFO}")
-      STRING(REGEX REPLACE "^(.*\n)?Last Changed Author: ([^\n]+).*"
+      string(REGEX REPLACE "^(.*\n)?Last Changed Author: ([^\n]+).*"
         "\\2" ${prefix}_WC_LAST_CHANGED_AUTHOR "${${prefix}_WC_INFO}")
-      STRING(REGEX REPLACE "^(.*\n)?Last Changed Rev: ([^\n]+).*"
+      string(REGEX REPLACE "^(.*\n)?Last Changed Rev: ([^\n]+).*"
         "\\2" ${prefix}_WC_LAST_CHANGED_REV "${${prefix}_WC_INFO}")
-      STRING(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
+      string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
         "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
-    ENDIF(${git_svn_info_result} EQUAL 0)
-    
-  ENDMACRO(GIT_WC_INFO)
-ENDIF(GIT_EXECUTABLE)
+    endif(${git_svn_info_result} EQUAL 0)
+
+  endmacro(GIT_WC_INFO)
+endif(GIT_EXECUTABLE)
 
 # Handle the QUIETLY and REQUIRED arguments and set GIT_FOUND to TRUE if
 # all listed variables are TRUE

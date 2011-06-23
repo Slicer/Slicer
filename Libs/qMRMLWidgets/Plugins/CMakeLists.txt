@@ -1,11 +1,11 @@
-PROJECT(qMRMLWidgetsPlugin)
+project(qMRMLWidgetsPlugin)
 
 #
 # See CMake/qCTKDesignerPluginMacros.cmake for details
 #
 
 # Source files
-SET(designer_plugin_SRCS
+set(designer_plugin_SRCS
   qMRMLWidgetsAbstractPlugin.cxx
   qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetsPlugin.cxx
@@ -80,7 +80,7 @@ SET(designer_plugin_SRCS
   )
 
 # Headers that should run through moc
-SET(designer_plugin_MOC_SRCS
+set(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
   qMRMLCheckableNodeComboBoxPlugin.h
@@ -118,7 +118,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLWindowLevelWidgetPlugin.h
   )
 
-SET(designer_plugin_TARGET_LIBRARIES
+set(designer_plugin_TARGET_LIBRARIES
   qMRMLWidgets
   )
 

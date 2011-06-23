@@ -22,10 +22,10 @@
 
 #
 # Convenient macro allowing to define a "empty" project in case an external one is provided
-# using for example <proj>_DIR. 
+# using for example <proj>_DIR.
 # Doing so allows to keep the external project dependency system happy.
 #
-MACRO(SlicerMacroEmptyExternalProject proj dependencies)
+macro(SlicerMacroEmptyExternalProject proj dependencies)
 
   ExternalProject_Add(${proj}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -34,7 +34,7 @@ MACRO(SlicerMacroEmptyExternalProject proj dependencies)
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${dependencies}
     )
-ENDMACRO()
+endmacro()

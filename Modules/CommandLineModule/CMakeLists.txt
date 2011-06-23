@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -25,13 +25,13 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkCommandLineModuleConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkCommandLineModuleConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkCommandLineModuleConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkCommandLineModuleConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -46,7 +46,7 @@ set(CommandLineModule_SRCS
 
 # Abstract/pure virtual classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #ABSTRACT "TRUE"
@@ -54,7 +54,7 @@ set(CommandLineModule_SRCS
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #WRAP_EXCLUDE "TRUE"
@@ -64,8 +64,8 @@ set(CommandLineModule_SRCS
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(CommandLineModule 
-  CommandLineModule_TCL_SRCS 
+vtk_wrap_tcl3(CommandLineModule
+  CommandLineModule_TCL_SRCS
   "${CommandLineModule_SRCS}" "")
 
 # --------------------------------------------------------------------------
@@ -81,7 +81,7 @@ slicer3_set_modules_output_path(${lib_name})
 target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   )
 
@@ -110,17 +110,17 @@ if(Slicer_USE_PYTHON)
 endif(Slicer_USE_PYTHON)
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-  #  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  #  add_subdirectory(Testing)
+endif()

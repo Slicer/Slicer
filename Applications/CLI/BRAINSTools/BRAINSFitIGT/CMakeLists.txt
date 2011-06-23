@@ -46,12 +46,12 @@ set(${CLP}_SOURCE BRAINSFitIGT.cxx  ${BRAINSFitIGT_SOURCE_DIR}/BRAINSFitIGTPrima
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSFitIGTPrimary.xml "${${CLP}_SOURCE}" "")
 target_link_libraries( ${CLP} BRAINSCommonLib ITKIO ITKAlgorithms ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
-INSTALL(TARGETS BRAINSFitIGT DESTINATION bin)
+install(TARGETS BRAINSFitIGT DESTINATION bin)
 
 # not yet
-#IF(BUILD_TESTING)
+#if(BUILD_TESTING)
 #  add_subdirectory(TestSuite)
-#ENDIF()
+#endif()
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BRAINSFitIGT Image Registration")

@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 include_directories(
@@ -21,7 +21,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters
   ${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
-  ${vtkTeem_INCLUDE_DIRS} 
+  ${vtkTeem_INCLUDE_DIRS}
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
@@ -60,6 +60,6 @@ install(
   DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData
   )
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

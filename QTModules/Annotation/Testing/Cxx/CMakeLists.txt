@@ -1,12 +1,12 @@
-SET(KIT Annotation)
+set(KIT Annotation)
 
-SET(KIT_TEST_SRCS)
-SET(KIT_TEST_NAMES)
-SET(KIT_TEST_NAMES_CXX)
+set(KIT_TEST_SRCS)
+set(KIT_TEST_NAMES)
+set(KIT_TEST_NAMES_CXX)
 SlicerMacroConfigureGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   #qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1
   qMRMLAnnotationROIWidgetTest1.cxx
@@ -39,20 +39,20 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
-LIST(APPEND Tests ${KIT_TEST_SRCS})
+list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+list(APPEND Tests ${KIT_TEST_SRCS})
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${lib_name})
 
-#MACRO(SIMPLE_TEST  TESTNAME)
-#  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-#ENDMACRO()
+#macro(SIMPLE_TEST  TESTNAME)
+#  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+#endmacro()
 
 #SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
 #SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )
@@ -74,7 +74,7 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 #SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
 
-#ADD_TEST(SlicerAnnotationRulerTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
+#add_test(SlicerAnnotationRulerTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
 
 # SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data
@@ -85,19 +85,19 @@ file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.raw.gz")
 file(GLOB LOGFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.log")
 file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 
-# foreach(file 
-#     ${MRMLFILES} 
+# foreach(file
+#     ${MRMLFILES}
 #     ${NHDRFILES}
 #     ${RAWGZFILES}
 #     ${LOGFILES}
 #     ${TESTFILES}
 #     )
-# In your code, you just need to include: vtkSlicerConfigure.h 
+# In your code, you just need to include: vtkSlicerConfigure.h
 #  Then, the following 'define' will be available:
 # Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
 # Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
 # Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR
-# Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR 
+# Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR
 #
 #   get_filename_component(filename "${file}" NAME)
 #   configure_file(
@@ -105,28 +105,28 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${filename}
 #     COPYONLY)
 # endforeach(file)
-# 
-# install(FILES 
-#   ${MRMLFILES} 
-#   ${NHDRFILES} 
+#
+# install(FILES
+#   ${MRMLFILES}
+#   ${NHDRFILES}
 #   ${RAWGZFILES}
-#   ${LOGFILES} 
+#   ${LOGFILES}
 #   ${TESTFILES}
 #   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
-#   ) 
+#   )
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 #
 # Add all the tests
 #
-FOREACH(test ${TestsToRun})
-  GET_FILENAME_COMPONENT(TESTNAME ${test} NAME_WE)
-  ADD_TEST(
-    NAME ${TESTNAME} 
+foreach(test ${TestsToRun})
+  get_filename_component(TESTNAME ${test} NAME_WE)
+  add_test(
+    NAME ${TESTNAME}
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
       -D ${CMAKE_CURRENT_SOURCE_DIR}/../
       -T ${TEMP}
       #-V Baseline/${TESTNAME}.png
     )
-ENDFOREACH()
+endforeach()

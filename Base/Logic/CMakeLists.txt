@@ -1,4 +1,4 @@
-PROJECT(SlicerBaseLogic)
+project(SlicerBaseLogic)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -30,20 +30,20 @@ set(include_dirs
   ${LibArchive_INCLUDE_DIR}
   )
 
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND include_dirs
+if(Slicer_USE_PYTHONQT)
+  list(APPEND include_dirs
     ${PYTHON_INCLUDE_DIR}
     )
-ENDIF()
+endif()
 
 include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
 # Update Slicer_Base_INCLUDE_DIRS
 # --------------------------------------------------------------------------
-SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS} 
+set(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR} 
+  ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "Slicer Base includes" FORCE)
 
 # --------------------------------------------------------------------------
@@ -51,22 +51,22 @@ SET(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS}
 # --------------------------------------------------------------------------
 set(configure_header_file vtkSlicerBaseLogicConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
   ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 # --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-ENDIF()
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+endif()
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   install(
     FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
     DESTINATION include/${PROJECT_NAME} COMPONENT Development)
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Sources
@@ -74,9 +74,9 @@ ENDIF()
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerApplicationLogic.cxx
-  vtkSlicerModuleLogic.cxx 
+  vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
-  vtkSlicerModelsLogic.cxx 
+  vtkSlicerModelsLogic.cxx
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
@@ -88,8 +88,8 @@ set(SlicerBaseLogic_SRCS
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerROILogic.cxx
-  vtkImageConnectivity.cxx 
-  vtkImageLabelChange.cxx 
+  vtkImageConnectivity.cxx
+  vtkImageLabelChange.cxx
   vtkImageErode.cxx
   vtkSlicerTransformLogic.cxx
   vtkPichonFastMarching.cxx
@@ -99,13 +99,13 @@ set(SlicerBaseLogic_SRCS
   vtkImageStash.cxx
   )
 
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND SlicerBaseLogic_SRCS
+if(Slicer_USE_PYTHONQT)
+  list(APPEND SlicerBaseLogic_SRCS
     vtkSlicerScriptedLoadableModuleLogic.cxx
     )
-ENDIF()
+endif()
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   vtkPichonFastMarchingPDF.cxx
   vtkArchive.cxx
   WRAP_EXCLUDE
@@ -113,7 +113,7 @@ SET_SOURCE_FILES_PROPERTIES(
 
 # --------------------------------------------------------------------------
 ## Create an instantiator for these classes
-# SET(VTK_USE_INSTANTIATOR_NEW 1)
+# set(VTK_USE_INSTANTIATOR_NEW 1)
 # VTK_MAKE_INSTANTIATOR3("${lib_name}Instantiator"
 #   Instantiator_SRCS
 #   "${SlicerBaseLogic_SRCS}"
@@ -126,12 +126,12 @@ SET_SOURCE_FILES_PROPERTIES(
 # --------------------------------------------------------------------------
 set(lib_name SlicerBaseLogic)
 
-#SET(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
-SET(srcs ${SlicerBaseLogic_SRCS})
+#set(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
+set(srcs ${SlicerBaseLogic_SRCS})
 
-ADD_LIBRARY(${lib_name} ${srcs})
+add_library(${lib_name} ${srcs})
 
-SET(libs
+set(libs
   MRML
   MRMLCLI
   MRMLLogic
@@ -143,34 +143,34 @@ SET(libs
   ${LibArchive_LIBRARY}
   )
 
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND libs
+if(Slicer_USE_PYTHONQT)
+  list(APPEND libs
     vtkCommonPythonD # For vtkPythonUtils
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
     )
-ENDIF()
+endif()
 
-TARGET_LINK_LIBRARIES(${lib_name} ${libs})
-SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
+target_link_libraries(${lib_name} ${libs})
+set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-ENDIF()
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+endif()
 
 # --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
-  
+
 # --------------------------------------------------------------------------
 # Python Wrapping
 # --------------------------------------------------------------------------
-IF(VTK_WRAP_PYTHON)
+if(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${SlicerBaseLogic_SRCS}
@@ -178,14 +178,14 @@ IF(VTK_WRAP_PYTHON)
     KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     )
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 # --------------------------------------------------------------------------
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # Install support files

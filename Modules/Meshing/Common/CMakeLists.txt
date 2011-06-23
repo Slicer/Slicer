@@ -1,9 +1,9 @@
-PROJECT(MIMXCommon)
+project(MIMXCommon)
 
 
 # Include dirs
 #
-#INCLUDE_DIRECTORIES(
+#include_directories(
 #  ${Slicer_INCLUDE_DIRS}
 #  ${SlicerBase_SOURCE_DIR}
 #  ${SlicerBase_BINARY_DIR}
@@ -14,9 +14,9 @@ PROJECT(MIMXCommon)
 #  ${vtkITK_INCLUDE_DIRS}
 #  ${ITK_INCLUDE_DIR}
 #  ${VTK_INCLUDE_DIR}
-#  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
-#  ${MIMXCommon_SOURCE_DIR}../Adapter ${MIMXCommon_BINARY_DIR}../Adapter 
-#  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
+#  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR}
+#  ${MIMXCommon_SOURCE_DIR}../Adapter ${MIMXCommon_BINARY_DIR}../Adapter
+#  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR}
 #)
 
 # --------------------------------------------------------------------------
@@ -27,9 +27,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
-  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
-  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
-  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
+  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR}
+  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR}
+  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR}
   ${ITK_INCLUDE_DIR}
   )
 
@@ -37,14 +37,14 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMimxCommonConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkMimxCommonConfigure.h
   )
-  
-SET(LIB_NAME "mimxCommon")
+
+set(LIB_NAME "mimxCommon")
 
 
-SET ( LIB_SRCS 
-    #mimxRegisterVersorRigidFilter.cxx  
-    #mimxRegisterBSplineFilter.cxx 
-    #mimxTransformIO.cxx 
+set( LIB_SRCS
+    #mimxRegisterVersorRigidFilter.cxx
+    #mimxRegisterBSplineFilter.cxx
+    #mimxTransformIO.cxx
     mimxCheckTypeOfFile.cxx
     # container types
     vtkContainer.cxx
@@ -69,9 +69,9 @@ SET ( LIB_SRCS
     vtkMimxCurve.cxx
     vtkMimxSTLSource.cxx
     vtkMimxUGrid.cxx
-    vtkMimxBoundingBoxSource.cxx 
+    vtkMimxBoundingBoxSource.cxx
     vtkLocalAxesActor.cxx
-    vtkPVAxesActor.cxx  
+    vtkPVAxesActor.cxx
     vtkMimxSolidStructuredGridSource.cxx
     vtkMimxPlanarStructuredGridSource.cxx
     #vtkMeshQualityClass.cxx
@@ -86,14 +86,14 @@ SET ( LIB_SRCS
     vtkMimxUnstructuredGridActor.cxx
     vtkMimxErrorCallback.cxx
     vtkMimxImageActor.cxx
-#    vtkMimxInteractorStyleUser.cxx 
+#    vtkMimxInteractorStyleUser.cxx
     vtkMimxColorCodeMeshSeedActor.cxx
     #
     vtkMimxBoundaryConditionActor.cxx
     vtkMimxTestErrorCallback.cxx
 )
- 
-SET_SOURCE_FILES_PROPERTIES(
+
+set_source_files_properties(
   mimxCheckTypeOfFile.cxx
   vtkMimxActorBase.cxx
   vtkMimxMeshActor.cxx
@@ -123,7 +123,7 @@ SET_SOURCE_FILES_PROPERTIES(
   WRAP_EXCLUDE
   )
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   vtkMimxActorBase.cxx
   ABSTRACT
   )
@@ -133,19 +133,19 @@ SET_SOURCE_FILES_PROPERTIES(
 # Wrapping
 #
 
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-#INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#include("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
 #KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 
 
-ADD_LIBRARY( ${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS} )
-#ADD_LIBRARY( ${LIB_NAME}  ${LIB_SRCS} )
+add_library( ${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS} )
+#add_library( ${LIB_NAME}  ${LIB_SRCS} )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
+target_link_libraries(${LIB_NAME}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   #mimxAdapter
@@ -153,18 +153,18 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${LIB_NAME} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
-  
+
 
 
 

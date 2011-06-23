@@ -11,31 +11,31 @@ if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND CMAKE_POLICY)
 
-SET(RUN_EXTENDED_LOCAL_TESTING OFF CACHE BOOL "Run extended tests?")
+set(RUN_EXTENDED_LOCAL_TESTING OFF CACHE BOOL "Run extended tests?")
 
 if (RUN_EXTENDED_LOCAL_TESTING)
-  ADD_SUBDIRECTORY(ExtendedTesting)
+  add_subdirectory(ExtendedTesting)
 endif (RUN_EXTENDED_LOCAL_TESTING)
 
-FIND_PACKAGE(ITK REQUIRED)
+find_package(ITK REQUIRED)
 
 if (NOT ITK_USE_REVIEW)
-  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW true")
+  message(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW true")
 endif (NOT ITK_USE_REVIEW)
 
 if (NOT ITK_USE_REVIEW_STATISTICS)
-  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW_STATISTICS true")
+  message(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW_STATISTICS true")
 endif (NOT ITK_USE_REVIEW_STATISTICS)
 
 if (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
-  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_OPTIMIZED_REGISTRATION_METHODS true")
+  message(FATAL_ERROR "ITK version was not built with ITK_USE_OPTIMIZED_REGISTRATION_METHODS true")
 endif (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
 
 if (Slicer_SOURCE_DIR)
-  ##There's limited testing from within Slicer.  There's extensive testing when run 
-  ##at UIowa but the testing data isn't publicly accessible yet.  Other packages that 
+  ##There's limited testing from within Slicer.  There's extensive testing when run
+  ##at UIowa but the testing data isn't publicly accessible yet.  Other packages that
   ##use this tool will not run either set of tests
-  ADD_SUBDIRECTORY(Testing)
+  add_subdirectory(Testing)
 endif (Slicer_SOURCE_DIR)
 
 set (CLP DicomToNrrdConverter)
@@ -50,7 +50,7 @@ else (Slicer_SOURCE_DIR)
 endif (Slicer_SOURCE_DIR)
 add_executable(${CLP} ${${CLP}_SOURCE})
 target_link_libraries (${CLP} ${ITK_LIBRARIES})
-SET_TARGET_PROPERTIES(${CLP} PROPERTIES LABELS ${CLP})
+set_target_properties(${CLP} PROPERTIES LABELS ${CLP})
 
 if (Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP})
@@ -59,8 +59,8 @@ if (Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP}Lib)
   set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
   target_link_libraries (${CLP}Lib ${ITK_LIBRARIES})
-  SET_TARGET_PROPERTIES(${CLP}Lib PROPERTIES LABELS ${CLP})
-  
+  set_target_properties(${CLP}Lib PROPERTIES LABELS ${CLP})
+
   set(TARGETS ${CLP}Lib ${CLP})
   slicer3_install_plugins(${TARGETS})
 else (Slicer_SOURCE_DIR)

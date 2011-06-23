@@ -1,7 +1,7 @@
-PROJECT(SlicerLibs)
+project(SlicerLibs)
 
 # Enable this option to avoid unnecessary re-compilation associated with command line module
-SET(GENERATECLP_USE_MD5 ON)
+set(GENERATECLP_USE_MD5 ON)
 
 # --------------------------------------------------------------------------
 #                      ----] W A R N I N G [----
@@ -9,12 +9,12 @@ SET(GENERATECLP_USE_MD5 ON)
 # Order of project directory matters. Project should be topologically ordered
 # --------------------------------------------------------------------------
 
-SET(dirs
+set(dirs
   SlicerExecutionModel # Bundled subdirectory that can easily be included in other packages.
 # FileWatcher
   )
 
-LIST(APPEND dirs
+list(APPEND dirs
   vtkTeem
   vtkITK
   FreeSurfer
@@ -33,62 +33,62 @@ LIST(APPEND dirs
 #-----------------------------------------------------------------------------
 # CUDA
 #-----------------------------------------------------------------------------
-#INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+#include(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
-#IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
-#   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
-#ELSE()
-#   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
-#ENDIF()
+#if(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+#   option(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
+#else()
+#   option(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
+#endif()
 
-#IF(CUDA_SUPPORT_ENABLED)
-#  LIST(APPEND dirs CudaSupport)
-#ENDIF()
+#if(CUDA_SUPPORT_ENABLED)
+#  list(APPEND dirs CudaSupport)
+#endif()
 
 #-----------------------------------------------------------------------------
 # Set library properties
 #-----------------------------------------------------------------------------
 
 # Python support within ModuleDescriptionParser is used only within ModuleFactory.cxx
-# Considering the ModuleFactory isn't used anymore to discover modules, let's disable the 
-# associated python support so that the python library aren't a dependency of 
+# Considering the ModuleFactory isn't used anymore to discover modules, let's disable the
+# associated python support so that the python library aren't a dependency of
 # either ModuleDescriptionParser or program/library depending on ModuleDescriptionParser.
-SET(ModuleDescriptionParser_USE_PYTHON OFF)
+set(ModuleDescriptionParser_USE_PYTHON OFF)
 
 # ITKFactories directories
-SET(MGHImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
-SET(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
-SET(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
-SET(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+set(MGHImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
+set(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
+set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 
-SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
-SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
+set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
+set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
 
 # vtkITK contains tests that uses MRML's test data.
-SET(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
+set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 
 #-----------------------------------------------------------------------------
 # Loop over list of directories
 #-----------------------------------------------------------------------------
-FOREACH(dir ${dirs})
-  SET(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
-  SET(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
-  SET(${dir}_INSTALL_SHARE_DIR ${Slicer_INSTALL_ROOT}share/${dir})
-  SET(${dir}_INSTALL_NO_DEVELOPMENT ${Slicer_INSTALL_NO_DEVELOPMENT})
-  SET(${dir}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
-  ADD_SUBDIRECTORY(${dir})
-ENDFOREACH()
+foreach(dir ${dirs})
+  set(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
+  set(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
+  set(${dir}_INSTALL_SHARE_DIR ${Slicer_INSTALL_ROOT}share/${dir})
+  set(${dir}_INSTALL_NO_DEVELOPMENT ${Slicer_INSTALL_NO_DEVELOPMENT})
+  set(${dir}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
+  add_subdirectory(${dir})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Generate list of include directories
 #-----------------------------------------------------------------------------
-SET(include_dirs)
-FOREACH(dir ${dirs})
-  LIST(APPEND include_dirs ${${dir}_INCLUDE_DIRS})
-ENDFOREACH()
+set(include_dirs)
+foreach(dir ${dirs})
+  list(APPEND include_dirs ${${dir}_INCLUDE_DIRS})
+endforeach()
 
 # Set variable Slicer_Libs_INCLUDE_DIRS
-SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
+set(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs includes" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set MRML_LIBRARIES
@@ -96,14 +96,14 @@ SET(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs include
 # Anticipating the move of MRML related libraries to a standalone project,
 # let's group these libraries.
 # Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
-SET(MRML_LIBRARIES
+set(MRML_LIBRARIES
   MRML MRMLCLI MRMLLogic MRMLDisplayableManager
   CACHE INTERNAL "MRML libraries" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
 #-----------------------------------------------------------------------------
-SET(Slicer_Libs_VTK_WRAPPED_LIBRARIES
+set(Slicer_Libs_VTK_WRAPPED_LIBRARIES
   vtkTeem
   vtkITK
   FreeSurfer

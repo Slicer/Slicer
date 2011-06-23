@@ -1,7 +1,7 @@
-set(launcher_machine ${CMAKE_SYSTEM_PROCESSOR}) 
+set(launcher_machine ${CMAKE_SYSTEM_PROCESSOR})
 
 if(${launcher_machine} MATCHES "i386")
-  set(launcher_machine "x86") 
+  set(launcher_machine "x86")
 endif(${launcher_machine} MATCHES "i386")
 
 
@@ -22,7 +22,7 @@ endif(${launcher_platform} MATCHES Windows)
 if(${launcher_platform} MATCHES Linux)
   execute_process(COMMAND uname -m OUTPUT_VARIABLE machine OUTPUT_STRIP_TRAILING_WHITESPACE)
   if(${machine} MATCHES "i686")
-    set(machine "x86") 
+    set(machine "x86")
   endif(${machine} MATCHES "i686")
   set(launcher_platform  linux-${machine})
 endif(${launcher_platform} MATCHES Linux)
@@ -38,13 +38,13 @@ set(launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 set(launcher_source
   "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}")
 
-SET(launcher_binary
+set(launcher_binary
   "${Slicer_BINARY_DIR}/Slicer4${CMAKE_EXECUTABLE_SUFFIX}")
 
-# MESSAGE(STATUS "launcher_platform: ${launcher_platform}")
-# MESSAGE(STATUS "launcher_name: ${launcher_name}")
-# MESSAGE(STATUS "launcher_source: ${launcher_source}")
-# MESSAGE(STATUS "launcher_binary: ${launcher_binary}")
+# message(STATUS "launcher_platform: ${launcher_platform}")
+# message(STATUS "launcher_name: ${launcher_name}")
+# message(STATUS "launcher_source: ${launcher_source}")
+# message(STATUS "launcher_binary: ${launcher_binary}")
 
 if(EXISTS "${launcher_source}" AND NOT APPLE)
   configure_file("${launcher_source}" "${launcher_binary}" COPYONLY)

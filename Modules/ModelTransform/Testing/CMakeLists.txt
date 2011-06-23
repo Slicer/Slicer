@@ -1,25 +1,25 @@
-SET(KIT ModelTransformLib)
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(KIT ModelTransformLib)
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLModelTransformNodeTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
-#SET(TestsToRun ${Tests})
-#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+#set(TestsToRun ${Tests})
+#list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${lib_name})
 
-SET(${KIT}_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+set(${KIT}_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
 
-IF(WIN32)
-  SET(${KIT}_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
-ENDIF(WIN32)
+if(WIN32)
+  set(${KIT}_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
+endif(WIN32)
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(${TESTNAME} ${Slicer_LAUNCH_COMMAND} ${${KIT}_TESTS} ${TESTNAME} ${ARGN})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(${TESTNAME} ${Slicer_LAUNCH_COMMAND} ${${KIT}_TESTS} ${TESTNAME} ${ARGN})
+endmacro()
 
 SIMPLE_TEST( vtkMRMLModelTransformNodeTest1 )

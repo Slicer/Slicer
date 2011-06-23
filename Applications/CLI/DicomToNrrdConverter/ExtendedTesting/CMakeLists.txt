@@ -27,7 +27,7 @@ set(DWICompareEXE ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP})
 set (CLP DicomToNrrdConverter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters) 
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 
 set (DicomToNrrdConverterEXE ${Slicer_LAUNCH_COMMAND} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP} )
 set (DicomToNrrdConverter_TESTS ${Slicer_LAUNCH_COMMAND} ${DicomToNrrdConverter_BINARY_DIR}/../bin/${CLP}Test )

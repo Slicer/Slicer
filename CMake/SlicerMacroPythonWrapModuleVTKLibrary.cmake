@@ -23,41 +23,41 @@
 # SlicerMacroPythonWrapModuleVTKLibrary
 #
 
-MACRO(SlicerMacroPythonWrapModuleVTKLibrary)
+macro(SlicerMacroPythonWrapModuleVTKLibrary)
   SLICER_PARSE_ARGUMENTS(PYTHONWRAPMODULEVTKLIBRARY
     "NAME;SRCS;WRAPPED_TARGET_LIBRARIES;RELATIVE_PYTHON_DIR"
     ""
     ${ARGN}
     )
-    
+
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
-  SET(expected_defined_vars VTK_LIBRARIES Slicer_Libs_VTK_WRAPPED_LIBRARIES)
-  FOREACH(var ${expected_defined_vars})
-    IF(NOT DEFINED ${var})
-      MESSAGE(FATAL_ERROR "error: ${var} CMake variable is not defined !")
-    ENDIF()
-  ENDFOREACH()
-  
-  SET(expected_nonempty_vars NAME SRCS)
-  FOREACH(var ${expected_nonempty_vars})
-    IF("${PYTHONWRAPMODULEVTKLIBRARY_${var}}" STREQUAL "")
-      MESSAGE(FATAL_ERROR "error: ${var} CMake variable is empty !")
-    ENDIF()
-  ENDFOREACH()
+  set(expected_defined_vars VTK_LIBRARIES Slicer_Libs_VTK_WRAPPED_LIBRARIES)
+  foreach(var ${expected_defined_vars})
+    if(NOT DEFINED ${var})
+      message(FATAL_ERROR "error: ${var} CMake variable is not defined !")
+    endif()
+  endforeach()
 
-  SET(VTK_PYTHON_WRAPPED_LIBRARIES)
-  FOREACH(lib ${VTK_LIBRARIES})
-    LIST(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
-  ENDFOREACH()
-  
-  SET(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)
-  FOREACH(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
-    LIST(APPEND Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
-  ENDFOREACH()
+  set(expected_nonempty_vars NAME SRCS)
+  foreach(var ${expected_nonempty_vars})
+    if("${PYTHONWRAPMODULEVTKLIBRARY_${var}}" STREQUAL "")
+      message(FATAL_ERROR "error: ${var} CMake variable is empty !")
+    endif()
+  endforeach()
 
-  SET(PYTHONWRAPMODULEVTKLIBRARY_Wrapped_LIBRARIES
+  set(VTK_PYTHON_WRAPPED_LIBRARIES)
+  foreach(lib ${VTK_LIBRARIES})
+    list(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+  endforeach()
+
+  set(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)
+  foreach(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
+    list(APPEND Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+  endforeach()
+
+  set(PYTHONWRAPMODULEVTKLIBRARY_Wrapped_LIBRARIES
     ${VTK_PYTHON_WRAPPED_LIBRARIES}
     ${Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES}
     ${PYTHONWRAPMODULEVTKLIBRARY_WRAPPED_TARGET_LIBRARIES}
@@ -72,14 +72,14 @@ MACRO(SlicerMacroPythonWrapModuleVTKLibrary)
     )
 
   # Generate "Python/<lib_name>.py" file
-  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/${lib_name}.py "
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/${lib_name}.py "
 \"\"\" This module loads all the classes from the ${lib_name} library into its
 namespace.\"\"\"
 
 from ${lib_name}Python import *
 ")
 
-  FILE(GLOB PYFILES
+  file(GLOB PYFILES
     RELATIVE "${CMAKE_CURRENT_BINARY_DIR}/Python"
     "${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/*.py")
   if ( PYFILES )
@@ -91,6 +91,6 @@ from ${lib_name}Python import *
       DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
       INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
       )
-  ENDIF()
-    
-ENDMACRO()
+  endif()
+
+endmacro()

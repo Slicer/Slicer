@@ -1,4 +1,4 @@
-PROJECT(ProstateNav)
+project(ProstateNav)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -15,7 +15,7 @@ set(ProstateNav_REVISION "")
 
 # Case where Slicer is checkout using SVN
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
-  FIND_PACKAGE(Subversion)
+  find_package(Subversion)
   if (Subversion_FOUND)
     Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
     set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
@@ -24,9 +24,9 @@ endif()
 
 # TODO Make sure Slicer3/CMake/FindGit.cmake is in CMAKE_MODULE_PATH
 # Case where Slicer is checkout using Git-SVN
-#IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
-#  FIND_PACKAGE(Git)
-#  IF(Git_FOUND)
+#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+#  find_package(Git)
+#  if(Git_FOUND)
 #    Git_WC_INFO(${CMAKE_HOME_DIRECTORY} ProstateNav)
 #    set(ProstateNav_REVISION "${ProstateNav_WC_REVISION}")
 #  endif()
@@ -65,11 +65,11 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkProstateNavConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkProstateNavConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkProstateNavConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateTemplate/*.h"
@@ -78,8 +78,8 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/newmat/*.h"
   )
 
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkProstateNavConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -88,29 +88,29 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(ProstateNav_SRCS 
+set(ProstateNav_SRCS
   vtkMRMLProstateNavManagerNode.cxx
   vtkProstateNavLogic.cxx
   vtkProstateNavGUI.cxx
-  vtkSlicerSecondaryViewerWindow.cxx 
+  vtkSlicerSecondaryViewerWindow.cxx
   vtkMRMLRobotNode.cxx
   vtkMRMLRobotDisplayNode.cxx
-  vtkProstateNavTargetDescriptor.cxx  
+  vtkProstateNavTargetDescriptor.cxx
   vtkRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration2.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkIGTLToMRMLCoordinate.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkIGTLToMRMLBrpRobotCommand.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkMRMLBrpRobotCommandNode.cxx  
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkMRMLBrpRobotCommandNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateRobot/vtkMRMLTransPerinealProstateRobotNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/TransPerinealProstateTemplate/vtkMRMLTransPerinealProstateTemplateNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkMRMLTransRectalProstateRobotNode.cxx  
-  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkTransRectalFiducialCalibrationAlgo.cxx  
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkMRMLTransRectalProstateRobotNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/TransRectalProstateRobot/vtkTransRectalFiducialCalibrationAlgo.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUp.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUpTemplate.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavCalibrationStep.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavFiducialCalibrationStep.cxx   
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavFiducialCalibrationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavTargetingStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavManualControlStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepVerification.cxx
@@ -174,9 +174,9 @@ generatelm(ProstateNav_SRCS ProstateNav.txt)
 set(lib_name ProstateNav)
 
 add_library(${lib_name}
-  ${ProstateNav_SRCS} 
+  ${ProstateNav_SRCS}
   ${ProstateNavIGTL_SRCS}
-  ${ProstateNavNewmat_SRCS} 
+  ${ProstateNavNewmat_SRCS}
   ${ProstateNav_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})

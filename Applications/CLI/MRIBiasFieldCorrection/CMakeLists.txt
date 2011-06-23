@@ -41,72 +41,72 @@ set(BASELINE_DIR ${PROJECT_SOURCE_DIR}/Baseline)
 set(OUTPUT_DIR ${Slicer_BINARY_DIR}/Testing)
 
 if (BUILD_TESTING)
-  
-  #add_executable(ImageCompare ImageCompare.cxx) 
+
+  #add_executable(ImageCompare ImageCompare.cxx)
   #target_link_libraries(ImageCompare
   #  ${ITK_LIBRARIES}
   #  )
-  #SET_TARGET_PROPERTIES(ImageCompare PROPERTIES LABELS ${CLP})
+  #set_target_properties(ImageCompare PROPERTIES LABELS ${CLP})
 
   set(testname ${PROJECT_NAME}_N3_Brain2D_1)
   add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
-    ${TEST_DATA_DIR}/t81slice.nii.gz 
+    ${TEST_DATA_DIR}/t81slice.nii.gz
     --inputMask
-    ${TEST_DATA_DIR}/t81mask.nii.gz 
+    ${TEST_DATA_DIR}/t81mask.nii.gz
     --outputImage
-    ${OUTPUT_DIR}/t81corrected.nii.gz 
+    ${OUTPUT_DIR}/t81corrected.nii.gz
     #--outputBiasField
     #${OUTPUT_DIR}/t81biasfield.nii.gz
     --algorithmType N3
     --shrinkFactor 2
     --maximumNumberOfIterations 50
     --numberOfFittingLevels 4)
-  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
-  
+  set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+
   #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareImage)
   #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
-  #  ${OUTPUT_DIR}/t81corrected.nii.gz 
+  #  ${OUTPUT_DIR}/t81corrected.nii.gz
   #  ${BASELINE_DIR}/t81corrected.nii.gz)
-  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  #set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareField)
   #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
-  #  ${OUTPUT_DIR}/t81biasfield.nii.gz 
+  #  ${OUTPUT_DIR}/t81biasfield.nii.gz
   #  ${BASELINE_DIR}/t81biasfield.nii.gz)
-  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  #set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   set(testname ${PROJECT_NAME}_N3_Brain2D_2)
   add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
-    ${TEST_DATA_DIR}/he3volume.nii.gz 
+    ${TEST_DATA_DIR}/he3volume.nii.gz
     --inputMask
-    ${TEST_DATA_DIR}/Input/he3mask.nii.gz 
+    ${TEST_DATA_DIR}/Input/he3mask.nii.gz
     --outputImage
-    ${OUTPUT_DIR}/he3corrected.nii.gz 
+    ${OUTPUT_DIR}/he3corrected.nii.gz
     #--outputBiasField
     #${OUTPUT_DIR}/he3biasfield.nii.gz
     --algorithmType N3
     --shrinkFactor 4
     --maximumNumberOfIterations 50)
-  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareImage)
   #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
-  #  ${OUTPUT_DIR}/he3corrected.nii.gz 
+  #  ${OUTPUT_DIR}/he3corrected.nii.gz
   #  ${BASELINE_DIR}/he3corrected.nii.gz)
-  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  #set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareField)
   #add_test(NAME ${testname} COMMAND $<TARGET_FILE:ImageCompare>
-  #  ${OUTPUT_DIR}/he3biasfield.nii.gz 
+  #  ${OUTPUT_DIR}/he3biasfield.nii.gz
   #  ${BASELINE_DIR}/he3biasfield.nii.gz)
-  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  #set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
   set(testname ${PROJECT_NAME}_N4_Brain2D)
   add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}>
     --inputImage
-    ${TEST_DATA_DIR}/t81slice.nii.gz 
+    ${TEST_DATA_DIR}/t81slice.nii.gz
     --inputMask
     ${TEST_DATA_DIR}/t81mask.nii.gz
     --outputImage
@@ -118,6 +118,6 @@ if (BUILD_TESTING)
     --numberOfFittingLevels 3
     --maximumNumberOfIterations 50
     --convergenceThreshold 0.001)
-  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  set_property(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
 endif()

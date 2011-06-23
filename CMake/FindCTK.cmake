@@ -40,27 +40,27 @@
 #
 
 # Assume not found.
-SET(CTK_FOUND 0)
+set(CTK_FOUND 0)
 
 # Construct consitent error messages for use below.
-SET(CTK_DIR_MESSAGE "CTK not found.  Set the CTK_DIR cmake cache entry to the directory containing CTKConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/ctk for an installation.")
+set(CTK_DIR_MESSAGE "CTK not found.  Set the CTK_DIR cmake cache entry to the directory containing CTKConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/ctk for an installation.")
 
 # Use the Config mode of the find_package() command to find CTKConfig.
 # If this succeeds (possibly because CTK_DIR is already set), the
 # command will have already loaded CTKConfig.cmake and set CTK_FOUND.
-IF(NOT CTK_FOUND)
-  FIND_PACKAGE(CTK QUIET NO_MODULE)
-ENDIF()
+if(NOT CTK_FOUND)
+  find_package(CTK QUIET NO_MODULE)
+endif()
 
 #-----------------------------------------------------------------------------
-IF(NOT CTK_FOUND)
+if(NOT CTK_FOUND)
   # CTK not found, explain to the user how to specify its location.
-  IF(CTK_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR ${CTK_DIR_MESSAGE})
-  ELSE(CTK_FIND_REQUIRED)
-    IF(NOT CTK_FIND_QUIETLY)
-      MESSAGE(STATUS ${CTK_DIR_MESSAGE})
-    ENDIF(NOT CTK_FIND_QUIETLY)
-  ENDIF(CTK_FIND_REQUIRED)
-ENDIF()
+  if(CTK_FIND_REQUIRED)
+    message(FATAL_ERROR ${CTK_DIR_MESSAGE})
+  else(CTK_FIND_REQUIRED)
+    if(NOT CTK_FIND_QUIETLY)
+      message(STATUS ${CTK_DIR_MESSAGE})
+    endif(NOT CTK_FIND_QUIETLY)
+  endif(CTK_FIND_REQUIRED)
+endif()
 

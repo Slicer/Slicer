@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(NUMPY_DEPENDENCIES CLAPACK python)
@@ -18,7 +18,7 @@ set(proj NUMPY)
 set(numpy_url http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
 set(numpy_md5 5c7b5349dc3161763f7f366ceb96516b)
 
-# Note: Both NUMPY_configure_step.cmake and NUMPY_make_step.cmake expects 
+# Note: Both NUMPY_configure_step.cmake and NUMPY_make_step.cmake expects
 #       this variable to be defined.
 set(NUMPY_DIR "${CMAKE_BINARY_DIR}/NUMPY")
 
@@ -30,7 +30,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_configure_step.cmake @ONLY)
 
 # To build numpy we also run a cmake -P script.
-# the script will set LD_LIBRARY_PATH so that 
+# the script will set LD_LIBRARY_PATH so that
 # python can run after it is built on linux
 configure_file(
   SuperBuild/NUMPY_make_step.cmake.in
@@ -50,7 +50,7 @@ ExternalProject_Add(${proj}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${NUMPY_DEPENDENCIES}
   )
 

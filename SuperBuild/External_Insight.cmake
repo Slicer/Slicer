@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
@@ -42,13 +42,13 @@ if(NOT DEFINED ITK_DIR)
       -DITK_LEGACY_REMOVE:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON
     INSTALL_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${Insight_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK, 
+  # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${Insight_DEPENDENCIES}")
 endif()

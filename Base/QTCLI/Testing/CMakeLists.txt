@@ -4,28 +4,28 @@ slicerMacroBuildCLI(
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   )
 
-SET(KIT QTCLI)
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(KIT QTCLI)
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerCLIExecutableModuleFactoryTest1.cxx
   qSlicerCLILoadableModuleFactoryTest1.cxx
   qSlicerCLIModuleTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
-SET_TARGET_PROPERTIES(${KIT}CxxTests PROPERTIES LABELS ${LIBRARY_NAME})
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
+set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${LIBRARY_NAME})
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+  set_property(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
+endmacro()
 
 #
 # Add Tests

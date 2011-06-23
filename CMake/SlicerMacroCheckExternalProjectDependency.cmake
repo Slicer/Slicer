@@ -18,50 +18,50 @@
 #
 ################################################################################
 
-MACRO(SlicerMacroCheckExternalProjectDependency proj)
+macro(SlicerMacroCheckExternalProjectDependency proj)
   # Set indent variable if needed
-  IF(NOT DEFINED __indent)
-    SET(__indent "")
-  ELSE()
-    SET(__indent "${__indent}  ")
-  ENDIF()
-  
+  if(NOT DEFINED __indent)
+    set(__indent "")
+  else()
+    set(__indent "${__indent}  ")
+  endif()
+
   # Sanity checks
-  IF(NOT DEFINED ${proj}_DEPENDENCIES)
+  if(NOT DEFINED ${proj}_DEPENDENCIES)
     message(FATAL_ERROR "${__indent}${proj}_DEPENDENCIES variable is NOT defined !")
-  ENDIF()
-  
+  endif()
+
   # Display dependency of project being processed
-  IF("${${proj}_DEPENDENCIES}" STREQUAL "")
-    MESSAGE(STATUS "SuperBuild - ${__indent}${proj}[OK]")
-  ELSE()
-    SET(dependency_str " ")
-    FOREACH(dep ${${proj}_DEPENDENCIES})
-      IF(External_${dep}_FILE_INCLUDED)
-        SET(dependency_str "${dependency_str}${dep}[INCLUDED], ")
-      ELSE()
-        SET(dependency_str "${dependency_str}${dep}, ")
-      ENDIF()
-    ENDFOREACH()
-    MESSAGE(STATUS "SuperBuild - ${__indent}${proj} => Requires${dependency_str}")
-  ENDIF()
-  
+  if("${${proj}_DEPENDENCIES}" STREQUAL "")
+    message(STATUS "SuperBuild - ${__indent}${proj}[OK]")
+  else()
+    set(dependency_str " ")
+    foreach(dep ${${proj}_DEPENDENCIES})
+      if(External_${dep}_FILE_INCLUDED)
+        set(dependency_str "${dependency_str}${dep}[INCLUDED], ")
+      else()
+        set(dependency_str "${dependency_str}${dep}, ")
+      endif()
+    endforeach()
+    message(STATUS "SuperBuild - ${__indent}${proj} => Requires${dependency_str}")
+  endif()
+
   # Include dependencies
-  FOREACH(dep ${${proj}_DEPENDENCIES})
-    IF(NOT External_${dep}_FILE_INCLUDED)
-      INCLUDE(${Slicer_SOURCE_DIR}/SuperBuild/External_${dep}.cmake)
-    ENDIF()
-  ENDFOREACH()
-  
+  foreach(dep ${${proj}_DEPENDENCIES})
+    if(NOT External_${dep}_FILE_INCLUDED)
+      include(${Slicer_SOURCE_DIR}/SuperBuild/External_${dep}.cmake)
+    endif()
+  endforeach()
+
   # If project being process has dependencies, indicates it has also been added.
-  IF(NOT "${${proj}_DEPENDENCIES}" STREQUAL "")
-    MESSAGE(STATUS "SuperBuild - ${__indent}${proj}[OK]")
-  ENDIF()
-  
+  if(NOT "${${proj}_DEPENDENCIES}" STREQUAL "")
+    message(STATUS "SuperBuild - ${__indent}${proj}[OK]")
+  endif()
+
   # Update indent variable
-  STRING(LENGTH "${__indent}" __indent_length)
-  MATH(EXPR __indent_length "${__indent_length}-2")
-  IF(NOT ${__indent_length} LESS 0)
-    STRING(SUBSTRING "${__indent}" 0 ${__indent_length} __indent)
-  ENDIF()
-ENDMACRO()
+  string(LENGTH "${__indent}" __indent_length)
+  math(EXPR __indent_length "${__indent_length}-2")
+  if(NOT ${__indent_length} LESS 0)
+    string(SUBSTRING "${__indent}" 0 ${__indent_length} __indent)
+  endif()
+endmacro()

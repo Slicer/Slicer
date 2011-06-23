@@ -16,9 +16,9 @@ include(${BRAINS_CMAKE_HELPER_DIR}/MIDAS.cmake)
 set(MIDAS_KEY_DIR "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData")
 
 #add_test(
-#  NAME BRATestImage 
+#  NAME BRATestImage
 #  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRATestImage>
-#    ${BRAINSROIAuto_BINARY_DIR}/sphere.nii.gz 
+#    ${BRAINSROIAuto_BINARY_DIR}/sphere.nii.gz
 #    ${BRAINSROIAuto_BINARY_DIR}/GeneratedMaskSphere.nii.gz
 #  )
 
@@ -27,7 +27,7 @@ midas_add_test(
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:BRAINSROIAuto>
   --inputVolume MIDAS{test.nii.gz.md5}
   --outputROIMaskVolume ${TESTING_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrainMask.nii.gz
-  --ROIAutoDilateSize 10 
+  --ROIAutoDilateSize 10
   --outputVolumePixelType uchar
   )
 set_tests_properties ( BRAINSROIAutoTest_GenerateBrainMask PROPERTIES DEPENDS BRATestImage)

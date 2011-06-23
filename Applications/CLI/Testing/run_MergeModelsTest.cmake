@@ -1,7 +1,7 @@
 
 # test_cmd .........: command to run without args
 # test_name ........: name of the test found in the testing wrapper <test_cmd>
-# model{1,2} .......: 
+# model{1,2} .......:
 # output_model .....:
 # output_baseline ..: name of the "baseline" output file
 # output_test ......: name of the output file the <test_cmd> will produce

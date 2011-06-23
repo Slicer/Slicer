@@ -1,2 +1,2 @@
-ADD_SUBDIRECTORY(Scripts)
-ADD_SUBDIRECTORY(EditorLib)
+add_subdirectory(Scripts)
+add_subdirectory(EditorLib)

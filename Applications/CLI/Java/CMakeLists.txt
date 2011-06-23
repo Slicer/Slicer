@@ -1,16 +1,16 @@
-FIND_PACKAGE ( Java )
+find_package( Java )
 
 # Since not all dashboard are running cmake 2.8.1, let's set the legacy variable
-IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.8.1")
-  SET(Java_JAVA_EXECUTABLE ${JAVA_RUNTIME})
-  SET(Java_JAVAC_EXECUTABLE ${JAVA_COMPILE})
-  SET(Java_JAR_EXECUTABLE ${JAVA_ARCHIVE})
-ENDIF()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.8.1")
+  set(Java_JAVA_EXECUTABLE ${JAVA_RUNTIME})
+  set(Java_JAVAC_EXECUTABLE ${JAVA_COMPILE})
+  set(Java_JAR_EXECUTABLE ${JAVA_ARCHIVE})
+endif()
 
-IF(NOT Java_JAVAC_EXECUTABLE)
-  MESSAGE(STATUS "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
-  RETURN()
-ENDIF()
+if(NOT Java_JAVAC_EXECUTABLE)
+  message(STATUS "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
+  return()
+endif()
 
 project(JavaExamples Java )
 
@@ -33,32 +33,32 @@ endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
 set (CLP HelloWorld)
 
 # If have the java compiler, try to compile the .java files
-IF ( Java_JAVAC_EXECUTABLE )
+if( Java_JAVAC_EXECUTABLE )
 # message (STATUS "Java run time = ${Java_JAVA_EXECUTABLE}, compiler = ${Java_JAVAC_EXECUTABLE}, jar = ${Java_JAR_EXECUTABLE}")
 
   # source files
-  SET ( ${CLP}_JAR_SRCS               Examples/${CLP}App.java)
+  set( ${CLP}_JAR_SRCS               Examples/${CLP}App.java)
 
   # class path
-  IF ( WIN32 )
-    SET  ( ${CLP}_CLASSPATH
+  if( WIN32 )
+    set( ${CLP}_CLASSPATH
       ".\;../Examples\;${CMAKE_CURRENT_BINARY_DIR}" )
-  ELSE ( WIN32 )
-    SET  ( ${CLP}_CLASSPATH
+  else( WIN32 )
+    set( ${CLP}_CLASSPATH
       ".:../Examples:${CMAKE_CURRENT_BINARY_DIR}" )
-  ENDIF ( WIN32 )
+  endif( WIN32 )
 
 # message (STATUS "Adding custom java compile target: ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}")
-  ADD_CUSTOM_TARGET ( ${CLP}.jar.classes ALL
+  add_custom_target( ${CLP}.jar.classes ALL
      ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
 
 # message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}")
-  ADD_CUSTOM_TARGET ( ${CLP}.jar ALL
+  add_custom_target( ${CLP}.jar ALL
       ${Java_JAR_EXECUTABLE} cvf  ${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar Examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 
-  ADD_DEPENDENCIES ( ${CLP}.jar ${CLP}.jar.classes )
+  add_dependencies( ${CLP}.jar ${CLP}.jar.classes )
 
   # install the jar file
   install (
@@ -69,13 +69,13 @@ IF ( Java_JAVAC_EXECUTABLE )
   #####
   # install the tcl file that runs the jar file like an executable CLI
   #####
- 
+
   if (Slicer_SOURCE_DIR)
-    # install each target in the production area (where it would appear in an 
-    # installation) and install each target in the developer area (for running 
+    # install each target in the production area (where it would appear in an
+    # installation) and install each target in the developer area (for running
     # from a build)
 #    message (STATUS "Installing ${CLP}.tcl")
-    set(TARGETS 
+    set(TARGETS
       ${CLP}.tcl
      )
 
@@ -96,9 +96,9 @@ IF ( Java_JAVAC_EXECUTABLE )
      )
   endif (Slicer_SOURCE_DIR)
 
-ELSE ( Java_JAVAC_EXECUTABLE)
+else( Java_JAVAC_EXECUTABLE)
    message (STATUS "Unable to compile java code, skipping installation of ${CLP}.jar and .tcl")
-ENDIF ( Java_JAVAC_EXECUTABLE )
+endif( Java_JAVAC_EXECUTABLE )
 
 ##############
 
@@ -112,10 +112,10 @@ set (CLP SPECTRE)
 #####
 
 if (Slicer_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
+  # install each target in the production area (where it would appear in an
+  # installation) and install each target in the developer area (for running
   # from a build)
-  set(TARGETS 
+  set(TARGETS
      ${CLP}.tcl
 #     SPECTRE_2010-04-01.jar
      SPECTRElite_2010-05-15.jar

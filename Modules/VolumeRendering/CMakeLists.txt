@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -68,14 +68,14 @@ generatelm(VolumeRendering_SRCS VolumeRendering.txt)
 # --------------------------------------------------------------------------
 # Build and install the library
 
-ADD_SUBDIRECTORY(VolumeRenderingReplacements)
-# SET(volume_rendering_libs
+add_subdirectory(VolumeRenderingReplacements)
+# set(volume_rendering_libs
 #   VolumeRenderingReplacements
 #   VolumeRenderingCuda
 #   )
-# FOREACH(lib ${volume_rendering_libs})
-#   ADD_SUBDIRECTORY(${lib})
-# ENDFOREACH(lib)
+# foreach(lib ${volume_rendering_libs})
+#   add_subdirectory(${lib})
+# endforeach(lib)
 
 set(lib_name VolumeRendering)
 add_library(${lib_name}
@@ -83,7 +83,7 @@ add_library(${lib_name}
   ${${lib_name}_TCL_SRCS}
   )
 #slicer3_set_modules_output_path(${lib_name})
-SET_TARGET_PROPERTIES(${lib_name} PROPERTIES 
+set_target_properties(${lib_name} PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR}"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
@@ -99,15 +99,15 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 #slicer3_install_modules(${lib_name})
-INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )
@@ -115,9 +115,9 @@ INSTALL(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # Install support files

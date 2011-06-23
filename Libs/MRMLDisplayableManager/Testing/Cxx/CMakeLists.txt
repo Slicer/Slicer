@@ -1,7 +1,7 @@
-SET(KIT MRMLDisplayableManager)
+set(KIT MRMLDisplayableManager)
 
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLCameraDisplayableManagerTest1.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
@@ -9,21 +9,21 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-SET(DisplayableManagerTest_SRCS
+set(DisplayableManagerTest_SRCS
   vtkMRMLTestThreeDViewDisplayableManager.cxx
   vtkMRMLTestSliceViewDisplayableManager.cxx
   vtkMRMLTestCustomDisplayableManager.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.
-SET(VTK_USE_INSTANTIATOR_NEW 1)
+set(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
   DisplayableManagerInstantiatorTest_SRCS
   "${DisplayableManagerTest_SRCS}"
@@ -31,28 +31,28 @@ VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
   ${PROJECT_BINARY_DIR}
   "")
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_EXECUTABLE(${KIT}CxxTests
+set(LIBRARY_NAME ${PROJECT_NAME})
+add_executable(${KIT}CxxTests
   ${Tests}
   ${DisplayableManagerTest_SRCS}
   ${DisplayableManagerInstantiatorTest_SRCS})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
+target_link_libraries(${KIT}CxxTests ${lib_name})
 
-#MACRO(SIMPLE_TEST TESTNAME)
-#  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-#ENDMACRO()
+#macro(SIMPLE_TEST TESTNAME)
+#  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+#endmacro()
 
 #
 # Add all the tests
 #
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
-FOREACH (test ${TestsToRun})
-  GET_FILENAME_COMPONENT(TESTNAME ${test} NAME_WE)
-  ADD_TEST(
-      NAME ${TESTNAME} 
+foreach(test ${TestsToRun})
+  get_filename_component(TESTNAME ${test} NAME_WE)
+  add_test(
+      NAME ${TESTNAME}
       COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
       -D ${CMAKE_CURRENT_SOURCE_DIR}/../
       -T ${TEMP}
       -V Baseline/${TESTNAME}.png
       )
-ENDFOREACH()
+endforeach()

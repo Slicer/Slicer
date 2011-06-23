@@ -1,4 +1,4 @@
-IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   file(GLOB HEADERFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
   foreach(headerfile ${HEADERFILES})
     configure_file(
@@ -26,7 +26,7 @@ IF(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     FILES ${PNGFILES}
     DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Resources
     )
-ENDIF()
+endif()
 
 # Should this location change, update somewhere
 

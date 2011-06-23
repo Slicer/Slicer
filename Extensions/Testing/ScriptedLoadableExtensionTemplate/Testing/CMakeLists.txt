@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(Python)
+add_subdirectory(Python)

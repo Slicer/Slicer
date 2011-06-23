@@ -31,8 +31,8 @@
 #
 #  PERMISSIONS ..: Specify permissions for installed files. Valid permissions are OWNER_READ,
 #                  OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_WRITE, GROUP_EXECUTE, WORLD_READ,
-#                  WORLD_WRITE, WORLD_EXECUTE, SETUID, and SETGID. 
-#                  Permissions that do not make sense on certain platforms are ignored 
+#                  WORLD_WRITE, WORLD_EXECUTE, SETUID, and SETGID.
+#                  Permissions that do not make sense on certain platforms are ignored
 #                  on those platforms.
 #
 
@@ -42,28 +42,28 @@
 # to install the symlink, but the actual library. This macro takes care of that.
 #
 
-FUNCTION(slicerInstallLibrary)
+function(slicerInstallLibrary)
   SLICER_PARSE_ARGUMENTS(_slicerInstallLibrary
     "FILE;DESTINATION;COMPONENT;PERMISSIONS"
     ""
     ${ARGN}
     )
 
-  IF(NOT WIN32)
-  
-    SET(install_permissions)
-    IF(DEFINED _slicerInstallLibrary_PERMISSIONS)
-      SET(install_permissions PERMISSIONS ${_slicerInstallLibrary_PERMISSIONS})
-    ENDIF()
-  
-    GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
-    SET(name_tmp)
+  if(NOT WIN32)
+
+    set(install_permissions)
+    if(DEFINED _slicerInstallLibrary_PERMISSIONS)
+      set(install_permissions PERMISSIONS ${_slicerInstallLibrary_PERMISSIONS})
+    endif()
+
+    get_filename_component(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
+    set(name_tmp)
     # Note: Library symlinks are always named "lib.*.dylib" on mac or "lib.so.*" on linux
-    GET_FILENAME_COMPONENT(lib_dir ${_slicerInstallLibrary_FILE} PATH)
-    GET_FILENAME_COMPONENT(lib_name ${_slicerInstallLibrary_FILE} NAME_WE)
-    INSTALL(DIRECTORY ${lib_dir}/ 
+    get_filename_component(lib_dir ${_slicerInstallLibrary_FILE} PATH)
+    get_filename_component(lib_name ${_slicerInstallLibrary_FILE} NAME_WE)
+    install(DIRECTORY ${lib_dir}/
       DESTINATION ${_slicerInstallLibrary_DESTINATION} COMPONENT ${_slicerInstallLibrary_COMPONENT}
       FILES_MATCHING PATTERN "${lib_name}*" ${install_permissions}
       PATTERN "${lib_name}*.a" EXCLUDE)
-  ENDIF()
-ENDFUNCTION()
+  endif()
+endfunction()

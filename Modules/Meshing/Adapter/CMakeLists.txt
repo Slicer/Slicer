@@ -1,19 +1,19 @@
-PROJECT(MIMXAdapter)
+project(MIMXAdapter)
 
-#CONFIGURE_FILE(
+#configure_file(
 #  ${MIMXAdapter_SOURCE_DIR}/vtkMimxAdapterConfigure.h.in
 #  ${MIMXAdapter_BINARY_DIR}/vtkMimxAdapterConfigure.h
 #  )
 
-SET (MIMXAdapter_SRCS 
-    vtkUnstructuredGridToitkMesh.cxx 
-    itkMeshTovtkPolyData.cxx  
+set(MIMXAdapter_SRCS
+    vtkUnstructuredGridToitkMesh.cxx
+    itkMeshTovtkPolyData.cxx
     vtkPolyDataToitkMesh.cxx
-    ) 
+    )
 
 # Include dirs
 #
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -25,26 +25,26 @@ INCLUDE_DIRECTORIES(
   ${vtkITK_INCLUDE_DIRS}
   ${ITK_INCLUDE_DIR}
   ${VTK_INCLUDE_DIR}
-  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR} 
+  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR}
 )
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMimxAdapterConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkMimxAdapterConfigure.h
   )
-  
+
 #
 # Wrapping
 #
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR})
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(mimxAdapter MimxAdapter_TCL_SRCS "${MIMXAdapter_SRCS}" "")
 
-SET(LIB_NAME "mimxAdapter")
+set(LIB_NAME "mimxAdapter")
 
-ADD_LIBRARY(${LIB_NAME} ${MIMXAdapter_SRCS} )
+add_library(${LIB_NAME} ${MIMXAdapter_SRCS} )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} 
+target_link_libraries(${LIB_NAME}
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL
@@ -55,15 +55,15 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${LIB_NAME} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
-  
+

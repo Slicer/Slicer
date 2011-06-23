@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(teem_DEPENDENCIES VTK)
@@ -54,9 +54,9 @@ ExternalProject_Add(${proj}
     -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DPNG_LIBRARY:FILEPATH=${teem_PNG_LIBRARY}
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${teem_DEPENDENCIES}
 )
 
-SET(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
 

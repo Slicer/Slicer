@@ -1,13 +1,13 @@
-PROJECT(qSlicerBaseQTCLI)
+project(qSlicerBaseQTCLI)
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
-SET(KIT_export_directive "Q_SLICER_BASE_QTCLI_EXPORT")
+set(KIT_export_directive "Q_SLICER_BASE_QTCLI_EXPORT")
 
 # Additional directories to include
-SET(KIT_include_directories
+set(KIT_include_directories
   ${qSlicerBaseQTCore_SOURCE_DIR}
   ${qSlicerBaseQTCore_BINARY_DIR}
   ${qSlicerBaseQTGUI_SOURCE_DIR}
@@ -18,13 +18,13 @@ SET(KIT_include_directories
   )
 
 # Source files
-SET(KIT_VTK_SRCS
+set(KIT_VTK_SRCS
   vtkSlicerCLIModuleLogic.cxx
   vtkSlicerCLIModuleLogic.h
   )
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   ${KIT_VTK_SRCS}
   qSlicerCLIExecutableModuleFactory.cxx
   qSlicerCLIExecutableModuleFactory.h
@@ -42,7 +42,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   qSlicerCLIModule.h
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
@@ -50,16 +50,16 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_SRCS
+set(KIT_UI_SRCS
   Resources/UI/qSlicerCLIModuleWidget.ui
   )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   )
 
 # Additional Target libraries (QT libs already included)
-SET(KIT_target_libraries
+set(KIT_target_libraries
   qSlicerBaseQTCore
   qSlicerBaseQTGUI
   ModuleDescriptionParser
@@ -78,12 +78,12 @@ SlicerMacroBuildBaseQtLibrary(
   )
 
 # Plugin
-#ADD_SUBDIRECTORY(Plugins)
+#add_subdirectory(Plugins)
 
 # --------------------------------------------------------------------------
 # Python Wrapping
 # --------------------------------------------------------------------------
-IF(VTK_WRAP_PYTHON)
+if(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${PROJECT_NAME}
     KIT_SRCS ${KIT_VTK_SRCS}
@@ -91,11 +91,11 @@ IF(VTK_WRAP_PYTHON)
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     KIT_PYTHON_LIBRARIES SlicerBaseLogicPythonD
     )
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Testing
 # --------------------------------------------------------------------------
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

@@ -1,7 +1,7 @@
 project(Statistics)
 
-ADD_SUBDIRECTORY(LabelStatistics)
+add_subdirectory(LabelStatistics)
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

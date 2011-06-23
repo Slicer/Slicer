@@ -1,34 +1,34 @@
-PROJECT(BUILDINGBLOCK)
+project(BUILDINGBLOCK)
 
 
 
 # We define several classes in this example, and we want to be able to use
-# their C++ methods as callbacks for our user interface. To do so, we need to 
+# their C++ methods as callbacks for our user interface. To do so, we need to
 # create a library and wrap it automatically for the Tcl language, which
 # is used as a bridge between C++ objects at run-time. Note that an
 # initialization function is automatically created in this library to allow
 # classes and C++ methods to be used as commands and callbacks inside the Tcl
-# interpreter; do *not* forget to call this function right after you 
-# initialize the Tcl interpreter in your application. The name of this 
+# interpreter; do *not* forget to call this function right after you
+# initialize the Tcl interpreter in your application. The name of this
 # function is built from the library name in lower-case (except for the first
-# letter) and suffixed with "_Init" (for example: 
+# letter) and suffixed with "_Init" (for example:
 # KWR21ExampleLib => KwR21examplelib_Init)
 # This whole process is required to use C++ methods as callbacks; it is not
 # needed if you use VTK's C++ command/observer pattern directly, which is
 # demonstrated in KWWidgets's C++ 'Callbacks' example.
 
 # directories for vtkMIMX
-#INCLUDE_DIRECTORIES( ../Common ../Common ) 
-#INCLUDE_DIRECTORIES( ${IAFEMMESH_SOURCE_DIR}/Code/Filter ${IAFEMMESH_BINARY_DIR}/Code/Filter ) 
-#INCLUDE_DIRECTORIES( ${IAFEMMESH_SOURCE_DIR}/Code/Widgets ${IAFEMMESH_BINARY_DIR}/Code/Widgets ) 
-#INCLUDE_DIRECTORIES( ${IAFEMMESH_SOURCE_DIR}/Code/Adapter ${IAFEMMESH_BINARY_DIR}/Code/Adapter )  
-#INCLUDE_DIRECTORIES( ${IAFEMMESH_SOURCE_DIR}/Code/IO ${IAFEMMESH_BINARY_DIR}/Code/IO )  
-#INCLUDE_DIRECTORIES( ${IAFEMMESH_SOURCE_DIR}/Code/Mesh    ${IAFEMMESH_BINARY_DIR}/Code/Mesh )  
-INCLUDE_DIRECTORIES( ${VTK_SOURCE_DIR}/Utilities/verdict/include ${VTK_KITS_DIR}/verdict )
-                    
+#include_directories( ../Common ../Common )
+#include_directories( ${IAFEMMESH_SOURCE_DIR}/Code/Filter ${IAFEMMESH_BINARY_DIR}/Code/Filter )
+#include_directories( ${IAFEMMESH_SOURCE_DIR}/Code/Widgets ${IAFEMMESH_BINARY_DIR}/Code/Widgets )
+#include_directories( ${IAFEMMESH_SOURCE_DIR}/Code/Adapter ${IAFEMMESH_BINARY_DIR}/Code/Adapter )
+#include_directories( ${IAFEMMESH_SOURCE_DIR}/Code/IO ${IAFEMMESH_BINARY_DIR}/Code/IO )
+#include_directories( ${IAFEMMESH_SOURCE_DIR}/Code/Mesh    ${IAFEMMESH_BINARY_DIR}/Code/Mesh )
+include_directories( ${VTK_SOURCE_DIR}/Utilities/verdict/include ${VTK_KITS_DIR}/verdict )
+
 # Include dirs
 #
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -40,13 +40,13 @@ INCLUDE_DIRECTORIES(
   ${vtkITK_INCLUDE_DIRS}
   ${ITK_INCLUDE_DIR}
   ${VTK_INCLUDE_DIR}
-  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR} 
-  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
-  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
-  ${MIMXWidgets_SOURCE_DIR} ${MIMXWidgets_BINARY_DIR} 
-  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
-  ${MIMXMeshIO_SOURCE_DIR} ${MIMXMeshIO_BINARY_DIR} 
-  ${MIMXMesh_SOURCE_DIR} ${MIMXMesh_BINARY_DIR} 
+  ${MIMXCommon_SOURCE_DIR} ${MIMXCommon_BINARY_DIR}
+  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR}
+  ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR}
+  ${MIMXWidgets_SOURCE_DIR} ${MIMXWidgets_BINARY_DIR}
+  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR}
+  ${MIMXMeshIO_SOURCE_DIR} ${MIMXMeshIO_BINARY_DIR}
+  ${MIMXMesh_SOURCE_DIR} ${MIMXMesh_BINARY_DIR}
   ${MRML_INCLUDE_DIRS}
 )
 
@@ -55,8 +55,8 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/vtkBuildingBlockConfigure.h
   )
 
-SET(LIB_NAME "BuildingBlock")
-SET(LIB_SRCS 
+set(LIB_NAME "BuildingBlock")
+set(LIB_SRCS
   vtkKWMimxApplication.cxx
   vtkKWMimxApplicationSettingsInterface.cxx
   vtkKWMimxFEMeshMenuGroup.cxx
@@ -128,7 +128,7 @@ SET(LIB_SRCS
 #  vtkSlicerCheckRadioButtonIcons.cxx
 #  vtkSlicerIcons.cxx
   #
-  vtkKWMimxLoadBBGroup.cxx    
+  vtkKWMimxLoadBBGroup.cxx
   vtkKWMimxLoadSurfaceGroup.cxx
   vtkKWMimxLoadMeshGroup.cxx
   vtkKWMimxDisplayMatPropGroup.cxx
@@ -136,35 +136,35 @@ SET(LIB_SRCS
   vtkKWMimxImportImageGroup.cxx
   )
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #  vtkKWMimxViewWindow.cxx
 #  WRAP_EXCLUDE
 #)
-  
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
 KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 
-# Create the library. The library is built in static mode for convenience. 
+# Create the library. The library is built in static mode for convenience.
 # Check the 'Callbacks' example for more information about building it in
 # shared mode, i.e. without the STATIC keyword (Win32 compilers requires
 # an additional header file to setup DLL export symbols correctly).
 
-ADD_LIBRARY(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
+add_library(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
 
 
-#TARGET_LINK_LIBRARIES(${LIB_NAME} ${KWWidgets_LIBRARIES})
+#target_link_libraries(${LIB_NAME} ${KWWidgets_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-  SlicerBaseLogic 
-  SlicerBaseGUI 
+target_link_libraries(${LIB_NAME}
+  SlicerBaseLogic
+  SlicerBaseGUI
   MRML
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL
   vtkIOTCL
   vtkWidgets
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
   mimxWidgets
   mimxFilter
   mimxCommon
@@ -173,11 +173,11 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   )
 
 if(CMAKE_SYSTEM MATCHES "SunOS.*")
-  SET_TARGET_PROPERTIES (${LIB_NAME} PROPERTIES LINK_FLAGS "-z muldefs")
+  set_target_properties(${LIB_NAME} PROPERTIES LINK_FLAGS "-z muldefs")
 endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 
-#CONFIGURE_FILE(
-#  ${BOUNDINGBOX_SOURCE_DIR}/vtkBoundingBlockConfigure.h.in 
+#configure_file(
+#  ${BOUNDINGBOX_SOURCE_DIR}/vtkBoundingBlockConfigure.h.in
 #  ${BOUNDINGBOX_BINARY_DIR}/vtkBoundingBlockConfigure.h
 #)
 
@@ -188,20 +188,20 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 # based on KWWidgets, you should omit this section, unless your application
 # supports that feature too and you checked how the macro is working.
 
-#IF(BUILD_TESTING)
-#  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTestingMacros.cmake")
+#if(BUILD_TESTING)
+#  include("${KWWidgets_CMAKE_DIR}/KWWidgetsTestingMacros.cmake")
 #  KWWidgets_ADD_TEST_FROM_C_EXAMPLE(KWWidgets-${PROJECT_NAME} ${EXE_NAME})
-#ENDIF()
+#endif()
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${LIB_NAME} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )

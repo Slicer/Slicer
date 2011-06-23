@@ -1,4 +1,4 @@
-MESSAGE(STATUS "Looking for OpenIGTLink")
+message(STATUS "Looking for OpenIGTLink")
 
 # - Find an OpenIGTLink installation or build tree.
 
@@ -9,42 +9,42 @@ MESSAGE(STATUS "Looking for OpenIGTLink")
 # that can be included to set the include directories, library directories,
 # and preprocessor macros.  In addition to the variables read from
 # OpenIGTLinkConfig.cmake, this find module also defines
-#  OpenIGTLink_DIR  - The directory containing OpenIGTLinkConfig.cmake.  
-#             This is either the root of the build tree, 
-#             or the lib/InsightToolkit directory.  
+#  OpenIGTLink_DIR  - The directory containing OpenIGTLinkConfig.cmake.
+#             This is either the root of the build tree,
+#             or the lib/InsightToolkit directory.
 #             This is the only cache entry.
-#   
-#  OpenIGTLink_FOUND - Whether OpenIGTLink was found.  If this is true, 
+#
+#  OpenIGTLink_FOUND - Whether OpenIGTLink was found.  If this is true,
 #              OpenIGTLink_DIR is okay.
 #
-#  USE_OpenIGTLink_FILE - The full path to the UseOpenIGTLink.cmake file.  
-#                 This is provided for backward 
+#  USE_OpenIGTLink_FILE - The full path to the UseOpenIGTLink.cmake file.
+#                 This is provided for backward
 #                 compatability.  Use OpenIGTLink_USE_FILE
 #                 instead.
 
 
-SET(OpenIGTLink_DIR_STRING "directory containing OpenIGTLinkConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/igtl for an installation.")
+set(OpenIGTLink_DIR_STRING "directory containing OpenIGTLinkConfig.cmake.  This is either the root of the build tree, or PREFIX/lib/igtl for an installation.")
 
 # Search only if the location is not already known.
-IF(NOT OpenIGTLink_DIR)
+if(NOT OpenIGTLink_DIR)
   # Get the system search path as a list.
-  IF(UNIX)
-    STRING(REGEX MATCHALL "[^:]+" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
-  ELSE(UNIX)
-    STRING(REGEX REPLACE "\\\\" "/" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
-  ENDIF(UNIX)
-  STRING(REGEX REPLACE "/;" ";" OpenIGTLink_DIR_SEARCH2 ${OpenIGTLink_DIR_SEARCH1})
+  if(UNIX)
+    string(REGEX MATCHALL "[^:]+" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
+  else(UNIX)
+    string(REGEX REPLACE "\\\\" "/" OpenIGTLink_DIR_SEARCH1 "$ENV{PATH}")
+  endif(UNIX)
+  string(REGEX REPLACE "/;" ";" OpenIGTLink_DIR_SEARCH2 ${OpenIGTLink_DIR_SEARCH1})
 
   # Construct a set of paths relative to the system search path.
-  SET(OpenIGTLink_DIR_SEARCH "")
-  FOREACH(dir ${OpenIGTLink_DIR_SEARCH2})
-    SET(OpenIGTLink_DIR_SEARCH ${OpenIGTLink_DIR_SEARCH} "${dir}/../lib/igtl")
-  ENDFOREACH(dir)
+  set(OpenIGTLink_DIR_SEARCH "")
+  foreach(dir ${OpenIGTLink_DIR_SEARCH2})
+    set(OpenIGTLink_DIR_SEARCH ${OpenIGTLink_DIR_SEARCH} "${dir}/../lib/igtl")
+  endforeach(dir)
 
   #
   # Look for an installation or build tree.
   #
-  FIND_PATH(OpenIGTLink_DIR OpenIGTLinkConfig.cmake
+  find_path(OpenIGTLink_DIR OpenIGTLinkConfig.cmake
     # Look for an environment variable OpenIGTLink_DIR.
     $ENV{OpenIGTLink_DIR}
 
@@ -71,23 +71,23 @@ IF(NOT OpenIGTLink_DIR)
     # Help the user find it if we cannot.
     DOC "The ${OpenIGTLink_DIR_STRING}"
   )
-ENDIF(NOT OpenIGTLink_DIR)
+endif(NOT OpenIGTLink_DIR)
 
 # If OpenIGTLink was found, load the configuration file to get the rest of the
 # settings.
-IF(OpenIGTLink_DIR)
-  SET(OpenIGTLink_FOUND 1)
-  INCLUDE(${OpenIGTLink_DIR}/OpenIGTLinkConfig.cmake)
+if(OpenIGTLink_DIR)
+  set(OpenIGTLink_FOUND 1)
+  include(${OpenIGTLink_DIR}/OpenIGTLinkConfig.cmake)
 
   # Set USE_OpenIGTLink_FILE for backward-compatability.
-  SET(USE_OpenIGTLink_FILE ${OpenIGTLink_USE_FILE})
-ELSE(OpenIGTLink_DIR)
-  SET(OpenIGTLink_FOUND 0)
-  IF(OpenIGTLink_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Please set OpenIGTLink_DIR to the ${OpenIGTLink_DIR_STRING}")
-  ENDIF(OpenIGTLink_FIND_REQUIRED)
-ENDIF(OpenIGTLink_DIR)
+  set(USE_OpenIGTLink_FILE ${OpenIGTLink_USE_FILE})
+else(OpenIGTLink_DIR)
+  set(OpenIGTLink_FOUND 0)
+  if(OpenIGTLink_FIND_REQUIRED)
+    message(FATAL_ERROR "Please set OpenIGTLink_DIR to the ${OpenIGTLink_DIR_STRING}")
+  endif(OpenIGTLink_FIND_REQUIRED)
+endif(OpenIGTLink_DIR)
 
-IF(OpenIGTLink_FOUND)
-    MESSAGE(STATUS "Found OpenIGTLink")
-ENDIF(OpenIGTLink_FOUND)
+if(OpenIGTLink_FOUND)
+    message(STATUS "Found OpenIGTLink")
+endif(OpenIGTLink_FOUND)

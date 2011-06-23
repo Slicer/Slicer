@@ -1,4 +1,4 @@
-PROJECT(SlicerBaseGUIPython)
+project(SlicerBaseGUIPython)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 
@@ -32,7 +32,7 @@ endif(WIN32)
 # --------------------------------------------------------------------------
 # Numpy?
 
-option(Slicer_USE_NUMPY "Enable Numpy/Scipy support in Python" OFF) 
+option(Slicer_USE_NUMPY "Enable Numpy/Scipy support in Python" OFF)
 
 if(Slicer_USE_NUMPY)
   find_path(PYTHON_NUMPY arrayobject.h
@@ -70,8 +70,8 @@ endif(Slicer_USE_NUMPY)
 # --------------------------------------------------------------------------
 # Sources
 
-set(SlicerBaseGUIPython_SRCS 
-  _mytkinter.c 
+set(SlicerBaseGUIPython_SRCS
+  _mytkinter.c
   _slicerPython.cxx
 )
 
@@ -81,10 +81,10 @@ add_subdirectory(Testing)
 # Build and install the library
 
 set(lib_name SlicerBaseGUIPython)
-add_library(${lib_name} 
+add_library(${lib_name}
   ${SlicerBaseGUIPython_SRCS}
 )
-target_link_libraries(${lib_name} 
+target_link_libraries(${lib_name}
   SlicerBaseLogic
 )
 if (WIN32 AND PYTHON_DEBUG_LIBRARIES)
@@ -96,12 +96,12 @@ else (WIN32 AND PYTHON_DEBUG_LIBRARIES)
 endif (WIN32 AND PYTHON_DEBUG_LIBRARIES)
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )

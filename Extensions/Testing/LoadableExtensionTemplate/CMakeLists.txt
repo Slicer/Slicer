@@ -6,50 +6,50 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # Module name (usually identique to the directory name)
-SET(EXTENSION_NAME LoadableExtensionTemplate)
+set(EXTENSION_NAME LoadableExtensionTemplate)
 
-IF(NOT Slicer_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
 
-  SET(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-  SET(EXTENSION_CATEGORY "Examples")
-  SET(EXTENSION_STATUS "Beta")
-  SET(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_STATUS "Beta")
+  set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
 
-  FIND_PACKAGE(Slicer REQUIRED)
-  
-  SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
-  SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
-  
-  INCLUDE(${Slicer_USE_FILE})
-  
-  SET(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
-  SET(EXTENSION_README_FILE ${Slicer_README_FILE})
+  find_package(Slicer REQUIRED)
 
-  INCLUDE(SlicerEnableExtensionTesting)
+  set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
+  set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
 
-ENDIF()
+  include(${Slicer_USE_FILE})
+
+  set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
+  set(EXTENSION_README_FILE ${Slicer_README_FILE})
+
+  include(SlicerEnableExtensionTesting)
+
+endif()
 
 
 # Add subdirectories
-ADD_SUBDIRECTORY(Logic)
+add_subdirectory(Logic)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerLoadableExtensionTemplateModule.cxx
   qSlicerLoadableExtensionTemplateModule.h
   qSlicerLoadableExtensionTemplateModuleWidget.cxx
@@ -57,23 +57,23 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerLoadableExtensionTemplateModule.h
   qSlicerLoadableExtensionTemplateModuleWidget.h
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerLoadableExtensionTemplateModule.ui
 )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   vtkSlicerLoadableExtensionTemplateModuleLogic
   )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerLoadableExtensionTemplateModule.qrc
 )
 
@@ -89,15 +89,15 @@ slicerMacroBuildQtModule(
   )
 
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
-IF(NOT Slicer_SOURCE_DIR)
-  INCLUDE(SlicerFunctionGenerateExtensionDescription)
+if(NOT Slicer_SOURCE_DIR)
+  include(SlicerFunctionGenerateExtensionDescription)
   slicerFunctionGenerateExtensionDescription(
     EXTENSION_NAME ${EXTENSION_NAME}
-    EXTENSION_CATEGORY ${EXTENSION_CATEGORY} 
+    EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
     EXTENSION_STATUS ${EXTENSION_STATUS}
     EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
     EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
@@ -105,5 +105,5 @@ IF(NOT Slicer_SOURCE_DIR)
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
-  INCLUDE(${Slicer_EXTENSION_CPACK})
-ENDIF()
+  include(${Slicer_EXTENSION_CPACK})
+endif()

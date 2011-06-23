@@ -1,4 +1,4 @@
-SET(EditorLib_PYTHON_SCRIPTS
+set(EditorLib_PYTHON_SCRIPTS
   __init__
   ColorBox
   EditBox
@@ -8,7 +8,7 @@ SET(EditorLib_PYTHON_SCRIPTS
   HelperBox
   )
 
-SET(EditorLib_PYTHON_RESOURCES
+set(EditorLib_PYTHON_RESOURCES
   )
 
 ctkMacroCompilePythonScript(
@@ -22,5 +22,5 @@ ctkMacroCompilePythonScript(
 #-----------------------------------------------------------------------------
 # Testing
 #
-IF(BUILD_TESTING)
-ENDIF()
+if(BUILD_TESTING)
+endif()

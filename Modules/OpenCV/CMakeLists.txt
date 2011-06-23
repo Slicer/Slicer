@@ -1,4 +1,4 @@
-PROJECT(OpenCV)
+project(OpenCV)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -8,56 +8,56 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
 # OpenCV stuff
 
 # Chinzei; Next 1 line is to include here to find FindXX.cmake files.
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 # Chinzei; This does eerything you want!
-FIND_PACKAGE(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED)
 
-#SET(CVlib  cv cvaux cxcore ml highgui)
-#SET(CVlibPath   /Users/ayamada/opencv-1.0.0/cv/.libs
+#set(CVlib  cv cvaux cxcore ml highgui)
+#set(CVlibPath   /Users/ayamada/opencv-1.0.0/cv/.libs
 #        /Users/ayamada/opencv-1.0.0/cvaux/.libs
 #        /Users/ayamada/opencv-1.0.0/cxcore/.libs
 #        /Users/ayamada/opencv-1.0.0/ml/.libs
 #        /Users/ayamada/opencv-1.0.0/otherlibs/highgui/.libs)
-#SET(CVincludePath  /Users/ayamada/opencv-1.0.0/cv/include
+#set(CVincludePath  /Users/ayamada/opencv-1.0.0/cv/include
 #           /Users/ayamada/opencv-1.0.0/cvaux/include
 #           /Users/ayamada/opencv-1.0.0/cxcore/include
 #           /Users/ayamada/opencv-1.0.0/ml/include
 #           /Users/ayamada/opencv-1.0.0/otherlibs/highgui)
 #
-#LINK_DIRECTORIES(${CVlibPath})
+#link_directories(${CVlibPath})
 
 # --------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
 # OpenIGTLink stuff
 
-FIND_PACKAGE(OpenIGTLink REQUIRED)
+find_package(OpenIGTLink REQUIRED)
 
-##SET(OpenIGTLinklib  cv cvaux cxcore ml highgui)
-#SET(OpenIGTLinklib OpenIGTLink)
-##SET(CVlibPath   /Users/ayamada/opencv-1.0.0/cv/.libs
+##set(OpenIGTLinklib  cv cvaux cxcore ml highgui)
+#set(OpenIGTLinklib OpenIGTLink)
+##set(CVlibPath   /Users/ayamada/opencv-1.0.0/cv/.libs
 ##        /Users/ayamada/opencv-1.0.0/cvaux/.libs
 ##        /Users/ayamada/opencv-1.0.0/cxcore/.libs
 ##        /Users/ayamada/opencv-1.0.0/ml/.libs
 ##        /Users/ayamada/opencv-1.0.0/otherlibs/highgui/.libs)
-#SET(OpenIGTLinklibPath   /Users/ayamada/videoopenigtlink/OpenIGTLinkVideoServer/lib)
-##SET(OpenIGTLinkincludePath  /Users/ayamada/OpenIGTLink/OpenIGTLink/Source)
-#SET(OpenIGTLinkincludePath  /Users/ayamada/videoopenigtlink/OpenIGTLinkVideoServer/include/OpenIGTLink)
-##LINK_DIRECTORIES(${CVlibPath})
+#set(OpenIGTLinklibPath   /Users/ayamada/videoopenigtlink/OpenIGTLinkVideoServer/lib)
+##set(OpenIGTLinkincludePath  /Users/ayamada/OpenIGTLink/OpenIGTLink/Source)
+#set(OpenIGTLinkincludePath  /Users/ayamada/videoopenigtlink/OpenIGTLinkVideoServer/include/OpenIGTLink)
+##link_directories(${CVlibPath})
 #
-#LINK_DIRECTORIES(${OpenIGTLinklibPath})
+#link_directories(${OpenIGTLinklibPath})
 # --------------------------------------------------------------------------
 
 # Include dirs
@@ -75,16 +75,16 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkOpenCVConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkOpenCVConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkOpenCVConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkOpenCVConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -92,7 +92,7 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(OpenCV_SRCS 
+set(OpenCV_SRCS
   vtkOpenCVGUI.cxx
   vtkOpenCVLogic.cxx
 )
@@ -116,7 +116,7 @@ generatelm(OpenCV_SRCS OpenCV.txt)
 
 set(lib_name OpenCV)
 add_library(${lib_name}
-  ${OpenCV_SRCS} 
+  ${OpenCV_SRCS}
   ${OpenCV_TCL_SRCS}
   )
 
@@ -131,7 +131,7 @@ target_link_libraries(${lib_name}
 #  ${OpenCV_CVCAM_LIBRARY}
   ${OpenCV_CVHAARTRAINING_LIBRARY}
   ${OpenCV_CXCORE_LIBRARY}
-#  ${OpenCV_CXTS_LIBRARY} 
+#  ${OpenCV_CXTS_LIBRARY}
   ${OpenCV_HIGHGUI_LIBRARY}
   ${OpenCV_ML_LIBRARY}
 #  ${OpenCV_TRS_LIBRARY}
@@ -139,7 +139,7 @@ target_link_libraries(${lib_name}
   )
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )

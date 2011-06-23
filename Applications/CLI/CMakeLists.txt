@@ -36,12 +36,12 @@ slicerMacroBuildCLI(
   NAME DiffusionTensorEstimation
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES 
-    ${MRML_LIB_DIR} 
-    ${vtkTeem_LIB_DIR} 
-    ${SlicerBaseLogic_SOURCE_DIR} 
+  LINK_DIRECTORIES
+    ${MRML_LIB_DIR}
+    ${vtkTeem_LIB_DIR}
+    ${SlicerBaseLogic_SOURCE_DIR}
     ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${vtkITK_INCLUDE_DIRS}
     ${MRML_INCLUDE_DIRS}
     ${vtkTeem_INCLUDE_DIRS}
@@ -52,17 +52,17 @@ slicerMacroBuildCLI(
   NAME DiffusionWeightedMasking
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES 
-    ${MRML_LIB_DIR} 
-    ${vtkTeem_LIB_DIR} 
-    ${SlicerBaseLogic_SOURCE_DIR} 
+  LINK_DIRECTORIES
+    ${MRML_LIB_DIR}
+    ${vtkTeem_LIB_DIR}
+    ${SlicerBaseLogic_SOURCE_DIR}
     ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR}
-    ${vtkITK_BINARY_DIR} 
-    ${MRML_SOURCE_DIR} 
+    ${vtkITK_BINARY_DIR}
+    ${MRML_SOURCE_DIR}
     ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} 
+    ${vtkTeem_SOURCE_DIR}
     ${vtkTeem_BINARY_DIR}
   EXECUTABLE_ONLY
   )
@@ -71,17 +71,17 @@ slicerMacroBuildCLI(
   NAME Seeding
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES 
-    ${MRML_LIB_DIR} 
-    ${vtkTeem_LIB_DIR} 
-    ${SlicerBaseLogic_SOURCE_DIR} 
+  LINK_DIRECTORIES
+    ${MRML_LIB_DIR}
+    ${vtkTeem_LIB_DIR}
+    ${SlicerBaseLogic_SOURCE_DIR}
     ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR}
-    ${vtkITK_BINARY_DIR} 
-    ${MRML_SOURCE_DIR} 
+    ${vtkITK_BINARY_DIR}
+    ${MRML_SOURCE_DIR}
     ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} 
+    ${vtkTeem_SOURCE_DIR}
     ${vtkTeem_BINARY_DIR}
   EXECUTABLE_ONLY
   )
@@ -90,10 +90,10 @@ slicerMacroBuildCLI(
   NAME DiffusionTensorMathematics
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRML vtkTeem
-  LINK_DIRECTORIES 
-    ${MRML_LIB_DIR} 
+  LINK_DIRECTORIES
+    ${MRML_LIB_DIR}
     ${vtkTeem_LIB_DIR}
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${MRML_SOURCE_DIR}    ${MRML_BINARY_DIR}
     ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR}
   EXECUTABLE_ONLY
@@ -287,7 +287,7 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
   INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR} 
+    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR}
     ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
   )
 #-----------------------------------------------------------------------------
@@ -298,7 +298,7 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
   INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR} 
+    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR}
     ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
   )
 #-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ slicerMacroBuildCLI(
 slicerMacroBuildCLI(
   NAME ProbeVolumeWithModel
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic 
+  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
   INCLUDE_DIRECTORIES
     ${vtkITK_SOURCE_DIR}  ${vtkITK_BINARY_DIR}
     ${MRML_SOURCE_DIR}    ${MRML_BINARY_DIR}
@@ -356,13 +356,13 @@ slicerMacroBuildCLI(
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME ComputeSUVBodyWeight
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h 
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   # LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
   LINK_DIRECTORIES ${vtkITK_LIB_DIR}
   INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}           ${vtkITK_BINARY_DIR} 
-    ${MRML_SOURCE_DIR}             ${MRML_BINARY_DIR} 
+    ${vtkITK_SOURCE_DIR}           ${vtkITK_BINARY_DIR}
+    ${MRML_SOURCE_DIR}             ${MRML_BINARY_DIR}
     ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR}
   )
 #-----------------------------------------------------------------------------
@@ -397,7 +397,7 @@ slicerMacroBuildCLI(
 #  )
 ###################
 
-SET(cli_modules
+set(cli_modules
   MRIBiasFieldCorrection
   SparseFieldLevelSetContour
   Realign
@@ -410,16 +410,16 @@ SET(cli_modules
   )
 
 if(Slicer_USE_MIDAS)
-  LIST(APPEND cli_modules MIDASApplications)
+  list(APPEND cli_modules MIDASApplications)
 endif()
 
 if(Slicer_USE_BatchMake)
-  LIST(APPEND cli_modules BatchMakeApplications)
+  list(APPEND cli_modules BatchMakeApplications)
 endif()
 
-FOREACH(cli_module ${cli_modules})
-  ADD_SUBDIRECTORY(${cli_module})
-ENDFOREACH(cli_module)
+foreach(cli_module ${cli_modules})
+  add_subdirectory(${cli_module})
+endforeach(cli_module)
 
 option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
 if(BUILD_BRAINSTOOLS)
@@ -429,6 +429,6 @@ if(BUILD_BRAINSTOOLS)
 
 endif()
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
 endif()

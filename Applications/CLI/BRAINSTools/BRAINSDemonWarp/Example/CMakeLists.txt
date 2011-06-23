@@ -33,7 +33,7 @@ add_executable( SimpleDiffeomorphicRegistrationCLP ${SimpleDiffeomorphicRegistra
 target_link_libraries(SimpleDiffeomorphicRegistrationCLP BRAINSDemonWarpLIB)
 
 add_test(
-   NAME ValidateLIB 
+   NAME ValidateLIB
    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SimpleDiffeomorphicRegistrationCLP>
      ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_dbg_splayed.nii.gz
      ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_sag_twisted.nii.gz

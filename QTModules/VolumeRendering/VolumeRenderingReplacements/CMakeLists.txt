@@ -1,21 +1,21 @@
-PROJECT(VolumeRenderingReplacements)
+project(VolumeRenderingReplacements)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
-SET(module_replacements_name "${PROJECT_NAME}")
+set(module_replacements_name "${PROJECT_NAME}")
 
 # The header '${module_replacements_name}Export.h' will be automatically configured.
-SET(module_replacements_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT")
+set(module_replacements_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT")
 
 # Additional directories to include
-SET(module_replacements_include_directories
+set(module_replacements_include_directories
   ${qt_module_include_directories}
   )
 
 # Source files
-SET(module_replacements_SRCS
+set(module_replacements_SRCS
   vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
   vtkSlicerVolumeRenderingFactory.cxx
@@ -65,7 +65,7 @@ SET(module_replacements_SRCS
   )
 
 # Additional Target libraries
-SET(module_replacements_target_libraries
+set(module_replacements_target_libraries
   ${VTK_LIBRARIES}
   )
 

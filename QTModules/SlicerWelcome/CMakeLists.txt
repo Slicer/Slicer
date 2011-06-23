@@ -1,18 +1,18 @@
 # Module name (usually identique to the directory name)
-SET(qt_module_name "Welcome")
+set(qt_module_name "Welcome")
 
-SET(qt_module_title "Welcome to Slicer")
+set(qt_module_title "Welcome to Slicer")
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_WELCOME_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_WELCOME_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerWelcomeModule.cxx
   qSlicerWelcomeModule.h
   qSlicerWelcomeModuleWidget.cxx
@@ -20,23 +20,23 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerWelcomeModule.h
   qSlicerWelcomeModuleWidget.h
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerWelcomeModule.ui
 )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerWelcomeModule.qrc
 )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   )
 
 
@@ -52,6 +52,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
-ENDIF()
+endif()

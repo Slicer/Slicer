@@ -1,15 +1,15 @@
-PROJECT( DiffusionFiltering )
+project( DiffusionFiltering )
 cmake_minimum_required(VERSION 2.8.2)
 
-INCLUDE_DIRECTORIES(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon)
+include_directories(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon)
 
-SET(filters
+set(filters
   jointLMMSE
   dwiNoiseFilter
   dwiUNLM
   #StochasticTractographyFilter
   ResampleDTI
   )
-FOREACH(filter ${filters})
-  ADD_SUBDIRECTORY(${filter})
-ENDFOREACH(filter)
+foreach(filter ${filters})
+  add_subdirectory(${filter})
+endforeach(filter)

@@ -1,10 +1,10 @@
 
-IF(Slicer_BUILD_CLI)
-  ADD_SUBDIRECTORY(CLI)
-ENDIF()
+if(Slicer_BUILD_CLI)
+  add_subdirectory(CLI)
+endif()
 
-ADD_SUBDIRECTORY(SlicerQT)
+add_subdirectory(SlicerQT)
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

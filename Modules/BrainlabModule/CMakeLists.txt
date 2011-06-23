@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # Include dirs
@@ -30,19 +30,19 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkBrainlabModuleConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkBrainlabModuleConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkBrainlabModuleConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/MRML/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
   )
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkBrainlabModuleConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -50,11 +50,11 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(BrainlabModule_SRCS 
+set(BrainlabModule_SRCS
   # module
   vtkBrainlabModuleGUI.cxx
-  vtkBrainlabModuleLogic.cxx 
-  vtkBrainlabModuleMRMLManager.cxx 
+  vtkBrainlabModuleLogic.cxx
+  vtkBrainlabModuleMRMLManager.cxx
 
   # wizard : Add wizard supporting programs here
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkBrainlabModuleStep.cxx
@@ -70,7 +70,7 @@ set(BrainlabModule_SRCS
 # Algorithm sources (temporary exclusion)
 # WRAP_EXCLUDE
 # )
-  
+
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -87,12 +87,12 @@ generatelm(BrainlabModule_SRCS BrainlabModule.txt)
 # Build and install the library
 
 set(lib_name BrainlabModule)
-add_library(${lib_name} 
-  ${BrainlabModule_SRCS} 
+add_library(${lib_name}
+  ${BrainlabModule_SRCS}
   ${BrainlabModule_TCL_SRCS}
   )
 #slicer3_set_modules_output_path(${lib_name})
-SET_TARGET_PROPERTIES(${lib_name} PROPERTIES 
+set_target_properties(${lib_name} PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR}"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
@@ -101,15 +101,15 @@ SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
 target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   ${OpenIGTLink_LIBRARIES}
   OpenIGTLinkIF
   )
 
 #slicer3_install_modules(${lib_name})
-INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )
@@ -117,9 +117,9 @@ INSTALL(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-#  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+#  add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # Install the testing data

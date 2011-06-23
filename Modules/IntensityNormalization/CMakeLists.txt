@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -25,13 +25,13 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkIntensityNormalizationFilterConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkIntensityNormalizationFilterConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkIntensityNormalizationFilterConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkIntensityNormalizationFilterConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -48,7 +48,7 @@ set(IntensityNormalizationFilter_SRCS
 
 # Abstract/pure virtual classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #ABSTRACT "TRUE"
@@ -56,7 +56,7 @@ set(IntensityNormalizationFilter_SRCS
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #WRAP_EXCLUDE "TRUE"
@@ -66,14 +66,14 @@ set(IntensityNormalizationFilter_SRCS
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(IntensityNormalizationFilter 
-  IntensityNormalizationFilter_TCL_SRCS 
+vtk_wrap_tcl3(IntensityNormalizationFilter
+  IntensityNormalizationFilter_TCL_SRCS
   "${IntensityNormalizationFilter_SRCS}" "")
 
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(IntensityNormalizationFilter_SRCS 
+generatelm(IntensityNormalizationFilter_SRCS
   IntensityNormalizationFilter.xml)
 
 # --------------------------------------------------------------------------
@@ -98,6 +98,6 @@ slicer3_install_modules(${lib_name})
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-#  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+#  add_subdirectory(Testing)
+endif()

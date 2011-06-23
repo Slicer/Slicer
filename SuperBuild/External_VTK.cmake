@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
 if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
@@ -97,7 +97,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
       )
   endif()
-  
+
   set(VTK_BUILD_STEP "")
   if(UNIX)
     configure_file(SuperBuild/VTK_build_step.cmake.in
@@ -105,7 +105,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       @ONLY)
     set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
-  
+
   ExternalProject_Add(${proj}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
@@ -131,14 +131,14 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       ${VTK_MAC_ARGS}
     BUILD_COMMAND ${VTK_BUILD_STEP}
     INSTALL_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${VTK_DEPENDENCIES}
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
 else()
-  # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other 
+  # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other
   # project may depend on VTK, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
 endif()

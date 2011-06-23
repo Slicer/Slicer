@@ -9,7 +9,7 @@ if(BatchMake_DIR)
   #  ${BatchMake_DIR}/bin/debug
   #  ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
   #  ${BatchMake_DIR}/bin)
-  
+
   #find_program(bmGridStore
   #  NAMES bmGridStore.exe bmGridStore
   #  PATHS ${BatchMake_DIR}/bin/relwithdebinfo
@@ -17,7 +17,7 @@ if(BatchMake_DIR)
   #  ${BatchMake_DIR}/bin/debug
   #  ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
   #  ${BatchMake_DIR}/bin)
-  
+
   #find_program(bmSliceExtractor
   #  NAMES bmSliceExtractor.exe bmSliceExtractor
   #  PATHS ${BatchMake_DIR}/bin/relwithdebinfo
@@ -34,7 +34,7 @@ if(BatchMake_DIR)
     #
     # TODO The following code will have to be updated to copy the file at build time
     # using a command like:
-    #  execute_process(${CMAKE_COMMAND} -E copy ...) and using 
+    #  execute_process(${CMAKE_COMMAND} -E copy ...) and using
     # CMAKE_CFG_INTDIR instead of CMAKE_BUILD_TYPE
     #
     if(WIN32)
@@ -54,22 +54,22 @@ if(BatchMake_DIR)
   endif(Slicer_BINARY_DIR)
 
   if (Slicer_SOURCE_DIR)
-    set(RUNTIME_SUPPORT_FILES 
+    set(RUNTIME_SUPPORT_FILES
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm" )
-    install(FILES ${RUNTIME_SUPPORT_FILES} 
+    install(FILES ${RUNTIME_SUPPORT_FILES}
       DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR})
 
   endif(Slicer_SOURCE_DIR)
 endif( BatchMake_DIR)
 
-SET(batchmake_modules
+set(batchmake_modules
 #  EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
   RegisterImagesBatchMakeModule
   ResampleVolumeBatchMakeModule
   )
-FOREACH(module ${batchmake_modules})
-  ADD_SUBDIRECTORY(${module})
-ENDFOREACH(module)
+foreach(module ${batchmake_modules})
+  add_subdirectory(${module})
+endforeach(module)

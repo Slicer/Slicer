@@ -1,14 +1,14 @@
 # Module name (usually identique to the directory name)
-SET(qt_module_name "Volumes")
+set(qt_module_name "Volumes")
 
 # Build module sub libraries
-#ADD_SUBDIRECTORY(MRML)
-#ADD_SUBDIRECTORY(Logic)
+#add_subdirectory(MRML)
+#add_subdirectory(Logic)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
@@ -16,7 +16,7 @@ SET(qt_module_include_directories
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.cxx
   qSlicerDiffusionTensorVolumeDisplayWidget.h
   qSlicerDiffusionWeightedVolumeDisplayWidget.cxx
@@ -40,7 +40,7 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.h
   qSlicerDiffusionWeightedVolumeDisplayWidget.h
   qSlicerLabelMapVolumeDisplayWidget.h
@@ -54,7 +54,7 @@ SET(qt_module_MOC_SRCS
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerDiffusionTensorVolumeDisplayWidget.ui
   Resources/UI/qSlicerDiffusionWeightedVolumeDisplayWidget.ui
   Resources/UI/qSlicerDTISliceDisplayWidget.ui
@@ -65,12 +65,12 @@ SET(qt_module_UI_SRCS
   )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   vtkSlicerVolumesModuleLogic
   )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerVolumesModule.qrc
   )
 
@@ -85,6 +85,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

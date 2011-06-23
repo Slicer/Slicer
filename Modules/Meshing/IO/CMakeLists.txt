@@ -1,6 +1,6 @@
-PROJECT (MIMXMeshIO)
+project(MIMXMeshIO)
 
-CONFIGURE_FILE(
+configure_file(
   ${MIMXMeshIO_SOURCE_DIR}/vtkMeshIOConfigure.h.in
   ${MIMXMeshIO_BINARY_DIR}/vtkMeshIOConfigure.h
   )
@@ -8,7 +8,7 @@ CONFIGURE_FILE(
 
 # Include dirs
 #
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
@@ -26,31 +26,31 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMimxIOConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkMimxIOConfigure.h
   )
-  
-SET (MeshIO_SRCS 
+
+set(MeshIO_SRCS
     vtkMimxAbaqusFileWriter.cxx
     vtkMimxIntervertebralDiscAbaqusWriter.cxx
     vtkPluginFilterWatcher.cxx
     ModuleProcessInformation.cxx
 )
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   vtkMimxAbaqusFileWriter.cxx
   WRAP_EXCLUDE
 )
-  
+
 #
 # Wrapping
 #
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MIMXMeshIO MeshIO_TCL_SRCS "${MeshIO_SRCS}" "")
-SET(LIB_NAME "mimxMeshIO")
+set(LIB_NAME "mimxMeshIO")
 
-#ADD_LIBRARY(mimxMeshIO ${MeshIO_TCL_SRCS} ${MeshIO_SRCS} )
-ADD_LIBRARY(${LIB_NAME} ${MeshIO_SRCS} )
+#add_library(mimxMeshIO ${MeshIO_TCL_SRCS} ${MeshIO_SRCS} )
+add_library(${LIB_NAME} ${MeshIO_SRCS} )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
+target_link_libraries(${LIB_NAME}
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL
@@ -60,18 +60,18 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${LIB_NAME} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
-  
+
 
 
 

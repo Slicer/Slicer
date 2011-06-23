@@ -1,11 +1,11 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
-  
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
 # Set dependency list
 set(BatchMake_DEPENDENCIES Insight)
 
@@ -31,7 +31,7 @@ ExternalProject_Add(${proj}
     -DUSE_SPLASHSCREEN:BOOL=OFF
     -DITK_DIR:PATH=${ITK_DIR}
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${BatchMake_DEPENDENCIES}
   )
 

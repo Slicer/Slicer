@@ -18,9 +18,9 @@
 #
 ###########################################################################
 
-FUNCTION(slicerFunctionGetGccVersion path_to_gcc output_var)
-  IF(CMAKE_COMPILER_IS_GNUCXX)
-    EXECUTE_PROCESS(
+function(slicerFunctionGetGccVersion path_to_gcc output_var)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    execute_process(
       COMMAND ${path_to_gcc} -dumpversion
       RESULT_VARIABLE result
       OUTPUT_VARIABLE output
@@ -28,9 +28,9 @@ FUNCTION(slicerFunctionGetGccVersion path_to_gcc output_var)
       OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_STRIP_TRAILING_WHITESPACE
       )
-    IF(result)
-      MESSAGE(FATAL_ERROR "Failed to obtain compiler version running [${path_to_gcc} -dumpversion]: ${error}")
-    ENDIF()
-    SET(${output_var} ${output} PARENT_SCOPE)
-  ENDIF()
-ENDFUNCTION()
+    if(result)
+      message(FATAL_ERROR "Failed to obtain compiler version running [${path_to_gcc} -dumpversion]: ${error}")
+    endif()
+    set(${output_var} ${output} PARENT_SCOPE)
+  endif()
+endfunction()

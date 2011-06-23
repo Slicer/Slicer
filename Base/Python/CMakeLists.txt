@@ -1,6 +1,6 @@
 
 
-SET(Slicer_PYTHON_SCRIPTS
+set(Slicer_PYTHON_SCRIPTS
   slicer/__init__
   slicer/cli
   slicer/logic
@@ -18,19 +18,19 @@ SET(Slicer_PYTHON_SCRIPTS
   vtkITK
   )
 
-SET(Slicer_PYTHON_RESOURCES
+set(Slicer_PYTHON_RESOURCES
   )
-  
-IF(Slicer_USE_PYTHONQT_WITH_TCL)
-  LIST(APPEND Slicer_PYTHON_SCRIPTS
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND Slicer_PYTHON_SCRIPTS
     slicer/slicerqt-with-tcl
     tpycl/__init__
     tpycl/tpycl
     )
-  LIST(APPEND Slicer_PYTHON_RESOURCES
+  list(APPEND Slicer_PYTHON_RESOURCES
     tpycl/tpycl.tcl
     )
-ENDIF()
+endif()
 
 ctkMacroCompilePythonScript(
   TARGET_NAME SlicerBase
@@ -43,8 +43,8 @@ ctkMacroCompilePythonScript(
 #-----------------------------------------------------------------------------
 # Testing
 #
-IF(BUILD_TESTING)
-  IF(Slicer_USE_PYTHONQT_WITH_TCL)
+if(BUILD_TESTING)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     add_subdirectory(tpycl/Testing)
-  ENDIF()
-ENDIF()
+  endif()
+endif()

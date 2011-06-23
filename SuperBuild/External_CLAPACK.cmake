@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(CLAPACK_DEPENDENCIES "")
@@ -17,7 +17,7 @@ set(proj CLAPACK)
 
 set(CLAPACK_version 3.2.1)
 #set(CLAPACK_file "http://www.netlib.org/clapack/clapack-${clapack_version}-CMAKE.tgz")
-# Since the netlib.org server has been down several time, especially when the nightly dashboard 
+# Since the netlib.org server has been down several time, especially when the nightly dashboard
 # started, we added a copy of the archive to slicer3 lib mirrors.
 set(CLAPACK_file http://svn.slicer.org/Slicer3-lib-mirrors/trunk/clapack-${CLAPACK_version}-CMAKE.tgz)
 set(CLAPACK_MD5 4fd18eb33f3ff8c5d65a7d43913d661b)
@@ -36,7 +36,7 @@ string(REPLACE "/W4" "/W0" CMAKE_C_FLAGS_CLAPACK "${CMAKE_C_FLAGS_CLAPACK}")
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   set(CMAKE_C_FLAGS_CLAPACK "-fPIC ${CMAKE_C_FLAGS_CLAPACK}")
 endif()
-  
+
 ExternalProject_Add(${proj}
   DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
   SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -51,7 +51,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_CLAPACK}
     -DBUILD_SHARED_LIBS:BOOL=OFF
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${CLAPACK_DEPENDENCIES}
   )
 set(CLAPACK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)

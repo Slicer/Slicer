@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 find_package(GenerateLM REQUIRED)
@@ -42,7 +42,7 @@ endif(GenerateLM_FOUND)
 # SlicerDaemon:
 #   - ScriptedModule (at run-time for its Tcl package)
 
-SET(modules
+set(modules
   #AtlasCreator <- culled from slicer 3.6
   CommandLineModule
   Editor
@@ -87,7 +87,7 @@ SET(modules
   )
 
 if(Slicer_USE_OPENIGTLINK)
-  SET(modules
+  set(modules
     ${modules}
     OpenIGTLinkIF
     NeuroNav
@@ -96,9 +96,9 @@ if(Slicer_USE_OPENIGTLINK)
     )
 endif(Slicer_USE_OPENIGTLINK)
 
-FOREACH(module ${modules})
-  ADD_SUBDIRECTORY(${module})
-ENDFOREACH(module)
+foreach(module ${modules})
+  add_subdirectory(${module})
+endforeach(module)
 
 ## SLICES_DEBUG
 ## GAD_DEBUG
@@ -115,7 +115,7 @@ ENDFOREACH(module)
 ## COMMANDLINE_DEBUG
 ## DEAMON_DEBUG
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 

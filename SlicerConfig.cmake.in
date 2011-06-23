@@ -10,7 +10,7 @@
 # Macro allowing to set a variable or complain if already defined
 macro(__SLICER_SET_OR_COMPLAIN_IF_DEFINED var value)
   if(DEFINED ${var} AND NOT SlicerConfig_INCLUDED_ONCE)
-    message(FATAL_ERROR "Variable ${var} has been defined prior calling FIND_PACKAGE(Slicer) !")
+    message(FATAL_ERROR "Variable ${var} has been defined prior calling find_package(Slicer) !")
   endif()
   set(${var} "${value}")
 endmacro()
@@ -69,9 +69,9 @@ set(CMAKE_MODULE_PATH
   )
 
 # Note: This block should be added after VTK and CTK are found.
-#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE 
+#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE
 #       are valid.
-INCLUDE(SlicerBlockFindQtAndCheckVersion)
+include(SlicerBlockFindQtAndCheckVersion)
 
 # Launcher command
 set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
@@ -112,8 +112,8 @@ set(Slicer_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 set(Slicer_LIBRARY_PROPERTIES "@Slicer_LIBRARY_PROPERTIES@")
 
 # Export header for BuildModuleLogic and BuildQTModule
-SET(Slicer_EXPORT_HEADER_TEMPLATE "@Slicer_EXPORT_HEADER_TEMPLATE@")
-SET(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
+set(Slicer_EXPORT_HEADER_TEMPLATE "@Slicer_EXPORT_HEADER_TEMPLATE@")
+set(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
 
 # Slicer home (top of the tree)
 set(Slicer_HOME "@Slicer_HOME@")
@@ -160,19 +160,19 @@ set(Slicer_PLUGINS_LIB_DIR "@Slicer_PLUGINS_LIB_DIR@")
 set(Slicer_PLUGINS_INCLUDE_DIR "@Slicer_PLUGINS_INCLUDE_DIR@")
 set(Slicer_PLUGINS_SHARE_DIR "@Slicer_PLUGINS_SHARE_DIR@")
 
-IF(Slicer_BUILD_QTLOADABLEMODULES)
+if(Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_QTLOADABLEMODULES_BIN_DIR "@Slicer_QTLOADABLEMODULES_BIN_DIR@")
   set(Slicer_QTLOADABLEMODULES_LIB_DIR "@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   set(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "@Slicer_QTLOADABLEMODULES_INCLUDE_DIR@")
   set(Slicer_QTLOADABLEMODULES_SHARE_DIR "@Slicer_QTLOADABLEMODULES_SHARE_DIR@")
-ENDIF()
+endif()
 
-IF(Slicer_BUILD_QTSCRIPTEDMODULES)
+if(Slicer_BUILD_QTSCRIPTEDMODULES)
   set(Slicer_QTSCRIPTEDMODULES_BIN_DIR "@Slicer_QTSCRIPTEDMODULES_BIN_DIR@")
   set(Slicer_QTSCRIPTEDMODULES_LIB_DIR "@Slicer_QTSCRIPTEDMODULES_LIB_DIR@")
   set(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "@Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR@")
   set(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "@Slicer_QTSCRIPTEDMODULES_SHARE_DIR@")
-ENDIF()
+endif()
 
 # Slicer install root
 set(Slicer_INSTALL_ROOT "@Slicer_INSTALL_ROOT@")
@@ -189,27 +189,27 @@ set(Slicer_INSTALL_PLUGINS_LIB_DIR "@Slicer_INSTALL_PLUGINS_LIB_DIR@")
 set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer_INSTALL_PLUGINS_INCLUDE_DIR@")
 set(Slicer_INSTALL_PLUGINS_SHARE_DIR "@Slicer_INSTALL_PLUGINS_SHARE_DIR@")
 
-IF(Slicer_BUILD_QTLOADABLEMODULES)
+if(Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR@")
-ENDIF()
+endif()
 
-IF(Slicer_BUILD_QTSCRIPTEDMODULES)
+if(Slicer_BUILD_QTSCRIPTEDMODULES)
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "@Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR@")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "@Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR@")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "@Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR@")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "@Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR@")
-ENDIF()
+endif()
 
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
 # The Slicer targets file.
-IF(EXISTS "@Slicer_TARGETS_FILE@")
-  INCLUDE("@Slicer_TARGETS_FILE@")
-ENDIF()
+if(EXISTS "@Slicer_TARGETS_FILE@")
+  include("@Slicer_TARGETS_FILE@")
+endif()
 
-SET(SlicerConfig_INCLUDED_ONCE 1 CACHE INTERNAL "True if SlicerConfig has already been included")
+set(SlicerConfig_INCLUDED_ONCE 1 CACHE INTERNAL "True if SlicerConfig has already been included")
 

@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(python_DEPENDENCIES "")
@@ -31,13 +31,13 @@ set(python_MD5 b2f209df270a33315e62c1ffac1937f0)
 get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 if(WIN32)
-  SET(External_python_win_PROJECT_INCLUDED 1)
+  set(External_python_win_PROJECT_INCLUDED 1)
   include(${CMAKE_CURRENT_LIST_DIR}/External_python_win.cmake)
-  SET(External_python_win_PROJECT_INCLUDED 0)
+  set(External_python_win_PROJECT_INCLUDED 0)
 else()
-  SET(External_python_unix_PROJECT_INCLUDED 1)
+  set(External_python_unix_PROJECT_INCLUDED 1)
   include(${CMAKE_CURRENT_LIST_DIR}/External_python_unix.cmake)
-  SET(External_python_unix_PROJECT_INCLUDED 0)
+  set(External_python_unix_PROJECT_INCLUDED 0)
 endif()
 
 #message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")

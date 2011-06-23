@@ -1,6 +1,6 @@
-SET(KIT MRMLLib)
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(KIT MRMLLib)
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLArrayPlotNodeTest1.cxx
   vtkMRMLBSplineTransformNodeTest1.cxx
   vtkMRMLCameraNodeTest1.cxx
@@ -93,17 +93,17 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${lib_name})
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+endmacro()
 
 SIMPLE_TEST( vtkMRMLArrayPlotNodeTest1 )
 SIMPLE_TEST( vtkMRMLBSplineTransformNodeTest1 )
@@ -194,15 +194,15 @@ SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLXYPlotManagerNodeTest1 )
 SIMPLE_TEST( vtkObserverManagerTest1 )
 
-MACRO(TEST_SCENE SCENEFILENAME)
-  ADD_TEST(
-    NAME vtkMRMLSceneTest2_${SCENEFILENAME} 
+macro(TEST_SCENE SCENEFILENAME)
+  add_test(
+    NAME vtkMRMLSceneTest2_${SCENEFILENAME}
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> vtkMRMLSceneTest2
       ${CMAKE_CURRENT_SOURCE_DIR}/${SCENEFILENAME}
     )
-ENDMACRO()
+endmacro()
 
-SET( ScenesToTest 
+set( ScenesToTest
   clipCube.mrml
   cube.mrml
   diffusionEditor.mrml
@@ -221,14 +221,14 @@ SET( ScenesToTest
   volScene.mrml
   )
 
-FOREACH(SceneToTest ${ScenesToTest})
+foreach(SceneToTest ${ScenesToTest})
   TEST_SCENE( ${SceneToTest} )
-ENDFOREACH()
+endforeach()
 
-IF(Slicer_USE_KWWIDGETS)
+if(Slicer_USE_KWWIDGETS)
   # add a tcl test to check that colour files get loaded and saved properly to mrml files and loaded again
-  ADD_TEST(NAME SlicerColorStorageNodeSceneTest COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestColorStorageNodeInScene.tcl)
+  add_test(NAME SlicerColorStorageNodeSceneTest COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestColorStorageNodeInScene.tcl)
 
   # add a tcl test to check that scene clear is working okay
-  ADD_TEST(NAME Slicer3SceneClearTest COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestSceneClear.tcl)
-ENDIF()
+  add_test(NAME Slicer3SceneClearTest COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestSceneClear.tcl)
+endif()

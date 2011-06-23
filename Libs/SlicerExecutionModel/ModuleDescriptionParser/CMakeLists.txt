@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -36,7 +36,7 @@ endif()
 # --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR} 
+  ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 if(ModuleDescriptionParser_USE_PYTHON)
@@ -53,23 +53,23 @@ include_directories(${include_dirs})
 # --------------------------------------------------------------------------
 set(configure_header_file ModuleDescriptionParserConfigure.h)
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
   ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
 # --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-ENDIF()
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+endif()
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   install(
     FILES ${headers} "${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}"
     DESTINATION include/${PROJECT_NAME} COMPONENT Development
     )
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Sources
@@ -101,7 +101,7 @@ if(USE_BFD)
         ${CMAKE_CURRENT_BINARY_DIR}/CMake
         ${CMAKE_CURRENT_SOURCE_DIR}/CMake
         TestBFD
-        CMAKE_FLAGS 
+        CMAKE_FLAGS
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         OUTPUT_VARIABLE OUTPUT)
@@ -116,8 +116,8 @@ if(USE_BFD)
     endif()
 
     if(HAVE_BFD)
-      set(ModuleDescriptionParser_SRCS 
-        ${ModuleDescriptionParser_SRCS} 
+      set(ModuleDescriptionParser_SRCS
+        ${ModuleDescriptionParser_SRCS}
         BinaryFileDescriptor.cxx)
     endif()
   endif()
@@ -167,26 +167,26 @@ target_link_libraries(${lib_name} ${libs})
 # Apply user-defined properties to the library target.
 #
 if(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
 
 # --------------------------------------------------------------------------
 # Export target
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
-ENDIF()
-EXPORT(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+endif()
+export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
+  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
 endif()
 
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
 endif()
 
 install(TARGETS ${lib_name}
@@ -199,30 +199,30 @@ install(TARGETS ${lib_name}
 # Testing
 # --------------------------------------------------------------------------
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
 endif()
 
 # --------------------------------------------------------------------------
 # Configure support files
 # --------------------------------------------------------------------------
-include(GenerateModuleDescriptionParserConfig.cmake) 
+include(GenerateModuleDescriptionParserConfig.cmake)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY)
-  
+
 # --------------------------------------------------------------------------
 # Install support files
 # --------------------------------------------------------------------------
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  install(FILES 
-    ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 
-    ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake
     DESTINATION lib/${lib_name} COMPONENT Development)
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-SET(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

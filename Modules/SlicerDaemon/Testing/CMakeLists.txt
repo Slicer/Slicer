@@ -1,6 +1,6 @@
-PROJECT (SlicerDeamonTesting)
+project(SlicerDeamonTesting)
 
-#ADD_TEST(
+#add_test(
 #  DaemonTest1_checkSlicerd
 #  ${Slicer_LAUNCHER_EXECUTABLE}
 #  --daemon
@@ -8,7 +8,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/testIfDaemonAlreadyRuns.tcl
 #)
 
-#ADD_TEST(
+#add_test(
 #  DaemonTest2_loadTensorScene
 #  ${Slicer_LAUNCHER_EXECUTABLE}
 #  --daemon
@@ -16,7 +16,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/daemonTest_loadTensorScene.tcl
 #)
 
-#ADD_TEST(
+#add_test(
 #  DaemonTest3_pipeTensor
 #  ${Slicer_LAUNCHER_EXECUTABLE}
 #  --daemon
@@ -24,7 +24,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/daemonTest_pipeTensor.tcl
 #)
 
-#ADD_TEST(
+#add_test(
 #  DaemonTest4_pipeAndCompareTensors
 #  ${Slicer_LAUNCHER_EXECUTABLE}
 #  --daemon

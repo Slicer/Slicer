@@ -11,7 +11,7 @@ if(WIN32)
 endif()
 
 # As explained in site.cfg.example, the library name without the prefix "lib" should be used.
-# Nevertheless, on windows, only "libf2c" leads to a successful configuration and 
+# Nevertheless, on windows, only "libf2c" leads to a successful configuration and
 # installation of NUMPY
 set(f2c_libname "f2c")
 if(WIN32)

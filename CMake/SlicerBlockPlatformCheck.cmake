@@ -24,13 +24,13 @@
 
 #
 # Usage:
-#   The check can be enabled/disabled by setting Slicer_PLATFORM_CHECK to 
+#   The check can be enabled/disabled by setting Slicer_PLATFORM_CHECK to
 #   True/False before including the block.
 #
 
-IF(NOT DEFINED Slicer_PLATFORM_CHECK)
-  SET(Slicer_PLATFORM_CHECK true)
-ENDIF()
+if(NOT DEFINED Slicer_PLATFORM_CHECK)
+  set(Slicer_PLATFORM_CHECK true)
+endif()
 
 if(Slicer_PLATFORM_CHECK)
   # See CMake/Modules/Platform/Darwin.cmake)

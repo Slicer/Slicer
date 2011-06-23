@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -35,7 +35,7 @@ install(
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_test(ModelIntoLabelVolumeTest ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/ModelIntoLabelVolumeTest.tcl)
 endif()
 
@@ -44,7 +44,7 @@ endif()
 
 file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
 
-foreach(file 
+foreach(file
     ${TCLFILES}
     )
   configure_file(
@@ -52,7 +52,7 @@ foreach(file
     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
-endforeach(file) 
+endforeach(file)
 
 install(DIRECTORY
   Testing/TestData

@@ -23,12 +23,12 @@ endif()
 if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
   set(python_configuration "Release|x64")
   set(PythonPCBuildDir ${CMAKE_BINARY_DIR}/python-build/PCbuild/amd64)
-  set(python_PATCH_COMMAND 
+  set(python_PATCH_COMMAND
     ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk64\" -Dreplace=tcl-build\" -P ${script})
 else()
   set(python_configuration "Release|Win32")
   set(PythonPCBuildDir ${CMAKE_BINARY_DIR}/python-build/PCbuild)
-  set(python_PATCH_COMMAND 
+  set(python_PATCH_COMMAND
     ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script})
 endif()
 
@@ -49,7 +49,7 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build ${python_configuration} /project select
   BUILD_IN_SOURCE 1
   INSTALL_COMMAND ""
-  DEPENDS 
+  DEPENDS
     ${python_DEPENDENCIES}
 )
 

@@ -1,20 +1,20 @@
 # -------------------------------------------------------------------------
 # Find and install PythonQt
 # -------------------------------------------------------------------------
-IF(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
 
-  SET(PYTHONQT_INSTALL_LIB_DIR "${Slicer_INSTALL_LIB_DIR}")
-  
-  IF(WIN32)
-    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll 
+  set(PYTHONQT_INSTALL_LIB_DIR "${Slicer_INSTALL_LIB_DIR}")
+
+  if(WIN32)
+    install(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll
       DESTINATION bin COMPONENT Runtime)
-  ELSEIF(APPLE)
+  elseif(APPLE)
     # needs to install symlink version named libraries as well.
-    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.dylib 
+    install(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.dylib
       DESTINATION ${PYTHONQT_INSTALL_LIB_DIR} COMPONENT Runtime)
-  ELSEIF(UNIX)
-    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so 
+  elseif(UNIX)
+    install(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so
       DESTINATION ${PYTHONQT_INSTALL_LIB_DIR} COMPONENT Runtime)
-  ENDIF()
-ENDIF()
+  endif()
+endif()
 

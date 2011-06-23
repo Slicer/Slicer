@@ -1,17 +1,17 @@
 
 # Module name (usually identique to the directory name)
-SET(qt_module_name "VolumeRendering")
-SET(qt_module_title "Volume Rendering")
+set(qt_module_name "VolumeRendering")
+set(qt_module_title "Volume Rendering")
 
 # Build module sub libraries
-ADD_SUBDIRECTORY(MRML)
-ADD_SUBDIRECTORY(VolumeRenderingReplacements)
-ADD_SUBDIRECTORY(Logic)
+add_subdirectory(MRML)
+add_subdirectory(VolumeRenderingReplacements)
+add_subdirectory(Logic)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
@@ -25,13 +25,13 @@ SET(qt_module_include_directories
   )
 
 # Displayable manager sources
-SET(qt_module_displayable_manager_SRCS
+set(qt_module_displayable_manager_SRCS
   MRMLDisplayableManager/vtkMRMLVolumeRenderingDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLVolumeRenderingDisplayableManager.h
   )
 
 # Create the instantiator for DisplayableManager classes.
-SET(VTK_USE_INSTANTIATOR_NEW 1)
+set(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("${qt_module_name}Instantiator"
   qt_module_displayable_manager_instantiator_SRCS
   "${qt_module_displayable_manager_SRCS}"
@@ -42,7 +42,7 @@ VTK_MAKE_INSTANTIATOR3("${qt_module_name}Instantiator"
 
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   ${qt_module_displayable_manager_SRCS}
   ${qt_module_displayable_manager_instantiator_SRCS}
   qSlicerVolumeRenderingModule.cxx
@@ -52,18 +52,18 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerVolumeRenderingModule.h
   qSlicerVolumeRenderingModuleWidget.h
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerVolumeRenderingModule.ui
   )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   vtkSlicerVolumeRenderingModuleLogic
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
@@ -72,7 +72,7 @@ SET(qt_module_target_libraries
   )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerVolumeRenderingModule.qrc
   )
 
@@ -88,6 +88,6 @@ slicerMacroBuildQtModule(
   )
 
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
 endif()

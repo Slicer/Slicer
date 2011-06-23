@@ -22,29 +22,29 @@
 # SlicerMacroBuildModuleWidgets
 #
 
-MACRO(SlicerMacroBuildModuleWidgets)
+macro(SlicerMacroBuildModuleWidgets)
   SLICER_PARSE_ARGUMENTS(MODULEWIDGETS
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     "WRAP_PYTHONQT"
     ${ARGN}
     )
-    
-  LIST(APPEND MODULEWIDGETS_INCLUDE_DIRECTORIES
+
+  list(APPEND MODULEWIDGETS_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
     ${Slicer_ModuleLogic_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     ${Slicer_ModuleWidgets_INCLUDE_DIRS}
     )
-    
-  LIST(APPEND MODULEWIDGETS_TARGET_LIBRARIES
+
+  list(APPEND MODULEWIDGETS_TARGET_LIBRARIES
     ${Slicer_GUI_LIBRARY}
     )
-  
-  SET(MODULEWIDGETS_WRAP_PYTHONQT_OPTION)
-  IF(MODULEWIDGETS_WRAP_PYTHONQT)
-    SET(MODULEWIDGETS_WRAP_PYTHONQT_OPTION "WRAP_PYTHONQT")
-  ENDIF()
+
+  set(MODULEWIDGETS_WRAP_PYTHONQT_OPTION)
+  if(MODULEWIDGETS_WRAP_PYTHONQT)
+    set(MODULEWIDGETS_WRAP_PYTHONQT_OPTION "WRAP_PYTHONQT")
+  endif()
 
   SlicerMacroBuildModuleQtLibrary(
     NAME ${MODULEWIDGETS_NAME}
@@ -61,13 +61,13 @@ MACRO(SlicerMacroBuildModuleWidgets)
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleWidgets_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  IF(Slicer_SOURCE_DIR)
-    SET(Slicer_ModuleWidgets_INCLUDE_DIRS
+  if(Slicer_SOURCE_DIR)
+    set(Slicer_ModuleWidgets_INCLUDE_DIRS
       ${Slicer_ModuleWidgets_INCLUDE_DIRS}
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
       CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
-  ENDIF()
-    
-ENDMACRO()
+  endif()
+
+endmacro()
 

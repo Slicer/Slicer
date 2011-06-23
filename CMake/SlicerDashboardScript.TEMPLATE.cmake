@@ -3,8 +3,8 @@
 # Hardware: x86_64 GNU/Linux
 # GPU: NA
 
-# Note: The specific version and processor type of this machine should be reported in the 
-# header above. Indeed, this file will be send to the dashboard as a NOTE file. 
+# Note: The specific version and processor type of this machine should be reported in the
+# header above. Indeed, this file will be send to the dashboard as a NOTE file.
 
 cmake_minimum_required(VERSION 2.8.2)
 
@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 2.8.2)
 #
 # Dashboard properties
 #
-set(MY_OPERATING_SYSTEM   "Linux") # Windows, Linux, Darwin... 
+set(MY_OPERATING_SYSTEM   "Linux") # Windows, Linux, Darwin...
 set(MY_COMPILER           "g++4.4.3")
 set(MY_QT_VERSION         "4.7")
 set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/qtsdk-2010.05/qt/bin/qmake")
@@ -45,14 +45,14 @@ find_program(CTEST_SVN_COMMAND NAMES svn)
 find_program(CTEST_GIT_COMMAND NAMES git)
 find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
 find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-# experimental: 
+# experimental:
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory will *NOT* be cleaned
-# continuous: 
-#     - run_ctest() macro will be called EVERY 5 minutes ... 
+# continuous:
+#     - run_ctest() macro will be called EVERY 5 minutes ...
 #     - binary directory will *NOT* be cleaned
 #     - configure/build will be executed *ONLY* if the repository has been updated
-# nightly: 
+# nightly:
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory *WILL BE* cleaned
 set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
@@ -73,10 +73,10 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
   Slicer_BUILD_CLI:BOOL=OFF
 ")
 
-# Update the following variable to match the chosen build options. This variable is used to 
+# Update the following variable to match the chosen build options. This variable is used to
 # generate both the build directory and the build name.
 # See http://www.cdash.org/CDash/index.php?project=Slicer4 for examples
-set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}-PythonQt-With-Tcl-NoCLI") 
+set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}-PythonQt-With-Tcl-NoCLI")
 
 #
 # Project specific properties
@@ -116,19 +116,19 @@ message("coverage: ${WITH_COVERAGE}, memcheck: ${WITH_MEMCHECK}")
 #
 # Convenient macro allowing to download a file
 #
-MACRO(downloadFile url dest)
-  FILE(DOWNLOAD ${url} ${dest} STATUS status)
-  LIST(GET status 0 error_code)
-  LIST(GET status 1 error_msg)
-  IF(error_code)
-    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-  ENDIF()
-ENDMACRO()
+macro(downloadFile url dest)
+  file(DOWNLOAD ${url} ${dest} STATUS status)
+  list(GET status 0 error_code)
+  list(GET status 1 error_msg)
+  if(error_code)
+    message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  endif()
+endmacro()
 
 #
-# Download and include dashboard driver script 
+# Download and include dashboard driver script
 #
 set(url http://svn.slicer.org/Slicer4/trunk/CMake/SlicerDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 downloadFile(${url} ${dest})
-INCLUDE(${dest})
+include(${dest})

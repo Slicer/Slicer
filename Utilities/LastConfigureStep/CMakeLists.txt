@@ -29,18 +29,18 @@
 # are configured in SUBDIRS.
 
 #-----------------------------------------------------------------------------
-CONFIGURE_FILE(
+configure_file(
   ${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
   ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY)
 
 #-----------------------------------------------------------------------------
-GET_PROPERTY(Slicer_TARGETS GLOBAL PROPERTY Slicer_TARGETS)
-EXPORT(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
+get_property(Slicer_TARGETS GLOBAL PROPERTY Slicer_TARGETS)
+export(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
 
 #-----------------------------------------------------------------------------
 # Create the SlicerConfig.cmake file containing the Slicer configuration.
 # Since it might generate configuration file depending
-INCLUDE(${Slicer_SOURCE_DIR}/SlicerGenerateSlicerConfig.cmake)
+include(${Slicer_SOURCE_DIR}/SlicerGenerateSlicerConfig.cmake)
 
 #-----------------------------------------------------------------------------
-INCLUDE(${Slicer_SOURCE_DIR}/SlicerCPack.cmake)
+include(${Slicer_SOURCE_DIR}/SlicerCPack.cmake)

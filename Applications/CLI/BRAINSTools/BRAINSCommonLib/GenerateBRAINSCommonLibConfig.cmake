@@ -1,4 +1,4 @@
-# Generate the BRAINSCommonLibConfig.cmake file in the build tree and configure 
+# Generate the BRAINSCommonLibConfig.cmake file in the build tree and configure
 # one the installation tree.
 
 # Settings specific to build trees

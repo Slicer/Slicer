@@ -18,15 +18,15 @@ macro(BRAINSGENERATEMODULESCRIPT progname)
   get_target_property(BGCbin_dir ${progname} RUNTIME_OUTPUT_DIRECTORY)
 
   set(BGCbin_name ${progname})
-  IF(APPLE)
-    SET(OS_VARNAME_FOR_LIBRARY_PATH "DYLD_LIBRARY_PATH")
-  ELSE(APPLE)
-    SET(OS_VARNAME_FOR_LIBRARY_PATH "LD_LIBRARY_PATH")
-  ENDIF(APPLE)
+  if(APPLE)
+    set(OS_VARNAME_FOR_LIBRARY_PATH "DYLD_LIBRARY_PATH")
+  else(APPLE)
+    set(OS_VARNAME_FOR_LIBRARY_PATH "LD_LIBRARY_PATH")
+  endif(APPLE)
 
-  CONFIGURE_FILE(${BRAINS_CMAKE_HELPER_DIR}/Module_Dummy.in ${BGCbin_dir}/Modules/${progname} )
+  configure_file(${BRAINS_CMAKE_HELPER_DIR}/Module_Dummy.in ${BGCbin_dir}/Modules/${progname} )
 
-# FILE(WRITE ${BGCbin_dir}/Modules/${progname}
+# file(WRITE ${BGCbin_dir}/Modules/${progname}
 # "#!/usr/bin/tclsh
 # catch {set script [info script]}
 # catch {set script [file normalize \$script]}
@@ -101,7 +101,7 @@ if(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
   else()
     GENERATECLP(CLP_SOURCES ${PROGCLI} )
   endif()
-  
+
   add_executable( ${PROGNAME} ${CLP_SOURCES} ${PROGCLI_HEADER})
 
   if(WIN32)
@@ -127,10 +127,10 @@ if(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
     slicer3_install_plugins(${TARGETS})
   else (Slicer_SOURCE_DIR)
     ### If building outside of Slicer3, then only build the command line executable.
-    IF(BRAINS_BUILD)
+    if(BRAINS_BUILD)
       BRAINSGENERATEMODULESCRIPT(${PROGNAME})
-    ENDIF(BRAINS_BUILD)
-    INSTALL(TARGETS ${PROGNAME}
+    endif(BRAINS_BUILD)
+    install(TARGETS ${PROGNAME}
       RUNTIME DESTINATION bin
       LIBRARY DESTINATION lib
       ARCHIVE DESTINATION lib)
@@ -174,10 +174,10 @@ macro(CONFIGUREBRAINSORSLICERLIBRARY LIBNAME LIBCLI LIBSOURCES EXTRA_LIBS)
     slicer3_install_plugins(${TARGETS})
   else (Slicer_SOURCE_DIR)
     ### If building outside of Slicer3, then only build the command line executable.
-    IF(BRAINS_BUILD)
+    if(BRAINS_BUILD)
       BRAINSGENERATEMODULESCRIPT(${LIBNAME})
-    ENDIF(BRAINS_BUILD)
-    INSTALL(TARGETS ${LIBNAME}
+    endif(BRAINS_BUILD)
+    install(TARGETS ${LIBNAME}
       RUNTIME DESTINATION bin
       LIBRARY DESTINATION lib
       ARCHIVE DESTINATION lib)

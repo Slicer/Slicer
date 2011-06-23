@@ -1,4 +1,4 @@
-PROJECT(OpenIGTLinkIF)
+project(OpenIGTLinkIF)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 
@@ -32,16 +32,16 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkOpenIGTLinkIFConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkOpenIGTLinkIFConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkOpenIGTLinkIFConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkOpenIGTLinkIFConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -50,7 +50,7 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(OpenIGTLinkIF_SRCS 
+set(OpenIGTLinkIF_SRCS
   vtkOpenIGTLinkIFLogic.cxx
   vtkOpenIGTLinkIFGUI.cxx
   #vtkIGTLConnector.cxx
@@ -89,7 +89,7 @@ generatelm(OpenIGTLinkIF_SRCS OpenIGTLinkIF.txt)
 set(lib_name OpenIGTLinkIF)
 
 add_library(${lib_name}
-  ${OpenIGTLinkIF_SRCS} 
+  ${OpenIGTLinkIF_SRCS}
   ${OpenIGTLinkIF_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
@@ -107,6 +107,6 @@ slicer3_install_modules(${lib_name})
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-   ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+   add_subdirectory(Testing)
+endif()

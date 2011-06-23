@@ -23,52 +23,52 @@
 #
 
 #
-# Usage: The variable Slicer_REQUIRED_C_FLAGS and Slicer_REQUIRED_CXX_FLAGS 
+# Usage: The variable Slicer_REQUIRED_C_FLAGS and Slicer_REQUIRED_CXX_FLAGS
 #        will set appropriately.
 #
 
-IF(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
-  
-  INCLUDE(SlicerFunctionCheckCompilerFlags)
-  INCLUDE(SlicerFunctionGetGccVersion)
+if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
 
-  SET(tmp_c_flags)
-  SET(tmp_cxx_flags)
-  
-  IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
+  include(SlicerFunctionCheckCompilerFlags)
+  include(SlicerFunctionGetGccVersion)
+
+  set(tmp_c_flags)
+  set(tmp_cxx_flags)
+
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
     SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
     SlicerFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
-    
+
     slicerFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
     # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
     # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
     # Doing so should allow to build package made for distribution using older linux distro.
-    IF(GCC_VERSION VERSION_GREATER "4.4.0" OR (CMAKE_BUILD_TYPE STREQUAL "Debug" AND GCC_VERSION VERSION_LESS "4.4.0"))
+    if(GCC_VERSION VERSION_GREATER "4.4.0" OR (CMAKE_BUILD_TYPE STREQUAL "Debug" AND GCC_VERSION VERSION_LESS "4.4.0"))
       SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
-    ENDIF()
-    IF(MINGW)
+    endif()
+    if(MINGW)
       # suppress warnings about auto imported symbols
-      SET(tmp_cxx_flags "-Wl,--enable-auto-import ${tmp_cxx_flags}")
-    ENDIF()
+      set(tmp_cxx_flags "-Wl,--enable-auto-import ${tmp_cxx_flags}")
+    endif()
 
     # Note: -Wold-style-cast is too verbose
-    #       Let's postpone the use of -Wsign-promo 
-    SET(tmp_c_flags "${cflags} ${tmp_c_flags}")
-    SET(tmp_cxx_flags "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${tmp_cxx_flags}")
-  ELSEIF(MSVC)
+    #       Let's postpone the use of -Wsign-promo
+    set(tmp_c_flags "${cflags} ${tmp_c_flags}")
+    set(tmp_cxx_flags "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${tmp_cxx_flags}")
+  elseif(MSVC)
      # if 64-bit Windows link with /bigobj
-    IF(CMAKE_SIZEOF_VOID_P MATCHES 8)
-       SET(tmp_c_flags /bigobj)
-       SET(tmp_cxx_flags /bigobj)
-    ENDIF()
+    if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+       set(tmp_c_flags /bigobj)
+       set(tmp_cxx_flags /bigobj)
+    endif()
 
-    SET(cflags "/Zm1000 /W3")
-    SET(tmp_c_flags "${cflags} ${tmp_c_flags}")
-    SET(tmp_cxx_flags "${cflags} /EHsc /GR ${tmp_cxx_flags}")
-  ENDIF()
-  
-  SET(Slicer_REQUIRED_C_FLAGS ${tmp_c_flags})
-  SET(Slicer_REQUIRED_CXX_FLAGS ${tmp_cxx_flags})
-  
-ENDIF()
+    set(cflags "/Zm1000 /W3")
+    set(tmp_c_flags "${cflags} ${tmp_c_flags}")
+    set(tmp_cxx_flags "${cflags} /EHsc /GR ${tmp_cxx_flags}")
+  endif()
+
+  set(Slicer_REQUIRED_C_FLAGS ${tmp_c_flags})
+  set(Slicer_REQUIRED_CXX_FLAGS ${tmp_cxx_flags})
+
+endif()

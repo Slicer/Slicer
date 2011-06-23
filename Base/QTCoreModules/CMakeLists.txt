@@ -1,20 +1,20 @@
-PROJECT(qSlicerBaseQTCoreModules)
+project(qSlicerBaseQTCoreModules)
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
-SET(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
+set(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
 
 # Additional directories to include
-SET(KIT_include_directories
+set(KIT_include_directories
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
   ${MRMLLogic_INCLUDE_DIRS}
   )
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   qSlicerCoreModule.cxx
   qSlicerCoreModule.h
 
@@ -70,7 +70,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   qSlicerCoreModule.h
 
   qSlicerCamerasModule.h
@@ -103,7 +103,7 @@ SET(KIT_MOC_SRCS
   )
 
 # UI files
-SET(KIT_UI_SRCS
+set(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerColorsModule.ui
   Resources/UI/qSlicerDataModule.ui
@@ -115,12 +115,12 @@ SET(KIT_UI_SRCS
 )
 
 # Additional Target libraries (QT libs already included)
-SET(KIT_target_libraries
+set(KIT_target_libraries
   qSlicerBaseQTGUI
   )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/qSlicerBaseQTCoreModules.qrc
 )
 
@@ -136,9 +136,9 @@ SlicerMacroBuildBaseQtLibrary(
   )
 
 # Plugin
-#ADD_SUBDIRECTORY(Plugins)
+#add_subdirectory(Plugins)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

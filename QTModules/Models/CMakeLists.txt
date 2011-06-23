@@ -1,17 +1,17 @@
 # Module name (usually identique to the directory name)
-SET(qt_module_name "Models")
+set(qt_module_name "Models")
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_MODELS_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_MODELS_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 # Is used by the Plugins and Testing directories
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerModelsIO.cxx
   qSlicerModelsIO.h
   qSlicerModelsModule.cxx
@@ -23,7 +23,7 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerModelsIO.h
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.h
@@ -31,17 +31,17 @@ SET(qt_module_MOC_SRCS
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerModelsModule.ui
   Resources/UI/qMRMLModelDisplayNodeWidget.ui
 )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerModelsModule.qrc
 )
 
@@ -56,9 +56,9 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-ADD_SUBDIRECTORY(Widgets/Plugins)
+add_subdirectory(Widgets/Plugins)
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-  ADD_SUBDIRECTORY(Widgets/Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+  add_subdirectory(Widgets/Testing)
+endif()

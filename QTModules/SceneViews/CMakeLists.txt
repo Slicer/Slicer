@@ -4,14 +4,14 @@
 #
 #-----------------------------------------------------------------------
 # Module name (usually identique to the directory name)
-SET(qt_module_name "SceneViews")
+set(qt_module_name "SceneViews")
 
-SET(qt_module_title "Scene Views")
+set(qt_module_title "Scene Views")
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   )
 
@@ -20,17 +20,17 @@ SET(qt_module_include_directories
 # LOGIC
 #
 #-----------------------------------------------------------------------
-SET(Logic_SRCS
+set(Logic_SRCS
   Logic/vtkSlicerSceneViewsModuleLogic.cxx
   Logic/vtkSlicerSceneViewsModuleLogic.h
   )
-  
+
 #-----------------------------------------------------------------------
 #
 # GUI
 #
 #-----------------------------------------------------------------------
-SET(GUI_SRCS
+set(GUI_SRCS
   GUI/qMRMLSceneViewsModel.cxx
   GUI/qMRMLSceneViewsModel.h
   GUI/qMRMLSceneViewsTreeView.cxx
@@ -46,7 +46,7 @@ SET(GUI_SRCS
 # ALL SOURCE FILES TOGETHER
 #
 #-----------------------------------------------------------------------
-SET(qt_module_SRCS
+set(qt_module_SRCS
   ${Logic_SRCS}
   ${GUI_SRCS}
   qSlicerSceneViewsModule.cxx
@@ -58,7 +58,7 @@ SET(qt_module_SRCS
 # MOC HEADERS
 #
 #-----------------------------------------------------------------------
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerSceneViewsModule.h
   GUI/qMRMLSceneViewsModel.h
   GUI/qMRMLSceneViewsTreeView.h
@@ -71,13 +71,13 @@ SET(qt_module_MOC_SRCS
 # RESOURCES
 #
 #-----------------------------------------------------------------------
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerSceneViewsModule.ui
   Resources/UI/qSlicerSceneViewsModuleDialog.ui
   )
- 
+
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerSceneViewsModule.qrc
 )
 
@@ -87,7 +87,7 @@ SET(qt_module_resources
 #
 #-----------------------------------------------------------------------
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
 )
@@ -114,7 +114,7 @@ slicerMacroBuildQtModule(
 # TESTING
 #
 #-----------------------------------------------------------------------
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing/Cxx)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing/Cxx)
+endif()
 

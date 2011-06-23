@@ -1,6 +1,6 @@
 
 
-SET(displayableManager_PYTHON_SCRIPTS
+set(displayableManager_PYTHON_SCRIPTS
   mrmlDisplayableManager/vtkScriptedExampleDisplayableManager
   )
 

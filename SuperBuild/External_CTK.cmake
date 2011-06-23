@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
 if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
@@ -58,13 +58,13 @@ if(NOT DEFINED CTK_DIR)
       -DCTK_APP_ctkDICOM:BOOL=ON
       -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     INSTALL_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${CTK_DEPENDENCIES}
     )
   set(CTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  
+
 else()
-  # The project is provided using CTK_DIR, nevertheless since other project may depend on CTK, 
+  # The project is provided using CTK_DIR, nevertheless since other project may depend on CTK,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${CTK_DEPENDENCIES}")
 endif()

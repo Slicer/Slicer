@@ -1,18 +1,18 @@
-# ModuleDescriptionParser could be installed anywhere, so set all paths based 
+# ModuleDescriptionParser could be installed anywhere, so set all paths based
 # on where this file was found (which should be the lib/ModuleDescriptionParser
 # directory of the installation)
-get_filename_component(ModuleDescriptionParser_CONFIG_DIR 
+get_filename_component(ModuleDescriptionParser_CONFIG_DIR
   "${CMAKE_CURRENT_LIST_FILE}" PATH
   )
 
-# 
-set(ModuleDescriptionParser_INCLUDE_DIRS 
+#
+set(ModuleDescriptionParser_INCLUDE_DIRS
   "${ModuleDescriptionParser_CONFIG_DIR}/../../include/ModuleDescriptionParser"
   )
-set(ModuleDescriptionParser_LIBRARY_DIRS 
+set(ModuleDescriptionParser_LIBRARY_DIRS
   "${ModuleDescriptionParser_CONFIG_DIR}"
   )
-set(ModuleDescriptionParser_USE_FILE 
+set(ModuleDescriptionParser_USE_FILE
   "${ModuleDescriptionParser_CONFIG_DIR}/UseModuleDescriptionParser.cmake"
   )
 

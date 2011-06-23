@@ -1,31 +1,31 @@
-SET(KIT_TEST_SRCS)
-SET(KIT_TEST_NAMES)
-SET(KIT_TEST_NAMES_CXX)
+set(KIT_TEST_SRCS)
+set(KIT_TEST_NAMES)
+set(KIT_TEST_NAMES_CXX)
 SlicerMacroConfigureGenericCxxModuleTests(${EXTENSION_NAME} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
-#SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${EXTENSION_NAME}CxxTests.cxx
+#set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${EXTENSION_NAME}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   # Add source of your tests after this line.
   #EXTRA_INCLUDE TestingMacros.h
   )
-LIST(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
-LIST(APPEND Tests ${KIT_TEST_SRCS})
+list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
+list(APPEND Tests ${KIT_TEST_SRCS})
 
-#SET(TestsToRun ${Tests})
-#LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+#set(TestsToRun ${Tests})
+#list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME qSlicer${EXTENSION_NAME}Module)
+set(LIBRARY_NAME qSlicer${EXTENSION_NAME}Module)
 
-ADD_EXECUTABLE(${EXTENSION_NAME}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${EXTENSION_NAME}CxxTests ${lib_name})
+add_executable(${EXTENSION_NAME}CxxTests ${Tests})
+target_link_libraries(${EXTENSION_NAME}CxxTests ${lib_name})
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${EXTENSION_NAME}CxxTests> ${TESTNAME} ${ARGN})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${EXTENSION_NAME}CxxTests> ${TESTNAME} ${ARGN})
+endmacro()
 
-FOREACH(testname ${KIT_TEST_NAMES})
+foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
-ENDFOREACH()
+endforeach()
 
 # Using SIMPLE_TEST(), you coudl add your test after this line.

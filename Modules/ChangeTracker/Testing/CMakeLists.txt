@@ -1,29 +1,29 @@
-SET(KIT ChangeTrackerGUI)
-SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+set(KIT ChangeTrackerGUI)
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkChangeTrackerGUITest.cxx
   vtkMRMLChangeTrackerNodeTest.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-SET(TestsToRun ${Tests})
-LIST(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
+set(TestsToRun ${Tests})
+list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
 # --------------------------------------------------------------------------
 # Testing
 
-SET(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
+set(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
-TARGET_LINK_LIBRARIES(${KIT}CxxTests 
-  ${lib_name} 
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests
+  ${lib_name}
   )
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
+endmacro()
 
 SIMPLE_TEST( vtkChangeTrackerGUITest )
 SIMPLE_TEST( vtkMRMLChangeTrackerNodeTest )
@@ -51,13 +51,13 @@ set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 add_executable(ChangeTrackerTest ChangeTrackerTest.cxx)
 #add_dependencies(ChangeTrackerTest ChangeTrackerLib)
 add_dependencies(ChangeTrackerTest ChangeTrackerCommandLine)
-target_link_libraries(ChangeTrackerTest 
+target_link_libraries(ChangeTrackerTest
                       ChangeTracker
 #                      vtkTeem
 )
 
-add_test(ChangeTrackerCL_Help 
-   ${Slicer_LAUNCH_COMMAND} ChangeTrackerTest 
+add_test(ChangeTrackerCL_Help
+   ${Slicer_LAUNCH_COMMAND} ChangeTrackerTest
    ChangeTrackerTest --help)
 
 add_test(ChangeTrackerCL_TestFull_Intensity

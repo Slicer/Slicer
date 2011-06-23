@@ -1,15 +1,15 @@
 # Module name (usually identique to the directory name)
-SET(qt_module_name "TractographyDisplay")
-SET(qt_module_title "Tractography Display")
+set(qt_module_name "TractographyDisplay")
+set(qt_module_title "Tractography Display")
 
 # Build module sub libraries
-ADD_SUBDIRECTORY(Logic)
-ADD_SUBDIRECTORY(Widgets)
+add_subdirectory(Logic)
+add_subdirectory(Widgets)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyDisplayModuleLogic_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
@@ -17,7 +17,7 @@ SET(qt_module_include_directories
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerFiberBundleIO.cxx
   qSlicerFiberBundleIO.h
   qSlicerTractographyDisplayModule.cxx
@@ -25,27 +25,27 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerFiberBundleIO.h
   qSlicerTractographyDisplayModule.h
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
 )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   vtkSlicerTractographyDisplayModuleLogic
   qSlicerTractographyDisplayModuleWidgets
   )
 
-IF(Slicer_USE_PYTHONQT)
-  #LIST(APPEND qt_module_target_libraries qSlicerTractographyDisplayModuleWidgetsPythonQt)
-ENDIF()
+if(Slicer_USE_PYTHONQT)
+  #list(APPEND qt_module_target_libraries qSlicerTractographyDisplayModuleWidgetsPythonQt)
+endif()
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
 )
 
 slicerMacroBuildQtModule(
@@ -60,6 +60,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
-ENDIF()
+endif()

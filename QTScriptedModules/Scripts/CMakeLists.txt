@@ -1,20 +1,20 @@
 
-SET(KIT_PYTHON_SCRIPTS
+set(KIT_PYTHON_SCRIPTS
     Editor.py
     LabelStatistics.py
     SampleData.py
     DICOM.py
   )
 
-IF(Slicer_USE_NUMPY)
-  LIST(APPEND KIT_PYTHON_SCRIPTS
+if(Slicer_USE_NUMPY)
+  list(APPEND KIT_PYTHON_SCRIPTS
     Endoscopy.py
     )
-ENDIF()
-  
-SET(KIT_PYTHON_RESOURCES
+endif()
+
+set(KIT_PYTHON_RESOURCES
   )
-  
+
 ctkMacroCompilePythonScript(
   TARGET_NAME SlicerQTScriptedModules
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"

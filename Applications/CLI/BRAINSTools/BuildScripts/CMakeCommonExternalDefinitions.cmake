@@ -17,8 +17,8 @@ endmacro()
 ## empty until ITK is brought into here as an ExternalProject
 macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck ITK)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_ITK)
     find_package(ITK REQUIRED)
     include(${ITK_USE_FILE})
@@ -61,8 +61,8 @@ endmacro()
 #
 macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck VTK)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_VTK)
     find_package(VTK 5.6 REQUIRED)
     include(${VTK_USE_FILE})
@@ -126,7 +126,7 @@ macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
-    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    message(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
     set(VTK_CMAKE
        -DVTK_DIR:PATH=${VTK_DIR}
         ${QT_ARGS}
@@ -136,8 +136,8 @@ endmacro()
 
 macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck VTK)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_VTK)
     find_package(VTK 5.6 REQUIRED)
     include(${VTK_USE_FILE})
@@ -190,7 +190,7 @@ macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
-    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    message(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
     set(VTK_CMAKE
        -DVTK_DIR:PATH=${VTK_DIR}
     )
@@ -199,8 +199,8 @@ endmacro()
 
 macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck VTK)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_VTK)
     find_package(VTK 5.6 REQUIRED)
     include(${VTK_USE_FILE})
@@ -253,7 +253,7 @@ macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
-    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    message(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
     set(VTK_CMAKE
        -DVTK_DIR:PATH=${VTK_DIR}
     )
@@ -262,8 +262,8 @@ endmacro()
 
 macro(PACKAGE_NEEDS_VTK_WITHR LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck VTK)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_VTK)
     find_package(VTK 5.7 REQUIRED)
     include(${VTK_USE_FILE})
@@ -306,10 +306,10 @@ macro(PACKAGE_NEEDS_VTK_WITHR LOCAL_CMAKE_BUILD_OPTIONS gen)
         -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
         -DVTK_USE_GNU_R:BOOL=ON
         -DR_COMMAND:FILEPATH=${R_DIR}/bin/R
-        -DR_INCLUDE_DIR:PATH=${R_DIR}/include                                                                       
-        -DR_LIBRARY_BASE=${R_DIR}/lib                                                                                 
-        -DR_LIBRARY_BLAS:FILEPATH=${R_DIR}/lib/libRblas${CMAKE_SHARED_LIBRARY_SUFFIX}                                                   
-        -DR_LIBRARY_LAPACK:FILEPATH=${R_DIR}/lib/libRlapack${CMAKE_SHARED_LIBRARY_SUFFIX}                                                  
+        -DR_INCLUDE_DIR:PATH=${R_DIR}/include
+        -DR_LIBRARY_BASE=${R_DIR}/lib
+        -DR_LIBRARY_BLAS:FILEPATH=${R_DIR}/lib/libRblas${CMAKE_SHARED_LIBRARY_SUFFIX}
+        -DR_LIBRARY_LAPACK:FILEPATH=${R_DIR}/lib/libRlapack${CMAKE_SHARED_LIBRARY_SUFFIX}
         #-DVTK_R_HOME:PATH=${CMAKE_CURRENT_BINARY_DIR}/R-build
         ${vtk_GUI_ARGS}
       INSTALL_COMMAND ""
@@ -319,7 +319,7 @@ macro(PACKAGE_NEEDS_VTK_WITHR LOCAL_CMAKE_BUILD_OPTIONS gen)
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
-    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    message(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
     set(VTK_CMAKE
        -DVTK_DIR:PATH=${VTK_DIR}
     )
@@ -330,8 +330,8 @@ endmacro()
 ##  Build the SlicerExecutionModel Once, and let all derived project use the same version
 macro(PACKAGE_NEEDS_SlicerExecutionModel LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck SlicerExecutionModel)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_SlicerExecutionModel)
     find_package(GenerateCLP NO_MODULE REQUIRED)
     include(${GenerateCLP_USE_FILE})
@@ -364,8 +364,8 @@ endmacro()
 # Get and build BRAINSCommonLib
 macro(PACKAGE_NEEDS_BRAINSCommonLib LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck BRAINSCommonLib)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_BRAINSCommonLib)
     find_package(BRAINSCommonLib NO_MODULE REQUIRED)
     include(${BRAINSCommonLib_USE_FILE})
@@ -397,8 +397,8 @@ endmacro()
 # Get and build R statistical library
 macro(PACKAGE_NEEDS_RSTATS LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck R)
-  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
-  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  option(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  mark_as_advanced(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_R)
     find_package(R NO_MODULE REQUIRED)
     include(${R_USE_FILE})

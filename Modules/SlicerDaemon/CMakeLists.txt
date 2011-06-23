@@ -1,4 +1,4 @@
-PROJECT(SlicerDaemon)
+project(SlicerDaemon)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 
@@ -26,13 +26,13 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerDaemonConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerDaemonConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerDaemonConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerDaemonConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -71,20 +71,20 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # Install support files
@@ -94,8 +94,8 @@ ENDIF()
 file(GLOB MFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Matlab/*.m")
 file(GLOB CFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Matlab/popen/*.c")
 
-foreach(file 
-    ${MFILES} 
+foreach(file
+    ${MFILES}
     ${CFILES}
     )
   configure_file(
@@ -129,8 +129,8 @@ install(
 
 file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
 file(GLOB TRACKERFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/tracker/*.[mtv]*")
-foreach(file 
-    ${TCLFILES} 
+foreach(file
+    ${TCLFILES}
     ${TRACKERFILES}
     )
   configure_file(
@@ -155,7 +155,7 @@ install(DIRECTORY
 #  )
 #configure_file(
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerput.tcl
-#  ${Slicer_INSTALL_BIN_DIR}/slicerput 
+#  ${Slicer_INSTALL_BIN_DIR}/slicerput
 #  COPYONLY
 #  )
 
@@ -164,8 +164,8 @@ install(DIRECTORY
 file(GLOB MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
 file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/Tcl/*.tcl")
 
-foreach(file 
-    ${TCLFILES} 
+foreach(file
+    ${TCLFILES}
     ${MRMLFILES}
     )
   configure_file(

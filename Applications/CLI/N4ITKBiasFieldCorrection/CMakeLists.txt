@@ -1,5 +1,5 @@
 
-SET(CLP N4ITKBiasFieldCorrection)
+set(CLP N4ITKBiasFieldCorrection)
 
 slicerMacroBuildCLI(
   NAME ${CLP}
@@ -7,6 +7,6 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

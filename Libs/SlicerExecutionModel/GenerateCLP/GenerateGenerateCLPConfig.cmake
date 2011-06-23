@@ -1,4 +1,4 @@
-# Generate the GenerateCLPConfig.cmake file in the build tree and configure 
+# Generate the GenerateCLPConfig.cmake file in the build tree and configure
 # one the installation tree.
 
 # Following the standard pattern, UseGenerateCLP.cmake is a configured file

@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
 # Set the default CMAKE_INSTALL_PREFIX variable
-# 
+#
 macro(slicer3_set_default_install_prefix_for_external_projects)
   if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     if(Slicer_INSTALL_PREFIX)

@@ -21,19 +21,19 @@
 # -------------------------------------------------------------------------
 # Sanity checks
 # -------------------------------------------------------------------------
-SET(expected_nonempty_vars EXTENSION_NAME EXTENSION_DESCRIPTION Slicer_WC_REVISION Slicer_PLATFORM Slicer_ARCHITECTURE)
-FOREACH(var ${expected_nonempty_vars})
-  IF("${${var}}" STREQUAL "")
-    MESSAGE(FATAL_ERROR "error: ${var} is either NOT defined or empty.")
-  ENDIF()
-ENDFOREACH()
+set(expected_nonempty_vars EXTENSION_NAME EXTENSION_DESCRIPTION Slicer_WC_REVISION Slicer_PLATFORM Slicer_ARCHITECTURE)
+foreach(var ${expected_nonempty_vars})
+  if("${${var}}" STREQUAL "")
+    message(FATAL_ERROR "error: ${var} is either NOT defined or empty.")
+  endif()
+endforeach()
 
-SET(expected_existing_vars EXTENSION_README_FILE EXTENSION_LICENSE_FILE)
-FOREACH(var ${expected_existing_vars})
-  IF(NOT EXISTS ${${var}})
-    MESSAGE(FATAL_ERROR "error: ${var} points to an inexistent file: ${${var}}")
-  ENDIF()
-ENDFOREACH()
+set(expected_existing_vars EXTENSION_README_FILE EXTENSION_LICENSE_FILE)
+foreach(var ${expected_existing_vars})
+  if(NOT EXISTS ${${var}})
+    message(FATAL_ERROR "error: ${var} points to an inexistent file: ${${var}}")
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Get working copy information
@@ -43,16 +43,16 @@ SlicerMacroExtractRepositoryInfo(VAR_PREFIX ${EXTENSION_NAME})
 #-----------------------------------------------------------------------------
 # Get today's date
 #-----------------------------------------------------------------------------
-INCLUDE(SlicerFunctionToday)
+include(SlicerFunctionToday)
 TODAY(${EXTENSION_NAME}_BUILDDATE)
 
 # -------------------------------------------------------------------------
 # Package properties
 # -------------------------------------------------------------------------
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${EXTENSION_DESCRIPTION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${EXTENSION_DESCRIPTION}")
 
-SET(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_MONOLITHIC_INSTALL ON)
 
 set(CMAKE_PROJECT_NAME ${EXTENSION_NAME})
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
@@ -82,7 +82,7 @@ configure_file(
 # -------------------------------------------------------------------------
 # Simulate generation of package named: ${CPACK_PACKAGE_FILE_NAME}.s4ext
 # -------------------------------------------------------------------------
-install(CODE "MESSAGE(\"CPack: - package: ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext generated.\")")
+install(CODE "message(\"CPack: - package: ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext generated.\")")
 
 # -------------------------------------------------------------------------
 # Disable source generator enabled by default

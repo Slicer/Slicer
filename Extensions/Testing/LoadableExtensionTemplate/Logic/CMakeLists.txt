@@ -1,26 +1,26 @@
-PROJECT(vtkSlicer${EXTENSION_NAME}ModuleLogic)
+project(vtkSlicer${EXTENSION_NAME}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
-SET(module_logic_name "${PROJECT_NAME}")
+set(module_logic_name "${PROJECT_NAME}")
 
 # The header '${module_logic_name}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_LOADABLEEXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT")
+set(module_logic_export_directive "VTK_SLICER_LOADABLEEXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
-SET(module_logic_include_directories
+set(module_logic_include_directories
   )
 
 # Source files
-SET(module_logic_SRCS
+set(module_logic_SRCS
   vtkSlicerLoadableExtensionTemplateLogic.cxx
   vtkSlicerLoadableExtensionTemplateLogic.h
   )
 
 # Additional Target libraries
-SET(module_logic_target_libraries
+set(module_logic_target_libraries
   ${CTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${QT_LIBRARIES}

@@ -1,21 +1,21 @@
-PROJECT(qSlicer${qt_module_name}ModuleWidgets)
+project(qSlicer${qt_module_name}ModuleWidgets)
 
 #
 # See CMake/SlicerMacroBuildModuleWidgets.cmake for details
 #
 
-SET(module_widgets_name "${PROJECT_NAME}")
+set(module_widgets_name "${PROJECT_NAME}")
 
 # The header '${module_widgets_name}Export.h' will be automatically configured.
-SET(module_widgets_export_directive "Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS_EXPORT")
+set(module_widgets_export_directive "Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS_EXPORT")
 
 # Additional directories to include
-SET(module_widgets_include_directories
+set(module_widgets_include_directories
   ${CMAKE_BUILD_DIR}
   )
 
 # Source files
-SET(module_widgets_SRCS
+set(module_widgets_SRCS
   qSlicerTractographyDisplayModuleWidget.cxx
   qSlicerTractographyDisplayModuleWidget.h
   qSlicerTractographyDisplayWidget.cxx
@@ -23,23 +23,23 @@ SET(module_widgets_SRCS
   )
 
 # Headers that should run through moc
-SET(module_widgets_MOC_SRCS
+set(module_widgets_MOC_SRCS
   qSlicerTractographyDisplayModuleWidget.h
   qSlicerTractographyDisplayWidget.h
   )
-  
+
 # UI files
-SET(module_widgets_UI_SRCS
+set(module_widgets_UI_SRCS
   Resources/UI/qSlicerTractographyDisplayModule.ui
   Resources/UI/qSlicerTractographyDisplayWidget.ui
   )
 
 # Resources
-SET(module_widgets_resources
+set(module_widgets_resources
   )
 
 # Additional Target libraries
-SET(module_widgets_target_libraries
+set(module_widgets_target_libraries
   vtkSlicerTractographyDisplayModuleLogic
   )
 
@@ -55,4 +55,4 @@ SlicerMacroBuildModuleWidgets(
   )
 
 # Plugin
-#ADD_SUBDIRECTORY(Plugins)
+#add_subdirectory(Plugins)

@@ -14,24 +14,24 @@ else()
   #       and slicer install rules will be considered.
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
-  
+
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
 "[Paths]
   Plugins = ${Slicer_QtPlugins_DIR}")
-  # .. and install 
+  # .. and install
   install(FILES ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
           DESTINATION ${Slicer_INSTALL_ROOT}/Resources
           COMPONENT Runtime
           RENAME qt.conf)
-  
+
   set(executable_path @executable_path)
   set(slicer_complete_bundle_directory ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles)
   configure_file(
     "${Slicer_SOURCE_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in"
     "${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake"
     @ONLY)
-  # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first, 
+  # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
   #        let's make sure the following install rule is evaluated within its own directory.
   #        Otherwise, the associated script will be executed before any other relevant install rules.
   file(WRITE ${slicer_complete_bundle_directory}/CMakeLists.txt
@@ -42,9 +42,9 @@ endif()
 # -------------------------------------------------------------------------
 # Package properties
 # -------------------------------------------------------------------------
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
 
-SET(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_MONOLITHIC_INSTALL ON)
 
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer_SOURCE_DIR}/README.txt")
@@ -52,7 +52,7 @@ set(CPACK_RESOURCE_FILE_LICENSE "${Slicer_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_MAJOR_VERSION}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_MINOR_VERSION}")
 set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_PATCH_VERSION}")
-SET(CPACK_SYSTEM_NAME "${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}")
+set(CPACK_SYSTEM_NAME "${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}")
 
 if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Slicer.icns")
@@ -81,7 +81,7 @@ if(FILE_EXTENSIONS)
       string(LENGTH "${ext}" len)
       math(EXPR len_m1 "${len} - 1")
       string(SUBSTRING "${ext}" 1 ${len_m1} ext_wo_dot)
-      set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS 
+      set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
         "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
             WriteRegStr HKCR \\\"${APPLICATION_NAME}\\\" \\\"\\\" \\\"${APPLICATION_NAME} supported file\\\"
             WriteRegStr HKCR \\\"${APPLICATION_NAME}\\\\shell\\\\open\\\\command\\\" \\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"

@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 2.8)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 enable_testing()
@@ -82,25 +82,25 @@ if (Slicer_SOURCE_DIR)
 
 else (Slicer_SOURCE_DIR)
 
-  INSTALL(TARGETS BRAINSCommonLib
+  install(TARGETS BRAINSCommonLib
       RUNTIME DESTINATION bin
       LIBRARY DESTINATION lib/BRAINSCommonLib
       ARCHIVE DESTINATION lib/BRAINSCommonLib
       )
 
-  IF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
-    FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-    FILE(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-    INSTALL(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
+  if(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
+    file(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    file(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+    install(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
       DESTINATION ${CMAKE_INSTALL_PREFIX}/include/BRAINSCommonLib
       COMPONENT Development)
-  ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
+  endif(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibInstallConfig.cmake.in
                  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
                  @ONLY)
 
-  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
           DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/BRAINSCommonLib
           COMPONENT Development
           RENAME BRAINSCommonLibConfig.cmake)
@@ -108,11 +108,11 @@ else (Slicer_SOURCE_DIR)
    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
      ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake @ONLY)
 
-   # INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
+   # install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
    #         DESTINATION lib/BRAINSCommonLib
    #         COMPONENT Development
    #         RENAME UseBRAINSCommonLib.cmake)
-   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake
+   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake
      DESTINATION lib/BRAINSCommonLib
      COMPONENT Development)
 
@@ -120,7 +120,7 @@ endif (Slicer_SOURCE_DIR)
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTS add_directory( Test_FindCenterOfBrainFilter )
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-ENDIF()
+endif()
 

@@ -1,4 +1,4 @@
-PROJECT(IGTToolSelector)
+project(IGTToolSelector)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -20,16 +20,16 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkIGTToolSelectorConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkIGTToolSelectorConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkIGTToolSelectorConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkIGTToolSelectorConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -37,7 +37,7 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(IGTToolSelector_SRCS 
+set(IGTToolSelector_SRCS
   vtkIGTToolSelectorLogic.cxx
   vtkIGTToolSelectorGUI.cxx
 )
@@ -61,7 +61,7 @@ generatelm(IGTToolSelector_SRCS IGTToolSelector.txt)
 
 set(lib_name IGTToolSelector)
 add_library(${lib_name}
-  ${IGTToolSelector_SRCS} 
+  ${IGTToolSelector_SRCS}
   ${IGTToolSelector_TCL_SRCS}
   )
 
@@ -74,7 +74,7 @@ target_link_libraries(${lib_name}
   )
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )

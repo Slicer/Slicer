@@ -8,16 +8,16 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
 # Add subdirectories
 
-ADD_SUBDIRECTORY(Logic)
+add_subdirectory(Logic)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -42,19 +42,19 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumesConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumesConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumesConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumesConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
-file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
-install(FILES 
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
+install(FILES
   ${files}
   DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   )
@@ -86,8 +86,8 @@ set(Volumes_SRCS
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(Volumes 
-  Volumes_TCL_SRCS 
+vtk_wrap_tcl3(Volumes
+  Volumes_TCL_SRCS
   "${Volumes_SRCS}" "")
 
 #---------------------------------------------------------------------------
@@ -104,7 +104,7 @@ add_library(${lib_name}
   ${Volumes_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
-  
+
 target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
@@ -118,27 +118,27 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
-ENDIF()
+endif()
 
 # Install testing data
 
 file(GLOB_RECURSE TXTFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.txt")
 file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
 
-foreach(file 
+foreach(file
     ${TXTFILES}
     ${TCLFILES}
     )
@@ -147,7 +147,7 @@ foreach(file
     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
-endforeach(file) 
+endforeach(file)
 
 install(DIRECTORY
   Testing

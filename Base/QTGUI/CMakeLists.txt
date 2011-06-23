@@ -1,13 +1,13 @@
-PROJECT(qSlicerBaseQTGUI)
+project(qSlicerBaseQTGUI)
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
-SET(KIT_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
+set(KIT_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 
 # Additional directories to include
-SET(KIT_include_directories
+set(KIT_include_directories
   ${MRMLLogic_INCLUDE_DIRS}
   ${MRMLDisplayableManager_INCLUDE_DIRS}
   ${qSlicerBaseQTCore_SOURCE_DIR}
@@ -15,7 +15,7 @@ SET(KIT_include_directories
   )
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   qSlicerAbstractModule.cxx
   qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.cxx
@@ -32,7 +32,7 @@ SET(KIT_SRCS
   qSlicerDataDialog.h
   qSlicerDirectoryListView.cxx
   qSlicerDirectoryListView.h
-  
+
   qSlicerExtensionsWizard.cxx
   qSlicerExtensionsWizard.h
   qSlicerExtensionsWizardOverviewPage.cxx
@@ -81,8 +81,8 @@ SET(KIT_SRCS
   qSlicerWidget.h
   )
 
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND KIT_SRCS
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_SRCS
     qSlicerScriptedLoadableModuleFactory.cxx
     qSlicerScriptedLoadableModuleFactory.h
     qSlicerScriptedLoadableModuleWidget.cxx
@@ -92,11 +92,11 @@ IF(Slicer_USE_PYTHONQT)
     qSlicerSettingsPythonPanel.cxx
     qSlicerSettingsPythonPanel.h
     )
-ENDIF()
+endif()
 
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.h
@@ -106,7 +106,7 @@ SET_SOURCE_FILES_PROPERTIES(
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.h
@@ -140,20 +140,20 @@ SET(KIT_MOC_SRCS
   qSlicerSettingsGeneralPanel.h
   qSlicerWidget.h
   )
-  
+
 # PythonQt decorator
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND KIT_MOC_SRCS
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_MOC_SRCS
     qSlicerBaseQTGUIPythonQtDecorators.h
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedLoadableModuleWidget.h
     qSlicerSettingsPythonPanel.h
     )
-ENDIF(Slicer_USE_PYTHONQT)
+endif(Slicer_USE_PYTHONQT)
 
 # UI files
-SET(KIT_UI_SRCS
-  Resources/UI/qSlicerActionsDialog.ui 
+set(KIT_UI_SRCS
+  Resources/UI/qSlicerActionsDialog.ui
   Resources/UI/qSlicerDataDialog.ui
   Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
   Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
@@ -166,14 +166,14 @@ SET(KIT_UI_SRCS
 )
 
 # PythonQt decorator
-IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND KIT_UI_SRCS
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_UI_SRCS
   Resources/UI/qSlicerSettingsPythonPanel.ui
   )
-ENDIF()
+endif()
 
 # Additional Target libraries (QT libs already included)
-SET(KIT_target_libraries
+set(KIT_target_libraries
   MRMLDisplayableManager
   qCDashAPI
   qSlicerBaseQTCore
@@ -181,42 +181,42 @@ SET(KIT_target_libraries
   )
 
 # Python wrap
-IF(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
 
-  LIST(APPEND KIT_target_libraries
+  list(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
     CTKDICOMWidgetsPythonQt
     CTKScriptingPythonWidgetsPythonQt
     CTKVisualizationVTKWidgetsPythonQt
     )
-  IF(qMRMLWidgets_WRAP_PYTHON)
-    LIST(APPEND KIT_target_libraries
+  if(qMRMLWidgets_WRAP_PYTHON)
+    list(APPEND KIT_target_libraries
       qMRMLWidgetsPythonQt
     )
-  ENDIF()
-ENDIF()
+  endif()
+endif()
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
 )
 
 # Python wrap
-IF(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
 
   # Sources
-  LIST(APPEND KIT_SRCS
+  list(APPEND KIT_SRCS
     qSlicerPythonManager.cxx
     qSlicerPythonManager.h
     )
 
   # Headers that should run through moc
-  LIST(APPEND KIT_MOC_SRCS
+  list(APPEND KIT_MOC_SRCS
     qSlicerPythonManager.h
     )
 
-ENDIF(Slicer_USE_PYTHONQT)
+endif(Slicer_USE_PYTHONQT)
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}
@@ -231,47 +231,47 @@ SlicerMacroBuildBaseQtLibrary(
   )
 
 # Slicer icon engine
-SET(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT")
-SET(MY_EXPORT_HEADER_PREFIX qSlicerIconEnginePlugin)
-SET(MY_LIBNAME qSlicerIconEnginePlugin)
+set(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT")
+set(MY_EXPORT_HEADER_PREFIX qSlicerIconEnginePlugin)
+set(MY_LIBNAME qSlicerIconEnginePlugin)
 
-CONFIGURE_FILE(
+configure_file(
   ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 QT4_WRAP_CPP(MOC_qSlicerIconEnginePlugin qSlicerIconEnginePlugin.h)
-ADD_LIBRARY(qSlicerIconEnginePlugin
+add_library(qSlicerIconEnginePlugin
   qSlicerIconEnginePlugin.cxx
   qSlicerIconEnginePlugin.h
   ${MOC_qSlicerIconEnginePlugin})
 
-TARGET_LINK_LIBRARIES(qSlicerIconEnginePlugin
+target_link_libraries(qSlicerIconEnginePlugin
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES})
 
 # Install rules
-INSTALL(TARGETS qSlicerIconEnginePlugin
-  RUNTIME DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT RuntimeLibraries 
+install(TARGETS qSlicerIconEnginePlugin
+  RUNTIME DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT Development
   )
 # Since Qt expects the plugin to be directly located under the
 # directory 'lib/Slicer3/iconengines', let's copy them.
 
-IF(NOT CMAKE_CFG_INTDIR STREQUAL ".")
-  GET_TARGET_PROPERTY(FILE_PATH qSlicerIconEnginePlugin LOCATION)
-  
-  ADD_CUSTOM_COMMAND(
+if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
+  get_target_property(FILE_PATH qSlicerIconEnginePlugin LOCATION)
+
+  add_custom_command(
     TARGET qSlicerIconEnginePlugin
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${FILE_PATH}" ${CMAKE_BINARY_DIR}/lib/Slicer3/iconengines/${CMAKE_SHARED_LIBRARY_PREFIX}qSlicerIconEnginePlugin${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
     )
-ENDIF()
+endif()
 
 # Plugin
-ADD_SUBDIRECTORY(Plugins)
+add_subdirectory(Plugins)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

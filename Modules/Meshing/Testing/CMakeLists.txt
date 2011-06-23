@@ -3,12 +3,12 @@ project(MimxTesting)
 include_regular_expression("^.*$")
 
 include_directories(
-  ${MimxMeshing_SOURCE_DIR}/Filter 
-  ${MimxMeshing_BINARY_DIR}/Filter 
+  ${MimxMeshing_SOURCE_DIR}/Filter
+  ${MimxMeshing_BINARY_DIR}/Filter
   ${MimxMeshing_SOURCE_DIR}/Mesh
-  ${MimxMeshing_BINARY_DIR}/Common 
+  ${MimxMeshing_BINARY_DIR}/Common
   ${MimxMeshing_SOURCE_DIR}/Common
-  ${MimxMeshing_SOURCE_DIR}/IO 
+  ${MimxMeshing_SOURCE_DIR}/IO
   ${MimxMeshing_BINARY_DIR}/IO
   )
 
@@ -16,7 +16,7 @@ set(MIMX_LIBRARIES mimxCommon mimxFilter)
 
 if(ITK_BINARY_DIR AND TCL_TCLSH)
   add_test(PrintSelf-BasicFilters ${TCL_TCLSH}
-    ${ITK_SOURCE_DIR}/Utilities/Dart/PrintSelfCheck.tcl  
+    ${ITK_SOURCE_DIR}/Utilities/Dart/PrintSelfCheck.tcl
     ${ITK_SOURCE_DIR}/Code/BasicFilters)
 endif()
 
@@ -31,7 +31,7 @@ endmacro()
 
 MIMX_ADD_TEST(MimxitkImageToVtkUnstructuredGridTest itkImageToVtkUnstructuredGridTest.cxx)
 
-MIMX_ADD_TEST(MimxAddUnstructuredHexahedronGridCellTest MainAddUnstructuredHexahedronGridCellTest.cxx 
+MIMX_ADD_TEST(MimxAddUnstructuredHexahedronGridCellTest MainAddUnstructuredHexahedronGridCellTest.cxx
               ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk)
 
 MIMX_ADD_TEST(MimxDeleteUnstructuredHexahedronGridCellTest MainDeleteUnstructuredHexahedronGridCellTest.cxx
@@ -42,15 +42,15 @@ MIMX_ADD_TEST(MimxMirrorUnstructuredHexahedronGridCellTest MainMirrorUnstructure
 
 MIMX_ADD_TEST(MimxUnstructuredHexahedronGridCellTest MainSplitUnstructuredHexahedronGridCellTest.cxx
               ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk)
-              
+
 ############## Re-Enable when Meshing Integratation is completed
 #MIMX_ADD_TEST(MimxApplyImageBasedMaterialPropertiesTest MainApplyImageBasedMaterialPropertiesTest.cxx
-#              ${MimxTesting_SOURCE_DIR}/Data/CA05042124RFinal.hdr 
+#              ${MimxTesting_SOURCE_DIR}/Data/CA05042124RFinal.hdr
 #              ${MimxTesting_SOURCE_DIR}/Data/CAfemesh.vtk)
 ##############
 
 MIMX_ADD_TEST(MimxBoundingBoxFromUnstructuredGridTest MainBoundingBoxFromUnstructuredGridTest.cxx
-              ${MimxTesting_SOURCE_DIR}/Data/dividedbb.vtk 
+              ${MimxTesting_SOURCE_DIR}/Data/dividedbb.vtk
               ${MimxTesting_SOURCE_DIR}/Data/dividedmorphsmooth.vtk)
 
 MIMX_ADD_TEST(MimxEquivalancePointsTest MainEquivalancePointsTest.cxx

@@ -102,7 +102,7 @@ set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 #
 # run_ctest macro
 #
-MACRO(run_ctest)
+macro(run_ctest)
   ctest_start(${model})
   ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
 
@@ -112,7 +112,7 @@ MACRO(run_ctest)
     set(force_build 1)
 
     if(WITH_EXTENSIONS)
-      SET(ADDITIONAL_CMAKECACHE_OPTION
+      set(ADDITIONAL_CMAKECACHE_OPTION
         "${ADDITIONAL_CMAKECACHE_OPTION} CTEST_MODEL:STRING=${model}")
     endif()
 
@@ -132,11 +132,11 @@ Slicer_UPLOAD_EXTENSIONS:BOOL=${WITH_EXTENSIONS}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
-  
+
   if (FILES_UPDATED GREATER 0 OR force_build)
 
     set(force_build 0)
-    
+
     #-----------------------------------------------------------------------------
     # The following variable can be used while testing the driver scripts
     #-----------------------------------------------------------------------------
@@ -149,25 +149,25 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     set(run_ctest_with_memcheck TRUE)
     set(run_ctest_with_packages TRUE)
     set(run_ctest_with_notes TRUE)
-    
+
     #-----------------------------------------------------------------------------
     # Update
     #-----------------------------------------------------------------------------
     if(run_ctest_with_update AND run_ctest_submit)
       ctest_submit(PARTS Update)
     endif()
-    
+
     #-----------------------------------------------------------------------------
     # Configure
     #-----------------------------------------------------------------------------
     if (run_ctest_with_configure)
       message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
-      
+
       #set(label Slicer)
-      
+
       set_property(GLOBAL PROPERTY SubProject ${label})
       set_property(GLOBAL PROPERTY Label ${label})
-       
+
       ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
       ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
       if(run_ctest_submit)
@@ -186,19 +186,19 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         ctest_submit(PARTS Build)
       endif()
     endif()
-    
+
     #-----------------------------------------------------------------------------
     # Inner build directory
     #-----------------------------------------------------------------------------
     set(slicer_build_dir "${CTEST_BINARY_DIRECTORY}/Slicer-build")
-    
+
     #-----------------------------------------------------------------------------
     # Test
     #-----------------------------------------------------------------------------
     if (run_ctest_with_test)
       message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
       ctest_test(
-        BUILD "${slicer_build_dir}" 
+        BUILD "${slicer_build_dir}"
         #INCLUDE_LABEL ${label}
         PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
         EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
@@ -207,15 +207,15 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         ctest_submit(PARTS Test)
       endif()
     endif()
-    
+
     #-----------------------------------------------------------------------------
-    # Global coverage ... 
+    # Global coverage ...
     #-----------------------------------------------------------------------------
     if (run_ctest_with_coverage)
       # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
       file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
       file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
-      
+
       if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
         message("----------- [ Global coverage ] -----------")
         ctest_coverage(BUILD "${slicer_build_dir}")
@@ -224,7 +224,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         endif()
       endif()
     endif()
-    
+
     #-----------------------------------------------------------------------------
     # Global dynamic analysis ...
     #-----------------------------------------------------------------------------
@@ -235,7 +235,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
           ctest_submit(PARTS MemCheck)
         endif()
     endif()
-    
+
     #-----------------------------------------------------------------------------
     # Create packages / installers ...
     #-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         set(packages)
         message("Packaging ...")
         SlicerFunctionCTestPackage(
-          BINARY_DIR ${slicer_build_dir} 
+          BINARY_DIR ${slicer_build_dir}
           CONFIG ${CTEST_BUILD_CONFIGURATION}
           RETURN_VAR packages)
         message("Uploading ...")
@@ -264,14 +264,14 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         endforeach()
       endif()
     endif()
-    
+
     #-----------------------------------------------------------------------------
     # Note should be at the end
     #-----------------------------------------------------------------------------
     if (run_ctest_with_notes AND run_ctest_submit)
       ctest_submit(PARTS Notes)
     endif()
-  
+
   endif()
 endmacro()
 

@@ -1,10 +1,10 @@
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(incrTcl_DEPENDENCIES tcl tk)
@@ -38,7 +38,7 @@ if(APPLE)
   set(incrTcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
   set(incrTcl_BUILD_COMMAND make)
   set(incrTcl_INSTALL_COMMAND make install)
-  
+
 else()
   set(incrTcl_BUILD_IN_SOURCE 1)
   set(incrTcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
@@ -48,8 +48,8 @@ endif()
 
 
 #-----------------------------------------------------------------------------
-# WARNING - Since the likelihood of updating that project is close to zero, 
-#           let's disable its UPDATE_COMMAND. Doing so will avoid unnecessary 
+# WARNING - Since the likelihood of updating that project is close to zero,
+#           let's disable its UPDATE_COMMAND. Doing so will avoid unnecessary
 #           configure/make/install cycle.
 #-----------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ if(NOT WIN32)
     BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
     INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
     UPDATE_COMMAND ""
-    DEPENDS 
+    DEPENDS
       ${incrTcl_DEPENDENCIES}
   )
 

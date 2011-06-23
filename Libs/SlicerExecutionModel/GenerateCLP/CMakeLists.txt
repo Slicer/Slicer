@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -52,7 +52,7 @@ include_directories(
 # Build executable
 # --------------------------------------------------------------------------
 set(executable_name GenerateCLP)
-set(GENERATECLP_SOURCE 
+set(GENERATECLP_SOURCE
   GenerateCLP.cxx
   )
 add_executable(${executable_name} ${GENERATECLP_SOURCE})
@@ -70,30 +70,30 @@ include(GenerateGenerateCLPConfig.cmake)
 # --------------------------------------------------------------------------
 # Export target
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
-ENDIF()
-EXPORT(TARGETS ${executable_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+endif()
+export(TARGETS ${executable_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install executable
 # --------------------------------------------------------------------------
 if(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
-  SET(GenerateCLP_INSTALL_BIN_DIR bin)
+  set(GenerateCLP_INSTALL_BIN_DIR bin)
 endif()
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-ENDIF()
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  install(TARGETS GenerateCLP RUNTIME 
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+endif()
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  install(TARGETS GenerateCLP RUNTIME
     DESTINATION ${GenerateCLP_INSTALL_BIN_DIR} COMPONENT Development
     )
-ENDIF()
-  
+endif()
+
 # --------------------------------------------------------------------------
 # Install support files
 # --------------------------------------------------------------------------
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
     DESTINATION lib/GenerateCLP
     COMPONENT Development
@@ -104,7 +104,7 @@ IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
     COMPONENT Development
     RENAME UseGenerateCLP.cmake
     )
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Launcher
@@ -117,11 +117,11 @@ ENDIF()
 set(GenerateCLP_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(GenerateCLP_FORWARD_DIR_INSTALL ".")
 if(WIN32)
-  set(GenerateCLP_FORWARD_PATH_BUILD 
+  set(GenerateCLP_FORWARD_PATH_BUILD
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
   set(GenerateCLP_FORWARD_PATH_INSTALL "\"\"")
 else()
-  set(GenerateCLP_FORWARD_PATH_BUILD 
+  set(GenerateCLP_FORWARD_PATH_BUILD
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\",\"${ITK_DIR}/bin\"")
   set(GenerateCLP_FORWARD_PATH_INSTALL
     "\"${GenerateCLP_DIR}\",\"${ITK_DIR}\",\"${ModuleDescriptionParser_DIR}\"")
@@ -143,22 +143,22 @@ if(NOT WIN32)
   # --------------------------------------------------------------------------
   # Install launcher
   # --------------------------------------------------------------------------
-  IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-    install(TARGETS GenerateCLPLauncher RUNTIME 
+  if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+    install(TARGETS GenerateCLPLauncher RUNTIME
       DESTINATION bin COMPONENT Development
       )
-  ENDIF()
+  endif()
 endif()
 
 # --------------------------------------------------------------------------
 # Testing
 # --------------------------------------------------------------------------
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
 endif()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-SET(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

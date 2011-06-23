@@ -1,12 +1,12 @@
 
 #
-# For further details regarding this file, 
+# For further details regarding this file,
 # see http://www.vtk.org/Wiki/CMake_Testing_With_CTest#Customizing_CTest
 #
 
-SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
+set(CTEST_CUSTOM_COVERAGE_EXCLUDE
   ${CTEST_CUSTOM_COVERAGE_EXCLUDE}
-  
+
   # Exclude try_compile sources from coverage results:
   "/CMakeFiles/CMakeTmp/"
 
@@ -18,33 +18,33 @@ SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
 
   # Exclude files from the Testing directories
   ".*/Testing/.*"
-  
-  )
-  
-# The following tests should not be run under valgrind
-SET(CTEST_CUSTOM_MEMCHECK_IGNORE
-  
+
   )
 
-SET(CTEST_CUSTOM_ERROR_MATCH
+# The following tests should not be run under valgrind
+set(CTEST_CUSTOM_MEMCHECK_IGNORE
+
+  )
+
+set(CTEST_CUSTOM_ERROR_MATCH
   ${CTEST_CUSTOM_ERROR_MATCH}
   "CMake Error[ :]"
   )
 
-SET(CTEST_CUSTOM_WARNING_MATCH
+set(CTEST_CUSTOM_WARNING_MATCH
   ${CTEST_CUSTOM_WARNING_MATCH}
   "CMake Warning[ :]"
   )
-  
-SET (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   10000)
-SET (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
 
-SET(CTEST_CUSTOM_WARNING_EXCEPTION
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   10000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
+
+set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   #"vtkparse.tab.c"
   "Microsoft SDKs."
   "VC.include."
-  
+
   # Numpy warnings
   "_configtest.*warning"
   # C4244: 'conversion' conversion from 'type1' to 'type2', possible loss of data
@@ -62,24 +62,24 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "NUMPY.*Warning"
   # Mac
   "numpy.core.src.multiarray.descriptor.*was declared here"
-  
+
   # CLAPACK
   "CLAPACK.BLAS.SRC"
   "CLAPACK.F2CLIBS.libf2c"
-  
+
   # Tcl
   "tcl.tcl.unix.*warning: cast"
   #  warning: '...' is deprecated (declared at ...)
   "tcl.tcl.unix.*warning:.*is deprecated"
-  
+
   # Tk
   "tcl.tk.unix.*warning: cast"
   "System.Library.Frameworks.Tk.framework.Headers.X11.Xlib.h.*warning: function declaration isn't a prototype"
-  
+
   # incrTcl
   "generic.itk_(option|archetype).*warning"
   "generic.itcl_.*warning"
-  
+
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
   # the following warnings when built with the MS compilers. Qt guys should
@@ -96,25 +96,25 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Suppress warning caused when QT 'foreach' loops are combined
   ".*warning: declaration of '_container_' shadows a previous local"
-  
+
   # STL - Tiger
   "include.c.*bits.stl_algo.h.*warning: comparison between signed and unsigned integer expressions"
-  
+
   # Make
   "warning: jobserver unavailable"
-  
+
   # Suppressing warnings about duplicate libraries in Darwin
-  # At some point this may be addressed by CMake feature request: 
+  # At some point this may be addressed by CMake feature request:
   # http://public.kitware.com/Bug/view.php?id=10179
   "ld: warning: duplicate dylib"
-  
-  # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below 
+
+  # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below
   # report a similar problem with GL_GLEXT_PROTOTYPE.
   # http://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
   # That problem could be solved installing a newer version of X11 SDK
   # See http://xquartz.macosforge.org/trac/changeset/343
   ".*warning.*GL_GLEXT_LEGACY.*redefined"
-  
+
   # ITK suppressions
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
@@ -142,25 +142,25 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
   # exception specific to Mac/X11
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
-  
+
   # CTK - log4qt
   "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
   "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
   "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
-  
+
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
-  
-  # Batchmake 
+
+  # Batchmake
   "BatchMake.Utilities.Zip.(zip|unzipcmd|zipcmd).*warning"
-  
+
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
-  
+
   # Teem
   # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
   "teem.src.nrrd.superset.c.*warning"
-  
+
   # Python - Windows
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
@@ -204,15 +204,15 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "curl.mprintf.*warning.*redefined"
   "usr.include.secure._stdio.h.*warning: this is the location of the previous definition"
   "ranlib: file:.*bin.libslicerlibcurl.a.*has no symbols"
-  
+
   # Visual studio spurious warnings...
   "The following environment variables were not found"
-  
+
   # Since NUMPY has test that return build errors, let's add the following exception
   "WARNING non-zero return value in ctest from"
   )
-  
-SET(CTEST_CUSTOM_ERROR_EXCEPTION
+
+set(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
   # Numpy errors
   "NUMPY.*Warning"

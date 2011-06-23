@@ -28,78 +28,78 @@
 # Abe Stephens
 # (c) 2007 Scientific Computing and Imaging Institute, University of Utah
 
-FILE(READ ${input_file} file_text)
+file(READ ${input_file} file_text)
 
-IF (${file_text} MATCHES ".+")
+if(${file_text} MATCHES ".+")
 
   # Remember, four backslashes is escaped to one backslash in the string.
-  STRING(REGEX REPLACE ";" "\\\\;" file_text ${file_text})
-  STRING(REGEX REPLACE "\ncode" ";code" file_text ${file_text})
-  
-  LIST(LENGTH file_text len)
+  string(REGEX REPLACE ";" "\\\\;" file_text ${file_text})
+  string(REGEX REPLACE "\ncode" ";code" file_text ${file_text})
 
-  FOREACH(line ${file_text})
+  list(LENGTH file_text len)
+
+  foreach(line ${file_text})
 
     # Only look at "code { }" blocks.
-    IF(line MATCHES "^code")
-      
-      # Break into individual lines.
-      STRING(REGEX REPLACE "\n" ";" line ${line})
+    if(line MATCHES "^code")
 
-      FOREACH(entry ${line})
+      # Break into individual lines.
+      string(REGEX REPLACE "\n" ";" line ${line})
+
+      foreach(entry ${line})
 
         # Extract kernel names.
-        IF (${entry} MATCHES "[^g]name = ([^ ]+)")
-          STRING(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
+        if(${entry} MATCHES "[^g]name = ([^ ]+)")
+          string(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
 
           # Check to see if the kernel name starts with "_"
-          SET(skip FALSE)
-          IF (${entry} MATCHES "^_")
+          set(skip FALSE)
+          if(${entry} MATCHES "^_")
             # Skip the rest of this block.
-            # MESSAGE("Skipping ${entry}")
-            SET(skip TRUE)
-          ELSE (${entry} MATCHES "^_")
-            MESSAGE("Kernel:    ${entry}")  
-          ENDIF (${entry} MATCHES "^_")
+            # message("Skipping ${entry}")
+            set(skip TRUE)
+          else(${entry} MATCHES "^_")
+            message("Kernel:    ${entry}")
+          endif(${entry} MATCHES "^_")
 
-        ENDIF(${entry} MATCHES "[^g]name = ([^ ]+)")
+        endif(${entry} MATCHES "[^g]name = ([^ ]+)")
 
         # Skip the rest of the block if necessary
-        IF(NOT skip)
+        if(NOT skip)
 
           # Registers
-          IF (${entry} MATCHES "reg = ([^ ]+)")
-            STRING(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
-            MESSAGE("Registers: ${entry}")
-          ENDIF(${entry} MATCHES "reg = ([^ ]+)")
-          
+          if(${entry} MATCHES "reg = ([^ ]+)")
+            string(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
+            message("Registers: ${entry}")
+          endif(${entry} MATCHES "reg = ([^ ]+)")
+
           # Local memory
-          IF (${entry} MATCHES "lmem = ([^ ]+)")
-            STRING(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
-            MESSAGE("Local:     ${entry}")
-          ENDIF(${entry} MATCHES "lmem = ([^ ]+)")
-          
+          if(${entry} MATCHES "lmem = ([^ ]+)")
+            string(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
+            message("Local:     ${entry}")
+          endif(${entry} MATCHES "lmem = ([^ ]+)")
+
           # Shared memory
-          IF (${entry} MATCHES "smem = ([^ ]+)")
-            STRING(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
-            MESSAGE("Shared:    ${entry}")
-          ENDIF(${entry} MATCHES "smem = ([^ ]+)")
-                  
-          IF (${entry} MATCHES "^}")
-            MESSAGE("")
-          ENDIF(${entry} MATCHES "^}")
+          if(${entry} MATCHES "smem = ([^ ]+)")
+            string(REGEX REPLACE ".* = ([^ ]+)" "\\1" entry ${entry})
+            message("Shared:    ${entry}")
+          endif(${entry} MATCHES "smem = ([^ ]+)")
 
-        ENDIF(NOT skip)
+          if(${entry} MATCHES "^}")
+            message("")
+          endif(${entry} MATCHES "^}")
+
+        endif(NOT skip)
 
 
-      ENDFOREACH(entry)
+      endforeach(entry)
 
-    ENDIF(line MATCHES "^code")
+    endif(line MATCHES "^code")
 
-  ENDFOREACH(line) 
+  endforeach(line)
 
-ELSE(${depend_text} MATCHES ".+") 
-  # MESSAGE("FOUND NO DEPENDS")
-ENDIF(${depend_text} MATCHES ".+")
+else(${depend_text} MATCHES ".+")
+  # message("FOUND NO DEPENDS")
+endif(${depend_text} MATCHES ".+")
 
 

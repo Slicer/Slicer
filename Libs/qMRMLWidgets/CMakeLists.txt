@@ -1,4 +1,4 @@
-PROJECT(qMRMLWidgets)
+project(qMRMLWidgets)
 
 
 #-----------------------------------------------------------------------------
@@ -9,28 +9,28 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 
-IF(NOT DEFINED BUILD_SHARED_LIBS)
-  OPTION(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
 
 # CMake Macros
-INCLUDE(CMake/qCTKParseArgumentsMacro.cmake)
-INCLUDE(CMake/qCTKDesignerPluginMacros.cmake)
+include(CMake/qCTKParseArgumentsMacro.cmake)
+include(CMake/qCTKDesignerPluginMacros.cmake)
 
 # CMake module
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
 
 #-----------------------------------------------------------------------------
 # Sources
 #
-SET(qMRMLWidgets_SRCS
+set(qMRMLWidgets_SRCS
   qMRMLActionSignalMapper.cxx
   qMRMLActionSignalMapper.h
   qMRMLCheckableNodeComboBox.cxx
@@ -88,7 +88,7 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneCategoryModel.cxx
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.cxx
-  qMRMLSceneColorTableModel.h 
+  qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
@@ -145,7 +145,7 @@ SET(qMRMLWidgets_SRCS
   )
 
 # Headers that should run through moc
-SET(qMRMLWidgets_MOC_SRCS
+set(qMRMLWidgets_MOC_SRCS
   qMRMLActionSignalMapper.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
@@ -207,7 +207,7 @@ SET(qMRMLWidgets_MOC_SRCS
   )
 
 # UI files
-SET(qMRMLWidgets_UI_SRCS
+set(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
@@ -227,7 +227,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
-SET(qMRMLWidgets_QRC_SRCS
+set(qMRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
   )
 
@@ -235,12 +235,12 @@ QT4_WRAP_CPP(qMRMLWidgets_MOC_CXX ${qMRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(qMRMLWidgets_QRC_CXX ${qMRMLWidgets_QRC_SRCS})
 
-SOURCE_GROUP("Resources" FILES
+source_group("Resources" FILES
   ${qMRMLWidgets_UI_SRCS}
   ${qMRMLWidgets_QRC_SRCS}
   )
 
-SOURCE_GROUP("Generated" FILES
+source_group("Generated" FILES
   ${qMRMLWidgets_MOC_CXX}
   ${qMRMLWidgets_UI_CXX}
   ${qMRMLWidgets_QRC_CXX}
@@ -249,41 +249,41 @@ SOURCE_GROUP("Generated" FILES
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
-SET(include_dirs
+set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRML_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${MRMLDisplayableManager_INCLUDE_DIRS}
   )
-INCLUDE_DIRECTORIES(${include_dirs})
+include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  SET(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-ENDIF()
-IF(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
+  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
+endif()
+if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
   install(
     FILES ${headers}
     DESTINATION include/${PROJECT_NAME} COMPONENT Development)
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
-SET(lib_name ${PROJECT_NAME})
+set(lib_name ${PROJECT_NAME})
 
-ADD_LIBRARY(${lib_name}
+add_library(${lib_name}
   ${qMRMLWidgets_SRCS}
   ${qMRMLWidgets_MOC_CXX}
   ${qMRMLWidgets_UI_CXX}
   ${qMRMLWidgets_QRC_CXX}
   )
 
-SET(qMRMLWidgets_LIBRARIES
+set(qMRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES}
   ${CTK_EXTERNAL_LIBRARIES}
@@ -292,47 +292,47 @@ SET(qMRMLWidgets_LIBRARIES
   MRMLDisplayableManager
   )
 
-TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
+target_link_libraries(${lib_name} ${qMRMLWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-ENDIF()
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+endif()
 
 
 # --------------------------------------------------------------------------
 # PythonQt wrapping
 # --------------------------------------------------------------------------
-IF(qMRMLWidgets_WRAP_PYTHON)
-  SET(KIT_PYTHONQT_SRCS) # Clear variable
+if(qMRMLWidgets_WRAP_PYTHON)
+  set(KIT_PYTHONQT_SRCS) # Clear variable
   ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
     KIT_PYTHONQT_SRCS "${qMRMLWidgets_SRCS}" FALSE)
-  ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
-  TARGET_LINK_LIBRARIES(${lib_name}PythonQt ${lib_name})
-  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
-  ENDIF()
-ENDIF()
+  add_library(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
+  target_link_libraries(${lib_name}PythonQt ${lib_name})
+  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+  endif()
+endif()
 
 # --------------------------------------------------------------------------
 # Export target
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  SET(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
-ENDIF()
-EXPORT(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
+  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+endif()
+export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install library
 # --------------------------------------------------------------------------
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
-ENDIF()
-IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
-ENDIF()
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
+endif()
+if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+endif()
 
-INSTALL(TARGETS ${lib_name}
+install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
@@ -341,17 +341,17 @@ INSTALL(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Testing
 # --------------------------------------------------------------------------
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # QtDesigner Plugins
 # --------------------------------------------------------------------------
-ADD_SUBDIRECTORY(Plugins)
+add_subdirectory(Plugins)
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-SET(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

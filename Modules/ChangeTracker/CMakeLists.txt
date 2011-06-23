@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # --------------------------------------------------------------------------
@@ -35,13 +35,13 @@ include_directories(
   )
 
 configure_file(
-  ${ChangeTracker_SOURCE_DIR}/vtkChangeTrackerConfigure.h.in 
+  ${ChangeTracker_SOURCE_DIR}/vtkChangeTrackerConfigure.h.in
   ${ChangeTracker_BINARY_DIR}/vtkChangeTrackerConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkChangeTrackerConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -49,17 +49,17 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(ChangeTracker_SRCS 
+set(ChangeTracker_SRCS
   # module
   vtkChangeTrackerGUI.cxx
-  vtkChangeTrackerLogic.cxx 
+  vtkChangeTrackerLogic.cxx
   # Filters
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageRectangularSource.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageIslandFilter.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageHistogramNormalization.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageGCR.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageKilianDistanceTransform.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageSumOverVoxels.cxx 
+  ${CMAKE_CURRENT_SOURCE_DIR}/Filters/vtkImageSumOverVoxels.cxx
   # wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkChangeTrackerStep.cxx
   # AF: will commit next merged version of first+second steps
@@ -75,22 +75,22 @@ set(ChangeTracker_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLChangeTrackerNode.cxx
 )
 
-# Enders work 
-SET(changetracker_libs
+# Enders work
+set(changetracker_libs
   DeformableMetric
   CommandLineApplication
   DiffeomorphicDemonsRegistration
   )
-FOREACH(lib ${changetracker_libs})
-  ADD_SUBDIRECTORY(${lib})
-ENDFOREACH(lib)
+foreach(lib ${changetracker_libs})
+  add_subdirectory(${lib})
+endforeach(lib)
 
 # Tools for diameter estimation
-#ADD_SUBDIRECTORY(TumorDiameterEstimation)
+#add_subdirectory(TumorDiameterEstimation)
 
 # Abstract/pure virtual classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #ABSTRACT "TRUE"
@@ -98,7 +98,7 @@ ENDFOREACH(lib)
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#set_source_files_properties(
 #vtkModule.cxx
 #PROPERTIES
 #WRAP_EXCLUDE "TRUE"
@@ -128,7 +128,7 @@ slicer3_set_modules_output_path(${lib_name})
 target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   vtkTeem
   vtkSlicerVolumesModuleLogic
@@ -136,29 +136,29 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES
      ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer_LIBRARY_PROPERTIES)
+endif(Slicer_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing
 
-IF(BUILD_TESTING)
-   ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+   add_subdirectory(Testing)
+endif()
 
 # --------------------------------------------------------------------------
 # Install support files
 
-# 
-# Copy over Tcl files 
+#
+# Copy over Tcl files
 #
 
-# Should those paths change, make sure to update 
+# Should those paths change, make sure to update
 #   - vtkChangeTrackerLogic.cxx
 
 file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
@@ -175,8 +175,8 @@ install(
   DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
   )
 
-# 
-# Copy over Script files 
+#
+# Copy over Script files
 #
 
 file(GLOB SHFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.sh")
@@ -184,8 +184,8 @@ file(GLOB NHDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.nhdr")
 file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.raw.gz")
 file(GLOB MHAFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.mha")
 
-foreach(file 
-    ${SHFILES} 
+foreach(file
+    ${SHFILES}
     ${NHDRFILES}
     ${RAWGZFILES}
     ${MHAFILES}
@@ -197,13 +197,13 @@ foreach(file
     COPYONLY)
 endforeach(file)
 
-install(FILES 
-  ${SHFILES} 
-  ${NHDRFILES} 
+install(FILES
+  ${SHFILES}
+  ${NHDRFILES}
   ${RAWGZFILES}
-  ${MHAFILES} 
+  ${MHAFILES}
   DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Simulation COMPONENT Development
-  ) 
+  )
 
 #
 # copy over Testing files
@@ -215,8 +215,8 @@ file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.raw.gz")
 file(GLOB LOGFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.log")
 file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 
-foreach(file 
-    ${MRMLFILES} 
+foreach(file
+    ${MRMLFILES}
     ${NHDRFILES}
     ${RAWGZFILES}
     ${LOGFILES}
@@ -229,15 +229,15 @@ foreach(file
     COPYONLY)
 endforeach(file)
 
-install(FILES 
-  ${MRMLFILES} 
-  ${NHDRFILES} 
+install(FILES
+  ${MRMLFILES}
+  ${NHDRFILES}
   ${RAWGZFILES}
-  ${LOGFILES} 
+  ${LOGFILES}
   ${TESTFILES}
   DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
-  ) 
-  
+  )
+
 #
 # Copy over BSF logo (and any new logos that might be added in the future)
 #

@@ -14,29 +14,29 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   ADDITIONAL_SRCS
     SFLSRobustStat3DTest.cxx
-    SFLSRobustStat3DTestConsole.cxx 
-    labelMapPreprocessor.h 
+    SFLSRobustStat3DTestConsole.cxx
+    labelMapPreprocessor.h
     SFLS.h
-    SFLSSegmentor3D.h 
-    SFLSSegmentor3D.txx 
-    SFLSRobustStatSegmentor3DLabelMap_single.h 
+    SFLSSegmentor3D.h
+    SFLSSegmentor3D.txx
+    SFLSRobustStatSegmentor3DLabelMap_single.h
     SFLSRobustStatSegmentor3DLabelMap_single.txx
-  INCLUDE_DIRECTORIES 
+  INCLUDE_DIRECTORIES
     ${MRML_INCLUDE_DIRS}
     ${vtkTeem_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
 
   add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
   target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})
-  SET_TARGET_PROPERTIES(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
+  set_target_properties(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
 
   set(testname ${CLP}Test)
   add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
-      ${CMAKE_CURRENT_SOURCE_DIR}/grayscale.nrrd 
-      ${CMAKE_CURRENT_SOURCE_DIR}/grayscale-label.nrrd 
+      ${CMAKE_CURRENT_SOURCE_DIR}/grayscale.nrrd
+      ${CMAKE_CURRENT_SOURCE_DIR}/grayscale-label.nrrd
       ${CMAKE_CURRENT_BINARY_DIR}/rss-test-seg.nrrd 50 0.1 0.2)
-  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
-ENDIF()
+  set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+endif()

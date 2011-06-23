@@ -21,14 +21,14 @@ create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
                        RegisterImagesMultiResApplicationsTests.cxx
                        ${RegisterImagesMultiResApplicationsTests_SOURCE})
 
-ADD_EXECUTABLE(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
-TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule)
-SET_TARGET_PROPERTIES(RegisterImagesMultiResApplicationsTests PROPERTIES LABELS ${CLP})
+add_executable(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
+target_link_libraries(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule)
+set_target_properties(RegisterImagesMultiResApplicationsTests PROPERTIES LABELS ${CLP})
 
-MACRO(SIMPLE_TEST TESTNAME)
-  ADD_TEST(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME} ${ARGN})
-  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${CLP})
-ENDMACRO()
+macro(SIMPLE_TEST TESTNAME)
+  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME} ${ARGN})
+  set_property(TEST ${TESTNAME} PROPERTY LABELS ${CLP})
+endmacro()
 
 SIMPLE_TEST( FixedRotationSimilarity3DTransformTest )
 SIMPLE_TEST( EulerSimilarity3DTransformTest )
@@ -41,7 +41,7 @@ SIMPLE_TEST( CountSamplesTest )
 
 add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
 target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
-SET_TARGET_PROPERTIES(RegisterImagesMultiResTest PROPERTIES LABELS ${CLP})
+set_target_properties(RegisterImagesMultiResTest PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:RegisterImagesMultiResTest>
@@ -55,4 +55,4 @@ add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:Registe
   ${MRML_TEST_DATA}/moving.nrrd
   --resampledImage   ${TEMP}/RegisterImagesMultiResResult.nrrd
   )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})

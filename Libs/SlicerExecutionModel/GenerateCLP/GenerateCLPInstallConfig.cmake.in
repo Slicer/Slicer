@@ -1,5 +1,5 @@
-# GenerateCLP could be installed anywhere, so set all paths based on where 
-# this file was found (which should be the lib/GenerateCLP directory of the 
+# GenerateCLP could be installed anywhere, so set all paths based on where
+# this file was found (which should be the lib/GenerateCLP directory of the
 # installation)
 get_filename_component(GenerateCLP_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
@@ -15,7 +15,7 @@ if(NOT WIN32)
   set(GENERATECLP_EXE "${GENERATECLP_EXE}Launcher")
 endif(NOT WIN32)
 set(GENERATECLP_EXE "${GENERATECLP_EXE}${__EXE_EXT}")
-get_filename_component(GENERATECLP_EXE "${GENERATECLP_EXE}" ABSOLUTE) 
+get_filename_component(GENERATECLP_EXE "${GENERATECLP_EXE}" ABSOLUTE)
 set(TCLAP_DIR "@TCLAP_DIR@")
 set(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR@")
 set(ITK_DIR "@ITK_DIR@")

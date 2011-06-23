@@ -1,13 +1,13 @@
-PROJECT(qSlicerBaseQTCore)
+project(qSlicerBaseQTCore)
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
-SET(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
+set(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
 
 # Additional directories to include
-SET(KIT_include_directories
+set(KIT_include_directories
   ${ModuleDescriptionParser_INCLUDE_DIRS}
   ${MRMLCLI_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
@@ -15,7 +15,7 @@ SET(KIT_include_directories
   )
 
 # Source files
-SET(KIT_SRCS
+set(KIT_SRCS
   qSlicerAbstractCoreModule.cxx
   qSlicerAbstractCoreModule.h
   qSlicerAbstractModuleRepresentation.cxx
@@ -50,7 +50,7 @@ SET(KIT_SRCS
   )
 
 # Headers that should run through moc
-SET(KIT_MOC_SRCS
+set(KIT_MOC_SRCS
   qSlicerAbstractCoreModule.h
   qSlicerCoreCommandOptions.h
   qSlicerCoreApplication.h
@@ -64,7 +64,7 @@ SET(KIT_MOC_SRCS
   )
 
 # Additional Target libraries (QT libs already included)
-SET(KIT_target_libraries
+set(KIT_target_libraries
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer # for qSlicerXcedeCatalogIO
@@ -75,41 +75,41 @@ SET(KIT_target_libraries
   )
 
 # Resources
-SET(KIT_resources
+set(KIT_resources
   Resources/qSlicerBaseQTCore.qrc
 )
 
 # Python wrap
-IF(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
 
-  LIST(APPEND KIT_target_libraries
+  list(APPEND KIT_target_libraries
     CTKCorePythonQt
     CTKDICOMCorePythonQt
     CTKVisualizationVTKCorePythonQt
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils
     )
-  IF(WIN32)
+  if(WIN32)
     # TODO: this resolves link errors on windows, but shouldn't be
     # needed - issue may lie with ctk external library macros?
-    LIST(APPEND KIT_target_libraries
+    list(APPEND KIT_target_libraries
       ${PYTHONQT_LIBRARY}
       )
-  ENDIF(WIN32)
+  endif(WIN32)
 
   # Sources
-  LIST(APPEND KIT_SRCS
+  list(APPEND KIT_SRCS
     qSlicerCorePythonManager.cxx
     qSlicerCorePythonManager.h
     )
 
   # Headers that should run through moc
-  LIST(APPEND KIT_MOC_SRCS
+  list(APPEND KIT_MOC_SRCS
     qSlicerCorePythonManager.h
     qSlicerBaseQTCorePythonQtDecorators.h
     )
 
-ENDIF(Slicer_USE_PYTHONQT)
+endif(Slicer_USE_PYTHONQT)
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}
@@ -123,9 +123,9 @@ SlicerMacroBuildBaseQtLibrary(
   )
 
 # Plugins
-#ADD_SUBDIRECTORY(Plugins)
+#add_subdirectory(Plugins)
 
 # Testing
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

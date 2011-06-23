@@ -7,15 +7,15 @@ if(UNIX)
     set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
   endif(APPLE)
 
-  EXECUTE_PROCESS(
+  execute_process(
     COMMAND make install
     WORKING_DIRECTORY "@python_base@"
     )
-    
-  EXECUTE_PROCESS( 
-    COMMAND @CMAKE_CURRENT_BINARY_DIR@/python-build/bin/python setup.py install 
+
+  execute_process(
+    COMMAND @CMAKE_CURRENT_BINARY_DIR@/python-build/bin/python setup.py install
     WORKING_DIRECTORY "@python_base@"
     RESULT_VARIABLE rv
     )
-    
+
 endif()

@@ -33,26 +33,26 @@ endif()
 #-----------------------------------------------------------------------------
 # Qt - Let's check if a valid version of Qt is available
 #-----------------------------------------------------------------------------
-INCLUDE(SlicerBlockFindQtAndCheckVersion)
+include(SlicerBlockFindQtAndCheckVersion)
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
 
-INCLUDE(ExternalProject)
-INCLUDE(SlicerMacroCheckExternalProjectDependency)
+include(ExternalProject)
+include(SlicerMacroCheckExternalProjectDependency)
 
 set(ep_base        "${CMAKE_BINARY_DIR}")
 #set(ep_install_dir "${ep_base}/Install")
 
-SET(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
-SET(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
+set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
+set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
-SET(ep_common_flags
+set(ep_common_flags
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
   -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
   )
-  
+
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
   set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
@@ -96,13 +96,13 @@ SlicerMacroCheckExternalProjectDependency(Slicer)
 #  set(ep_dependency_graph "${ep_dependency_graph}\n${ep}:${${ep}_DEPENDENCIES}")
 #endforeach()
 #file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt "${ep_dependency_graph}\n")
-#MESSAGE(STATUS "Generated ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt")
+#message(STATUS "Generated ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt")
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
 #
 
-SET(slicer_cmake_boolean_args
+set(slicer_cmake_boolean_args
   DOCUMENTATION_TARGET_IN_ALL
   BUILD_TESTING
   BUILD_SHARED_LIBS
@@ -121,32 +121,32 @@ SET(slicer_cmake_boolean_args
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
   )
-  
-SET(slicer_superbuild_boolean_args)
-FOREACH(slicer_cmake_arg ${slicer_cmake_boolean_args})
-  LIST(APPEND slicer_superbuild_boolean_args -D${slicer_cmake_arg}:BOOL=${${slicer_cmake_arg}})
-ENDFOREACH()
 
-# MESSAGE("CMake args:")
-# FOREACH(arg ${slicer_superbuild_boolean_args})
-#   MESSAGE("  ${arg}")
-# ENDFOREACH()
-  
+set(slicer_superbuild_boolean_args)
+foreach(slicer_cmake_arg ${slicer_cmake_boolean_args})
+  list(APPEND slicer_superbuild_boolean_args -D${slicer_cmake_arg}:BOOL=${${slicer_cmake_arg}})
+endforeach()
+
+# message("CMake args:")
+# foreach(arg ${slicer_superbuild_boolean_args})
+#   message("  ${arg}")
+# endforeach()
+
 #-----------------------------------------------------------------------------
 # Define list of additional options used to configure Slicer
 #------------------------------------------------------------------------------
 set(slicer_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
-  LIST(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
+  list(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
 endif()
 
-IF(Slicer_BUILD_CLI)
-  LIST(APPEND slicer_superbuild_extra_args -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS})
-ENDIF()
+if(Slicer_BUILD_CLI)
+  list(APPEND slicer_superbuild_extra_args -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS})
+endif()
 
 if(Slicer_USE_PYTHONQT)
-  LIST(APPEND slicer_superbuild_extra_args
+  list(APPEND slicer_superbuild_extra_args
     -DSlicer_USE_SYSTEM_PYTHON:BOOL=OFF
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
@@ -155,19 +155,19 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  LIST(APPEND slicer_superbuild_extra_args -DSlicer_TCL_DIR:PATH=${tcl_build})
+  list(APPEND slicer_superbuild_extra_args -DSlicer_TCL_DIR:PATH=${tcl_build})
 endif()
 
 if(Slicer_USE_BatchMake)
-  LIST(APPEND slicer_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
+  list(APPEND slicer_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()
 
 if(Slicer_USE_OPENIGTLINK)
-  LIST(APPEND slicer_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+  list(APPEND slicer_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
 endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
-  LIST(APPEND slicer_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
+  list(APPEND slicer_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
 #------------------------------------------------------------------------------
@@ -217,15 +217,15 @@ ExternalProject_Add(${proj}
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
   INSTALL_COMMAND ""
   )
-  
+
 #-----------------------------------------------------------------------------
 # Slicer extensions
 #-----------------------------------------------------------------------------
-IF(Slicer_BUILD_EXTENSIONS)
-  SET(Slicer_EXTENSION_DESCRIPTION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Extensions)
-  SET(Slicer_LOCAL_EXTENSIONS_DIR ${Slicer_EXTENSION_DESCRIPTION_DIR})
-  SET(Slicer_DIR ${CMAKE_CURRENT_BINARY_DIR}/Slicer-build)
-  INCLUDE(SlicerMacroExtractRepositoryInfo)
+if(Slicer_BUILD_EXTENSIONS)
+  set(Slicer_EXTENSION_DESCRIPTION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Extensions)
+  set(Slicer_LOCAL_EXTENSIONS_DIR ${Slicer_EXTENSION_DESCRIPTION_DIR})
+  set(Slicer_DIR ${CMAKE_CURRENT_BINARY_DIR}/Slicer-build)
+  include(SlicerMacroExtractRepositoryInfo)
   SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
-  INCLUDE(SlicerBlockBuildPackageAndUploadExtensions)
-ENDIF()
+  include(SlicerBlockBuildPackageAndUploadExtensions)
+endif()

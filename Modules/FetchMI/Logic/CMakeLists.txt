@@ -4,17 +4,17 @@ project(vtkSlicerFetchMIModuleLogic)
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
-SET(module_logic_name "${PROJECT_NAME}")
+set(module_logic_name "${PROJECT_NAME}")
 
 # The header '${PROJECT_NAME}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT")
+set(module_logic_export_directive "VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
-SET(module_logic_include_directories
+set(module_logic_include_directories
   )
 
 # Source files
-SET(module_logic_SRCS
+set(module_logic_SRCS
   vtkFetchMILogic.cxx
   vtkFetchMIParser.cxx
   vtkFetchMIParserHID.cxx
@@ -29,7 +29,7 @@ SET(module_logic_SRCS
   )
 
 # Additional Target libraries
-SET(module_logic_target_libraries
+set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   RemoteIO
   )

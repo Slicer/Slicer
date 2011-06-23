@@ -3,35 +3,35 @@
 # Check if '--python-code' / 'slicer.testing' works as expected
 #
 
-ADD_TEST(
+add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest1
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
   --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
   --python-code "exit(slicer.util.EXIT_SUCCESS)"
   )
 
-ADD_TEST(
+add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest2
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
   --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
   --python-code "exit(slicer.util.EXIT_FAILURE)"
   )
-SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
 
-ADD_TEST(
+add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest3
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
   --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
   --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitSuccess()"
   )
 
-ADD_TEST(
+add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest4
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
   --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
   --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitFailure('Should fail !')"
   )
-SET_TESTS_PROPERTIES(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
 
 #
 # Check if '--python-scripts' / 'slicer.testing' works as expected
@@ -44,12 +44,12 @@ SLICER_ADD_PYTHON_TEST(
 SLICER_ADD_PYTHON_TEST(
   SCRIPT SlicerTestingExitFailureTest.py
   SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
-SET_TESTS_PROPERTIES(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitSuccessTest.py)
 
 SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitFailureTest.py)
-SET_TESTS_PROPERTIES(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 #
 # Check if 'slicer.testing.runUnitTest()' works as expected

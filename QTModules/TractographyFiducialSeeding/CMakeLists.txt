@@ -1,19 +1,19 @@
 # Module name (usually identique to the directory name)
-SET(qt_module_name "TractographyFiducialSeeding")
-SET(qt_module_title "Fiducial Seeding")
+set(qt_module_name "TractographyFiducialSeeding")
+set(qt_module_title "Fiducial Seeding")
 
-ADD_SUBDIRECTORY(Logic)
+add_subdirectory(Logic)
 
-SET(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-SET(qt_module_include_directories
+set(qt_module_include_directories
   ${vtkSlicerTractographyModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyModuleLogic_BINARY_DIR}
   )
 
 # Source files
-SET(qt_module_SRCS
+set(qt_module_SRCS
   qSlicerTractographyFiducialSeedingModule.cxx
   qSlicerTractographyFiducialSeedingModule.h
   qSlicerTractographyFiducialSeedingModuleWidget.cxx
@@ -21,24 +21,24 @@ SET(qt_module_SRCS
   )
 
 # Headers that should run through moc
-SET(qt_module_MOC_SRCS
+set(qt_module_MOC_SRCS
   qSlicerTractographyFiducialSeedingModule.h
   qSlicerTractographyFiducialSeedingModuleWidget.h
   )
 
 # UI files
-SET(qt_module_UI_SRCS
+set(qt_module_UI_SRCS
   Resources/UI/qSlicerTractographyFiducialSeedingModule.ui
 )
 
 # Additional Target libraries
-SET(qt_module_target_libraries
+set(qt_module_target_libraries
   vtkSlicerTractographyModuleLogic
   vtkSlicerAnnotationModuleMRML
   )
 
 # Resources
-SET(qt_module_resources
+set(qt_module_resources
   Resources/qSlicerTractographyFiducialSeedingModule.qrc
 )
 
@@ -54,6 +54,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

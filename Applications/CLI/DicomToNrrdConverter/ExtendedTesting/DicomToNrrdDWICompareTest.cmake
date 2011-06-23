@@ -29,7 +29,7 @@ endif( TEST_RESULT )
 
 # Check to see if the image we are comparing against exists.  We do this here to avoid a lengthy test for no reason.
 if(NOT EXISTS ${TEST_BASELINE})
-  message( FATAL_ERROR "Failed: Baseline image ${TEST_BASELINE} does not exist!\n") 
+  message( FATAL_ERROR "Failed: Baseline image ${TEST_BASELINE} does not exist!\n")
 endif( NOT EXISTS ${TEST_BASELINE})
 
 # run the test program, capture the stdout/stderr and the result var

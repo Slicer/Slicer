@@ -27,51 +27,51 @@
 #  <var-prefix>_SEXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
 #  <var-prefix>_SEXT_SCMURL - URL of the associated source repository
 #  <var-prefix>_SEXT_DEPENDS - list of dependencies
-#  <var-prefix>_SEXT_HOMEPAGE - homepage 
+#  <var-prefix>_SEXT_HOMEPAGE - homepage
 #  <var-prefix>_SEXT_CATEGORY - category
 #  <var-prefix>_SEXT_STATUS - status
-#  <var-prefix>_SEXT_DESCRIPTION - one line description 
+#  <var-prefix>_SEXT_DESCRIPTION - one line description
 #
 
-FUNCTION(slicerFunctionExtractExtensionDescription)
+function(slicerFunctionExtractExtensionDescription)
   set(options)
   set(oneValueArgs EXTENSION_FILE VAR_PREFIX)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  
+
   # Sanity checks
-  SET(expected_nonempty_vars VAR_PREFIX)
-  FOREACH(var ${expected_nonempty_vars})
-    IF("${MY_${var}}" STREQUAL "")
-      MESSAGE(FATAL_ERROR "error: ${var} CMake variable is empty !")
-    ENDIF()
-  ENDFOREACH()
-  
-  SET(expected_existing_vars EXTENSION_FILE)
-  FOREACH(var ${expected_existing_vars})
-    IF(NOT EXISTS "${MY_${var}}")
-      MESSAGE(FATAL_ERROR "error: ${var} CMake variable points to a inexistent file or directory: ${MY_${var}}")
-    ENDIF()
-  ENDFOREACH()
-  
+  set(expected_nonempty_vars VAR_PREFIX)
+  foreach(var ${expected_nonempty_vars})
+    if("${MY_${var}}" STREQUAL "")
+      message(FATAL_ERROR "error: ${var} CMake variable is empty !")
+    endif()
+  endforeach()
+
+  set(expected_existing_vars EXTENSION_FILE)
+  foreach(var ${expected_existing_vars})
+    if(NOT EXISTS "${MY_${var}}")
+      message(FATAL_ERROR "error: ${var} CMake variable points to a inexistent file or directory: ${MY_${var}}")
+    endif()
+  endforeach()
+
   # Read file
-  FILE(READ ${MY_EXTENSION_FILE} extension_file_content)
-  
-  SET(extension_description_tokens scm scmurl depends homepage category status description)
-  
-  FOREACH(token ${extension_description_tokens})
-    
-    STRING(TOUPPER ${token} upper_case_token)
-    STRING(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
+  file(READ ${MY_EXTENSION_FILE} extension_file_content)
+
+  set(extension_description_tokens scm scmurl depends homepage category status description)
+
+  foreach(token ${extension_description_tokens})
+
+    string(TOUPPER ${token} upper_case_token)
+    string(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
           "\\2" sext_${upper_case_token} "${extension_file_content}")
-    
+
     # If there was no match, set to an empty string
     if (sext_${upper_case_token} STREQUAL "${extension_file_content}")
       set(sext_${upper_case_token} "")
     endif()
-    
-    SET(${MY_VAR_PREFIX}_SEXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
-  ENDFOREACH()
 
-ENDFUNCTION()
+    set(${MY_VAR_PREFIX}_SEXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
+  endforeach()
+
+endfunction()
 

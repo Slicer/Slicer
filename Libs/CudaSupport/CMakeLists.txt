@@ -1,13 +1,13 @@
-PROJECT(CudaSupport)
+project(CudaSupport)
 
-IF(CUDA_SUPPORT_ENABLED)
+if(CUDA_SUPPORT_ENABLED)
 
-#INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+#include(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
 # --------#
 # Sources #
 #---------#
- SET(CudaSupport_SRCS
+ set(CudaSupport_SRCS
   ### BASIC CUDA RUNTIME API  CLASSES ###
     CudappBase.h
     CudappBase.cxx
@@ -23,7 +23,7 @@ IF(CUDA_SUPPORT_ENABLED)
 ##    CudappOpenGLBufferObject.cxx
 
   #### CUDA MEMORY RUNTIME CLASSES ####
-    CudappMemoryBase.h    
+    CudappMemoryBase.h
     CudappMemoryBase.cxx
     CudappMemory.h
     CudappMemory.cxx
@@ -38,82 +38,82 @@ IF(CUDA_SUPPORT_ENABLED)
     CudappMemoryPitch.cxx
     CudappMemoryArray.h
     CudappMemoryArray.cxx
-    
+
  #### Specialized Classes ##
 )
 
-INCLUDE_DIRECTORIES(
+include_directories(
   ${FOUND_CUT_INCLUDE}
   ${FOUND_CUDA_NVCC_INCLUDE}
   ${CUDA_INSTALL_PREFIX}/include
 )
 
-CUDA_INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} 
+CUDA_INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}
                           ${FOUND_CUT_INCLUDE}
                           ${FOUND_CUDA_NVCC_INCLUDE}
 )
 
-INCLUDE_REGULAR_EXPRESSION("^.h$")
+include_regular_expression("^.h$")
 
 # --------------------------------------------------------------------------
 # Wrapping
 
 ##DISABLED THE TIKL Wrapper
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CudaSupport_SOURCE_DIR}
   ${CudaSupport_BINARY_DIR}
   )
-#INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+#include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 #VTK_WRAP_TCL3(CudaSupport
-#         CudaSupport_TCL_SRCS 
-#         "${CudaSupport_SRCS}" 
+#         CudaSupport_TCL_SRCS
+#         "${CudaSupport_SRCS}"
 #         "")
 
 # --------------------------------------------------------------------------
 # Build the library
-SET(CudaSupport_LIBRARIES
-  SlicerBaseLogic 
-  SlicerBaseGUI 
+set(CudaSupport_LIBRARIES
+  SlicerBaseLogic
+  SlicerBaseGUI
   MRML
   vtkCommon
   vtkImaging
   vtkFiltering
   )
-IF (VTK_WRAP_TCL)
-  SET(CudaSupport_LIBRARIES
+if(VTK_WRAP_TCL)
+  set(CudaSupport_LIBRARIES
     ${CudaSupport_LIBRARIES}
     vtkCommonTCL
     vtkImagingTCL
     vtkFilteringTCL
     )
-ENDIF (VTK_WRAP_TCL)
+endif(VTK_WRAP_TCL)
 ## Set the Libraries we link
-SET(CudaSupport_LIBRARIES
+set(CudaSupport_LIBRARIES
   ${CudaSupport_LIBRARIES}
   ${CUDA_TARGET_LINK}
  )
 
-SET(srcs
+set(srcs
   ${CudaSupport_SRCS}
   )
-IF (VTK_WRAP_TCL)
-  SET(srcs
+if(VTK_WRAP_TCL)
+  set(srcs
     ${srcs}
     ${CudaSupport_TCL_SRCS}
     )
-ENDIF (VTK_WRAP_TCL)
-ADD_LIBRARY(CudaSupport
+endif(VTK_WRAP_TCL)
+add_library(CudaSupport
   ${srcs}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS CudaSupport
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+if(BUILD_SHARED_LIBS)
+  install(TARGETS CudaSupport
+      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
       LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION lib COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+endif(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES(CudaSupport
+target_link_libraries(CudaSupport
   ${CudaSupport_LIBRARIES}
   ${CudaSupport_CudaLibrary}
   )
@@ -122,20 +122,20 @@ TARGET_LINK_LIBRARIES(CudaSupport
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 # --------------------------------------------------------------------------
-#IF(BUILD_TESTING)
-#  ADD_SUBDIRECTORY(Testing)
-#ENDIF()
+#if(BUILD_TESTING)
+#  add_subdirectory(Testing)
+#endif()
 
 
-CONFIGURE_FILE(
-  ${CudaSupport_SOURCE_DIR}/CudappSupportConfigure.h.in 
+configure_file(
+  ${CudaSupport_SOURCE_DIR}/CudappSupportConfigure.h.in
   ${CudaSupport_BINARY_DIR}/CudappSupportConfigure.h
   )
 
-ENDIF()
+endif()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-SET(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

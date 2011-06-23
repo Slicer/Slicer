@@ -22,7 +22,7 @@
 # SlicerMacroBuildModuleVTKLibrary
 #
 
-MACRO(SlicerMacroBuildModuleVTKLibrary)
+macro(SlicerMacroBuildModuleVTKLibrary)
   SLICER_PARSE_ARGUMENTS(MODULEVTKLIBRARY
     "NAME;EXPORT_DIRECTIVE;SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
     "DISABLE_WRAP_PYTHON"
@@ -31,23 +31,23 @@ MACRO(SlicerMacroBuildModuleVTKLibrary)
 
   # --------------------------------------------------------------------------
   # Sanity checks
-  # --------------------------------------------------------------------------  
-  SET(expected_nonempty_vars NAME EXPORT_DIRECTIVE SRCS)
-  FOREACH(var ${expected_nonempty_vars})
-    IF("${MODULEVTKLIBRARY_${var}}" STREQUAL "")
-      MESSAGE(FATAL_ERROR "error: ${var} CMake variable is empty !")
-    ENDIF()
-  ENDFOREACH()
-  
+  # --------------------------------------------------------------------------
+  set(expected_nonempty_vars NAME EXPORT_DIRECTIVE SRCS)
+  foreach(var ${expected_nonempty_vars})
+    if("${MODULEVTKLIBRARY_${var}}" STREQUAL "")
+      message(FATAL_ERROR "error: ${var} CMake variable is empty !")
+    endif()
+  endforeach()
+
   # --------------------------------------------------------------------------
   # Define library name
   # --------------------------------------------------------------------------
-  SET(lib_name ${MODULEVTKLIBRARY_NAME})
-  
+  set(lib_name ${MODULEVTKLIBRARY_NAME})
+
   # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
-  INCLUDE_DIRECTORIES(
+  include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MODULEVTKLIBRARY_INCLUDE_DIRECTORIES}
@@ -56,57 +56,57 @@ MACRO(SlicerMacroBuildModuleVTKLibrary)
   #-----------------------------------------------------------------------------
   # Configure export header
   #-----------------------------------------------------------------------------
-  SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MODULEVTKLIBRARY_EXPORT_DIRECTIVE})
-  SET(MY_EXPORT_HEADER_PREFIX ${MODULEVTKLIBRARY_NAME})
-  SET(MY_LIBNAME ${lib_name})
-  
+  set(MY_LIBRARY_EXPORT_DIRECTIVE ${MODULEVTKLIBRARY_EXPORT_DIRECTIVE})
+  set(MY_EXPORT_HEADER_PREFIX ${MODULEVTKLIBRARY_NAME})
+  set(MY_LIBNAME ${lib_name})
+
   # Sanity checks
-  IF (NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
-    MESSAGE(FATAL_ERROR "error: Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
-  ENDIF()
-  
-  CONFIGURE_FILE(
+  if(NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
+    message(FATAL_ERROR "error: Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
+  endif()
+
+  configure_file(
     ${Slicer_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
-  SET(dynamicHeaders
+  set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   #-----------------------------------------------------------------------------
   # Source groups
   # --------------------------------------------------------------------------
-  SOURCE_GROUP("Generated" FILES
+  source_group("Generated" FILES
     ${dynamicHeaders}
     )
 
   # --------------------------------------------------------------------------
   # Build library
   # --------------------------------------------------------------------------
-  ADD_LIBRARY(${lib_name}
+  add_library(${lib_name}
     ${MODULEVTKLIBRARY_SRCS}
     )
-  
-  # Set loadable modules output 
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+
+  # Set loadable modules output
+  set_target_properties(${lib_name} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
     )
 
-  TARGET_LINK_LIBRARIES(${lib_name}
+  target_link_libraries(${lib_name}
     ${MODULEVTKLIBRARY_TARGET_LIBRARIES}
     )
 
   # Apply user-defined properties to the library target.
-  IF(Slicer_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-  ENDIF()
-  
+  if(Slicer_LIBRARY_PROPERTIES)
+    set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  endif()
+
   # --------------------------------------------------------------------------
   # Install library
   # --------------------------------------------------------------------------
-  INSTALL(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  install(TARGETS ${lib_name}
+    RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
     )
@@ -114,28 +114,28 @@ MACRO(SlicerMacroBuildModuleVTKLibrary)
   # --------------------------------------------------------------------------
   # Install headers
   # --------------------------------------------------------------------------
-  IF(DEFINED Slicer_DEVELOPMENT_INSTALL)
-    IF(NOT DEFINED ${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
-      SET(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL ${Slicer_DEVELOPMENT_INSTALL})
-    ENDIF()
-  ELSE()
-    IF (NOT DEFINED ${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
-      SET(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL OFF)
-    ENDIF()
-  ENDIF()
-  
-  IF(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
-    FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-    INSTALL(FILES
+  if(DEFINED Slicer_DEVELOPMENT_INSTALL)
+    if(NOT DEFINED ${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
+      set(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL ${Slicer_DEVELOPMENT_INSTALL})
+    endif()
+  else()
+    if(NOT DEFINED ${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
+      set(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL OFF)
+    endif()
+  endif()
+
+  if(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
+    file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    install(FILES
       ${headers}
       ${dynamicHeaders}
       DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${MODULEVTKLIBRARY_NAME} COMPONENT Development
       )
-  ENDIF()
-  
+  endif()
+
   # --------------------------------------------------------------------------
   # Export target
   # --------------------------------------------------------------------------
-  SET_PROPERTY(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULEVTKLIBRARY_NAME})
-    
-ENDMACRO()
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULEVTKLIBRARY_NAME})
+
+endmacro()

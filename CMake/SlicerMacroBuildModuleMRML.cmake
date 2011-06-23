@@ -22,18 +22,18 @@
 # SlicerMacroBuildModuleMRML
 #
 
-MACRO(SlicerMacroBuildModuleMRML)
+macro(SlicerMacroBuildModuleMRML)
   SLICER_PARSE_ARGUMENTS(MODULEMRML
     "NAME;EXPORT_DIRECTIVE;SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
     "DISABLE_WRAP_PYTHON"
     ${ARGN}
     )
-  
-  LIST(APPEND MODULEMRML_INCLUDE_DIRECTORIES
+
+  list(APPEND MODULEMRML_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )
-  
+
   SlicerMacroBuildModuleVTKLibrary(
     NAME ${MODULEMRML_NAME}
     EXPORT_DIRECTIVE ${MODULEMRML_EXPORT_DIRECTIVE}
@@ -45,22 +45,22 @@ MACRO(SlicerMacroBuildModuleMRML)
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleMRML_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  IF(Slicer_SOURCE_DIR)
-    SET(Slicer_ModuleMRML_INCLUDE_DIRS
+  if(Slicer_SOURCE_DIR)
+    set(Slicer_ModuleMRML_INCLUDE_DIRS
       ${Slicer_ModuleMRML_INCLUDE_DIRS}
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
       CACHE INTERNAL "Slicer Module MRML includes" FORCE)
-  ENDIF()
-  
+  endif()
+
   # --------------------------------------------------------------------------
   # Python wrapping
   # --------------------------------------------------------------------------
-  IF(NOT ${MODULEMRML_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON)
-    
-    SET(Slicer_Wrapped_LIBRARIES
+  if(NOT ${MODULEMRML_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON)
+
+    set(Slicer_Wrapped_LIBRARIES
       )
-    
+
     SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULEMRML_NAME}
       SRCS ${MODULEMRML_SRCS}
@@ -68,6 +68,6 @@ MACRO(SlicerMacroBuildModuleMRML)
       RELATIVE_PYTHON_DIR "slicer/modulemrml"
       )
 
-  ENDIF()
-    
-ENDMACRO()
+  endif()
+
+endmacro()

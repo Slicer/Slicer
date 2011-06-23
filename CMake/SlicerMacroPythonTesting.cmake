@@ -19,29 +19,29 @@
 ################################################################################
 
 
-MACRO(SLICER_ADD_PYTHON_TEST)
+macro(SLICER_ADD_PYTHON_TEST)
   set(options)
   set(oneValueArgs TESTNAME_PREFIX SLICER_ARGS SCRIPT)
   set(multiValueArgs SCRIPT_ARGS)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
-  ADD_TEST(
+  add_test(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash --ignore-slicerrc ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
-ENDMACRO()
+endmacro()
 
-MACRO(SLICER_ADD_PYTHON_UNITTEST)
+macro(SLICER_ADD_PYTHON_UNITTEST)
   set(options)
   set(oneValueArgs TESTNAME_PREFIX SCRIPT)
   set(multiValueArgs SLICER_ARGS)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
-  ADD_TEST(
+  add_test(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash --ignore-slicerrc ${MY_SLICER_ARGS}
     --python-code "import slicer.testing; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${CMAKE_CURRENT_SOURCE_DIR}'], '${test_name}')"
     )
-ENDMACRO()
+endmacro()

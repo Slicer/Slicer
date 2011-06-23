@@ -1,4 +1,4 @@
-PROJECT(CollectFiducials)
+project(CollectFiducials)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -20,16 +20,16 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkCollectFiducialsConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkCollectFiducialsConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkCollectFiducialsConfigure.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkCollectFiducialsConfigure.h"
   DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -37,7 +37,7 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-set(CollectFiducials_SRCS 
+set(CollectFiducials_SRCS
   vtkCollectFiducialsLogic.cxx
   vtkCollectFiducialsGUI.cxx
 )
@@ -61,7 +61,7 @@ generatelm(CollectFiducials_SRCS CollectFiducials.txt)
 
 set(lib_name CollectFiducials)
 add_library(${lib_name}
-  ${CollectFiducials_SRCS} 
+  ${CollectFiducials_SRCS}
   ${CollectFiducials_TCL_SRCS}
   )
 
@@ -74,7 +74,7 @@ target_link_libraries(${lib_name}
   )
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )

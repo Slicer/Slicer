@@ -1,11 +1,11 @@
-# 
-set(ModuleDescriptionParser_INCLUDE_DIRS 
+#
+set(ModuleDescriptionParser_INCLUDE_DIRS
   "@ModuleDescriptionParser_INCLUDE_DIRS_CONFIG@"
   )
-set(ModuleDescriptionParser_LIBRARY_DIRS 
+set(ModuleDescriptionParser_LIBRARY_DIRS
   "@ModuleDescriptionParser_LIBRARY_DIRS_CONFIG@"
   )
-set(ModuleDescriptionParser_USE_FILE 
+set(ModuleDescriptionParser_USE_FILE
   "@ModuleDescriptionParser_USE_FILE_CONFIG@"
   )
 

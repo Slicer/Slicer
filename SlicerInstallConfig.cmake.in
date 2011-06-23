@@ -34,8 +34,8 @@ set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
 set(Slicer_USE_OPENTRACKER "@Slicer_USE_OPENTRACKER@")
 
-# Slicer could be installed anywhere, so set all paths based on where 
-# this file was found (which should be the lib/Slicer3 directory of the 
+# Slicer could be installed anywhere, so set all paths based on where
+# this file was found (which should be the lib/Slicer3 directory of the
 # installation)
 get_filename_component(Slicer_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
@@ -47,7 +47,7 @@ get_filename_component(Slicer_HOME ${Slicer_HOME} ABSOLUTE)
 set(Slicer_CMAKE_DIR "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 
 # Slicer Libs library directories.
-set(Slicer_Libs_LIBRARY_DIRS 
+set(Slicer_Libs_LIBRARY_DIRS
   "${Slicer_HOME}/lib/FreeSurfer"
   "${Slicer_HOME}/lib/IGT"
   "${Slicer_HOME}/lib/ITKCommandIO"
@@ -66,7 +66,7 @@ set(Slicer_Libs_LIBRARY_DIRS
   )
 
 # Slicer Libs include file directories.
-set(Slicer_Libs_INCLUDE_DIRS 
+set(Slicer_Libs_INCLUDE_DIRS
   "${Slicer_HOME}/include/FreeSurfer"
   "${Slicer_HOME}/include/IGT"
   "${Slicer_HOME}/include/ITKCommandIO"
@@ -82,23 +82,23 @@ set(Slicer_Libs_INCLUDE_DIRS
   )
 
 # Slicer Base library directories.
-set(Slicer_Base_LIBRARY_DIRS 
+set(Slicer_Base_LIBRARY_DIRS
   "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@"
   )
 
 # Slicer Base include file directories.
-set(Slicer_Base_INCLUDE_DIRS 
-  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@" 
-  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
-  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
-  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
+set(Slicer_Base_INCLUDE_DIRS
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@"
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseCLI"
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseGUI"
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseLogic"
   )
 
 # The location of the UseSlicer.cmake file.
 set(Slicer_USE_FILE "${Slicer_CONFIG_DIR}/UseSlicer.cmake")
 
 # The build settings file.
-set(Slicer_BUILD_SETTINGS_FILE 
+set(Slicer_BUILD_SETTINGS_FILE
   "${Slicer_CONFIG_DIR}/SlicerBuildSettings.cmake")
 
 # The Slicer relative install directories.
@@ -113,14 +113,14 @@ set(Slicer_INSTALL_PLUGINS_LIB_DIR "@Slicer_INSTALL_PLUGINS_LIB_DIR@")
 set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer_INSTALL_PLUGINS_INCLUDE_DIR@")
 set(Slicer_INSTALL_PLUGINS_SHARE_DIR "@Slicer_INSTALL_PLUGINS_SHARE_DIR@")
 
-IF(Slicer_BUILD_QTLOADABLEMODULES)
+if(Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR@")
   set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR@")
-ENDIF()
+endif()
 
-# Components needed to build modules from outside a Slicer build tree or 
+# Components needed to build modules from outside a Slicer build tree or
 # from outside a Slicer installation tree
 set(TCLAP_DIR "${Slicer_HOME}/lib/tclap")
 set(ModuleDescriptionParser_DIR "${Slicer_HOME}/lib/ModuleDescriptionParser")

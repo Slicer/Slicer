@@ -9,7 +9,7 @@ set(python_BUILD_IN_SOURCE 1)
 configure_file(SuperBuild/python_patch_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
   @ONLY)
-  
+
 configure_file(SuperBuild/python_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
   @ONLY)
@@ -17,7 +17,7 @@ configure_file(SuperBuild/python_configure_step.cmake.in
 configure_file(SuperBuild/python_make_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_make_step.cmake
   @ONLY)
-  
+
 configure_file(SuperBuild/python_install_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_install_step.cmake
   @ONLY)
@@ -38,7 +38,7 @@ ExternalProject_Add(${proj}
   BUILD_COMMAND ${python_BUILD_COMMAND}
   UPDATE_COMMAND ""
   INSTALL_COMMAND ${python_INSTALL_COMMAND}
-  DEPENDS 
+  DEPENDS
     ${python_DEPENDENCIES}
   )
 
