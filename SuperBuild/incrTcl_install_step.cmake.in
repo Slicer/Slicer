@@ -16,6 +16,5 @@ if(APPLE)
 endif()
 
 execute_process(
-  COMMAND make
-  WORKING_DIRECTORY @tcl_base@/tcl/unix
-  )
+  COMMAND make install
+)

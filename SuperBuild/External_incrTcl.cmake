@@ -16,15 +16,13 @@ set(proj incrTcl)
 #message(STATUS "${__indent}Adding project ${proj}")
 
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
-set(incrTcl_BUILD_IN_SOURCE 0)
+set(incrTcl_BUILD_IN_SOURCE 1)
 set(incrTcl_CONFIGURE_COMMAND "")
 set(incrTcl_BUILD_COMMAND "")
 set(incrTcl_INSTALL_COMMAND "")
 set(incrTcl_PATCH_COMMAND "")
 
 if(APPLE)
-  set(incrTcl_BUILD_IN_SOURCE 1)
-
   set(incrTcl_configure ${tcl_base}/incrTcl/itcl/configure)
   set(incrTcl_configure_find "*.c | *.o | *.obj) \;\;")
   set(incrTcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
@@ -36,15 +34,23 @@ if(APPLE)
   set(incrTcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${incrTcl_configure_find} -Dreplace=${incrTcl_configure_replace} -P ${script})
 
   set(incrTcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(incrTcl_BUILD_COMMAND make)
   set(incrTcl_INSTALL_COMMAND make install)
 
 else()
-  set(incrTcl_BUILD_IN_SOURCE 1)
   set(incrTcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(incrTcl_BUILD_COMMAND make ${parallelism_level} all)
-  set(incrTcl_INSTALL_COMMAND make install)
 endif()
+
+configure_file(
+  SuperBuild/incrTcl_make_step.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_make_step.cmake
+  @ONLY)
+set(incrTcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_make_step.cmake)
+
+configure_file(
+  SuperBuild/incrTcl_install_step.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_install_step.cmake
+  @ONLY)
+set(incrTcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_install_step.cmake)
 
 
 #-----------------------------------------------------------------------------
