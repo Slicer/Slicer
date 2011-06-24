@@ -36,6 +36,8 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     iconDir = slicer.app.slicerHome + '/lib/Slicer3/SlicerBaseGUI/Tcl/ImageData'
     parent.icon = qt.QIcon("%s/ToolbarEditorToolbox.png" % iconDir)
 
+    slicer.modules.editorExtensions = {}
+
 
 #
 # qSlicerPythonModuleExampleWidget
