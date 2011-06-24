@@ -699,15 +699,15 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   // save worldCoordinates to MRML if no change
   double p1[3], p2[3];
-  rulerNode->GetPosition1(p1);
-  rulerNode->GetPosition2(p2);
+  rulerNode->GetPositionWorldCoordinates1(p1);
+  rulerNode->GetPositionWorldCoordinates2(p2);
   if (this->GetWorldCoordinatesChanged(worldCoordinates1, p1))
     {
-    rulerNode->SetPosition1(worldCoordinates1);
+    rulerNode->SetPositionWorldCoordinates1(worldCoordinates1);
     }
   if (this->GetWorldCoordinatesChanged(worldCoordinates2, p2))
     {
-    rulerNode->SetPosition2(worldCoordinates2);
+    rulerNode->SetPositionWorldCoordinates2(worldCoordinates2);
     }
   // save distance to mrml
   rulerNode->SetDistanceMeasurement(distance);
@@ -763,8 +763,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
 
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
 
-    rulerNode->SetPosition1(worldCoordinates1);
-    rulerNode->SetPosition2(worldCoordinates2);
+    rulerNode->SetPositionWorldCoordinates1(worldCoordinates1);
+    rulerNode->SetPositionWorldCoordinates2(worldCoordinates2);
     rulerNode->SetDistanceMeasurement(distance);
 
     rulerNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationRuler"));

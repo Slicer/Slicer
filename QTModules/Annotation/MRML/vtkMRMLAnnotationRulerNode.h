@@ -55,27 +55,74 @@ public:
   // Get position of the first point
   void GetPosition1(double position[3]);
 
+  // Get position of the first point in world coordinates, including parnts transfroms
+  void GetPositionWorldCoordinates1(double position[4])
+    {
+    double p[4];
+    this->GetPosition1(p);
+    this->TransformPointToWorld(p,position);
+    }
+
   // Legacy code
   // Description:
   // get/set the first point position
-  double* GetPosition1() {return this->GetControlPointCoordinates(0);}
+  double* GetPosition1() 
+    {
+    return this->GetControlPointCoordinates(0);
+    }
 
-  int SetPosition1(double newControl[3]) { return this->SetControlPoint(0, newControl) ; }
-  int SetPosition1(double nC1, double nC2, double nC3) { 
+  int SetPosition1(double newControl[3]) 
+    { 
+    return this->SetControlPoint(0, newControl) ; 
+    }
+
+  int SetPositionWorldCoordinates1(double newControl[4]) 
+    { 
+    double locPoint[4];
+    this->TransformPointFromWorld(newControl, locPoint);
+    return this->SetPosition1(locPoint) ; 
+    }
+
+  int SetPosition1(double nC1, double nC2, double nC3) 
+    { 
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetPosition1(newControl) ; 
-  }
+    }
 
 
-  // Get position of the first point
+  // Get position of the second point
   void GetPosition2(double position[3]);
 
-  double* GetPosition2() {return this->GetControlPointCoordinates(1);}
-  int SetPosition2(double newControl[3]) { return this->SetControlPoint(1, newControl);}
-  int SetPosition2(double nC1, double nC2, double nC3) { 
+  // Get position of the second point in world coordinates, including parnts transfroms
+  void GetPositionWorldCoordinates2(double position[4])
+    {
+    double p[4];
+    this->GetPosition2(p);
+    this->TransformPointToWorld(p,position);
+    }
+
+  double* GetPosition2() 
+    {
+    return this->GetControlPointCoordinates(1);
+    }
+
+  int SetPosition2(double newControl[3]) 
+    { 
+    return this->SetControlPoint(1, newControl);
+    }
+
+  int SetPositionWorldCoordinates2(double newControl[4]) 
+    { 
+    double locPoint[4];
+    this->TransformPointFromWorld(newControl, locPoint);
+    return this->SetPosition2(locPoint) ; 
+    }
+
+  int SetPosition2(double nC1, double nC2, double nC3) 
+    { 
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetPosition2(newControl) ; 
-  }
+    }
 
   // Description:
   // get/set the distance annotation format, it's in standard sprintf notation
