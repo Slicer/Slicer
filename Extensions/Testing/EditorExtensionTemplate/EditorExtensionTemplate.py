@@ -102,7 +102,7 @@ class EditorExtensionTemplate:
 
     # TODO:
     # don't show this module - it only appears in the Editor module
-    parent.hidden = True
+    #parent.hidden = True
 
     slicer.modules.editorExtensions['EditorExtensionTemplateOptions'] = EditorExtensionTemplateOptions
 
