@@ -3,6 +3,9 @@
 #include <QtPlugin>
 #include <QDebug>
 
+// PythonQT includes
+#include <PythonQt.h>
+
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -16,6 +19,8 @@
 #include "qSlicerAnnotationModule.h"
 #include "GUI/qSlicerAnnotationModuleWidget.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
+
+void PythonQt_init_org_slicer_module_qSlicerAnnotationModuleWidgets(PyObject*);
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationModule, qSlicerAnnotationModule);
@@ -42,6 +47,9 @@ qSlicerAnnotationModule::~qSlicerAnnotationModule()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModule::setup()
 {
+
+  PythonQt_init_org_slicer_module_qSlicerAnnotationModuleWidgets(0);
+
   // 3D
   QStringList threeDdisplayableManagers;
   threeDdisplayableManagers

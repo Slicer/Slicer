@@ -130,6 +130,7 @@ set(qt_module_target_libraries
   qMRMLWidgets
   vtkSlicerAnnotationModuleMRML
   qSlicerAnnotationModuleWidgets
+  qSlicerAnnotationModuleWidgetsPythonQt
   )
 
 slicerMacroBuildQtModule(
