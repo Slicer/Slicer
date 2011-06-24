@@ -444,12 +444,17 @@ itcl::body EditBox::setButtonState {effect state} {
       dialog = qt.QErrorMessage(self.parent)
       dialog.showMessage("Label Image and Background Image Dimensions don't match. Select another label image. All previous gestures will be lost.")
     else:
+# flip label name and gesture name
       labelName = labelNode.GetName()
-      gestureName = labelName + '-growcut'
-      nodes = slicer.mrmlScene.GetNodesByName(gestureName)
+      gestureName = labelName
+      labelName = labelName + '-growcut-input'
+
+      slicer.mrmlScene.GetNodeByID(labelID).SetName(gestureName)
+
+      nodes = slicer.mrmlScene.GetNodesByName(labelName)
       if nodes.GetNumberOfItems() == 0:
         volumesLogic = slicer.modules.volumes.logic()
-        gestureNode = volumesLogic.CreateLabelVolume( slicer.mrmlScene, labelNode, gestureName) 
+        gestureNode = volumesLogic.CreateLabelVolume( slicer.mrmlScene, labelNode, labelName) 
         gestureID = gestureNode.GetID()
         node = self.editorGetGestureParameterNode(gestureID)
       else:
