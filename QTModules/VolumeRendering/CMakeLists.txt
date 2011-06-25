@@ -5,6 +5,7 @@ set(qt_module_title "Volume Rendering")
 
 # Build module sub libraries
 add_subdirectory(MRML)
+add_subdirectory(Widgets)
 add_subdirectory(VolumeRenderingReplacements)
 add_subdirectory(Logic)
 
@@ -20,6 +21,8 @@ set(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingReplacements
   ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingReplacements
+  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${qSlicerAnnotationModuleWidgets_SOURCE_DIR}
   ${qSlicerAnnotationModuleWidgets_BINARY_DIR}
   )
@@ -69,6 +72,7 @@ set(qt_module_target_libraries
   VolumeRenderingReplacements
   vtkSlicerAnnotationModuleMRML
   qSlicerAnnotationModuleWidgets
+  qSlicerVolumeRenderingModuleWidgets
   )
 
 # Resources

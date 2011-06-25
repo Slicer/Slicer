@@ -1,5 +1,6 @@
 // Qt includes
 #include <QDebug>
+#include <QListView>
 #include <QSettings>
 
 // qMRMLWidgets include
@@ -141,10 +142,16 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
     vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
   
   // Volume Properties
+  QComboBox* comboBox = this->PresetsNodeComboBox->findChild<QComboBox*>();
+  /*
+  
+  */
+   
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
-  this->populatePresetsIcons(this->PresetsNodeComboBox);
+  this->PresetsNodeComboBox->setCurrentNode(0);
+
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(applyPreset(vtkMRMLNode*)));
   
@@ -235,10 +242,6 @@ void qSlicerVolumeRenderingModuleWidgetPrivate
       sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
       }
     }
-  // Use a larger size for the icons
-  QComboBox* comboBox = presetsNodeComboBox->findChild<QComboBox*>();
-  int iconSize = presetsNodeComboBox->style()->pixelMetric(QStyle::PM_LargeIconSize);
-  comboBox->view()->setIconSize(QSize(iconSize, iconSize));
 }
 
 //-----------------------------------------------------------------------------

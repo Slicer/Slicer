@@ -31,6 +31,12 @@
        <string>vtkMRMLScalarVolumeNode</string>
       </stringlist>
      </property>
+     <property name="hideChildNodeTypes">
+      <stringlist>
+       <string>vtkMRMLDiffusionWeightedVolumeNode</string>
+       <string>vtkMRMLDiffusionTensorVolumeNode</string>
+      </stringlist>
+     </property>
      <property name="addEnabled">
       <bool>false</bool>
      </property>
@@ -523,24 +529,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="qMRMLNodeComboBox" name="PresetsNodeComboBox">
-            <property name="nodeTypes">
-             <stringlist>
-              <string>vtkMRMLVolumePropertyNode</string>
-             </stringlist>
-            </property>
-            <property name="selectNodeUponCreation">
-             <bool>false</bool>
-            </property>
-            <property name="addEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="removeEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="baseName">
-             <string>Preset</string>
-            </property>
+           <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox">
            </widget>
           </item>
           <item row="2" column="0" colspan="2">
@@ -631,7 +620,13 @@
    <header>qSlicerWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
+   <customwidget>
+     <class>qSlicerPresetComboBox</class>
+     <extends>qMRMLNodeComboBox</extends>
+     <header>qSlicerPresetComboBox.h</header>
+     <container>1</container>
+   </customwidget>
+   <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
