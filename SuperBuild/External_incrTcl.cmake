@@ -35,7 +35,7 @@ configure_file(
   SuperBuild/incrTcl_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake
   @ONLY)
-set(incrTcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake)
+set(incrTcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake)
 
 configure_file(
   SuperBuild/incrTcl_make_step.cmake.in
