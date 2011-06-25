@@ -14,6 +14,23 @@ endif()
 # use this step so we can set the WORKING_DIRECTORY appropriately
 
 if(APPLE)
+  set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
+  set(osx_arch_flags)
+  foreach(arch ${CMAKE_OSX_ARCHITECTURES})
+    set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
+  endforeach()
+  set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
+  set(osx_sysroot)
+  set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
+  if(CMAKE_CXX_HAS_ISYSROOT)
+    set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
+  endif()
+  set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
+
+  set(ENV{CFLAGS} "${osx_flags} $ENV{CFLAGS}")
+  set(ENV{CXXFLAGS} "${osx_flags} $ENV{CXXFLAGS}")
+  set(ENV{CPPFLAGS} "${osx_flags} $ENV{CPPFLAGS}")
+  set(ENV{LDFLAGS} "${osx_flags} $ENV{LDFLAGS}")
 
   execute_process(
     COMMAND sh configure --with-tcl=@tcl_build@/lib --prefix=@tcl_build@ --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x --with-cflags=${configure_cflags}

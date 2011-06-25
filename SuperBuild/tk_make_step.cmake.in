@@ -1,20 +1,4 @@
 
-if(APPLE)
-  set(ENV{MACOSX_DEPLOYMENT_TARGET} "@CMAKE_OSX_DEPLOYMENT_TARGET@")
-
-  set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
-  set(archflags)
-  foreach(arch ${CMAKE_OSX_ARCHITECTURES})
-    set(archflags "${archflags} -arch ${arch}")
-  endforeach()
-  set(ENV{ARCHFLAGS} "${archflags}")
-
-  set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
-  if(CMAKE_CXX_HAS_ISYSROOT)
-    set(ENV{SDKROOT} "@CMAKE_OSX_SYSROOT@")
-  endif()
-endif()
-
 execute_process(
   COMMAND make
   WORKING_DIRECTORY @tcl_base@/tk/unix

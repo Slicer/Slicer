@@ -17,9 +17,6 @@ set(proj incrTcl)
 
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
 set(incrTcl_BUILD_IN_SOURCE 1)
-set(incrTcl_CONFIGURE_COMMAND "")
-set(incrTcl_BUILD_COMMAND "")
-set(incrTcl_INSTALL_COMMAND "")
 set(incrTcl_PATCH_COMMAND "")
 
 if(APPLE)
@@ -32,13 +29,13 @@ if(APPLE)
   set(out ${incrTcl_configure})
 
   set(incrTcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${incrTcl_configure_find} -Dreplace=${incrTcl_configure_replace} -P ${script})
-
-  set(incrTcl_CONFIGURE_COMMAND ./configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
-  set(incrTcl_INSTALL_COMMAND make install)
-
-else()
-  set(incrTcl_CONFIGURE_COMMAND sh configure --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build})
 endif()
+
+configure_file(
+  SuperBuild/incrTcl_configure_step.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake
+  @ONLY)
+set(incrTcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake)
 
 configure_file(
   SuperBuild/incrTcl_make_step.cmake.in
