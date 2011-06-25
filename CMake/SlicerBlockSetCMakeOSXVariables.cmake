@@ -31,11 +31,20 @@
 #       Currently, we default to 10.5. Obviously this may need to be re-evaluated when Lion comes out.
 #
 if(APPLE)
-  if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "force build for 64-bit Leopard" FORCE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" CACHE STRING "force build for 64-bit Leopard" FORCE)
-    set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk" CACHE PATH "force build for 64-bit Leopard" FORCE)
-  endif()
+
+  set(SDK_VERSIONS_TO_CHECK "")
+  set(SDK_VERSIONS_TO_CHECK ${SDK_VERSIONS_TO_CHECK} "10.5")
+  set(SDK_VERSIONS_TO_CHECK ${SDK_VERSIONS_TO_CHECK} "10.6")
+  foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK}) ## Prefer 10.5, but use 10.6 if necessary
+    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
+      set(TEST_OSX_SYSROOT "/Developer/SDKs/MacOSX${SDK_VERSION}.sdk")
+      if(EXISTS "${TEST_OSX_SYSROOT}")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "force build for 64-bit Leopard" FORCE)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "${SDK_VERSION}" CACHE STRING "force build for 64-bit Leopard" FORCE)
+        set(CMAKE_OSX_SYSROOT "${TEST_OSX_SYSROOT}" CACHE PATH "force build for 64-bit Leopard" FORCE)
+      endif()
+    endif()
+  endforeach()
 
   if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
     if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
