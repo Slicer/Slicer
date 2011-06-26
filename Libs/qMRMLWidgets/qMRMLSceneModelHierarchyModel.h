@@ -50,7 +50,14 @@ public:
 
   virtual Qt::DropActions supportedDropActions()const;
   virtual void setMRMLScene(vtkMRMLScene* scene);
+
+  /// 
+  /// As we reimplement insertNode, we need don't want to hide the other functions.
+  using qMRMLSceneModel::insertNode;
+  /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
+  /// visibility check state changes.
   virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneModelHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneModelHierarchyModel);

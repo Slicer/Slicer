@@ -141,12 +141,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
     "Illustrative Context Preserving Exploration",
     vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
   
-  // Volume Properties
-  QComboBox* comboBox = this->PresetsNodeComboBox->findChild<QComboBox*>();
-  /*
-  
-  */
-   
+  // Volume Properties 
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());

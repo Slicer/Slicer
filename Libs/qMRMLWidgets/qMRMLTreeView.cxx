@@ -486,8 +486,6 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
 {
-  Q_D(qMRMLTreeView);
-
   if (e->button() == Qt::LeftButton)
     {
     // get the index of the current column

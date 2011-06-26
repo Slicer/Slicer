@@ -71,9 +71,9 @@ void qSlicerIconComboBox::showPopup()
   QRect screen = QApplication::desktop()->availableGeometry(
     QApplication::desktop()->screenNumber(this));
   QPoint below = mapToGlobal(listRect.bottomLeft());
-  int belowHeight = screen.bottom() - below.y();
+  //int belowHeight = screen.bottom() - below.y();
   QPoint above = mapToGlobal(listRect.topLeft());
-  int aboveHeight = above.y() - screen.y();
+  //int aboveHeight = above.y() - screen.y();
     
   // CustomSize
   //

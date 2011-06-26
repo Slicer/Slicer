@@ -269,7 +269,6 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModelHierarchyModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
 {
-  Q_D(qMRMLSceneModel);
   QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
   if (this->listenNodeModifiedEvent())
     {
