@@ -85,7 +85,7 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToMinEigenvalue();
     }
-  else if (operation == std::string("MiddleEigenvalue"))
+  else if (operation == std::string("MidEigenvalue"))
     {
     math->SetOperationToMiddleEigenvalue();
     }
@@ -141,7 +141,7 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToParallelDiffusivity();
     }
-  else if (operation == std::string("PerpendicularDffusivity"))
+  else if (operation == std::string("PerpendicularDiffusivity"))
     {
     math->SetOperationToPerpendicularDiffusivity();
     }
