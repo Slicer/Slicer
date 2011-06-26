@@ -59,6 +59,8 @@ public:
   bool              RemoveEnabled;
   bool              EditEnabled;
   bool              RenameEnabled;
+  
+  bool              AutoDefaultText;
 };
 
 #endif

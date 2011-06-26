@@ -57,6 +57,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->RemoveEnabled = true;
   this->EditEnabled = false;
   this->RenameEnabled = false;
+  this->AutoDefaultText = true;
 }
 
 // -----------------------------------------------------------------------------
@@ -187,6 +188,10 @@ QModelIndexList qMRMLNodeComboBoxPrivate::indexesFromMRMLNodeID(const QString& n
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateDefaultText()
 {
+  if (!this->AutoDefaultText)
+    {
+    return;
+    }
   ctkComboBox* cb = qobject_cast<ctkComboBox*>(this->ComboBox);
   if (cb)
     {
