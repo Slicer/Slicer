@@ -59,6 +59,10 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// Control in which column vtkMRMLNode::Visibility are displayed (Qt::DecorationRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  ///
+  /// Control in which column tooltips are displayed (Qt::ToolTipRole).
+  /// A value of -1 hides it. Hidden by default (value of -1).
+  Q_PROPERTY (int toolTipNameColumn READ toolTipNameColumn WRITE setToolTipNameColumn)
 
 public:
   typedef QStandardItemModel Superclass;
@@ -111,6 +115,10 @@ public:
 
   int visibilityColumn()const;
   void setVisibilityColumn(int column);
+
+  int toolTipNameColumn()const;
+  void setToolTipNameColumn(int column);
+
 
   ///
   /// Extra items that are prepended to the node list

@@ -778,6 +778,10 @@ void qMRMLSceneModel::updateItemDataFromNode(
     {
     item->setText(QString(node->GetName()));
     }
+  if (column == d->ToolTipNameColumn)
+    {
+    item->setToolTip(QString(node->GetName()));
+    }
   if (column == d->IDColumn)
     {
     item->setText(QString(node->GetID()));
@@ -864,6 +868,10 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
     {
     node->SetName(item->text().toLatin1());
     }
+  // ToolTip can't be edited, don't change the node
+  // if (item->column() == d->ToolTipNameColumn)
+  // {
+  // }
   if (item->column() == d->IDColumn)
     {
     // Too dangerous
@@ -1240,5 +1248,20 @@ void qMRMLSceneModel::setVisibilityColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->VisibilityColumn = column;
+  /// TODO: refresh the items
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneModel::toolTipNameColumn()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->ToolTipNameColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setToolTipNameColumn(int column)
+{
+  Q_D(qMRMLSceneModel);
+  d->ToolTipNameColumn = column;
   /// TODO: refresh the items
 }
