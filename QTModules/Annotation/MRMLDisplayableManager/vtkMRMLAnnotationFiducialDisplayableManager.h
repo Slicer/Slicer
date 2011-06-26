@@ -64,6 +64,8 @@ protected:
 
   // respond to control point modified events
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
+
+  std::map<vtkMRMLNode*, int> NodeGlyphTypes;
   
 private:
 

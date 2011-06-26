@@ -317,61 +317,67 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   if (handleRep)
     {
     // set the glyph type
-    vtkDebugMacro("DisplayNode glyph type = " << displayNode->GetGlyphType() << " = " << displayNode->GetGlyphTypeAsString() << ", is 3d glyph = " << (displayNode->GlyphTypeIs3D() ? "true" : "false") << ", is 2d disp manager = " << this->Is2DDisplayableManager());
-    if (displayNode->GlyphTypeIs3D())
+    std::map<vtkMRMLNode*, int>::iterator iter  = this->NodeGlyphTypes.find(displayNode);
+    if (iter == this->NodeGlyphTypes.end() || iter->second != displayNode->GetGlyphType())
       {
-      if (this->Is2DDisplayableManager())
+      vtkDebugMacro("DisplayNode glyph type = " << displayNode->GetGlyphType() << " = " << displayNode->GetGlyphTypeAsString() << ", is 3d glyph = " << (displayNode->GlyphTypeIs3D() ? "true" : "false") << ", is 2d disp manager = " << this->Is2DDisplayableManager());
+      if (displayNode->GlyphTypeIs3D())
         {
-        // map the 3d sphere to a filled circle, the 3d diamond to a filled
-        // diamond
-        VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-        if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+        if (this->Is2DDisplayableManager())
           {
-          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Circle2D);
-          }
-        else if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Diamond3D)
-          {
-          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
-          }
+          // map the 3d sphere to a filled circle, the 3d diamond to a filled
+          // diamond
+          VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+          if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+            {
+            glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Circle2D);
+            }
+          else if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Diamond3D)
+            {
+            glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
+            }
+          else
+            {
+            glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
+            }
+          glyphSource->Update();
+          glyphSource->SetScale(1.0);
+          handleRep->SetHandle(glyphSource->GetOutput());
+          } //if (this->Is2DDisplayableManager())
         else
           {
-          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
+          if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+            {
+            VTK_CREATE(vtkSphereSource, sphereSource);
+            sphereSource->SetRadius(0.5);
+            sphereSource->SetPhiResolution(10);
+            sphereSource->SetThetaResolution(10);
+            sphereSource->Update();
+            handleRep->SetHandle(sphereSource->GetOutput());
+            }
+          else
+            {
+            // the 3d diamond isn't supported yet, use a 2d diamond for now
+            VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+            glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
+            glyphSource->Update();
+            glyphSource->SetScale(1.0);
+            handleRep->SetHandle(glyphSource->GetOutput());
+            }
           }
+        }//if (displayNode->GlyphTypeIs3D())
+      else
+        {
+        // 2D
+        VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+        glyphSource->SetGlyphType(displayNode->GetGlyphType());
         glyphSource->Update();
         glyphSource->SetScale(1.0);
         handleRep->SetHandle(glyphSource->GetOutput());
         }
-      else
-        {
-        if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
-          {
-          VTK_CREATE(vtkSphereSource, sphereSource);
-          sphereSource->SetRadius(0.5);
-          sphereSource->SetPhiResolution(10);
-          sphereSource->SetThetaResolution(10);
-          sphereSource->Update();
-          handleRep->SetHandle(sphereSource->GetOutput());
-          }
-        else
-          {
-          // the 3d diamond isn't supported yet, use a 2d diamond for now
-          VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
-          glyphSource->Update();
-          glyphSource->SetScale(1.0);
-          handleRep->SetHandle(glyphSource->GetOutput());
-          }
-        }
-      }
-    else
-      {
-      // 2D
-      VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
-      glyphSource->SetGlyphType(displayNode->GetGlyphType());
-      glyphSource->Update();
-      glyphSource->SetScale(1.0);
-      handleRep->SetHandle(glyphSource->GetOutput());
-      }
+      this->NodeGlyphTypes[displayNode] = displayNode->GetGlyphType();
+      } // if (iter == this->NodeGlyphTypes.end() || iter->second != displayNode->GetGlyphType())
+    // end of glyph type
     
     if (fiducialNode->GetSelected())
       {
@@ -394,15 +400,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     // the following check is only needed since we require a different uniform scale depending on 2D and 3D
     if (this->Is2DDisplayableManager())
       {
-      
       handleRep->SetUniformScale(displayNode->GetGlyphScale()*this->GetScaleFactor2D());
-      
       }
     else
       {
-      
       handleRep->SetUniformScale(displayNode->GetGlyphScale());
-      
       }
 
     // update the text
@@ -418,7 +420,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
           }
         textString.append(fiducialNode->GetText(i));
         }
-      handleRep->SetLabelText(textString.c_str());
+
+      if (vtkStdString(handleRep->GetLabelText()) != textString)
+        {
+        handleRep->SetLabelText(textString.c_str());
+        }
 
       // get the text display node
       vtkMRMLAnnotationTextDisplayNode *textDisplayNode = fiducialNode->GetAnnotationTextDisplayNode();
@@ -447,14 +453,14 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
             }
           handleRep->GetLabelTextActor()->GetProperty()->SetOpacity(textDisplayNode->GetOpacity());
           }
-        }
+        }//if (textDisplayNode)
       handleRep->LabelVisibilityOn();
-      }
+      }//if (fiducialNode->GetNumberOfTexts() > 0)
     else
       {
       handleRep->LabelVisibilityOff();
       }
-    }
+    }//if (handleRep)
 
   // now update the position
   this->UpdatePosition(widget, node);
