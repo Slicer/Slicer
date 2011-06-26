@@ -1,3 +1,4 @@
+#include "ctkUtils.h"
 
 // MRML includes
 #include "vtkMRMLFiberBundleNode.h"
@@ -37,7 +38,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
   this->Superclass::setMRMLScene(scene);
 
   // find parameters node or create it if there is no one in the scene
-  if (this->TractographyFiducialSeedingNode == 0)
+  if (scene && this->TractographyFiducialSeedingNode == 0)
   {
     vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
     vtkMRMLNode *node = scene->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
@@ -197,9 +198,42 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setSeedingNode(vtkMRMLNode 
 
   }
 }
+
+static double round_num(double num)
+{
+  double result = num;
+
+  if (num < 1.0)
+  {
+    std::stringstream ss;
+    ss << num;
+    std::string s = ss.str();
+    std::stringstream res;
+    for (unsigned int i=0; i<s.size(); i++)
+      {
+      if (s.at(i) != '0' && s.at(i) != '.')
+        {
+        res << s.at(i);
+        break;
+        }
+        res << s.at(i);
+      }
+    res >> result;
+  }
+  else
+  {
+    // drop off everything past the decimal point
+    result = floor(result);
+  }
+
+  return result;
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNode(vtkMRMLNode *node)
 {
+  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+
   vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
 
   if (this->TractographyFiducialSeedingNode)
@@ -212,8 +246,36 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
     {
       seedingLogic->SetAndObserveTractographyFiducialSeedingNode(this->TractographyFiducialSeedingNode);
     }
-
   }
+
+  if (diffusionTensorVolumeNode && diffusionTensorVolumeNode->GetImageData())
+    {
+    double spacing[3];
+    diffusionTensorVolumeNode->GetSpacing(spacing);
+    double minSpacing = spacing[0];
+    for (int i=1; i<3; i++)
+      {
+      if (spacing[i] < minSpacing)
+        {
+        minSpacing = spacing[i];
+        }
+      }
+    // get 0 decimal places
+    minSpacing = round_num(0.5*minSpacing);
+
+    int decimal = ctk::orderOfMagnitude(minSpacing);
+    decimal = decimal >= 0 ? 0 : -decimal;
+
+    d->FiducialStepSpinBoxLabel->setDecimals(decimal+1);
+    d->FiducialStepSpinBoxLabel->setSingleStep(minSpacing);
+    d->FiducialStepSpinBoxLabel->setMinimum(minSpacing);
+    d->FiducialStepSpinBoxLabel->setMaximum(10*minSpacing);
+
+    d->FiducialRegionSpinBoxLabel->setDecimals(decimal+1);
+    d->FiducialRegionSpinBoxLabel->setSingleStep(minSpacing);
+    d->FiducialRegionSpinBoxLabel->setMinimum(minSpacing);
+    d->FiducialRegionSpinBoxLabel->setMaximum(100*minSpacing);
+    }
 }
 
 //-----------------------------------------------------------------------------
