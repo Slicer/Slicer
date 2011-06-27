@@ -111,7 +111,6 @@ void qSlicerCropVolumeModuleWidget::setup()
 }
 
 void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
-  Q_D(qSlicerCropVolumeModuleWidget);
 
   this->Superclass::setMRMLScene(scene);
   if(scene == NULL)
