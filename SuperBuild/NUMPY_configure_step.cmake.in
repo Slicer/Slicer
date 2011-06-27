@@ -2,6 +2,26 @@ message("Configuring NUMPY:\n@NUMPY_DIR@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
+if(APPLE)
+  set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
+  set(osx_arch_flags)
+  foreach(arch ${CMAKE_OSX_ARCHITECTURES})
+    set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
+  endforeach()
+  set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
+  set(osx_sysroot)
+  set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
+  if(CMAKE_CXX_HAS_ISYSROOT)
+    set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
+  endif()
+  set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
+
+  set(ENV{CFLAGS} "${osx_flags}")
+  set(ENV{CXXFLAGS} "${osx_flags}")
+  set(ENV{CPPFLAGS} "${osx_flags}")
+  set(ENV{LDFLAGS} "${osx_flags}")
+endif()
+
 # As explained in site.cfg.example - See http://projects.scipy.org/numpy/browser/trunk/site.cfg.example
 # Directories listed in variable such as library_dirs or source_dirs should be separated using os.pathsep
 # On windows, the separator is ";" and ":" on unix-like platform
