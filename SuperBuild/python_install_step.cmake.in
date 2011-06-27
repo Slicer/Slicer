@@ -1,11 +1,47 @@
 
 if(UNIX)
+  set(LDFLAGS)
+  set(CPPFLAGS)
+  set(LD_LIBRARY_PATH "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+
+  set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
+    set(LD_LIBRARY_PATH "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:${LD_LIBRARY_PATH}")
+    set(LDFLAGS "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
+    set(CPPFLAGS "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
+  endif()
 
   if(APPLE)
-    set(ENV{DYLD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
-  else(APPLE)
-    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+    set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
+    set(osx_arch_flags)
+    foreach(arch ${CMAKE_OSX_ARCHITECTURES})
+      set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
+    endforeach()
+    set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
+    set(osx_sysroot)
+    set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
+    if(CMAKE_CXX_HAS_ISYSROOT)
+      set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
+    endif()
+    set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
+
+    set(CFLAGS "${CFLAGS} ${osx_flags}")
+    set(CXXFLAGS "${CXXFLAGS} ${osx_flags}")
+    set(CPPFLAGS "${CPPFLAGS} ${osx_flags}")
+    set(LDFLAGS "${LDFLAGS} ${osx_flags} -undefined dynamic_lookup")
   endif(APPLE)
+
+  set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
+  foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
+    set(ENV{${v}} ${${v}})
+  endforeach()
+
+  #message(CXX:[$ENV{CXX}])
+  #message(CFLAGS:[$ENV{CFLAGS}])
+  #message(CXXFLAGS:[$ENV{CXXFLAGS}])
+  #message(CPPFLAGS:[$ENV{CPPFLAGS}])
+  #message(LDFLAGS:[$ENV{LDFLAGS}])
+  #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
     COMMAND make install
@@ -15,7 +51,6 @@ if(UNIX)
   execute_process(
     COMMAND @CMAKE_CURRENT_BINARY_DIR@/python-build/bin/python setup.py install
     WORKING_DIRECTORY "@python_base@"
-    RESULT_VARIABLE rv
     )
 
 endif()

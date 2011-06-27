@@ -1,16 +1,15 @@
 
 if(UNIX)
-  set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
-  set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
-
-  set(with_tcl_param)
+  set(LDFLAGS)
+  set(CPPFLAGS)
+  set(LD_LIBRARY_PATH "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
-
+  set(with_tcl_param)
   if(Slicer_USE_PYTHONQT_WITH_TCL)
-    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:$ENV{LD_LIBRARY_PATH}")
-    set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
-    set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
+    set(LD_LIBRARY_PATH "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:${LD_LIBRARY_PATH}")
+    set(LDFLAGS "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
+    set(CPPFLAGS "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
     set(with_tcl_param "--with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build")
   endif()
 
@@ -28,15 +27,28 @@ if(UNIX)
     endif()
     set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
 
-    set(ENV{CFLAGS} "${osx_flags} $ENV{CFLAGS}")
-    set(ENV{CXXFLAGS} "${osx_flags} $ENV{CXXFLAGS}")
-    set(ENV{CPPFLAGS} "${osx_flags} $ENV{CPPFLAGS}")
-    set(ENV{LDFLAGS} "${osx_flags} $ENV{LDFLAGS}")
-  endif()
+    set(CFLAGS "${CFLAGS} ${osx_flags}")
+    set(CXXFLAGS "${CXXFLAGS} ${osx_flags}")
+    set(CPPFLAGS "${CPPFLAGS} ${osx_flags}")
+    set(LDFLAGS "${LDFLAGS} ${osx_flags}")
+    set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
+  endif(APPLE)
+
+  set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
+  foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
+    set(ENV{${v}} ${${v}})
+  endforeach()
+
+  #message(CXX:[$ENV{CXX}])
+  #message(CFLAGS:[$ENV{CFLAGS}])
+  #message(CXXFLAGS:[$ENV{CXXFLAGS}])
+  #message(CPPFLAGS:[$ENV{CPPFLAGS}])
+  #message(LDFLAGS:[$ENV{LDFLAGS}])
+  #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
     COMMAND sh configure --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build ${with_tcl_param} --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
-    RESULT_VARIABLE rv
+    #RESULT_VARIABLE rv
     )
 endif()
