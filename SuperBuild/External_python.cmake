@@ -24,6 +24,10 @@ set(proj python)
 
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+#
+# WARNING - If you consider updating the Python version, make sure the patch 
+#           step associated with both window and unix are still valid !
+#
 set(PYVER_SHORT 26)
 set(python_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Python-2.6.6.tgz)
 set(python_MD5 b2f209df270a33315e62c1ffac1937f0)
