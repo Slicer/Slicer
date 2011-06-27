@@ -191,7 +191,10 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
         this->Interactor->SetEventPositionFlipY(x, rawY);
         if (this->GetDebug())
           {
-          int y = this->Interactor->GetEventPosition()[1];
+#ifndef NDEBUG
+          int y =
+#endif
+            this->Interactor->GetEventPosition()[1];
           vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
           }
         // now throw the events

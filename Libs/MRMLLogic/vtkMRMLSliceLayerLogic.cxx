@@ -514,8 +514,6 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     this->Reslice->SetInterpolationModeToLinear();
     }
 
-  vtkImageData *slicedImageData = 0;
-
   // for tensors reassign scalar data
   if ( volumeNode && volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {

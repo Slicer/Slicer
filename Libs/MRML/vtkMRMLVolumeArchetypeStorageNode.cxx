@@ -375,7 +375,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     for (unsigned int n = 0; n < reader->GetNumberOfFileNames(); n++)
       {
       const char *thisFileName = reader->GetFileName(n);
-      int currentSize = this->AddFileName(thisFileName);
+#ifndef NDEBUG
+      int currentSize =
+#endif
+        this->AddFileName(thisFileName);
       vtkDebugMacro("After adding file " << n << ", filename = " << thisFileName << " to this storage node's list, current size of the list = " << currentSize);
       }
     }

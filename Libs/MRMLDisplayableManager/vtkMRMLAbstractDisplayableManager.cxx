@@ -661,7 +661,7 @@ void vtkMRMLAbstractDisplayableManager::RemoveInteractorStyleObservableEvent(int
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::OnInteractorStyleEvent(int eventid)
+void vtkMRMLAbstractDisplayableManager::OnInteractorStyleEvent(int vtkNotUsed(eventid))
 {
 //  std::cout << "OnInteractorStyleEvent - eventid:" << eventid
 //            << ", eventname:" << vtkCommand::GetStringFromEventId(eventid) << std::endl;
