@@ -20,11 +20,13 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QDesktopWidget>
 #include <QListView>
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkVTKScalarsToColorsUtils.h>
 
 // qMRMLWidgets includes
 #include <qMRMLNodeComboBox_p.h>
@@ -34,15 +36,15 @@
 #include "qSlicerPresetComboBox.h"
 #include "qSlicerPresetComboBox_p.h"
 
-// Qt includes
-#include <QDebug>
-
 // MRML includes
-#include "vtkMRMLNode.h"
+#include <vtkMRMLNode.h>
+#include <vtkMRMLVolumePropertyNode.h>
 
 // VTK includes
 
 // STD includes
+
+//-----------------------------------------------------------------------------
 qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
   :Superclass(parentWidget)
 {
@@ -53,9 +55,6 @@ qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
   listView->setMovement(QListView::Static);
   listView->setFlow(QListView::LeftToRight);
   listView->setSpacing(0);
-  //listView->setGridSize(QSize(65,50));
-  //listView->setLayoutMode(QListView::Batched);
-  //listView->setBatchSize(1);
   this->setView(listView);
 }
 
@@ -152,7 +151,7 @@ void qSlicerPresetComboBoxPrivate::init()
   qMRMLSceneModel* sceneModel =
     qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
   sceneModel->setNameColumn(-1);
-  sceneModel->setToolTipNameColumn(0);
+  //sceneModel->setToolTipNameColumn(0);
 
   QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)),
                    q, SLOT(setIconToPreset(vtkMRMLNode*)));
@@ -179,20 +178,35 @@ qSlicerPresetComboBox
 // --------------------------------------------------------------------------
 void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 {
+  // Search corresponding icon
   QIcon presetIcon(QString(":/presets/") + presetNode->GetName());
-  //QIcon presetIcon(":/Icons/VisibleOff.png");
   if (presetIcon.isNull())
     {
     return;
     }
+  // Set icon
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
   sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
+  
+  // Update icon size
   QList<QSize> iconSizes = presetIcon.availableSizes();
   if (iconSizes.count())
     {
     QSize iconSize = this->comboBox()->view()->iconSize();
     this->comboBox()->view()->setIconSize(QSize(qMax(iconSize.width(), iconSizes[0].width()),
                                                 qMax(iconSize.height(), iconSizes[0].height())));
+    }
+  
+  // Set toolTip
+  vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
+  if (volumePropertyNode)
+    {
+    int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
+    vtkScalarsToColors* colors =
+      volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
+    QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
+    QString toolTip = QString("<img src=\"%1\"> %2").arg(ctk::base64HTMLImageTagSrc(img)).arg(presetNode->GetName());
+    sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
     }
 }
 
