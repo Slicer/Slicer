@@ -147,6 +147,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
   "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
   "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
+  
+  # CTK - dcmtk
+  "dcmdata/dcovlay.h:93: warning: use of old-style cast"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
