@@ -29,6 +29,7 @@ add_test(
     NAME ${CLP}Test
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
+    --useBMatrixGradientDirections
     --inputDicomDirectory ${TEST_DATA}/DWIDicom
     --outputDirectory ${TEMP}
     --outputVolume DWIDicom.nhdr
