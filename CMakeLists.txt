@@ -126,7 +126,9 @@ option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 option(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
-option(Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON
+  "Slicer_USE_PYTHONQT" OFF)
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)
 option(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
 option(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
