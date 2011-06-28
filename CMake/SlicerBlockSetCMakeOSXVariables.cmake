@@ -32,6 +32,15 @@
 #
 if(APPLE)
 
+  # Waiting universal binaries are supported and tested, complain if
+  # multiple architectures are specified.
+  if(NOT "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
+    list(LENGTH CMAKE_OSX_ARCHITECTURES arch_count)
+    if(arch_count GREATER 1)
+      message(FATAL_ERROR "error: Only one value (i386 or x86_64) should be associated with CMAKE_OSX_ARCHITECTURES.")
+    endif()
+  endif()
+
   # See CMake/Modules/Platform/Darwin.cmake)
   #   8.x == Mac OSX 10.4 (Tiger)
   #   9.x == Mac OSX 10.5 (Leopard)
