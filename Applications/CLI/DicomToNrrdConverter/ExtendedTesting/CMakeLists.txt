@@ -47,12 +47,12 @@ SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The 
 
 set(MIDAS_KEY_DIR "${DicomToNrrdConverter_SOURCE_DIR}/ExtendedTesting/keys")
 
-add_test(DicomToNrrdConverterTest ${DicomToNrrdConverter_TESTS}
+add_test(DicomToNrrdConverterHelpTest ${DicomToNrrdConverter_TESTS}
     DicomToNrrdConverterTest
     --help
   )
 
-add_test(DicomToNrrdConverterDWICompareTest ${Slicer_LAUNCH_COMMAND} ${DWICompareEXE}
+add_test(DicomToNrrdConverterDWICompareHelpTest ${Slicer_LAUNCH_COMMAND} ${DWICompareEXE}
     --help
   )
 
