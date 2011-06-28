@@ -209,6 +209,22 @@ endif()
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
+
+if(APPLE)
+  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+  #       we ensure that the bitness will be properly detected.
+  include(${Slicer_CMAKE_DIR}/SlicerBlockSetCMakeOSXVariables.cmake)
+endif()
+
+# Make sure EXTENSION_NAME is defined
+if(NOT DEFINED EXTENSION_NAME OR "${EXTENSION_NAME}" STREQUAL "")
+  message(FATAL_ERROR "error: Make sure to define EXTENSION_NAME prior to call find_package(Slicer) !")
+endif()
+if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT SlicerConfig_INCLUDED_ONCE)
+  message(FATAL_ERROR "Since calling find_package(Slicer) automatically calls project(${EXTENSION_NAME}). Make sure to remove any call to project(${EXTENSION_NAME}).")
+endif()
+project(${EXTENSION_NAME})
+
 # The Slicer targets file.
 if(EXISTS "@Slicer_TARGETS_FILE@")
   include("@Slicer_TARGETS_FILE@")

@@ -13,23 +13,16 @@ if(POLICY CMP0017)
 endif()
 
 # Module name (usually identique to the directory name)
+# Note: You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
 set(EXTENSION_NAME LoadableExtensionTemplate)
 
 if(NOT Slicer_SOURCE_DIR)
-
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_STATUS "Beta")
   set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
 
   find_package(Slicer REQUIRED)
-  
-  if(APPLE)
-    # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
-    #       we ensure that the bitness will be properly detected.
-    include(${Slicer_CMAKE_DIR}/SlicerBlockSetCMakeOSXVariables.cmake)
-  endif()
-  project(${EXTENSION_NAME})
 
   set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
   set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
