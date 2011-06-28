@@ -13,18 +13,32 @@ if(UNIX)
     set(with_tcl_param "--with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build")
   endif()
 
+  set(extra_configure_flags)
   if(APPLE)
     set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
-    set(osx_arch_flags)
-    foreach(arch ${CMAKE_OSX_ARCHITECTURES})
-      set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
-    endforeach()
-    set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
-    set(osx_sysroot)
-    set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
-    if(CMAKE_CXX_HAS_ISYSROOT)
-      set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
+    if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
+      message(FATAL_ERROR "error: CMAKE_OSX_ARCHITECTURES should be specified.")
     endif()
+    list(LENGTH CMAKE_OSX_ARCHITECTURES arch_count)
+    if(arch_count GREATER 1)
+      message(FATAL_ERROR "error: Only one value should be associated with CMAKE_OSX_ARCHITECTURES.")
+    endif()
+
+    set(CMAKE_OSX_SYSROOT @CMAKE_OSX_SYSROOT@)
+    if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
+      message(FATAL_ERROR "error: CMAKE_OSX_SYSROOT should point to an existing directory.")
+    endif()
+
+    # See http://stackoverflow.com/questions/2111283/how-to-build-64-bit-python-on-os-x-10-6-only-64-bit-no-universal-nonsense
+    set(extra_configure_flags --with-universal-archs=32-bit)
+    if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64")
+      set(extra_configure_flags --with-universal-archs=64-bit)
+    endif()
+    list(APPEND extra_configure_flags --enable-universalsdk=${CMAKE_OSX_SYSROOT})
+
+    set(osx_arch_flags "-arch ${CMAKE_OSX_ARCHITECTURES}")
+    set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
+    set(osx_sysroot "-isysroot ${CMAKE_OSX_SYSROOT}")
     set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
 
     set(CFLAGS "${CFLAGS} ${osx_flags}")
@@ -47,7 +61,7 @@ if(UNIX)
   #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
-    COMMAND sh configure --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build ${with_tcl_param} --enable-unicode=ucs2 --enable-shared
+    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build ${with_tcl_param} --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
     #RESULT_VARIABLE rv
     )
