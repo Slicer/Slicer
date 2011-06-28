@@ -76,7 +76,7 @@ public:
 
   int SetControlPointWorldCoordinates(double newControl[3], int id)
     {
-    double localPoint[4];
+    double localPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, localPoint);
     return this->SetControlPoint(localPoint, id);
     }

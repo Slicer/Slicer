@@ -50,6 +50,8 @@
 
 typedef void (*fp)(void);
 
+#define NUMERIC_ZERO 0.000001
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);
 vtkCxxRevisionMacro (vtkMRMLAnnotationDisplayableManager, "$Revision: 1.2 $");
@@ -1385,7 +1387,7 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 
   double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
 
-  if (distance>1.0)
+  if (distance > NUMERIC_ZERO)
     {
     changed = true;
     }

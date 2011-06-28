@@ -58,7 +58,7 @@ public:
   // Get position of the first point in world coordinates, including parnts transfroms
   void GetPositionWorldCoordinates1(double position[4])
     {
-    double p[4];
+    double p[4]={0,0,0,1};
     this->GetPosition1(p);
     this->TransformPointToWorld(p,position);
     }
@@ -78,7 +78,7 @@ public:
 
   int SetPositionWorldCoordinates1(double newControl[4]) 
     { 
-    double locPoint[4];
+    double locPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, locPoint);
     return this->SetPosition1(locPoint) ; 
     }
@@ -96,7 +96,7 @@ public:
   // Get position of the second point in world coordinates, including parnts transfroms
   void GetPositionWorldCoordinates2(double position[4])
     {
-    double p[4];
+    double p[4]={0,0,0,1};
     this->GetPosition2(p);
     this->TransformPointToWorld(p,position);
     }
@@ -113,7 +113,7 @@ public:
 
   int SetPositionWorldCoordinates2(double newControl[4]) 
     { 
-    double locPoint[4];
+    double locPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, locPoint);
     return this->SetPosition2(locPoint) ; 
     }
