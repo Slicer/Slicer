@@ -511,11 +511,6 @@ set(INCR_TCL_VERSION_DOT "3.2")
 set(INCR_TCL_VERSION "32")
 
 #-----------------------------------------------------------------------------
-# Python Version info
-#-----------------------------------------------------------------------------
-
-
-#-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 set(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
@@ -617,9 +612,13 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
 endif()
 
 #-----------------------------------------------------------------------------
+# CLI wrapper
+#-----------------------------------------------------------------------------
+set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX ${CMAKE_CURRENT_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+
+#-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

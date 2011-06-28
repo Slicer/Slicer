@@ -15,15 +15,26 @@ macro(slicerMacroBuildCLI)
   # Sanity checks
   # --------------------------------------------------------------------------
   if(NOT DEFINED MY_NAME)
-    message(SEND_ERROR "NAME is mandatory")
+    message(FATAL_ERROR "error: NAME is mandatory")
   endif()
 
   if(DEFINED MY_LOGO_HEADER AND NOT EXISTS ${MY_LOGO_HEADER})
-    message(SEND_ERROR "Specified LOGO_HEADER [${header}] doesn't exist")
+    message(WARNING "warning: Specified LOGO_HEADER [${header}] doesn't exist")
     set(MY_LOGO_HEADER)
   endif()
-  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${MY_NAME}.xml)
-    message(SEND_ERROR "Xml file [${MY_NAME}.xml] doesn't exist !")
+
+  foreach(v Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX)
+    if(NOT EXISTS "${${v}}")
+      message(FATAL_ERROR "error: Variable ${v} point to an non-existing file or directory !")
+    endif()
+  endforeach()
+
+  set(cli_xml_file ${CMAKE_CURRENT_SOURCE_DIR}/${MY_NAME}.xml)
+  if(NOT EXISTS ${cli_xml_file})
+    set(cli_xml_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}.xml)
+    if(NOT EXISTS ${cli_xml_file})
+      message(FATAL_ERROR "Xml file [${MY_NAME}.xml] doesn't exist !")
+    endif()
   endif()
 
   set(CLP ${MY_NAME})
@@ -33,7 +44,7 @@ macro(slicerMacroBuildCLI)
   include(${GenerateCLP_USE_FILE})
 
   set(${CLP}_SOURCE ${CLP}.cxx ${MY_ADDITIONAL_SRCS})
-  generateclp(${CLP}_SOURCE ${CLP}.xml ${MY_LOGO_HEADER})
+  generateclp(${CLP}_SOURCE ${cli_xml_file} ${MY_LOGO_HEADER})
 
   if(DEFINED MY_LINK_DIRECTORIES)
     link_directories(${MY_LINK_DIRECTORIES})
@@ -43,45 +54,47 @@ macro(slicerMacroBuildCLI)
     include_directories(${MY_INCLUDE_DIRECTORIES})
   endif()
 
+  set(cli_targets)
+
   if(NOT MY_EXECUTABLE_ONLY)
 
     add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
     set_target_properties(${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-    slicer3_set_plugins_output_path(${CLP}Lib)
     if(DEFINED MY_TARGET_LIBRARIES)
       target_link_libraries(${CLP}Lib ${MY_TARGET_LIBRARIES})
     endif()
 
-    # Set labels associated with the target.
-    set_target_properties(${CLP}Lib PROPERTIES LABELS ${CLP})
-
-    add_executable(${CLP} ${Slicer_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
-    slicer3_set_plugins_output_path(${CLP})
+    add_executable(${CLP} ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
     target_link_libraries(${CLP} ${CLP}Lib)
 
-    # Set labels associated with the target.
-    set_target_properties(${CLP} PROPERTIES LABELS ${CLP})
-
-    # Install each target in the production area (where it would appear in an installation)
-    # and install each target in the developer area (for running from a build)
-    set(TARGETS ${CLP} ${CLP}Lib)
-    slicer3_install_plugins(${TARGETS})
+    set(cli_targets ${CLP} ${CLP}Lib)
 
   else()
 
     add_executable(${CLP} ${${CLP}_SOURCE})
-    slicer3_set_plugins_output_path(${CLP})
     if(DEFINED MY_TARGET_LIBRARIES)
       target_link_libraries(${CLP} ${MY_TARGET_LIBRARIES})
     endif()
 
-    # Set labels associated with the target.
-    set_target_properties(${CLP} PROPERTIES LABELS ${CLP})
+    set(cli_targets ${CLP})
 
-    # Install each target in the production area (where it would appear in an installation)
-    # and install each target in the developer area (for running from a build)
-    set(TARGETS ${CLP})
-    slicer3_install_plugins(${TARGETS})
   endif()
+
+  # Set labels associated with the target.
+  set_target_properties(${cli_targets} PROPERTIES LABELS ${CLP})
+
+  set_target_properties(${cli_targets} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+    )
+
+  # Install each target in the production area (where it would appear in an installation)
+  # and install each target in the developer area (for running from a build)
+  install(TARGETS ${cli_targets}
+    RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+    )
+
 
 endmacro()
