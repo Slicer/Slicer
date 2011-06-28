@@ -11,8 +11,11 @@
 #ifndef __itkPluginFilterWatcher_h
 #define __itkPluginFilterWatcher_h
 
-#include "itkSimpleFilterWatcher.h"
-#include "ModuleProcessInformation.h"
+// ModuleDescriptionParser includes
+#include <ModuleProcessInformation.h>
+
+// ITK includes
+#include <itkSimpleFilterWatcher.h>
 
 namespace itk
 {
@@ -39,6 +42,7 @@ public:
 
 protected:
 
+//-----------------------------------------------------------------------------
 /** Callback method to show the ProgressEvent */
 virtual void ShowProgress()
 {
@@ -96,6 +100,7 @@ virtual void ShowProgress()
     }
 }
 
+//-----------------------------------------------------------------------------
 /** Callback method to show the StartEvent */
 virtual void StartFilter()
 {
@@ -137,6 +142,7 @@ virtual void StartFilter()
     }
 }
 
+//-----------------------------------------------------------------------------
 /** Callback method to show the EndEvent */
 virtual void EndFilter()
 {

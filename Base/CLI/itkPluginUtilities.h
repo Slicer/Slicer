@@ -1,16 +1,20 @@
 #ifndef __itkPluginUtilities_h
 #define __itkPluginUtilities_h
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkPluginFilterWatcher.h"
+// ITK includes
+#include <itkContinuousIndex.h>
+#include <itkImage.h>
+#include <itkImageFileReader.h>
+#include <itkPluginFilterWatcher.h>
+
+// STD includes
 #include <vector>
 #include <string>
 
 namespace itk
 {
-  // Description:
-  // Get the PixelType and ComponentType from fileName
+  //-----------------------------------------------------------------------------
+  /// Get the PixelType and ComponentType from fileName
   void GetImageType (std::string fileName,
                      ImageIOBase::IOPixelType &pixelType,
                      ImageIOBase::IOComponentType &componentType)
@@ -25,8 +29,8 @@ namespace itk
       componentType = imageReader->GetImageIO()->GetComponentType();
     }
 
-  // Description:
-  // Get the PixelTypes and ComponentTypes from fileNames
+  //-----------------------------------------------------------------------------
+  /// Get the PixelTypes and ComponentTypes from fileNames
   void GetImageTypes (std::vector<std::string> fileNames,
                       std::vector<ImageIOBase::IOPixelType> &pixelTypes,
                       std::vector<ImageIOBase::IOComponentType> &componentTypes)
@@ -48,7 +52,7 @@ namespace itk
       }
     }
   
-#include "itkContinuousIndex.h"
+  //-----------------------------------------------------------------------------
   template <class T>
   void AlignVolumeCenters(T *fixed, T *moving, typename T::PointType &origin)
   {

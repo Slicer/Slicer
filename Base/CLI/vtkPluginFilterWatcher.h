@@ -1,12 +1,16 @@
 #ifndef __vtkPluginFilterWatcher_h
 #define __vtkPluginFilterWatcher_h
 
-#include "vtkCommand.h"
-#include "vtkAlgorithm.h"
-#include "ModuleProcessInformation.h"
+// ModuleDescriptionParser includes
+#include <ModuleProcessInformation.h>
+
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkAlgorithm.h>
 
 #include "vtkSlicerBaseCLIWin32Header.h"
 
+// STD includes
 #include <string>
 
 /** \class vtkPluginFilterWatcher

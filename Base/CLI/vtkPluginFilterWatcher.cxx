@@ -1,6 +1,10 @@
-#include "vtkObject.h"
-#include "vtkPluginFilterWatcher.h"
 
+#include <vtkPluginFilterWatcher.h>
+
+// VTK includes
+#include <vtkObject.h>
+
+//-----------------------------------------------------------------------------
 class vtkPluginWatcherStart : public vtkCommand
 {
 public:
@@ -57,6 +61,7 @@ private:
 
 };
 
+//-----------------------------------------------------------------------------
 class vtkPluginWatcherEnd : public vtkCommand
 {
 public:
@@ -105,6 +110,7 @@ private:
 
 };
 
+//-----------------------------------------------------------------------------
 class vtkPluginWatcherProgress : public vtkCommand
 {
 public:
@@ -168,6 +174,7 @@ public:
       }
   }
 
+  //-----------------------------------------------------------------------------
   void SetWatcher(vtkPluginFilterWatcher *w)
   {
     this->Watcher = w;
@@ -182,6 +189,7 @@ private:
 
 };
 
+//-----------------------------------------------------------------------------
 vtkPluginFilterWatcher
 ::vtkPluginFilterWatcher(vtkAlgorithm* o,
                          const char *comment,
@@ -225,8 +233,8 @@ vtkPluginFilterWatcher
                                                  this->ProgressFilterCommand);
 }
 
-vtkPluginFilterWatcher
-::~vtkPluginFilterWatcher()
+//-----------------------------------------------------------------------------
+vtkPluginFilterWatcher::~vtkPluginFilterWatcher()
 {
   // Remove any observers we have on the old process object
   if (this->Process)
@@ -251,6 +259,7 @@ vtkPluginFilterWatcher
   this->ProgressFilterCommand->Delete();
 }
 
+//-----------------------------------------------------------------------------
 void vtkPluginFilterWatcher::SetQuiet(bool val)
 {
   Quiet=val;
