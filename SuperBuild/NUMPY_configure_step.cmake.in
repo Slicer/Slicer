@@ -17,8 +17,8 @@ if(APPLE)
   set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
 
   set(ENV{CFLAGS} "${osx_flags}")
-  set(ENV{CXXFLAGS} "${osx_flags}")
-  set(ENV{CPPFLAGS} "${osx_flags}")
+  #set(ENV{CXXFLAGS} "${osx_flags}")
+  #set(ENV{CPPFLAGS} "${osx_flags}")
   set(ENV{LDFLAGS} "${osx_flags}")
 endif()
 
