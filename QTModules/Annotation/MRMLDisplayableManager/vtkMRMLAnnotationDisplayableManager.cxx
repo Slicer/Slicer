@@ -964,7 +964,14 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     return 0;
     }
 
-  for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
+  int numberOfControlPoints =  controlPointsNode->GetNumberOfControlPoints();
+  // the text node saves it's second control point in viewport coordinates, so
+  // don't check it
+  if (node->IsA("vtkMRMLAnnotationTextNode"))
+    {
+    numberOfControlPoints = 1;
+    }
+  for (int i=0; i < numberOfControlPoints; i++)
     {
     // we loop through all controlpoints of each node
     double transformedWorldCoordinates[4];

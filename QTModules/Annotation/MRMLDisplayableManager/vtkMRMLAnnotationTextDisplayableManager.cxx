@@ -28,6 +28,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
+#include <vtkCoordinate.h>
 
 // STD includes
 #include <string>
@@ -164,11 +165,27 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
     {
     textNode->SetTextLabel("New text");
     }
-  
+  // turn off text scaling
+  if (captionRep->GetCaptionActor2D() &&
+      captionRep->GetCaptionActor2D()->GetTextActor())
+    {
+    vtkDebugMacro("CreateWidget: turning text scaling off");
+    captionRep->GetCaptionActor2D()->GetTextActor()->SetTextScaleMode(vtkTextActor::TEXT_SCALE_MODE_NONE);
+    captionRep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetFontFamilyToTimes();
+    captionRep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetShadow(0);
+    captionRep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetItalic(0);
+
+    captionRep->GetCaptionActor2D()->GetCaptionTextProperty()->SetFontFamilyToTimes();
+    captionRep->GetCaptionActor2D()->GetCaptionTextProperty()->SetShadow(0);
+    captionRep->GetCaptionActor2D()->GetCaptionTextProperty()->SetItalic(0);
+    }
   captionWidget->SetInteractor(this->GetInteractor());
 
   captionWidget->SetRepresentation(captionRep);
 
+  // disallow the user being able to resize the border around the text
+  captionWidget->ResizableOff();
+  
   captionWidget->On();
 
   // now set it up from the node
@@ -209,7 +226,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget 
   node->SaveView();
 
   // propagate the widget to the MRML node
-  //this->PropagateWidgetToMRML(widget, node);
+//  this->PropagateWidgetToMRML(widget, node);
 }
 
 //---------------------------------------------------------------------------
@@ -270,6 +287,17 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   double worldCoordinates1[4];
   textNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
 
+  double *captionViewportCoordinates = textNode->GetCaptionCoordinates();
+  vtkDebugMacro("PropagateMRMLToWidget: caption coordinates from node = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1]);
+  if ((this->Is2DDisplayableManager() && strcmp(this->GetSliceNode()->GetName(), "Red") == 0) || !this->Is2DDisplayableManager())
+     {
+     vtkDebugMacro("PropagateMRMLToWidget: caption coordinates from node " << textNode->GetID() << " = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1] << (this->Is2DDisplayableManager() ? "(2D)" : "(3D)"));
+     }
+  //these two calls should do the same thing, the caption actor is updated
+  //from the rep position
+  rep->SetPosition(captionViewportCoordinates);
+  //captionActor->SetPosition(captionViewportCoordinates[0], captionViewportCoordinates[1]);
+  
   if (this->Is2DDisplayableManager())
      {
      double displayCoordinates1[4];
@@ -283,19 +311,10 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
      }
    else
      {
+     // 3D case
      rep->SetAnchorPosition(worldCoordinates1);
      captionActor->SetThreeDimensionalLeader(textDisplayNode->GetUseThreeDimensionalLeader());
      }
-
-  double captionWorldCoordinates[4];
-  textNode->GetControlPointWorldCoordinates(1, captionWorldCoordinates);
-
-  double captionViewportCoordinates[4];
-  double captionDisplayCoordinates[4];
-  this->GetWorldToDisplayCoordinates(captionWorldCoordinates,captionDisplayCoordinates);
-  this->GetDisplayToViewportCoordinates(captionDisplayCoordinates[0], captionDisplayCoordinates[1], captionViewportCoordinates);
-  rep->SetPosition(captionViewportCoordinates);
-
   // update widget text
   if (textDisplayNode->GetUseLineWrap())
     {
@@ -396,8 +415,8 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   double displayCoordinates1[4];
 
   // for the caption 
-  double worldCoordinates2[4];
-  double displayCoordinates2[4];
+//  double worldCoordinates2[4];
+//  double displayCoordinates2[4];
 
   bool allowMovement = true;
 
@@ -410,7 +429,6 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
       }
     
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
-
     if (displayCoordinates1[0] < 0 || displayCoordinates1[0] > this->GetInteractor()->GetRenderWindow()->GetSize()[0])
       {
       allowMovement = false;
@@ -433,18 +451,24 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   // update mrml coordinates
   textNode->SetTextCoordinates(worldCoordinates1);
 
+  // this gets the display coordinate offset between the anchor and the bottom
+  // of the caption box
+  // GetPosition goes to the BorderRepresentation and returns viewport
+  // coordinates, so does GetPosition on the caption actor
   double *captionPosition = rep->GetPosition();
-  //rep->GetPosition(displayCoordinates2);
+  
   if (captionPosition)
     {
-    displayCoordinates2[0] = captionPosition[0];
-    displayCoordinates2[1] = captionPosition[1];
-    displayCoordinates2[2] = 0.0;
-    displayCoordinates2[3] = 0.0;
+    vtkDebugMacro("PropagateWidgetToMRML: " << textNode->GetID() << " widget rep caption position viewport = " << captionPosition[0] << ", " << captionPosition[1]);
+    if (captionPosition[0] < 0.0 || captionPosition[1] < 0.0 || captionPosition[0] > 1.0 || captionPosition[1] > 1.0)
+      {
+      vtkErrorMacro("PropagateWidgetToMRML: caption position from widget is not in normalised viewport coordinates: " << captionPosition[0] << ", " << captionPosition[1]);
+      }
+    else
+      {
+      textNode->SetCaptionCoordinates(captionPosition);
+      }
     }
-  this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
-  textNode->SetCaptionCoordinates(worldCoordinates2);
-  
   // don't update mrml text, it can't be edited in 3D and this may take the
   // line wrapped text and put it into the node
   if (captionActor)
@@ -467,9 +491,9 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   // update mrml textscale
   if (captionActor)
     {
-    double fontSize = captionActor->GetTextActor()->GetScaledTextProperty()->GetFontSize();
-    std::cout << "WidgetToMRML: fontSize = " << fontSize << std::endl;
-    textDisplayNode->SetTextScale(fontSize);
+//    double fontSize = captionActor->GetTextActor()->GetScaledTextProperty()->GetFontSize();
+//    std::cout << "WidgetToMRML: fontSize = " << fontSize << std::endl;
+//    textDisplayNode->SetTextScale(fontSize);
     }
   // update mrml selected color
   //textDisplayNode->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
@@ -509,40 +533,22 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
   double displayCoordinates1[2];
   displayCoordinates1[0] = x;
   displayCoordinates1[1] = y;
-
-  // offset the caption
-  double displayCoordinates2[4];
-  if (this->Is2DDisplayableManager())
-   {
-   // offset by 50
-   displayCoordinates2[0] = displayCoordinates1[0] - 50.0;
-   displayCoordinates2[1] = displayCoordinates1[1] - 50.0;
-   }
-  else
-    {
-    // offest by a bit more
-    displayCoordinates2[0] = displayCoordinates1[0] - 100.0;
-    displayCoordinates2[1] = displayCoordinates1[1] - 100.0;
-    }
-  displayCoordinates2[2] = 0.0;
-  displayCoordinates2[3] = 0.0;
-
-  vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+  
+  vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1]);
 
   double worldCoordinates1[4];
-  double worldCoordinates2[4];
     
   this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
 
   this->RestrictDisplayCoordinatesToViewport(displayCoordinates1);
-  this->RestrictDisplayCoordinatesToViewport(displayCoordinates2);
-  vtkDebugMacro("OnClickInRenderWindow: restricted to viewport displaycoordinates2 = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
-  this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
 
   // create the MRML node
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
   textNode->SetTextCoordinates(worldCoordinates1);
-  textNode->SetCaptionCoordinates(worldCoordinates2);
+  double captionCoordinates[2];
+  this->BestGuessForNewCaptionCoordinates(captionCoordinates);
+  vtkDebugMacro("OnClickInRenderWindow: Best guess for caption coordinates = " << captionCoordinates[0] << ", " << captionCoordinates[1]);
+  textNode->SetCaptionCoordinates(captionCoordinates);
 
   textNode->SetTextLabel("New text");
 
@@ -560,5 +566,48 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
   if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
    {
     interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+    }
+}
+
+//---------------------------------------------------------------------------
+/// Figure out the best guess at a placement for a new caption coordinate by
+//examining the text nodes in the scene
+void vtkMRMLAnnotationTextDisplayableManager::BestGuessForNewCaptionCoordinates(double bestGuess[2])
+{
+  bestGuess[0] = 0.05;
+  bestGuess[1] = 0.05;
+
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  
+  int numNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationTextNode");
+ 
+  // for now, just hard code the nodes around the viewport
+  if (numNodes % 5 == 0)
+    {
+    bestGuess[0] = 0.8;
+    bestGuess[1] = 0.8;
+    }
+  else if (numNodes % 5 == 1)
+    {
+    bestGuess[0] = 0.05;
+    bestGuess[1] = 0.8;
+    }
+  else if (numNodes % 5 == 2)
+    {
+    bestGuess[0] = 0.8;
+    bestGuess[1] = 0.05;
+    }
+  else if (numNodes % 5 == 3)
+    {
+    bestGuess[0] = 0.2;
+    bestGuess[1] = 0.2;
+    }
+  else if (numNodes % 5 == 4)
+    {
+    bestGuess[0] = 0.5;
+    bestGuess[1] = 0.5;
     }
 }

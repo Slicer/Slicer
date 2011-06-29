@@ -57,6 +57,9 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
+  /// Examine nodes in the scene and try to pick a caption coordinate that
+  /// doesn't conflict.
+  void BestGuessForNewCaptionCoordinates(double bestGuess[2]);
 private:
 
   vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented

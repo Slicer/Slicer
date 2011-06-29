@@ -31,18 +31,16 @@ public:
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationText";};
-
+  
   virtual const char* GetIcon() {return ":/Icons/AnnotationText.png";};
 
   int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
   double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
 
-  // coordinates of the text box for the caption widget
-  //int SetCaptionCoordinates(double newCoord[3]) {return this->SetControlPoint(1,newCoord,1,1);}
-  //double* GetCaptionCoordinates() {return this->GetControlPointCoordinates(1);}
-
-  vtkSetVector3Macro(CaptionCoordinates,double);
-  vtkGetVector3Macro(CaptionCoordinates,double);
+  // normalized viewport coordinates of the lower left of the text box for the caption widget
+  int SetCaptionCoordinates(double x, double y);
+  int SetCaptionCoordinates(double newCoord[2]);
+  double* GetCaptionCoordinates() {return this->GetControlPointCoordinates(1);}
 
   void SetTextLabel(const char* newLabel) {this->SetText(0, newLabel, 1, 1);}
   vtkStdString GetTextLabel() {return this->GetText(0);}
@@ -54,12 +52,10 @@ public:
   };
 
 protected:
-  vtkMRMLAnnotationTextNode() { }
+  vtkMRMLAnnotationTextNode();
   ~vtkMRMLAnnotationTextNode() { }
   vtkMRMLAnnotationTextNode(const vtkMRMLAnnotationTextNode&);
   void operator=(const vtkMRMLAnnotationTextNode&);
-
-  double CaptionCoordinates[3];
 
 };
 
