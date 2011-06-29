@@ -5,8 +5,8 @@
 #ifndef __qSlicerAnnotationModuleWidgetsPluginExport_h
 #define __qSlicerAnnotationModuleWidgetsPluginExport_h
 
-#if defined(WIN32) && !defined(qSlicerAnnotationModuleWidgetsPlugin_STATIC)
- #if defined(qSlicerAnnotationModuleWidgetsPlugin_EXPORTS)
+#if defined(WIN32) && !defined(qSlicerAnnotationsModuleWidgetsPlugin_STATIC)
+ #if defined(qSlicerAnnotationsModuleWidgetsPlugin_EXPORTS)
   #define Q_ANNOTATIONS_MODULE_WIDGETS_PLUGIN_EXPORT __declspec( dllexport )
  #else
   #define Q_ANNOTATIONS_MODULE_WIDGETS_PLUGIN_EXPORT __declspec( dllimport )
