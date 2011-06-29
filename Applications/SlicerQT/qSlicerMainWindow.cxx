@@ -98,7 +98,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   this->ModuleSelectorToolBar = 0;
   // Title of the modules sorted by appearance order
   this->ModuleToolBarList << "Home" << "Data"  << "Volumes" << "Models" << "Transforms"
-                          << "Annotation" << "Editor" << "Measurements"
+                          << "Annotations" << "Editor" << "Measurements"
                           << "Colors";
   this->LayoutManager = 0;
   this->SettingsDialog = 0;

@@ -351,7 +351,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
            node->IsA("vtkMRMLAnnotationStorageNode") ||
            node->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
-    return "annotation";
+    return "annotations";
     }
   else if (node->IsA("vtkMRMLTransformNode") ||
            node->IsA("vtkMRMLTransformStorageNode"))

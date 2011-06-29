@@ -23,7 +23,7 @@ set(module_mrml_SRCS
 set(module_mrml_target_libraries
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
-  vtkSlicerAnnotationModuleMRML
+  vtkSlicerAnnotationsModuleMRML
   )
 
 SlicerMacroBuildModuleMRML(

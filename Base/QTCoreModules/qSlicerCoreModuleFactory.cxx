@@ -102,7 +102,7 @@ void qSlicerCoreModuleFactory::registerItems()
   d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   d->registerCoreModule<qSlicerEventBrokerModule>();
-  // vtkMRMLROINode are obsolete, one should use the Annotation module to
+  // vtkMRMLROINode are obsolete, one should use the Annotations module to
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerSliceControllerModule>();

@@ -46,7 +46,7 @@
 #include <itksys/RegularExpression.hxx>
 #include <itksys/DynamicLoader.hxx>
 
-// Annotation module includes
+// Annotations module includes
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
 // QT includes

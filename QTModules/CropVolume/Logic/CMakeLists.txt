@@ -23,7 +23,7 @@ set(module_logic_SRCS
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   vtkSlicerCropVolumeModuleMRML
-  vtkSlicerAnnotationModuleMRML
+  vtkSlicerAnnotationsModuleMRML
   vtkSlicerVolumesModuleLogic
   )
 

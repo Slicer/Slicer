@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerAnnotationModule</class>
+ <widget class="qSlicerWidget" name="qSlicerAnnotationModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>716</width>
+    <height>705</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Annotation</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
+      <string>Annotations</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_2">
+        <property name="title">
+         <string>Create</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="textTypeButton">
+             <property name="toolTip">
+              <string>Text annotation</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="fiducialTypeButton">
+             <property name="toolTip">
+              <string>Fiducial point</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rulerTypeButton">
+             <property name="toolTip">
+              <string>Distance measurement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationDistance.png</normaloff>:/Icons/AnnotationDistance.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="roiTypeButton">
+             <property name="toolTip">
+              <string>Region of Interest. This is a 3D only annotation.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="bidimensionalTypeButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Bidimensional orthogonal measurement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="screenShot">
+             <property name="toolTip">
+              <string>Create screenshot</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/ViewCamera.png</normaloff>:/Icons/ViewCamera.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="resumeButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Resume placement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationPlayForward.png</normaloff>:/Icons/AnnotationPlayForward.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pauseButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Pause placement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationPause.png</normaloff>:/Icons/AnnotationPause.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="cancelButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Cancel placement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationCancel.png</normaloff>:/Icons/AnnotationCancel.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="doneButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>End placement</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationOkDone.png</normaloff>:/Icons/AnnotationOkDone.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Edit</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="selectedLayout">
+           <item>
+            <widget class="QPushButton" name="selectAllButton">
+             <property name="toolTip">
+              <string>Select all annotations and hierarchies</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationSelectAll.png</normaloff>
+               <normalon>:/Icons/AnnotationDeselectAll.png</normalon>:/Icons/AnnotationSelectAll.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="unselectAllButton">
+             <property name="toolTip">
+              <string>Unselect all annotations and hierarchies</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationDeselectAll.png</normaloff>:/Icons/AnnotationDeselectAll.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="visibleSelectedButton">
+             <property name="toolTip">
+              <string>Toggle the visibility of highlighted Annotations. Hierarchies are ignored.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Icons/SlicerVisibleInvisible.png</normaloff>:/Icons/SlicerVisibleInvisible.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="lockSelectedButton">
+             <property name="toolTip">
+              <string>Lock/ unlock highlighted annotations. Hierarchies are ignored.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/SlicerLockUnlock.png</normaloff>:/Icons/SlicerLockUnlock.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="restoreViewButton">
+             <property name="toolTip">
+              <string>Reset sliceViews to the first coordinate of the highlighted annotation.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationResetView.png</normaloff>:/Icons/AnnotationResetView.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveUpSelectedButton">
+             <property name="toolTip">
+              <string>Move highlighted annotations up in the list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationMoveUp.png</normaloff>:/Icons/AnnotationMoveUp.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveDownSelectedButton">
+             <property name="toolTip">
+              <string>Move highlighted annotations down in the list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationMoveDown.png</normaloff>:/Icons/AnnotationMoveDown.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addHierarchyButton">
+             <property name="toolTip">
+              <string>Create a new hierarchy. If a hierarchy is currently highlighted, the new one will be a sub-hierarchy.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/SlicerAddHierarchy.png</normaloff>:/Icons/SlicerAddHierarchy.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="generateReport">
+             <property name="toolTip">
+              <string>Display a report of highlighted annotations</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationReport.png</normaloff>:/Icons/AnnotationReport.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="deleteSelectedButton">
+             <property name="toolTip">
+              <string>Delete highlighted annotations. Hierarchies have to single selected to get deleted.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/AnnotationDelete.png</normaloff>:/Icons/AnnotationDelete.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0">
+          <widget class="qMRMLAnnotationTreeView" name="hierarchyTreeView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="indentation">
+            <number>10</number>
+           </property>
+           <property name="uniformRowHeights">
+            <bool>true</bool>
+           </property>
+           <property name="listenNodeModifiedEvent" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="advancedCollapsibleGroupBox">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="persistentCheckBox">
+             <property name="text">
+              <string>Create-and-Place persistently when using the Annotation module</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy" stdset="0">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="active" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy" stdset="0">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="active" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationTreeView</class>
+   <extends>QTreeView</extends>
+   <header>GUI/qMRMLAnnotationTreeView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerAnnotationModule.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>CTKCollapsibleButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CTKSpacer</receiver>
+   <slot>setActive(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>220</x>
+     <y>571</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CTKCollapsibleGroupBox_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DynamicSpacer</receiver>
+   <slot>setActive(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

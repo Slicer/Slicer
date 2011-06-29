@@ -34,7 +34,7 @@ set(qt_module_UI_SRCS
 # Additional Target libraries
 set(qt_module_target_libraries
   vtkSlicerTractographyModuleLogic
-  vtkSlicerAnnotationModuleMRML
+  vtkSlicerAnnotationsModuleMRML
   )
 
 # Resources

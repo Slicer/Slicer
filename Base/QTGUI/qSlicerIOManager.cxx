@@ -307,19 +307,19 @@ void qSlicerIOManager::openScreenshotDialog()
   Q_D(qSlicerIOManager);
   // try opening the Annotation module's screen shot
   qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
-  if (moduleManager && moduleManager->isLoaded("annotation") == false)
+  if (moduleManager && moduleManager->isLoaded("annotations") == false)
     {
     // load it?
-    if (moduleManager->loadModule("annotation") == false)
+    if (moduleManager->loadModule("annotations") == false)
       {
-      qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to load Annotation module (annotation).";
+      qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to load Annotations module (annotations).";
       }
     }
 
   qSlicerAbstractCoreModule *modulePointer = NULL;
   if (moduleManager)
     {
-    modulePointer = moduleManager->module("annotation");
+    modulePointer = moduleManager->module("annotations");
     }
   if (modulePointer)
     {
@@ -327,7 +327,7 @@ void qSlicerIOManager::openScreenshotDialog()
     }
   else
     {
-    qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotation module (annotation), using the CTK screen shot dialog.";
+    qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotations module (annotations), using the CTK screen shot dialog.";
     // use the ctk one
     if (!d->ScreenshotDialog)
       {

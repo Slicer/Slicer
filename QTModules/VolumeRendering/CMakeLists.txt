@@ -70,8 +70,8 @@ set(qt_module_target_libraries
   vtkSlicerVolumeRenderingModuleLogic
   vtkSlicerVolumeRenderingModuleMRML
   VolumeRenderingReplacements
-  vtkSlicerAnnotationModuleMRML
-  qSlicerAnnotationModuleWidgets
+  vtkSlicerAnnotationsModuleMRML
+  qSlicerAnnotationsModuleWidgets
   qSlicerVolumeRenderingModuleWidgets
   )
 
