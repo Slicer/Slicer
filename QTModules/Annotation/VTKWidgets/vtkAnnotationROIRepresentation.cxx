@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerBoxRepresentation.cxx,v $
+  Module:    $RCSfile: vtkAnnotationROIRepresentation.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSlicerBoxRepresentation.h"
+#include "vtkAnnotationROIRepresentation.h"
 #include "vtkActor.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyDataMapper.h"
@@ -36,14 +36,14 @@
 #include "vtkObjectFactory.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerBoxRepresentation, "$Revision: 12141 $");
-vtkStandardNewMacro(vtkSlicerBoxRepresentation);
+vtkCxxRevisionMacro(vtkAnnotationROIRepresentation, "$Revision: 12141 $");
+vtkStandardNewMacro(vtkAnnotationROIRepresentation);
 
 //----------------------------------------------------------------------------
-vtkSlicerBoxRepresentation::vtkSlicerBoxRepresentation()
+vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
 {
   // The initial state
-  this->InteractionState = vtkSlicerBoxRepresentation::Outside;
+  this->InteractionState = vtkAnnotationROIRepresentation::Outside;
 
   // Handle size is in pixels for this widget
   this->HandleSize = 5.0;
@@ -176,7 +176,7 @@ vtkSlicerBoxRepresentation::vtkSlicerBoxRepresentation()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerBoxRepresentation::~vtkSlicerBoxRepresentation()
+vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
 {  
   this->HexActor->Delete();
   this->HexMapper->Delete();
@@ -225,7 +225,7 @@ vtkSlicerBoxRepresentation::~vtkSlicerBoxRepresentation()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetActors(vtkPropCollection *actors)
+void vtkAnnotationROIRepresentation::GetActors(vtkPropCollection *actors)
 {
   actors->RemoveAllItems();
   actors->AddItem(this->HexActor);
@@ -240,14 +240,14 @@ void vtkSlicerBoxRepresentation::GetActors(vtkPropCollection *actors)
 
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetPolyData(vtkPolyData *pd)
+void vtkAnnotationROIRepresentation::GetPolyData(vtkPolyData *pd)
 {
   pd->SetPoints(this->HexPolyData->GetPoints());
   pd->SetPolys(this->HexPolyData->GetPolys());
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::StartWidgetInteraction(double e[2])
+void vtkAnnotationROIRepresentation::StartWidgetInteraction(double e[2])
 {
   // Store the start position
   this->StartEventPosition[0] = e[0];
@@ -263,7 +263,7 @@ void vtkSlicerBoxRepresentation::StartWidgetInteraction(double e[2])
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::WidgetInteraction(double e[2])
+void vtkAnnotationROIRepresentation::WidgetInteraction(double e[2])
 {
   // Convert events to appropriate coordinate systems
   vtkCamera *camera = this->Renderer->IsActiveCameraCreated() ? this->Renderer->GetActiveCamera() : NULL;
@@ -290,48 +290,48 @@ void vtkSlicerBoxRepresentation::WidgetInteraction(double e[2])
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, e[0], e[1], z, pickPoint);
 
   // Process the motion
-  if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF0 )
+  if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF0 )
     {
     this->MoveMinusXFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF1 )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF1 )
     {
     this->MovePlusXFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF2 )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF2 )
     {
     this->MoveMinusYFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF3 )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF3 )
     {
     this->MovePlusYFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF4 )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF4 )
     {
     this->MoveMinusZFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::MoveF5 )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF5 )
     {
     this->MovePlusZFace(prevPickPoint,pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::Translating )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::Translating )
     {
     this->Translate(prevPickPoint, pickPoint);
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::Scaling )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::Scaling )
     {
     this->Scale(prevPickPoint, pickPoint, 
                 static_cast<int>(e[0]), static_cast<int>(e[1]));
     }
 
-  else if ( this->InteractionState == vtkSlicerBoxRepresentation::Rotating )
+  else if ( this->InteractionState == vtkAnnotationROIRepresentation::Rotating )
     {
     this->Rotate(static_cast<int>(e[0]), static_cast<int>(e[1]), prevPickPoint, pickPoint, vpn);
     }
@@ -343,7 +343,7 @@ void vtkSlicerBoxRepresentation::WidgetInteraction(double e[2])
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MoveFace(double *p1, double *p2, double *dir, 
+void vtkAnnotationROIRepresentation::MoveFace(double *p1, double *p2, double *dir,
                                     double *x1, double *x2, double *x3, double *x4,
                                     double *x5)
   {
@@ -373,7 +373,7 @@ void vtkSlicerBoxRepresentation::MoveFace(double *p1, double *p2, double *dir,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetDirection(const double Nx[3],const double Ny[3], 
+void vtkAnnotationROIRepresentation::GetDirection(const double Nx[3],const double Ny[3],
                                         const double Nz[3], double dir[3])
 {
   double dotNy, dotNz;
@@ -413,7 +413,7 @@ void vtkSlicerBoxRepresentation::GetDirection(const double Nx[3],const double Ny
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MovePlusXFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MovePlusXFace(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -432,7 +432,7 @@ void vtkSlicerBoxRepresentation::MovePlusXFace(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MoveMinusXFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MoveMinusXFace(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -452,7 +452,7 @@ void vtkSlicerBoxRepresentation::MoveMinusXFace(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MovePlusYFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MovePlusYFace(double *p1, double *p2)
 {
   double *pts =
      static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -472,7 +472,7 @@ void vtkSlicerBoxRepresentation::MovePlusYFace(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MoveMinusYFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MoveMinusYFace(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -492,7 +492,7 @@ void vtkSlicerBoxRepresentation::MoveMinusYFace(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MovePlusZFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MovePlusZFace(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -512,7 +512,7 @@ void vtkSlicerBoxRepresentation::MovePlusZFace(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::MoveMinusZFace(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::MoveMinusZFace(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -533,7 +533,7 @@ void vtkSlicerBoxRepresentation::MoveMinusZFace(double *p1, double *p2)
 
 //----------------------------------------------------------------------------
 // Loop through all points and translate them
-void vtkSlicerBoxRepresentation::Translate(double *p1, double *p2)
+void vtkAnnotationROIRepresentation::Translate(double *p1, double *p2)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -554,7 +554,7 @@ void vtkSlicerBoxRepresentation::Translate(double *p1, double *p2)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::Scale(double *vtkNotUsed(p1),
+void vtkAnnotationROIRepresentation::Scale(double *vtkNotUsed(p1),
                                  double *vtkNotUsed(p2),
                                  int vtkNotUsed(X),
                                  int Y)
@@ -585,7 +585,7 @@ void vtkSlicerBoxRepresentation::Scale(double *vtkNotUsed(p1),
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::ComputeNormals()
+void vtkAnnotationROIRepresentation::ComputeNormals()
 {
   double *pts =
      static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -613,7 +613,7 @@ void vtkSlicerBoxRepresentation::ComputeNormals()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetPlanes(vtkPlanes *planes)
+void vtkAnnotationROIRepresentation::GetPlanes(vtkPlanes *planes)
 {
   if ( ! planes )
     {
@@ -637,7 +637,7 @@ void vtkSlicerBoxRepresentation::GetPlanes(vtkPlanes *planes)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::Rotate(int X,
+void vtkAnnotationROIRepresentation::Rotate(int X,
                                   int Y,
                                   double *p1,
                                   double *p2,
@@ -687,7 +687,7 @@ void vtkSlicerBoxRepresentation::Rotate(int X,
 }
   
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::CreateDefaultProperties()
+void vtkAnnotationROIRepresentation::CreateDefaultProperties()
 {
   // Handle properties
   //  this->HandleProperty = vtkProperty::New();
@@ -732,7 +732,7 @@ void vtkSlicerBoxRepresentation::CreateDefaultProperties()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::PlaceWidget(double bds[6])
+void vtkAnnotationROIRepresentation::PlaceWidget(double bds[6])
 {
   int i;
   double bounds[6], center[3];
@@ -763,7 +763,7 @@ void vtkSlicerBoxRepresentation::PlaceWidget(double bds[6])
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetCenter(double center[])
+void vtkAnnotationROIRepresentation::GetCenter(double center[])
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -776,7 +776,7 @@ void vtkSlicerBoxRepresentation::GetCenter(double center[])
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetExtents(double bounds[])
+void vtkAnnotationROIRepresentation::GetExtents(double bounds[])
 {
   double *pts =
      static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -792,7 +792,7 @@ void vtkSlicerBoxRepresentation::GetExtents(double bounds[])
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GetTransform(vtkTransform *t)
+void vtkAnnotationROIRepresentation::GetTransform(vtkTransform *t)
 {
   double *pts =
     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -863,7 +863,7 @@ void vtkSlicerBoxRepresentation::GetTransform(vtkTransform *t)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::SetTransform(vtkTransform* t)
+void vtkAnnotationROIRepresentation::SetTransform(vtkTransform* t)
 {
   if (!t)
     {
@@ -909,7 +909,7 @@ void vtkSlicerBoxRepresentation::SetTransform(vtkTransform* t)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::SetOutlineFaceWires(int newValue)
+void vtkAnnotationROIRepresentation::SetOutlineFaceWires(int newValue)
 {
   if (this->OutlineFaceWires != newValue)
     {
@@ -921,7 +921,7 @@ void vtkSlicerBoxRepresentation::SetOutlineFaceWires(int newValue)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::SetOutlineCursorWires(int newValue)
+void vtkAnnotationROIRepresentation::SetOutlineCursorWires(int newValue)
 {
   if (this->OutlineCursorWires != newValue)
     {
@@ -933,7 +933,7 @@ void vtkSlicerBoxRepresentation::SetOutlineCursorWires(int newValue)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::GenerateOutline()
+void vtkAnnotationROIRepresentation::GenerateOutline()
 {
   // Whatever the case may be, we have to reset the Lines of the
   // OutlinePolyData (i.e. nuke all current line data)
@@ -993,13 +993,13 @@ void vtkSlicerBoxRepresentation::GenerateOutline()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::ComputeInteractionState(int X, int Y, int vtkNotUsed(modify))
+int vtkAnnotationROIRepresentation::ComputeInteractionState(int X, int Y, int vtkNotUsed(modify))
 {
   // Okay, we can process this. Try to pick handles first;
   // if no handles picked, then pick the bounding box.
   if (!this->Renderer || !this->Renderer->IsInViewport(X, Y))
     {
-    this->InteractionState = vtkSlicerBoxRepresentation::Outside;
+    this->InteractionState = vtkAnnotationROIRepresentation::Outside;
     return this->InteractionState;
     }
   
@@ -1017,31 +1017,31 @@ int vtkSlicerBoxRepresentation::ComputeInteractionState(int X, int Y, int vtkNot
            reinterpret_cast<vtkActor *>(path->GetFirstNode()->GetViewProp());
     if ( this->CurrentHandle == this->Handle[0] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF0;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF0;
       }
     else if ( this->CurrentHandle == this->Handle[1] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF1;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF1;
       }
     else if ( this->CurrentHandle == this->Handle[2] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF2;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF2;
       }
     else if ( this->CurrentHandle == this->Handle[3] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF3;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF3;
       }
     else if ( this->CurrentHandle == this->Handle[4] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF4;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF4;
       }
     else if ( this->CurrentHandle == this->Handle[5] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::MoveF5;
+      this->InteractionState = vtkAnnotationROIRepresentation::MoveF5;
       }
     else if ( this->CurrentHandle == this->Handle[6] )
       {
-      this->InteractionState = vtkSlicerBoxRepresentation::Translating;
+      this->InteractionState = vtkAnnotationROIRepresentation::Translating;
       }
     }
 
@@ -1049,34 +1049,34 @@ int vtkSlicerBoxRepresentation::ComputeInteractionState(int X, int Y, int vtkNot
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::SetInteractionState(int state)
+void vtkAnnotationROIRepresentation::SetInteractionState(int state)
 {
   // Clamp to allowable values
-  state = ( state < vtkSlicerBoxRepresentation::Outside ? vtkSlicerBoxRepresentation::Outside : 
-            (state > vtkSlicerBoxRepresentation::Scaling ? vtkSlicerBoxRepresentation::Scaling : state) );
+  state = ( state < vtkAnnotationROIRepresentation::Outside ? vtkAnnotationROIRepresentation::Outside :
+            (state > vtkAnnotationROIRepresentation::Scaling ? vtkAnnotationROIRepresentation::Scaling : state) );
   
   // Depending on state, highlight appropriate parts of representation
   int handle;
   this->InteractionState = state;
   switch (state)
     {
-    case vtkSlicerBoxRepresentation::MoveF0:
-    case vtkSlicerBoxRepresentation::MoveF1:
-    case vtkSlicerBoxRepresentation::MoveF2:
-    case vtkSlicerBoxRepresentation::MoveF3:
-    case vtkSlicerBoxRepresentation::MoveF4:
-    case vtkSlicerBoxRepresentation::MoveF5:
+    case vtkAnnotationROIRepresentation::MoveF0:
+    case vtkAnnotationROIRepresentation::MoveF1:
+    case vtkAnnotationROIRepresentation::MoveF2:
+    case vtkAnnotationROIRepresentation::MoveF3:
+    case vtkAnnotationROIRepresentation::MoveF4:
+    case vtkAnnotationROIRepresentation::MoveF5:
       this->HighlightOutline(0);
       handle = this->HighlightHandle(this->CurrentHandle);
       this->HighlightFace(handle);
       break;
-    case vtkSlicerBoxRepresentation::Rotating:
+    case vtkAnnotationROIRepresentation::Rotating:
       //this->HighlightOutline(0);
       //this->HighlightHandle(NULL);
       //this->HighlightFace(this->HexPicker->GetCellId());
       break;
-    case vtkSlicerBoxRepresentation::Translating:
-    case vtkSlicerBoxRepresentation::Scaling:
+    case vtkAnnotationROIRepresentation::Translating:
+    case vtkAnnotationROIRepresentation::Scaling:
       this->HighlightOutline(1);
       this->HighlightHandle(this->Handle[6]);
       this->HighlightFace(-1);
@@ -1089,7 +1089,7 @@ void vtkSlicerBoxRepresentation::SetInteractionState(int state)
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerBoxRepresentation::GetBounds()
+double *vtkAnnotationROIRepresentation::GetBounds()
 {
   this->BuildRepresentation();
   this->BoundingBox->SetBounds(this->HexActor->GetBounds());
@@ -1097,7 +1097,7 @@ double *vtkSlicerBoxRepresentation::GetBounds()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::BuildRepresentation()
+void vtkAnnotationROIRepresentation::BuildRepresentation()
 {
   // Rebuild only if necessary
   if ( this->GetMTime() > this->BuildTime ||
@@ -1111,7 +1111,7 @@ void vtkSlicerBoxRepresentation::BuildRepresentation()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::ReleaseGraphicsResources(vtkWindow *w)
+void vtkAnnotationROIRepresentation::ReleaseGraphicsResources(vtkWindow *w)
 {
   this->HexActor->ReleaseGraphicsResources(w);
   this->HexOutline->ReleaseGraphicsResources(w);
@@ -1125,7 +1125,7 @@ void vtkSlicerBoxRepresentation::ReleaseGraphicsResources(vtkWindow *w)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::RenderOpaqueGeometry(vtkViewport *v)
+int vtkAnnotationROIRepresentation::RenderOpaqueGeometry(vtkViewport *v)
 {
   int count=0;
   this->BuildRepresentation();
@@ -1143,7 +1143,7 @@ int vtkSlicerBoxRepresentation::RenderOpaqueGeometry(vtkViewport *v)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport *v)
+int vtkAnnotationROIRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport *v)
 {
   int count=0;
   this->BuildRepresentation();
@@ -1161,7 +1161,7 @@ int vtkSlicerBoxRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport *
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::HasTranslucentPolygonalGeometry()
+int vtkAnnotationROIRepresentation::HasTranslucentPolygonalGeometry()
 {
   int result=0;
   this->BuildRepresentation();
@@ -1184,7 +1184,7 @@ int vtkSlicerBoxRepresentation::HasTranslucentPolygonalGeometry()
   c[2] = (a[2] + b[2])/2.0;
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::PositionHandles()
+void vtkAnnotationROIRepresentation::PositionHandles()
 {
   double *pts =
      static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
@@ -1227,7 +1227,7 @@ void vtkSlicerBoxRepresentation::PositionHandles()
 #undef VTK_AVERAGE
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::HandlesOn()
+void vtkAnnotationROIRepresentation::HandlesOn()
 {
   for (int i=0; i<7; i++)
     {
@@ -1236,7 +1236,7 @@ void vtkSlicerBoxRepresentation::HandlesOn()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::HandlesOff()
+void vtkAnnotationROIRepresentation::HandlesOff()
 {
   for (int i=0; i<7; i++)
     {
@@ -1245,7 +1245,7 @@ void vtkSlicerBoxRepresentation::HandlesOff()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::SizeHandles()
+void vtkAnnotationROIRepresentation::SizeHandles()
 {
   double *center 
     = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
@@ -1258,7 +1258,7 @@ void vtkSlicerBoxRepresentation::SizeHandles()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerBoxRepresentation::HighlightHandle(vtkProp *prop)
+int vtkAnnotationROIRepresentation::HighlightHandle(vtkProp *prop)
 {
   // first unhighlight anything picked
   this->HighlightOutline(0);
@@ -1291,7 +1291,7 @@ int vtkSlicerBoxRepresentation::HighlightHandle(vtkProp *prop)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::HighlightFace(int cellId)
+void vtkAnnotationROIRepresentation::HighlightFace(int cellId)
 {
   if ( cellId >= 0 )
     {
@@ -1316,7 +1316,7 @@ void vtkSlicerBoxRepresentation::HighlightFace(int cellId)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::HighlightOutline(int highlight)
+void vtkAnnotationROIRepresentation::HighlightOutline(int highlight)
 {
   if ( highlight )
     {
@@ -1331,7 +1331,7 @@ void vtkSlicerBoxRepresentation::HighlightOutline(int highlight)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxRepresentation::PrintSelf(ostream& os, vtkIndent indent)
+void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

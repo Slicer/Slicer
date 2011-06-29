@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerBoxWidget2.cxx,v $
+  Module:    $RCSfile: vtkAnnotationROIWidget.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,8 +12,8 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSlicerBoxWidget2.h"
-#include "vtkSlicerBoxRepresentation.h"
+#include "vtkAnnotationROIWidget.h"
+#include "vtkAnnotationROIRepresentation.h"
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 #include "vtkRenderWindowInteractor.h"
@@ -26,13 +26,13 @@
 #include "vtkRenderer.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerBoxWidget2, "$Revision: 12141 $");
-vtkStandardNewMacro(vtkSlicerBoxWidget2);
+vtkCxxRevisionMacro(vtkAnnotationROIWidget, "$Revision: 12141 $");
+vtkStandardNewMacro(vtkAnnotationROIWidget);
 
 //----------------------------------------------------------------------------
-vtkSlicerBoxWidget2::vtkSlicerBoxWidget2()
+vtkAnnotationROIWidget::vtkAnnotationROIWidget()
 {
-  this->WidgetState = vtkSlicerBoxWidget2::Start;
+  this->WidgetState = vtkAnnotationROIWidget::Start;
   this->ManagesCursor = 1;
 
   this->TranslationEnabled = 1;
@@ -42,37 +42,37 @@ vtkSlicerBoxWidget2::vtkSlicerBoxWidget2()
   // Define widget events
   this->CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonPressEvent,
                                           vtkWidgetEvent::Select,
-                                          this, vtkSlicerBoxWidget2::SelectAction);
+                                          this, vtkAnnotationROIWidget::SelectAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonReleaseEvent,
                                           vtkWidgetEvent::EndSelect,
-                                          this, vtkSlicerBoxWidget2::EndSelectAction);
+                                          this, vtkAnnotationROIWidget::EndSelectAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::MiddleButtonPressEvent,
                                           vtkWidgetEvent::Translate,
-                                          this, vtkSlicerBoxWidget2::TranslateAction);
+                                          this, vtkAnnotationROIWidget::TranslateAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::MiddleButtonReleaseEvent,
                                           vtkWidgetEvent::EndTranslate,
-                                          this, vtkSlicerBoxWidget2::EndSelectAction);
+                                          this, vtkAnnotationROIWidget::EndSelectAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonPressEvent,
                                           vtkWidgetEvent::Scale,
-                                          this, vtkSlicerBoxWidget2::ScaleAction);
+                                          this, vtkAnnotationROIWidget::ScaleAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonReleaseEvent,
                                           vtkWidgetEvent::EndScale,
-                                          this, vtkSlicerBoxWidget2::EndSelectAction);
+                                          this, vtkAnnotationROIWidget::EndSelectAction);
   this->CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent,
                                           vtkWidgetEvent::Move,
-                                          this, vtkSlicerBoxWidget2::MoveAction);
+                                          this, vtkAnnotationROIWidget::MoveAction);
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerBoxWidget2::~vtkSlicerBoxWidget2()
+vtkAnnotationROIWidget::~vtkAnnotationROIWidget()
 {  
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::SelectAction(vtkAbstractWidget *w)
+void vtkAnnotationROIWidget::SelectAction(vtkAbstractWidget *w)
 {
   // We are in a static method, cast to ourself
-  vtkSlicerBoxWidget2 *self = reinterpret_cast<vtkSlicerBoxWidget2*>(w);
+  vtkAnnotationROIWidget *self = reinterpret_cast<vtkAnnotationROIWidget*>(w);
 
   // Get the event position
   int X = self->Interactor->GetEventPosition()[0];
@@ -82,7 +82,7 @@ void vtkSlicerBoxWidget2::SelectAction(vtkAbstractWidget *w)
   if ( !self->CurrentRenderer || 
        !self->CurrentRenderer->IsInViewport(X,Y) )
     {
-    self->WidgetState = vtkSlicerBoxWidget2::Start;
+    self->WidgetState = vtkAnnotationROIWidget::Start;
     return;
     }
   
@@ -93,25 +93,25 @@ void vtkSlicerBoxWidget2::SelectAction(vtkAbstractWidget *w)
   e[1] = static_cast<double>(Y);
   self->WidgetRep->StartWidgetInteraction(e);
   int interactionState = self->WidgetRep->GetInteractionState();
-  if ( interactionState == vtkSlicerBoxRepresentation::Outside )
+  if ( interactionState == vtkAnnotationROIRepresentation::Outside )
     {
     return;
     }
   
   // We are definitely selected
-  self->WidgetState = vtkSlicerBoxWidget2::Active;
+  self->WidgetState = vtkAnnotationROIWidget::Active;
   self->GrabFocus(self->EventCallbackCommand);
 
   // Modifier keys force us into translare mode
   // The SetInteractionState has the side effect of highlighting the widget
   if ( self->Interactor->GetShiftKey() || self->Interactor->GetControlKey() )
     {
-    reinterpret_cast<vtkSlicerBoxRepresentation*>(self->WidgetRep)->
-      SetInteractionState(vtkSlicerBoxRepresentation::Translating);
+    reinterpret_cast<vtkAnnotationROIRepresentation*>(self->WidgetRep)->
+      SetInteractionState(vtkAnnotationROIRepresentation::Translating);
     }
   else 
     {
-    reinterpret_cast<vtkSlicerBoxRepresentation*>(self->WidgetRep)->
+    reinterpret_cast<vtkAnnotationROIRepresentation*>(self->WidgetRep)->
       SetInteractionState(interactionState);
     }
 
@@ -123,10 +123,10 @@ void vtkSlicerBoxWidget2::SelectAction(vtkAbstractWidget *w)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::TranslateAction(vtkAbstractWidget *w)
+void vtkAnnotationROIWidget::TranslateAction(vtkAbstractWidget *w)
 {
   // We are in a static method, cast to ourself
-  vtkSlicerBoxWidget2 *self = reinterpret_cast<vtkSlicerBoxWidget2*>(w);
+  vtkAnnotationROIWidget *self = reinterpret_cast<vtkAnnotationROIWidget*>(w);
 
   // Get the event position
   int X = self->Interactor->GetEventPosition()[0];
@@ -136,7 +136,7 @@ void vtkSlicerBoxWidget2::TranslateAction(vtkAbstractWidget *w)
   if ( !self->CurrentRenderer || 
        !self->CurrentRenderer->IsInViewport(X,Y) )
     {
-    self->WidgetState = vtkSlicerBoxWidget2::Start;
+    self->WidgetState = vtkAnnotationROIWidget::Start;
     return;
     }
   
@@ -147,16 +147,16 @@ void vtkSlicerBoxWidget2::TranslateAction(vtkAbstractWidget *w)
   e[1] = static_cast<double>(Y);
   self->WidgetRep->StartWidgetInteraction(e);
   int interactionState = self->WidgetRep->GetInteractionState();
-  if ( interactionState == vtkSlicerBoxRepresentation::Outside )
+  if ( interactionState == vtkAnnotationROIRepresentation::Outside )
     {
     return;
     }
   
   // We are definitely selected
-  self->WidgetState = vtkSlicerBoxWidget2::Active;
+  self->WidgetState = vtkAnnotationROIWidget::Active;
   self->GrabFocus(self->EventCallbackCommand);
-  reinterpret_cast<vtkSlicerBoxRepresentation*>(self->WidgetRep)->
-    SetInteractionState(vtkSlicerBoxRepresentation::Translating);
+  reinterpret_cast<vtkAnnotationROIRepresentation*>(self->WidgetRep)->
+    SetInteractionState(vtkAnnotationROIRepresentation::Translating);
   
   // start the interaction
   self->EventCallbackCommand->SetAbortFlag(1);
@@ -166,10 +166,10 @@ void vtkSlicerBoxWidget2::TranslateAction(vtkAbstractWidget *w)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::ScaleAction(vtkAbstractWidget *w)
+void vtkAnnotationROIWidget::ScaleAction(vtkAbstractWidget *w)
 {
   // We are in a static method, cast to ourself
-  vtkSlicerBoxWidget2 *self = reinterpret_cast<vtkSlicerBoxWidget2*>(w);
+  vtkAnnotationROIWidget *self = reinterpret_cast<vtkAnnotationROIWidget*>(w);
 
   // Get the event position
   int X = self->Interactor->GetEventPosition()[0];
@@ -179,7 +179,7 @@ void vtkSlicerBoxWidget2::ScaleAction(vtkAbstractWidget *w)
   if ( !self->CurrentRenderer || 
        !self->CurrentRenderer->IsInViewport(X,Y) )
     {
-    self->WidgetState = vtkSlicerBoxWidget2::Start;
+    self->WidgetState = vtkAnnotationROIWidget::Start;
     return;
     }
   
@@ -190,16 +190,16 @@ void vtkSlicerBoxWidget2::ScaleAction(vtkAbstractWidget *w)
   e[1] = static_cast<double>(Y);
   self->WidgetRep->StartWidgetInteraction(e);
   int interactionState = self->WidgetRep->GetInteractionState();
-  if ( interactionState == vtkSlicerBoxRepresentation::Outside )
+  if ( interactionState == vtkAnnotationROIRepresentation::Outside )
     {
     return;
     }
   
   // We are definitely selected
-  self->WidgetState = vtkSlicerBoxWidget2::Active;
+  self->WidgetState = vtkAnnotationROIWidget::Active;
   self->GrabFocus(self->EventCallbackCommand);
-  reinterpret_cast<vtkSlicerBoxRepresentation*>(self->WidgetRep)->
-    SetInteractionState(vtkSlicerBoxRepresentation::Scaling);
+  reinterpret_cast<vtkAnnotationROIRepresentation*>(self->WidgetRep)->
+    SetInteractionState(vtkAnnotationROIRepresentation::Scaling);
 
   // start the interaction
   self->EventCallbackCommand->SetAbortFlag(1);
@@ -209,12 +209,12 @@ void vtkSlicerBoxWidget2::ScaleAction(vtkAbstractWidget *w)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::MoveAction(vtkAbstractWidget *w)
+void vtkAnnotationROIWidget::MoveAction(vtkAbstractWidget *w)
 {
-  vtkSlicerBoxWidget2 *self = reinterpret_cast<vtkSlicerBoxWidget2*>(w);
+  vtkAnnotationROIWidget *self = reinterpret_cast<vtkAnnotationROIWidget*>(w);
 
   // See whether we're active
-  if ( self->WidgetState == vtkSlicerBoxWidget2::Start )
+  if ( self->WidgetState == vtkAnnotationROIWidget::Start )
     {
     return;
     }
@@ -236,18 +236,18 @@ void vtkSlicerBoxWidget2::MoveAction(vtkAbstractWidget *w)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::EndSelectAction(vtkAbstractWidget *w)
+void vtkAnnotationROIWidget::EndSelectAction(vtkAbstractWidget *w)
 {
-  vtkSlicerBoxWidget2 *self = reinterpret_cast<vtkSlicerBoxWidget2*>(w);
-  if ( self->WidgetState == vtkSlicerBoxWidget2::Start )
+  vtkAnnotationROIWidget *self = reinterpret_cast<vtkAnnotationROIWidget*>(w);
+  if ( self->WidgetState == vtkAnnotationROIWidget::Start )
     {
     return;
     }
   
   // Return state to not active
-  self->WidgetState = vtkSlicerBoxWidget2::Start;
-  reinterpret_cast<vtkSlicerBoxRepresentation*>(self->WidgetRep)->
-    SetInteractionState(vtkSlicerBoxRepresentation::Outside);
+  self->WidgetState = vtkAnnotationROIWidget::Start;
+  reinterpret_cast<vtkAnnotationROIRepresentation*>(self->WidgetRep)->
+    SetInteractionState(vtkAnnotationROIRepresentation::Outside);
   self->ReleaseFocus();
 
   self->EventCallbackCommand->SetAbortFlag(1);
@@ -257,16 +257,16 @@ void vtkSlicerBoxWidget2::EndSelectAction(vtkAbstractWidget *w)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerBoxWidget2::CreateDefaultRepresentation()
+void vtkAnnotationROIWidget::CreateDefaultRepresentation()
 {
   if ( ! this->WidgetRep )
     {
-    this->WidgetRep = vtkSlicerBoxRepresentation::New();
+    this->WidgetRep = vtkAnnotationROIRepresentation::New();
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerBoxWidget2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkAnnotationROIWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerBoxWidget2.h,v $
+  Module:    $RCSfile: vtkAnnotationROIWidget.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,9 +12,9 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkSlicerBoxWidget2 - 3D widget for manipulating a box
+///  vtkAnnotationROIWidget - 3D widget for manipulating a box
 /// 
-/// This 3D widget interacts with a vtkSlicerBoxRepresentation class (i.e., it
+/// This 3D widget interacts with a vtkAnnotationROIRepresentation class (i.e., it
 /// handles the events that drive its corresponding representation). The
 /// representation is assumed to represent a region of interest that is
 /// represented by an arbitrarily oriented hexahedron (or box) with interior
@@ -23,14 +23,14 @@
 /// six faces can also be interacted with. The first six handles are placed on
 /// the six faces, the seventh is in the center of the box. In addition, a
 /// bounding box outline is shown, the "faces" of which can be selected for
-/// object rotation or scaling. A nice feature of vtkSlicerBoxWidget2, like any 3D
+/// object rotation or scaling. A nice feature of vtkAnnotationROIWidget, like any 3D
 /// widget, will work with the current interactor style. That is, if
-/// vtkSlicerBoxWidget2 does not handle an event, then all other registered
+/// vtkAnnotationROIWidget does not handle an event, then all other registered
 /// observers (including the interactor style) have an opportunity to process
-/// the event. Otherwise, the vtkSlicerBoxWidget will terminate the processing of
+/// the event. Otherwise, the vtkAnnotationROIWidget will terminate the processing of
 /// the event that it handles.
 //
-/// To use this widget, you generally pair it with a vtkSlicerBoxRepresentation
+/// To use this widget, you generally pair it with a vtkAnnotationROIRepresentation
 /// (or a subclass). Variuos options are available in the representation for 
 /// controlling how the widget appears, and how the widget functions.
 //
@@ -57,7 +57,7 @@
 //
 /// Note that the event bindings described above can be changed using this
 /// class's vtkWidgetEventTranslator. This class translates VTK events 
-/// into the vtkSlicerBoxWidget2's widget events:
+/// into the vtkAnnotationROIWidget's widget events:
 /// <pre>
 ///   vtkWidgetEvent::Select -- some part of the widget has been selected
 ///   vtkWidgetEvent::EndSelect -- the selection process has completed
@@ -68,7 +68,7 @@
 ///   vtkWidgetEvent::Move -- a request for motion has been invoked
 /// </pre>
 //
-/// In turn, when these widget events are processed, the vtkSlicerBoxWidget2
+/// In turn, when these widget events are processed, the vtkAnnotationROIWidget
 /// invokes the following VTK events on itself (which observers can listen for):
 /// <pre>
 ///   vtkCommand::StartInteractionEvent (on vtkWidgetEvent::Select)
@@ -80,42 +80,42 @@
 /// Note that in some cases the widget can be picked even when it is "behind"
 /// other actors.  This is an intended feature and not a bug.
 /// 
-/// This class, and the affiliated vtkSlicerBoxRepresentation, are second generation
+/// This class, and the affiliated vtkAnnotationROIRepresentation, are second generation
 /// VTK widgets. An earlier version of this functionality was defined in the
-/// class vtkSlicerBoxWidget.
+/// class vtkAnnotationROIWidget.
 
 /// .SECTION See Also
-/// vtkSlicerBoxRepresentation vtkSlicerBoxWidget
+/// vtkAnnotationROIRepresentation vtkAnnotationROIWidget
 
-#ifndef __vtkSlicerBoxWidget2_h
-#define __vtkSlicerBoxWidget2_h
+#ifndef __vtkAnnotationROIWidget_h
+#define __vtkAnnotationROIWidget_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 #include "vtkAbstractWidget.h"
 
-class vtkSlicerBoxRepresentation;
+class vtkAnnotationROIRepresentation;
 class vtkHandleWidget;
 
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkSlicerBoxWidget2 : public vtkAbstractWidget
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkAnnotationROIWidget : public vtkAbstractWidget
 {
 public:
   /// 
   /// Instantiate the object.
-  static vtkSlicerBoxWidget2 *New();
+  static vtkAnnotationROIWidget *New();
 
   /// 
   /// Standard class methods for type information and printing.
-  vtkTypeRevisionMacro(vtkSlicerBoxWidget2,vtkAbstractWidget);
+  vtkTypeRevisionMacro(vtkAnnotationROIWidget,vtkAbstractWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
   /// Specify an instance of vtkWidgetRepresentation used to represent this
   /// widget in the scene. Note that the representation is a subclass of vtkProp
   /// so it can be added to the renderer independent of the widget.
-  void SetRepresentation(vtkSlicerBoxRepresentation *r)
+  void SetRepresentation(vtkAnnotationROIRepresentation *r)
     {this->Superclass::SetWidgetRepresentation(reinterpret_cast<vtkWidgetRepresentation*>(r));}
   
   /// 
@@ -134,12 +134,12 @@ public:
 
   /// 
   /// Create the default widget representation if one is not set. By default,
-  /// this is an instance of the vtkSlicerBoxRepresentation class.
+  /// this is an instance of the vtkAnnotationROIRepresentation class.
   void CreateDefaultRepresentation();
 
 protected:
-  vtkSlicerBoxWidget2();
-  ~vtkSlicerBoxWidget2();
+  vtkAnnotationROIWidget();
+  ~vtkAnnotationROIWidget();
 
 //BTX - manage the state of the widget
   int WidgetState;
@@ -159,8 +159,8 @@ protected:
   int RotationEnabled;
 
 private:
-  vtkSlicerBoxWidget2(const vtkSlicerBoxWidget2&);  //Not implemented
-  void operator=(const vtkSlicerBoxWidget2&);  //Not implemented
+  vtkAnnotationROIWidget(const vtkAnnotationROIWidget&);  //Not implemented
+  void operator=(const vtkAnnotationROIWidget&);  //Not implemented
 };
 
 #endif

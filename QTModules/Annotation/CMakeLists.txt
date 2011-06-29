@@ -36,8 +36,6 @@ set(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx
 
-  MRMLDisplayableManager/vtkSlicerBoxRepresentation.cxx
-  MRMLDisplayableManager/vtkSlicerBoxWidget2.cxx
   )
 
 set(Logic_SRCS
@@ -62,6 +60,9 @@ set(VTKWidget_SRCS
 
   VTKWidgets/vtkAnnotationGlyphSource2D.cxx
   VTKWidgets/vtkAnnotationGlyphSource2D.h
+  
+  VTKWidgets/vtkAnnotationROIRepresentation.cxx
+  VTKWidgets/vtkAnnotationROIWidget.cxx  
   )
 
 set(GUI_SRCS

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerBoxRepresentation.h,v $
+  Module:    $RCSfile: vtkAnnotationROIRepresentation.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkSlicerBoxRepresentation - a class defining the representation for the vtkSlicerBoxWidget2
+///  vtkAnnotationROIRepresentation - a class defining the representation for the vtkSlicerBoxWidget2
 /// 
 /// This class is a concrete representation for the vtkSlicerBoxWidget2. It
 /// represents a box with seven handles: one on each of the six faces, plus a
@@ -31,8 +31,8 @@
 /// vtkSlicerBoxWidget2 vtkSlicerBoxWidget
 
 
-#ifndef __vtkSlicerBoxRepresentation_h
-#define __vtkSlicerBoxRepresentation_h
+#ifndef __vtkAnnotationROIRepresentation_h
+#define __vtkAnnotationROIRepresentation_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
@@ -57,16 +57,16 @@ class vtkMatrix4x4;
 
 #define NUMBER_HANDLES 7
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerBoxRepresentation : public vtkWidgetRepresentation
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationROIRepresentation : public vtkWidgetRepresentation
 {
 public:
   /// 
   /// Instantiate the class.
-  static vtkSlicerBoxRepresentation *New();
+  static vtkAnnotationROIRepresentation *New();
 
   /// 
   /// Standard methods for the class.
-  vtkTypeRevisionMacro(vtkSlicerBoxRepresentation,vtkWidgetRepresentation);
+  vtkTypeRevisionMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -199,8 +199,8 @@ public:
 
 
 protected:
-  vtkSlicerBoxRepresentation();
-  ~vtkSlicerBoxRepresentation();
+  vtkAnnotationROIRepresentation();
+  ~vtkAnnotationROIRepresentation();
 
   /// Manage how the representation appears
   double LastEventPosition[3];
@@ -291,8 +291,8 @@ protected:
 
 
 private:
-  vtkSlicerBoxRepresentation(const vtkSlicerBoxRepresentation&);  //Not implemented
-  void operator=(const vtkSlicerBoxRepresentation&);  //Not implemented
+  vtkAnnotationROIRepresentation(const vtkAnnotationROIRepresentation&);  //Not implemented
+  void operator=(const vtkAnnotationROIRepresentation&);  //Not implemented
 };
 
 #endif
