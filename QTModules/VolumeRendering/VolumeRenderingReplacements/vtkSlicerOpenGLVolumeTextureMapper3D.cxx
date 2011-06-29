@@ -1523,7 +1523,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::GetLightInformation(
       float lightIntensity = light[lightIndex]->GetIntensity();
       double lightColor[3];
       
-      light[lightIndex]->GetColor( lightColor );
+      light[lightIndex]->GetDiffuseColor( lightColor );
       
       double lightPosition[3];
       double lightFocalPoint[3];
@@ -1654,7 +1654,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupProgramLocalsForShadingFP(
       float lightIntensity = light[lightIndex]->GetIntensity();
       double lightColor[3];
       
-      light[lightIndex]->GetColor( lightColor );
+      light[lightIndex]->GetDiffuseColor( lightColor );
       
       double lightPosition[3];
       double lightFocalPoint[3];
