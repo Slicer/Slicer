@@ -538,23 +538,33 @@ class HelperBox(object):
         
         # label index
         item = qt.QStandardItem()
+        item.setEditable(False)
         item.setText( str(structureIndex) )
         self.structures.setItem(self.row,0,item)
         self.items.append(item)
         # label color
         item = qt.QStandardItem()
+        item.setEditable(False)
         item.setData(color,1)
         self.structures.setItem(self.row,1,item)
         self.items.append(item)
         # structure name
         item = qt.QStandardItem()
+        item.setEditable(False)
         item.setText(structureName)
         self.structures.setItem(self.row,2,item)
         self.items.append(item)
         # volumeName name
         item = qt.QStandardItem()
+        item.setEditable(False)
         item.setText(vName)
         self.structures.setItem(self.row,3,item)
+        self.items.append(item)
+        # sort order
+        item = qt.QStandardItem()
+        item.setEditable(True)
+        item.setText("")
+        self.structures.setItem(self.row,4,item)
         self.items.append(item)
         self.row += 1
 
@@ -564,10 +574,12 @@ class HelperBox(object):
     self.structuresView.setColumnWidth(1,50)
     self.structuresView.setColumnWidth(2,60)
     self.structuresView.setColumnWidth(3,100)
+    self.structuresView.setColumnWidth(4,10)
     self.structures.setHeaderData(0,1,"Number")
     self.structures.setHeaderData(1,1,"Color")
     self.structures.setHeaderData(2,1,"Name")
     self.structures.setHeaderData(3,1,"Label Volume")
+    self.structures.setHeaderData(4,1,"Order")
     self.structuresView.setModel(self.structures)
     
     # show the tools if a structure has been selected
@@ -689,6 +701,7 @@ class HelperBox(object):
     # structures view
 
     self.structuresView = qt.QTreeView()
+    self.structuresView.sortingEnabled = True
     self.structuresFrame.layout().addWidget(self.structuresView)
 
     # all buttons frame 
