@@ -23,8 +23,8 @@ set(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingReplacements
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
-  ${qSlicerAnnotationModuleWidgets_SOURCE_DIR}
-  ${qSlicerAnnotationModuleWidgets_BINARY_DIR}
+  ${qSlicerAnnotationsModuleWidgets_SOURCE_DIR}
+  ${qSlicerAnnotationsModuleWidgets_BINARY_DIR}
   )
 
 # Displayable manager sources
