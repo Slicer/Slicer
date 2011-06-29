@@ -543,15 +543,6 @@ void qMRMLAnnotationTreeView::hideScene()
   this->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
   this->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
 
-  // hide the strange columns
-  this->hideColumn(6);
-  this->hideColumn(7);
-  this->hideColumn(8);
-  this->hideColumn(9);
-  this->hideColumn(10);
-  this->hideColumn(11);
-
-
 }
 
 //------------------------------------------------------------------------------
