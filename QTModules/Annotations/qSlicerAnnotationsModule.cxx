@@ -3,9 +3,6 @@
 #include <QtPlugin>
 #include <QDebug>
 
-// PythonQT includes
-#include <PythonQt.h>
-
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -24,6 +21,9 @@
 #include <vtkSlicerConfigure.h>
 
 #ifdef Slicer_USE_PYTHONQT
+  // PythonQT includes
+  #include <PythonQt.h>
+
   void PythonQt_init_org_slicer_module_qSlicerAnnotationsModuleWidgets(PyObject*);
 #endif
 
