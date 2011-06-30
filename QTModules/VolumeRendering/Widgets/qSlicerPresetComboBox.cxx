@@ -27,6 +27,7 @@
 // CTK includes
 #include <ctkComboBox.h>
 #include <ctkVTKScalarsToColorsUtils.h>
+#include <ctkWidgetsUtils.h>
 
 // qMRMLWidgets includes
 #include <qMRMLNodeComboBox_p.h>
