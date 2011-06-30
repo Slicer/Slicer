@@ -48,9 +48,20 @@ list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${lib_name}
+
+set(target_libraries
   qSlicerAnnotationsModuleWidgets
-  qSlicerAnnotationsModuleWidgetsPythonQt
+   )
+
+if(Slicer_USE_PYTHONQT)
+  set(target_libraries
+      ${target_libraries}
+      qSlicerAnnotationsModuleWidgetsPythonQt
+      )
+endif()
+
+target_link_libraries(${KIT}CxxTests ${lib_name}
+  ${target_libraries}
 )
 
 #macro(SIMPLE_TEST  TESTNAME)
