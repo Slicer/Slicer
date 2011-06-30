@@ -57,8 +57,8 @@ def registerScriptedDisplayableManagers(sliceWidget):
     evalString = '%s.GetClassName()' % instName
     instClass = eval(evalString)
     # creat a proc that represents the instance
-    tcl('set procName [::tpycl::uniqueInstanceName %s]' % instClass)
-    tclCmd = 'proc $procName {args} {::tpycl::methodCaller slicer.sliceWidget%s_%s $args}' % (sliceWidget, key)
+    procName = tcl('set procName [::tpycl::uniqueInstanceName %s]' % instClass)
+    tclCmd = 'proc $procName {args} {::tpycl::methodCaller %s slicer.sliceWidget%s_%s $args}' % (procName, sliceWidget, key)
     tcl(tclCmd)
     # set the new tcl instance into the sliceGUI instance for this slice
     tcl('%s %s $procName' % (sliceGUIName, method))

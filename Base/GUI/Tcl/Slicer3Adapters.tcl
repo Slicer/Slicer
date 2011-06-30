@@ -50,10 +50,10 @@ namespace eval Slicer3Adapters {
             set event "${event}XXX"
           }
           set script [lindex $args 3]
-          ::tpycl::methodCaller slicer.broker [list $method $subject $event $script]
+          ::tpycl::methodCaller slicer.broker slicer.broker [list $method $subject $event $script]
         }
         default {
-          ::tpycl::methodCaller slicer.broker $args
+          ::tpycl::methodCaller slicer.broker slicer.broker $args
         }
       }
     }

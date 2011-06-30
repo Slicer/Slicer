@@ -105,12 +105,12 @@ namespace eval tpycl {
       set instanceName $pyInstanceName
     } else {
       # if the caller specified a name, create an alias proc for it
-      proc ::$instanceName {args} [format "tpycl::methodCaller $pyInstanceName $%s" args]
+      proc ::$instanceName {args} [format "tpycl::methodCaller $instanceName $pyInstanceName $%s" args]
     }
     return $instanceName
   }
 
-  proc methodCaller {instanceName args} {
+  proc methodCaller {tclInstanceName pyInstanceName args} {
     # call to python to execute the method for this instance
     set args [lindex $args 0]
     set method [lindex $args 0]
@@ -124,24 +124,27 @@ namespace eval tpycl {
     # TODO: deal with special cases in a more general way
     switch $method {
       "Print" {
-        set pycmd "str($instanceName)"
+        set pycmd "str($pyInstanceName)"
       }
       "IsA" {
-        set fmt "$instanceName.IsA('%s')"
+        set fmt "$pyInstanceName.IsA('%s')"
         set pycmd [eval format $fmt $args]
       } 
       "Delete" {
-        py_del "$instanceName"
+        py_del "$pyInstanceName"
         
-        if {[string equal ::$instanceName [info procs ::$instanceName]]} {
-          rename ::$instanceName ""
+        if { [info procs ::$pyInstanceName] != "" } {
+          rename ::$pyInstanceName ""
+        }
+        if { [info procs ::$tclInstanceName] != "" } {
+          rename ::$tclInstanceName ""
         }
         return
       } 
 
 
       default {
-        set doc [py_eval "__tmpdoc = $instanceName.$method.__doc__"]
+        set doc [py_eval "__tmpdoc = $pyInstanceName.$method.__doc__"]
         set types [py_eval "__tmpdoc\[__tmpdoc.find('(')+1:__tmpdoc.find(')')\]"]
 
         set tuple 0
@@ -162,12 +165,12 @@ namespace eval tpycl {
         if { [llength $args] != [llength $types] } {
           # TODO: check for non matching args here
           # - complication is multiple sinatures
-          # error "$instanceName $method called with \"$args\" but method needs \"$types\" (according to $doc)"
+          # error "$pyInstanceName $method called with \"$args\" but method needs \"$types\" (according to $doc)"
         }
 
         # avoid trying to set "$var(" as tcl will 
         # try to treat it as an array reference
-        set pycmd [format "$instanceName.$method%s" "("]
+        set pycmd [format "$pyInstanceName.$method%s" "("]
         foreach arg $args { 
           set type [lindex $types 0]
           set types [lrange $types 1 end]

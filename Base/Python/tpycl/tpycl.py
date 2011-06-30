@@ -127,7 +127,7 @@ class tpycl(object):
         instanceName = self.py_vtkInstanceName(evalResult)
         if self.tcl_eval("info command %s" % instanceName) == "":
           exec ("%s = globals()['__tpycl_result']" % instanceName, globals())
-          self.tcl_eval( "proc ::%s {args} {tpycl::methodCaller %s $args}" % (instanceName, instanceName) )
+          self.tcl_eval( "proc ::%s {args} {tpycl::methodCaller %s %s $args}" % (instanceName, instanceName, instanceName) )
         return( instanceName )
     except AttributeError:
       pass
