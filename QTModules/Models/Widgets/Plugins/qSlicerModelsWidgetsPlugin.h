@@ -21,10 +21,11 @@
 #ifndef __qSlicerModelsWidgetsPlugin_h
 #define __qSlicerModelsWidgetsPlugin_h
 
-#include "qMRMLModelDisplayNodeWidgetPlugin.h"
-
+// Qt includes
 #include <QDesignerCustomWidgetCollectionInterface>
-#include "qSlicerModelsWidgetsPluginExport.h"
+
+// Models includes
+#include "qMRMLModelDisplayNodeWidgetPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGIN_EXPORT qSlicerModelsWidgetsPlugin

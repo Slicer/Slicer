@@ -21,6 +21,10 @@
 #ifndef __qMRMLWidgetsPlugin_h
 #define __qMRMLWidgetsPlugin_h
 
+// Qt includes
+#include <QDesignerCustomWidgetCollectionInterface>
+
+// qMRMLWidgets includes
 #include "qMRMLCheckableNodeComboBoxPlugin.h"
 #include "qMRMLClipNodeWidgetPlugin.h"
 #include "qMRMLCollapsibleButtonPlugin.h"
@@ -54,9 +58,6 @@
 #include "qMRMLWidgetPlugin.h"
 #include "qMRMLWindowLevelWidgetPlugin.h"
 #include "qMRMLSceneFactoryWidgetPlugin.h"
-
-#include <QDesignerCustomWidgetCollectionInterface>
-#include "qMRMLWidgetsPluginExport.h"
 
 // \class Group the plugins in one library
 class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin

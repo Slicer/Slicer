@@ -38,6 +38,19 @@ macro(qctk_build_designer_plugin)
 
   set(MY_LIBNAME ${lib_name})
 
+  
+  SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
+  SET(MY_EXPORT_HEADER_PREFIX "${lib_name}_")
+  SET(MY_LIBNAME ${lib_name})
+  
+  CONFIGURE_FILE(
+    ${QMRML_EXPORT_HEADER_TEMPLATE}
+    ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
+    )
+  SET(dynamicHeaders
+    "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
+
+  
   # Make sure variable are cleared
   set(MY_UI_CXX)
   set(MY_QRC_SRCS)

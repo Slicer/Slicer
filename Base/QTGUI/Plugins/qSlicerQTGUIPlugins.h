@@ -21,14 +21,13 @@
 #ifndef __qSlicerQTGUIPlugins_h
 #define __qSlicerQTGUIPlugins_h
 
-#include "qSlicerWidgetPlugin.h"
-#include "qSlicerModulePanelPlugin.h"
-#include "qSlicerMouseModeToolBarPlugin.h"
-
 // QT includes
 #include <QDesignerCustomWidgetCollectionInterface>
 
-#include "qSlicerQTGUIPluginExport.h"
+// QtGUI includes
+#include "qSlicerWidgetPlugin.h"
+#include "qSlicerModulePanelPlugin.h"
+#include "qSlicerMouseModeToolBarPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIPlugins : public QObject,

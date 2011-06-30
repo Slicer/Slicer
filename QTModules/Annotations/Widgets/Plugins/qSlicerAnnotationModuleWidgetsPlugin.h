@@ -21,13 +21,14 @@
 #ifndef __qSlicerAnnotationModuleWidgetsPlugin_h
 #define __qSlicerAnnotationModuleWidgetsPlugin_h
 
+// Qt includes
+#include <QDesignerCustomWidgetCollectionInterface>
+
+// Annotations includes
 #include "qMRMLAnnotationROIWidgetPlugin.h"
 
-#include <QDesignerCustomWidgetCollectionInterface>
-#include "qSlicerAnnotationModuleWidgetsPluginExport.h"
-
 // \class Group the plugins in one library
-class Q_ANNOTATIONS_MODULE_WIDGETS_PLUGIN_EXPORT qSlicerAnnotationModuleWidgetsPlugin
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGIN_EXPORT qSlicerAnnotationModuleWidgetsPlugin
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

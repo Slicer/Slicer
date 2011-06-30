@@ -21,10 +21,11 @@
 #ifndef __qSlicerVolumeRenderingModuleWidgetsPlugin_h
 #define __qSlicerVolumeRenderingModuleWidgetsPlugin_h
 
-#include "qSlicerPresetComboBoxPlugin.h"
-
+// Qt includes
 #include <QDesignerCustomWidgetCollectionInterface>
-#include "qSlicerVolumeRenderingModuleWidgetsPluginExport.h"
+
+// VolumeRendering includes
+#include "qSlicerPresetComboBoxPlugin.h"
 
 // \class Group the plugins in one library
 class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXPORT qSlicerVolumeRenderingModuleWidgetsPlugin

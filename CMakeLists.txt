@@ -564,6 +564,12 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIR
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
+# Set the header template which defines custom export/import macros
+# for shared libraries
+#-----------------------------------------------------------------------------
+set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/qMRMLWidgets/CMake/qMRMLExport.h.in")
+
+#-----------------------------------------------------------------------------
 # Generate SlicerVersion.txt
 #-----------------------------------------------------------------------------
 

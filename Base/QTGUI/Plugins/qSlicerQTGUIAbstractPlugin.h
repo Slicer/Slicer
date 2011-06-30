@@ -24,7 +24,7 @@
 // QT includes
 #include <QDesignerCustomWidgetInterface>
 
-#include "qSlicerQTGUIPluginExport.h"
+#include "qSlicerBaseQTGUIPlugin_Export.h"
 
 class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin :
   public QDesignerCustomWidgetInterface
