@@ -1,0 +1,23 @@
+#
+# Configuration for plastimatch-slicer - project by Greg Sharp
+# of MGH Medical Physics
+#
+scm       svn
+svnpath   http://forge.abcd.harvard.edu/svn/plastimatch/plastimatch/trunk
+svnusername anonymous
+svnpassword ""
+
+#cmakeproject plastimatch
+
+# homepage
+homepage    http://plastimatch.org
+
+# Match category in the xml description of the module (where it shows up in Modules menu)
+#category    Plastimatch
+
+# Give people an idea what to expect from this code 
+#  - Is it just a test or something you stand beind?
+status      Beta
+
+# One line stating what the module does
+description Plastimatch is an open source software for deformable image registration.
