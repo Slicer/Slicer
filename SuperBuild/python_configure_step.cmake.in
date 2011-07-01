@@ -30,11 +30,20 @@ if(UNIX)
     endif()
 
     # See http://stackoverflow.com/questions/2111283/how-to-build-64-bit-python-on-os-x-10-6-only-64-bit-no-universal-nonsense
-    set(extra_configure_flags --with-universal-archs=32-bit)
-    if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64")
-      set(extra_configure_flags --with-universal-archs=64-bit)
-    endif()
-    list(APPEND extra_configure_flags --enable-universalsdk=${CMAKE_OSX_SYSROOT})
+    #set(extra_configure_flags --with-universal-archs=32-bit)
+    #if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64")
+    #  set(extra_configure_flags --with-universal-archs=64-bit)
+    #endif()
+    #list(APPEND extra_configure_flags --enable-universalsdk=${CMAKE_OSX_SYSROOT})
+    
+    # Addendum: Using --with-universal-archs isn't the right approach since python build 
+    #           system tries to build a universal binary using 'lipo' tool and fails.
+    #           On the other hand, using an approach similar to one reported in [1], 
+    #           where disable-framework option is provided and specifying arch, 
+    #           sysroot and mmacosx-version-min reveals to be more successful.
+    # 
+    #           [1] http://webamused.wordpress.com/2011/01/31/building-64-bit-python-python-org-using-ucs-4-on-mac-os-x-10-6-6-snow-leopard/
+    list(APPEND extra_configure_flags --disable-toolbox-glue --disable-framework)
 
     set(osx_arch_flags "-arch ${CMAKE_OSX_ARCHITECTURES}")
     set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
