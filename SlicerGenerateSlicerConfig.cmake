@@ -50,11 +50,6 @@ set(Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG ${Slicer_ModuleWidgets_INCLUDE_DIRS
 # Qt
 set(QT_QMAKE_EXECUTABLE_CONFIG ${QT_QMAKE_EXECUTABLE})
 
-# Slicer libraries
-set(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-set(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-set(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-
 # External project
 if(Slicer_USE_BatchMake)
   set(BatchMake_DIR_CONFIG ${BatchMake_DIR})
@@ -67,12 +62,13 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 set(PYTHON_INCLUDE_PATH_CONFIG ${PYTHON_INCLUDE_PATH})
 set(PYTHON_LIBRARIES_CONFIG ${PYTHON_LIBRARIES})
+set(SlicerExecutionModel_DIR_CONFIG ${SlicerExecutionModel_DIR})
 set(SLICERLIBCURL_DIR_CONFIG ${SLICERLIBCURL_DIR})
 set(Teem_DIR_CONFIG ${Teem_DIR})
 set(VTK_DIR_CONFIG ${VTK_DIR})
 
 # List all required external project
-set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK GenerateCLP ITK qCDashAPI SLICERLIBCURL Teem VTK)
+set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK ITK qCDashAPI SLICERLIBCURL SlicerExecutionModel Teem VTK)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG BatchMake)
 endif()
