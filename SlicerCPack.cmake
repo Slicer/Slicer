@@ -1,6 +1,7 @@
-
-# Python install rules are common to both 'bundled' and 'regular' package
-include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
+if(Slicer_USE_PYTHONQT)
+  # Python install rules are common to both 'bundled' and 'regular' package
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
+endif()
 
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
@@ -12,7 +13,9 @@ if(NOT APPLE)
 else()
   # Note: Since CPACK_INSTALL_CMAKE_PROJECTS isn't defined, CPack will default to the current project
   #       and slicer install rules will be considered.
-  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
+  if(Slicer_USE_PYTHONQT)
+    include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
+  endif()
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
 
   # Generate qt.conf
