@@ -10,7 +10,6 @@ set(GENERATECLP_USE_MD5 ON)
 # --------------------------------------------------------------------------
 
 set(dirs
-  SlicerExecutionModel # Bundled subdirectory that can easily be included in other packages.
 # FileWatcher
   )
 

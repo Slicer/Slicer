@@ -1,6 +1,13 @@
 project(qSlicerBaseQTCLI)
 
 #
+# Third party library
+#
+
+# Required to define ModuleDescriptionParser_INCLUDE_DIRS
+find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+
+#
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 

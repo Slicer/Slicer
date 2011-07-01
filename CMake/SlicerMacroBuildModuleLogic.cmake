@@ -29,9 +29,13 @@ macro(SlicerMacroBuildModuleLogic)
     ${ARGN}
     )
 
+  # Third-party library
+  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+
   list(APPEND MODULELOGIC_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
+    ${ModuleDescriptionParser_INCLUDE_DIRS}
     ${Slicer_ModuleLogic_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )

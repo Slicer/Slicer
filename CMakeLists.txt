@@ -513,9 +513,6 @@ set(INCR_TCL_VERSION "32")
 #-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
-set(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-set(ModuleDescriptionParser_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-set(GenerateCLP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
 set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
 set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 

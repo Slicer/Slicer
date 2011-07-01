@@ -289,12 +289,12 @@ kwwidgets_install_tcl_tk_support_files("/lib")
 # --------------------------------------------------------------------------
 # Use the command line utilities
 #
-find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+#find_package(GenerateCLP REQUIRED)
+#if(GenerateCLP_FOUND)
+#  include(${GenerateCLP_USE_FILE})
+#endif(GenerateCLP_FOUND)
 
-generateclp(${SRC} Slicer3.xml)
+#generateclp(${SRC} Slicer3.xml)
 
 # --------------------------------------------------------------------------
 # Testing

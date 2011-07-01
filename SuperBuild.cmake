@@ -63,7 +63,7 @@ endif()
 #------------------------------------------------------------------------------
 # Slicer dependency list
 #------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI)
+set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI SlicerExecutionModel)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
@@ -208,6 +208,8 @@ ExternalProject_Add(${proj}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
+    # SlicerExecutionModel
+    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     # Teem
     -DTeem_DIR:PATH=${Teem_DIR}
     # VTK

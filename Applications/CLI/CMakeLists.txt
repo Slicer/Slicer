@@ -1,7 +1,7 @@
 project(CLI)
 
-# GenerateCLP
-find_package(GenerateCLP REQUIRED)
+# SlicerExecutionModel
+find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 
 # ITK
@@ -16,7 +16,7 @@ include(${VTK_USE_FILE})
 find_package(vtkITK REQUIRED)
 
 include_directories(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
-link_directories(${SlicerBaseCLI_BINARY_DIR} ${ModuleDescriptionParser_BINARY_DIR})
+link_directories(${SlicerBaseCLI_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
