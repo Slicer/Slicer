@@ -189,7 +189,7 @@ install(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
   COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
-# Configure Slicer Launcher (Linux & Windows Only)
+# Configure Slicer Launcher
 # --------------------------------------------------------------------------
 if(Slicer_USE_CTKAPPLAUNCHER)
   include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
