@@ -156,9 +156,10 @@ option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 
-set(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK")
+set(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK" FORCE)
 mark_as_advanced(Slicer_VTK_GIT_REPOSITORY)
-set(Slicer_VTK_GIT_TAG "origin/slicer-4.0-gamma" CACHE STRING "VTK git tag to use")
+# By default, use a specific SHA1 associated with branch slicer-4.0-gamma on github.com/Slicer/VTK.git
+set(Slicer_VTK_GIT_TAG "a8f1a02" CACHE STRING "VTK git tag to use" FORCE)
 mark_as_advanced(Slicer_VTK_GIT_TAG)
 set(Slicer_ITK_GIT_REPOSITORY "github.com/Slicer/ITK.git" CACHE STRING "repository from which to get ITK")
 mark_as_advanced(Slicer_ITK_GIT_REPOSITORY)
