@@ -551,6 +551,7 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationButtons()
   //d->stickyTypeButton->setChecked(false);
   d->rulerTypeButton->setChecked(false);
   d->bidimensionalTypeButton->setChecked(false);
+  d->screenShot->setChecked(false);
 }
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
@@ -585,6 +586,7 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
   //d->stickyTypeButton->setEnabled(false);
   d->rulerTypeButton->setEnabled(false);
   d->bidimensionalTypeButton->setEnabled(false);
+  d->screenShot->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -600,6 +602,7 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   //d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
   d->bidimensionalTypeButton->setEnabled(true);
+  d->screenShot->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
