@@ -109,6 +109,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
   this->UniqueIDByClass.clear();
+  this->UniqueIDs.clear();
 
   this->CurrentScene =  vtkCollection::New();
   this->UndoStackSize = 100;
@@ -520,6 +521,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
+  this->UniqueIDs.clear();
 
   if ( this->GetUserTagTable() != NULL )
     {
