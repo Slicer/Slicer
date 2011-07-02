@@ -1,4 +1,4 @@
-project(vtkSlicerVolumesModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -16,6 +16,7 @@ set(module_logic_include_directories
 # Source files
 set(module_logic_SRCS
   vtkSlicerVolumesLogic.cxx
+  vtkSlicerVolumesLogic.h
   )
 
 # Additional Target libraries

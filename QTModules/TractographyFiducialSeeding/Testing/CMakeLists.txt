@@ -18,6 +18,11 @@ list(APPEND Tests ${KIT_TEST_SRCS})
 #set(TestsToRun ${Tests})
 #list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
+include_directories(
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
+  )
+
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CxxTests ${Tests})
