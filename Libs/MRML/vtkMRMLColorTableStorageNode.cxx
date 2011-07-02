@@ -242,7 +242,10 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     for (int i = 0; i < maxID+1; i++)
       {
       colorNode->SetColor(i, 0.0, 0.0, 0.0, 0.0);
-      } 
+      }
+    // We are sure that all the names are initialized here, flag it as such
+    // to prevent unnecessary recomputation
+    colorNode->NamesInitialisedOn();
     for (unsigned int i = 0; i < lines.size(); i++)
       {
       std::stringstream ss;
@@ -273,7 +276,6 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
         return 0;
         }
       }
-    colorNode->NamesInitialisedOn();
     colorNode->EndModify(wasModifying);
     }
   else
