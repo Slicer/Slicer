@@ -146,7 +146,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
-                q, SLOT(setSliceOffsetValue(double)));
+                q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
 
   // Connect SliceCollapsibleButton
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
