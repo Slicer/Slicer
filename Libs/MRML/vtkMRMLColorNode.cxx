@@ -11,22 +11,22 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLScene.h"
-
-// to calculate relative path for filename
 #include "vtkMRMLStorageNode.h"
-#include <itksys/SystemTools.hxx>
 
+// VTK includes
 #include <vtkLookupTable.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+
+// STD includes
+#include <cassert>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLColorNode::New()
@@ -299,19 +299,19 @@ void vtkMRMLColorNode::SetType(int type)
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetNamesFromColors()
 {
-  int numPoints = this->GetNumberOfColors();
+  const int numPoints = this->GetNumberOfColors();
   // reset the names
-  this->Names.clear();
   this->Names.resize(numPoints);
 
-  bool res = false;
   for (int i = 0; i < numPoints; ++i)
     {
-    res = this->SetNameFromColor(i);
-    if (!res)
-      {
-      return;
-      }
+#ifndef NDEBUG
+    bool res =
+#endif
+      this->SetNameFromColor(i);
+    // There is no reason why SetNameFromColor would fail because we control
+    // the array size.
+    assert(res);
     }
   this->NamesInitialisedOn();
 }
