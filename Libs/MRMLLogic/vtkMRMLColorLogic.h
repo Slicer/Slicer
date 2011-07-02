@@ -26,6 +26,9 @@
 
 // MRML includes
 class vtkMRMLColorNode;
+class vtkMRMLColorTableNode;
+class vtkMRMLFreeSurferProceduralColorNode;
+class vtkMRMLProceduralColorNode;
 
 // STD includes
 #include <stdlib.h>
@@ -129,6 +132,13 @@ protected:
 
   /// Reimplemented to listen to specific scene events
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  vtkMRMLColorTableNode* CreateLabelsNode();
+  vtkMRMLColorTableNode* CreateDefaultTableNode(int type);
+  vtkMRMLProceduralColorNode* CreateRandomNode();
+  vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
+  vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
+  
 
   ///
   /// a vector holding discovered default colour files, found in the
