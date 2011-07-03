@@ -289,6 +289,18 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     ctnode->SetName(uname.c_str());
     vtkDebugMacro("AddDefaultColorFiles: About to read file " << this->ColorFiles[i].c_str());
+    // check if this is the new default one read in from file
+    if (strcmp(ctnode->GetName(),"GenericColors") == 0 ||
+        strcmp(ctnode->GetName(),"GenericAnatomyColors") == 0)
+      {
+      vtkDebugMacro("Found default lut node");
+      // No category to float to the top of the node
+      // can't unset an attribute, so just don't set it at all
+      }
+    else
+      {
+      ctnode->SetAttribute("Category", "Default Labels from File");
+      }
     if (ctnode->GetStorageNode()->ReadData(ctnode))
       {
       vtkDebugMacro("AddDefaultColorFiles: finished reading file " << this->ColorFiles[i].c_str());
@@ -305,20 +317,6 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
       else
         {
         vtkDebugMacro("AddDefaultColorFiles: node " << id << " already in scene");
-        }
-
-      // check if this is the new default one read in from file
-      if (strcmp(ctnode->GetName(),"GenericColors") == 0 ||
-          strcmp(ctnode->GetName(),"GenericAnatomyColors") == 0)
-        {
-        vtkDebugMacro("Found default lut node");
-        // remove the category attribute so it floats to the top of the node
-        // selector
-        // can't unset an attribute, so just don't set it at all
-        }
-      else
-        {
-        ctnode->SetAttribute("Category", "Default Labels from File");
         }
       delete [] colorNodeID;
       }
