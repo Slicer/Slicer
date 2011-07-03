@@ -9,6 +9,7 @@
 
 // CTK includes
 #include <ctkRangeWidget.h>
+#include <ctkPopupWidget.h>
 #include <ctkUtils.h>
 
 // qMRML includes
@@ -23,7 +24,6 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-
 //-----------------------------------------------------------------------------
 class qMRMLWindowLevelWidgetPrivate: public Ui_qMRMLWindowLevelWidget
 {
@@ -35,16 +35,14 @@ public:
   qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object);
   virtual ~qMRMLWindowLevelWidgetPrivate();
   void init();
-  void openRangeWidget();
-  void closeRangeWidget();
   bool blockSignals(bool block);
   void scalarRange(vtkMRMLScalarVolumeDisplayNode* displayNode, double range[2]);
   void updateSingleStep(double min, double max);
   
   vtkMRMLScalarVolumeNode*        VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
+  ctkPopupWidget*                 PopupWidget;
   ctkRangeWidget*                 RangeWidget;
-  QPropertyAnimation*             RangeWidgetAnimation;
   double                          DisplayScalarRange[2];
 };
 
@@ -55,6 +53,7 @@ qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate(
 {
   this->VolumeNode = 0;
   this->VolumeDisplayNode = 0;
+  this->PopupWidget = 0;
   this->RangeWidget = 0;
   this->DisplayScalarRange[0] = 0;
   this->DisplayScalarRange[1] = 0;
@@ -63,7 +62,8 @@ qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate(
 // --------------------------------------------------------------------------
 qMRMLWindowLevelWidgetPrivate::~qMRMLWindowLevelWidgetPrivate()
 {
-  delete this->RangeWidget;
+  delete this->PopupWidget;
+  this->PopupWidget = 0;
   this->RangeWidget = 0;
 }
 
@@ -97,22 +97,24 @@ void qMRMLWindowLevelWidgetPrivate::init()
   // disable as there is not MRML Node associated with the widget
   q->setEnabled(this->VolumeDisplayNode != 0);
 
-  this->RangeWidget = new ctkRangeWidget(0);
-  // you can't use the flag Qt::Popup as it automatically closes when there is
+  // we can't use the flag Qt::Popup as it automatically closes when there is
   // a click outside of the rangewidget
-  this->RangeWidget->setWindowFlags(Qt::ToolTip);
-  //this->RangeWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+  this->PopupWidget = new ctkPopupWidget(0);
+  this->PopupWidget->setAutoHide(false);
+  this->PopupWidget->setOpacity(255 * 0.9);
+  this->PopupWidget->setBaseWidget(q);
+  this->RangeWidget = new ctkRangeWidget;
+
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(this->RangeWidget);
+  layout->setContentsMargins(0,0,0,0);
+  this->PopupWidget->setLayout(layout);
+
   this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
   this->RangeWidget->setRange(-1000000., 1000000.);
-  //this->RangeWidget->resize(this->RangeWidget->sizeHint());
-  this->RangeWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  //this->RangeWidget->setVisible(false);
-  this->RangeWidget->installEventFilter(q);
   QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double, double)),
                    q, SLOT(setRange(double, double)));
   this->RangeWidget->setToolTip("Set the range boundaries of Window/Level to control large numbers or allow fine tuning");
-  this->RangeWidgetAnimation = new QPropertyAnimation(this->RangeWidget, "geometry");
-  this->RangeWidgetAnimation->setDuration(100);
 }
 
 // --------------------------------------------------------------------------
@@ -175,46 +177,6 @@ void qMRMLWindowLevelWidgetPrivate::updateSingleStep(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidgetPrivate::openRangeWidget()
-{
-  Q_Q(qMRMLWindowLevelWidget);
-  if (this->RangeWidget->isVisible() ||
-      !q->underMouse())
-    {
-    return;
-    }
-  QPoint bottomLeft = QPoint(q->geometry().x(), q->geometry().bottom());
-  QPoint pos = q->parentWidget() ? q->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
-  this->RangeWidgetAnimation->setStartValue(
-    QRect(pos, QSize(q->width(), 0)));
-  this->RangeWidgetAnimation->setEndValue(
-    QRect(pos, QSize(q->width(), this->RangeWidget->sizeHint().height())));
-  this->RangeWidget->setVisible(true);
-  this->RangeWidgetAnimation->start();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidgetPrivate::closeRangeWidget()
-{
-  Q_Q(qMRMLWindowLevelWidget);
-
-  if (!this->RangeWidget->isVisible())
-    {
-    return;
-    }
-  QPoint bottomLeft = QPoint(q->geometry().x(), q->geometry().bottom());
-  QPoint pos = q->parentWidget() ? q->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
-  this->RangeWidgetAnimation->setStartValue(
-    QRect(pos, QSize(q->width(), this->RangeWidget->sizeHint().height())));
-  this->RangeWidgetAnimation->setEndValue(
-    QRect(pos, QSize(q->width(), 0)));
-
-  this->RangeWidgetAnimation->start();
-  QTimer::singleShot(this->RangeWidgetAnimation->duration(),
-                     this->RangeWidget, SLOT(hide()));
-}
-
-// --------------------------------------------------------------------------
 qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new qMRMLWindowLevelWidgetPrivate(*this))
 {
@@ -264,11 +226,13 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
     }
   if (autoWindowLevel != qMRMLWindowLevelWidget::Auto)
     {
-    d->openRangeWidget();
+    d->PopupWidget->setAutoHide(true);
+    d->PopupWidget->showPopup();
     }
   else
     {
-    d->closeRangeWidget();
+    d->PopupWidget->setAutoHide(false);
+    d->PopupWidget->hidePopup();
     }
   
   if (autoWindowLevel != oldAuto)
@@ -604,53 +568,4 @@ void qMRMLWindowLevelWidget::setRange(double min, double max)
   d->MinSpinBox->setRange(min, max);
   d->MaxSpinBox->setRange(min, max);
   d->RangeWidget->setValues(min, max);
-}
-
-// --------------------------------------------------------------------------
-bool qMRMLWindowLevelWidget::eventFilter(QObject* obj, QEvent* event)
-{
-  if (event->type() == QEvent::Leave)
-    {
-    QTimer::singleShot(10, this, SLOT(hideRangeWidget()));
-    }
-  return this->QObject::eventFilter(obj, event);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::enterEvent(QEvent* event)
-{
-  Q_D(qMRMLWindowLevelWidget);
-  if (this->autoWindowLevel() != Auto)
-    {
-    d->openRangeWidget();
-    }
-  this->QWidget::enterEvent(event);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::leaveEvent(QEvent* event)
-{
-  QTimer::singleShot(10, this, SLOT(hideRangeWidget()));
-  this->QWidget::leaveEvent(event);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::hideRangeWidget()
-{
-  Q_D(qMRMLWindowLevelWidget);
-/*
-  QPoint topLeft = QPoint(this->geometry().left(), this->geometry().top());
-  QPoint bottomRight = QPoint(this->geometry().right(), this->geometry().bottom());
-  topLeft = this->parentWidget() ? this->parentWidget()->mapToGlobal(topLeft) : topLeft;
-  bottomRight = this->parentWidget() ? this->parentWidget()->mapToGlobal(bottomRight) : bottomRight;
-  QRect geom(topLeft, bottomRight);
-*/
-  if (d->RangeWidget->underMouse()
-      || this->underMouse()
-//      ||geom.contains(QCursor::pos())
-  )
-    {
-    return;
-    }
-  d->closeRangeWidget();
 }

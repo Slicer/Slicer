@@ -110,9 +110,9 @@ protected slots:
   /// update widget GUI from MRML node
   void updateWidgetFromMRMLDisplayNode();
   void updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode*);
-  void hideRangeWidget();
 
 protected:
+  QScopedPointer<qMRMLWindowLevelWidgetPrivate> d_ptr;
   /// 
   /// Return the current MRML display node
   vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;
@@ -120,13 +120,6 @@ protected:
   /// 
   /// Set current MRML display node
   void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
-  virtual bool eventFilter(QObject* obj, QEvent* event);
-
-protected:
-  QScopedPointer<qMRMLWindowLevelWidgetPrivate> d_ptr;
-
-  virtual void enterEvent(QEvent* event);
-  virtual void leaveEvent(QEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
