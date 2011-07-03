@@ -88,6 +88,7 @@ class SampleDataWidget:
       b.connect('clicked()', sample[1])
 
     self.log = qt.QTextEdit()
+    self.log.readOnly = True
     self.layout.addWidget(self.log)
     self.log.insertHtml('<p>Status: <i>Idle</i>\n')
     self.log.insertPlainText('\n')
