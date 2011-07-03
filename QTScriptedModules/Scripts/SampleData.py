@@ -17,6 +17,7 @@ The SampleData module can be used to download data for working with in slicer.  
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
     """
+    parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
     self.parent = parent
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
@@ -27,8 +28,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     
 
   def addMenu(self):
-    i = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
-    a = qt.QAction(i, 'Download Sample Data', slicer.util.mainWindow())
+    actionIcon = self.parent.icon
+    a = qt.QAction(actionIcon, 'Download Sample Data', slicer.util.mainWindow())
     a.setToolTip('Go to the SampleData module to download data from the network')
     a.connect('triggered()', self.select)
 
