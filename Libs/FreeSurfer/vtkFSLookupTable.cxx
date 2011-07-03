@@ -545,3 +545,10 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
         vtkErrorMacro(<<"MapScalarsThroughTable2: Have no idea how to deal with this input type " << inputDataType);
       }
 }
+
+//----------------------------------------------------------------------------
+vtkIdType vtkFSLookupTable::GetNumberOfAvailableColors()
+{
+  return this->NumberOfColors;
+}
+

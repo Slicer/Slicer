@@ -105,6 +105,10 @@ public:
       FSLUTGREENRED = 5,
     };
     //ETX
+
+    // Description:
+    // Get the number of available colors for mapping to.
+    virtual vtkIdType GetNumberOfAvailableColors();
 protected:
     vtkFSLookupTable();
     ~vtkFSLookupTable();
