@@ -18,7 +18,30 @@ endif()
 #-----------------------------------------------------------------------------
 file(GLOB_RECURSE s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
 
+# Get the dependency information of each extension
+set(EXTENSION_LIST)
 foreach(file ${s4extfiles})
+  # Extract extension description info
+  slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
+  #message(DEPENDS:${EXTENSION_SEXT_DEPENDS})
+  # Extract file basename
+  get_filename_component(EXTENSION_NAME ${file} NAME_WE)
+  if("${EXTENSION_NAME}" STREQUAL "")
+    message(WARNING "Failed to extract extension name associated with file: ${file}")
+  else()
+    list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
+    set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_SEXT_DEPENDS})
+  endif()
+endforeach()
+
+# Sort extensions
+include(TopologicalSort)
+topological_sort(EXTENSION_LIST "EXTENSION_" "_DEPENDS")
+
+foreach(extension_name ${EXTENSION_LIST})
+  # Set extension description filename using extension_name
+  set(file ${Slicer_EXTENSION_DESCRIPTION_DIR}/${extension_name}.s4ext)
+
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
 
@@ -31,7 +54,8 @@ foreach(file ${s4extfiles})
   if("${EXTENSION_NAME}" STREQUAL "")
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
-    message(STATUS "Configuring extension: ${EXTENSION_NAME} (${file})")
+    #message(STATUS "Configuring extension: ${EXTENSION_NAME} (${file})")
+    message(STATUS "Configuring extension: ${EXTENSION_NAME}")
     if("${EXTENSION_SEXT_SCM}" STREQUAL "" AND "${EXTENSION_SEXT_SCMURL}" STREQUAL "")
       message(WARNING "Failed to extract extension information associated file: ${file}")
     else()
@@ -66,7 +90,18 @@ foreach(file ${s4extfiles})
         # Set external project DEPENDS parameter
         set(EXTENSION_DEPENDS)
         if(Slicer_SOURCE_DIR)
-          set(EXTENSION_DEPENDS DEPENDS Slicer)
+          set(EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_DEPENDS})
+        else()
+          if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
+            set(EXTENSION_DEPENDS DEPENDS ${EXTENSION_SEXT_DEPENDS})
+          endif()
+        endif()
+        set(EXTENSION_REBUILD_DEPENDS)
+        if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
+          set(EXTENSION_REBUILD_DEPENDS DEPENDS)
+          foreach(dep ${EXTENSION_SEXT_DEPENDS})
+            list(APPEND EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
+          endforeach()
         endif()
         if(Slicer_UPLOAD_EXTENSIONS)
           #-----------------------------------------------------------------------------
@@ -104,6 +139,7 @@ foreach(file ${s4extfiles})
               CONFIGURE_COMMAND ""
               BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
               INSTALL_COMMAND ""
+              ${EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later
             # steps to run whenever a top level build is done...
@@ -156,6 +192,7 @@ foreach(file ${s4extfiles})
                 -DBUILD_TESTING:BOOL=OFF
                 -DSlicer_DIR:PATH=${Slicer_DIR}
                 ${sext_ep_option_scm_executable}
+              ${EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later
             # steps to run whenever a top level build is done...

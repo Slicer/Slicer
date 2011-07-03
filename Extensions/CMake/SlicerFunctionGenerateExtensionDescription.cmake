@@ -22,7 +22,7 @@ include(SlicerMacroExtractRepositoryInfo)
 
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
-  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -33,6 +33,11 @@ function(slicerFunctionGenerateExtensionDescription)
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
     endif()
   endforeach()
+
+  if(NOT "${MY_EXTENSION_DEPENDS}" STREQUAL "")
+    # A list of extension names without spaces is expected
+    #TODO if()
+  endif()
 
   set(expected_existing_vars DESTINATION_DIR)
   foreach(var ${expected_existing_vars})
@@ -81,7 +86,7 @@ ${scm_path_token} ${scm_url}
 # list dependencies
 # - These should be names of other modules that have .s4ext files
 # - The dependencies will be built first
-depends
+depends     ${MY_EXTENSION_DEPENDS}
 
 # homepage
 homepage    ${MY_EXTENSION_HOMEPAGE}

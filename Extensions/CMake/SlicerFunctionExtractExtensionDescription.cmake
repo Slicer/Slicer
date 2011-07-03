@@ -65,6 +65,12 @@ function(slicerFunctionExtractExtensionDescription)
     string(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
           "\\2" sext_${upper_case_token} "${extension_file_content}")
 
+    # Using the regular expression reported above, if there is no match, the second matched
+    # string will be one space. In that case, let's change it to be an empty string.
+    if(sext_${upper_case_token} STREQUAL " ")
+      set(sext_${upper_case_token} "")
+    endif()
+
     # If there was no match, set to an empty string
     if (sext_${upper_case_token} STREQUAL "${extension_file_content}")
       set(sext_${upper_case_token} "")
