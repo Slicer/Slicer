@@ -278,6 +278,7 @@ endif()
 # Build library
 # --------------------------------------------------------------------------
 set(lib_name ${PROJECT_NAME})
+set(targets_to_export ${lib_name})
 
 add_library(${lib_name}
   ${qMRMLWidgets_SRCS}
@@ -311,6 +312,7 @@ if(qMRMLWidgets_WRAP_PYTHON)
   ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
     KIT_PYTHONQT_SRCS "${qMRMLWidgets_SRCS}" FALSE)
   add_library(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
+  list(APPEND targets_to_export ${lib_name}PythonQt)
   target_link_libraries(${lib_name}PythonQt ${lib_name})
   if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
     set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
@@ -323,7 +325,7 @@ endif()
 if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
   set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
 endif()
-export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+export(TARGETS ${targets_to_export} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 
 # --------------------------------------------------------------------------
 # Install library
