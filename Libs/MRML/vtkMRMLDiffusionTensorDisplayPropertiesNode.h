@@ -208,7 +208,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// 
   /// Return a text string describing the GlyphGeometry variable
   virtual const char * GetGlyphGeometryAsString();
-
+  virtual const char * GetGlyphGeometryAsString(int);
+  
   //--------------------------------------------------------------------------
   /// Display Information: Parameters of glyph geometry
   //--------------------------------------------------------------------------
@@ -290,6 +291,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// 
   /// Return a text string describing GlyphEigenvector variable
   virtual const char * GetGlyphEigenvectorAsString();
+  virtual const char * GetGlyphEigenvectorAsString(int);
 
   
   //--------------------------------------------------------------------------

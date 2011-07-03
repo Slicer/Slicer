@@ -501,15 +501,21 @@ const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarInvariantAsStr
 //----------------------------------------------------------------------------
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsString()
 {
-  if (this->GlyphGeometry == this->Lines)
+  return this->GetGlyphGeometryAsString(this->GlyphGeometry);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsString(int geometry)
+{
+  if (geometry == this->Lines)
     {
     return "Lines";
     }
-  if (this->GlyphGeometry == this->Tubes)
+  if (geometry == this->Tubes)
     {
     return "Tubes";
     }
-  if (this->GlyphGeometry == this->Ellipsoids)
+  if (geometry == this->Ellipsoids)
     {
     return "Ellipsoids";
     }
@@ -524,16 +530,24 @@ const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsStrin
 const char*
 vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphEigenvectorAsString()
 {
+  return this->GetGlyphEigenvectorAsString(this->GlyphEigenvector);
+}
 
-  if (this->GlyphEigenvector == this->Major)
+//----------------------------------------------------------------------------
+const char*
+vtkMRMLDiffusionTensorDisplayPropertiesNode::
+  GetGlyphEigenvectorAsString(int eigenvector)
+{
+
+  if (eigenvector == this->Major)
     {
     return "Major";
     }
-  if (this->GlyphEigenvector == this->Middle)
+  if (eigenvector == this->Middle)
     {
     return "Middle";
     }
-  if (this->GlyphEigenvector == this->Minor)
+  if (eigenvector == this->Minor)
     {
     return "Minor";
     }
