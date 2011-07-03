@@ -871,7 +871,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFreeSurferFileNode(const char* f
   vtkDebugMacro("Adding FreeSurfer Labels file node");
   vtkDebugMacro("Trying to read colour file " << fileName);
   node->GetStorageNode()->SetFileName(fileName);
-  if (node->GetStorageNode()->ReadData(node))
+  if (node->GetStorageNode()->ReadData(node) == 0)
     {
     vtkErrorMacro("Unable to read freesurfer colour file " << (node->GetFileName() ? node->GetFileName() : ""));
     node->Delete();
