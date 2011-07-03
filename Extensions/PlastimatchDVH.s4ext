@@ -7,6 +7,11 @@ svnpath   http://forge.abcd.harvard.edu/svn/plastimatch/plastimatch/trunk
 svnusername anonymous
 svnpassword ""
 
+# list dependencies
+# - These should be names of other modules that have .s4ext files
+# - The dependencies will be built first
+depends     
+
 #cmakeproject plastimatch
 
 # homepage
