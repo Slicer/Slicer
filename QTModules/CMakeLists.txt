@@ -26,10 +26,10 @@ set(qtmodules
   SceneViews
   SlicerWelcome
   TractographyDisplay
-  TractographyFiducialSeeding
   Volumes
+  TractographyFiducialSeeding # tractography depends of Volumes
   CropVolume
-  VolumeRendering
+  VolumeRendering # Volume Rendering depends of Volumes
   )
 if(BUILD_TESTING)
   list(APPEND qtmodules ModuleTemplate)
