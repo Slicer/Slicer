@@ -127,6 +127,7 @@ void qSlicerApplicationPrivate::init()
     QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
   ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
                                 "Labels", SIGNAL(colorSelected(const QColor&)));
+  ctkColorDialog::setDefaultTab(1);
 
   this->Superclass::init();
 
