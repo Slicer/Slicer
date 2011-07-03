@@ -69,7 +69,7 @@ qSlicerTractographyDisplayGlyphWidget::qSlicerTractographyDisplayGlyphWidget(QWi
   Q_D(qSlicerTractographyDisplayGlyphWidget);
   d->init();
   //TBD: is there some better way to avoid the updateWidgetFromMRML ringback?
-  this->m_updating = 0;
+  this->updating = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +146,8 @@ void qSlicerTractographyDisplayGlyphWidget::setGlyphType(int type)
     return;
     }
   d->DiffusionTensorDisplayPropertiesNode->SetGlyphGeometry(type);
-  qSlicerWidget* widget = d->GlyphSubPropertiesWidget->
-    findChild<qSlicerWidget *>( 
+  QWidget* widget = d->GlyphSubPropertiesWidget->
+    findChild<QWidget *>( 
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometryAsString()
     );
   if (widget)
@@ -223,11 +223,11 @@ void qSlicerTractographyDisplayGlyphWidget::setTubeGlyphRadius(double radius)
 void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  if ( !d->FiberBundleDisplayNode || this->m_updating )
+  if ( !d->FiberBundleDisplayNode || this->updating )
     {
     return;
     }
-  this->m_updating = 1;
+  this->updating = 1;
   
   d->GlyphTypeSelector->setCurrentIndex(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometry() );
@@ -251,5 +251,5 @@ void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
   d->GlyphRadiusSlider->setValue(
     d->DiffusionTensorDisplayPropertiesNode->GetTubeGlyphRadius() );
 
-  this->m_updating = 0;
+  this->updating = 0;
 }

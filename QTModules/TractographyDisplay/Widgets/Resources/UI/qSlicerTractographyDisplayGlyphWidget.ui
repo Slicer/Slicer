@@ -158,11 +158,14 @@
          <property name="pageStep">
           <double>1.000000000000000</double>
          </property>
+         <property name="minimum">
+          <double>3.000000000000000</double>
+         </property>
          <property name="maximum">
           <double>10.000000000000000</double>
          </property>
          <property name="value">
-          <double>0.000000000000000</double>
+          <double>3.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -241,7 +244,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="ButtonGroup_ColorBySelectors"/>
- </buttongroups>
 </ui>

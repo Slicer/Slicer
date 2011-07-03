@@ -51,7 +51,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerTractographyDisplayGlyphWidget);
   Q_DISABLE_COPY(qSlicerTractographyDisplayGlyphWidget);
-  int m_updating;
+  int updating;
 };
 
 #endif
