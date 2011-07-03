@@ -108,7 +108,7 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
   vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
     vtkSmartPointer<vtkMRMLColorLogic>::New();
   vtkMRMLNode* defaultColorNode =
-    this->mrmlScene()->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID());
+    this->mrmlScene()->GetNodeByID(colorLogic->GetDefaultEditorColorNodeID());
   if (defaultColorNode)
     {
     this->setCurrentColorNode(defaultColorNode);
@@ -124,7 +124,7 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
   vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
     vtkSmartPointer<vtkMRMLColorLogic>::New();
   if (node &&
-      QString(node->GetID()) == colorLogic->GetDefaultLabelMapColorNodeID())
+      QString(node->GetID()) == colorLogic->GetDefaultEditorColorNodeID())
     {
     this->setCurrentColorNode(node);
     }

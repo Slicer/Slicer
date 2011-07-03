@@ -54,8 +54,11 @@ void qMRMLColorTableComboBoxPrivate::init()
   Q_Q(qMRMLColorTableComboBox);
   q->rootModel()->setParent(q);
   ctkTreeComboBox* comboBox = new ctkTreeComboBox;
+  // only the first column is visible
+  comboBox->setVisibleModelColumn(0);
   q->setComboBox(comboBox);
   q->setShowHidden(true);
+  
   QStringList nodeTypes;
   nodeTypes << QString("vtkMRMLColorTableNode");
   nodeTypes << QString("vtkMRMLProceduralColorNode");
@@ -98,6 +101,4 @@ void qMRMLColorTableComboBox::setMRMLScene(vtkMRMLScene* scene)
   QModelIndex sceneIndex = this->comboBox()->model()->index(0,0);
   // index(0,0) is the scene.
   this->comboBox()->setRootModelIndex(sceneIndex);
-  // must be called after the scene is set (model initialized)
-  qobject_cast<ctkTreeComboBox*>(this->comboBox())->treeView()->hideColumn(1);
 }

@@ -21,13 +21,16 @@
 // QT includes
 #include <QApplication>
 #include <QDebug>
+#include <QHBoxLayout>
 #include <QTimer>
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
 
-// MRMLLogic includes
-#include <vtkMRMLColorLogic.h>
+// MRML includes
+#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLFreeSurferProceduralColorNode.h>
+#include <vtkMRMLPETProceduralColorNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -36,7 +39,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
+int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
@@ -44,10 +47,27 @@ int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
+  vtkSmartPointer<vtkMRMLColorTableNode> colorTableNode =
+    vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
+  scene->AddNode(colorTableNode);
+  
   colorPickerWidget.setMRMLScene(scene);
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
-    vtkSmartPointer<vtkMRMLColorLogic>::New();
-  colorLogic->SetMRMLScene(scene);
+
+  vtkSmartPointer<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode =
+    vtkSmartPointer<vtkMRMLFreeSurferProceduralColorNode>::New();
+  colorFreeSurferNode->SetTypeToRedBlue();
+  scene->AddNode(colorFreeSurferNode);
+
+
+  // for some reasons it generate a warning if the type is changed.
+  colorTableNode->NamesInitialisedOff();
+  colorTableNode->SetTypeToCool1();
+
+  vtkSmartPointer<vtkMRMLPETProceduralColorNode> colorPETNode =
+    vtkSmartPointer<vtkMRMLPETProceduralColorNode>::New();
+  colorPETNode->SetTypeToRainbow();
+  scene->AddNode(colorPETNode);
   
   colorPickerWidget.show();
 

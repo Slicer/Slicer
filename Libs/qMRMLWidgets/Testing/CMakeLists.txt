@@ -9,6 +9,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLColorModelTest2.cxx
   qMRMLColorPickerWidgetTest1.cxx
   qMRMLColorPickerWidgetTest2.cxx
+  qMRMLColorPickerWidgetTest3.cxx
   qMRMLColorTableComboBoxTest1.cxx
   qMRMLColorTableViewTest1.cxx
   qMRMLDisplayNodeWidgetTest1.cxx
@@ -91,6 +92,7 @@ SIMPLE_TEST( qMRMLColorModelTest1 )
 SIMPLE_TEST( qMRMLColorModelTest2 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest1 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest2 )
+SIMPLE_TEST( qMRMLColorPickerWidgetTest3 )
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLColorTableViewTest1 )
 SIMPLE_TEST( qMRMLDisplayNodeWidgetTest1 )
