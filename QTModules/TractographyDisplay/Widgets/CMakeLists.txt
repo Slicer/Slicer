@@ -20,18 +20,22 @@ set(module_widgets_SRCS
   qSlicerTractographyDisplayModuleWidget.h
   qSlicerTractographyDisplayWidget.cxx
   qSlicerTractographyDisplayWidget.h
+  qSlicerTractographyDisplayGlyphWidget.cxx
+  qSlicerTractographyDisplayGlyphWidget.h
   )
 
 # Headers that should run through moc
 set(module_widgets_MOC_SRCS
   qSlicerTractographyDisplayModuleWidget.h
   qSlicerTractographyDisplayWidget.h
+  qSlicerTractographyDisplayGlyphWidget.h
   )
 
 # UI files
 set(module_widgets_UI_SRCS
   Resources/UI/qSlicerTractographyDisplayModule.ui
   Resources/UI/qSlicerTractographyDisplayWidget.ui
+  Resources/UI/qSlicerTractographyDisplayGlyphWidget.ui
   )
 
 # Resources
