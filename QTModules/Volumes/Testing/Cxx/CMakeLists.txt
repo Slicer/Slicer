@@ -11,6 +11,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerDiffusionTensorVolumeDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest2.cxx
+  qSlicerVolumesModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
@@ -19,12 +20,18 @@ list(APPEND Tests ${KIT_TEST_SRCS})
 #set(TestsToRun ${Tests})
 #list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
+include_directories(
+  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
+  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
+  )
+
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${lib_name})
 
 set(DTI_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
+set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
 macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
@@ -36,6 +43,7 @@ endforeach()
 SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
 SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )
 SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )
+SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
 
 # Install the testing data
 
