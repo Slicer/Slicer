@@ -29,7 +29,7 @@ macro(slicerMacroBuildQtModule)
     ""
     ${ARGN}
     )
-
+  message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME}")
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------

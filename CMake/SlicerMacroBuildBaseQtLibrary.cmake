@@ -58,7 +58,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
     "WRAP_PYTHONQT"
     ${ARGN}
     )
-
+  message(STATUS "Configuring Slicer Qt base library: ${SLICERQTBASELIB_NAME}")
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------

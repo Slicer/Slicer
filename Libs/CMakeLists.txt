@@ -70,6 +70,7 @@ set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 # Loop over list of directories
 #-----------------------------------------------------------------------------
 foreach(dir ${dirs})
+  message(STATUS "Configuring library: ${dir}")
   set(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
   set(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
   set(${dir}_INSTALL_SHARE_DIR ${Slicer_INSTALL_ROOT}share/${dir})

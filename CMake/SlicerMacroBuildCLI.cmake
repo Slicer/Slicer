@@ -10,7 +10,7 @@ macro(slicerMacroBuildCLI)
     "EXECUTABLE_ONLY"
     ${ARGN}
     )
-
+  message(STATUS "Configuring CLI module: ${MY_NAME}")
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
