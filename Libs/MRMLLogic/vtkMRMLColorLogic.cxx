@@ -770,7 +770,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultTableNode(int type)
     {
     node->SetAttribute("Category", "Discrete");
     }
-  if (strcmp(typeName, "(unknown)") != 0)
+  if (strcmp(typeName, "(unknown)") == 0)
     {
     return node;
     }
