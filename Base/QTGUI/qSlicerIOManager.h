@@ -29,7 +29,11 @@ public:
   qSlicerIOManager(QObject* parent = 0);
   virtual ~qSlicerIOManager();
 
-
+  /// Search for the most appropriate dialog based on the fileType,
+  /// and open it.
+  /// If no dialog is registered for a given fileType (e.g.
+  /// qSlicerIO::SceneFile), a default dialog (qSlicerStandardFileDialog) is 
+  /// used.
   bool openDialog(qSlicerIO::IOFileType fileType,
                   qSlicerFileDialog::IOAction action,
                   const qSlicerIO::IOProperties& ioProperties

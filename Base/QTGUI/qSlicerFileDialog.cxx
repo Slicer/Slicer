@@ -138,6 +138,10 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   Q_ASSERT(!ioProperties.contains("fileName"));
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog fileDialog(qobject_cast<QWidget*>(this->parent()));
+  // We don't want the odd dialog in Mac: it shows in gray filenames that
+  // don't match the filter -> we don't want to show files that don't match
+  // the filter.
+  fileDialog.setOption(QFileDialog::DontUseNativeDialog);
 
   fileDialog.setNameFilters(
     qSlicerFileDialog::nameFilters(d->FileType));
