@@ -335,9 +335,14 @@ void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 }
 
+//----------------------------------------------------------------------------
+bool vtkMRMLLinearTransformNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
 
 //----------------------------------------------------------------------------
-void vtkMRMLLinearTransformNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+void vtkMRMLLinearTransformNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   vtkMatrix4x4* matrixToParent = this->GetMatrixTransformToParent();
   vtkMatrix4x4* newMatrixToParent = vtkMatrix4x4::New();
@@ -349,13 +354,4 @@ void vtkMRMLLinearTransformNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   newMatrixToParent->Delete();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLLinearTransformNode::ApplyTransform(vtkAbstractTransform* transform)
-{
-  if (!transform->IsA("vtkLinearTransform"))
-    {
-    vtkErrorMacro(<<"Can't harden a general transform in a linear transform.");
-    }
-  this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
-}
 // End

@@ -78,9 +78,8 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  virtual bool CanApplyNonLinearTransforms() { return false; } 
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual bool CanApplyNonLinearTransforms()const;
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
  
   /// 
   /// Create default storage node or NULL if does not have one

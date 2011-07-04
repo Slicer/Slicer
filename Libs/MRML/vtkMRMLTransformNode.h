@@ -99,10 +99,12 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
   /// Returns 1 if the node is one of the this node's descendents
   int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
-  virtual bool CanApplyNonLinearTransforms() { return true; }
+  ///
+  /// Reimplemented from vtkMRMLTransformableNode
+  virtual bool CanApplyNonLinearTransforms()const;
+  ///
+  /// Reimplemented from vtkMRMLTransformableNode
   virtual void ApplyTransform(vtkAbstractTransform* transform);
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
-    { Superclass::ApplyTransform(transformMatrix); }
 
   /// 
   /// Create default storage node or NULL if does not have one

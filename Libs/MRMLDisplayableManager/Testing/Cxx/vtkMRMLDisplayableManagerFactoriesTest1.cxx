@@ -206,7 +206,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   std::string dataRoot = testHelper->GetDataRoot();
   std::string mrmlFiletoLoad = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-load.mrml";
   scene->SetURL(mrmlFiletoLoad.c_str());
-  bool success = static_cast<bool>(scene->Connect());
+  bool success = scene->Connect() != 0;
   if (!success)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with vtkMRMLScene::Connect" << std::endl;
@@ -270,7 +270,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   // Import scene
   std::string mrmlFiletoImport = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-import.mrml";
   scene->SetURL(mrmlFiletoImport.c_str());
-  success = static_cast<bool>(scene->Import());
+  success = scene->Import() != 0;
   if (!success)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with vtkMRMLScene::Import" << std::endl;

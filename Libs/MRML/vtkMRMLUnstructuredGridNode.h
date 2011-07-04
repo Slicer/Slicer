@@ -80,10 +80,8 @@ public:
   vtkGetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
   void SetAndObserveUnstructuredGrid(vtkUnstructuredGrid *UnstructuredGrid);
 
-  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
-    { Superclass::ApplyTransform(transformMatrix); }
 
   /// 
   /// Create default storage node or NULL if does not have one

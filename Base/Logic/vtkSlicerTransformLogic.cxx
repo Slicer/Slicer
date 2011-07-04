@@ -76,7 +76,7 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
     {
     vtkSmartPointer<vtkMatrix4x4> hardeningMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     transformNode->GetMatrixTransformToWorld(hardeningMatrix);
-    transformableNode->ApplyTransform(hardeningMatrix);
+    transformableNode->ApplyTransformMatrix(hardeningMatrix);
     }
   else
     {

@@ -107,12 +107,6 @@ public:
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
     /// 
-    /// transform utility functions
-    virtual bool CanApplyNonLinearTransforms() { return false; }
-    virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
-    virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
-
-    /// 
     /// Create default storage node or NULL if does not have one
     virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

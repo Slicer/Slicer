@@ -704,7 +704,7 @@ vtkMRMLVolumeNode::GetMetaDataDictionary() const
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+void vtkMRMLVolumeNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   vtkSmartPointer<vtkMatrix4x4> ijkToRASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   vtkSmartPointer<vtkMatrix4x4> newIJKToRASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -715,15 +715,4 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   this->SetIJKToRASMatrix(newIJKToRASMatrix);
 
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
-{
-  if (!transform->IsA("vtkLinearTransform"))
-    {
-    vtkErrorMacro(<<"Only linear transforms can be hardened in volumes. Image resampling is required for nonlinear transforms.");
-    }
-  this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
-}
-
 

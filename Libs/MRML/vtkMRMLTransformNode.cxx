@@ -228,11 +228,18 @@ int vtkMRMLTransformNode::IsTransformNodeMyChild(vtkMRMLTransformNode* node)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   this->TransformToParent->Concatenate(transform); 
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
 {
   return vtkMRMLTransformStorageNode::New();

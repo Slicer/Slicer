@@ -141,6 +141,13 @@ void vtkMRMLUnstructuredGridNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLUnstructuredGridNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   vtkTransformFilter* transformFilter = vtkTransformFilter::New();
@@ -154,6 +161,7 @@ void vtkMRMLUnstructuredGridNode::ApplyTransform(vtkAbstractTransform* transform
   transformFilter->Delete();
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLUnstructuredGridNode::CreateDefaultStorageNode()
 {
   return vtkMRMLUnstructuredGridStorageNode::New();

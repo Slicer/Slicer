@@ -693,6 +693,13 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     return 1;
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();

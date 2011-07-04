@@ -188,12 +188,34 @@ void vtkMRMLTransformableNode::UpdateReferences()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLTransformableNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms()const
+{
+  return false;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   vtkMatrixToLinearTransform* transform = vtkMatrixToLinearTransform::New();
   transform->SetInput(transformMatrix);
   this->ApplyTransform(transform);
   transform->Delete();
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
+  if (linearTransform)
+    {
+    this->ApplyTransformMatrix(linearTransform->GetMatrix());
+    return;
+    }
+  if (!this->CanApplyNonLinearTransforms())
+    {
+    vtkErrorMacro("Can't apply a non-linear transform");
+    return;
+    }
 }
 
 //-----------------------------------------------------------

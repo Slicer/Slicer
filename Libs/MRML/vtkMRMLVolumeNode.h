@@ -162,9 +162,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 //ETX
 
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
   /// 
   /// Subclasses can define actions to take when the mrml scene passes an event

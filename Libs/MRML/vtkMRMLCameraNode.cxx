@@ -485,9 +485,3 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char *tag)
 
   return NULL;
 }
-
-//----------------------------------------------------------------------------
-void vtkMRMLCameraNode::ApplyTransform(vtkAbstractTransform* )
-{
-  // I'm not quite sure what ApplyTransform is used for
-}

@@ -107,11 +107,6 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
-  /// Utility transformable methods
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
-    
 protected:
   vtkMRMLSceneViewNode();
   ~vtkMRMLSceneViewNode();

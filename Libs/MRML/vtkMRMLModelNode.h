@@ -113,10 +113,8 @@ public:
   
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
 
-  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
-    { Superclass::ApplyTransform(transformMatrix); }
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

@@ -406,7 +406,13 @@ void vtkMRMLROINode::SetRadiusIJK(double* radiusIJK)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+bool vtkMRMLROINode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
   double *xyzIn  = this->GetXYZ();
@@ -420,6 +426,7 @@ void vtkMRMLROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
 
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
   double *xyzIn  = this->GetXYZ();

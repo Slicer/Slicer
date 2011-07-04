@@ -512,7 +512,7 @@ int vtkModelMirrorLogic::HardenTransform()
     {
     vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();
     this->GetMirrorTransformNode()->GetMatrixTransformToWorld( hardeningMatrix);
-    tbnode->ApplyTransform(hardeningMatrix);
+    tbnode->ApplyTransformMatrix(hardeningMatrix);
     hardeningMatrix->Delete();
     }
   else

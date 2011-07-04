@@ -88,9 +88,9 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
       TransformModifiedEvent = 15000
     };
  
-  virtual bool CanApplyNonLinearTransforms() = 0;
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix); 
-  virtual void ApplyTransform(vtkAbstractTransform* transform) = 0; 
+  virtual bool CanApplyNonLinearTransforms()const;
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix); 
+  virtual void ApplyTransform(vtkAbstractTransform* transform); 
 
   virtual void TransformPointToWorld(double *in, double *out);
   virtual void TransformPointFromWorld(double *in, double *out);

@@ -164,13 +164,6 @@ public:
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
-  /// Reimplement from parent
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix)
-    { Superclass::ApplyTransform(transformMatrix); }
-
 protected:
   vtkMRMLCameraNode();
   ~vtkMRMLCameraNode();

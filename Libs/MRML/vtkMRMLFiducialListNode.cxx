@@ -1663,7 +1663,13 @@ void vtkMRMLFiducialListNode::SetPower(double val)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLFiducialListNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+bool vtkMRMLFiducialListNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   int numPoints = this->GetNumberOfFiducials();
   double (*matrix)[4] = transformMatrix->Element;
