@@ -100,8 +100,18 @@ void qMRMLWindowLevelWidgetPrivate::init()
   // we can't use the flag Qt::Popup as it automatically closes when there is
   // a click outside of the rangewidget
   this->PopupWidget = new ctkPopupWidget(0);
-  this->PopupWidget->setAutoHide(false);
+
+  QPalette popupPalette = q->palette();
+  //popupPalette.setColor(QPalette::Window, popupPalette.color(QPalette::Dark));
+  QLinearGradient gradient(QPointF(0.,0.),QPointF(0.,0.8));
+  gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
+  gradient.setColorAt(0, popupPalette.color(QPalette::Window));
+  gradient.setColorAt(1, popupPalette.color(QPalette::Dark));
+  popupPalette.setBrush(QPalette::Window, gradient);
+  this->PopupWidget->setPalette(popupPalette);
   this->PopupWidget->setOpacity(255 * 0.9);
+
+  this->PopupWidget->setAutoHide(false);
   this->PopupWidget->setBaseWidget(q);
   this->RangeWidget = new ctkRangeWidget;
 
