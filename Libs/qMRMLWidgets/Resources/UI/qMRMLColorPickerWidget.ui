@@ -39,7 +39,7 @@
       <enum>QListView::Adjust</enum>
      </property>
      <property name="uniformItemSizes">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </item>

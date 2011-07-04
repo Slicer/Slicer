@@ -60,7 +60,7 @@ signals:
   void colorSelected(const QColor& color);
 protected slots:
   void onNodeAdded(vtkObject*, vtkObject*);
-
+  void onCurrentColorNodeChanged(vtkMRMLNode* node);
 protected:
   QScopedPointer<qMRMLColorPickerWidgetPrivate> d_ptr;
 

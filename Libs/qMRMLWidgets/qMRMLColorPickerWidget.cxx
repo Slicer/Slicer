@@ -60,7 +60,7 @@ void qMRMLColorPickerWidgetPrivate::init()
   Q_Q(qMRMLColorPickerWidget);
   this->setupUi(q);
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SIGNAL(currentColorNodeChanged(vtkMRMLNode*)));
+                   q, SLOT(onCurrentColorNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
                    q, SIGNAL(colorEntrySelected(int)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(const QColor&)),
@@ -142,4 +142,26 @@ void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
                       this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
     this->setCurrentColorNodeToDefault();
    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
+{
+  Q_D(qMRMLColorPickerWidget);
+  // Search for the largest item
+  QSize maxSizeHint;
+  QModelIndex rootIndex = d->MRMLColorListView->rootIndex();
+  const int count = d->MRMLColorListView->model()->rowCount(rootIndex);
+  for (int i = 0; i < count; ++i)
+    {
+    QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(
+      d->MRMLColorListView->model()->index(i, 0, rootIndex));
+    maxSizeHint.setWidth(qMax(maxSizeHint.width(), sizeHint.width()));
+    maxSizeHint.setHeight(qMax(maxSizeHint.height(), sizeHint.height()));
+    }
+  // Set the largest the default size for all the items, that way they will
+  // be aligned horizontally and vertically.
+  d->MRMLColorListView->setGridSize(maxSizeHint);
+  // Inform that the color node has changed.
+  emit currentColorNodeChanged(colorNode);
 }
