@@ -807,13 +807,31 @@ void qMRMLSceneModel::updateItemDataFromNode(
     switch (visible)
       {
       case 0:
-        item->setIcon(d->HiddenIcon);
+        // It should be fine to set the icon even if it is the same, but due
+        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
+        // it would fire a superflous itemChanged() signal.
+        if (item->icon().cacheKey() != d->HiddenIcon.cacheKey())
+          {
+          item->setIcon(d->HiddenIcon);
+          }
         break;
       case 1:
-        item->setIcon(d->VisibleIcon);
+        // It should be fine to set the icon even if it is the same, but due
+        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
+        // it would fire a superflous itemChanged() signal.
+        if (item->icon().cacheKey() != d->VisibleIcon.cacheKey())
+          {
+          item->setIcon(d->VisibleIcon);
+          }
         break;
       case 2:
-        item->setIcon(d->PartiallyVisibleIcon);
+        // It should be fine to set the icon even if it is the same, but due
+        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
+        // it would fire a superflous itemChanged() signal.
+        if (item->icon().cacheKey() != d->PartiallyVisibleIcon.cacheKey())
+          {
+          item->setIcon(d->PartiallyVisibleIcon);
+          }
         break;
       default:
         break;
