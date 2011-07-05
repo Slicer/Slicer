@@ -7,19 +7,19 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(libarchive_DEPENDENCIES "")
+set(LibArchive_DEPENDENCIES "")
 
 if(WIN32)
-  set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)
-  set(libarchive_MD5 bb416ba2e35693394a546e460797d87e)
+  set(LibArchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)
+  set(LibArchive_MD5 bb416ba2e35693394a546e460797d87e)
 else()
-  set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
-  set(libarchive_MD5 f43382413b4457d0e192771b100a66e7)
+  set(LibArchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
+  set(LibArchive_MD5 f43382413b4457d0e192771b100a66e7)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(libarchive)
-set(proj libarchive)
+SlicerMacroCheckExternalProjectDependency(LibArchive)
+set(proj LibArchive)
 
 # Set CMake OSX variable to pass down the external project
 set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -33,11 +33,11 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 
 ExternalProject_Add(${proj}
-  URL ${libarchive_URL}
-  URL_MD5 ${libarchive_MD5}
-  SOURCE_DIR libarchive
-  BINARY_DIR libarchive-build
-  INSTALL_DIR libarchive-install
+  URL ${LibArchive_URL}
+  URL_MD5 ${LibArchive_MD5}
+  SOURCE_DIR LibArchive
+  BINARY_DIR LibArchive-build
+  INSTALL_DIR LibArchive-install
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
@@ -50,18 +50,18 @@ ExternalProject_Add(${proj}
     -DENABLE_TEST:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   DEPENDS
-    ${libarchive_DEPENDENCIES}
+    ${LibArchive_DEPENDENCIES}
 )
 
-set(LIBARCHIVE_DIR ${CMAKE_BINARY_DIR}/libarchive-install)
-set(LIBARCHIVE_INCLUDE_DIR ${LIBARCHIVE_DIR}/include)
-set(LIBARCHIVE_LIBRARY)
+set(LibArchive_DIR ${CMAKE_BINARY_DIR}/LibArchive-install)
+set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
+set(LibArchive_LIBRARY)
 
 if(WIN32)
-  set(LIBARCHIVE_LIBRARY ${LIBARCHIVE_DIR}/lib/archive.lib)
+  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/archive.lib)
 elseif(APPLE)
-  set(LIBARCHIVE_LIBRARY ${CMAKE_BINARY_DIR}/libarchive-build/libarchive/libarchive.dylib)
+  set(LibArchive_LIBRARY ${CMAKE_BINARY_DIR}/libarchive-build/libarchive/libarchive.dylib)
 else()
-  set(LIBARCHIVE_LIBRARY ${LIBARCHIVE_DIR}/lib/libarchive.so)
+  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/libarchive.so)
 endif()
 

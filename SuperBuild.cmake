@@ -63,7 +63,7 @@ endif()
 #------------------------------------------------------------------------------
 # Slicer dependency list
 #------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES libarchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI SlicerExecutionModel)
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI SlicerExecutionModel)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
@@ -217,10 +217,8 @@ ExternalProject_Add(${proj}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
-    # libarchive
-    -DLibArchive_DIR:PATH=${LIBARCHIVE_DIR}
-    -DLibArchive_INCLUDE_DIR:PATH=${LIBARCHIVE_INCLUDE_DIR}
-    -DLibArchive_LIBRARY:PATH=${LIBARCHIVE_LIBRARY}
+    # LibArchive
+    -DLibArchive_DIR:PATH=${LibArchive_DIR}
     # Qt
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     # CTK
