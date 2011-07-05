@@ -38,10 +38,24 @@ int vtkMRMLColorLogicTest1(int , char * [] )
   // To load the freesurfer file, SLICER_HOME is requested
   //vtksys::SystemTools::PutEnv("SLICER_HOME=..." );
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
+  vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
   colorLogic->SetDebug(1);
+
+  vtkSmartPointer<vtkTimerLog> overallTimer = vtkSmartPointer<vtkTimerLog>::New();
+  overallTimer->StartTimer();
+
   colorLogic->SetMRMLScene(scene);
-  //colorLogic->AddDefaultColorNodes();
+
+  overallTimer->StopTimer();
+  std::cout << "AddDefaultColorNodes: " << overallTimer->GetElapsedTime() << "s"
+            << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
+  overallTimer->StartTimer();
+
+  colorLogic->Delete();
+
+  std::cout << "RemoveDefaultColorNodes: " << overallTimer->GetElapsedTime() << "s"
+            << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
+
   return EXIT_SUCCESS;
 }
 

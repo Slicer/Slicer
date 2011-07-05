@@ -42,13 +42,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkMRMLColorLogi
   /// look for color files in the Base/Logic/Resources/ColorFiles directory and
   /// put their names in the ColorFiles list. Look in any user defined color
   /// files paths and put them in the UserColorFiles list.
-  void FindColorFiles();
+  virtual std::vector<std::string> FindDefaultColorFiles();
+  virtual std::vector<std::string> FindUserColorFiles();
 
 protected:
   vtkSlicerColorLogic();
   ~vtkSlicerColorLogic();
   vtkSlicerColorLogic(const vtkSlicerColorLogic&);
   void operator=(const vtkSlicerColorLogic&);
+  std::vector<std::string> FindColorFiles(const std::vector<std::string>& directories);
 };
 
 #endif

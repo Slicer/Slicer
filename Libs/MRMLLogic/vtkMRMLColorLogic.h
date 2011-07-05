@@ -29,6 +29,9 @@ class vtkMRMLColorNode;
 class vtkMRMLColorTableNode;
 class vtkMRMLFreeSurferProceduralColorNode;
 class vtkMRMLProceduralColorNode;
+class vtkMRMLPETProceduralColorNode;
+class vtkMRMLdGEMRICProceduralColorNode;
+class vtkMRMLColorTableNode;
 
 // STD includes
 #include <stdlib.h>
@@ -103,12 +106,6 @@ public:
   virtual const char * GetDefaultModelColorNodeID();
 
   ///
-  /// look for color files in the Base/Logic/Resources/ColorFiles directory and
-  /// put their names in the ColorFiles list. Look in any user defined color
-  /// files paths and put them in the UserColorFiles list.
-  virtual void FindColorFiles();
-
-  ///
   /// Add a file to the input list list, checking first for null, duplicates
 //BTX
   void AddColorFile(const char *fileName, std::vector<std::string> *Files);
@@ -138,7 +135,31 @@ protected:
   vtkMRMLProceduralColorNode* CreateRandomNode();
   vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
   vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
+  vtkMRMLPETProceduralColorNode* CreatePETColorNode(int type);
+  vtkMRMLdGEMRICProceduralColorNode* CreatedGEMRICColorNode(int type);
+  vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
+  vtkMRMLColorTableNode* CreateUserFileNode(const std::string& colorname);
+  vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
   
+  void AddLabelsNode();
+  void AddDefaultTableNode(int i);
+  void AddRandomNode();
+  void AddFreeSurferNode(int type);
+  void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
+  void AddPETNode(int type);
+  void AddDGEMRICNode(int type); 
+  void AddDefaultFileNode(int i);  
+  void AddUserFileNode(int i);
+
+  void AddDefaultTableNodes();
+  void AddFreeSurferNodes();
+  void AddPETNodes();
+  void AddDGEMRICNodes(); 
+  void AddDefaultFileNodes();  
+  void AddUserFileNodes();
+  
+  virtual std::vector<std::string> FindDefaultColorFiles();
+  virtual std::vector<std::string> FindUserColorFiles();  
 
   ///
   /// a vector holding discovered default colour files, found in the
