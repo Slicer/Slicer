@@ -18,3 +18,4 @@ REGISTER_TEST(GrayscaleModelMakerTest);
 #undef main
 #define main GrayscaleModelMakerTest
 #include "GrayscaleModelMaker.cxx"
+

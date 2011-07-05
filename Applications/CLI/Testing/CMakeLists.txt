@@ -753,12 +753,12 @@ set (CLP ExecutionModelTour)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test MRML)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ExecutionModelTourTest
+  ModuleEntryPoint
     --integer 30
     --double 30
     -f 1.3,2,-14
@@ -907,12 +907,12 @@ set (CLP ImageLabelCombine)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
+target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ImageLabelCombineTest --help
+  ModuleEntryPoint --help
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
@@ -978,13 +978,7 @@ set (CLP ModelMaker)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
-  )
+target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 configure_file(${TEST_DATA}/ModelMakerTest.mrml
@@ -992,7 +986,7 @@ configure_file(${TEST_DATA}/ModelMakerTest.mrml
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --labels 2
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
@@ -1001,7 +995,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}GenerateAllOneLabelTest)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
@@ -1010,7 +1004,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}GenerateAllThreeLabelsTest)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helixMask3Labels.nrrd
@@ -1019,7 +1013,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}GenerateAllThreeLabelsPadTest)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --generateAll
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     --pad
@@ -1030,7 +1024,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}StartEndTest)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --start 1 --end 5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helixMask3Labels.nrrd
@@ -1039,7 +1033,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}LabelsTest)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  ModelMakerTest
+  ModuleEntryPoint
     --labels 3,1,5
     --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
     ${MRML_TEST_DATA}/helixMask3Labels.nrrd
@@ -1053,18 +1047,12 @@ set (CLP MultipleModelsExample)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
-  )
+target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  MultipleModelsExampleTest --help
+  ModuleEntryPoint --help
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
@@ -1515,16 +1503,12 @@ set (CLP MergeModels)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test
-  vtkIO
-  ${ITK_LIBRARIES}
-  vtkGraphics
-  )
+target_link_libraries(${CLP}Test ${CLP}Lib ${ITK_LIBRARIES})
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  MergeModelsTest
+  ModuleEntryPoint
     ${MRML_TEST_DATA}/sphere.vtk
     ${MRML_TEST_DATA}/cube.vtk
     ${TEMP}/sphereCube.vtk
@@ -1533,7 +1517,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}TestVtp)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  MergeModelsTest
+  ModuleEntryPoint
     ${MRML_TEST_DATA}/sphere.vtp
     ${MRML_TEST_DATA}/cube.vtp
     ${TEMP}/sphereCube.vtp
