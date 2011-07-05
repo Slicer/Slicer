@@ -519,6 +519,7 @@ void qMRMLAnnotationTreeView::hideScene()
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();
 
+  /* don't hide the top level node
   if (this->m_Logic &&
       this->m_Logic->GetMRMLScene())
     {
@@ -531,7 +532,7 @@ void qMRMLAnnotationTreeView::hideScene()
       root = d->SceneModel->indexes(toplevelNode)[0];
       }
     }
-
+  */
   this->setRootIndex(d->SortFilterModel->mapFromSource(root));
 
 
