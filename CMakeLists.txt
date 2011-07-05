@@ -473,7 +473,13 @@ include(${SLICERLIBCURL_USE_FILE})
 #-----------------------------------------------------------------------------
 # LibArchive
 #-----------------------------------------------------------------------------
-find_package(LibArchive REQUIRED)
+set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
+set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
+foreach(var LibArchive_LIBRARY LibArchive_INCLUDE_DIR)
+  if(NOT EXISTS "${${var}}")
+    message(FATAL_ERROR "error: ${var} corresponds to an inexistant file or directory. [${${var}}]")
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 # BatchMake
