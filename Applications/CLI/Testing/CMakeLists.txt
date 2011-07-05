@@ -1,7 +1,6 @@
 #
 # Test CLI executables
 #
-include_regular_expression("^.*$")
 
 find_package(GenerateCLP REQUIRED)
 include(${GenerateCLP_USE_FILE})
