@@ -2473,7 +2473,8 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     toplevelNode = vtkMRMLAnnotationHierarchyNode::New();
     toplevelNode->SetAttribute(attributeName, annotationNode->GetClassName());
     toplevelNode->HideFromEditorsOff();
-    std::string nodeName = std::string(annotationNode->GetNodeTagName()) + std::string(" List");
+    // get the node tag name, remove the Annotation string, append List
+    std::string nodeName = std::string(annotationNode->GetNodeTagName()).replace(0, strlen("Annotation"), "") + std::string(" List");
     toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(nodeName.c_str()));
     // make it a child of the active hierarchy
     if (this->GetActiveHierarchyNode())
