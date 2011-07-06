@@ -20,6 +20,13 @@ if(NOT "${ITK_DIR}" STREQUAL "" AND EXISTS "${ITK_DIR}/CMakeCache.txt")
 endif()
 
 # -------------------------------------------------------------------------
+# Install SlicerExecutionModel
+# -------------------------------------------------------------------------
+if(NOT "${SlicerExecutionModel_DIR}" STREQUAL "" AND EXISTS "${SlicerExecutionModel_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SlicerExecutionModel_DIR};SlicerExecutionModel;RuntimeLibraries;/")
+endif()
+
+# -------------------------------------------------------------------------
 # Install Teem
 # -------------------------------------------------------------------------
 if(NOT "${Teem_DIR}" STREQUAL "" AND EXISTS "${Teem_DIR}/CMakeCache.txt")
