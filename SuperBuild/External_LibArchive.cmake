@@ -24,13 +24,9 @@ endif()
 
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
-  if(WIN32)
-    set(LibArchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)
-    set(LibArchive_MD5 bb416ba2e35693394a546e460797d87e)
-  else()
-    set(LibArchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
-    set(LibArchive_MD5 f43382413b4457d0e192771b100a66e7)
-  endif()
+  # Note: On windows, version smaller than 2.8.4 can't be built on 64bits architecture.
+  set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-backported-r3295.tgz)
+  set(LibArchive_MD5 4b01697777fe8e5f565353474951e276)
   ExternalProject_Add(${proj}
     URL ${LibArchive_URL}
     URL_MD5 ${LibArchive_MD5}
