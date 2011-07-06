@@ -36,6 +36,7 @@ set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 # Sanity checks
 #------------------------------------------------------------------------------
 include(PreventInSourceBuilds)
+include(PreventInBuildInstalls)
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
