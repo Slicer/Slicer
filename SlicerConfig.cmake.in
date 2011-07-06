@@ -135,6 +135,10 @@ set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
 # Slicer Libs include file directories.
 set(Slicer_Libs_INCLUDE_DIRS "@Slicer_Libs_INCLUDE_DIRS_CONFIG@")
 
+# HACK Expose SlicerBaseCLI_INCLUDE_DIRS so that slicerMacroBuildCLI works
+#      Ideally we would like to move the files from SlicerBaseCLI into the SlicerExecutionModel
+set(Slicer_BaseCLI_INCLUDE_DIRS "@Slicer_BaseCLI_INCLUDE_DIRS@")
+
 # Slicer Base include file directories.
 set(Slicer_Base_INCLUDE_DIRS "@Slicer_BINARY_DIR@" "@Slicer_Base_INCLUDE_DIRS_CONFIG@")
 

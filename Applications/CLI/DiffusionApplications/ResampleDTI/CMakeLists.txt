@@ -1,8 +1,5 @@
 project(ResampleDTI)
 
-find_package(GenerateCLP REQUIRED)
-include(${GenerateCLP_USE_FILE})
-
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 

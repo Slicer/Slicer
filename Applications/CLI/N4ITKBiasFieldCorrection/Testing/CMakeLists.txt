@@ -3,7 +3,8 @@
 #
 include_regular_expression("^.*$")
 
-find_package(GenerateCLP REQUIRED)
+# SlicerExecutionModel
+find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 
 

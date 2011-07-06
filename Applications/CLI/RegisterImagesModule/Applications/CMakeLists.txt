@@ -12,9 +12,9 @@ project( RegisterImagesModuleApplications )
              DOC "Directory with RegisterImages helper classes" )
   include_directories( ${RegisterImagesModule_INCLUDE_PATH} )
 
-  # Find GenerateCLP
-  find_package( GenerateCLP REQUIRED )
-  include( ${GenerateCLP_USE_FILE} )
+  # SlicerExecutionModel
+  find_package(SlicerExecutionModel REQUIRED GenerateCLP)
+  include(${GenerateCLP_USE_FILE})
 
   # Setup the source and paths
   set( RegisterImagesSlicer_SOURCE RegisterImagesSlicer.cxx )

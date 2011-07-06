@@ -39,8 +39,8 @@ macro(slicerMacroBuildCLI)
 
   set(CLP ${MY_NAME})
 
-  # GenerateCLP
-  find_package(GenerateCLP REQUIRED)
+  # SlicerExecutionModel
+  find_package(SlicerExecutionModel REQUIRED GenerateCLP)
   include(${GenerateCLP_USE_FILE})
 
   set(${CLP}_SOURCE ${CLP}.cxx ${MY_ADDITIONAL_SRCS})
@@ -49,6 +49,8 @@ macro(slicerMacroBuildCLI)
   if(DEFINED MY_LINK_DIRECTORIES)
     link_directories(${MY_LINK_DIRECTORIES})
   endif()
+
+  include_directories(${Slicer_BaseCLI_INCLUDE_DIRS})
 
   if(DEFINED MY_INCLUDE_DIRECTORIES)
     include_directories(${MY_INCLUDE_DIRECTORIES})

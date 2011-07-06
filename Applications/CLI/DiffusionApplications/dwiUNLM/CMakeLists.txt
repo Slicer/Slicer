@@ -1,7 +1,4 @@
-project( dwiUNLM )
-
-find_package(GenerateCLP REQUIRED)
-include(${GenerateCLP_USE_FILE})
+project(dwiUNLM)
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})

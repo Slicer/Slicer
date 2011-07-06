@@ -41,11 +41,13 @@ endif (Slicer_SOURCE_DIR)
 set (CLP DicomToNrrdConverter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 
+# SlicerExecutionModel
+find_package(SlicerExecutionModel REQUIRED GenerateCLP)
+include(${GenerateCLP_USE_FILE})
+
 if (Slicer_SOURCE_DIR)
   generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 else (Slicer_SOURCE_DIR)
-  find_package(GenerateCLP NO_MODULE REQUIRED)
-  include(${GenerateCLP_USE_FILE})
   generateclp(${CLP}_SOURCE ${CLP}.xml)
 endif (Slicer_SOURCE_DIR)
 add_executable(${CLP} ${${CLP}_SOURCE})

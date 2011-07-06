@@ -33,3 +33,8 @@ slicerMacroBuildCLI(
     ${vtkTeem_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
+
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
+

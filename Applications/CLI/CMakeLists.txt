@@ -1,413 +1,68 @@
-project(CLI)
-
-# SlicerExecutionModel
-find_package(SlicerExecutionModel REQUIRED GenerateCLP)
-include(${GenerateCLP_USE_FILE})
-
-# ITK
-find_package(ITK REQUIRED)
-include(${ITK_USE_FILE})
-
-# VTK
-find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
-
-# vtkITK
-find_package(vtkITK REQUIRED)
-
-include_directories(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
-link_directories(${SlicerBaseCLI_BINARY_DIR})
-
-#-----------------------------------------------------------------------------
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME DiffusionTensorTest
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-#slicerMacroBuildCLI(
-#  NAME DiffusionWeightedTest
-#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ${ITK_LIBRARIES})
-#  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME DiffusionTensorEstimation
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES
-    ${MRML_LIB_DIR}
-    ${vtkTeem_LIB_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR}
-    ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES
-    ${vtkITK_INCLUDE_DIRS}
-    ${MRML_INCLUDE_DIRS}
-    ${vtkTeem_INCLUDE_DIRS}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME DiffusionWeightedMasking
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES
-    ${MRML_LIB_DIR}
-    ${vtkTeem_LIB_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR}
-    ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}
-    ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}
-    ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR}
-    ${vtkTeem_BINARY_DIR}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Seeding
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES
-    ${MRML_LIB_DIR}
-    ${vtkTeem_LIB_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR}
-    ${SlicerBaseLogic_BINARY_DIR}
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}
-    ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}
-    ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR}
-    ${vtkTeem_BINARY_DIR}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME DiffusionTensorMathematics
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem
-  LINK_DIRECTORIES
-    ${MRML_LIB_DIR}
-    ${vtkTeem_LIB_DIR}
-  INCLUDE_DIRECTORIES
-    ${MRML_SOURCE_DIR}    ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME OrientImage
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME LinearRegistration
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME RigidRegistration
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME AffineRegistration
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME BSplineDeformableRegistration
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME BSplineToDeformationField
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME TestGridTransformRegistration
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME CheckerBoard
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ResampleVolume
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME PolyDataToLabelmap
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES} vtkIO vtkGraphics ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME GaussianBlurImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES} ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ConfidenceConnected
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ExecutionModelTour
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/BillsLogo.h
-  TARGET_LIBRARIES MRML
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ImageReadDicomWrite
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME CurvatureAnisotropicDiffusion
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME GradientAnisotropicDiffusion
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME MedianImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-
-if( "${ITK_VERSION_MAJOR}" LESS 4 )
-#-----------------------------------------------------------------------------
-add_subdirectory(DicomToNrrdConverter)
-#-----------------------------------------------------------------------------
-endif( "${ITK_VERSION_MAJOR}" LESS 4 )
-# set (CLP DWIDicomLoad)
-
-# set ( ${CLP}_SOURCE ${CLP}.cxx)
-# generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-# add_executable(${CLP} ${${CLP}_SOURCE})
-# slicer3_set_plugins_output_path(${CLP})
-# target_link_libraries (${CLP} ${ITK_LIBRARIES})
-
-# add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-# slicer3_set_plugins_output_path(${CLP}Lib)
-# set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-# target_link_libraries (${CLP}Lib ${ITK_LIBRARIES})
-
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME HistogramMatching
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME OtsuThresholdImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME OtsuThresholdSegmentation
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Subtract
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Multiply
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Add
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Threshold
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Mask
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME Cast
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME VotingBinaryHoleFillingImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-# TODO: Remove SlicerBaseLogic once pass in color node information
-slicerMacroBuildCLI(
-  NAME ModelMaker
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
-  )
-#-----------------------------------------------------------------------------
-# TODO: Remove SlicerBaseLogic once pass in color node information
-slicerMacroBuildCLI(
-  NAME MultipleModelsExample
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME GrayscaleModelMaker
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES vtkITK ModuleDescriptionParser SlicerBaseCLI vtkHybrid
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME MergeModels
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES vtkIO vtkGraphics
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ProbeVolumeWithModel
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}  ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}    ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR}
-  EXECUTABLE_ONLY
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME GrayscaleFillHoleImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME GrayscaleGrindPeakImageFilter
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME LabelMapSmoothing
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ImageLabelCombine
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ComputeSUVBodyWeight
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  # LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h
-  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
-  LINK_DIRECTORIES ${vtkITK_LIB_DIR}
-  INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}           ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}             ${MRML_BINARY_DIR}
-    ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR}
-  )
-#-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
-  NAME ResampleVolume2
-  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${ITK_LIBRARIES}
-  ADDITIONAL_SRCS
-    DiffusionApplications/ResampleDTI/itkWarpTransform3D.h
-    DiffusionApplications/ResampleDTI/itkWarpTransform3D.txx
-    DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.h
-    DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.txx
-    DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.h
-    DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.cxx
-    DiffusionApplications/ResampleDTI/dtiprocessFiles/dtitypes.h
-    DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
-    DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
-  )
-#-----------------------------------------------------------------------------
-# culled from Slicer 3.6 release
-#slicerMacroBuildCLI(
-#  NAME ZeroCrossingBasedEdgeDetectionImageFilter
-#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ${ITK_LIBRARIES}
-#  )
-#-----------------------------------------------------------------------------
-# culled from Slicer 3.6 release
-#slicerMacroBuildCLI(
-#  NAME FreesurferSurfaceSectionExtraction
-#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ${ITK_LIBRARIES}
-#  )
-###################
-
 set(cli_modules
-  MRIBiasFieldCorrection
-  SparseFieldLevelSetContour
-  Realign
+  Add
+  AffineRegistration
+  BSplineDeformableRegistration
+  BSplineToDeformationField
+  Cast
+  CheckerBoard
+  ComputeSUVBodyWeight
+  ConfidenceConnected
+  CurvatureAnisotropicDiffusion
   DiffusionApplications
+  DiffusionTensorEstimation
+  DiffusionTensorMathematics
+  DiffusionTensorTest
+  DiffusionWeightedMasking
+  DiffusionWeightedTest
+  ExecutionModelTour
   ExtractSkeleton
+  FreesurferSurfaceSectionExtraction
+  GaussianBlurImageFilter
+  GradientAnisotropicDiffusion
+  GrayscaleFillHoleImageFilter
+  GrayscaleGrindPeakImageFilter
+  GrayscaleModelMaker
+  HistogramMatching
+  ImageLabelCombine
+  ImageReadDicomWrite
   Java
+  LabelMapSmoothing
+  LinearRegistration
+  Mask
+  MedianImageFilter
+  MergeModels
+  ModelMaker
+  MRIBiasFieldCorrection
+  MultipleModelsExample
+  Multiply
   N4ITKBiasFieldCorrection
-  RobustStatisticsSegmenter
+  OrientImage
+  OtsuThresholdImageFilter
+  OtsuThresholdSegmentation
+  PolyDataToLabelmap
+  ProbeVolumeWithModel
+  Realign
   RegisterImagesModule
+  ResampleVolume2
+  ResampleVolume
+  RigidRegistration
+  RobustStatisticsSegmenter
+  Seeding
+  SparseFieldLevelSetContour
+  Subtract
+  TestGridTransformRegistration
+  Threshold
+  VotingBinaryHoleFillingImageFilter
+  ZeroCrossingBasedEdgeDetectionImageFilter
   )
+  
+if("${ITK_VERSION_MAJOR}" LESS 4)
+  list(APPEND cli_modules DicomToNrrdConverter)
+  option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
+  if(BUILD_BRAINSTOOLS)
+    list(APPEND cli_modules BRAINSTools)
+  endif()
+endif()
 
 if(Slicer_USE_MIDAS)
   list(APPEND cli_modules MIDASApplications)
@@ -417,18 +72,29 @@ if(Slicer_USE_BatchMake)
   list(APPEND cli_modules BatchMakeApplications)
 endif()
 
+if(BUILD_TESTING)
+  # TODO Since the following snippet have been moved from CLI/Testing/CMakeLists.txt into 
+  # CLI/CMakeLists.txt, the variable SLICER_BRAINWEB_DATA_ROOT won't be set properly.
+  # Configure the default SLICER_BRAINWEB_DATA_ROOT for the location of BrainWeb Data.
+  # When this data is available, additional 3D tests are enabled.
+  find_path(SLICER_BRAINWEB_DATA_ROOT brainweb165a10f17.mha
+    DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
+  mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
+
+  set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
+  if(USE_VALGRIND)
+    set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+  endif()
+
+  set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+  set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
+  set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+  set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
+
+  set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
+endif()
+
 foreach(cli_module ${cli_modules})
   add_subdirectory(${cli_module})
-endforeach(cli_module)
+endforeach()
 
-option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
-if(BUILD_BRAINSTOOLS)
-  if( "${ITK_VERSION_MAJOR}" LESS 4 )
-  add_subdirectory(BRAINSTools)
-  endif( "${ITK_VERSION_MAJOR}" LESS 4 )
-
-endif()
-
-if(BUILD_TESTING)
-  add_subdirectory(Testing)
-endif()

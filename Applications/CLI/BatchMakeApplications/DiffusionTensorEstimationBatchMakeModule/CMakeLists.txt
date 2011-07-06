@@ -66,8 +66,8 @@ if(BatchMake_DIR)
 
   endif(Slicer_BINARY_DIR)
 
-  # Find GenerateCLP
-  find_package(GenerateCLP REQUIRED)
+  # SlicerExecutionModel
+  find_package(SlicerExecutionModel REQUIRED GenerateCLP)
   if(GenerateCLP_FOUND)
     include(${GenerateCLP_USE_FILE})
   endif(GenerateCLP_FOUND)

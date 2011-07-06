@@ -1,8 +1,5 @@
 project(RobustStatisticsSegmenter)
 
-find_package(GenerateCLP REQUIRED)
-include(${GenerateCLP_USE_FILE})
-
 find_package(ITK REQUIRED)
 include(${USE_ITK_FILE})
 

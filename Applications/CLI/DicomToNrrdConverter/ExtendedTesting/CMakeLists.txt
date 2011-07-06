@@ -14,7 +14,8 @@ include_directories(${DicomToNrrdConverter_SOURCE_DIR})
 include_directories(${DicomToNrrdConverter_BINARY_DIR})
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 
-find_package(GenerateCLP NO_MODULE REQUIRED)
+# SlicerExecutionModel
+find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 
 set (CLP DWICompare)

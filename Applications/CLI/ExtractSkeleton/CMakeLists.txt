@@ -18,3 +18,8 @@ slicerMacroBuildCLI(
     misc.cxx
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
+
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
+

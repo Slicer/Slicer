@@ -1,7 +1,4 @@
-project( jointLMMSE )
-
-find_package(GenerateCLP REQUIRED)
-include(${GenerateCLP_USE_FILE})
+project(jointLMMSE)
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
