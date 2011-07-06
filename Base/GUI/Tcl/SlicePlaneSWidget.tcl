@@ -217,12 +217,15 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
               set visible [$sliceNode GetWidgetVisible]
               $sliceNode SetWidgetVisible [expr !$visible]
               if { [expr !$visible] } {
-                  set rwi [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+                set viewerWidget [$::slicer3::ApplicationGUI GetActiveViewerWidget]
+                if { $viewerWidget != "" } {
+                  set rwi [[$viewerWidget GetMainViewer] GetRenderWindowInteractor]
                   # Update the size of the render window interactor to match that of the render window
                   set rw [[[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer] GetRenderWindow]
                   if {[$rw GetSize] != [$rwi GetSize]} { 
                       $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
                   }
+                }
               }
             }
           }
