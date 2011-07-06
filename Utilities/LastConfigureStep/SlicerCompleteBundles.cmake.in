@@ -122,6 +122,7 @@ function(fixup_bundle_with_plugins location app)
   list(APPEND libs_path "@OpenIGTLink_DIR@/bin")
   list(APPEND libs_path "@CTK_DIR@/bin")
   list(APPEND libs_path "@SlicerExecutionModel_DIR@/ModuleDescriptionParser/bin")
+  list(APPEND libs_path "@LibArchive_DIR@/lib")
 
   list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3")
   list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
