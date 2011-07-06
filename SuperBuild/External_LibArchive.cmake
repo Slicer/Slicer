@@ -22,7 +22,7 @@ if(APPLE)
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
-if(NOT DEFINED qCDashAPI_DIR)
+if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   if(WIN32)
     set(LibArchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.zip)
