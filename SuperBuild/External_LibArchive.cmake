@@ -34,9 +34,9 @@ if(NOT DEFINED qCDashAPI_DIR)
   ExternalProject_Add(${proj}
     URL ${LibArchive_URL}
     URL_MD5 ${LibArchive_MD5}
-    SOURCE_DIR libarchive
-    BINARY_DIR libarchive-build
-    INSTALL_DIR libarchive-install
+    SOURCE_DIR LibArchive
+    BINARY_DIR LibArchive-build
+    INSTALL_DIR LibArchive-install
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
@@ -51,9 +51,9 @@ if(NOT DEFINED qCDashAPI_DIR)
     DEPENDS
       ${LibArchive_DEPENDENCIES}
     )
-  set(LibArchive_DIR ${CMAKE_BINARY_DIR}/libarchive-install)
+  set(LibArchive_DIR ${CMAKE_BINARY_DIR}/LibArchive-install)
 else()
-  # The project is provided using LibArchive_DIR, nevertheless since other project may depend on libarchive,
+  # The project is provided using LibArchive_DIR, nevertheless since other project may depend on LibArchive,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${LibArchive_DEPENDENCIES}")
 endif()
