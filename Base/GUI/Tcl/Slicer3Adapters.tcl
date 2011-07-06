@@ -199,6 +199,7 @@ namespace eval Slicer3Adapters {
 
     constructor {} {
       set _slicerWindow [namespace current]::[::Slicer3Adapters::SlicerWindow #auto]
+      set _viewerWidget [namespace current]::[::Slicer3Adapters::ViewerWidget #auto]
     }
 
     destructor {
@@ -206,10 +207,8 @@ namespace eval Slicer3Adapters {
 
     # parts of the application
     variable _slicerWindow ""
+    variable _viewerWidget ""
     variable _application ""
-
-    # to limit printouts
-    variable _viewerWarning ""
 
     # methods
     # access to locally instanced classes
@@ -219,15 +218,37 @@ namespace eval Slicer3Adapters {
       return $_slicerWindow
     }
     method GetActiveViewerWidget {} {
-      if { $_viewerWarning == "" } {
-        puts "TODO: need to be able to access the viewers from a script: $this GetActiveViewerWidget"
-        set _viewerWarning "done"
+      if { [py_eval "slicer.app.layoutManager() == None"] == "True" } {
+        return ""
       }
-      return ""
+      return $_viewerWidget
     }
 
     method GetGUILayoutNode {} {
       return [$::slicer3::MRMLScene GetNthNodeByClass 0 "vtkMRMLLayoutNode"]
+    }
+  }
+
+  itcl::class ViewerWidget {
+    # this is a replacement for a vtkSlicerViewerWidget from slicer3
+
+    constructor {} {
+      set _renderWidget [namespace current]::[::Slicer3Adapters::RenderWidget #auto]
+    }
+
+    destructor {
+    }
+
+    # place holder variable
+    variable _renderWidget ""
+
+    # methods
+    method GetMainViewer {} {
+      $_renderWidget SetRenderWindowInteractor [py_eval "slicer.app.layoutManager().threeDView(0).renderWindow().GetInteractor()"]
+      return $_renderWidget
+    }
+    method RequestRender {} {
+      $_renderWidget RequestRender
     }
   }
 
@@ -343,6 +364,10 @@ namespace eval Slicer3Adapters {
     method GetVTKWidget {} {return $_vtkWidget}
     method GetRenderWindow {} {
       return [$_interactor GetRenderWindow]
+    }
+    method RequestRender {} {
+      # TODO: make this a request rather than a force render
+      [$this GetRenderWindow] Render
     }
     method GetRenderer {} {
       return [[[$_interactor GetRenderWindow] GetRenderers] GetFirstRenderer]
