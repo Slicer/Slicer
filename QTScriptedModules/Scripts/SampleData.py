@@ -93,6 +93,7 @@ class SampleDataWidget:
     self.layout.addWidget(self.log)
     self.log.insertHtml('<p>Status: <i>Idle</i>\n')
     self.log.insertPlainText('\n')
+    self.log.ensureCursorVisible()
 
     # Add spacer to layout
     self.layout.addStretch(1)
@@ -127,6 +128,7 @@ class SampleDataWidget:
       # Automatically select the volume to display
       self.log.insertHtml('<i>Displaying...</i>')
       self.log.insertPlainText('\n')
+      self.log.ensureCursorVisible()
       self.log.repaint()
       mrmlLogic = slicer.app.mrmlApplicationLogic()
       selNode = mrmlLogic.GetSelectionNode()
@@ -134,10 +136,12 @@ class SampleDataWidget:
       mrmlLogic.PropagateVolumeSelection(1)
       self.log.insertHtml('<i>finished.</i>\n')
       self.log.insertPlainText('\n')
+      self.log.ensureCursorVisible()
       self.log.repaint()
     else:
       self.log.insertHtml('<b>Download failed!</b>\n')
       self.log.insertPlainText('\n')
+      self.log.ensureCursorVisible()
       self.log.repaint()
     self.processStorageEvents(storageNode, 'ModifiedEvent')
 
@@ -152,6 +156,7 @@ class SampleDataWidget:
     else:
       self.log.insertHtml('Status: <i>%s</i>\n' % state)
       self.log.insertPlainText('\n')
+    self.log.ensureCursorVisible()
     self.log.repaint()
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
