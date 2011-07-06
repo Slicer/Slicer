@@ -735,16 +735,16 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
     return;
     }
-
+  
   // run through all associated nodes
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
   it = this->Helper->AnnotationNodeList.begin();
   while(it != this->Helper->AnnotationNodeList.end())
     {
-
+    
     // we loop through all nodes
     vtkMRMLAnnotationNode * annotationNode = *it;
-
+    
     vtkAbstractWidget* widget = this->Helper->GetWidget(annotationNode);
     if (!widget)
       {
@@ -758,7 +758,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     bool visibleOnNode = (annotationNode->GetVisible() == 1 ? true : false);
     // check if the widget is visible according to the widget state
     bool visibleOnWidget = (widget->GetEnabled() == 1 ? true : false);
-
 
     // now this is the magical part
     // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
@@ -813,9 +812,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
           }
         }
+      else
+        {
+        // it's visible, just update the position
+        this->UpdatePosition(widget, annotationNode);
+        }
 
       }
-
 
     // if the widget is not shown on the slice, show at least the intersection
     if (!visibleOnSlice)
