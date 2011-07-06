@@ -21,6 +21,23 @@ if(POLICY CMP0017)
 endif()
 
 #-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+  ${Slicer_SOURCE_DIR}/CMake
+  ${Slicer_SOURCE_DIR}/Extensions/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+
+set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
+set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
+
+#-----------------------------------------------------------------------------
+# Sanity checks
+#------------------------------------------------------------------------------
+include(PreventInSourceBuilds)
+
+#-----------------------------------------------------------------------------
 # Set a default build type if none was specified
 #-----------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -37,18 +54,6 @@ endif()
 #-----------------------------------------------------------------------------
 set(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/qSlicerExport.h.in")
 set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${Slicer_SOURCE_DIR}/CMake
-  ${Slicer_SOURCE_DIR}/Extensions/CMake
-  ${CMAKE_MODULE_PATH}
-  )
-
-set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
-set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
