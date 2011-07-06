@@ -474,7 +474,11 @@ include(${SLICERLIBCURL_USE_FILE})
 # LibArchive
 #-----------------------------------------------------------------------------
 set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
-set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
+if(WIN32)
+  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
+else()
+  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
 foreach(var LibArchive_LIBRARY LibArchive_INCLUDE_DIR)
   if(NOT EXISTS "${${var}}")
     message(FATAL_ERROR "error: ${var} corresponds to an inexistant file or directory. [${${var}}]")
