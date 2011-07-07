@@ -266,6 +266,47 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
   #
   if { $caller == $sliceNode } {
     if { [$sliceNode GetWidgetVisible] } {
+      # calculate bounds of bg volume if it exists
+      set rmin -100; set rmax 100
+      set amin -100; set amax 100
+      set smin -100; set smax 100
+      set logic [[$sliceGUI GetLogic]  GetBackgroundLayer]
+      set node [$logic GetVolumeNode]
+      if { $node != "" } {
+        set imageData [$node GetImageData]
+        if { $imageData != "" } {
+
+          # find the transformed ijkToRAS
+          set ijkToRAS [vtkMatrix4x4 New]
+          $node GetIJKToRASMatrix $ijkToRAS
+          set transformNode [$::slicer3::MRMLScene GetNodeByID [$node GetTransformNodeID]]
+          if { $transformNode != "" } {
+            if { [$transformNode IsTransformToWorldLinear] } {
+              set rasToRAS [vtkMatrix4x4 New]
+              $transformNode GetMatrixTransformToWorld $rasToRAS
+              $rasToRAS Multiply4x4 $rasToRAS $ijkToRAS $ijkToRAS
+              $rasToRAS Delete
+            }
+          }
+
+          set dimensions [$imageData GetDimensions]
+          set d0 [lindex $dimensions 0]
+          set d1 [lindex $dimensions 1]
+          set d2 [lindex $dimensions 2]
+          set min [$ijkToRAS MultiplyDoublePoint 0 0 0 1]
+          set max [$ijkToRAS MultiplyDoublePoint $d0 $d1 $d2 1]
+          set rmin [lindex $min 0]
+          set amin [lindex $min 1]
+          set smin [lindex $min 2]
+          set rmax [lindex $max 0]
+          set amax [lindex $max 1]
+          set smax [lindex $max 2]
+          $ijkToRAS Delete
+        }
+      }
+
+      $o(planeRepresentation) SetDrawPlane 0
+      $o(planeRepresentation) PlaceWidget $rmin $rmax $amin $amax $smin $smax
       $o(planeWidget) On
     } else {
       $o(planeWidget) Off
