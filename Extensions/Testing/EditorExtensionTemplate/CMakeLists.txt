@@ -6,43 +6,43 @@ cmake_minimum_required(VERSION 2.8.2)
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
 if(POLICY CMP0016)
-  CMAKE_POLICY(SET CMP0016 NEW)
+  cmake_policy(SET CMP0016 NEW)
 endif()
 if(POLICY CMP0017)
-  CMAKE_POLICY(SET CMP0017 OLD)
+  cmake_policy(SET CMP0017 OLD)
 endif()
 
 # Module name (usually identique to the directory name)
-SET(EXTENSION_NAME EditorExtensionTemplate)
+set(EXTENSION_NAME EditorExtensionTemplate)
 
-IF(NOT Slicer_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
 
-  SET(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-  SET(EXTENSION_CATEGORY "Examples")
-  SET(EXTENSION_STATUS "Beta")
-  SET(EXTENSION_DESCRIPTION "This is an example of scripted loadable editor effect built as an extension")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_STATUS "Beta")
+  set(EXTENSION_DESCRIPTION "This is an example of scripted loadable editor effect built as an extension")
   set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
 
-  FIND_PACKAGE(Slicer REQUIRED)
+  find_package(Slicer REQUIRED)
   
   # Additional C/CXX flags - Should be defined before including Slicer_USE_FILE
   set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
   set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
   
-  INCLUDE(${Slicer_USE_FILE})
+  include(${Slicer_USE_FILE})
   
-  SET(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
-  SET(EXTENSION_README_FILE ${Slicer_README_FILE})
+  set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
+  set(EXTENSION_README_FILE ${Slicer_README_FILE})
 
-  INCLUDE(SlicerEnableExtensionTesting)
+  include(SlicerEnableExtensionTesting)
 
-ENDIF()
+endif()
 
-SET(KIT_PYTHON_SCRIPTS
+set(KIT_PYTHON_SCRIPTS
   EditorExtensionTemplate.py
   )
   
-SET(KIT_PYTHON_RESOURCES
+set(KIT_PYTHON_RESOURCES
   )
 
 ctkMacroCompilePythonScript(
@@ -53,12 +53,12 @@ ctkMacroCompilePythonScript(
   INSTALL_DIR ${Slicer_INSTALL_ROOT}
   )
 
-IF(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
-ENDIF()
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
 
-IF(NOT Slicer_SOURCE_DIR)
-  INCLUDE(SlicerFunctionGenerateExtensionDescription)
+if(NOT Slicer_SOURCE_DIR)
+  include(SlicerFunctionGenerateExtensionDescription)
   slicerFunctionGenerateExtensionDescription(
     EXTENSION_NAME ${EXTENSION_NAME}
     EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
@@ -70,5 +70,5 @@ IF(NOT Slicer_SOURCE_DIR)
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
-  INCLUDE(${Slicer_EXTENSION_CPACK})
-ENDIF()
+  include(${Slicer_EXTENSION_CPACK})
+endif()
