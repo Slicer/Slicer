@@ -21,7 +21,7 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_STATUS "Beta")
   set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
-  set(EXTENSION_DEPENDS CLIExtensionTemplate)
+  set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 
   find_package(Slicer REQUIRED)
 

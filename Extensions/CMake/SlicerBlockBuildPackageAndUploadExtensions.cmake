@@ -30,6 +30,7 @@ foreach(file ${s4extfiles})
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
+    string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS ${EXTENSION_SEXT_DEPENDS})
     set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_SEXT_DEPENDS})
   endif()
 endforeach()
@@ -44,6 +45,7 @@ foreach(extension_name ${EXTENSION_LIST})
 
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
+  string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS ${EXTENSION_SEXT_DEPENDS})
 
   #foreach(v SCM SCMURL DEPENDS HOMEPAGE CATEGORY STATUS DESCRIPTION)
   #  message(${v}:${EXTENSION_SEXT_${v}})
