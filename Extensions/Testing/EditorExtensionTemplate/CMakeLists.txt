@@ -25,8 +25,9 @@ IF(NOT Slicer_SOURCE_DIR)
 
   FIND_PACKAGE(Slicer REQUIRED)
   
-  SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
-  SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
+  # Additional C/CXX flags - Should be defined before including Slicer_USE_FILE
+  set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
+  set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
   
   INCLUDE(${Slicer_USE_FILE})
   
