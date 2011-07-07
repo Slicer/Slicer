@@ -284,35 +284,15 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
   vtkCaptionActor2D *captionActor = rep->GetCaptionActor2D();
 
-  double worldCoordinates1[4];
-  textNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
-
-  double *captionViewportCoordinates = textNode->GetCaptionCoordinates();
-  vtkDebugMacro("PropagateMRMLToWidget: caption coordinates from node = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1]);
-  if ((this->Is2DDisplayableManager() && strcmp(this->GetSliceNode()->GetName(), "Red") == 0) || !this->Is2DDisplayableManager())
-     {
-     vtkDebugMacro("PropagateMRMLToWidget: caption coordinates from node " << textNode->GetID() << " = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1] << (this->Is2DDisplayableManager() ? "(2D)" : "(3D)"));
-     }
-  //these two calls should do the same thing, the caption actor is updated
-  //from the rep position
-  rep->SetPosition(captionViewportCoordinates);
-  //captionActor->SetPosition(captionViewportCoordinates[0], captionViewportCoordinates[1]);
-  
+ 
   if (this->Is2DDisplayableManager())
      {
-     double displayCoordinates1[4];
-     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
-
-     captionActor->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
-     captionActor->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
-
      // turn off the three dimensional leader
      captionActor->ThreeDimensionalLeaderOff();
      }
    else
      {
      // 3D case
-     rep->SetAnchorPosition(worldCoordinates1);
      captionActor->SetThreeDimensionalLeader(textDisplayNode->GetUseThreeDimensionalLeader());
      }
   // update widget text
@@ -359,6 +339,8 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   captionActor->SetPadding(textDisplayNode->GetPadding());
   captionActor->SetAttachEdgeOnly(textDisplayNode->GetAttachEdgeOnly());
 
+  this->UpdatePosition(widget, node);
+  
   // at least one value has changed, so set the widget to modified
   rep->NeedToRenderOn();
   captionWidget->Modified();
@@ -366,6 +348,67 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
   // enable processing of modified events
   this->m_Updating = 0;
 
+}
+
+//---------------------------------------------------------------------------
+/// Propagate position properties of MRML node to widget.
+void vtkMRMLAnnotationTextDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
+{
+  if (!widget)
+    {
+    vtkErrorMacro("UpdatePosition: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("UpdatePosition: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkCaptionWidget * captionWidget = vtkCaptionWidget::SafeDownCast(widget);
+
+  if (!captionWidget)
+   {
+   vtkErrorMacro("UpdatePosition: Could not get caption widget!")
+   return;
+   }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+
+  vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
+  vtkCaptionActor2D *captionActor = rep->GetCaptionActor2D();
+  
+  double worldCoordinates1[4];
+  textNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
+
+  double *captionViewportCoordinates = textNode->GetCaptionCoordinates();
+  vtkDebugMacro("UpdatePosition: caption coordinates from node = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1]);
+  if ((this->Is2DDisplayableManager() && strcmp(this->GetSliceNode()->GetName(), "Red") == 0) || !this->Is2DDisplayableManager())
+     {
+     vtkDebugMacro("UpdatePosition: caption coordinates from node " << textNode->GetID() << " = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1] << (this->Is2DDisplayableManager() ? "(2D)" : "(3D)"));
+     }
+  //these two calls should do the same thing, the caption actor is updated
+  //from the rep position
+  rep->SetPosition(captionViewportCoordinates);
+  //captionActor->SetPosition(captionViewportCoordinates[0], captionViewportCoordinates[1]);
+
+   if (this->Is2DDisplayableManager())
+     {
+     double displayCoordinates1[4];
+     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+
+     captionActor->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+     captionActor->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
+     }
+   else
+     {
+     // 3D case
+     rep->SetAnchorPosition(worldCoordinates1);
+     }
+  
 }
 
 //---------------------------------------------------------------------------
