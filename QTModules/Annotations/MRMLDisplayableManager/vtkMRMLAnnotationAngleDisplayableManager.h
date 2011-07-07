@@ -44,6 +44,10 @@ public:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
+  // update just the position, called from PropagateMRMLToWidget and in
+  // response to slice node modified events
+  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
+
 protected:
 
   vtkMRMLAnnotationAngleDisplayableManager(){this->m_Focus="vtkMRMLAnnotationAngleNode";}
