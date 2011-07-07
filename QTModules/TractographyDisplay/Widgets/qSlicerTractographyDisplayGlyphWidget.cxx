@@ -41,6 +41,7 @@ qSlicerTractographyDisplayGlyphWidgetPrivate::qSlicerTractographyDisplayGlyphWid
   : q_ptr(&object)
 {
   this->FiberBundleDisplayNode = 0;
+  this->DiffusionTensorDisplayPropertiesNode = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -77,22 +78,20 @@ qSlicerTractographyDisplayGlyphWidget::~qSlicerTractographyDisplayGlyphWidget()
 {
 }
 
-
 //------------------------------------------------------------------------------
-vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayGlyphWidget::FiberBundleDisplayNode()const
+vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayGlyphWidget::fiberBundleDisplayNode()const
 {
   Q_D(const qSlicerTractographyDisplayGlyphWidget);
   return d->FiberBundleDisplayNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayGlyphWidget::DiffusionTensorDisplayPropertiesNode()const
+vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayGlyphWidget::diffusionTensorDisplayPropertiesNode()const
 {
   Q_D(const qSlicerTractographyDisplayGlyphWidget);
   return d->FiberBundleDisplayNode ?
     d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() : 0;
 }
-
 
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLNode* node)
@@ -101,17 +100,16 @@ void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLNod
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode)
+void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode* fiberBundleDisplayNode)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  vtkMRMLFiberBundleDisplayNode *oldDisplayNode = 
-    this->FiberBundleDisplayNode();
+  vtkMRMLFiberBundleDisplayNode *oldDisplayNode = d->FiberBundleDisplayNode;
   vtkMRMLDiffusionTensorDisplayPropertiesNode *oldDisplayPropertiesNode =
-    this->DiffusionTensorDisplayPropertiesNode();
- 
-  d->FiberBundleDisplayNode = FiberBundleDisplayNode;
+    d->DiffusionTensorDisplayPropertiesNode;
+
+  d->FiberBundleDisplayNode = fiberBundleDisplayNode;
   d->DiffusionTensorDisplayPropertiesNode =
-    FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
+    fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
 
   std::vector<int> supportedDisplayTypes;
   int i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphGeometry();
@@ -129,9 +127,9 @@ void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLFib
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvectorAsString(i), i);
     }
   
-  qvtkReconnect( oldDisplayNode, this->FiberBundleDisplayNode(),
+  qvtkReconnect( oldDisplayNode, d->FiberBundleDisplayNode,
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
-  qvtkReconnect( oldDisplayPropertiesNode, this->DiffusionTensorDisplayPropertiesNode(),
+  qvtkReconnect( oldDisplayPropertiesNode, d->DiffusionTensorDisplayPropertiesNode,
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
   this->updateWidgetFromMRML();
 }
@@ -231,7 +229,7 @@ void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
   
   d->GlyphTypeSelector->setCurrentIndex(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometry() );
-  
+
   int geomId =
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometry();
   if (geomId == vtkMRMLDiffusionTensorDisplayPropertiesNode::Ellipsoids)
@@ -241,7 +239,7 @@ void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
 
   d->GlyphEigenvectorSelector->setCurrentIndex( 
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvector() );
-  
+
   d->ScaleFactorSlider->setValue(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphScaleFactor() );
   d->SpacingSlider->setValue(

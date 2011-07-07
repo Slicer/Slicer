@@ -28,8 +28,8 @@ public:
   qSlicerTractographyDisplayGlyphWidget(QWidget *parent=0);
   virtual ~qSlicerTractographyDisplayGlyphWidget();
 
-  vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode()const;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode()const;
+  vtkMRMLFiberBundleDisplayNode* fiberBundleDisplayNode()const;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* diffusionTensorDisplayPropertiesNode()const;
 
 public slots:
   void setFiberBundleDisplayNode(vtkMRMLNode *node);
