@@ -92,6 +92,7 @@ if(BUILD_TESTING)
   set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
   set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
+  include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
 endif()
 
 foreach(cli_module ${cli_modules})
