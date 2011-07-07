@@ -224,7 +224,8 @@ if(NOT DEFINED EXTENSION_NAME OR "${EXTENSION_NAME}" STREQUAL "")
   message(FATAL_ERROR "error: Make sure to define EXTENSION_NAME prior to call find_package(Slicer) !")
 endif()
 if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT SlicerConfig_INCLUDED_ONCE)
-  message(FATAL_ERROR "Since calling find_package(Slicer) automatically calls project(${EXTENSION_NAME}). Make sure to remove any call to project(${EXTENSION_NAME}).")
+  message(FATAL_ERROR "Since calling find_package(Slicer) automatically calls project(${EXTENSION_NAME}). Make sure to remove any call to project(${EXTENSION_NAME}).
+Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 project(${EXTENSION_NAME})
 
