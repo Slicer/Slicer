@@ -24,7 +24,7 @@ add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib ${ITK_LIBRARIES})
 
-add_executable(${CLP} ${Slicer_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+add_executable(${CLP} ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
 target_link_libraries (${CLP} ${CLP}Lib)
 
 #the following line is an example of how to add a test to your project.

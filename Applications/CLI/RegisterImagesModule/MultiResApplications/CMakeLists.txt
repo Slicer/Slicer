@@ -41,8 +41,8 @@ project( RegisterImagesMultiResApplications )
   set_target_properties(${CLP}Module PROPERTIES LABELS ${CLP})
 
   # Build the command line
-  add_executable( RegisterImagesMultiRes ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
-  target_link_libraries( RegisterImagesMultiRes RegisterImagesMultiResModule )
+  add_executable(RegisterImagesMultiRes ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
+  target_link_libraries(RegisterImagesMultiRes RegisterImagesMultiResModule)
   set_target_properties(${CLP} PROPERTIES LABELS ${CLP})
 
   if( Slicer_SOURCE_DIR )

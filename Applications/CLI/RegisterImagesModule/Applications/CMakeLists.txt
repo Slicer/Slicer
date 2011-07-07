@@ -39,8 +39,8 @@ project( RegisterImagesModuleApplications )
   target_link_libraries(${CLP}Module ${ITK_LIBRARIES})
 
   # Build the command line
-  add_executable( RegisterImages ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
-  target_link_libraries( RegisterImages RegisterImagesModule )
+  add_executable(RegisterImages ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
+  target_link_libraries(RegisterImages RegisterImagesModule)
 
   # Setup the source and paths
   set( TransformFromFiducials_SOURCE TransformFromFiducials.cxx )
