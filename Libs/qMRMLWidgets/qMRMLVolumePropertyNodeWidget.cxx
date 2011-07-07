@@ -29,7 +29,6 @@
 #include <vtkMRMLVolumePropertyNode.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qMRMLVolumePropertyNodeWidgetPrivate
   : public Ui_qMRMLVolumePropertyNodeWidget
 {
