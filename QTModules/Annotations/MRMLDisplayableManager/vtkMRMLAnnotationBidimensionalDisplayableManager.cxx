@@ -6,6 +6,8 @@
 #include <vtkMRMLAnnotationBidimensionalNode.h>
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayableManager.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationLineDisplayNode.h>
 
 // AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationBidimensionalDisplayableManager.h"
@@ -20,12 +22,15 @@
 // VTK includes
 #include <vtkAbstractWidget.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkPointHandleRepresentation2D.h>
 #include <vtkMath.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkObjectFactory.h>
 #include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkTextProperty.h>
 
 // STD includes
 #include <string>
@@ -347,6 +352,161 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
   double worldCoordinates4[4];
   bidimensionalNode->GetControlPointWorldCoordinates(3, worldCoordinates4);
 
+
+
+  // update the distance measurement
+  rep->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+  rep->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
+
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = bidimensionalNode->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = bidimensionalNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = bidimensionalNode->GetAnnotationLineDisplayNode();
+
+  if (textDisplayNode)
+    {
+    vtkTextProperty *textProperty = rep->GetTextProperty();
+    if (textProperty)
+      {
+      if (bidimensionalNode->GetSelected())
+        {
+        textProperty->SetColor(textDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        textProperty->SetColor(textDisplayNode->GetColor());
+        }
+      float textScale = textDisplayNode->GetTextScale();
+      textProperty->SetFontSize(textScale);
+      }
+    }
+  if (pointDisplayNode)
+    {
+    vtkPointHandleRepresentation2D *handle =  vtkPointHandleRepresentation2D::SafeDownCast(rep->GetPoint1Representation());
+    if (handle)
+      {
+      if (bidimensionalNode->GetSelected())
+        {
+        handle->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        handle->GetProperty()->SetColor(pointDisplayNode->GetColor());
+        }
+      }
+    handle =  vtkPointHandleRepresentation2D::SafeDownCast(rep->GetPoint2Representation());
+    if (bidimensionalNode->GetSelected())
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+      }
+    else
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetColor());
+      }
+    handle =  vtkPointHandleRepresentation2D::SafeDownCast(rep->GetPoint3Representation());
+    if (bidimensionalNode->GetSelected())
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+      }
+    else
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetColor());
+      }
+    handle =  vtkPointHandleRepresentation2D::SafeDownCast(rep->GetPoint4Representation());
+    if (bidimensionalNode->GetSelected())
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
+      }
+    else
+      {
+      handle->GetProperty()->SetColor(pointDisplayNode->GetColor());
+      }
+    }
+  if (lineDisplayNode)
+    {
+    vtkProperty2D *lineProp = rep->GetLineProperty();
+    if (lineProp)
+      {
+      if (bidimensionalNode->GetSelected())
+        {
+        lineProp->SetColor(lineDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        lineProp->SetColor(lineDisplayNode->GetColor());
+        }
+      }
+    vtkProperty2D *selLineProp = rep->GetSelectedLineProperty();
+    if (selLineProp)
+      {
+      if (bidimensionalNode->GetSelected())
+        {
+        selLineProp->SetColor(lineDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        selLineProp->SetColor(lineDisplayNode->GetColor());
+        }
+      }
+    }
+  
+  this->UpdatePosition(widget, node);
+  
+  rep->NeedToRenderOn();
+  bidimensionalWidget->Modified();
+
+  // enable processing of modified events
+  this->m_Updating = 0;
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate position properties of MRML node to widget.
+void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
+{
+    if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkBiDimensionalWidget* bidimensionalWidget = vtkBiDimensionalWidget::SafeDownCast(widget);
+
+  if (!bidimensionalWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationBidimensionalNode* bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node);
+
+  if (!bidimensionalNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!")
+    return;
+    }
+
+  vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
+
+  double worldCoordinates1[4];
+  bidimensionalNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
+
+  double worldCoordinates2[4];
+  bidimensionalNode->GetControlPointWorldCoordinates(1, worldCoordinates2);
+
+  double worldCoordinates3[4];
+  bidimensionalNode->GetControlPointWorldCoordinates(2, worldCoordinates3);
+
+  double worldCoordinates4[4];
+  bidimensionalNode->GetControlPointWorldCoordinates(3, worldCoordinates4);
+  
   double displayCoordinates1[4];
   double displayCoordinates2[4];
   double displayCoordinates3[4];
@@ -355,13 +515,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
   double displayCoordinatesBuffer2[4];
   double displayCoordinatesBuffer3[4];
   double displayCoordinatesBuffer4[4];
-
-  // update the distance measurement
-  rep->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
-  rep->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
-
+  
   // update the location
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
     // change the 2D location
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
@@ -402,13 +558,6 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
     rep->SetPoint3WorldPosition(worldCoordinates3);
     rep->SetPoint4WorldPosition(worldCoordinates4);
     }
-
-  rep->NeedToRenderOn();
-  bidimensionalWidget->Modified();
-
-  // enable processing of modified events
-  this->m_Updating = 0;
-
 }
 
 //---------------------------------------------------------------------------
