@@ -57,6 +57,7 @@ set(run_ctest_with_configure TRUE)
 set(run_ctest_with_build TRUE)
 set(run_ctest_with_test TRUE)
 set(run_ctest_with_packages TRUE)
+# See also RUN_CTEST_SUBMIT in SlicerBlockUploadExtension.cmake
 
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_MODEL "Experimental")
@@ -75,6 +76,7 @@ CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 Slicer_DIR:PATH=${Slicer_DIR}
 ")
 
+# Write CMakeCache.txt only if required
 set(cmakecache_current "")
 if(EXISTS ${EXTENSION_BINARY_DIR}/CMakeCache.txt)
   file(READ ${EXTENSION_BINARY_DIR}/CMakeCache.txt cmakecache_current)

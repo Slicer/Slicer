@@ -1,4 +1,5 @@
 
+#-----------------------------------------------------------------------------
 # Sanity checks
 set(expected_defined_vars CMAKE_CTEST_COMMAND EXTENSION_NAME EXTENSION_SOURCE_DIR EXTENSION_BINARY_DIR Slicer_CMAKE_DIR Slicer_EXTENSIONS_CMAKE_DIR Slicer_DIR EXTENSION_COMPILER EXTENSION_BITNESS Slicer_EXTENSION_CMAKE_GENERATOR Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR)
 foreach(var ${expected_defined_vars})
@@ -13,6 +14,7 @@ foreach(var ${expected_existing_vars})
   endif()
 endforeach()
 
+#-----------------------------------------------------------------------------
 function(SlicerConvertScriptArgListToCTestFormat script_arg_list output_var)
   # Convert 'script_arg_list' to the format understood by ctest
   foreach(arg ${script_arg_list})
@@ -22,6 +24,7 @@ function(SlicerConvertScriptArgListToCTestFormat script_arg_list output_var)
   set(${output_var} ${script_args} PARENT_SCOPE)
 endfunction()
 
+#-----------------------------------------------------------------------------
 # Prepare external project configuration arguments
 set(script ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUploadExtension.cmake)
 set(script_arg_list
@@ -46,12 +49,16 @@ if(NOT "${CTEST_MODEL}" STREQUAL "")
   list(APPEND script_arg_list CTEST_MODEL=${CTEST_MODEL})
 endif()
 
+#-----------------------------------------------------------------------------
+# Set EXTENSION_TEST_COMMAND
 set(script_arg_list_for_test ${script_arg_list})
 list(APPEND script_arg_list_for_test RUN_CTEST_UPLOAD=FALSE)
 set(script_args "")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_test}" script_args)
 set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V)
 
+#-----------------------------------------------------------------------------
+# Set EXTENSION_UPLOAD_COMMAND
 set(script_arg_list_for_upload ${script_arg_list})
 list(APPEND script_arg_list_for_upload RUN_CTEST_UPLOAD=TRUE)
 set(script_args "")
