@@ -59,8 +59,8 @@ project( RegisterImagesModuleApplications )
   set_target_properties(TransformFromFiducialsModule PROPERTIES LABELS ${CLP})
 
   # Build the command line
-  add_executable( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-  target_link_libraries( TransformFromFiducials TransformFromFiducialsModule )
+  add_executable(TransformFromFiducials ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
+  target_link_libraries(TransformFromFiducials TransformFromFiducialsModule)
   set_target_properties(TransformFromFiducials PROPERTIES LABELS ${CLP})
 
   if( Slicer_SOURCE_DIR )
