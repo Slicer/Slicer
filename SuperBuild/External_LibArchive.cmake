@@ -25,11 +25,11 @@ endif()
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   # Note: On windows, version smaller than 2.8.4 can't be built on 64bits architecture.
-  set(LibArchive_SVN_REPOSITORY http://libarchive.googlecode.com/svn/trunk/)
-  set(LibArchive_SVN_REVISION -r 3461)
+  set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-patched.tar.gz)
+  set(LibArchive_MD5 8667f571da1f3318081acdd5377ddda5)
   ExternalProject_Add(${proj}
-    SVN_REPOSITORY ${LibArchive_SVN_REPOSITORY}
-    SVN_REVISION ${LibArchive_SVN_REVISION}
+    URL ${LibArchive_URL}
+    URL_MD5 ${LibArchive_MD5}
     SOURCE_DIR LibArchive
     BINARY_DIR LibArchive-build
     INSTALL_DIR LibArchive-install
