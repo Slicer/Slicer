@@ -131,7 +131,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   
   // Duplicate the pipeline of vtkMRMLScalarVolumeDisplayNode
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-  imageData->DeepCopy(displayNode2->GetInput());
+  imageData->DeepCopy(displayNode2->GetInputImageData());
   vtkSmartPointer<vtkImageResliceMask> reslice = vtkSmartPointer<vtkImageResliceMask>::New();
   reslice->SetBackgroundColor(0, 0, 0, 0); // only first two are used
   reslice->AutoCropOutputOff();

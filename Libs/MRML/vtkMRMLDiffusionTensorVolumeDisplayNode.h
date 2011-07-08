@@ -91,12 +91,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
 
-
-    /// 
-  /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData);
-
-
   /// 
   /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
   /// rotation) selected for display.
@@ -150,6 +144,18 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
     return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
     };
 
+  ///
+  /// Set the input of the pipeline
+  virtual void SetInputImageData(vtkImageData *imageData);
+
+  ///
+  /// Get the input of the pipeline
+  virtual vtkImageData* GetInputImageData();
+
+  ///
+  /// Get the output of the pipeline
+  virtual vtkImageData* GetOutputImageData();
+
   virtual void UpdateImageDataPipeline();
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematicsSimple);
@@ -169,10 +175,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
   /// 
-  /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData();
-
-  /// 
   /// Defines the expected range of the output data for given imageData after 
   /// having been mapped through the current display options
   virtual void GetDisplayScalarRange(double range[2]);
@@ -183,7 +185,7 @@ protected:
   ~vtkMRMLDiffusionTensorVolumeDisplayNode();
   vtkMRMLDiffusionTensorVolumeDisplayNode(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
-  
+
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
   /// used for main scalar invarant (can be 1 or 3 component)

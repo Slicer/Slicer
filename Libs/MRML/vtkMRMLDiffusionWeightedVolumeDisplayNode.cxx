@@ -137,16 +137,28 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 
 }
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionWeightedVolumeDisplayNode
+::SetInputImageData(vtkImageData *imageData)
+{
+  this->ExtractComponent->SetInput(imageData);
+};
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetImageData()
+vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
 {
-  this->UpdateImageDataPipeline();
-  if (this->ExtractComponent->GetInput() == NULL)
-    {
-    return NULL;
-    }
-  this->AppendComponents->Update();
+  return vtkImageData::SafeDownCast(this->ExtractComponent->GetInput());
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
+{
   return this->AppendComponents->GetOutput();
-};
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionWeightedVolumeDisplayNode::UpdateImageDataPipeline()
+{
+  this->ExtractComponent->SetComponents(this->GetDiffusionComponent());
+  this->Superclass::UpdateImageDataPipeline();
+}

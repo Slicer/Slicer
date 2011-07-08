@@ -204,17 +204,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferenceID(const char *oldI
   Superclass::UpdateReferenceID(oldID, newID);
 }
 
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeDisplayNode::SetImageData(vtkImageData *imageData)
-{
-  this->DTIMathematics->SetInput(0, imageData);
-  this->DTIMathematicsAlpha->SetInput(0, imageData);
-  //this->ShiftScale->SetInput(0, imageData );
-  //this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
-
-}
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 {
@@ -338,15 +327,24 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetImageData()
+void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
-  this->UpdateImageDataPipeline();
-  if (this->DTIMathematics->GetInput() == NULL)
-    {
-    return NULL;
-    }
-  return this->AppendComponents->GetOutput();
+  this->DTIMathematics->SetInput(imageData);
+  this->DTIMathematicsAlpha->SetInput(0, imageData);
+  //this->ShiftScale->SetInput(0, imageData );
 };
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
+{
+  return vtkImageData::SafeDownCast(this->DTIMathematics->GetInput());
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
+{
+  return this->AppendComponents->GetOutput();
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode

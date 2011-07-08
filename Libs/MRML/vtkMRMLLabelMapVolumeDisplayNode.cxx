@@ -90,6 +90,27 @@ void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
+{
+  this->MapToColors->SetInput(imageData);
+}
+
+//---------------------------------------------------------------------------
+vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
+{
+  return vtkImageData::SafeDownCast(this->MapToColors->GetInput());
+}
+
+//---------------------------------------------------------------------------
+vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
+{
+  assert(!this->MapToColors->GetLookupTable() ||
+         !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
+         vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
+  return this->MapToColors->GetOutput();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();

@@ -149,7 +149,7 @@ void qMRMLWindowLevelWidgetPrivate::scalarRange(vtkMRMLScalarVolumeDisplayNode* 
   // volume node.
   // Here we already know the volumenode so we can manually use it to
   // retrieve the scalar range.
-  if (dNode && dNode->GetInput())
+  if (dNode && dNode->GetInputImageData())
     {
     dNode->GetDisplayScalarRange(range);
     }

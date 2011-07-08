@@ -268,7 +268,7 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
   if (d->VolumeNode && d->VolumeNode->GetImageData())
     {
     double range[2];
-    if (d->VolumeDisplayNode && d->VolumeDisplayNode->GetInput())
+    if (d->VolumeDisplayNode && d->VolumeDisplayNode->GetInputImageData())
       {
       d->VolumeDisplayNode->GetDisplayScalarRange(range);
       }

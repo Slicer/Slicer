@@ -141,26 +141,7 @@ public:
 
   /// 
   /// Get the output of the pipeline for this layer
-  vtkImageData *GetImageData () { 
-    if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL) 
-      {
-      return NULL;
-      } 
-    else
-      {
-      return this->GetVolumeDisplayNode()->GetImageData();
-      }
-    /**
-    if ( this->GetVolumeNode() == NULL ) 
-      {
-      return NULL;
-      } 
-    else
-      {
-      return (this->GetAppendComponents()->GetOutput());
-      **/
-
-  };
+  vtkImageData *GetImageData ();
 
   void UpdateImageDisplay();
 

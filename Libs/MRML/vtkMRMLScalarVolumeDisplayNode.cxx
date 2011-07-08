@@ -131,16 +131,10 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::SetImageData(vtkImageData *imageData)
+void vtkMRMLScalarVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
   this->Threshold->SetInput(imageData);
   this->MapToWindowLevelColors->SetInput(imageData);
-}
-
-//----------------------------------------------------------------------------
-vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInput()
-{
-  return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
 }
 
 //----------------------------------------------------------------------------
@@ -150,14 +144,14 @@ void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetImageData() 
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
 {
-  this->UpdateImageDataPipeline();
-  if (this->GetInput() == NULL)
-    {
-    return NULL;
-    }
-  this->AppendComponents->Update();
+  return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetOutputImageData()
+{
   return this->AppendComponents->GetOutput();
 }
 
@@ -606,7 +600,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
 {
   range[0] = 0;
   range[1] = 255.;
-  vtkImageData *imageData = this->GetInput();
+  vtkImageData *imageData = this->GetInputImageData();
   if (imageData)
     {
     imageData->GetScalarRange(range);

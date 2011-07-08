@@ -123,17 +123,22 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  /// 
-  /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData);
-  virtual vtkImageData* GetInput();
+
+  ///
+  /// Set the pipeline input
+  virtual void SetInputImageData(vtkImageData *imageData);
+
+  ///
+  /// Gets the pipeline input
+  virtual vtkImageData* GetInputImageData();
+
+  ///
+  /// Gets the pipeline output
+  virtual vtkImageData* GetOutputImageData();
+
   /// 
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData *imageData);
-
-  /// 
-  /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData();
 
   /// 
   /// Parse a string with window and level as double|double, and add a preset 
@@ -171,7 +176,7 @@ protected:
   virtual ~vtkMRMLScalarVolumeDisplayNode();
   vtkMRMLScalarVolumeDisplayNode(const vtkMRMLScalarVolumeDisplayNode&);
   void operator=(const vtkMRMLScalarVolumeDisplayNode&);
-  
+
   virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
   void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
 

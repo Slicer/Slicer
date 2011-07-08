@@ -119,16 +119,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   /// 
   /// set gray colormap
   void SetDefaultColorMap(/*int isLabelMap*/);
- 
-  virtual void SetImageData(vtkImageData *imageData)
-    {
-    Superclass::SetImageData(imageData);
-    };
 
-  virtual void UpdateImageDataPipeline()
-    {
-    Superclass::UpdateImageDataPipeline();
-    };
 //BTX
   /// 
   /// get associated slice glyph display node or NULL if not set

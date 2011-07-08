@@ -102,17 +102,22 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  /// 
-  /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData);
+
+  ///
+  /// Set the input of the pipeline
+  virtual void SetInputImageData(vtkImageData *imageData);
+
+  ///
+  /// Get the input of the pipeline
+  virtual vtkImageData* GetInputImageData();
+
+  ///
+  /// Get the output of the pipeline
+  virtual vtkImageData* GetOutputImageData();
 
   /// 
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData *imageData);
-
-  /// 
-  /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData();
 
   virtual void UpdateImageDataPipeline();
 

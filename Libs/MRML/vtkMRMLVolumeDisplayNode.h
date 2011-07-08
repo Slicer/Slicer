@@ -60,22 +60,29 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  virtual vtkImageData* GetInput() {return NULL;};
-  /// 
-  /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *vtkNotUsed(imageData)) {};
-
   /// 
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData)) {};
 
-  /// 
-  /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData() {return NULL;};
+  ///
+  /// Returns the output of the pipeline if there is a not a null input.
+  virtual vtkImageData* GetImageData();
+
+  ///
+  /// Set the pipeline input. To be reimplemented in subclasses.
+  virtual void SetInputImageData(vtkImageData *imageData);
+
+  ///
+  /// Gets the pipeline input. To be reimplemented in subclasses.
+  virtual vtkImageData* GetInputImageData();
+
+  ///
+  /// Gets the pipeline output. To be reimplemented in subclasses.
+  virtual vtkImageData* GetOutputImageData();
 
   /// 
   /// Update the pipeline based on this node attributes
-  virtual void UpdateImageDataPipeline() {};
+  virtual void UpdateImageDataPipeline();
 
   /// 
   /// alternative method to propagate events generated in Display nodes
@@ -96,7 +103,6 @@ protected:
   ~vtkMRMLVolumeDisplayNode();
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
-
 };
 
 #endif

@@ -44,7 +44,18 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   
   /// 
   /// Gets ImageData converted from the real data in the node
+  /// The image is the direct output of the pipeline, it might not be
+  /// up-to-date. You can call Update() on the returned vtkImageData or use
+  /// GetUpToDateImageData() instead.
+  /// \sa GetUpToDateImageData()
   virtual vtkImageData* GetImageData() {return NULL;};
+
+  ///
+  /// Gets ImageData and ensure it's up-to-date by calling Update() on the
+  /// pipeline.
+  /// Please note that it can be slow, depending on the filters in
+  /// the pipeline and the dimension of the input data.
+  vtkImageData* GetUpToDateImageData();
 
   /// 
   /// Gets associated dispayable node 

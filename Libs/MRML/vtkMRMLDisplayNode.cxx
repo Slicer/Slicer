@@ -628,6 +628,18 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 }
 
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDisplayNode::GetUpToDateImageData()
+{
+  vtkImageData* imageData = this->GetImageData();
+  if (!imageData)
+    {
+    return NULL;
+    }
+  imageData->Update();
+  return imageData;
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetActiveScalarName(const char *scalarName)
 {

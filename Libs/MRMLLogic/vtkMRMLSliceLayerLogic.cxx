@@ -432,7 +432,6 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
 
   if (this->VolumeNode && this->VolumeNode->GetImageData())
     {
-
     // Apply the transform, if it exists
     vtkMRMLTransformNode *transformNode = this->VolumeNode->GetParentTransformNode();
     if ( transformNode != 0 )
@@ -482,6 +481,16 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     {
     this->Modified();
     }
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLSliceLayerLogic::GetImageData()
+{
+  if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL)
+    {
+    return NULL;
+    }
+  return this->GetVolumeDisplayNode()->GetImageData();
 }
 
 //----------------------------------------------------------------------------
@@ -565,7 +574,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
     if (volumeNode != 0 && volumeNode->GetImageData() != 0)
       {
-      volumeDisplayNode->SetImageData(this->GetSliceImageData());
+      volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
       volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
       }
     }

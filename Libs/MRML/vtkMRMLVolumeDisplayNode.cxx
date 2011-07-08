@@ -94,6 +94,39 @@ void vtkMRMLVolumeDisplayNode::UpdateReferences()
    Superclass::UpdateReferences();
 }
 
+//---------------------------------------------------------------------------
+vtkImageData* vtkMRMLVolumeDisplayNode::GetImageData()
+{
+  if (!this->GetInputImageData())
+    {
+    return 0;
+    }
+  this->UpdateImageDataPipeline();
+  return this->GetOutputImageData();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode
+::SetInputImageData(vtkImageData *vtkNotUsed(imageData))
+{
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
+{
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
+{
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline()
+{
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,

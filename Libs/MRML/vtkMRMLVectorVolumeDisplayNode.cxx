@@ -96,11 +96,12 @@ vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorVolumeDisplayNode::SetImageData(vtkImageData *imageData)
+void vtkMRMLVectorVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
 {
   this->ShiftScale->SetInput( imageData );
   this->RGBToHSI->SetInput( imageData );
 
+  // TODO: Move theh following to UpdateImageDataPipeline()
   this->AppendComponents->RemoveAllInputs();
   //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
   //this->AppendComponents->SetInput(0, imageData);
@@ -116,15 +117,15 @@ void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 }
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetImageData() 
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 {
-  if ( this->RGBToHSI->GetInput() != NULL )
-    {
-    this->UpdateImageDataPipeline();
-    this->AppendComponents->Update();
-    return this->AppendComponents->GetOutput();
-    }
-  return NULL;
+  return vtkImageData::SafeDownCast(this->RGBToHSI->GetInput());
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
+{
+  return this->AppendComponents->GetOutput();
 }
 
 //----------------------------------------------------------------------------

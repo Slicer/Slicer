@@ -50,34 +50,23 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   /// set gray colormap
   virtual void SetDefaultColorMap();
 
+  ///
+  /// Set the pipeline input
+  virtual void SetInputImageData(vtkImageData *imageData);
+
+  ///
+  /// Get the pipeline input
+  virtual vtkImageData* GetInputImageData();
+
+  ///
+  /// Gets the pipeline output
+  virtual vtkImageData* GetOutputImageData();
+
   virtual void UpdateImageDataPipeline();
-
-  /// 
-  /// Sets ImageData to be converted to lables
-  void SetImageData(vtkImageData *imageData) 
-    {
-    this->UpdateImageDataPipeline();
-    this->MapToColors->SetInput( imageData);
-    };
-
-  /// 
-  /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData() 
-    {
-    if (this->MapToColors->GetInput() == NULL)
-      {
-      return NULL;
-      }
-    assert(!this->MapToColors->GetLookupTable() ||
-           !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
-           vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
-    this->MapToColors->Update();
-    return this->MapToColors->GetOutput();
-    };
 
 protected:
   vtkMRMLLabelMapVolumeDisplayNode();
-  ~vtkMRMLLabelMapVolumeDisplayNode();
+  virtual ~vtkMRMLLabelMapVolumeDisplayNode();
   vtkMRMLLabelMapVolumeDisplayNode(const vtkMRMLLabelMapVolumeDisplayNode&);
   void operator=(const vtkMRMLLabelMapVolumeDisplayNode&);
 
