@@ -80,11 +80,8 @@ public:
   /// from SlicerVersion.txt
   void discoverRepository();
 
-  /// Set PYTHONHOME enviroment variable is not already set.
-  void discoverPythonHome();
-
-  /// Set PYTHONPATH enviroment variable is not already set.
-  void discoverPythonPath();
+  /// Set PYTHONHOME and PYTHONPATH environment variables is not already set.
+  void setPythonEnvironmentVariables();
 
   /// Convenient function used to create a \a path.
   /// If it fails, print an error message using given \a description

@@ -146,8 +146,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
 
   this->discoverRepository();
-  this->discoverPythonHome();
-  this->discoverPythonPath();
+  this->setPythonEnvironmentVariables();
 
 #if defined(Q_WS_MAC)
   if (q->isInstalled())
@@ -359,11 +358,11 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverPythonHome()
+void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
 {
 #ifdef Slicer_USE_PYTHONQT
   Q_Q(qSlicerCoreApplication);
-  // If there is no PYTHONHOME attempt to generate one.
+  // Set PYTHONHOME if not already done
   if (this->Environment.value("PYTHONHOME").isEmpty())
     {
     if (!q->isInstalled())
@@ -376,21 +375,12 @@ void qSlicerCoreApplicationPrivate::discoverPythonHome()
       this->setEnvironmentVariable("PYTHONHOME", app->slicerHome() + "/lib/Python");
       }
     }
-#endif
-}
 
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverPythonPath()
-{
-#ifdef Slicer_USE_PYTHONQT
-  QString pythonPath = this->Environment.value("PYTHONPATH");
-
-  // If there is no PYTHONPATH attempt to generate one.
-  if (pythonPath.isEmpty())
+  // Set PYTHONPATH if not already done
+  if (this->Environment.value("PYTHONPATH").isEmpty())
     {
-    qSlicerCorePythonManager tempPythonManager;
-    pythonPath = QString("PYTHONPATH=") + tempPythonManager.pythonPaths().join(":");
-    vtksys::SystemTools::PutEnv(pythonPath.toLatin1());
+    this->setEnvironmentVariable(
+          "PYTHONPATH", qSlicerCorePythonManager().pythonPaths().join(":"));
     }
 #endif
 }
