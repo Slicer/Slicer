@@ -401,7 +401,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setSeedSelectedFiducials(in
 {
   if (this->TractographyFiducialSeedingNode)
   {
-    this->TractographyFiducialSeedingNode->SetSeedSelectedFiducials(value);
+    this->TractographyFiducialSeedingNode->SetSeedSelectedFiducials(value!=0?1:0);
   }
 }
 
