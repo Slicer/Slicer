@@ -142,20 +142,30 @@ set(SLICER_ENVVARS_BUILD
   )
 
 if(Slicer_USE_PYTHONQT)
-  set(pythonpath_subdir python${Slicer_PYTHON_VERSION_DOT})
+  get_filename_component(SLICER_PYTHONHOME ${SLICER_PYTHON_LIB_DIR} PATH)
+  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "../Lib")
+    set(pythonpath_subdir "Lib")
   endif()
-  set(PYTHONPATH "${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/lib-tk")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/lib")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHON_LIB_DIR}/${pythonpath_subdir}/site-packages/numpy/core")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin")
+  set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/lib")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core")
 
-  list(APPEND SLICER_ENVVARS_BUILD "PYTHONPATH=${PYTHONPATH}")
+  # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
+  # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
+  # and ../lib/pythonX.Y/{lib-tk, lib-old, lib-dynload}
+  # See http://docs.python.org/c-api/intro.html#embedding-python
+  if(WIN32)
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk")
+  endif()
+
+  list(APPEND SLICER_ENVVARS_BUILD
+    "PYTHONHOME=${SLICER_PYTHONHOME}"
+    "PYTHONPATH=${PYTHONPATH}")
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
@@ -245,8 +255,6 @@ if(Slicer_USE_PYTHONQT)
     set(pythonpath_subdir "Lib")
   endif()
   set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib")
@@ -256,7 +264,18 @@ if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
 
-  list(APPEND SLICER_ENVVARS_INSTALLED "PYTHONPATH=${PYTHONPATH}")
+  # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
+  # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
+  # and ../lib/pythonX.Y/{lib-tk, lib-old, lib-dynload}
+  # See http://docs.python.org/c-api/intro.html#embedding-python
+  if(WIN32)
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
+  endif()
+
+  list(APPEND SLICER_ENVVARS_INSTALLED
+    "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
+    "PYTHONPATH=${PYTHONPATH}")
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)

@@ -146,6 +146,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
 
   this->discoverRepository();
+  this->discoverPythonHome();
   this->discoverPythonPath();
 
 #if defined(Q_WS_MAC)
