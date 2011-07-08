@@ -10,7 +10,12 @@
 
 # Include projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})
-  include(${${proj}_USE_FILE})
+  set(proj_has_no_usefile -1)
+  list(FIND Slicer_EXTERNAL_PROJECTS_NO_USEFILE ${proj} proj_has_no_usefile)
+  #message("${proj} has_no_usefile: ${proj_has_no_usefile}")
+  if(proj_has_no_usefile EQUAL -1)
+    include(${${proj}_USE_FILE})
+  endif()
 endforeach()
 
 # Set PythonQt 'DIR' variable so that find_package(PythonQt) works as expected.

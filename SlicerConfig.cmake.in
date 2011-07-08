@@ -47,6 +47,7 @@ __SLICER_SET_OR_COMPLAIN_IF_DEFINED(VTK_DIR "@VTK_DIR_CONFIG@" CACHE PATH "Path 
 
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
+set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
 
 # Include external projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})

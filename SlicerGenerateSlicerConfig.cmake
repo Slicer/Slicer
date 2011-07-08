@@ -69,6 +69,7 @@ set(VTK_DIR_CONFIG ${VTK_DIR})
 
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK ITK qCDashAPI SLICERLIBCURL SlicerExecutionModel Teem VTK)
+set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG BatchMake)
 endif()
