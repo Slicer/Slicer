@@ -80,6 +80,9 @@ public:
   /// from SlicerVersion.txt
   void discoverRepository();
 
+  /// Set PYTHONHOME enviroment variable is not already set.
+  void discoverPythonHome();
+
   /// Set PYTHONPATH enviroment variable is not already set.
   void discoverPythonPath();
 

@@ -358,6 +358,27 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::discoverPythonHome()
+{
+#ifdef Slicer_USE_PYTHONQT
+  Q_Q(qSlicerCoreApplication);
+  // If there is no PYTHONHOME attempt to generate one.
+  if (this->Environment.value("PYTHONHOME").isEmpty())
+    {
+    if (!q->isInstalled())
+      {
+      // TODO
+      }
+    else
+      {
+      qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+      this->setEnvironmentVariable("PYTHONHOME", app->slicerHome() + "/lib/Python");
+      }
+    }
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverPythonPath()
 {
 #ifdef Slicer_USE_PYTHONQT
