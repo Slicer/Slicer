@@ -80,7 +80,7 @@ public:
   /// from SlicerVersion.txt
   void discoverRepository();
 
-  /// Detect PythonPath. If one doesn't exist attempt to generate one.
+  /// Set PYTHONPATH enviroment variable is not already set.
   void discoverPythonPath();
 
   /// Convenient function used to create a \a path.
