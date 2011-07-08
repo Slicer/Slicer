@@ -110,13 +110,29 @@ public:
       SlicerLayoutUserView = 100
     };
 
+  /// Adds a layout description with integer identifier
+  /// "layout". Returns without making any modifications if the
+  /// integer identifier "layout" is already in use.
   void AddLayoutDescription(int layout, const char* layoutDescription);
+
+  /// Query whether a layout exists with a specified integer identifier
   bool IsLayoutDescription(int layout);
+
+  /// Get the layout description associated with a specified integer
+  /// identifier. The empty string is returned if the layout does not exist.
   std::string GetLayoutDescription(int layout);
+
+  // Get the layout description currently displayed. Used
+  // internally. This is XML description corresponding to the ivar
+  // ViewArrangement which is the integer identifier for the
+  // layout. ViewArrangement and CurrentViewArrangement may not
+  // correspond while a view is being switched.
   vtkGetStringMacro(CurrentViewArrangement);
+
+  // Get the XML data model of the CurrentViewArrangement
   vtkGetObjectMacro(LayoutRootElement, vtkXMLDataElement);
 
-  // You are responsible to delete the reutrned dataElement.
+  // You are responsible to delete the returned dataElement.
   static vtkXMLDataElement* ParseLayout(const char* description);
 
 protected:
