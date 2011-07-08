@@ -28,7 +28,7 @@
 #include <QWidgetAction>
 
 // CTK includes
-#include <ctkVTKSliceView.h>
+//#include <ctkVTKSliceView.h>
 #include <ctkLogger.h>
 
 // qMRML includes
@@ -160,14 +160,6 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // Connect link toggle
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
                 q, SLOT(setSliceLink(bool)));
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onImageDataModifiedEvent()
-{
-  Q_Q(qMRMLSliceControllerWidget);
-  logger.trace("onImageDataModifiedEvent");
-  emit q->imageDataModified(this->ImageData);
 }
 
 // --------------------------------------------------------------------------
@@ -595,6 +587,8 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
   // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
   this->SliceOffsetSlider->blockSignals(wasBlocking);
+
+  emit q->renderRequested();
 }
 
 //---------------------------------------------------------------------------
@@ -974,18 +968,9 @@ void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
     return;
     }
 
-  logger.trace("setImageData - Reconnect ModifiedEvent on ImageData");
-
-  d->qvtkReconnect(d->ImageData, newImageData,
-                   vtkCommand::ModifiedEvent, d, SLOT(onImageDataModifiedEvent()));
-
   d->ImageData = newImageData;
 
-  // Since new layers have been associated with the current MRML Slice Node,
-  // let's update the widget state to reflect these changes
-  //this->updateWidgetFromMRMLSliceNode();
-
-  d->onImageDataModifiedEvent();
+  emit this->imageDataChanged(d->ImageData);
 }
 
 //---------------------------------------------------------------------------

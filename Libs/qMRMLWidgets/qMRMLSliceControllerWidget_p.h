@@ -90,9 +90,6 @@ public slots:
   /// Called after the SliceLogic is modified
   void onSliceLogicModifiedEvent();
 
-  /// Called after the ImageData associated with the SliceLogic is modified
-  void onImageDataModifiedEvent();
-
   void updateFromForegroundDisplayNode(vtkObject* displayNode);
   void updateFromBackgroundDisplayNode(vtkObject* displayNode);
 

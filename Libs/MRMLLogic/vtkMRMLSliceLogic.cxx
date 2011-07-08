@@ -694,28 +694,32 @@ void vtkMRMLSliceLogic::UpdateImageData ()
     {
     if ( this->Blend->GetInput(0) != 0 )
       {
-      this->Blend->Update();
+      // Pipeline driven, rendering automatically updates the pipeline when needed.
+      //this->Blend->Update();
       }
     //this->ImageData = this->Blend->GetOutput();
     if (this->ImageData== 0 || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
       {
-      if (this->ImageData== 0)
-        {
-        this->ImageData = vtkImageData::New();
-        }
-      this->ImageData->DeepCopy( this->Blend->GetOutput());
+      // Pipeline driven, no need to copy image data.
+      //if (this->ImageData== 0)
+      //  {
+      //  this->ImageData = vtkImageData::New();
+      //  }
+      //this->ImageData->DeepCopy( this->Blend->GetOutput());
+      this->ImageData = this->Blend->GetOutput();
       this->ExtractModelTexture->SetInput( this->ImageData );
-      this->ActiveSliceTransform->Identity();
-      this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
-      this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
+      // Doesn't seem needed, not sure though.
+      //this->ActiveSliceTransform->Identity();
+      //this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
+      //this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
       }
     }
   else
     {
-    if (this->ImageData)
-      {
-      this->ImageData->Delete();
-      }
+    //if (this->ImageData)
+    //  {
+    //  this->ImageData->Delete();
+    //  }
     this->ImageData=0;
     this->ExtractModelTexture->SetInput( this->ImageData );
     }
@@ -914,7 +918,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       else if (displayNode->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
         {
         // upadte texture
-        this->ExtractModelTexture->Update();
+        //this->ExtractModelTexture->Update();
         displayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
        

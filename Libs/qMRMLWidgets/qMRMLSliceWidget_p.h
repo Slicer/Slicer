@@ -54,9 +54,8 @@ public slots:
   void onSceneImportedEvent();
   void onSceneRestoredEvent();
 
-  /// Connected with the imageDataModified signal invoked by qMRMLSliceControllerWidget
-  /// \sa qMRMLSliceControllerWidget::imageDataModified
-  void onImageDataModified(vtkImageData * imageData);
+  /// Set the image data to the slice view
+  void setImageData(vtkImageData * imageData);
 
   void updateWidgetFromMRMLSliceNode();
 

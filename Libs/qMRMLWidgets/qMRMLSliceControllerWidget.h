@@ -33,7 +33,6 @@
 #include "qMRMLWidgetsExport.h"
 
 class QButtonGroup;
-class ctkVTKSliceView;
 class qMRMLSliceControllerWidgetPrivate;
 class vtkCollection;
 class vtkImageData;
@@ -175,7 +174,8 @@ public slots:
 signals:
 
   /// This signal is emitted when the given \a imageData is modified.
-  void imageDataModified(vtkImageData * imageData);
+  void imageDataChanged(vtkImageData * imageData);
+  void renderRequested();
 
 protected:
   QScopedPointer<qMRMLSliceControllerWidgetPrivate> d_ptr;

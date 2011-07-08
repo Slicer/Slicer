@@ -106,11 +106,10 @@ void qMRMLSliceWidgetPrivate::onSceneRestoredEvent()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onImageDataModified(vtkImageData * imageData)
+void qMRMLSliceWidgetPrivate::setImageData(vtkImageData * imageData)
 {
-  logger.trace("onImageDataModifiedEvent");
+  logger.trace("setImageData");
   this->VTKSliceView->setImageData(imageData);
-  this->VTKSliceView->scheduleRender();
 }
 
 // --------------------------------------------------------------------------
@@ -138,9 +137,10 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   connect(d->VTKSliceView, SIGNAL(resized(const QSize&)),
           d->SliceController, SLOT(setSliceViewSize(const QSize&)));
 
-  connect(d->SliceController,
-          SIGNAL(imageDataModified(vtkImageData*)), d,
-          SLOT(onImageDataModified(vtkImageData*)));
+  connect(d->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
+          d, SLOT(setImageData(vtkImageData*)));
+  connect(d->SliceController, SIGNAL(renderRequested()),
+          d->VTKSliceView, SLOT(scheduleRender()));
 }
 
 // --------------------------------------------------------------------------
