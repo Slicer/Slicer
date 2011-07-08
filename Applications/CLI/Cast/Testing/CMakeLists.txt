@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------
 # Cast tests
 #-----------------------------------------------------------------------------
-set (CLP Cast)
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(CLP Cast)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
