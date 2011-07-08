@@ -240,17 +240,17 @@ set(Slicer_INCLUDE_DIR "include/Slicer")
 set(Slicer_SHARE_DIR "share/Slicer")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
-set(Slicer_INSTALL_ROOT ".")
+set(Slicer_INSTALL_ROOT "./")
 if(APPLE)
   # Set to create Bundle
   set(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
   set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/")
 endif()
 
-set(Slicer_INSTALL_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_BIN_DIR}")
-set(Slicer_INSTALL_LIB_DIR "${Slicer_INSTALL_ROOT}/${Slicer_LIB_DIR}")
-set(Slicer_INSTALL_INCLUDE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_INCLUDE_DIR}")
-set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_SHARE_DIR}")
+set(Slicer_INSTALL_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BIN_DIR}")
+set(Slicer_INSTALL_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_LIB_DIR}")
+set(Slicer_INSTALL_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_INCLUDE_DIR}")
+set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
 #-----------------------------------------------------------------------------
@@ -305,7 +305,7 @@ set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_PATCH_VERSION}")
 # Qt plugins (imageformats, ...) relative directories
 #------------------------------------------------------------------------------
 set(Slicer_QtPlugins_DIR "lib/QtPlugins")
-set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QtPlugins_DIR}")
+set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
 
 #-----------------------------------------------------------------------------
 # Plugins and Modules relative directories
@@ -315,10 +315,10 @@ set(Slicer_PLUGINS_LIB_DIR "plugins")
 set(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/plugins")
 set(Slicer_PLUGINS_SHARE_DIR "${Slicer_SHARE_DIR}/plugins")
 
-set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_PLUGINS_BIN_DIR}")
-set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}/${Slicer_PLUGINS_LIB_DIR}")
-set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_PLUGINS_INCLUDE_DIR}")
-set(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_PLUGINS_SHARE_DIR}")
+set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_BIN_DIR}")
+set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_LIB_DIR}")
+set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_INCLUDE_DIR}")
+set(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_SHARE_DIR}")
 
 set(Slicer_HOME "${Slicer_BINARY_DIR}")
 
@@ -542,10 +542,10 @@ if(Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-loadable-modules")
   set(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-loadable-modules")
 
-  set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTLOADABLEMODULES_BIN_DIR}")
-  set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTLOADABLEMODULES_LIB_DIR}")
-  set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
-  set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
+  set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_BIN_DIR}")
+  set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
+  set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
 endif()
 
 if(Slicer_BUILD_QTSCRIPTEDMODULES)
@@ -554,10 +554,10 @@ if(Slicer_BUILD_QTSCRIPTEDMODULES)
   set(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-scripted-modules")
   set(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-scripted-modules")
 
-  set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTSCRIPTEDMODULES_BIN_DIR}")
-  set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
-  set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
-  set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}/${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_BIN_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
 endif()
 
 #-----------------------------------------------------------------------------
