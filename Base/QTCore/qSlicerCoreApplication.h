@@ -52,7 +52,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
   Q_PROPERTY(QString intDir READ intDir)
-  Q_PROPERTY(QString isInstalled READ isInstalled)
+  Q_PROPERTY(bool isInstalled READ isInstalled)
   Q_PROPERTY(QString repositoryUrl READ repositoryUrl)
   Q_PROPERTY(QString repositoryBranch READ repositoryBranch)
   Q_PROPERTY(QString repositoryRevision READ repositoryRevision)
