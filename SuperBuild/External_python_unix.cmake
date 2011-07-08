@@ -52,7 +52,7 @@ endif()
 
 set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
 set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.${python_IMPORT_SUFFIX})
-set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python)
+set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python2.6)
 
 #-----------------------------------------------------------------------------
 # Since fixup_bundle expects the library to be writable, let's add an extra step
