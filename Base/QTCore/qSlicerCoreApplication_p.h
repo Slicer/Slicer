@@ -83,6 +83,9 @@ public:
   /// Set PYTHONHOME and PYTHONPATH environment variables is not already set.
   void setPythonEnvironmentVariables();
 
+  /// Set TCL_LIBRARY, TK_LIBRARY and TCLLIBPATH environment variable is not already set.
+  void setTclEnvironmentVariables();
+
   /// Convenient function used to create a \a path.
   /// If it fails, print an error message using given \a description
   bool createDirectory(const QString& path, const QString& description) const;

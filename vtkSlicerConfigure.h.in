@@ -62,21 +62,19 @@
 #  define Slicer_QTSCRIPTEDMODULES_SHARE_DIR "@Slicer_QTSCRIPTEDMODULES_SHARE_DIR@"
 #endif //Slicer_BUILD_QTSCRIPTEDMODULES
 
-/* Do not use those variables unless you can not retrieve the Tcl/Tk version
-   at run-time using this code below:
-   int tcl_major, tcl_minor, tcl_patch_level;
-   Tcl_GetVersion(&tcl_major, &tcl_minor, &tcl_patch_level, NULL);
-*/
-#define Slicer_TCL_TK_MAJOR_VERSION "@TCL_TK_MAJOR_VERSION@"
-#define Slicer_TCL_TK_MINOR_VERSION "@TCL_TK_MINOR_VERSION@"
-#define Slicer_INCR_TCL_MAJOR_VERSION "@INCR_TCL_MAJOR_VERSION@"
-#define Slicer_INCR_TCL_MINOR_VERSION "@INCR_TCL_MINOR_VERSION@"
-
 #cmakedefine Slicer_USE_PYTHONQT
 #ifdef Slicer_USE_PYTHONQT
 #  define Slicer_PYTHON_VERSION_DOT "@Slicer_PYTHON_VERSION_DOT@"
 #  define Slicer_PYTHON_VERSION "@Slicer_PYTHON_VERSION@"
-#endif //Slicer_PUSE_PYTHONQT
+#endif //Slicer_USE_PYTHONQT
+
+#cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
+#  define Slicer_TCL_TK_VERSION_DOT "@TCL_TK_VERSION_DOT@"
+#  define Slicer_TCL_TK_VERSION "@TCL_TK_VERSION@"
+#  define Slicer_INCR_TCL_VERSION_DOT "@INCR_TCL_VERSION_DOT@"
+#  define Slicer_INCR_TCL_VERSION "@INCR_TCL_VERSION@"
+#endif //Slicer_USE_PYTHONQT_WITH_TCL
 
 // Library sub-directory
 #define VTK_DIR "@VTK_DIR@"

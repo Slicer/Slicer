@@ -147,6 +147,7 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->discoverRepository();
   this->setPythonEnvironmentVariables();
+  this->setTclEnvironmentVariables();
 
 #if defined(Q_WS_MAC)
   if (q->isInstalled())
@@ -381,6 +382,53 @@ void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
     {
     this->setEnvironmentVariable(
           "PYTHONPATH", qSlicerCorePythonManager().pythonPaths().join(":"));
+    }
+#endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
+{
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
+  Q_Q(qSlicerCoreApplication);
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (this->Environment.value("TCL_LIBRARY").isEmpty())
+    {
+    if (!q->isInstalled())
+      {
+      // TODO
+      }
+    else
+      {
+      this->setEnvironmentVariable(
+            "TCL_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tcl"Slicer_TCL_TK_VERSION_DOT);
+      }
+    }
+  if (this->Environment.value("TK_LIBRARY").isEmpty())
+    {
+    if (!q->isInstalled())
+      {
+      // TODO
+      }
+    else
+      {
+      this->setEnvironmentVariable(
+            "TK_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tk"Slicer_TCL_TK_VERSION_DOT);
+      }
+    }
+  if (this->Environment.value("TCLLIBPATH").isEmpty())
+    {
+    if (!q->isInstalled())
+      {
+      // TODO
+      }
+    else
+      {
+      QStringList tclLibPaths;
+      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itcl"Slicer_INCR_TCL_VERSION_DOT;
+      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itk"Slicer_INCR_TCL_VERSION_DOT;
+      this->setEnvironmentVariable("TCLLIBPATH", tclLibPaths.join(" "));
+      }
     }
 #endif
 }
