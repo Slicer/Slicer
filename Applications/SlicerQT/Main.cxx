@@ -58,10 +58,13 @@
 // VTK includes
 //#include <vtkObject.h>
 
+#ifdef Slicer_BUILD_QTSCRIPTEDMODULES
+# include "qSlicerScriptedLoadableModuleFactory.h"
+#endif
+
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQtObjectPtr.h>
 # include "qSlicerPythonManager.h"
-# include "qSlicerScriptedLoadableModuleFactory.h"
 # include <dPython.h>
 
 // PythonQt wrapper initialization methods
@@ -159,7 +162,7 @@ void registerScriptedLoadableModuleFactory(
   qSlicerModuleFactoryManager * moduleFactoryManager,
   const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& coreModuleFactoryRegisteredItems)
 {
-#ifdef Slicer_USE_PYTHONQT
+#ifdef Slicer_BUILD_QTSCRIPTEDMODULES
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
     qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =

@@ -81,7 +81,7 @@ set(KIT_SRCS
   qSlicerWidget.h
   )
 
-if(Slicer_USE_PYTHONQT)
+if(Slicer_BUILD_QTSCRIPTEDMODULES)
   list(APPEND KIT_SRCS
     qSlicerScriptedLoadableModuleFactory.cxx
     qSlicerScriptedLoadableModuleFactory.h
@@ -89,6 +89,11 @@ if(Slicer_USE_PYTHONQT)
     qSlicerScriptedLoadableModuleWidget.h
     qSlicerScriptedLoadableModule.cxx
     qSlicerScriptedLoadableModule.h
+    )
+endif()
+
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_SRCS
     qSlicerSettingsPythonPanel.cxx
     qSlicerSettingsPythonPanel.h
     )
@@ -141,12 +146,17 @@ set(KIT_MOC_SRCS
   qSlicerWidget.h
   )
 
+if(Slicer_BUILD_QTSCRIPTEDMODULES)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerScriptedLoadableModule.h
+    qSlicerScriptedLoadableModuleWidget.h
+    )
+endif()
+
 # PythonQt decorator
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
     qSlicerBaseQTGUIPythonQtDecorators.h
-    qSlicerScriptedLoadableModule.h
-    qSlicerScriptedLoadableModuleWidget.h
     qSlicerSettingsPythonPanel.h
     )
 endif(Slicer_USE_PYTHONQT)
@@ -182,7 +192,6 @@ set(KIT_target_libraries
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)
-
   list(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
