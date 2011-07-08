@@ -255,9 +255,28 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
   if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
       (this->ParentNodeIDReference != ref))
     {
-    this->SetSortingValue(++MaximumSortingValue);
+
+    vtkMRMLHierarchyNode *oldParentNode = this->GetParentNode();
+
+    int disableModify = this->GetDisableModifiedEvent();
+    this->SetDisableModifiedEvent(1);
+
     this->SetParentNodeIDReference(ref);
+    this->SetSortingValue(++MaximumSortingValue);
+
+    this->SetDisableModifiedEvent(1);
+
     this->HierarchyIsModified(this->GetScene());
+
+    vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
+    if (oldParentNode)
+      {
+      oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
+      }
+    if (parentNode)
+      {
+      parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
+      }
     }
 }
 
@@ -425,6 +444,8 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
     }
 
   char *parentID = this->GetParentNodeID();
+  vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
+
   std::vector< vtkMRMLHierarchyNode *> children = this->GetChildrenNodes();
   for (unsigned int i=0; i<children.size(); i++)
     {
@@ -433,6 +454,10 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
     for (unsigned int j=0; i<childChildern.size(); j++)
       {
       childChildern[j]->SetParentNodeID(parentID);
+      if (parentNode)
+        {
+        parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
+        }
       }
     this->GetScene()->RemoveNode(child);
     }

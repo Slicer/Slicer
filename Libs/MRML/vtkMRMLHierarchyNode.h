@@ -110,7 +110,13 @@ public:
   /// Removes all children hierarchy nodes including children of childern, etc.
   void RemoveAllHierarchyChildrenNodes();
 
-
+  /// ChildNodeAddedEvent is send when a child node added to this parent
+  enum
+    {
+      ChildNodeAddedEvent = 15550,
+      ChildNodeRemovedEvent = 15551
+    };
+ 
   //// Assocailted node methods ////////////////
 
   /// 

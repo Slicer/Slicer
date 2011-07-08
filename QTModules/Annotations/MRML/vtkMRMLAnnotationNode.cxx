@@ -467,17 +467,27 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
     vtkErrorMacro("TextList is NULL");
     return;
     }
-  
-  if (!this->PolyData || !this->PolyData->GetPointData())
-    {
-    this->ResetTextAttributesAll(); 
-    }
 
   vtkStdString newString;
   if (newText)
     {
     newString = vtkStdString(newText);
     }
+
+  // check if the same as before
+  if (this->TextList->GetNumberOfValues() == 0 && (newText == NULL || newString == "") ||
+     (this->TextList->GetNumberOfValues() > id && this->TextList->GetValue(id) == newString &&
+      this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag &&
+      this->GetAnnotationAttribute(id, TEXT_VISIBLE) == visibleFlag ) )
+    {
+    return;
+    }
+
+  if (!this->PolyData || !this->PolyData->GetPointData())
+    {
+    this->ResetTextAttributesAll(); 
+    }
+
   this->TextList->InsertValue(id,newString);
  
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 

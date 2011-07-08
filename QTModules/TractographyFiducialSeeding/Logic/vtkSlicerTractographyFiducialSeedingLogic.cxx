@@ -59,19 +59,19 @@ vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingL
 vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
 {
   this->MaskPoints->Delete();
-  this->RemoveTransformableNodesObservers();
+  this->RemoveMRMLNodesObservers();
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::RemoveTransformableNodesObservers()
+void vtkSlicerTractographyFiducialSeedingLogic::RemoveMRMLNodesObservers()
 {
-  for (unsigned int i=0; i<this->TransformableNodes.size(); i++)
+  for (unsigned int i=0; i<this->ObservedNodes.size(); i++)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->TransformableNodes[i], NULL);
+    vtkSetAndObserveMRMLNodeMacro(this->ObservedNodes[i], NULL);
     }
-  this->TransformableNodes.clear();
+  this->ObservedNodes.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -85,20 +85,37 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
 void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
 {
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
-  this->RemoveTransformableNodesObservers();
-  if (node)
+
+  this->RemoveMRMLNodesObservers();
+
+  this->AddMRMLNodesObservers();
+
+  return;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
+{
+  if (this->TractographyFiducialSeedingNode)
     {
     vtkMRMLDiffusionTensorVolumeNode *dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(node->GetInputVolumeRef()));
+          this->GetMRMLScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputVolumeRef()));
     vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, dtiNode);
 
-    vtkMRMLNode *seedinNode = this->GetMRMLScene()->GetNodeByID(node->GetInputFiducialRef());
+    vtkMRMLNode *seedinNode = this->GetMRMLScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputFiducialRef());
 
     vtkMRMLAnnotationHierarchyNode *annotationHierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedinNode);
     vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(seedinNode);
 
     if (annotationHierarchyNode)
       {
+      this->ObservedNodes.push_back(NULL);
+      vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+      events->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeAddedEvent );
+      events->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeRemovedEvent );
+      vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
+                                          annotationHierarchyNode, events);
+
       vtkCollection *annotationNodes = vtkCollection::New();
       annotationHierarchyNode->GetDirectChildren(annotationNodes);
       int nf = annotationNodes->GetNumberOfItems();
@@ -108,12 +125,12 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
                                                       annotationNodes->GetItemAsObject(f));   
         if (annotationNode)
           {
-          this->TransformableNodes.push_back(NULL);
+          this->ObservedNodes.push_back(NULL);
           vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
           events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
           events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
           events->InsertNextValue ( vtkCommand::ModifiedEvent );
-          vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNodes[this->TransformableNodes.size()-1], 
+          vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
                                               annotationNode, events);
           }
         }
@@ -121,12 +138,12 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
       }
     else if (transformableNode)
       {
-      this->TransformableNodes.push_back(NULL);
+      this->ObservedNodes.push_back(NULL);
       vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
       events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
       events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
       events->InsertNextValue ( vtkCommand::ModifiedEvent );
-      vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNodes[this->TransformableNodes.size()-1], 
+      vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
                                           transformableNode, events);
       }
     }
@@ -494,6 +511,10 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtk
     {
     return;
     }
+
+  this->RemoveMRMLNodesObservers();
+
+  this->AddMRMLNodesObservers();
 
   vtkMRMLDiffusionTensorVolumeNode *volumeNode = 
         vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(scene->GetNodeByID(snode->GetInputVolumeRef()));

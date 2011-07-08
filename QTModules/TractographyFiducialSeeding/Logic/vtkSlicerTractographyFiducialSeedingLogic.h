@@ -84,12 +84,14 @@ protected:
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes();
 
-  void RemoveTransformableNodesObservers();
+  void AddMRMLNodesObservers();
+
+  void RemoveMRMLNodesObservers();
   
   vtkMaskPoints *MaskPoints;
 
   vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
-  std::vector<vtkMRMLTransformableNode *> TransformableNodes;
+  std::vector<vtkMRMLTransformableNode *> ObservedNodes;
   vtkMRMLDiffusionTensorVolumeNode       *DiffusionTensorVolumeNode;
 
 };
