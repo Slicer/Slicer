@@ -50,13 +50,18 @@ library_dirs = @CLAPACK_DIR@/SRC/${CONFIG_TYPE}/
 lapack_libs = lapack
 ")
 
+set(output_file "@NUMPY_DIR@/configure_step_output.txt")
+set(error_file "@NUMPY_DIR@/configure_step_error.txt")
+
 execute_process(
   COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py config
   WORKING_DIRECTORY "@NUMPY_DIR@"
   RESULT_VARIABLE res
+  OUTPUT_FILE ${output_file}
+  ERROR_FILE ${error_file}
   )
 
 if(NOT ${res} EQUAL 0)
-  message(FATAL_ERROR "Error in config of NUMPY")
+  message(FATAL_ERROR "Error in config of NUMPY. See configure_step_output.txt and configure_step_error.txt")
 endif()
 message("Numpy config worked.")

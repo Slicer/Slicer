@@ -29,8 +29,14 @@ execute_process(
   OUTPUT_VARIABLE NUMPY_OUT
   OUTPUT_VARIABLE NUMPY_ERR)
 
+set(output_file "@NUMPY_DIR@/make_step_output.txt")
+file(WRITE ${output_file} ${NUMPY_OUT})
+
+set(error_file "@NUMPY_DIR@/make_step_error.txt")
+file(WRITE ${error_file} ${NUMPY_ERR})
+
 if(NOT ${res} EQUAL 0)
   message("NUMPY Errors detected: \n${NUMPY_OUT}\n${NUMPY_ERR}")
-  message(FATAL_ERROR "Error in config of NUMPY")
+  message(FATAL_ERROR "Error in config of NUMPY. See make_step_output.txt and make_step_error.txt")
 endif()
 message("NUMPY build worked.")
