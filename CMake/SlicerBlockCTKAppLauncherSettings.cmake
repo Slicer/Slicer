@@ -76,6 +76,7 @@ set(SLICER_LIBRARY_PATHS_BUILD
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
   ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
+  ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${LibArchive_DIR}/${LIB_SUBDIR}
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
