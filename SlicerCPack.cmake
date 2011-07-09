@@ -2,9 +2,12 @@ if(Slicer_USE_PYTHONQT)
   # Python install rules are common to both 'bundled' and 'regular' package
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
 endif()
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  # Tcl install rules are common to both 'bundled' and 'regular' package
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
+endif()
 
 if(NOT APPLE)
-  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPythonQt.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallLibArchive.cmake)

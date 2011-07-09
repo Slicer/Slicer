@@ -12,15 +12,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     set(Slicer_TCL_DIR "")
   endif()
 
-  # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
-  # ends up installing the whole /usr/local to the Slicer3 install tree :(
-  # TODO: use VTK/KWWidgets macros to copy only the files that are known to
-  # belong to Tcl/Tk; in the meantime only a few people are using external
-  # VTK/KWWidgets/Teem/TclTk packages, so we will assume they know what they
-  #  are doing (i.e. they have Tcl/Tk installed in a standalone directory
-  # like /opt/tcltk8.5.0)
-
-  set(TclTk_INSTALL_LIB_DIR lib/TclTk)
+  set(TclTk_INSTALL_LIB_DIR ${Slicer_INSTALL_ROOT}lib/TclTk)
 
   if(Slicer_TCL_DIR)
     install(DIRECTORY
