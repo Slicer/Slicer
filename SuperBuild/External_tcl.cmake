@@ -25,9 +25,13 @@ set(tcl_INSTALL_COMMAND ${CMAKE_COMMAND} -E echo Installing tcl)
 set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
 set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
+set(TCL_TK_VERSION_DOT "8.4")
+set(TCL_TK_VERSION "84")
 
 if(WIN32)
   if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+    set(TCL_TK_VERSION_DOT "8.5")
+    set(TCL_TK_VERSION "85")
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl85-x64-build")
   else()
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")

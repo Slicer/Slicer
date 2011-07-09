@@ -508,26 +508,6 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 
 #-----------------------------------------------------------------------------
-# Need some Tcl/Tk info
-#-----------------------------------------------------------------------------
-# TODO: these should be passed in by SuperBuild
-# For now, use 3.2 as a fallback - we haven't changed versions in years and probably
-# never will, so this is always likely to work.
-# This is needed so the launcher can set the paths to the correct subdirectories
-# for incrTcl and incrTk
-
-# On 64bit Windows we use a prebuilt tcl 8.5.
-if(WIN32 AND "${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-  set(TCL_TK_VERSION_DOT "8.5")
-  set(TCL_TK_VERSION "85")
-else()
-  set(TCL_TK_VERSION_DOT "8.4")
-  set(TCL_TK_VERSION "84")
-endif()
-set(INCR_TCL_VERSION_DOT "3.2")
-set(INCR_TCL_VERSION "32")
-
-#-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)

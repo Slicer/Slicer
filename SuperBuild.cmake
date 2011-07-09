@@ -155,7 +155,17 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  list(APPEND slicer_superbuild_extra_args -DSlicer_TCL_DIR:PATH=${tcl_build})
+  list(APPEND slicer_superbuild_extra_args
+    -DSlicer_TCL_DIR:PATH=${tcl_build}
+    -DTCL_TK_VERSION:STRING=${TCL_TK_VERSION}
+    -DTCL_TK_VERSION_DOT:STRING=${TCL_TK_VERSION_DOT}
+    )
+  if(TARGET incrTcl)
+    list(APPEND slicer_superbuild_extra_args
+      -DINCR_TCL_VERSION:STRING=${INCR_TCL_VERSION}
+      -DINCR_TCL_VERSION_DOT:STRING=${INCR_TCL_VERSION_DOT}
+      )
+  endif()
 endif()
 
 if(Slicer_USE_BatchMake)

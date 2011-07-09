@@ -15,6 +15,8 @@ set(proj incrTcl)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
+set(INCR_TCL_VERSION_DOT "3.2")
+set(INCR_TCL_VERSION "32")
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
 set(incrTcl_BUILD_IN_SOURCE 1)
 set(incrTcl_PATCH_COMMAND "")
