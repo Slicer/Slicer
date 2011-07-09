@@ -40,7 +40,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../lib/Python/lib")
   endif()
 
-  if(item MATCHES "lib/TclTk/lib.*\\.dylib$")
+  if(item MATCHES "tcl-build/lib/lib.*\\.dylib$")
     set(path "@executable_path@/../lib/TclTk")
   endif()
 
