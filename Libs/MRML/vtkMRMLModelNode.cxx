@@ -713,6 +713,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->Delete();
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());

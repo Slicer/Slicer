@@ -40,6 +40,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkTimerLog.h>
 
 // STD includes
 #include <cstdlib>

@@ -1,6 +1,7 @@
 
 // AnnotationModule/MRML includes
 #include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationDisplayNode.h>
 
 // AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManagerHelper.h"

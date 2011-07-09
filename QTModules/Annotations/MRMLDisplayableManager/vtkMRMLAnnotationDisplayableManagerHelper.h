@@ -30,6 +30,7 @@
 // MRML includes
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
+class vtkMRMLAnnotationDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManagerHelper :

@@ -20,6 +20,7 @@
 #include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLTransformNode.h>

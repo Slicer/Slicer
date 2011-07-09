@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 #include <string>
 
+#include "vtkEventBroker.h"
 #include "vtkMRMLArrayPlotNode.h"
 
 #include "vtkDataObject.h"

@@ -10,6 +10,7 @@
 #include "vtkSlicerVolumeTextureMapper3D.h"
 
 // MRML includes
+#include "vtkEventBroker.h"
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"

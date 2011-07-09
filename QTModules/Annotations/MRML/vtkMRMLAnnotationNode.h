@@ -9,15 +9,16 @@
 #ifndef __vtkMRMLAnnotationNode_h
 #define __vtkMRMLAnnotationNode_h
 
-#include "vtkMRMLModelNode.h" 
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLCameraNode.h"
+// MRML includes
+#include "vtkMRMLModelNode.h"
+
+// Annotations includes
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-class vtkStringArray;
-class vtkMRMLStorageNode;
+class vtkMRMLCameraNode;
+class vtkMRMLSliceNode;
 class vtkMRMLAnnotationTextDisplayNode;
+class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
@@ -102,9 +103,9 @@ public:
   vtkMRMLAnnotationTextDisplayNode* GetAnnotationTextDisplayNode();
 
   /// Set the text scale of the associated text.
-  void SetTextScale(double textScale) {this->GetAnnotationTextDisplayNode()->SetTextScale(textScale); this->InvokeEvent(vtkCommand::ModifiedEvent);}
+  void SetTextScale(double textScale);
   /// Get the text scale of the associated text.
-  double GetTextScale() {return this->GetAnnotationTextDisplayNode()->GetTextScale();}
+  double GetTextScale();
 
 
   // Description:

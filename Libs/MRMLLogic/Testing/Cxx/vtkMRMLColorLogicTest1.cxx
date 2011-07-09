@@ -25,6 +25,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkTimerLog.h>
 #include <vtksys/SystemTools.hxx>
 
 // STD includes

@@ -1,6 +1,7 @@
 
 // AnnotationModule/MRML includes
 #include <vtkMRMLAnnotationControlPointsNode.h>
+#include <vtkMRMLAnnotationDisplayNode.h>
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationRulerNode.h>
 

@@ -17,6 +17,7 @@
 #include "vtkMRMLSliceLayerLogic.h"
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>

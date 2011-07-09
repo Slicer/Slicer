@@ -29,14 +29,15 @@
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkImageViewer2.h>
 #include <vtkMultiThreader.h>
-#include <vtkRenderer.h>
+#include <vtkPointData.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer2.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkPointData.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkTimerLog.h>
 
 // STD includes
 #include <cstdlib>

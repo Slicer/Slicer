@@ -19,15 +19,14 @@
 #ifndef __vtkMRMLTransformableNode_h
 #define __vtkMRMLTransformableNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+// MRML includes
 #include "vtkMRMLNode.h"
-
+#include "vtkMRMLScene.h"
 class vtkMRMLTransformNode;
-class vtkCallbackCommand;
-class vtkMatrix4x4;
+
+// VTK includes
 class vtkAbstractTransform;
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 {

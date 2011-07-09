@@ -24,6 +24,7 @@
 #include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLCameraNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>

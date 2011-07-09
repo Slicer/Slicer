@@ -1,17 +1,23 @@
+// MRML includes
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationStorageNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
+#include "vtkMRMLCameraNode.h"
+#include "vtkMRMLSliceNode.h"
+
+// VTK includes
+#include <vtkBitArray.h>
+#include <vtkDataSetAttributes.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkStringArray.h>
+#include <vtkSmartPointer.h>
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-
-#include "vtkObjectFactory.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkBitArray.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
-#include "vtkStringArray.h"
-#include "vtkMRMLAnnotationStorageNode.h"
-#include <vtkSmartPointer.h>
 
 // KPs Todos 
 // - create specific event for node modification
@@ -647,6 +653,18 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
   // node->SetPolyData(this->GetPolyData());
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationNode::SetTextScale(double textScale)
+{
+  this->GetAnnotationTextDisplayNode()->SetTextScale(textScale);
+  this->InvokeEvent(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAnnotationNode::GetTextScale()
+{
+  return this->GetAnnotationTextDisplayNode()->GetTextScale();
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::SetLocked(int locked)

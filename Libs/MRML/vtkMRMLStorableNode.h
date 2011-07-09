@@ -20,18 +20,13 @@
 #ifndef __vtkMRMLStorableNode_h
 #define __vtkMRMLStorableNode_h
 
-#include <string>
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+// MRML includes
 #include "vtkMRMLTransformableNode.h"
-#include "vtkTagTable.h"
-
-class vtkCallbackCommand;
 class vtkMRMLStorageNode;
-class vtkMRMLScene;
-class vtkMRMLNode;
+
+// VTK includes
+class vtkTagTable;
+
 class VTK_MRML_EXPORT vtkMRMLStorableNode : public vtkMRMLTransformableNode
 {
 public:

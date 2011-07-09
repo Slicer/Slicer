@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 #include "vtkLinearTransform.h"
 
+#include "vtkEventBroker.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
 

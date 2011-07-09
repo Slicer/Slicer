@@ -4,10 +4,11 @@
 
 // AnnotationModule/MRML includes
 #include <vtkMRMLAnnotationBidimensionalNode.h>
-#include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayableManager.h>
-#include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationBidimensionalDisplayableManager.h"

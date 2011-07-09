@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 #include "vtkLinearTransform.h"
 #include "vtkSmartPointer.h"
 
+#include "vtkEventBroker.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 

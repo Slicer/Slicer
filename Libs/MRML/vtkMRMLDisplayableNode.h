@@ -20,19 +20,15 @@
 #ifndef __vtkMRMLDisplayableNode_h
 #define __vtkMRMLDisplayableNode_h
 
-#include <string>
-
-#include "vtkPolyData.h" 
-#include "vtkMatrix4x4.h"
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+// MRML includes
 #include "vtkMRMLStorableNode.h"
-#include "vtkMRMLDisplayNode.h"
+class vtkMRMLDisplayNode;
 
+// VTK includes
+#include <vtkPolyData.h>
 class vtkCallbackCommand;
 class vtkFloatArray;
+
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:

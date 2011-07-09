@@ -16,10 +16,11 @@
 #include <vtkXMLDataParser.h>
 
 // STD includes
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <set>
 #include <sstream>
-#include <algorithm>
 
 #include "TestingMacros.h"
 

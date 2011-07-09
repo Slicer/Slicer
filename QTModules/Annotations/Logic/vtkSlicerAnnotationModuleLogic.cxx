@@ -22,9 +22,10 @@
 #include "qSlicerCoreApplication.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

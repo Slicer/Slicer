@@ -18,11 +18,12 @@
 #ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+// MRML includes
 #include "vtkMRMLTransformableNode.h"
-#include "vtkMatrix4x4.h"
-#include "vtkCamera.h"
+
+// VTK includes
+#include <vtkCamera.h>
+#include <vtkMatrix4x4.h>
 
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {

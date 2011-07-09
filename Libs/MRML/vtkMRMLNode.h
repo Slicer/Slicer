@@ -20,14 +20,19 @@
 #ifndef __vtkMRMLNode_h
 #define __vtkMRMLNode_h
 
-#include <string>
-#include <map>
-
-#include "vtkObject.h"
-
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkObserverManager.h"
-#include "vtkEventBroker.h"
+class vtkMRMLScene;
+
+
+// VTK includes
+#include <vtkObject.h>
+class vtkCallbackCommand;
+
+// STD includes
+#include <string>
+#include <map>
 
 #ifndef vtkSetMRMLObjectMacro
 #define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
@@ -87,9 +92,6 @@ virtual void Set##name (const char* _arg) \
   } 
 #endif
 //ETX
-
-class vtkMRMLScene;
-class vtkCallbackCommand;
 
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {

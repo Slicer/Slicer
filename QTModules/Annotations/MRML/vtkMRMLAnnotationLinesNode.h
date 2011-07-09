@@ -9,11 +9,8 @@
 #ifndef __vtkMRMLAnnotationLinesNode_h
 #define __vtkMRMLAnnotationLinesNode_h
 
-#include "vtkSlicerAnnotationsModuleMRMLExport.h"
-#include "vtkMRMLAnnotationControlPointsNode.h" 
+#include "vtkMRMLAnnotationControlPointsNode.h"
 
-class vtkStringArray;
-class vtkMRMLStorageNode;
 class vtkMRMLAnnotationLineDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation

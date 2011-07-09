@@ -7,6 +7,7 @@
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
 #include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // AnnotationModule/MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationFiducialDisplayableManager.h"
