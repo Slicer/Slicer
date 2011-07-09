@@ -24,9 +24,62 @@ endif()
 
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
-  # Note: On windows, version smaller than 2.8.4 can't be built on 64bits architecture.
-  set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-patched.tar.gz)
-  set(LibArchive_MD5 8667f571da1f3318081acdd5377ddda5)
+
+  #
+  # WARNING - Before updating the version of LibArchive, please consider the following:
+  # 
+  #   * LibArchive 2.7.1:
+  #         - Patched version where '-Werror' is commented out - Available here [1]
+  #         - Compiles on: All unix-like platform + windows 32bits
+  #         - Doesn't compile on windows 64bits
+  # 
+  #   * LibArchive 2.8.4 
+  #         - Patched version where '-Werror' is commented out - Available here [2]
+  #         - Doesn't compile on all unix-like platform (See errors listed below)
+  #         - Compiles compile on windows 64bits
+  # 
+  #   * LibArchive trunk (r3461)
+  #         - Compiles properly on all unix-like platform
+  #         - Doesn't compile on windows 64bits
+  #
+  # [1] http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz
+  # [2] http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-patched.tar.gz
+  #
+  #
+  # Listed below the errors occurring when compiling LibArchive2.8.4-patched.tar.gz
+  # 
+  #   MacOSX:
+  #    ../LibArchive/libarchive/archive_entry_copy_stat.c: \
+  #    In function ‘archive_entry_copy_stat’:
+  #    ../LibArchive/libarchive/archive_entry_copy_stat.c:67: \
+  #    error: ‘const struct stat’ has no member named ‘st_birthtimespec’
+  #    ../LibArchive/libarchive/archive_entry_copy_stat.c:67: \
+  #    error: ‘const struct stat’ has no member named ‘st_birthtimespec’
+  #
+  #   Ubuntu 9.04 - gcc 4.3.3 :
+  #    ../LibArchive/libarchive/archive_write_disk.c: In function ‘set_time’:
+  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
+  #     error: ‘AT_FDCWD’ undeclared (first use in this function)
+  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
+  #    error: (Each undeclared identifier is reported only once
+  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
+  #    error: for each function it appears in.)
+  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
+  #    error: ‘AT_SYMLINK_NOFOLLOW’ undeclared (first use in this function)
+  #
+  set(ADDITIONAL_CMAKE_ARGS)
+  if(WIN32)
+    set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-patched.tar.gz)
+    set(LibArchive_MD5 8667f571da1f3318081acdd5377ddda5)
+    # CMake arguments specific to LibArchive >= 2.8.4
+    list(APPEND ADDITIONAL_CMAKE_ARGS
+      -DBUILD_TESTING:BOOL=OFF
+      -DENABLE_OPENSSL:BOOL=OFF
+      )
+  else()
+    set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz)
+    set(LibArchive_MD5 fce7fc069ff7f7ecb2eaccac6bab3d7e)
+  endif()
   ExternalProject_Add(${proj}
     URL ${LibArchive_URL}
     URL_MD5 ${LibArchive_MD5}
@@ -37,17 +90,15 @@ if(NOT DEFINED LibArchive_DIR)
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      # -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DBUILD_TESTING:BOOL=ON
       -DENABLE_ACL:BOOL=OFF
       -DENABLE_CPIO:BOOL=OFF
-      -DENABLE_ICONV:BOOL=OFF
-      -DENABLE_OPENSSL:BOOL=OFF
       -DENABLE_TAR:BOOL=OFF
       -DENABLE_TEST:BOOL=OFF
       -DENABLE_XATTR:BOOL=OFF
+      ${ADDITIONAL_CMAKE_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${LibArchive_DEPENDENCIES}
