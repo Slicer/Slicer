@@ -124,8 +124,7 @@ public:
 
  // Description:
   // transform utility functions
-  virtual bool CanApplyNonLinearTransforms() { return true; }
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   // Description:

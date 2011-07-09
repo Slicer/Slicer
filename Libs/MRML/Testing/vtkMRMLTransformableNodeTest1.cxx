@@ -33,9 +33,6 @@ public:
     {
     return "vtkMRMLTransformableNodeTestHelper1";
     }
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
-  using vtkMRMLTransformableNode::ApplyTransform; 
 };
  
 int vtkMRMLTransformableNodeTest1(int , char * [] )

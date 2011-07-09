@@ -380,7 +380,7 @@ void vtkMRMLAnnotationRulerNode::SetLineColour(double initColor[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+void vtkMRMLAnnotationRulerNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
   double xyzIn[3];

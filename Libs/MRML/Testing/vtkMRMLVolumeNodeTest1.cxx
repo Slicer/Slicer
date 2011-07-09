@@ -37,10 +37,6 @@ public:
     return "vtkMRMLVolumeNodeTestHelper1";
     }
 
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
-  using vtkMRMLVolumeNode::ApplyTransform;
-
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLVolumeArchetypeStorageNode::New(); }
 };
  

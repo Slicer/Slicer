@@ -40,13 +40,6 @@ public:
     {
     return "vtkMRMLNodeTestHelper1";
     }
-
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
-    {
-    return;
-    }
-  using vtkMRMLTransformableNode::ApplyTransform;
 };
  
 int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )

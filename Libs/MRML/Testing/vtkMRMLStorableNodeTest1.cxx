@@ -36,10 +36,6 @@ public:
     return "vtkMRMLStorableNodeTestHelper1";
     }
 
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
-  using vtkMRMLTransformableNode::ApplyTransform;
-
   // for testing purposes, return a valid storage node,
   // vtkMRMLStorageNode::New returns NULL
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLModelStorageNode::New(); }

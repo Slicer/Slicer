@@ -63,7 +63,6 @@ public:
 
  // Description:
   // transform utility functions
-  virtual bool CanApplyNonLinearTransforms() { return true; }
   void Initialize(vtkMRMLScene* mrmlScene);
 
   int GetVisibility() {return this->GetVisible();}

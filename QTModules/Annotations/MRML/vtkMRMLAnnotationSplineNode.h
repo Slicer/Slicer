@@ -91,10 +91,6 @@ public:
   double *GetDistanceAnnotationTextColour();
   void SetDistanceAnnotationTextColour(double initColor[3]);
 
- // Description:
-  // transform utility functions
-  virtual bool CanApplyNonLinearTransforms() { return true; }
-
   void Initialize(vtkMRMLScene* mrmlScene);
 
   int GetVisibility() {return this->GetVisible();}

@@ -35,10 +35,6 @@ public:
     return "vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1";
     }
 
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
-  using vtkMRMLColorNode::ApplyTransform;
-
   virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
   virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
 };

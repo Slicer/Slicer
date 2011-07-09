@@ -481,7 +481,7 @@ void vtkMRMLAnnotationROINode::SetLineColor(double initColor[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
   double xyzIn[3];

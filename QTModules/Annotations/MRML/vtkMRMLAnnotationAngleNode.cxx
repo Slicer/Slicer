@@ -473,7 +473,7 @@ void vtkMRMLAnnotationAngleNode::SetLineColour(double initColor[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+void vtkMRMLAnnotationAngleNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
   double xyzIn[3];

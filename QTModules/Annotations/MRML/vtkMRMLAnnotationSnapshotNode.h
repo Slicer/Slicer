@@ -64,9 +64,9 @@ public:
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   /// Utility transformable methods
-  virtual bool CanApplyNonLinearTransforms() { return false; }
-  virtual void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) {};
+  virtual bool CanApplyNonLinearTransforms()const;
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* vtkNotUsed(transformMatrix));
+  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform));
 
   enum
   {
