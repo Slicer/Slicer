@@ -85,7 +85,7 @@ if(NOT WIN32)
       endif()
     endforeach()
     ExternalProject_Add_Step(${proj} tk_install_chmod_library
-      COMMAND chmod u+xw ${tcl_build}/lib/tk${TCL_TK_VERSION_DOT}
+      COMMAND chmod u+xw ${tcl_build}/lib/tk${TCL_TK_VERSION_DOT}.dylib
       DEPENDEES install
       )
   endif()

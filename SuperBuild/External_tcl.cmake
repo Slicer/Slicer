@@ -85,7 +85,7 @@ ExternalProject_Add(${proj}
 # to make sure it's the case.
 if(APPLE)
   ExternalProject_Add_Step(${proj} tcl_install_chmod_library
-    COMMAND chmod u+xw ${tcl_build}/lib/tcl${TCL_TK_VERSION_DOT}
+    COMMAND chmod u+xw ${tcl_build}/lib/tcl${TCL_TK_VERSION_DOT}.dylib
     DEPENDEES install
     )
 endif()
