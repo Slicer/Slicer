@@ -74,5 +74,20 @@ if(NOT WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy ${tcl_base}/tk/unix/tkUnixDefault.h ${tcl_build}/include
     DEPENDEES install
     )
+
+  #-----------------------------------------------------------------------------
+  # Since fixup_bundle expects the library to be writable, let's add an extra step
+  # to make sure it's the case.
+  if(APPLE)
+    foreach(var tcl_build TCL_TK_VERSION_DOT)
+      if(NOT DEFINED ${var})
+        message(FATAL_ERROR "error: ${var} is not defined !")
+      endif()
+    endforeach()
+    ExternalProject_Add_Step(${proj} tk_install_chmod_library
+      COMMAND chmod u+xw ${tcl_build}/lib/tk${TCL_TK_VERSION_DOT}
+      DEPENDEES install
+      )
+  endif()
 endif()
 

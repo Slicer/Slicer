@@ -80,3 +80,13 @@ ExternalProject_Add(${proj}
     ${tcl_DEPENDENCIES}
   )
 
+#-----------------------------------------------------------------------------
+# Since fixup_bundle expects the library to be writable, let's add an extra step
+# to make sure it's the case.
+if(APPLE)
+  ExternalProject_Add_Step(${proj} tcl_install_chmod_library
+    COMMAND chmod u+xw ${tcl_build}/lib/tcl${TCL_TK_VERSION_DOT}
+    DEPENDEES install
+    )
+endif()
+
