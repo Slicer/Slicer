@@ -97,8 +97,22 @@ void popupDisclaimerDialog(void * data)
     }
 }
 
-//----------------------------------------------------------------------------
+
 #ifdef Slicer_USE_PYTHONQT
+//----------------------------------------------------------------------------
+void setApplicationDisablePythonAttribute(int argc, char* argv[])
+{
+  for (int i = 0; i < argc; ++i)
+    {
+    if (qstrcmp(argv[i], "--disable-python") == 0)
+      {
+      qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::AA_DisablePython);
+      break;
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void initializePython()
 {
   qSlicerApplication * app = qSlicerApplication::application();
@@ -121,6 +135,7 @@ void initializePython()
     app->commandOptions()->setExtraPythonScript(unparsedArguments.at(0));
     }
 }
+
 //----------------------------------------------------------------------------
 void initializePythonConsole(ctkPythonConsole& pythonConsole)
 {
@@ -236,6 +251,13 @@ int main(int argc, char* argv[])
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
   ctkLogger::configure();
+
+#ifdef Slicer_USE_PYTHONQT
+  // Since the attribute AA_DisablePython has to be set before the application
+  // is instantiated, the following function will check if --disable-python argument
+  // has been passed.
+  setApplicationDisablePythonAttribute(argc, argv);
+#endif
 
   qSlicerApplication app(argc, argv);
 

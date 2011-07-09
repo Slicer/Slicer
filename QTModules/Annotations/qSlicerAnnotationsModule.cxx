@@ -54,7 +54,10 @@ void qSlicerAnnotationsModule::setup()
 {
 
 #ifdef Slicer_USE_PYTHONQT
-  PythonQt_init_org_slicer_module_qSlicerAnnotationsModuleWidgets(0);
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    PythonQt_init_org_slicer_module_qSlicerAnnotationsModuleWidgets(0);
+    }
 #endif
 
   // 3D

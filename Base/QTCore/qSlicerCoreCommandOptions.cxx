@@ -209,6 +209,9 @@ void qSlicerCoreCommandOptions::addArguments()
                     "Display available command line arguments.");
 
 #ifdef Slicer_USE_PYTHONQT
+  this->addArgument("disable-python", "", QVariant::Bool,
+                    "Disable python support. This is equivalent to build the application with Slicer_USE_PYTHONQT=OFF.");
+
   this->addArgument("python-script", "", QVariant::String,
                     "Python script to execute after slicer loads.");
 
