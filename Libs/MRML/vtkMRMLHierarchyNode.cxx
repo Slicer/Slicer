@@ -264,7 +264,7 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
     this->SetParentNodeIDReference(ref);
     this->SetSortingValue(++MaximumSortingValue);
 
-    this->SetDisableModifiedEvent(1);
+    this->SetDisableModifiedEvent(disableModify);
 
     this->HierarchyIsModified(this->GetScene());
 
