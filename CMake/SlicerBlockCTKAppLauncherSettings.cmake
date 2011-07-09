@@ -112,9 +112,17 @@ endif()
 
 if(Slicer_USE_PYTHONQT)
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
+  get_filename_component(SLICER_PYTHONHOME ${SLICER_PYTHON_LIB_DIR} PATH)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
     ${SLICER_PYTHON_LIB_DIR}
+    )
+endif()
+
+if(Slicer_USE_NUMPY)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core
+    ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/lib
     )
 endif()
 
@@ -143,7 +151,6 @@ set(SLICER_ENVVARS_BUILD
   )
 
 if(Slicer_USE_PYTHONQT)
-  get_filename_component(SLICER_PYTHONHOME ${SLICER_PYTHON_LIB_DIR} PATH)
   set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(pythonpath_subdir "Lib")
@@ -151,9 +158,6 @@ if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/lib")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core")
 
   # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
   # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
@@ -233,6 +237,13 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     )
 endif()
 
+if(Slicer_USE_NUMPY)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib
+    )
+endif()
+
 #-----------------------------------------------------------------------------
 # PATHS
 #-----------------------------------------------------------------------------
@@ -257,9 +268,6 @@ if(Slicer_USE_PYTHONQT)
   endif()
   set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")

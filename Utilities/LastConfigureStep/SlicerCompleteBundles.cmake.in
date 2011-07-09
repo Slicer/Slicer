@@ -103,6 +103,7 @@ function(fixup_bundle_with_plugins location app)
     "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
     "${app_dir}/Contents/lib/Python/lib/*${suffix}"
     "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
+    "${app_dir}/Contents/lib/Python/lib/python2.6/site-packages/*.so"
     "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"
     )
