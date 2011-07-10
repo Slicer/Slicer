@@ -26,7 +26,7 @@ include(SlicerMacroParseArguments)
 macro(slicerMacroBuildQtModule)
   SLICER_PARSE_ARGUMENTS(QTMODULE
     "NAME;TITLE;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    ""
+    "NO_INSTALL"
     ${ARGN}
     )
   message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME}")
@@ -155,11 +155,13 @@ macro(slicerMacroBuildQtModule)
   # --------------------------------------------------------------------------
   # Install library
   # --------------------------------------------------------------------------
-  install(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
-    )
+  if(NOT QTMODULE_NO_INSTALL)
+    install(TARGETS ${lib_name}
+      RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+      )
+  endif()
 
   # --------------------------------------------------------------------------
   # Install headers
@@ -174,7 +176,7 @@ macro(slicerMacroBuildQtModule)
     endif()
   endif()
 
-  if(${QTMODULE_NAME}_DEVELOPMENT_INSTALL)
+  if(NOT QTMODULE_NO_INSTALL AND ${QTMODULE_NAME}_DEVELOPMENT_INSTALL)
     # Install headers
     file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
     install(FILES
