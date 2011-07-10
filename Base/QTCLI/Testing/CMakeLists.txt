@@ -2,6 +2,7 @@
 slicerMacroBuildCLI(
   NAME CLIModule4Test
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  NO_INSTALL
   )
 
 set(KIT QTCLI)
