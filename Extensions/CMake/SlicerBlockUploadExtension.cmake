@@ -25,11 +25,17 @@ function(SlicerConvertScriptArgListToCTestFormat script_arg_list output_var)
 endfunction()
 
 #-----------------------------------------------------------------------------
+# The following variable can be used while testing the script
+#-----------------------------------------------------------------------------
+set(CTEST_EXTRA_VERBOSE FALSE) # Enable/Disable ctest extra verbosity
+set(RUN_CTEST_SUBMIT TRUE) # Enable/Disable dashboard submission
+
+#-----------------------------------------------------------------------------
 # Prepare external project configuration arguments
 set(script ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUploadExtension.cmake)
 set(script_arg_list
   CTEST_CMAKE_GENERATOR=${Slicer_EXTENSION_CMAKE_GENERATOR}
-  RUN_CTEST_SUBMIT=TRUE # Could be set to FALSE for debug purposes
+  RUN_CTEST_SUBMIT=${RUN_CTEST_SUBMIT}
   EXTENSION_BUILD_OPTIONS_STRING=${EXTENSION_BITNESS}bits-Qt${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}
   EXTENSION_COMPILER=${EXTENSION_COMPILER}
   EXTENSION_NAME=${EXTENSION_NAME}
@@ -49,13 +55,20 @@ if(NOT "${CTEST_MODEL}" STREQUAL "")
   list(APPEND script_arg_list CTEST_MODEL=${CTEST_MODEL})
 endif()
 
+
+#-----------------------------------------------------------------------------
+set(CTEST_EXTRA_VERBOSE_ARG "")
+if(CTEST_EXTRA_VERBOSE)
+  set(CTEST_EXTRA_VERBOSE_ARG "V")
+endif()
+
 #-----------------------------------------------------------------------------
 # Set EXTENSION_TEST_COMMAND
 set(script_arg_list_for_test ${script_arg_list})
 list(APPEND script_arg_list_for_test RUN_CTEST_UPLOAD=FALSE)
 set(script_args "")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_test}" script_args)
-set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V)
+set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
 
 #-----------------------------------------------------------------------------
 # Set EXTENSION_UPLOAD_COMMAND
@@ -63,4 +76,4 @@ set(script_arg_list_for_upload ${script_arg_list})
 list(APPEND script_arg_list_for_upload RUN_CTEST_UPLOAD=TRUE)
 set(script_args "")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_upload}" script_args)
-set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V)
+set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
