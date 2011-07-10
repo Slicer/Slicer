@@ -107,14 +107,24 @@ if(run_ctest_with_build)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
 # Test extension
 if(run_ctest_with_test)
   #message("----------- [ Testing extension ${EXTENSION_NAME} ] -----------")
-  ctest_test(
-      BUILD ${EXTENSION_BINARY_DIR}
-      PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL})
-  if(RUN_CTEST_SUBMIT)
-    ctest_submit(PARTS Test)
+  # Check if there are tests to run
+  execute_process(COMMAND ${CMAKE_CTEST_COMMAND} -N
+    WORKING_DIRECTORY ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+    OUTPUT_VARIABLE output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  string(REGEX REPLACE ".*Total Tests: ([0-9]+)" "\\1" test_count "${output}")
+  if("${test_count}" GREATER 0)
+    ctest_test(
+        BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL})
+    if(RUN_CTEST_SUBMIT)
+      ctest_submit(PARTS Test)
+    endif()
   endif()
 endif()
 
