@@ -78,7 +78,7 @@ endfunction()
 #-----------------------------------------------------------------------------
 # Fixup the .app bundles in the install tree:
 #-----------------------------------------------------------------------------
-function(fixup_bundle_with_plugins location app)
+function(fixup_bundle_with_plugins app)
   set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
 
@@ -143,5 +143,5 @@ function(fixup_bundle_with_plugins location app)
     )
 endfunction()
 
-fixup_bundle_with_plugins("" "Slicer.app")
+fixup_bundle_with_plugins("Slicer.app")
 #verify_app("/Users/partyd/Kitware/Slicer4-trunk/build/Slicer-build/_CPack_Packages/Darwin/DragNDrop/Slicer-4.0.gamma-2011-05-10-Darwin/Slicer.app")
