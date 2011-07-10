@@ -30,8 +30,8 @@ class tpycl(object):
     self.tcl.createcommand("py_del", self.py_del)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
 
-    import platform
-    if platform.system() == "Windows":
+    import sys
+    if sys.platform == 'win32'
       # Update environment variables set by application - unlike other platforms,
       # on windows this does not happen automatically so we do it here
       # Note that subsquent env changes will not be reflected
