@@ -12,6 +12,20 @@ if(Slicer_USE_PYTHONQT)
   if(NOT EXISTS "${PYTHON_DIR}${python_lib_subdir}")
     message(FATAL_ERROR "error: Failed to install Python ! - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
   endif()
+  
+  set(extra_exclude_pattern)
+  if(UNIX)
+    # Note: 
+    #       * Libraries directly located under 'site-packages' directory are
+    #       duplicate of the library located under 'lib-dynload' directory.
+    # 
+    #       * Duplicate library are not properly fixed. Indeed, it's safe to assume
+    #       fixup_bundle identify each library by its name, a same library 
+    #       being in both site-packages and lib-dynload will be fixed only once.
+    # 
+    list(APPEND extra_exclude_pattern 
+      REGEX "site-packages/[^/]+\\.so" EXCLUDE)
+  endif()
 
   install(
     DIRECTORY "${PYTHON_DIR}${python_lib_subdir}"
@@ -23,6 +37,7 @@ if(Slicer_USE_PYTHONQT)
     REGEX "test/" EXCLUDE
     REGEX "wsgiref*" EXCLUDE
     REGEX "distutils/" EXCLUDE
+    ${extra_exclude_pattern}
     )
   # Install python library
   if(UNIX)
