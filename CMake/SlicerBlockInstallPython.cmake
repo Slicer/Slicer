@@ -18,7 +18,7 @@ if(Slicer_USE_PYTHONQT)
     DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_lib_subdir}
     USE_SOURCE_PERMISSIONS
     REGEX "lib2to3/" EXCLUDE
-    REGEX "lib-old/" EXCLUDE
+    REGEX "lib[-]old/" EXCLUDE
     REGEX "plat[-].*" EXCLUDE
     REGEX "test/" EXCLUDE
     REGEX "wsgiref*" EXCLUDE
