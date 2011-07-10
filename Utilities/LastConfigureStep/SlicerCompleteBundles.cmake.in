@@ -17,6 +17,22 @@ if(COMMAND CMAKE_POLICY)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
+# gp_log_message - Convenient function allowing to both display and log a message.
+# Log file: $ENV{DESTDIR}/../complete-bundles-log.txt
+#-----------------------------------------------------------------------------
+function(gp_log_message text)
+  message(${text})
+  file(APPEND $ENV{DESTDIR}/../complete-bundles-log.txt "${text}
+")
+endfunction()
+
+#-----------------------------------------------------------------------------
+# gp_clear_log - Clear the log file
+#-----------------------------------------------------------------------------
+function(gp_clear_log)
+  file(WRITE $ENV{DESTDIR}/../complete-bundles-log.txt "")
+endfunction()
 
 #-----------------------------------------------------------------------------
 # gp_item_default_embedded_path_override item default_embedded_path_var
