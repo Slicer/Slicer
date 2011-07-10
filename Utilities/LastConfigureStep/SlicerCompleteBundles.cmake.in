@@ -97,6 +97,8 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
     set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
+  
+  gp_log_message("fixing item ${item} with ${path}")
 
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction()
@@ -157,10 +159,31 @@ function(fixup_bundle_with_plugins app)
 
   list(REMOVE_DUPLICATES libs_path)
 
-  message("Calling fixup_bundle with")
-  message("app=${app_dir}")
-  message("libs=${libs}")
-  message("libs_path=${libs_path}")
+  set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
+  # TODO Ideally Slicer_SUPERBUILD_DIR should be passed in through Superbuild.cmake
+  get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_BUILD_DIR} PATH)
+
+  gp_clear_log()
+  
+  gp_log_message("Calling fixup_bundle with")
+  gp_log_message("app=${app_dir}")
+  gp_log_message("<Slicer_SUPERBUILD_DIR>=${Slicer_SUPERBUILD_DIR}")
+  gp_log_message("libs=")
+  foreach(lib ${libs})
+    file(RELATIVE_PATH relative_lib ${Slicer_SUPERBUILD_DIR} ${lib})
+    if(NOT "${relative_lib}" STREQUAL "${lib}")
+      set(lib "<Slicer_SUPERBUILD_DIR>/${relative_lib}")
+    endif()
+    gp_log_message("  ${lib}")
+  endforeach()
+  gp_log_message("libs_path=")
+  foreach(path ${libs_path})
+    file(RELATIVE_PATH relative_path ${Slicer_SUPERBUILD_DIR} ${path})
+    if(NOT "${relative_path}" STREQUAL "${path}")
+      set(path "<Slicer_SUPERBUILD_DIR>/${relative_path}")
+    endif()
+    gp_log_message("  ${path}")
+  endforeach()
 
   fixup_bundle(
     "${app_dir}"
