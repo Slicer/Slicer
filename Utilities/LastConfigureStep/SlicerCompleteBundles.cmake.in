@@ -36,11 +36,11 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
-  if(item MATCHES "libpython.*\\.dylib$")
+  if(item MATCHES "libpython[^/]+\\.dylib$")
     set(path "@executable_path@/../lib/Python/lib")
   endif()
 
-  if(item MATCHES "tcl-build/lib/lib.*\\.dylib$")
+  if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
     set(path "@executable_path@/../lib/TclTk")
   endif()
 
@@ -48,7 +48,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/.*\\.dylib$")
+  if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/[^/]+\\.dylib$")
     set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@")
   endif()
 
