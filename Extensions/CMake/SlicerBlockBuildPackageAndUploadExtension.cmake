@@ -20,6 +20,7 @@ if(NOT CTEST_SCRIPT_ARG STREQUAL "")
   endforeach()
 endif()
 
+#-----------------------------------------------------------------------------
 # Macro allowing to set a variable to its default value only if not already defined
 macro(setIfNotDefined var defaultvalue)
   if(NOT DEFINED ${var})
@@ -27,6 +28,7 @@ macro(setIfNotDefined var defaultvalue)
   endif()
 endmacro()
 
+#-----------------------------------------------------------------------------
 # Set build configuration
 if(NOT "${CMAKE_CFG_INTDIR}" STREQUAL ".")
   set(CTEST_BUILD_CONFIGURATION ${CMAKE_CFG_INTDIR})
@@ -34,6 +36,7 @@ else()
   set(CTEST_BUILD_CONFIGURATION ${CMAKE_BUILD_TYPE})
 endif()
 
+#-----------------------------------------------------------------------------
 # Sanity checks
 set(expected_defined_vars EXTENSION_NAME EXTENSION_SOURCE_DIR EXTENSION_BINARY_DIR CTEST_BUILD_CONFIGURATION CTEST_CMAKE_GENERATOR Slicer_CMAKE_DIR Slicer_DIR Slicer_WC_REVISION  EXTENSION_BUILD_OPTIONS_STRING RUN_CTEST_SUBMIT RUN_CTEST_UPLOAD)
 foreach(var ${expected_defined_vars})
@@ -44,6 +47,7 @@ endforeach()
 
 include(${Slicer_CMAKE_DIR}/SlicerFunctionCTestPackage.cmake)
 
+#-----------------------------------------------------------------------------
 # Set site name
 site_name(CTEST_SITE)
 # Force to lower case
@@ -76,6 +80,7 @@ CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 Slicer_DIR:PATH=${Slicer_DIR}
 ")
 
+#-----------------------------------------------------------------------------
 # Write CMakeCache.txt only if required
 set(cmakecache_current "")
 if(EXISTS ${EXTENSION_BINARY_DIR}/CMakeCache.txt)
@@ -85,6 +90,7 @@ if(NOT ${cmakecache_content} STREQUAL "${cmakecache_current}")
   file(WRITE ${EXTENSION_BINARY_DIR}/CMakeCache.txt ${cmakecache_content})
 endif()
 
+#-----------------------------------------------------------------------------
 # Configure extension
 if(run_ctest_with_configure)
   #message("----------- [ Configuring extension ${EXTENSION_NAME} ] -----------")
@@ -97,6 +103,7 @@ if(run_ctest_with_configure)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
 # Build extension
 set(build_errors)
 if(run_ctest_with_build)
@@ -128,6 +135,7 @@ if(run_ctest_with_test)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
 # Package extension
 if(run_ctest_with_packages)
   if(build_errors GREATER "0")
