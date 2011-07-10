@@ -7,7 +7,7 @@
 macro(slicerMacroBuildCLI)
   SLICER_PARSE_ARGUMENTS(MY
     "NAME;ADDITIONAL_SRCS;LOGO_HEADER;TARGET_LIBRARIES;LINK_DIRECTORIES;INCLUDE_DIRECTORIES"
-    "EXECUTABLE_ONLY"
+    "EXECUTABLE_ONLY;NO_INSTALL"
     ${ARGN}
     )
   message(STATUS "Configuring CLI module: ${MY_NAME}")
@@ -91,12 +91,13 @@ macro(slicerMacroBuildCLI)
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
     )
 
-  # Install each target in the production area (where it would appear in an installation)
-  # and install each target in the developer area (for running from a build)
-  install(TARGETS ${cli_targets}
-    RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-    )
-
+  if(NOT MY_NO_INSTALL)
+    # Install each target in the production area (where it would appear in an installation)
+    # and install each target in the developer area (for running from a build)
+    install(TARGETS ${cli_targets}
+      RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+      )
+  endif()
 
 endmacro()
