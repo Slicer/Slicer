@@ -99,7 +99,9 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
   
-  gp_log_message("fixing item ${item} with ${path}")
+  math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
+  set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
+  gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
 
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction()
@@ -185,6 +187,11 @@ function(fixup_bundle_with_plugins app)
     endif()
     gp_log_message("  ${path}")
   endforeach()
+  
+  # Keep track of libs count and current lib being fixed
+  list(LENGTH libs libs_count)
+  set(ENV{FIXUP_LIBS_COUNT} ${libs_count})
+  set(ENV{FIXUP_LIB_CURRENT} 0)
 
   fixup_bundle(
     "${app_dir}"
