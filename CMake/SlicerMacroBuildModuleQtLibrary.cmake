@@ -25,7 +25,7 @@
 macro(SlicerMacroBuildModuleQtLibrary)
   SLICER_PARSE_ARGUMENTS(MODULEQTLIBRARY
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "WRAP_PYTHONQT"
+    "WRAP_PYTHONQT;NO_INSTALL"
     ${ARGN}
     )
 
@@ -139,11 +139,13 @@ macro(SlicerMacroBuildModuleQtLibrary)
   # --------------------------------------------------------------------------
   # Install library
   # --------------------------------------------------------------------------
-  install(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
-    )
+  if(NOT MODULEQTLIBRARY_NO_INSTALL)
+    install(TARGETS ${lib_name}
+      RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+      )
+  endif()
 
   # --------------------------------------------------------------------------
   # Install headers
@@ -158,7 +160,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
     endif()
   endif()
 
-  if(${MODULEQTLIBRARY_NAME}_DEVELOPMENT_INSTALL)
+  if(NOT MODULEQTLIBRARY_NO_INSTALL AND ${MODULEQTLIBRARY_NAME}_DEVELOPMENT_INSTALL)
     # Install headers
     file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
     install(FILES
