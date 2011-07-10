@@ -239,7 +239,9 @@ SlicerMacroBuildBaseQtLibrary(
   WRAP_PYTHONQT
   )
 
+#-----------------------------------------------------------------------------
 # Slicer icon engine
+#-----------------------------------------------------------------------------
 set(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT")
 set(MY_EXPORT_HEADER_PREFIX qSlicerIconEnginePlugin)
 set(MY_LIBNAME qSlicerIconEnginePlugin)
@@ -257,6 +259,13 @@ add_library(qSlicerIconEnginePlugin
 target_link_libraries(qSlicerIconEnginePlugin
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES})
+  
+# Set iconengine output path
+set_target_properties(qSlicerIconEnginePlugin PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/iconengines"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/iconengines"
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/iconengines"
+  )
 
 # Install rules
 install(TARGETS qSlicerIconEnginePlugin
@@ -265,15 +274,14 @@ install(TARGETS qSlicerIconEnginePlugin
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR}/iconengines COMPONENT Development
   )
 # Since Qt expects the plugin to be directly located under the
-# directory 'lib/Slicer3/iconengines', let's copy them.
-
+# directory '<Slicer_LIB_DIR>/iconengines', let's copy them.
 if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
   get_target_property(FILE_PATH qSlicerIconEnginePlugin LOCATION)
 
   add_custom_command(
     TARGET qSlicerIconEnginePlugin
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${FILE_PATH}" ${CMAKE_BINARY_DIR}/lib/Slicer3/iconengines/${CMAKE_SHARED_LIBRARY_PREFIX}qSlicerIconEnginePlugin${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
+    COMMAND ${CMAKE_COMMAND} -E copy "${FILE_PATH}" ${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/iconengines/${CMAKE_SHARED_LIBRARY_PREFIX}qSlicerIconEnginePlugin${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
     )
 endif()
 
