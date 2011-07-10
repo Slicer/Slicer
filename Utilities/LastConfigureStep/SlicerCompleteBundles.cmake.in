@@ -52,11 +52,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/.*\\.dylib$")
-    set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
-  endif()
-
-  if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/.*Python\\.so$")
+  if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
     set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
 
