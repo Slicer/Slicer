@@ -60,10 +60,6 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_QtPlugins_DIR@/imageformats/[^/]+\\.dylib$")
-    set(path "@executable_path@/../@Slicer_QtPlugins_DIR@/imageformats")
-  endif()
-
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction()
 
