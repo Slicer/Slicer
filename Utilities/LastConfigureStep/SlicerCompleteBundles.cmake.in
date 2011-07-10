@@ -63,19 +63,27 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
-  if(item MATCHES "libpython[^/]+\\.dylib$")
-    set(path "@executable_path@/../lib/Python/lib")
+  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+  if(Slicer_USE_PYTHONQT)
+    
+    if(item MATCHES "libpython[^/]+\\.dylib$")
+      set(path "@executable_path@/../lib/Python/lib")
+    endif()
+    
+    if(item MATCHES "@Slicer_LIB_DIR@/[^/]+Python\\.so$")
+      set(path "@executable_path@/../@Slicer_LIB_DIR@")
+    endif()
+    
   endif()
 
-  if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
-    set(path "@executable_path@/../lib/TclTk")
+  set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
+    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
+      set(path "@executable_path@/../lib/TclTk")
+    endif()
   endif()
 
   if(item MATCHES "@Slicer_LIB_DIR@/[^/]+\\.dylib$")
-    set(path "@executable_path@/../@Slicer_LIB_DIR@")
-  endif()
-
-  if(item MATCHES "@Slicer_LIB_DIR@/[^/]+Python\\.so$")
     set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
@@ -91,12 +99,18 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/[^/]+\\.dylib$")
-    set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@")
+  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
+  if(Slicer_BUILD_CLI)
+    if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/[^/]+\\.dylib$")
+      set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@")
+    endif()
   endif()
 
-  if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
-    set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
+      set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+    endif()
   endif()
   
   math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
@@ -112,24 +126,50 @@ endfunction()
 function(fixup_bundle_with_plugins app)
   set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
-
-  set(libs "")
-  file(GLOB_RECURSE candidates
-    "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
-    "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
+  
+  set(candiates_pattern
     "${app_dir}/Contents/@Slicer_LIB_DIR@/designer/*${suffix}"
     "${app_dir}/Contents/@Slicer_LIB_DIR@/iconengines/*${suffix}"
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*${suffix}"
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.so"
-    "${app_dir}/Contents/@Slicer_PLUGINS_LIB_DIR@/*${suffix}"
     "${app_dir}/Contents/@Slicer_LIB_DIR@/*${suffix}"
-    "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
-    "${app_dir}/Contents/lib/Python/lib/*${suffix}"
-    "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
-    "${app_dir}/Contents/lib/Python/lib/python2.6/site-packages/*.so"
-    "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"
     )
+
+  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
+  if(Slicer_BUILD_CLI)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/@Slicer_PLUGINS_LIB_DIR@/*${suffix}"
+      )
+  endif()
+
+  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
+      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
+      )
+  endif()
+
+  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
+      "${app_dir}/Contents/lib/Python/lib/*${suffix}"
+      "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
+      "${app_dir}/Contents/lib/Python/lib/python2.6/site-packages/*.so"
+      )
+  endif()
+
+  set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
+      )
+  endif()
+
+  set(libs "")
+  file(GLOB_RECURSE candidates ${candiates_pattern})
   foreach(lib ${candidates})
     if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
       set(libs ${libs} "${lib}")
@@ -156,8 +196,12 @@ function(fixup_bundle_with_plugins app)
   endif()
 
   list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3")
-  list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
-  list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+  endif()
+  if(Slicer_BUILD_CLI)
+    list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@")
+  endif()
   list(APPEND libs_path "@Slicer_BINARY_DIR@/lib/Slicer3/iconengines")
 
   list(REMOVE_DUPLICATES libs_path)
