@@ -44,11 +44,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../lib/TclTk")
   endif()
 
-  if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/.*Plugin\\.dylib$")
-    set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
-  endif()
-
-  if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/.*Plugin\\.so$")
+  if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
     set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
   endif()
 
