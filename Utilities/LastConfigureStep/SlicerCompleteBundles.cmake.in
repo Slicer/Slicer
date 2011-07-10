@@ -32,6 +32,7 @@ endfunction()
 #-----------------------------------------------------------------------------
 function(gp_clear_log)
   file(WRITE $ENV{DESTDIR}/../complete-bundles-log.txt "")
+  gp_log_message("Log file: $ENV{DESTDIR}/../complete-bundles-log.txt")
 endfunction()
 
 #-----------------------------------------------------------------------------
