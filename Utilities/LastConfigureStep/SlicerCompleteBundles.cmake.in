@@ -40,9 +40,9 @@ endfunction()
 #-----------------------------------------------------------------------------
 function(gp_resolved_file_type_override resolved_file type_var)
   if(resolved_file MATCHES "^/usr/.*/lib")
-    gp_log_message("resolving ${file} as system")
     set(${type_var} system PARENT_SCOPE)
   endif()
+  #gp_log_message("resolving ${file} as ${${type_var}}")
 endfunction()
 
 #-----------------------------------------------------------------------------
