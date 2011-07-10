@@ -25,7 +25,7 @@
 macro(SlicerMacroBuildModuleVTKLibrary)
   SLICER_PARSE_ARGUMENTS(MODULEVTKLIBRARY
     "NAME;EXPORT_DIRECTIVE;SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
-    "DISABLE_WRAP_PYTHON"
+    "DISABLE_WRAP_PYTHON;NO_INSTALL"
     ${ARGN}
     )
 
@@ -105,11 +105,13 @@ macro(SlicerMacroBuildModuleVTKLibrary)
   # --------------------------------------------------------------------------
   # Install library
   # --------------------------------------------------------------------------
-  install(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
-    )
+  if(NOT MY_NO_INSTALL)
+    install(TARGETS ${lib_name}
+      RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+      )
+  endif()
 
   # --------------------------------------------------------------------------
   # Install headers
@@ -124,7 +126,7 @@ macro(SlicerMacroBuildModuleVTKLibrary)
     endif()
   endif()
 
-  if(${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
+  if(NOT MY_NO_INSTALL AND ${MODULEVTKLIBRARY_NAME}_DEVELOPMENT_INSTALL)
     file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
     install(FILES
       ${headers}
