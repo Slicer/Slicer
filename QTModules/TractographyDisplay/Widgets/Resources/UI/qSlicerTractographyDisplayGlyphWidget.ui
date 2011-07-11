@@ -31,6 +31,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="duplicatesEnabled">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="0">
@@ -47,6 +50,9 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="duplicatesEnabled">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

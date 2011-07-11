@@ -69,8 +69,6 @@ qSlicerTractographyDisplayGlyphWidget::qSlicerTractographyDisplayGlyphWidget(QWi
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
   d->init();
-  //TBD: is there some better way to avoid the updateWidgetFromMRML ringback?
-  this->updating = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -100,17 +98,41 @@ void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLNod
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode* fiberBundleDisplayNode)
+void qSlicerTractographyDisplayGlyphWidget::
+  setFiberBundleDisplayNode
+  (vtkMRMLFiberBundleDisplayNode* fiberBundleDisplayNode)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
   vtkMRMLFiberBundleDisplayNode *oldDisplayNode = d->FiberBundleDisplayNode;
+
+  d->FiberBundleDisplayNode = fiberBundleDisplayNode;
+
+  qvtkReconnect( oldDisplayNode, d->FiberBundleDisplayNode,
+                vtkCommand::ModifiedEvent, this, 
+                SLOT(updateWidgetFromMRMLDisplayNode()) );
+  this->updateWidgetFromMRMLDisplayNode();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayGlyphWidget::
+  setDiffusionTensorDisplayPropertiesNode(vtkMRMLNode* node)
+{
+  this->setDiffusionTensorDisplayPropertiesNode
+    (vtkMRMLFiberBundleDisplayNode::SafeDownCast(node));
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayGlyphWidget::
+  setDiffusionTensorDisplayPropertiesNode
+  (vtkMRMLDiffusionTensorDisplayPropertiesNode* node)
+{
+  Q_D(qSlicerTractographyDisplayGlyphWidget);
   vtkMRMLDiffusionTensorDisplayPropertiesNode *oldDisplayPropertiesNode =
     d->DiffusionTensorDisplayPropertiesNode;
 
-  d->FiberBundleDisplayNode = fiberBundleDisplayNode;
-  d->DiffusionTensorDisplayPropertiesNode =
-    fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
+  d->DiffusionTensorDisplayPropertiesNode = node;
 
+  d->GlyphTypeSelector->clear();
   std::vector<int> supportedDisplayTypes;
   int i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphGeometry();
   for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphGeometry(); i++) 
@@ -119,21 +141,15 @@ void qSlicerTractographyDisplayGlyphWidget::setFiberBundleDisplayNode(vtkMRMLFib
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometryAsString(i), i);
     }
 
+  d->GlyphEigenvectorSelector->clear();
   std::vector<int> supportedEigenVectorTypes;
   i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphEigenvector();
   for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphEigenvector(); i++) 
     {
     d->GlyphEigenvectorSelector->addItem(
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvectorAsString(i), i);
-    }
-  
-  qvtkReconnect( oldDisplayNode, d->FiberBundleDisplayNode,
-                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
-  qvtkReconnect( oldDisplayPropertiesNode, d->DiffusionTensorDisplayPropertiesNode,
-                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
-  this->updateWidgetFromMRML();
+    } 
 }
-
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayGlyphWidget::setGlyphType(int type)
 {
@@ -218,15 +234,33 @@ void qSlicerTractographyDisplayGlyphWidget::setTubeGlyphRadius(double radius)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
+void qSlicerTractographyDisplayGlyphWidget::
+  updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  if ( !d->FiberBundleDisplayNode || this->updating )
+  if ( !d->FiberBundleDisplayNode )
     {
     return;
     }
-  this->updating = 1;
-  
+  if ( d->DiffusionTensorDisplayPropertiesNode != 
+       d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() )
+    {
+    this->setDiffusionTensorDisplayPropertiesNode( 
+      d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() );
+    }
+  this->updateWidgetFromMRMLDisplayPropertiesNode();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayGlyphWidget::
+  updateWidgetFromMRMLDisplayPropertiesNode()
+{
+  Q_D(qSlicerTractographyDisplayGlyphWidget);
+  if ( !d->FiberBundleDisplayNode || !d->DiffusionTensorDisplayPropertiesNode )
+    {
+    return;
+    }
+
   d->GlyphTypeSelector->setCurrentIndex(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometry() );
 
@@ -248,6 +282,4 @@ void qSlicerTractographyDisplayGlyphWidget::updateWidgetFromMRML()
     d->DiffusionTensorDisplayPropertiesNode->GetTubeGlyphNumberOfSides() );
   d->GlyphRadiusSlider->setValue(
     d->DiffusionTensorDisplayPropertiesNode->GetTubeGlyphRadius() );
-
-  this->updating = 0;
 }

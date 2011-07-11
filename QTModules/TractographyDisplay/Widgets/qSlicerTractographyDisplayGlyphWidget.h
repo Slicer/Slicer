@@ -32,8 +32,11 @@ public:
   vtkMRMLDiffusionTensorDisplayPropertiesNode* diffusionTensorDisplayPropertiesNode()const;
 
 public slots:
-  void setFiberBundleDisplayNode(vtkMRMLNode *node);
-  void setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode *node);
+  void setFiberBundleDisplayNode(vtkMRMLNode *);
+  void setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode*);
+  void setDiffusionTensorDisplayPropertiesNode(vtkMRMLNode*);
+  void setDiffusionTensorDisplayPropertiesNode
+    (vtkMRMLDiffusionTensorDisplayPropertiesNode*);
 
   void setGlyphScaleFactor(double);
   void setGlyphSpacing(double);
@@ -43,7 +46,8 @@ public slots:
   void setTubeGlyphRadius(double);  
   
 protected slots:
-  void updateWidgetFromMRML();
+  void updateWidgetFromMRMLDisplayNode();
+  void updateWidgetFromMRMLDisplayPropertiesNode();
 
 protected:
   QScopedPointer<qSlicerTractographyDisplayGlyphWidgetPrivate> d_ptr;

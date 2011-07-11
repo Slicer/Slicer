@@ -47,11 +47,9 @@ int qSlicerTractographyDisplayGlyphWidgetTest1( int argc, char * argv[] )
   
 
   qSlicerTractographyDisplayGlyphWidget widget;
-  // TODO: CRASH
-  //widget.setFiberBundleDisplayNode(static_cast<vtkMRMLNode*>(0));
+  widget.setFiberBundleDisplayNode(static_cast<vtkMRMLNode*>(0));
 
-  // TODO: CRASH
-  //widget.setFiberBundleDisplayNode(fbDisplay.GetPointer());
+  widget.setFiberBundleDisplayNode(fbDisplay.GetPointer());
 
   fbDisplay->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(dtDisplayProperties->GetID());
 
