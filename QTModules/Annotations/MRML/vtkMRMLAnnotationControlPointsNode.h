@@ -101,6 +101,7 @@ public:
     CP_VISIBLE,
     NUM_CP_ATTRIBUTE_TYPES
   };
+  //ETX
 
   const char *GetAttributeTypesEnumAsString(int val);
 
@@ -114,6 +115,7 @@ public:
   void CreateAnnotationPointDisplayNode();
 
   /// flags to determine how the next fiducial added to the list is labelled
+  //BTX
   enum NumberingSchemes
   {
       SchemeMin = 0,

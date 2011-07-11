@@ -62,6 +62,7 @@ public:
         ROINode,
         Screenshot,
       };
+    //ETX
 
     /// the logic observes the interaction node, update the gui to keep in
     /// step with the mouse modes tool bar. If interactionNode is null, try to
