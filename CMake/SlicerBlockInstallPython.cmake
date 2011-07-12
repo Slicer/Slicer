@@ -28,7 +28,8 @@ if(Slicer_USE_PYTHONQT)
     #       yet to be discovered, the directory 'lib-dynload' could end up empty !
     #       Excluding the library from 'site-packages' may result in Slicer package
     #       without any python libraries at all. To avoid such problem, the folder
-    #       'lib-dynload' is now excluded instead of just the libraries located in 'site-packages'.
+    #       'lib-dynload' is now excluded instead of just the libraries located
+    #       directly under 'site-packages'.
     #
     list(APPEND extra_exclude_pattern 
       REGEX "lib[-]dynload.*" EXCLUDE)
