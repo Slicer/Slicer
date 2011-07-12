@@ -138,11 +138,11 @@ class EditBox(object):
     # if a list of effects was supplied, then use that list instead of all of the effects
     # don't forget to check that the supplied effects are valid: ensure they exist in the lists of available effects
     
-    if(self.suppliedEffects):
-      self.mouseTools = self.listIntersection(self.suppliedEffects, EditBox.availableMouseTools)
-      self.operations = self.listIntersection(self.suppliedEffects, EditBox.availableOperations)
-      self.nonmodal = self.listIntersection(self.suppliedEffects, EditBox.availableNonmodal)
-      self.disabled = self.listIntersection(self.suppliedEffects, EditBox.availableDisabled)
+    if (self.suppliedEffects):
+      self.mouseTools = tuple(self.listIntersection(self.suppliedEffects, EditBox.availableMouseTools))
+      self.operations = tuple(self.listIntersection(self.suppliedEffects, EditBox.availableOperations))
+      self.nonmodal = tuple(self.listIntersection(self.suppliedEffects, EditBox.availableNonmodal))
+      self.disabled = tuple(self.listIntersection(self.suppliedEffects, EditBox.availableDisabled))
     # if a list of effects is not supplied, then provide all effects
     else:
       self.mouseTools = EditBox.availableMouseTools
