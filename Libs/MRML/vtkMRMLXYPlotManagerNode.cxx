@@ -12,13 +12,14 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLXYPlotManagerNode.h"
-
+#include "vtkMRMLArrayPlotNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMRMLArrayPlotNode.h"
+// VTK includes
+#include <vtkIntArray.h>
+#include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLXYPlotManagerNode* vtkMRMLXYPlotManagerNode::New()

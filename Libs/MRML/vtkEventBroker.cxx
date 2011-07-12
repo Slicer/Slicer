@@ -12,13 +12,20 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCollection.h"
-#include "vtkCallbackCommand.h"
+// MRML includes
 #include "vtkEventBroker.h"
 #include "vtkObservation.h"
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
+#include <vtkObjectFactory.h>
+#include <vtkTimerLog.h>
+
+// STD includes
 #include <algorithm>
+
+vtkCxxSetObjectMacro(vtkEventBroker, TimerLog, vtkTimerLog);
 
 //----------------------------------------------------------------------------
 // The IO manager singleton.

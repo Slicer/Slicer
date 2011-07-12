@@ -6,6 +6,7 @@
 #include "vtkMRMLSliceNode.h"
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkBitArray.h>
 #include <vtkDataSetAttributes.h>
 #include <vtkObjectFactory.h>

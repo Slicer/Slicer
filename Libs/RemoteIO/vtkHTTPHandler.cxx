@@ -1,4 +1,5 @@
 #include "vtkHTTPHandler.h"
+#include <vtkPermissionPrompter.h>
 
 vtkStandardNewMacro ( vtkHTTPHandler );
 vtkCxxRevisionMacro ( vtkHTTPHandler, "$Revision: 1.0 $" );

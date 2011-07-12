@@ -1,6 +1,11 @@
+#include "vtkXNATHandler.h"
+
+// VTK includes
+#include <vtkPermissionPrompter.h>
+
+// ITKSys includes
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
-#include "vtkXNATHandler.h"
 
 vtkStandardNewMacro ( vtkXNATHandler );
 vtkCxxRevisionMacro ( vtkXNATHandler, "$Revision: 1.0 $" );

@@ -1,11 +1,14 @@
 #ifndef __vtkTagTable_h
 #define __vtkTagTable_h
 
-#include "vtkObject.h"
-#include "vtkTable.h"
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkObject.h>
 #include <vtksys/SystemTools.hxx>
+
+// STD includes
 #include <string>
 #include <map>
 

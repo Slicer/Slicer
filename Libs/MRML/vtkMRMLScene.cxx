@@ -2706,6 +2706,16 @@ void vtkMRMLScene::ClearRedoStack()
 }
 
 //------------------------------------------------------------------------------
+void vtkMRMLScene::AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
+{
+  if (id && refrencingNode && refrencingNode->GetScene() && refrencingNode->GetID()) 
+    {
+    this->ReferencedIDs.push_back(id);
+    this->ReferencingNodes.push_back(refrencingNode);
+    }
+}
+
+//------------------------------------------------------------------------------
 int vtkMRMLScene::IsFilePathRelative(const char * filepath)
 {
   if (filepath == NULL)

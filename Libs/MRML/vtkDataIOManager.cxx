@@ -1,14 +1,20 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkDataIOManager.h"
+#include "vtkCacheManager.h"
 #include "vtkDataFileFormatHelper.h"
+#include "vtkDataTransfer.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkURIHandler.h"
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
 #include <list>
 #include <string>
 #include <algorithm>
@@ -16,6 +22,9 @@
 
 vtkStandardNewMacro ( vtkDataIOManager );
 vtkCxxRevisionMacro(vtkDataIOManager, "$Revision: 1.9.12.1 $");
+vtkCxxSetObjectMacro(vtkDataIOManager, CacheManager, vtkCacheManager);
+vtkCxxSetObjectMacro(vtkDataIOManager, DataTransferCollection, vtkCollection);
+vtkCxxSetObjectMacro(vtkDataIOManager, FileFormatHelper, vtkDataFileFormatHelper);
 
 
 //----------------------------------------------------------------------------
@@ -133,7 +142,11 @@ int vtkDataIOManager::GetTransferStatus( vtkDataTransfer *transfer)
   return ( transfer->GetTransferStatus() );
 }
 
-
+//----------------------------------------------------------------------------
+const char* vtkDataIOManager::GetTransferStatusString( vtkDataTransfer *transfer )
+{
+  return transfer->GetTransferStatusString();
+}
 
 //----------------------------------------------------------------------------
 vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( )

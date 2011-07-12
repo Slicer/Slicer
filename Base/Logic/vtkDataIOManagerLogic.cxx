@@ -5,6 +5,7 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkPermissionPrompter.h"
 #include "vtkCommand.h"
 #include <vtksys/SystemTools.hxx>
 

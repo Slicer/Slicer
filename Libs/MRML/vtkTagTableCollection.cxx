@@ -1,6 +1,9 @@
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkTagTableCollection.h"
+#include "vtkTagTable.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkTagTableCollection );
@@ -81,6 +84,18 @@ void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
     }
 }
 
+//---------------------------------------------------------------------------
+vtkTagTable *vtkTagTableCollection::GetNextTable()
+{
+  return vtkTagTable::SafeDownCast(this->GetNextItemAsObject());
+}
+
+//---------------------------------------------------------------------------
+vtkTagTable *vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator &cookie)
+{
+  return vtkTagTable::SafeDownCast(this->GetNextItemAsObject(cookie));
+}
+  
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::ClearAllTagTables ( )
 {

@@ -12,13 +12,18 @@
 
 #include "vtkObserverManager.h"
 
-#include <stdlib.h>
-#include <iostream>
-
 #include "TestingMacros.h"
 
 // to make an owner
 #include "vtkMRMLModelNode.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkCommand.h>
+
+// STD includes
+#include <stdlib.h>
+#include <iostream>
 
 struct callBackDataStruct{
   std::string testString;

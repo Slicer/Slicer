@@ -33,6 +33,7 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
+#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes

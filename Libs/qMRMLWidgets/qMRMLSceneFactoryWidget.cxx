@@ -27,6 +27,7 @@
 #include "ui_qMRMLSceneFactoryWidget.h"
 
 // MRML includes 
+#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
 class qMRMLSceneFactoryWidgetPrivate: public Ui_qMRMLSceneFactoryWidget

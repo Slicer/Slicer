@@ -28,15 +28,17 @@
 #ifndef __vtkEventBroker_h
 #define __vtkEventBroker_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkTimerLog.h"
-
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkObject.h>
+class vtkTimerLog;
+
+// STD includes
 #include <deque>
 #include <vector>
-#include <set>
+//#include <set>
 #include <map>
 #include <fstream>
 
@@ -150,7 +152,7 @@ public:
 
   /// 
   /// Timer log class for calculating elapsed time for event invocations
-  vtkSetObjectMacro (TimerLog, vtkTimerLog);
+  virtual void SetTimerLog(vtkTimerLog* timerLog);
   vtkGetObjectMacro (TimerLog, vtkTimerLog);
 
   /// 

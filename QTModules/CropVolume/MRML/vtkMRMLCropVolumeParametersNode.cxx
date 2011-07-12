@@ -13,7 +13,8 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // VTK includes
-#include "vtkObjectFactory.h"
+#include <vtkCommand.h>
+#include <vtkObjectFactory.h>
 
 // MRML includes
 #include "vtkMRMLScene.h"

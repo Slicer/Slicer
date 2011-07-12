@@ -1,6 +1,9 @@
 #include "vtkDataFileFormatHelper.h"
-#include "vtkStringArray.h"
-#include "itkImageIOBase.h"
+
+#include <itkImageIOBase.h>
+
+#include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
 
 #include <vector>
 #include <set>

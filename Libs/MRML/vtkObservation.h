@@ -31,11 +31,16 @@
 #ifndef __vtkObservation_h
 #define __vtkObservation_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
+// MRML includes
+#include "vtkMRML.h"
+class vtkEventBroker;
 
-#include "vtkEventBroker.h"
+// VTK includes
+#include <vtkObject.h>
+class vtkCallbackCommand;
+
+// STD includes
+#include <deque>
 
 class VTK_MRML_EXPORT vtkObservation : public vtkObject 
 {
@@ -52,7 +57,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   /// - it is assumed that the EventBroker will attach DeleteEvent
   ///   observers to these objects and will thereby know when they
   ///   are no longer valid
-  vtkSetObjectMacro (EventBroker, vtkEventBroker);
+  virtual void SetEventBroker(vtkEventBroker* eventBroker);
   vtkGetObjectMacro (EventBroker, vtkEventBroker);
   vtkGetMacro (InEventQueue, int);
   vtkSetMacro (InEventQueue, int);
@@ -61,7 +66,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   void AssignSubject(vtkObject* subject) {this->Subject = subject;};
   vtkGetMacro (Event, unsigned long);
   vtkSetMacro (Event, unsigned long);
-  vtkSetObjectMacro (CallbackCommand, vtkCallbackCommand);
+  virtual void SetCallbackCommand(vtkCallbackCommand* callbackCommand);
   vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
   vtkSetStringMacro (Script);
   vtkGetStringMacro (Script);

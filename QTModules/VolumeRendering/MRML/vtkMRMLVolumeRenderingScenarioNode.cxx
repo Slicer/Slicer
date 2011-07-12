@@ -12,14 +12,18 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVolumeRenderingScenarioNode* vtkMRMLVolumeRenderingScenarioNode::New()

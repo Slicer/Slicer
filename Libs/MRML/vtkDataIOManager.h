@@ -1,19 +1,17 @@
 #ifndef __vtkDataIOManager_h
 #define __vtkDataIOManager_h
 
-
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkUnsignedLongArray.h"
-#include "vtkIntArray.h"
-#include "vtkCallbackCommand.h"
-
-#include "vtkDataTransfer.h"
-#include "vtkCacheManager.h"
-#include "vtkCollection.h"
-#include "vtkDataFileFormatHelper.h"
+// MRML includes
 #include "vtkMRML.h"
-#include "vtkMRMLNode.h"
+class vtkCacheManager;
+class vtkDataFileFormatHelper;
+class vtkDataTransfer;
+class vtkMRMLNode;
+
+// VTK includes
+#include <vtkObject.h>
+class vtkCallbackCommand;
+class vtkCollection;
 
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
@@ -28,9 +26,9 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkTypeRevisionMacro(vtkDataIOManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkGetObjectMacro ( DataTransferCollection, vtkCollection );
-  vtkSetObjectMacro ( DataTransferCollection, vtkCollection );
+  void SetDataTransferCollection(vtkCollection* dataTransfer );
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
-  vtkSetObjectMacro ( CacheManager, vtkCacheManager );
+  virtual void SetCacheManager(vtkCacheManager* cacheManager);
   vtkGetMacro ( EnableAsynchronousIO, int );
   vtkGetMacro ( InUpdateCallbackFlag, int );
   vtkSetMacro ( InUpdateCallbackFlag, int );
@@ -38,7 +36,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   /// 
   /// Get/Set the DataFileFormatHelper object
   vtkDataFileFormatHelper* GetFileFormatHelper();
-  vtkSetObjectMacro ( FileFormatHelper, vtkDataFileFormatHelper );
+  virtual void SetFileFormatHelper(vtkDataFileFormatHelper* helper);
   
   void SetEnableAsynchronousIO ( int );
 
@@ -85,10 +83,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   void SetTransferStatus(vtkDataTransfer *transfer, int status);
   int GetTransferStatus( vtkDataTransfer *transfer);
 
-  const char* GetTransferStatusString( vtkDataTransfer *transfer )
-    {
-    return (transfer->GetTransferStatusString () );
-    };
+  const char* GetTransferStatusString( vtkDataTransfer *transfer );
 
   virtual void ProcessTransferUpdates ( vtkObject *caller, unsigned long event, void *callData );
   

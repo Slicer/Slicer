@@ -1,9 +1,11 @@
 #ifndef __vtkPermissionPrompter_h
 #define __vtkPermissionPrompter_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRML.h"
+
+// VTK includes
+#include <vtkObject.h>
 
 class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject 
 {

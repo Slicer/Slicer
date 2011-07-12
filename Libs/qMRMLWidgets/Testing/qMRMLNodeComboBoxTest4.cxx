@@ -26,7 +26,8 @@
 #include "qMRMLNodeComboBox.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
+#include <vtkMRMLNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include "vtkSmartPointer.h"

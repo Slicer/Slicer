@@ -1,10 +1,12 @@
 #ifndef __vtkDataTransfer_h
 #define __vtkDataTransfer_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRML.h"
-#include "vtkURIHandler.h"
+class vtkURIHandler;
+
+// VTK includes
+#include <vtkObject.h>
 
 class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject 
 {
@@ -19,7 +21,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkGetStringMacro ( DestinationURI );
   vtkSetStringMacro ( DestinationURI );
   vtkGetObjectMacro ( Handler, vtkURIHandler );
-  vtkSetObjectMacro ( Handler, vtkURIHandler );
+  virtual void SetHandler(vtkURIHandler* uriHandler);
   vtkGetMacro ( TransferType, int );
   vtkSetMacro ( TransferType, int );
   vtkGetMacro ( TransferID, int );

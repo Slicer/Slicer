@@ -1,12 +1,17 @@
+#include "ExecutionModelTourCLP.h"
+
+// MRML includes
+#include <vtkMRMLNode.h>
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+
+// STD includes
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-
-#include "ExecutionModelTourCLP.h"
-
-#include "vtkMRMLScene.h"
-#include "vtkSmartPointer.h"
 
 int main (int argc, char *argv[])
 {

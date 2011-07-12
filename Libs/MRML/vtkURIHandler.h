@@ -1,9 +1,12 @@
 #ifndef __vtkURIHandler_h
 #define __vtkURIHandler_h
 
-#include "vtkObject.h"
+// MRML includes
 #include "vtkMRML.h"
-#include "vtkPermissionPrompter.h"
+class vtkPermissionPrompter;
+
+// VTK includes
+#include <vtkObject.h>
 
 class VTK_MRML_EXPORT vtkURIHandler : public vtkObject 
 {
@@ -62,7 +65,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   vtkGetMacro ( RequiresPermission, int );
   vtkSetMacro ( RequiresPermission, int );
   vtkGetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
-  vtkSetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
+  virtual void SetPermissionPrompter(vtkPermissionPrompter* prompter);
   vtkGetStringMacro ( Prefix );
   vtkSetStringMacro ( Prefix );
   vtkGetStringMacro ( Name );

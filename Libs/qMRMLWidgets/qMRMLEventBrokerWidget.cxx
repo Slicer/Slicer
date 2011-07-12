@@ -35,7 +35,9 @@
 #include <vtkObservation.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkCommand.h>
 #include <vtkObject.h>
 
 namespace

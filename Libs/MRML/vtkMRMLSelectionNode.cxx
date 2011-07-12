@@ -12,15 +12,19 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 
-#include "vtkMatrix4x4.h"
+// VTK includes
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkStdString.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLSelectionNode::New()

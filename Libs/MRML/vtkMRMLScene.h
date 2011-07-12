@@ -300,14 +300,7 @@ public:
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
   //ETX
 
-  void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
-  {
-    if (id && refrencingNode && refrencingNode->GetScene() && refrencingNode->GetID()) 
-      {
-      this->ReferencedIDs.push_back(id);
-      this->ReferencingNodes.push_back(refrencingNode);
-      }
-  };
+  void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
 
   void ClearReferencedNodeID()
   {

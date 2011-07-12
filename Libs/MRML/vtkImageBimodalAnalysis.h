@@ -22,10 +22,11 @@
 #ifndef __vtkImageBimodalAnalysis_h
 #define __vtkImageBimodalAnalysis_h
 
-#include "vtkImageToImageFilter.h"
-
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkImageToImageFilter.h>
 
 #define VTK_BIMODAL_MODALITY_CT 0
 #define VTK_BIMODAL_MODALITY_MR 1

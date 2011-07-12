@@ -13,6 +13,7 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkXMLDataParser.h>
 
 // STD includes

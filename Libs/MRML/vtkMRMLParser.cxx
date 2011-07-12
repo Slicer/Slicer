@@ -11,8 +11,15 @@ Date:      $Date: 2006/03/11 19:51:14 $
 Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLParser.h"
+#include "vtkMRMLNode.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkStdString.h>
+
+// STD includes
 #include <sstream>
 #include <string>
 #include <iostream>

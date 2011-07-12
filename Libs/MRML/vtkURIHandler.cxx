@@ -1,9 +1,13 @@
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkURIHandler.h"
+#include "vtkPermissionPrompter.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkURIHandler );
 vtkCxxRevisionMacro ( vtkURIHandler, "$Revision: 1.0 $" );
+vtkCxxSetObjectMacro( vtkURIHandler, PermissionPrompter, vtkPermissionPrompter );
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()
 {

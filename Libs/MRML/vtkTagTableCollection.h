@@ -1,10 +1,12 @@
 #ifndef __vtkTagTableCollection_h
 #define __vtkTagTableCollection_h
 
+// MRML includes
 #include "vtkMRML.h"
-#include "vtkObject.h"
-#include "vtkCollection.h"
-#include "vtkTagTable.h"
+class vtkTagTable;
+
+// VTK includes
+#include <vtkCollection.h>
 
 class VTK_MRML_EXPORT vtkTagTableCollection : public vtkCollection
 {
@@ -27,8 +29,7 @@ public:
   /// 
   /// Get the next Table in the list. Return NULL
   /// when at the end of the list.
-  vtkTagTable *GetNextTable() {
-  return static_cast<vtkTagTable *>(this->GetNextItemAsObject() ); };
+  vtkTagTable *GetNextTable();
 
   /// 
   /// Access routine provided for compatibility with previous
@@ -40,8 +41,7 @@ public:
   ///  
   /// Reentrant safe way to get an object in a collection. 
   /// Just pass the same cookie back and forth. 
-  vtkTagTable *GetNextTable(vtkCollectionSimpleIterator &cookie) {
-    return static_cast<vtkTagTable *>(this->GetNextItemAsObject(cookie));};
+  vtkTagTable *GetNextTable(vtkCollectionSimpleIterator &cookie);
   //ETX
 
  protected:

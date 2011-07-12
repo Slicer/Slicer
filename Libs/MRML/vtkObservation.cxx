@@ -12,14 +12,18 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkObservation.h"
-
-#include "vtkCallbackCommand.h"
 #include "vtkEventBroker.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 
 vtkCxxRevisionMacro(vtkObservation, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkObservation);
+vtkCxxSetObjectMacro(vtkObservation, CallbackCommand, vtkCallbackCommand);
+vtkCxxSetObjectMacro(vtkObservation, EventBroker, vtkEventBroker);
 
 //----------------------------------------------------------------------------
 vtkObservation::vtkObservation()

@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkActor2D.h>
+#include <vtkCallbackCommand.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>

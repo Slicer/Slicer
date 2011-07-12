@@ -12,35 +12,38 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-#include "vtksys/Directory.hxx"
-
+// MRML includes
+#include "vtkDataFileFormatHelper.h"
 #include "vtkMRMLConfigure.h" // MRML_USE*
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkSmartPointer.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
-
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVolumeNode.h"
 
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
-#include "vtkDataArray.h"
-#include "vtkPointData.h"
-#include "vtkStringArray.h"
+// VTK ITK includes
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
 #include "vtkITKImageWriter.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkDataArray.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+#include <vtksys/Directory.hxx>
+
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode* vtkMRMLVolumeArchetypeStorageNode::New()

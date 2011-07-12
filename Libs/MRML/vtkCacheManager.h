@@ -1,23 +1,22 @@
 #ifndef __vtkCacheManager_h
 #define __vtkCacheManager_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkUnsignedLongArray.h"
-#include "vtkIntArray.h"
+// MRML includes
 #include "vtkMRML.h"
+class vtkCallbackCommand;
+class vtkMRMLScene;
 
+// VTK includes
+#include <vtkObject.h>
+
+// STD includes
 #include <string>
 #include <vector>
 #include <map>
 
-class vtkCallbackCommand;
-class vtkMRMLScene;
-
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
-
 
 class VTK_MRML_EXPORT vtkCacheManager : public vtkObject 
 {

@@ -29,6 +29,7 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>

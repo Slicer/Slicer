@@ -1,10 +1,11 @@
 #ifndef __vtkDataFileFormatHelper_h
 #define __vtkDataFileFormatHelper_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkObject.h>
 class vtkStringArray;
 
 typedef struct

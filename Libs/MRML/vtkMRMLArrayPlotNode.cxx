@@ -12,18 +12,21 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
+// MRML includes
+#include "vtkMRMLArrayPlotNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkEventBroker.h"
 
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkDataObject.h>
+#include <vtkDoubleArray.h>
+#include <vtkFieldData.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
 #include <sstream>
 #include <string>
-
-#include "vtkEventBroker.h"
-#include "vtkMRMLArrayPlotNode.h"
-
-#include "vtkDataObject.h"
-#include "vtkFieldData.h"
-#include "vtkDoubleArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLArrayPlotNode* vtkMRMLArrayPlotNode::New()

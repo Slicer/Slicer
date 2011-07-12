@@ -1,7 +1,9 @@
-
+// MRML includes
 #include "vtkPermissionPrompter.h"
-#include "vtkCallbackCommand.h"
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkPermissionPrompter );
 vtkCxxRevisionMacro ( vtkPermissionPrompter, "$Revision: 1.0 $" );
@@ -16,7 +18,6 @@ vtkPermissionPrompter::vtkPermissionPrompter()
   this->PromptTitle = NULL;
   this->Remember = 0;
 }
-
 
 //----------------------------------------------------------------------------
 vtkPermissionPrompter::~vtkPermissionPrompter()

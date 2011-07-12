@@ -1,10 +1,17 @@
+// MRML includes
 #include "vtkDataTransfer.h"
+#include "vtkURIHandler.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtksys/SystemTools.hxx>
+
 #include <iostream>
 #include <fstream>
-#include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro ( vtkDataTransfer );
 vtkCxxRevisionMacro ( vtkDataTransfer, "$Revision: 1.0 $" );
+vtkCxxSetObjectMacro( vtkDataTransfer, Handler, vtkURIHandler );
 
 //----------------------------------------------------------------------------
 vtkDataTransfer::vtkDataTransfer()

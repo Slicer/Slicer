@@ -21,10 +21,11 @@
 #ifndef __vtkImageAccumulateDiscrete_h
 #define __vtkImageAccumulateDiscrete_h
 
-#include "vtkImageToImageFilter.h"
-
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
+#include <vtkImageToImageFilter.h>
 
 class VTK_MRML_EXPORT vtkImageAccumulateDiscrete : public vtkImageToImageFilter
 {
