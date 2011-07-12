@@ -102,16 +102,23 @@ void qMRMLWindowLevelWidgetPrivate::init()
   this->PopupWidget = new ctkPopupWidget(0);
 
   QPalette popupPalette = q->palette();
-  //popupPalette.setColor(QPalette::Window, popupPalette.color(QPalette::Dark));
+  QColor windowColor = popupPalette.color(QPalette::Window);
+  windowColor.setAlpha(200);
+  QColor darkColor = popupPalette.color(QPalette::Dark);
+  darkColor.setAlpha(200);
+  /*
   QLinearGradient gradient(QPointF(0.,0.),QPointF(0.,0.5));
   gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  gradient.setColorAt(0, popupPalette.color(QPalette::Window));
-  gradient.setColorAt(1, popupPalette.color(QPalette::Dark));
+  gradient.setColorAt(0, windowColor);
+  gradient.setColorAt(1, darkColor);
   popupPalette.setBrush(QPalette::Window, gradient);
+  */
+  popupPalette.setColor(QPalette::Window, darkColor);
   this->PopupWidget->setPalette(popupPalette);
-  this->PopupWidget->setOpacity(255 * 0.8);
+  this->PopupWidget->setAttribute(Qt::WA_TranslucentBackground, true);
 
-  this->PopupWidget->setAutoHide(false);
+  this->PopupWidget->setAutoShow(false);
+  this->PopupWidget->setAutoHide(true);
   this->PopupWidget->setBaseWidget(q);
   this->RangeWidget = new ctkRangeWidget;
 
@@ -239,12 +246,12 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
     }
   if (autoWindowLevel != qMRMLWindowLevelWidget::Auto)
     {
-    d->PopupWidget->setAutoHide(true);
+    d->PopupWidget->setAutoShow(true);
     d->PopupWidget->showPopup();
     }
   else
     {
-    d->PopupWidget->setAutoHide(false);
+    d->PopupWidget->setAutoShow(false);
     d->PopupWidget->hidePopup();
     }
   
