@@ -1,9 +1,10 @@
 
 set(KIT_PYTHON_SCRIPTS
+    DICOM.py
     Editor.py
     LabelStatistics.py
+    PerformanceTests.py
     SampleData.py
-    DICOM.py
   )
 
 if(Slicer_USE_NUMPY)
