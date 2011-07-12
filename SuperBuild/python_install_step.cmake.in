@@ -49,8 +49,13 @@ if(UNIX)
   #message(LDFLAGS:[$ENV{LDFLAGS}])
   #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
+  set(extra_make_flags)
+  # Warning: To avoid error on macosx, let's disable parallel build using '-j1'
+  if(APPLE)
+    set(extra_make_flags -j1)
+  endif()
   execute_process(
-    COMMAND make install
+    COMMAND make install ${extra_make_flags}
     WORKING_DIRECTORY "@python_base@"
     )
 

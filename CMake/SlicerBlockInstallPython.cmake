@@ -23,13 +23,7 @@ if(Slicer_USE_PYTHONQT)
     #       to assume fixup_bundle identify each library by its name, a same library
     #       being in both site-packages and lib-dynload will be fixed only once.
     #
-    #       * If python build process happens as "expected", the libraries should be located
-    #       in both 'site-packages' and 'lib-dynload'. Nevertheless, for some reason
-    #       yet to be discovered, the directory 'lib-dynload' could end up empty !
-    #       Excluding the library from 'site-packages' may result in Slicer package
-    #       without any python libraries at all. To avoid such problem, the folder
-    #       'lib-dynload' is now excluded instead of just the libraries located
-    #       directly under 'site-packages'.
+    #       * For convenience, let's exclude lib[-]dynload completely.
     #
     list(APPEND extra_exclude_pattern 
       REGEX "lib[-]dynload.*" EXCLUDE)
