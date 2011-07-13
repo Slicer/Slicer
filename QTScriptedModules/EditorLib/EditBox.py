@@ -41,6 +41,12 @@ class EditBox(object):
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
     self.editUtil = EditUtil.EditUtil()
 
+    # check for extensions - if none have been registered, just create the empty dictionary
+    try:
+      slicer.modules.editorExtensions
+    except AttributeError:
+      slicer.modules.editorExtensions = {}
+
     # embedded boolean specifies whether or not this edit box is to be embedded
     # into another moduleWidget
     # - if it is, all effect buttons will be displayed in a single row

@@ -104,6 +104,13 @@ class EditorExtensionTemplate:
     # don't show this module - it only appears in the Editor module
     #parent.hidden = True
 
+    # Add this extension to the editor's list for discovery when the module
+    # is created.  Since this module may be discovered before the Editor itself,
+    # create the list if it doesn't already exist.
+    try:
+      slicer.modules.editorExtensions
+    except AttributeError:
+      slicer.modules.editorExtensions = {}
     slicer.modules.editorExtensions['EditorExtensionTemplateOptions'] = EditorExtensionTemplateOptions
 
 #
