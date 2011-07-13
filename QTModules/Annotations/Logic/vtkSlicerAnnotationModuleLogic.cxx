@@ -468,36 +468,15 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode()
 {
 
-  // fire cancel placement event
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-  if (!selectionNode)
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+
+  if (!interactionNode)
     {
-    vtkErrorMacro("CancelCurrentOrRemoveLastAddedAnnotationNode: No selection node in the scene.");
+    vtkErrorMacro("CancelCurrentOrRemoveLastAddedAnnotationNode: No interaction node")
     return;
     }
 
-  selectionNode->SetActiveAnnotationID("CancelPlacement");
-
-  vtkMRMLAnnotationNode* tmpNode = vtkMRMLAnnotationNode::New();
-  tmpNode->SetScene(this->GetMRMLScene());
-  this->GetMRMLScene()->AddNode(tmpNode);
-  tmpNode->Delete();
-  this->GetMRMLScene()->RemoveNode(tmpNode);
-  // end of cancel placement event
-
-  if (!this->m_LastAddedAnnotationNode)
-    {
-    return;
-    }
-
-  if (this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationTextNode")
-      || this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    // for text annotations or fiducials, just remove the last node
-    this->GetMRMLScene()->RemoveNode(this->m_LastAddedAnnotationNode);
-    this->m_LastAddedAnnotationNode = 0;
-    }
+  interactionNode->InvokeEvent(vtkMRMLInteractionNode::CancelPlacementEvent);
 
 }
 

@@ -67,7 +67,7 @@ void qSlicerAnnotationsModule::setup()
       //<< "AngleThreeDView"
       << "Text"
       << "Fiducial"
-      << "Bidimensional"
+      //<< "Bidimensional"
       << "Ruler"
       << "ROI"
       //<< "StickyThreeDView"

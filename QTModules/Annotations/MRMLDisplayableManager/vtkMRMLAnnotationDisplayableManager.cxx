@@ -121,7 +121,6 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNode(vtkMRMLAnnotationNod
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
-  nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::CancelPlacementEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
  if (annotationNode)// && !annotationNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
@@ -167,6 +166,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
       vtkIntArray *interactionEvents = vtkIntArray::New();
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
+      interactionEvents->InsertNextValue(vtkMRMLInteractionNode::CancelPlacementEvent);
       vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
       interactionEvents->Delete();
     //  }
@@ -295,6 +295,7 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                             unsigned long event,
                                                             void *callData)
 {
+
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
   vtkMRMLAnnotationDisplayNode *displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(caller);
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
@@ -314,9 +315,6 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       case vtkMRMLAnnotationNode::LockModifiedEvent:
         this->OnMRMLAnnotationNodeLockModifiedEvent(annotationNode);
         break;
-      case vtkMRMLAnnotationNode::CancelPlacementEvent:
-        this->Helper->RemoveSeeds();
-        break;
       }
     }
   else if (displayNode)
@@ -330,6 +328,13 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
   else if (interactionNode)
     {
+    if (event == vtkMRMLInteractionNode::CancelPlacementEvent)
+      {
+      // remove all seeds and reset the clickcounter
+      this->m_ClickCounter->Reset();
+      this->Helper->RemoveSeeds();
+      return;
+      }
     if (this->IsCorrectDisplayableManager())
       {
       if (event == vtkMRMLInteractionNode::InteractionModeChangedEvent)
@@ -1414,14 +1419,14 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
         this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
-  if ( selectionNode == NULL )
+  if ( selectionNode == 0 )
     {
     vtkErrorMacro ( "IsCorrectDisplayableManager: No selection node in the scene." );
     return false;
     }
-  if ( selectionNode->GetActiveAnnotationID() == NULL)
+  if ( selectionNode->GetActiveAnnotationID() == 0)
     {
-    vtkErrorMacro ( "IsCorrectDisplayableManager: no active annotation");
+    //vtkErrorMacro ( "IsCorrectDisplayableManager: no active annotation");
     return false;
     }
   // the purpose of the displayableManager is hardcoded

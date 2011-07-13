@@ -83,7 +83,6 @@ public:
     TEXT_VISIBLE,
     NUM_TEXT_ATTRIBUTE_TYPES,
      LockModifiedEvent,
-     CancelPlacementEvent,
   };
 //ETX
   virtual const char *GetAttributeTypesEnumAsString(int val);
