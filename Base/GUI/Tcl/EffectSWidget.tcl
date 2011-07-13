@@ -577,8 +577,22 @@ itcl::body EffectSWidget::postApply {} {
       error "bad scope: should be all or visible, not $scope"
     }
   }
-  $node SetModifiedSinceRead 1
-  $node Modified
+  # TODO: workaround for new pipeline in slicer4
+  # - editing image data of the calling modified on the node
+  #   does not pull the pipeline chain
+  # - so we trick it by changing the image data first
+  set workaround 1
+  if { $workaround } {
+    if { ![info exists o(tempImageData)] } {
+      set o(tempImageData) [vtkNew vtkImageData]
+    }
+    set imageData [$node GetImageData]
+    $node SetAndObserveImageData $o(tempImageData)
+    $node SetAndObserveImageData $imageData
+  } else {
+    $node SetModifiedSinceRead 1
+    $node Modified
+  }
   foreach imageData {_outputLabel _extractedBackground _extractedLabel} {
     if { [set $imageData] != "" } {
       [set $imageData] Delete
