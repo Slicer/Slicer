@@ -790,7 +790,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       // if it is, we have to show it
       if (visibleOnSlice)
         {
+
         // show the widget immediately
+        this->UpdatePosition(widget, annotationNode);
         widget->SetEnabled(1);
         vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
         if (seedWidget)
@@ -1054,7 +1056,41 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       break;
       }
 
+    // -----------------------------------------
+    // special cases when the slices get panned:
+
+    // if all of the controlpoints are outside the viewport coordinates, the widget should not be shown
+    // if one controlpoint is inside the viewport coordinates, the widget should be shown
+
+    // we need to check if we are inside the viewport
+    double coords[2] = {displayCoordinates[0], displayCoordinates[1]};
+
+    vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(coords[0],coords[1]);
+    if (!pokedRenderer)
+      {
+      vtkErrorMacro("RestrictDisplayCoordinatesToViewport: Could not find the poked renderer!")
+      return false;
+      }
+
+    pokedRenderer->DisplayToNormalizedDisplay(coords[0],coords[1]);
+    pokedRenderer->NormalizedDisplayToViewport(coords[0],coords[1]);
+    pokedRenderer->ViewportToNormalizedViewport(coords[0],coords[1]);
+
+    if ((coords[0]<0.001) || (coords[0]>0.999) || (coords[1]<0.001) || (coords[1]>0.999))
+      {
+      // current point is outside of view
+      showWidget = false;
+      }
+    else
+      {
+      // current point is inside of view
+      // stop parsing the control points since the widget needs to be shown
+      showWidget = true;
+      break;
+      }
+
     } // end of for loop through control points
+
 
   return showWidget;
 
