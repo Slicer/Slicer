@@ -248,7 +248,9 @@ namespace eval Slicer3Adapters {
       return $_renderWidget
     }
     method RequestRender {} {
-      $_renderWidget RequestRender
+      if { [$this GetMainViewer] != "" } {
+        $_renderWidget RequestRender
+      }
     }
   }
 
@@ -270,19 +272,12 @@ namespace eval Slicer3Adapters {
     method SetSliceLogic {arg} {set _sliceLogic $arg}
     method GetSliceLogic {} {return $_sliceLogic}
     method RequestRender {} {
-      # TODO: need to have a request render methodology in Qt
-      # - for now, do nothing, as observers on the Qt side seem
-      #   to be handling this
-      set imageData [$_sliceLogic GetImageData]
-      if { $imageData != "" } {
-        # - trigger a modified event on the image data
-        #   as if it had been recalculated
-        $imageData Modified
-      }
-      #[[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
+      set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
+      py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().scheduleRender()"
     }
     method Render {} {
-      [[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
+      set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
+      py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().forceRender()"
     }
     method GetHighlightColor {} {
       # TODO: need to figure out how these resources map to Qt
