@@ -347,7 +347,7 @@ void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const cha
   int index = this->AnnotationIDInList(idString);
   if (index == -1)
     {
-    vtkDebugMacro("Annotation id " << idString << " not in list, adding it");
+    vtkDebugMacro("Annotation id " << idString << " not in list, adding it and invoking annotation id list modified event");
     this->AnnotationIDList.push_back(idString);
     this->AnnotationResourceList.push_back(resourceString);
     this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);

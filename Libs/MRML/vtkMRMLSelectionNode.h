@@ -138,7 +138,8 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Check for an id in the list, returning it's index, -1 if not in list
   int AnnotationIDInList(std::string id);
 //ETX
-  
+  /// Get the number of ids in the list
+  int GetNumberOfAnnotationIDsInList() { return this->AnnotationIDList.size(); };
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
