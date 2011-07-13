@@ -2,7 +2,7 @@
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See COPYRIGHT.txt
+  See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
@@ -17,13 +17,13 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-#include "vtkSlicerAtlasCreatorModuleLogicExport.h"
+#include "vtkAtlasCreatorCxxModuleWin32Header.h"
 
-// Description:
+// Description: 
 // The atlas creator node is simply a MRMLNode container for
 // a configuration of the Atlas Creator module
 
-class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
+class VTK_ATLASCREATORCXXMODULE_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLAtlasCreatorNode *New();
@@ -113,7 +113,8 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : publ
   vtkSetStringMacro (LabelsList);
 
 
-  // Description: The Registration Type: "Affine" or "Non-Rigid"
+  // Description: The Registration Type: "Rigid","Affine","Affine12" or "Non-Rigid"
+  // Affine12 means 12 DOF
   vtkGetStringMacro (RegistrationType);
   vtkSetStringMacro (RegistrationType);
 
@@ -140,16 +141,16 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : publ
 
 
   // Description: The Output Cast
-  //   "Char"
-  //   "Unsigned Char"
-  //   "Double"
-  //   "Float"
-  //   "Int"
-  //   "Unsigned Int"
-  //   "Long"
-  //   "Unsigned Long"
-  //   "Short"
-  //   "Unsigned Short"
+  //   "char"
+  //   "unsigned char"
+  //   "double"
+  //   "float"
+  //   "int"
+  //   "unsigned int"
+  //   "long"
+  //   "unsigned long"
+  //   "short"
+  //   "unsigned short"
   vtkGetStringMacro (OutputCast);
   vtkSetStringMacro (OutputCast);
 
@@ -192,6 +193,11 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : publ
   // Description: The Transforms Directory
   vtkGetStringMacro (TransformsDirectory);
   vtkSetStringMacro (TransformsDirectory);
+
+
+  // Description: 1: Use DRAMMS on top of Registration and Resampling 0: Don't use DRAMMS
+  vtkGetMacro(UseDRAMMS,int);
+  vtkSetMacro(UseDRAMMS,int);
 
 
   // Description: 1: Use Debug Mode 0: Don't use Debug Mode
@@ -243,6 +249,8 @@ protected:
   int SkipRegistration;
   char *ExistingTemplate;
   char *TransformsDirectory;
+
+  int UseDRAMMS;
 
   int DebugMode;
   int DryrunMode;
