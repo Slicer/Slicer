@@ -115,8 +115,8 @@ if(Slicer_USE_PYTHONQT)
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(pythonpath_subdir "Lib")
   endif()
+  set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-build)
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
-  get_filename_component(SLICER_PYTHONHOME ${SLICER_PYTHON_LIB_DIR} PATH)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
     ${SLICER_PYTHON_LIB_DIR}
