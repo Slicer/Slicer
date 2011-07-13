@@ -177,6 +177,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
   "Modules.(getpath|signalmodule).c.*warning: ignoring return value of.*declared with attribute warn_unused_result"
+  "Modules.expat.xmlparse.*warning.*discards qualifiers from pointer target type"
   # Python - Mac
   "ranlib: file:.*libpython2.6.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
