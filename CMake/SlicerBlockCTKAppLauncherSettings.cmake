@@ -111,6 +111,10 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 
 if(Slicer_USE_PYTHONQT)
+  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir "Lib")
+  endif()
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
   get_filename_component(SLICER_PYTHONHOME ${SLICER_PYTHON_LIB_DIR} PATH)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
@@ -151,10 +155,6 @@ set(SLICER_ENVVARS_BUILD
   )
 
 if(Slicer_USE_PYTHONQT)
-  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "Lib")
-  endif()
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
@@ -235,6 +235,13 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
     <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
     )
+endif()
+
+if(Slicer_USE_PYTHONQT)
+  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir "Lib")
+  endif()
 endif()
 
 if(Slicer_USE_NUMPY)
