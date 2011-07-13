@@ -582,7 +582,10 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   if ( oldSliceMTime != this->Slice->GetMTime() ||
        oldReSliceMTime != this->Reslice->GetMTime() ||
        oldAssign != this->AssignAttributeTensorsFromScalars->GetMTime() ||
-       oldLabel != this->LabelOutline->GetMTime() )
+       oldLabel != this->LabelOutline->GetMTime() ||
+       (volumeNode != 0 && (volumeNode->GetMTime() > oldReSliceMTime)) ||
+       (volumeDisplayNode != 0 && (volumeDisplayNode->GetMTime() > oldReSliceMTime))
+       )
     {
     this->Modified();
     }
