@@ -17,13 +17,13 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-#include "vtkAtlasCreatorCxxModuleWin32Header.h"
+#include "vtkSlicerAtlasCreatorModuleLogicExport.h"
 
 // Description: 
 // The atlas creator node is simply a MRMLNode container for
 // a configuration of the Atlas Creator module
 
-class VTK_ATLASCREATORCXXMODULE_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
+class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLAtlasCreatorNode *New();
