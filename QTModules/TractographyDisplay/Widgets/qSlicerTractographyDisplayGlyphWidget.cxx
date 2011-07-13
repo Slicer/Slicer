@@ -118,7 +118,7 @@ void qSlicerTractographyDisplayGlyphWidget::
   setDiffusionTensorDisplayPropertiesNode(vtkMRMLNode* node)
 {
   this->setDiffusionTensorDisplayPropertiesNode
-    (vtkMRMLFiberBundleDisplayNode::SafeDownCast(node));
+    (vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(node));
 }
 
 //------------------------------------------------------------------------------
@@ -127,8 +127,6 @@ void qSlicerTractographyDisplayGlyphWidget::
   (vtkMRMLDiffusionTensorDisplayPropertiesNode* node)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *oldDisplayPropertiesNode =
-    d->DiffusionTensorDisplayPropertiesNode;
 
   d->DiffusionTensorDisplayPropertiesNode = node;
 
