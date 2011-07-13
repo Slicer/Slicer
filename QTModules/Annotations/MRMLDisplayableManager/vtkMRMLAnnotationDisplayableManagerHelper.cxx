@@ -355,8 +355,10 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
     seedWidget->SetCurrentRenderer(renderer);
 
     seedWidget->CompleteInteraction();
+    seedWidget->ManagesCursorOff();
     seedWidget->ProcessEventsOff();
 
+    
     this->SeedWidget = seedWidget;
 
     }
@@ -376,6 +378,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
 
   this->SeedWidget->On();
   this->SeedWidget->CompleteInteraction();
+  this->SeedWidget->ManagesCursorOff();
+  this->SeedWidget->ProcessEventsOff();
 }
 
 //---------------------------------------------------------------------------
