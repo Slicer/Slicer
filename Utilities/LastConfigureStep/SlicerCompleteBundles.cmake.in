@@ -207,8 +207,7 @@ function(fixup_bundle_with_plugins app)
   list(REMOVE_DUPLICATES libs_path)
 
   set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
-  # TODO Ideally Slicer_SUPERBUILD_DIR should be passed in through Superbuild.cmake
-  get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_BUILD_DIR} PATH)
+  set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
 
   gp_clear_log()
   
