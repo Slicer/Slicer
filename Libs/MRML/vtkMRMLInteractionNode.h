@@ -88,6 +88,7 @@ public:
       InteractionModeChangedEvent = 19001,
       TransientTimeoutEvent,
       InteractionModePersistenceChangedEvent,
+      CancelPlacementEvent,
     };
 
   //BTX
