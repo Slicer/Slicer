@@ -45,6 +45,7 @@ public:
   virtual ~qSlicerAbstractCoreModulePrivate();
 
   bool                                       Enabled;
+  bool                                       Hidden;
   QString                                    Name;
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
@@ -57,6 +58,7 @@ public:
 qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
 {
   this->Enabled = false;
+  this->Hidden = false;
   this->Name = "NA";
   this->WidgetRepresentation = 0;
 }
@@ -187,10 +189,8 @@ CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractCoreModule::isHidden()const
-{
-  return false;
-}
+CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isHidden, Hidden);
+CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setHidden, Hidden);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresentation()
