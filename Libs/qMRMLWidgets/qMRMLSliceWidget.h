@@ -110,7 +110,7 @@ public:
   /// A const ctkVTKSliceView pointer is returned as you shouldn't
   /// mess too much with it. If you do, be aware that you are probably
   /// unsynchronizing the view from the nodes/logics.
-  const ctkVTKSliceView* sliceView()const;
+  Q_INVOKABLE const ctkVTKSliceView* sliceView()const;
 public slots:
 
   void setMRMLScene(vtkMRMLScene * newScene);

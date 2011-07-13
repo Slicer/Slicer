@@ -54,7 +54,7 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   /// Get SliceViewWidget identified by \a name
-  qMRMLSliceWidget* sliceWidget(const QString& name)const;
+  Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
