@@ -76,7 +76,7 @@ public:
   vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
   vtkRenderer* activeThreeDRenderer()const;
 
-  vtkMRMLLayoutLogic* layoutLogic()const;
+  Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
 public slots:
 
   ///
