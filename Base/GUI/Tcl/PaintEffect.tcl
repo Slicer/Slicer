@@ -556,6 +556,23 @@ itcl::body PaintEffect::paintBrush {x y} {
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
 
+  # TODO: workaround for new pipeline in slicer4
+  # - editing image data of the calling modified on the node
+  #   does not pull the pipeline chain
+  # - so we trick it by changing the image data first
+  $_layers(label,node) SetModifiedSinceRead 1
+  set workaround 1
+  if { $workaround } {
+    if { ![info exists o(tempImageData)] } {
+      set o(tempImageData) [vtkNew vtkImageData]
+    }
+    set imageData [$_layers(label,node) GetImageData]
+    $_layers(label,node) SetAndObserveImageData $o(tempImageData)
+    $_layers(label,node) SetAndObserveImageData $imageData
+  } else {
+    $_layers(label,node) Modified
+  }
+
   return
 }
 
