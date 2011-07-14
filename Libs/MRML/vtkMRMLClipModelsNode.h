@@ -20,12 +20,7 @@
 #ifndef __vtkMRMLClipModelsNode_h
 #define __vtkMRMLClipModelsNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
 
 class VTK_MRML_EXPORT vtkMRMLClipModelsNode : public vtkMRMLNode
 {

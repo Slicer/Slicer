@@ -22,8 +22,8 @@
 #include "vtkMRMLTransformableNode.h"
 
 // VTK includes
-#include <vtkCamera.h>
-#include <vtkMatrix4x4.h>
+class vtkCamera;
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
@@ -67,73 +67,43 @@ public:
 
   /// 
   /// Set camera ParallelProjection flag 
-  void SetParallelProjection(int parallelProjection) 
-    {
-    this->Camera->SetParallelProjection(parallelProjection);
-    };
+  void SetParallelProjection(int parallelProjection);
   
   /// 
   /// Set camera ParallelProjection flag   
-  int GetParallelProjection()
-    {
-    return this->Camera->GetParallelProjection();
-    };
+  int GetParallelProjection();
 
   /// 
   /// Set camera Parallel Scale 
-  void SetParallelScale(double scale) 
-    {
-    this->Camera->SetParallelScale(scale);
-    };
+  void SetParallelScale(double scale);
   
   /// 
   /// Set camera Parallel Scale   
-  double GetParallelScale()
-    {
-    return this->Camera->GetParallelScale();
-    };
+  double GetParallelScale();
 
   /// 
   /// Set camera Position 
-  void SetPosition(double position[3]) 
-    {
-    this->Camera->SetPosition(position);
-    };
+  void SetPosition(double position[3]);
   
   /// 
   /// Get camera Position   
-  double *GetPosition()
-    {
-    return this->Camera->GetPosition();
-    };
+  double *GetPosition();
 
   /// 
   /// Set camera Focal Point 
-  void SetFocalPoint(double focalPoint[3]) 
-    {
-    this->Camera->SetFocalPoint(focalPoint);
-    };
+  void SetFocalPoint(double focalPoint[3]);
   
   /// 
   /// Get camera Focal Point 
-  double *GetFocalPoint()
-    {
-    return this->Camera->GetFocalPoint();
-    };
+  double *GetFocalPoint();
 
   /// 
   /// Set camera Up vector
-  void SetViewUp(double viewUp[3]) 
-    {
-    this->Camera->SetViewUp(viewUp);
-    };
+  void SetViewUp(double viewUp[3]);
   
   /// 
   /// Get camera Up vector
-  double *GetViewUp()
-    {
-      return this->Camera->GetViewUp();
-    };
+  double *GetViewUp();
   
   /// 
   /// alternative method to propagate events generated in Camera nodes
@@ -147,7 +117,7 @@ public:
   /// (for any new transforms, the incremental difference
   /// is calculated and applied to the parameters)
   vtkGetObjectMacro(AppliedTransform, vtkMatrix4x4);
-  vtkSetObjectMacro(AppliedTransform, vtkMatrix4x4);
+  virtual void SetAppliedTransform(vtkMatrix4x4* appliedTransform);
 
   /// 
   /// Events
@@ -172,7 +142,7 @@ protected:
   void operator=(const vtkMRMLCameraNode&);
 
 
-  vtkSetObjectMacro(Camera, vtkCamera); 
+  void SetCamera(vtkCamera* camera); 
   void SetAndObserveCamera(vtkCamera *camera);
   vtkCamera *Camera;
 

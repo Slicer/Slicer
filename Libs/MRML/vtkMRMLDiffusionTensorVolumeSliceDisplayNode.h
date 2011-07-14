@@ -22,17 +22,12 @@
 #ifndef __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
 #define __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
 
-#include "vtkPolyData.h"
-#include "vtkMatrix4x4.h"
-
-#include "vtkMRML.h"
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
-//#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
 class vtkDiffusionTensorGlyph;
-class vtkTransform;
-class vtkTransformPolyDataFilter;
+class vtkMatrix4x4;
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLGlyphableVolumeSliceDisplayNode
 {

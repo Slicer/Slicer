@@ -27,6 +27,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLModelStorageNode.h>
@@ -39,6 +40,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
 // ITKSYS includes
 #include <itksys/Process.h>

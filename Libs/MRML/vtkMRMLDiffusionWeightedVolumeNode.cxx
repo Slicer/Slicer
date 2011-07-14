@@ -16,12 +16,15 @@ Version:   $Revision: 1.14 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkDoubleArray.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
+
+#include "vtkDoubleArray.h"
+#include <vtkImageExtractComponents.h>
+#include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionWeightedVolumeNode::New()
@@ -430,13 +433,19 @@ void vtkMRMLDiffusionWeightedVolumeNode::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLDiffusionWeightedVolumeDisplayNode* vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionWeightedVolumeDisplayNode()
+{
+  return vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::UpdateFromMRML()
 {
   this->CalculateAutoLevels(NULL, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode:: CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
+void vtkMRMLDiffusionWeightedVolumeNode::CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
 {
   if (refNode == NULL &&  !this->GetDisplayNode())
     {
@@ -498,4 +507,10 @@ void vtkMRMLDiffusionWeightedVolumeNode:: CalculateAutoLevels( vtkMRMLScalarVolu
     // pass it up to the superclass
     this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLDiffusionWeightedVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLNRRDStorageNode::New();
 }

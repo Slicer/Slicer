@@ -11,19 +11,26 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
 // when change the display node, update the scalars
 #include "vtkMRMLVolumeNode.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkPolyData.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
+
+vtkCxxSetObjectMacro(vtkMRMLDisplayableNode, PolyData, vtkPolyData)
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()

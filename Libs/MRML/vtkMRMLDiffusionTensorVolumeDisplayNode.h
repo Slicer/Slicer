@@ -24,18 +24,17 @@
 #ifndef __vtkMRMLDiffusionTensorVolumeDisplayNode_h
 #define __vtkMRMLDiffusionTensorVolumeDisplayNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-#include "vtkImageShiftScale.h"
-#include "vtkImageExtractComponents.h"
-#include "vtkImageMathematics.h"
-#include "vtkImageCast.h"
-
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
+
 class vtkDiffusionTensorMathematicsSimple;
 class vtkDiffusionTensorGlyph;
+class vtkImageCast;
 class vtkImageData;
+class vtkImageExtractComponents;
+class vtkImageShiftScale;
+class vtkImageMathematics;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {

@@ -20,7 +20,6 @@
 #define __vtkMRMLBSplineTransformNode_h
 
 #include "vtkMRMLNonlinearTransformNode.h"
-#include "vtkMRMLBSplineTransformNode.h"
 
 class vtkMRMLStorageNode;
 

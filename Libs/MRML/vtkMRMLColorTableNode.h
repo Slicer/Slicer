@@ -21,15 +21,8 @@
 #ifndef __vtkMRMLColorTableNode_h
 #define __vtkMRMLColorTableNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"
 
-#include "vtkMRMLScene.h"
-
-class vtkLookupTable;
-class vtkMRMLStorageNode;
-class vtkMRMLScene;
 class VTK_MRML_EXPORT vtkMRMLColorTableNode : public vtkMRMLColorNode
 {
 public:

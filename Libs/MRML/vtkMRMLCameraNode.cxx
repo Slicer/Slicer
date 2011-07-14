@@ -23,8 +23,14 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkTransform.h"
-#include "vtkSmartPointer.h"
+
+#include <vtkCamera.h>
+#include <vtkMatrix4x4.h>
+#include <vtkTransform.h>
+#include <vtkSmartPointer.h>
+
+vtkCxxSetObjectMacro(vtkMRMLCameraNode, Camera, vtkCamera);
+vtkCxxSetObjectMacro(vtkMRMLCameraNode, AppliedTransform, vtkMatrix4x4);
 
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLCameraNode::New()
@@ -314,6 +320,65 @@ void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera *camera)
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetParallelProjection(int parallelProjection) 
+{
+  this->Camera->SetParallelProjection(parallelProjection);
+}
+  
+//---------------------------------------------------------------------------
+int vtkMRMLCameraNode::GetParallelProjection()
+{
+  return this->Camera->GetParallelProjection();
+};
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetParallelScale(double scale) 
+{
+  this->Camera->SetParallelScale(scale);
+}
+  
+//---------------------------------------------------------------------------
+double vtkMRMLCameraNode::GetParallelScale()
+{
+  return this->Camera->GetParallelScale();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetPosition(double position[3]) 
+{
+  this->Camera->SetPosition(position);
+}
+  
+//---------------------------------------------------------------------------
+double *vtkMRMLCameraNode::GetPosition()
+{
+  return this->Camera->GetPosition();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetFocalPoint(double focalPoint[3]) 
+{
+  this->Camera->SetFocalPoint(focalPoint);
+}
+  
+//---------------------------------------------------------------------------
+double *vtkMRMLCameraNode::GetFocalPoint()
+{
+  return this->Camera->GetFocalPoint();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetViewUp(double viewUp[3]) 
+{
+  this->Camera->SetViewUp(viewUp);
+}
+  
+//---------------------------------------------------------------------------
+double *vtkMRMLCameraNode::GetViewUp()
+{
+  return this->Camera->GetViewUp();
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,

@@ -25,9 +25,7 @@
 class vtkMRMLDisplayNode;
 
 // VTK includes
-#include <vtkPolyData.h>
-class vtkCallbackCommand;
-class vtkFloatArray;
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
@@ -157,8 +155,7 @@ public:
   void AddDisplayNodeID(const char* id);
   void AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode);
 
-  vtkSetObjectMacro(PolyData, vtkPolyData);
-
+  virtual void SetPolyData(vtkPolyData* polyData);
 
   /// Data
   vtkPolyData *PolyData;

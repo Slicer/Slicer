@@ -17,13 +17,9 @@
 #ifndef __vtkMRMLDisplayableHierarchyNode_h
 #define __vtkMRMLDisplayableHierarchyNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLHierarchyNode.h"
-#include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLDisplayNode.h"
-
+class vtkMRMLDisplayableNode;
+class vtkMRMLDisplayNode;
 
 class vtkCallbackCommand;
 

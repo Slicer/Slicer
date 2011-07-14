@@ -24,6 +24,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 

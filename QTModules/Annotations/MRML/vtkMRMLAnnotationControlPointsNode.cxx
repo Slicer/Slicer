@@ -13,6 +13,8 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkDataSetAttributes.h"
 #include "vtkPointData.h"
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
 #include "vtkStringArray.h"
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 

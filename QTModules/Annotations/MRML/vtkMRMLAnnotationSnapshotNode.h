@@ -10,7 +10,7 @@
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 #include "vtkMRMLAnnotationNode.h"
 
-
+#include <vtkStdString.h>
 class vtkStringArray;
 class vtkMRMLStorageNode;
 

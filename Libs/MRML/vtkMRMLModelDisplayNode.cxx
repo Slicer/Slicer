@@ -17,9 +17,12 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkPolyData.h>
 
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
+
+vtkCxxSetObjectMacro(vtkMRMLModelDisplayNode, PolyData, vtkPolyData)
 
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* vtkMRMLModelDisplayNode::New()

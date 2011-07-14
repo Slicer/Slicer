@@ -19,8 +19,6 @@
 #ifndef __vtkMRMLColorTableStorageNode_h
 #define __vtkMRMLColorTableStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode

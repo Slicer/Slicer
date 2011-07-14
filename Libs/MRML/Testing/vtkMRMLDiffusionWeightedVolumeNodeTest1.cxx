@@ -12,6 +12,8 @@
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 
+#include <vtkPolyData.h>
+
 #include <stdlib.h>
 #include <iostream>
 

@@ -24,14 +24,8 @@
 #ifndef __vtkMRMLDiffusionImageVolumeNode_h
 #define __vtkMRMLDiffusionImageVolumeNode_h
 
-
 #include "vtkMRMLTensorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-
-
-class vtkDoubleArray;
-class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
-class vtkMRMLStorageNode;
+class vtkMRMLDiffusionWeightedVolumeNode;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {

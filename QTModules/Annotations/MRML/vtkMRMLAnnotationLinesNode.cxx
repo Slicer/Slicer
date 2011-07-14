@@ -13,6 +13,7 @@
 #include "vtkCellArray.h"
 #include "vtkDataSetAttributes.h"
 #include "vtkPointData.h"
+#include <vtkPolyData.h>
 #include "vtkStringArray.h"
 
 

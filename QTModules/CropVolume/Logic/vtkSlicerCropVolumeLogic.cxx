@@ -26,10 +26,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkImageChangeInformation.h>
 
-#include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLAnnotationROINode.h>
-#include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 
 // CLI invocation

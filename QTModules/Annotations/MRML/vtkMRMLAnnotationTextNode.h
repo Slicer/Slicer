@@ -12,9 +12,8 @@
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 
-
+#include <vtkStdString.h>
 class vtkStringArray;
-class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextNode : public vtkMRMLAnnotationControlPointsNode

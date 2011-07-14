@@ -8,6 +8,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLStorableNode.h"
 
 #include "vtkVolumeProperty.h"
 #include "vtkPiecewiseFunction.h"

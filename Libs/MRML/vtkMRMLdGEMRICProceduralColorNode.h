@@ -21,13 +21,7 @@
 #ifndef __vtkMRMLdGEMRICProceduralColorNode_h
 #define __vtkMRMLdGEMRICProceduralColorNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
-
-class vtkColorTransferFunction;
-class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLdGEMRICProceduralColorNode : public vtkMRMLProceduralColorNode
 {

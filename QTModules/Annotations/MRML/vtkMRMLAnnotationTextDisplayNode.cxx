@@ -4,6 +4,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkStdString.h>
 
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLScene.h"

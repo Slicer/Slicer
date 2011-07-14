@@ -20,6 +20,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
+#include <vtkIntArray.h>
 
 // STD includes
 #include <stdlib.h>

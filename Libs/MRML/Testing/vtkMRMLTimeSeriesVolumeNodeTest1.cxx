@@ -12,6 +12,8 @@
 
 #include "vtkMRMLTimeSeriesVolumeNode.h"
 
+#include <vtkPolyData.h>
+
 #include <stdlib.h>
 #include <iostream>
 

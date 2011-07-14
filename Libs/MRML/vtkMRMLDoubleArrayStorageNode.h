@@ -19,8 +19,6 @@
 #ifndef __vtkMRMLDoubleArrayStorageNode_h
 #define __vtkMRMLDoubleArrayStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayStorageNode : public vtkMRMLStorageNode

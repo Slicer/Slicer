@@ -27,6 +27,7 @@
 // MRML includes
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
 // VTK includes
 #include <vtkPointData.h>

@@ -29,8 +29,10 @@ Version:   $Revision: 1.2 $
 #include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
 #include <vtkImageLogic.h>
+#include <vtkImageMathematics.h>
 #include <vtkImageMapToColors.h>
 #include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkSphereSource.h>

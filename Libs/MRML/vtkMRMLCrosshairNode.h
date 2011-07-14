@@ -20,8 +20,6 @@
 #ifndef __vtkMRMLCrosshairNode_h
 #define __vtkMRMLCrosshairNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode

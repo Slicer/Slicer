@@ -17,13 +17,8 @@
 #include <string>
 #include <vector>
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
-#include "vtkObject.h"
-#include "vtkDoubleArray.h"
-#include "vtkStringArray.h"
-
+class vtkDoubleArray;
 
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 {
@@ -75,7 +70,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   //----------------------------------------------------------------
   /// Get and Set Macros
   //----------------------------------------------------------------
-  vtkSetObjectMacro ( Array, vtkDoubleArray );
+  virtual void SetArray(vtkDoubleArray*);
   vtkGetObjectMacro ( Array, vtkDoubleArray );
 
   //----------------------------------------------------------------

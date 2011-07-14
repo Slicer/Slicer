@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLDiffusionImageVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------

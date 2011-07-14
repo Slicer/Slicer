@@ -12,6 +12,7 @@
 #include <ctkVTKHistogram.h>
 
 // MRML includes
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
 // VTK includes

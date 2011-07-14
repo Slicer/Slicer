@@ -11,6 +11,7 @@
 #include <vtkDataSetAttributes.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkPolyData.h>
 #include <vtkStringArray.h>
 #include <vtkSmartPointer.h>
 

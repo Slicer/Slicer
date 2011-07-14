@@ -23,16 +23,15 @@
 #define __vtkMRMLColorNode_h
 
 // MRML includes
-//#include "vtkMRML.h"
-//#include "vtkMRMLNode.h"
 #include "vtkMRMLStorableNode.h"
+
+// VTK includes
+class vtkLookupTable;
+class vtkScalarsToColors;
 
 // Std includes
 #include <string>
 #include <vector>
-
-class vtkLookupTable;
-class vtkScalarsToColors;
 
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {

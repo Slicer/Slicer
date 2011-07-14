@@ -16,16 +16,18 @@ Version:   $Revision: 1.3 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
 #include "vtkEventBroker.h"
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
+#include <vtkCallbackCommand.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkObjectFactory.h>
 
-
+vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData)
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()

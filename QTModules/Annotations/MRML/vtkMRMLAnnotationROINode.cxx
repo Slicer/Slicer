@@ -13,6 +13,8 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMath.h"
 #include "vtkPlanes.h"
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
 #include "vtkDoubleArray.h"
 #include "vtkGeneralTransform.h"
 

@@ -21,10 +21,13 @@ Version:   $Revision: 1.0 $
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkLookupTable.h"
-#include "vtkLineSource.h"
-#include "vtkTubeFilter.h"
-#include "vtkSphereSource.h"
+#include <vtkLookupTable.h>
+#include <vtkLineSource.h>
+#include <vtkTubeFilter.h>
+#include <vtkPolyData.h>
+#include <vtkSphereSource.h>
+
+vtkCxxSetObjectMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode, GlyphSource, vtkPolyData);
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorDisplayPropertiesNode::New()

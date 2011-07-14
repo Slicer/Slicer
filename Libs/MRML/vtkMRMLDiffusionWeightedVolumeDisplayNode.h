@@ -24,15 +24,12 @@
 #ifndef __vtkMRMLDiffusionWeightedVolumeDisplayNode_h
 #define __vtkMRMLDiffusionWeightedVolumeDisplayNode_h
 
-#include "vtkMRML.h"
+// MRML includes
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLColorNode.h"
 
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
-#include "vtkImageExtractComponents.h"
-
+// VTK includes
 class vtkImageData;
+class vtkImageExtractComponents;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {

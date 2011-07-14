@@ -14,20 +14,16 @@
 #ifndef __vtkMRMLArrayPlotNode_h
 #define __vtkMRMLArrayPlotNode_h
 
-#include <string>
-#include <vector>
-
-#include "vtkMRML.h"
+// MRML includes
 #include "vtkMRMLPlotNode.h"
+class vtkMRMLDoubleArrayNode;
 
-#include "vtkObject.h"
-
-#include "vtkDataObject.h"
-#include "vtkMRMLDoubleArrayNode.h"
+// VTK includes
+class vtkDataObject;
+class vtkDoubleArray;
 
 class VTK_MRML_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
 {
-
  public:
 
   //----------------------------------------------------------------

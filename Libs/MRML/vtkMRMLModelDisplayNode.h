@@ -52,7 +52,7 @@ public:
   /// 
   /// Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
-  vtkSetObjectMacro(PolyData, vtkPolyData);
+  virtual void SetPolyData(vtkPolyData* polydata);
 
 protected:
   vtkMRMLModelDisplayNode();

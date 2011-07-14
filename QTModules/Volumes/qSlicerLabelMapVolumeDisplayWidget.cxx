@@ -25,6 +25,7 @@
 #include <QDebug>
 
 // MRML includes
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 

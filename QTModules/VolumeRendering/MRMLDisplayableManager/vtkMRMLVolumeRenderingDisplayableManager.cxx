@@ -36,6 +36,7 @@
 #include "vtkPlane.h"
 #include "vtkPlanes.h"
 #include "vtkPointData.h"
+#include "vtkPoints.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"

@@ -18,16 +18,13 @@
 #ifndef __vtkMRMLDisplayNode_h
 #define __vtkMRMLDisplayNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLColorNode.h"
-
-#include "vtkImageData.h"
-#include "vtkPolyData.h"
-
+#include "vtkMRMLScene.h"
+class vtkMRMLColorNode;
 class vtkMRMLDisplayableNode;
+
+class vtkImageData;
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
@@ -275,7 +272,7 @@ protected:
   
   virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
   
-  vtkSetObjectMacro(TextureImageData, vtkImageData);
+  virtual void SetTextureImageData(vtkImageData* imageData);
   
   vtkImageData    *TextureImageData;
   

@@ -31,6 +31,7 @@
 #include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 // STD includes

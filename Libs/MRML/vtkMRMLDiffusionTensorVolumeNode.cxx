@@ -21,6 +21,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
@@ -134,6 +135,17 @@ void vtkMRMLDiffusionTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeNode
+::GetDiffusionTensorVolumeDisplayNode()
+{
+  return vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
 
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLNRRDStorageNode::New();
+}
 
  

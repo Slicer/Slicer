@@ -14,6 +14,7 @@ Version:   $Revision: 1.2 $
 
 // MRML includes
 #include "vtkMRMLArrayPlotNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkEventBroker.h"
 

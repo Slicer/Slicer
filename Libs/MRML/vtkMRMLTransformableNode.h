@@ -21,7 +21,7 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
+#include "vtkMRMLScene.h" // used for vtkSetReferenceStringMacro
 class vtkMRMLTransformNode;
 
 // VTK includes

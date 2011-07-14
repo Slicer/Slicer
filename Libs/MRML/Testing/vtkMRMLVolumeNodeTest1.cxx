@@ -10,15 +10,17 @@
 
 =========================================================================auto=*/
 
+// return a concrete storage node, vtkMRMLStorageNode::New returns null
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
+
+#include <vtkPolyData.h>
 
 #include <stdlib.h>
 #include <iostream>
 
 #include "TestingMacros.h"
 
-// return a concrete storage node, vtkMRMLStorageNode::New returns null
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
 {

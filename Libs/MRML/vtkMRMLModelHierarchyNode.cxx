@@ -18,6 +18,8 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLScene.h"
 

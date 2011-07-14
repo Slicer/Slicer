@@ -27,10 +27,10 @@
 #ifndef __vtkMRMLDiffusionTensorDisplayPropertiesNode_h
 #define __vtkMRMLDiffusionTensorDisplayPropertiesNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLColorTableNode.h"
-#include "vtkPolyData.h"
 
+// VTK includes
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMRMLColorTableNode
 {
@@ -497,7 +497,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// This is used internally to set a pointer to this polydata
   /// and reference count it.  
   /// TO DO: is this causing an extra modified event?
-  vtkSetObjectMacro( GlyphSource, vtkPolyData );
+  virtual void SetGlyphSource(vtkPolyData* glyphSource);
 
 
   /// TO DO: add specific lookup tables ranging from 0..1 for or -1 1

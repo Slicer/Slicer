@@ -73,6 +73,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleNode.h"
