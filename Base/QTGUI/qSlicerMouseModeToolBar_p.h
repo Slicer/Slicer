@@ -23,10 +23,13 @@
 
 // Qt includes
 #include <QToolBar>
+#include <QMenu>
+#include <QCheckBox>
 
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
+#include <ctkMenuButton.h>
 #include "qSlicerBaseQTGUIExport.h"
 
 // SlicerQt includes
@@ -60,6 +63,10 @@ public:
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
   void updateWidgetFromMRML();
+  void updateWidgetFromSelectionNode();
+  /// given an annotation id, find the action associated with it and set it
+  /// checked, update the cursor, update the icon on the button
+  void updateWidgetToAnnotation(const char *annotationID);
 
 public slots:
 
@@ -67,21 +74,22 @@ public slots:
   void onMRMLSceneImportedEvent();
   void onMRMLSceneClosedEvent();
   void onInteractionNodeModeChangedEvent();
-  void onInteractionNodeModePersistenceChangedEvent();
-
+  void onInteractionNodeModePersistenceChanged();
+  void onActiveAnnotationIDChangedEvent();
+  void onAnnotationIDListModifiedEvent();
+  
 public:
 
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
-  /// PickMode
-  QAction*      SinglePickModeAction;
-  QAction*      PersistentPickModeAction;
-
   /// PlaceMode
-  QAction*      SinglePlaceModeAction;
-  QAction*      PersistentPlaceModeAction;
+  ctkMenuButton *CreateAndPlaceMenuButton;
+  QMenu*        CreateAndPlaceMenu;
 
+  // Place Persistence
+  QCheckBox* PersistenceCheckBox;
+  
   /// RotateMode
   QAction*      ViewTransformModeAction;
 

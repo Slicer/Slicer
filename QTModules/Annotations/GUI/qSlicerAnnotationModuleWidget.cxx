@@ -105,8 +105,6 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
 
 
-  q->connect(this->persistentCheckBox, SIGNAL(stateChanged(int)), q,
-                SLOT(onPersistentCheckBoxStateChanged(int)));
   // annotation tools
   q->connect(this->fiducialTypeButton, SIGNAL(clicked()), q,
       SLOT(onFiducialNodeButtonClicked()));
@@ -460,10 +458,12 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
   d->resumeButton->setChecked(true);
 
   bool persistent = false;
-  if (d->persistentCheckBox->checkState() == Qt::Checked)
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
     {
-    persistent = true;
+    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
     }
+ 
   switch (this->m_CurrentAnnotationType)
     {
     case qSlicerAnnotationModuleWidget::TextNode:
@@ -502,9 +502,10 @@ void qSlicerAnnotationModuleWidget::onPauseButtonClicked()
   d->resumeButton->setChecked(false);
   d->pauseButton->setChecked(true);
   bool persistent = false;
-  if (d->persistentCheckBox->checkState() == Qt::Checked)
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
     {
-    persistent = true;
+    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
     }
   d->logic()->StopPlaceMode(persistent);
 
@@ -563,9 +564,10 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
   this->resetAllAnnotationButtons();
 
   bool persistent = false;
-  if (d->persistentCheckBox->checkState() == Qt::Checked)
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
     {
-    persistent = true;
+    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
     }
   d->logic()->StopPlaceMode(persistent);
 
@@ -736,22 +738,6 @@ void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
 
   d->rulerTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onPersistentCheckBoxStateChanged(int state)
-{
-  vtkMRMLInteractionNode *iNode = NULL;
-  if (this->logic()->GetMRMLScene() != NULL)
-    {
-    iNode = vtkMRMLInteractionNode::SafeDownCast(
-             this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-    }
-  if (!iNode)
-    {
-    return;
-    }
-  iNode->SetPlaceModePersistence(state);
 }
 
 //-----------------------------------------------------------------------------
@@ -996,20 +982,7 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
     }
 
   QString activeAnnotationType(selectionNode->GetActiveAnnotationID());
-
-  // don't update the persistentCheckBox from the node, as the check box is
-  // only for changes triggered from the Annotation GUI
-  /*
-  int placeModePersistence = iNode->GetPlaceModePersistence();
-  if (placeModePersistence)
-    {
-    d->persistentCheckBox->setCheckState(Qt::Checked);
-    }
-  else
-    {
-    d->persistentCheckBox->setCheckState(Qt::Unchecked);
-    }
-  */
+  
   //std::cout << "updatewidgetFromInteractionMode" << std::endl;
   if (iNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
     {

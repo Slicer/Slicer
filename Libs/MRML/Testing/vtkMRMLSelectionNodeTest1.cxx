@@ -50,21 +50,28 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   std::cout << "Checking for id '" << id.c_str() << "' in list, got index: " << index << std::endl;
   if (index != -1)
     {
-    std::string idstring = node1->GetAnnotationIDFromList(index);
+    std::string idstring = node1->GetAnnotationIDByIndex(index);
     if (idstring.compare(id) != 0)
       {
       std::cerr << "Error! Set id '" << id.c_str() << "' to list at index " << index << ", but got back '" << idstring.c_str() << "'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
       }
-    std::string resource = node1->GetAnnotationResourceFromList(index);
+    std::string resource = node1->GetAnnotationResourceByIndex(index);
     if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
       {
-      std::cout << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+      std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
       }
     std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
+    }
+  std::string resource = node1->GetAnnotationResourceByID(id);
+  if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
+    {
+    std::cerr << "ERROR! Got resource for id " << id << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+    node1->Print(std::cout);
+    return EXIT_FAILURE;
     }
   node1->Print(std::cout);
   return EXIT_SUCCESS;

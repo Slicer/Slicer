@@ -59,6 +59,10 @@ vtkMRMLInteractionNode::~vtkMRMLInteractionNode()
 //----------------------------------------------------------------------------
 int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )
 {
+  if (modeString == NULL)
+    {
+    return (-1);
+    }
   if ( !strcmp (modeString, "Pick" ))
     {
     return ( vtkMRMLInteractionNode::PickManipulate);
@@ -542,8 +546,9 @@ void vtkMRMLInteractionNode::SwitchToViewTransformMode()
     {
     return;
     }
-  this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
+  // only set transform mode persistence, keep the state of the pick and place
+  // mode persistence
   this->SetTransformModePersistence(1);
   this->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
 }

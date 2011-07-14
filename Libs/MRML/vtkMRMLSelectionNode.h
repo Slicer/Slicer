@@ -130,13 +130,18 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Add a new valid annotation id to the list, with optional qt resource
   /// reference string for updating GUI elements
   void AddNewAnnotationIDToList(const char *newID, const char *resource = NULL);
-  /// Return nth annotation id/resource string from the list, emptry string if
+  /// Return nth annotation id/resource string from the list, empty string if
   /// out of bounds
 //BTX
-  std::string GetAnnotationIDFromList(int n);
-  std::string GetAnnotationResourceFromList(int n);
+  std::string GetAnnotationIDByIndex(int n);
+  std::string GetAnnotationResourceByIndex(int n);
   /// Check for an id in the list, returning it's index, -1 if not in list
   int AnnotationIDInList(std::string id);
+  /// Return the annotation resource associated with this id, empty string if
+  /// not found
+  /// \sa vtkMRMLSelectionNode::AnnotationIDInList
+  /// \sa vtkMRMLSelectionNode::GetAnnotationResourceFromList
+  std::string GetAnnotationResourceByID(std::string id);
 //ETX
   /// Get the number of ids in the list
   int GetNumberOfAnnotationIDsInList() { return this->AnnotationIDList.size(); };

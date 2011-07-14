@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QToolBar>
+#include <QMenu>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -51,18 +52,19 @@ public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene);
 
-  void switchToPersistentPickMode();
-  void switchToSinglePickMode();
-  void switchToPersistentPlaceMode();
-  void switchToSinglePlaceMode();
   void switchToViewTransformMode();
 
   void changeCursorTo(QCursor cursor);
 
+  /// Switch to placing items of annotationID type
+  void switchPlaceMode();
 
+  /// Update the interaction node's persistent place mode from the checkbox
+  void onPersistenceCheckBoxStateChanged(int state);
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
+  bool isActionTextInMenu(QString actionText, QMenu *menu);
 private:
   Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
   Q_DISABLE_COPY(qSlicerMouseModeToolBar);

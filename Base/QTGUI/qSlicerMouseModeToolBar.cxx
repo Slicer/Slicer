@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QActionGroup>
 #include <QCursor>
+#include <QHBoxLayout>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -56,16 +57,18 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerMouseModeToolBar");
 qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
   : q_ptr(&object)
 {
-  logger.setTrace();
+//  logger.setTrace();
+  logger.setOff();
 
   // MRMLApplicationLogic should be instantiated
   ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
   this->MRMLAppLogic = qSlicerApplication::application() ? qSlicerApplication::application()->mrmlApplicationLogic(): 0;
 
-  this->SinglePickModeAction = 0;
-  this->PersistentPickModeAction = 0;
-  this->SinglePlaceModeAction = 0;
-  this->PersistentPlaceModeAction = 0;
+  this->CreateAndPlaceMenuButton = 0;
+  this->CreateAndPlaceMenu = 0;
+
+  this->PersistenceCheckBox = 0;
+  
   this->ViewTransformModeAction = 0;
 
   this->ActionGroup = 0;
@@ -76,50 +79,45 @@ void qSlicerMouseModeToolBarPrivate::init()
 {
   Q_Q(qSlicerMouseModeToolBar);
 
-  this->SinglePickModeAction = new QAction(q);
-  this->SinglePickModeAction->setIcon(QIcon(":/Icons/MouseSinglePickMode.png"));
-  this->SinglePickModeAction->setText("&Pick && Move(1)");
-  this->SinglePickModeAction->setIconText("Move(1)");
-  this->SinglePickModeAction->setToolTip("Use mouse to Pick-and-Manipulate one time.");
-  connect(this->SinglePickModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToSinglePickMode()));
+  // place once
+  
+  this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
 
-  this->PersistentPickModeAction = new QAction(q);
-  this->PersistentPickModeAction->setIcon(QIcon(":/Icons/MousePickMode.png"));
-  this->PersistentPickModeAction->setText("Pick && &Move");
-  this->PersistentPickModeAction->setIconText("Move");
-  this->PersistentPickModeAction->setToolTip("Use mouse to Pick-and-Manipulate persistently.");
-  connect(this->PersistentPickModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToPersistentPickMode()));
+  this->CreateAndPlaceMenuButton = new ctkMenuButton();
+  this->CreateAndPlaceMenuButton->setToolTip(QObject::tr("Create and Place"));
+  this->CreateAndPlaceMenuButton->setText(QObject::tr("Place"));
+  //this->CreateAndPlaceMenuButton->setIcon(QIcon(":/Icons/"));
+  this->CreateAndPlaceMenuButton->setMenu(this->CreateAndPlaceMenu);
+  q->addWidget(this->CreateAndPlaceMenuButton);
 
-  this->SinglePlaceModeAction = new QAction(q);
-  this->SinglePlaceModeAction->setIcon(QIcon(":/Icons/MouseSinglePlaceMode.png"));
-  this->SinglePlaceModeAction->setText("&Create && Place(1)");
-  this->SinglePlaceModeAction->setIconText("Place(1)");
-  this->SinglePlaceModeAction->setToolTip("Use mouse to Create-and-Place one time.");
-  connect(this->SinglePlaceModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToSinglePlaceMode()));
+  // persistence
+  this->PersistenceCheckBox = new QCheckBox(q);
+  this->PersistenceCheckBox->setText(QObject::tr("Persistent"));
+  this->PersistenceCheckBox->setToolTip(QObject::tr("Switch between single place and persistent place modes."));
+  this->PersistenceCheckBox->setChecked(false);
+  connect(this->PersistenceCheckBox, SIGNAL(stateChanged(int)), q,
+                SLOT(onPersistenceCheckBoxStateChanged(int)));
 
-  this->PersistentPlaceModeAction = new QAction(q);
-  this->PersistentPlaceModeAction->setIcon(QIcon(":/Icons/MousePlaceMode.png"));
-  this->PersistentPlaceModeAction->setText("Create && &Place");
-  this->PersistentPlaceModeAction->setIconText("Place");
-  this->PersistentPlaceModeAction->setToolTip("Use mouse to Create-and-Place persistently.");
-  connect(this->PersistentPlaceModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToPersistentPlaceMode()));
-
+  q->addWidget(this->PersistenceCheckBox);
+  
+  //q->addSeparator();
+  
   // RotateMode action
   this->ViewTransformModeAction = new QAction(q);
   this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
   this->ViewTransformModeAction->setText("&Rotate"); 
   this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
+  this->ViewTransformModeAction->setCheckable(true);
   connect(this->ViewTransformModeAction, SIGNAL(triggered()),
           q, SLOT(switchToViewTransformMode()));
 
+  q->addAction(this->ViewTransformModeAction);
+
+  
   QList<QAction*> actionList;
-  actionList << this->SinglePickModeAction << this->PersistentPickModeAction
-      << this->SinglePlaceModeAction << this->PersistentPlaceModeAction
-      << this->ViewTransformModeAction;
+  // actionList << this->SinglePickModeAction <<
+  // this->PersistentPickModeAction << this->PersistentPlaceModeAction << this->SinglePlaceModeAction
+  actionList << this->ViewTransformModeAction;
 
   this->ActionGroup = new QActionGroup(q);
 
@@ -127,7 +125,6 @@ void qSlicerMouseModeToolBarPrivate::init()
     {
     action->setCheckable(true);
     this->ActionGroup->addAction(action);
-    q->addAction(action);
     }
 }
 
@@ -152,7 +149,7 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->MRMLScene = newScene;
 
-  // watch for changes to the interaction node so can update the widget
+  // watch for changes to the interaction, selection nodes so can update the widget
   if (this->MRMLScene)
     {
     vtkMRMLInteractionNode * interactionNode = this->MRMLAppLogic->GetInteractionNode();
@@ -161,7 +158,15 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
       this->qvtkReconnect(interactionNode, vtkMRMLInteractionNode::InteractionModeChangedEvent,
                           this, SLOT(onInteractionNodeModeChangedEvent()));
       this->qvtkReconnect(interactionNode, vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent,
-                          this, SLOT(onInteractionNodeModePersistenceChangedEvent()));
+                          this, SLOT(onInteractionNodeModePersistenceChanged()));
+      }
+    vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
+    if (selectionNode)
+      {
+      this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent,
+                          this, SLOT(onActiveAnnotationIDChangedEvent()));
+      this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::AnnotationIDListModifiedEvent,
+                          this, SLOT(onAnnotationIDListModifiedEvent()));
       }
     }
   // Update UI
@@ -175,40 +180,145 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
 {
-  Q_Q(qSlicerMouseModeToolBar);
   Q_ASSERT(this->MRMLScene);
+
+  this->onInteractionNodeModePersistenceChanged();
+  
   vtkMRMLInteractionNode * interactionNode = this->MRMLAppLogic->GetInteractionNode();
   Q_ASSERT(interactionNode);
 
   int currentMouseMode = interactionNode->GetCurrentInteractionMode();
-  switch(currentMouseMode)
+  switch (currentMouseMode)
     {
-    case vtkMRMLInteractionNode::PickManipulate:
-      if (interactionNode->GetPickModePersistence())
-        {
-        q->switchToPersistentPickMode();
-        }
-      else
-        {
-        q->switchToSinglePickMode();
-        }
-      break;
     case vtkMRMLInteractionNode::Place:
-      if (interactionNode->GetPlaceModePersistence())
+      {
+      // find the active annotation id and set it's corresponding action to be checked
+      //q->switchPlaceMode();
+      vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
+      if ( selectionNode )
         {
-        q->switchToPersistentPlaceMode();
+        const char *activeAnnotationID = selectionNode->GetActiveAnnotationID();
+        this->updateWidgetToAnnotation(activeAnnotationID);        
         }
-      else
-        {
-        q->switchToSinglePlaceMode();
-        }
+      }
       break;
+    case vtkMRMLInteractionNode::PickManipulate:
     case vtkMRMLInteractionNode::ViewTransform:
-      q->switchToViewTransformMode();
+      // reset the widget to view transform, not supporting pick manipulate
+      this->updateWidgetToAnnotation(NULL);
       break;
     default:
-      logger.warn(QString("updateWidgetFromMRML - Unknown MouseMode: %1").arg(currentMouseMode));
+      logger.warn(QString("updateWidgetFromMRML - unhandled MouseMode: %1").arg(currentMouseMode));
       break;
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
+{
+  Q_Q(qSlicerMouseModeToolBar);
+  Q_ASSERT(this->MRMLScene);
+  
+  // get the currently active annotation 
+  vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
+  if (!selectionNode)
+    {
+    return;
+    }
+  logger.debug(QString("updateWidgetFromSelectionNode: ") + QString(selectionNode->GetID()) );
+
+  
+  // make sure that all the elements in the selection node have actions in the
+  // create and place menu
+  int numIDs = selectionNode->GetNumberOfAnnotationIDsInList();
+//  logger.debug("\tnumIDs = " << numIDs );
+  for (int i = 0; i < numIDs; i++)
+    {
+    QString annotationID = QString(selectionNode->GetAnnotationIDByIndex(i).c_str());
+    QString annotationResource = QString(selectionNode->GetAnnotationResourceByIndex(i).c_str());
+    QString annotationName = annotationID;
+    annotationName = annotationName.remove(QString("vtkMRMLAnnotation"));
+    annotationName = annotationName.remove(QString("Node"));
+//    logger.debug("\t" << i << ", id = " << annotationID.toAscii().data() << ", resource = " << annotationResource.toAscii().data() );
+    // is it in the list already?
+    bool inMenu = q->isActionTextInMenu(annotationName, this->CreateAndPlaceMenu);
+    if (!inMenu)
+      {
+      // add it
+      QAction * newAction = new QAction(this->CreateAndPlaceMenu);
+      newAction->setIcon(QIcon(annotationResource));
+      if (newAction->icon().isNull())
+        {
+        logger.error(QString("ERROR: new action icon for id ") + annotationID + QString(" is null, from resource: ") + annotationResource );
+        }
+      newAction->setText(annotationName);
+      newAction->setIconText(annotationName);
+      QString tooltip = QString("Use mouse to Create-and-Place ") + annotationName;
+      newAction->setToolTip(tooltip);
+      // save the annotation id as data on the action
+      newAction->setData(annotationID);
+      newAction->setCheckable(true);
+      connect(newAction, SIGNAL(triggered()),
+              q, SLOT(switchPlaceMode()));
+      this->CreateAndPlaceMenuButton->menu()->addAction(newAction);
+      this->ActionGroup->addAction(newAction);
+//      logger.debug(QString("Added action for annotation id ") + annotationID
+//      + QString(", name = ") + annotationName + QString(", resource = ") + annotationResource);
+      }
+    }
+  // select the active one
+  const char *activeAnnotationID = selectionNode->GetActiveAnnotationID();
+  this->updateWidgetToAnnotation(activeAnnotationID);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annotationID)
+{
+  Q_Q(qSlicerMouseModeToolBar);
+  
+  if (!annotationID)
+    {
+    logger.debug("updateWidgetToAnnotation: null active annotation id, resetting to view transform");
+    this->ViewTransformModeAction->setChecked(true);
+    this->CreateAndPlaceMenuButton->setIcon(QIcon());
+    q->changeCursorTo(QCursor());
+    return;
+    }
+  // get the actions and check their data for the annotation id
+  QList<QAction *> actions = this->ActionGroup->actions();
+  for (int i = 0; i < actions.size(); ++i)
+    {
+    QString thisID = actions.at(i)->data().toString();
+    if (thisID.compare(annotationID) == 0)
+      {
+      // set this action checked
+      actions.at(i)->setChecked(true);
+      logger.debug(QString("Found active annotation: ") + thisID);
+      // update the icon on the menu
+      this->CreateAndPlaceMenuButton->setIcon(actions.at(i)->icon());
+      // update the cursor from the annotation id
+      vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
+      if ( selectionNode )
+        {
+        std::string resource = selectionNode->GetAnnotationResourceByID(std::string(annotationID));
+        q->changeCursorTo(QCursor(QPixmap(resource.c_str()),-1,0));
+        }
+      else
+        {
+        // update from the icon, preserving size
+        QList<QSize> availableSizes = actions.at(i)->icon().availableSizes();
+        if (availableSizes.size() > 0)
+          {
+          q->changeCursorTo(QCursor(actions.at(i)->icon().pixmap(availableSizes[0])));
+          }
+        else
+          {
+          // use a default
+          q->changeCursorTo(QCursor(actions.at(i)->icon().pixmap(20)));
+          }
+        }
+      break;
+      }
     }
 }
 
@@ -252,10 +362,44 @@ void qSlicerMouseModeToolBarPrivate::onInteractionNodeModeChangedEvent()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBarPrivate::onInteractionNodeModePersistenceChangedEvent()
+void qSlicerMouseModeToolBarPrivate::onInteractionNodeModePersistenceChanged()
 {
-  this->updateWidgetFromMRML();
+  //this->updateWidgetFromMRML();
+  // get the place persistence mode from the interaction node
+  Q_ASSERT(this->MRMLScene);
+  vtkMRMLInteractionNode * interactionNode = this->MRMLAppLogic->GetInteractionNode();
+  Q_ASSERT(interactionNode);
+  int persistence = interactionNode->GetPlaceModePersistence();
+  if (persistence)
+    {
+    if (!this->PersistenceCheckBox->isChecked())
+      {
+      this->PersistenceCheckBox->setChecked(true);
+      }
+    }
+  else
+    {
+    if (this->PersistenceCheckBox->isChecked())
+      {
+      this->PersistenceCheckBox->setChecked(false);
+      }
+    }
 }
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::onActiveAnnotationIDChangedEvent()
+{
+  logger.trace("onActiveAnnotationIDChangedEvent" ); 
+  this->updateWidgetFromSelectionNode();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBarPrivate::onAnnotationIDListModifiedEvent()
+{
+  logger.trace("onAnnotationIDListModifiedEvent" ); 
+  this->updateWidgetFromSelectionNode();
+}
+
 
 //---------------------------------------------------------------------------
 // qSlicerModuleSelectorToolBar methods
@@ -290,101 +434,6 @@ void qSlicerMouseModeToolBar::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBar::switchToPersistentPickMode()
-{
-  Q_D(qSlicerMouseModeToolBar);
-
-  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  if (interactionNode)
-    {
-    logger.trace("switchToPersistentPickMode");
-    
-    interactionNode->SwitchToPersistentPickMode();
-
-    d->PersistentPickModeAction->setChecked(true);
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMouseModeToolBar::switchToSinglePickMode()
-{
-  Q_D(qSlicerMouseModeToolBar);
-
-  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  if (interactionNode)
-    {
-    logger.trace("switchToSinglePickMode");
-    
-    interactionNode->SwitchToSinglePickMode();
-
-    d->SinglePickModeAction->setChecked(true);
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
-{
-  Q_D(qSlicerMouseModeToolBar);
-
-  // check to see if there's a currently selected annotation node
-  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
-  if ( selectionNode )
-    {
-    if (selectionNode->GetActiveAnnotationID() == NULL ||
-        strcmp(selectionNode->GetActiveAnnotationID(), "") == 0)
-      {
-      // set it to be fiducials
-      selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
-      }
-    }
-  
-  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  if (interactionNode)
-    {
-    logger.trace("switchToPersistentPlaceMode");
-    
-    interactionNode->SwitchToPersistentPlaceMode();
-
-    // set cursor to persistent place mode, -1,0 means the hot spot is at the top middle
-    this->changeCursorTo(QCursor(QPixmap(":/Icons/MousePlaceMode.png"),-1,0));
-
-    d->PersistentPlaceModeAction->setChecked(true);
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
-{
-  Q_D(qSlicerMouseModeToolBar);
-
-  // check to see if there's a currently selected annotation node
-  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
-  if ( selectionNode )
-    {
-    if (selectionNode->GetActiveAnnotationID() == NULL ||
-        strcmp(selectionNode->GetActiveAnnotationID(), "") == 0)
-      {
-      // set it to be fiducials
-      selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
-      }
-    }
-  
-  vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  if (interactionNode)
-    {
-    logger.trace("switchToSinglePlaceMode");
-    
-    interactionNode->SwitchToSinglePlaceMode();
-
-    // set cursor to single place mode, -1,0 means the hot spot is at the top middle
-    this->changeCursorTo(QCursor(QPixmap(":/Icons/MouseSinglePlaceMode.png"),-1,0));
-
-    d->SinglePlaceModeAction->setChecked(true);
-    }
-  
-}
-
-//---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToViewTransformMode()
 {
   Q_D(qSlicerMouseModeToolBar);
@@ -400,6 +449,8 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
     this->changeCursorTo(QCursor());
 
     d->ViewTransformModeAction->setChecked(true);
+    // remove the icon from the place menu
+    d->CreateAndPlaceMenuButton->setIcon(QIcon());
     }
 }
 
@@ -440,6 +491,102 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
 
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::switchPlaceMode()
+{
+  Q_D(qSlicerMouseModeToolBar);
 
+  // reset the icon to nothing
+  d->CreateAndPlaceMenuButton->setIcon(QIcon());
+  
+  // get the currently checked action
+  QString annotationID;
+  QAction *thisAction = d->CreateAndPlaceMenuButton->menu()->activeAction();
+  if (thisAction)
+    {
+    annotationID = thisAction->text();
+    logger.debug(QString("switchPlaceMode: got active action text ") + annotationID);
+    }
+  else
+    {
+    thisAction = d->ActionGroup->checkedAction();
+    if (thisAction)
+      {
+      annotationID = thisAction->data().toString();
+      logger.debug(QString("switchPlaceMode: got action group checked action text ") + thisAction->data().toString() + QString(", id = ") + annotationID );
+      }
+    }
+  if (annotationID.isEmpty())
+    {
+    logger.error( "switchPlaceMode: could not get active annotation menu item!");
+    return;
+    }
+  // get selection node
+  vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
+  if ( selectionNode )
+    {
+    selectionNode->SetActiveAnnotationID(annotationID.toAscii().data());
+    std::string resource = selectionNode->GetAnnotationResourceByID(std::string(annotationID.toAscii().data()));
+    logger.debug(QString("switchPlaceMode: got resource ") + QString(resource.c_str()) );
+    // set the icon in the ctkmenubutton
+    d->CreateAndPlaceMenuButton->setIcon(QIcon(resource.c_str()));
+    // change the cursor
+    this->changeCursorTo(QCursor(QPixmap(resource.c_str()),-1,0));
 
+    // update the interaction mode
+    vtkMRMLInteractionNode * interactionNode = d->MRMLAppLogic->GetInteractionNode();
+    if (interactionNode)
+      {
+      if (d->PersistenceCheckBox->isChecked())
+        {
+        logger.debug("switchPlaceMode: switching to persistent place mode");
+        interactionNode->SwitchToPersistentPlaceMode();
+        }
+      else
+        {
+        logger.debug("switchPlaceMode: switching to single place mode");
+        interactionNode->SwitchToSinglePlaceMode();
+        }
+      }
+    else { logger.error("switchPlaceMode: unable to get interaction node"); }
+    }
+  else
+    {
+    logger.error("switchPlaceMode: unable to get selection node");
+    }
+}
 
+//---------------------------------------------------------------------------
+bool qSlicerMouseModeToolBar::isActionTextInMenu(QString actionText, QMenu *menu)
+{
+  // get a list of all the actions currently in the menu
+  QList<QAction*> actionList = menu->actions();
+  int numActions = actionList.size();
+  for (int i = 0; i < numActions; i++)
+    {
+//    logger.debug(QString("isActionTextInMenu, testing action ") + QString(i)
+//    + QString(" with text ") + actionList[i] + QString(" against text ") + actionText );
+    if (actionList[i]->text() == actionText)
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::onPersistenceCheckBoxStateChanged(int state)
+{
+  Q_D(qSlicerMouseModeToolBar);
+  
+  vtkMRMLInteractionNode *interactionNode = d->MRMLAppLogic->GetInteractionNode();
+  
+  if (interactionNode)
+    {
+    interactionNode->SetPlaceModePersistence(state);
+    }
+  else
+    {
+    logger.warn(QString("onPersistenceCheckBoxStateChanged: no interaction node found to set state to ") + QString(state));
+    }
+}

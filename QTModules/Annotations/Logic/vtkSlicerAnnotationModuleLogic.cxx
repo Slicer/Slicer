@@ -319,8 +319,9 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (selectionNode)
     {
-    std::cout << "vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list" << std::endl;
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
+    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/MousePlaceMode.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistance.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensional.png");
@@ -370,14 +371,7 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 
-  if (persistent)
-    {
-    interactionNode->SetPlaceModePersistence(1);
-    }
-  else
-    {
-    interactionNode->SetPlaceModePersistence(0);
-    }
+  interactionNode->SetPlaceModePersistence(persistent ? 1 : 0);
 
   if (interactionNode->GetCurrentInteractionMode()
       != vtkMRMLInteractionNode::Place)

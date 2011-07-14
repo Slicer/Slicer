@@ -108,7 +108,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Bidimensional orthogonal measurement</string>
+              <string>Bidimensional orthogonal measurement. This is a 2D only annotation</string>
              </property>
              <property name="text">
               <string/>
@@ -415,19 +415,6 @@
         <property name="checked">
          <bool>false</bool>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="persistentCheckBox">
-             <property name="text">
-              <string>Create-and-Place persistently when using the Annotation module</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
        </widget>
       </item>
      </layout>

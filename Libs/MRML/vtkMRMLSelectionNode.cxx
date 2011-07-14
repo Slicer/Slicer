@@ -355,7 +355,7 @@ void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const cha
   else
     {
     // check if the resource needs to be updated
-    if (resourceString.compare(this->GetAnnotationResourceFromList(index)) != 0)
+    if (resourceString.compare(this->GetAnnotationResourceByIndex(index)) != 0)
       {
       vtkDebugMacro("Updating resource for id " << idString << ", at index " << index << " to " << resourceString);
       this->AnnotationResourceList[index] = resourceString;
@@ -365,7 +365,7 @@ void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const cha
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLSelectionNode::GetAnnotationIDFromList(int n)
+std::string vtkMRMLSelectionNode::GetAnnotationIDByIndex(int n)
 {
   std::string id;
   if (this->AnnotationIDList.size() > (unsigned int)n && n >= 0)
@@ -374,13 +374,13 @@ std::string vtkMRMLSelectionNode::GetAnnotationIDFromList(int n)
     }
   else
     {
-    vtkWarningMacro("GetAnnotationIDFromList: index " << n << " is out of bounds of 0-" << this->AnnotationIDList.size());
+    vtkWarningMacro("GetAnnotationIDByIndex: index " << n << " is out of bounds of 0-" << this->AnnotationIDList.size());
     }
   return id;
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLSelectionNode::GetAnnotationResourceFromList(int n)
+std::string vtkMRMLSelectionNode::GetAnnotationResourceByIndex(int n)
 {
   std::string resource;
   if (this->AnnotationResourceList.size() > (unsigned int)n && n >= 0)
@@ -389,7 +389,7 @@ std::string vtkMRMLSelectionNode::GetAnnotationResourceFromList(int n)
     }
   else
     {
-    vtkWarningMacro("GetAnnotationResourceFromList: index " << n << " is out of bounds of 0-" << this->AnnotationResourceList.size());
+    vtkWarningMacro("GetAnnotationResourceByIndex: index " << n << " is out of bounds of 0-" << this->AnnotationResourceList.size());
     }
   return resource;
 }
@@ -405,4 +405,17 @@ int vtkMRMLSelectionNode::AnnotationIDInList(std::string id)
       }
     }
   return -1;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSelectionNode::GetAnnotationResourceByID(std::string id)
+{
+  std::string resource;
+
+  int annotationIndex = this->AnnotationIDInList(id);
+  if (annotationIndex != -1)
+    {
+    resource = this->GetAnnotationResourceByIndex(annotationIndex);
+    }
+  return resource;
 }
