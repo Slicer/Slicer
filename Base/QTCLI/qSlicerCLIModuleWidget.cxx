@@ -383,7 +383,7 @@ void qSlicerCLIModuleWidget::apply()
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->CLIModuleUIHelper->updateMRMLCommandLineModuleNode(node);
-  d->module()->run(node, /* waitForCompletion= */ true);
+  d->module()->run(node, /* waitForCompletion= */ false);
 }
 
 //-----------------------------------------------------------------------------
