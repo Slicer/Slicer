@@ -417,6 +417,7 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const c
   node->SetAttribute("Category", "File");  
   node->SaveWithSceneOn();
   node->GetStorageNode()->SaveWithSceneOn();
+  node->HideFromEditorsOff();
 
   if (nodeName != NULL)
     {
@@ -669,6 +670,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateUserFileNode(const std::string& 
     }
   ctnode->SetAttribute("Category", "Auto Loaded User Color Files");
   ctnode->SaveWithSceneOn();
+  ctnode->HideFromEditorsOff();
   
   return ctnode;
 }
@@ -691,7 +693,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
   vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
   ctnode->SetTypeToFile();
   ctnode->SaveWithSceneOff();
-  ctnode->HideFromEditorsOff();
+  ctnode->HideFromEditorsOn();
   ctnode->SetScene(this->GetMRMLScene());
 
   // make a storage node
