@@ -68,7 +68,7 @@ public:
     /// step with the mouse modes tool bar. If interactionNode is null, try to
     /// get it from the scene.
     void updateWidgetFromInteractionMode(vtkMRMLInteractionNode *interactionNode);
-    
+
 protected:
 
 public slots:
@@ -77,6 +77,10 @@ public slots:
     /// a public slot allowing other modules to open up the screen capture
     /// dialog
     void onSnapShotButtonClicked();
+
+    /// Update the label showing the active annotation hierarchy, triggered from
+    /// the logic modifying the active hierarchy node
+    void updateActiveHierarchyLabel();
 
 protected slots:
 
@@ -169,7 +173,7 @@ protected slots:
 
   // ROI Node
   void onROINodeButtonClicked();
-
+  
 protected:
   QScopedPointer<qSlicerAnnotationModuleWidgetPrivate> d_ptr;
 

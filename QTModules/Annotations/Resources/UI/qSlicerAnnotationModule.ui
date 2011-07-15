@@ -15,8 +15,8 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+     <property name="text">
       <string>Annotations</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -285,7 +285,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
+              <iconset>
                <normaloff>:/Icons/Medium/SlicerLockUnlock.png</normaloff>:/Icons/Medium/SlicerLockUnlock.png</iconset>
              </property>
             </widget>
@@ -341,7 +341,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
+              <iconset>
                <normaloff>:/Icons/Medium/SlicerAddHierarchy.png</normaloff>:/Icons/Medium/SlicerAddHierarchy.png</iconset>
              </property>
             </widget>
@@ -376,7 +376,7 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="qMRMLAnnotationTreeView" name="hierarchyTreeView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -401,6 +401,16 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="activeHierarchyLabel">
+           <property name="text">
+            <string>Active list: </string>
+           </property>
+           <property name="toolTip">
+              <string>Click a hierarchy to activate it. If the Main Hierarchy is active, new per-annotation lists will be created under it, otherwise annotations will be added to the active list.</string>
+             </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -421,39 +431,39 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active" stdset="0">
+     <property name="active">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active" stdset="0">
+     <property name="active">
       <bool>true</bool>
      </property>
     </widget>
@@ -461,6 +471,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
@@ -477,12 +493,6 @@
    <class>ctkDynamicSpacer</class>
    <extends>QWidget</extends>
    <header>ctkDynamicSpacer.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLAnnotationTreeView</class>

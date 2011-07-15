@@ -2433,27 +2433,28 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
 
   // get the set of hierarchy nodes to check through
   vtkCollection *col = NULL;
-  if (this->GetActiveHierarchyNode())
+  bool topLevelAnnotationIsActive = false;
+  if (this->GetActiveHierarchyNode() && this->GetActiveHierarchyNode()->GetID() &&
+      this->GetTopLevelHierarchyNodeID() &&
+      !strcmp(this->GetActiveHierarchyNode()->GetID(), this->GetTopLevelHierarchyNodeID()))
     {
-    // get all the hierarchy nodes under the active one
-    std::vector< vtkMRMLHierarchyNode *> childrenNodes;
-    this->GetActiveHierarchyNode()->GetAllChildrenNodes(childrenNodes);
-    // add them to the collection
-    col = vtkCollection::New();
-    for (unsigned int i = 0; i < childrenNodes.size(); i++)
-      {
-      col->AddItem(childrenNodes[i]);
-      }
-    // and add the active one!
-    col->AddItem(this->GetActiveHierarchyNode());
+    topLevelAnnotationIsActive = true;
     }
-  else
-    {
-    // look for any annotation hierarchy nodes in the scene
-    col = this->GetMRMLScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode");
-    }
-  unsigned int numNodes = col->GetNumberOfItems();
 
+  if (!topLevelAnnotationIsActive)
+    {
+    // just use the currently active annotation hierarchy
+    return this->GetActiveHierarchyNode()->GetID();
+    }
+
+  // find the per list annotation hierarchy nodes at the top level
+  // look for any annotation hierarchy nodes in the scene
+  col = this->GetMRMLScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode");
+  unsigned int numNodes = 0;
+  if (col)
+    {
+    numNodes = col->GetNumberOfItems();
+    }
   // iterate through the hierarchy nodes to find one with an attribute matching the input node's classname
   vtkMRMLAnnotationHierarchyNode *toplevelNode = NULL;
   char *toplevelNodeID = NULL;
@@ -2477,16 +2478,13 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     // get the node tag name, remove the Annotation string, append List
     std::string nodeName = std::string(annotationNode->GetNodeTagName()).replace(0, strlen("Annotation"), "") + std::string(" List");
     toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(nodeName.c_str()));
-    // make it a child of the active hierarchy
-    if (this->GetActiveHierarchyNode())
-      {
-      toplevelNode->SetParentNodeID(this->GetActiveHierarchyNode()->GetID());
-      }
+    // make it a child of the top annotation hierarchy
+    toplevelNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
     this->GetMRMLScene()->AddNode(toplevelNode);
     toplevelNodeID = toplevelNode->GetID();
     toplevelNode->Delete();
     }
- else
+  else
     {
     toplevelNodeID = toplevelNode->GetID();
     }

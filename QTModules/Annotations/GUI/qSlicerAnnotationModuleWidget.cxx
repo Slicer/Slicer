@@ -26,6 +26,7 @@
 #include "vtkObserverManager.h"
 #include "vtkCollection.h"
 #include "vtkSmartPointer.h"
+#include "vtkCommand.h"
 
 #include "qMRMLSceneDisplayableModel.h"
 
@@ -159,6 +160,10 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
 
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
+
+  // listen for updates to the logic to update the active hierarchy label
+  q->qvtkConnect(this->logic(), vtkCommand::ModifiedEvent,
+                 q, SLOT(updateActiveHierarchyLabel()));
 
   // update from the mrml scene
   q->refreshTree();
@@ -318,9 +323,9 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
   // hierarchies
   if (d->logic()->IsAnnotationHierarchyNode(mrmlIdArray.data()))
     {
-
-
-
+    
+    
+    
     // bail out, everything below is not for hierarchies
     }
 
@@ -806,6 +811,25 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 
   d->roiTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::updateActiveHierarchyLabel()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  const char *id = d->logic()->GetActiveHierarchyNodeID();
+  //QString idString = QString(" (none)");
+  QString name = QString("(none)");
+  if (id)
+    {
+    //idString = QString(" (") + QString(id) + QString(")");
+    if (d->logic() && d->logic()->GetMRMLScene() && d->logic()->GetMRMLScene()->GetNodeByID(id))
+      {
+      name = QString(d->logic()->GetMRMLScene()->GetNodeByID(id)->GetName());
+      }
+    }
+  d->activeHierarchyLabel->setText(QString("Active list: ") + name);
 }
 
 //-----------------------------------------------------------------------------
