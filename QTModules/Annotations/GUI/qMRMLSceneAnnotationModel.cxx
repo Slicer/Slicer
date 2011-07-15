@@ -141,16 +141,16 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         if (annotationNode->GetVisible())
           {
-          item->setData(QPixmap(":/Icons/VisibleOn.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/Small/SlicerVisible.png"),Qt::DecorationRole);
           }
         else
           {
-          item->setData(QPixmap(":/Icons/VisibleOff.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/Small/SlicerInvisible.png"),Qt::DecorationRole);
           }
         }
       else if (hnode)
         {
-        item->setData(QPixmap(":/Icons/VisibleOrInvisible.png"),Qt::DecorationRole);
+        item->setData(QPixmap(":/Icons/Small/SlicerVisibleInvisible.png"),Qt::DecorationRole);
         }
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
@@ -160,16 +160,16 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         if (annotationNode->GetLocked())
           {
-          item->setData(QPixmap(":/Icons/SlicerLock.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/Small/SlicerLock.png"),Qt::DecorationRole);
           }
         else
           {
-          item->setData(QPixmap(":/Icons/SlicerUnlock.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/Small/SlicerUnlock.png"),Qt::DecorationRole);
           }
         }
       else if (hnode)
         {
-        item->setData(QPixmap(":/Icons/SlicerLockUnlock.png"),Qt::DecorationRole);
+        item->setData(QPixmap(":/Icons/Small/SlicerLockUnlock.png"),Qt::DecorationRole);
         }
       break;
     case qMRMLSceneAnnotationModel::EditColumn:

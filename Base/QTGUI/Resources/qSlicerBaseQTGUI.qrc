@@ -76,5 +76,46 @@
     
     <file>Icons/TreeClose.png</file>
     <file>Icons/TreeOpen.png</file>
+
+    <file>Icons/Small/SlicerVisibleInvisible.png</file>
+    <file>Icons/Medium/SlicerVisibleInvisible.png</file>
+    <file>Icons/Large/SlicerVisibleInvisible.png</file>
+    <file>Icons/XLarge/SlicerVisibleInvisible.png</file>
+
+    <file>Icons/Small/SlicerVisible.png</file>
+    <file>Icons/Medium/SlicerVisible.png</file>
+    <file>Icons/Large/SlicerVisible.png</file>
+    <file>Icons/XLarge/SlicerVisible.png</file>
+
+    <file>Icons/Small/SlicerInvisible.png</file>
+    <file>Icons/Medium/SlicerInvisible.png</file>
+    <file>Icons/Large/SlicerInvisible.png</file>
+    <file>Icons/XLarge/SlicerInvisible.png</file>
+
+    <file>Icons/Small/SlicerLockUnlock.png</file>
+    <file>Icons/Medium/SlicerLockUnlock.png</file>
+    <file>Icons/Large/SlicerLockUnlock.png</file>
+    <file>Icons/XLarge/SlicerLockUnlock.png</file>
+
+    <file>Icons/Small/SlicerLock.png</file>
+    <file>Icons/Medium/SlicerLock.png</file>
+    <file>Icons/Large/SlicerLock.png</file>
+    <file>Icons/XLarge/SlicerLock.png</file>
+
+    <file>Icons/Small/SlicerUnlock.png</file>
+    <file>Icons/Medium/SlicerUnlock.png</file>
+    <file>Icons/Large/SlicerUnlock.png</file>
+    <file>Icons/XLarge/SlicerUnlock.png</file>
+
+    <file>Icons/Small/SlicerAddHierarchy.png</file>
+    <file>Icons/Medium/SlicerAddHierarchy.png</file>
+    <file>Icons/Large/SlicerAddHierarchy.png</file>
+    <file>Icons/XLarge/SlicerAddHierarchy.png</file>
+
+    <file>Icons/Small/SlicerHierarchy.png</file>
+    <file>Icons/Medium/SlicerHierarchy.png</file>
+    <file>Icons/Large/SlicerHierarchy.png</file>
+    <file>Icons/XLarge/SlicerHierarchy.png</file>
+
   </qresource>
 </RCC>

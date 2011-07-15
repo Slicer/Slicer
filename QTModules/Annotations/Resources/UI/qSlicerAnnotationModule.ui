@@ -272,7 +272,7 @@
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>:/Icons/SlicerVisibleInvisible.png</normaloff>:/Icons/SlicerVisibleInvisible.png</iconset>
+               <normaloff>:/Icons/Medium/SlicerVisibleInvisible.png</normaloff>:/Icons/Medium/SlicerVisibleInvisible.png</iconset>
              </property>
             </widget>
            </item>
@@ -286,7 +286,7 @@
              </property>
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/SlicerLockUnlock.png</normaloff>:/Icons/SlicerLockUnlock.png</iconset>
+               <normaloff>:/Icons/Medium/SlicerLockUnlock.png</normaloff>:/Icons/Medium/SlicerLockUnlock.png</iconset>
              </property>
             </widget>
            </item>
@@ -342,7 +342,7 @@
              </property>
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/SlicerAddHierarchy.png</normaloff>:/Icons/SlicerAddHierarchy.png</iconset>
+               <normaloff>:/Icons/Medium/SlicerAddHierarchy.png</normaloff>:/Icons/Medium/SlicerAddHierarchy.png</iconset>
              </property>
             </widget>
            </item>
