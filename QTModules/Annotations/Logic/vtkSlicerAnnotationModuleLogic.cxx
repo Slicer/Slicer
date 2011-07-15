@@ -1353,7 +1353,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphType(const char *id)
   if (!node)
     {
     vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the MRML node for id " << id);
-    return NULL;
+    return 0;
     }
 
   vtkMRMLAnnotationControlPointsNode* annotationNode =
@@ -1361,13 +1361,13 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphType(const char *id)
   if (!annotationNode)
     {
     vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the displayable control points MRML node for id " << id);
-    return NULL;
+    return 0;
     }
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
     vtkErrorMacro("GetAnnotationPointGlyphType: Could not get the display node for node " << id);
-    return NULL;
+    return 0;
     }
 
   return annotationNode->GetAnnotationPointDisplayNode()->GetGlyphType();

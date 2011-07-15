@@ -483,10 +483,11 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
     }
 
   // check if the same as before
-  if (this->TextList->GetNumberOfValues() == 0 && (newText == NULL || newString == "") ||
-     (this->TextList->GetNumberOfValues() > id && this->TextList->GetValue(id) == newString &&
-      this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag &&
-      this->GetAnnotationAttribute(id, TEXT_VISIBLE) == visibleFlag ) )
+  if (((this->TextList->GetNumberOfValues() == 0) && (newText == NULL || newString == "")) ||
+      ((this->TextList->GetNumberOfValues() > id) && 
+       (this->TextList->GetValue(id) == newString) &&
+       (this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag) &&
+       (this->GetAnnotationAttribute(id, TEXT_VISIBLE) == visibleFlag) ) )
     {
     return;
     }
