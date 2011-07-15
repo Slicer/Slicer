@@ -60,6 +60,8 @@ public:
   /// Check if node id corresponds to an annotaton node
   bool IsAnnotationNode(const char* id);
 
+  bool IsAnnotationHierarchyNode(const char* id);
+
   /// Return the text display node for the annotation mrml node with this id,
   /// null if not a valid node, not an annotation node, or doesn't have a text
   /// display node

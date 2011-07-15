@@ -166,7 +166,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
       vtkIntArray *interactionEvents = vtkIntArray::New();
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
-      interactionEvents->InsertNextValue(vtkMRMLInteractionNode::CancelPlacementEvent);
+      interactionEvents->InsertNextValue(vtkMRMLInteractionNode::EndPlacementEvent);
       vtkObserveMRMLNodeEventsMacro(interactionNode, interactionEvents);
       interactionEvents->Delete();
     //  }
@@ -328,7 +328,7 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
   else if (interactionNode)
     {
-    if (event == vtkMRMLInteractionNode::CancelPlacementEvent)
+    if (event == vtkMRMLInteractionNode::EndPlacementEvent)
       {
       // remove all seeds and reset the clickcounter
       this->m_ClickCounter->Reset();

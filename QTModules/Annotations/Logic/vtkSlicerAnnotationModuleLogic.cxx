@@ -470,7 +470,7 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
     return;
     }
 
-  interactionNode->InvokeEvent(vtkMRMLInteractionNode::CancelPlacementEvent);
+  interactionNode->InvokeEvent(vtkMRMLInteractionNode::EndPlacementEvent);
 
 }
 
@@ -655,6 +655,28 @@ bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
       this->GetMRMLScene()->GetNodeByID(id));
 
   if (annotationNode)
+    {
+    return true;
+    }
+
+  return false;
+
+}
+
+//---------------------------------------------------------------------------
+// Check if the id points to an annotation hierarchy node
+//---------------------------------------------------------------------------
+bool vtkSlicerAnnotationModuleLogic::IsAnnotationHierarchyNode(const char* id)
+{
+  if (!id)
+    {
+    return false;
+    }
+
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID(id));
+
+  if (hierarchyNode)
     {
     return true;
     }
