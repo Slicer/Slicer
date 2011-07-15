@@ -2408,6 +2408,10 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
       this->GetMRMLScene()->InsertBeforeNode(node, toplevelNode);
       }
     toplevelNodeID = toplevelNode->GetID();
+    if (this->AddDisplayNodeForHierarchyNode(toplevelNode) == NULL)
+      {
+      vtkErrorMacro("GetTopLevelHierarchyNodeID: error adding a display node for new top level node " << toplevelNodeID);
+      }
     toplevelNode->Delete();
     }
   else
@@ -2482,6 +2486,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     toplevelNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
     this->GetMRMLScene()->AddNode(toplevelNode);
     toplevelNodeID = toplevelNode->GetID();
+    this->AddDisplayNodeForHierarchyNode(toplevelNode);
     toplevelNode->Delete();
     }
   else
@@ -3062,3 +3067,30 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
 
     return linesNode->GetAnnotationLineDisplayNode();
   }
+
+//---------------------------------------------------------------------------
+const char * vtkSlicerAnnotationModuleLogic::AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode)
+{
+  if (!hnode)
+    {
+    vtkErrorMacro("AddDisplayNodeForHierarchyNode: null input hierarchy node");
+    return NULL;
+    }
+  if (hnode->GetDisplayNode() && hnode->GetDisplayNodeID())
+    {
+    // it already has a display node
+    return hnode->GetDisplayNodeID();
+    }
+  vtkMRMLAnnotationDisplayNode *dnode = vtkMRMLAnnotationDisplayNode::New();
+  if (!dnode)
+    {
+    vtkErrorMacro("AddDisplayNodeForHierarchyNode: error creating a new display node");
+    return NULL;
+    }
+  this->GetMRMLScene()->AddNode(dnode);  
+  hnode->SetAndObserveDisplayNodeID(dnode->GetID());
+
+  const char *id = dnode->GetID();
+  dnode->Delete();
+  return id;
+}

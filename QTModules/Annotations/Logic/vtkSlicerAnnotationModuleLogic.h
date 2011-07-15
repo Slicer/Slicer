@@ -239,6 +239,11 @@ public:
   /// Return HTML markup for a specific hierarchy node
   const char* GetHTMLRepresentation(vtkMRMLAnnotationHierarchyNode* hierarchyNode, int level);
 
+
+  /// Add a model display node to the scene for a passed in hierarchy node, if
+  /// it doesn't already have one, return the ID, NULL on failure
+  const char* AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode);
+  
 protected:
 
   vtkSlicerAnnotationModuleLogic();

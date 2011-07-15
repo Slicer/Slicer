@@ -42,7 +42,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  virtual const char* GetNodeTagName() {return "AnnotationTextDisplay";};
+  virtual const char* GetNodeTagName() {return "AnnotationDisplay";};
 
   // Description:
   // Finds the storage node and read the data
