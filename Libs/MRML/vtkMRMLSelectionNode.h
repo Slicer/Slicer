@@ -144,7 +144,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   std::string GetAnnotationResourceByID(std::string id);
 //ETX
   /// Get the number of ids in the list
-  int GetNumberOfAnnotationIDsInList() { return this->AnnotationIDList.size(); };
+  int GetNumberOfAnnotationIDsInList() { return (int)(this->AnnotationIDList.size()); };
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
