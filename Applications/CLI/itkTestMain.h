@@ -505,7 +505,4 @@ std::map< std::string, int > RegressionTestBaselines(char *baselineFilename)
   return baselines;
 }
 
-// Needed for explicit instantiation
-#include "itkDifferenceImageFilter.txx"
-
 #endif
