@@ -1,5 +1,5 @@
 #
-# First token of each non-comment line is the keyword and the rest of the line 
+# First token of each non-comment line is the keyword and the rest of the line
 # (including spaces) is the value.
 # - the value can be blank
 #
@@ -9,9 +9,9 @@ scm local
 scmurl Testing/LoadableExtensionTemplate
 
 # list dependencies
-# - These should be names of other modules that have .s4ext files 
+# - These should be names of other modules that have .s4ext files
 # - The dependencies will be built first
-depends
+depends     
 
 # homepage
 homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting
@@ -19,7 +19,7 @@ homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projec
 # Match category in the xml description of the module (where it shows up in Modules menu)
 category    Examples
 
-# Give people an idea what to expect from this code 
+# Give people an idea what to expect from this code
 #  - Is it just a test or something you stand beind?
 status      Beta
 
