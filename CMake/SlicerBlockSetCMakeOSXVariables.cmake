@@ -28,7 +28,6 @@
 
 # Note: Change architecture *before* any enable_language() or project()
 #       calls so that it's set properly to detect 64-bit-ness...
-#       Currently, we default to 10.5. Obviously this may need to be re-evaluated when Lion comes out.
 #
 if(APPLE)
 
@@ -45,12 +44,14 @@ if(APPLE)
   #   8.x == Mac OSX 10.4 (Tiger)
   #   9.x == Mac OSX 10.5 (Leopard)
   #  10.x == Mac OSX 10.6 (Snow Leopard)
+  #  10.x == Mac OSX 10.7 (Lion)
   set(OSX_SDK_104_NAME "Tiger")
   set(OSX_SDK_105_NAME "Leopard")
   set(OSX_SDK_106_NAME "Snow Leopard")
+  set(OSX_SDK_107_NAME "Lion")
 
-  set(SDK_VERSIONS_TO_CHECK 10.5 10.6)
-  foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK}) ## Prefer 10.5, but use 10.6 if necessary
+  set(SDK_VERSIONS_TO_CHECK 10.7 10.6 10.5)
+  foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK})
     if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
       set(TEST_OSX_SYSROOT "/Developer/SDKs/MacOSX${SDK_VERSION}.sdk")
       if(EXISTS "${TEST_OSX_SYSROOT}")
