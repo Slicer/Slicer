@@ -8,7 +8,8 @@
 #set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 #
 # culled from Slicer 3.6
-#set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
+#set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+#set(CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 #set(testname ${CLP}Test)
 #add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr

@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------
 # SparseFieldLevelSetContour tests
 #-----------------------------------------------------------------------------
-set (CLP SparseFieldLevelSetContour)
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(CLP SparseFieldLevelSetContour)
 
 include_directories(${SlicerBaseCLI_BINARY_DIR}
                     ${vtkTeem_INCLUDE_DIRS})

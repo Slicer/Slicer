@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------
 # MedianImageFilter tests
 #-----------------------------------------------------------------------------
-set (CLP MedianImageFilter)
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(CLP MedianImageFilter)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)

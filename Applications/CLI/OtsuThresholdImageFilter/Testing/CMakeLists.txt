@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------
 # OtsuThresholdImageFilter tests
 #-----------------------------------------------------------------------------
-set (CLP OtsuThresholdImageFilter)
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(CLP OtsuThresholdImageFilter)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})

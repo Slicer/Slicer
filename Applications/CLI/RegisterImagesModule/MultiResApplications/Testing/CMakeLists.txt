@@ -2,7 +2,8 @@
 include_directories( ${CLI_SOURCE_DIR} ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 link_directories( ${RegisterImagesMultiResApplications_BUILD_DIR} )
 
-set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+#set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 

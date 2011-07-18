@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------
 # GaussianBlur tests
 #-----------------------------------------------------------------------------
-set (CLP GaussianBlurImageFilter)
+set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(CLP GaussianBlurImageFilter)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
