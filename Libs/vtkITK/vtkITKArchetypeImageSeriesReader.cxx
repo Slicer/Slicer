@@ -316,7 +316,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   FilterType::Pointer filter;
 
   // First see if the archetype exists, if it's not a pointer into memory
-  if (fileNameCollapsed.find("slicer:0x") != std::string::npos &&
+  if (fileNameCollapsed.find("slicer:") != std::string::npos &&
       fileNameCollapsed.find("#") != std::string::npos)
     {
     vtkDebugMacro("File " << fileNameCollapsed.c_str() << " is a pointer to the mrml scene in memory, not checking for it on disk");
