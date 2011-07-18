@@ -33,7 +33,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   #vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
   #vtkMRMLAnnotationRulerDisplayableManagerTest1.cxx
   #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
-  #vtkSlicerAnnotationModuleLogicTest1.cxx
+  vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
   #TestAnnAngleWidget3D.cxx
   EXTRA_INCLUDE TestingMacros.h

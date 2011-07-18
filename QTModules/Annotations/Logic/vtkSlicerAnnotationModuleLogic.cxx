@@ -103,10 +103,10 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MeasurementFormat = " << (this->m_MeasurementFormat ? this->m_MeasurementFormat : "NULL") << std::endl;
   os << indent << "CoordinateFormat = " << (this->m_CoordinateFormat ? this->m_CoordinateFormat : "NULL") << std::endl;
   os << indent << "ActiveHierarchyNodeID = " << (this->ActiveHierarchyNodeID ? this->ActiveHierarchyNodeID : "NULL") << std::endl;
-if (this->m_LastAddedAnnotationNode)
-  {
-  os << indent << "LastAddedAnnotationNode: " << (this->m_LastAddedAnnotationNode->GetID() ? this->m_LastAddedAnnotationNode->GetID() : "NULL ID") << std::endl;
-  }
+  if (this->m_LastAddedAnnotationNode)
+    {
+    os << indent << "LastAddedAnnotationNode: " << (this->m_LastAddedAnnotationNode->GetID() ? this->m_LastAddedAnnotationNode->GetID() : "NULL ID") << std::endl;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vt
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-// Start the place mouse mode
+// Set the internal mrml scene adn observe events on it
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
@@ -338,8 +338,11 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
 void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescriptor, bool persistent)
 {
 
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  vtkMRMLSelectionNode *selectionNode = NULL;
+  if (this->GetMRMLScene())
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    }
   if (!selectionNode)
     {
     vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
@@ -358,9 +361,11 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
 void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
 {
 
-  vtkMRMLInteractionNode *interactionNode =
-      vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  vtkMRMLInteractionNode *interactionNode = NULL;
+  if ( this->GetMRMLScene())
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    }
   if (!interactionNode)
     {
     vtkErrorMacro ( "StartPlaceMode: No interaction node in the scene." );
@@ -415,8 +420,12 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode* ann
 void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 {
 
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+  vtkMRMLSelectionNode *selectionNode = NULL;
+  if (this->GetMRMLScene())
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    }
   if (!selectionNode)
     {
     vtkErrorMacro("StopPlaceMode: No selection node in the scene.");
@@ -462,7 +471,11 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode()
 {
 
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+  vtkMRMLInteractionNode *interactionNode = NULL;
+  if (this->GetMRMLScene())
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+    }
 
   if (!interactionNode)
     {
@@ -479,6 +492,11 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RemoveAnnotationNode(vtkMRMLAnnotationNode* annotationNode)
 {
+  if (!annotationNode)
+    {
+    vtkErrorMacro("RemoveAnnotationNode: no node to remove.")
+    return;
+    }
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("RemoveAnnotationNode: No MRML Scene found.")
@@ -646,7 +664,8 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
 {
-  if (!id)
+  if (!id ||
+      !this->GetMRMLScene())
     {
     return false;
     }
@@ -668,7 +687,7 @@ bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
 //---------------------------------------------------------------------------
 bool vtkSlicerAnnotationModuleLogic::IsAnnotationHierarchyNode(const char* id)
 {
-  if (!id)
+  if (!id || !this->GetMRMLScene())
     {
     return false;
     }
@@ -696,7 +715,11 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationName(const char * id)
     return 0;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -723,8 +746,14 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
 {
   if (!id)
     {
-    vtkErrorMacro("GetAnnotationText: no id supplid");
-    return 0;
+    vtkErrorMacro("GetAnnotationText: no id supplied");
+    return "";
+    }
+
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("GetAnnotationText: no mrml scene.");
+    return "";
     }
 
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
@@ -732,7 +761,7 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
   if (!node)
     {
     vtkErrorMacro("GetAnnotationText: Could not get the MRML node with id " << id)
-    return 0;
+    return "";
     }
 
   // special case for annotation snapShots
@@ -750,7 +779,7 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
   if (!annotationNode)
     {
     vtkErrorMacro("GetAnnotationText: Could not get the annotationMRML node.")
-    return 0;
+    return "";
     }
 
   return annotationNode->GetText(0);
@@ -768,7 +797,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -825,7 +858,11 @@ double vtkSlicerAnnotationModuleLogic::GetAnnotationTextScale(const char* id)
     return 0;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -856,8 +893,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextScale(const char* id, doub
     vtkErrorMacro("SetAnnotationTextScale: no id given");
     return;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
   if (!node)
     {
     vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node with id " << id)
@@ -887,7 +927,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const ch
     vtkErrorMacro("GetAnnotationTextSelectedColor: no id specified");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -922,7 +966,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextSelectedColor(const char* 
     {
     return;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -955,7 +1003,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextUnselectedColor(const 
     vtkErrorMacro("GetAnnotationTextUnselectedColor: no id given");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -991,6 +1043,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextUnselectedColor(const char
     vtkErrorMacro("SetAnnotationTextUnselectedColor: no id given");
     return;
     }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("SetAnnotationTextUnselectedColor: Could not get the MRML scene");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -999,8 +1056,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextUnselectedColor(const char
     return;
     }
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      node);
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
   if (!annotationNode)
     {
@@ -1008,6 +1064,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextUnselectedColor(const char
     return;
     }
 
+  if (!annotationNode->GetAnnotationTextDisplayNode())
+    {
+    vtkErrorMacro("SetAnnotationTextUnselectedColor: Could not get the text display node for the annotation MRML node with id " << id)
+    return;
+    }
   annotationNode->GetAnnotationTextDisplayNode()->SetColor(color);
 
   annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
@@ -1024,7 +1085,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationColor(const char *id)
     vtkErrorMacro("GetAnnotationColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1065,7 +1130,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationColor(const char *id, double *
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1102,7 +1171,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationUnselectedColor(const char
     vtkErrorMacro("GetAnnotationUnselectedColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1143,7 +1216,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationUnselectedColor(const char *id
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1180,7 +1257,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointColor(const char *id)
     vtkErrorMacro("GetAnnotationPointColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1198,7 +1279,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointColor(const char *id)
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationPointColor: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationPointColor: Could not get the point display node for node " << id);
     return 0;
     }
 
@@ -1221,7 +1302,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointColor(const char *id, dou
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1258,7 +1343,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointUnselectedColor(const
     vtkErrorMacro("GetAnnotationPointUnselectedColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1276,7 +1365,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationPointUnselectedColor(const
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationPointUnselectedColor: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationPointUnselectedColor: Could not get the point display node for node " << id);
     return 0;
     }
 
@@ -1299,7 +1388,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointUnselectedColor(const cha
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1317,7 +1410,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointUnselectedColor(const cha
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("SetAnnotationPointUnselectedColor: Could not get the display node for node " << id);
+    vtkErrorMacro("SetAnnotationPointUnselectedColor: Could not get the point display node for node " << id);
     return;
     }
 
@@ -1335,7 +1428,11 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphTypeAsString
     return NULL;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1353,7 +1450,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphTypeAsString
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationPointGlyphTypeAsString: Could not get the point display node for node " << id);
     return NULL;
     }
 
@@ -1370,7 +1467,11 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphType(const char *id)
     vtkErrorMacro("GetAnnotationPointGlyphType: no id given, cannot get glyph type");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1388,7 +1489,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPointGlyphType(const char *id)
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationPointGlyphType: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationPointGlyphType: Could not get the point display node for node " << id);
     return 0;
     }
 
@@ -1411,7 +1512,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphTypeFromString(const
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1429,7 +1534,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphTypeFromString(const
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: Could not get the display node for node " << id);
+    vtkErrorMacro("SetAnnotationPointGlyphTypeFromString: Could not get the point display node for node " << id);
     return;
     }
 
@@ -1447,7 +1552,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphType(const char *id,
     vtkErrorMacro("SetAnnotationPointGlyphType: no id given, cannot set glyph type to " << glyphType);
     return;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1465,7 +1574,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationPointGlyphType(const char *id,
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("SetAnnotationPointGlyphType: Could not get the display node for node " << id);
+    vtkErrorMacro("SetAnnotationPointGlyphType: Could not get the point display node for node " << id);
     return;
     }
 
@@ -1482,8 +1591,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineColor(const char *id)
     vtkErrorMacro("GetAnnotationLineColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
   if (!node)
     {
     vtkErrorMacro("GetAnnotationLineColor: Could not get the MRML node for id " << id);
@@ -1500,7 +1612,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineColor(const char *id)
 
   if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationLineColor: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationLineColor: Could not get the line display node for node " << id);
     return 0;
     }
 
@@ -1523,7 +1635,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLineColor(const char *id, doub
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1541,7 +1657,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLineColor(const char *id, doub
 
   if (annotationNode->GetAnnotationPointDisplayNode() == NULL)
     {
-    vtkErrorMacro("SetAnnotationLineColor: Could not get the display node for node " << id);
+    vtkErrorMacro("SetAnnotationLineColor: Could not get the point display node for node " << id);
     return;
     }
 
@@ -1560,7 +1676,11 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineUnselectedColor(const 
     vtkErrorMacro("GetAnnotationLineUnselectedColor: no id given, cannot get color");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1578,7 +1698,7 @@ double * vtkSlicerAnnotationModuleLogic::GetAnnotationLineUnselectedColor(const 
 
   if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
     {
-    vtkErrorMacro("GetAnnotationLineUnselectedColor: Could not get the display node for node " << id);
+    vtkErrorMacro("GetAnnotationLineUnselectedColor: Could not get the line display node for node " << id);
     return 0;
     }
 
@@ -1601,7 +1721,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLineUnselectedColor(const char
     return;
     }
 
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1619,7 +1743,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLineUnselectedColor(const char
 
   if (annotationNode->GetAnnotationLineDisplayNode() == NULL)
     {
-    vtkErrorMacro("SetAnnotationLineUnselectedColor: Could not get the display node for node " << id);
+    vtkErrorMacro("SetAnnotationLineUnselectedColor: Could not get the line display node for node " << id);
     return;
     }
 
@@ -1636,7 +1760,11 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     vtkErrorMacro("GetAnnotationMeasurement: no id given");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1838,8 +1966,11 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationLockedUnlocked(const char * id)
     vtkErrorMacro("GetAnnotationLockedUnlocked: no id");
     return 0;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
   if (!node)
     {
     vtkErrorMacro("GetAnnotationLockedUnlocked: Could not get the MRML node with id " << id);
@@ -1870,7 +2001,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLockedUnlocked(const char * id
     vtkErrorMacro("SetAnnotationLockedUnlocked: no id");
     return;
     }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* node = NULL;
+  if (this->GetMRMLScene())
+    {
+    node = this->GetMRMLScene()->GetNodeByID(id);
+    }
 
   if (!node)
     {
@@ -1902,7 +2037,11 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
     vtkErrorMacro("GetAnnotationVisibility: no id given");
     return 0;
     }
-
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -1933,6 +2072,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
   if (!id)
     {
     vtkErrorMacro("SetAnnotationVisibility: no id given");
+    return;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
     return;
     }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
@@ -1967,7 +2111,11 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool
     vtkErrorMacro("SetAnnotationSelected: no id given");
     return;
     }
-
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -2037,7 +2185,11 @@ void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
     vtkErrorMacro("BackupAnnotationNode: no id given");
     return;
     }
-
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -2089,6 +2241,12 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 
   vtkDebugMacro("RestoreAnnotationNode: " << id);
 
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return;
+    }
+  
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -2145,6 +2303,11 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
 
   vtkDebugMacro("DeleteBackupNodes: " << id);
 
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return;
+    }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
@@ -2187,15 +2350,19 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
   //---------------------------------------------------------------------------
   // Restore the view when it was last modified of an AnnotationMRML node
   //---------------------------------------------------------------------------
-  void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
-  {
-    if (!id)
-      {
-      vtkErrorMacro("RestoreAnnotationView: no id given");
-      return;
-      }
-
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
+{
+  if (!id)
+    {
+    vtkErrorMacro("RestoreAnnotationView: no id given");
+    return;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
     if (!node)
       {
@@ -2486,7 +2653,10 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     toplevelNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
     this->GetMRMLScene()->AddNode(toplevelNode);
     toplevelNodeID = toplevelNode->GetID();
-    this->AddDisplayNodeForHierarchyNode(toplevelNode);
+    if (this->AddDisplayNodeForHierarchyNode(toplevelNode) == NULL)
+      {
+      vtkErrorMacro("GetTopLevelHierarchyNodeIDForNodeClass: error adding a display node for hierarchy node " << toplevelNodeID);
+      }
     toplevelNode->Delete();
     }
   else
@@ -2671,7 +2841,11 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
       vtkErrorMacro("CreateSnapShot: No screenshot was set.")
       return;
       }
-
+    if (!this->GetMRMLScene())
+      {
+      vtkErrorMacro("No scene defined");
+      return;
+      }
     if (!this->m_Widget)
       {
       vtkErrorMacro("CreateSnapShot: We need the widget here.")
@@ -2715,7 +2889,11 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
       vtkErrorMacro("ModifySnapShot: No screenshot was set.")
       return;
       }
-
+    if (!this->GetMRMLScene())
+      {
+      vtkErrorMacro("No scene defined");
+      return;
+      }
     vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id.c_str());
 
     if (!node)
@@ -2757,316 +2935,368 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
 
   }
 
-  //---------------------------------------------------------------------------
-  // Return the description of an existing Annotation snapShot node.
-  //---------------------------------------------------------------------------
-  vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* id)
-  {
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+//---------------------------------------------------------------------------
+// Return the description of an existing Annotation snapShot node.
+//---------------------------------------------------------------------------
+vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* id)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
-    if (!node)
-      {
-      vtkErrorMacro("GetSnapShotDescription: Could not get mrml node!")
+  if (!node)
+    {
+    vtkErrorMacro("GetSnapShotDescription: Could not get mrml node!")
       return 0;
-      }
-
-    vtkMRMLAnnotationSnapshotNode* snapshotNode =
-        vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
-
-    if (!snapshotNode)
-      {
-      vtkErrorMacro("GetSnapShotDescription: Could not get snapshot node!")
+    }
+  
+  vtkMRMLAnnotationSnapshotNode* snapshotNode =
+    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  
+  if (!snapshotNode)
+    {
+    vtkErrorMacro("GetSnapShotDescription: Could not get snapshot node!")
       return 0;
-      }
+    }
+  
+  return snapshotNode->GetSnapshotDescription();
+}
 
-    return snapshotNode->GetSnapshotDescription();
-  }
+//---------------------------------------------------------------------------
+// Return the screenshotType of an existing Annotation snapShot node.
+//---------------------------------------------------------------------------
+int vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshotType(const char* id)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
-  //---------------------------------------------------------------------------
-  // Return the screenshotType of an existing Annotation snapShot node.
-  //---------------------------------------------------------------------------
-  int vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshotType(const char* id)
-  {
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
-    if (!node)
-      {
-      vtkErrorMacro("GetSnapShotScreenshotType: Could not get mrml node!")
+  if (!node)
+    {
+    vtkErrorMacro("GetSnapShotScreenshotType: Could not get mrml node!")
       return 0;
-      }
-
-    vtkMRMLAnnotationSnapshotNode* snapshotNode =
-        vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
-
-    if (!snapshotNode)
-      {
-      vtkErrorMacro("GetSnapShotScreenshotType: Could not get snapshot node!")
+    }
+  
+  vtkMRMLAnnotationSnapshotNode* snapshotNode =
+    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  
+  if (!snapshotNode)
+    {
+    vtkErrorMacro("GetSnapShotScreenshotType: Could not get snapshot node!")
       return 0;
-      }
+    }
+  
+  return snapshotNode->GetScreenShotType();
+}
 
-    return snapshotNode->GetScreenShotType();
-  }
-
-  //---------------------------------------------------------------------------
-  // Return the screenshotType of an existing Annotation snapShot node.
-  //---------------------------------------------------------------------------
-  double vtkSlicerAnnotationModuleLogic::GetSnapShotScaleFactor(const char* id)
-  {
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
-    if (!node)
-      {
-      vtkErrorMacro("GetSnapShotScaleFactor: Could not get mrml node!")
+//---------------------------------------------------------------------------
+// Return the screenshotType of an existing Annotation snapShot node.
+//---------------------------------------------------------------------------
+double vtkSlicerAnnotationModuleLogic::GetSnapShotScaleFactor(const char* id)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("GetSnapShotScaleFactor: Could not get mrml node!")
       return 0;
-      }
+    }
+  
+  vtkMRMLAnnotationSnapshotNode* snapshotNode =
+    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
-    vtkMRMLAnnotationSnapshotNode* snapshotNode =
-        vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
-
-    if (!snapshotNode)
-      {
-      vtkErrorMacro("GetSnapShotScaleFactor: Could not get snapshot node!")
+  if (!snapshotNode)
+    {
+    vtkErrorMacro("GetSnapShotScaleFactor: Could not get snapshot node!")
       return 0;
-      }
+    }
+  
+  return snapshotNode->GetScaleFactor();
+}
 
-    return snapshotNode->GetScaleFactor();
-  }
-
-  //---------------------------------------------------------------------------
-  // Return the screenshot of an existing Annotation snapShot node.
-  //---------------------------------------------------------------------------
-  vtkImageData* vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshot(const char* id)
-  {
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
-    if (!node)
-      {
-      vtkErrorMacro("GetSnapShotScreenshot: Could not get mrml node!")
+//---------------------------------------------------------------------------
+// Return the screenshot of an existing Annotation snapShot node.
+//---------------------------------------------------------------------------
+vtkImageData* vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshot(const char* id)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  if (!node)
+    {
+    vtkErrorMacro("GetSnapShotScreenshot: Could not get mrml node!")
       return 0;
-      }
-
-    vtkMRMLAnnotationSnapshotNode* snapshotNode =
-        vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
-
-    if (!snapshotNode)
-      {
-      vtkErrorMacro("GetSnapShotScreenshot: Could not get snapshot node!")
+    }
+  
+  vtkMRMLAnnotationSnapshotNode* snapshotNode =
+    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  
+  if (!snapshotNode)
+    {
+    vtkErrorMacro("GetSnapShotScreenshot: Could not get snapshot node!")
       return 0;
-      }
+    }
+  
+  return snapshotNode->GetScreenShot();
+}
 
-    return snapshotNode->GetScreenShot();
-  }
+//---------------------------------------------------------------------------
+// Check if node id corresponds to a snapShot node.
+//---------------------------------------------------------------------------
+bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
+{
 
-  //---------------------------------------------------------------------------
-  // Check if node id corresponds to a snapShot node.
-  //---------------------------------------------------------------------------
-  bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
-  {
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  
+  if (!node)
+    {
+    vtkErrorMacro("IsSnapshotNode: Invalid node.");
+    return false;
+    }
+  
+  return node->IsA("vtkMRMLAnnotationSnapshotNode");
+  
+}
 
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+//---------------------------------------------------------------------------
+//
+//
+// Place Annotations programmatically
+//
+//
+//---------------------------------------------------------------------------
 
-    if (!node)
+//---------------------------------------------------------------------------
+//
+//
+// Report functionality
+//
+//
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationHierarchyNode* hierarchyNode, int level)
+{
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("GetHTMLRepresentation: We need a hierarchy Node here.");
+    return 0;
+    }
+  
+  vtkStdString html =
+    vtkStdString("<tr bgcolor=#E0E0E0><td valign='middle'>");
+
+  // level
+  for (int i = 0; i < level; ++i)
+    {
+    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+  
+  // icon
+  html += "<img src='";
+  const char *icon = this->GetAnnotationIcon(hierarchyNode->GetID());
+  html += (icon ? icon : "");
+  html += "'>";
+
+  html += "</td><td valign='middle'>";
+  html += "&nbsp;";
+  html += "</td><td valign='middle'>";
+
+  // text
+  html += hierarchyNode->GetName();
+
+  html += "</td></tr>";
+
+  this->m_StringHolder = html;
+
+  return this->m_StringHolder.c_str();
+}
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode, int level)
+{
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetHTMLRepresentation: We need an annotation Node here.")
+    return 0;
+    }
+
+  vtkStdString html = vtkStdString("<tr><td valign='middle'>");
+  
+  // level
+  for (int i = 0; i < level; ++i)
+    {
+    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+
+  // icon
+  html += "<img src='";
+  const char *icon = this->GetAnnotationIcon(annotationNode->GetID());
+  if (icon)
+    {
+    html += icon;
+    }
+  html += "'>";
+  
+  html += "</td><td valign='middle'>";   
+  // if this is a snapshotNode, we want to include the image here
+  if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+    {
+    vtkImageData* image =
+      this->GetSnapShotScreenshot(annotationNode->GetID());
+    
+    if (image)
       {
-      vtkErrorMacro("IsSnapshotNode: Invalid node.")
-      return false;
+      
+      QString tempPath =
+        qSlicerCoreApplication::application()->temporaryPath();
+      tempPath.append(annotationNode->GetID());
+      tempPath.append(".png");
+      
+      QByteArray tempPathArray = tempPath.toLatin1();
+      VTK_CREATE(vtkPNGWriter,w);
+      w->SetInput(image);
+      w->SetFileName(tempPathArray.data());
+      w->Write();
+      
+      html += "<img src='";
+      html += tempPathArray.data();
+      html += "' width='400'>";
+      
       }
-
-    return node->IsA("vtkMRMLAnnotationSnapshotNode");
-
-  }
-
-  //---------------------------------------------------------------------------
-  //
-  //
-  // Place Annotations programmatically
-  //
-  //
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //
-  //
-  // Report functionality
-  //
-  //
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationHierarchyNode* hierarchyNode, int level)
-  {
-    if (!hierarchyNode)
+    }
+  else
+    {
+    const char *measurement =  this->GetAnnotationMeasurement(annotationNode->GetID(), true);
+    if (measurement)
       {
-      vtkErrorMacro("GetHTMLRepresentation: We need a hierarchy Node here.")
-      return 0;
+      html += measurement;
       }
-
-    vtkStdString html =
-        vtkStdString("<tr bgcolor=#E0E0E0><td valign='middle'>");
-
-    // level
-    for (int i = 0; i < level; ++i)
+    }
+  html += "</td><td valign='middle'>";
+  
+  // text
+  vtkStdString txt = this->GetAnnotationText(annotationNode->GetID());
+  if (txt)
+    {
+    html += txt;
+    }
+  // if this is a snapshotNode, we want to include the image here
+  if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+    {
+    html += "<br><br>";
+    vtkStdString desc =  this->GetSnapShotDescription(annotationNode->GetID());
+    if (desc)
       {
-      html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+      html += desc;
       }
+    }
+  
+  html += "</td></tr>";
+  
+  this->m_StringHolder = html;
+  
+  return this->m_StringHolder.c_str();
+  
+}
 
-    // icon
-    html += "<img src='";
-    html += this->GetAnnotationIcon(hierarchyNode->GetID());
-    html += "'>";
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationTextDisplayNode *vtkSlicerAnnotationModuleLogic::GetTextDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationNode *textNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!textNode)
+    {
+    return NULL;
+    }
+  return textNode->GetAnnotationTextDisplayNode();
+}
 
-    html += "</td><td valign='middle'>";
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationPointDisplayNode *vtkSlicerAnnotationModuleLogic::GetPointDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationControlPointsNode *pointsNode =
+    vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!pointsNode)
+    {
+    return NULL;
+    }
+  // get the point display node
+  return pointsNode->GetAnnotationPointDisplayNode();
+}
 
-    html += "&nbsp;";
-
-    html += "</td><td valign='middle'>";
-
-    // text
-    html += hierarchyNode->GetName();
-
-    html += "</td></tr>";
-
-    this->m_StringHolder = html;
-
-    return this->m_StringHolder.c_str();
-
-  }
-
-  //---------------------------------------------------------------------------
-  const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode, int level)
-  {
-    if (!annotationNode)
-      {
-      vtkErrorMacro("GetHTMLRepresentation: We need an annotation Node here.")
-      return 0;
-      }
-
-    vtkStdString html = vtkStdString("<tr><td valign='middle'>");
-
-    // level
-    for (int i = 0; i < level; ++i)
-      {
-      html += "&nbsp;&nbsp;&nbsp;&nbsp;";
-      }
-
-    // icon
-    html += "<img src='";
-    html += this->GetAnnotationIcon(annotationNode->GetID());
-    html += "'>";
-
-    html += "</td><td valign='middle'>";
-
-    // if this is a snapshotNode, we want to include the image here
-    if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
-      {
-      vtkImageData* image =
-          this->GetSnapShotScreenshot(annotationNode->GetID());
-
-      if (image)
-        {
-
-        QString tempPath =
-            qSlicerCoreApplication::application()->temporaryPath();
-        tempPath.append(annotationNode->GetID());
-        tempPath.append(".png");
-
-        QByteArray tempPathArray = tempPath.toLatin1();
-        VTK_CREATE(vtkPNGWriter,w);
-        w->SetInput(image);
-        w->SetFileName(tempPathArray.data());
-        w->Write();
-
-        html += "<img src='";
-        html += tempPathArray.data();
-        html += "' width='400'>";
-
-        }
-      }
-    else
-      {
-      html += this->GetAnnotationMeasurement(annotationNode->GetID(), true);
-      }
-    html += "</td><td valign='middle'>";
-
-    // text
-    html += this->GetAnnotationText(annotationNode->GetID());
-    // if this is a snapshotNode, we want to include the image here
-    if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
-      {
-      html += "<br><br>";
-      html += this->GetSnapShotDescription(annotationNode->GetID());
-      }
-
-    html += "</td></tr>";
-
-    this->m_StringHolder = html;
-
-    return this->m_StringHolder.c_str();
-
-  }
-
-  //---------------------------------------------------------------------------
-  vtkMRMLAnnotationTextDisplayNode *vtkSlicerAnnotationModuleLogic::GetTextDisplayNode(const char *id)
-  {
-    if (!id)
-      {
-      return NULL;
-      }
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-    if (!node)
-      {
-      return NULL;
-      }
-    vtkMRMLAnnotationNode *textNode = vtkMRMLAnnotationNode::SafeDownCast(node);
-    if (!textNode)
-      {
-      return NULL;
-      }
-    return textNode->GetAnnotationTextDisplayNode();
-  }
-
-  //---------------------------------------------------------------------------
-  vtkMRMLAnnotationPointDisplayNode *vtkSlicerAnnotationModuleLogic::GetPointDisplayNode(const char *id)
-  {
-    if (!id)
-      {
-      return NULL;
-      }
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-    if (!node)
-      {
-      return NULL;
-      }
-    vtkMRMLAnnotationControlPointsNode *pointsNode =
-        vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
-    if (!pointsNode)
-      {
-      return NULL;
-      }
-    // get the point display node
-    return pointsNode->GetAnnotationPointDisplayNode();
-  }
-
-  //---------------------------------------------------------------------------
-  vtkMRMLAnnotationLineDisplayNode *vtkSlicerAnnotationModuleLogic::GetLineDisplayNode(const char *id)
-  {
-    if (!id)
-      {
-      return NULL;
-      }
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-    if (!node)
-      {
-      return NULL;
-      }
-    vtkMRMLAnnotationLinesNode *linesNode =
-        vtkMRMLAnnotationLinesNode::SafeDownCast(node);
-    if (!linesNode)
-      {
-      return NULL;
-      }
-
-    return linesNode->GetAnnotationLineDisplayNode();
-  }
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationLineDisplayNode *vtkSlicerAnnotationModuleLogic::GetLineDisplayNode(const char *id)
+{
+  if (!id)
+    {
+    return NULL;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene defined");
+    return 0;
+    }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLAnnotationLinesNode *linesNode =
+    vtkMRMLAnnotationLinesNode::SafeDownCast(node);
+  if (!linesNode)
+    {
+    return NULL;
+    }
+  
+  return linesNode->GetAnnotationLineDisplayNode();
+}
 
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode)
@@ -3087,9 +3317,11 @@ const char * vtkSlicerAnnotationModuleLogic::AddDisplayNodeForHierarchyNode(vtkM
     vtkErrorMacro("AddDisplayNodeForHierarchyNode: error creating a new display node");
     return NULL;
     }
-  this->GetMRMLScene()->AddNode(dnode);  
-  hnode->SetAndObserveDisplayNodeID(dnode->GetID());
-
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->AddNode(dnode);  
+    hnode->SetAndObserveDisplayNodeID(dnode->GetID());
+    }
   const char *id = dnode->GetID();
   dnode->Delete();
   return id;
