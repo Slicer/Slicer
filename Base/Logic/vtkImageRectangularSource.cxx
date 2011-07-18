@@ -417,7 +417,7 @@ void vtkImageRectangularSource::ExecuteData(vtkDataObject *output)
     }
   } else {
     switch (data->GetScalarType()) {
-      vtkTemplateMacro4(vtkImageRectangularSourceExecute, this, data, extent, (VTK_TT *)ptr);
+      vtkTemplateMacro(vtkImageRectangularSourceExecute(this, data, extent, static_cast<VTK_TT*>(ptr)));
     default:
       vtkErrorMacro("Execute: Unknown output ScalarType");
     }

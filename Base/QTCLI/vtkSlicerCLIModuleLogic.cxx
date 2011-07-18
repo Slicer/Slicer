@@ -1032,14 +1032,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               for (int i=0; i < fiducials->GetNumberOfFiducials(); ++i)
                 {
                 float *pt;
-                std::ostrstream ptAsString;
+                std::ostringstream ptAsString;
 
                 if (fiducials->GetNthFiducialSelected(i))
                   {
                   pt = fiducials->GetNthFiducialXYZ(i);
                   ptAsString << pt[0] << "," << pt[1] << "," << pt[2]
                              << std::ends;
-                  ptAsString.rdbuf()->freeze();
                   
                   commandLineAsString.push_back(prefix + flag);
                   commandLineAsString.push_back(ptAsString.str());
@@ -1105,7 +1104,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 {
                 double *pt;
                 double *Radius;
-                std::ostrstream roiAsString;
+                std::ostringstream roiAsString;
 
                 if (regions->GetNthROISelected(i))
                   {
@@ -1114,8 +1113,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   roiAsString << pt[0] << "," << pt[1] << "," << pt[2] << ","
                              << Radius[0] << "," << Radius[1] << "," << Radius[2]
                              << std::ends;
-                  roiAsString.rdbuf()->freeze();
-                  
+
                   commandLineAsString.push_back(prefix + flag);
                   commandLineAsString.push_back(roiAsString.str());
                   }

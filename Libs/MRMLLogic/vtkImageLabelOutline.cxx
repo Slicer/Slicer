@@ -191,7 +191,7 @@ void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
 {    int x1;
 
   // Single component input is required
-  vtkImageData *input = this->GetInput();
+  vtkImageData *input = this->GetImageDataInput(0);
   x1 = input->GetNumberOfScalarComponents();
   if (x1 != 1) {
     vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");

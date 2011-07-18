@@ -412,9 +412,9 @@ void vtkTensorRotate::ThreadedExecute(vtkImageData *inData,
       // already.  And we only access the input tensors
       // which are float.  So this switch statement on output
       // scalar type is sufficient.
-      vtkTemplateMacro6(vtkTensorRotateExecute,
+      vtkTemplateMacro(vtkTensorRotateExecute(
                 this, outExt, inData, outData,
-                (VTK_TT *)(outPtr), id);
+                static_cast<VTK_TT*>(outPtr), id));
       default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");
         break;

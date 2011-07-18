@@ -649,8 +649,7 @@ void vtkDiffusionTensorMathematicsSimple::SimpleExecute(vtkImageData* input,
       // already.  And we only access the input tensors
       // which are float.  So this switch statement on output
       // scalar type is sufficient.
-      vtkTemplateMacro4(vtkDiffusionTensorMathematicsSimpleExecute1,
-                this, input, output, (VTK_TT *)(outPtr));
+      vtkTemplateMacro(vtkDiffusionTensorMathematicsSimpleExecute1(this, input, output, static_cast<VTK_TT*>(outPtr)));
       default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");
         return;
@@ -679,8 +678,8 @@ void vtkDiffusionTensorMathematicsSimple::SimpleExecute(vtkImageData* input,
     case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
       switch (output->GetScalarType())
       {
-        vtkTemplateMacro4(vtkDiffusionTensorMathematicsSimpleExecute1Eigen,
-                          this, input, output, (VTK_TT *)(outPtr));
+        vtkTemplateMacro(vtkDiffusionTensorMathematicsSimpleExecute1Eigen(
+                           this, input, output, static_cast<VTK_TT*>(outPtr)));
         default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");
         return;

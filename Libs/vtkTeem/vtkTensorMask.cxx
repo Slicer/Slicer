@@ -400,10 +400,10 @@ void vtkTensorMask::ThreadedRequestData(
     case VTK_UNSIGNED_CHAR:
       switch (inData[0][0]->GetScalarType())
         {
-          vtkTemplateMacro9(vtkTensorMaskExecute, this, outExt, 
-                inData[0][0], (VTK_TT *)(inPtr1), 
-                inData[1][0], (unsigned char *)(inPtr2),
-                outData[0], (VTK_TT *)(outPtr),id);
+          vtkTemplateMacro(vtkTensorMaskExecute(this, outExt,
+                inData[0][0], static_cast<VTK_TT*>(inPtr1),
+                inData[1][0], static_cast<unsigned char*>(inPtr2),
+                outData[0], static_cast<VTK_TT*>(outPtr), id));
         default:
           vtkErrorMacro(<< "Execute: Unknown ScalarType");
           return;
@@ -412,10 +412,10 @@ void vtkTensorMask::ThreadedRequestData(
     case VTK_SHORT:
       switch (inData[0][0]->GetScalarType())
         {
-          vtkTemplateMacro9(vtkTensorMaskExecute, this, outExt, 
-                inData[0][0], (VTK_TT *)(inPtr1), 
-                inData[1][0], (short *)(inPtr2),
-                outData[0], (VTK_TT *)(outPtr),id);
+          vtkTemplateMacro(vtkTensorMaskExecute(this, outExt,
+                inData[0][0], static_cast<VTK_TT*>(inPtr1),
+                inData[1][0], static_cast<short*>(inPtr2),
+                outData[0], static_cast<VTK_TT*>(outPtr), id));
         default:
           vtkErrorMacro(<< "Execute: Unknown ScalarType");
           return;

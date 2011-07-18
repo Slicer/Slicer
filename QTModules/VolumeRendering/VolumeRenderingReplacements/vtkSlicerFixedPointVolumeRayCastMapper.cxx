@@ -16,6 +16,7 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkCamera.h"
 #include "vtkColorTransferFunction.h"
+#include "vtkDataArray.h"
 #include "vtkEncodedGradientShader.h"
 #include "vtkFiniteDifferenceGradientEstimator.h"
 #include "vtkImageData.h"

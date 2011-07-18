@@ -21,15 +21,15 @@
 #ifndef __vtkImageNeighborhoodFilter_h
 #define __vtkImageNeighborhoodFilter_h
 
-#include "vtkImageSpatialFilter.h"
+#include <vtkImageSpatialAlgorithm.h>
 
 #include "vtkMRMLLogicWin32Header.h"
 
-class VTK_MRML_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialFilter
+class VTK_MRML_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialAlgorithm
 {
 public:
   static vtkImageNeighborhoodFilter *New();
-  vtkTypeRevisionMacro(vtkImageNeighborhoodFilter,vtkImageSpatialFilter);
+  vtkTypeRevisionMacro(vtkImageNeighborhoodFilter,vtkImageSpatialAlgorithm);
 
   /// 
   /// Mask that defines area of interest in the neighborhood.

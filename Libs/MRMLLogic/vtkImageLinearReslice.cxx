@@ -14,26 +14,29 @@
 =========================================================================*/
 #include "vtkImageLinearReslice.h"
 
-#include "vtkImageData.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkMath.h"
-#include "vtkObjectFactory.h"
-#include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkTransform.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
+// VTK includes
+#include <vtkDataArray.h>
+#include <vtkDataSetAttributes.h>
+#include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkTransform.h>
 
-#include "vtkTemplateAliasMacro.h"
+#include <vtkTemplateAliasMacro.h>
 // turn off 64-bit ints when templating over all types
 # undef VTK_USE_INT64
 # define VTK_USE_INT64 0
 # undef VTK_USE_UINT64
 # define VTK_USE_UINT64 0
 
-#include <limits.h>
-#include <float.h>
-#include <math.h>
+// STD includes
+#include <climits>
+#include <cfloat>
+#include <cmath>
 
 vtkCxxRevisionMacro(vtkImageLinearReslice, "$Revision$");
 vtkStandardNewMacro(vtkImageLinearReslice);
@@ -105,6 +108,7 @@ void vtkImageLinearReslice::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundLevel: " << this->BackgroundColor[0] << "\n";
 }
 
+//----------------------------------------------------------------------------
 // the MTime of the filter
 unsigned long int vtkImageLinearReslice::GetMTime()
 {

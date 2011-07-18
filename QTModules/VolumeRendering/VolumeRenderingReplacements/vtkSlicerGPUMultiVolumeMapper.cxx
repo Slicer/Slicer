@@ -15,6 +15,7 @@
 #include "vtkSlicerGPUMultiVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
+#include "vtkDataArray.h"
 #include "vtkMultiThreader.h"
 #include "vtkRenderer.h"
 #include "vtkVolume.h"

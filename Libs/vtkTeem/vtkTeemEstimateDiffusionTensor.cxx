@@ -546,10 +546,10 @@ void vtkTeemEstimateDiffusionTensor::ThreadedExecute(vtkImageData *inData,
   // call Execute method to handle all data at the same time
   switch (inData->GetScalarType())
     {
-      vtkTemplateMacro7(vtkTeemEstimateDiffusionTensorExecute, this, 
-                        inData, (VTK_TT *)(inPtrs),
-                        outData, (VTK_TT *)(outPtr), 
-                        outExt, id);
+      vtkTemplateMacro(vtkTeemEstimateDiffusionTensorExecute(this,
+                        inData, static_cast<VTK_TT*>(inPtrs),
+                        outData, static_cast<VTK_TT*>(outPtr),
+                        outExt, id));
     default:
       vtkErrorMacro(<< "Execute: Unknown ScalarType");
       return;

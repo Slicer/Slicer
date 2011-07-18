@@ -12,15 +12,20 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// MRMLCLI includes
+#include "vtkMRMLCommandLineModuleNode.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include "vtkObjectFactory.h"
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <map>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLCommandLineModuleNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCommandLineModuleNode);
@@ -242,7 +247,7 @@ void vtkMRMLCommandLineModuleNode
 void vtkMRMLCommandLineModuleNode
 ::SetParameterAsDouble(const std::string& name, double value)
 {
-  std::ostrstream strvalue;
+  std::ostringstream strvalue;
 
   strvalue << value;
   strvalue << ends;
@@ -255,15 +260,13 @@ void vtkMRMLCommandLineModuleNode
       .SetParameterDefaultValue(name, strvalue.str());
     this->Modified();
     }
-
-  strvalue.rdbuf()->freeze(0);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode
 ::SetParameterAsFloat(const std::string& name, float value)
 {
-  std::ostrstream strvalue;
+  std::ostringstream strvalue;
 
   strvalue << value;
   strvalue << ends;
@@ -276,8 +279,6 @@ void vtkMRMLCommandLineModuleNode
       .SetParameterDefaultValue(name, strvalue.str());
     this->Modified();
     }
-
-  strvalue.rdbuf()->freeze(0);
 }
 
 
@@ -285,7 +286,7 @@ void vtkMRMLCommandLineModuleNode
 void vtkMRMLCommandLineModuleNode
 ::SetParameterAsInt(const std::string& name, int value)
 {
-  std::ostrstream strvalue;
+  std::ostringstream strvalue;
 
   strvalue << value;
   strvalue << ends;
@@ -298,8 +299,6 @@ void vtkMRMLCommandLineModuleNode
       .SetParameterDefaultValue(name, strvalue.str());
     this->Modified();
     }
-
-  strvalue.rdbuf()->freeze(0);
 }
 
 //----------------------------------------------------------------------------
