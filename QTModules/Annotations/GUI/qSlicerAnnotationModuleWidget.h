@@ -116,6 +116,13 @@ protected slots:
   /// Delete selected Annotations
   void deleteSelectedButtonClicked();
 
+  /// Make active hierarchy annotations visible/invisible
+  void invisibleHierarchyButtonClicked();
+  void visibleHierarchyButtonClicked();
+  /// Un/Lock annotations in active hierarchy
+  void lockHierarchyButtonClicked();
+  void unlockHierarchyButtonClicked();
+
   // Property dialog
   void propertyRestored();
   void propertyAccepted();

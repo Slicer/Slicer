@@ -152,6 +152,16 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   q->connect(this->deleteSelectedButton, SIGNAL(clicked()),
       SLOT(deleteSelectedButtonClicked()));
 
+  // active list
+  q->connect(this->visibleHierarchyButton, SIGNAL(clicked()), q,
+      SLOT(visibleHierarchyButtonClicked()));
+  q->connect(this->invisibleHierarchyButton, SIGNAL(clicked()), q,
+      SLOT(invisibleHierarchyButtonClicked()));
+  q->connect(this->lockHierarchyButton, SIGNAL(clicked()), q,
+      SLOT(lockHierarchyButtonClicked()));
+  q->connect(this->unlockHierarchyButton, SIGNAL(clicked()), q,
+      SLOT(unlockHierarchyButtonClicked()));
+
   // Save Panel
   q->connect(this->screenShot, SIGNAL(clicked()), q,
       SLOT(onSnapShotButtonClicked()));
@@ -416,7 +426,42 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 
 }
 
+// Active list buttons
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::invisibleHierarchyButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->logic()->SetHierarchyAnnotationsVisibleFlag(NULL, false);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::visibleHierarchyButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->logic()->SetHierarchyAnnotationsVisibleFlag(NULL, true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::lockHierarchyButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->logic()->SetHierarchyAnnotationsLockFlag(NULL, true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::unlockHierarchyButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->logic()->SetHierarchyAnnotationsLockFlag(NULL, false);
+}
+
+
 // Resume, Pause, Cancel and Done buttons
 //-----------------------------------------------------------------------------
 

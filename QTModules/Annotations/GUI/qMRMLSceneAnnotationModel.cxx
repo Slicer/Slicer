@@ -150,7 +150,7 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         }
       else if (hnode)
         {
-        item->setData(QPixmap(":/Icons/Small/SlicerVisibleInvisible.png"),Qt::DecorationRole);
+        // don't show anything, handle it in property dialogue
         }
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
@@ -169,7 +169,7 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         }
       else if (hnode)
         {
-        item->setData(QPixmap(":/Icons/Small/SlicerLockUnlock.png"),Qt::DecorationRole);
+        // don't show anything, handle it in property dialogue
         }
       break;
     case qMRMLSceneAnnotationModel::EditColumn:

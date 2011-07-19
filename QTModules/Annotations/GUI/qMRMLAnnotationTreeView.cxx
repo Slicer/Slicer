@@ -571,30 +571,15 @@ void qMRMLAnnotationTreeView::onVisibilityColumnClicked(vtkMRMLNode* node)
 
     }
 
-
-  // TODO move to logic
+  // taking out the switch for hierarchy nodes, do it via the buttons above
+/*
   vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
 
   if (hierarchyNode)
     {
-    vtkCollection* children = vtkCollection::New();
-    hierarchyNode->GetChildrenDisplayableNodes(children);
-
-    children->InitTraversal();
-    for (int i=0; i<children->GetNumberOfItems(); ++i)
-      {
-      vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
-      if (childNode)
-        {
-        // this is a valid annotation child node
-        //
-        childNode->SetVisible(!childNode->GetVisible());
-        }
-      } // for loop
-
+    this->m_Logic->SetHierarchyAnnotationsVisibleFlag(hierarchyNode, true);
     } // if hierarchyNode
-
-
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -617,28 +602,17 @@ void qMRMLAnnotationTreeView::onLockColumnClicked(vtkMRMLNode* node)
     }
 
 
-  // TODO move to logic
+  // taking out the switch for hierarchy nodes, do it via the buttons above
+/*
   vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
 
   if (hierarchyNode)
     {
-    vtkCollection* children = vtkCollection::New();
-    hierarchyNode->GetChildrenDisplayableNodes(children);
-
-    children->InitTraversal();
-    for (int i=0; i<children->GetNumberOfItems(); ++i)
-      {
-      vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
-      if (childNode)
-        {
-        // this is a valid annotation child node
-        //
-        childNode->SetLocked(!childNode->GetLocked());
-        }
-      } // for loop
+    this->m_Logic->SetHierarchyAnnotationsLockFlag(hierarchyNode, true);
+   
 
     } // if hierarchyNode
-
+*/
 
 }
 

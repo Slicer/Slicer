@@ -230,6 +230,11 @@ public:
   vtkGetStringMacro(ActiveHierarchyNodeID);
   vtkSetStringMacro(ActiveHierarchyNodeID);
 
+  /// Set the visible flag on all annotations in the hierarchy. If hierarchy is null, use active hierarchy
+  void SetHierarchyAnnotationsVisibleFlag(vtkMRMLAnnotationHierarchyNode* hierarchyNode, bool flag);
+  /// Set the lock flag on all annotations in the hierarchy. If hierarchy is null, use active hierarchy
+  void SetHierarchyAnnotationsLockFlag(vtkMRMLAnnotationHierarchyNode* hierarchyNode, bool flag);
+
   //
   // Place Annotations programmatically
   //

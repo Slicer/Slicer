@@ -3077,6 +3077,63 @@ bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
   return node->IsA("vtkMRMLAnnotationSnapshotNode");
   
 }
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsVisibleFlag(vtkMRMLAnnotationHierarchyNode* hierarchyNode, bool flag)
+{
+  if (hierarchyNode == NULL)
+    {
+    // use the active one
+    hierarchyNode = this->GetActiveHierarchyNode();
+    }
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("SetHierarchyAnnotationsVisibleFlag: no hierarchy node");
+    return;
+    }
+  vtkCollection* children = vtkCollection::New();
+  hierarchyNode->GetChildrenDisplayableNodes(children);
+
+  children->InitTraversal();
+  for (int i=0; i<children->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+    if (childNode)
+      {
+      // this is a valid annotation child node
+      //
+      childNode->SetVisible((flag ? 1 : 0));
+      }
+    } // for loop
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsLockFlag(vtkMRMLAnnotationHierarchyNode* hierarchyNode, bool flag)
+{
+  if (hierarchyNode == NULL)
+    {
+    // use the active one
+    hierarchyNode = this->GetActiveHierarchyNode();
+    }
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("SetHierarchyAnnotationsLockFlag: no hierarchy node");
+    return;
+    }
+  vtkCollection* children = vtkCollection::New();
+  hierarchyNode->GetChildrenDisplayableNodes(children);
+  
+  children->InitTraversal();
+  for (int i=0; i<children->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+    if (childNode)
+      {
+      // this is a valid annotation child node
+      //
+      childNode->SetLocked((flag ? 1 : 0));
+      }
+    } // for loop
+}
 
 //---------------------------------------------------------------------------
 //

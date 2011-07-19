@@ -15,8 +15,8 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Annotations</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -230,8 +230,8 @@
         <property name="title">
          <string>Edit</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
           <layout class="QHBoxLayout" name="selectedLayout">
            <item>
             <widget class="QPushButton" name="selectAllButton">
@@ -271,7 +271,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
                <normaloff>:/Icons/Medium/SlicerVisibleInvisible.png</normaloff>:/Icons/Medium/SlicerVisibleInvisible.png</iconset>
              </property>
             </widget>
@@ -285,7 +285,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
                <normaloff>:/Icons/Medium/SlicerLockUnlock.png</normaloff>:/Icons/Medium/SlicerLockUnlock.png</iconset>
              </property>
             </widget>
@@ -341,7 +341,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
                <normaloff>:/Icons/Medium/SlicerAddHierarchy.png</normaloff>:/Icons/Medium/SlicerAddHierarchy.png</iconset>
              </property>
             </widget>
@@ -376,7 +376,90 @@
            </item>
           </layout>
          </item>
-         <item row="2" column="0">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="activeHierarchyLabel">
+             <property name="toolTip">
+              <string>Click a hierarchy to activate it. If the Main Hierarchy is active, new per-annotation lists will be created under it, otherwise annotations will be added to the active list.</string>
+             </property>
+             <property name="text">
+              <string>Active list: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="visibleHierarchyButton">
+             <property name="toolTip">
+              <string>Set all annotations in active list visible</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerVisible.png</normaloff>:/Icons/Small/SlicerVisible.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="invisibleHierarchyButton">
+             <property name="toolTip">
+              <string>Set all annotations in active list invisible</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>:/Icons/Small/SlicerInvisible.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="lockHierarchyButton">
+             <property name="toolTip">
+              <string>Set all annotations in active list locked</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerLock.png</normaloff>:/Icons/Small/SlicerLock.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="unlockHierarchyButton">
+             <property name="toolTip">
+              <string>Set all annotations in active list to be unlocked</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerUnlock.png</normaloff>:/Icons/Small/SlicerUnlock.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="qMRMLAnnotationTreeView" name="hierarchyTreeView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -401,16 +484,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="activeHierarchyLabel">
-           <property name="text">
-            <string>Active list: </string>
-           </property>
-           <property name="toolTip">
-              <string>Click a hierarchy to activate it. If the Main Hierarchy is active, new per-annotation lists will be created under it, otherwise annotations will be added to the active list.</string>
-             </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -425,45 +498,46 @@
         <property name="checked">
          <bool>false</bool>
         </property>
+        <zorder>CTKCollapsibleGroupBox_3</zorder>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -502,6 +576,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerAnnotationModule.qrc"/>
+  <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections>
   <connection>
