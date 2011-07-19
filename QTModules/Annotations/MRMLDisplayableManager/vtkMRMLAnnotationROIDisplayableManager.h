@@ -68,10 +68,10 @@ protected:
 
 
   /// Update just the position for the widget, implemented by subclasses.
-  virtual void UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *node);
+  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
 
   /// Check, if the widget is displayable in the current slice geometry
-  virtual bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
+  virtual bool IsWidgetDisplayable(vtkMRMLSliceNode *sliceNode, vtkMRMLAnnotationNode* node);
 
   /// Set mrml parent transform to widgets
   virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget);

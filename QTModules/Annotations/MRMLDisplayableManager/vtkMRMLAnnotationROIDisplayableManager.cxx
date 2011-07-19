@@ -760,7 +760,8 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLAnnotationROIDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* sliceNode, vtkMRMLAnnotationNode* node)
+bool vtkMRMLAnnotationROIDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* vtkNotUsed(sliceNode), 
+                                                                 vtkMRMLAnnotationNode* vtkNotUsed(node))
 {
   if (this->Is2DDisplayableManager())
     {
