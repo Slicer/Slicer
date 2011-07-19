@@ -320,18 +320,9 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
     }
   // end of special case for snapshots
 
-  // hierarchies
-  if (d->logic()->IsAnnotationHierarchyNode(mrmlIdArray.data()))
-    {
-    
-    
-    
-    // bail out, everything below is not for hierarchies
-    }
-
   // check if there exists an annotationNode with the given ID
   // only then display the property dialog
-  if (d->logic()->IsAnnotationNode(mrmlIdArray.data()))
+  if (d->logic()->IsAnnotationNode(mrmlIdArray.data()) || d->logic()->IsAnnotationHierarchyNode(mrmlIdArray.data()))
     {
 
     if (this->m_PropertyDialog)

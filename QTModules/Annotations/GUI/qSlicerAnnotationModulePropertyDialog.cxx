@@ -40,10 +40,27 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   // now build the user interface
   ui.setupUi(this);
 
-  this->initialize();
+  if (this->m_logic->IsAnnotationHierarchyNode(id))
+    {
+    // hierarchies
+
+    // TODO show the display widget
+
+    ui.tabWidget->hide();
+
+    }
+  else
+    {
+    // annotations
+
+    this->initialize();
+
+    }
 
   // create the slot and signal connections
   this->createConnection();
+
+
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +118,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   ui.textUnselectedColorPickerButton->setDisplayColorName(false);
   ui.textUnselectedColorPickerButton->setColor(unselectedQColor);
+  ui.textUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   // load the selected text color
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
@@ -113,6 +131,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   ui.textSelectedColorPickerButton->setDisplayColorName(false);
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
+  ui.textSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   // load the lock/unlock status
   int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id.c_str());
@@ -191,6 +210,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
     ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
     ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
+    ui.pointUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
     
     // selected color
     double *pointSelColor = pointDisplayNode->GetSelectedColor();
@@ -198,6 +218,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
     ui.pointSelectedColorPickerButton->setDisplayColorName(false);
     ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
+    ui.pointSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
     
     // load the glyph type
   
@@ -266,6 +287,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     this->TurnColorArrayToQColor(lineUnSelColor,lineUnSelQColor);
     ui.lineUnselectedColorPickerButton->setDisplayColorName(false);
     ui.lineUnselectedColorPickerButton->setColor(lineUnSelQColor);
+    ui.lineUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
     // selected
     double *lineSelColor = lineDisplayNode->GetSelectedColor();
@@ -273,6 +295,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     this->TurnColorArrayToQColor(lineSelColor, lineSelQColor);
     ui.lineSelectedColorPickerButton->setDisplayColorName(false);
     ui.lineSelectedColorPickerButton->setColor(lineSelQColor);
+    ui.lineSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
     
     // width
     ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
