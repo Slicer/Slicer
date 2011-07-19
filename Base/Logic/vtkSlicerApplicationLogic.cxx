@@ -70,7 +70,8 @@
 #include "itksys/SystemTools.hxx"
 
 // STD includes
-#ifdef linux 
+#include <algorithm>
+#ifdef linux
 # include "unistd.h"
 #endif
 #include <queue>
