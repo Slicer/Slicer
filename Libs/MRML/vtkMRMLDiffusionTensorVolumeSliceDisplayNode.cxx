@@ -17,11 +17,13 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkImageData.h>
 
 #include "vtkDiffusionTensorGlyph.h"
 
 #include "vtkTransformPolyDataFilter.h"
 
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
 

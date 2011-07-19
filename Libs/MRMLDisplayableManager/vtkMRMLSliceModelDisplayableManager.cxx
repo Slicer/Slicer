@@ -22,6 +22,7 @@
 #include "vtkMRMLSliceModelDisplayableManager.h"
 
 // MRML includes
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>

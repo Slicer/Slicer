@@ -19,6 +19,7 @@
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLStorageNode.h"
 
 // for transforming picked points
 #include "vtkMRMLTransformNode.h"

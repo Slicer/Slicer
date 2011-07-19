@@ -19,16 +19,17 @@
 #ifndef __vtkMRMLFiducialListNode_h
 #define __vtkMRMLFiducialListNode_h
 
-#include <string>
-
-#include "vtkMatrix4x4.h"
-#include "vtkCollection.h"
-
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLFiducial.h"
+// MRML includes
 #include "vtkMRMLStorableNode.h"
-#include "vtkMRMLFiducialListStorageNode.h"
+class vtkMRMLFiducial;
+class vtkMRMLFiducialListStorageNode;
+
+// VTK includes
+class vtkMatrix4x4;
+class vtkCollection;
+
+// STD includes
+#include <string>
 
 ///
 /// a structure used when invoking an event to let others know that two
@@ -252,10 +253,7 @@ public:
   virtual void ApplyTransform(vtkAbstractTransform* transform);
   
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-      return vtkMRMLFiducialListStorageNode::New();
-    };
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   /// move a fiducial point in the collection, one up/down
   /// returns -1 on failure (current index is out of bounds, the fid is already

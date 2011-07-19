@@ -66,6 +66,7 @@
 #include <vtkMRMLRemoteIOLogic.h>
 
 // MRML includes
+#include <vtkCacheManager.h>
 #include <vtkDataIOManager.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLCommandLineModuleNode.h>

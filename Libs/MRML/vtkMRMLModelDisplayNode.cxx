@@ -11,16 +11,20 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+#include "vtkMRMLColorNode.h"
+#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLScene.h"
+
+#include "vtkCallbackCommand.h"
+#include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
+#include "vtkObjectFactory.h"
+#include <vtkPolyData.h>
+#include "vtkTransform.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <vtkPolyData.h>
-
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 vtkCxxSetObjectMacro(vtkMRMLModelDisplayNode, PolyData, vtkPolyData)
 

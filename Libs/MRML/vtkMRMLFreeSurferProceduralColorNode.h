@@ -21,12 +21,9 @@
 #ifndef __vtkMRMLFreeSurferProceduralColorNode_h
 #define __vtkMRMLFreeSurferProceduralColorNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLProceduralColorNode.h"
-
-class vtkLookupTable;
 class vtkFSLookupTable;
+
 class VTK_MRML_EXPORT vtkMRMLFreeSurferProceduralColorNode : public vtkMRMLProceduralColorNode
 {
 public:

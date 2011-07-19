@@ -18,10 +18,13 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkImageData.h>
+#include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
+#include <cassert>
 #include <string>
 #include <iostream>
 #include <sstream>

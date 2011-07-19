@@ -18,11 +18,8 @@
 #ifndef __vtkMRMLSceneViewStorageNode_h
 #define __vtkMRMLSceneViewStorageNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLSceneViewNode.h" 
 
-class vtkImageData;
 class VTK_MRML_EXPORT vtkMRMLSceneViewStorageNode : public vtkMRMLStorageNode
 {
 public:

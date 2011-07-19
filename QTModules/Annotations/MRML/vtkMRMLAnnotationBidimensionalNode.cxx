@@ -13,6 +13,8 @@
 #include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMath.h"
 
+#include <vtkObjectFactory.h>
+
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationBidimensionalNode* vtkMRMLAnnotationBidimensionalNode::New()
 {

@@ -35,6 +35,8 @@
 class vtkImageData;
 class vtkMRMLHierarchyNode;
 
+#include <string>
+
 /// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT vtkSlicerSceneViewsModuleLogic :
   public vtkMRMLAbstractLogic
@@ -129,7 +131,7 @@ protected:
 
 private:
 
-  vtksys_stl::string m_StringHolder;
+  std::string m_StringHolder;
 
   qSlicerSceneViewsModuleWidget* m_Widget;
 

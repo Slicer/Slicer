@@ -20,11 +20,8 @@
 #ifndef __vtkMRMLSelectionNode_h
 #define __vtkMRMLSelectionNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-
-#include "vtkMatrix4x4.h"
+#include "vtkMRMLScene.h"
 
 class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 {

@@ -17,12 +17,12 @@
 #ifndef __vtkMRMLFiducial_h
 #define __vtkMRMLFiducial_h
 
-
-#include "vtkMatrix4x4.h"
-
+// MRML includes
 #include "vtkMRML.h"
 
+// VTK includes
 #include "vtkObject.h"
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLFiducial : public vtkObject
 {

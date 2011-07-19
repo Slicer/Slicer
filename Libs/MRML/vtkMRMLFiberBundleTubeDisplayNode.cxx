@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkPolyDataTensorToColor.h"
 #include "vtkTubeFilter.h"
 
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLScene.h"
 

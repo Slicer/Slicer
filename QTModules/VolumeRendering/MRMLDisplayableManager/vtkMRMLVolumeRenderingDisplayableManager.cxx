@@ -47,6 +47,7 @@
 //#include <itksys/Directory.hxx> 
 
 // STD includes
+#include <cassert>
 #include <cmath>
 #include <algorithm> // for std::min
 

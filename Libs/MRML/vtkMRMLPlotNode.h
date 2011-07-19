@@ -14,20 +14,13 @@
 #ifndef __vtkMRMLPlotNode_h
 #define __vtkMRMLPlotNode_h
 
-#include <string>
-#include <vector>
-
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
-
-#include "vtkObject.h"
-
-#include "vtkDataObject.h"
-
-class vtkSlicerXYPlotWidget;
 class vtkMRMLXYPlotManagerNode;
+class vtkSlicerXYPlotWidget;
 
+class vtkDataObject;
+
+#include <string>
 
 class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
 {

@@ -27,6 +27,7 @@ Version:   $Revision: 1.2 $
 #include "vtkFSSurfaceReader.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLModelNode.h"
 
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataWriter.h"

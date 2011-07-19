@@ -18,9 +18,12 @@
 #include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerFiberBundleDisplayLogic.h"
 
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 

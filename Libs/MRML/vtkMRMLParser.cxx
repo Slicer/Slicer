@@ -13,7 +13,9 @@ Version:   $Revision: 1.8 $
 =========================================================================auto=*/
 // MRML includes
 #include "vtkMRMLParser.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkTagTable.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>

@@ -19,13 +19,14 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
+#include <vtkAbstractWidget.h>
+#include <vtkHandleRepresentation.h>
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
-#include <vtkHandleRepresentation.h>
-#include <vtkAbstractWidget.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 // std includes
 #include <string>

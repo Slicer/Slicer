@@ -22,20 +22,12 @@
 #ifndef __vtkMRMLFiberBundleNode_h
 #define __vtkMRMLFiberBundleNode_h
 
-#include "vtkPolyData.h" 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+//#include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
-#include "vtkMRMLFiberBundleLineDisplayNode.h"
-#include "vtkMRMLFiberBundleTubeDisplayNode.h"
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
+class vtkMRMLFiberBundleDisplayNode;
 
-
-class vtkCallbackCommand;
-class vtkMRMLStorageNode;
+//class vtkCallbackCommand;
+//class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {

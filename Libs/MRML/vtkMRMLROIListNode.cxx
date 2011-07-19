@@ -4,10 +4,15 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkCollection.h>
+#include <vtkMatrix4x4.h>
 #include "vtkSmartPointer.h"
 
 #include "vtkMRMLROIListNode.h"
+#include "vtkMRMLROINode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLROIListNode* vtkMRMLROIListNode::New()

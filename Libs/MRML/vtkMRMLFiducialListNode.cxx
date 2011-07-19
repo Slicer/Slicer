@@ -18,7 +18,9 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkAbstractTransform.h"
@@ -1741,6 +1743,12 @@ void vtkMRMLFiducialListNode::ApplyTransform(vtkAbstractTransform* transform)
     node->SetOrientationWXYZ(orientationOut);
     }
   this->ModifiedSinceReadOn();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLFiducialListNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLFiducialListStorageNode::New();
 }
 
 //---------------------------------------------------------------------------

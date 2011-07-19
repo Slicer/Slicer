@@ -122,6 +122,12 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode() 
+{
+  return vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   

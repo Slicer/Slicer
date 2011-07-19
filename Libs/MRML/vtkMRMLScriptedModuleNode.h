@@ -14,7 +14,6 @@
 #ifndef __vtkMRMLScriptedModuleNode_h
 #define __vtkMRMLScriptedModuleNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 // Description: 

@@ -18,9 +18,6 @@
 #ifndef __vtkMRMLScalarVolumeDisplayNode_h
 #define __vtkMRMLScalarVolumeDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
 class vtkImageData;

@@ -22,12 +22,9 @@
 #ifndef __vtkMRMLFiberBundleTubeDisplayNode_h
 #define __vtkMRMLFiberBundleTubeDisplayNode_h
 
-#include "vtkPolyData.h"
-
-#include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
+class vtkPolyData;
 class vtkPolyDataTensorToColor;
 class vtkTubeFilter;
 

@@ -19,13 +19,9 @@
 #ifndef __vtkMRMLNRRDStorageNode_h
 #define __vtkMRMLNRRDStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
-class vtkNRRDReader;
 class vtkDoubleArray;
-
-class vtkImageData;
+class vtkNRRDReader;
 
 class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 {

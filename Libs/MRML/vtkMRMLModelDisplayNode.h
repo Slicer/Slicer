@@ -19,15 +19,7 @@
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLColorNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
 
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {

@@ -1,13 +1,7 @@
 #ifndef __vtkMRMLPETProceduralColorNode_h
 #define __vtkMRMLPETProceduralColorNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
-
-class vtkColorTransferFunction;
-class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLPETProceduralColorNode : public vtkMRMLProceduralColorNode
 {
@@ -59,12 +53,6 @@ public:
   enum
     {
       DisplayModifiedEvent = 20000
-    };
-
-  /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return Superclass::CreateDefaultStorageNode();
     };
 
   /// The list of valid types

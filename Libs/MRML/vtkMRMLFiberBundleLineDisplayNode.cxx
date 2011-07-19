@@ -22,6 +22,7 @@ Version:   $Revision: 1.3 $
 #include "vtkPolyDataTensorToColor.h"
 
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------

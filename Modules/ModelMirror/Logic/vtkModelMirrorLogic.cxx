@@ -12,6 +12,7 @@
 #include "vtkCleanPolyData.h"
 
 // MRML includes
+#include "vtkCacheManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"

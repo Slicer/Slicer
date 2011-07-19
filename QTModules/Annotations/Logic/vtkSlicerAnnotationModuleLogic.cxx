@@ -28,8 +28,9 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkImageData.h>
 #include <vtkPNGWriter.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <string>

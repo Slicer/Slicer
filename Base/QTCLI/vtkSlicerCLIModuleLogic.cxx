@@ -17,6 +17,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLColorTableStorageNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>

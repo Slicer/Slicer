@@ -1,12 +1,14 @@
 
 #include "vtkCacheManager.h"
-#include <vtkCallbackCommand.h>
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
 
 #include <vtksys/Directory.hxx>
 #include <vtksys/SystemTools.hxx>
+
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkCacheManager );
 vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );

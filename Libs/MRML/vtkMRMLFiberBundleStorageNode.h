@@ -18,9 +18,7 @@
 #ifndef __vtkMRMLFiberBundleStorageNode_h
 #define __vtkMRMLFiberBundleStorageNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLFiberBundleNode.h" 
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
 {

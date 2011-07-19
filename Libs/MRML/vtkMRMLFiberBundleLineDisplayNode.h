@@ -22,12 +22,9 @@
 #ifndef __vtkMRMLFiberBundleLineDisplayNode_h
 #define __vtkMRMLFiberBundleLineDisplayNode_h
 
-#include "vtkPolyData.h"
-
-#include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
+class vtkPolyData;
 class vtkPolyDataTensorToColor;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode

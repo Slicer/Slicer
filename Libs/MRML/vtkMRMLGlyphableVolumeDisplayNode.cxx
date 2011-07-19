@@ -19,8 +19,15 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
+
+#include "vtkMatrix4x4.h"
+#include "vtkTransform.h"
+#include "vtkImageData.h"
+#include "vtkPolyData.h"
+#include "vtkLookupTable.h"
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 

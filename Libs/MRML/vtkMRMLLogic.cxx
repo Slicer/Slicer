@@ -6,6 +6,9 @@
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 
+// STD includes
+#include "vtkObjectFactory.h"
+
 #include <map>
 #include <set>
 

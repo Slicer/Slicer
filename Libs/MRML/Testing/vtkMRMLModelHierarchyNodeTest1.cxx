@@ -10,7 +10,9 @@
 
 =========================================================================auto=*/
 
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLModelNode.h"
 
 #include <stdlib.h>
 #include <iostream>

@@ -28,6 +28,7 @@ Version:   $Revision: 1.3 $
 #include "vtkImageFlip.h"
 #include "vtkSmartPointer.h"
 
+#include "vtkDataIOManager.h"
 #include "vtkDataFileFormatHelper.h"
 #include "vtkMRMLConfigure.h" // MRML_USE*
 

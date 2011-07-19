@@ -1,7 +1,9 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
-#include "vtkPiecewiseFunction.h"
+
+#include <vtkObjectFactory.h>
+#include <vtkPiecewiseFunction.h>
 
 #include <vector>
 #include <iostream>

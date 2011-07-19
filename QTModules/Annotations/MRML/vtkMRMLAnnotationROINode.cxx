@@ -12,6 +12,7 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMath.h"
+#include <vtkObjectFactory.h>
 #include "vtkPlanes.h"
 #include <vtkPoints.h>
 #include <vtkPolyData.h>

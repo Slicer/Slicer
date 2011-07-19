@@ -16,11 +16,8 @@
 #ifndef __vtkMRMLHierarchyNode_h
 #define __vtkMRMLHierarchyNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-
+#include "vtkMRMLScene.h"
 
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {

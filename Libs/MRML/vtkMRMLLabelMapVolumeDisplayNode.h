@@ -18,15 +18,10 @@
 #ifndef __vtkMRMLLabelMapVolumeDisplayNode_h
 #define __vtkMRMLLabelMapVolumeDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
+//#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
-#include "vtkImageData.h"
-#include "vtkImageMapToColors.h"
-#include <vtkLookupTable.h>
-#include <cassert>
+class vtkImageMapToColors;
 
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {

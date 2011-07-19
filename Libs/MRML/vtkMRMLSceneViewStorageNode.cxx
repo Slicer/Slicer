@@ -17,6 +17,7 @@
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLSceneViewStorageNode.h"
 #include "vtkMRMLScene.h"
 

@@ -43,7 +43,9 @@
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLVolumeNode.h>

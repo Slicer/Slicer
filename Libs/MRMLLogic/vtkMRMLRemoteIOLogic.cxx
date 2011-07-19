@@ -36,6 +36,9 @@
 vtkCxxRevisionMacro(vtkMRMLRemoteIOLogic, "$Revision: 16232 $");
 vtkStandardNewMacro(vtkMRMLRemoteIOLogic);
 
+vtkCxxSetObjectMacro(vtkMRMLRemoteIOLogic, CacheManager, vtkCacheManager);
+vtkCxxSetObjectMacro(vtkMRMLRemoteIOLogic, DataIOManager, vtkDataIOManager);
+
 //----------------------------------------------------------------------------
 vtkMRMLRemoteIOLogic::vtkMRMLRemoteIOLogic()
 {

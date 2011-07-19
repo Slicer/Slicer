@@ -11,6 +11,7 @@
 #include "vtkMRMLAnnotationNode.h"
 
 #include <vtkStdString.h>
+class vtkImageData;
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
@@ -40,7 +41,7 @@ public:
 
   ///
   /// The attached screenshot
-  vtkSetObjectMacro(ScreenShot, vtkImageData);
+  virtual void SetScreenShot(vtkImageData* );
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
   ///

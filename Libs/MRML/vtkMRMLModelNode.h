@@ -22,10 +22,11 @@
 
 // MRML includes
 #include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLModelDisplayNode.h"
+class vtkMRMLModelDisplayNode;
 class vtkMRMLStorageNode;
 
 // VTK includes
+class vtkDataArray;
 class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLDisplayableNode
@@ -59,11 +60,7 @@ public:
 
   /// 
   /// Get associated model display MRML node
-  vtkMRMLModelDisplayNode* GetModelDisplayNode() 
-  {
-    return vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode());
-  }
-
+  vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
   /// 
   /// add an array to the polydata's point/cell data

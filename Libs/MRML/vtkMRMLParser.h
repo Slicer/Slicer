@@ -20,17 +20,21 @@
 
 #include <stack> 
 
-#include "vtkObjectFactory.h"
+//#include "vtkObjectFactory.h"
 #include "vtkXMLParser.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+class vtkMRMLNode;
+class vtkMRMLScene;
+//#include "vtkMRMLScene.h"
+
+class vtkCollection;
 
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:
   static vtkMRMLParser *New();
-  vtkTypeMacro(vtkMRMLParser,vtkCollection);
+  vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
   //void PrintSelf(ostream& os, vtkIndent indent){}
   
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};

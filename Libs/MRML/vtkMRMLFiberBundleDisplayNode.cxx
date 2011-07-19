@@ -18,6 +18,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLScene.h"
 

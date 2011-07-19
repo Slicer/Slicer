@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkTagTable.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::vtkMRMLStorableNode()

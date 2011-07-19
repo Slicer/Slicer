@@ -26,6 +26,7 @@
 #include "qMRMLSceneModel_p.h"
 
 // MRMLLogic includes
+#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyLogic.h>
 
 // MRML includes

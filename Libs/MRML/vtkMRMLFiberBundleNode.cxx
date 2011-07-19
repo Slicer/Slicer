@@ -19,6 +19,9 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
 //------------------------------------------------------------------------------

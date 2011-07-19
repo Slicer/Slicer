@@ -30,6 +30,7 @@
 
 #include "vtkMRMLFiberBundleNode.h"
 
+class vtkDiffusionTensorGlyph;
 class vtkSlicerTractographyDisplay;
 
 class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleDisplayLogic

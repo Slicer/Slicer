@@ -7,20 +7,23 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <itksys/SystemTools.hxx>
-#include <itksys/Directory.hxx>
-
 #include "vtkSlicerTransformLogic.h"
 
+// MRML includes
+#include "vtkCacheManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 
+// VTKsys includes
+#include <itksys/SystemTools.hxx>
+#include <itksys/Directory.hxx>
+
 // VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 

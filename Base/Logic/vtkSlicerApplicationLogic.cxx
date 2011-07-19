@@ -16,6 +16,7 @@
 #include "vtkPointData.h"
 
 // MRML includes
+#include "vtkCacheManager.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"

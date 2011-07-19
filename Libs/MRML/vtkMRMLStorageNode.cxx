@@ -16,10 +16,13 @@ Version:   $Revision: 1.1.1.1 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCommand.h"
+#include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
+
+#include "vtkCommand.h"
+#include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
 #include "vtkURIHandler.h"
 

@@ -66,6 +66,8 @@
 
 class vtkDiffusionTensorMathematics;
 class vtkImageLabelOutline;
+class vtkTransform;
+
 class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic : public vtkMRMLAbstractLogic 
 {
 public:

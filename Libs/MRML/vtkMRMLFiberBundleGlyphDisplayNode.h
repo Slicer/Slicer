@@ -22,14 +22,10 @@
 #ifndef __vtkMRMLFiberBundleGlyphDisplayNode_h
 #define __vtkMRMLFiberBundleGlyphDisplayNode_h
 
-#include "vtkPolyData.h"
-
-#include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
 class vtkDiffusionTensorGlyph;
-
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {

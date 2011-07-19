@@ -18,14 +18,8 @@
 #ifndef __vtkMRMLFreeSurferModelOverlayStorageNode_h
 #define __vtkMRMLFreeSurferModelOverlayStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLModelNode.h" 
 
-
-class vtkImageData;
-class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLModelStorageNode
 {
   public:

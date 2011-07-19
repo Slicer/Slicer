@@ -18,6 +18,7 @@
 #include "vtkMRMLSliceLogic.h"
 
 // MRML includes
+#include <vtkCacheManager.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
@@ -35,17 +36,18 @@
 #include <itksys/Directory.hxx> 
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
-#include <vtkSmartPointer.h>
+#include <vtkAssignAttribute.h>
+#include <vtkDiffusionTensorMathematics.h>
 #include <vtkImageThreshold.h>
 #include <vtkImageAccumulateDiscrete.h>
 #include <vtkImageBimodalAnalysis.h>
 #include <vtkImageExtractComponents.h>
-#include <vtkDiffusionTensorMathematics.h>
-#include <vtkAssignAttribute.h>
-#include <vtkStringArray.h>
+#include <vtkLookupTable.h>
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
 #include <vtkPointData.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"

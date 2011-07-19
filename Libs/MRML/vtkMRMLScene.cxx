@@ -17,6 +17,10 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLParser.h"
 
+#include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
+#include "vtkTagTable.h"
+
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
@@ -100,6 +104,10 @@ Version:   $Revision: 1.18 $
 #include <map>
 
 //#define MRMLSCENE_VERBOSE 1
+
+vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
+vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
+vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable)
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 

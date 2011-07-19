@@ -15,7 +15,8 @@
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
 
 // MRML includes
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
+#include <vtkMRMLFiberBundleDisplayNode.h>
+#include <vtkMRMLTractographyFiducialSeedingNode.h>
 #include <vtkMRMLTransformableNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>

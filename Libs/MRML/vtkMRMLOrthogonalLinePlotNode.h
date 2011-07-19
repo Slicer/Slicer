@@ -14,15 +14,11 @@
 #ifndef __vtkMRMLOrthogonalLinePlotNode_h
 #define __vtkMRMLOrthogonalLinePlotNode_h
 
-#include <string>
-#include <vector>
-
-#include "vtkMRML.h"
+// MRML includes
 #include "vtkMRMLPlotNode.h"
 
-#include "vtkObject.h"
-
-#include "vtkDataObject.h"
+// VTK includes
+class vtkDataObject;
 
 class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
 {

@@ -27,10 +27,8 @@
 #ifndef __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
 #define __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLColorTableNode.h"
-#include "vtkPolyData.h"
-
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayPropertiesNode : public vtkMRMLColorTableNode
 {
@@ -100,7 +98,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayPropertiesNode : public vtkMR
   /// This is used internally to set a pointer to this polydata
   /// and reference count it.  
   /// TO DO: is this causing an extra modified event?
-  vtkSetObjectMacro( GlyphSource, vtkPolyData );
+  virtual void SetGlyphSource(vtkPolyData* polyData);
 
   /// TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   /// for scalar invariants with those ranges

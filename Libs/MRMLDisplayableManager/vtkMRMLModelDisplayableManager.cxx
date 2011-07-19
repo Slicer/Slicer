@@ -42,6 +42,7 @@
 #include <vtkProp3D.h>
 #include <vtkActor.h>
 #include <vtkImageActor.h>
+#include <vtkImageData.h>
 #include <vtkFollower.h>
 #include <vtkProperty.h>
 #include <vtkTexture.h>

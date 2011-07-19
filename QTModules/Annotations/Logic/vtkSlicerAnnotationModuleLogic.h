@@ -13,6 +13,9 @@
 
 #include "qSlicerAnnotationsModuleExport.h"
 
+// STD includes
+#include <string>
+
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationModuleLogic :
   public vtkSlicerModuleLogic
@@ -259,7 +262,7 @@ private:
 
   vtkMRMLAnnotationNode* m_LastAddedAnnotationNode;
 
-  vtksys_stl::string m_StringHolder;
+  std::string m_StringHolder;
 
   char* m_MeasurementFormat;
   char* m_CoordinateFormat;

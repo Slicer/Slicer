@@ -17,11 +17,14 @@ Version:   $Revision: 1.0 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkPolyData.h>
 
 #include "vtkMRMLGlyphableVolumeDisplayPropertiesNode.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkLookupTable.h"
+
+vtkCxxSetObjectMacro(vtkMRMLGlyphableVolumeDisplayPropertiesNode, GlyphSource, vtkPolyData);
 
 //------------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeDisplayPropertiesNode* vtkMRMLGlyphableVolumeDisplayPropertiesNode::New()

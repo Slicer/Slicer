@@ -19,8 +19,7 @@
 #ifndef __vtkMRMLFiducialListStorageNode_h
 #define __vtkMRMLFiducialListStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+//#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLFiducialListStorageNode : public vtkMRMLStorageNode

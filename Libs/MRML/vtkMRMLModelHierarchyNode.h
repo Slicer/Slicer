@@ -16,15 +16,9 @@
 #ifndef __vtkMRMLModelHierarchyNode_h
 #define __vtkMRMLModelHierarchyNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLHierarchyNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLDisplayableHierarchyNode.h"
-
-class vtkCallbackCommand;
+class vtkMRMLModelDisplayNode;
+class vtkMRMLModelNode;
 
 class VTK_MRML_EXPORT vtkMRMLModelHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {

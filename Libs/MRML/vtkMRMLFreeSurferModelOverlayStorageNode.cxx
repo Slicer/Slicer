@@ -12,38 +12,43 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkMRMLScene.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkStripper.h"
-
+// FreeSurfer includes
 #include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
 #include "vtkFSSurfaceLabelReader.h"
 #include "vtkFSSurfaceScalarReader.h"
 #include "vtkFSSurfaceAnnotationReader.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
+
+// MRML includes
 #include "vtkMRMLColorTableNode.h"
-
-#include "vtkPolyDataWriter.h"
-#include "vtkXMLPolyDataWriter.h"
-
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkPointData.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLScene.h"
 
+// VTK ITK includes
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkStdString.h>
+#include <vtkStripper.h>
+#include <vtkXMLPolyDataWriter.h>
+
+// ITKSys includes
 #include "itksys/SystemTools.hxx"
 
-#include "vtkCollection.h"
-#include "vtkStdString.h"
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 

@@ -4,12 +4,14 @@
 #include <algorithm>
 
 #include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMatrix4x4.h"
-#include "vtkAbstractTransform.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationAngleStorageNode.h"
+
+#include <vtkAbstractTransform.h>
+#include <vtkObjectFactory.h>
+#include <vtkMatrix4x4.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationAngleNode* vtkMRMLAnnotationAngleNode::New()

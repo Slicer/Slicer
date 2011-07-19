@@ -4,9 +4,11 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSceneViewNode.h>
+#include <vtkMRMLSceneViewStorageNode.h>
 #include <vtkMRMLHierarchyNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 
 // STD includes

@@ -1,9 +1,6 @@
 #ifndef __vtkMRMLROINode_h
 #define __vtkMRMLROINode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
 
 class vtkPlanes;

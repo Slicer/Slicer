@@ -18,19 +18,9 @@
 #ifndef __vtkMRMLGlyphableVolumeDisplayNode_h
 #define __vtkMRMLGlyphableVolumeDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLColorNode.h"
+class vtkMRMLColorNode;
 
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
-#include "vtkPolyData.h"
-#include "vtkLookupTable.h"
-
-class vtkImageData;
 class vtkMRMLVolumeNode;
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
 

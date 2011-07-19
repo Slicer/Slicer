@@ -1,7 +1,6 @@
 #ifndef __vtkMRMLInteractionNode_h
 #define __vtkMRMLInteractionNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode

@@ -41,6 +41,7 @@
 #include <vtkPoints.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 // STD includes
 #include <sstream>

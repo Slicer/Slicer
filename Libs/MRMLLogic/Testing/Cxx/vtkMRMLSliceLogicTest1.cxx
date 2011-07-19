@@ -16,6 +16,7 @@
 
 // MRML includes
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>

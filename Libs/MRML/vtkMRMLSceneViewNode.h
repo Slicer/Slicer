@@ -16,13 +16,10 @@
 #ifndef __vtkMRMLSceneViewNode_h
 #define __vtkMRMLSceneViewNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkImageData.h"
 #include "vtkMRMLStorableNode.h"
-#include "vtkMRMLSceneViewStorageNode.h"
+
+class vtkImageData;
+//#include "vtkMRMLSceneViewStorageNode.h"
 #include <vtkStdString.h>
 
 class vtkMRMLStorageNode;
@@ -88,7 +85,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   ///
   /// The attached screenshot of this sceneView
-  vtkSetObjectMacro(ScreenShot, vtkImageData);
+  virtual void SetScreenShot(vtkImageData*);
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
 

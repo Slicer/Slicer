@@ -1,11 +1,10 @@
 #ifndef __vtkMRMLROIListNode_h
 #define __vtkMRMLROIListNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLROINode.h"
-#include "vtkCollection.h"
-#include "vtkMRMLTransformableNode.h"
+class vtkMRMLROINode;
+
+class vtkCollection;
 
 ///  vtkMRMLROIListNode - MRML list node to represent a list of ROINODE 
 /// 

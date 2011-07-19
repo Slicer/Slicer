@@ -18,6 +18,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
+#include <vtkMatrix4x4.h>
 
 #include "vtkMRMLFiducial.h"
 //#include "vtkMRMLFiducialListNode.h"

@@ -28,6 +28,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
 
+#include "vtkCacheManager.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"

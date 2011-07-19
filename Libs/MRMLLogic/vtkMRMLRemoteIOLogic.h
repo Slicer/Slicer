@@ -51,9 +51,9 @@ public:
   /// The Get methods can be used elsewhere, but the set methods
   /// should only be used for debuggin
   vtkGetObjectMacro (CacheManager, vtkCacheManager);
-  vtkSetObjectMacro (CacheManager, vtkCacheManager);
+  virtual void SetCacheManager(vtkCacheManager*);
   vtkGetObjectMacro (DataIOManager, vtkDataIOManager);
-  vtkSetObjectMacro (DataIOManager, vtkDataIOManager);
+  virtual void SetDataIOManager(vtkDataIOManager*);
 
 protected:
   vtkMRMLRemoteIOLogic();

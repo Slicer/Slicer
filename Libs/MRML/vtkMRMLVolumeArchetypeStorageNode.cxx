@@ -14,6 +14,7 @@ Version:   $Revision: 1.6 $
 
 // MRML includes
 #include "vtkDataFileFormatHelper.h"
+#include "vtkDataIOManager.h"
 #include "vtkMRMLConfigure.h" // MRML_USE*
 #include "vtkMRMLScalarVolumeNode.h"
 #ifdef MRML_USE_vtkTeem
@@ -28,6 +29,9 @@ Version:   $Revision: 1.6 $
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
 #include "vtkITKImageWriter.h"
+
+// VTKsys includes
+#include <vtksys/SystemTools.hxx>
 
 // VTK includes
 #include <vtkCallbackCommand.h>

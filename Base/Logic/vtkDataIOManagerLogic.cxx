@@ -1,6 +1,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 
+#include "vtkCacheManager.h"
 #include "vtkDataIOManagerLogic.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"

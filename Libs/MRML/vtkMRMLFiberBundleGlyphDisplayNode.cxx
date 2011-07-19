@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkDiffusionTensorGlyph.h"
 
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------

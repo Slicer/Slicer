@@ -25,6 +25,7 @@
 #include <QDebug>
 
 // MRML includes
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes

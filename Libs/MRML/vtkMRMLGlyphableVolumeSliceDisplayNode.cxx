@@ -17,6 +17,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkTransform.h>
 
 #include "vtkTransformPolyDataFilter.h"
 

@@ -20,7 +20,9 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------

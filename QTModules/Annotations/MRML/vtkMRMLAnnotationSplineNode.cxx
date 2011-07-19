@@ -5,13 +5,15 @@
 #include <cmath>
 
 #include "vtkMRMLAnnotationSplineNode.h"
-#include "vtkMatrix4x4.h"
-#include "vtkAbstractTransform.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMath.h"
+
+#include <vtkAbstractTransform.h>
+#include <vtkMath.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationSplineNode* vtkMRMLAnnotationSplineNode::New()

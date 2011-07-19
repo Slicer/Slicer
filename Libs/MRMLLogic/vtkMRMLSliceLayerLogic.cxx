@@ -32,6 +32,7 @@
 #include "vtkCallbackCommand.h"
 #include "vtkSmartPointer.h"
 #include "vtkPointData.h"
+#include <vtkTransform.h>
 #include "vtkDiffusionTensorMathematics.h"
 
 //

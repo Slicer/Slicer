@@ -21,13 +21,9 @@
 #ifndef __vtkMRMLProceduralColorNode_h
 #define __vtkMRMLProceduralColorNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"
 
-
 class vtkColorTransferFunction;
-class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
@@ -89,13 +85,6 @@ public:
   /// Reimplemented vtkMRMLColorNode::GetScalarsToColors() to return the
   /// transfer function instead of the empty lookuptable
   virtual vtkScalarsToColors* GetScalarsToColors();
-
-  /// 
-  /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return Superclass::CreateDefaultStorageNode();
-    };
 
   /// 
   /// set up some names, going from the points defined in the transfer function

@@ -17,6 +17,8 @@
 #include <sstream>
 
 #include "vtkObjectFactory.h"
+#include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
@@ -38,6 +40,41 @@
 #include "itksys/SystemTools.hxx"
 
 #include "vtkSmartPointer.h"
+
+#include "itkMesh.h"
+#include "itkTriangleCell.h"
+#include "itkQuadrilateralCell.h"
+#include "itkDefaultDynamicMeshTraits.h"
+#include "itkMeshSpatialObject.h"
+#include "itkSpatialObjectReader.h"
+#include "itkSpatialObjectWriter.h"
+
+//BTX
+typedef itk::DefaultDynamicMeshTraits< vtkFloatingPointType , 3, 3, double > MeshTrait;
+typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
+
+/** Hold on to the type information specified by the template parameters. */
+typedef  floatMesh::Pointer             MeshPointer;
+typedef  MeshTrait::PointType           MeshPointType;
+typedef  MeshTrait::PixelType           MeshPixelType;  
+
+/** Some convenient typedefs. */
+typedef  floatMesh::Pointer              MeshPointer;
+typedef  floatMesh::CellTraits           CellTraits;
+typedef  floatMesh::PointsContainerPointer PointsContainerPointer;
+typedef  floatMesh::PointsContainer      PointsContainer;
+typedef  floatMesh::CellsContainerPointer CellsContainerPointer;
+typedef  floatMesh::CellsContainer       CellsContainer;
+typedef  floatMesh::PointType            PointType;
+typedef  floatMesh::CellType             CellType;
+typedef  itk::TriangleCell<CellType>   TriangleType;
+
+typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
+typedef itk::SpatialObjectReader<3,vtkFloatingPointType,MeshTrait> MeshReaderType;
+typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterType;
+//ETX
+
+
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 

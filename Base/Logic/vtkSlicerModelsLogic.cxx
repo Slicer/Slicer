@@ -12,7 +12,9 @@
 #include "vtkSlicerModelsLogic.h"
 
 /// MRML includes
+#include <vtkCacheManager.h>
 #include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLModelDisplayNode.h>
@@ -31,6 +33,9 @@
 /// ITK includes
 #include <itksys/Directory.hxx>
 #include <itksys/SystemTools.hxx>
+
+/// STD includes
+#include <cassert>
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModelsLogic);

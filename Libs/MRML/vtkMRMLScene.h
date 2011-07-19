@@ -29,13 +29,12 @@ Version:   $Revision: 1.18 $
 #include <vector>
 #include <string>
 
-#include "vtkCollection.h"
-#include "vtkObjectFactory.h"
+#include <vtkCollection.h>
 
 #include "vtkMRML.h"
-#include "vtkCacheManager.h"
-#include "vtkDataIOManager.h"
-#include "vtkTagTable.h"
+class vtkCacheManager;
+class vtkDataIOManager;
+class vtkTagTable;
 
 class vtkCallbackCommand;
 class vtkGeneralTransform;
@@ -434,13 +433,13 @@ public:
 
 
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
-  vtkSetObjectMacro ( CacheManager, vtkCacheManager );
+  virtual void SetCacheManager(vtkCacheManager* );
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
-  vtkSetObjectMacro ( DataIOManager, vtkDataIOManager );
+  virtual void SetDataIOManager(vtkDataIOManager* );
   vtkGetObjectMacro ( URIHandlerCollection, vtkCollection );
   vtkSetObjectMacro ( URIHandlerCollection, vtkCollection );
   vtkGetObjectMacro ( UserTagTable, vtkTagTable);
-  vtkSetObjectMacro ( UserTagTable, vtkTagTable);  
+  virtual void SetUserTagTable(vtkTagTable* );  
 
   /// 
   /// find a URI handler in the collection that can work on the passed URI
