@@ -104,7 +104,8 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 
   if (this->ImageData)
     {
-    this->ImageData->Delete();
+  //  this->ImageData->Delete();
+    this->ImageData = 0;
     }
 
   if (this->Blend)
