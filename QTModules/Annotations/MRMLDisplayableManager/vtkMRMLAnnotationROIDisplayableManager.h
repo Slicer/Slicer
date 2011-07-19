@@ -28,6 +28,12 @@ class vtkMRMLAnnotationROIDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
+class vtkActor2D;
+class vtkPlane;
+class vtkCutter;
+class vtkCubeSource;
+class vtkTransform;
+class vtkTransformPolyDataFilter;
 
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationROIDisplayableManager :
@@ -42,7 +48,7 @@ public:
 protected:
 
   vtkMRMLAnnotationROIDisplayableManager(){this->m_Focus="vtkMRMLAnnotationROINode";}
-  virtual ~vtkMRMLAnnotationROIDisplayableManager(){}
+  virtual ~vtkMRMLAnnotationROIDisplayableManager();
 
   /// Callback for click in RenderWindow
   virtual void OnClickInRenderWindow(double x, double y);
@@ -58,8 +64,28 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
+
+  /// Update just the position for the widget, implemented by subclasses.
+  virtual void UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *node);
+
+  /// Check, if the widget is displayable in the current slice geometry
+  virtual bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
+
   /// Set mrml parent transform to widgets
   virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget);
+
+  /// Update 2D countour pipeline
+  void Update2DCountour(vtkMRMLAnnotationNode* node);
+
+  /// Map of 2d countor objects indexed using associated node
+  std::map<vtkMRMLAnnotationNode*, vtkActor2D*> Contour2DActors;
+  std::map<vtkMRMLAnnotationNode*, vtkPlane*> Contour2DPlanes;
+  std::map<vtkMRMLAnnotationNode*, vtkCutter*> Contour2DCutters;
+  std::map<vtkMRMLAnnotationNode*, vtkCubeSource*> Contour2DCubes;
+  std::map<vtkMRMLAnnotationNode*, vtkTransform*> Contour2DTransforms;
+  std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*> Contour2DTransformFilters;
 
 
 private:

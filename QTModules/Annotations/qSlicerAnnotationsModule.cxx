@@ -88,8 +88,9 @@ void qSlicerAnnotationsModule::setup()
       << "Text"
       << "Fiducial"
       << "Bidimensional"
-      << "Ruler";
-
+      << "Ruler"
+      << "ROI"
+      ;
   foreach(const QString& name, slicerViewDisplayableManagers)
     {
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(

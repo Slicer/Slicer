@@ -118,7 +118,7 @@ protected:
   void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
 
   /// Check, if the widget is displayable in the current slice geometry
-  bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
+  virtual bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
 
   /// Observe one node
   void SetAndObserveNode(vtkMRMLAnnotationNode *annotationNode);

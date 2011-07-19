@@ -27,6 +27,15 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+#include <vtkCutter.h>
+#include <vtkPlane.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper2D.h>
+#include <vtkActor2D.h>
+#include <vtkMath.h>
+#include <vtkCubeSource.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 
 // std includes
 #include <string>
@@ -104,6 +113,52 @@ public:
 // vtkMRMLAnnotationROIDisplayableManager methods
 
 //---------------------------------------------------------------------------
+vtkMRMLAnnotationROIDisplayableManager::~vtkMRMLAnnotationROIDisplayableManager()
+{
+  std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter;
+  for (iter = this->Contour2DActors.begin(); iter != this->Contour2DActors.end(); iter++)
+    {
+    iter->second->Delete();
+    }
+  this->Contour2DActors.clear();
+
+  std::map<vtkMRMLAnnotationNode*, vtkPlane*>::iterator iter1;
+  for (iter1 = this->Contour2DPlanes.begin(); iter1 != this->Contour2DPlanes.end(); iter1++)
+    {
+    iter1->second->Delete();
+    }
+  this->Contour2DPlanes.clear();
+
+  std::map<vtkMRMLAnnotationNode*, vtkCutter*>::iterator iter2;
+  for (iter2 = this->Contour2DCutters.begin(); iter2 != this->Contour2DCutters.end(); iter2++)
+    {
+    iter2->second->Delete();
+    }
+  this->Contour2DCutters.clear();
+
+  std::map<vtkMRMLAnnotationNode*, vtkCubeSource*>::iterator iter3;
+  for (iter3 = this->Contour2DCubes.begin(); iter3 != this->Contour2DCubes.end(); iter3++)
+    {
+    iter3->second->Delete();
+    }
+  this->Contour2DCubes.clear();
+
+  std::map<vtkMRMLAnnotationNode*, vtkTransform*>::iterator iter4; 
+  for (iter4 = this->Contour2DTransforms.begin(); iter4 != this->Contour2DTransforms.end(); iter4++)
+    {
+    iter4->second->Delete();
+    }
+  this->Contour2DTransforms.clear();
+
+  std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*>::iterator iter5; 
+  for (iter5 = this->Contour2DTransformFilters.begin(); iter5 != this->Contour2DTransformFilters.end(); iter5++)
+    {
+    iter5->second->Delete();
+    }
+  this->Contour2DTransformFilters.clear();
+
+}
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -127,6 +182,7 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
     vtkErrorMacro("CreateWidget: Could not get ROI node!")
     return 0;
     }
+
 
   vtkAnnotationROIWidget* boxWidget = vtkAnnotationROIWidget::New();
 
@@ -219,6 +275,12 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
   matrix->Delete();
   transform->Delete();
 
+
+  if (this->Is2DDisplayableManager())
+    {
+    this->Update2DCountour(node);
+    }
+
   return boxWidget;
 
 }
@@ -240,6 +302,12 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
     return;
     }
 
+  if (this->Is2DDisplayableManager())
+    {
+    // cannot manipulate ROI in 2d views
+    return;
+    }
+
   vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
   myCallback->SetNode(node);
   myCallback->SetWidget(widget);
@@ -252,6 +320,161 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
 
 }
 
+void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *node)
+{
+  this->Update2DCountour(vtkMRMLAnnotationNode::SafeDownCast(node));
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationNode* node)
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+    {
+    return;
+    }
+
+    // cast to the specific mrml node
+  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+
+  double xyz[3];
+  double rxyz[3];
+  roiNode->GetXYZ(xyz);
+  roiNode->GetRadiusXYZ(rxyz);
+    
+  
+  vtkMatrix4x4 *XYToRASMatrix = sliceNode->GetXYToRAS();
+
+  vtkCubeSource *cube = NULL;
+  vtkPlane *plane = NULL;
+  vtkCutter *cutter = NULL;
+  vtkTransformPolyDataFilter *transformFilter = NULL;
+  vtkTransform *transform = NULL;
+  vtkActor2D *actor = NULL;
+
+  std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter = Contour2DActors.find(node);
+  if (iter == Contour2DActors.end())
+    {
+    // create new pipeline
+    cube = vtkCubeSource::New();
+    plane = vtkPlane::New();
+
+    cutter = vtkCutter::New();
+    cutter->SetInput(cube->GetOutput());
+    cutter->SetCutFunction(plane);
+
+    transform = vtkTransform::New();
+    transformFilter = vtkTransformPolyDataFilter::New();
+    transformFilter->SetInput(cutter->GetOutput());
+    transformFilter->SetTransform(transform);
+
+    vtkPolyDataMapper2D *mapper = vtkPolyDataMapper2D::New();
+    mapper->SetInput(transformFilter->GetOutput());
+
+    actor = vtkActor2D::New();
+    actor->SetMapper(mapper);
+
+    this->GetRenderer()->AddActor2D(actor);
+   
+    this->Contour2DActors[node] = actor;
+    this->Contour2DCutters[node] = cutter;
+    this->Contour2DPlanes[node] = plane;
+    this->Contour2DCubes[node] = cube;
+    this->Contour2DTransforms[node] = transform;
+    this->Contour2DTransformFilters[node] = transformFilter;
+
+    mapper->Delete();
+    }
+  else
+    {
+    actor = iter->second;
+
+    std::map<vtkMRMLAnnotationNode*, vtkPlane*>::iterator iter1 = Contour2DPlanes.find(node);
+    if (iter1 == Contour2DPlanes.end())
+      {
+      vtkErrorMacro("Update2DCountour:plane not found")
+      return;
+      }
+    plane = iter1->second;
+
+    std::map<vtkMRMLAnnotationNode*, vtkCutter*>::iterator iter2 = Contour2DCutters.find(node);
+    if (iter2 == Contour2DCutters.end())
+      {
+      vtkErrorMacro("Update2DCountour:cutter not found")
+      return;
+      }
+    cutter = iter2->second;
+
+    std::map<vtkMRMLAnnotationNode*, vtkCubeSource*>::iterator iter3 = Contour2DCubes.find(node);
+    if (iter3 == Contour2DCubes.end())
+      {
+      vtkErrorMacro("Update2DCountour:cube source not found")
+      return;
+      }
+    cube = iter3->second;
+
+
+    std::map<vtkMRMLAnnotationNode*, vtkTransform*>::iterator iter4 = Contour2DTransforms.find(node);
+    if (iter4 == Contour2DTransforms.end())
+      {
+      vtkErrorMacro("Update2DCountour: transform not found")
+      return;
+      }
+    transform = iter4->second;
+
+    std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*>::iterator iter5 = Contour2DTransformFilters.find(node);
+    if (iter5 == Contour2DTransformFilters.end())
+      {
+      vtkErrorMacro("Update2DCountour:transform filter not found")
+      return;
+      }
+    transformFilter = iter5->second;
+
+    }
+
+  cube->SetCenter(xyz);
+  cube->SetXLength(2*rxyz[0]);
+  cube->SetYLength(2*rxyz[1]);
+  cube->SetZLength(2*rxyz[2]);
+
+  double normal[4]={0,0,1,0};
+  double normalRAS[4]={0,0,0,0};
+  XYToRASMatrix->MultiplyPoint(normal, normalRAS);
+  plane->SetNormal(normalRAS);
+
+  double origin[4]={0,0,0,1};
+  double originRAS[4]={0,0,0,1};
+  XYToRASMatrix->MultiplyPoint(origin, originRAS);
+  plane->SetOrigin(originRAS);
+
+  cutter->Update();
+
+  vtkMatrix4x4 *RASToXYMatrix = vtkMatrix4x4::New();
+  RASToXYMatrix->DeepCopy(XYToRASMatrix);
+  RASToXYMatrix->Invert();
+
+  transform->SetMatrix(RASToXYMatrix);
+  transformFilter->Update();
+
+  RASToXYMatrix->Delete();
+  return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  if (this->Is2DDisplayableManager())
+    {
+    std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter = this->Contour2DActors.find(vtkMRMLAnnotationNode::SafeDownCast(node));
+    if (iter != this->Contour2DActors.end())
+      {
+      this->GetRenderer()->RemoveActor2D(iter->second);
+      //this->Contour2DActors.erase(iter);
+      }
+    }
+  this->Superclass::OnMRMLSceneNodeRemovedEvent(node);
+}
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
@@ -269,6 +492,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
     return;
     }
+
+  if (this->Is2DDisplayableManager())
+    {
+    this->Update2DCountour(node);
+    return;
+    }
+
 
   // cast to the specific widget
   vtkAnnotationROIWidget* boxWidget = vtkAnnotationROIWidget::SafeDownCast(widget);
@@ -340,6 +570,10 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
+  if (this->Is2DDisplayableManager())
+    {
+    return;
+    }
 
   if (!widget)
     {
@@ -415,6 +649,10 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
   if (!this->IsCorrectDisplayableManager())
     {
     // jump out
+    return;
+    }
+  if (this->Is2DDisplayableManager())
+    {
     return;
     }
 
@@ -521,3 +759,15 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
     }
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationROIDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* sliceNode, vtkMRMLAnnotationNode* node)
+{
+  if (this->Is2DDisplayableManager())
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
