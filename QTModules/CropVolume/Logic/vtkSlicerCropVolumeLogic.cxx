@@ -95,7 +95,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMRMLVolumeNode *inputVolume = pnode->GetInputVolumeNode();
   vtkMRMLScalarVolumeNode *refVolume;
   vtkMRMLAnnotationROINode *inputROI = pnode->GetROINode();
-  vtkMRMLVolumeNode *outputVolume = pnode->GetOutputVolumeNode();
+  vtkMRMLVolumeNode *outputVolume = NULL;
   vtkMatrix4x4 *inputRASToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
