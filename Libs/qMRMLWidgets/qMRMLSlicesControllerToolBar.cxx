@@ -416,7 +416,7 @@ vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveCrosshai
   vtkSmartPointer<vtkCollection> nodes;
   if (this->MRMLScene)
     {
-    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNodes"));
+    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
     }
   if (nodes)
     {
@@ -430,7 +430,7 @@ vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveSliceNod
   vtkSmartPointer<vtkCollection> nodes;
   if (this->MRMLScene)
     {
-    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLSliceNodes"));
+    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLSliceNode"));
     }
   if (nodes)
     {
