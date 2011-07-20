@@ -64,7 +64,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
   this->MRMLAppLogic = qSlicerApplication::application() ? qSlicerApplication::application()->mrmlApplicationLogic(): 0;
 
-  this->CreateAndPlaceMenuButton = 0;
+  this->CreateAndPlaceToolButton = 0;
   this->CreateAndPlaceMenu = 0;
 
   this->PersistenceCheckBox = 0;
@@ -79,16 +79,31 @@ void qSlicerMouseModeToolBarPrivate::init()
 {
   Q_Q(qSlicerMouseModeToolBar);
 
+  // RotateMode action
+  this->ViewTransformModeAction = new QAction(q);
+  this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
+  this->ViewTransformModeAction->setText("&Rotate"); 
+  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
+  this->ViewTransformModeAction->setCheckable(true);
+  connect(this->ViewTransformModeAction, SIGNAL(triggered()),
+          q, SLOT(switchToViewTransformMode()));
+
+  q->addAction(this->ViewTransformModeAction);
+
   // place once
   
   this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
 
-  this->CreateAndPlaceMenuButton = new ctkMenuButton();
-  this->CreateAndPlaceMenuButton->setToolTip(QObject::tr("Create and Place"));
-  this->CreateAndPlaceMenuButton->setText(QObject::tr("Place"));
-  //this->CreateAndPlaceMenuButton->setIcon(QIcon(":/Icons/"));
-  this->CreateAndPlaceMenuButton->setMenu(this->CreateAndPlaceMenu);
-  q->addWidget(this->CreateAndPlaceMenuButton);
+  this->CreateAndPlaceToolButton = new QToolButton();
+  this->CreateAndPlaceToolButton->setCheckable(true);
+  this->CreateAndPlaceToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  this->CreateAndPlaceToolButton->setToolTip(QObject::tr("Create and Place"));
+  this->CreateAndPlaceToolButton->setText(QObject::tr("Place"));
+  this->CreateAndPlaceToolButton->setMenu(this->CreateAndPlaceMenu);
+  this->CreateAndPlaceToolButton->setPopupMode(QToolButton::MenuButtonPopup);
+  QObject::connect( this->CreateAndPlaceMenu, SIGNAL(triggered(QAction*)),
+                    this->CreateAndPlaceToolButton, SLOT(setDefaultAction(QAction*)));
+  q->addWidget(this->CreateAndPlaceToolButton);
 
   // persistence
   this->PersistenceCheckBox = new QCheckBox(q);
@@ -102,16 +117,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   
   //q->addSeparator();
   
-  // RotateMode action
-  this->ViewTransformModeAction = new QAction(q);
-  this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
-  this->ViewTransformModeAction->setText("&Rotate"); 
-  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
-  this->ViewTransformModeAction->setCheckable(true);
-  connect(this->ViewTransformModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToViewTransformMode()));
 
-  q->addAction(this->ViewTransformModeAction);
 
   
   QList<QAction*> actionList;
@@ -193,7 +199,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
     case vtkMRMLInteractionNode::Place:
       {
       // find the active annotation id and set it's corresponding action to be checked
-      //q->switchPlaceMode();
       vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
       if ( selectionNode )
         {
@@ -260,8 +265,13 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
       newAction->setCheckable(true);
       connect(newAction, SIGNAL(triggered()),
               q, SLOT(switchPlaceMode()));
-      this->CreateAndPlaceMenuButton->menu()->addAction(newAction);
+      this->CreateAndPlaceToolButton->menu()->addAction(newAction);
       this->ActionGroup->addAction(newAction);
+      // is it a fiducial? make it the default action
+      if (annotationID == QString("vtkMRMLAnnotationFiducialNode"))
+        {
+        this->CreateAndPlaceToolButton->setDefaultAction(newAction);
+        }
 //      logger.debug(QString("Added action for annotation id ") + annotationID
 //      + QString(", name = ") + annotationName + QString(", resource = ") + annotationResource);
       }
@@ -280,7 +290,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annota
     {
     logger.debug("updateWidgetToAnnotation: null active annotation id, resetting to view transform");
     this->ViewTransformModeAction->setChecked(true);
-    this->CreateAndPlaceMenuButton->setIcon(QIcon());
     q->changeCursorTo(QCursor());
     return;
     }
@@ -294,8 +303,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annota
       // set this action checked
       actions.at(i)->setChecked(true);
       logger.debug(QString("Found active annotation: ") + thisID);
-      // update the icon on the menu
-      this->CreateAndPlaceMenuButton->setIcon(actions.at(i)->icon());
       // update the cursor from the annotation id
       vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
       if ( selectionNode )
@@ -449,8 +456,6 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
     this->changeCursorTo(QCursor());
 
     d->ViewTransformModeAction->setChecked(true);
-    // remove the icon from the place menu
-    d->CreateAndPlaceMenuButton->setIcon(QIcon());
     }
 }
 
@@ -496,12 +501,9 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
 {
   Q_D(qSlicerMouseModeToolBar);
 
-  // reset the icon to nothing
-  d->CreateAndPlaceMenuButton->setIcon(QIcon());
-  
   // get the currently checked action
   QString annotationID;
-  QAction *thisAction = d->CreateAndPlaceMenuButton->menu()->activeAction();
+  QAction *thisAction = d->CreateAndPlaceToolButton->menu()->activeAction();
   if (thisAction)
     {
     annotationID = thisAction->text();
@@ -528,8 +530,6 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
     selectionNode->SetActiveAnnotationID(annotationID.toAscii().data());
     std::string resource = selectionNode->GetAnnotationResourceByID(std::string(annotationID.toAscii().data()));
     logger.debug(QString("switchPlaceMode: got resource ") + QString(resource.c_str()) );
-    // set the icon in the ctkmenubutton
-    d->CreateAndPlaceMenuButton->setIcon(QIcon(resource.c_str()));
     // change the cursor
     this->changeCursorTo(QCursor(QPixmap(resource.c_str()),-1,0));
 

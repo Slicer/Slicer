@@ -29,7 +29,6 @@
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
-#include <ctkMenuButton.h>
 #include "qSlicerBaseQTGUIExport.h"
 
 // SlicerQt includes
@@ -47,6 +46,7 @@
 class qSlicerMouseModeToolBarPrivate;
 class QAction;
 class QActionGroup;
+class QToolButton;
 
 class qSlicerMouseModeToolBarPrivate: public QObject
 {
@@ -84,7 +84,7 @@ public:
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
   /// PlaceMode
-  ctkMenuButton *CreateAndPlaceMenuButton;
+  QToolButton *CreateAndPlaceToolButton;
   QMenu*        CreateAndPlaceMenu;
 
   // Place Persistence
