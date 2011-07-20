@@ -31,34 +31,58 @@ if { [info command ::tpycl::tcl_after] == "" } {
   rename ::after ::tpycl::tcl_after
 }
 
-set ::after_warning ""
-set ::after_serial 0
+set ::after_serial -1
 array set ::after_scripts {}
 proc ::after {option args} {
-  # special purpose version of the after command to use 
-  # an alternate event queue (probably Qt)
-  if { $::after_warning == "" } {
-    puts "TODO: need to handle after events correctly with timers"
-    set ::after_warning "done"
-  }
-  # for now, just evaluate the 
-  # code as it is passed in, but issue a warning
   switch $option {
     "cancel" {
-      #puts "todo: cancel $args"
+      if { [scan $args after#%d serial] != 1 } {
+        error "can't parse $args"
+      }
+      if { [info exists ::after_scripts(idle,$serial)] } {
+        unset ::after_scripts(idle,$serial)
+      } else {
+        # silent error condition - mimic tcl native behavior
+        # error "No after event $serial"
+      }
+      set returnValue "" 
     }
     "idle" {
-      eval $args
+      incr ::after_serial
+      set ::after_scripts(idle,$::after_serial) $args
+      set returnValue "after#$::after_serial"
     }
     default {
       if { ![string is integer $option] } {
         error "expected integer but got $option"
       }
-      #puts "in $option ms do $args"
-      eval $args
+      # TODO: this currently is the same as 'idle' - needs to be changed to respect the ms argument
+      incr ::after_serial
+      set ::after_scripts(idle,$::after_serial) $args
+      set returnValue "after#$::after_serial"
     }
   }
-  return 'after0'
+  if { [array names ::after_scripts idle,*] != "" } {
+    # we have scripts to process, so tell pythonqt to start the timer
+    py_after    
+  }
+  return $returnValue
+}
+
+proc ::after_callback {} {
+  set idleScripts [array names ::after_scripts idle,*]
+  foreach script $idleScripts {
+    # check if script exists - it might have been canceled during
+    # one of the earlier callbacks
+    if { [info exists ::after_scripts($script)] } {
+      eval $::after_scripts($script)
+      unset ::after_scripts($script)
+    }
+  }
+  if { [array names ::after_scripts idle,*] != "" } {
+    # we have more scripts to process, so tell pythonqt to start the timer
+    py_after
+  }
 }
   
 namespace eval tpycl {

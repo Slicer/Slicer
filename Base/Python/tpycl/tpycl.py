@@ -11,6 +11,7 @@ import sys
 import os
 import Tkinter
 from __main__ import slicer
+import qt
 
 class tpycl(object):
 
@@ -28,7 +29,13 @@ class tpycl(object):
     self.tcl.createcommand("py_package", self.py_package)
     self.tcl.createcommand("py_type", self.py_type)
     self.tcl.createcommand("py_del", self.py_del)
+    self.tcl.createcommand("py_after", self.py_after)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
+
+    self.timer = qt.QTimer()
+    self.timer.setSingleShot(True)
+    self.timer.setInterval(0)
+    self.timer.connect('timeout()', self.after_callback)
 
     if sys.platform == 'win32':
       # Update environment variables set by application - unlike other platforms,
@@ -38,7 +45,7 @@ class tpycl(object):
         self.tcl_putenv(key, os.environ[key])
 
     # This path is Slicer-specific
-    self.tcl.eval("source $::env(SLICER_HOME)/bin/Python/tpycl/tpycl.tcl")
+    self.tcl.eval("source %s/bin/Python/tpycl/tpycl.tcl" % slicer.app.slicerHome)
 
   def usage(self):
     print "tpycl [options] [file.tcl] [arg] [arg]"
@@ -108,6 +115,17 @@ class tpycl(object):
         
     return None
 
+  def py_after(self):
+    """ sets the QTimer to call the callback
+    """
+    self.timer.start()
+    
+  def after_callback(self):
+    """ what gets called when the after timeout happens
+    """
+    self.tcl.eval('::after_callback')
+    self.timer.stop()
+    
   def py_eval(self,cmd):
     """ evaluated the python command string and returns the result
     - if the result is a vtk object instance, it is registered in the tcl interp
