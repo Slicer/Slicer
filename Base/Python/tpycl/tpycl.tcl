@@ -31,8 +31,16 @@ if { [info command ::tpycl::tcl_puts] == "" } {
   rename ::puts ::tpycl::tcl_puts
 }
 
-proc puts {message} {
-  py_puts $message
+proc puts {args} {
+  if { $args == "" } {
+    error "wrong # args: should be \"puts ?-nonewline? ?channelId? string\""
+  }
+  set noNewline 0
+  if { [lindex $args 0] == "-nonewline" } {
+    set noNewline 1
+    set args [lrange $args 1 end]
+  }
+  py_puts $noNewline $args
 }
 
 

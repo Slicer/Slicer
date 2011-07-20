@@ -116,13 +116,15 @@ class tpycl(object):
         
     return None
 
-  def py_puts(self, message):
+  def py_puts(self, noNewLine, message):
     """ print into the python shell
     """
     p = slicer.util.pythonShell()
     if p:
       c = qt.QColor()
-      p.printMessage(message+"\n",c)
+      p.printMessage(message,c)
+      if noNewLine == "0":
+        p.printMessage("\n",c)
 
   def py_after(self):
     """ sets the QTimer to call the callback
