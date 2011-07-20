@@ -469,7 +469,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
-  seedWidget->CompleteInteraction();
+//  seedWidget->CompleteInteraction();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -565,7 +565,7 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
 
     fiducialNode->SaveView();
     }
-  seedWidget->CompleteInteraction();
+  //seedWidget->CompleteInteraction();
 
   // enable processing of modified events
   fiducialNode->DisableModifiedEventOff();
@@ -766,7 +766,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
     // not already updating from propagate mrml to widget, so trigger a render
     seedRepresentation->NeedToRenderOn();
     seedWidget->Modified();
-    seedWidget->CompleteInteraction();
+//    seedWidget->CompleteInteraction();
     }
   // enable processing of modified events
   //this->m_Updating = 0;
