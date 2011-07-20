@@ -335,17 +335,6 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
     return;
     }
 
-    // cast to the specific mrml node
-  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
-
-  double xyz[3];
-  double rxyz[3];
-  roiNode->GetXYZ(xyz);
-  roiNode->GetRadiusXYZ(rxyz);
-    
-  
-  vtkMatrix4x4 *XYToRASMatrix = sliceNode->GetXYToRAS();
-
   vtkCubeSource *cube = NULL;
   vtkPlane *plane = NULL;
   vtkCutter *cutter = NULL;
@@ -433,31 +422,81 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
 
     }
 
+  // cast to the specific mrml node
+  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+
+  double xyz[4]={0,0,0,1};
+  roiNode->GetXYZ(xyz);
   cube->SetCenter(xyz);
+
+  double rxyz[4] = {0,0,0,0};
+  roiNode->GetRadiusXYZ(rxyz);
   cube->SetXLength(2*rxyz[0]);
   cube->SetYLength(2*rxyz[1]);
   cube->SetZLength(2*rxyz[2]);
 
-  double normal[4]={0,0,1,0};
-  double normalRAS[4]={0,0,0,0};
-  XYToRASMatrix->MultiplyPoint(normal, normalRAS);
-  plane->SetNormal(normalRAS);
+  // handle ROI transform to world space
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  transformToWorld->Identity();
 
+  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+
+  // update the transform from world to screen space
+  // for the extracted cut plane
+  vtkSmartPointer<vtkMatrix4x4> rasToXY = vtkSmartPointer<vtkMatrix4x4>::New();
+  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
+  rasToXY->Invert();
+
+  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
+  mat->Identity();
+  mat->Multiply4x4(rasToXY, transformToWorld, mat);
+  rasToXY->DeepCopy(mat);
+
+  transform->SetMatrix(rasToXY);
+
+  //
+  // update the plane equation for the current slice cutting plane
+  // - extract from the slice matrix
+  // - normalize the normal
+  transformToWorld->Invert();
+  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
+
+  mat->Identity();
+  mat->Multiply4x4(transformToWorld, rasToXY, mat);
+  rasToXY->DeepCopy(mat);
+
+  double normal[4]={0,0,0,1};
   double origin[4]={0,0,0,1};
-  double originRAS[4]={0,0,0,1};
-  XYToRASMatrix->MultiplyPoint(origin, originRAS);
-  plane->SetOrigin(originRAS);
+  double sum = 0;
+  int i;
+
+  for (i=0; i<3; i++)
+    {
+    normal[i] = rasToXY->GetElement(i, 2);
+    origin[i] = rasToXY->GetElement(i, 3);
+    }
+  for (i=0; i<3; i++)
+    {
+    sum += normal[i]*normal[i];
+    }
+
+  double lenInv = 1./sqrt(sum);
+  for (i=0; i<3; i++)
+    {
+    normal[i] = normal[i]*lenInv;
+    }
+
+  plane->SetNormal(normal);
+  plane->SetOrigin(origin);
 
   cutter->Update();
-
-  vtkMatrix4x4 *RASToXYMatrix = vtkMatrix4x4::New();
-  RASToXYMatrix->DeepCopy(XYToRASMatrix);
-  RASToXYMatrix->Invert();
-
-  transform->SetMatrix(RASToXYMatrix);
   transformFilter->Update();
 
-  RASToXYMatrix->Delete();
   return;
 }
 
