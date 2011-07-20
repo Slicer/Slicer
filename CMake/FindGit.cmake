@@ -106,31 +106,40 @@ if(GIT_EXECUTABLE)
     set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
     set(${prefix}_WC_GITSVN False)
 
-    # In case git-svn is used, attempt to extract svn info
-    execute_process(COMMAND ${GIT_EXECUTABLE} svn info
+    # Check if this git is likely to be a git-svn repository
+    execute_process(COMMAND ${GIT_EXECUTABLE} config --list
       WORKING_DIRECTORY ${dir}
       TIMEOUT 3
-      ERROR_VARIABLE git_svn_info_error
-      OUTPUT_VARIABLE ${prefix}_WC_INFO
-      RESULT_VARIABLE git_svn_info_result
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
+      ERROR_VARIABLE git_config_error
+      OUTPUT_VARIABLE git_config_output
+      )
 
-    if(${git_svn_info_result} EQUAL 0)
-      set(${prefix}_WC_GITSVN True)
-      string(REGEX REPLACE "^(.*\n)?URL: ([^\n]+).*"
-        "\\2" ${prefix}_WC_URL "${${prefix}_WC_INFO}")
-      string(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
-        "\\2" ${prefix}_WC_REVISION "${${prefix}_WC_INFO}")
-      string(REGEX REPLACE "^(.*\n)?Repository Root: ([^\n]+).*"
-        "\\2" ${prefix}_WC_ROOT "${${prefix}_WC_INFO}")
-      string(REGEX REPLACE "^(.*\n)?Last Changed Author: ([^\n]+).*"
-        "\\2" ${prefix}_WC_LAST_CHANGED_AUTHOR "${${prefix}_WC_INFO}")
-      string(REGEX REPLACE "^(.*\n)?Last Changed Rev: ([^\n]+).*"
-        "\\2" ${prefix}_WC_LAST_CHANGED_REV "${${prefix}_WC_INFO}")
-      string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
-        "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
-    endif(${git_svn_info_result} EQUAL 0)
+    if(${git_config_result} MATCHES "svn[-]remote")
+      # In case git-svn is used, attempt to extract svn info
+      execute_process(COMMAND ${GIT_EXECUTABLE} svn info
+        WORKING_DIRECTORY ${dir}
+        TIMEOUT 3
+        ERROR_VARIABLE git_svn_info_error
+        OUTPUT_VARIABLE ${prefix}_WC_INFO
+        RESULT_VARIABLE git_svn_info_result
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+      if(${git_svn_info_result} EQUAL 0)
+        set(${prefix}_WC_GITSVN True)
+        string(REGEX REPLACE "^(.*\n)?URL: ([^\n]+).*"
+          "\\2" ${prefix}_WC_URL "${${prefix}_WC_INFO}")
+        string(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
+          "\\2" ${prefix}_WC_REVISION "${${prefix}_WC_INFO}")
+        string(REGEX REPLACE "^(.*\n)?Repository Root: ([^\n]+).*"
+          "\\2" ${prefix}_WC_ROOT "${${prefix}_WC_INFO}")
+        string(REGEX REPLACE "^(.*\n)?Last Changed Author: ([^\n]+).*"
+          "\\2" ${prefix}_WC_LAST_CHANGED_AUTHOR "${${prefix}_WC_INFO}")
+        string(REGEX REPLACE "^(.*\n)?Last Changed Rev: ([^\n]+).*"
+          "\\2" ${prefix}_WC_LAST_CHANGED_REV "${${prefix}_WC_INFO}")
+        string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
+          "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
+      endif(${git_svn_info_result} EQUAL 0)
+    endif(${git_config_result} MATCHES "svn[-]remote")
   endmacro(GIT_WC_INFO)
 endif(GIT_EXECUTABLE)
 
