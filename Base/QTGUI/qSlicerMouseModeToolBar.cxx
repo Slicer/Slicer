@@ -583,7 +583,15 @@ void qSlicerMouseModeToolBar::onPersistenceCheckBoxStateChanged(int state)
   
   if (interactionNode)
     {
-    interactionNode->SetPlaceModePersistence(state);
+    if (state == Qt::Checked)
+      {
+      interactionNode->SetPlaceModePersistence(1);
+      }
+    else if (state == Qt::Unchecked)
+      {
+      interactionNode->SetPlaceModePersistence(0);
+      }
+    // ignoring Qt::PartiallyChecked, this checkbox is not tristate
     }
   else
     {
