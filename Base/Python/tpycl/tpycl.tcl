@@ -26,6 +26,16 @@ proc ::package {option args} {
   }
 }
 
+if { [info command ::tpycl::tcl_puts] == "" } {
+  # rename the 'puts' command first time script is sourced
+  rename ::puts ::tpycl::tcl_puts
+}
+
+proc puts {message} {
+  py_puts $message
+}
+
+
 if { [info command ::tpycl::tcl_after] == "" } {
   # rename the 'after' command first time script is sourced
   rename ::after ::tpycl::tcl_after

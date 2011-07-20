@@ -29,6 +29,7 @@ class tpycl(object):
     self.tcl.createcommand("py_package", self.py_package)
     self.tcl.createcommand("py_type", self.py_type)
     self.tcl.createcommand("py_del", self.py_del)
+    self.tcl.createcommand("py_puts", self.py_puts)
     self.tcl.createcommand("py_after", self.py_after)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
 
@@ -114,6 +115,14 @@ class tpycl(object):
       exec( "del(%s)"%instanceName, globals() )
         
     return None
+
+  def py_puts(self, message):
+    """ print into the python shell
+    """
+    p = slicer.util.pythonShell()
+    if p:
+      c = qt.QColor()
+      p.printMessage(message+"\n",c)
 
   def py_after(self):
     """ sets the QTimer to call the callback
