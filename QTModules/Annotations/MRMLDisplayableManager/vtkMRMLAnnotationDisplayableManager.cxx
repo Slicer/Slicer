@@ -335,13 +335,11 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       this->Helper->RemoveSeeds();
       return;
       }
-    if (this->IsCorrectDisplayableManager())
+    else if (event == vtkMRMLInteractionNode::InteractionModeChangedEvent)
       {
-      if (event == vtkMRMLInteractionNode::InteractionModeChangedEvent)
-        {
-        // don't update locking on persistence changed event
-        this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
-        }
+      // always update lock if the mode changed, even if this isn't the displayable manager 
+      // for the annotation that is getting placed, but don't update locking on persistence changed event
+      this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
       }
     }
   else
