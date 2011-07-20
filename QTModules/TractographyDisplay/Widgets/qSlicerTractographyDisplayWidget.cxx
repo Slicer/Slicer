@@ -57,6 +57,8 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
         vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(*it), *it);
     }
 
+  this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
+
   QObject::connect( this->VisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setVisibility(int)) );
   QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorByCellScalars(int)) );
   QObject::connect( this->ColorBySolidCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorBySolid(int)) );
