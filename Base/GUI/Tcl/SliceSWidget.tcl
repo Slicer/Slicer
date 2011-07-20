@@ -53,6 +53,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     method updateSWidgets {} {}
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
+    method updateAnnotationCallback {r a s} {}
+    method updateAnnotationsCallback {r a s} {}
     method updateAnnotation {r a s} {}
     method updateAnnotations {r a s} {}
     method updateStatusAnnotation {r a s} {}
@@ -185,7 +187,6 @@ itcl::body SliceSWidget::destructor {} {
 # not already have one.  Also delete old ones.
 #
 itcl::body SliceSWidget::updateSWidgets {} {
-
   # this part is generic, based on the types configured for this class to manage
   foreach swidgetType $swidgetTypes {
     foreach {swidgetClass configVar nodeClass} $swidgetType {}
@@ -384,7 +385,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
-
   # To support the LightBox, the event locations sometimes need to be
   # relative to a renderer (or viewport or pane of the lightbox).
   # Currently, these are relative to the viewport of the "start" action. 
@@ -450,21 +450,17 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         }
     }
 
-
     #
     # update the annotations even if they aren't currently visible
     # - this way the values will be correct when the corner annotation
     #   are eventually made visible
     #
-    set annotationsUpdated false
     set link [$_sliceCompositeNode GetLinkedControl]
     if { $link == 1 && [$this isCompareViewMode] == 1 && 
           ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
         $this updateAnnotations $r $a $s
-        set annotationsUpdated true
     } else {
         $this updateAnnotation $r $a $s
-        set annotationsUpdated true
     }
   } else {
     $_renderWidget CornerAnnotationVisibilityOff
@@ -952,8 +948,19 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   }
 }
 
+#
+# Defer actual calculation of the annotation text until the 
+# it is time to render the text
+#
+itcl::body SliceSWidget::updateAnnotation {r a s} {
+  after idle $this updateAnnotationCallback $r $a $s
+}
 
 itcl::body SliceSWidget::updateAnnotations {r a s} {
+  after idle $this updateAnnotationsCallback $r $a $s
+}
+
+itcl::body SliceSWidget::updateAnnotationsCallback {r a s} {
 
   # check arguments - if they are, for example, nan, just bail out
   foreach v "r a s" {
@@ -1108,7 +1115,8 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
   }
 }
 
-itcl::body SliceSWidget::updateAnnotation {r a s} {
+
+itcl::body SliceSWidget::updateAnnotationCallback {r a s} {
 
   # check arguments - if they are, for example, nan, just bail out
   foreach v "r a s" {
