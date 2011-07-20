@@ -62,11 +62,8 @@ public:
 
   QString firstSelectedNode()const;
 
-  // Register the widget
-  void setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
-
   // Register the logic
-  void setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic);
+  void setLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
 public slots:
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
@@ -93,7 +90,6 @@ private:
   Q_DECLARE_PRIVATE(qMRMLSceneViewsTreeView);
   Q_DISABLE_COPY(qMRMLSceneViewsTreeView);
 
-  qSlicerSceneViewsModuleWidget* m_Widget;
   vtkSlicerSceneViewsModuleLogic* m_Logic;
 
 };

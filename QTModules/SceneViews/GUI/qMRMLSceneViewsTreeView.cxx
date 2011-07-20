@@ -306,7 +306,7 @@ void qMRMLSceneViewsTreeView::deleteSelected()
     // now, it is safe to delete
     for (int j=0; j < markedForDeletion.size(); ++j)
       {
-      vtkMRMLSceneViewNode* sceneViewNodeToDelete = vtkMRMLSceneViewNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
+      vtkMRMLSceneViewNode* sceneViewNodeToDelete = vtkMRMLSceneViewNode::SafeDownCast(this->mrmlScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
       this->m_Logic->RemoveSceneViewNode(sceneViewNodeToDelete);
       }
     this->m_Logic->SetActiveHierarchyNodeID(NULL);
@@ -423,25 +423,9 @@ void qMRMLSceneViewsTreeView::mousePressEvent(QMouseEvent* event)
 //------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-/// Set and observe the GUI widget
-//-----------------------------------------------------------------------------
-void qMRMLSceneViewsTreeView::setAndObserveWidget(qSlicerSceneViewsModuleWidget* widget)
-{
-  if (!widget)
-    {
-    return;
-    }
-
-  //Q_D(qMRMLSceneViewsTreeView);
-
-  this->m_Widget = widget;
-
-}
-
-//-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
-void qMRMLSceneViewsTreeView::setAndObserveLogic(vtkSlicerSceneViewsModuleLogic* logic)
+void qMRMLSceneViewsTreeView::setLogic(vtkSlicerSceneViewsModuleLogic* logic)
 {
   if (!logic)
     {

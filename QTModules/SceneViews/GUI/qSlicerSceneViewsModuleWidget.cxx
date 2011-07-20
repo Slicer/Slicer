@@ -20,6 +20,8 @@
 #include <QGraphicsRectItem>
 #include <QBuffer>
 #include <QImageWriter>
+#include <QMainWindow>
+#include <QStatusBar>
 
 #include "vtkObserverManager.h"
 #include "vtkCollection.h"
@@ -27,6 +29,8 @@
 
 // GUI includes
 #include "GUI/qSlicerSceneViewsModuleDialog.h"
+
+#include "qSlicerApplication.h"
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -92,7 +96,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(editSceneView(const QString&)));
 
   // setup the hierarchy treeWidget
-  this->hierarchyTreeView->setAndObserveLogic(this->logic());
+  this->hierarchyTreeView->setLogic(this->logic());
   this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
   this->logic()->SetAndObserveWidget(q);
   this->hierarchyTreeView->hideScene();
@@ -168,8 +172,7 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
 
   d->logic()->RestoreSceneView(mrmlId.toLatin1());
 
-  QMessageBox::information(this, "3D Slicer SceneView updated",
-                                 "The SceneView was restored including the attached scene.");
+  qSlicerApplication::application()->mainWindow()->statusBar()->showMessage("The SceneView was restored including the attached scene.", 2000);
 }
 
 //-----------------------------------------------------------------------------
