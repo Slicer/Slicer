@@ -22,6 +22,7 @@ namespace eval SWidget {
 namespace eval SWidget set CALLBACK_LEVEL 0
 namespace eval SWidget set VERBOSE_CALLBACKS 0
 namespace eval SWidget set DEBUG_CALLBACKS 1
+namespace eval SWidget set TIME_CALLBACKS 0
 namespace eval SWidget set DISABLE_CALLBACKS 0
 namespace eval SWidget set EXCLUDE "__instance_name_pattern__"
 namespace eval SWidget {
@@ -29,7 +30,8 @@ namespace eval SWidget {
     if { $::SWidget::DISABLE_CALLBACKS } {
       return
     }
-    if { [string match $::SWidget::EXCLUDE $instance] } {
+    if { [string match $::SWidget::EXCLUDE $instance] ||
+          [string match $::SWidget::EXCLUDE $args] } {
       return
     }
     if { $::SWidget::VERBOSE_CALLBACKS } {
@@ -40,14 +42,19 @@ namespace eval SWidget {
     }
     incr ::SWidget::CALLBACK_LEVEL
     if { [info command $instance] != "" } {
-      if { $::SWidget::DEBUG_CALLBACKS } {
-        eval $instance $args
+      if { $::SWidget::TIME_CALLBACKS } {
+        puts -nonewline "($instance $args: "
+        puts "[time "eval $instance $args" 1])"
       } else {
-        if { [catch "eval $instance $args" res] } {
-          catch "puts $res"
-          catch "puts $::errorInfo"
-          if { [string match "*bad alloc*" $res] } {
-            ::bgerror $res
+        if { $::SWidget::DEBUG_CALLBACKS } {
+          eval $instance $args
+        } else {
+          if { [catch "eval $instance $args" res] } {
+            catch "puts $res"
+            catch "puts $::errorInfo"
+            if { [string match "*bad alloc*" $res] } {
+              ::bgerror $res
+            }
           }
         }
       }
