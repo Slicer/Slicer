@@ -147,6 +147,8 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
                 q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
+  this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
+                q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
 
   // Connect SliceCollapsibleButton
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
@@ -999,6 +1001,21 @@ void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
     return;
     }
   logger.trace(QString("setSliceOffsetValue: %1").arg(offset));
+  d->SliceLogic->StartSliceOffsetInteraction();
+  d->SliceLogic->SetSliceOffset(offset);
+  d->SliceLogic->EndSliceOffsetInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::trackSliceOffsetValue(double offset)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  if (!d->SliceLogic)
+    {
+    return;
+    }
+  logger.trace(QString("trackSliceOffsetValue"));
+  d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
 }
 

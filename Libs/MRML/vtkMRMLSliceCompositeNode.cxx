@@ -71,6 +71,8 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
   this->SliceIntersectionVisibility = 0;
   this->DoPropagateVolumeSelection = true;
+  this->Interacting = 0;
+  this->HotLinkedControl = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -258,6 +260,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetLinkedControl( atoi(attValue) );
       }    
+    else if (!strcmp(attName, "hotLinkedControl")) 
+      {
+      this->SetHotLinkedControl( atoi(attValue) );
+      }    
     else if (!strcmp(attName, "foregroundGrid")) 
       {
       this->SetForegroundGrid( atoi(attValue) );
@@ -351,6 +357,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetForegroundOpacity(node->GetForegroundOpacity());
   this->SetLabelOpacity(node->GetLabelOpacity());
   this->SetLinkedControl (node->GetLinkedControl());
+  this->SetHotLinkedControl (node->GetHotLinkedControl());
   this->SetForegroundGrid ( node->GetForegroundGrid());
   this->SetBackgroundGrid ( node->GetBackgroundGrid());
   this->SetLabelGrid ( node->GetLabelGrid());
@@ -378,6 +385,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
   os << indent << "LinkedControl: " << this->LinkedControl << "\n";
+  os << indent << "HotLinkedControl: " << this->HotLinkedControl << "\n";
   os << indent << "ForegroundGrid: " << this->ForegroundGrid << "\n";
   os << indent << "BackgroundGrid: " << this->BackgroundGrid << "\n";
   os << indent << "LabelGrid: " << this->LabelGrid << "\n";
@@ -387,6 +395,8 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
   os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
   os << indent << "DoPropagateVolumeSelection: " << this->DoPropagateVolumeSelection << "\n";
+  os << indent << "Interacting: " <<
+    (this->Interacting ? "on" : "off") << "\n";
 }
 
 // End

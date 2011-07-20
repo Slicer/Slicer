@@ -97,6 +97,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->ActiveSlice = 0;
 
+  this->Interacting = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -788,6 +789,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Prescribed slice spacing: (" << this->PrescribedSliceSpacing[0] << ", "
                                << this->PrescribedSliceSpacing[1] << ", "
                                << this->PrescribedSliceSpacing[2] << ")\n";
+  os << indent << "Interacting: " <<
+    (this->Interacting ? "on" : "off") << "\n";
 }
 
 void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)

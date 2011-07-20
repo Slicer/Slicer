@@ -236,6 +236,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// occurs when rendering (helps to see original acquisition data
   /// and for obluique volumes with few slices).
   void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode);
+
+  ///
+  /// Get/Set a flag indicating whether this node is actively being
+  /// manipulated (usually) by a user interface. This flag is used by
+  /// logic classes to determine whether state changes should be
+  /// propagated to other nodes to implement linked controls.
+  vtkSetMacro(Interacting, int);
+  vtkGetMacro(Interacting, int);
+  vtkBooleanMacro(Interacting, int);
   
 protected:
 
@@ -267,6 +276,8 @@ protected:
   double PrescribedSliceSpacing[3];
 
   int ActiveSlice;
+
+  int Interacting;
 };
 
 #endif

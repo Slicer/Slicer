@@ -1775,6 +1775,62 @@ void vtkMRMLSliceLogic::SetSliceOffset(double offset)
 
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::StartInteraction()
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+
+  // If we have hot linked controls, then we want to broadcast changes
+  if (compositeNode && 
+      compositeNode->GetHotLinkedControl() && compositeNode->GetLinkedControl())
+    {
+    if (sliceNode)
+      {
+      sliceNode->InteractingOn();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::EndInteraction()
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+
+  // If we have linked controls, then we want to broadcast changes
+  if (compositeNode && compositeNode->GetLinkedControl())
+    {
+    if (sliceNode)
+      {
+      // Need to trigger a final message to broadcast to all the nodes
+      // that are linked
+      sliceNode->InteractingOn();
+      sliceNode->Modified();
+      sliceNode->InteractingOff();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::StartSliceOffsetInteraction()
+{
+  // This method is here in case we want to do something specific when
+  // we start SliceOffset interactions
+
+  this->StartInteraction();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::EndSliceOffsetInteraction()
+{
+  // This method is here in case we want to do something specific when
+  // we complete SliceOffset interactions
+  
+  this->EndInteraction();
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
 {
@@ -2006,3 +2062,4 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset)
   // slice is not aligned to any of the layers or out of the volume
   return SLICE_INDEX_NO_VOLUME;
 }
+

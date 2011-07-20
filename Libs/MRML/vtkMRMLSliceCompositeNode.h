@@ -104,6 +104,14 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// toggle that gangs control of slice viewers
   vtkGetMacro (LinkedControl, int );
   vtkSetMacro (LinkedControl, int );
+  vtkBooleanMacro(LinkedControl, int);
+
+  /// 
+  /// toggle for whether linked behavior is immediate or waits until
+  /// an interaction is finished
+  vtkGetMacro (HotLinkedControl, int );
+  vtkSetMacro (HotLinkedControl, int );
+  vtkBooleanMacro(HotLinkedControl, int);
 
   /// 
   /// toggles for grid in different slice layers.
@@ -185,6 +193,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       Subtract
     };
 
+  ///
+  /// Get/Set a flag indicating whether this node is actively being
+  /// manipulated (usually) by a user interface. This flag is used by
+  /// logic classes to determine whether state changes should be
+  /// propagated to other nodes to implement linked controls.
+  vtkSetMacro(Interacting, int);
+  vtkGetMacro(Interacting, int);
+  vtkBooleanMacro(Interacting, int);
+  
 protected:
   vtkMRMLSliceCompositeNode();
   ~vtkMRMLSliceCompositeNode();
@@ -200,6 +217,7 @@ protected:
   
   double LabelOpacity;
   int LinkedControl;
+  int HotLinkedControl;
 
   int ForegroundGrid;
   int BackgroundGrid;
@@ -214,6 +232,8 @@ protected:
   int AnnotationMode;
   
   bool DoPropagateVolumeSelection;
+
+  int Interacting;
 };
 
 #endif

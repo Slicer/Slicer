@@ -21,6 +21,7 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLSliceLogic.h"
+#include <vtkMRMLSliceLinkLogic.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -49,6 +50,7 @@ public:
   vtkMRMLSelectionNode *    SelectionNode;
   vtkMRMLInteractionNode *  InteractionNode;
   vtkSmartPointer<vtkCollection> SliceLogics;
+  vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
 };
 
 //----------------------------------------------------------------------------
@@ -59,6 +61,8 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal()
 {
   this->SelectionNode = 0;
   this->InteractionNode = 0;
+  
+  this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -155,6 +159,8 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
   this->SetInteractionNode(interactionNode);
 
   this->Superclass::SetMRMLSceneInternal(newScene);
+
+  this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
 }
 
 //----------------------------------------------------------------------------

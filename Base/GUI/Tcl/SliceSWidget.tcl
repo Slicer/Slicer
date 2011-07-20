@@ -41,7 +41,6 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartViewportOrigin "0 0"
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
-    variable _actionLink 0
     variable _actionStartOrientation ""
     variable _actionModifier ""
     variable _swidgets ""
@@ -63,7 +62,6 @@ if { [itcl::find class SliceSWidget] == "" } {
     method moveSlice { delta } {}
     method jumpSlice { r a s } {}
     method jumpOtherSlices { r a s } {}
-    method getLinkedSliceLogics {} {}
     method getLinkedSliceGUIs {} {}
     method addSliceModelSWidgets {} {}
     method isCompareViewer {} {}
@@ -592,7 +590,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
-
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
 
       $this requestDelayedAnnotation
@@ -606,37 +603,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set _actionStartViewportOrigin "$rox $roy"
       set _actionStartRAS $ras
       set _actionStartOrientation [$_sliceNode GetOrientationString]
-      set _actionLink [$_sliceCompositeNode GetLinkedControl]
-      $_sliceCompositeNode SetLinkedControl 0
+
+      [$sliceGUI GetLogic] StartInteraction
 
       $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
       set _actionStartFOV [$_sliceNode GetFieldOfView]
     }
     "RightButtonReleaseEvent" { 
-      $_sliceCompositeNode SetLinkedControl $_actionLink
-      if { $_actionState == "Zoom" } {
-         # set the field of view on each slice node. note that
-         # the Red viewer and Compare viewers may have different
-         # aspect ratios, so set the field of views in x the same
-         foreach {nfx nfy nfz} [$_sliceNode GetFieldOfView] {}
-         set sliceLogics [$this getLinkedSliceLogics]
-         foreach logic $sliceLogics {
-            set snode [$logic GetSliceNode]
-            foreach {fx fy fz} [$snode GetFieldOfView] {}
-            # new prescribed x fov, aspect corrected y fov, orig z fov
-            $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
-         }
-     } elseif { $_actionState == "Rotate" } {
-         set sliceLogics [$this getLinkedSliceLogics]
-         # set the SliceToRAS on each slice node
-         foreach logic $sliceLogics {
-           set snode [$logic GetSliceNode]
-           [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
-           $snode UpdateMatrices
-         }
-     }
-
+      [$sliceGUI GetLogic] EndInteraction
+      
       $this requestDelayedAnnotation
       set _actionState ""
       set _actionStartOrientation ""
@@ -807,23 +783,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             # node, then set that field of view on the linked slice
             # nodes
             set logic [$sliceGUI GetLogic]
+
+            $logic StartInteraction
             $logic FitSliceToBackground $w $h
             $_sliceNode UpdateMatrices
-            
-            foreach {nfx nfy nfz} [$_sliceNode GetFieldOfView] {}
-
-            # get the linked logics (including self)
-            set sliceLogics [$this getLinkedSliceLogics]
-            # save state for undo
-            
-            # can't call FitToBackground on linked nodes since they
-            # may have different aspect rations
-            foreach logic $sliceLogics {
-              set snode [$logic GetSliceNode]
-              foreach {fx fy fz} [$snode GetFieldOfView] {}
-              # new prescribed x fov, aspect corrected y fov, orig z fov
-              $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
-            }
+            $logic EndInteraction
           }
           "g" {
             # toggle the label opacity via the slice compoiste node
@@ -1144,7 +1108,7 @@ itcl::body SliceSWidget::updateAnnotationCallback {r a s} {
   set labelname "None"
 
   set reformation [$_sliceNode GetOrientationString]
-  
+
   # get the display node for the label volume, extract the name of the colour used to represent the label pixel
   set colorName ""
   if {[info command $_layers(label,node)] != "" && \
@@ -1388,27 +1352,13 @@ itcl::body SliceSWidget::decrementSlice {} {
 
 itcl::body SliceSWidget::moveSlice { delta } {
     set logic [$sliceGUI GetLogic]
-    set sliceNode [$logic GetSliceNode]
-    set orientString [$sliceNode GetOrientationString]
 
     set offset [$logic GetSliceOffset]
     set spacing [$logic GetLowestVolumeSliceSpacing]
 
-    set logics [$this getLinkedSliceLogics]
-
-    # set the slice offset for all slice logics (there may be a flaw
-    # in this logic as modifying a single logic may trigger a
-    # controller widget which then will trigger all the other slice
-    # logics. Comes down to whether we want to rely on the existence
-    # of SliceControllerWidgets.)
-    set numberOfLogics [llength $logics]
-    foreach logic $logics {
-        set tlink [[$logic GetSliceCompositeNode] GetLinkedControl]
-        [$logic GetSliceCompositeNode] SetLinkedControl 0
-        $logic SetSliceOffset [expr $offset + $delta]
-        [$logic GetSliceCompositeNode] SetLinkedControl $tlink
-    }
-    $_renderWidget CornerAnnotationVisibilityOff
+    $logic StartInteraction
+    $logic SetSliceOffset [expr $offset + $delta]
+    $logic EndInteraction
 }
 
 itcl::body SliceSWidget::jumpSlice { r a s } {
@@ -1435,52 +1385,6 @@ itcl::body SliceSWidget::addSliceModelSWidgets {} {
 }
 
 
-# Return the SliceLogics that are linked to the current 
-# SliceNode/SliceCompositeNode.  
-#
-# The list of linked logics either contains the current slice (because 
-# linking is off) or a list of logics (one for the current slice and others 
-# for linked slices).
-#
-itcl::body SliceSWidget::getLinkedSliceLogics { } {
-    set logic [$sliceGUI GetLogic]
-    set sliceNode [$logic GetSliceNode]
-    set orientString [$sliceNode GetOrientationString]
-
-    set logics ""
-    set link [$_sliceCompositeNode GetLinkedControl]
-    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
-        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-        set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
-        set viewArrangement [$layout GetViewArrangement]
-
-        set numsgui [$ssgui GetNumberOfSliceGUI]
-
-        for { set i 0 } { $i < $numsgui } { incr i } {
-            if { $i == 0} {
-                set sgui [$ssgui GetFirstSliceGUI]
-                set lname [$ssgui GetFirstSliceGUILayoutName]
-            } else {
-                set sgui [$ssgui GetNextSliceGUI $lname]
-                set lname [$ssgui GetNextSliceGUILayoutName $lname]
-            }
-
-            if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
-              continue
-            } 
-
-            set currSliceNode [$sgui GetSliceNode]
-            set currOrientString [$currSliceNode GetOrientationString]
-            if { [string compare $orientString $currOrientString] == 0 || ($_actionStartOrientation != "" && [string compare $_actionStartOrientation $currOrientString] == 0) } {
-                lappend logics [$sgui GetLogic]
-            }
-        }
-    } else {
-        lappend logics [$sliceGUI GetLogic]
-    }
-
-  return $logics
-}
 
 # Return the SliceGUIs that are linked to the current 
 # SliceNode/SliceCompositeNode.  
@@ -1586,8 +1490,8 @@ itcl::body SliceSWidget::startTranslate { x y  windowx windowy  rox roy  ras } {
     set _actionStartWindowXY "$windowx $windowy"
     set _actionStartViewportOrigin "$rox $roy"
     set _actionStartRAS $ras
-    set _actionLink [$_sliceCompositeNode GetLinkedControl]
-    $_sliceCompositeNode SetLinkedControl 0
+
+    [$sliceGUI GetLogic] StartInteraction
 
     $sliceGUI SetGrabID $this
     $sliceGUI SetGUICommandAbortFlag 1
@@ -1597,13 +1501,7 @@ itcl::body SliceSWidget::startTranslate { x y  windowx windowy  rox roy  ras } {
 }
 
 itcl::body SliceSWidget::endTranslate { } {
-    $_sliceCompositeNode SetLinkedControl $_actionLink
-    set sliceLogics [$this getLinkedSliceLogics]
-    foreach logic $sliceLogics {
-        set snode [$logic GetSliceNode]
-        [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
-        $snode UpdateMatrices
-    }
+    [$sliceGUI GetLogic] EndInteraction
 
     $this requestDelayedAnnotation
     set _actionState ""

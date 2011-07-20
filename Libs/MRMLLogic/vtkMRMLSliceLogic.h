@@ -276,6 +276,22 @@ public:
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
+  ///
+  /// Indicate an interaction is beginning
+  void StartInteraction();
+
+  ///
+  /// Indicate an interaction has been completed
+  void EndInteraction();
+
+  ///
+  /// Indicate the slice offset value is starting to change
+  void StartSliceOffsetInteraction();
+
+  ///
+  /// Indicate the slice offset value has completed its change
+  void EndSliceOffsetInteraction();
+
   /// 
   /// Set the current distance so that it corresponds to the closest center of 
   /// a voxel in IJK space (integer value)

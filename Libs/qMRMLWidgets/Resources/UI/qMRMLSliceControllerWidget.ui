@@ -410,6 +410,9 @@
           <property name="pageStep">
            <double>1.000000000000000</double>
           </property>
+          <property name="tracking">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
