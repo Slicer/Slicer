@@ -238,11 +238,11 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           // Copy the slice to RAS information
           sNode->SetSliceToRAS( sliceNode->GetSliceToRAS() );
 
-          // Copy the field of view information. May need to do this
-          // differently as each viewer may have a different aspect ratio
+          // Copy the field of view information. Use the new
+          // prescribed x fov, aspect corrected y fov, and keep z fov constant
           sNode->SetFieldOfView( sliceNode->GetFieldOfView()[0], 
-                                 sliceNode->GetFieldOfView()[1], 
-                                 sliceNode->GetFieldOfView()[2] );
+                                 sliceNode->GetFieldOfView()[0] * sNode->GetFieldOfView()[1] / sNode->GetFieldOfView()[0], 
+                                 sNode->GetFieldOfView()[2] );
 
           // Forces the internal matrices to be updated
           sNode->UpdateMatrices();
