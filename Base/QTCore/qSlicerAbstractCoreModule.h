@@ -56,8 +56,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// order to have the signal/slots working and the meta-class name valid.
   Q_OBJECT
 
-  /// The following property will be added to the meta-class
-  /// and will also be available through PythonQt
+  /// The following properties will be added to the meta-class
+  /// and will also be available through PythonQt.
   Q_PROPERTY(QString name READ name)
   Q_PROPERTY(QString title READ title)
   Q_PROPERTY(QString category READ category)
@@ -65,6 +65,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(int index READ index)
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
   Q_PROPERTY(bool hidden READ isHidden WRITE setHidden)
+  Q_PROPERTY(QString path READ path)
 
 public:
 
@@ -152,6 +153,11 @@ public:
   /// Returns true if the module should be hidden to the user.
   /// By default, modules are not hidden.
   virtual bool isHidden()const;
+
+  /// Returns path if any
+  /// \todo Ideally this function should be added within the qSlicerLoadableModule.
+  QString path()const;
+  void setPath(const QString& newPath);
 
 public slots:
 

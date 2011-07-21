@@ -58,6 +58,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   //qDebug() << "module->contributor()" << module->contributor();
   //qDebug() << "module->helpText()" << module->helpText();
   //qDebug() << "module->acknowledgementText()" << module->acknowledgementText();
+  module->setPath(this->path());
 
   return module.take();
 }

@@ -81,6 +81,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   module->setXmlModuleDescription(QString(xmlDescription));
   module->setTempDirectory(this->TempDirectory);
+  module->setPath(this->path());
 
   return module.take();
 }

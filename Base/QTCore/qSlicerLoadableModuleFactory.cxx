@@ -34,7 +34,22 @@
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
 #include "vtkSlicerConfigure.h"
-  
+
+//-----------------------------------------------------------------------------
+qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
+{
+  qSlicerAbstractCoreModule * module =
+      ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
+  module->setPath(this->path());
+  return module;
+}
+
 //-----------------------------------------------------------------------------
 class qSlicerLoadableModuleFactoryPrivate
 {
@@ -114,4 +129,10 @@ QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)cons
 QString qSlicerLoadableModuleFactory::extractModuleName(const QString& libraryName)
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerLoadableModuleFactoryItem* qSlicerLoadableModuleFactory::createFactoryFileBasedItem()
+{
+  return new qSlicerLoadableModuleFactoryItem();
 }

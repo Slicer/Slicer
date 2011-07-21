@@ -76,6 +76,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 
   module->setXmlModuleDescription(xmlDescription.toLatin1());
   module->setTempDirectory(this->TempDirectory);
+  module->setPath(this->path());
 
   return module.take();
 }

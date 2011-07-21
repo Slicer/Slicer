@@ -32,6 +32,17 @@
 
 class qSlicerLoadableModuleFactoryPrivate;
 
+//-----------------------------------------------------------------------------
+class qSlicerLoadableModuleFactoryItem
+  : public ctkFactoryPluginItem<qSlicerAbstractCoreModule>
+{
+public:
+  qSlicerLoadableModuleFactoryItem();
+protected:
+  virtual qSlicerAbstractCoreModule* instanciator();
+};
+
+//-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory :
   public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
 {
@@ -50,6 +61,9 @@ public:
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   static QString extractModuleName(const QString& libraryName);
+
+protected:
+  virtual qSlicerLoadableModuleFactoryItem* createFactoryFileBasedItem();
 
 protected:
   QScopedPointer<qSlicerLoadableModuleFactoryPrivate> d_ptr;

@@ -47,6 +47,7 @@ public:
   bool                                       Enabled;
   bool                                       Hidden;
   QString                                    Name;
+  QString                                    Path;
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
@@ -191,6 +192,10 @@ CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isHidden, Hidden);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setHidden, Hidden);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerAbstractCoreModule, QString, path, Path);
+CTK_SET_CPP(qSlicerAbstractCoreModule, const QString&, setPath, Path);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresentation()
