@@ -167,28 +167,18 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
 #endif
           vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
           }
-        // now throw the events
         if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
           {
-          //--- increment the number of Places that have occured.
           this->NumberOfPlaces++;
           }
         }
       }
     }
-
-  if ( interactionNode != 0 )
-    {
-      // release the pointer
-    interactionNode = 0;
-    }
-  
 }
 
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
 {
-  // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   int placeModePersistence = 0;
   vtkMRMLInteractionNode *interactionNode = 0;
