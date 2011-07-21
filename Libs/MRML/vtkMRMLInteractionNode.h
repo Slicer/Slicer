@@ -55,8 +55,8 @@ public:
   /// mouse modes
   enum
     {
-      SelectRegion,
-      LassoRegion,
+      //SelectRegion,
+      //LassoRegion,
       Place,
       ViewTransform,
     };
