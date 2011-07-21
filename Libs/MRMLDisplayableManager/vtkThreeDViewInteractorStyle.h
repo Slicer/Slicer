@@ -89,14 +89,6 @@ public:
   vtkGetObjectMacro(ModelDisplayableManager, vtkMRMLModelDisplayableManager);
   virtual void SetModelDisplayableManager(vtkMRMLModelDisplayableManager *modelDisplayableManager);
 
-  /// Events
-  enum
-  {
-      PickEvent,
-      PlaceEvent,
-      SelectRegionEvent,
-  };
-    
 protected:
   vtkThreeDViewInteractorStyle();
   ~vtkThreeDViewInteractorStyle();

@@ -170,7 +170,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
         // now throw the events
         if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
           {
-          this->InvokeEvent(vtkThreeDViewInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
           //--- increment the number of Places that have occured.
           this->NumberOfPlaces++;
           }

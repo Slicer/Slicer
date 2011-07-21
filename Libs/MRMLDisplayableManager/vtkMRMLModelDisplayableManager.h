@@ -99,11 +99,8 @@ public:
   /// Get point picker
   vtkPointPicker* GetPointPicker();
   
-  /// 
   /// Convert an x/y location to a mrml node, 3d RAS point, point id, cell id,
-  /// as appropriate depending what's found under the xy. Called by
-  /// vtkSlicerViewerInteractorStyle PickEvent consumers. Returns 1 on
-  /// successful pick.
+  /// as appropriate depending what's found under the xy.
   int Pick(int x, int y);
 
   /// 
