@@ -139,7 +139,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::ViewTransform:      
+    case vtkMRMLInteractionNode::ViewTransform:
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
@@ -160,18 +160,18 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
 void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
   if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " currentInteractionMode=\"" << "Place" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "Place" << "\"";
     }
   else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";    
+    of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";
     }
 //  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
@@ -184,11 +184,11 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 
   if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::Place )
     {
-    of << indent << " lastInteractionMode=\"" << "Place" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "Place" << "\"";
     }
   else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
-    of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";    
+    of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";
     }
 //  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
@@ -210,12 +210,12 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "currentInteractionMode")) 
+    if (!strcmp(attName, "currentInteractionMode"))
       {
       if ( !strcmp (attValue, "Place" ))
         {
@@ -254,7 +254,7 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 //        }
       }
     }
-    
+
   this->EndModify(disabledModify);
 }
 
@@ -278,11 +278,11 @@ void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   os << indent << "CurrentInteractionMode:        " << this->GetInteractionModeAsString(this->CurrentInteractionMode) << "\n";
   os << indent << "LastInteractionMode:        " <<  this->GetInteractionModeAsString(this->LastInteractionMode) << "\n";
-  
+
   os << indent << "PlaceModePersistence: " << this->GetPlaceModePersistence() << "\n";
   os << indent << "TransformModePersistence: " << this->GetTransformModePersistence() << "\n";
 }
@@ -290,23 +290,26 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
 {
-//  if (mode == this->SelectRegion)
-//    {
-//    return "SelectRegion";
-//    }
-//  if (mode == this->LassoRegion)
-//    {
-//    return "LassoRegion";
-//    }
   if (mode == this->Place)
     {
     return "Place";
     }
-  if (mode == this->ViewTransform)
+  else if (mode == this->ViewTransform)
     {
     return "ViewTransform";
     }
-  return "(unknown)";
+  //  else if (mode == this->SelectRegion)
+  //    {
+  //    return "SelectRegion";
+  //    }
+  //  else if (mode == this->LassoRegion)
+  //    {
+  //    return "LassoRegion";
+  //    }
+  else
+    {
+    return "(unknown)";
+    }
 }
 
 //----------------------------------------------------------------------------
