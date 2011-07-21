@@ -272,10 +272,16 @@ namespace eval Slicer3Adapters {
     method SetSliceLogic {arg} {set _sliceLogic $arg}
     method GetSliceLogic {} {return $_sliceLogic}
     method RequestRender {} {
+      if { [py_eval "slicer.app.layoutManager() == None"] == "True" } {
+        return ""
+      }
       set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
       py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().scheduleRender()"
     }
     method Render {} {
+      if { [py_eval "slicer.app.layoutManager() == None"] == "True" } {
+        return ""
+      }
       set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
       py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().forceRender()"
     }
