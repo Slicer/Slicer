@@ -95,7 +95,6 @@ public:
       PickEvent,
       PlaceEvent,
       SelectRegionEvent,
-      PlotEvent,
   };
     
 protected:
