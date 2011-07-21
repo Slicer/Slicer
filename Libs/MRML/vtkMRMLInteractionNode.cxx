@@ -97,18 +97,6 @@ int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString
     {
     return ( vtkMRMLInteractionNode::LassoRegion);
     }
-  else if ( !strcmp (modeString, "ViewPan" ))
-    {
-    return ( vtkMRMLInteractionNode::ViewPan);
-    }
-  else if ( !strcmp (modeString, "ViewRotate" ))
-    {
-    return ( vtkMRMLInteractionNode::ViewRotate);
-    }
-  else if ( !strcmp (modeString, "ViewZoom" ))
-    {
-    return ( vtkMRMLInteractionNode::ViewZoom);
-    }
   else
     {
     return (-1);
@@ -190,18 +178,6 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
-    case vtkMRMLInteractionNode::ViewPan:      
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
-      break;
-    case vtkMRMLInteractionNode::ViewZoom:
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
-      break;
-    case vtkMRMLInteractionNode::ViewRotate:      
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
-      break;
     case vtkMRMLInteractionNode::ViewTransform:      
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
@@ -237,18 +213,6 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " currentInteractionMode=\"" << "Place" << "\"";    
     }
-  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewPan )
-    {
-    of << indent << " currentInteractionMode=\"" << "ViewPan" << "\"";    
-    }
-  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewZoom )
-    {
-    of << indent << " currentInteractionMode=\"" << "ViewZoom" << "\"";    
-    }
-  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewRotate )
-    {
-    of << indent << " currentInteractionMode=\"" << "ViewRotate" << "\"";    
-    }  
   else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
     of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";    
@@ -270,18 +234,6 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " lastInteractionMode=\"" << "Place" << "\"";    
     }
-  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewPan )
-    {
-    of << indent << " lastInteractionMode=\"" << "ViewPan" << "\"";    
-    }
-  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewZoom )
-    {
-    of << indent << " lastInteractionMode=\"" << "ViewZoom" << "\"";    
-    }
-  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewRotate )
-    {
-    of << indent << " lastInteractionMode=\"" << "ViewRotate" << "\"";    
-    }  
   else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
     of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";    
@@ -322,18 +274,6 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
         {
         this->CurrentInteractionMode = vtkMRMLInteractionNode::Place;
         }
-      else if ( !strcmp (attValue, "ViewPan" ))
-        {
-        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewPan;
-        }
-      else if ( !strcmp (attValue, "ViewZoom" ))
-        {
-        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewZoom;
-        }
-      else if ( !strcmp (attValue, "ViewRotate" ))
-        {
-        this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewRotate;
-        }
       else if ( !strcmp (attValue, "ViewTransform" ))
         {
         this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
@@ -356,18 +296,6 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
       else if ( !strcmp (attValue, "Place" ))
         {
         this->LastInteractionMode = vtkMRMLInteractionNode::Place;
-        }
-      else if ( !strcmp (attValue, "ViewPan" ))
-        {
-        this->LastInteractionMode = vtkMRMLInteractionNode::ViewPan;
-        }
-      else if ( !strcmp (attValue, "ViewZoom" ))
-        {
-        this->LastInteractionMode = vtkMRMLInteractionNode::ViewZoom;
-        }
-      else if ( !strcmp (attValue, "ViewRotate" ))
-        {
-        this->LastInteractionMode = vtkMRMLInteractionNode::ViewRotate;
         }
       else if ( !strcmp (attValue, "ViewTransform" ))
         {
@@ -433,18 +361,6 @@ const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
   if (mode == this->Place)
     {
     return "Place";
-    }
-  if (mode == this->ViewPan)
-    {
-    return "ViewPan";
-    }
-  if (mode == this->ViewZoom)
-    {
-    return "ViewZoom";
-    }
-  if (mode == this->ViewRotate)
-    {
-    return "ViewRotate";
     }
   if (mode == this->ViewTransform)
     {

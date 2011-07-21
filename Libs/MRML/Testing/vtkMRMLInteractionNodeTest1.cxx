@@ -45,8 +45,6 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   std::cout << "For null string, interaction mode = " << mode << std::endl;
   mode = node1->GetInteractionModeByString("invalid");
   std::cout << "For 'invalid' string, interaction mode = " << mode << std::endl;
-  mode = node1->GetInteractionModeByString("ViewPan");
-  std::cout << "For 'ViewPan' string, interaction mode = " << mode << std::endl;
   
   node1->SwitchToPersistentPickMode();
   if (!node1->GetPickModePersistence())

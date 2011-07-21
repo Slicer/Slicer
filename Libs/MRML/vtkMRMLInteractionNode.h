@@ -61,9 +61,6 @@ public:
       SelectRegion,
       LassoRegion,
       Place,
-      ViewPan,
-      ViewZoom,
-      ViewRotate,
       ViewTransform,
     };
   /// events
