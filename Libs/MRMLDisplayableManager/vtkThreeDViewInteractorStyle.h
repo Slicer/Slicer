@@ -79,19 +79,10 @@ public:
 
   virtual void OnExpose();
 
-
   /// 
   /// Get/Set the CameraNode
   vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
-
-  ///
-  /// Get the number of mouse 'place' events
-  vtkGetMacro (NumberOfPlaces, int);
-
-  /// Get the max number of 'place' events
-  /// allowed before interaction mode switches back to 'transform'.
-  vtkGetMacro (NumberOfTransientPlaces, int);
 
   /// 
   /// Get/Set the ModelDisplayableManager, for picking

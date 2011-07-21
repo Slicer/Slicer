@@ -218,7 +218,7 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
     //--- drop the interaction mode back to 
     //--- the default (transform) if mouse mode
     //--- is transient.
-    if ( (this->GetNumberOfPlaces() >= this->GetNumberOfTransientPlaces() ) &&
+    if ( (this->NumberOfPlaces >= this->NumberOfTransientPlaces ) &&
          (placeModePersistence == 0 ) && (interactionNode != 0) )
       {
       interactionNode->NormalizeAllMouseModes();
