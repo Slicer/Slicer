@@ -65,7 +65,6 @@ public:
       ViewZoom,
       ViewRotate,
       ViewTransform,
-      CustomTag,
     };
   /// events
   enum
