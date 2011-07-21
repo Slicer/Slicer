@@ -99,27 +99,6 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
     }
 }
 
-
-//----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnEnter()
-{
-  if (this->HasObserver(vtkCommand::EnterEvent)) 
-    {
-    this->InvokeEvent(vtkCommand::EnterEvent,0);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkThreeDViewInteractorStyle::OnLeave()
-{
-  if (this->HasObserver(vtkCommand::LeaveEvent)) 
-    {
-    this->InvokeEvent(vtkCommand::LeaveEvent,0);
-    }
-}
-
-
-
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnLeftButtonDown() 
 { 

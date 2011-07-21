@@ -77,8 +77,6 @@ public:
   virtual void Dolly();
   virtual void Dolly(double factor);
 
-  virtual void OnEnter();
-  virtual void OnLeave();
   virtual void OnExpose();
 
 
