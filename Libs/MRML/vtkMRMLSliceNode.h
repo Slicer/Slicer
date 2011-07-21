@@ -245,6 +245,29 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkSetMacro(Interacting, int);
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
+
+  ///
+  /// Enum identifying the parameters being manipulated with calls to 
+  /// InteractionOn() and InteractionOff(). Identifiers are powers of
+  /// two so they can be combined into a bitmask to manipulate
+  /// multiple parameters.
+  enum InteractionFlagType
+  {
+    None = 0,
+    SliceToRASFlag = 1,
+    FieldOfViewFlag = 2, 
+    OrientationFlag = 4
+    // Next one needs to be 8
+  };
+
+  ///
+  /// Get/Set a flag indicating what parameters are being manipulated
+  /// within calls to InteractingOn() and InteractingOff(). These
+  /// fields are used propagate linked behaviors. This flag is a
+  /// bitfield, with multiple parameters OR'd to composte the flag.
+  vtkSetMacro(InteractionFlags, unsigned int);
+  vtkGetMacro(InteractionFlags, unsigned int);
+
   
 protected:
 
@@ -278,6 +301,7 @@ protected:
   int ActiveSlice;
 
   int Interacting;
+  unsigned int InteractionFlags;
 };
 
 #endif

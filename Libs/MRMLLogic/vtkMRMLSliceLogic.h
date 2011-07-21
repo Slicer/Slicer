@@ -277,12 +277,24 @@ public:
   void SetSliceOffset(double offset);
 
   ///
-  /// Indicate an interaction is beginning
-  void StartInteraction();
+  /// Indicate an interaction with the slice node is beginning. The
+  /// parameters of the slice node being manipulated are passed as a
+  /// bitmask. See vtkMRMLSliceNode::InteractionFlagType.
+  void StartSliceNodeInteraction(unsigned int parameters);
 
   ///
-  /// Indicate an interaction has been completed
-  void EndInteraction();
+  /// Indicate an interaction with the slice node has been completed
+  void EndSliceNodeInteraction();
+
+  ///
+  /// Indicate an interaction with the slice composite node is
+  /// beginning. The parameters of the slice node being manipulated
+  /// are passed as a bitmask. See vtkMRMLSliceNode::InteractionFlagType.
+  void StartSliceCompositeNodeInteraction(unsigned int parameters);
+
+  ///
+  /// Indicate an interaction with the slice composite node has been completed
+  void EndSliceCompositeNodeInteraction();
 
   ///
   /// Indicate the slice offset value is starting to change

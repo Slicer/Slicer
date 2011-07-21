@@ -72,6 +72,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->SliceIntersectionVisibility = 0;
   this->DoPropagateVolumeSelection = true;
   this->Interacting = 0;
+  this->InteractionFlags = 0;
   this->HotLinkedControl = 0;
 }
 

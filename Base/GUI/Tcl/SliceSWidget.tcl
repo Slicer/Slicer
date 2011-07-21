@@ -604,14 +604,15 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set _actionStartRAS $ras
       set _actionStartOrientation [$_sliceNode GetOrientationString]
 
-      [$sliceGUI GetLogic] StartInteraction
+      # 2 = FieldOfView
+      [$sliceGUI GetLogic] StartSliceNodeInteraction 2
 
       $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
       set _actionStartFOV [$_sliceNode GetFieldOfView]
     }
     "RightButtonReleaseEvent" { 
-      [$sliceGUI GetLogic] EndInteraction
+      [$sliceGUI GetLogic] EndSliceNodeInteraction
       
       $this requestDelayedAnnotation
       set _actionState ""
@@ -784,10 +785,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             # nodes
             set logic [$sliceGUI GetLogic]
 
-            $logic StartInteraction
+            # 3 = SliceToRASFlag and FieldOfViewFlag
+            $logic StartSliceNodeInteraction 3 
             $logic FitSliceToBackground $w $h
             $_sliceNode UpdateMatrices
-            $logic EndInteraction
+            $logic EndSliceNodeInteraction
           }
           "g" {
             # toggle the label opacity via the slice compoiste node
@@ -1356,9 +1358,10 @@ itcl::body SliceSWidget::moveSlice { delta } {
     set offset [$logic GetSliceOffset]
     set spacing [$logic GetLowestVolumeSliceSpacing]
 
-    $logic StartInteraction
+    # 1 = SliceToRASFlag
+    $logic StartSliceNodeInteraction 1 
     $logic SetSliceOffset [expr $offset + $delta]
-    $logic EndInteraction
+    $logic EndSliceNodeInteraction
 }
 
 itcl::body SliceSWidget::jumpSlice { r a s } {
@@ -1491,7 +1494,8 @@ itcl::body SliceSWidget::startTranslate { x y  windowx windowy  rox roy  ras } {
     set _actionStartViewportOrigin "$rox $roy"
     set _actionStartRAS $ras
 
-    [$sliceGUI GetLogic] StartInteraction
+    # 1 = SliceToRASFlag
+    [$sliceGUI GetLogic] StartSliceNodeInteraction 1 
 
     $sliceGUI SetGrabID $this
     $sliceGUI SetGUICommandAbortFlag 1
@@ -1501,7 +1505,7 @@ itcl::body SliceSWidget::startTranslate { x y  windowx windowy  rox roy  ras } {
 }
 
 itcl::body SliceSWidget::endTranslate { } {
-    [$sliceGUI GetLogic] EndInteraction
+    [$sliceGUI GetLogic] EndSliceNodeInteraction
 
     $this requestDelayedAnnotation
     set _actionState ""

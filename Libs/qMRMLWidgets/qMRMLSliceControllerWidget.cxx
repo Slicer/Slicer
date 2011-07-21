@@ -499,20 +499,10 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
     return;
     }
 
-  if (this->MRMLSliceCompositeNode->GetLinkedControl())
-    {
-    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-    for (int i = 0; i < nnodes; ++i)
-      {
-      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
-      cnode->SetForegroundVolumeID(node ? node->GetID() : 0);
-      }
-    }
-  else
-    {
-    this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
-    }
+  this->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::ForegroundVolumeFlag);
+  this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
+  this->SliceLogic->EndSliceCompositeNodeInteraction();
+
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
@@ -533,20 +523,10 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
     return;
     }
 
-  if (this->MRMLSliceCompositeNode->GetLinkedControl())
-    {
-    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-    for (int i = 0; i < nnodes; ++i)
-      {
-      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
-      cnode->SetBackgroundVolumeID(node ? node->GetID() : 0);
-      }
-    }
-  else
-    {
-    this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
-    }
+  this->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::BackgroundVolumeFlag);
+  this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
+  this->SliceLogic->EndSliceCompositeNodeInteraction();
+
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
@@ -565,20 +545,10 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
     {
     return;
     }
-  if (this->MRMLSliceCompositeNode->GetLinkedControl())
-    {
-    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-    for (int i = 0; i < nnodes; ++i)
-      {
-      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
-      cnode->SetLabelVolumeID(node ? node->GetID() : 0);
-      }
-    }
-  else
-    {
-    this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
-    }
+
+  this->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::LabelVolumeFlag);
+  this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
+  this->SliceLogic->EndSliceCompositeNodeInteraction();
 }
 
 // --------------------------------------------------------------------------
@@ -1092,26 +1062,10 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
     {
     return;
     }
-  if (d->MRMLSliceCompositeNode->GetLinkedControl())
-    {
-    // Loop over all vtkMRMLSliceNode and update Orientation property
-    vtkCollection* nodes = this->mrmlScene()->GetNodesByClass("vtkMRMLSliceNode");
-    if (!nodes)
-      {
-      return;
-      }
-    vtkMRMLSliceNode * sliceNode = 0;
-    for (nodes->InitTraversal(); (sliceNode = vtkMRMLSliceNode::SafeDownCast(
-                                    nodes->GetNextItemAsObject()));)
-      {
-      sliceNode->SetOrientation(orientation.toLatin1());
-      }
-    nodes->Delete();
-    }
-  else
-    {
-    d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
-    }
+
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::OrientationFlag); 
+  d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------

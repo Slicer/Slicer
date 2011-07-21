@@ -98,6 +98,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->ActiveSlice = 0;
 
   this->Interacting = 0;
+  this->InteractionFlags = 0;
 }
 
 //----------------------------------------------------------------------------

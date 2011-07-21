@@ -1775,12 +1775,54 @@ void vtkMRMLSliceLogic::SetSliceOffset(double offset)
 
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::StartSliceCompositeNodeInteraction(unsigned int parameters)
+{
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+
+  // Cache the flags on what parameters are going to be modified. Need
+  // to this this outside the conditional on HotLinkedControl and LinkedControl
+  compositeNode->SetInteractionFlags(parameters);
+
+  // If we have hot linked controls, then we want to broadcast changes
+  if (compositeNode && 
+      compositeNode->GetHotLinkedControl() && compositeNode->GetLinkedControl())
+    {
+    if (compositeNode)
+      {
+      compositeNode->InteractingOn();
+      }
+    }
+}
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::StartInteraction()
+void vtkMRMLSliceLogic::EndSliceCompositeNodeInteraction()
+{
+  vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+
+  // If we have linked controls, then we want to broadcast changes
+  if (compositeNode && compositeNode->GetLinkedControl())
+    {
+    if (compositeNode)
+      {
+      // Need to trigger a final message to broadcast to all the nodes
+      // that are linked
+      compositeNode->InteractingOn();
+      compositeNode->Modified();
+      compositeNode->InteractingOff();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::StartSliceNodeInteraction(unsigned int parameters)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+
+  // Cache the flags on what parameters are going to be modified. Need
+  // to this this outside the conditional on HotLinkedControl and LinkedControl
+  sliceNode->SetInteractionFlags(parameters);
 
   // If we have hot linked controls, then we want to broadcast changes
   if (compositeNode && 
@@ -1794,7 +1836,7 @@ void vtkMRMLSliceLogic::StartInteraction()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::EndInteraction()
+void vtkMRMLSliceLogic::EndSliceNodeInteraction()
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
@@ -1818,8 +1860,8 @@ void vtkMRMLSliceLogic::StartSliceOffsetInteraction()
 {
   // This method is here in case we want to do something specific when
   // we start SliceOffset interactions
-
-  this->StartInteraction();
+  
+  this->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
 }
 
 //----------------------------------------------------------------------------
@@ -1828,7 +1870,7 @@ void vtkMRMLSliceLogic::EndSliceOffsetInteraction()
   // This method is here in case we want to do something specific when
   // we complete SliceOffset interactions
   
-  this->EndInteraction();
+  this->EndSliceNodeInteraction();
 }
 
 //----------------------------------------------------------------------------
