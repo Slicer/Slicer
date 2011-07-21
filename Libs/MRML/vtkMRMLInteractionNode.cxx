@@ -68,10 +68,6 @@ int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString
     {
     return ( vtkMRMLInteractionNode::Place);
     }
-  else if ( !strcmp (modeString, "Put" ))
-    {
-    return ( vtkMRMLInteractionNode::Place );
-    }
   else if ( !strcmp (modeString, "ViewTransform" ))
     {
     return ( vtkMRMLInteractionNode::ViewTransform);
