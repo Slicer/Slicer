@@ -142,6 +142,12 @@ public slots:
   /// Link/Unlink the slice controls across all slice viewer
   void setSliceLink(bool linked);
 
+  /// Set the link mode to hot linked. When on, slice interactions affect other
+  /// slices immediately. When off, slice interactions affect other
+  /// slices after the interaction completes.
+  void setHotLinked(bool hot);
+
+
   // Advanced options
   /// Rotate to volume plane
   void rotateSliceToBackground();

@@ -58,6 +58,7 @@ public:
 
   void setupUi(qMRMLWidget* widget);
 
+  void setupLinkedOptionsMenu();
   void setupMoreOptionsMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);

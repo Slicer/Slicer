@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>174</width>
+    <width>182</width>
     <height>107</height>
    </rect>
   </property>
@@ -106,9 +106,6 @@
         <property name="sizeAdjustPolicy">
          <enum>QComboBox::AdjustToMinimumContentsLength</enum>
         </property>
-        <property name="elideMode">
-         <enum>Qt::ElideMiddle</enum>
-        </property>
         <item>
          <property name="text">
           <string>Axial</string>
@@ -155,7 +152,7 @@
        </widget>
       </item>
       <item row="0" column="3">
-       <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector">
+       <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
@@ -171,25 +168,22 @@
         <property name="toolTip">
          <string>Select the foreground</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLVolumeNode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled">
+        <property name="noneEnabled" stdset="0">
          <bool>true</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="removeEnabled">
+        <property name="removeEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
         </property>
        </widget>
       </item>
@@ -217,7 +211,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="LabelMapSelector">
+       <widget class="qMRMLNodeComboBox" name="LabelMapSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
@@ -233,25 +227,22 @@
         <property name="toolTip">
          <string>Select the label map</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLVolumeNode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled">
+        <property name="noneEnabled" stdset="0">
          <bool>true</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="removeEnabled">
+        <property name="removeEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
         </property>
        </widget>
       </item>
@@ -279,7 +270,7 @@
        </widget>
       </item>
       <item row="1" column="3">
-       <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector">
+       <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>1</horstretch>
@@ -295,25 +286,22 @@
         <property name="toolTip">
          <string>Select the background</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLVolumeNode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled">
+        <property name="noneEnabled" stdset="0">
          <bool>true</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="removeEnabled">
+        <property name="removeEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
         </property>
        </widget>
       </item>
@@ -331,10 +319,13 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Links/Unlinks the slice controls (except scales) across all Slice Viewers.</string>
+           <string>Links/Unlinks/Hot links controls across all Slice Viewers.</string>
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="popupMode">
+            <enum>QToolButton::DelayedPopup</enum>
           </property>
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
@@ -397,7 +388,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkSliderWidget" name="SliceOffsetSlider">
+         <widget class="ctkSliderWidget" name="SliceOffsetSlider" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -407,10 +398,10 @@
           <property name="toolTip">
            <string>Slice distance from RAS origin</string>
           </property>
-          <property name="pageStep">
+          <property name="pageStep" stdset="0">
            <double>1.000000000000000</double>
           </property>
-          <property name="tracking">
+          <property name="tracking" stdset="0">
            <bool>false</bool>
           </property>
          </widget>
@@ -442,7 +433,21 @@ Use this display to cross-reference to filmed images or other displays.</string>
     </widget>
    </item>
   </layout>
+  <action name="actionHotLinked">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hot linked</string>
+   </property>
+   <property name="toolTip">
+    <string>Set linking behavior to hot linked controls. When on, Slice interactions affect other slices immediately. When off, Slice interactions affect other slices after the interaction completes.</string>
+   </property>
+  </action>
   <action name="actionFit_to_window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
@@ -1047,6 +1052,22 @@ Use this display to cross-reference to filmed images or other displays.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionHotLinked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setHotLinked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fitSliceToBackground()</slot>
@@ -1069,5 +1090,6 @@ Use this display to cross-reference to filmed images or other displays.</string>
   <slot>setLightboxTo1x3()</slot>
   <slot>setForegroundInterpolation(bool)</slot>
   <slot>setBackgroundInterpolation(bool)</slot>
+  <slot>setHotLinked(bool)</slot>
  </slots>
 </ui>

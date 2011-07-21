@@ -104,6 +104,9 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   //this->BackgroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
   //this->ForegroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
 
+  // Populate the Linked menu
+  this->setupLinkedOptionsMenu();
+
   // Populate Advanced menu
   this->setupMoreOptionsMenu();
 
@@ -172,6 +175,15 @@ void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
   this->ControllerWidgetGroup->setVisible(visible);
   this->SliceCollapsibleButton->setArrowType(
     visible ? Qt::UpArrow : Qt::DownArrow);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
+{
+  QMenu* linkedMenu = new QMenu(tr("Linked"),this->SliceLinkButton);
+  linkedMenu->addAction(this->actionHotLinked);
+
+  this->SliceLinkButton->setMenu(linkedMenu);
 }
 
 // --------------------------------------------------------------------------
@@ -426,7 +438,23 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
   // Update slice link toggle. Must be done first as its state controls
   // different behaviors when properties are set.
   this->SliceLinkButton->setChecked(this->MRMLSliceCompositeNode->GetLinkedControl());
-
+  this->actionHotLinked->setChecked(this->MRMLSliceCompositeNode->GetHotLinkedControl());
+  if (this->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    if (this->MRMLSliceCompositeNode->GetHotLinkedControl())
+      {
+      this->SliceLinkButton->setIcon(QIcon(":Icons/HotLinkOn.png"));
+      }
+    else
+      {
+      this->SliceLinkButton->setIcon(QIcon(":Icons/LinkOn.png"));
+      }
+    }
+  else
+    {
+      this->SliceLinkButton->setIcon(QIcon(":Icons/LinkOff.png"));
+    }
+  
   // Update "foreground layer" node selector
   this->ForegroundLayerNodeSelector->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
@@ -1165,6 +1193,25 @@ void qMRMLSliceControllerWidget::setSliceLink(bool linked)
         sliceCompositeNodes->GetNextItemAsObject()));)
     {
     sliceCompositeNode->SetLinkedControl(linked);
+    }
+  sliceCompositeNodes->Delete();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setHotLinked(bool linked)
+{
+  vtkCollection* sliceCompositeNodes = this->mrmlScene() ?
+    this->mrmlScene()->GetNodesByClass("vtkMRMLSliceCompositeNode") : 0;
+  if (!sliceCompositeNodes)
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = 0;
+  for(sliceCompositeNodes->InitTraversal();
+      (sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(
+        sliceCompositeNodes->GetNextItemAsObject()));)
+    {
+    sliceCompositeNode->SetHotLinkedControl(linked);
     }
   sliceCompositeNodes->Delete();
 }

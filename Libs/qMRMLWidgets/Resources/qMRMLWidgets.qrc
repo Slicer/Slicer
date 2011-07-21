@@ -7,7 +7,8 @@
 
     <file>Icons/LinkOff.png</file>
     <file>Icons/LinkOn.png</file>
-    
+    <file>Icons/HotLinkOn.png</file>
+   
     <file>Icons/LayoutChooseView.png</file>
     <file>Icons/LayoutCompareView.png</file>
     <file>Icons/LayoutConventionalView.png</file>
