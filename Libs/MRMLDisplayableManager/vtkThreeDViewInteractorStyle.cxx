@@ -35,9 +35,7 @@ vtkThreeDViewInteractorStyle::vtkThreeDViewInteractorStyle()
 {
   this->MotionFactor   = 10.0;
   this->CameraNode = 0;
-  this->NumberOfPicks = 0;
   this->NumberOfPlaces= 0;
-  this->NumberOfTransientPicks = 1;
   this->NumberOfTransientPlaces = 1;
 }
 
@@ -45,7 +43,6 @@ vtkThreeDViewInteractorStyle::vtkThreeDViewInteractorStyle()
 vtkThreeDViewInteractorStyle::~vtkThreeDViewInteractorStyle() 
 {
   this->SetCameraNode(0);
-  this->NumberOfPicks = 0;
   this->NumberOfPlaces= 0;
 }
 
@@ -114,7 +111,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
   
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-  int pickModePersistence = 0;
   int placeModePersistence = 0;
   vtkMRMLInteractionNode *interactionNode = 0;
     
@@ -126,7 +122,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
     if (interactionNode != 0)
       {
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
-      pickModePersistence = interactionNode->GetPickModePersistence();
       placeModePersistence = interactionNode->GetPlaceModePersistence();
       vtkDebugMacro("OnLeftButtonDown: mouse interaction mode = " << mouseInteractionMode);
       }
@@ -135,8 +130,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
       vtkErrorMacro("OnLeftButtonDown: no interaction node! Assuming ViewTransform");
       }
     }
-  
-  
   
   if (this->Interactor->GetShiftKey()) 
     {
@@ -161,8 +154,7 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
         {
         this->StartRotate();
         }
-      else if (mouseInteractionMode == vtkMRMLInteractionNode::Place ||
-               mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
+      else if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
         {
         // get the current event position, flipping Y
         int x = this->Interactor->GetEventPosition()[0];
@@ -182,20 +174,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
           //--- increment the number of Places that have occured.
           this->NumberOfPlaces++;
           }
-        else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
-          {
-          // deal with select mode
-          // throw a select region event
-          this->InvokeEvent(vtkThreeDViewInteractorStyle::SelectRegionEvent, this->Interactor->GetEventPosition());
-          this->NumberOfPicks++;
-          // TODO: expand the mouse interaction modes and events to support
-          // picking everything needed
-#ifndef QDEC_DEBUG
-          // for the Qdec module, throw a plot event that won't clash with the
-          // fiducials module looking for a pick event
-          this->InvokeEvent(vtkThreeDViewInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
-#endif
-          }
         }
       }
     }
@@ -213,7 +191,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
 {
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-  int pickModePersistence = 0;
   int placeModePersistence = 0;
   vtkMRMLInteractionNode *interactionNode = 0;
     
@@ -225,7 +202,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
     if (interactionNode != 0)
       {
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
-      pickModePersistence = interactionNode->GetPickModePersistence();
       placeModePersistence = interactionNode->GetPlaceModePersistence();
       vtkDebugMacro("OnLeftButtonUp: mouse interaction mode = " << mouseInteractionMode);
       }
@@ -250,24 +226,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
       interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
       // reset the number of place events.
       this->NumberOfPlaces = 0;
-      interactionNode->InvokeEvent ( vtkMRMLInteractionNode::TransientTimeoutEvent);
-      }
-    }
-  else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
-    {
-    // deal with select mode
-    //--- count the number of picks and
-    //--- drop the interaction mode back to 
-    //--- the default (transform) if mousemode 
-    //--- is transient.
-    if ( (this->GetNumberOfPicks() >= this->GetNumberOfTransientPicks() ) &&
-         (pickModePersistence == 0  ) && (interactionNode != 0) )
-      {
-      interactionNode->NormalizeAllMouseModes();
-      interactionNode->SetLastInteractionMode ( mouseInteractionMode );
-      interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-      // reset the number of pick events.
-      this->NumberOfPicks = 0;
       interactionNode->InvokeEvent ( vtkMRMLInteractionNode::TransientTimeoutEvent);
       }
     }

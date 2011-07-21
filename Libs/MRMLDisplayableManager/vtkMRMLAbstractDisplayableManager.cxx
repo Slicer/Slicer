@@ -315,7 +315,6 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
     switch (currentInteractionMode)
       {
       case vtkMRMLInteractionNode::Place:
-      case vtkMRMLInteractionNode::PickManipulate:
         this->SetAndObserveInteractorStyle(
             this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
         updateObserver = (this->InteractorStyle != 0);

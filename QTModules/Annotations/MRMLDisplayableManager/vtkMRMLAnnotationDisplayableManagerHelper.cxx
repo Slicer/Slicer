@@ -75,12 +75,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromIntera
 
   int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
   vtkDebugMacro("Annotation DisplayableManager Helper: updateLockedAllWidgetsFromInteractionNode, currentInteractionMode = " << currentInteractionMode);
-  if (currentInteractionMode == vtkMRMLInteractionNode::PickManipulate)
-    {
-    // turn on processing events on the widgets
-    this->UpdateLockedAllWidgets(false);
-    }
-  else if (currentInteractionMode == vtkMRMLInteractionNode::Place)
+  if (currentInteractionMode == vtkMRMLInteractionNode::Place)
     {
     // turn off processing events on the 3d widgets
     this->UpdateLockedAllWidgets(true);

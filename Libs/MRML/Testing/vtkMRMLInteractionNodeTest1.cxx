@@ -28,7 +28,6 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   TEST_SET_GET_INT_RANGE( node1, CurrentInteractionMode, 1, 7);
   TEST_SET_GET_INT_RANGE( node1, LastInteractionMode, 1, 7);
 
-  TEST_SET_GET_INT_RANGE( node1, PickModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, PlaceModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, TransformModePersistence, 0, 1);
   
@@ -46,18 +45,6 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   mode = node1->GetInteractionModeByString("invalid");
   std::cout << "For 'invalid' string, interaction mode = " << mode << std::endl;
   
-  node1->SwitchToPersistentPickMode();
-  if (!node1->GetPickModePersistence())
-    {
-    std::cerr << "Error in SwitchToPersistentPickMode, got persistence = " << node1->GetPickModePersistence() << std::endl;
-    return EXIT_FAILURE;
-    }
-  node1->SwitchToSinglePickMode();
-  if (node1->GetPickModePersistence())
-    {
-    std::cerr << "Error in SwitchToSinglePickMode, got persistence = " << node1->GetPickModePersistence() << std::endl;
-    return EXIT_FAILURE;
-    }
   node1->SwitchToPersistentPlaceMode();
   if (!node1->GetPlaceModePersistence())
     {

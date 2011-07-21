@@ -86,15 +86,6 @@ public:
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
 
   ///
-  /// Get the number of mouse 'pick' events
-  vtkGetMacro (NumberOfPicks, int);
-
-  ///
-  /// Get the max number of 'pick' events
-  /// allowed before interaction mode switches back to 'transform'.
-  vtkGetMacro (NumberOfTransientPicks, int );
-
-  ///
   /// Get the number of mouse 'place' events
   vtkGetMacro (NumberOfPlaces, int);
 
@@ -126,13 +117,11 @@ protected:
 
   /// Keep track of the number of picks so for resetting mouse modes when
   /// transient pick or place mode has been selected.
-  int NumberOfPicks;
   int NumberOfPlaces;
 
 
   /// The number of "clicks" the transient mouse-modes come loaded with.
   /// Currently makes sense to set this to 1 -- but we can change it if appropriate.
-  int NumberOfTransientPicks;
   int NumberOfTransientPlaces;
 
   /// 

@@ -207,10 +207,9 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
         }
       }
       break;
-    case vtkMRMLInteractionNode::PickManipulate:
     case vtkMRMLInteractionNode::ViewTransform:
       // reset the widget to view transform, not supporting pick manipulate
-      this->updateWidgetToAnnotation(NULL);
+      this->updateWidgetToAnnotation(0);
       break;
     default:
       logger.warn(QString("updateWidgetFromMRML - unhandled MouseMode: %1").arg(currentMouseMode));

@@ -38,7 +38,6 @@ public:
   vtkGetMacro (LastInteractionMode, int );
   void SetLastInteractionMode (int mode );
 
-  vtkGetMacro (PickModePersistence, int );
   vtkGetMacro (PlaceModePersistence, int);
   vtkGetMacro (TransformModePersistence, int );
 
@@ -49,7 +48,6 @@ public:
   // persistent and transient mouse modes.
   // TransformMode is persistent by default,
   // and Pick or Place are transient by default.
-  virtual void SetPickModePersistence ( int val );
   virtual void SetPlaceModePersistence (int val );
   virtual void SetTransformModePersistence ( int val );
   virtual void NormalizeAllMouseModes();
@@ -57,7 +55,6 @@ public:
   /// mouse modes
   enum
     {
-      PickManipulate = 0,
       SelectRegion,
       LassoRegion,
       Place,
@@ -73,7 +70,6 @@ public:
     };
 
   //BTX
-  int PickModePersistence;
   int PlaceModePersistence;
   int TransformModePersistence;
   //ETX
@@ -88,8 +84,6 @@ public:
 
   ///
   /// Convenience methods for the mouse mode tool bar to call
-  void SwitchToPersistentPickMode();
-  void SwitchToSinglePickMode();
   void SwitchToPersistentPlaceMode();
   void SwitchToSinglePlaceMode();
   void SwitchToViewTransformMode();
