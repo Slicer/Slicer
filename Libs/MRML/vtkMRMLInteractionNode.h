@@ -42,20 +42,6 @@ public:
   vtkGetMacro (PlaceModePersistence, int);
   vtkGetMacro (TransformModePersistence, int );
 
-  //--- workaround for mouse modes.
-  //--- put on when fiducials are placed.
-  //--- turned off by callback to window/level.
-  vtkGetMacro (WindowLevelLock, int );
-  vtkSetMacro (WindowLevelLock, int );
-  
-  //--- workaround for mouse modes.
-  //--- put on when an object is mid-place
-  //--- (between mouse-press and mouse-release)
-  //--- to prevent PickAndManipulate operations
-  //--- from being processed while placing.
-  vtkGetMacro (PlaceOperationLock, int );
-  vtkSetMacro (PlaceOperationLock, int );
-
   // Description:
   // Convenience methods for setting modes
   // without triggering events on the node.
@@ -103,9 +89,6 @@ public:
   ///
   /// Return the mode given a text string.
   int GetInteractionModeByString ( const char * modeString );
-
-  int WindowLevelLock;
-  int PlaceOperationLock;
 
   ///
   /// Convenience methods for the mouse mode tool bar to call

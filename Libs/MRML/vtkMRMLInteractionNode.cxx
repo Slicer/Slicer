@@ -46,8 +46,6 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->PickModePersistence = 0;
   this->PlaceModePersistence = 0;
   this->TransformModePersistence = 1;
-  this->WindowLevelLock = 0;
-  this->PlaceOperationLock = 0;
 
 }
 
@@ -429,9 +427,6 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   os << indent << "CurrentInteractionMode:        " << this->GetInteractionModeAsString(this->CurrentInteractionMode) << "\n";
   os << indent << "LastInteractionMode:        " <<  this->GetInteractionModeAsString(this->LastInteractionMode) << "\n";
-  
-  os << indent << "WindowLevelLock: " << this->GetWindowLevelLock() << "\n";
-  os << indent << "PlaceOperationLock: " << this->GetPlaceOperationLock() << "\n";
   
   os << indent << "PickModePersistence: " << this->GetPickModePersistence() << "\n";
   os << indent << "PlaceModePersistence: " << this->GetPlaceModePersistence() << "\n";

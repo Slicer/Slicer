@@ -28,9 +28,6 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   TEST_SET_GET_INT_RANGE( node1, CurrentInteractionMode, 1, 7);
   TEST_SET_GET_INT_RANGE( node1, LastInteractionMode, 1, 7);
 
-  TEST_SET_GET_INT_RANGE( node1, WindowLevelLock, 0, 1);
-  TEST_SET_GET_INT_RANGE( node1, PlaceOperationLock, 0, 1);
-
   TEST_SET_GET_INT_RANGE( node1, PickModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, PlaceModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, TransformModePersistence, 0, 1);
