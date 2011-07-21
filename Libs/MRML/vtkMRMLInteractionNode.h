@@ -55,7 +55,6 @@ public:
   enum
     {
       InteractionModeChangedEvent = 19001,
-      TransientTimeoutEvent,
       InteractionModePersistenceChangedEvent,
       EndPlacementEvent,
     };

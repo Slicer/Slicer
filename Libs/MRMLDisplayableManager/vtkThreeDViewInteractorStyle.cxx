@@ -226,7 +226,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
       interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
       // reset the number of place events.
       this->NumberOfPlaces = 0;
-      interactionNode->InvokeEvent ( vtkMRMLInteractionNode::TransientTimeoutEvent);
       }
     }
   switch (this->State) 
