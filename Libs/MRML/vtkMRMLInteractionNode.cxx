@@ -1,12 +1,16 @@
+
+// MRML includes
+#include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLInteractionNode* vtkMRMLInteractionNode::New()
