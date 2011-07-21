@@ -84,7 +84,7 @@ def registerScriptedDisplayableManagers(sliceWidget):
       }
     }
     # tell the SliceSWidget to create instances of only specific widget types
-    foreach sw [itcl::find objects -isa sliceswidget] {
+    foreach sw [itcl::find objects -isa SliceSWidget] {
       $sw configure -swidgetTypes  { { ModelSWidget -modelID vtkMRMLModelNode } }
     }
   ''')
