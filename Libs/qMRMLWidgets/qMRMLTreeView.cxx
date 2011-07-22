@@ -26,6 +26,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QMessageBox>
+#include <QInputDialog>
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
@@ -89,6 +90,15 @@ void qMRMLTreeViewPrivate::init()
   q->horizontalScrollBar()->installEventFilter(q);
   
   this->NodeMenu = new QMenu(q);
+
+  // rename node
+  QAction* renameAction =
+    new QAction(qMRMLTreeView::tr("Rename"),this->NodeMenu);
+  this->NodeMenu->addAction(renameAction);
+  QObject::connect(renameAction, SIGNAL(triggered()),
+                   q, SLOT(renameCurrentNode()));
+
+  // delete node
   QAction* deleteAction =
     new QAction(qMRMLTreeView::tr("Delete"),this->NodeMenu);
   this->NodeMenu->addAction(deleteAction);
@@ -536,6 +546,29 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
     {
     displayableNode->SetDisplayVisibility(displayableNode->GetDisplayVisibility() ? 0 : 1);
     }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::renameCurrentNode()
+{
+  if (!this->currentNode())
+    {
+    Q_ASSERT(this->currentNode());
+    return;
+    }
+  // pop up an entry box for the new name, with the old name as default
+  QString oldName = this->currentNode()->GetName();
+
+  bool ok = false;
+  QString newName = QInputDialog::getText(
+    this, "Rename " + oldName, "New name:",
+    QLineEdit::Normal, oldName, &ok);
+  if (!ok)
+    {
+    return;
+    }
+  this->currentNode()->SetName(newName.toLatin1());
+
 }
 
 //------------------------------------------------------------------------------

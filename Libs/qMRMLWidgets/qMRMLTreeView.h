@@ -128,6 +128,7 @@ protected slots:
   void onNumberOfVisibleIndexChanged();
   void deleteCurrentNode();
   void editCurrentNode();
+  void renameCurrentNode();
 
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
