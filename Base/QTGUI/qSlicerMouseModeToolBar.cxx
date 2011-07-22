@@ -96,7 +96,8 @@ void qSlicerMouseModeToolBarPrivate::init()
 
   this->CreateAndPlaceToolButton = new QToolButton();
   this->CreateAndPlaceToolButton->setCheckable(true);
-  this->CreateAndPlaceToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+//  this->CreateAndPlaceToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  this->CreateAndPlaceToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
   this->CreateAndPlaceToolButton->setToolTip(QObject::tr("Create and Place"));
   this->CreateAndPlaceToolButton->setText(QObject::tr("Place"));
   this->CreateAndPlaceToolButton->setMenu(this->CreateAndPlaceMenu);
