@@ -12,18 +12,13 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
 #include <sstream>
 #include <algorithm>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkIntArray.h"
 
 #include "vtkMRMLHierarchyNode.h"
 
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);

@@ -18,14 +18,11 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLScene.h"
 
 // VTK include
-#include <vtkImageChangeInformation.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
 
 // STD include
-#include <string>
-#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

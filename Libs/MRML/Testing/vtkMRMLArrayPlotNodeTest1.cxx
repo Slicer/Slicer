@@ -12,8 +12,6 @@
 
 #include "vtkMRMLArrayPlotNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

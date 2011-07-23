@@ -23,8 +23,6 @@ Version:   $Revision: 1.8 $
 
 // STD includes
 #include <sstream>
-#include <string>
-#include <iostream>
 
 //------------------------------------------------------------------------------
 vtkMRMLParser* vtkMRMLParser::New()

@@ -13,8 +13,6 @@ Version:   $Revision: 1.14 $
 =========================================================================auto=*/
 
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 
@@ -25,9 +23,6 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode* vtkMRMLTensorVolumeNode::New()

@@ -16,13 +16,9 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkImageChangeInformation.h"
 #include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode* vtkMRMLFiducialListStorageNode::New()

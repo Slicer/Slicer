@@ -3,11 +3,8 @@
 #include "vtkCacheManager.h"
 #include "vtkDataFileFormatHelper.h"
 #include "vtkDataTransfer.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"
-#include "vtkURIHandler.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -15,10 +12,6 @@
 #include <vtkObjectFactory.h>
 
 // STD includes
-#include <list>
-#include <string>
-#include <algorithm>
-#include <set>
 
 vtkStandardNewMacro ( vtkDataIOManager );
 vtkCxxRevisionMacro(vtkDataIOManager, "$Revision: 1.9.12.1 $");

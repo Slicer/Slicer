@@ -11,15 +11,10 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
-#include "vtkMRMLScene.h"
 
 #include "vtkColorTransferFunction.h"
 

@@ -10,13 +10,10 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLStorageNode.h"
 #include "vtkURIHandler.h"
 
 #include <vtkAbstractTransform.h>
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

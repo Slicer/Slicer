@@ -23,7 +23,6 @@
 #include <vtkTimerLog.h>
 
 // STD includes
-#include <algorithm>
 
 vtkCxxSetObjectMacro(vtkEventBroker, TimerLog, vtkTimerLog);
 

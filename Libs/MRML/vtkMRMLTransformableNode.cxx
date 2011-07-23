@@ -12,20 +12,13 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 #include "vtkIntArray.h"
 #include "vtkMatrixToLinearTransform.h"
 #include "vtkMatrix4x4.h"
 
-#include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
 vtkCxxSetReferenceStringMacro(vtkMRMLTransformableNode, TransformNodeID);

@@ -12,8 +12,6 @@ Version:   $Revision: 1.1.1.1 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkCacheManager.h"
@@ -22,14 +20,11 @@ Version:   $Revision: 1.1.1.1 $
 #include "vtkMRMLScene.h"
 
 #include "vtkCommand.h"
-#include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
 #include "vtkURIHandler.h"
 
-#include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
 
-#include <itksys/stl/string>
 #include <itksys/SystemTools.hxx>
 
 vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler)

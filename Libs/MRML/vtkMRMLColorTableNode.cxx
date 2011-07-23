@@ -14,18 +14,13 @@ Version:   $Revision: 1.0 $
 
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
-#include <string>
-#include <iostream>
 #include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLColorTableNode, LookupTable, vtkLookupTable);

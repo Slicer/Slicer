@@ -12,18 +12,14 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkGridTransform.h"
 #include "vtkImageData.h"
 
 #include "vtkMRMLGridTransformNode.h"
-#include "vtkMRMLScene.h"
 
 #include "vtkSmartPointer.h"
 

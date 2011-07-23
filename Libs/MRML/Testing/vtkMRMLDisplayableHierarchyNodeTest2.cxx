@@ -12,14 +12,9 @@
 
 #include "vtkMRMLDisplayableHierarchyNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 
-#include "vtkCollection.h"
-#include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"

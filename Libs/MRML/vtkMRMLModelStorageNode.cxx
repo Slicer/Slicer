@@ -12,9 +12,6 @@
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLDisplayNode.h"
@@ -26,26 +23,18 @@
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkSTLReader.h"
-#include "vtkMRMLColorTableNode.h"
 
-#include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkSTLWriter.h"
 #include "vtkTriangleFilter.h"
 
-#include "vtkPointData.h"
 #include "vtkStringArray.h"
 #include "vtkCellArray.h"
 
-#include "itksys/SystemTools.hxx"
 
 #include "vtkSmartPointer.h"
 
-#include "itkMesh.h"
-#include "itkTriangleCell.h"
-#include "itkQuadrilateralCell.h"
 #include "itkDefaultDynamicMeshTraits.h"
-#include "itkMeshSpatialObject.h"
 #include "itkSpatialObjectReader.h"
 #include "itkSpatialObjectWriter.h"
 

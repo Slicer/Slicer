@@ -4,10 +4,7 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtksys/SystemTools.hxx>
 
-#include <iostream>
-#include <fstream>
 
 vtkStandardNewMacro ( vtkDataTransfer );
 vtkCxxRevisionMacro ( vtkDataTransfer, "$Revision: 1.0 $" );

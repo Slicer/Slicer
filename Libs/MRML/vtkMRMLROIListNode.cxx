@@ -1,19 +1,13 @@
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLVolumeNode.h"
 
 #include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
-#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLROIListNode* vtkMRMLROIListNode::New()

@@ -14,21 +14,15 @@ Version:   $Revision: 1.14 $
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
-#include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
 #include <vtkImageData.h>
-#include "vtkLinearTransform.h"
 #include "vtkSmartPointer.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLVolumeNode, ImageData, vtkImageData);
 

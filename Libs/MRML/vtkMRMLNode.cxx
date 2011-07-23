@@ -12,7 +12,6 @@ Version:   $Revision: 1.11 $
 
 =========================================================================auto=*/
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"

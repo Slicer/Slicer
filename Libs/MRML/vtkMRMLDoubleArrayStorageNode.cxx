@@ -12,9 +12,6 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLDoubleArrayNode.h"

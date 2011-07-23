@@ -1,18 +1,13 @@
 // STL includes
-#include <string>
-#include <iostream>
 #include <sstream>
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkXMLDataElement.h>
 #include <vtkXMLDataParser.h>
 
 // MRML includes
 #include "vtkMRMLLayoutNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLLayoutNode* vtkMRMLLayoutNode::New()

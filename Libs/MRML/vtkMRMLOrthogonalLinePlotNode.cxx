@@ -13,10 +13,8 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
-#include "vtkMRMLScene.h"
 
 #include <sstream>
-#include <string>
 
 #include "vtkMRMLOrthogonalLinePlotNode.h"
 

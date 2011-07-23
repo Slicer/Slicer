@@ -13,8 +13,6 @@
 #include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkURIHandler.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

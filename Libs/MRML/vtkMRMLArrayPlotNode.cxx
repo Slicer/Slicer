@@ -15,7 +15,6 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLArrayPlotNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkEventBroker.h"
 
 // VTK includes
@@ -27,7 +26,6 @@ Version:   $Revision: 1.2 $
 
 // STD includes
 #include <sstream>
-#include <string>
 
 //------------------------------------------------------------------------------
 vtkMRMLArrayPlotNode* vtkMRMLArrayPlotNode::New()

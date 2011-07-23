@@ -14,7 +14,6 @@ Version:   $Revision: 1.3 $
 
 // MRML includes
 #include "vtkEventBroker.h"
-#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
 
@@ -22,14 +21,10 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 #include <vtkPolyData.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLDisplayableNode, PolyData, vtkPolyData)
 

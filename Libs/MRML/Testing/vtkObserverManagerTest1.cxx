@@ -10,7 +10,6 @@
 
 =========================================================================auto=*/
 
-#include "vtkObserverManager.h"
 
 #include "TestingMacros.h"
 
@@ -19,12 +18,9 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkCommand.h>
 #include <vtkIntArray.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 struct callBackDataStruct{
   std::string testString;

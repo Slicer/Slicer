@@ -15,8 +15,6 @@
 
 #include <vtkGeneralTransform.h>
 
-#include <stdlib.h>
-#include <iostream>
 
 class vtkMRMLTransformNodeTestHelper1 : public vtkMRMLTransformNode
 {

@@ -12,8 +12,6 @@
 
 #include "vtkMRMLGlyphableVolumeDisplayPropertiesNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

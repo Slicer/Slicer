@@ -12,8 +12,6 @@ Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 #include <algorithm>
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkEventBroker.h"
@@ -24,8 +22,6 @@ Version:   $Revision: 1.3 $
 
 #include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
-#include <vtkPolyData.h>
-#include <vtkObjectFactory.h>
 
 vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);

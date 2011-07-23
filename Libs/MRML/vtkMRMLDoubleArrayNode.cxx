@@ -14,13 +14,11 @@ Version:   $Revision: 1.2 $
 
 
 #include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLScene.h"
 
 #include <vtkDoubleArray.h>
 #include <vtkObjectFactory.h>
 
 #include <sstream>
-#include <string>
 
 vtkCxxSetObjectMacro(vtkMRMLDoubleArrayNode, Array, vtkDoubleArray)
 

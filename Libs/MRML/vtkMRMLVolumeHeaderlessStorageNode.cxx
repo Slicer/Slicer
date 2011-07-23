@@ -15,37 +15,26 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkDataIOManager.h"
 #include "vtkDataFileFormatHelper.h"
-#include "vtkMRMLConfigure.h" // MRML_USE*
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
 
 // ITK includes
 #include "vtkITKImageWriter.h"
 #include <itkArchetypeSeriesFileNames.h> 
 
 // VTK includes
-#include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 #include <vtkImageChangeInformation.h>
-#include <vtkMatrix4x4.h>
 #include <vtkStringArray.h>
-#include <vtkImageData.h>
-#include <vtkImageReader2.h>
-#include <vtkImageWriter.h>
 #include <vtkImageReader2.h>
 #include <vtkImageAppend.h>
 #include <vtkImageFlip.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode* vtkMRMLVolumeHeaderlessStorageNode::New()

@@ -1,12 +1,7 @@
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLPETProceduralColorNode.h"
-#include "vtkMRMLScene.h"
 
 #include "vtkColorTransferFunction.h"
 

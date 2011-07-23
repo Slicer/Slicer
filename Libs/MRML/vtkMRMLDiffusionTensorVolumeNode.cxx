@@ -12,17 +12,12 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode* vtkMRMLDiffusionTensorVolumeNode::New()

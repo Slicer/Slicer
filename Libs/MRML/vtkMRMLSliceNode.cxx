@@ -12,9 +12,6 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLSliceNode.h"
@@ -23,7 +20,6 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 
 #include "vtkSmartPointer.h"
-#include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
 

@@ -11,21 +11,15 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkCallbackCommand.h"
 #include "vtkGeometryFilter.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
 #include "vtkShrinkPolyData.h"
 #include <vtkUnstructuredGrid.h>
 
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLUnstructuredGridNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLUnstructuredGridDisplayNode* vtkMRMLUnstructuredGridDisplayNode::New()

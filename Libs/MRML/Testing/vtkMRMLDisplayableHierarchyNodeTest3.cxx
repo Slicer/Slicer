@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 #include <sstream>
 
 #include "TestingMacros.h"
 
-#include "vtkCollection.h"
-#include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"

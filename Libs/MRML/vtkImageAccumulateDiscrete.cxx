@@ -15,8 +15,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
 
-#include <math.h>
-#include <stdlib.h>
 
 //------------------------------------------------------------------------------
 vtkImageAccumulateDiscrete* vtkImageAccumulateDiscrete::New()

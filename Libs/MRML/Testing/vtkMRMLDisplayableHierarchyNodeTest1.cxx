@@ -12,16 +12,11 @@
 
 #include "vtkMRMLDisplayableHierarchyNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 
-#include "vtkCollection.h"
-#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLModelNode.h"
-#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode

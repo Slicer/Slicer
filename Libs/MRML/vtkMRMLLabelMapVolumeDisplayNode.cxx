@@ -13,11 +13,9 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
 #include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
@@ -25,9 +23,6 @@ Version:   $Revision: 1.2 $
 
 // STD includes
 #include <cassert>
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()

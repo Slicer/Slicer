@@ -13,7 +13,6 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // FreeSurfer includes
-#include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
 #include "vtkFSSurfaceLabelReader.h"
 #include "vtkFSSurfaceScalarReader.h"
@@ -31,24 +30,13 @@ Version:   $Revision: 1.2 $
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 // VTK includes
-#include <vtkCollection.h>
 #include <vtkImageData.h>
-#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkPolyDataNormals.h>
-#include <vtkPolyDataWriter.h>
-#include <vtkStdString.h>
-#include <vtkStripper.h>
-#include <vtkXMLPolyDataWriter.h>
 
 // ITKSys includes
-#include "itksys/SystemTools.hxx"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 

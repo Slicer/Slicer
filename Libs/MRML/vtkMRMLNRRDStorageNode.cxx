@@ -16,23 +16,16 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLVolumeNode.h"
 
-#include "vtkDoubleArray.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 #include "vtkStringArray.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode* vtkMRMLNRRDStorageNode::New()

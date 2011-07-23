@@ -12,9 +12,6 @@
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLSceneViewNode.h"

@@ -23,16 +23,12 @@ Version:   $Revision: 1.2 $
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageLogic.h>
-#include <vtkImageMapToColors.h>
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkLookupTable.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()

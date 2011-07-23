@@ -24,9 +24,6 @@ Version:   $Revision: 1.2 $
 
 #include "itksys/SystemTools.hxx"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLUnstructuredGridStorageNode* vtkMRMLUnstructuredGridStorageNode::New()

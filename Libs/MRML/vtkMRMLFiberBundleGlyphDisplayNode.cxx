@@ -11,9 +11,6 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
@@ -22,7 +19,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleGlyphDisplayNode* vtkMRMLFiberBundleGlyphDisplayNode::New()

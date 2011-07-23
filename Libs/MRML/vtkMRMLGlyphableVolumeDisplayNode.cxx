@@ -17,15 +17,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 
 #include "vtkCallbackCommand.h"
-#include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
-#include "vtkPolyData.h"
-#include "vtkLookupTable.h"
 
-#include <string>
-#include <iostream>
 #include <sstream>
 
 // Initialize static member that controls resampling -- 

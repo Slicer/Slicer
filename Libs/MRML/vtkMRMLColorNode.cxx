@@ -24,9 +24,7 @@ Version:   $Revision: 1.0 $
 
 // STD includes
 #include <cassert>
-#include <iostream>
 #include <sstream>
-#include <string>
 
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLColorNode::New()

@@ -1,7 +1,6 @@
 #include "vtkMRMLLogic.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
@@ -9,7 +8,6 @@
 // STD includes
 #include "vtkObjectFactory.h"
 
-#include <map>
 #include <set>
 
 

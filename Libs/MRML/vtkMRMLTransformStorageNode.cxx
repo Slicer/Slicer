@@ -12,42 +12,30 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLNonlinearTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
 
-#include "vtkDoubleArray.h"
 #include "vtkGeneralTransform.h"
 #include "vtkGridTransform.h"
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
-#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkStringArray.h"
 
 #include "vtkITKBSplineTransform.h"
 
-#include "itksys/SystemTools.hxx"
 
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkAffineTransform.h"
-#include "itkIdentityTransform.h"
 #include "itkTranslationTransform.h"
 #include "itkScaleTransform.h"
-#include "itkBSplineDeformableTransform.h"
 
-#include "itkImageRegionIterator.h"
 
 
 //------------------------------------------------------------------------------

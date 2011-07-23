@@ -12,21 +12,15 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMatrix4x4.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkStripper.h"
 
 #include "vtkFSSurfaceReader.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLModelNode.h"
 
 #include "vtkPolyDataWriter.h"
@@ -34,15 +28,10 @@ Version:   $Revision: 1.2 $
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkPointData.h"
 
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 #include "itksys/SystemTools.hxx"
 
-#include "vtkCollection.h"
-#include "vtkStdString.h"
 #include "vtkStringArray.h"
 
 // Initialize static member that controls resampling -- 

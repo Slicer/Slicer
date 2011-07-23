@@ -12,15 +12,10 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLScene.h"
 
 #include "vtkDoubleArray.h"
 #include <vtkImageData.h>

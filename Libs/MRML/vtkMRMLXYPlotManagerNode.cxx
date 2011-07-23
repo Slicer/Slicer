@@ -15,10 +15,6 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLXYPlotManagerNode.h"
 #include "vtkMRMLArrayPlotNode.h"
-#include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLPlotNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLStorageNode.h"
 
 // VTK includes
 #include <vtkCollection.h>

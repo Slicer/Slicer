@@ -16,23 +16,16 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLSceneViewStorageNode.h"
-#include "vtkMRMLStorageNode.h"
 
 // VTKsys includes
-#include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
-#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cassert>
-#include <string>
-#include <iostream>
 #include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLSceneViewNode, ScreenShot, vtkImageData);

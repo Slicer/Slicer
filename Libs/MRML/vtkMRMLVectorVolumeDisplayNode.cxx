@@ -14,26 +14,18 @@ Version:   $Revision: 1.2 $
 
 // MRML includes
 #include "vtkMRMLVectorVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
-#include <vtkImageLogic.h>
-#include <vtkImageMapToColors.h>
-#include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageRGBToHSI.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
-#include <vtkMatrix4x4.h>
 
 // STD includes
-#include <string>
-#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

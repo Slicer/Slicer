@@ -13,16 +13,12 @@ Version:   $Revision: 1.0 $
 =========================================================================auto=*/
 
 #include "vtkMRMLProceduralColorNode.h"
-#include "vtkMRMLScene.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
-#include <string>
-#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

@@ -15,17 +15,13 @@ Version:   $Revision: 1.6 $
 // MRML includes
 #include "vtkDataFileFormatHelper.h"
 #include "vtkDataIOManager.h"
-#include "vtkMRMLConfigure.h" // MRML_USE*
 #include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
 
 // VTK ITK includes
-#include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
@@ -36,19 +32,12 @@ Version:   $Revision: 1.6 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkDataArray.h>
 #include <vtkImageChangeInformation.h>
-#include <vtkImageData.h>
-#include <vtkMatrix4x4.h>
-#include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/Directory.hxx>
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode* vtkMRMLVolumeArchetypeStorageNode::New()

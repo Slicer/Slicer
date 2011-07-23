@@ -12,7 +12,6 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -20,9 +19,6 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 #include "vtkImageExtractComponents.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVectorVolumeNode* vtkMRMLVectorVolumeNode::New()

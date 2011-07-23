@@ -15,24 +15,18 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLStorageNode.h"// temporary fix for finding stats volumes
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 
 // for calculating auto win/level
 #include <vtkImageAccumulateDiscrete.h>
 #include <vtkImageBimodalAnalysis.h>
-#include <vtkImageExtractComponents.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()

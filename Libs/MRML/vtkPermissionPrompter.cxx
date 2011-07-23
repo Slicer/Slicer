@@ -2,7 +2,6 @@
 #include "vtkPermissionPrompter.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkPermissionPrompter );

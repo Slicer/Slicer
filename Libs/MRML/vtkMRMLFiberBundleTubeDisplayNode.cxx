@@ -10,8 +10,6 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
@@ -23,7 +21,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleTubeDisplayNode* vtkMRMLFiberBundleTubeDisplayNode::New()

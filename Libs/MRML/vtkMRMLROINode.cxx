@@ -1,24 +1,14 @@
-#include <string>
-#include <iostream>
 #include <sstream>
 
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 #include <vtkGeneralTransform.h>
 #include "vtkPlanes.h"
 #include "vtkPoints.h"
-#include "vtkTransform.h"
-#include "vtkDataArray.h"
 #include "vtkDoubleArray.h"
 
-#include "vtkAbstractTransform.h"
 #include "vtkMath.h"
-#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLROINode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
 //------------------------------------------------------------------------------

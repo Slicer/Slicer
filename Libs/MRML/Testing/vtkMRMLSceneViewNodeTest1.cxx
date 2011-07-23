@@ -16,8 +16,6 @@
 
 #include <vtkImageData.h>
 
-#include <stdlib.h>
-#include <iostream>
 
 int vtkMRMLSceneViewNodeTest1(int , char * [] )
 {

@@ -13,17 +13,12 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
-#include "vtkMRMLScene.h"
 
 #include <sstream>
-#include <string>
 
 
 #include "vtkMRMLPlotNode.h"
 
-#include "vtkDataObject.h"
-#include "vtkFieldData.h"
-#include "vtkDoubleArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLPlotNode* vtkMRMLPlotNode::New()

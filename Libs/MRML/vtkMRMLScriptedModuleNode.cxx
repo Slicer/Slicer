@@ -12,14 +12,10 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLScriptedModuleNode.h"
-#include "vtkMRMLScene.h"
 
 
 //------------------------------------------------------------------------------

@@ -12,7 +12,6 @@ Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
 
-#include "vtkMRMLConfigure.h" // MRML_USE*
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLParser.h"
@@ -24,9 +23,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
@@ -36,17 +33,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLHierarchyNode.h"
-#include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLNonlinearTransformNode.h"
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLROIListNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScriptedModuleNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -58,7 +47,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkURIHandler.h"
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
@@ -67,7 +55,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLArrayPlotNode.h"
 #include "vtkMRMLXYPlotManagerNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLPlotNode.h"
 #include "vtkMRMLOrthogonalLinePlotNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
@@ -90,18 +77,11 @@ Version:   $Revision: 1.18 $
 #include <vtkObjectFactory.h>
 #include <vtkErrorCode.h>
 #include <vtkCallbackCommand.h>
-#include <vtkCommand.h>
-#include <vtkGeneralTransform.h>
-#include <vtkDebugLeaks.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <map>
 
 //#define MRMLSCENE_VERBOSE 1
 

@@ -14,14 +14,10 @@
 
 #include <vtkPolyData.h>
 
-#include <stdlib.h>
-#include <iostream>
 
-#include "vtkMRMLStorageNode.h"
 
 #include "TestingMacros.h"
 
-#include "vtkIntArray.h"
 
 int vtkMRMLModelNodeTest1(int , char * [] )
 {

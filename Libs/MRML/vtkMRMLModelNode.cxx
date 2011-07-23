@@ -11,8 +11,6 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
@@ -23,14 +21,11 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkDataSetAttributes.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkFloatArray.h"
-#include "vtkAbstractTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 
-#include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkColorTransferFunction.h"
 

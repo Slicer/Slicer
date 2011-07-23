@@ -12,10 +12,7 @@
 
 #include "vtkMRMLDisplayNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
-#include "vtkMRMLModelNode.h"
 
 #include "TestingMacros.h"
 

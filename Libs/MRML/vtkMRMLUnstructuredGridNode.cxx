@@ -19,17 +19,12 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 
 // VTK includes
-#include "vtkAbstractTransform.h"
 #include "vtkCallbackCommand.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h" 
 #include "vtkTransformFilter.h"
 #include "vtkUnstructuredGrid.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLUnstructuredGridNode, UnstructuredGrid, vtkUnstructuredGrid);
 

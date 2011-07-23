@@ -30,8 +30,6 @@
 #include <vtkImageData.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
 {

@@ -17,14 +17,10 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLSelectionNode.h"
 
 // VTK includes
-#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkStdString.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, SecondaryVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLabelVolumeID);

@@ -18,12 +18,8 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include "vtkObjectFactory.h"
-#include "vtkMatrix4x4.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, BackgroundVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, ForegroundVolumeID);

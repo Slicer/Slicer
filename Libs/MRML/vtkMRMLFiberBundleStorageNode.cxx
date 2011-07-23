@@ -12,16 +12,10 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLScene.h"
 
-#include "vtkPolyDataReader.h"
-#include "vtkPolyDataWriter.h"
 
 
 //------------------------------------------------------------------------------

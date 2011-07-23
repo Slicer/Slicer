@@ -1,13 +1,10 @@
 #include "vtkDataFileFormatHelper.h"
 
-#include <itkImageIOBase.h>
 
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
 
-#include <vector>
 #include <set>
-#include <string>
 
 #define USE_TEMP_ITK_FILEFORMAT_TABLE
 

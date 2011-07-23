@@ -23,14 +23,12 @@ Version:   $Revision: 1.2 $
 #include <vtkDiffusionTensorMathematicsSimple.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
 #include <vtkImageLogic.h>
 #include <vtkImageMathematics.h>
-#include <vtkImageMapToColors.h>
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
@@ -38,9 +36,6 @@ Version:   $Revision: 1.2 $
 #include <vtkSphereSource.h>
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()

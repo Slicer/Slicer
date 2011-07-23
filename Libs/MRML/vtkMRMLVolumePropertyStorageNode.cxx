@@ -22,8 +22,6 @@ Version:   $Revision: 1.2 $
 #include <vtkStringArray.h>
 #include <vtkVolumeProperty.h>
 
-#include <string>
-#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

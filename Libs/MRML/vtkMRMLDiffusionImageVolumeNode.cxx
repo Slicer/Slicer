@@ -12,12 +12,8 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"

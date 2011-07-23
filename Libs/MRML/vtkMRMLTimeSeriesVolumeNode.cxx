@@ -12,14 +12,10 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLTimeSeriesVolumeNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 //------------------------------------------------------------------------------
