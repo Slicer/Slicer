@@ -172,7 +172,7 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
   char *DiffusionTensorDisplayPropertiesNodeID;
 
-  vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
+  void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
   /// Enumerated
   int ColorMode;

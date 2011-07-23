@@ -22,14 +22,14 @@
 #ifndef __vtkMRMLUnstructuredGridDisplayNode_h
 #define __vtkMRMLUnstructuredGridDisplayNode_h
 
-#include "vtkPolyData.h"
-#include "vtkShrinkPolyData.h"
-#include "vtkGeometryFilter.h"
+// MRML includes
+#include "vtkMRMLDisplayNode.h"
 
-#include "vtkMRML.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLUnstructuredGridNode.h"
-
+// VTK includes
+class vtkGeometryFilter;
+class vtkPolyData;
+class vtkShrinkPolyData;
+class vtkUnstructuredGrid;
 
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplayNode
 {
@@ -68,35 +68,15 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplay
                                    void * /*callData*/ );
   /// 
   /// Sets UnstructuredGrid from UnstructuredGrid model node
-  void SetUnstructuredGrid(vtkUnstructuredGrid *grid)
-  {
-    if (this->GeometryFilter)
-      {
-      this->GeometryFilter->SetInput(grid);
-      }
-  }
+  void SetUnstructuredGrid(vtkUnstructuredGrid *grid);
 
   /// 
   /// Gets PlyData converted from UnstructuredGrid 
-  virtual vtkPolyData* GetPolyData()
-  {
-    if (this->ShrinkPolyData)
-      {
-      this->ShrinkPolyData->Update();
-      return this->ShrinkPolyData->GetOutput();
-      }
-    else
-      {
-      return NULL;
-      }
-  }
+  virtual vtkPolyData* GetPolyData();
    
   /// 
   /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline() 
-    {
-    this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
-    };
+  virtual void UpdatePolyDataPipeline();
  
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)

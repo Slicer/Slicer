@@ -18,11 +18,12 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()

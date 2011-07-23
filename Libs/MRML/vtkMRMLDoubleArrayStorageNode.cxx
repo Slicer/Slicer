@@ -16,10 +16,12 @@ Version:   $Revision: 1.6 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
-#include "vtkStringArray.h"
+#include "vtkMRMLScene.h"
+
+#include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLDoubleArrayStorageNode* vtkMRMLDoubleArrayStorageNode::New()

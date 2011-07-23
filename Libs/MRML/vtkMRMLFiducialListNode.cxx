@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkAbstractTransform.h"
 #include "vtkMath.h"
+#include <vtkMatrix4x4.h>
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"

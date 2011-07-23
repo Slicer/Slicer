@@ -1,6 +1,5 @@
 #include "vtkMRMLAnnotationROINode.h"
-//#include "vtkMRMLAnnotationROIStorageNode.h"
-
+#include <vtkMRMLScene.h>
 
 #include <stdlib.h>
 #include <iostream>

@@ -31,6 +31,7 @@
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkImageResliceMask.h>
 #include <vtkImageViewer2.h>
 #include <vtkMultiThreader.h>

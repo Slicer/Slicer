@@ -1,5 +1,6 @@
 #include "vtkMRMLAnnotationAngleStorageNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
+#include "vtkMRMLScene.h"
 
 #include <stdlib.h>
 #include <iostream>

@@ -27,6 +27,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode, DiffusionTensorDisplayPropertiesNodeID);
+
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New()
 {

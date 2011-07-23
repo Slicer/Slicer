@@ -139,7 +139,7 @@ protected:
   vtkMRMLDisplayableHierarchyNode(const vtkMRMLDisplayableHierarchyNode&);
   void operator=(const vtkMRMLDisplayableHierarchyNode&);
 
-  vtkSetReferenceStringMacro(DisplayNodeID);
+  void SetDisplayNodeID(const char *);
 
   char *DisplayNodeID;
 

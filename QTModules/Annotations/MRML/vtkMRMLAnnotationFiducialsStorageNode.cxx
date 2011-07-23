@@ -1,15 +1,22 @@
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
+// Annotation includes
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkImageChangeInformation.h"
 #include "vtkStringArray.h"
 #include "vtkSmartPointer.h"
+
+// STd includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationFiducialsStorageNode* vtkMRMLAnnotationFiducialsStorageNode::New()

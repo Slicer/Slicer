@@ -18,11 +18,14 @@
 #ifndef __vtkMRMLGlyphableVolumeDisplayNode_h
 #define __vtkMRMLGlyphableVolumeDisplayNode_h
 
+// MRML includes
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 class vtkMRMLColorNode;
-
-class vtkMRMLVolumeNode;
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
+class vtkMRMLVolumeNode;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
@@ -145,7 +148,7 @@ protected:
 
   char *GlyphColorNodeID;
 
-  vtkSetReferenceStringMacro(GlyphColorNodeID);
+  void SetGlyphColorNodeID(const char* id);
 
   vtkMRMLColorNode *GlyphColorNode;
 

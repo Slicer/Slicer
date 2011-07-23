@@ -18,11 +18,15 @@ Version:   $Revision: 1.14 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
-#include "vtkLinearTransform.h"
+#include <vtkGeneralTransform.h>
+#include <vtkLinearTransform.h>
+#include <vtkMatrix4x4.h>
 
 #include "vtkEventBroker.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
+
+vtkCxxSetObjectMacro(vtkMRMLLinearTransformNode, MatrixTransformToParent, vtkMatrix4x4);
 
 //------------------------------------------------------------------------------
 vtkMRMLLinearTransformNode* vtkMRMLLinearTransformNode::New()

@@ -46,6 +46,7 @@
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLVolumeNode.h>
@@ -53,6 +54,7 @@
 /// VTK includes
 #include <vtkImageReader.h>
 #include <vtkLookupTable.h>
+#include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkXMLDataParser.h>

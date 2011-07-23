@@ -23,6 +23,10 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
 
+vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionImageVolumeNode, BaselineNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionImageVolumeNode, MaskNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionImageVolumeNode, DiffusionWeightedNodeID);
+
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionImageVolumeNode* vtkMRMLDiffusionImageVolumeNode::New()
 {

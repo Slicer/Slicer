@@ -18,12 +18,9 @@
 #ifndef __vtkMRMLVectorVolumeNode_h
 #define __vtkMRMLVectorVolumeNode_h
 
-
 #include "vtkMRMLTensorVolumeNode.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVectorVolumeDisplayNode.h"
-
-class vtkImageData;
+class vtkMRMLVolumeArchetypeStorageNode;
+class vtkMRMLVectorVolumeDisplayNode;
 
 class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 {
@@ -56,17 +53,11 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 
   /// 
   /// Associated display MRML node
-  virtual vtkMRMLVectorVolumeDisplayNode* GetVectorVolumeDisplayNode()
-  {
-    return vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-  }
+  virtual vtkMRMLVectorVolumeDisplayNode* GetVectorVolumeDisplayNode();
 
   /// 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return vtkMRMLVolumeArchetypeStorageNode::New();
-    };
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 protected:
   vtkMRMLVectorVolumeNode();

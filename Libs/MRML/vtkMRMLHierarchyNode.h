@@ -16,8 +16,14 @@
 #ifndef __vtkMRMLHierarchyNode_h
 #define __vtkMRMLHierarchyNode_h
 
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
+
+// VTK includes
+class vtkCollection;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
@@ -171,7 +177,7 @@ protected:
 
   /// 
   /// String ID of the parent hierarchy MRML node
-  vtkSetReferenceStringMacro(ParentNodeIDReference);
+  void SetParentNodeIDReference(const char* id);
   vtkGetStringMacro(ParentNodeIDReference);
 
   char *ParentNodeIDReference;
@@ -188,7 +194,7 @@ protected:
   /// String ID of the associated MRML node
   char *AssociatedNodeIDReference;
 
-  vtkSetReferenceStringMacro(AssociatedNodeIDReference);
+  void SetAssociatedNodeIDReference(const char*);
   vtkGetStringMacro(AssociatedNodeIDReference);
 
   //BTX

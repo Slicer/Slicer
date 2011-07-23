@@ -24,15 +24,15 @@
 #ifndef __vtkMRMLScalarVolumeNode_h
 #define __vtkMRMLScalarVolumeNode_h
 
-
+// MRML includes
 #include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
+class vtkMRMLScalarVolumeDisplayNode;
+class vtkMRMLVolumeArchetypeStorageNode;
 
+// VTK includes
 class vtkImageData;
 class vtkImageAccumulateDiscrete;
 class vtkImageBimodalAnalysis;
-class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
@@ -78,10 +78,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   /// 
   /// Associated display MRML node
-  virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode()
-  {
-    return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-  }
+  virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode();
 
   virtual void UpdateFromMRML();
   
@@ -102,10 +99,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   
   /// 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return vtkMRMLVolumeArchetypeStorageNode::New();
-    };
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 protected:
   vtkMRMLScalarVolumeNode();

@@ -11,7 +11,9 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLStorageNode.h"
-#include "vtkAbstractTransform.h"
+#include "vtkURIHandler.h"
+
+#include <vtkAbstractTransform.h>
 
 #include <stdlib.h>
 #include <iostream>

@@ -94,7 +94,7 @@ protected:
   vtkMRMLLinearTransformNode(const vtkMRMLLinearTransformNode&);
   void operator=(const vtkMRMLLinearTransformNode&);
 
-  vtkSetObjectMacro(MatrixTransformToParent, vtkMatrix4x4); 
+  virtual void SetMatrixTransformToParent(vtkMatrix4x4*); 
   vtkMatrix4x4* MatrixTransformToParent;
 
 };

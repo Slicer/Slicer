@@ -26,6 +26,9 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
+vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);
+vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, AssociatedNodeIDReference);
+
 typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
 
 std::map< vtkMRMLScene*, HierarchyChildrenNodesType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodes = std::map< vtkMRMLScene*, HierarchyChildrenNodesType>();

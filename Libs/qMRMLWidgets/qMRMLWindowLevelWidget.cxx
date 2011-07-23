@@ -22,7 +22,8 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
+#include <vtkImageData.h>
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLWindowLevelWidgetPrivate: public Ui_qMRMLWindowLevelWidget

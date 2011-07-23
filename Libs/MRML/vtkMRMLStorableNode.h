@@ -27,6 +27,9 @@ class vtkMRMLStorageNode;
 // VTK includes
 class vtkTagTable;
 
+// STD includes
+#include <vector>
+
 class VTK_MRML_EXPORT vtkMRMLStorableNode : public vtkMRMLTransformableNode
 {
 public:
@@ -107,7 +110,7 @@ public:
   
   int GetNumberOfStorageNodes()
     {
-      return (int)this->StorageNodeIDs.size();
+      return static_cast<int>(this->StorageNodeIDs.size());
     };
 
   const char *GetNthStorageNodeID(int n)

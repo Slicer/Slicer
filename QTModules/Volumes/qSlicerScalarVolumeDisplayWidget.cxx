@@ -13,10 +13,13 @@
 
 // MRML includes
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
+#include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 

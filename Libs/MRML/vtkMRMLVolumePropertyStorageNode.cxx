@@ -12,17 +12,19 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkStringArray.h"
-
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 #include "vtkMRMLScene.h"
 
+#include <vtkColorTransferFunction.h>
+#include <vtkObjectFactory.h>
+#include <vtkPiecewiseFunction.h>
+#include <vtkStringArray.h>
+#include <vtkVolumeProperty.h>
+
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVolumePropertyStorageNode* vtkMRMLVolumePropertyStorageNode::New()

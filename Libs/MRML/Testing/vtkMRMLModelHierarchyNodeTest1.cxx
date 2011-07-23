@@ -13,6 +13,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLScene.h"
 
 #include <stdlib.h>
 #include <iostream>

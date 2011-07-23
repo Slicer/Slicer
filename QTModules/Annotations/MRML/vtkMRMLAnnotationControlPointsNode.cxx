@@ -8,6 +8,7 @@
 
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLScene.h>
 
 #include "vtkBitArray.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"

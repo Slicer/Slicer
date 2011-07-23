@@ -12,27 +12,27 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLVolumeNode.h"
+
+#include "vtkDoubleArray.h"
+#include "vtkImageChangeInformation.h"
+#include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
+#include "vtkNRRDReader.h"
+#include "vtkNRRDWriter.h"
+#include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
+#include "vtkStringArray.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkMRMLNRRDStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
-#include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
-#include "vtkDoubleArray.h"
-#include "vtkStringArray.h"
-
-#include "vtkSmartPointer.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode* vtkMRMLNRRDStorageNode::New()

@@ -26,7 +26,6 @@
 #include "vtkMRML.h"
 class vtkMRMLNode;
 class vtkMRMLScene;
-//#include "vtkMRMLScene.h"
 
 class vtkCollection;
 

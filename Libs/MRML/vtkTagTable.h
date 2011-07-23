@@ -6,7 +6,6 @@
 
 // VTK includes
 #include <vtkObject.h>
-#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <string>

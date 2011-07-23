@@ -25,6 +25,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLBSplineTransformNode.h"
 
 #include "vtkDoubleArray.h"
+#include "vtkGeneralTransform.h"
 #include "vtkGridTransform.h"
 #include "vtkImageData.h"
 #include "vtkMatrix4x4.h"

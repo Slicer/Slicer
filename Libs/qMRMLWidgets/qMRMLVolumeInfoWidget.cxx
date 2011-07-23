@@ -30,12 +30,14 @@
 
 // MRML includes
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 

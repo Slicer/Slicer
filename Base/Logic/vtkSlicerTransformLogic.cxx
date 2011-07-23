@@ -23,6 +23,7 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkGeneralTransform.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>

@@ -14,6 +14,7 @@
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -34,6 +35,7 @@
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 #include "itkRealTimeClock.h"
 

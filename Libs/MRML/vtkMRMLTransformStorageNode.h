@@ -18,9 +18,7 @@
 #ifndef __vtkMRMLTransformStorageNode_h
 #define __vtkMRMLTransformStorageNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLTransformNode.h" 
 
 class vtkImageData;
 

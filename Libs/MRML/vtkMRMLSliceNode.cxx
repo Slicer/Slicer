@@ -29,6 +29,8 @@ Version:   $Revision: 1.2 $
 
 #include "vnl/vnl_double_3.h"
 
+vtkCxxSetObjectMacro(vtkMRMLSliceNode, SliceToRAS, vtkMatrix4x4);
+
 //------------------------------------------------------------------------------
 vtkMRMLSliceNode* vtkMRMLSliceNode::New()
 {

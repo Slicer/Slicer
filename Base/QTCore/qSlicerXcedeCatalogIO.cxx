@@ -44,11 +44,13 @@
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
+#include <vtkURIHandler.h>
 
 /// FreeSurfer includes
 #include <vtkFSSurfaceHelper.h>
 
 /// VTK includes
+#include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLDataElement.h>

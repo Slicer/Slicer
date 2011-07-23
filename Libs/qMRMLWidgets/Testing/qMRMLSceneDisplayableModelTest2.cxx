@@ -28,7 +28,10 @@
 #include "qMRMLSortFilterProxyModel.h"
 
 #include "TestingMacros.h"
+
+// MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLScene.h>
 
 // STD includes
 #include <cstdlib>

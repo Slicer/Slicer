@@ -4,6 +4,7 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkCommand.h>

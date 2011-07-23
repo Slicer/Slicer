@@ -11,6 +11,7 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkURIHandler.h"
 
 #include <stdlib.h>
 #include <iostream>

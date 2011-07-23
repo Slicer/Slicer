@@ -15,28 +15,30 @@
 #include "vtkSlicerTask.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLColorTableStorageNode.h>
 #include <vtkMRMLDisplayableNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLDiffusionWeightedVolumeNode.h>
-#include <vtkMRMLVectorVolumeNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLStorageNode.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLFiberBundleNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
-#include <vtkMRMLNRRDStorageNode.h>
-#include <vtkMRMLTransformNode.h>
-#include <vtkMRMLFiberBundleStorageNode.h>
-#include <vtkMRMLModelStorageNode.h>
-#include <vtkMRMLTransformStorageNode.h>
-#include <vtkMRMLFiducialListNode.h>
-#include <vtkMRMLROIListNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLDoubleArrayStorageNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLFiberBundleNode.h>
+#include <vtkMRMLFiberBundleStorageNode.h>
+#include <vtkMRMLFiducialListNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelStorageNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
+#include <vtkMRMLROIListNode.h>
+#include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLStorageNode.h>
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLTransformStorageNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>

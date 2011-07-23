@@ -31,6 +31,7 @@ Version:   $Revision: 1.3 $
 
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, Camera, vtkCamera);
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, AppliedTransform, vtkMatrix4x4);
+vtkCxxSetReferenceStringMacro(vtkMRMLCameraNode, InternalActiveTag);
 
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLCameraNode::New()

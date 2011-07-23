@@ -27,7 +27,8 @@ Version:   $Revision: 1.3 $
 #include <vtkPolyData.h>
 #include <vtkObjectFactory.h>
 
-vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData)
+vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
+vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()

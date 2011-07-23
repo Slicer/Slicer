@@ -19,10 +19,7 @@
 #ifndef __vtkMRMLVolumeArchetypeStorageNode_h
 #define __vtkMRMLVolumeArchetypeStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
-
 
 class vtkImageData;
 

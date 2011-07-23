@@ -37,6 +37,7 @@
 // MRML includes
 #include <vtkEventBroker.h>
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

@@ -21,6 +21,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCollection.h"
 
 #include "vtkMRMLSnapshotClipNode.h"
+#include "vtkMRMLSceneViewNode.h"
 
 #include "vtkMRMLScene.h"
 
@@ -165,4 +166,23 @@ void vtkMRMLSnapshotClipNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLSceneViewNode *node = vtkMRMLSceneViewNode::SafeDownCast(scene->GetNodeByID(this->SceneSnapshotNodeIDs[n]));
     this->SceneSnapshotNodes->AddItem(node);
     }
+}
+
+void vtkMRMLSnapshotClipNode::AddSceneSnapshotNode(vtkMRMLSceneViewNode * node)
+{
+  this->SceneSnapshotNodes->AddItem(node);
+}
+
+/// 
+/// Get Numbre of SceneSnapshot nodes
+int vtkMRMLSnapshotClipNode::GetNumberOfSceneSnapshotNodes()
+{
+  return this->SceneSnapshotNodes->GetNumberOfItems();
+}
+
+/// 
+/// Get SceneSnapshot node
+vtkMRMLSceneViewNode* vtkMRMLSnapshotClipNode::GetSceneSnapshotNode(int index)
+{
+  return vtkMRMLSceneViewNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(index));
 }

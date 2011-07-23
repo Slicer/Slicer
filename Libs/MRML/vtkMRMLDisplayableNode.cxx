@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 // when change the display node, update the scalars

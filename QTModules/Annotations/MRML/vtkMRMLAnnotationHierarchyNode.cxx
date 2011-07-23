@@ -1,6 +1,10 @@
-#include "vtkObjectFactory.h"
+
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLScene.h"
+
+#include <vtkCollection.h>
+#include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationHierarchyNode* vtkMRMLAnnotationHierarchyNode::New()

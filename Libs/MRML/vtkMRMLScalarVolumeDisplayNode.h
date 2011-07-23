@@ -18,8 +18,10 @@
 #ifndef __vtkMRMLScalarVolumeDisplayNode_h
 #define __vtkMRMLScalarVolumeDisplayNode_h
 
+// MRML includes
 #include "vtkMRMLVolumeDisplayNode.h"
 
+// VTK includes
 class vtkImageData;
 class vtkImageCast;
 class vtkImageLogic;
@@ -27,6 +29,9 @@ class vtkImageMapToColors;
 class vtkImageThreshold;
 class vtkImageAppendComponents;
 class vtkImageMapToWindowLevelColors;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {

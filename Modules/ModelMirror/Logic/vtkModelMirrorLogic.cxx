@@ -1,16 +1,4 @@
 #include "vtkModelMirrorLogic.h"
-
-// ITKSYS includes
-#include <itksys/SystemTools.hxx>
-#include <itksys/Directory.hxx>
-
-// VTK includes
-#include "vtkObjectFactory.h"
-#include "vtkIntArray.h"
-#include "vtkPolyData.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkCleanPolyData.h"
-
 // MRML includes
 #include "vtkCacheManager.h"
 #include "vtkMRMLScene.h"
@@ -23,6 +11,18 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
+
+// ITKSYS includes
+#include <itksys/SystemTools.hxx>
+#include <itksys/Directory.hxx>
+
+// VTK includes
+#include "vtkObjectFactory.h"
+#include <vtkGeneralTransform.h>
+#include "vtkIntArray.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkCleanPolyData.h"
 
 // STD includes
 #include <string>

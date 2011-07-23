@@ -14,20 +14,16 @@
 #ifndef __vtkMRMLXYPlotManagerNode_h
 #define __vtkMRMLXYPlotManagerNode_h
 
-#include <string>
-#include <vector>
-
-#include "vtkObject.h"
-#include "vtkCollection.h"
-
-#include "vtkMRML.h"
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
-#include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLPlotNode.h"
+class vtkMRMLPlotNode;
 
-
+// VTK includes
+class vtkCollection;
 class vtkIntArray;
+
+// STD includes
+#include <string>
 
 class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
 {

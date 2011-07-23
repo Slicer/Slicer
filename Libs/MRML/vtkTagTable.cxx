@@ -5,6 +5,8 @@
 #include "vtkVariant.h"
 #include "vtkStringArray.h"
 
+#include <vtksys/SystemTools.hxx>
+
 #include <iostream>
 #include <sstream>
 #include <string>

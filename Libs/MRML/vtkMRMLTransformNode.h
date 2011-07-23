@@ -21,10 +21,8 @@
 
 #include "vtkMRMLStorableNode.h"
 
-#include "vtkGeneralTransform.h"
-#include "vtkMatrix4x4.h"
-
-class vtkMRMLStorageNode;
+class vtkGeneralTransform;
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
 {

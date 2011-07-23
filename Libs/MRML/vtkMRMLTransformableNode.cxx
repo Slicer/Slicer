@@ -28,6 +28,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
+vtkCxxSetReferenceStringMacro(vtkMRMLTransformableNode, TransformNodeID);
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()

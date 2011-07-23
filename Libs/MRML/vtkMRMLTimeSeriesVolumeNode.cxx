@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkMRMLTimeSeriesVolumeNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLTimeSeriesVolumeNode* vtkMRMLTimeSeriesVolumeNode::New()
@@ -91,5 +92,9 @@ void vtkMRMLTimeSeriesVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
-
- 
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLTimeSeriesVolumeNode::CreateDefaultStorageNode()
+{
+  // Superclass::CreateDefaultStorageNode();
+  return vtkMRMLVolumeArchetypeStorageNode::New();
+}

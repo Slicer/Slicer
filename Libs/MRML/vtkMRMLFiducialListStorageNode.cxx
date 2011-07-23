@@ -12,15 +12,17 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLFiducialListStorageNode.h"
+#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLScene.h"
+
+#include "vtkImageChangeInformation.h"
+#include "vtkObjectFactory.h"
+#include "vtkStringArray.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkMRMLFiducialListStorageNode.h"
-#include "vtkMRMLFiducialListNode.h"
-#include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode* vtkMRMLFiducialListStorageNode::New()

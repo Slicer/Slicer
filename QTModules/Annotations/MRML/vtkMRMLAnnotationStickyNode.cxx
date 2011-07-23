@@ -2,6 +2,7 @@
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
+#include "vtkMRMLScene.h"
 
 #include <string>
 #include <iostream>

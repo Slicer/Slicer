@@ -25,6 +25,7 @@
 // MRML includes
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLScene.h"
 
 // STD includes
 #include <vector>

@@ -12,15 +12,17 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
+#include "vtkMRMLScene.h"
+#include "vtkMRMLVectorVolumeDisplayNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkImageExtractComponents.h"
 
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLScene.h"
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVectorVolumeNode* vtkMRMLVectorVolumeNode::New()
@@ -147,4 +149,16 @@ void vtkMRMLVectorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode
     // pass it up to the superclass
     this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVectorVolumeDisplayNode* vtkMRMLVectorVolumeNode::GetVectorVolumeDisplayNode()
+{
+  return vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLVectorVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLVolumeArchetypeStorageNode::New();
 }

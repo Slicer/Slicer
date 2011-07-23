@@ -20,8 +20,11 @@
 #ifndef __vtkMRMLSelectionNode_h
 #define __vtkMRMLSelectionNode_h
 
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 {
@@ -64,56 +67,56 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// 
   /// the ID of a MRMLVolumeNode (typically background)
   vtkGetStringMacro (ActiveVolumeID);
-  vtkSetReferenceStringMacro (ActiveVolumeID);
-  void SetReferenceActiveVolumeID (char *id) { this->SetActiveVolumeID(id); };
+  void SetActiveVolumeID(const char* id);
+  void SetReferenceActiveVolumeID (const char *id) { this->SetActiveVolumeID(id); };
 
   /// 
   /// the ID of a MRMLVolumeNode (typically foreground)
   vtkGetStringMacro (SecondaryVolumeID);
-  vtkSetReferenceStringMacro (SecondaryVolumeID);
+  void SetSecondaryVolumeID(const char* id);
   void SetReferenceSecondaryVolumeID (char *id) { this->SetSecondaryVolumeID(id); };
 
   /// 
   /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (ActiveLabelVolumeID);
-  vtkSetReferenceStringMacro (ActiveLabelVolumeID);
-  void SetReferenceActiveLabelVolumeID (char *id) { this->SetActiveLabelVolumeID(id); };
+  void SetActiveLabelVolumeID(const char* id);
+  void SetReferenceActiveLabelVolumeID (const char *id) { this->SetActiveLabelVolumeID(id); };
 
   /// 
   /// the ID of a MRMLFiducialList
   vtkGetStringMacro (ActiveFiducialListID);
-  vtkSetReferenceStringMacro (ActiveFiducialListID);
-  void SetReferenceActiveFiducialListID (char *id) { this->SetActiveFiducialListID(id); };
+  void SetActiveFiducialListID(const char* id);
+  void SetReferenceActiveFiducialListID (const char *id) { this->SetActiveFiducialListID(id); };
 
   /// 
   /// the ID of a MRMLAnnotationNode
   vtkGetStringMacro (ActiveAnnotationID);
-  vtkSetReferenceStringMacro (ActiveAnnotationID);
-  void SetReferenceActiveAnnotationID (char *id) { this->SetActiveAnnotationID(id); };
+  void SetActiveAnnotationID(const char* id);
+  void SetReferenceActiveAnnotationID (const char *id) { this->SetActiveAnnotationID(id); };
 
   ///
   /// the ID of a MRMLROIList
   vtkGetStringMacro (ActiveROIListID);
-  vtkSetReferenceStringMacro (ActiveROIListID);
-  void SetReferenceActiveROIListID (char *id) { this->SetActiveROIListID(id); };
+  void SetActiveROIListID(const char* id);
+  void SetReferenceActiveROIListID (const char *id) { this->SetActiveROIListID(id); };
 
   /// 
   /// the ID of a MRMLCameraNode
   vtkGetStringMacro (ActiveCameraID );
-  vtkSetReferenceStringMacro ( ActiveCameraID );
-  void SetReferenceActiveCameraID (char *id) { this->SetActiveCameraID(id); };
+  void SetActiveCameraID(const char* id);
+  void SetReferenceActiveCameraID (const char *id) { this->SetActiveCameraID(id); };
   
   /// Description
   /// the ID of a MRMLViewNode
   vtkGetStringMacro (ActiveViewID );
-  vtkSetReferenceStringMacro ( ActiveViewID );
-  void SetReferenceActiveViewID (char *id) { this->SetActiveViewID(id); };
+  void SetActiveViewID(const char* id );
+  void SetReferenceActiveViewID (const char *id) { this->SetActiveViewID(id); };
   
   /// Description
   /// the ID of a MRMLLayoutNode
   vtkGetStringMacro (ActiveLayoutID );
-  vtkSetReferenceStringMacro ( ActiveLayoutID );
-  void SetReferenceActiveLayoutID (char *id) { this->SetActiveLayoutID(id); this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent); };
+  void SetActiveLayoutID(const char* id);
+  void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent); };
 
   /// Description
   /// a list of events that this node can throw

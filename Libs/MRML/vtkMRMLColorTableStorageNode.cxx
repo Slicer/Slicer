@@ -15,6 +15,7 @@ Version:   $Revision: 1.6 $
 // MRML include
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK include
 #include <vtkImageChangeInformation.h>

@@ -12,27 +12,26 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
+#include "vtkObjectFactory.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 #include "vtkLookupTable.h"
 
+#include <string>
+#include <iostream>
+#include <sstream>
+
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
 // development meeting, to move ijk coordinates to voxel centers."
-
+vtkCxxSetReferenceStringMacro(vtkMRMLGlyphableVolumeDisplayNode, GlyphColorNodeID);
 
 //------------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeDisplayNode* vtkMRMLGlyphableVolumeDisplayNode::New()

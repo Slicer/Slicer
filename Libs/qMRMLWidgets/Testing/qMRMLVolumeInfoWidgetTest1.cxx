@@ -28,10 +28,12 @@
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 
 // STD includes

@@ -24,14 +24,7 @@
 #ifndef __vtkMRMLVectorVolumeDisplayNode_h
 #define __vtkMRMLVectorVolumeDisplayNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
-#include "vtkMRMLColorNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
-#include "vtkImageShiftScale.h"
-#include "vtkImageRGBToHSI.h"
 
 class vtkImageData;
 class vtkImageShiftScale;

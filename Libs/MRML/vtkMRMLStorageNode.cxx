@@ -32,6 +32,8 @@ Version:   $Revision: 1.1.1.1 $
 #include <itksys/stl/string>
 #include <itksys/SystemTools.hxx>
 
+vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler)
+
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {

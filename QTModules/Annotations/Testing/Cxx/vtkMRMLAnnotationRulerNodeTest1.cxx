@@ -1,6 +1,6 @@
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
-
+#include "vtkMRMLScene.h"
 
 #include <stdlib.h>
 #include <iostream>

@@ -148,7 +148,7 @@ protected:
 
   vtkMRMLCameraNode* FindActiveTagInScene(const char *tag);
 
-  vtkSetReferenceStringMacro(InternalActiveTag);
+  void SetInternalActiveTag(const char* id);
   char *InternalActiveTag;
 
   vtkMatrix4x4 *AppliedTransform;

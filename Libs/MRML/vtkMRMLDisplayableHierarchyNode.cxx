@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
@@ -27,6 +28,8 @@ Version:   $Revision: 1.3 $
 #include <string>
 #include <iostream>
 #include <sstream>
+
+vtkCxxSetReferenceStringMacro(vtkMRMLDisplayableHierarchyNode, DisplayNodeID);
 
 //------------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::New()

@@ -22,17 +22,9 @@
 #ifndef __vtkMRMLUnstructuredGridNode_h
 #define __vtkMRMLUnstructuredGridNode_h
 
-#include "vtkPolyData.h" 
-#include "vtkUnstructuredGrid.h" 
+#include "vtkMRMLDisplayableNode.h"
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLUnstructuredGridDisplayNode.h"
-
-class vtkMRMLUnstructuredGridStorageNode;
-class vtkCallbackCommand;
+class vtkUnstructuredGrid;
 
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLDisplayableNode
 {
@@ -94,8 +86,7 @@ protected:
   vtkMRMLUnstructuredGridNode(const vtkMRMLUnstructuredGridNode&);
   void operator=(const vtkMRMLUnstructuredGridNode&);
 
-  vtkSetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
-
+  virtual void SetUnstructuredGrid(vtkUnstructuredGrid* grid);
 
   /// Data
   vtkUnstructuredGrid *UnstructuredGrid;

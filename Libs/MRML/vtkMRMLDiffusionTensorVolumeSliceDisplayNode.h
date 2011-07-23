@@ -203,7 +203,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
     vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
     char *DiffusionTensorDisplayPropertiesNodeID;
 
-    vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
+    void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
     /// Enumerated
     int ColorMode;

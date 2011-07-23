@@ -24,6 +24,7 @@
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 // VTK includes
+#include <vtkAbstractTransform.h>
 #include <vtkCallbackCommand.h>
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkGPUVolumeRayCastMapper.h"

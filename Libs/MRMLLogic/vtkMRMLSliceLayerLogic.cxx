@@ -28,12 +28,13 @@
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkSmartPointer.h"
-#include "vtkPointData.h"
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkImageData.h>
+#include <vtkSmartPointer.h>
+#include <vtkPointData.h>
 #include <vtkTransform.h>
-#include "vtkDiffusionTensorMathematics.h"
+#include <vtkDiffusionTensorMathematics.h>
 
 //
 #include "vtkImageLabelOutline.h"

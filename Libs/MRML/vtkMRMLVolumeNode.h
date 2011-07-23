@@ -24,19 +24,16 @@
 #ifndef __vtkMRMLVolumeNode_h
 #define __vtkMRMLVolumeNode_h
 
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+// MRML includes
 #include "vtkMRMLDisplayableNode.h"
+class vtkMRMLVolumeDisplayNode;
 
-#include "itkMetaDataDictionary.h"
-
+// VTK includes
 class vtkImageData;
-class vtkMRMLStorageNode;
+class vtkMatrix4x4;
+
+// ITK includes
+#include "itkMetaDataDictionary.h"
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
@@ -129,10 +126,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 
   /// 
   /// Associated display MRML node
-  virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode()
-  {
-    return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-  }
+  virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode();
 
   /// 
   /// Associated ImageData
@@ -168,13 +162,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   /// Subclasses can define actions to take when the mrml scene passes an event
   /// that the image data has changed, usually call CalculateAutoLevels
   virtual void UpdateFromMRML();
-  
-  /// 
-  /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return Superclass::CreateDefaultStorageNode();
-    };
 
 
 protected:
@@ -183,7 +170,7 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
-  vtkSetObjectMacro(ImageData, vtkImageData);
+  virtual void SetImageData(vtkImageData* img);
 
   /// these are unit length direction cosines
   double IJKToRASDirections[3][3];

@@ -8,6 +8,7 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
 

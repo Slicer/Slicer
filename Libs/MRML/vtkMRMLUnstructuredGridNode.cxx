@@ -11,21 +11,27 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+// MRML includes
+#include "vtkEventBroker.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLUnstructuredGridNode.h"
+#include "vtkMRMLUnstructuredGridDisplayNode.h"
+#include "vtkMRMLUnstructuredGridStorageNode.h"
+
+// VTK includes
+#include "vtkAbstractTransform.h"
+#include "vtkCallbackCommand.h"
+#include "vtkObjectFactory.h"
+#include "vtkPolyData.h" 
+#include "vtkTransformFilter.h"
+#include "vtkUnstructuredGrid.h"
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
-#include "vtkEventBroker.h"
-#include "vtkMRMLUnstructuredGridNode.h"
-#include "vtkMRMLUnstructuredGridDisplayNode.h"
-#include "vtkMRMLUnstructuredGridStorageNode.h"
-#include "vtkMRMLUnstructuredGridStorageNode.h"
-
-#include "vtkAbstractTransform.h"
-#include "vtkTransformFilter.h"
+vtkCxxSetObjectMacro(vtkMRMLUnstructuredGridNode, UnstructuredGrid, vtkUnstructuredGrid);
 
 //------------------------------------------------------------------------------
 vtkMRMLUnstructuredGridNode* vtkMRMLUnstructuredGridNode::New()

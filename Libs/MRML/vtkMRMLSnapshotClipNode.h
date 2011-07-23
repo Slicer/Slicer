@@ -16,11 +16,15 @@
 #ifndef __vtkMRMLSnapshotClipNode_h
 #define __vtkMRMLSnapshotClipNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLSceneViewNode.h"
+class vtkMRMLSceneViewNode;
+
+// VTK includes
+class vtkCollection;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
@@ -54,23 +58,14 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   /// 
   /// Add SceneSnapshot node
-  void AddSceneSanpshotNode(vtkMRMLSceneViewNode * node)
-  {
-    this->SceneSnapshotNodes->AddItem(node);
-  };
+  void AddSceneSnapshotNode(vtkMRMLSceneViewNode * node);
 
   /// 
   /// Get Numbre of SceneSnapshot nodes
-  int GetNumberOfSceneSanpshotNodes()
-  {
-    return this->SceneSnapshotNodes->GetNumberOfItems();
-  };
+  int GetNumberOfSceneSnapshotNodes();
   /// 
   /// Get SceneSnapshot node
-  vtkMRMLSceneViewNode* GetSceneSanpshotNode(int index)
-  {
-    return vtkMRMLSceneViewNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(index));
-  };
+  vtkMRMLSceneViewNode* GetSceneSnapshotNode(int index);
 
 protected:
   vtkMRMLSnapshotClipNode();

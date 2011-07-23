@@ -22,6 +22,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleDisplayNode, DiffusionTensorDisplayPropertiesNodeID)
+
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleDisplayNode::New()
 {

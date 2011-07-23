@@ -18,7 +18,6 @@
 #ifndef __vtkMRMLViewNode_h
 #define __vtkMRMLViewNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLViewNode : public vtkMRMLNode

@@ -25,6 +25,10 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
+vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, BackgroundVolumeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, ForegroundVolumeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, LabelVolumeID);
+
 //------------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* vtkMRMLSliceCompositeNode::New()
 {

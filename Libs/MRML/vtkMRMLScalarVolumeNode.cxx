@@ -11,26 +11,28 @@ Date:      $Date: 2006/03/17 17:01:53 $
 Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
+// MRML includes
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"// temporary fix for finding stats volumes
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkDataArray.h>
+#include <vtkImageData.h>
+#include <vtkPointData.h>
+
+// for calculating auto win/level
+#include <vtkImageAccumulateDiscrete.h>
+#include <vtkImageBimodalAnalysis.h>
+#include <vtkImageExtractComponents.h>
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLScene.h"
-
-#include "vtkPointData.h"
-#include "vtkDataArray.h"
-
-// for calculating auto win/level
-#include "vtkImageAccumulateDiscrete.h"
-#include "vtkImageBimodalAnalysis.h"
-#include "vtkImageExtractComponents.h"
-
-// temporary fix for finding stats volumes
-#include "vtkMRMLStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()
@@ -170,6 +172,11 @@ void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
   id->Delete();
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeNode::GetScalarVolumeDisplayNode()
+{
+  return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -536,3 +543,10 @@ void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeD
     }
 
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLVolumeArchetypeStorageNode::New();
+}
+

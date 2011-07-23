@@ -12,22 +12,22 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLTensorVolumeNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
+
+#include "vtkDiffusionTensorMathematics.h"
+
+#include "vtkAssignAttribute.h"
+#include <vtkImageData.h>
+#include "vtkObjectFactory.h"
+#include "vtkMatrix4x4.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLTensorVolumeNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMatrix4x4.h"
-
-
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkAssignAttribute.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLNRRDStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode* vtkMRMLTensorVolumeNode::New()

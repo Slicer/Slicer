@@ -9,6 +9,8 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
+#include "vtkMRMLScene.h"
+
 #include "vtkBitArray.h"
 #include "vtkCellArray.h"
 #include "vtkDataSetAttributes.h"

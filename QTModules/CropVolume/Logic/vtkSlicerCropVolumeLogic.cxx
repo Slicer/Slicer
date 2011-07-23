@@ -12,26 +12,10 @@
 
 =========================================================================auto=*/
 
-// 
-#include "vtkSlicerCropVolumeLogic.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkSlicerVolumesLogic.h"
-
 // Qt includes
 #include <QDebug>
-
-// VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageChangeInformation.h>
-
-#include <vtkMRMLAnnotationROINode.h>
-#include <vtkMRMLCropVolumeParametersNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLDiffusionWeightedVolumeNode.h>
-#include <vtkMRMLVolumeNode.h>
-#include <vtkMRMLVectorVolumeNode.h>
+#include <QMessageBox>
+#include <QString>
 
 // CLI invocation
 #include <qSlicerCoreApplication.h>
@@ -41,16 +25,32 @@
 #include <qSlicerCLIModule.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkSlicerCLIModuleLogic.h>
-//#include <qSlicerVolumesModule.h>
 
-#include <math.h>
+// CropLogic includes
+#include "vtkSlicerCropVolumeLogic.h"
+#include "vtkSlicerColorLogic.h"
+#include "vtkSlicerVolumesLogic.h"
 
+// CropMRML includes
 #include <vtkMRMLCropVolumeParametersNode.h>
 
-#include <QDebug>
-#include <QMessageBox>
-#include <QString>
+// MRML includes
+#include <vtkMRMLAnnotationROINode.h>
+#include <vtkMRMLCropVolumeParametersNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkImageData.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
+
+// STD includes
+#include <math.h>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerCropVolumeLogic, "$Revision: 1.9.12.1 $");

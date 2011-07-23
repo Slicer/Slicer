@@ -20,11 +20,7 @@
 #ifndef __vtkMRMLSliceCompositeNode_h
 #define __vtkMRMLSliceCompositeNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-
-#include "vtkMatrix4x4.h"
 
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
@@ -63,21 +59,21 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// 
   /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
-  vtkSetReferenceStringMacro (BackgroundVolumeID);
+  void SetBackgroundVolumeID(const char* id);
   void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
 
   /// 
   /// the ID of a MRMLVolumeNode
   /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (ForegroundVolumeID);
-  vtkSetReferenceStringMacro (ForegroundVolumeID);
+  void SetForegroundVolumeID(const char* id);
   void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
 
   /// 
   /// the ID of a MRMLVolumeNode
   /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (LabelVolumeID);
-  vtkSetReferenceStringMacro (LabelVolumeID);
+  void SetLabelVolumeID(const char* id);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
 
   /// 

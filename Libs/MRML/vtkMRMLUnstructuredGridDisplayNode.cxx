@@ -15,11 +15,17 @@ Version:   $Revision: 1.3 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkGeometryFilter.h"
+#include "vtkObjectFactory.h"
+#include "vtkPolyData.h"
+#include "vtkShrinkPolyData.h"
+#include <vtkUnstructuredGrid.h>
 
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLUnstructuredGridNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLUnstructuredGridDisplayNode* vtkMRMLUnstructuredGridDisplayNode::New()
@@ -140,4 +146,33 @@ void vtkMRMLUnstructuredGridDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLUnstructuredGridDisplayNode::SetUnstructuredGrid(vtkUnstructuredGrid *grid)
+{
+  if (this->GeometryFilter)
+    {
+    this->GeometryFilter->SetInput(grid);
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLUnstructuredGridDisplayNode::GetPolyData()
+{
+  if (this->ShrinkPolyData)
+    {
+    this->ShrinkPolyData->Update();
+    return this->ShrinkPolyData->GetOutput();
+    }
+  else
+    {
+    return NULL;
+    }
+}
+   
+//---------------------------------------------------------------------------
+void vtkMRMLUnstructuredGridDisplayNode::UpdatePolyDataPipeline() 
+{
+  this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
 }

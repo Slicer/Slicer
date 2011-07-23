@@ -31,6 +31,7 @@
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLFreeSurferProceduralColorNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

@@ -26,6 +26,7 @@
 #include <vtkCamera.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkMath.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkPropCollection.h>
 #include <vtkProperty.h>

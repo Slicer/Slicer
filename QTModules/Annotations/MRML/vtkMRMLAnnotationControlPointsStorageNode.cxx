@@ -7,6 +7,7 @@
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
 // KP: Deal with TEXT - annotation label 

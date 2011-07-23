@@ -22,11 +22,10 @@
 #ifndef __vtkMRMLSliceNode_h
 #define __vtkMRMLSliceNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-
-#include "vtkMatrix4x4.h"
 class vtkMRMLVolumeNode;
+
+class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
 {
@@ -61,7 +60,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// Mapping from RAS space onto the slice plane
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
   vtkGetObjectMacro (SliceToRAS, vtkMatrix4x4);
-  vtkSetObjectMacro (SliceToRAS, vtkMatrix4x4);
+  virtual void SetSliceToRAS(vtkMatrix4x4* sliceToRAS);
 
   /// 
   /// The visibility of the slice in the 3DViewer.

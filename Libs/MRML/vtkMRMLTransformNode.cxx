@@ -17,7 +17,7 @@ Version:   $Revision: 1.14 $
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-
+#include <vtkGeneralTransform.h>
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"

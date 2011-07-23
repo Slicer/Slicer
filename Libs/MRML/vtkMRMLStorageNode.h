@@ -18,13 +18,13 @@
 #ifndef __vtkMRMLStorageNode_h
 #define __vtkMRMLStorageNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkURIHandler.h"
-
-class vtkStringArray;
 class vtkURIHandler;
+
+// VTK includes
+class vtkStringArray;
+
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
@@ -83,7 +83,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetStringMacro(URI);
   
   vtkGetObjectMacro (URIHandler, vtkURIHandler);
-  vtkSetObjectMacro (URIHandler, vtkURIHandler);
+  virtual void SetURIHandler(vtkURIHandler* uriHandler);
   
   /// 
   /// Propagate Progress Event generated in ReadData

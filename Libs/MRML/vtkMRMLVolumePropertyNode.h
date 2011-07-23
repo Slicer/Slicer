@@ -6,13 +6,11 @@
 #ifndef __vtkMRMLVolumePropertyNode_h
 #define __vtkMRMLVolumePropertyNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLStorableNode.h"
 
-#include "vtkVolumeProperty.h"
-#include "vtkPiecewiseFunction.h"
-#include "vtkColorTransferFunction.h"
+class vtkVolumeProperty;
+class vtkPiecewiseFunction;
+class vtkColorTransferFunction;
 
 #include <string>
 #include <vtksys/stl/vector>

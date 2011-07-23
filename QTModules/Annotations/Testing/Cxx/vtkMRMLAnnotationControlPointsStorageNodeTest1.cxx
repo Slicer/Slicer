@@ -1,5 +1,6 @@
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
+#include "vtkMRMLScene.h"
 
 #include <stdlib.h>
 #include <iostream>

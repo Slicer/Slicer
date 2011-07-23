@@ -1,5 +1,6 @@
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
+#include "vtkMRMLScene.h"
 
 #include <stdlib.h>
 #include <iostream>

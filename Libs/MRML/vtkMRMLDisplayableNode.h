@@ -27,6 +27,9 @@ class vtkMRMLDisplayNode;
 // VTK includes
 class vtkPolyData;
 
+// STD includes
+#include <vector>
+
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:

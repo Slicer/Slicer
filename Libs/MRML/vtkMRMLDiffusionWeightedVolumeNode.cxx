@@ -23,7 +23,9 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScene.h"
 
 #include "vtkDoubleArray.h"
+#include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
+#include <vtkMatrix4x4.h>
 #include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------

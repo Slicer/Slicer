@@ -33,8 +33,10 @@
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneCategoryModel.h"
 
+// MRML includes
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

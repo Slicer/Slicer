@@ -26,6 +26,16 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, SecondaryVolumeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLabelVolumeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveFiducialListID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveAnnotationID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveROIListID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveCameraID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveViewID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLayoutID);
+vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveVolumeID);
+
 //------------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLSelectionNode::New()
 {

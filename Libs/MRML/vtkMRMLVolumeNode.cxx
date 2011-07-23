@@ -11,22 +11,26 @@ Date:      $Date: 2006/03/17 17:01:53 $
 Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
+// MRML includes
+#include "vtkEventBroker.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeNode.h"
 
+// VTK includes
+#include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
+#include "vtkMatrix4x4.h"
+#include <vtkImageData.h>
+#include "vtkLinearTransform.h"
+#include "vtkSmartPointer.h"
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkMatrix4x4.h"
-#include "vtkLinearTransform.h"
-#include "vtkSmartPointer.h"
-
-#include "vtkEventBroker.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLScene.h"
-
-#include "vtkMRMLScalarVolumeDisplayNode.h"
+vtkCxxSetObjectMacro(vtkMRMLVolumeNode, ImageData, vtkImageData);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
@@ -682,6 +686,13 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
     }
   return;
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetVolumeDisplayNode()
+{
+  return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
+
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateFromMRML()

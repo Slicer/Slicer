@@ -18,12 +18,13 @@
 
 #include <vtkSmartPointer.h>
 
-#include "vtkImageThreshold.h"
-#include "vtkImageAccumulateDiscrete.h"
-#include "vtkImageBimodalAnalysis.h"
-#include "vtkImageExtractComponents.h"
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkAssignAttribute.h"
+#include <vtkImageData.h>
+#include <vtkImageThreshold.h>
+#include <vtkImageAccumulateDiscrete.h>
+#include <vtkImageBimodalAnalysis.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkDiffusionTensorMathematics.h>
+#include <vtkAssignAttribute.h>
 
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"

@@ -10,12 +10,13 @@
 
 =========================================================================auto=*/
 
+#include "TestingMacros.h"
 #include "vtkMRMLTransformNode.h"
+
+#include <vtkGeneralTransform.h>
 
 #include <stdlib.h>
 #include <iostream>
-
-#include "TestingMacros.h"
 
 class vtkMRMLTransformNodeTestHelper1 : public vtkMRMLTransformNode
 {

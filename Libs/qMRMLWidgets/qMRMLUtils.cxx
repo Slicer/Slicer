@@ -28,9 +28,9 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
-#include <vtkMRMLNode.h>
-#include <vtkMRMLViewNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkTransform.h>

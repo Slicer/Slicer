@@ -7,13 +7,6 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <vtksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
-
-#include "vtkSmartPointer.h"
-
 #include "vtkSlicerFiducialsLogic.h"
 
 #include "vtkMRMLFiducial.h"
@@ -24,6 +17,15 @@
 // for transforming picked points
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+
+#include "vtkObjectFactory.h"
+#include "vtkCallbackCommand.h"
+#include <vtkMatrix4x4.h>
+#include "vtkSmartPointer.h"
+
+#include <vtksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
+
 
 vtkCxxRevisionMacro(vtkSlicerFiducialsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerFiducialsLogic);

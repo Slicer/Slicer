@@ -21,6 +21,7 @@
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
+#include <vtkMRMLGlyphableVolumeDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
@@ -33,6 +34,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkImageBlend.h>
+#include <vtkImageData.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageReslice.h>
 #include <vtkMath.h>

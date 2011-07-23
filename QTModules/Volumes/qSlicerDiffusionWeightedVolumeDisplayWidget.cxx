@@ -29,6 +29,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 

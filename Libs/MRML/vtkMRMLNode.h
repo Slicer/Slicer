@@ -59,10 +59,8 @@ class vtkCallbackCommand;
 #endif
 
 //BTX
-#ifndef vtkSetReferenceStringMacro
-#define vtkSetReferenceStringMacro(name) \
-virtual void Set##name (const char* _arg) \
-  { \
+#ifndef vtkSetReferenceStringBodyMacro
+#define vtkSetReferenceStringBodyMacro(name) \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
   if ( this->name == NULL && _arg == NULL) { return;} \
   if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
@@ -88,8 +86,23 @@ virtual void Set##name (const char* _arg) \
       this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this); \
       } \
     this->Scene->AddReferencedNodeID(this->name, this); \
-    } \
-  } 
+    }
+#endif
+
+#ifndef vtkSetReferenceStringMacro
+#define vtkSetReferenceStringMacro(name) \
+virtual void Set##name (const char* _arg) \
+  { \
+  vtkSetReferenceStringBodyMacro(name)\
+  }
+#endif
+
+#ifndef vtkCxxSetReferenceStringMacro
+#define vtkCxxSetReferenceStringMacro(class,name)   \
+void class::Set##name (const char* _arg)            \
+  {                                                 \
+  vtkSetReferenceStringBodyMacro(name);             \
+  }
 #endif
 //ETX
 

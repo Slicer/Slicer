@@ -29,6 +29,7 @@
 
 // MRML includes
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkPolyData.h>

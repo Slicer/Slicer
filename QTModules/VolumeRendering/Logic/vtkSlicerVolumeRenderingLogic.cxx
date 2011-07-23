@@ -19,15 +19,16 @@
 
 // MRML includes
 #include <vtkCacheManager.h>
-#include <vtkMRMLViewNode.h>
+#include <vtkMRMLColorNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 #include <vtkMRMLVolumeHeaderlessStorageNode.h>
-#include <vtkMRMLNRRDStorageNode.h>
-#include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVolumePropertyStorageNode.h>
 
 // VTKSYS includes
@@ -37,17 +38,21 @@
 
 // VTK includes
 #include <vtkAssignAttribute.h>
+#include <vtkCallbackCommand.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkDiffusionTensorMathematics.h>
-#include <vtkImageThreshold.h>
 #include <vtkImageAccumulateDiscrete.h>
 #include <vtkImageBimodalAnalysis.h>
+#include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
+#include <vtkImageThreshold.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
+#include <vtkPiecewiseFunction.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
+#include <vtkVolumeProperty.h>
 
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"

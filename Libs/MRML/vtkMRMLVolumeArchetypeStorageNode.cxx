@@ -16,6 +16,7 @@ Version:   $Revision: 1.6 $
 #include "vtkDataFileFormatHelper.h"
 #include "vtkDataIOManager.h"
 #include "vtkMRMLConfigure.h" // MRML_USE*
+#include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"

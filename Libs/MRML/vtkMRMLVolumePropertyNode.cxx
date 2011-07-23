@@ -1,9 +1,11 @@
-#include "vtkMRMLNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
+#include <vtkColorTransferFunction.h>
 #include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkVolumeProperty.h>
 
 #include <vector>
 #include <iostream>

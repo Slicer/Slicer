@@ -22,6 +22,9 @@
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
+// VTK includes
+#include <vtkImageData.h>
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModuleWidgetPrivate

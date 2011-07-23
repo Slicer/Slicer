@@ -18,7 +18,6 @@
 #ifndef __vtkMRMLLabelMapVolumeDisplayNode_h
 #define __vtkMRMLLabelMapVolumeDisplayNode_h
 
-//#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
 class vtkImageMapToColors;

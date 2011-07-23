@@ -10,12 +10,17 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "TestingMacros.h"
 #include "vtkMRMLUnstructuredGridNode.h"
+#include "vtkURIHandler.h"
 
+// VTK includes
+#include <vtkPolyData.h>
+
+// STD includes
 #include <stdlib.h>
 #include <iostream>
-
-#include "TestingMacros.h"
 
 int vtkMRMLUnstructuredGridNodeTest1(int , char * [] )
 {

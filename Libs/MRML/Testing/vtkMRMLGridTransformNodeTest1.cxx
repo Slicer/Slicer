@@ -12,6 +12,8 @@
 
 #include "vtkMRMLGridTransformNode.h"
 
+#include <vtkGeneralTransform.h>
+
 #include <stdlib.h>
 #include <iostream>
 

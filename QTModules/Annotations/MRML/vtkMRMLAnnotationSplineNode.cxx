@@ -9,6 +9,7 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
+#include "vtkMRMLScene.h"
 
 #include <vtkAbstractTransform.h>
 #include <vtkMath.h>

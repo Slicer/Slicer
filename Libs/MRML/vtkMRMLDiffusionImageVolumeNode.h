@@ -54,17 +54,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
  /// Description:
   /// String ID of the storage MRML node
-  vtkSetReferenceStringMacro(BaselineNodeID);
+  void SetBaselineNodeID(const char* id);
   vtkGetStringMacro(BaselineNodeID);
 
   /// 
   /// String ID of the display MRML node
-  vtkSetReferenceStringMacro(MaskNodeID);
+  void SetMaskNodeID(const char* id);
   vtkGetStringMacro(MaskNodeID);
 
  /// Description:
   /// String ID of the display MRML node
-  vtkSetReferenceStringMacro(DiffusionWeightedNodeID);
+  void SetDiffusionWeightedNodeID(const char* id);
   vtkGetStringMacro(DiffusionWeightedNodeID);
 
   /// 

@@ -5,6 +5,7 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include <vtkGeneralTransform.h>
 #include "vtkPlanes.h"
 #include "vtkPoints.h"
 #include "vtkTransform.h"

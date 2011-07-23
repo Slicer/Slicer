@@ -10,14 +10,14 @@
 
 =========================================================================auto=*/
 
+#include "TestingMacros.h"
 #include "vtkMRMLSceneViewNode.h"
+#include "vtkMRMLScene.h"
+
+#include <vtkImageData.h>
 
 #include <stdlib.h>
 #include <iostream>
-
-#include "TestingMacros.h"
-
-#include <vtkImageData.h>
 
 int vtkMRMLSceneViewNodeTest1(int , char * [] )
 {

@@ -18,13 +18,17 @@
 #ifndef __vtkMRMLDisplayNode_h
 #define __vtkMRMLDisplayNode_h
 
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkMRMLScene.h"
 class vtkMRMLColorNode;
 class vtkMRMLDisplayableNode;
 
+// VTK includes
 class vtkImageData;
 class vtkPolyData;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
@@ -310,7 +314,7 @@ protected:
   std::vector< std::string > ViewNodeIDs;
 
 private:
-  vtkSetReferenceStringMacro(ColorNodeID);
+  void SetColorNodeID(const char* id);
 };
 
 #endif

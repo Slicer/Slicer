@@ -22,7 +22,6 @@
 #ifndef __vtkMRMLFiberBundleNode_h
 #define __vtkMRMLFiberBundleNode_h
 
-//#include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
 class vtkMRMLFiberBundleDisplayNode;
 

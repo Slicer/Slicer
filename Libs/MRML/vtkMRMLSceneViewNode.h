@@ -18,9 +18,9 @@
 
 #include "vtkMRMLStorableNode.h"
 
-class vtkImageData;
-//#include "vtkMRMLSceneViewStorageNode.h"
+// VTK includes
 #include <vtkStdString.h>
+class vtkImageData;
 
 class vtkMRMLStorageNode;
 class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode

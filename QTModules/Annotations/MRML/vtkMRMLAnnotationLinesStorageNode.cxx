@@ -7,6 +7,7 @@
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------

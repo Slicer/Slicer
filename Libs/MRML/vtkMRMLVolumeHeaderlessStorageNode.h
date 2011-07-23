@@ -18,10 +18,7 @@
 #ifndef __vtkMRMLVolumeHeaderlessStorageNode_h
 #define __vtkMRMLVolumeHeaderlessStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
-
 
 class vtkImageData;
 

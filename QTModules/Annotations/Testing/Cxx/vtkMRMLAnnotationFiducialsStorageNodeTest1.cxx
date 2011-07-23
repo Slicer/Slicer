@@ -1,5 +1,6 @@
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include <vtkMRMLScene.h>
 
 #include <stdlib.h>
 #include <iostream>

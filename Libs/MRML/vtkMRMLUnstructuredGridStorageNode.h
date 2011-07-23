@@ -18,9 +18,7 @@
 #ifndef __vtkMRMLUnstructuredGridStorageNode_h
 #define __vtkMRMLUnstructuredGridStorageNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLUnstructuredGridNode.h" 
+#include "vtkMRMLStorageNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorageNode
 {

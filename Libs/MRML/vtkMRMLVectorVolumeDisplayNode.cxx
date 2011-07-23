@@ -26,7 +26,10 @@ Version:   $Revision: 1.2 $
 #include <vtkImageLogic.h>
 #include <vtkImageMapToColors.h>
 #include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageRGBToHSI.h>
+#include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
+#include <vtkMatrix4x4.h>
 
 // STD includes
 #include <string>
