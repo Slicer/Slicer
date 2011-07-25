@@ -46,7 +46,7 @@ class tpycl(object):
         self.tcl_putenv(key, os.environ[key])
 
     # This path is Slicer-specific
-    self.tcl.eval("source %s/bin/Python/tpycl/tpycl.tcl" % slicer.app.slicerHome)
+    self.tcl.eval('source "%s/bin/Python/tpycl/tpycl.tcl"' % slicer.app.slicerHome)
 
   def usage(self):
     print "tpycl [options] [file.tcl] [arg] [arg]"
