@@ -11,8 +11,13 @@ import slicer.cli
 
 def loadSlicerRCFile():
   """If it exists, execute slicer resource script '~/.slicerrc.py'"""
-  import os.path
-  rcfile = os.path.expanduser( '~/.slicerrc.py' )
+  import os
+  if os.environ.has_key('SLICERRC'):
+    rcfile = os.environ['SLICERRC']
+  else:
+    import os.path
+    rcfile = os.path.expanduser( '~/.slicerrc.py' )
+
   if os.path.isfile( rcfile ):
     print 'Loading Slicer RC file [%s]' % ( rcfile )
     execfile( rcfile )
