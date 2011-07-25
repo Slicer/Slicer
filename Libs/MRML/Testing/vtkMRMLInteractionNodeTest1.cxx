@@ -23,8 +23,15 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLInteractionNode, node1);
 
-  TEST_SET_GET_INT_RANGE( node1, CurrentInteractionMode, 1, 7);
-  TEST_SET_GET_INT_RANGE( node1, LastInteractionMode, 1, 7);
+  TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::Place);
+  TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::ViewTransform);
+  // test re-setting with same value
+  TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::ViewTransform);
+  
+  TEST_SET_GET_INT( node1, LastInteractionMode, vtkMRMLInteractionNode::Place);
+  TEST_SET_GET_INT( node1, LastInteractionMode, vtkMRMLInteractionNode::ViewTransform);
+  // test re-setting with same value
+  TEST_SET_GET_INT( node1, LastInteractionMode, vtkMRMLInteractionNode::ViewTransform);
 
   TEST_SET_GET_INT_RANGE( node1, PlaceModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, TransformModePersistence, 0, 1);
