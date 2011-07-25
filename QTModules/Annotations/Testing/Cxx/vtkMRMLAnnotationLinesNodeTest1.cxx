@@ -71,11 +71,17 @@ int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
   node2->SetScene(mrmlScene);
 
   node2->CreateAnnotationLineDisplayNode();
-  if (!node2->GetAnnotationLineDisplayNode())
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = node2->GetAnnotationLineDisplayNode();
+  if (!lineDisplayNode)
     {
-       std::cerr << "Error in AnnotationLineDisplayNode() " << std::endl;
-       return EXIT_FAILURE;
-    }  
+    std::cerr << "Error in AnnotationLineDisplayNode() " << std::endl;
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    // register the node type with the scene
+    mrmlScene->RegisterNodeClass(lineDisplayNode);
+    }
 
   std::cout << "Passed DisplayNode" << std::endl;
 

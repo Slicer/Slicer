@@ -31,7 +31,7 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
     mrmlScene->AddNode(node2);
   }
  
-  std::cout << "Passed Baisc" << std::endl;
+  std::cout << "Passed Basic" << std::endl;
   
   // ======================
   // Modify Properties
@@ -41,12 +41,17 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
 
   node2->SetScene(mrmlScene);
   node2->CreateAnnotationPointDisplayNode();
-  if (!node2->GetAnnotationPointDisplayNode())
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = node2->GetAnnotationPointDisplayNode();
+  if (!pointDisplayNode)
     {
-       std::cerr << "Error in AnnotationPointDisplayNode() " << std::endl;
-       return EXIT_FAILURE;
+    std::cerr << "Error in AnnotationPointDisplayNode() " << std::endl;
+    return EXIT_FAILURE;
     }  
-
+  else
+    {
+    // register with the scene
+    mrmlScene->RegisterNodeClass(pointDisplayNode);
+    }
   std::cout << "Passed DisplayNode" << std::endl;
 
   node2->SetName("AnnotationFidcucialNodeTest") ;
