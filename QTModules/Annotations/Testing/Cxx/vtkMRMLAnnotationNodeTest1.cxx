@@ -13,7 +13,6 @@
 int vtkMRMLAnnotationNodeTest1(int , char * [] )
 {
 
-    std::cout << "this is a message from Yong." << std::endl;
   // ======================
   // Basic Setup 
   // ======================
@@ -47,12 +46,17 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
 
 
   node2->CreateAnnotationTextDisplayNode();
-  if (!node2->GetAnnotationTextDisplayNode())
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = node2->GetAnnotationTextDisplayNode();
+  if (!textDisplayNode)
     {
        std::cerr << "Error in AnnotationTextDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    }  
-
+    }
+  else
+    {
+    // register the node type to the sceen
+    mrmlScene->RegisterNodeClass(textDisplayNode);
+    }
   std::cout << "Passed DisplayNode" << std::endl;
  
   
@@ -98,7 +102,7 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
        return EXIT_FAILURE;
     } 
 
-  const char* text2 = "Test nEW";
+  const char* text2 = "Test New";
   node2->SetText(0,text2, 1, 1);
   if (node2->GetText(0).compare(text2))
     {
