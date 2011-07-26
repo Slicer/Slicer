@@ -12,12 +12,8 @@
 
 ==========================================================================*/
 #include "SparseFieldLevelSetContourCLP.h"
-#include <iostream>
-#include <vector>
 #include "vtkXMLPolyDataReader.h"
 #include "vtkXMLPolyDataWriter.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkPolyData.h"
 #include "vtkPluginFilterWatcher.h"
 #include "ModuleEntry.h"
 

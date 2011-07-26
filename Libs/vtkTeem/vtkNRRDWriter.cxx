@@ -5,7 +5,6 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
-#include "vtkDataArray.h"
 #include "vtkInformation.h"
 
 

@@ -26,10 +26,8 @@
 
 // VTK includes
 #include <vtkPythonUtil.h>
-#include <vtkSmartPointer.h>
 
 // Python includes
-#include <Python.h>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerScriptedLoadableModuleLogic, "$Revision$");

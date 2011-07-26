@@ -1,4 +1,3 @@
-#include <iostream>
 #include "itkTestMain.h" 
 
 #ifdef WIN32

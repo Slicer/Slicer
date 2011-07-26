@@ -1,19 +1,11 @@
-#include "itkBSplineControlPointImageFilter.h"
 #include "itkConstantPadImageFilter.h"
-#include "itkExpImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
 #include "itkN4MRIBiasFieldCorrectionImageFilter.h"
 #include "itkOtsuThresholdImageFilter.h"
 #include "itkShrinkImageFilter.h"
 
-#include "itkTimeProbe.h"
 
-#include <string>
-#include <algorithm>
-#include <vector>
 
 #include "N4ITKBiasFieldCorrectionCLP.h"
 #include "itkPluginUtilities.h"

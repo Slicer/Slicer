@@ -2,20 +2,11 @@
 #include <fstream>
 
 #include "itkMGHImageIO.h"
-#include "itkIOCommon.h"
-#include "itkExceptionObject.h"
 #include "itkByteSwapper.h"
 #include "itkMetaDataObject.h"
 
-#include <vnl/vnl_matrix.h>
-#include <vnl/vnl_vector.h>
-#include <vnl/vnl_cross.h>
 
-#include <cmath>
-#include <math.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 
 const int MRI_UCHAR = 0;
 const int MRI_INT   = 1;

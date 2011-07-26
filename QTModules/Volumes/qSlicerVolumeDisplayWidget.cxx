@@ -1,5 +1,4 @@
 // QT includes
-#include <QDebug>
 
 // SlicerQT includes
 #include "qSlicerDiffusionTensorVolumeDisplayWidget.h"
@@ -11,8 +10,6 @@
 // MRML includes
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLVolumeNode.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes

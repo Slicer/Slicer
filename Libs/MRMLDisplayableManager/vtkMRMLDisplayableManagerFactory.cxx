@@ -20,28 +20,18 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLDisplayableManagerFactory.h"
-#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 #ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
 #endif
 
 // MRML includes
-#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkInstantiator.h>
 
 // STD includes
-#include <vector>
-#include <map>
 #include <algorithm>
-#include <cassert>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLDisplayableManagerFactory);

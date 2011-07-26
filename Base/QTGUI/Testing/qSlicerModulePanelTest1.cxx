@@ -19,16 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerModulePanel.h"
 
 // STD includes
-#include <cstdlib>
 
 int qSlicerModulePanelTest1(int argc, char * argv[] )
 {

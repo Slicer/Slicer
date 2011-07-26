@@ -19,18 +19,10 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QAction>
 #include <QDebug>
-#include <QMimeData>
-#include <QStringList>
-#include <QSharedPointer>
-#include <QVector>
-#include <QMap>
 
 // qMRML includes
-#include "qMRMLSceneModel.h"
 #include "qMRMLSceneModel_p.h"
-#include "qMRMLUtils.h"
 
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
@@ -38,13 +30,8 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkCallbackCommand.h>
-#include <vtkVariantArray.h>
 
 // STD includes
-#include <iostream>
-#include <fstream>
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)

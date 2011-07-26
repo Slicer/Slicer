@@ -12,12 +12,8 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 
 

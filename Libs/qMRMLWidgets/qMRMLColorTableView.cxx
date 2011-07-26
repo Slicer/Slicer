@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
@@ -32,7 +31,6 @@
 #include "qMRMLColorModel.h"
 
 // MRML includes
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLColorTableNode.h>
 
 //------------------------------------------------------------------------------

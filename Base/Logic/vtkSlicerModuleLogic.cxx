@@ -7,11 +7,9 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
 #include "vtkSlicerModuleLogic.h"
 
 #include <vtksys/SystemTools.hxx>
-#include <vtksys/stl/string>
 
 #ifdef WIN32
 #include <windows.h>

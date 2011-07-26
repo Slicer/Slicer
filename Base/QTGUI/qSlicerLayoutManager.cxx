@@ -19,9 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QFileInfo>
-#include <QWidget>
 #include <QVariant>
 
 // CTK includes
@@ -34,7 +32,6 @@
 //#include <qMRMLNodeFactory.h>
 
 // SlicerQt includes
-#include "vtkSlicerConfigure.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerApplication.h"
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL

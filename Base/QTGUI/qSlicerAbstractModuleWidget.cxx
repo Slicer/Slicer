@@ -18,8 +18,6 @@
 
 ==============================================================================*/
 // Qt includes
-#include <QAction>
-#include <QIcon>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"

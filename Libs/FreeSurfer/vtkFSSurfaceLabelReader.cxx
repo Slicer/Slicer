@@ -14,9 +14,6 @@
 
 #include "vtkFSSurfaceLabelReader.h"
 #include "vtkObjectFactory.h"
-#include "vtkFSIO.h"
-#include "vtkByteSwap.h"
-#include "vtkFloatArray.h"
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceLabelReader* vtkFSSurfaceLabelReader::New()

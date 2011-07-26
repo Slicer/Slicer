@@ -21,9 +21,6 @@
 #include "qSlicerCoreIOManager.h"
 #include "vtkMRMLScene.h"
 
-#include <stdlib.h>
-#include <iostream>
-#include <QString>
 
 #include "TestingMacros.h"
 

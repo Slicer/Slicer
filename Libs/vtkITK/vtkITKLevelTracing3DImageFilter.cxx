@@ -16,9 +16,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkITKLevelTracing3DImageFilter.h"
 #include "itkLevelTracingImageFilter.h"
 
-#include "vtkCellArray.h"
-#include "vtkFloatArray.h"
-#include "vtkUnsignedCharArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
@@ -27,10 +24,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSmartPointer.h"
 
-#include "itkImage.h"
-#include "itkExtractImageFilter.h"
-#include "itkChainCodePath.h"
-#include "itkNumericTraits.h"
 
 vtkCxxRevisionMacro(vtkITKLevelTracing3DImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracing3DImageFilter);

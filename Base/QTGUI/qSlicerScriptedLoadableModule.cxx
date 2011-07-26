@@ -19,11 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QFileInfo>
 
 // CTK includes
-#include <ctkPimpl.h>
 
 // PythonQt includes
 #include <PythonQt.h>
@@ -34,10 +32,8 @@
 #include "vtkSlicerScriptedLoadableModuleLogic.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 // Python includes
-#include <Python.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModulePrivate

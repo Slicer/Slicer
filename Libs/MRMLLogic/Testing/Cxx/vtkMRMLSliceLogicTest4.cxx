@@ -18,38 +18,23 @@
 
 ==============================================================================*/
 // MRMLLogic includes
-#include <vtkMRMLSliceLogic.h>
-#include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkImageData.h>
-#include <vtkImageViewer2.h>
 #include <vtkImageReslice.h>
 #include <vtkImageMapToColors.h>
 #include <vtkImageAppendComponents.h>
-#include <vtkImageCast.h>
-#include <vtkImageBlend.h>
-#include <vtkMultiThreader.h>
-#include <vtkPointData.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
 {

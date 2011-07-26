@@ -20,14 +20,9 @@
 
 // Qt includes
 #include <QCompleter>
-#include <QDebug>
-#include <QFontMetrics>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMenu>
-#include <QPixmap>
 #include <QPushButton>
-#include <QStyle>
 #include <QStyleOptionButton>
 #include <QToolButton>
 

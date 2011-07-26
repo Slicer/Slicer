@@ -6,13 +6,10 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkDiffusionTensor3D.h"
 #include "itkMetaDataObject.h"
 
-#include "itkPluginFilterWatcher.h"
 #include "itkPluginUtilities.h"
 
 

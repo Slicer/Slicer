@@ -1,22 +1,14 @@
-#include <string>
-#include <iostream>
 #include <sstream>
 #include <algorithm>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
 
-#include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLScene.h>
 
 #include "vtkBitArray.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
-#include <vtkPoints.h>
 #include <vtkPolyData.h>
-#include "vtkStringArray.h"
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 
 #define NUMERIC_ZERO 1.0e-6

@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QAction>
-#include <QDebug>
 #include <QMainWindow>
 #include <QSettings>
 

@@ -19,10 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QButtonGroup>
 #include <QFileDialog>
-#include <QVector>
-#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerTransformsModuleWidget.h"
@@ -42,7 +39,6 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkMatrix4x4.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerTransformsModuleWidgetPrivate: public Ui_qSlicerTransformsModule

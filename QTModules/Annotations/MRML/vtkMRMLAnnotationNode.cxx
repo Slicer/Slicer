@@ -9,18 +9,13 @@
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkBitArray.h>
-#include <vtkDataSetAttributes.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
 
 // KPs Todos 
 // - create specific event for node modification

@@ -1,12 +1,6 @@
-#include <string>
-#include <vector>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkMRMLFetchMINode.h"
-#include "vtkMRMLScene.h"
 #include "vtkHIDTagTable.h"
 #include "vtkXNDTagTable.h"
 

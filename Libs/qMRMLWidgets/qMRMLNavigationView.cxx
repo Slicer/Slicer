@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QFileInfo>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -33,17 +31,6 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkCamera.h>
-#include <vtkFollower.h>
-#include <vtkInteractorStyle.h>
-#include <vtkMath.h>
-#include <vtkOutlineSource.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------

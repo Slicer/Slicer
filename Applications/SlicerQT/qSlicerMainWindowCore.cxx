@@ -20,9 +20,7 @@
 
 // Qt includes
 #include <QAction>
-#include <QDebug>
 #include <QDesktopServices>
-#include <QUrl>
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
@@ -33,16 +31,13 @@
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAboutDialog.h"
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
-#include "qSlicerMainWindowCore.h" 
 #include "qSlicerMainWindowCore_p.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerModulePanel.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif

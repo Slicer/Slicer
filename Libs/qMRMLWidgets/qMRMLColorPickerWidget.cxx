@@ -19,11 +19,9 @@
 ==============================================================================*/
 
 // QT includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
-#include "qMRMLColorModel.h"
 #include "ui_qMRMLColorPickerWidget.h"
 
 // MRMLLogic includes

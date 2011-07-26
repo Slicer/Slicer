@@ -1,6 +1,5 @@
 #include "SFLSRobustStat3DTestCLP.h"
 
-#include <iostream>
 
 
 #include "SFLSRobustStatSegmentor3DLabelMap_single.h"

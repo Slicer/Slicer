@@ -14,15 +14,12 @@
 #include "vtkHyperStreamlineDTMRI.h"
 
 #include "vtkCellArray.h"
-#include "vtkDataSet.h"
 #include "vtkFloatArray.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkPolyData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkTractographyPointAndArray.h"
 
 // the superclass had these classes in the vtkHyperStreamline.cxx
 // file: being compiled via CMakeListsLocal.txt

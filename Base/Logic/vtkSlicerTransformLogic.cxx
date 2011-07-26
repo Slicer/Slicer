@@ -11,7 +11,6 @@
 
 // MRML includes
 #include "vtkCacheManager.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -19,39 +18,25 @@
 
 // VTKsys includes
 #include <itksys/SystemTools.hxx>
-#include <itksys/Directory.hxx>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkGeneralTransform.h>
-#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 
 // ITK includes
-#include "itkAffineTransform.h"
 #include "itkBSplineDeformableTransform.h"
 #include "itkCenteredAffineTransform.h"
 #include "itkCenteredEuler3DTransform.h"
 #include "itkCenteredRigid2DTransform.h"
 #include "itkCenteredSimilarity2DTransform.h"
 #include "itkEuler2DTransform.h"
-#include "itkEuler3DTransform.h"
 #include "itkFixedCenterOfRotationAffineTransform.h"
-#include "itkIdentityTransform.h"
 #include "itkQuaternionRigidTransform.h"
-#include "itkRigid2DTransform.h"
 #include "itkRigid3DPerspectiveTransform.h"
-#include "itkRigid3DTransform.h"
-#include "itkScalableAffineTransform.h"
 #include "itkScaleLogarithmicTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
-#include "itkScaleTransform.h"
 #include "itkScaleVersor3DTransform.h"
-#include "itkSimilarity2DTransform.h"
 #include "itkTranslationTransform.h"
-#include "itkVersorRigid3DTransform.h"
-#include "itkVersorTransform.h"
 #include "itkTransformFactory.h"
 
 vtkCxxRevisionMacro(vtkSlicerTransformLogic, "$Revision$");

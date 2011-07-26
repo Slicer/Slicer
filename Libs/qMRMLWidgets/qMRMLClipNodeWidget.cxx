@@ -19,15 +19,12 @@
 ==============================================================================*/
 
 // QT includes
-#include <QColor>
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLClipNodeWidget.h"
 #include "ui_qMRMLClipNodeWidget.h"
 
 // MRML includes
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLClipModelsNode.h>
 
 // VTK includes

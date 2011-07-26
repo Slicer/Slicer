@@ -19,27 +19,16 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QAction>
 #include <QApplication>
-#include <QDebug>
-#include <QMimeData>
-#include <QStringList>
-#include <QSharedPointer>
-#include <QVector>
-#include <QMap>
 
 // qMRML includes
-#include "qMRMLColorModel.h"
 #include "qMRMLColorModel_p.h"
 #include "qMRMLUtils.h"
 
 // MRML includes
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLColorTableNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkCallbackCommand.h>
 
 //------------------------------------------------------------------------------
 qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)

@@ -20,8 +20,6 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
-#include "vtkUnsignedCharArray.h"
 
 #include "vtkSmartPointer.h"
 #include "vtkMRMLFiducialListNode.h"

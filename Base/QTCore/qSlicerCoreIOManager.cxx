@@ -20,20 +20,13 @@
 
 // Qt includes
 #include <QDebug>
-#include <QFileInfo>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
 
 // CTK includes
 #include <ctkLogger.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
-#include "qSlicerIO.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerSceneIO.h"
 #include "qSlicerSlicer2SceneReader.h"
 #include "qSlicerXcedeCatalogIO.h"

@@ -19,9 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QProcess>
-#include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerCLIExecutableModuleFactory.h"

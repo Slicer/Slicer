@@ -1,11 +1,7 @@
 #include "DownsampleHeuristics.h"
 #include "ConvertSlicerROIToRegion.h"
-#include "itkSlicerBoxSpatialObject.h"
 
-#include <itkImage.h>
 
-#include <iostream>
-#include <cstdlib>
 
 namespace
 {

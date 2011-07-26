@@ -19,11 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMap>
-#include <QString>
-#include <QStringList>
-#include <QVariant>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
@@ -34,14 +29,12 @@
 
 // Logic includes
 #include "vtkSlicerVolumesLogic.h"
-#include "vtkSlicerApplicationLogic.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 
 // VTK includes

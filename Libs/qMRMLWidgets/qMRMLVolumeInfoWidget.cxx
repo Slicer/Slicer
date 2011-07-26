@@ -34,7 +34,6 @@
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
 #include <vtkImageData.h>

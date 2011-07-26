@@ -13,28 +13,14 @@
 ==========================================================================*/
 
 // ITK includes
-#include <itkAffineTransform.h>
 #include <itkBSplineDeformableTransform.h>
-#include <itkBSplineInterpolateImageFunction.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
-#include <itkImage.h>
-#include <itkImageIOBase.h>
-#include <itkImageRegionIterator.h>
-#include <itkLinearInterpolateImageFunction.h>
-#include <itkMatrix.h>
 #include <itkMetaDataObject.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
-#include <itkNrrdImageIO.h>
-#include <itkPeriodicBoundaryCondition.h>
-#include <itkPoint.h>
 #include <itkResampleImageFilter.h>
 #include <itkRigid3DTransform.h>
 #include <itkTransformFileReader.h>
-#include <itkTransform.h>
-#include <itkVariableLengthVector.h>
-#include <itkVectorImage.h>
-#include <itkVectorLinearInterpolateImageFunction.h>
 #include <itkVectorResampleImageFilter.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
 
@@ -43,17 +29,10 @@
 
 // ResampleDTI includes
 #include "ResampleDTI/dtiprocessFiles/deformationfieldio.h"
-#include "ResampleDTI/dtiprocessFiles/dtitypes.h"
-#include "ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h"
 #include "ResampleDTI/itkTransformDeformationFieldFilter.h"
 #include "ResampleDTI/itkWarpTransform3D.h"
 
 // STD includes
-#include <cstdio>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every

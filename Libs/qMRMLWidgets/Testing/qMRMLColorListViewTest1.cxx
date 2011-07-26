@@ -20,7 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
 #include <QHBoxLayout>
 #include <QTimer>
 
@@ -36,8 +35,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLColorListViewTest1(int argc, char * argv [])
 {

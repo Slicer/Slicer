@@ -1,10 +1,7 @@
 // Qt includes
-#include <QDebug>
-#include <QListView>
 #include <QSettings>
 
 // qMRMLWidgets include
-#include "qMRMLNodeComboBox.h"
 #include "qMRMLSceneModel.h"
 
 // qSlicerVolumeRendering includes
@@ -13,14 +10,8 @@
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 // MRML includes
-#include "vtkMRMLNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
-#include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
-#include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 // VTK includes
 #include <vtkImageData.h>

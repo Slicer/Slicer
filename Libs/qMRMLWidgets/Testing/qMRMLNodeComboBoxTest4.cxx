@@ -33,8 +33,6 @@
 #include "vtkSmartPointer.h"
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
 {

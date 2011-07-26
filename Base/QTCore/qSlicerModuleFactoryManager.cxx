@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QHash>
 
 // SlicerQt includes
 #include "qSlicerModuleFactoryManager.h"

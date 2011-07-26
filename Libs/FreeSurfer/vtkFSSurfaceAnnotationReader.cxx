@@ -11,12 +11,9 @@
   Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
-#include <stdio.h>
 #include "vtkFSSurfaceAnnotationReader.h"
 #include "vtkObjectFactory.h"
 #include "vtkFSIO.h"
-#include "vtkByteSwap.h"
-#include "vtkFloatArray.h"
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceAnnotationReader* vtkFSSurfaceAnnotationReader::New()

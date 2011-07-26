@@ -19,20 +19,17 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // CTK includes
 #include <ctkLogger.h>
 
 // qMRML includes
-#include "qMRMLEventLogger.h"
 #include "qMRMLEventLogger_p.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkObject.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLEventLogger");

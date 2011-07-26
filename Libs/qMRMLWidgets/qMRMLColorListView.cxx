@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QDebug>
 #include <QSortFilterProxyModel>
 
 // qMRML includes

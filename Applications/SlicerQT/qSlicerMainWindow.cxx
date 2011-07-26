@@ -22,7 +22,6 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QSettings>
-#include <QStringList>
 #include <QTimer>
 #include <QToolButton>
 
@@ -37,10 +36,8 @@
 #include "ui_qSlicerMainWindow.h"
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerExtensionsWizard.h"
 #include "qSlicerLayoutManager.h"
-#include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
@@ -62,10 +59,8 @@
 // MRML includes
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLLayoutNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public Ui_qSlicerMainWindow

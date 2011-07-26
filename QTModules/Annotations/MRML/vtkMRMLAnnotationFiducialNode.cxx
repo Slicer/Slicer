@@ -1,15 +1,8 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkBitArray.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
 #include <vtkPolyData.h>
-#include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationFiducialNode* vtkMRMLAnnotationFiducialNode::New()

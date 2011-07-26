@@ -4,8 +4,6 @@
 #include <vtkPermissionPrompter.h>
 
 // ITKSys includes
-#include "itksys/Process.h"
-#include "itksys/SystemTools.hxx"
 
 vtkStandardNewMacro ( vtkXNATHandler );
 vtkCxxRevisionMacro ( vtkXNATHandler, "$Revision: 1.0 $" );

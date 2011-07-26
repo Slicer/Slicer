@@ -12,26 +12,17 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
 
 #include "vtkSlicerFiberBundleDisplayLogic.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
-#include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
-#include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 #include "vtkDiffusionTensorGlyph.h"
 #include "vtkTubeFilter.h"
 
 //#include "vtkPointData.h"
 
-#include <sstream>
 
 vtkCxxRevisionMacro(vtkSlicerFiberBundleDisplayLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerFiberBundleDisplayLogic);

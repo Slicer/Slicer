@@ -21,7 +21,6 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLDisplayableManagerFactory.h"
-#include "vtkMRMLAbstractDisplayableManager.h"
 #ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
 #endif
@@ -30,7 +29,6 @@
 #include <vtkMRMLNode.h>
 
 // VTK includes
-#include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -38,7 +36,6 @@
 #include <vtkInstantiator.h>
 
 // STD includes
-#include <vector>
 #include <algorithm>
 #include <cassert>
 

@@ -19,13 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QToolButton>
-#include <QIcon>
-#include <QMenu>
-#include <QActionGroup>
-#include <QCursor>
-#include <QHBoxLayout>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -33,14 +27,11 @@
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
-#include "qMRMLLayoutManager.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLSliceWidget.h"
-#include "qSlicerMouseModeToolBar.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
 // MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>

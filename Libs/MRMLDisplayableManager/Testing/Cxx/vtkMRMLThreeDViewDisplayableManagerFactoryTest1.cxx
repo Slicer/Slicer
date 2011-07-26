@@ -25,7 +25,6 @@
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -35,7 +34,6 @@
 #include <vtkRenderer.h>
 
 // STD includes
-#include <cstdlib>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

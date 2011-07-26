@@ -21,7 +21,6 @@
 #include "qSlicerAbstractModule.h"
 
 // STD includes
-#include <cstdlib>
 
 class AModule: public qSlicerAbstractModule
 {

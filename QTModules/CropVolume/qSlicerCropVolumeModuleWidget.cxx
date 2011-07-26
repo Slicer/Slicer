@@ -1,6 +1,5 @@
 // Qt includes
 #include <QDebug>
-#include <QMessageBox>
 
 // qMRML includes
 #include <qMRMLNodeFactory.h>

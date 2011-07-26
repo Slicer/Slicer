@@ -23,7 +23,6 @@
 /*****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
 /********************************  Konstanten  *******************************/
 #define LIM  1 /* Voxelwert >= LIM => Objekt (Input-Bild) */

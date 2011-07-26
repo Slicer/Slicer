@@ -16,22 +16,13 @@
 
 #include "itkDiffusionTensor3DResample.h"
 #include "itkDiffusionTensor3DRigidTransform.h"
-#include "itkDiffusionTensor3DFSAffineTransform.h"
-#include "itkDiffusionTensor3DPPDAffineTransform.h"
 #include "itkDiffusionTensor3DNonRigidTransform.h"
 #include "itkDiffusionTensor3DNearestNeighborInterpolateFunction.h"
 #include "itkDiffusionTensor3DLinearInterpolateFunction.h"
 #include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.h"
 #include "itkDiffusionTensor3DBSplineInterpolateImageFunction.h"
-#include <itkPeriodicBoundaryCondition.h>
-#include <itkMatrix.h>
-#include <itkPoint.h>
-#include <itkImageFileReader.h>
-#include <itkImageIOBase.h>
-#include <itkImage.h>
 #include <itkTransformFileReader.h>
 #include "ResampleDTICLP.h"
-#include <itkDiffusionTensor3D.h>
 #include "itkDiffusionTensor3DZeroCorrection.h"
 #include "itkDiffusionTensor3DAbsCorrection.h"
 #include "itkDiffusionTensor3DNearestCorrection.h"
@@ -39,9 +30,6 @@
 #include "itkDiffusionTensor3DWrite.h"
 #include "dtiprocessFiles/deformationfieldio.h"
 #include "itkWarpTransform3D.h"
-#include <itkImageRegionIteratorWithIndex.h>
-#include <list>
-#include <itkVectorLinearInterpolateImageFunction.h>
 #include "itkTransformDeformationFieldFilter.h"
 #include <itkVectorResampleImageFilter.h>
 #include <itkBSplineDeformableTransform.h>

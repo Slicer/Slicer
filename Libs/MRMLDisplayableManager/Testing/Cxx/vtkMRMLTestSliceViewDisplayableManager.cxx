@@ -20,17 +20,11 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLTestSliceViewDisplayableManager.h"
-#include "vtkThreeDViewInteractorStyle.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
 
 // STD includes
 #include <cassert>

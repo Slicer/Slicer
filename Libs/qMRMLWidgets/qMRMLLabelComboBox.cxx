@@ -1,8 +1,6 @@
 // Qt includes
 #include <QVBoxLayout>
-#include <QPainter>
 #include <QDebug>
-#include <QTime>
 
 // CTK includes
 #include <ctkComboBox.h>
@@ -14,7 +12,6 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
-#include <vtkMRMLNode.h>
 
 // VTK includes
 #include <vtkLookupTable.h>

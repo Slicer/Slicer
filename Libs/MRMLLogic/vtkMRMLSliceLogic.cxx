@@ -19,36 +19,24 @@
 // MRML includes
 #include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 #include <vtkMRMLGlyphableVolumeDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLTransformNode.h>
-#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkImageBlend.h>
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
-#include <vtkImageReslice.h>
 #include <vtkMath.h>
-#include <vtkObjectFactory.h>
 #include <vtkPlaneSource.h>
-#include <vtkPoints.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // STD includes
-#include <sstream>
-#include <iostream>
-#include <cassert>
 
 //----------------------------------------------------------------------------
 // Convenient macros

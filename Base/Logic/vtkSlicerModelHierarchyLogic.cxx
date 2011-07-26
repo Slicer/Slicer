@@ -7,8 +7,6 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkSlicerModelHierarchyLogic.h"
 

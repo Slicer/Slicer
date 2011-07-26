@@ -14,7 +14,6 @@ Version:   $Revision$
 
 #include "MultipleModelsExampleCLP.h"
 
-#include "vtkPluginFilterWatcher.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
@@ -27,15 +26,11 @@ Version:   $Revision$
 #include "vtkConeSource.h"
 #include "vtkCubeSource.h"
 #include "vtkSphereSource.h"
-#include "vtkPolyData.h"
 #include "vtkDebugLeaks.h"
 #include "vtkLookupTable.h"
 
 #include "vtksys/SystemTools.hxx"
 
-#include <fstream>
-#include <string>
-#include <map>
 
 
 int main(int argc, char * argv[])

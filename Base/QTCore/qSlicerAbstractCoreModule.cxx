@@ -20,19 +20,15 @@
 
 // Qt includes
 #include <QDebug>
-#include <QPointer>
 
 // SlicerQt includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleRepresentation.h"
 
 // SlicerLogic includes
-#include "vtkSlicerApplicationLogic.h"
-#include "vtkMRMLAbstractLogic.h"
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

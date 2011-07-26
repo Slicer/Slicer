@@ -32,7 +32,6 @@
 //#include <vtkCommandLineModuleLogic.h>
 
 // ModuleDescriptionParser includes
-#include <ModuleDescription.h>
 #include <ModuleDescriptionParser.h>
 
 //-----------------------------------------------------------------------------

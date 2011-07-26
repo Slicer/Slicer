@@ -1,12 +1,8 @@
 #include "vtkMRMLAnnotationLinesNode.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-#include <stdlib.h>
-#include <iostream>
 #include <sstream>
-#include <string>
 
 #include "TestingMacros.h"
 

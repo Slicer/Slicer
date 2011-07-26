@@ -21,19 +21,14 @@
 #include "BSplineDeformableRegistrationCLP.h"
 
 
-#include "itkCommand.h"
 
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
-#include "itkLinearInterpolateImageFunction.h"
-#include "itkBSplineDeformableTransform.h"
 #include "itkLBFGSBOptimizer.h"
 
-#include "itkImage.h"
 #include "itkOrientImageFilter.h"
 #include "itkResampleImageFilter.h"
 
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"

@@ -19,10 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QDockWidget>
-#include <QHBoxLayout>
-#include <QMainWindow>
 #include <QTimer>
 
 // SlicerQt includes
@@ -34,7 +31,6 @@
 #include <qSlicerStyle.h>
 
 // STD includes
-#include <cstdlib>
 
 int qSlicerModulePanelTest2(int argc, char * argv[] )
 {

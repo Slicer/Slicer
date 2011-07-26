@@ -15,8 +15,6 @@
 
 =========================================================================*/
 #include "itkMRMLIDImageIOFactory.h"
-#include "itkCreateObjectFunction.h"
-#include "itkMRMLIDImageIO.h"
 #include "itkVersion.h"
 
   

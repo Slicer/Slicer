@@ -27,15 +27,12 @@
 #include "qMRMLLayoutManager.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLLayoutNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

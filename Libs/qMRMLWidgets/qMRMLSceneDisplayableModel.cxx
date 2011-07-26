@@ -19,13 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
-#include <QStringList>
-#include <QVector>
 
 // qMRML includes
 #include "qMRMLSceneDisplayableModel.h"
@@ -34,13 +27,10 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
 // VTK includes
-#include <vtkVariantArray.h>
-#include <typeinfo>
 
 // CTK includes
 #include <ctkLogger.h>

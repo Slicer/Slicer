@@ -20,14 +20,11 @@
 
 // Qt includes
 #include <QApplication>
-#include <QTimer>
-#include <QWidget>
 
 // SlicerQt includes
 #include "qSlicerLayoutManager.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // STD includes
 #include <cstdlib>

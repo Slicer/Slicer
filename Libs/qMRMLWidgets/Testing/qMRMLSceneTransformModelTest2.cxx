@@ -20,21 +20,15 @@
 
 // QT includes
 #include <QApplication>
-#include <QString>
-#include <QStringList>
 
 // qMRML includes
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 
 // MRML includes
-#include "TestingMacros.h"
-#include <vtkEventBroker.h>
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
 {

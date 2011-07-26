@@ -25,8 +25,6 @@
 #include "qMRMLThreeDView.h"
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLThreeDViewTest1(int argc, char * argv [] )
 {

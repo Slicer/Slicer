@@ -2,8 +2,6 @@
 #include <QApplication>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLMatrixWidgetTest1( int argc, char * argv [] )
 {

@@ -22,12 +22,10 @@
 #include <QSortFilterProxyModel>
 
 // CTK includes
-#include "ctkModelTester.h"
 
 // qMRML includes
 #include "qMRMLListWidget.h"
 //#include "qMRMLItemModel.h"
-#include "qMRMLSceneModel.h"
 #include "qMRMLSceneTransformModel.h"
 
 //------------------------------------------------------------------------------

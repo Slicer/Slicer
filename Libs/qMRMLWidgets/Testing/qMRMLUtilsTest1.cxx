@@ -22,11 +22,9 @@
 #include <QApplication>
 
 // qMRMLWidgets include
-#include <qMRMLUtils.h>
 
 // STD includes
 #include <stdlib.h>
-#include <iostream>
 
 int qMRMLUtilsTest1( int argc, char * argv [] )
 {

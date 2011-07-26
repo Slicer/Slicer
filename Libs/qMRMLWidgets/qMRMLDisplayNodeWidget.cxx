@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QColor>
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLDisplayNodeWidget.h"

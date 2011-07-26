@@ -1,4 +1,3 @@
-#include <iostream>
 
 
 #include "SFLSRobustStatSegmentor3DLabelMap_single.h"

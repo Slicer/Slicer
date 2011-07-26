@@ -20,7 +20,6 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLTestCustomDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>
@@ -28,10 +27,6 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
 
 // STD includes
 #include <cassert>

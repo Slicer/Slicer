@@ -19,10 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
 
 // SlicerQt includes
-#include <qSlicerCoreApplication.h>
 
 // Slices QTModule includes
 #include "qSlicerSliceControllerModule.h"

@@ -12,7 +12,6 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx> 
 
@@ -20,18 +19,12 @@
 
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
-#include <vtkImageAccumulateDiscrete.h>
-#include <vtkImageBimodalAnalysis.h>
-#include <vtkImageExtractComponents.h>
-#include <vtkDiffusionTensorMathematics.h>
-#include <vtkAssignAttribute.h>
 
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
 
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
@@ -41,12 +34,10 @@
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 #include "vtkStringArray.h"

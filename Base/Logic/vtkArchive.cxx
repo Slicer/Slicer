@@ -17,9 +17,7 @@
 #include <archive_entry.h>
 
 // Std includes
-#include <cstdio>
 #include <cstring>
-#include <ctime>
 
 #define BSDTAR_FILESIZE_PRINTF  "%lu"
 #define BSDTAR_FILESIZE_TYPE    unsigned long

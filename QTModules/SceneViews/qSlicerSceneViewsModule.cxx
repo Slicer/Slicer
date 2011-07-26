@@ -3,12 +3,9 @@
 #include <QtPlugin>
 
 // QTGUI includes
-#include <qSlicerApplication.h>
-#include <qSlicerLayoutManager.h>
 
 // SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
-#include "GUI/qSlicerSceneViewsModuleWidget.h"
 
 #include <vtkSlicerSceneViewsModuleLogic.h>
 

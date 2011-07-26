@@ -1,5 +1,3 @@
-#include "itksys/Process.h"
-#include "itksys/SystemTools.hxx"
 #include "vtkHIDHandler.h"
 
 vtkStandardNewMacro ( vtkHIDHandler );

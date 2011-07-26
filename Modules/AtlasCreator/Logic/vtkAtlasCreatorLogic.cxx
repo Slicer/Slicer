@@ -16,19 +16,12 @@ Version:   $Revision: 1.2 $
 #include "vtkAtlasCreatorLogic.h"
 
 // VTKITK includes
-#include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
 
 // VTK includes
-#include "vtkObjectFactory.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 vtkAtlasCreatorLogic* vtkAtlasCreatorLogic::New()
 {

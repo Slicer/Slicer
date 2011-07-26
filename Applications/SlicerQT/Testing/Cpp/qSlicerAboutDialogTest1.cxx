@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 
 // SlicerQt includes
@@ -27,7 +26,6 @@
 #include "qSlicerApplication.h"
 
 // STD includes
-#include <cstdlib>
 
 int qSlicerAboutDialogTest1(int argc, char * argv[] )
 {

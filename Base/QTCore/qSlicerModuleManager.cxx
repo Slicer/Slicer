@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QHash>
-#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerModuleManager.h"
@@ -29,7 +27,6 @@
 #include "qSlicerModuleFactoryManager.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerModuleManagerPrivate

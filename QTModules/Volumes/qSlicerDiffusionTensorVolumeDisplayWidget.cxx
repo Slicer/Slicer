@@ -22,7 +22,6 @@
 #include "ui_qSlicerDiffusionTensorVolumeDisplayWidget.h"
 
 // Qt includes
-#include <QDebug>
 
 // MRML includes
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
@@ -30,11 +29,8 @@
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
 // VTK includes
-#include <vtkPointData.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <limits>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes

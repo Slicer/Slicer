@@ -19,19 +19,13 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <cmath>
-#include <iostream>
 
-#include "itkImage.h"
 #include "itkImageFileWriter.h"
 #include "itkImageFileReader.h"
-#include "itkImageRegionIterator.h"
-#include "itkImageRegionConstIterator.h"
 
 #include "ExtractSkeletonCLP.h"
 
 #include "SkelGraph.h"
-#include "coordTypes.h"
 #include "tilg_iso_3D.h"
 
 // Use an anonymous namespace to keep class types and function names

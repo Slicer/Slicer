@@ -27,16 +27,12 @@
 =========================================================================*/
 #include "vtkNRRDReader.h"
 
-#include <string>
 
-#include "vtkByteSwap.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
-#include <vtkDataSetAttributes.h> // for data types
 #include "vtkImageData.h"
 
 
-#include "vtkDataArray.h"
 #include "vtkBitArray.h"
 #include "vtkUnsignedCharArray.h"
 #include "vtkCharArray.h"

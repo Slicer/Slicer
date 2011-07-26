@@ -20,7 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
 #include <QTimer>
 
 // qMRML includes
@@ -33,8 +32,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
 {

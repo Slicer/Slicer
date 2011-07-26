@@ -19,26 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
-#include <QStringList>
-#include <QVector>
 
 // qMRML includes
 #include "qMRMLSceneCategoryModel.h"
 #include "qMRMLSceneModel_p.h"
-#include "qMRMLUtils.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkVariantArray.h>
-#include <typeinfo>
 
 //------------------------------------------------------------------------------
 class qMRMLSceneCategoryModelPrivate: public qMRMLSceneModelPrivate

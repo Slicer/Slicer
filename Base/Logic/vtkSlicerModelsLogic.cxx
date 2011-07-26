@@ -18,14 +18,10 @@
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLTransformNode.h>
 
 /// VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkGeneralTransform.h>
-#include <vtkObjectFactory.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkSmartPointer.h>
 #include <vtkTagTable.h>

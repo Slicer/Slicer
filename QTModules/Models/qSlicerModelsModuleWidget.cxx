@@ -19,10 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRMLWidgets
-#include <qMRMLSceneModel.h>
 
 // SlicerQt includes
 #include "qSlicerModelsModuleWidget.h"

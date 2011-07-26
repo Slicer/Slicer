@@ -19,9 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDirIterator>
 #include <QSettings>
-#include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerLoadableModuleFactory.h"
@@ -33,7 +31,6 @@
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
-#include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem()

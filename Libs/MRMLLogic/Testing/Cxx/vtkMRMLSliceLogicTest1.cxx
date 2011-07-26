@@ -19,13 +19,10 @@
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkImageBlend.h>
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

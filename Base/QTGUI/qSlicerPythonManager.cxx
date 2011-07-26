@@ -11,7 +11,6 @@
 =========================================================================auto=*/
 
 // PythonQT includes
-#include <PythonQt.h>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -19,7 +18,6 @@
 #include <ctkDICOMWidgetsPythonQtDecorators.h>
 
 // SlicerQt includes
-#include "qSlicerPythonManager.h"
 #include "qSlicerApplication.h"
 #include "qSlicerBaseQTGUIPythonQtDecorators.h"
 

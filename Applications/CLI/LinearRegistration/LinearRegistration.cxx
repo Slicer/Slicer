@@ -7,28 +7,19 @@
   Version:   $Revision$
 
 =========================================================================*/
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
-#include <iostream>
 
 #include "LinearRegistrationCLP.h"
 
-#include "itkImage.h"
 #include "itkOrientImageFilter.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
 
-#include "itkGradientDescentOptimizer.h"
 #include "itkQuaternionRigidTransformGradientDescentOptimizer.h"
 #include "itkImageRegistrationMethod.h"
-#include "itkLinearInterpolateImageFunction.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkQuaternionRigidTransform.h"
-#include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
 #include "itkBinomialBlurImageFilter.h"
 

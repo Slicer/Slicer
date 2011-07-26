@@ -1,13 +1,5 @@
-#include "itksys/Process.h"
-#include "itksys/SystemTools.hxx"
 #include "vtkXNDHandler.h"
-#include <string>
-#include <iostream>
-#include <fstream>
 #include <sstream>
-#include <iterator>
-#include <map>
-#include <vector>
 
 vtkStandardNewMacro ( vtkXNDHandler );
 vtkCxxRevisionMacro ( vtkXNDHandler, "$Revision: 1.0 $" );

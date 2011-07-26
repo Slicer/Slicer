@@ -13,8 +13,6 @@
 
 =========================================================================*/
 #include "vtkSliceViewInteractorStyle.h"
-#include "vtkMath.h"
-#include "vtkCellPicker.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"

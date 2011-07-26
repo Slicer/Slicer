@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QIcon>
 #include <QPixmap>
 
 // CTK includes

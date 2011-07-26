@@ -1,38 +1,16 @@
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkPluginUtilities.h"
-#include "vtkPluginFilterWatcher.h"
 #include "ComputeSUVBodyWeightCLP.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string.h>
-#include <vector>
-#include <stdio.h>
 
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/Directory.hxx>
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkIntArray.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 #include "vtkImageAccumulate.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageToImageStencil.h"
-#include "vtkImageMathematics.h"
-#include "vtkLookupTable.h"
-#include "vtkColorTransferFunction.h"
 
-#include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLColorNode.h"
 
 //...
 //...............................................................................................

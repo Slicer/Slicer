@@ -9,23 +9,15 @@ command line processing and additional features have been added.
 #pragma warning ( disable : 4786 )
 #endif
 
-#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkExtractImageFilter.h"
 #include "itkShiftScaleImageFilter.h"
 #include "itkGDCMImageIO.h"
 #include "itkMetaDataObject.h"
-#include "itkNumericTraits.h"
 
-#include <string>
-#include <itksys/ios/sstream>
-#include <itksys/Base64.h>
 
-#include <vector>
-#include <itksys/SystemTools.hxx>
 #include "ImageReadDicomWriteCLP.h"
-#include <math.h>
 
 
 // Use an anonymous namespace to keep class types and function names

@@ -22,10 +22,8 @@
 #include "qMRMLSceneFactoryWidget.h"
 
 // qMRML includes
-#include "qMRMLNodeFactory.h"
 
 // QT includes
-#include <QDebug>
 
 // --------------------------------------------------------------------------
 qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject *_parent)

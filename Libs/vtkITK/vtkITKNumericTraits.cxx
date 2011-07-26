@@ -1,4 +1,3 @@
-#include "vtkITKNumericTraits.h"
 
 namespace itk
 {

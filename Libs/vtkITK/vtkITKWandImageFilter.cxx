@@ -17,10 +17,8 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkDataArray.h"
 #include "vtkImageData.h"
 
-#include "itkImage.h"
 #include "itkConnectedThresholdImageFilter.h"
 
 vtkCxxRevisionMacro(vtkITKWandImageFilter, "$Revision: 1.0 $");

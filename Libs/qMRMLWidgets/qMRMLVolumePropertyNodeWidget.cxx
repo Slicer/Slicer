@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLVolumePropertyNodeWidget.h"

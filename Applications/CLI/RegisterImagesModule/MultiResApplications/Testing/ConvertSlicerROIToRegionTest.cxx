@@ -13,10 +13,7 @@
 =========================================================================*/
 
 #include <itkImage.h>
-#include <itkPoint.h>
-#include <itkImageRegion.h>
 
-#include <iostream>
 
 #include "ConvertSlicerROIToRegion.h"
 

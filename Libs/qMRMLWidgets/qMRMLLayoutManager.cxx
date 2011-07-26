@@ -20,22 +20,17 @@
 
 // Qt includes
 #include <QButtonGroup>
-#include <QDebug>
-#include <QWidget>
 
 // CTK includes
 #include <ctkLogger.h>
-#include <ctkLayoutManager_p.h>
 
 // qMRMLWidgets includes
-#include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutManager_p.h"
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLThreeDView.h>
 
 // MRMLLogic includes
-#include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLSliceLogic.h>
 
 // MRML includes
@@ -44,9 +39,6 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkCollection.h>
-#include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qMRMLLayoutManager");

@@ -1,10 +1,7 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkFetchMIWriterXND.h"
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <vtksys/SystemTools.hxx>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkFetchMIWriterXND );

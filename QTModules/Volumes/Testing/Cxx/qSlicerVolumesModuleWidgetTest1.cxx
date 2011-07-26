@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 #include <QWidget>
 
@@ -32,7 +31,6 @@
 #include "vtkSlicerVolumesLogic.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>

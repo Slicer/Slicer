@@ -19,10 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QDoubleSpinBox>
 #include <QMenu>
-#include <QProxyStyle>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QWidgetAction>
@@ -32,7 +29,6 @@
 #include <ctkLogger.h>
 
 // qMRML includes
-#include "qMRMLSliceControllerWidget.h"
 #include "qMRMLSliceControllerWidget_p.h"
 
 // MRMLLogic includes
@@ -41,13 +37,9 @@
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkImageData.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceControllerWidget");

@@ -19,17 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMenu>
-#include <QFileInfo>
 
 // CTK includes
-#include <ctkVTKSliceView.h>
 #include <ctkLogger.h>
 #include <vtkLightBoxRendererManager.h>
 
 // qMRML includes
-#include "qMRMLSliceWidget.h"
 #include "qMRMLSliceWidget_p.h"
 
 // MRMLDisplayableManager includes
@@ -39,12 +34,9 @@
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkImageData.h>
-#include <vtkCornerAnnotation.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");

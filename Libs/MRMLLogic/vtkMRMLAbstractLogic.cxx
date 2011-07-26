@@ -16,7 +16,6 @@
 #include "vtkMRMLAbstractLogic.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 
 // STD includes

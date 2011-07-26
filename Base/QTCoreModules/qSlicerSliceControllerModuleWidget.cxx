@@ -19,14 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // CTK includes
 #include <ctkLogger.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkCollection.h>
 
 // qMRMLWidgets includes
 #include <qMRMLSliceWidget.h>
@@ -39,16 +37,12 @@
 #include "qSlicerLayoutManager.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLViewNode.h"
 
 // MRMLLogic includes
 #include "vtkMRMLLayoutLogic.h"
 
 // STL include
-#include <map>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtcoremodules.qSlicerSliceControllerWidget");

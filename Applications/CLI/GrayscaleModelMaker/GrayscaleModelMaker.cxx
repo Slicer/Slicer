@@ -13,15 +13,12 @@ Version:   $Revision$
 =========================================================================auto=*/
 
 #include "GrayscaleModelMakerCLP.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 #include "vtkMarchingCubes.h"
 #include "vtkWindowedSincPolyDataFilter.h"
-#include "vtkPointData.h"
 #include "vtkTransform.h"
 #include "vtkDecimatePro.h"
-#include "vtkSmoothPolyDataFilter.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkReverseSense.h"
 #include "vtkPolyDataNormals.h"
@@ -32,11 +29,8 @@ Version:   $Revision$
 #include "vtkPluginFilterWatcher.h"
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
-#include "ModuleParameterGroup.h"
-#include "ModuleParameter.h"
 #include "vtkDebugLeaks.h"
 
-#include <string>
 
 int main(int argc, char * argv[])
 {

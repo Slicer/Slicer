@@ -14,20 +14,16 @@
 =========================================================================*/
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 
-#include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkVolume.h"
 #include "vtkRenderer.h"
 #include "vtkTransform.h"
 #include "vtkCamera.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
-#include "vtkToolkits.h"
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
 # include "vtkOpenGL.h"
 #endif
 
-#include <math.h>
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
 vtkCxxRevisionMacro(vtkSlicerOpenGLRayCastImageDisplayHelper, "$Revision: 1.4 $");

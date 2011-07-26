@@ -23,8 +23,6 @@
 #endif
 
 #include "itkPluginUtilities.h"
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkMedianImageFilter.h"
 

@@ -14,7 +14,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
 #include "itkTestMainExtended.h"
 
 #ifdef WIN32

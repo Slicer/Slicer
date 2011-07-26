@@ -1,24 +1,13 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
 
-#include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
-#include <vtkBitArray.h>
-#include <vtkDataSetAttributes.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
-#include <vtkPointData.h>
-#include <vtkPNGWriter.h>
-#include <vtkPNGReader.h>
-#include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 
 vtkCxxSetObjectMacro(vtkMRMLAnnotationSnapshotNode, ScreenShot, vtkImageData);
 

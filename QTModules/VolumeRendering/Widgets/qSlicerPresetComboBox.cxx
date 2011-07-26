@@ -20,25 +20,20 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QListView>
 
 // CTK includes
-#include <ctkComboBox.h>
 #include <ctkVTKScalarsToColorsUtils.h>
 #include <ctkWidgetsUtils.h>
 
 // qMRMLWidgets includes
-#include <qMRMLNodeComboBox_p.h>
 #include <qMRMLSceneModel.h>
 
 // VolumeRenderingWidgets includes
-#include "qSlicerPresetComboBox.h"
 #include "qSlicerPresetComboBox_p.h"
 
 // MRML includes
-#include <vtkMRMLNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
 
 // VTK includes

@@ -16,16 +16,12 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLCommandLineModuleNode.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include "vtkObjectFactory.h"
 
 // STD includes
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <map>
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCommandLineModuleNode);

@@ -5,25 +5,17 @@
 #include "vtkCacheManager.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkPermissionPrompter.h"
 #include <vtkURIHandler.h>
 
 // VTK includes
-#include "vtkCommand.h"
-#include "vtkObjectFactory.h"
-#include "vtkSmartPointer.h"
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
 // ITKsys includes
-#include "itksys/Process.h"
-#include "itksys/RegularExpression.hxx"
 
 // STD includes
-#include <algorithm>
-#include <set>
 
 #ifdef linux 
 #include "unistd.h"

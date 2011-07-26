@@ -21,8 +21,6 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLViewDisplayableManager.h>
-#include <vtkMRMLAnnotationDisplayableManager.h>
 #include <vtkMRMLAnnotationFiducialDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
 
@@ -30,27 +28,15 @@
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLInteractionNode.h>
 
 // VTK includes
-#include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h> 
-#include <vtkSmartPointer.h>
-#include <vtkErrorCode.h>
-#include <vtkInteractorEventRecorder.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
-#include <vtkMath.h>
 #include <vtkCamera.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
-#include <iterator>
 
 #include "TestingMacros.h"
 

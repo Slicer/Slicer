@@ -16,20 +16,14 @@
 #include "vtkMRMLSliceLayerLogic.h"
 
 // MRML includes
-#include "vtkMRMLVolumeDisplayNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 #include <vtkPointData.h>

@@ -1,21 +1,14 @@
 // QT includes
-#include <QDebug>
-#include <QColor>
 
 // qMRML includes
 #include "qSlicerTractographyDisplayGlyphWidget.h"
 #include "ui_qSlicerTractographyDisplayGlyphWidget.h"
 
 // MRML includes
-#include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLStorageNode.h>
 #include <vtkMRMLFiberBundleDisplayNode.h>
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
 // VTK includes
-#include <vtkMatrix4x4.h>
-#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 class qSlicerTractographyDisplayGlyphWidgetPrivate: 

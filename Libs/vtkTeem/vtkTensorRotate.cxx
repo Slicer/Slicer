@@ -18,9 +18,7 @@
 #include "vtkPointData.h"
 #include "vtkFloatArray.h"
 #include "vtkDoubleArray.h"
-#include "vtkMatrix4x4.h"
 #include "vtkCellData.h"
-#include "vtkDataArray.h"
 
 
 vtkCxxRevisionMacro(vtkTensorRotate, "$Revision: 1.1 $");

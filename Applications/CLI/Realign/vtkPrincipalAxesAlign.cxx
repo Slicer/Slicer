@@ -15,8 +15,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkMath.h>
-#include <iostream>
-#include <assert.h>
 void vtkPrincipalAxesAlign::Execute()
 {
   vtkPolyData *input = (vtkPolyData *)this->Inputs[0];

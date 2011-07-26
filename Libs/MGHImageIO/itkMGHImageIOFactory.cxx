@@ -1,6 +1,5 @@
 
 #include "itkMGHImageIOFactory.h"
-#include "itkCreateObjectFunction.h"
 #include "itkMGHImageIO.h"
 #include "itkVersion.h"
 

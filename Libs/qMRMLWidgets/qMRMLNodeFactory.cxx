@@ -19,12 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QHash>
-#include <QScopedPointer>
 #include <QDebug>
 
 // qMRML includes
-#include "qMRMLUtils.h"
 #include "qMRMLNodeFactory.h"
 
 // MRML includes

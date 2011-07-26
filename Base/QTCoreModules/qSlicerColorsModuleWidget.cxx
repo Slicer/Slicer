@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QInputDialog>
-#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -35,7 +34,6 @@
 #include <vtkSlicerColorLogic.h>
 
 // MRML includes
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 

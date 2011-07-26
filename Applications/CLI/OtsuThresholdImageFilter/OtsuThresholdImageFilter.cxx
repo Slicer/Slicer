@@ -31,7 +31,6 @@
 #include "itkOtsuThresholdImageFilter.h"
 // Software Guide : EndCodeSnippet
 
-#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 

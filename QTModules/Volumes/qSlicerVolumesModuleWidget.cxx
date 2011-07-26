@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // CTK includes
 //#include <ctkModelTester.h>

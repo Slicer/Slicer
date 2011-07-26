@@ -16,12 +16,10 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkCamera.h"
 #include "vtkColorTransferFunction.h"
-#include "vtkDataArray.h"
 #include "vtkEncodedGradientShader.h"
 #include "vtkFiniteDifferenceGradientEstimator.h"
 #include "vtkImageData.h"
 #include "vtkCommand.h"
-#include "vtkGraphicsFactory.h"
 #include "vtkSphericalDirectionEncoder.h"
 #include "vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.h"
 #include "vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.h"
@@ -39,10 +37,8 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkTimerLog.h"
 #include "vtkTransform.h"
 #include "vtkVolumeProperty.h"
-#include "vtkSlicerRayCastImageDisplayHelper.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
 
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastMapper, "$Revision: 1.20.4.1 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastMapper);

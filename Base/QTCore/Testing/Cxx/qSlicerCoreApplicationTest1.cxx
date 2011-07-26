@@ -19,30 +19,23 @@
 ==============================================================================*/
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // SlicerQT includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerCoreCommandOptions.h"
-#include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
 #endif
 
 // Slicer includes
-#include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
 
 // STD includes
-#include <stdlib.h>
 
-#include "TestingMacros.h"
 
 // namespace{
 // class qSlicerCoreApplicationTest : public qSlicerCoreApplication

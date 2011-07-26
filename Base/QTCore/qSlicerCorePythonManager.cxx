@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 // Qt includes
-#include <QDebug>
-#include <QDir>
-#include <QStringList>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -28,18 +25,15 @@
 #include <ctkDICOMCorePythonQtDecorators.h>
 
 // PythonQt includes
-#include <PythonQt.h>
 
 // SlicerQt includes
 #include "qSlicerUtils.h"
 #include "qSlicerCorePythonManager.h"
-#include "qSlicerCoreApplication.h"
 #include "qSlicerBaseQTCorePythonQtDecorators.h"
 
 // VTK includes
 #include <vtkPythonUtil.h>
 
-#include "vtkSlicerConfigure.h" // For VTK_DIR, CTK_DIR
 
 // PythonQt wrapper initialization methods
 void PythonQt_init_org_commontk_CTKCore(PyObject*);

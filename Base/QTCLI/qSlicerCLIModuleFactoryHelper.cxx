@@ -29,7 +29,6 @@
 
 // For:
 //  - Slicer_PLUGINS_BIN_DIR
-#include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
 const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()

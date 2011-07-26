@@ -23,13 +23,10 @@
 #include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
-#include <vtkMRMLNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
 
 // VTK includes
-#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 #include <vtkRenderWindowInteractor.h>

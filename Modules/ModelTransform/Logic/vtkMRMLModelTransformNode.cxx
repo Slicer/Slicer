@@ -1,12 +1,7 @@
-#include <string>
-#include <vector>
-#include <iostream>
 #include <sstream>
 
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkMRMLModelTransformNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLModelTransformNode, "$Revision: 1.0 $");

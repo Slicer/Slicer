@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QStandardItem>
 
 // qMRML includes
 #include "qMRMLSceneModel.h"

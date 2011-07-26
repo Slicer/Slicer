@@ -26,7 +26,6 @@
 #include "qSlicerMainWindowCore.h"
 
 // STD includes
-#include <cstdlib>
 
 int qSlicerMainWindowCoreTest1(int argc, char * argv[] )
 {

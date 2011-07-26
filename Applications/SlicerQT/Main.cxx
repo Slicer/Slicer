@@ -19,9 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QMessageBox>
-#include <QSettings>
 #include <QSplashScreen>
 #include <QTimer>
 
@@ -48,8 +46,6 @@
 #include "qSlicerMainWindow.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerModulePanel.h"
-#include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerStyle.h"
 
 // Slicer includes

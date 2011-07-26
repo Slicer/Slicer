@@ -7,11 +7,8 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

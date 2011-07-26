@@ -9,14 +9,10 @@
 
 // VTK includes
 #include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
 #include "vtkStringArray.h"
 #include "vtkSmartPointer.h"
 
 // STd includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationFiducialsStorageNode* vtkMRMLAnnotationFiducialsStorageNode::New()

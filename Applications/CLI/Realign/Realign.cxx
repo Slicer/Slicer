@@ -12,23 +12,14 @@
 
 ==========================================================================*/
 #include "RealignCLP.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkITKImageWriter.h"
-#include "vtkImageData.h"
 #include "vtkTransform.h"
 #include "vtkPolyData.h"
 #include "vtkMath.h"
-#include "vtkPoints.h"
-#include "vtkMatrix4x4.h"
-#include "vtkImageReslice.h"
 
 #include "vtkPluginFilterWatcher.h"
 
 #include "vtkPrincipalAxesAlign.h"
 
-#include <fstream>
-#include <string>
 
 #include "vtkMRMLScene.h"
 #include "vtkSmartPointer.h"

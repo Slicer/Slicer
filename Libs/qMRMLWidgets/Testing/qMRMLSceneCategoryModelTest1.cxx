@@ -20,30 +20,22 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
-#include <QString>
-#include <QStringList>
 #include <QTimer>
 #include <QTreeView>
 
 // CTK includes
-#include <ctkModelTester.h>
 
 // qMRML includes
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneCategoryModel.h"
 
 // MRML includes
-#include "TestingMacros.h"
-#include <vtkEventBroker.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
 {

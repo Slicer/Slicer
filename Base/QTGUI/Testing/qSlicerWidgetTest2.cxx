@@ -13,13 +13,11 @@
 
 // Qt includes
 #include <QApplication>
-#include <QWidget>
 #include <QTimer>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QProcessEnvironment>
 #include <QWebView>
-#include <QUrl>
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -35,7 +33,6 @@
 #include <vtkActor2D.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
@@ -47,7 +44,6 @@
 #include <vtkMRMLSliceLogic.h>
 
 // STD includes
-#include <cstdlib>
 
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 900

@@ -19,21 +19,16 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QLabel>
 #include <QFormLayout>
 #include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerCLIModule.h"
-#include "qSlicerCLIModuleWidget.h"
 #include "qSlicerCLIModuleWidget_p.h"
 #include "vtkSlicerCLIModuleLogic.h"
 #include "qSlicerCLIModuleUIHelper.h"
-#include "qSlicerWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
-#include <vtkMRMLCommandLineModuleNode.h>
 
 //-----------------------------------------------------------------------------
 // qSlicerCLIModuleWidgetPrivate methods

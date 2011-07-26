@@ -6,20 +6,13 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <algorithm>
-#include <string>
 
-#include "itkPluginFilterWatcher.h"
-#include "itkPluginUtilities.h"
 
 
 #include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
 #include "vtkImageData.h"
 #include "ProbeVolumeWithModelCLP.h"
 
-#include "vtkPolyData.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"

@@ -12,15 +12,11 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkWindows.h"
 #include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
 
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkPlane.h"
 #include "vtkPlaneCollection.h"
-#include "vtkPointData.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkTimerLog.h"
@@ -32,7 +28,6 @@
 #include "vtkMath.h"
 #include "vtkOpenGLExtensionManager.h"
 #include "vtkgl.h"
-#include "vtkCommand.h"
 #include "vtkVolumeTextureMapper3D_OneComponentNoShadeFP.h"
 #include "vtkVolumeTextureMapper3D_OneComponentShadeFP.h"
 #include "vtkVolumeTextureMapper3D_TwoDependentNoShadeFP.h"

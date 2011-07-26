@@ -19,13 +19,11 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // CTK includes
 #include "ctkLogger.h"
 
 // QtGUI includes
-#include "qSlicerApplication.h"
 #include "qSlicerExtensionsWizard.h"
 #include "qSlicerExtensionsWizardWelcomePage.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"

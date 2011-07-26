@@ -20,7 +20,6 @@
 
 // QT includes
 #include <QComboBox>
-#include <QDebug>
 #include <QHBoxLayout>
 
 // qMRML includes
@@ -30,7 +29,6 @@
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 class qMRMLScalarInvariantComboBoxPrivate

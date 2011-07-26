@@ -8,10 +8,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
 
 int main (int argc, char *argv[])
 {

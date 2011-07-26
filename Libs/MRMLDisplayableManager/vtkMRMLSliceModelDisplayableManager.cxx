@@ -23,7 +23,6 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
-#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -39,9 +38,6 @@
 
 // STD includes
 #include <algorithm>
-#include <cassert>
-#include <map>
-#include <vector>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceModelDisplayableManager );

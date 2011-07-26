@@ -19,10 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
-#include "qMRMLSceneViewMenu.h"
 #include "qMRMLSceneViewMenu_p.h"
 
 // MRML includes

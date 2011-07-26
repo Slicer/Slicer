@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 // Qt includes
-#include <QAction>
 #include <QFileInfo>
 #include <QVBoxLayout>
 
@@ -29,7 +28,6 @@
 #include "qSlicerScriptedLoadableModuleWidget.h"
 
 // Python includes
-#include <Python.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleWidgetPrivate

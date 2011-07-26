@@ -20,14 +20,11 @@
 
 // Qt includes
 #include <QDebug>
-#include <QFileInfo>
 
 // CTK includes
 #include <ctkLogger.h>
-#include <ctkAxesWidget.h>
 
 // qMRML includes
-#include "qMRMLThreeDView.h"
 #include "qMRMLThreeDView_p.h"
 
 // MRMLDisplayableManager includes
@@ -41,8 +38,6 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderer.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

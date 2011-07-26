@@ -33,70 +33,35 @@ gradient directions is the same as the ImageOrientationPatient
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <algorithm> //Needed for trasforom to convert string tolower
 
-#include "itkXMLFilterWatcher.h"
 
-#include "itkNrrdImageIO.h"
-#include "itkImage.h"
 #include "itkImageSeriesReader.h"
-#include "itkMetaDataDictionary.h"
-#include "itkSmoothingRecursiveGaussianImageFilter.h"
-#include "itkRecursiveGaussianImageFilter.h"
 
 
-#include "itkImageFileWriter.h"
 #include "itkRawImageIO.h"
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
-#include "itkNumericSeriesFileNames.h"
 
 //#include "itkScalarImageToListAdaptor.h"
 //#include "itkListSampleToHistogramGenerator.h"
 //
 #include "itksys/Base64.h"
 
-#include "itkImage.h"
-#include "vnl/vnl_math.h"
 
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 
-#include "vnl/vnl_vector_fixed.h"
-#include "vnl/vnl_matrix_fixed.h"
-#include "vnl/algo/vnl_svd.h"
 
-#include "itkVectorImage.h"
-#include "gdcmFile.h"
-#include "gdcmGlobal.h"
-#include "gdcmUtil.h"
-#include "gdcmDebug.h"
-#include "gdcmTS.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
-#include "gdcmSeqEntry.h"
-#include "gdcmRLEFramesInfo.h"
-#include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmSQItem.h"
 
 #include "gdcmSeqEntry.h"
 #include "gdcmDictSet.h"        // access to dictionary
-#include "gdcmDict.h"           // access to dictionary
 #include "gdcmFile.h"           // access to dictionary
-#include "gdcmDocEntry.h"       //internal of gdcm
 #include "gdcmBinEntry.h"       //internal of gdcm
 #include "gdcmValEntry.h"       //internal of gdcm
-#include "gdcmDictEntry.h"      // access to dictionary
 #include "gdcmGlobal.h"         // access to dictionary
 
-#include "itksys/RegularExpression.hxx"
 #include "itksys/Directory.hxx"
-#include "itksys/SystemTools.hxx"
 
 #include "DicomToNrrdConverterCLP.h"
 

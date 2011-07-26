@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qSlicer includes
 #include "qSlicerIOOptionsWidget.h"

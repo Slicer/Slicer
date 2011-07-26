@@ -1,19 +1,13 @@
 /// Qt includes
 #include <QDebug>
-#include <QDir>
 #include <QFileDialog>
-#include <QFileInfo>
-#include <QMap>
 #include <QProgressDialog>
-#include <QString>
-#include <QUrl>
 
 // CTK includes
 #include "ctkScreenshotDialog.h"
 
 /// SlicerQt includes
 #include "qSlicerIOManager.h"
-#include "qSlicerFileDialog.h"
 #include "qSlicerDataDialog.h"
 #include "qSlicerModelsDialog.h"
 #include "qSlicerSaveDataDialog.h"
@@ -21,7 +15,6 @@
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
-#include "qSlicerAbstractModuleRepresentation.h"
 
 /// MRML includes
 #include <vtkMRMLScene.h>

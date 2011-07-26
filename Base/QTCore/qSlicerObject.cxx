@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // QTCore includes
 #include "qSlicerObject.h"

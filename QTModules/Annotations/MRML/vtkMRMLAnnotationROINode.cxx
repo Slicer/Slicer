@@ -1,20 +1,13 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
-#include <cmath>
 
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLTransformNode.h"
-#include "vtkMatrix4x4.h"
-#include "vtkAbstractTransform.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMath.h"
 #include <vtkObjectFactory.h>
 #include "vtkPlanes.h"
-#include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include "vtkDoubleArray.h"
 #include "vtkGeneralTransform.h"

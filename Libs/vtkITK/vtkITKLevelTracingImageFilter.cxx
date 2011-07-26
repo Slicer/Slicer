@@ -17,20 +17,14 @@ PURPOSE.  See the above copyright notice for more information.
 #include "itkLevelTracingImageFilter.h"
 
 #include "vtkCellArray.h"
-#include "vtkFloatArray.h"
-#include "vtkUnsignedCharArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
-#include "vtkPolyData.h"
 #include "vtkStructuredPoints.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSmartPointer.h"
 
-#include "itkImage.h"
 #include "itkExtractImageFilter.h"
-#include "itkChainCodePath.h"
-#include "itkNumericTraits.h"
 
 vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);

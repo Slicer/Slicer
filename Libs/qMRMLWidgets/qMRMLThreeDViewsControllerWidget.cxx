@@ -19,9 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMenu>
-#include <QActionGroup>
 #include <QInputDialog>
 
 // CTK includes
@@ -29,14 +26,12 @@
 #include <ctkButtonGroup.h>
 
 // qMRML includes
-#include "qMRMLThreeDViewsControllerWidget.h"
 #include "qMRMLThreeDViewsControllerWidget_p.h"
 #include "qMRMLActionSignalMapper.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneViewMenu.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSceneViewNode.h>
 

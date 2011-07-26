@@ -36,8 +36,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
 {

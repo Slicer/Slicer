@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QFile>
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QListView>

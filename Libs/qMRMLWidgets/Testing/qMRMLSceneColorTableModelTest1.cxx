@@ -20,22 +20,16 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
-#include <QString>
-#include <QStringList>
 #include <QTimer>
 #include <QTreeView>
 
 // CTK includes
-#include <ctkModelTester.h>
 
 // qMRML includes
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneColorTableModel.h"
 
-#include "TestingMacros.h"
 // MRML includes
-#include <vtkEventBroker.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLScene.h>
 
@@ -43,8 +37,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
 {

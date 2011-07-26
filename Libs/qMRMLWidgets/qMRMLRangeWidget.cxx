@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QMenu>

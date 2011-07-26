@@ -16,8 +16,6 @@
 #include "vtkMRMLModelHierarchyLogic.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);

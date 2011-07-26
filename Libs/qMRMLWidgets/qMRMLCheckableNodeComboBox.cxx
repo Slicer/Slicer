@@ -19,31 +19,17 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
-#include <QAbstractItemView>
-#include <QAbstractProxyModel>
-#include <QAction>
 #include <QDebug>
-#include <QHBoxLayout>
-#include <QInputDialog>
-#include <QKeyEvent>
-#include <QListView>
-#include <QStandardItemModel>
 
 // CTK includes
-#include <ctkComboBox.h>
 #include <ctkCheckableComboBox.h>
 
 // qMRMLWidgets includes
 #include "qMRMLCheckableNodeComboBox.h"
 #include "qMRMLNodeComboBox_p.h"
-#include "qMRMLNodeFactory.h"
-#include "qMRMLSceneModel.h"
-#include "qMRMLSortFilterProxyModel.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
-#include <vtkMRMLScene.h>
 
 // -----------------------------------------------------------------------------
 class qMRMLCheckableNodeComboBoxPrivate: public qMRMLNodeComboBoxPrivate

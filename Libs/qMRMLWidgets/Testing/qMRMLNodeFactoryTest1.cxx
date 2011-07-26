@@ -23,7 +23,6 @@
 
 // STD includes
 #include <stdlib.h>
-#include <iostream>
 
 int qMRMLNodeFactoryTest1( int argc, char * argv [] )
 {

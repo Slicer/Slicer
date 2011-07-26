@@ -6,31 +6,18 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <algorithm>
-#include <string>
-#include <cmath>
 
-#include "itkPluginFilterWatcher.h"
-#include "itkPluginUtilities.h"
 #include "vtkSmartPointer.h"
-#include "vtkMatrix4x4.h"
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMath.h"
-#include "vtkDoubleArray.h"
 #include "vtkTensorMask.h"
 #include "vtkTeemEstimateDiffusionTensor.h"
 
-#include "vtkImageData.h"
-#include "vtkImageCast.h"
-#include "vtkImageSeedConnectivity.h"
-#include "vtkImageConnectivity.h"
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 
 #if ITK_VERSION_MAJOR >= 4
-#include "itkFloatingPointExceptions.h"
 #endif
 
 #include "DiffusionTensorEstimationCLP.h"

@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
@@ -31,7 +30,6 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 #include "vtkTransform.h"
-#include "vtkMatrix4x4.h"
 
 //-----------------------------------------------------------------------------
 class qMRMLLinearTransformSliderPrivate

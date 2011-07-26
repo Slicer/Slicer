@@ -30,15 +30,12 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
 {

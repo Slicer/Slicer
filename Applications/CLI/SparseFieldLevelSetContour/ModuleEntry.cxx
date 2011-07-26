@@ -1,7 +1,5 @@
 #include "ModuleEntry.h"
 
-#include <list>
-#include <math.h>
 
 // Input: mesh and indices of vertices for initialization
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 

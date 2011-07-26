@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-#include "qSlicerLoadableModule.h"
 
 // STD includes
 #include <cstdlib>

@@ -16,10 +16,8 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkPointData.h"
-#include "vtkDataArray.h"
 #include "vtkImageData.h"
 
-#include "itkImage.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 
 vtkCxxRevisionMacro(vtkITKDistanceTransform, "$Revision: 1900 $");

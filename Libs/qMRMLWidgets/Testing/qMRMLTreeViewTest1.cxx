@@ -20,17 +20,13 @@
 #include <QApplication>
 
 #include <qMRMLTreeView.h>
-#include <qMRMLSceneModel.h>
 #include <qMRMLSceneTransformModel.h>
-#include <qMRMLSortFilterProxyModel.h>
 
 #include <vtkMRMLScene.h>
 
 #include <vtkTimerLog.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLTreeViewTest1( int argc, char * argv [] )
 {

@@ -20,7 +20,6 @@
 
 /// Qt includes
 #include <QFileInfo>
-#include <QRegExp>
 
 // CTK includes
 #include <ctkUtils.h>

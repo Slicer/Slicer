@@ -1,24 +1,19 @@
 
 // Qt includes
 #include <QtPlugin>
-#include <QDebug>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
-#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // QTGUI includes
 #include <qSlicerApplication.h>
-#include <qSlicerLayoutManager.h>
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModule.h"
-#include "GUI/qSlicerAnnotationModuleWidget.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // needed to get the CMake variables
-#include <vtkSlicerConfigure.h>
 
 #ifdef Slicer_USE_PYTHONQT
   // PythonQT includes

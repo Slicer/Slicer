@@ -26,10 +26,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkTransform.h"
-#include "vtkFloatArray.h"
 #include "vtkPointData.h"
-#include "time.h"
-#include "vtkLookupTable.h"
 #ifndef M_SQRT2
 #define M_SQRT2    1.41421356237309504880168872421      /* sqrt(2) */
 #endif

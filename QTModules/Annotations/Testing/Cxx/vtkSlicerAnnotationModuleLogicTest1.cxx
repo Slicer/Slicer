@@ -5,13 +5,7 @@
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 
-#include <stdlib.h>
-#include <iostream>
-#include <sstream>
-#include <string>
 #include "TestingMacros.h"
-#include <time.h>
-#include <vtkSmartPointer.h>
 
 void CheckTextColor(vtkMRMLAnnotationRulerNode *rnode)
 {

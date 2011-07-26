@@ -9,28 +9,17 @@
 
 #include "vtkObjectFactory.h"
 
-#include "vtkPoints.h"
 //#include "vtkPointData.h"
-#include "vtkImageData.h"
 #include "vtkImageCast.h"
 
-#include "itkImage.h"
-#include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkImageRegionConstIterator.h"
-#include "itkImageFileWriter.h"
 
 //#include "itkExtractImageFilter.h"
 #include "itkRegionOfInterestImageFilter.h"
 
-#include "vtkProcessObject.h"
 
-#include "itkEventObject.h"
-#include "itkCommand.h"
 
-#include <vcl_string.h>
 
-#include <iostream>
 
 
 vtkCxxRevisionMacro(vtkITKGrowCutSegmentationImageFilter, "$Revision: 1.3 $");

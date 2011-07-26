@@ -1,11 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string.h>
 
-#include <itksys/SystemTools.hxx>
 #include <vtkITKArchetypeImageSeriesVectorReaderFile.h>
-#include <vtkITKArchetypeImageSeriesVectorReaderSeries.h>
 #include <vtkImageData.h>
 
 int main(int argc, char *argv[])

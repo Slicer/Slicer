@@ -15,10 +15,8 @@
 #include "vtkSlicerTask.h"
 
 // MRML includes
-#include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLColorTableStorageNode.h>
-#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLDoubleArrayStorageNode.h>
@@ -28,42 +26,31 @@
 #include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
 #include <vtkMRMLROIListNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLStorageNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLTransformStorageNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 
 // ITKSYS includes
 #include <itksys/Process.h>
 #include <itksys/SystemTools.hxx>
 #include <itksys/RegularExpression.hxx>
-#include <itksys/DynamicLoader.hxx>
 
 // Annotations module includes
-#include <vtkMRMLDisplayableHierarchyNode.h>
 
 // QT includes
 #include <QDebug>
 
 #if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
 // needed to hack around itksys to override defaults used by Mac OS X
-#include <dlfcn.h>
 #endif
 
 
-#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 // #ifdef Slicer_USE_PYTHON
 // #include "slicerPython.h"
@@ -72,10 +59,6 @@
 // STL includes
 #include <algorithm>
 #include <set>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <time.h>
 
 #ifdef _WIN32
 #else

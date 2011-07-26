@@ -24,28 +24,18 @@
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkImageResliceMask.h>
 #include <vtkImageViewer2.h>
-#include <vtkMultiThreader.h>
-#include <vtkPointData.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 {

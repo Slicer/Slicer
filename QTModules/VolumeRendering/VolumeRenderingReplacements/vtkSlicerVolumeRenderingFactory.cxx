@@ -15,29 +15,17 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkSlicerVolumeRenderingFactory.h"
-#include "vtkToolkits.h"
-#include "vtkVolumeRenderingToolkit.h"
-#include "vtkDebugLeaks.h"
 #include "vtkGraphicsFactory.h"
 
 
 // if using some sort of opengl, then include these files
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
-#include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
-#include "vtkOpenGLVolumeTextureMapper2D.h"
-#include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
-#include "vtkSlicerGPURayCastVolumeMapper.h"
-#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #endif
 
 #if defined(VTK_USE_MANGLED_MESA)
-#include "vtkMesaRayCastImageDisplayHelper.h"
-#include "vtkMesaVolumeTextureMapper2D.h"
 #endif
 
-#include "vtkCriticalSection.h"
 
-#include "stdlib.h"
 
 vtkCxxRevisionMacro(vtkSlicerVolumeRenderingFactory, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkSlicerVolumeRenderingFactory);

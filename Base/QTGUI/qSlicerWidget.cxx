@@ -19,15 +19,11 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QScrollArea>
-#include <QVBoxLayout>
 #include <QPointer>
-#include <QDebug>
 
 #include "qSlicerWidget.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerWidgetPrivate

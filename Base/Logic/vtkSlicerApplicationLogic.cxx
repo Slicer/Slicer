@@ -7,21 +7,15 @@
 ==========================================================================*/
 
 // Slicer configure - Should be included first
-#include "vtkSlicerConfigure.h"
 
 // VTK includes
-#include "vtkObjectFactory.h"
-#include "vtkSmartPointer.h"
-#include "vtkStringArray.h"
 #include "vtkPointData.h"
 
 // MRML includes
 #include "vtkCacheManager.h"
-#include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"
 #include "vtkMRMLCrosshairNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
@@ -29,34 +23,23 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-#include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLNonlinearTransformNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
 
 // MRMLLogic includes
 #include "vtkMRMLSliceLogic.h"
@@ -75,7 +58,6 @@
 # include "unistd.h"
 #endif
 #include <queue>
-#include <map>
 
 // Private implementaton of an std::map
 class SliceLogicMap : public std::map<std::string, vtkSmartPointer<vtkMRMLSliceLogic> > {};

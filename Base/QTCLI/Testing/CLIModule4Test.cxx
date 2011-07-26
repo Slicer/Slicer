@@ -14,7 +14,6 @@
 #include "CLIModule4TestCLP.h"
 
 // STD includes
-#include <iostream>
 #include <fstream>
 
 // Use an anonymous namespace to keep class types and function names

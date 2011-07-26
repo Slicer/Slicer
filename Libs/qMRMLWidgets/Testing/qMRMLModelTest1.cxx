@@ -20,8 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QString>
-#include <QStringList>
 
 // CTK includes
 #include <ctkModelTester.h>
@@ -30,12 +28,8 @@
 #include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneModel.h"
 
-#include "TestingMacros.h"
-#include <vtkEventBroker.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLModelTest1(int argc, char * argv [] )
 {

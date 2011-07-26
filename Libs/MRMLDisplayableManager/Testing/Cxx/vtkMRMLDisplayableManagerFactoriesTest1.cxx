@@ -14,7 +14,6 @@
 // MRML includes
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSliceNode.h>
-#include <vtkMRMLCrosshairNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -24,7 +23,6 @@
 #include <vtkTesting.h>
 
 // STD includes
-#include <cstdlib>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

@@ -22,13 +22,10 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkOrientImageFilter.h"
 #include "itkChangeInformationImageFilter.h"
-#include "itkSpatialOrientation.h"
 
 #include "itkPluginUtilities.h"
 #include "OrientImageCLP.h"

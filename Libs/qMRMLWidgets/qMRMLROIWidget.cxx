@@ -19,14 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLROIWidget.h"
 #include "ui_qMRMLROIWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLROINode.h>
 
 // --------------------------------------------------------------------------

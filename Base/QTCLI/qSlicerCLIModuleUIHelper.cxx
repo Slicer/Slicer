@@ -11,44 +11,32 @@
 =========================================================================auto=*/
 
 // Qt includes
-#include <QLabel>
 #include <QDebug>
-#include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QLineEdit>
-#include <QButtonGroup>
-#include <QPushButton>
 #include <QRadioButton>
-#include <QHash>
 
 // CTK includes
-#include <ctkCollapsibleButton.h>
-#include <ctkDoubleSlider.h>
 #include <ctkDirectoryButton.h>
 #include <ctkFlowLayout.h>
 #include <ctkSliderWidget.h>
 
 // qMRML includes
 #include <qMRMLNodeComboBox.h>
-#include <qMRMLNodeFactory.h>
 
 /// ModuleDescriptionParser includes
-#include <ModuleDescription.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLCommandLineModuleNode.h>
 
 // ITK includes
-#include <itkNumericTraits.h>
 
 // SlicerQT includes
 #include "qSlicerCLIModuleUIHelper.h"
 #include "qSlicerCLIModuleWidget.h"
 
 /// STD includes
-#include <vector>
 #include <limits>
 
 //-----------------------------------------------------------------------------

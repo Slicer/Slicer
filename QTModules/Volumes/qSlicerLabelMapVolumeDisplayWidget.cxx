@@ -22,7 +22,6 @@
 #include "ui_qSlicerLabelMapVolumeDisplayWidget.h"
 
 // Qt includes
-#include <QDebug>
 
 // MRML includes
 #include "vtkMRMLColorNode.h"
@@ -30,7 +29,6 @@
 #include "vtkMRMLScalarVolumeNode.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes

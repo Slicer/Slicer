@@ -20,11 +20,8 @@
 
 /// Qt includes
 #include <QDebug>
-#include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
-#include <QList>
-#include <QUrl>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -33,7 +30,6 @@
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerDataDialog.h"
 #include "qSlicerDataDialog_p.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"

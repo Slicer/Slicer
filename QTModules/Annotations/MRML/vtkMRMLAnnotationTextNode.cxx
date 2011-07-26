@@ -1,15 +1,6 @@
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationTextNode.h"
-#include "vtkBitArray.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
-#include "vtkStringArray.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
 
 
 //------------------------------------------------------------------------------

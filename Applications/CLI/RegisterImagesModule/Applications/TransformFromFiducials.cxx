@@ -16,8 +16,6 @@
 #include <itkAffineTransform.h>
 
 #include <numeric>
-#include <functional>
-#include <iterator>
 
 namespace
 {

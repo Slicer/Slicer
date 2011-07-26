@@ -13,7 +13,6 @@
 ==========================================================================*/
 #include "MeshOps.h"
 #include "vtkSmartPointer.h"
-#include <math.h>
 
 void ComputeCurvatureData( MeshData* meshdata )
 {

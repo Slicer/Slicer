@@ -37,8 +37,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkMultiThreader.h>
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSliceWidgetTest1(int argc, char * argv [] )
 {

@@ -13,16 +13,11 @@
 #include "vtkSlicerTransformLogic.h"
 
 // MRML includes
-#include <vtkMRMLTransformNode.h>
-#include <vtkMRMLStorageNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <stdlib.h>
 
-#include "TestingMacros.h"
 
 int vtkSlicerTransformLogicTest1(int argc, char * argv [])
 {

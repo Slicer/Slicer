@@ -19,19 +19,14 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QDir>
-#include <QStringList>
 #include <QTimer>
-#include <QVector>
 
 // CTK includes
-#include <ctkErrorLogModel.h>
 #include <ctkErrorLogFDMessageHandler.h>
 #include <ctkErrorLogQtMessageHandler.h>
 #include <ctkErrorLogStreamMessageHandler.h>
 #include <ctkITKErrorLogMessageHandler.h>
-#include <ctkPimpl.h>
 #include <ctkVTKErrorLogMessageHandler.h>
 
 // For:
@@ -48,7 +43,6 @@
 #endif
 
 // SlicerQt includes
-#include "qSlicerCoreApplication.h"
 #include "qSlicerCoreApplication_p.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerCoreIOManager.h"
@@ -58,19 +52,15 @@
 #endif
 
 // SlicerLogic includes
-#include "vtkSlicerApplicationLogic.h"
 #include "vtkDataIOManagerLogic.h"
 
 // MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLRemoteIOLogic.h>
 
 // MRML includes
 #include <vtkCacheManager.h>
-#include <vtkDataIOManager.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLCommandLineModuleNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>

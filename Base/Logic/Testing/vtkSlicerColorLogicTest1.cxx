@@ -24,13 +24,9 @@
 // MRML includes
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
-#include <vtksys/SystemTools.hxx>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

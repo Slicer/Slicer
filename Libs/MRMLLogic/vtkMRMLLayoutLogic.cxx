@@ -3,17 +3,14 @@
 
 // MRML includes
 #include "vtkMRMLLayoutNode.h"
-#include <vtkMRMLViewNode.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
-#include <vtkXMLDataParser.h>
 #include <vtkXMLDataElement.h>
 
 // STD includes
-#include <sstream>
 #include <cassert>
 
 const char* conventionalView =

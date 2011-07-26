@@ -1,4 +1,3 @@
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkFetchMIServerCollection.h"
 

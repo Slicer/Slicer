@@ -28,8 +28,6 @@
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLSceneFactoryWidgetTest1( int argc, char * argv [] )
 {

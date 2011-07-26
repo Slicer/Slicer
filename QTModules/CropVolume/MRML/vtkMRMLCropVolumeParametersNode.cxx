@@ -17,7 +17,6 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 
 // MRML includes
-#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
 // CropModuleMRML includes
@@ -27,9 +26,6 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLAnnotationROINode.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLCropVolumeParametersNode* vtkMRMLCropVolumeParametersNode::New()

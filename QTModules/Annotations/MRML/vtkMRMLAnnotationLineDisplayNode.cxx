@@ -1,12 +1,8 @@
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLineDisplayNode::New()

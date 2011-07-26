@@ -16,7 +16,6 @@
 #include "vtkPointData.h"
 #include "vtkImageData.h"
 #include "vtkFloatArray.h"
-#include "vtkMath.h"
 
 
 #define VTKEPS 10e-12

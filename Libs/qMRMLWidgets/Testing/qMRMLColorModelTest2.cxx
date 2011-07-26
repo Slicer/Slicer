@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QTimer>
-#include <QDebug>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -31,13 +30,10 @@
 #include "qMRMLColorModel.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLdGEMRICProceduralColorNode.h>
 //#include <vtkMRMLFreeSurferProceduralColorNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 #include "TestingMacros.h"
 

@@ -1,7 +1,5 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

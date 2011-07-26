@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLSceneModelHierarchyModel.h"
@@ -30,12 +29,8 @@
 #include <vtkMRMLModelHierarchyLogic.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 class qMRMLSceneModelHierarchyModelPrivate: public qMRMLSceneModelPrivate

@@ -20,9 +20,7 @@
 
 // QT includes
 #include <QStringList>
-#include <QFile>
 #include <QFileInfo>
-#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerUtils.h"

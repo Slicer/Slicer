@@ -19,12 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QWidget>
 #include <QStyleOptionGroupBox>
 #include <QGroupBox>
-#include <QWindowsStyle>
-#include <QCommonStyle>
 #include <QCleanlooksStyle>
 
 // qMRML includes

@@ -13,7 +13,6 @@
 =========================================================================auto=*/
 
 #include "vtkSeedTracts.h"
-#include "vtkFloatArray.h"
 #include "vtkCellArray.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkSmartPointer.h"
@@ -25,7 +24,6 @@
 #include "vtkPointData.h"
 
 #include <sstream>
-#include <string>
 
 //------------------------------------------------------------------------------
 vtkSeedTracts* vtkSeedTracts::New()

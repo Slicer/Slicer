@@ -1,8 +1,4 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
-#include <cmath>
 
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
@@ -12,7 +8,6 @@
 
 #include <vtkAbstractTransform.h>
 #include <vtkObjectFactory.h>
-#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 
 //------------------------------------------------------------------------------

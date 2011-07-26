@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QStringList>
-#include <QDirIterator>
 
 // SlicerQT includes
 #include "qSlicerCLILoadableModuleFactory.h"

@@ -20,22 +20,16 @@
 
 // QT includes
 #include <QApplication>
-#include <QString>
-#include <QStringList>
 
 // qMRML includes
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 
-#include "TestingMacros.h"
 
 // MRML includes
-#include <vtkEventBroker.h>
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSceneDisplayableModelTest2(int argc, char * argv [] )
 {

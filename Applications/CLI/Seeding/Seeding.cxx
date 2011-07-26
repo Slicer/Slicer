@@ -6,24 +6,13 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <algorithm>
-#include <string>
 
-#include "itkPluginFilterWatcher.h"
-#include "itkPluginUtilities.h"
 
-#include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
-#include "vtkImageData.h"
 #include "vtkSeedTracts.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkMath.h"
-#include "vtkImageThreshold.h"
-#include "vtkImageWriter.h"
-#include "vtkNRRDWriter.h"
 #include "vtkImageCast.h"
 
 #include "SeedingCLP.h"

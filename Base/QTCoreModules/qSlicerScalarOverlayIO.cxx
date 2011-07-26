@@ -20,8 +20,6 @@
 
 // Qt includes
 #include <QDebug>
-#include <QString>
-#include <QVariant>
 
 // SlicerQt includes
 //#include "qSlicerAbstractModule.h"
@@ -34,7 +32,6 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
 
 //-----------------------------------------------------------------------------

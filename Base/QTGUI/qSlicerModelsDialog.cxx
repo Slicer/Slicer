@@ -19,16 +19,11 @@
 ==============================================================================*/
 
 /// Qt includes
-#include <QDebug>
 #include <QFileDialog>
-#include <QList>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerFileDialog.h"
 #include "qSlicerIOManager.h"
-#include "qSlicerIOOptionsWidget.h"
-#include "qSlicerModelsDialog.h"
 #include "qSlicerModelsDialog_p.h"
 
 //-----------------------------------------------------------------------------

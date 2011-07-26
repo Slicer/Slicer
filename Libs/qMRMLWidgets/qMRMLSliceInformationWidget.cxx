@@ -19,25 +19,17 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMenu>
-#include <QProxyStyle>
 
 // CTK includes
-#include <ctkVTKSliceView.h>
 #include <ctkLogger.h>
 
 // qMRML includes
-#include "qMRMLSliceInformationWidget.h"
 #include "qMRMLSliceInformationWidget_p.h"
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkImageData.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceInformationWidget");

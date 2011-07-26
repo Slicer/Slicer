@@ -15,9 +15,7 @@
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
-#include "vtkDataArray.h"
 #include "vtkRenderer.h"
-#include "vtkVolume.h"
 #include "vtkCamera.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"

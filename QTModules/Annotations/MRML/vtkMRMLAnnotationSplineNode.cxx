@@ -1,19 +1,11 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
-#include <cmath>
 
 #include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include <vtkAbstractTransform.h>
-#include <vtkMath.h>
-#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------

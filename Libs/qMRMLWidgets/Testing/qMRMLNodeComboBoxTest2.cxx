@@ -30,8 +30,6 @@
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
 {

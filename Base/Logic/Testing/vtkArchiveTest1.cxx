@@ -14,11 +14,8 @@
 #include "vtkArchive.h"
 
 // VTK includes
-#include <vtkObject.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 #include "TestingMacros.h"
 

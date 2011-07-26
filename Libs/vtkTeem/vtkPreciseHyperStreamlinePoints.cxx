@@ -21,7 +21,6 @@
 //------------------------------------------------------------------------------
 
 #include "vtkPreciseHyperArray.h"
-#include "vtkPreciseHyperPoint.h"
 
 /*
 class vtkPreciseHyperPoint { //;prevent man page generation

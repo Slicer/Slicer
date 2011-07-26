@@ -21,10 +21,6 @@
 /// Qt includes
 #include <QDebug>
 #include <QDir>
-#include <QMap>
-#include <QString>
-#include <QVariant>
-#include <QFileInfo>
 
 /// SlicerQt includes
 //#include "qSlicerAbstractModule.h"
@@ -49,7 +45,6 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
-#include <vtkMRMLVolumeNode.h>
 
 /// VTK includes
 #include <vtkImageReader.h>
@@ -58,7 +53,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkXMLDataParser.h>
-#include <vtkXMLDataElement.h>
 
 //-----------------------------------------------------------------------------
 namespace

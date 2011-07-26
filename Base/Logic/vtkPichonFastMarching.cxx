@@ -10,22 +10,16 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
 
-#include <math.h>
 
 #if defined(__sun)
-#include <ieeefp.h>
 #endif
 
-#include <algorithm>
 
 #include "vtkObjectFactory.h"
 
 #include "vtkPichonFastMarching.h"
 
-#include "vtkPichonFastMarchingPDF.h"
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////

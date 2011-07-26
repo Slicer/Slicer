@@ -1,34 +1,19 @@
 #include "vtkModelMirrorLogic.h"
 // MRML includes
 #include "vtkCacheManager.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkMRMLStorageNode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLTransformableNode.h"
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
-#include <itksys/Directory.hxx>
 
 // VTK includes
-#include "vtkObjectFactory.h"
 #include <vtkGeneralTransform.h>
-#include "vtkIntArray.h"
-#include "vtkPolyData.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkCleanPolyData.h"
 
 // STD includes
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 
 vtkModelMirrorLogic* vtkModelMirrorLogic::New()
 {

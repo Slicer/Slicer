@@ -12,7 +12,6 @@
 
 ==========================================================================*/
 #include "LSops.h"
-#include <list>
 
 void SparseFieldLS::SelfUnion( std::list<int>& vec )
 {

@@ -25,7 +25,6 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkObjectFactory.h>
 
 // STD includes
 #include <cassert>

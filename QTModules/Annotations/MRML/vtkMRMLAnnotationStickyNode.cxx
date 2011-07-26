@@ -1,13 +1,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationStickyNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationStickyNode* vtkMRMLAnnotationStickyNode::New()

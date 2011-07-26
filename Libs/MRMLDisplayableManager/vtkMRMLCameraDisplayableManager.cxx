@@ -25,17 +25,13 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
-#include <vtkMRMLCameraNode.h>
-#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
-#include <vtkCollection.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 
 // STD includes
-#include <iostream>
 #include <cassert>
 
 //---------------------------------------------------------------------------

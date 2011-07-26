@@ -8,13 +8,8 @@
 
 #include "RegisterImagesSlicerCLP.h"
 
-#include "itkTimeProbesCollectorBase.h"
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 
-#include "itkMultiThreader.h"
 
 #undef itkDebugMacro
 #define itkDebugMacro(args) {}

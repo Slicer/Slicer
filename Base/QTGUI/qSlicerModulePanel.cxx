@@ -20,23 +20,12 @@
 
 // Qt includes
 #include <QDebug>
-#include <QLabel>
-#include <QResizeEvent>
-#include <QScrollArea>
-#include <QSpacerItem>
-#include <QStackedWidget>
-#include <QTextBrowser>
-#include <QVBoxLayout>
-#include <QWebView>
 
 // CTK includes
-#include <ctkCollapsibleButton.h>
-#include <ctkFittedTextBrowser.h>
 
 // SlicerQt includes
 #include "qSlicerModulePanel.h"
 #include "ui_qSlicerModulePanel.h"
-#include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleWidget.h"

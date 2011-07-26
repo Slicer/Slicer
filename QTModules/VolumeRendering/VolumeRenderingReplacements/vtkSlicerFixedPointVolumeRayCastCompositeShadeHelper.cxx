@@ -26,7 +26,6 @@
 #include "vtkVolumeProperty.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
 
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper, "$Revision: 1.5 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper);

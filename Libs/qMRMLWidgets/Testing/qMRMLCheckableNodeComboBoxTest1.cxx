@@ -27,11 +27,8 @@
 #include "qMRMLSceneFactoryWidget.h"
 
 // MRML includes
-#include "vtkMRMLScene.h"
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
 {

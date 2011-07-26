@@ -22,11 +22,8 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkBSplineInterpolateImageFunction.h"
 #include "itkResampleImageFilter.h"
 #include "itkConstrainedValueDifferenceImageFilter.h"
 

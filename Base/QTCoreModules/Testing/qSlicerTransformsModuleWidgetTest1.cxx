@@ -21,9 +21,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerTransformsModuleWidget.h"
 
-#include <stdlib.h>
 
-#include "TestingMacros.h"
 
 int qSlicerTransformsModuleWidgetTest1(int argc, char * argv [] )
 {

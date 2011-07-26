@@ -15,11 +15,8 @@
 
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkDataArray.h"
 #include "vtkMath.h"
 
-#include "itkExceptionObject.h"
 #include "itkTimeProbe.h"
 
 // Commented out redefinition of ExceptionMacro
@@ -64,32 +61,18 @@
 
 
 #include "itkArchetypeSeriesFileNames.h"
-#include "itkImage.h"
-#include "itkVector.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
-#include "itkImageFileReader.h"
-#include "itkImportImageContainer.h"
-#include "itkImageRegion.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkGDCMImageIO.h"
-#include "itkMetaImageIO.h"
-#include "itkNrrdImageIO.h"
-#include "itkGE5ImageIO.h"
 #if ITK_VERSION_MAJOR < 4
-#include "itkAnalyzeImageIO.h"
 #include "itkBrains2MaskImageIOFactory.h"
-#include "itkBrains2MaskImageIO.h"
 #include "itkDICOMImageIO2Factory.h"
 #endif
 #ifdef ITKV3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
 #include "itkAnalyzeImageIO.h"
 #endif
-#include "itkNiftiImageIO.h"
-#include "itkVTKImageIO.h"
-#include "itkTIFFImageIO.h"
-#include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);

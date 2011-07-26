@@ -19,13 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QDir>
-#include <QFileInfo>
-#include <QMap>
-#include <QString>
-#include <QStringList>
-#include <QVariant>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"

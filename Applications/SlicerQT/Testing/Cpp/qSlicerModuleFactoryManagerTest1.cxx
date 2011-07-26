@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QString>
-#include <QStringList>
 
 // SlicerQt includes
 #include <qSlicerModuleFactoryManager.h>
@@ -28,10 +26,7 @@
 #include <qSlicerCoreApplication.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
-#include "TestingMacros.h"
 
 int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 {

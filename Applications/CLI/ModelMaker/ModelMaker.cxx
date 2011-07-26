@@ -13,12 +13,10 @@ Version:   $Revision$
 =========================================================================auto=*/
 
 #include "ModelMakerCLP.h"
-#include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 #include "vtkImageAccumulate.h"
 #include "vtkDiscreteMarchingCubes.h"
-#include "vtkMarchingCubes.h"
 #include "vtkWindowedSincPolyDataFilter.h"
 #include "vtkPointData.h"
 #include "vtkTransform.h"
@@ -52,9 +50,6 @@ Version:   $Revision$
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkDebugLeaks.h"
 
-#include <fstream>
-#include <string>
-#include <map>
 
   
 int main(int argc, char * argv[])

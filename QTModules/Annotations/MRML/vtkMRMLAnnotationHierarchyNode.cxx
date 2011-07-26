@@ -3,7 +3,6 @@
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLScene.h"
 
-#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------

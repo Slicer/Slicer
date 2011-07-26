@@ -20,27 +20,16 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <string>
-#include <iostream>
 
-#include "itkImage.h"
 #include "itkImageFileWriter.h"
-#include "itkImageFileReader.h"
-#include "itkImageRegionIterator.h"
-#include "itkImageRegionConstIterator.h"
-#include "itkCastImageFilter.h"
 #include "itkShrinkImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkN3MRIBiasFieldCorrectionImageFilter.h"
 #include "itkN4MRIBiasFieldCorrectionImageFilter.h"
-#include "itkBSplineControlPointImageFilter.h"
-#include "itkExpImageFilter.h"
 
 #include "itkImageToVTKImageFilter.h"
-#include "itkVTKImageToImageFilter.h"
 
 #include "vtkImageClip.h"
-#include "vtkImageReslice.h"
 #include "vtkImageResample.h"
 #include "vtkImageAccumulate.h"
 #include "vtkImageGaussianSmooth.h"

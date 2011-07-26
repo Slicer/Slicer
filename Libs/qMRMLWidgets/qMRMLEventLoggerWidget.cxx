@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QLatin1String>
 
 // qMRML includes
 #include "qMRMLEventLoggerWidget.h"
@@ -30,7 +29,6 @@
 #include <vtkMRMLNode.h>
 
 // VTK includes
-#include <vtkObject.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLEventLoggerWidgetPrivate: public Ui_qMRMLEventLoggerWidget

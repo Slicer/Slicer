@@ -1,5 +1,3 @@
-#include <iostream>
-#include <cstdlib>
 
 #ifdef _WIN32
 #ifndef M_PI

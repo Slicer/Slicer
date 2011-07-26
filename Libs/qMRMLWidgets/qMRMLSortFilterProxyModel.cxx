@@ -19,28 +19,18 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
-#include <QStringList>
-#include <QVector>
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLUtils.h"
 
 // CTK includes
 #include <ctkLogger.h>
 
 // VTK includes
 #include <vtkMRMLNode.h>
-#include <vtkMRMLScene.h>
 
 // STD includes
-#include <typeinfo>
 
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSortFilterProxyModel");
 

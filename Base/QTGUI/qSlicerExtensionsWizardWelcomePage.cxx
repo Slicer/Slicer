@@ -19,13 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QFile>
-#include <QHash>
 #include <QProgressDialog>
-#include <QSettings>
 #include <QUrl>
-#include <QVariant>
 
 // qCDashAPI includes
 #include <qCDashAPI.h>

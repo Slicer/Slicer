@@ -1,6 +1,5 @@
 #include "vtkITKBSplineTransform.h"
 
-#include "itkBSplineDeformableTransform.h"
 
 #include "vtkSmartPointer.h"
 

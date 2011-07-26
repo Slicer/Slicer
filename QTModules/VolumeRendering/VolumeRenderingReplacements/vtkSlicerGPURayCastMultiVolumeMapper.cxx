@@ -15,32 +15,21 @@
 
 
 =========================================================================*/
-#include <string.h>
-#include <iostream>
 #include <sstream>
 
-#include "vtkWindows.h"
 #include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkPlane.h"
 #include "vtkPlaneCollection.h"
-#include "vtkPointData.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkTimerLog.h"
 #include "vtkVolumeProperty.h"
 #include "vtkTransform.h"
-#include "vtkLightCollection.h"
-#include "vtkLight.h"
-#include "vtkCamera.h"
-#include "vtkMath.h"
 #include "vtkOpenGLExtensionManager.h"
 #include "vtkgl.h"
 
-#include "vtkCommand.h"
 
 //#ifndef VTK_IMPLEMENT_MESA_CXX
 vtkCxxRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper, "$Revision: 1.2 $");

@@ -1,6 +1,4 @@
 #include "vtkSRBHandler.h"
-#include "itksys/Process.h"
-#include "itksys/SystemTools.hxx"
 
 vtkStandardNewMacro ( vtkSRBHandler );
 vtkCxxRevisionMacro ( vtkSRBHandler, "$Revision: 1.0 $" );

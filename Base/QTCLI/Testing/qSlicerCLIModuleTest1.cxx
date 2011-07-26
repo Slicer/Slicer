@@ -38,8 +38,6 @@
 #include <vtkMRMLCommandLineModuleNode.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 namespace
 {

@@ -21,9 +21,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCamerasModuleWidget.h"
 
-#include <stdlib.h>
 
-#include "TestingMacros.h"
 
 int qSlicerCamerasModuleWidgetTest1(int argc, char * argv [] )
 {

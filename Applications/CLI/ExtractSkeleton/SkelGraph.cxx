@@ -17,11 +17,8 @@
 //  + Processing utilities of the graph
 //  ===============================================
 
-#include <stdlib.h>
-#include <math.h>
 
 #include <iostream>
-#include <iterator>
 
 #include "SkelGraph.h"
 

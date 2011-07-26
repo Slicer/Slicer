@@ -20,8 +20,6 @@
 
 #include "qSlicerCoreModule.h"
 
-#include <stdlib.h>
-#include <iostream>
 
 class ACoreModule: public qSlicerCoreModule
 {

@@ -19,18 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
 #include "qMRMLMatrixWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
-#include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkWeakPointer.h>

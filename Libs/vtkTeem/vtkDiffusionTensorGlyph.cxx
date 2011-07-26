@@ -14,23 +14,18 @@
 #include "vtkDiffusionTensorGlyph.h"
 
 
-#include "vtkCell.h"
 #include "vtkCellArray.h"
-#include "vtkDataSet.h"
-#include "vtkExecutive.h"
 #include "vtkFloatArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkPolyData.h"
 #include "vtkTransform.h"
 
 #include "vtkImageData.h"
 #include "vtkDiffusionTensorMathematics.h"
 
-#include <time.h>
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,Mask,vtkImageData);
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,VolumePositionMatrix,vtkMatrix4x4);

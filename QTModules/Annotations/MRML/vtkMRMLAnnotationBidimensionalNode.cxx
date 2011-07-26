@@ -1,17 +1,6 @@
-#include <string>
-#include <iostream>
 #include <sstream>
-#include <algorithm>
-#include <cmath>
 
 #include "vtkMRMLAnnotationBidimensionalNode.h"
-#include "vtkMatrix4x4.h"
-#include "vtkAbstractTransform.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMath.h"
 
 #include <vtkObjectFactory.h>
 

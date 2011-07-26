@@ -20,12 +20,10 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLViewDisplayableManager.h"
-#include "vtkThreeDViewInteractorStyle.h"
 #include "vtkMRMLCameraDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
-#include <vtkMRMLCameraNode.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -33,9 +31,7 @@
 #include <vtkCamera.h>
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderWindow.h>
-#include <vtkActor.h>
 #include <vtkBoundingBox.h>
 #include <vtkFollower.h>
 #include <vtkPolyDataMapper.h>
@@ -45,8 +41,6 @@
 #include <vtkMath.h>
 
 // STD includes
-#include <cassert>
-#include <vector>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

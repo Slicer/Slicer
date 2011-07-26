@@ -20,7 +20,6 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLScriptedDisplayableManager.h"
-#include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -30,16 +29,11 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkPythonUtil.h>
 
 // Python includes
-#include <Python.h>
 
 // STD includes
-#include <iostream>
-#include <cassert>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

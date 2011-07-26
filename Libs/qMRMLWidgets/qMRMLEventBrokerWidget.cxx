@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
@@ -36,9 +35,6 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkCollection.h>
-#include <vtkCommand.h>
-#include <vtkObject.h>
 
 namespace
 {

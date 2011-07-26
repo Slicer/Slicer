@@ -19,15 +19,11 @@
 ==============================================================================*/
 
 // QT includes
-#include <QString>
-#include <QStringList>
 
 // SlicerQt includes
 #include <qSlicerCLILoadableModuleFactory.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 #include "TestingMacros.h"
 

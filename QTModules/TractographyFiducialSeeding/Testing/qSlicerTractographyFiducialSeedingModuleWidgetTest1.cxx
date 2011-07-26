@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 
 // Slicer includes
@@ -30,10 +29,8 @@
 #include "qSlicerTractographyFiducialSeedingModuleWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 int qSlicerTractographyFiducialSeedingModuleWidgetTest1( int argc, char * argv[] )

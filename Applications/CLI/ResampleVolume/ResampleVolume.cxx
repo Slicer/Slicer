@@ -42,24 +42,16 @@
 // 3) Write the new series
 //
 
-#include "itkVersion.h"
 
 #include "itkPluginUtilities.h"
-#include "itkImage.h"
-#include "itkMinimumMaximumImageFilter.h"
 
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkResampleImageFilter.h"
 
-#include "itkIdentityTransform.h"
-#include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
-#include "itkBSplineInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 
-#include <string>
 #include "ResampleVolumeCLP.h"
 
 // Use an anonymous namespace to keep class types and function names

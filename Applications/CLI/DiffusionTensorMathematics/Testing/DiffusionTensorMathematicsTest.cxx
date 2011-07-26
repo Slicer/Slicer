@@ -6,7 +6,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
 #include "itkTestMain.h" 
 
 
@@ -17,4 +16,5 @@ REGISTER_TEST(DiffusionTensorMathematicsTest);
 
 #undef main
 #define main DiffusionTensorMathematicsTest
+
 #include "../DiffusionTensorMathematics.cxx"

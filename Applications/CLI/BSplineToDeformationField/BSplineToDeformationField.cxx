@@ -2,12 +2,10 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <itkTransform.h>
 #include <itkTransformFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkBSplineDeformableTransform.h>
 #include <itkImageFileReader.h>
-#include <itkImageRegionIterator.h>
 
 #include <BSplineToDeformationFieldCLP.h>
 

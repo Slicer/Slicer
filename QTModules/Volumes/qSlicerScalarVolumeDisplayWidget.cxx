@@ -2,7 +2,6 @@
 #include "ui_qSlicerScalarVolumeDisplayWidget.h"
 
 // Qt includes
-#include <QDebug>
 
 // CTK includes
 #include <ctkVTKColorTransferFunction.h>

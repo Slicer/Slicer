@@ -29,7 +29,6 @@
 // MRML includes
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

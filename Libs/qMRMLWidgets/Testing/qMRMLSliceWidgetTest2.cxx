@@ -29,7 +29,6 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -38,11 +37,8 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkMultiThreader.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {

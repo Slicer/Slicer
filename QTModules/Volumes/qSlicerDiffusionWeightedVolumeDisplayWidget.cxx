@@ -22,7 +22,6 @@
 #include "ui_qSlicerDiffusionWeightedVolumeDisplayWidget.h"
 
 // Qt includes
-#include <QDebug>
 
 // MRML includes
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
@@ -30,11 +29,8 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkPointData.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <limits>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes

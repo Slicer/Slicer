@@ -13,7 +13,6 @@
 =========================================================================auto=*/
 #include "vtkTensorMask.h"
 
-#include "vtkObjectFactory.h"
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"

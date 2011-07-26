@@ -19,9 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QComboBox>
-#include <QTreeView>
 
 // CTK includes
 #include <ctkTreeComboBox.h>

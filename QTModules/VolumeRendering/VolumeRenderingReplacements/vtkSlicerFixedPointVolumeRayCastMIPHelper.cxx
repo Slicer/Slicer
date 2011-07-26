@@ -23,7 +23,6 @@
 #include "vtkVolumeProperty.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
 
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastMIPHelper, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastMIPHelper);

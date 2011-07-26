@@ -13,44 +13,31 @@
 =========================================================================auto=*/
 
 // Qt includes
-#include <QDebug>
-#include <QMessageBox>
-#include <QString>
 
 // CLI invocation
 #include <qSlicerCoreApplication.h>
 #include <qSlicerModuleManager.h>
 #include <qSlicerModuleFactoryManager.h>
-#include <qSlicerAbstractCoreModule.h>
 #include <qSlicerCLIModule.h>
-#include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
 // CropLogic includes
 #include "vtkSlicerCropVolumeLogic.h"
-#include "vtkSlicerColorLogic.h"
 #include "vtkSlicerVolumesLogic.h"
 
 // CropMRML includes
-#include <vtkMRMLCropVolumeParametersNode.h>
 
 // MRML includes
 #include <vtkMRMLAnnotationROINode.h>
 #include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
-#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
-#include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
-#include <math.h>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerCropVolumeLogic, "$Revision: 1.9.12.1 $");

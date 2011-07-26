@@ -19,17 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QButtonGroup>
-#include <QList>
-#include <QFontMetrics>
-#include <QDebug>
 
 // SlicerQt includes
 #include "qSlicerWelcomeModuleWidget.h"
 #include "ui_qSlicerWelcomeModule.h"
 
 // CTK includes
-#include "ctkCollapsibleButton.h"
 #include "ctkButtonGroup.h"
 
 //-----------------------------------------------------------------------------

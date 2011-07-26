@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QWidget>
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -29,7 +28,6 @@
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <cstdlib>
 
 int qSlicerWidgetTest1(int argc, char * argv[] )
 {

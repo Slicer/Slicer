@@ -1,11 +1,5 @@
 
 // Qt includes
-#include <QDebug>
-#include <QMenu>
-#include <QStack>
-#include <QPropertyAnimation>
-#include <QTimer>
-#include <QWidgetAction>
 
 // CTK includes
 #include <ctkRangeWidget.h>
@@ -13,7 +7,6 @@
 #include <ctkUtils.h>
 
 // qMRML includes
-#include "qMRMLUtils.h"
 #include "qMRMLWindowLevelWidget.h"
 #include "ui_qMRMLWindowLevelWidget.h"
 
@@ -23,7 +16,6 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLWindowLevelWidgetPrivate: public Ui_qMRMLWindowLevelWidget

@@ -14,7 +14,6 @@
 
 #include "vtkITKImageWriter.h"
 
-#include <math.h>
 #include "vtkImageExport.h"
 #include "vtkImageFlip.h"
 

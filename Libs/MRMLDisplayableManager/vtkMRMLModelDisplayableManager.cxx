@@ -13,7 +13,6 @@
 ==========================================================================*/
 
 // MRMLLogic includes
-#include <vtkMRMLModelHierarchyLogic.h>
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelDisplayableManager.h"
@@ -21,44 +20,22 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
-#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLScene.h>
-#include <vtkMRMLClipModelsNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkPolyData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
-#include <vtkMath.h>
-#include <vtkProp3D.h>
-#include <vtkActor.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
-#include <vtkFollower.h>
 #include <vtkProperty.h>
-#include <vtkTexture.h>
-#include <vtkRenderer.h>
-#include <vtkCamera.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkCellArray.h>
-#include <vtkFloatArray.h>
-#include <vtkPointData.h>
-#include <vtkOutlineSource.h>
-#include <vtkVectorText.h>
-#include <vtkRenderWindow.h>
 #include <vtkImplicitBoolean.h>
 #include <vtkPlane.h>
 #include <vtkClipPolyData.h>
-#include <vtkBoundingBox.h>
 #include <vtkLookupTable.h>
 
 // for picking
@@ -66,12 +43,9 @@
 #include <vtkPropPicker.h>
 #include <vtkCellPicker.h>
 #include <vtkPointPicker.h>
-#include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 
 // STD includes
-#include <string>
-#include <sstream>
 #include <cassert>
 
 //---------------------------------------------------------------------------

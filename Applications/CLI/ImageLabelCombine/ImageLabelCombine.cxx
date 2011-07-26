@@ -19,18 +19,11 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <algorithm>
-#include <string>
 
-#include "itkPluginFilterWatcher.h"
-#include "itkPluginUtilities.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
 #include "itkImageDuplicator.h"
-#include "itkImage.h"
 
 #include "ImageLabelCombineCLP.h"
 

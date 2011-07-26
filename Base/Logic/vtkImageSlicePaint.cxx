@@ -14,11 +14,9 @@
 =========================================================================*/
 #include "vtkImageSlicePaint.h"
 
-#include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision$");
 vtkStandardNewMacro(vtkImageSlicePaint);

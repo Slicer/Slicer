@@ -7,7 +7,6 @@
 
 =========================================================================auto=*/
 #include "vtkPichonFastMarchingPDF.h"
-#include <math.h>
 #include "vtkObjectFactory.h"
 
 vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )

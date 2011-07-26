@@ -26,7 +26,6 @@
 #include "qMRMLModelInfoWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLModelNode.h>
 
 // VTK includes
@@ -34,8 +33,6 @@
 #include <vtkPolyData.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLModelInfoWidgetTest1(int argc, char * argv [] )
 {

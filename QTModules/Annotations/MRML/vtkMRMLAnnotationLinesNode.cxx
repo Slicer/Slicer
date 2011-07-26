@@ -1,5 +1,3 @@
-#include <string>
-#include <iostream>
 #include <sstream>
 #include <algorithm>
 
@@ -7,16 +5,11 @@
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkBitArray.h"
 #include "vtkCellArray.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkPointData.h"
 #include <vtkPolyData.h>
-#include "vtkStringArray.h"
 
 
 //------------------------------------------------------------------------------

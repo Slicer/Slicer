@@ -15,18 +15,14 @@
 #include "vtkImageLinearReslice.h"
 
 // VTK includes
-#include <vtkDataArray.h>
-#include <vtkDataSetAttributes.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTransform.h>
 
-#include <vtkTemplateAliasMacro.h>
 // turn off 64-bit ints when templating over all types
 # undef VTK_USE_INT64
 # define VTK_USE_INT64 0
@@ -34,9 +30,6 @@
 # define VTK_USE_UINT64 0
 
 // STD includes
-#include <climits>
-#include <cfloat>
-#include <cmath>
 
 vtkCxxRevisionMacro(vtkImageLinearReslice, "$Revision$");
 vtkStandardNewMacro(vtkImageLinearReslice);

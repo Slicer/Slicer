@@ -2,7 +2,6 @@
 #include <vtkPluginFilterWatcher.h>
 
 // VTK includes
-#include <vtkObject.h>
 
 //-----------------------------------------------------------------------------
 class vtkPluginWatcherStart : public vtkCommand

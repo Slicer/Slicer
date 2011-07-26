@@ -1,9 +1,5 @@
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
-#include "vtkStringArray.h"
 #include "vtkXNDTagTable.h"
-#include <iostream>
-#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkXNDTagTable );

@@ -1,9 +1,5 @@
-#include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkHIDTagTable.h"
-#include "vtkStringArray.h"
-#include <iostream>
-#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkHIDTagTable );

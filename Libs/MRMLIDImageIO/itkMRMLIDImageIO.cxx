@@ -16,18 +16,14 @@ Version:   $Revision: 1.18 $
 #include "itkMRMLIDImageIO.h"
 #include "itkMetaDataObject.h"
 
-#include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLVolumeNode.h"
 
-#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>
 
-#include <string>
 
 namespace itk {
 

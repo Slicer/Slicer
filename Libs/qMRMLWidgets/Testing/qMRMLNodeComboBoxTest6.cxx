@@ -25,7 +25,6 @@
 
 // qMRML includes
 #include "qMRMLNodeComboBox.h"
-#include "qMRMLSceneModel.h"
 
 // MRML includes
 #include <vtkMRMLModelNode.h>
@@ -35,8 +34,6 @@
 #include "vtkSmartPointer.h"
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
 {

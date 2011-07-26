@@ -30,10 +30,8 @@
 #include <vtkMRMLColorLogic.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 
 // STD includes
-#include <stdlib.h>
 
 #include "TestingMacros.h"
 

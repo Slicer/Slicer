@@ -21,15 +21,12 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLViewDisplayableManager.h>
-#include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -37,16 +34,12 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h> 
-#include <vtkSmartPointer.h>
 #include <vtkErrorCode.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkPNGWriter.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
-#include <iterator>
 
 #include "TestingMacros.h"
 

@@ -1,24 +1,12 @@
 #include "vtkInitClosedPath.h"
 #include "MeshOps.h"
 
-#include "vtkCellArray.h"
 #include "vtkCellData.h"
-#include "vtkCellLocator.h"
-#include "vtkFloatArray.h"
-#include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkPolyData.h"
-#include "vtkPolygon.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkTriangleFilter.h"
-#include "vtkSmartPointer.h"
 
-#include <list>
-#include <vector>
-#include <algorithm>
 
 bool IsAllInitConnected( const std::vector< std::vector<int> > &LstarIJidx ) {
   size_t M = LstarIJidx.size();

@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QRegExp>
 
 // SlicerQt includes
 #include "qSlicerDataModuleWidget.h"
@@ -32,10 +30,8 @@
 #include <vtkSlicerTransformLogic.h>
 
 // qMRMLWidgets includes
-#include <qMRMLSortFilterProxyModel.h>
 
 // MRML includes
-#include <vtkMRMLNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 
 //-----------------------------------------------------------------------------

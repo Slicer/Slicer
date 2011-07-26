@@ -15,18 +15,14 @@
 #include "vtkSlicerGPUMultiVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
-#include "vtkDataArray.h"
 #include "vtkMultiThreader.h"
-#include "vtkRenderer.h"
 #include "vtkVolume.h"
-#include "vtkCamera.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
 #include "vtkColorTransferFunction.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkVolumeProperty.h"
-#include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
 #include "vtkExecutive.h"
 

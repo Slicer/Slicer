@@ -20,8 +20,6 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLViewDisplayableManager.h>
-#include <vtkMRMLSliceModelDisplayableManager.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
 // MRMLLogic includes
@@ -29,26 +27,15 @@
 #include <vtkMRMLSliceLogic.h>
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
-#include <vtkErrorCode.h>
-#include <vtkInteractorEventRecorder.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
-#include <iterator>
 
-#include "TestingMacros.h"
 
 // Convenient macro
 #define VTK_CREATE(type, name) \

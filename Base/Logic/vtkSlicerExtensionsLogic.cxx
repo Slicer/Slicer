@@ -2,7 +2,6 @@
 #include "vtkSlicerExtensionsLogic.h"
 
 // vtkSlicer includes
-#include "vtkSlicerConfigure.h"
 #include "vtkArchive.h"
 
 // RemoteIO includes
@@ -10,12 +9,10 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // ITKsys includes
 #include <itksys/SystemTools.hxx>
-#include <vtksys/ios/sstream>
 
 namespace
 {

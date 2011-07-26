@@ -1,10 +1,7 @@
 #include "ScalingHeuristics.h"
 
-#include "itkImage.h"
 #include "itkCenteredTransformInitializer.h"
 
-#include <iostream>
-#include <cstdlib>
 
 typedef itk::Image<short, 3> ImageType;
 typedef ImageType::RegionType  RegionType;

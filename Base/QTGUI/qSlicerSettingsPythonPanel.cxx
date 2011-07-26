@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QDebug>
-#include <QMainWindow>
 #include <QPointer>
 
 // CTK includes
@@ -28,7 +27,6 @@
 #include <ctkPythonConsole.h>
 
 // QtGUI includes
-#include "qSlicerApplication.h"
 #include "qSlicerSettingsPythonPanel.h"
 #include "ui_qSlicerSettingsPythonPanel.h"
 

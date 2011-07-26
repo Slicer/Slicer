@@ -6,12 +6,7 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include <iostream>
-#include <algorithm>
-#include <string>
 
-#include "itkPluginFilterWatcher.h"
-#include "itkPluginUtilities.h"
 
 #include "vtkDiffusionTensorMathematicsSimple.h"
 
@@ -20,7 +15,6 @@
 #include "vtkImageData.h"
 
 #if ITK_VERSION_MAJOR >= 4
-#include "itkFloatingPointExceptions.h"
 #endif
 
 #include "DiffusionTensorMathematicsCLP.h"

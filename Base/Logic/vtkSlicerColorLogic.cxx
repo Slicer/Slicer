@@ -8,18 +8,9 @@
 =========================================================================auto=*/
 
 #include <vtkSmartPointer.h>
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 #include <vtksys/SystemTools.hxx>
 
 #include "vtkSlicerColorLogic.h"
-#include "vtkMRMLColorNode.h"
-#include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkMRMLdGEMRICProceduralColorNode.h"
-#include "vtkMRMLPETProceduralColorNode.h"
-#include "vtkMRMLProceduralColorNode.h"
-#include "vtkColorTransferFunction.h"
 
 #include "vtkMRMLColorTableStorageNode.h"
 

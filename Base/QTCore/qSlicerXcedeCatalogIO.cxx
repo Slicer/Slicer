@@ -21,10 +21,6 @@
 /// Qt includes 
 #include <QDebug>
 #include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QString>
-#include <QStringList>
 
 #include "qSlicerXcedeCatalogIO.h"
 
@@ -38,9 +34,7 @@
 #include <vtkCacheManager.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLVolumeDisplayNode.h>
 #include <vtkMRMLVolumeNode.h>
-#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
@@ -53,7 +47,6 @@
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
-#include <vtkXMLDataElement.h>
 #include <vtkXMLDataParser.h>
 
 class qSlicerXcedeCatalogIOPrivate

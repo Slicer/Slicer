@@ -1,13 +1,8 @@
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <vtksys/SystemTools.hxx> 
 
 #include "vtkSlicerROILogic.h"
 
 #include <vtkMRMLROIListNode.h>
-#include <vtkMRMLROINode.h>
-#include <vtkMRMLSelectionNode.h>
 
 vtkCxxRevisionMacro(vtkSlicerROILogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerROILogic);

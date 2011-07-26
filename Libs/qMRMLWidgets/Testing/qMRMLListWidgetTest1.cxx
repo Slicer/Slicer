@@ -22,8 +22,6 @@
 #include <QApplication>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLListWidgetTest1( int argc, char * argv [] )
 {

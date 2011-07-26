@@ -16,7 +16,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkFSIO.h"
 #include "vtkByteSwap.h"
-#include "vtkFloatArray.h"
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceScalarReader* vtkFSSurfaceScalarReader::New()

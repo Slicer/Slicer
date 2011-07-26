@@ -23,8 +23,6 @@
 #include <QTimer>
 
 // Models includes
-#include "qMRMLModelDisplayNodeWidget.h"
-#include <ctkVTKDataSetModel.h>
 #include <ctkVTKDataSetArrayComboBox.h>
 
 // MRML includes
@@ -36,7 +34,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <iostream>
 
 int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
 {

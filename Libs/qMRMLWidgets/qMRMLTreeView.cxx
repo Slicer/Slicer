@@ -19,23 +19,17 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QAction>
-#include <QDebug>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QScrollBar>
-#include <QMessageBox>
 #include <QInputDialog>
 
 // qMRML includes
-#include "qMRMLSceneModel.h"
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLSceneModelHierarchyModel.h"
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSortFilterModelHierarchyProxyModel.h"
-#include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLTreeView.h"
 #include "qMRMLTreeView_p.h"
 
 // MRML includes

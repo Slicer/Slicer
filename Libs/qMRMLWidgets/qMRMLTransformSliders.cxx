@@ -22,20 +22,14 @@
 #include "ui_qMRMLTransformSliders.h"
 
 // Qt includes
-#include <QDebug>
 #include <QStack>
 
 // qMRML includes
-#include "qMRMLUtils.h"
-#include "qMRMLLinearTransformSlider.h"
 
 // MRML includes
 #include "vtkMRMLLinearTransformNode.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
-#include "vtkTransform.h"
-#include "vtkMatrix4x4.h"
 
 
 //-----------------------------------------------------------------------------

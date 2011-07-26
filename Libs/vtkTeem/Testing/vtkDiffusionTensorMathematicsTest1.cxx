@@ -22,14 +22,12 @@
 #include <vtkDiffusionTensorMathematics.h>
 
 // VTK includes
-#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMultiThreader.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
 
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])

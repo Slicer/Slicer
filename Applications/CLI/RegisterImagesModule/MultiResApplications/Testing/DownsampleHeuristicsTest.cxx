@@ -1,10 +1,7 @@
 #include "DownsampleHeuristics.h"
 
-#include "itkImage.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 
-#include <iostream>
-#include <cstdlib>
 
 namespace
 {

@@ -14,48 +14,28 @@
 
 // 
 #include "vtkSlicerVolumeRenderingLogic.h"
-#include "vtkSlicerColorLogic.h"
 #include "vtkMRMLSliceLogic.h"
 
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLNRRDStorageNode.h>
-#include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
-#include <vtkMRMLVolumeArchetypeStorageNode.h>
-#include <vtkMRMLVolumeHeaderlessStorageNode.h>
 #include <vtkMRMLVolumePropertyStorageNode.h>
 
 // VTKSYS includes
-#include <vtksys/SystemTools.hxx> 
 #include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
 
 // VTK includes
-#include <vtkAssignAttribute.h>
-#include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkDiffusionTensorMathematics.h>
-#include <vtkImageAccumulateDiscrete.h>
-#include <vtkImageBimodalAnalysis.h>
 #include <vtkImageData.h>
-#include <vtkImageExtractComponents.h>
-#include <vtkImageThreshold.h>
 #include <vtkLookupTable.h>
-#include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPointData.h>
-#include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 #include <vtkVolumeProperty.h>
 
-#include "vtkMRMLVolumeRenderingScenarioNode.h"
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerVolumeRenderingLogic, "$Revision: 1.9.12.1 $");

@@ -18,11 +18,9 @@
 #include "vtkImageStencilData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTransform.h"
-#include "vtkDataSetAttributes.h"
 #include "vtkSmartPointer.h"
 
 #include "vtkTemplateAliasMacro.h"
@@ -32,9 +30,6 @@
 # undef VTK_USE_UINT64
 # define VTK_USE_UINT64 0
 
-#include <limits.h>
-#include <float.h>
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision$");
 vtkStandardNewMacro(vtkImageResliceMask);

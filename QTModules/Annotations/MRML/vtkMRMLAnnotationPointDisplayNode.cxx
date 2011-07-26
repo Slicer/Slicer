@@ -1,12 +1,8 @@
-#include <string>
-#include <iostream>
 #include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] = 
 {

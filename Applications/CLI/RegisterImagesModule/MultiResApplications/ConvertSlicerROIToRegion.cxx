@@ -11,14 +11,10 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
   =========================================================================*/
-#include "ConvertSlicerROIToRegion.h"
 
-#include <itkImageRegion.h>
-#include <itkPoint.h>
 #include <itkImageBase.h>
 #include <itkSlicerBoxSpatialObject.h>
 
-#include <algorithm>
 
 itk::ImageRegion<3>
 convertPointsToRegion(const itk::Point<double, 3>& p1,

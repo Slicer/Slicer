@@ -19,9 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QString>
-#include <QVariant>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"

@@ -19,16 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSceneModel_p.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLTransformableNode.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)const

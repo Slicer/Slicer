@@ -1,4 +1,3 @@
-#include "itkMGHIOPlugin.h"
 #include "itkMGHImageIOFactory.h"
 
 /**

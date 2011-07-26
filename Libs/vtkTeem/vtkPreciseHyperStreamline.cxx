@@ -12,12 +12,10 @@
 
 =========================================================================auto=*/
 
-#include <math.h>
 
 #include "vtkPreciseHyperStreamline.h"
 
 #include "vtkCellArray.h"
-#include "vtkDataSet.h"
 #include "vtkFloatArray.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -25,7 +23,6 @@
 #include "vtkPolyData.h"
 #include "vtkTensorImplicitFunctionToFunctionSet.h"
 #include "vtkPreciseHyperArray.h"
-#include "vtkPreciseHyperPoint.h"
 #include "vtkDiffusionTensorMathematics.h"
 
 

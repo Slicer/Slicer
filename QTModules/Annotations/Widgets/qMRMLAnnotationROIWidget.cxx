@@ -19,14 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLAnnotationROIWidget.h"
 #include "ui_qMRMLAnnotationROIWidget.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLAnnotationROINode.h>
 
 // 0.001 because the sliders only handle 2 decimals

@@ -16,9 +16,6 @@
 
 // MRML includes
 #include <vtkMRMLFiberBundleDisplayNode.h>
-#include <vtkMRMLTractographyFiducialSeedingNode.h>
-#include <vtkMRMLTransformableNode.h>
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLAnnotationHierarchyNode.h>
 #include <vtkMRMLAnnotationControlPointsNode.h>
@@ -27,23 +24,17 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
-#include <vtkDiffusionTensorMathematics.h>
 #include <vtkSeedTracts.h>
 #include <vtkMath.h>
 #include <vtkPointData.h>
 #include <vtkMaskPoints.h>
-#include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkSmartPointer.h>
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
 
 // ITKSYS includes
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx>
 
 // STD includes
-#include <sstream>
 
 vtkCxxRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerTractographyFiducialSeedingLogic);

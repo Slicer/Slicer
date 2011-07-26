@@ -10,11 +10,14 @@
   See the License for more information.
 ============================================================================*/
 
-#include "vtkSlicerBaseLogicWin32Header.h"
+#ifndef __vtkArchive_h
+#define __vtkArchive_h
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "vtkSlicerBaseLogicWin32Header.h"
 
 // Warning, it extracts the archive into the current directory
 // With Qt, you can change the current directory using QDir::setCurrent()
@@ -22,4 +25,6 @@ VTK_SLICER_BASE_LOGIC_EXPORT bool extract_tar(const char* outFileName, bool verb
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

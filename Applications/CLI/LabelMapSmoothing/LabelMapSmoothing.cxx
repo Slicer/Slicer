@@ -28,7 +28,6 @@
 #include "itkRegionOfInterestImageFilter.h"
 #include "itkPasteImageFilter.h"
 
-#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 

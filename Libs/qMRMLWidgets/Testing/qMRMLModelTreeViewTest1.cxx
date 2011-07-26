@@ -22,9 +22,6 @@
 
 // qMRMLWidgets includes
 #include <qMRMLTreeView.h>
-#include <qMRMLSceneModel.h>
-#include <qMRMLSceneModelHierarchyModel.h>
-#include <qMRMLSortFilterProxyModel.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -33,11 +30,8 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkTimerLog.h>
 
 // STD includes
-#include <stdlib.h>
-#include <iostream>
 
 int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 {

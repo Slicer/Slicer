@@ -20,25 +20,13 @@
 
 // Qt includes
 #include <QAction>
-#include <QCleanlooksStyle>
-#include <QColor>
 #include <QDebug>
-#include <QFont>
-#include <QFontDatabase>
-#include <QFontInfo>
 #include <QMainWindow>
-#include <QMap>
-#include <QPalette>
-#include <QPluginLoader>
-#include <QRect>
-#include <QStyle>
-#include <QWidget>
 
 // CTK includes
 #include <ctkColorDialog.h>
 #include <ctkConfirmExitDialog.h>
 #include <ctkErrorLogModel.h>
-#include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
 #include <ctkSettings.h>
 #include <ctkToolTipTrapper.h>
@@ -54,8 +42,6 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
-#include "qSlicerStyle.h"
-#include "qSlicerWidget.h"
 
 // qMRMLWidget includes
 #include "qMRMLColorPickerWidget.h"

@@ -1,12 +1,8 @@
 #include "vtkHyperStreamlineTeem.h"
 
-#include "vtkCellArray.h"
-#include "vtkDataSet.h"
-#include "vtkFloatArray.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkPolyData.h"
 #include "vtkImageData.h"
 
 

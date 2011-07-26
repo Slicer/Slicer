@@ -2,10 +2,7 @@
 #include "vtkIGTDataStream.h"
 #include "vtkObjectFactory.h"
 #if defined(KWWidgets_FOUND)
-#include "vtkKWTkUtilities.h"
-#include "vtkKWApplication.h"
 #endif //defined(KWWidgets_FOUND)
-#include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 
 #include "vnl/vnl_float_3.h"

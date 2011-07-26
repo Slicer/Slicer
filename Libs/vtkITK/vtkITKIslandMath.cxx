@@ -16,14 +16,11 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkPointData.h"
-#include "vtkDataArray.h"
 #include "vtkImageData.h"
 #include "vtkProcessObject.h"
 
-#include "itkImage.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
-#include "itkEventObject.h"
 #include "itkCommand.h"
 
 vtkCxxRevisionMacro(vtkITKIslandMath, "$Revision: 1900 $");

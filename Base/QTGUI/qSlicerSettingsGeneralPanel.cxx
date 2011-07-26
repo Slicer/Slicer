@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QMainWindow>
 
 // CTK includes

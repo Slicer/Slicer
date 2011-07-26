@@ -1,11 +1,6 @@
-#include <string>
-#include <iostream>
-#include <sstream>
 
 #include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
 #include "vtkMRMLAnnotationAngleStorageNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"

@@ -20,9 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
-#include <QHBoxLayout>
-#include <QTimer>
 
 // CTK includes
 #include <ctkColorDialog.h>
@@ -40,8 +37,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
 {

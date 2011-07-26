@@ -15,20 +15,15 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkPolyDataTensorToColor.h"
 
 #include "vtkCellArray.h"
-#include "vtkDataArray.h"
-#include "vtkDataSet.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
 #include "vtkFloatArray.h"
 #include "vtkMath.h"
 
 #include "vtkDiffusionTensorMathematics.h"
 
-#include <time.h>
 
 
 vtkCxxRevisionMacro(vtkPolyDataTensorToColor, "$Revision: 1.41 $");

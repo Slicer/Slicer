@@ -22,7 +22,6 @@
 
 
 #include "itkConfidenceConnectedImageFilter.h"
-#include "itkImage.h"
 #include "itkCastImageFilter.h"
 #include "itkCurvatureFlowImageFilter.h"
 #include "itkImageFileReader.h"

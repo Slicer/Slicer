@@ -28,7 +28,6 @@
 #include "vtkMRMLScene.h"
 
 // STD includes
-#include <vector>
 
 //-----------------------------------------------------------------------------
 class qSlicerCamerasModuleWidgetPrivate: public Ui_qSlicerCamerasModule

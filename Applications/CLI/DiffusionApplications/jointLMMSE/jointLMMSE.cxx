@@ -11,30 +11,20 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include <iostream>
-#include <algorithm>
-#include <string>
 #include <itkMetaDataObject.h>
-#include <itkImage.h>
-#include <itkVector.h>
-#include <itkVectorImage.h>
 
 #ifdef _WIN32
 // to pick up M_SQRT2 and other nice things...
 #define _USE_MATH_DEFINES
 #endif
-#include <math.h>
 
 #include "localPluginUtilities.h"
 
 #include "itkLMMSEVectorImageFilter.h"
 
 #include <itkImageFileWriter.h>
-#include <itkImageFileReader.h>
 #include <itkNrrdImageIO.h>
 
-#include <itkImageRegionIterator.h>
-#include <itkImageRegionConstIterator.h>
 
 #include "itkCastImageFilter.h"
 

@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCheckBox>
 #include <QDir>
 #include <QSignalSpy>
 
@@ -28,7 +27,6 @@
 #include "qSlicerDirectoryListView.h"
 
 // STD includes
-#include <cstdlib>
 #include <iostream>
 
 int qSlicerDirectoryListViewTest1(int argc, char * argv[] )

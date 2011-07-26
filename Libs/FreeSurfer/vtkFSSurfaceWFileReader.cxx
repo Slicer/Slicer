@@ -15,8 +15,6 @@
 #include "vtkFSSurfaceWFileReader.h"
 #include "vtkObjectFactory.h"
 #include "vtkFSIO.h"
-#include "vtkByteSwap.h"
-#include "vtkFloatArray.h"
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader* vtkFSSurfaceWFileReader::New()

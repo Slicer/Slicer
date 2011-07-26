@@ -1,27 +1,10 @@
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/Directory.hxx>
 
-#include "vtkObjectFactory.h"
-#include "vtkIntArray.h"
 
-#include "vtkMRMLScene.h"
 #include "vtkCacheManager.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLStorableNode.h"
-#include "vtkMRMLStorageNode.h"
-#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLUnstructuredGridNode.h"
-#include "vtkMRMLUnstructuredGridStorageNode.h"
-#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -31,19 +14,12 @@
 #include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
-#include "itkRealTimeClock.h"
 
 
-#include "vtkHTTPHandler.h"
-#include "vtkHIDHandler.h"
-#include "vtkXNDHandler.h"
-#include "vtkXMLDataParser.h"
 
 #include "vtkFetchMILogic.h"
 

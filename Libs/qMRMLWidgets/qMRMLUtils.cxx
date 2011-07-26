@@ -19,8 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QColor>
 #include <QStyle>
 #include <QPainter>
 
@@ -34,8 +32,6 @@
 
 // VTK includes
 #include <vtkTransform.h>
-#include <vtkSmartPointer.h>
-#include <vtkMatrix4x4.h>
 #include <vtkImageData.h>
 
 //------------------------------------------------------------------------------

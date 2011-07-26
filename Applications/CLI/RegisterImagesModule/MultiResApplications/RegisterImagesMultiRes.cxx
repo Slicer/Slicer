@@ -8,31 +8,23 @@
 
 #include "RegisterImagesMultiResCLP.h"
 
-#include "itkImage.h"
 #include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 
 #include "itkFRPROptimizer.h"
 #include "itkCenteredTransformInitializer.h"
-#include "itkVersor.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 #include "itkImageMaskSpatialObject.h"
-#include "itkAffineTransform.h"
-#include "itkSlicerBoxSpatialObject.h"
 
 // From Review
 #include "itkTransformFileWriter.h"
 #include "itkImageRegistrationMethod.h"
 #include "itkVectorResampleImageFilter.h"
-#include "itkResampleImageFilter.h"
 #include "itkRegionalMinimaImageFilter.h"
-#include "itkLinearInterpolateImageFunction.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 
 // My headers
 #include "itkFixedRotationSimilarity3DTransform.h"
 #include "itkEulerSimilarity3DTransform.h"
-#include "itkSimilarity3DTransform.h"
 #include "itkDecomposedAffine3DTransform.h"
 
 #include "RegistrationMonitor.h"
@@ -42,10 +34,6 @@
 #include "ConvertSlicerROIToRegion.h"
 
 #include <queue>
-#include <iostream>
-#include <iomanip>
-#include <limits>
-#include <cmath>
 
 #ifndef M_PI
 #define M_PI  3.1415926

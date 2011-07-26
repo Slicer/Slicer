@@ -21,10 +21,8 @@
 // Qt includes
 #include <QSettings>
 #include <QDir>
-#include <QDebug>
 
 // CTK includes
-#include <ctkPimpl.h>
 
 // SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"

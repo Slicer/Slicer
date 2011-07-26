@@ -16,22 +16,17 @@
 #include "vtkMRMLColorLogic.h"
 
 // MRML includes
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLPETProceduralColorNode.h"
-#include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 
 // VTK sys includes
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 
 vtkCxxRevisionMacro(vtkMRMLColorLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLColorLogic);

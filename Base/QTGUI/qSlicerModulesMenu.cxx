@@ -20,13 +20,9 @@
 
 // Qt includes
 #include <QDebug>
-#include <QPixmap>
-#include <QStyle>
-#include <QStyleOptionButton>
 
 // CTK includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
 
 // SlicerQt includes

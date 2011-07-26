@@ -19,10 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QFileDialog>
-#include <QList>
-#include <QUrl>
 
 // CTK includes
 #include <ctkFileDialog.h>
@@ -30,7 +26,6 @@
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerFileDialog.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"
 

@@ -21,24 +21,16 @@
 /// Qt includes
 #include <QComboBox>
 #include <QDebug>
-#include <QFileDialog>
-#include <QFileInfo>
 #include <QLineEdit>
-#include <QList>
 #include <QMessageBox>
-#include <QUrl>
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
-#include <ctkDirectoryButton.h>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerSaveDataDialog.h"
 #include "qSlicerSaveDataDialog_p.h"
-#include "qSlicerIOManager.h"
-#include "qSlicerIOOptionsWidget.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLUtils.h"
 
@@ -49,7 +41,6 @@
 #include <vtkCacheManager.h>
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
 #include <vtkMRMLScene.h>
-#include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSceneViewNode.h>
 

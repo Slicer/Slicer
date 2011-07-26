@@ -1,9 +1,6 @@
-#include "vtkObjectFactory.h"
 #include "vtkFetchMIWebServicesClientXND.h"
-#include "vtkHTTPHandler.h"
 #include "vtkXNDHandler.h"
 #include <sstream>
-#include <string>
 
 
 

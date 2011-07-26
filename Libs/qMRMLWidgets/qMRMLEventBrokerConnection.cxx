@@ -23,7 +23,6 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
-#include <vtkObservation.h>
 
 //-----------------------------------------------------------------------------
 ctkVTKConnection* qMRMLConnectionFactory::createConnection(

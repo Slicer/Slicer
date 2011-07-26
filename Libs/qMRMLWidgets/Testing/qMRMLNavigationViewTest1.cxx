@@ -34,8 +34,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLNavigationViewTest1(int argc, char * argv [] )
 {

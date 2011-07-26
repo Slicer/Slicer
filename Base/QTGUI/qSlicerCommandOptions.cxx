@@ -22,7 +22,6 @@
 #include "qSlicerCoreApplication.h"
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 //-----------------------------------------------------------------------------
 // qSlicerCommandOptions methods

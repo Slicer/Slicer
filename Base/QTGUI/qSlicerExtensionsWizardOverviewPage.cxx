@@ -21,19 +21,12 @@
 // Qt includes
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDir>
 #include <QDirIterator>
-#include <QFileInfo>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QProgressBar>
 #include <QProgressDialog>
-#include <QUrl>
-#include <QVector>
 
 // CTK includes
-#include <ctkCheckableHeaderView.h>
 #include <ctkLogger.h>
 
 // QtGUI includes
@@ -49,7 +42,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <algorithm>
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardOverviewPage");
 

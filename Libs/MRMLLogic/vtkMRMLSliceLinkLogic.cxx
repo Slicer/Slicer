@@ -17,18 +17,13 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
-#include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
-#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <sstream>
-#include <iostream>
 #include <cassert>
 
 

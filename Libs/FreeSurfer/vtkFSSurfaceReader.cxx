@@ -14,13 +14,10 @@
 #include "vtkFSSurfaceReader.h"
 #include "vtkObjectFactory.h"
 #include "vtkByteSwap.h"
-#include "vtkFloatArray.h"
 #include "vtkFSIO.h"
-#include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #if (VTK_MAJOR_VERSION >= 5)
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkInformation.h"
 #endif
 
 //-------------------------------------------------------------------------

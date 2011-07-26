@@ -30,7 +30,6 @@
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <cstdlib>
 
 int qMRMLLayoutManagerTest1(int argc, char * argv[] )
 {

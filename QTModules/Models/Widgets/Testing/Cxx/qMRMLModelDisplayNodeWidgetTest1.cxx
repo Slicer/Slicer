@@ -32,7 +32,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <iostream>
 
 int qMRMLModelDisplayNodeWidgetTest1( int argc, char * argv [] )
 {

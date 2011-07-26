@@ -19,9 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QAction>
-#include <QActionGroup>
-#include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -40,14 +37,12 @@
 #include "qMRMLActionSignalMapper.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkCollection.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------

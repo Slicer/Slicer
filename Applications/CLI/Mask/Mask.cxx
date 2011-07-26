@@ -22,8 +22,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkMaskImageFilter.h"

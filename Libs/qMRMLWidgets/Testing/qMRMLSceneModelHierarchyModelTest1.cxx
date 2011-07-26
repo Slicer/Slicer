@@ -20,9 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QDebug>
-#include <QString>
-#include <QStringList>
 #include <QTimer>
 #include <QTreeView>
 
@@ -32,14 +29,9 @@
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneModelHierarchyModel.h"
-#include "qMRMLUtils.h"
 
-#include "TestingMacros.h"
-#include <vtkEventBroker.h>
 
 // STD includes
-#include <cstdlib>
-#include <iostream>
 
 int qMRMLSceneModelHierarchyModelTest1(int argc, char * argv [])
 {

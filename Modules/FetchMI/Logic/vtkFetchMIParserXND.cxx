@@ -1,9 +1,4 @@
 #include "vtkObjectFactory.h"
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <vtksys/SystemTools.hxx>
 
 #include "vtkFetchMIParserXND.h"
 #include "vtkXNDTagTable.h"

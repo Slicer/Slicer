@@ -12,7 +12,6 @@
 #define MODULE_IMPORT
 #endif
 
-#include <iostream>
 #include "itkTestMain.h"
 
 void RegisterTests()
@@ -22,6 +21,5 @@ REGISTER_TEST(SparseFieldLevelSetContourTest);
 
 #undef main
 #define main SparseFieldLevelSetContourTest
+
 #include "../SparseFieldLevelSetContour.cxx"
-
-

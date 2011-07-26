@@ -1,10 +1,7 @@
 
 // Qt includes
-#include <QDebug>
-#include <QStack>
 
 // qMRML includes
-#include "qMRMLUtils.h"
 #include "qMRMLVolumeThresholdWidget.h"
 #include "ui_qMRMLVolumeThresholdWidget.h"
 
@@ -14,7 +11,6 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLVolumeThresholdWidgetPrivate: public Ui_qMRMLVolumeThresholdWidget

@@ -19,7 +19,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 
-#include <math.h>
 
 vtkCxxRevisionMacro(vtkImageLabelCombine, "$Revision: 1.53 $");
 vtkStandardNewMacro(vtkImageLabelCombine);

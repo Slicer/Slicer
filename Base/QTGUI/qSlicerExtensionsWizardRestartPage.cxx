@@ -19,9 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QDir>
-#include <QProcess>
 #include <QSettings>
 
 // CTK includes

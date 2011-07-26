@@ -22,16 +22,12 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
-#include "itkImage.h"
-#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkBinaryBallStructuringElement.h"
 #include "itkBinaryErodeImageFilter.h"
 #include "itkBinaryDilateImageFilter.h"
 #include "itkBinaryThresholdImageFunction.h"
-#include "itkImageRegionIteratorWithIndex.h"
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
 
 #include "vtkXMLPolyDataReader.h"
