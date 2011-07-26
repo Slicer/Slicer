@@ -49,11 +49,10 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
   // with vtkclassname, and not the real name of the class
 #ifdef VTK_DEBUG_LEAKS
   vtkDebugLeaks::DestructClass(vtkclassname);
-#endif
-  const char *rl = vtkGraphicsFactory::GetRenderLibrary();
-  
+#endif  
 
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
+  const char *rl = vtkGraphicsFactory::GetRenderLibrary();
   if (!strcmp("OpenGL",rl) || !strcmp("Win32OpenGL",rl) || !strcmp("CarbonOpenGL",rl) || !strcmp("CocoaOpenGL",rl))
     {
     // 2D Volume Texture Mapper

@@ -38,6 +38,7 @@
 
 // STD includes
 #include <algorithm>
+#include <cassert>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceModelDisplayableManager );
