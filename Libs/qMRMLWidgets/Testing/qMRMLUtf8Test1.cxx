@@ -43,13 +43,15 @@ vtkMRMLScene* myScene = 0;
 vtkMRMLNode* myNode = 0;
 QLineEdit* myLineEdit = 0;
 
-void saveScene(void* data)
+//------------------------------------------------------------------------------
+void saveScene(void* vtkNotUsed(data))
 {
   myNode->SetName(myLineEdit->text().toUtf8());
   const char* tmpScene = "scene-utf8.mrml";
   myScene->Commit(tmpScene);
 }
 
+//------------------------------------------------------------------------------
 int qMRMLUtf8Test1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
