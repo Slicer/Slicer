@@ -12,11 +12,16 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkObjectFactory.h"
 
 #include "vtkSlicerVolumeRenderingFactory.h"
 #include "vtkGraphicsFactory.h"
+#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
+#include "vtkSlicerGPURayCastVolumeMapper.h"
+#include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
+#include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
 
+#include <vtkObjectFactory.h>
+#include <vtkOpenGLVolumeTextureMapper2D.h>
 
 // if using some sort of opengl, then include these files
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)

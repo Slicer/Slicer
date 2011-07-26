@@ -1,5 +1,7 @@
 #include "vtkSRBHandler.h"
 
+#include <string>
+
 vtkStandardNewMacro ( vtkSRBHandler );
 vtkCxxRevisionMacro ( vtkSRBHandler, "$Revision: 1.0 $" );
 

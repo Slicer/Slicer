@@ -40,8 +40,10 @@ extern "C" {
 
 #include "vtkDiffusionTensorMathematicsSimple.h"
 
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
+#include <vtkImageData.h>
+#include <vtkObjectFactory.h>
+
+#include <time.h>
 
 vtkCxxRevisionMacro(vtkDiffusionTensorMathematicsSimple, "$Revision: 1.11 $");
 

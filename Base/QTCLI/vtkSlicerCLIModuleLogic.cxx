@@ -59,6 +59,7 @@
 // STL includes
 #include <algorithm>
 #include <set>
+#include <time.h>
 
 #ifdef _WIN32
 #else

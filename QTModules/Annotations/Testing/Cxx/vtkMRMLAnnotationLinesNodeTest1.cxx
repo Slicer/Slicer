@@ -1,3 +1,4 @@
+#include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLScene.h"

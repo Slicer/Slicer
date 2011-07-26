@@ -35,6 +35,8 @@ extern "C" {
 #include "teem/ten.h"
 }
 
+#include <time.h>
+
 #define VTK_EPS 10e-15
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);

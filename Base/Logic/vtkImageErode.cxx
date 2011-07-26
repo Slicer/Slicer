@@ -9,6 +9,8 @@
 #include "vtkImageErode.h"
 #include "vtkObjectFactory.h"
 
+#include <time.h>
+
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkImageErode, "$Revision$");
 vtkStandardNewMacro(vtkImageErode);

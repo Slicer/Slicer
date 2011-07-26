@@ -5,6 +5,8 @@
 
 // ITKSys includes
 
+#include <string>
+
 vtkStandardNewMacro ( vtkXNATHandler );
 vtkCxxRevisionMacro ( vtkXNATHandler, "$Revision: 1.0 $" );
 

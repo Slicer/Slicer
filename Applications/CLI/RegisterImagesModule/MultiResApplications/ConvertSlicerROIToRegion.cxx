@@ -12,9 +12,10 @@
 
   =========================================================================*/
 
+#include "ConvertSlicerROIToRegion.h"
+
 #include <itkImageBase.h>
 #include <itkSlicerBoxSpatialObject.h>
-
 
 itk::ImageRegion<3>
 convertPointsToRegion(const itk::Point<double, 3>& p1,

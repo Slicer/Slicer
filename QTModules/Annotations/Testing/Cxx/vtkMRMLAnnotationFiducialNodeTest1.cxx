@@ -1,3 +1,4 @@
+#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLScene.h"
 
