@@ -32,10 +32,11 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
+#include "vtkNew.h"
 
 // STD includes
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 vtkMRMLScene* myScene = 0;
@@ -53,7 +54,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   myScene = scene.GetPointer();
   myScene->SetURL(argv[1]);
   myScene->Connect();
