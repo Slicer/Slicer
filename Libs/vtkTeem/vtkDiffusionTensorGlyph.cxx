@@ -26,7 +26,7 @@
 #include "vtkImageData.h"
 #include "vtkDiffusionTensorMathematics.h"
 
-#include <time.h>
+#include <ctime>
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,Mask,vtkImageData);
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,VolumePositionMatrix,vtkMatrix4x4);

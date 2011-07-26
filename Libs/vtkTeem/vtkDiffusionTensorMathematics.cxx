@@ -35,7 +35,7 @@ extern "C" {
 #include "teem/ten.h"
 }
 
-#include <time.h>
+#include <ctime>
 
 #define VTK_EPS 10e-15
 

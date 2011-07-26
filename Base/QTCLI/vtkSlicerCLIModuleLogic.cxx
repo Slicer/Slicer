@@ -58,8 +58,8 @@
 
 // STL includes
 #include <algorithm>
+#include <ctime>
 #include <set>
-#include <time.h>
 
 #ifdef _WIN32
 #else

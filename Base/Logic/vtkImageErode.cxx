@@ -9,7 +9,7 @@
 #include "vtkImageErode.h"
 #include "vtkObjectFactory.h"
 
-#include <time.h>
+#include <ctime>
 
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkImageErode, "$Revision$");
