@@ -5,6 +5,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLColorLogicTest1.cxx
   vtkMRMLLayoutLogicTest1.cxx
   vtkMRMLLayoutLogicTest2.cxx
+  vtkMRMLModelHierarchyLogicTest1.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
   vtkMRMLSliceLogicTest3.cxx
@@ -31,6 +32,7 @@ macro(SIMPLE_FILE_TEST TESTNAME FILE)
 endmacro()
 
 SIMPLE_TEST( vtkMRMLColorLogicTest1 )
+SIMPLE_TEST( vtkMRMLModelHierarchyLogicTest1 )
 SIMPLE_TEST( vtkMRMLLayoutLogicTest1 )
 SIMPLE_TEST( vtkMRMLLayoutLogicTest2 )
 SIMPLE_TEST( vtkMRMLSliceLogicTest1 )

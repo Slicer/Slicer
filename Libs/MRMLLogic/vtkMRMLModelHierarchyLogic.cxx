@@ -97,6 +97,10 @@ void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(
   vtkMRMLModelHierarchyNode *parentNode,
   vtkMRMLModelHierarchyNodeList &childrenNodes)
 {
+  if (!parentNode)
+    {
+    return;
+    }
   this->UpdateHierarchyChildrenMap();
   
   HierarchyChildrenNodesType::iterator iter = 
@@ -117,7 +121,12 @@ vtkMRMLModelHierarchyNodeList vtkMRMLModelHierarchyLogic
 ::GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode)
 {
   vtkMRMLModelHierarchyNodeList childrenNodes;
-  
+
+  if (!parentNode)
+    {
+    return childrenNodes;
+    } 
+
   this->UpdateHierarchyChildrenMap();
   
   HierarchyChildrenNodesType::iterator iter =
@@ -149,8 +158,9 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
     this->HierarchyChildrenNodes.clear();
     }
     
-  if (this->GetMRMLScene()->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime)
-  {
+  if (this->GetMRMLScene() &&
+      (this->GetMRMLScene()->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime))
+    {
     for (iter  = this->HierarchyChildrenNodes.begin();
          iter != this->HierarchyChildrenNodes.end();
          iter++)
@@ -185,5 +195,5 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
         }
       }
     this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
-  }
+    }
 }
