@@ -28,6 +28,7 @@
 
 class qSlicerModelsModuleWidgetPrivate;
 class vtkMRMLNode;
+class QModelIndex;
 
 /// \ingroup Slicer_QtModules_Models
 class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget
@@ -42,7 +43,10 @@ public:
   virtual ~qSlicerModelsModuleWidget();
 
 public slots:
-
+  void insertHierarchyNode();
+  void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
+  void onExpanded(const QModelIndex &index);
+  void onCollapsed(const QModelIndex &index);
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;

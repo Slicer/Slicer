@@ -30,6 +30,7 @@
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -96,10 +97,25 @@ vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()cons
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setMRMLModelNode(vtkMRMLNode* node)
+void qMRMLModelDisplayNodeWidget::setMRMLNode(vtkMRMLNode* node)
 {
+  // can be set from a model node or a model hierarchy node
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  this->setMRMLModelDisplayNode(modelNode ? modelNode->GetDisplayNode() : 0);
+  vtkMRMLModelHierarchyNode *hierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
+  vtkMRMLModelDisplayNode *modelDisplayNode = 0;
+  if (modelNode)
+    {
+    if (modelNode->GetDisplayNode())
+      {
+      modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+      }
+    }
+  else if (hierarchyNode)
+    {
+    modelDisplayNode = hierarchyNode->GetModelDisplayNode();
+    }
+  this->setMRMLModelDisplayNode(modelDisplayNode);
+  
 }
 
 //------------------------------------------------------------------------------

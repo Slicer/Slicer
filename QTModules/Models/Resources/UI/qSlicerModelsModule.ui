@@ -40,6 +40,9 @@
        <string>vtkMRMLModelNode</string>
       </stringlist>
      </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -181,7 +184,7 @@
    <sender>ModelHierarchyTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>ModelDisplayWidget</receiver>
-   <slot>setMRMLModelNode(vtkMRMLNode*)</slot>
+   <slot>setMRMLNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>200</x>

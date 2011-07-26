@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QModelIndex>
 
 // qMRMLWidgets
 
@@ -26,12 +27,23 @@
 #include "qSlicerModelsModuleWidget.h"
 #include "ui_qSlicerModelsModule.h"
 
+// MRML includes
+#include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLScene.h"
+
+// CTK includes
+#include <ctkLogger.h>
+
+static ctkLogger logger("org.slicer.qtmodules.models.qSlicerModelsModule");
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
 class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModule
 {
 public:
   qSlicerModelsModuleWidgetPrivate();
+  QAction *InsertHierarchyAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -40,6 +52,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
 {
+  this->InsertHierarchyAction = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -50,6 +63,7 @@ qSlicerModelsModuleWidget::qSlicerModelsModuleWidget(QWidget* _parent)
   : Superclass( _parent )
   , d_ptr( new qSlicerModelsModuleWidgetPrivate )
 {
+  logger.setOff();
 }
 
 //-----------------------------------------------------------------------------
@@ -61,11 +75,130 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 void qSlicerModelsModuleWidget::setup()
 {
   Q_D(qSlicerModelsModuleWidget);
+
+  logger.trace("setup");
+  
   d->setupUi(this);
-  d->ModelHierarchyTreeView->setColumnHidden(1, true);
   d->ClipModelsNodeComboBox->setVisible(false);
+  
+  d->ModelHierarchyTreeView->setColumnHidden(1, true);
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
     QStringList() << "vtkMRMLModelHierarchyNode");
+
+  // add an add hierarchy right click action on the scene and hierarchy nodes
+  connect(d->ModelHierarchyTreeView,  SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+          this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
+  bool expRet = connect(d->ModelHierarchyTreeView, SIGNAL(expanded(const QModelIndex &)),
+          this, SLOT(onExpanded(const QModelIndex &)));
+  bool colRet = connect(d->ModelHierarchyTreeView, SIGNAL(collapsed(const QModelIndex &)),
+          this, SLOT(onCollapsed(const QModelIndex &)));
+  if (!expRet)
+    {
+    logger.trace("Connecting expanded failed");
+    }
+  if (!colRet)
+    {
+    logger.trace("Connecting collapsed failed");
+    }
+
+  d->InsertHierarchyAction = new QAction(tr("Insert hierarchy"), this);
+  d->ModelHierarchyTreeView->prependSceneMenuAction(d->InsertHierarchyAction);
+  connect(d->InsertHierarchyAction, SIGNAL(triggered()),
+          this, SLOT(insertHierarchyNode()));
+  
+
   this->Superclass::setup();
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::insertHierarchyNode()
+{
+  Q_D(qSlicerModelsModuleWidget);
+  
+  vtkMRMLModelHierarchyNode *modelHierarchyNode = vtkMRMLModelHierarchyNode::New();
+
+  vtkMRMLNode* parent = vtkMRMLNode::SafeDownCast(d->ModelHierarchyTreeView->currentNode());
+  if (parent)
+    {
+    modelHierarchyNode->SetParentNodeID(parent->GetID());
+    }
+  this->mrmlScene()->AddNode(modelHierarchyNode);
+  modelHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString("Model Hierarchy"));
+
+  // also add a display node to the hierarchy node for use when the hierarchy is collapsed
+  vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
+  if (modelDisplayNode)
+    {
+    this->mrmlScene()->AddNode(modelDisplayNode);
+    modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
+
+    modelDisplayNode->Delete();
+    }
+  modelHierarchyNode->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  // only allow adding hierarchies when right click on hierarchies
+  vtkMRMLModelHierarchyNode* hierarchyNode =
+    vtkMRMLModelHierarchyNode::SafeDownCast(newCurrentNode);
+  if (hierarchyNode)
+    {
+    d->ModelHierarchyTreeView->prependNodeMenuAction(d->InsertHierarchyAction);
+    }
+  else
+    {
+    d->ModelHierarchyTreeView->removeNodeMenuAction(d->InsertHierarchyAction);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::onCollapsed(const QModelIndex & index)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  logger.trace("onCollapsed");
+  
+  vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  if (!node)
+    {
+    logger.trace("onCollapsed: node not found for this index");
+    return;
+    }
+  vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+  if (!hnode)
+    {
+    logger.warn("onCollapsed: node is not a displayable hierarchy node");
+    return;
+    }
+  logger.trace(QString("onCollapsed: found displayable hierarchy node ") + QString(hnode->GetID()));
+
+  hnode->SetExpanded(0);
+  logger.trace("onCollapsed: set hierarchy node to collapsed");
+
+}
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  logger.trace("onExpanded");
+  
+  vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  if (!node)
+    {
+    logger.trace("onExpanded: node not found for this index");
+    return;
+    }
+  vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+  if (!hnode)
+    {
+    logger.warn("onExpanded: node is not a displayable hierarchy node");
+    return;
+    }
+  logger.trace(QString("onExpanded: found displayable hierarchy node ") + QString(hnode->GetID()));
+
+  hnode->SetExpanded(1);
+  logger.trace("onExpanded: set hierarchy node to expanded");
+}
