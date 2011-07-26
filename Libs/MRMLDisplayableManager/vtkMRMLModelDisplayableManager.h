@@ -178,7 +178,7 @@ protected:
   int UpdateClipSlicesFromMRML();
   vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
 
-  void AddHierarchiyObservers();
+  void AddHierarchyObservers();
   void RemoveHierarchyObservers(int clearCache);
 
   void CheckModelHierarchies();

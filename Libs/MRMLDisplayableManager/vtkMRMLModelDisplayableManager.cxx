@@ -114,7 +114,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->YellowSliceNode = 0;
 
   this->ModelHierarchiesPresent = false;
-  this->ModelHierarchyLogic = 0;
+  this->ModelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
 
   // Instantiate and initialize Pickers
   this->WorldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
@@ -943,7 +943,7 @@ void vtkMRMLModelDisplayableManager::CheckModelHierarchies()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::AddHierarchiyObservers()
+void vtkMRMLModelDisplayableManager::AddHierarchyObservers()
 {
   if (this->GetMRMLScene() == 0)
     {
@@ -982,7 +982,7 @@ void vtkMRMLModelDisplayableManager::AddHierarchiyObservers()
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchies()
 {
   this->CheckModelHierarchies();
-  this->AddHierarchiyObservers();
+  this->AddHierarchyObservers();
 }
 
 //---------------------------------------------------------------------------
