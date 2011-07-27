@@ -56,7 +56,8 @@ public slots:
   void setMRMLModelDisplayNode(vtkMRMLNode *node);
   /// Utility function to be connected with generic signals,
   /// it internally shows the 1st display node.
-  void setMRMLNode(vtkMRMLNode* modelNode);
+  // can be set from a model node or a model hierarchy node
+  void setMRMLModelOrHierarchyNode(vtkMRMLNode* modelNode);
   
   void setScalarsVisibility(bool);
   void setActiveScalarName(const QString&);

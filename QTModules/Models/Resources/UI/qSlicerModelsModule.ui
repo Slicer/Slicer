@@ -184,7 +184,7 @@
    <sender>ModelHierarchyTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>ModelDisplayWidget</receiver>
-   <slot>setMRMLNode(vtkMRMLNode*)</slot>
+   <slot>setMRMLModelOrHierarchyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>200</x>

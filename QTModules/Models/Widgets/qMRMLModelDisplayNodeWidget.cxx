@@ -97,7 +97,7 @@ vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()cons
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setMRMLNode(vtkMRMLNode* node)
+void qMRMLModelDisplayNodeWidget::setMRMLModelOrHierarchyNode(vtkMRMLNode* node)
 {
   // can be set from a model node or a model hierarchy node
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
