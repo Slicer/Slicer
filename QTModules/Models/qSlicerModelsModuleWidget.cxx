@@ -21,6 +21,9 @@
 // Qt includes
 #include <QModelIndex>
 
+// CTK includes
+#include <ctkLogger.h>
+
 // qMRMLWidgets
 
 // SlicerQt includes
@@ -32,8 +35,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-// CTK includes
-#include <ctkLogger.h>
+
 
 static ctkLogger logger("org.slicer.qtmodules.models.qSlicerModelsModule");
 
