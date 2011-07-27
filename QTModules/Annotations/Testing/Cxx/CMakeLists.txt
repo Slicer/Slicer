@@ -13,6 +13,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationNodeTest1.cxx
   vtkMRMLAnnotationStorageNodeTest1.cxx
   vtkMRMLAnnotationDisplayNodeTest1.cxx
+  vtkMRMLAnnotationDisplayNodeTest2.cxx
   vtkMRMLAnnotationControlPointsNodeTest1.cxx
   vtkMRMLAnnotationPointDisplayNodeTest1.cxx
   vtkMRMLAnnotationControlPointsStorageNodeTest1.cxx
