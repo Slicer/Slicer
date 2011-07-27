@@ -840,12 +840,6 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
     }
 
   annotationNode->SetText(0, newtext, 1, 1);
-  if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    // also set the name
-    annotationNode->SetName(newtext);
-    }
-
 }
 
 //---------------------------------------------------------------------------
