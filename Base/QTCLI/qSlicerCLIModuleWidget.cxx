@@ -333,6 +333,13 @@ void qSlicerCLIModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode * qSlicerCLIModuleWidget::currentCommandLineModuleNode()const
+{
+  Q_D(const qSlicerCLIModuleWidget);
+  return d->CommandLineModuleNode;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
   vtkMRMLNode* commandLineModuleNode)
 {
