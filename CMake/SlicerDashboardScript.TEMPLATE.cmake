@@ -40,6 +40,7 @@ set(WITH_EXTENSIONS FALSE) # Indicates if 'trusted' Slicer extensions should be
 set(CTEST_BUILD_CONFIGURATION "Release")
 set(CTEST_TEST_TIMEOUT 100)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
+set(CTEST_PARALLEL_LEVEL 8) # number of tests running in parallel
 
 find_program(CTEST_SVN_COMMAND NAMES svn)
 find_program(CTEST_GIT_COMMAND NAMES git)
