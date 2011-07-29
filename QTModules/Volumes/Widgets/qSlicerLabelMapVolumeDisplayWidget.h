@@ -30,7 +30,7 @@
 // SlicerQt includes
 #include <qSlicerWidget.h>
 
-#include "qSlicerVolumesModuleExport.h"
+#include "qSlicerVolumesModuleWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLLabelMapVolumeDisplayNode;
@@ -38,7 +38,7 @@ class vtkMRMLScalarVolumeNode;
 class qSlicerLabelMapVolumeDisplayWidgetPrivate;
 
 /// \ingroup Slicer_QtModules_Volumes
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerLabelMapVolumeDisplayWidget : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerLabelMapVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT

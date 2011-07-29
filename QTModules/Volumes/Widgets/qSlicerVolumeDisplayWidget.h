@@ -8,13 +8,13 @@
 #include <ctkVTKObject.h>
 
 // Volumes includes
-#include "qSlicerVolumesModuleExport.h"
+#include "qSlicerVolumesModuleWidgetsExport.h"
 
 class vtkMRMLNode;
 class qSlicerVolumeDisplayWidgetPrivate;
 
 /// \ingroup Slicer_QtModules_Volumes
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumeDisplayWidget : public QStackedWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerVolumeDisplayWidget : public QStackedWidget
 {
   Q_OBJECT
   QVTK_OBJECT

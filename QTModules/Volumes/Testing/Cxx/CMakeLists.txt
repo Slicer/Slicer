@@ -8,9 +8,6 @@ SlicerMacroConfigureGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KI
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
-  qSlicerDiffusionTensorVolumeDisplayWidgetTest1.cxx
-  qSlicerDTISliceDisplayWidgetTest1.cxx
-  qSlicerDTISliceDisplayWidgetTest2.cxx
   qSlicerVolumesModuleWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
@@ -20,80 +17,15 @@ list(APPEND Tests ${KIT_TEST_SRCS})
 #set(TestsToRun ${Tests})
 #list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-include_directories(
-  ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
-  ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
-  )
-
-set(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${lib_name})
 
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${lib_name})
-
-set(DTI_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
-set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
+target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
 
 macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 endmacro()
 
-foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
-endforeach()
-SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
-SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )
-SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )
+set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
+
 SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
-
-# Install the testing data
-
-file(GLOB MRMLFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.mrml")
-file(GLOB NHDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.nhdr")
-file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.raw.gz")
-file(GLOB LOGFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.log")
-file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
-
-# foreach(file
-#     ${MRMLFILES}
-#     ${NHDRFILES}
-#     ${RAWGZFILES}
-#     ${LOGFILES}
-#     ${TESTFILES}
-#     )
-# In your code, you just need to include: vtkSlicerConfigure.h
-#  Then, the following 'define' will be available:
-# Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
-# Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
-# Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR
-# Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR
-#
-#   get_filename_component(filename "${file}" NAME)
-#   configure_file(
-#     ${file}
-#     ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${filename}
-#     COPYONLY)
-# endforeach(file)
-#
-# install(FILES
-#   ${MRMLFILES}
-#   ${NHDRFILES}
-#   ${RAWGZFILES}
-#   ${LOGFILES}
-#   ${TESTFILES}
-#   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
-#   )
-
-#
-# Add all the tests
-#
-#set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
-#foreach(test ${TestsToRun})
-#  get_filename_component(TESTNAME ${test} NAME_WE)
-#  add_test(
-#    NAME ${TESTNAME}
-#    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
-#      -D ${CMAKE_CURRENT_SOURCE_DIR}/../
-#      -T ${TEMP}
-#      #-V Baseline/${TESTNAME}.png
-#    )
-#endforeach()

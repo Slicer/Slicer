@@ -21,21 +21,21 @@
 #ifndef __qSlicerDTISliceDisplayWidget_h
 #define __qSlicerDTISliceDisplayWidget_h
 
-// QT includes
+// Qt includes
 
 // CTK includes
 #include <ctkVTKObject.h>
 
 // SlicerQt includes
 #include <qSlicerWidget.h>
-#include "qSlicerVolumesModuleExport.h"
+#include "qSlicerVolumesModuleWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 class qSlicerDTISliceDisplayWidgetPrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerDTISliceDisplayWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDTISliceDisplayWidget
   : public qSlicerWidget
 {
   Q_OBJECT

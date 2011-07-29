@@ -9,12 +9,5 @@
     <file>Icons/Medium/SlicerVolumes.png</file>
     <file>Icons/Large/SlicerVolumes.png</file>
     <file>Icons/XLarge/SlicerVolumes.png</file>
-
-    <file>Icons/WindowLevelPreset-CT-air.png</file>
-    <file>Icons/WindowLevelPreset-CT-bone.png</file>
-    <file>Icons/WindowLevelPreset-PET.png</file>
-    <file>Icons/WindowLevelPreset-Abdomen.png</file>
-    <file>Icons/WindowLevelPreset-Brain.png</file>
-    <file>Icons/WindowLevelPreset-Lung.png</file>
   </qresource>
 </RCC>

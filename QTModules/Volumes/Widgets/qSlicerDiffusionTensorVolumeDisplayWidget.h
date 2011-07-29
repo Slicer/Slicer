@@ -25,13 +25,12 @@
 #include <QWidget>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // SlicerQt includes
 #include <qSlicerWidget.h>
 
-#include "qSlicerVolumesModuleExport.h"
+#include "qSlicerVolumesModuleWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLDiffusionTensorVolumeDisplayNode;
@@ -41,7 +40,7 @@ class vtkMRMLGlyphableVolumeSliceDisplayNode;
 class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate;
 
 /// \ingroup Slicer_QtModules_Volumes
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerDiffusionTensorVolumeDisplayWidget : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionTensorVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT

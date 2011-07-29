@@ -1,5 +1,5 @@
 /**
-\defgroup Slicer_QtModules_Volume Volume
+\defgroup Slicer_QtModules_Volumes Volumes
 \ingroup Slicer_QtModules
 This module allows to load, save and adjust display parameters of volume data.
 

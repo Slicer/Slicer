@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <!-- Used in qSlicerScalarVolumeDisplayWidget.ui -->
+    <file>Icons/WindowLevelPreset-CT-air.png</file>
+    <file>Icons/WindowLevelPreset-CT-bone.png</file>
+    <file>Icons/WindowLevelPreset-PET.png</file>
+    <file>Icons/WindowLevelPreset-Abdomen.png</file>
+    <file>Icons/WindowLevelPreset-Brain.png</file>
+    <file>Icons/WindowLevelPreset-Lung.png</file>
+  </qresource>
+</RCC>

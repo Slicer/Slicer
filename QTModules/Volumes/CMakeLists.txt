@@ -4,6 +4,7 @@ set(qt_module_name "Volumes")
 # Build module sub libraries
 #add_subdirectory(MRML)
 add_subdirectory(Logic)
+add_subdirectory(Widgets)
 
 set(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 
@@ -17,14 +18,6 @@ set(qt_module_include_directories
 
 # Source files
 set(qt_module_SRCS
-  qSlicerDiffusionTensorVolumeDisplayWidget.cxx
-  qSlicerDiffusionTensorVolumeDisplayWidget.h
-  qSlicerDiffusionWeightedVolumeDisplayWidget.cxx
-  qSlicerDiffusionWeightedVolumeDisplayWidget.h
-  qSlicerLabelMapVolumeDisplayWidget.cxx
-  qSlicerLabelMapVolumeDisplayWidget.h
-  qSlicerScalarVolumeDisplayWidget.cxx
-  qSlicerScalarVolumeDisplayWidget.h
   qSlicerVolumesIO.cxx
   qSlicerVolumesIO.h
   qSlicerVolumesIOOptionsWidget.cxx
@@ -33,39 +26,25 @@ set(qt_module_SRCS
   qSlicerVolumesModule.h
   qSlicerVolumesModuleWidget.cxx
   qSlicerVolumesModuleWidget.h
-  qSlicerVolumeDisplayWidget.cxx
-  qSlicerVolumeDisplayWidget.h
-  Widgets/qSlicerDTISliceDisplayWidget.cxx
-  Widgets/qSlicerDTISliceDisplayWidget.h
   )
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
-  qSlicerDiffusionTensorVolumeDisplayWidget.h
-  qSlicerDiffusionWeightedVolumeDisplayWidget.h
-  qSlicerLabelMapVolumeDisplayWidget.h
-  qSlicerScalarVolumeDisplayWidget.h
   qSlicerVolumesIO.h
   qSlicerVolumesIOOptionsWidget.h
   qSlicerVolumesModule.h
   qSlicerVolumesModuleWidget.h
-  qSlicerVolumeDisplayWidget.h
-  Widgets/qSlicerDTISliceDisplayWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
-  Resources/UI/qSlicerDiffusionTensorVolumeDisplayWidget.ui
-  Resources/UI/qSlicerDiffusionWeightedVolumeDisplayWidget.ui
-  Resources/UI/qSlicerDTISliceDisplayWidget.ui
-  Resources/UI/qSlicerLabelMapVolumeDisplayWidget.ui
-  Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
   Resources/UI/qSlicerVolumesIOOptionsWidget.ui
   Resources/UI/qSlicerVolumesModule.ui
   )
 
 # Additional Target libraries
 set(qt_module_target_libraries
+  qSlicerVolumesModuleWidgets
   vtkSlicerVolumesModuleLogic
   )
 
