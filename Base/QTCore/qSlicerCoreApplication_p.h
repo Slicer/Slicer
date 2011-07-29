@@ -69,6 +69,14 @@ public:
   /// Set environment variable
   void setEnvironmentVariable(const QString& key, const QString& value);
 
+#ifdef Slicer_USE_PYTHONQT
+  void setPythonOsEnviron(const QString& key, const QString& value);
+#endif
+
+  /// Prepend or append value to environment variable using \a separator
+  void updateEnvironmentVariable(
+    const QString& key, const QString& value, QChar separator, bool prepend = false);
+
   /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
   /// \sa QCoreApplication::applicationDirPath
   void discoverSlicerBinDirectory();

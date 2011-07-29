@@ -78,6 +78,22 @@ public:
   /// \sa QCoreApplication::testAttribute
   static bool testAttribute(qSlicerCoreApplication::ApplicationAttribute attribute);
 
+  /// Convenient function to set an environment variable
+  /// \note Using this function will ensure that the environment is up-to-date for
+  /// processes started using QProcess or other alternative methods.
+  void setEnvironmentVariable(const QString& key, const QString& value);
+
+  /// Returns True if environment variable identified by \a key is set to \a value
+  bool isEnvironmentVariableValueSet(const QString& key, const QString& value);
+
+  /// Convenient function allowing to prepend \a value to environment variable identified by
+  /// by \a key using \a separator
+  void prependEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
+
+  /// Convenient function allowing to append \a value to environment variable identified by
+  /// by \a key using \a separator
+  void appendEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
+
   /// Parse arguments
   /// \note If exitWhenDone is True, it's your responsability to exit the application
   void parseArguments(bool& exitWhenDone);

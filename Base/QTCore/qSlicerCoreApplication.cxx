@@ -256,16 +256,55 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::setEnvironmentVariable(const QString& key, const QString& value)
 {
-  this->Environment.insert(key, value);
-  // Since QProcessEnvironment can't be used to update the environment of the
-  // current process, let's use 'putenv()'.
-  // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
-  vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toLatin1());
+  Q_Q(qSlicerCoreApplication);
+  q->setEnvironmentVariable(key, value);
 
 #if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
   // Cache environment variable
   this->EnvironmentVariablesCache[key] = value;
 #endif
+}
+
+//-----------------------------------------------------------------------------
+#ifdef Slicer_USE_PYTHONQT
+void qSlicerCoreApplicationPrivate::setPythonOsEnviron(const QString& key, const QString& value)
+{
+  if(!this->CorePythonManager->isPythonInitialized())
+    {
+    return;
+    }
+  this->CorePythonManager->executeString(
+        QString("import os; os.environ['%1']='%2'; del os").arg(key).arg(value));
+}
+#endif
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key, const QString& value,
+                                                              QChar separator, bool prepend)
+{
+  Q_Q(qSlicerCoreApplication);
+  if(q->isEnvironmentVariableValueSet(key, value))
+    {
+    return;
+    }
+  std::string currentValue;
+  vtksys::SystemTools::GetEnv(key.toLatin1(), currentValue);
+  if(currentValue.size() > 0)
+    {
+    QString updatedValue(value);
+    if(prepend)
+      {
+      q->setEnvironmentVariable(key, updatedValue.prepend(separator).prepend(QString::fromStdString(currentValue)));
+      }
+    else
+      {
+      q->setEnvironmentVariable(key, updatedValue.append(separator).append(QString::fromStdString(currentValue)));
+      }
+    }
+  else
+    {
+    q->setEnvironmentVariable(key, value);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -513,6 +552,44 @@ void qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::ApplicationAtt
 bool qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::ApplicationAttribute attribute)
 {
   return QCoreApplication::testAttribute(static_cast<Qt::ApplicationAttribute>(attribute));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setEnvironmentVariable(const QString& key, const QString& value)
+{
+  Q_D(qSlicerCoreApplication);
+
+  d->Environment.insert(key, value);
+  // Since QProcessEnvironment can't be used to update the environment of the
+  // current process, let's use 'putenv()'.
+  // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
+  vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toLatin1());
+
+#ifdef Slicer_USE_PYTHONQT
+  d->setPythonOsEnviron(key, value);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::isEnvironmentVariableValueSet(const QString& key, const QString& value)
+{
+  std::string currentValue;
+  vtksys::SystemTools::GetEnv(key.toLatin1(), currentValue);
+  return QString::fromStdString(currentValue).contains(value);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::prependEnvironmentVariable(const QString& key, const QString& value, QChar separator)
+{
+  Q_D(qSlicerCoreApplication);
+  d->updateEnvironmentVariable(key, value, separator, true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::appendEnvironmentVariable(const QString& key, const QString& value, QChar separator)
+{
+  Q_D(qSlicerCoreApplication);
+  d->updateEnvironmentVariable(key, value, separator, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -857,9 +934,7 @@ void qSlicerCoreApplication::updatePythonOsEnviron()
   Q_D(qSlicerCoreApplication);
   foreach(const QString& key, d->EnvironmentVariablesCache.keys())
     {
-    d->CorePythonManager->executeString(
-          QString("import os; os.environ['%1']='%2'; del os").arg(
-            key).arg(d->EnvironmentVariablesCache.value(key)));
+    d->setPythonOsEnviron(key, d->EnvironmentVariablesCache.value(key));
     }
 }
 #endif
