@@ -1,3 +1,4 @@
+#include "itkMRMLIDIOPlugin.h"
 #include "itkMRMLIDImageIOFactory.h"
 
 /**
