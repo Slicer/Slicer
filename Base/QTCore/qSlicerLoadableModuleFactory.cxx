@@ -21,16 +21,21 @@
 // Qt includes
 #include <QSettings>
 
+// For:
+//  - Slicer_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h"
+
 // SlicerQt includes
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerUtils.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerCorePythonManager.h"
+#endif
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
-
-// For:
-//  - Slicer_QTLOADABLEMODULES_LIB_DIR
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem()
@@ -44,6 +49,34 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
   qSlicerAbstractCoreModule * module =
       ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
   module->setPath(this->path());
+
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    QString slicerHome = qSlicerCoreApplication::application()->slicerHome();
+
+    // By convention, if the module is an extension,
+    // "<MODULEPATH>/Python" will be appended to PYTHONPATH
+    QString modulePath = QFileInfo(module->path()).path();
+    if (QDir::cleanPath(modulePath) != QDir::cleanPath(slicerHome + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR))
+      {
+      QString pythonPath = modulePath + "/Python";
+      QStringList paths; paths << modulePath << pythonPath;
+      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+      foreach(const QString& path, paths)
+        {
+        //qSlicerCoreApplication::application()->appendEnvironmentVariable("PYTHONPATH", path, ':');
+        pythonManager->executeString(QString(
+              "import sys; sys.path.append('%1'); del sys").arg(path));
+        }
+      pythonManager->executeString(QString(
+            "from slicer.util import importVTKClassesFromDirectory;"
+            "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"
+            "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRML.py');"
+            ).arg(pythonPath));
+      }
+    }
+#endif
   return module;
 }
 
