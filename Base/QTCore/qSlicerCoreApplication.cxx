@@ -250,7 +250,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
     {
     qDebug() << "Warning, can't cdUp in " << slicerBinDir;
     }
-  return slicerBinDir.absolutePath();
+  return slicerBinDir.canonicalPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -855,6 +855,13 @@ QString qSlicerCoreApplication::slicerHome() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->SlicerHome;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::isExtension(const QString& moduleFileName)const
+{
+  QString modulePath = QFileInfo(moduleFileName).canonicalPath();
+  return !modulePath.startsWith(this->slicerHome());
 }
 
 //-----------------------------------------------------------------------------

@@ -110,6 +110,9 @@ public:
   /// Get slicer home directory
   QString slicerHome() const;
 
+  /// Returns True if module identified by \a moduleFileName is an extension
+  bool isExtension(const QString& moduleFileName)const;
+
   /// Get slicer default temporary directory
   QString defaultTemporaryPath() const;
 
