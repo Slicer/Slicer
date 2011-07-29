@@ -42,14 +42,16 @@ public:
   explicit qMRMLThreeDView(QWidget* parent = 0);
   virtual ~qMRMLThreeDView();
 
-  /// Register DisplayableManagers
-  /// \a scriptedDisplayableManagerDirectory is the based directory from which
-  /// scripted DisplayableManager should be sourced from.
-  void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
-
-  /// If set to True, scripted DisplayableManager located in the directory specified
-  /// when calling registerDisplayableManagers() will be ignored.
-  void setIgnoreScriptedDisplayableManagers(bool value);
+  /// Add a displayable manager to the view,
+  /// the displayable manager is proper to the 3D view and is not shared
+  /// with other views.
+  /// If you want to register a displayable manager with all the 3D
+  /// views (existing or future), you need to do it via
+  /// vtkMRMLThreeDViewDisplayableManagerFactory::RegisterDisplayableManager()
+  /// By default: vtkMRMLCameraDisplayableManager,
+  /// vtkMRMLViewDisplayableManager and vtkMRMLModelDisplayableManager are
+  /// already registered.
+  void addDisplayableManager(const QString& displayableManager);
 
   /// Get the 3D View node observed by view.
   vtkMRMLViewNode* mrmlViewNode()const;

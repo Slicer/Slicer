@@ -59,14 +59,14 @@ public:
   explicit qMRMLSliceWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceWidget();
 
-  /// Register DisplayableManagers
-  /// \a scriptedDisplayableManagerDirectory is the based directory from which
-  /// scripted DisplayableManager should be sourced from.
-  void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
-
-  /// If set to True, scripted DisplayableManager located in the directory specified
-  /// when calling registerDisplayableManagers() will be ignored.
-  void setIgnoreScriptedDisplayableManagers(bool value);
+  /// Add a displayable manager to the view,
+  /// the displayable manager is proper to the slice view and is not shared
+  /// with other views.
+  /// If you want to register a displayable manager with all the slice
+  /// views (existing or future), you need to do it via
+  /// vtkMRMLThreeDViewDisplayableManagerFactory::RegisterDisplayableManager()
+  /// By default: vtkMRMLSliceModelDisplayableManager is  already registered.
+  void addDisplayableManager(const QString& displayableManager);
 
   /// Get slice controller
   qMRMLSliceControllerWidget* sliceController()const;

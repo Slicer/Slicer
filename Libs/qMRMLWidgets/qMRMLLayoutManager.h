@@ -101,10 +101,6 @@ protected:
   virtual QWidget* viewFromXML(QDomElement layoutElement);
   virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
-  /// \sa qMRMLThreeDView::setIgnoreScriptedDisplayableManagers()
-  /// \sa qMRMLSliceWidget::setIgnoreScriptedDisplayableManagers()
-  void setIgnoreScriptedDisplayableManagers(bool value);
-
   using ctkLayoutManager::setLayout;
 private:
   Q_DECLARE_PRIVATE(qMRMLLayoutManager);

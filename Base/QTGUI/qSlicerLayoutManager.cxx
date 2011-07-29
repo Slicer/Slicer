@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDir>
 #include <QFileInfo>
 #include <QVariant>
 
@@ -28,8 +29,6 @@
 // qMRMLWidgets includes
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
-//#include <qMRMLUtils.h>
-//#include <qMRMLNodeFactory.h>
 
 // SlicerQt includes
 #include "qSlicerLayoutManager.h"
@@ -40,6 +39,10 @@
 
 // qMRMLSlicer
 #include <qMRMLLayoutManager_p.h>
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
@@ -62,7 +65,7 @@ public:
   virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
 public:
-  //QString            ScriptedDisplayableManagerDirectory;
+  QString            ScriptedDisplayableManagerDirectory;
 };
 
 // --------------------------------------------------------------------------
@@ -80,8 +83,6 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
   if (sliceWidget)
     {
     bool disablePython = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython);
-    sliceWidget->setIgnoreScriptedDisplayableManagers(disablePython);
-    sliceWidget->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL
     if (!disablePython)
       {
@@ -124,22 +125,36 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget)
   : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(*this), widget, widget)
 {
-  bool disablePython = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython);
-  this->setIgnoreScriptedDisplayableManagers(disablePython);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
-    const QString& scriptedDisplayableManagerDirectory)
+  const QString& scriptedDisplayableManagerDirectory)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+  if (qSlicerCoreApplication::testAttribute(
+        qSlicerCoreApplication::AA_DisablePython))
     {
-    Q_D(qSlicerLayoutManager);
-
-    Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
-    d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
+    return;
     }
+  Q_D(qSlicerLayoutManager);
+
+  Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
+  d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
+  // Disable for now as we don't have any displayable managers and
+  // loading the python file on Windows 64b in Debug crashes.
+  //vtkMRMLSliceViewDisplayableManagerFactory* sliceFactory
+  //  = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+  //sliceFactory->RegisterDisplayableManager(
+  //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
+  //            "vtkScriptedExampleDisplayableManager.py")
+  //    .absoluteFilePath().toLatin1());
+  //vtkMRMLThreeDViewDisplayableManagerFactory* threeDFactory
+  //  = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  //threeDFactory->RegisterDisplayableManager(
+  //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
+  //            "vtkScriptedExampleDisplayableManager.py")
+  //    .absoluteFilePath().toLatin1());
 #else
   Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif

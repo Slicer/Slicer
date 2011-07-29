@@ -46,6 +46,8 @@ public:
   qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object);
   ~qMRMLSliceWidgetPrivate();
 
+  void init();
+
 public slots:
 
   /// Handle MRML scene event
@@ -61,11 +63,10 @@ public slots:
   void updateWidgetFromMRMLSliceNode();
 
 public:
+  void initDisplayableManagers();
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
-  QString                            ScriptDisplayableManagerDirectory;
   vtkMRMLSliceNode*                  MRMLSliceNode;
-  bool                               IgnoreScriptedDisplayableManagers;
 };
 
 #endif

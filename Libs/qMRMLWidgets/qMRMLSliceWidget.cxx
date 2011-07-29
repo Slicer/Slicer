@@ -28,8 +28,9 @@
 #include "qMRMLSliceWidget_p.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLAbstractDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 //#include <vtkSliceViewInteractorStyle.h>
 
 // MRML includes
@@ -37,6 +38,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
@@ -51,7 +53,46 @@ qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
 {
   this->DisplayableManagerGroup = 0;
   this->MRMLSliceNode = 0;
-  this->IgnoreScriptedDisplayableManagers = false;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::init()
+{
+  Q_Q(qMRMLSliceWidget);
+  this->setupUi(q);
+
+  // Highligh first RenderWindowItem
+  this->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
+
+  connect(this->VTKSliceView, SIGNAL(resized(const QSize&)),
+          this->SliceController, SLOT(setSliceViewSize(const QSize&)));
+
+  connect(this->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
+          this, SLOT(setImageData(vtkImageData*)));
+  connect(this->SliceController, SIGNAL(renderRequested()),
+          this->VTKSliceView, SLOT(scheduleRender()));
+
+  this->initDisplayableManagers();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::initDisplayableManagers()
+{
+  vtkMRMLSliceViewDisplayableManagerFactory* factory
+    = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+  this->DisplayableManagerGroup
+    = factory->InstantiateDisplayableManagers(
+      this->VTKSliceView->lightBoxRendererManager()->GetRenderer(0));
+  // Observe displayable manager group to catch RequestRender events
+  this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
+                    this->VTKSliceView, SLOT(scheduleRender()));
+
+  QStringList displayableManagers;
+  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
+  foreach(const QString& displayableManager, displayableManagers)
+    {
+    factory->RegisterDisplayableManager(displayableManager.toLatin1());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -107,10 +148,13 @@ void qMRMLSliceWidgetPrivate::setImageData(vtkImageData * imageData)
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
-  Q_ASSERT(this->MRMLSliceNode);
+  if (!this->MRMLSliceNode)
+    {
+    return;
+    }
   this->VTKSliceView->lightBoxRendererManager()->SetRenderWindowLayout(
-      this->MRMLSliceNode->GetLayoutGridRows(),
-      this->MRMLSliceNode->GetLayoutGridColumns());
+    this->MRMLSliceNode->GetLayoutGridRows(),
+    this->MRMLSliceNode->GetLayoutGridColumns());
 }
 
 // --------------------------------------------------------------------------
@@ -121,18 +165,7 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new qMRMLSliceWidgetPrivate(*this))
 {
   Q_D(qMRMLSliceWidget);
-  d->setupUi(this);
-
-  // Highligh first RenderWindowItem
-  d->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
-
-  connect(d->VTKSliceView, SIGNAL(resized(const QSize&)),
-          d->SliceController, SLOT(setSliceViewSize(const QSize&)));
-
-  connect(d->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
-          d, SLOT(setImageData(vtkImageData*)));
-  connect(d->SliceController, SIGNAL(renderRequested()),
-          d->VTKSliceView, SLOT(scheduleRender()));
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -141,58 +174,15 @@ qMRMLSliceWidget::~qMRMLSliceWidget()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory)
+void qMRMLSliceWidget::addDisplayableManager(const QString& displayableManagerName)
 {
   Q_D(qMRMLSliceWidget);
-
-  QStringList displayableManagers;
-  //displayableManagers << "vtkSliceDisplayableManager";
-  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
-
-#ifdef Slicer_USE_PYTHONQT
-  if (!d->IgnoreScriptedDisplayableManagers)
-    {
-    QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
-    if (dirInfo.isDir())
-      {
-      //displayableManagers<< QString("%1/vtkScriptedExampleDisplayableManager.py").
-      //  arg(scriptedDisplayableManagerDirectory);
-      }
-    else
-      {
-      logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
-                   arg(scriptedDisplayableManagerDirectory));
-      }
-    }
-#else
-  Q_UNUSED(scriptedDisplayableManagerDirectory);
-#endif
-
-  // Register Displayable Managers
-  vtkMRMLSliceViewDisplayableManagerFactory* factory =
-      vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
-
-  foreach(const QString displayableManagerName, displayableManagers)
-    {
-    if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
-      {
-      factory->RegisterDisplayableManager(displayableManagerName.toLatin1());
-      }
-    }
-
-  d->DisplayableManagerGroup = factory->InstantiateDisplayableManagers(
-      d->VTKSliceView->lightBoxRendererManager()->GetRenderer(0));
-  Q_ASSERT(d->DisplayableManagerGroup);
-
-  d->DisplayableManagerGroup->SetMRMLDisplayableNode(d->MRMLSliceNode);
-
-  // Observe displayable manager group to catch RequestRender events
-  d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
-                 d->VTKSliceView, SLOT(scheduleRender()));
+  vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
+  displayableManager.TakeReference(
+    vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(
+      displayableManagerName.toLatin1()));
+  d->DisplayableManagerGroup->AddDisplayableManager(displayableManager);
 }
-
-//------------------------------------------------------------------------------
-CTK_SET_CPP(qMRMLSliceWidget, bool, setIgnoreScriptedDisplayableManagers, IgnoreScriptedDisplayableManagers);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
@@ -234,21 +224,15 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
     {
     return;
     }
-  if (d->DisplayableManagerGroup)
-    {
-    d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
-    }
-  d->SliceController->setMRMLSliceNode(newSliceNode);
 
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
                    d, SLOT(updateWidgetFromMRMLSliceNode()));
 
   d->MRMLSliceNode = newSliceNode;
+  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
+  d->SliceController->setMRMLSliceNode(newSliceNode);
 
-  if (newSliceNode)
-    {
-    d->updateWidgetFromMRMLSliceNode();
-    }
+  d->updateWidgetFromMRMLSliceNode();
 }
 
 //---------------------------------------------------------------------------
