@@ -18,10 +18,10 @@
 #ifndef __itkN4MRIBiasFieldCorrectionImageFilter_txx
 #define __itkN4MRIBiasFieldCorrectionImageFilter_txx
 
-#include "itkN4MRIBiasFieldCorrectionImageFilter.h"
+#include "SlicerITKv3N4MRIBiasFieldCorrectionImageFilter.h"
+#include "SlicerITKv3BSplineControlPointImageFilter.h"
 
 #include "itkAddImageFilter.h"
-#include "itkBSplineControlPointImageFilter.h"
 #include "itkDivideImageFilter.h"
 #include "itkExpImageFilter.h"
 #include "itkImageRegionIterator.h"

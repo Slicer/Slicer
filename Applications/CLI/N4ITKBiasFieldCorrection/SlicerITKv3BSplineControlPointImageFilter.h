@@ -386,7 +386,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBSplineControlPointImageFilter.txx"
+#include "SlicerITKv3BSplineControlPointImageFilter.txx"
 #endif
 
 #endif

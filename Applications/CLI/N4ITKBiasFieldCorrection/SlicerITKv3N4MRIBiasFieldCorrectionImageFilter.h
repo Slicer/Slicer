@@ -428,7 +428,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkN4MRIBiasFieldCorrectionImageFilter.txx"
+#include "SlicerITKv3N4MRIBiasFieldCorrectionImageFilter.txx"
 #endif
 
 #endif

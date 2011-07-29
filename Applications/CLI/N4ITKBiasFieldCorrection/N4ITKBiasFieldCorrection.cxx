@@ -1,10 +1,17 @@
 #include "itkConstantPadImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageFileWriter.h"
-#include "itkN4MRIBiasFieldCorrectionImageFilter.h"
 #include "itkOtsuThresholdImageFilter.h"
 #include "itkShrinkImageFilter.h"
 
+
+#if ITK_VERSION_MAJOR >=4
+//This is  now officially part of ITKv4
+#include "itkN4MRIBiasFieldCorrectionImageFilter.h"
+#else
+//Need private version for ITKv3 that does not conflict with ITKv4 fixes
+#include "SlicerITKV3N4MRIBiasFieldCorrectionImageFilter.h"
+#endif
 
 
 #include "N4ITKBiasFieldCorrectionCLP.h"

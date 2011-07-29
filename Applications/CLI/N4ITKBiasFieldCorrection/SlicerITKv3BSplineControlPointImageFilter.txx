@@ -1,7 +1,7 @@
 #ifndef __itkBSplineControlPointImageFilter_txx
 #define __itkBSplineControlPointImageFilter_txx
 
-#include "itkBSplineControlPointImageFilter.h"
+#include "SlicerITKv3BSplineControlPointImageFilter.h"
 
 #include "itkImageDuplicator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
