@@ -1,19 +1,16 @@
 
-#-----------------------------------------------------------------------------
-# Get and build itk
-#-----------------------------------------------------------------------------
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-IF(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  RETURN()
-ENDIF()
-SET(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(ITK_PYTHON_ARGS
-      -DPYTHON_EXECUTABLE:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_EXECUTABLE}
-      -DPYTHON_INCLUDE_DIR:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_INCLUDE}
-      -DPYTHON_LIBRARY:FILEPATH=${${CMAKE_PROJECT_NAME}_PYTHON_LIBRARY}
-      )
+  -DPYTHON_EXECUTABLE:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_EXECUTABLE}
+  -DPYTHON_INCLUDE_DIR:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_INCLUDE}
+  -DPYTHON_LIBRARY:FILEPATH=${${CMAKE_PROJECT_NAME}_PYTHON_LIBRARY}
+  )
 
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
@@ -28,9 +25,10 @@ SlicerMacroCheckExternalProjectDependency(ITKv4)
 set(proj ITKv4)
 
 if(NOT DEFINED ITK_DIR)
-  #
-  # this code fixes a loony problem with HDF5 -- it doesn't
-  # link properly if -fopenmp is used.
+  #message(STATUS "${__indent}Adding project ${proj}")
+
+  # HACK This code fixes a loony problem with HDF5 -- it doesn't
+  #      link properly if -fopenmp is used.
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
@@ -70,8 +68,7 @@ if(NOT DEFINED ITK_DIR)
       -DWRAP_ITK_TCL:BOOL=OFF
       -DWRAP_ITK_JAVA:BOOL=OFF
       -DWRAP_ITK_PYTHON:BOOL=ON
-      ##Slicer Added dependancy needed
-      -DKWSYS_USE_MD5:BOOL=ON
+      -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       ${ITK_PYTHON_ARGS}
       ${FFTW_FLAGS}
       #    ${CableSwig_FLAGS}
