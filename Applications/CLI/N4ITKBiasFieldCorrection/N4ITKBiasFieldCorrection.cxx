@@ -276,9 +276,14 @@ int main(int argc, char** argv){
     itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0/1.0, 0.0);
     correcter->Update();
     }
+  catch( itk::ExceptionObject &err )
+    {
+    std::cerr << err << std::endl;
+    return  EXIT_FAILURE;
+    }
   catch(...)
     {
-    std::cerr << "Excepion caugh." << std::endl;
+    std::cerr << "Unknown Exception caught." << std::endl;
     return EXIT_FAILURE;
     }
 
