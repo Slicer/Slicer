@@ -11,7 +11,7 @@ scmurl Testing/LoadableExtensionTemplate
 # list dependencies
 # - These should be names of other modules that have .s4ext files
 # - The dependencies will be built first
-depends     
+depends NA
 
 # homepage
 homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting
