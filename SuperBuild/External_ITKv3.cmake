@@ -12,11 +12,11 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
 endif()
 
 # Set dependency list
-set(Insight_DEPENDENCIES "")
+set(ITKv3_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(Insight)
-set(proj Insight)
+SlicerMacroCheckExternalProjectDependency(ITKv3)
+set(proj ITKv3)
 
 # Set CMake OSX variable to pass down the external project
 set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -50,16 +50,16 @@ if(NOT DEFINED ITK_DIR)
       -DITK_USE_CENTERED_PIXEL_COORDINATES_CONSISTENTLY:BOOL=ON
       -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON
       -DITK_LEGACY_REMOVE:BOOL=ON
-      -DKWSYS_USE_MD5:BOOL=ON
+      -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
     INSTALL_COMMAND ""
     DEPENDS
-      ${Insight_DEPENDENCIES}
+      ${ITKv3_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
   # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK,
   # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${Insight_DEPENDENCIES}")
+  SlicerMacroEmptyExternalProject(${proj} "${ITKv3_DEPENDENCIES}")
 endif()
 
