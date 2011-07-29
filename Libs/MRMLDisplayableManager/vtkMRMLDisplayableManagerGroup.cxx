@@ -189,10 +189,10 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
 
   for(int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
     {
-    const char* classOrScriptName = factory->GetRegisteredDisplayableManagerName(i).c_str();
+    std::string classOrScriptName = factory->GetRegisteredDisplayableManagerName(i);
     vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
     displayableManager.TakeReference(
-      vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(classOrScriptName));
+      vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(classOrScriptName.c_str()));
     // Note that DisplayableManagerGroup will take ownership of the object
     this->AddDisplayableManager(displayableManager);
     }
