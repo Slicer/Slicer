@@ -156,7 +156,8 @@ set(SLICER_ENVVARS_BUILD
 
 if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/python")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
 
   # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
@@ -279,6 +280,7 @@ if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
 
   # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
   # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,

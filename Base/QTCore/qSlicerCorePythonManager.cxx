@@ -69,6 +69,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
   paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR;
+  paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR;
 #endif
 
 #ifdef Slicer_BUILD_QTSCRIPTEDMODULES

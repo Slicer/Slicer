@@ -50,6 +50,7 @@
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
 #  define Slicer_QTLOADABLEMODULES_BIN_DIR "@Slicer_QTLOADABLEMODULES_BIN_DIR@"
 #  define Slicer_QTLOADABLEMODULES_LIB_DIR "@Slicer_QTLOADABLEMODULES_LIB_DIR@"
+#  define Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR "@Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR@"
 #  define Slicer_QTLOADABLEMODULES_INCLUDE_DIR "@Slicer_QTLOADABLEMODULES_INCLUDE_DIR@"
 #  define Slicer_QTLOADABLEMODULES_SHARE_DIR "@Slicer_QTLOADABLEMODULES_SHARE_DIR@"
 #endif //Slicer_BUILD_QTLOADABLEMODULES
@@ -76,7 +77,7 @@
 #  define Slicer_INCR_TCL_VERSION "@INCR_TCL_VERSION@"
 #endif //Slicer_USE_PYTHONQT_WITH_TCL
 
-// Library sub-directory
+// Library sub-directory - The following macros define directories only valid for a given build tree.
 #define VTK_DIR "@VTK_DIR@"
 #define CTK_DIR "@CTK_DIR@"
 //#define Teem_DIR "@Teem_DIR@"

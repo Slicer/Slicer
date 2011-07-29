@@ -231,15 +231,17 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
-# Slicer install directories
-#------------------------------------------------------------------------------
-
+# Slicer sub-directories
+#-----------------------------------------------------------------------------
 set(Slicer_BIN_DIR "bin")
 set(Slicer_LIB_DIR "lib/Slicer3")
 set(Slicer_INCLUDE_DIR "include/Slicer")
 set(Slicer_SHARE_DIR "share/Slicer")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
+#-----------------------------------------------------------------------------
+# Slicer install directories
+#-----------------------------------------------------------------------------
 set(Slicer_INSTALL_ROOT "./")
 if(APPLE)
   # Set to create Bundle
@@ -514,16 +516,18 @@ set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
 set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
-# Qt Loadable and Scripted Modules
+# Qt Loadable and Scripted Modules relative directories
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_QTLOADABLEMODULES_BIN_DIR "qt-loadable-modules")
   set(Slicer_QTLOADABLEMODULES_LIB_DIR "qt-loadable-modules")
+  set(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR "qt-loadable-modules/Python")
   set(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-loadable-modules")
   set(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-loadable-modules")
 
   set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_BIN_DIR}")
   set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
   set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
   set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
 endif()
