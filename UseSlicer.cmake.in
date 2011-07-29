@@ -64,11 +64,12 @@ include(SlicerMacroParseArguments)
 include(SlicerMacroBuildCLI)
 include(SlicerMacroBuildModuleQtLibrary)
 include(SlicerMacroBuildModuleVTKLibrary)
-#include(SlicerMacroPythonWrapModuleVTKLibrary)
+include(SlicerMacroPythonWrapModuleVTKLibrary)
 include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildModuleWidgets)
 include(SlicerMacroBuildQtModule)
+include(vtkMacroKitPythonWrap)
 
 
 #-----------------------------------------------------------------------------
