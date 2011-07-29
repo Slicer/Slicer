@@ -53,13 +53,11 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    QString slicerHome = qSlicerCoreApplication::application()->slicerHome();
-
     // By convention, if the module is an extension,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
-    QString modulePath = QFileInfo(module->path()).path();
-    if (QDir::cleanPath(modulePath) != QDir::cleanPath(slicerHome + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR))
+    if (qSlicerCoreApplication::application()->isExtension(module->path()))
       {
+      QString modulePath = QFileInfo(module->path()).path();
       QString pythonPath = modulePath + "/Python";
       QStringList paths; paths << modulePath << pythonPath;
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
