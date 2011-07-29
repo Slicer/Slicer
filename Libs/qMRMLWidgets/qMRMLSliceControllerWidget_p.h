@@ -21,6 +21,9 @@
 #ifndef __qMRMLSliceControllerWidget_p_h
 #define __qMRMLSliceControllerWidget_p_h
 
+// Qt includes
+class QToolButton;
+
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
@@ -40,6 +43,8 @@
 
 class QSpinBox;
 class QDoubleSpinBox;
+class ctkPopupWidget;
+class ctkSliderWidget;
 class ctkVTKSliceView;
 class vtkMRMLSliceNode;
 class vtkObject;
@@ -55,8 +60,9 @@ protected:
   qMRMLSliceControllerWidget* const q_ptr;
 public:
   qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
+  virtual ~qMRMLSliceControllerWidgetPrivate();
 
-  void setupUi(qMRMLWidget* widget);
+  void init();
 
   void setupLinkedOptionsMenu();
   void setupMoreOptionsMenu();
@@ -100,6 +106,7 @@ public slots:
 
   void applyCustomLightbox();
 protected:
+  virtual void setupUi(ctkPopupWidget* widget);
   void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 
@@ -114,6 +121,9 @@ public:
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
+  QToolButton*                        PinButton;
+  ctkSliderWidget*                    SliceOffsetSlider;
+  ctkPopupWidget*                     PopupWidget;
   ctkSliderWidget*                    LabelOpacitySlider;
   QToolButton*                        LabelOpacityToggleButton;
   double                              LastLabelOpacity;

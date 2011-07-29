@@ -3,12 +3,15 @@
     <file>Icons/VisibleOff.png</file>
     <file>Icons/VisibleOn.png</file>
     <file>Icons/VisibleOrInvisible.png</file>
-	<file>Icons/VisiblePartially.png</file>
+    <file>Icons/VisiblePartially.png</file>
 
     <file>Icons/LinkOff.png</file>
     <file>Icons/LinkOn.png</file>
     <file>Icons/HotLinkOn.png</file>
-   
+
+    <file>Icons/PushPinIn.png</file>
+    <file>Icons/PushPinOut.png</file>
+
     <file>Icons/LayoutChooseView.png</file>
     <file>Icons/LayoutCompareView.png</file>
     <file>Icons/LayoutConventionalView.png</file>

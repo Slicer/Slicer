@@ -1,436 +1,320 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qMRMLSliceControllerWidget</class>
- <widget class="qMRMLWidget" name="qMRMLSliceControllerWidget">
-  <property name="enabled">
-   <bool>false</bool>
-  </property>
+ <widget class="ctkPopupWidget" name="qMRMLSliceControllerWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>182</width>
-    <height>107</height>
+    <width>176</width>
+    <height>66</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Slice Controller</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <property name="autoShow">
+   <bool>false</bool>
+  </property>
+  <property name="autoHide">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0,1">
    <property name="margin">
     <number>0</number>
    </property>
-   <item>
-    <widget class="QToolButton" name="SliceCollapsibleButton">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QToolButton" name="OrientationToolButton">
+     <property name="toolTip">
+      <string>Select options for the Viewer's orientation (not yet implemented).</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceViewerOR.png</normaloff>:/Icons/SliceViewerOR.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="ctkComboBox" name="SliceOrientationSelector">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>0</width>
-       <height>16</height>
+       <width>65</width>
+       <height>0</height>
       </size>
      </property>
-     <property name="maximumSize">
+     <property name="toolTip">
+      <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     </property>
+     <property name="elideMode">
+      <enum>Qt::ElideMiddle</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>Axial</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sagittal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coronal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Reformat</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QToolButton" name="LabelMapLayerOptionButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Select options for the Label Layer (not yet implemented).</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceViewerLB.png</normaloff>:/Icons/SliceViewerLB.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="qMRMLNodeComboBox" name="LabelMapSelector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
       <size>
-       <width>16777215</width>
-       <height>16</height>
+       <width>65</width>
+       <height>0</height>
       </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the label map</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QToolButton" name="SliceLinkButton">
+     <property name="toolTip">
+      <string>Links/Unlinks the slice controls (except scales) across all Slice Viewers.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/LinkOff.png</normaloff>
+       <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QToolButton" name="SliceVisibilityButton">
+     <property name="toolTip">
+      <string>Toggles slice visibility in the MainViewer.</string>
      </property>
      <property name="text">
       <string>...</string>
      </property>
-     <property name="arrowType">
-      <enum>Qt::DownArrow</enum>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/VisibleOff.png</normaloff>
+       <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QWidget" name="ControllerWidgetGroup" native="true">
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,1">
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QToolButton" name="OrientationToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Select options for the Viewer's orientation (not yet implemented).</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../qMRMLWidgets.qrc">
-          <normaloff>:/Icons/SliceViewerOR.png</normaloff>:/Icons/SliceViewerOR.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="ctkComboBox" name="SliceOrientationSelector">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>1</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>65</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-        </property>
-        <item>
-         <property name="text">
-          <string>Axial</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Sagittal</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Coronal</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Reformat</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="ForegroundLayerOptionButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Select options for the Foreground Layer</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../qMRMLWidgets.qrc">
-          <normaloff>:/Icons/SliceViewerFG.png</normaloff>:/Icons/SliceViewerFG.png</iconset>
-        </property>
-        <property name="popupMode">
-         <enum>QToolButton::InstantPopup</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>1</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>65</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Select the foreground</string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLVolumeNode</string>
-         </stringlist>
-        </property>
-        <property name="noneEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="renameEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QToolButton" name="LabelMapLayerOptionButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Select options for the Label Layer (not yet implemented).</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../qMRMLWidgets.qrc">
-          <normaloff>:/Icons/SliceViewerLB.png</normaloff>:/Icons/SliceViewerLB.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="LabelMapSelector" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>1</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>65</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Select the label map</string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLVolumeNode</string>
-         </stringlist>
-        </property>
-        <property name="noneEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="renameEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QToolButton" name="BackgroundLayerOptionButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Select options for the Background Layer</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../qMRMLWidgets.qrc">
-          <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
-        </property>
-        <property name="popupMode">
-         <enum>QToolButton::InstantPopup</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>1</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>65</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Select the background</string>
-        </property>
-        <property name="nodeTypes" stdset="0">
-         <stringlist>
-          <string>vtkMRMLVolumeNode</string>
-         </stringlist>
-        </property>
-        <property name="noneEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="removeEnabled" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="renameEnabled" stdset="0">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="4">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QToolButton" name="SliceLinkButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Links/Unlinks/Hot links controls across all Slice Viewers.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="popupMode">
-            <enum>QToolButton::DelayedPopup</enum>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/LinkOff.png</normaloff>
-            <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="SliceVisibilityButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Toggles slice visibility in the MainViewer.</string>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/VisibleOff.png</normaloff>
-            <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="SliceMoreOptionButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
-          </property>
-          <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="ctkSliderWidget" name="SliceOffsetSlider" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Slice distance from RAS origin</string>
-          </property>
-          <property name="pageStep" stdset="0">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="tracking" stdset="0">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="SliceIndexLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Slice number display
-Integer: slice number starting from 1 (not 0)
-Letter 'O': slice is out of volume
-Letter 'R': use Rotate to Volume Plane to see slice index
-
-Use this display to cross-reference to filmed images or other displays.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="SliceMoreOptionButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
+     </property>
     </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QToolButton" name="ForegroundLayerOptionButton">
+     <property name="toolTip">
+      <string>Select options for the Foreground Layer</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceViewerFG.png</normaloff>:/Icons/SliceViewerFG.png</iconset>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the foreground</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QToolButton" name="BackgroundLayerOptionButton">
+     <property name="toolTip">
+      <string>Select options for the Background Layer</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5">
+    <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the background</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </spacer>
    </item>
   </layout>
   <action name="actionHotLinked">
@@ -444,652 +328,241 @@ Use this display to cross-reference to filmed images or other displays.</string>
     <string>Set linking behavior to hot linked controls. When on, Slice interactions affect other slices immediately. When off, Slice interactions affect other slices after the interaction completes.</string>
    </property>
   </action>
-  <action name="actionFit_to_window">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
-   </property>
-   <property name="text">
-    <string>Fit to window</string>
-   </property>
-   <property name="toolTip">
-    <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
-   </property>
-  </action>
-  <action name="actionRotate_to_volume_plane">
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
-   </property>
-   <property name="text">
-    <string>Rotate to volume plane</string>
-   </property>
-   <property name="toolTip">
-    <string>Rotate to volume plane</string>
-   </property>
-  </action>
-  <action name="actionShow_label_volume_outline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
-     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
-   </property>
-   <property name="text">
-    <string>Hide label volume outlines</string>
-   </property>
-   <property name="toolTip">
-    <string>Toggle between showing label map volume with regions outlined or filled.</string>
-   </property>
-  </action>
-  <action name="actionShow_reformat_widget">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
-     <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
-   </property>
-   <property name="text">
-    <string>Show reformat widget</string>
-   </property>
-  </action>
-  <action name="actionCompositingAlpha_blend">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Alpha blend</string>
-   </property>
-  </action>
-  <action name="actionCompositingReverse_alpha_blend">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Reverse alpha blend</string>
-   </property>
-  </action>
-  <action name="actionCompositingAdd">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Add</string>
-   </property>
-  </action>
-  <action name="actionCompositingSubtract">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Subtract</string>
-   </property>
-  </action>
-  <action name="actionSliceSpacingModeAutomatic">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png</iconset>
-   </property>
-   <property name="text">
-    <string>Automatic</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x1_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x1 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x2_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x2 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x3_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x3 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x4_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x4 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x6_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x6 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x8_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x8 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox2x2_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>2x2 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox3x3_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>3x3 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox6x6_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>6x6 view</string>
-   </property>
-  </action>
-  <action name="actionAdjustDisplayForeground_volume">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Foreground volume</string>
-   </property>
-  </action>
-  <action name="actionAdjustDisplayBackground_volume">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Background volume</string>
-   </property>
-  </action>
-  <action name="actionAdjustDisplayLabel_map_volume">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Label map volume</string>
-   </property>
-  </action>
-  <action name="actionForegroundInterpolation">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Interpolation</string>
-   </property>
-  </action>
-  <action name="actionBackgroundInterpolation">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Interpolation</string>
-   </property>
-  </action>
+   <action name="actionFit_to_window">
+     <property name="icon">
+       <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png
+       </iconset>
+     </property>
+     <property name="text">
+       <string>Fit to window</string>
+     </property>
+     <property name="toolTip">
+       <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+     </property>
+   </action>
+   <action name="actionRotate_to_volume_plane">
+     <property name="icon">
+       <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png
+       </iconset>
+     </property>
+     <property name="text">
+       <string>Rotate to volume plane</string>
+     </property>
+     <property name="toolTip">
+       <string>Rotate to volume plane</string>
+     </property>
+   </action>
+   <action name="actionShow_label_volume_outline">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="icon">
+       <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
+         <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png
+       </iconset>
+     </property>
+     <property name="text">
+       <string>Hide label volume outlines</string>
+     </property>
+     <property name="toolTip">
+       <string>Toggle between showing label map volume with regions outlined or filled.</string>
+     </property>
+   </action>
+   <action name="actionShow_reformat_widget">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="icon">
+       <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
+         <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png
+       </iconset>
+     </property>
+     <property name="text">
+       <string>Show reformat widget</string>
+     </property>
+   </action>
+   <action name="actionCompositingAlpha_blend">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Alpha blend</string>
+     </property>
+   </action>
+   <action name="actionCompositingReverse_alpha_blend">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Reverse alpha blend</string>
+     </property>
+   </action>
+   <action name="actionCompositingAdd">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Add</string>
+     </property>
+   </action>
+   <action name="actionCompositingSubtract">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Subtract</string>
+     </property>
+   </action>
+   <action name="actionSliceSpacingModeAutomatic">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="icon">
+       <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png
+       </iconset>
+     </property>
+     <property name="text">
+       <string>Automatic</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x1_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x1 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x2_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x2 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x3_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x3 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x4_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x4 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x6_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x6 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x8_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>1x8 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox2x2_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>2x2 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox3x3_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>3x3 view</string>
+     </property>
+   </action>
+   <action name="actionLightbox6x6_view">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>6x6 view</string>
+     </property>
+   </action>
+   <action name="actionAdjustDisplayForeground_volume">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Foreground volume</string>
+     </property>
+   </action>
+   <action name="actionAdjustDisplayBackground_volume">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Background volume</string>
+     </property>
+   </action>
+   <action name="actionAdjustDisplayLabel_map_volume">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Label map volume</string>
+     </property>
+   </action>
+   <action name="actionForegroundInterpolation">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Interpolation</string>
+     </property>
+   </action>
+   <action name="actionBackgroundInterpolation">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Interpolation</string>
+     </property>
+   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkComboBox</class>
-   <extends>QComboBox</extends>
-   <header>ctkComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWidget.h</header>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPopupWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkPopupWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>qMRMLSliceControllerWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>BackgroundLayerNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>475</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qMRMLSliceControllerWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ForegroundLayerNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>475</x>
-     <y>31</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qMRMLSliceControllerWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>LabelMapSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>165</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionFit_to_window</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>fitSliceToBackground()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionRotate_to_volume_plane</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>rotateSliceToBackground()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShow_label_volume_outline</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>showLabelOutline(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShow_reformat_widget</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>showReformatWidget(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCompositingAlpha_blend</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setCompositingToAlphaBlend()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCompositingReverse_alpha_blend</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setCompositingToReverseAlphaBlend()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCompositingAdd</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setCompositingToAdd()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCompositingSubtract</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setCompositingToSubtract()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionSliceSpacingModeAutomatic</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setSliceSpacingMode(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x1_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x1()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x2_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x3_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x3()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x4_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x4()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x6_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x6()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox1x8_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo1x8()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox2x2_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo2x2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox3x3_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo3x3()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLightbox6x6_view</sender>
-   <signal>triggered()</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setLightboxTo6x6()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionForegroundInterpolation</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setForegroundInterpolation(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionBackgroundInterpolation</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setBackgroundInterpolation(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>195</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionHotLinked</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>qMRMLSliceControllerWidget</receiver>
-   <slot>setHotLinked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>90</x>
-     <y>53</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
- <slots>
-  <slot>fitSliceToBackground()</slot>
-  <slot>rotateSliceToBackground()</slot>
-  <slot>showLabelOutline(bool)</slot>
-  <slot>showReformatWidget(bool)</slot>
-  <slot>setCompositingToAlphaBlend()</slot>
-  <slot>setCompositingToReverseAlphaBlend()</slot>
-  <slot>setCompositingToAdd()</slot>
-  <slot>setCompositingToSubtract()</slot>
-  <slot>setSliceSpacingMode(bool)</slot>
-  <slot>setLightboxTo1x1()</slot>
-  <slot>setLightboxTo1x2()</slot>
-  <slot>setLightboxTo1x4()</slot>
-  <slot>setLightboxTo1x6()</slot>
-  <slot>setLightboxTo1x8()</slot>
-  <slot>setLightboxTo2x2()</slot>
-  <slot>setLightboxTo3x3()</slot>
-  <slot>setLightboxTo6x6()</slot>
-  <slot>setLightboxTo1x3()</slot>
-  <slot>setForegroundInterpolation(bool)</slot>
-  <slot>setBackgroundInterpolation(bool)</slot>
-  <slot>setHotLinked(bool)</slot>
- </slots>
+ <connections/>
 </ui>
