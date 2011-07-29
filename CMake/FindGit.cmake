@@ -107,14 +107,13 @@ if(GIT_EXECUTABLE)
     set(${prefix}_WC_GITSVN False)
 
     # Check if this git is likely to be a git-svn repository
-    execute_process(COMMAND ${GIT_EXECUTABLE} config --list
+    execute_process(COMMAND ${GIT_EXECUTABLE} config --get-regexp "^svn-remote"
       WORKING_DIRECTORY ${dir}
-      TIMEOUT 3
-      ERROR_VARIABLE git_config_error
       OUTPUT_VARIABLE git_config_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
       )
 
-    if(${git_config_output} MATCHES "svn[-]remote")
+    if(NOT "${git_config_output}" STREQUAL "")
       # In case git-svn is used, attempt to extract svn info
       execute_process(COMMAND ${GIT_EXECUTABLE} svn info
         WORKING_DIRECTORY ${dir}
@@ -139,7 +138,7 @@ if(GIT_EXECUTABLE)
         string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
           "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
       endif(${git_svn_info_result} EQUAL 0)
-    endif(${git_config_output} MATCHES "svn[-]remote")
+    endif(NOT "${git_config_output}" STREQUAL "")
   endmacro(GIT_WC_INFO)
 endif(GIT_EXECUTABLE)
 
