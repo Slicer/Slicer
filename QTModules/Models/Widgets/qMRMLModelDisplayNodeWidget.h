@@ -28,14 +28,14 @@
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qSlicerModelsModuleExport.h"
+#include "qSlicerModelsModuleWidgetsExport.h"
 
 class qMRMLModelDisplayNodeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLColorTableNode;
 
-class Q_SLICER_QTMODULES_MODELS_EXPORT qMRMLModelDisplayNodeWidget : public QWidget
+class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -56,7 +56,7 @@ public slots:
   void setMRMLModelDisplayNode(vtkMRMLNode *node);
   /// Utility function to be connected with generic signals,
   /// it internally shows the 1st display node.
-  // can be set from a model node or a model hierarchy node
+  /// can be set from a model node or a model hierarchy node
   void setMRMLModelOrHierarchyNode(vtkMRMLNode* modelNode);
   
   void setScalarsVisibility(bool);

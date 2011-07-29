@@ -3,6 +3,9 @@ set(qt_module_name "Models")
 
 set(qt_module_export_directive "Q_SLICER_QTMODULES_MODELS_EXPORT")
 
+# Build module sub libraries
+add_subdirectory(Widgets)
+
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 # Is used by the Plugins and Testing directories
 set(qt_module_include_directories
@@ -18,8 +21,6 @@ set(qt_module_SRCS
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.cxx
   qSlicerModelsModuleWidget.h
-  Widgets/qMRMLModelDisplayNodeWidget.cxx
-  Widgets/qMRMLModelDisplayNodeWidget.h
   )
 
 # Headers that should run through moc
@@ -27,17 +28,16 @@ set(qt_module_MOC_SRCS
   qSlicerModelsIO.h
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.h
-  Widgets/qMRMLModelDisplayNodeWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerModelsModule.ui
-  Resources/UI/qMRMLModelDisplayNodeWidget.ui
 )
 
 # Additional Target libraries
 set(qt_module_target_libraries
+  qSlicerModelsModuleWidgets
   )
 
 # Resources
@@ -56,9 +56,7 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-add_subdirectory(Widgets/Plugins)
-
 if(BUILD_TESTING)
   add_subdirectory(Testing)
-  add_subdirectory(Widgets/Testing)
 endif()
+

@@ -26,7 +26,7 @@ set(designer_plugin_MOC_SRCS
   )
 
 set(designer_plugin_TARGET_LIBRARIES
-  qSlicerModelsModule
+  qSlicerModelsModuleWidgets
   )
 
 qctk_build_designer_plugin(
