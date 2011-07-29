@@ -47,9 +47,14 @@ foreach(extension_name ${EXTENSION_LIST})
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
   string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS "${EXTENSION_SEXT_DEPENDS}")
 
-  #foreach(v SCM SCMURL DEPENDS HOMEPAGE CATEGORY STATUS DESCRIPTION)
+  #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY STATUS DESCRIPTION)
   #  message(${v}:${EXTENSION_SEXT_${v}})
   #endforeach()
+  
+  # Set apporpriate default value for optional property
+  if("${EXTENSION_SEXT_BUILD_SUBDIRECTORY}" STREQUAL "")
+    set(EXTENSION_SEXT_BUILD_SUBDIRECTORY ".")
+  endif()
 
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
@@ -109,7 +114,8 @@ foreach(extension_name ${EXTENSION_LIST})
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: TRUE
           #-----------------------------------------------------------------------------
-          set(EXTENSION_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
+          set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
+          set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_SEXT_BUILD_SUBDIRECTORY})
           include(SlicerBlockUploadExtension)
           # Add extension external project
           set(proj ${EXTENSION_NAME})
@@ -169,6 +175,7 @@ foreach(extension_name ${EXTENSION_LIST})
               -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
               -DBUILD_TESTING:BOOL=OFF
               -DSlicer_DIR:PATH=${Slicer_BINARY_DIR}/Slicer-build
+              -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
               ${sext_ep_option_scm_executable}
             ${EXTENSION_DEPENDS}
             )
@@ -193,6 +200,7 @@ foreach(extension_name ${EXTENSION_LIST})
                 -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
                 -DBUILD_TESTING:BOOL=OFF
                 -DSlicer_DIR:PATH=${Slicer_DIR}
+                -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
                 ${sext_ep_option_scm_executable}
               ${EXTENSION_REBUILD_DEPENDS}
               )

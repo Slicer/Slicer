@@ -26,6 +26,7 @@
 # The function defines the following variables in the caller scope:
 #  <var-prefix>_SEXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
 #  <var-prefix>_SEXT_SCMURL - URL of the associated source repository
+#  <var-prefix>_SEXT_BUILD_SUBDIRECTORY - Corresponds to the xxtension inner build directory (default is ".")
 #  <var-prefix>_SEXT_DEPENDS - list of dependencies
 #  <var-prefix>_SEXT_HOMEPAGE - homepage
 #  <var-prefix>_SEXT_CATEGORY - category
@@ -57,7 +58,7 @@ function(slicerFunctionExtractExtensionDescription)
   # Read file
   file(READ ${MY_EXTENSION_FILE} extension_file_content)
 
-  set(extension_description_tokens scm scmurl depends homepage category status description)
+  set(extension_description_tokens scm scmurl depends build_subdirectory homepage category status description)
 
   foreach(token ${extension_description_tokens})
 
@@ -65,16 +66,16 @@ function(slicerFunctionExtractExtensionDescription)
     string(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
           "\\2" sext_${upper_case_token} "${extension_file_content}")
 
-    # Using the regular expression reported above, if there is no match, the second matched
-    # string will be one space. In that case, let's change it to be an empty string.
-    if(sext_${upper_case_token} STREQUAL " ")
-      set(sext_${upper_case_token} "")
-    endif()
-
     # If there was no match, set to an empty string
     if (sext_${upper_case_token} STREQUAL "${extension_file_content}")
       set(sext_${upper_case_token} "")
     endif()
+    
+    # Trim value
+    set(str ${sext_${upper_case_token}})
+    string(REGEX REPLACE "^[ \t\r\n]+" "" str "${str}")
+    string(REGEX REPLACE "[ \t\r\n]+$" "" str "${str}")
+    set(sext_${upper_case_token} ${str})
 
     set(${MY_VAR_PREFIX}_SEXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
   endforeach()

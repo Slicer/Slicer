@@ -22,7 +22,7 @@ include(SlicerMacroExtractRepositoryInfo)
 
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
-  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -37,6 +37,11 @@ function(slicerFunctionGenerateExtensionDescription)
   if(NOT "${MY_EXTENSION_DEPENDS}" STREQUAL "NA")
     # A list of extension names without spaces is expected
     #TODO if()
+  endif()
+  
+  # If not specified, EXTENSION_BUILD_SUBDIRECTORY default to "."
+  if("${MY_EXTENSION_BUILD_SUBDIRECTORY}" STREQUAL "")
+    set(MY_EXTENSION_BUILD_SUBDIRECTORY ".")
   endif()
 
   set(expected_existing_vars DESTINATION_DIR)
@@ -87,6 +92,9 @@ ${scm_path_token} ${scm_url}
 # - These should be names of other modules that have .s4ext files
 # - The dependencies will be built first
 depends     ${MY_EXTENSION_DEPENDS}
+
+# Inner build directory (default is ".")
+build_subdirectory ${MY_EXTENSION_BUILD_SUBDIRECTORY}
 
 # homepage
 homepage    ${MY_EXTENSION_HOMEPAGE}
