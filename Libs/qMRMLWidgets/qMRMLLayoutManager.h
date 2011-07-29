@@ -27,7 +27,7 @@
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLThreeDView;
+class qMRMLThreeDWidget;
 class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
 class vtkCollection;
@@ -63,7 +63,7 @@ public:
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
-  Q_INVOKABLE qMRMLThreeDView* threeDView(int id)const;
+  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;

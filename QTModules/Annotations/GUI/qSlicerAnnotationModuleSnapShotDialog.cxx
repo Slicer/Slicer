@@ -6,6 +6,7 @@
 #include "qSlicerLayoutManager.h"
 #include "qMRMLSliceWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
 #include "qMRMLUtils.h"
 
 #include "vtkImageData.h"
@@ -343,7 +344,7 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
       {
       // create a screenShot of the first 3DView
       widget
-          = qSlicerApplication::application()->layoutManager()->threeDView(0);
+          = qSlicerApplication::application()->layoutManager()->threeDWidget(0)->threeDView();
       }
     else
       {

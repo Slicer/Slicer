@@ -53,32 +53,32 @@ public:
   /// 
   /// Indicates whether or not the view is active
   vtkGetMacro (Active, int );
-  virtual void SetActive(int);
+  vtkSetMacro (Active, int );
 
   /// 
   /// Indicates whether or not the view is visible (if it is not visible,
   /// then the view is not shown in any of the view layouts, but can be privately
   /// used by modules)
   vtkGetMacro(Visibility, int);
-  virtual void SetVisibility ( int );
+  vtkSetMacro(Visibility, int);
 
   /// 
   /// Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
-  virtual void SetBoxVisible ( int );
+  vtkSetMacro(BoxVisible, int);
   
   /// 
   /// Indicates if the axis labels are visible
   vtkGetMacro(AxisLabelsVisible, int);
-  virtual void SetAxisLabelsVisible ( int );
+  vtkSetMacro(AxisLabelsVisible, int);
 
   /// 
   /// Toggles visibility of fiducial points in 3D viewer
   vtkGetMacro (FiducialsVisible, int );
-  virtual void SetFiducialsVisible ( int );
+  vtkSetMacro (FiducialsVisible, int );
 
   vtkGetMacro (FiducialLabelsVisible, int );
-  virtual void SetFiducialLabelsVisible ( int );
+  vtkSetMacro (FiducialLabelsVisible, int );
 
   /// 
   /// Field of view size
@@ -93,12 +93,12 @@ public:
   /// 
   /// Background color
   vtkGetVector3Macro (BackgroundColor, double);
-  virtual void SetBackgroundColor ( double *color );
+  vtkSetVector3Macro (BackgroundColor, double);
 
   /// 
   /// Turn on and off animated spinning or rocking.
   vtkGetMacro (AnimationMode, int );
-  virtual void SetAnimationMode ( int );
+  vtkSetMacro (AnimationMode, int );
 
   /// 
   vtkGetMacro (ViewAxisMode, int );
@@ -135,12 +135,12 @@ public:
   /// 
   /// stereo mode (including nostereo)
   vtkGetMacro ( StereoType, int );
-  virtual void SetStereoType ( int );
+  vtkSetMacro ( StereoType, int );
 
   /// 
   /// specifies orthographic or perspective rendering
   vtkGetMacro (RenderMode, int );
-  virtual void SetRenderMode ( int );
+  vtkSetMacro (RenderMode, int );
   
   /// Modes for automatically controlling camera 
   enum
@@ -186,24 +186,10 @@ public:
     };
 
   /// events
-  /// Ideally, the events defined below could be handle by
-  /// a MRMLViewNodeLogic
   enum
     {
-      AnimationModeEvent = 19001,
-      RenderModeEvent,
-      StereoModeEvent,
-      VisibilityEvent,
-      BackgroundColorEvent,
-      ActiveModifiedEvent,
-      GraphicalResourcesCreatedEvent,
-      PitchViewRequestedEvent,
-      RollViewRequestedEvent,
-      YawViewRequestedEvent,
-      ZoomInRequestedEvent,
-      ZoomOutRequestedEvent,
-      ResetFocalPointRequestedEvent,
-      LookFromAxisRequestedEvent
+    GraphicalResourcesCreatedEvent = 19001,
+    ResetFocalPointRequestedEvent,
     };
 
 protected:

@@ -244,7 +244,7 @@ namespace eval Slicer3Adapters {
 
     # methods
     method GetMainViewer {} {
-      $_renderWidget SetRenderWindowInteractor [py_eval "slicer.app.layoutManager().threeDView(0).renderWindow().GetInteractor()"]
+      $_renderWidget SetRenderWindowInteractor [py_eval "slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow().GetInteractor()"]
       return $_renderWidget
     }
     method RequestRender {} {

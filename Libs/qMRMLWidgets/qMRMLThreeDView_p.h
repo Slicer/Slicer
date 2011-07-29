@@ -21,9 +21,13 @@
 #ifndef __qMRMLThreeDView_p_h
 #define __qMRMLThreeDView_p_h
 
+// Qt includes
+class QToolButton;
+
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
+class ctkPopupWidget;
 
 // qMRML includes
 #include "qMRMLThreeDView.h"
@@ -45,6 +49,8 @@ public:
   qMRMLThreeDViewPrivate(qMRMLThreeDView& object);
   ~qMRMLThreeDViewPrivate();
 
+  virtual void init();
+
   void setMRMLScene(vtkMRMLScene* scene);
 
   /// Loop over all CameraNode from the scene and return the one having
@@ -53,24 +59,19 @@ public:
 
 public slots:
   /// Handle MRML scene event
-  void onSceneAboutToBeClosedEvent();
-  void onSceneAboutToBeImportedEvent();
-  void onSceneImportedEvent();
-  //  void onSceneRestoredEvent();
+  void onSceneStartProcessing();
+  void onSceneEndProcessing();
 
-  void onMRMLViewNodeModifiedEvent();
+  void updateWidgetFromMRML();
 
-  void onResetFocalPointRequestedEvent();
-
-  void onAnimationModeEvent();
-  void rockView();
-  void onLookFromAxisEvent(vtkObject* node, void* axis);
-
-public:
+protected:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
+  
+  QToolButton*                       PinButton;
+  ctkPopupWidget*                    PopupWidget;
   bool                               IgnoreScriptedDisplayableManagers;
 };
 

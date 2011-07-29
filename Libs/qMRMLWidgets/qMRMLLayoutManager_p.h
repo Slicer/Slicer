@@ -43,6 +43,7 @@ class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceWidget;
 class qMRMLThreeDView;
+class qMRMLThreeDWidget;
 class vtkCollection;
 class vtkObject;
 class vtkMRMLLayoutLogic;
@@ -77,10 +78,10 @@ public:
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
 
   /// Instantiate a 3D Viewer corresponding to \a viewNode
-  virtual qMRMLThreeDView* createThreeDView(vtkMRMLViewNode* viewNode);
+  virtual qMRMLThreeDWidget* createThreeDWidget(vtkMRMLViewNode* viewNode);
 
   /// Delete 3D Viewer associated with \a viewNode
-  void removeThreeDView(vtkMRMLViewNode* viewNode);
+  void removeThreeDWidget(vtkMRMLViewNode* viewNode);
 
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();
@@ -97,8 +98,8 @@ public:
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.
-  qMRMLThreeDView* threeDView(vtkMRMLViewNode* node)const;
-  qMRMLThreeDView* threeDView(int id)const;
+  qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
+  qMRMLThreeDWidget* threeDWidget(int id)const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -133,7 +134,7 @@ public:
   QButtonGroup*      SliceControllerButtonGroup;
   vtkCollection*     MRMLSliceLogics;
 
-  QList<qMRMLThreeDView*>           ThreeDViewList;
+  QList<qMRMLThreeDWidget*>         ThreeDWidgetList;
   QList<qMRMLSliceWidget*>          SliceWidgetList;
 protected:
   void showWidget(QWidget* widget);

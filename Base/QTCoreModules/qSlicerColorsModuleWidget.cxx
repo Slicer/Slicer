@@ -29,6 +29,7 @@
 
 // qMRMLWidget includes
 #include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
 
 // Slicer logic includes
 #include <vtkSlicerColorLogic.h>
@@ -146,7 +147,7 @@ void qSlicerColorsModuleWidget::setup()
   qSlicerApplication * app = qSlicerApplication::application();
   if (app && app->layoutManager())
     {
-    qMRMLThreeDView* threeDView = app->layoutManager()->threeDView(0);
+    qMRMLThreeDView* threeDView = app->layoutManager()->threeDWidget(0)->threeDView();
     vtkRenderer* activeRenderer = app->layoutManager()->activeThreeDRenderer();
     if (activeRenderer)
       {

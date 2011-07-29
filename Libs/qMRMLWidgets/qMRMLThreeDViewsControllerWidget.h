@@ -64,7 +64,6 @@ public slots:
 
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void setActiveThreeDRenderer(vtkRenderer* newActiveRenderer);
-  void lookFromAxis(const ctkAxesWidget::Axis& axis);
   void setDisplayModeToNavigation();
   void setDisplayModeToMagnification();
 

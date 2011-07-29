@@ -47,6 +47,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLSliceWidgetTest2.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLThreeDViewTest1.cxx
+  qMRMLThreeDWidgetTest1.cxx
   qMRMLTreeViewTest1.cxx
   qMRMLUtf8Test1.cxx
   qMRMLUtilsTest1.cxx
@@ -130,6 +131,7 @@ SCENE_TEST( qMRMLSliceWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLSliceWidgetTest2 fixed.nrrd)
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
 SIMPLE_TEST( qMRMLThreeDViewTest1 )
+SIMPLE_TEST( qMRMLThreeDWidgetTest1 )
 SCENE_TEST(  qMRMLTreeViewTest1 vol_and_cube.mrml )
 SCENE_TEST(  qMRMLUtf8Test1 cube-utf8.mrml )
 SIMPLE_TEST( qMRMLUtilsTest1 )

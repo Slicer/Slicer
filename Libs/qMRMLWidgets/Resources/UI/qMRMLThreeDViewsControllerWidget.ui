@@ -24,67 +24,11 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkAxesWidget" name="AxesWidget">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="autoReset">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="spacing">
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QToolButton" name="PitchButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Pitch the view of the scene.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewPitch.png</normaloff>:/Icons/ViewPitch.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QToolButton" name="CenterButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Center the 3D view on the scene.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
       <widget class="QToolButton" name="ScreenshotButton">
        <property name="enabled">
         <bool>false</bool>
@@ -101,82 +45,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QToolButton" name="ZoomInButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Zoom in on the scene by a small amount.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewZoomIn.png</normaloff>:/Icons/ViewZoomIn.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QToolButton" name="SpinButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Spin the 3D view.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewSpin.png</normaloff>:/Icons/ViewSpin.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
-      <widget class="QToolButton" name="RollButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Roll the view of the scene.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewRoll.png</normaloff>:/Icons/ViewRoll.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QToolButton" name="OrthoButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Toggle between orthographic and perspective rendering in the 3D view.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewPerspective.png</normaloff>
-         <normalon>:/Icons/ViewOrtho.png</normalon>:/Icons/ViewPerspective.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
       <widget class="QToolButton" name="SceneViewButton">
        <property name="toolTip">
         <string>Capture and name a scene view.</string>
@@ -190,81 +59,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QToolButton" name="ZoomOutButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Zoom out of the scene by a small amount.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewZoomOut.png</normaloff>:/Icons/ViewZoomOut.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="4">
-      <widget class="QToolButton" name="RockButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Rock the 3D view.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewRock.png</normaloff>:/Icons/ViewRock.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
-      <widget class="QToolButton" name="YawButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Yaw the view of the scene.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewYaw.png</normaloff>:/Icons/ViewYaw.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QToolButton" name="VisibilityButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Toggle visibility of elements in the 3D view.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/VisibleOn.png</normaloff>:/Icons/VisibleOn.png</iconset>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
       <widget class="QToolButton" name="SelectSceneViewMenuButton">
        <property name="toolTip">
         <string>Restore or delete saved scene views.</string>
@@ -275,26 +70,6 @@
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
          <normaloff>:/Icons/ViewCameraSelect.png</normaloff>:/Icons/ViewCameraSelect.png</iconset>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QToolButton" name="StereoButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Select among stereo viewing options (3DSlicer must be started with stereo enabled to use these features).</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewStereo.png</normaloff>:/Icons/ViewStereo.png</iconset>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
@@ -392,110 +167,6 @@
     </widget>
    </item>
   </layout>
-  <action name="actionNoStereo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>No Stereo</string>
-   </property>
-  </action>
-  <action name="actionSwitchToRedBlueStereo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Red/blue</string>
-   </property>
-  </action>
-  <action name="actionSwitchToAnaglyphStereo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Anaglyph</string>
-   </property>
-  </action>
-  <action name="actionSwitchToCrystalEyesStereo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>CrystalEyes</string>
-   </property>
-  </action>
-  <action name="actionSwitchToInterlacedStereo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Interlaced</string>
-   </property>
-   <property name="toolTip">
-    <string>Switch to Interlaced stereo mode</string>
-   </property>
-  </action>
-  <action name="actionSet3DAxisVisible">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>3D cube</string>
-   </property>
-  </action>
-  <action name="actionSet3DAxisLabelVisible">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>3D axis label</string>
-   </property>
-  </action>
-  <action name="actionSetLightBlueBackground">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Light blue background</string>
-   </property>
-   <property name="toolTip">
-    <string>Set light blue background</string>
-   </property>
-  </action>
-  <action name="actionSetBlackBackground">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Black background</string>
-   </property>
-   <property name="toolTip">
-    <string>Set black background</string>
-   </property>
-  </action>
-  <action name="actionSetWhiteBackground">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>White background</string>
-   </property>
-   <property name="toolTip">
-    <string>Set white background</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -507,11 +178,6 @@
    <class>ctkVTKRenderView</class>
    <extends>QWidget</extends>
    <header>ctkVTKRenderView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkAxesWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkAxesWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCrosshairLabel</class>

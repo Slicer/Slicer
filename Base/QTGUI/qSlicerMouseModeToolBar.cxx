@@ -28,6 +28,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
 #include "qMRMLSliceWidget.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
@@ -464,7 +465,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   // loop through all existing threeDViews
   for (int i=0; i < layoutManager->threeDViewCount(); ++i)
     {
-    layoutManager->threeDView(i)->setCursor(cursor);
+    layoutManager->threeDWidget(i)->threeDView()->setCursor(cursor);
     }
 
   // the slice viewers

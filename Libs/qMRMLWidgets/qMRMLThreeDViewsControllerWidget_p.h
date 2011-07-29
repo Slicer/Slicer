@@ -65,32 +65,7 @@ public slots:
 
   void updateWidgetFromMRML();
 
-  void setOrthographicModeEnabled(bool enabled);
-
-  void pitchActiveView();
-  void rollActiveView();
-  void yawActiveView();
-
-  void zoomIn();
-  void zoomOut();
-
-  void resetFocalPoint();
-
-  void setStereoType(int newStereoType);
-
-  void set3DAxisVisible(bool visible);
-  void set3DAxisLabelVisible(bool visible);
-
-  void setLightBlueBackground();
-  void setBlackBackground();
-  void setWhiteBackground();
-  void setBackgroundColor(double newBackgroundColor[3]);
-
   void createSceneView();
-
-  void onSpinViewButtonToggled(bool enabled);
-  void onRockViewButtonToggled(bool enabled);
-  void setAnimationMode(int newAnimationMode);
 
   void setDisplayMode(DisplayMode newMode);
 
@@ -101,7 +76,6 @@ public:
 
   qMRMLActionSignalMapper*         StereoTypesMapper;
   qMRMLSceneViewMenu*              SceneViewMenu;
-  ctkButtonGroup*                  AnimateViewButtonGroup;
 
   bool                             DisableMagnification;
   

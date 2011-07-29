@@ -116,7 +116,7 @@ void qMRMLNavigationView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     return;
     }
 
-  this->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkMRMLViewNode::BackgroundColorEvent,
+  this->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromMRMLViewNode()));
   d->MRMLViewNode = newViewNode;
   this->updateFromMRMLViewNode();

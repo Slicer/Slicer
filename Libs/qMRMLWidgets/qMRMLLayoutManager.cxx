@@ -29,6 +29,7 @@
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLThreeDView.h>
+#include <qMRMLThreeDWidget.h>
 
 // MRMLLogic includes
 #include <vtkMRMLSliceLogic.h>
@@ -82,24 +83,24 @@ void qMRMLLayoutManagerPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDView(int id)const
+qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(int id)const
 {
   Q_ASSERT(id >= 0);
-  if (id >= this->ThreeDViewList.size())
+  if (id >= this->ThreeDWidgetList.size())
     {
     return 0;
     }
-  return this->ThreeDViewList.at(id);
+  return this->ThreeDWidgetList.at(id);
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDView(vtkMRMLViewNode* node)const
+qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node)const
 {
   if (!node)
     {
     return 0;
     }
-  foreach(qMRMLThreeDView* view, this->ThreeDViewList)
+  foreach(qMRMLThreeDWidget* view, this->ThreeDWidgetList)
     {
     if (view->mrmlViewNode() == node)
       {
@@ -142,9 +143,9 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
     {
     return qobject_cast<qMRMLSliceWidget*>(widget)->mrmlSliceNode();
     }
-  if (qobject_cast<qMRMLThreeDView*>(widget))
+  if (qobject_cast<qMRMLThreeDWidget*>(widget))
     {
-    return qobject_cast<qMRMLThreeDView*>(widget)->mrmlViewNode();
+    return qobject_cast<qMRMLThreeDWidget*>(widget)->mrmlViewNode();
     }
   return 0;
 }
@@ -158,7 +159,7 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
     }
   if (vtkMRMLViewNode::SafeDownCast(viewNode))
     {
-    return this->threeDView(vtkMRMLViewNode::SafeDownCast(viewNode));
+    return this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
     }
   return 0;
 }
@@ -219,7 +220,7 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode)
+qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode* viewNode)
 {
   Q_Q(qMRMLLayoutManager);
   if (!q->viewport() || !this->MRMLScene || !viewNode)
@@ -229,21 +230,21 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* vi
     return 0;
     }
 
-  // There must be a unique threedview per node
-  Q_ASSERT(!this->threeDView(viewNode));
+  // There must be a unique ThreeDWidget per node
+  Q_ASSERT(!this->threeDWidget(viewNode));
 
-  qMRMLThreeDView* threeDView = 0;
+  qMRMLThreeDWidget* threeDWidget = 0;
 
-  logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
-  threeDView = new qMRMLThreeDView(q->viewport());
+  logger.trace("createThreeDWidget - instantiated new qMRMLThreeDWidget");
+  threeDWidget = new qMRMLThreeDWidget(q->viewport());
+  threeDWidget->setMRMLScene(this->MRMLScene);
+  threeDWidget->setMRMLViewNode(viewNode);
   threeDView->setIgnoreScriptedDisplayableManagers(this->IgnoreScriptedDisplayableManagers);
   threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
-  threeDView->setMRMLScene(this->MRMLScene);
-  threeDView->setMRMLViewNode(viewNode);
 
-  this->ThreeDViewList.push_back(threeDView);
+  this->ThreeDWidgetList.push_back(threeDWidget);
 
-  return threeDView;
+  return threeDWidget;
 }
 
 // --------------------------------------------------------------------------
@@ -261,16 +262,16 @@ void qMRMLLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::removeThreeDView(vtkMRMLViewNode* viewNode)
+void qMRMLLayoutManagerPrivate::removeThreeDWidget(vtkMRMLViewNode* viewNode)
 {
   Q_ASSERT(viewNode);
-  qMRMLThreeDView * threeDViewToDelete = this->threeDView(viewNode);
+  qMRMLThreeDWidget * threeDWidgetToDelete = this->threeDWidget(viewNode);
 
   // Remove threeDView
-  if (threeDViewToDelete)
+  if (threeDWidgetToDelete)
     {
-    this->ThreeDViewList.removeAll(threeDViewToDelete);
-    delete threeDViewToDelete;
+    this->ThreeDWidgetList.removeAll(threeDWidgetToDelete);
+    delete threeDWidgetToDelete;
     }
 }
 
@@ -304,9 +305,9 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   if (viewNode)
     {
     logger.trace(QString("onViewNodeAddedEvent - id: %1").arg(viewNode->GetID()));
-    if (!this->threeDView(viewNode))
+    if (!this->threeDWidget(viewNode))
       {
-      this->createThreeDView(viewNode);
+      this->createThreeDWidget(viewNode);
       }
     }
 
@@ -360,7 +361,7 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
       {
       this->setActiveMRMLThreeDViewNode(0);
       }
-    this->removeThreeDView(viewNode);
+    this->removeThreeDWidget(viewNode);
     }
 
   // Slice node
@@ -423,9 +424,9 @@ void qMRMLLayoutManagerPrivate::updateWidgetsFromViewNodes()
   for (unsigned int i = 0; i < viewNodes.size(); ++i)
     {
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes[i]);
-    if (!this->threeDView(viewNode))
+    if (!this->threeDWidget(viewNode))
       {
-      this->createThreeDView(viewNode);
+      this->createThreeDWidget(viewNode);
       }
     // For now, the active view is the first one
     if (i == 0)
@@ -602,18 +603,18 @@ qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 int qMRMLLayoutManager::threeDViewCount()const
 {
   Q_D(const qMRMLLayoutManager);
-  return d->ThreeDViewList.size();
+  return d->ThreeDWidgetList.size();
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLLayoutManager::threeDView(int id)const
+qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 {
   Q_D(const qMRMLLayoutManager);
-  if(id < 0 || id >= d->ThreeDViewList.size())
+  if(id < 0 || id >= d->ThreeDWidgetList.size())
     {
     return 0;
     }
-  return d->threeDView(id);
+  return d->threeDWidget(id);
 }
 
 //------------------------------------------------------------------------------
@@ -676,9 +677,9 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
     {
     sliceWidget->setMRMLScene(d->MRMLScene);
     }
-  foreach (qMRMLThreeDView* threeDView, d->ThreeDViewList )
+  foreach (qMRMLThreeDWidget* threeDWidget, d->ThreeDWidgetList )
     {
-    threeDView->setMRMLScene(d->MRMLScene);
+    threeDWidget->setMRMLScene(d->MRMLScene);
     }
 
   d->updateWidgetsFromViewNodes();
@@ -700,8 +701,8 @@ CTK_GET_CPP(qMRMLLayoutManager, vtkMRMLViewNode*,
 vtkRenderer* qMRMLLayoutManager::activeThreeDRenderer()const
 {
   Q_D(const qMRMLLayoutManager);
-  qMRMLThreeDView* activeThreeDView = d->threeDView(d->ActiveMRMLThreeDViewNode);
-  return activeThreeDView ? activeThreeDView->renderer() : 0;
+  qMRMLThreeDWidget* activeThreeDWidget = d->threeDWidget(d->ActiveMRMLThreeDViewNode);
+  return activeThreeDWidget ? activeThreeDWidget->threeDView()->renderer() : 0;
 }
 
 //------------------------------------------------------------------------------

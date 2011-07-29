@@ -35,7 +35,7 @@ logic.UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode)
 
 def viewImageData():
   layoutManager = slicer.app.layoutManager()
-  view = layoutManager.threeDView(0)
+  view = layoutManager.threeDWidget(0).threeDView()
   w2i = vtk.vtkWindowToImageFilter()
   w2i.SetInput(view.renderWindow())
   w2i.Update()

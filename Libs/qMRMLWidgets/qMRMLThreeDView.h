@@ -54,6 +54,9 @@ public:
   /// Get the 3D View node observed by view.
   vtkMRMLViewNode* mrmlViewNode()const;
 
+  /// Returns the interactor style of the view
+  vtkInteractorObserver* interactorStyle()const;
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
@@ -61,6 +64,13 @@ public slots:
 
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
+
+  /// Look from a given axis, need a mrml view node to be set
+  void lookFromViewAxis(const ctkAxesWidget::Axis& axis);
+
+  /// Reimplemented to hide items to not take into
+  /// account when computing the boundaries
+  virtual void resetFocalPoint();
 
 protected:
   QScopedPointer<qMRMLThreeDViewPrivate> d_ptr;

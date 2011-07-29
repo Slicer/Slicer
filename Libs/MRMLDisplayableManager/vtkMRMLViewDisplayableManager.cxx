@@ -157,11 +157,14 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     }
 
   // Turn off box and axis labels to compute bounds
+  int boxVisibility = this->BoxAxisActor->GetVisibility();
   this->BoxAxisActor->VisibilityOff();
 
+  int axisLabelVisibility = 0;
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
     vtkFollower* actor = this->AxisLabelActors[i];
+    axisLabelVisibility = actor->GetVisibility();
     actor->VisibilityOff();
     }
 
@@ -263,12 +266,12 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     }
 
   // Update camera and make the axis visible again
-  this->BoxAxisActor->VisibilityOn();
+  this->BoxAxisActor->SetVisibility(boxVisibility);
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
     vtkFollower* actor = this->AxisLabelActors[i];
     actor->SetCamera(renderer->GetActiveCamera());
-    actor->VisibilityOn();
+    actor->SetVisibility(axisLabelVisibility);
     }
 
   // Until we come up with a solution for all use cases, the resetting
@@ -416,10 +419,7 @@ void vtkMRMLViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
 {
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::VisibilityEvent);
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::StereoModeEvent);
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::BackgroundColorEvent);
+  // TODO: Listen to ModifiedEvent and update the box coords if needed
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
 }
 
@@ -462,25 +462,12 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
     }
   else if(vtkMRMLViewNode::SafeDownCast(caller))
     {
-    if (event == vtkMRMLViewNode::RenderModeEvent)
+    if (event == vtkCommand::ModifiedEvent)
       {
-      vtkDebugMacro(<< "ProcessMRMLEvents - RenderModeEvent");
       this->Internal->UpdateRenderMode();
-      }
-    else if (event == vtkMRMLViewNode::VisibilityEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - VisibilityEvent");
       this->Internal->UpdateAxisLabelVisibility();
       this->Internal->UpdateAxisVisibility();
-      }
-    else if (event == vtkMRMLViewNode::StereoModeEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - StereoModeEvent");
       this->Internal->UpdateStereoType();
-      }
-    else if (event == vtkMRMLViewNode::BackgroundColorEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - BackgroundColorEvent");
       this->Internal->UpdateBackgroundColor();
       }
     else if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)

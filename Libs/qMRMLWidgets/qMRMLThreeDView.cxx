@@ -20,9 +20,15 @@
 
 // Qt includes
 #include <QDebug>
+#include <QEvent>
+#include <QFileInfo>
+#include <QHBoxLayout>
+#include <QToolButton>
 
 // CTK includes
+#include <ctkAxesWidget.h>
 #include <ctkLogger.h>
+#include <ctkPopupWidget.h>
 
 // qMRML includes
 #include "qMRMLThreeDView_p.h"
@@ -57,6 +63,8 @@ qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
   this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
   this->MRMLViewNode = 0;
+  this->PinButton = 0;
+  this->PopupWidget = 0;
   this->IgnoreScriptedDisplayableManagers = false;
 }
 
@@ -70,8 +78,37 @@ qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
 }
 
 //---------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::init()
+{
+  Q_Q(qMRMLThreeDView);
+  q->setRenderEnabled(this->MRMLScene != 0);
+
+  this->PopupWidget = new ctkPopupWidget;
+  QHBoxLayout* popupLayout = new QHBoxLayout;
+  popupLayout->addWidget(new QToolButton);
+  this->PopupWidget->setLayout(popupLayout);
+
+  VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
+  q->interactor()->SetInteractorStyle(interactorStyle);
+
+  // Set default background color
+  q->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
+
+  // Hide orientation widget
+  q->setOrientationWidgetVisible(false);
+
+  q->setZoomFactor(0.05);
+
+  q->setPitchDirection(ctkVTKRenderView::PitchUp);
+  q->setRollDirection(ctkVTKRenderView::RollRight);
+  q->setYawDirection(ctkVTKRenderView::YawLeft);
+
+}
+
+//---------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
+  Q_Q(qMRMLThreeDView);
   if (newScene == this->MRMLScene)
     {
     return;
@@ -79,21 +116,30 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, this, SLOT(onSceneAboutToBeClosedEvent()));
+    vtkMRMLScene::SceneAboutToBeClosedEvent, this, SLOT(onSceneStartProcessing()));
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneAboutToBeImportedEvent()));
+    vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneStartProcessing()));
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
-//
-//  this->qvtkReconnect(
-//    this->MRMLScene, newScene,
-//    vtkMRMLScene::SceneRestoredEvent, this, SLOT(onSceneRestoredEvent()));
+    vtkMRMLScene::SceneAboutToBeRestoredEvent, this, SLOT(onSceneStartProcessing()));
+
+  this->qvtkReconnect(
+    this->MRMLScene, newScene,
+    vtkMRMLScene::SceneClosedEvent, this, SLOT(onSceneEndProcessing()));
+
+  this->qvtkReconnect(
+    this->MRMLScene, newScene,
+    vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneEndProcessing()));
+
+  this->qvtkReconnect(
+    this->MRMLScene, newScene,
+    vtkMRMLScene::SceneRestoredEvent, this, SLOT(onSceneEndProcessing()));
 
   this->MRMLScene = newScene;
+  q->setRenderEnabled(this->MRMLScene != 0);
 }
 
 //---------------------------------------------------------------------------
@@ -121,109 +167,38 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 //}
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onSceneAboutToBeClosedEvent()
+void qMRMLThreeDViewPrivate::onSceneStartProcessing()
 {
-  logger.trace("onSceneAboutToBeClosedEvent");
+  logger.trace("onSceneStartProcessing");
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(false);
 }
 
-// --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onSceneAboutToBeImportedEvent()
-{
-  logger.trace("onSceneAboutToBeImportedEvent");
-  Q_Q(qMRMLThreeDView);
-  q->setRenderEnabled(false);
-}
 //
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onSceneImportedEvent()
+void qMRMLThreeDViewPrivate::onSceneEndProcessing()
 {
   logger.trace("onSceneImportedEvent");
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(true);
-  //p->scheduleRender();
 }
-//
-//// --------------------------------------------------------------------------
-//void qMRMLThreeDViewPrivate::onSceneRestoredEvent()
-//{
-//  logger.trace("onSceneRestoredEvent");
-//}
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onMRMLViewNodeModifiedEvent()
+void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLThreeDView);
+  if (!this->MRMLViewNode)
+    {
+    return;
+    }
   q->setAnimationIntervalMs(this->MRMLViewNode->GetAnimationMs());
   q->setPitchRollYawIncrement(this->MRMLViewNode->GetRotateDegrees());
   q->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
   q->setRockIncrement(this->MRMLViewNode->GetRockCount());
   q->setRockLength(this->MRMLViewNode->GetRockLength());
-}
-
-// --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
-{
-  Q_Q(qMRMLThreeDView);
-
-  // Save current visiblity state of Box and AxisLabel
-  bool savedBoxVisibile = this->MRMLViewNode->GetBoxVisible();
-  bool savedAxisLabelVisible = this->MRMLViewNode->GetAxisLabelsVisible();
-
-  // Hide Box and AxisLabel
-  this->MRMLViewNode->SetBoxVisible(0);
-  this->MRMLViewNode->SetAxisLabelsVisible(0);
-
-  q->resetFocalPoint();
-
-  // Restore visibility state
-  this->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
-  this->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onAnimationModeEvent()
-{
-  Q_Q(qMRMLThreeDView);
-  if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin)
-    {
-    q->setSpinEnabled(true);
-    }
-  else if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock)
-    {
-    q->setRockEnabled(true);
-    }
-  else
-    {
-    q->setRockEnabled(false);
-    q->setSpinEnabled(false);
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::rockView()
-{
-  qDebug() << "rockView";
-}
-
-// --------------------------------------------------------------------------
-void qMRMLThreeDViewPrivate::onLookFromAxisEvent(vtkObject* node, void* axis)
-{
-  Q_Q(qMRMLThreeDView);
-  Q_UNUSED(node);
-  Q_ASSERT(this->MRMLViewNode == node);
-  ctkAxesWidget::Axis lookFrom = *reinterpret_cast<ctkAxesWidget::Axis*>(axis);
-  Q_ASSERT(lookFrom == ctkAxesWidget::None ||
-           lookFrom == ctkAxesWidget::Right ||
-           lookFrom == ctkAxesWidget::Left ||
-           lookFrom == ctkAxesWidget::Anterior ||
-           lookFrom == ctkAxesWidget::Posterior ||
-           lookFrom == ctkAxesWidget::Superior ||
-           lookFrom == ctkAxesWidget::Inferior);
-  double fov = this->MRMLViewNode->GetFieldOfView();
-  Q_ASSERT(fov >= 0.0);
-  q->lookFromAxis(lookFrom, fov);
+  
+  q->setSpinEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
+  q->setRockEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
 }
 
 // --------------------------------------------------------------------------
@@ -233,22 +208,8 @@ void qMRMLThreeDViewPrivate::onLookFromAxisEvent(vtkObject* node, void* axis)
 qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new qMRMLThreeDViewPrivate(*this))
 {
-  VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
-  this->interactor()->SetInteractorStyle(interactorStyle);
-
-  // Set default background color
-  this->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
-
-  // Hide orientation widget
-  this->setOrientationWidgetVisible(false);
-
-  this->setZoomFactor(0.05);
-
-  this->setPitchDirection(ctkVTKRenderView::PitchUp);
-  this->setRollDirection(ctkVTKRenderView::RollRight);
-  this->setYawDirection(ctkVTKRenderView::YawLeft);
-
-  // true by default this->setRenderEnabled(true);
+  Q_D(qMRMLThreeDView);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -310,16 +271,12 @@ CTK_SET_CPP(qMRMLThreeDView, bool, setIgnoreScriptedDisplayableManagers, IgnoreS
 void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLThreeDView);
-  if (d->MRMLScene == newScene)
-    {
-    return;
-    }
   d->setMRMLScene(newScene);
-  if (d->MRMLViewNode && newScene == d->MRMLViewNode->GetScene())
+
+  if (d->MRMLViewNode && newScene != d->MRMLViewNode->GetScene())
     {
-    return;
+    this->setMRMLViewNode(0);
     }
-  this->setMRMLViewNode(0);
 }
 
 //---------------------------------------------------------------------------
@@ -331,57 +288,16 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     return;
     }
 
-  // Enable/disable widget
-  this->setDisabled(newViewNode == 0);
-
-  if (d->DisplayableManagerGroup)
-    {
-    d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
-    }
-
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,
-    vtkCommand::ModifiedEvent, d, SLOT(onMRMLViewNodeModifiedEvent()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::PitchViewRequestedEvent, this, SLOT(pitch()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::RollViewRequestedEvent, this, SLOT(roll()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::YawViewRequestedEvent, this, SLOT(yaw()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::ZoomInRequestedEvent, this, SLOT(zoomIn()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::ZoomOutRequestedEvent, this, SLOT(zoomOut()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::ResetFocalPointRequestedEvent, d, SLOT(onResetFocalPointRequestedEvent()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::AnimationModeEvent, d, SLOT(onAnimationModeEvent()));
-
-  d->qvtkReconnect(
-    d->MRMLViewNode, newViewNode,
-    vtkMRMLViewNode::LookFromAxisRequestedEvent, d, SLOT(onLookFromAxisEvent(vtkObject*, void*)));
+    vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
 
   d->MRMLViewNode = newViewNode;
+  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
 
-  if (d->MRMLViewNode)
-    {
-    d->onMRMLViewNodeModifiedEvent();
-    d->onAnimationModeEvent();
-    }
+  d->updateWidgetFromMRML();
+  // Enable/disable widget
+  this->setEnabled(newViewNode != 0);
 }
 
 //---------------------------------------------------------------------------
@@ -391,3 +307,47 @@ vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode()const
   return d->MRMLViewNode;
 }
 
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDView::lookFromViewAxis(const ctkAxesWidget::Axis& axis)
+{
+  Q_D(qMRMLThreeDView);
+  if (!d->MRMLViewNode)
+    {
+    return;
+    }
+  double fov = d->MRMLViewNode->GetFieldOfView();
+  Q_ASSERT(fov >= 0.0);
+  this->lookFromAxis(axis, fov);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDView::resetFocalPoint()
+{
+  Q_D(qMRMLThreeDView);
+
+  bool savedBoxVisibile = true;
+  bool savedAxisLabelVisible = true;
+  if (d->MRMLViewNode)
+    {
+    // Save current visiblity state of Box and AxisLabel
+    savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
+    savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
+    
+    // Hide Box and AxisLabel so they don't get taken into account when computing
+    // the view boundaries
+    d->MRMLViewNode->SetBoxVisible(0);
+    d->MRMLViewNode->SetAxisLabelsVisible(0);
+    }
+  this->Superclass::resetFocalPoint();
+
+  if (d->MRMLViewNode)
+    {
+    // Restore visibility state
+    d->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
+    d->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
+    // Inform the displayable manager that the view is reset, so it can
+    // update the box/labels bounds.
+    d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
+    }
+}
