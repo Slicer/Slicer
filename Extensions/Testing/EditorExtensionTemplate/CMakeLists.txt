@@ -12,11 +12,17 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-# Module name (usually identique to the directory name)
+#-----------------------------------------------------------------------------
+# Module name
+#   - Usually identique to the directory name)
+#   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
+#-----------------------------------------------------------------------------
 set(EXTENSION_NAME EditorExtensionTemplate)
 
+#-----------------------------------------------------------------------------
+# Prerequisites
+#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
-
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_STATUS "Beta")
@@ -38,6 +44,9 @@ if(NOT Slicer_SOURCE_DIR)
 
 endif()
 
+#-----------------------------------------------------------------------------
+# Sources
+#-----------------------------------------------------------------------------
 set(KIT_PYTHON_SCRIPTS
   EditorExtensionTemplate.py
   )
@@ -45,6 +54,9 @@ set(KIT_PYTHON_SCRIPTS
 set(KIT_PYTHON_RESOURCES
   )
 
+#-----------------------------------------------------------------------------
+# Build
+#-----------------------------------------------------------------------------
 ctkMacroCompilePythonScript(
   TARGET_NAME EditorExtensionTemplate
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"
@@ -53,10 +65,16 @@ ctkMacroCompilePythonScript(
   INSTALL_DIR ${Slicer_INSTALL_ROOT}
   )
 
+#-----------------------------------------------------------------------------
+# Testing
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
+#-----------------------------------------------------------------------------
+# Generate extension description file '<EXTENSION_NAME>.s4ext'
+#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   include(SlicerFunctionGenerateExtensionDescription)
   slicerFunctionGenerateExtensionDescription(
@@ -70,5 +88,11 @@ if(NOT Slicer_SOURCE_DIR)
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
+endif()
+
+#-----------------------------------------------------------------------------
+# Packaging
+#-----------------------------------------------------------------------------
+if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_EXTENSION_CPACK})
 endif()

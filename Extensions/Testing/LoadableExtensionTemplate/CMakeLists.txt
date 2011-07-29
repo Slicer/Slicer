@@ -12,10 +12,16 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-# Module name (usually identique to the directory name)
-# Note: You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
+#-----------------------------------------------------------------------------
+# Module name
+#   - Usually identique to the directory name)
+#   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
+#-----------------------------------------------------------------------------
 set(EXTENSION_NAME LoadableExtensionTemplate)
 
+#-----------------------------------------------------------------------------
+# Prerequisites
+#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
@@ -42,6 +48,9 @@ endif()
 # Add subdirectories
 add_subdirectory(Logic)
 
+#-----------------------------------------------------------------------------
+# Sources
+#-----------------------------------------------------------------------------
 set(qt_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
@@ -79,6 +88,9 @@ set(qt_module_resources
   Resources/qSlicerLoadableExtensionTemplateModule.qrc
 )
 
+#-----------------------------------------------------------------------------
+# Build
+#-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
   NAME ${EXTENSION_NAME}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
@@ -90,11 +102,16 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-
+#-----------------------------------------------------------------------------
+# Testing
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
+#-----------------------------------------------------------------------------
+# Generate extension description file '<EXTENSION_NAME>.s4ext'
+#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   include(SlicerFunctionGenerateExtensionDescription)
   slicerFunctionGenerateExtensionDescription(
@@ -108,5 +125,11 @@ if(NOT Slicer_SOURCE_DIR)
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
+endif()
+
+#-----------------------------------------------------------------------------
+# Packaging
+#-----------------------------------------------------------------------------
+if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_EXTENSION_CPACK})
 endif()
