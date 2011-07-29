@@ -71,7 +71,7 @@ macro(SlicerMacroBuildModuleMRML)
       NAME ${MODULEMRML_NAME}
       SRCS ${MODULEMRML_SRCS}
       WRAPPED_TARGET_LIBRARIES ${Slicer_Wrapped_LIBRARIES}
-      RELATIVE_PYTHON_DIR "slicer/modulemrml"
+      RELATIVE_PYTHON_DIR "."
       )
 
   endif()

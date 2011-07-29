@@ -87,7 +87,7 @@ macro(SlicerMacroBuildModuleLogic)
       NAME ${MODULELOGIC_NAME}
       SRCS ${MODULELOGIC_SRCS}
       WRAPPED_TARGET_LIBRARIES ${Slicer_Wrapped_LIBRARIES}
-      RELATIVE_PYTHON_DIR "slicer/modulelogic"
+      RELATIVE_PYTHON_DIR "."
       )
 
   endif()

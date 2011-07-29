@@ -18,6 +18,44 @@ def restart():
   app.restart()
 
 #
+# Custom Import
+#
+
+def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
+  import glob, os
+  for fname in glob.glob(directory + '/' + filematch):
+    try:
+      vtk_module_name = os.path.splitext(os.path.basename(fname))[0]
+      importVTKClasses(vtk_module_name, dest_module_name)
+    except ImportError as detail:
+      # TODO: this message should go in the application error log (how?)
+      print detail
+
+def importVTKClasses(vtk_module_name, dest_module_name):
+  """Import VTK classes from module identified by vtk_module_name into
+  the module identified by 'dest_module_name'."""
+
+  # Obtain a reference to the module idenitifed by 'dest_module_name'
+  import sys
+  dest_module = sys.modules[dest_module_name]
+
+  exec "import %s" % (vtk_module_name)
+
+  # Obtain a reference to the associated VTK module
+  module = eval(vtk_module_name)
+
+  # Loop over content of the python module associated with the given VTK python library
+  for item_name in dir(module):
+
+    # Obtain a reference associated with the current object
+    item = eval("%s.%s" % (vtk_module_name, item_name))
+
+    # Add the vtk class to dest_module_globals_dict if any
+    if type(item).__name__ == 'vtkclass':
+      exec("from %s import %s" % (vtk_module_name, item_name))
+      exec("dest_module.%s = %s"%(item_name, item_name))
+
+#
 # UI
 #
 
