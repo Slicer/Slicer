@@ -62,7 +62,7 @@ set(empty_binary_directory FALSE)
 # Attempt to build and test also if 'ctest_update' returned an error
 set(force_build FALSE)
 
-# Set model options
+# Set model and track options
 set(model "")
 if(SCRIPT_MODE STREQUAL "experimental")
   set(empty_binary_directory FALSE)
@@ -79,6 +79,7 @@ elseif(SCRIPT_MODE STREQUAL "nightly")
 else()
   message(FATAL_ERROR "Unknown script mode: '${SCRIPT_MODE}'. Script mode should be either 'experimental', 'continuous' or 'nightly'")
 endif()
+set(track ${model}${CTEST_TRACK_SUFFIX})
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 0)
@@ -103,7 +104,7 @@ set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 # run_ctest macro
 #
 macro(run_ctest)
-  ctest_start(${model})
+  ctest_start(${model} TRACK ${track})
   ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
 
   # force a build if this is the first run and the build dir is empty
