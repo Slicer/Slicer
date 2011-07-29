@@ -1,4 +1,4 @@
-set(KIT TractographyDisplay)
+set(KIT ${qt_module_name})
 
 set(KIT_TEST_SRCS qSlicerTractographyDisplayGlyphWidgetTest1.cxx)
 set(KIT_TEST_NAMES qSlicerTractographyDisplayGlyphWidgetTest1)
@@ -16,10 +16,10 @@ list(APPEND Tests ${KIT_TEST_SRCS})
 #set(TestsToRun ${Tests})
 #list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-set(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${lib_name})
 
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${lib_name})
+target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
 
 macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
