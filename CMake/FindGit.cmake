@@ -114,7 +114,7 @@ if(GIT_EXECUTABLE)
       OUTPUT_VARIABLE git_config_output
       )
 
-    if(${git_config_result} MATCHES "svn[-]remote")
+    if(${git_config_output} MATCHES "svn[-]remote")
       # In case git-svn is used, attempt to extract svn info
       execute_process(COMMAND ${GIT_EXECUTABLE} svn info
         WORKING_DIRECTORY ${dir}
@@ -139,7 +139,7 @@ if(GIT_EXECUTABLE)
         string(REGEX REPLACE "^(.*\n)?Last Changed Date: ([^\n]+).*"
           "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
       endif(${git_svn_info_result} EQUAL 0)
-    endif(${git_config_result} MATCHES "svn[-]remote")
+    endif(${git_config_output} MATCHES "svn[-]remote")
   endmacro(GIT_WC_INFO)
 endif(GIT_EXECUTABLE)
 
