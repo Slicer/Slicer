@@ -33,7 +33,6 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(ITK_REPOSITORY git://github.com/hjmjohnson/ITK.git)
-  set(ITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-4.0)
   set(ITK_TAG_COMMAND GIT_TAG ITK_Slicer)
   set(WrapITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-4.0/WrapITK)
   message(STATUS "ITK_WRAPPING=${ITK_WRAPPING}")
