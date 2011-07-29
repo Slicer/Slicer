@@ -22,6 +22,7 @@
 #include "vtkMRMLSliceViewDisplayableManagerFactory.h"
 
 // VTK includes
+#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------

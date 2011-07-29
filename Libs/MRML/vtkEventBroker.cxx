@@ -19,6 +19,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 #include <vtkTimerLog.h>
 

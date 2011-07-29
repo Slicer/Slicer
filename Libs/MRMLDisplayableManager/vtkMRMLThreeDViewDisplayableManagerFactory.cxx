@@ -22,6 +22,7 @@
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 
 // VTK includes
+#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------

@@ -74,9 +74,10 @@ Version:   $Revision: 1.18 $
 #endif
 
 // VTK includes
-#include <vtkObjectFactory.h>
-#include <vtkErrorCode.h>
+#include <vtkDebugLeaks.h>
 #include <vtkCallbackCommand.h>
+#include <vtkErrorCode.h>
+#include <vtkObjectFactory.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
