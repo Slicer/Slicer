@@ -167,6 +167,38 @@ vtkMRMLAbstractDisplayableManager* vtkMRMLDisplayableManagerGroup
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory * factory,
+                                                vtkRenderer * renderer)
+{
+  // Sanity checks
+  if (!factory)
+    {
+    vtkWarningMacro(<<"Initialize - factory is NULL");
+    return;
+    }
+  if (!renderer)
+    {
+    vtkWarningMacro(<<"Initialize - renderer is NULL");
+    return;
+    }
+
+  // A Group observes the factory and eventually instantiates new DisplayableManager
+  // when they are registered in the factory
+  this->SetAndObserveDisplayableManagerFactory(factory);
+  this->SetRenderer(renderer);
+
+  for(int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
+    {
+    const char* classOrScriptName = factory->GetRegisteredDisplayableManagerName(i).c_str();
+    vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
+    displayableManager.TakeReference(
+      vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(classOrScriptName));
+    // Note that DisplayableManagerGroup will take ownership of the object
+    this->AddDisplayableManager(displayableManager);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
     vtkMRMLDisplayableManagerFactory * factory)
 {

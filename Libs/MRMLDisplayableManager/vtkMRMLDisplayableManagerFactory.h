@@ -72,6 +72,9 @@ public:
   ///
   /// Return number of registered displayable managers
   int GetRegisteredDisplayableManagerCount();
+
+  /// Return name of the nth registered displayable manager
+  std::string GetRegisteredDisplayableManagerName(int n);
   
   /// Instantiate registrered DisplayableManagers
   /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager

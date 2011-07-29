@@ -59,12 +59,38 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   VTK_CREATE(vtkMRMLApplicationLogic, mrmlAppLogic);
   mrmlAppLogic->SetMRMLScene(scene);
 
+  int currentCount = threeDViewFactory->GetRegisteredDisplayableManagerCount();
+  if (currentCount != 0)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with threeDViewFactory->GetRegisteredDisplayableManagerCount() method"
+        << std::endl;
+    std::cerr << "\tcurrentCount:" << currentCount << " - expected: 0" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (threeDViewFactory->GetRegisteredDisplayableManagerName(-1) != "" ||
+      threeDViewFactory->GetRegisteredDisplayableManagerName(0) != "")
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with threeDViewFactory->GetNthRegisteredDisplayableManagerName() method"
+        << std::endl;
+    }
+
   // Register displayable manager
   threeDViewFactory->RegisterDisplayableManager("vtkMRMLTestThreeDViewDisplayableManager");
   threeDViewFactory->RegisterDisplayableManager("vtkMRMLTestCustomDisplayableManager");
 
   slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestSliceViewDisplayableManager");
   slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestCustomDisplayableManager");
+
+  if (threeDViewFactory->GetRegisteredDisplayableManagerName(0) != "vtkMRMLTestThreeDViewDisplayableManager" ||
+      threeDViewFactory->GetRegisteredDisplayableManagerName(1) != "vtkMRMLTestCustomDisplayableManager")
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with threeDViewFactory->GetNthRegisteredDisplayableManagerName() method"
+        << std::endl;
+    }
 
   // Renderer, RenderWindow and Interactor
   VTK_CREATE(vtkRenderer, rr);
@@ -90,7 +116,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  int currentCount = threeDViewGroup->GetDisplayableManagerCount();
+  currentCount = threeDViewGroup->GetDisplayableManagerCount();
   if (currentCount != 2)
     {
     std::cerr << "Line " << __LINE__

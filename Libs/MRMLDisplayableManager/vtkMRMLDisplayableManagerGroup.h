@@ -46,6 +46,12 @@ public:
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Convenient method equivalent to call SetAndObserveDisplayableManagerFactory, SetRenderer,
+  /// then instantiate and add all displayable managers registered within the \a factory.
+  /// \sa SetAndObserveDisplayableManagerFactory SetRenderer
+  /// \sa AddDisplayableManager InstantiateDisplayableManager
+  void Initialize(vtkMRMLDisplayableManagerFactory * factory, vtkRenderer * renderer);
+
   ///
   /// Set and observe DisplayableManager factory
   void SetAndObserveDisplayableManagerFactory(vtkMRMLDisplayableManagerFactory * factory);

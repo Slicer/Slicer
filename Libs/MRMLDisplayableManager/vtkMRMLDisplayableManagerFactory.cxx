@@ -179,6 +179,19 @@ int vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerName(int n)
+{
+  if (n < 0 || n >= this->GetRegisteredDisplayableManagerCount())
+    {
+    vtkWarningMacro(<<"GetNthRegisteredDisplayableManagerName - "
+                    "n " << n << " is invalid. A valid value for n should be >= 0 and < " <<
+                    this->GetRegisteredDisplayableManagerCount());
+    return std::string();
+    }
+  return this->Internal->DisplayableManagerClassNames.at(n);
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDisplayableManagers(
     vtkRenderer * newRenderer)
 {
@@ -190,23 +203,6 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
     }
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
-
-  // A Group observes the factory and eventually instantiates new DisplayableManager
-  // when they are registered in the factory
-  displayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
-  displayableManagerGroup->SetRenderer(newRenderer);
-
-  for(std::size_t i=0; i < this->Internal->DisplayableManagerClassNames.size(); ++i)
-    {
-    const char* classOrScriptName = this->Internal->DisplayableManagerClassNames[i].c_str();
-    vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
-    displayableManager.TakeReference(
-      vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(classOrScriptName));
-    // Note that DisplayableManagerGroup will take ownership of the object
-    displayableManagerGroup->AddDisplayableManager(displayableManager);
-    }
-
+  displayableManagerGroup->Initialize(this, newRenderer);
   return displayableManagerGroup;
 }
-
-
