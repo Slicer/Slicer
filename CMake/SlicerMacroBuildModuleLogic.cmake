@@ -90,6 +90,8 @@ macro(SlicerMacroBuildModuleLogic)
       RELATIVE_PYTHON_DIR "."
       )
 
+    # Export target
+    set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULELOGIC_NAME}Python ${MODULELOGIC_NAME}PythonD)
   endif()
 
 endmacro()

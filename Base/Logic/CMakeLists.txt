@@ -174,6 +174,8 @@ if(VTK_WRAP_PYTHON)
     KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     )
+  # Export target
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python ${lib_name}PythonD)
 endif()
 
 # --------------------------------------------------------------------------

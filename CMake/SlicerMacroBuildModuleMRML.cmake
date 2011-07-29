@@ -74,6 +74,8 @@ macro(SlicerMacroBuildModuleMRML)
       RELATIVE_PYTHON_DIR "."
       )
 
+    # Export target
+    set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULEMRML_NAME}Python ${MODULEMRML_NAME}PythonD)
   endif()
 
 endmacro()
