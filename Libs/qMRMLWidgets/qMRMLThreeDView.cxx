@@ -112,11 +112,6 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
   Q_Q(qMRMLThreeDView);
   vtkMRMLThreeDViewDisplayableManagerFactory* factory
     = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
-  this->DisplayableManagerGroup
-    = factory->InstantiateDisplayableManagers(q->renderer());
-  // Observe displayable manager group to catch RequestRender events
-  this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
-                    q, SLOT(scheduleRender()));
 
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
@@ -124,8 +119,17 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
                       << "vtkMRMLModelDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {
-    factory->RegisterDisplayableManager(displayableManager.toLatin1());
+    if(!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))
+      {
+      factory->RegisterDisplayableManager(displayableManager.toLatin1());
+      }
     }
+
+  this->DisplayableManagerGroup
+    = factory->InstantiateDisplayableManagers(q->renderer());
+  // Observe displayable manager group to catch RequestRender events
+  this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
+                    q, SLOT(scheduleRender()));
 }
 
 //---------------------------------------------------------------------------
@@ -290,7 +294,6 @@ vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode()const
   Q_D(const qMRMLThreeDView);
   return d->MRMLViewNode;
 }
-
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::lookFromViewAxis(const ctkAxesWidget::Axis& axis)

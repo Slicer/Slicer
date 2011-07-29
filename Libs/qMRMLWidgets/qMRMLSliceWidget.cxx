@@ -80,19 +80,23 @@ void qMRMLSliceWidgetPrivate::initDisplayableManagers()
 {
   vtkMRMLSliceViewDisplayableManagerFactory* factory
     = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+
+  QStringList displayableManagers;
+  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
+  foreach(const QString& displayableManager, displayableManagers)
+    {
+    if (!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))
+      {
+      factory->RegisterDisplayableManager(displayableManager.toLatin1());
+      }
+    }
+
   this->DisplayableManagerGroup
     = factory->InstantiateDisplayableManagers(
       this->VTKSliceView->lightBoxRendererManager()->GetRenderer(0));
   // Observe displayable manager group to catch RequestRender events
   this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                     this->VTKSliceView, SLOT(scheduleRender()));
-
-  QStringList displayableManagers;
-  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
-  foreach(const QString& displayableManager, displayableManagers)
-    {
-    factory->RegisterDisplayableManager(displayableManager.toLatin1());
-    }
 }
 
 //---------------------------------------------------------------------------
