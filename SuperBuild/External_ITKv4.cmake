@@ -43,7 +43,6 @@ if(NOT DEFINED ITK_DIR)
 
   set(ITK_REPOSITORY git://github.com/hjmjohnson/ITK.git)
   set(ITK_TAG_COMMAND GIT_TAG ITK_Slicer)
-  set(WrapITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-4.0/WrapITK)
   message(STATUS "ITK_WRAPPING=${ITK_WRAPPING}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITK_REPOSITORY}
@@ -79,9 +78,6 @@ if(NOT DEFINED ITK_DIR)
       -DWRAP_ITK_PYTHON:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       ${ITK_PYTHON_ARGS}
-      ${FFTW_FLAGS}
-      #    ${CableSwig_FLAGS}
-    BUILD_COMMAND ${BUILD_COMMAND_STRING}
     INSTALL_COMMAND ""
     DEPENDS 
       ${ITKv4_DEPENDENCIES}
