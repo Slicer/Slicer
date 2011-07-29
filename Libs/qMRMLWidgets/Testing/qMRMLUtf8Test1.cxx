@@ -20,6 +20,8 @@
 
 // QT includes
 #include <QApplication>
+#include <QDebug>
+#include <QLabel>
 #include <QLineEdit>
 #include <QTimer>
 
@@ -47,6 +49,12 @@ QLineEdit* myLineEdit = 0;
 void saveScene(void* vtkNotUsed(data))
 {
   myNode->SetName(myLineEdit->text().toUtf8());
+
+  QLabel* label = new QLabel(QString::fromUtf8(myNode->GetName()), 0);
+  label->show();
+  label->setAttribute(Qt::WA_DeleteOnClose);
+  QTimer::singleShot(500, label, SLOT(close()));
+  std::cout << "output: " << myNode->GetName() << std::endl;
   const char* tmpScene = "scene-utf8.mrml";
   myScene->Commit(tmpScene);
 }
