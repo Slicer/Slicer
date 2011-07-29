@@ -90,6 +90,13 @@ macro(SlicerMacroBuildModuleLogic)
       RELATIVE_PYTHON_DIR "."
       )
 
+    # Set python module logic output
+    set_target_properties(${MODULELOGIC_NAME}Python ${MODULELOGIC_NAME}PythonD PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      )
+
     # Export target
     set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${MODULELOGIC_NAME}Python ${MODULELOGIC_NAME}PythonD)
   endif()
