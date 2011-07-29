@@ -10,7 +10,7 @@
 #include "itkN4MRIBiasFieldCorrectionImageFilter.h"
 #else
 //Need private version for ITKv3 that does not conflict with ITKv4 fixes
-#include "SlicerITKV3N4MRIBiasFieldCorrectionImageFilter.h"
+#include "SlicerITKv3N4MRIBiasFieldCorrectionImageFilter.h"
 #endif
 
 
