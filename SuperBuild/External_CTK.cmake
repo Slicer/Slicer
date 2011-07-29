@@ -12,7 +12,7 @@ if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
 endif()
 
 # Set dependency list
-set(CTK_DEPENDENCIES VTK Insight)
+set(CTK_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME})
 if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()

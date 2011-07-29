@@ -239,7 +239,7 @@ proc launch_SetEnvironment {} {
         set ::env(QT_FRAMEWORK_DIRS)  [file normalize "@Slicer_QT_FRAMEWORK_DIRS@"]
       }
     
-      set ::env(ITK_BIN_DIR)        $::env(SLICER_HOME)/lib/InsightToolkit
+      set ::env(ITK_BIN_DIR)        $::env(SLICER_HOME)/lib/${ITK_LIB_DIR}
     
       set ::env(Teem_DIR)           $::env(SLICER_HOME)/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@.@Teem_VERSION_PATCH@
     

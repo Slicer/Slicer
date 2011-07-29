@@ -63,7 +63,18 @@ endif()
 #------------------------------------------------------------------------------
 # Slicer dependency list
 #------------------------------------------------------------------------------
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK Insight CTK qCDashAPI SlicerExecutionModel)
+option(Slicer_BUILD_WITH_ITKv4 "Build Slicer against ITKv4" OFF)
+mark_as_advanced(Slicer_BUILD_WITH_ITKv4)
+
+if(Slicer_BUILD_WITH_ITKv4)
+  set(ITK_EXTERNAL_NAME "ITKv4")
+  set(ITK_LIBRARY_DIR_NAME "ITKv4")
+else()
+  set(ITK_EXTERNAL_NAME "Insight")
+  set(ITK_LIBRARY_DIR_NAME "InsightToolkit")
+endif()
+
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()

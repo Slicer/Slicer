@@ -7,7 +7,7 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(BatchMake_DEPENDENCIES Insight)
+set(BatchMake_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(BatchMake)
