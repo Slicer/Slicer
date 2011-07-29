@@ -548,7 +548,7 @@ vtkObservation *vtkEventBroker::GetNthObservation ( int n )
   ObjectToObservationVectorMap::iterator iter; 
   for(iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)  
     {
-    if ( n < count + (int)iter->second.size())
+    if ( static_cast<size_t>(n) < count + iter->second.size())
       {
       return (iter->second[n-count]);
       }
