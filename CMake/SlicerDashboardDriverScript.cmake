@@ -48,7 +48,7 @@ foreach(var ${expected_variables})
 endforeach()
 
 # Make sure command 'ctest_upload' is available if WITH_PACKAGES is True
-if (WITH_PACKAGES)
+if(WITH_PACKAGES)
   if(NOT COMMAND ctest_upload)
     message(FATAL_ERROR "Failed to enable option WITH_PACKAGES ! CMake ${CMAKE_VERSION} doesn't support 'ctest_upload' command.")
   endif()
@@ -64,15 +64,15 @@ set(force_build FALSE)
 
 # Set model options
 set(model "")
-if (SCRIPT_MODE STREQUAL "experimental")
+if(SCRIPT_MODE STREQUAL "experimental")
   set(empty_binary_directory FALSE)
   set(force_build TRUE)
   set(model Experimental)
-elseif (SCRIPT_MODE STREQUAL "continuous")
+elseif(SCRIPT_MODE STREQUAL "continuous")
   set(empty_binary_directory TRUE)
   set(force_build FALSE)
   set(model Continuous)
-elseif (SCRIPT_MODE STREQUAL "nightly")
+elseif(SCRIPT_MODE STREQUAL "nightly")
   set(empty_binary_directory TRUE)
   set(force_build TRUE)
   set(model Nightly)
@@ -82,7 +82,7 @@ endif()
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 0)
-#if (NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
+#if(NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
 #  set(CTEST_USE_LAUNCHERS 1)
 #endif()
 
@@ -133,7 +133,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
 
-  if (FILES_UPDATED GREATER 0 OR force_build)
+  if(FILES_UPDATED GREATER 0 OR force_build)
 
     set(force_build 0)
 
@@ -160,7 +160,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Configure
     #-----------------------------------------------------------------------------
-    if (run_ctest_with_configure)
+    if(run_ctest_with_configure)
       message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
 
       #set(label Slicer)
@@ -179,7 +179,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Build top level
     #-----------------------------------------------------------------------------
     set(build_errors)
-    if (run_ctest_with_build)
+    if(run_ctest_with_build)
       message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
       ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
       if(run_ctest_submit)
@@ -195,7 +195,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Test
     #-----------------------------------------------------------------------------
-    if (run_ctest_with_test)
+    if(run_ctest_with_test)
       message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
       ctest_test(
         BUILD "${slicer_build_dir}"
@@ -211,12 +211,12 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Global coverage ...
     #-----------------------------------------------------------------------------
-    if (run_ctest_with_coverage)
+    if(run_ctest_with_coverage)
       # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
       file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
       file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
 
-      if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+      if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
         message("----------- [ Global coverage ] -----------")
         ctest_coverage(BUILD "${slicer_build_dir}")
         if(run_ctest_submit)
@@ -228,7 +228,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Global dynamic analysis ...
     #-----------------------------------------------------------------------------
-    if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
+    if(WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
         message("----------- [ Global memcheck ] -----------")
         ctest_memcheck(BUILD "${slicer_build_dir}")
         if(run_ctest_submit)
@@ -239,10 +239,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Create packages / installers ...
     #-----------------------------------------------------------------------------
-    if (WITH_PACKAGES AND run_ctest_with_packages)
+    if(WITH_PACKAGES AND run_ctest_with_packages)
       message("----------- [ WITH_PACKAGES ] -----------")
 
-      if (build_errors GREATER "0")
+      if(build_errors GREATER "0")
         message("Build Errors Detected: ${build_errors}. Aborting package generation")
       else()
         #-----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Note should be at the end
     #-----------------------------------------------------------------------------
-    if (run_ctest_with_notes AND run_ctest_submit)
+    if(run_ctest_with_notes AND run_ctest_submit)
       ctest_submit(PARTS Notes)
     endif()
 
