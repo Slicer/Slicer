@@ -219,11 +219,6 @@
               <string>NCI GPU Ray Casting</string>
              </property>
             </item>
-            <item>
-             <property name="text">
-              <string>NCI GPU Ray Casting (Multi-Volume)</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="1" column="0">
