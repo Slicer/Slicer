@@ -12,7 +12,7 @@ if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
 endif()
 
 # Set dependency list
-set(SlicerExecutionModel_DEPENDENCIES "Insight")
+set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(SlicerExecutionModel)
