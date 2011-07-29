@@ -149,7 +149,6 @@ int RegressionTestImage (const char *testImageFilename, const char *baselineImag
   if (reportErrors)
     {
     typedef itk::RescaleIntensityImageFilter<ImageType,OutputType> RescaleType;
-    typedef itk::ExtractImageFilter<OutputType,DiffOutputType> ExtractType;
     typedef itk::ImageFileWriter<DiffOutputType> WriterType;
     typedef itk::ImageRegion<ITK_TEST_DIMENSION_MAX> RegionType;
     OutputType::IndexType index; index.Fill(0);
@@ -171,9 +170,13 @@ int RegressionTestImage (const char *testImageFilename, const char *baselineImag
       }
     region.SetSize(size);
 
+    typedef itk::ExtractImageFilter<OutputType,DiffOutputType> ExtractType;
     ExtractType::Pointer extract = ExtractType::New();
-      extract->SetInput(rescale->GetOutput());
-      extract->SetExtractionRegion(region);
+#if  ITK_VERSION_MAJOR >=4
+    extract->SetDirectionCollapseToGuess(); //ITKv3 compatible, but not recommended
+#endif
+    extract->SetInput(rescale->GetOutput());
+    extract->SetExtractionRegion(region);
 
     WriterType::Pointer writer = WriterType::New();
       writer->SetInput(extract->GetOutput());

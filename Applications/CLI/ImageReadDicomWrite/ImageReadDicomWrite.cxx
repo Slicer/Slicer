@@ -38,7 +38,6 @@ int main( int argc, char* argv[] )
   typedef itk::Image<short,3>               Image3DType;
   typedef itk::Image<short,2>               Image2DType;
   typedef itk::ImageFileReader< Image3DType > ReaderType;
-  typedef itk::ExtractImageFilter< Image3DType, Image2DType > ExtractType;
   typedef itk::ShiftScaleImageFilter< Image3DType, Image3DType > ShiftScaleType;
   typedef itk::ImageFileWriter< Image2DType > WriterType;
   typedef itk::GDCMImageIO                  ImageIOType;
@@ -232,7 +231,11 @@ int main( int argc, char* argv[] )
       extractRegion.SetSize(extractSize);
       extractRegion.SetIndex(extractIndex);
 
+    typedef itk::ExtractImageFilter< Image3DType, Image2DType > ExtractType;
     ExtractType::Pointer extract = ExtractType::New();
+#if  ITK_VERSION_MAJOR >=4
+     extract->SetDirectionCollapseToGuess(); //ITKv3 compatible, but not recommended
+#endif
       extract->SetInput(image );
       extract->SetExtractionRegion(extractRegion);
       extract->GetOutput()->SetMetaDataDictionary(dictionary);

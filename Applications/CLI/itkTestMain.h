@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *=========================================================================*/
+ *=========================================================================*
 /*=========================================================================
  *
  *  Portions of this file are subject to the VTK Toolkit Version 3 copyright.
@@ -319,7 +319,6 @@ int RegressionTestImage(const char *testImageFilename,
   if ( ( status > numberOfPixelsTolerance ) && reportErrors )
     {
     typedef itk::RescaleIntensityImageFilter< ImageType, OutputType > RescaleType;
-    typedef itk::ExtractImageFilter< OutputType, DiffOutputType >     ExtractType;
     typedef itk::ImageFileWriter< DiffOutputType >                    WriterType;
     typedef itk::ImageRegion< ITK_TEST_DIMENSION_MAX >                RegionType;
     OutputType::SizeType size; size.Fill(0);
@@ -346,8 +345,11 @@ int RegressionTestImage(const char *testImageFilename,
 
     region.SetSize(size);
 
+    typedef itk::ExtractImageFilter< OutputType, DiffOutputType >     ExtractType;
     ExtractType::Pointer extract = ExtractType::New();
-    extract->SetDirectionCollapseToSubmatrix();
+#if  ITK_VERSION_MAJOR >=4
+    extract->SetDirectionCollapseToGuess(); //ITKv3 compatible, but not recommended
+#endif
     extract->SetInput( rescale->GetOutput() );
     extract->SetExtractionRegion(region);
 

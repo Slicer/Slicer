@@ -343,7 +343,7 @@ int main(int argc, char** argv){
     CropperType::Pointer cropper = CropperType::New();
     cropper->SetInput( divider->GetOutput() );
     cropper->SetExtractionRegion( inputRegion );
-#if ITK_VERSION_MAJOR > 3
+#if ITK_VERSION_MAJOR >=4
           cropper->SetDirectionCollapseToSubmatrix();
 #endif
     cropper->Update();
@@ -351,7 +351,7 @@ int main(int argc, char** argv){
     CropperType::Pointer biasFieldCropper = CropperType::New();
     biasFieldCropper->SetInput( expFilter->GetOutput() );
     biasFieldCropper->SetExtractionRegion( inputRegion );
-#if ITK_VERSION_MAJOR > 3
+#if ITK_VERSION_MAJOR >= 4
     biasFieldCropper->SetDirectionCollapseToSubmatrix();
 #endif
 

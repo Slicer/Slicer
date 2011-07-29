@@ -629,7 +629,9 @@ vtkITKBSplineTransformHelperImpl<O>
 {
   typename BSplineType::OriginType origin;
   for( unsigned int i=0; i<3; ++i )
+    {
     origin[i] = vOrigin[i];
+    }
   BSpline->SetGridOrigin( origin );
 }
 
