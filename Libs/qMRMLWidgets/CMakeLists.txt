@@ -359,9 +359,9 @@ if(BUILD_TESTING)
 endif()
 
 # --------------------------------------------------------------------------
-# QtDesigner Plugins
+# Qt Designer Plugins
 # --------------------------------------------------------------------------
-add_subdirectory(Plugins)
+add_subdirectory(DesignerPlugins)
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable

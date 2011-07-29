@@ -50,5 +50,5 @@ SlicerMacroBuildModuleWidgets(
   WRAP_PYTHONQT
   )
 
-# Plugin
-add_subdirectory(Plugins)
+# Qt Designer Plugins
+add_subdirectory(DesignerPlugins)

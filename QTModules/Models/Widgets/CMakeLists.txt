@@ -50,7 +50,7 @@ SlicerMacroBuildModuleWidgets(
   )
 
 # Qt Designer Plugins
-add_subdirectory(Plugins)
+add_subdirectory(DesignerPlugins)
 
 # Testing
 if(BUILD_TESTING)

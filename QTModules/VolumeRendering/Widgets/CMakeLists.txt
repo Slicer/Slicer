@@ -49,5 +49,5 @@ SlicerMacroBuildModuleWidgets(
   RESOURCES ${module_widgets_resources}
   )
 
-# Plugin
-add_subdirectory(Plugins)
+# Qt Designer Plugins
+add_subdirectory(DesignerPlugins)

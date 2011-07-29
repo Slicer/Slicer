@@ -285,8 +285,8 @@ if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
     )
 endif()
 
-# Plugin
-add_subdirectory(Plugins)
+# Qt Designer Plugins
+add_subdirectory(DesignerPlugins)
 
 # Testing
 if(BUILD_TESTING)
