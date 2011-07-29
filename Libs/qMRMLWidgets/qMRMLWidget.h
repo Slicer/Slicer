@@ -24,13 +24,12 @@
 // Qt includes
 #include <QWidget>
 
-// CTK includes
-#include <ctkPimpl.h>
-
+// qMRMLWidgets includes
 #include "qMRMLWidgetsExport.h"
-
-class vtkMRMLScene;
 class qMRMLWidgetPrivate;
+
+// VTK includes
+class vtkMRMLScene;
 
 /// Base class for any widget that requires a MRML Scene.
 class QMRML_WIDGETS_EXPORT qMRMLWidget : public QWidget

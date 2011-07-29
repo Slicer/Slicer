@@ -69,6 +69,7 @@ public slots:
 
 protected slots:
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
+  void onSceneModelChanged(const QString& modelType);
   
 protected:
   QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;

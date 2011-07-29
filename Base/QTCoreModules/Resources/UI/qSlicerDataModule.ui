@@ -822,21 +822,5 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>MRMLSceneModelComboBox</sender>
-   <signal>currentIndexChanged(QString)</signal>
-   <receiver>MRMLTreeView</receiver>
-   <slot>setSceneModelType(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>313</x>
-     <y>154</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>227</x>
-     <y>127</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

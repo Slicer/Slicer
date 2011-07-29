@@ -89,7 +89,11 @@ void qSlicerDataModuleWidget::setup()
   // Connection with TreeView is done in UI file
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
   d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
-          
+  d->MRMLSceneModelComboBox->addItem(QString("ModelHierarchy"));
+
+  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(const QString&)),
+          this, SLOT(onSceneModelChanged(const QString&)));
+
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
@@ -202,6 +206,16 @@ void qSlicerDataModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
     {
     d->MRMLTreeView->removeNodeMenuAction(d->HardenTransformAction);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModuleWidget::onSceneModelChanged(const QString& modelType)
+{
+  Q_D(qSlicerDataModuleWidget);
+  d->MRMLTreeView->setSceneModelType( modelType );
+
+  connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
+          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
 }
 
 //-----------------------------------------------------------------------------

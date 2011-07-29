@@ -270,6 +270,7 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
   if (newFilterModel)
     {
     newFilterModel->setNodeTypes(this->nodeTypes());
+    newFilterModel->setShowHidden(this->showHidden());
     }
   d->setSceneModel(newModel);
   // typically a no op except for ModelHierarchy
