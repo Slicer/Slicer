@@ -18,6 +18,7 @@
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 
 #if ITK_VERSION_MAJOR >= 4
+#include "itkFloatingPointExceptions.h"
 #endif
 
 #include "DiffusionTensorEstimationCLP.h"
