@@ -39,7 +39,7 @@ class _sliceWidget(object):
     pass
 
 def registerScriptedDisplayableManagers(sliceWidget):
-  """ called from qSlicerLayoutManager::createSliceView
+  """ called from qSlicerLayoutManager::createSliceWidget
       after it creates python wrappers for the vtk parts of
       the sliceWidget
   """
