@@ -44,10 +44,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   /// Read transform from file 
   vtkMRMLTransformNode* AddTransform (const char* filename, vtkMRMLScene *scene);
 
-  // Register transform types with ITK factory
-  // TODO: revisit this after the next (3.20?) release of ITK is out!!!
-  void RegisterITKTransforms();
-
   /// 
   /// Write transform's data to a specified file
   int SaveTransform (const char* filename, vtkMRMLTransformNode *transformNode);
