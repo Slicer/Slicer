@@ -103,7 +103,7 @@ qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPythonSource)
+bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPythonSource, const QString& className)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
 
@@ -118,27 +118,33 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
-  QString className = moduleName + "Widget";
-  //qDebug() << "className" << className;
+  QString classNameToLoad = className;
+  if (classNameToLoad.isEmpty())
+    {
+    QString moduleName = QFileInfo(newPythonSource).baseName();
+    classNameToLoad = moduleName + "Widget";
+    }
+  //qDebug() << "classNameToLoad" << classNameToLoad;
 
   // Get a reference to the main module and global dictionary
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
   // Load class definition if needed
-  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
+  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
   if (!classToInstantiate)
     {
     PyRun_File(pyfile, newPythonSource.toLatin1(), Py_file_input, global_dict, global_dict);
-    classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
+    classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
     }
 
   if (!classToInstantiate)
     {
-    qCritical()
-        << "setPythonSource - Failed to load scripted pythonqt module class definition"
-        << className << "from" << newPythonSource;
+    PyErr_Print();
+    PyErr_SetString(PyExc_RuntimeError,
+                    QString("setPythonSource - Failed to load scripted pythonqt module class definition"
+                            " %1 from %2").arg(classNameToLoad).arg(newPythonSource).toLatin1());
+    PyErr_Print();
     return false;
     }
 
@@ -162,7 +168,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     {
     qCritical() << "setPythonSource" << newPythonSource
         << " - Failed to instantiate scripted pythonqt class"
-        << className << classToInstantiate;
+        << classNameToLoad << classToInstantiate;
     return false;
     }
 
