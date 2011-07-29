@@ -210,8 +210,8 @@ SetUpTransform( parameters &list ,
                 const itk::Point< double > & outputImageCenter 
               )
 {
-   typedef itk::AffineTransform< double , 3 > AffineTransformType ;
-   typedef itk::Rigid3DTransform< double > RotationType ;
+   typedef itk::AffineTransform< double , 3 >       AffineTransformType;
+   typedef itk::MatrixOffsetTransformBase< double > RotationType;
    itk::Matrix< double , 3 , 3 > transformMatrix ;
    itk::Vector< double , 3 > vec ;
    if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
@@ -231,7 +231,7 @@ SetUpTransform( parameters &list ,
        try
        {
          typename RotationType::Pointer rotation = RotationType::New() ;
-         rotation->SetRotationMatrix( transformMatrix ) ;
+         rotation->SetMatrix( transformMatrix ) ;
          rotation->SetTranslation( vec ) ;
          transform = rotation ;
        }
@@ -269,9 +269,9 @@ SetTransformAndOrder( parameters &list ,
                       const itk::Point< double > &outputImageCenter
                     )
 {
-   typedef itk::AffineTransform< double , 3 > AffineTransformType ;
-   typedef itk::Rigid3DTransform< double > RotationType ;
-   typedef itk::Transform< double , 3 , 3 > TransformType ;
+   typedef itk::AffineTransform< double , 3 >       AffineTransformType ;
+   typedef itk::MatrixOffsetTransformBase< double > RotationType ;
+   typedef itk::Transform< double , 3 , 3 >         TransformType ;
    if( list.transformationFile.compare( "" ) )//Get transformation matrix from command line if no file given
    {
       list.transformMatrix.resize( 0 ) ;
@@ -311,7 +311,7 @@ SetTransformAndOrder( parameters &list ,
                      }
                      else
                      {
-                        itk::Rigid3DTransform< float >::Pointer floatRigid3DTransform
+                        itk::MatrixOffsetTransformBase< float >::Pointer floatRigid3DTransform
                               = dynamic_cast< itk::Rigid3DTransform< float >* > ( transform.GetPointer() ) ;
                         if( floatRigid3DTransform )//if rigid3D transform in float
                         {
@@ -484,7 +484,6 @@ SetAllTransform( parameters &list ,
 {
    typedef itk::Transform< double , 3 , 3 > TransformType ;
    typedef itk::AffineTransform< double , 3 > AffineTransformType ;
-   typedef itk::Rigid3DTransform< double > RotationType ;
    typename DeformationImageType::Pointer fieldPointer ;
    typedef itk::TransformFileReader::Pointer TransformReaderPointer ;
    TransformReaderPointer transformFile ;
@@ -877,7 +876,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer &transform )
 {
    itk::Transform< double , 3 , 3 >::Pointer inverseTransform ;
    typedef itk::AffineTransform< double , 3 > AffineTransformType ;
-   typedef itk::Rigid3DTransform< double > RotationType ;
+   typedef itk::MatrixOffsetTransformBase< double > RotationType ;
    try
    {
       AffineTransformType::Pointer affine = dynamic_cast<AffineTransformType* > ( transform.GetPointer() ) ;

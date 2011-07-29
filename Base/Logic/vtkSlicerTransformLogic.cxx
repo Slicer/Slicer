@@ -175,6 +175,7 @@ int vtkSlicerTransformLogic::SaveTransform (const char* vtkNotUsed(filename),
   return 1;
 }
 
+  // HACK:  This section of code is no longer needed in ITKv4 (or ITK v3.20 for that matter)
   // Register transform types with ITK factory
   // This code is from Applications/CLI/BRAINSTools/BRAINSCommonLib/GenericTransformImage.cxx
   // We do this in order to register ScaleVersor3DTransform, which is not done
