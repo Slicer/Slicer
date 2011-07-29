@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
@@ -64,10 +65,15 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->ControllerButtonGroup = 0;
   this->SliceOrientation = "Axial";
 
-  this->SliceOrientationToDescription["Axial"]    = QLatin1String("I <-----> S");
-  this->SliceOrientationToDescription["Sagittal"] = QLatin1String("L <-----> R");
-  this->SliceOrientationToDescription["Coronal"]  = QLatin1String("P <----> A");
-  this->SliceOrientationToDescription["Reformat"] = QLatin1String("Oblique");
+  qMRMLOrientation axialOrientation = {qMRMLSliceControllerWidget::tr("S: "), qMRMLSliceControllerWidget::tr("I <-----> S")};
+  qMRMLOrientation sagittalOrientation = {qMRMLSliceControllerWidget::tr("R: "), qMRMLSliceControllerWidget::tr("L <-----> R")};
+  qMRMLOrientation coronalOrientation = {qMRMLSliceControllerWidget::tr("A: "), qMRMLSliceControllerWidget::tr("P <-----> A")};
+  qMRMLOrientation obliqueOrientation = {qMRMLSliceControllerWidget::tr(""), qMRMLSliceControllerWidget::tr("Oblique")};
+
+  this->SliceOrientationToDescription["Axial"] = axialOrientation;
+  this->SliceOrientationToDescription["Sagittal"] = sagittalOrientation;
+  this->SliceOrientationToDescription["Coronal"] = coronalOrientation;
+  this->SliceOrientationToDescription["Reformat"] = obliqueOrientation;
 
   this->PinButton = 0;
   this->SliceOffsetSlider = 0;
@@ -154,24 +160,21 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider = new ctkSliderWidget(q);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
   this->SliceOffsetSlider->setPageStep(1.);
-  QObject::connect(this->PopupWidget, SIGNAL(popupOpened(bool)),
-                   this->SliceOffsetSlider, SLOT(setSpinBoxVisible(bool)));
-  this->SliceOffsetSlider->setSpinBoxVisible(false);
-  QSpinBox dummySpinBox(q);
-  this->SliceOffsetSlider->setFixedHeight(dummySpinBox.minimumSizeHint().height());
+  this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
+  // Move the spinbox in the popup instead of having it in the slider bar
+  dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
 
   this->PinButton = new QToolButton(q);
   this->PinButton->setCheckable(true);
   this->PinButton->setAutoRaise(true);
-  this->PinButton->setFixedSize(20,20);
+  this->PinButton->setFixedSize(15, 15);
   QIcon pushPinIcon;
   pushPinIcon.addFile(":/Icons/PushPinIn.png", QSize(), QIcon::Normal, QIcon::On);
   pushPinIcon.addFile(":/Icons/PushPinOut.png", QSize(), QIcon::Normal, QIcon::Off);
   this->PinButton->setIcon(pushPinIcon);
   QObject::connect(this->PinButton, SIGNAL(toggled(bool)),
                    this->PopupWidget, SLOT(pinPopup(bool)));
-  this->PinButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
-  this->PinButton->installEventFilter(q);
+  this->PinButton->installEventFilter(this);
 
   QHBoxLayout* layout = new QHBoxLayout;
   layout->addWidget(this->SliceOffsetSlider);
@@ -181,7 +184,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   margins.setBottom(0);
   q->setLayout(layout);
   layout->setContentsMargins(margins);
-  
+
   vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
     vtkSmartPointer<vtkMRMLSliceLogic>::New();
   q->setSliceLogic(defaultLogic);
@@ -274,10 +277,11 @@ void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 {
+  Q_Q(qMRMLSliceControllerWidget);
   QMenu* linkedMenu = new QMenu(tr("Linked"),this->SliceLinkButton);
   linkedMenu->addAction(this->actionHotLinked);
 
-  QObject::connect(this->actionHotLinked, SLOT(toggled(bool)),
+  QObject::connect(this->actionHotLinked, SIGNAL(toggled(bool)),
                    q, SLOT(setHotLinked(bool)));
 
   this->SliceLinkButton->setMenu(linkedMenu);
@@ -287,13 +291,16 @@ void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  QMenu* advancedMenu = new QMenu(tr("Advanced"),this->SliceMoreOptionButton);
+  //QMenu* advancedMenu = new QMenu(tr("Advanced"),this->SliceMoreOptionButton);
+  //QMenu* advancedMenu = new QMenu(tr("Advanced"));
   // Fit to window
-  advancedMenu->addAction(this->actionFit_to_window);
+  //advancedMenu->addAction(this->actionFit_to_window);
+  this->FitToWindowToolButton->setDefaultAction(actionFit_to_window);
   // Rotate to Volume Plane
-  advancedMenu->addAction(this->actionRotate_to_volume_plane);
+  //advancedMenu->addAction(this->actionRotate_to_volume_plane);
+  this->RotateToVolumePlaneToolButton->setDefaultAction(actionRotate_to_volume_plane);
   // LabelMap opacity
-  QMenu* labelOpacityMenu = new QMenu(tr("Adjust Labelmap opacity"), advancedMenu);
+  QMenu* labelOpacityMenu = new QMenu(tr("Adjust Labelmap opacity"));
   labelOpacityMenu->setIcon(QIcon(":Icons/SlicesLabelOpacity.png"));
   QWidget* labelOpacityWidget = new QWidget(labelOpacityMenu);
   QHBoxLayout* labelOpacityLayout = new QHBoxLayout(labelOpacityWidget);
@@ -320,13 +327,19 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   QWidgetAction* sliderAction = new QWidgetAction(labelOpacityMenu);
   sliderAction->setDefaultWidget(labelOpacityWidget);
   labelOpacityMenu->addAction(sliderAction);
-  advancedMenu->addMenu(labelOpacityMenu);
+  //advancedMenu->addMenu(labelOpacityMenu);
+  this->LabelOpacityToolButton->setMenu(labelOpacityMenu);
+
   // Show label volume outline
-  advancedMenu->addAction(this->actionShow_label_volume_outline);
+  //advancedMenu->addAction(this->actionShow_label_volume_outline);
+  this->ShowLabelVolumeOutlineToolButton->setDefaultAction(
+    this->actionShow_label_volume_outline);
   // Show reformat widget
-  advancedMenu->addAction(this->actionShow_reformat_widget);
+  //advancedMenu->addAction(this->actionShow_reformat_widget);
+  this->ShowReformatWidgetToolButton->setDefaultAction(
+    this->actionShow_reformat_widget);
   // Compositing
-  QMenu* compositingMenu = new QMenu(tr("Compositing"), advancedMenu);
+  QMenu* compositingMenu = new QMenu(tr("Compositing"));
   compositingMenu->setIcon(QIcon(":/Icons/SlicesComposite.png"));
   compositingMenu->addAction(this->actionCompositingAlpha_blend);
   compositingMenu->addAction(this->actionCompositingReverse_alpha_blend);
@@ -337,9 +350,11 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   compositingGroup->addAction(this->actionCompositingReverse_alpha_blend);
   compositingGroup->addAction(this->actionCompositingAdd);
   compositingGroup->addAction(this->actionCompositingSubtract);
-  advancedMenu->addMenu(compositingMenu);
+  //advancedMenu->addMenu(compositingMenu);
+  this->CompositingToolButton->setMenu(compositingMenu);
+
   // Spacing mode
-  QMenu* sliceSpacingMode = new QMenu(tr("Slice spacing mode"), advancedMenu);
+  QMenu* sliceSpacingMode = new QMenu(tr("Slice spacing mode"));
   sliceSpacingMode->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
   sliceSpacingMode->addAction(this->actionSliceSpacingModeAutomatic);
   QMenu* sliceSpacingManualMode = new QMenu(tr("Manual"), sliceSpacingMode);
@@ -355,9 +370,10 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   sliceSpacingAction->setDefaultWidget(this->SliceSpacingSpinBox);
   sliceSpacingManualMode->addAction(sliceSpacingAction);
   sliceSpacingMode->addMenu(sliceSpacingManualMode);
-  advancedMenu->addMenu(sliceSpacingMode);
+  //advancedMenu->addMenu(sliceSpacingMode);
+  this->SliceSpacingModeToolButton->setMenu(sliceSpacingMode);
   // Lightbox View
-  QMenu* lightboxView = new QMenu(tr("Lightbox view"), advancedMenu);
+  QMenu* lightboxView = new QMenu(tr("Lightbox view"));
   lightboxView->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
   lightboxView->addAction(this->actionLightbox1x1_view);
   lightboxView->addAction(this->actionLightbox1x2_view);
@@ -399,7 +415,8 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   lightboxActionGroup->addAction(this->actionLightbox3x3_view);
   lightboxActionGroup->addAction(this->actionLightbox6x6_view);
   lightboxActionGroup->addAction(customLightboxAction);
-  advancedMenu->addMenu(lightboxView);
+  //advancedMenu->addMenu(lightboxView);
+  this->LightBoxToolButton->setMenu(lightboxView);
   // Adjust display
   /*
   QMenu* adjustDisplay = new QMenu(tr("Adjust display"), advancedMenu);
@@ -408,7 +425,17 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   adjustDisplay->addAction(this->actionAdjustDisplayBackground_volume);
   advancedMenu->addMenu(adjustDisplay);
   */
-  this->SliceMoreOptionButton->setMenu(advancedMenu);
+  //this->SliceMoreOptionButton->setMenu(advancedMenu);
+}
+
+//---------------------------------------------------------------------------
+bool qMRMLSliceControllerWidgetPrivate::eventFilter(QObject* object, QEvent* event)
+{
+  if (object == this->PinButton && event->type() == QEvent::Enter)
+    {
+    this->PopupWidget->showPopup();
+    }
+  return this->QObject::eventFilter(object, event);
 }
 
 //---------------------------------------------------------------------------
@@ -486,9 +513,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->SliceOrientationSelector->setCurrentIndex(index);
 
   // Update slice offset slider tooltip
-  this->SliceOffsetSlider->setToolTip(
-      this->SliceOrientationToDescription[
-          QString::fromStdString(this->MRMLSliceNode->GetOrientationString())]);
+  qMRMLOrientation orientation = this->SliceOrientationToDescription[
+          QString::fromStdString(this->MRMLSliceNode->GetOrientationString())];
+  this->SliceOffsetSlider->setToolTip(orientation.ToolTip);
+  this->SliceOffsetSlider->setPrefix(orientation.Prefix);
 
   // Update slice visibility toggle
   this->SliceVisibilityButton->setChecked(this->MRMLSliceNode->GetSliceVisible());
@@ -582,7 +610,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       this->actionCompositingSubtract->setChecked(true);
       break;
     }
-  
+
 }
 
 // --------------------------------------------------------------------------
@@ -848,17 +876,6 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent) : Super
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget()
 {
-}
-
-//---------------------------------------------------------------------------
-bool qMRMLSliceControllerWidget::eventFilter(QObject* object, QEvent* event)
-{
-  Q_D(qMRMLSliceControllerWidget);
-  if (object == d->PinButton && event->type() == QEvent::Enter)
-    {
-    d->PopupWidget->showPopup();
-    }
-  return this->Superclass::eventFilter(object, event);
 }
 
 //---------------------------------------------------------------------------

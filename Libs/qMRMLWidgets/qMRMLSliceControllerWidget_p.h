@@ -50,6 +50,13 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
+struct qMRMLOrientation
+{
+  QString Prefix;
+  QString ToolTip;
+};
+
+//-----------------------------------------------------------------------------
 class qMRMLSliceControllerWidgetPrivate: public QObject,
                                    public Ui_qMRMLSliceControllerWidget
 {
@@ -107,6 +114,7 @@ public slots:
   void applyCustomLightbox();
 protected:
   virtual void setupUi(ctkPopupWidget* widget);
+  virtual bool eventFilter(QObject*, QEvent*);
   void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 
@@ -117,7 +125,7 @@ public:
   vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkImageData>        ImageData;
   QString                             SliceOrientation;
-  QHash<QString, QString>             SliceOrientationToDescription;
+  QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
