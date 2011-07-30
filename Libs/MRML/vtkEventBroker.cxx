@@ -19,11 +19,8 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
-#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 #include <vtkTimerLog.h>
-
-// STD includes
 
 vtkCxxSetObjectMacro(vtkEventBroker, TimerLog, vtkTimerLog);
 
@@ -85,12 +82,6 @@ vtkEventBroker* vtkEventBroker::GetInstance()
     // if the factory did not provide one, then create it here
     if(!vtkEventBrokerInstance)
       {
-      // if the factory failed to create the object,
-      // then destroy it now, as vtkDebugLeaks::ConstructClass was called
-      // with "vtkEventBroker", and not the real name of the class
-#ifdef VTK_DEBUG_LEAKS
-      vtkDebugLeaks::DestructClass("vtkEventBroker");
-#endif
       vtkEventBrokerInstance = new vtkEventBroker;
       }
     }
