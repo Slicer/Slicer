@@ -22,7 +22,6 @@
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 
 // VTK includes
-#include <vtkDebugLeaks.h>
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
@@ -56,12 +55,6 @@ vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerF
     // if the factory did not provide one, then create it here
     if(!Self::Instance)
       {
-      // if the factory failed to create the object,
-      // then destroy it now, as vtkDebugLeaks::ConstructClass was called
-      // with "vtkMRMLThreeDViewDisplayableManagerFactory", and not the real name of the class
-#ifdef VTK_DEBUG_LEAKS
-      vtkDebugLeaks::DestructClass("vtkMRMLThreeDViewDisplayableManagerFactory");
-#endif
       Self::Instance = new vtkMRMLThreeDViewDisplayableManagerFactory;
       }
     }
