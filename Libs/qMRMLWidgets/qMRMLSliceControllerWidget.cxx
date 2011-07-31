@@ -1082,6 +1082,10 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
   this->setAutoFillBackground(true);
   this->setPalette(palette);
 
+  QPalette buttonPalette( buttonColor.lighter(130));
+  d->PinButton->setAutoFillBackground(true);
+  d->PinButton->setPalette(buttonPalette);
+
   if (d->SliceLogic)
     {
     d->SliceLogic->SetName(newSliceViewName.toLatin1());
