@@ -34,7 +34,6 @@
 
 class QAction;
 class ctkButtonGroup;
-class qMRMLActionSignalMapper;
 class qMRMLSceneViewMenu;
 class vtkMRMLViewNode;
 
@@ -74,7 +73,6 @@ public:
   // TODO In LayoutManager, use GetActive/IsActive flag ...
   vtkWeakPointer<vtkMRMLViewNode>  ActiveMRMLThreeDViewNode;
 
-  qMRMLActionSignalMapper*         StereoTypesMapper;
   qMRMLSceneViewMenu*              SceneViewMenu;
 
   bool                             DisableMagnification;

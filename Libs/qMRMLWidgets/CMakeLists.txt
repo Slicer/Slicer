@@ -31,14 +31,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
 # Sources
 #
 set(qMRMLWidgets_SRCS
-  qMRMLActionSignalMapper.cxx
-  qMRMLActionSignalMapper.h
   qMRMLCheckableNodeComboBox.cxx
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
+  qMRMLColors.cxx
+  qMRMLColors.h
   qMRMLColorListView.cxx
   qMRMLColorListView.h
   qMRMLColorModel.cxx
@@ -153,7 +153,6 @@ set(qMRMLWidgets_SRCS
 
 # Headers that should run through moc
 set(qMRMLWidgets_MOC_SRCS
-  qMRMLActionSignalMapper.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h

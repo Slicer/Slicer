@@ -29,12 +29,12 @@
 // CTK includes
 #include <ctkDoubleSlider.h>
 #include <ctkLogger.h>
+#include <ctkSignalMapper.h>
 #include <ctkSliderWidget.h>
 
 // qMRML includes
 #include "qMRMLSlicesControllerToolBar.h"
 #include "ui_qMRMLSlicesControllerToolBar.h"
-#include "qMRMLActionSignalMapper.h"
 
 // MRML includes
 #include <vtkMRMLCrosshairNode.h>
@@ -72,11 +72,11 @@ public:
   QToolButton*             LabelOpacityToggleButton;
   double                   LastLabelOpacity;
   ctkDoubleSlider*         ForegroundOpacitySlider;
-  qMRMLActionSignalMapper* AnnotationsMapper;
-  qMRMLActionSignalMapper* CompositingMapper;
-  qMRMLActionSignalMapper* CrosshairMapper;
-  qMRMLActionSignalMapper* CrosshairThicknessMapper;
-  qMRMLActionSignalMapper* SpatialUnitsMapper;
+  ctkSignalMapper* AnnotationsMapper;
+  ctkSignalMapper* CompositingMapper;
+  ctkSignalMapper* CrosshairMapper;
+  ctkSignalMapper* CrosshairThicknessMapper;
+  ctkSignalMapper* SpatialUnitsMapper;
   QDoubleSpinBox*          RedSliceFOVSpinBox;
   QDoubleSpinBox*          YellowSliceFOVSpinBox;
   QDoubleSpinBox*          GreenSliceFOVSpinBox;
@@ -169,7 +169,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   annotationsActions->addAction(actionAnnotationShow_all);
   annotationsActions->addAction(actionAnnotationShow_label_values_only);
   annotationsActions->addAction(actionAnnotationShow_voxel_and_label_values_only);
-  this->AnnotationsMapper = new qMRMLActionSignalMapper(q);
+  this->AnnotationsMapper = new ctkSignalMapper(q);
   this->AnnotationsMapper->setMapping(this->actionAnnotationNone,
                                       vtkMRMLSliceCompositeNode::NoAnnotation);
   this->AnnotationsMapper->setMapping(this->actionAnnotationShow_all,
@@ -198,7 +198,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   compositingActions->addAction(actionCompositingReverse_alpha_blend);
   compositingActions->addAction(actionCompositingAdd);
   compositingActions->addAction(actionCompositingSubstract);
-  this->CompositingMapper = new qMRMLActionSignalMapper(q);
+  this->CompositingMapper = new ctkSignalMapper(q);
   this->CompositingMapper->setMapping(this->actionCompositingAlpha_blend,
                                       vtkMRMLSliceCompositeNode::Alpha);
   this->CompositingMapper->setMapping(this->actionCompositingReverse_alpha_blend,
@@ -230,7 +230,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   crosshairActions->addAction(actionCrosshairBasic_hashmarks_intersection);
   crosshairActions->addAction(actionCrosshairSmall_basic);
   crosshairActions->addAction(actionCrosshairSmall_basic_intersection);
-  this->CrosshairMapper = new qMRMLActionSignalMapper(q);
+  this->CrosshairMapper = new ctkSignalMapper(q);
   this->CrosshairMapper->setMapping(actionCrosshairNo_crosshair,
                                     vtkMRMLCrosshairNode::NoCrosshair);
   this->CrosshairMapper->setMapping(actionCrosshairBasic_crosshair,
@@ -254,7 +254,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   crosshairThicknessActions->addAction(actionCrosshairFine);
   crosshairThicknessActions->addAction(actionCrosshairMedium);
   crosshairThicknessActions->addAction(actionCrosshairThick);
-  this->CrosshairThicknessMapper = new qMRMLActionSignalMapper(q);
+  this->CrosshairThicknessMapper = new ctkSignalMapper(q);
   this->CrosshairThicknessMapper->setMapping(actionCrosshairFine,
                                              vtkMRMLCrosshairNode::Fine);
   this->CrosshairThicknessMapper->setMapping(actionCrosshairMedium,
@@ -287,7 +287,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   spatialUnitsActions->addAction(actionSpatialUnitsIJK);
   spatialUnitsActions->addAction(actionSpatialUnitsRAS);
   spatialUnitsActions->addAction(actionSpatialUnitsIJK_RAS);
-  this->SpatialUnitsMapper = new qMRMLActionSignalMapper(q);
+  this->SpatialUnitsMapper = new ctkSignalMapper(q);
   this->SpatialUnitsMapper->setMapping(this->actionSpatialUnitsXYZ,
                                       vtkMRMLSliceCompositeNode::XYZ);
   this->SpatialUnitsMapper->setMapping(this->actionSpatialUnitsIJK,

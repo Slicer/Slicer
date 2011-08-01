@@ -27,7 +27,6 @@
 
 // qMRML includes
 #include "qMRMLThreeDViewsControllerWidget_p.h"
-#include "qMRMLActionSignalMapper.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneViewMenu.h"
 
