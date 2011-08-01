@@ -194,7 +194,7 @@ install(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 if(Slicer_USE_CTKAPPLAUNCHER)
   include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
 
-  # Define list of extra 'application to launch' to associate with the launched
+  # Define list of extra 'application to launch' to associate with the launcher
   set(extraApplicationToLaunchListForBuildTree)
   if(EXISTS "${QT_DESIGNER_EXECUTABLE}")
     ctkAppLauncherAppendExtraAppToLaunchToList(
