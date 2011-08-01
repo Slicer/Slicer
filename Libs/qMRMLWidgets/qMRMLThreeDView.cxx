@@ -31,6 +31,7 @@
 #include <ctkPopupWidget.h>
 
 // qMRML includes
+#include "qMRMLColors.h"
 #include "qMRMLThreeDView_p.h"
 
 // MRMLDisplayableManager includes
@@ -92,7 +93,7 @@ void qMRMLThreeDViewPrivate::init()
   q->interactor()->SetInteractorStyle(interactorStyle);
 
   // Set default background color
-  q->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
+  q->setBackgroundColor(qMRMLColors::viewBlue());
 
   // Hide orientation widget
   q->setOrientationWidgetVisible(false);

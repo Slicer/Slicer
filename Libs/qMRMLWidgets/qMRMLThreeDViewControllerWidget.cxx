@@ -19,22 +19,22 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
-#include <QMenu>
 #include <QActionGroup>
+#include <QDebug>
 #include <QInputDialog>
+#include <QMenu>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkButtonGroup.h>
+#include <ctkLogger.h>
+#include <ctkSignalMapper.h>
 
 // qMRML includes
-#include "qMRMLThreeDViewControllerWidget.h"
-#include "qMRMLThreeDViewControllerWidget_p.h"
-#include "qMRMLActionSignalMapper.h"
+#include "qMRMLColors.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneViewMenu.h"
 #include "qMRMLThreeDView.h"
+#include "qMRMLThreeDViewControllerWidget_p.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -97,7 +97,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(resetFocalPoint()));
 
   // StereoType actions
-  this->StereoTypesMapper = new qMRMLActionSignalMapper(widget);
+  this->StereoTypesMapper = new ctkSignalMapper(widget);
   this->StereoTypesMapper->setMapping(this->actionNoStereo,
                                       vtkMRMLViewNode::NoStereo);
   this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
@@ -375,8 +375,7 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setLightBlueBackground()
 {
-  QColor lightBlue = QColor::fromRgbF(0.70196, 0.70196, 0.90588);
-  this->setBackgroundColor(lightBlue);
+  this->setBackgroundColor(qMRMLColors::viewBlue());
 }
 
 // --------------------------------------------------------------------------

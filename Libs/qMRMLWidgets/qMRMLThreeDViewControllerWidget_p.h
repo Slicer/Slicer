@@ -30,7 +30,7 @@
 
 class QAction;
 class ctkButtonGroup;
-class qMRMLActionSignalMapper;
+class ctkSignalMapper;
 class qMRMLSceneViewMenu;
 class vtkMRMLViewNode;
 
@@ -52,7 +52,7 @@ public:
   vtkWeakPointer<vtkMRMLViewNode>  ViewNode;
   qMRMLThreeDView*                 ThreeDView;
 
-  qMRMLActionSignalMapper*         StereoTypesMapper;
+  ctkSignalMapper*                 StereoTypesMapper;
   ctkButtonGroup*                  AnimateViewButtonGroup;
 };
 

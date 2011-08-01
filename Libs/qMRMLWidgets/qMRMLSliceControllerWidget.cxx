@@ -34,6 +34,7 @@
 #include <ctkSliderWidget.h>
 
 // qMRML includes
+#include "qMRMLColors.h"
 #include "qMRMLSliceControllerWidget_p.h"
 
 // MRMLLogic includes
@@ -1049,26 +1050,26 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
   // http://www.w3.org/TR/SVG/types.html#ColorKeywords, then use that.
   // Set Orange otherwise.
   QColor buttonColor;
-  buttonColor.setRgbF(0.882352941176, 0.439215686275, 0.0705882352941); // orange
-
-  QColor namedColor;
-  namedColor.setNamedColor( newSliceViewName.toLower() );
 
   if (newSliceViewName == "Red")
     {
-    buttonColor.setRgbF(0.952941176471, 0.290196078431, 0.2); // red
+    buttonColor = qMRMLColors::sliceRed();
     }
   else if (newSliceViewName == "Green")
     {
-    buttonColor.setRgbF(0.43137254902, 0.690196078431, 0.294117647059); // green
+    buttonColor = qMRMLColors::sliceGreen();
     }
   else if (newSliceViewName == "Yellow")
     {
-    buttonColor.setRgbF(0.929411764706, 0.835294117647, 0.298039215686); // yellow
+    buttonColor =  qMRMLColors::sliceYellow();
     }
-  else if (namedColor.isValid())
+  else if (QColor(newSliceViewName.toLower()).isValid())
     {
-    buttonColor = namedColor;
+    buttonColor = QColor(newSliceViewName.toLower());
+    }
+  else
+    {
+    buttonColor = qMRMLColors::sliceOrange();
     }
   //d->SliceCollapsibleButton->setPalette(QPalette(buttonColor));
   palette = d->SliceOffsetSlider->palette();
