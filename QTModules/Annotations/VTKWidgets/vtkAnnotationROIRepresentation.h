@@ -203,7 +203,7 @@ protected:
   ~vtkAnnotationROIRepresentation();
 
   /// Manage how the representation appears
-  double LastEventPosition[3];
+  double LastEventPosition[4];
   
   /// the hexahedron (6 faces)
   vtkActor          *HexActor;
@@ -222,7 +222,7 @@ protected:
   vtkPolyDataMapper **HandleMapper;
   vtkSphereSource   **HandleGeometry;
   virtual void PositionHandles();
-  int HighlightHandle(vtkProp *prop); //returns cell id
+  virtual int HighlightHandle(vtkProp *prop); //returns cell id
   void HighlightFace(int cellId);
   void HighlightOutline(int highlight);
   void ComputeNormals();
@@ -255,7 +255,7 @@ protected:
   vtkProperty *SelectedFaceProperty;
   vtkProperty *OutlineProperty;
   vtkProperty *SelectedOutlineProperty;
-  void CreateDefaultProperties();
+  virtual void CreateDefaultProperties();
   
   /// Control the orientation of the normals
   int InsideOut;

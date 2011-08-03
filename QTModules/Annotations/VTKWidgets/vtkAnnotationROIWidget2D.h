@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkAnnotationROIWidget.h,v $
+  Module:    $RCSfile: vtkAnnotationROIWidget2D.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkAnnotationROIWidget - 3D widget for manipulating a box
+///  vtkAnnotationROIWidget2D - 3D widget for manipulating a box
 /// 
 /// This 3D widget interacts with a vtkAnnotationROIRepresentation class (i.e., it
 /// handles the events that drive its corresponding representation). The
@@ -23,11 +23,11 @@
 /// six faces can also be interacted with. The first six handles are placed on
 /// the six faces, the seventh is in the center of the box. In addition, a
 /// bounding box outline is shown, the "faces" of which can be selected for
-/// object rotation or scaling. A nice feature of vtkAnnotationROIWidget, like any 3D
+/// object rotation or scaling. A nice feature of vtkAnnotationROIWidget2D, like any 3D
 /// widget, will work with the current interactor style. That is, if
-/// vtkAnnotationROIWidget does not handle an event, then all other registered
+/// vtkAnnotationROIWidget2D does not handle an event, then all other registered
 /// observers (including the interactor style) have an opportunity to process
-/// the event. Otherwise, the vtkAnnotationROIWidget will terminate the processing of
+/// the event. Otherwise, the vtkAnnotationROIWidget2D will terminate the processing of
 /// the event that it handles.
 //
 /// To use this widget, you generally pair it with a vtkAnnotationROIRepresentation
@@ -57,7 +57,7 @@
 //
 /// Note that the event bindings described above can be changed using this
 /// class's vtkWidgetEventTranslator. This class translates VTK events 
-/// into the vtkAnnotationROIWidget's widget events:
+/// into the vtkAnnotationROIWidget2D's widget events:
 /// <pre>
 ///   vtkWidgetEvent::Select -- some part of the widget has been selected
 ///   vtkWidgetEvent::EndSelect -- the selection process has completed
@@ -68,7 +68,7 @@
 ///   vtkWidgetEvent::Move -- a request for motion has been invoked
 /// </pre>
 //
-/// In turn, when these widget events are processed, the vtkAnnotationROIWidget
+/// In turn, when these widget events are processed, the vtkAnnotationROIWidget2D
 /// invokes the following VTK events on itself (which observers can listen for):
 /// <pre>
 ///   vtkCommand::StartInteractionEvent (on vtkWidgetEvent::Select)
@@ -82,87 +82,57 @@
 /// 
 /// This class, and the affiliated vtkAnnotationROIRepresentation, are second generation
 /// VTK widgets. An earlier version of this functionality was defined in the
-/// class vtkAnnotationROIWidget.
+/// class vtkAnnotationROIWidget2D.
 
 /// .SECTION See Also
-/// vtkAnnotationROIRepresentation vtkAnnotationROIWidget
+/// vtkAnnotationROIRepresentation vtkAnnotationROIWidget2D
 
-#ifndef __vtkAnnotationROIWidget_h
-#define __vtkAnnotationROIWidget_h
+#ifndef __vtkAnnotationROIWidget2D_h
+#define __vtkAnnotationROIWidget2D_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-#include "vtkAbstractWidget.h"
+#include "vtkAnnotationROIWidget.h"
 
-class vtkAnnotationROIRepresentation;
+class vtkAnnotationROIRepresentation2D;
+class vtkWidgetRepresentation2D;
 class vtkHandleWidget;
 
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkAnnotationROIWidget : public vtkAbstractWidget
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkAnnotationROIWidget2D : public vtkAnnotationROIWidget
 {
 public:
   /// 
   /// Instantiate the object.
-  static vtkAnnotationROIWidget *New();
+  static vtkAnnotationROIWidget2D *New();
 
   /// 
   /// Standard class methods for type information and printing.
-  vtkTypeRevisionMacro(vtkAnnotationROIWidget,vtkAbstractWidget);
+  vtkTypeRevisionMacro(vtkAnnotationROIWidget2D,vtkAnnotationROIWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
   /// Specify an instance of vtkWidgetRepresentation used to represent this
   /// widget in the scene. Note that the representation is a subclass of vtkProp
   /// so it can be added to the renderer independent of the widget.
-  virtual void SetRepresentation(vtkAnnotationROIRepresentation *r)
+  virtual void SetRepresentation(vtkAnnotationROIRepresentation2D *r)
     {
     this->Superclass::SetWidgetRepresentation(reinterpret_cast<vtkWidgetRepresentation*>(r));
     }
   
-  /// 
-  /// Control the behavior of the widget (i.e., how it processes
-  /// events). Translation, rotation, and scaling can all be enabled and
-  /// disabled.
-  vtkSetMacro(TranslationEnabled,int);
-  vtkGetMacro(TranslationEnabled,int);
-  vtkBooleanMacro(TranslationEnabled,int);
-  vtkSetMacro(ScalingEnabled,int);
-  vtkGetMacro(ScalingEnabled,int);
-  vtkBooleanMacro(ScalingEnabled,int);
-  vtkSetMacro(RotationEnabled,int);
-  vtkGetMacro(RotationEnabled,int);
-  vtkBooleanMacro(RotationEnabled,int);
-
   /// 
   /// Create the default widget representation if one is not set. By default,
   /// this is an instance of the vtkAnnotationROIRepresentation class.
   virtual void CreateDefaultRepresentation();
 
 protected:
-  vtkAnnotationROIWidget();
-  ~vtkAnnotationROIWidget();
-
-//BTX - manage the state of the widget
-  int WidgetState;
-  enum _WidgetState {Start=0,Active};
-//ETX
-  
-  /// These methods handle events
-  static void SelectAction(vtkAbstractWidget*);
-  static void EndSelectAction(vtkAbstractWidget*);
-  static void TranslateAction(vtkAbstractWidget*);
-  static void ScaleAction(vtkAbstractWidget*);
-  static void MoveAction(vtkAbstractWidget*);
-
-  /// Control whether scaling, rotation, and translation are supported
-  int TranslationEnabled;
-  int ScalingEnabled;
-  int RotationEnabled;
+  vtkAnnotationROIWidget2D();
+  ~vtkAnnotationROIWidget2D();
 
 private:
-  vtkAnnotationROIWidget(const vtkAnnotationROIWidget&);  //Not implemented
-  void operator=(const vtkAnnotationROIWidget&);  //Not implemented
+  vtkAnnotationROIWidget2D(const vtkAnnotationROIWidget2D&);  //Not implemented
+  void operator=(const vtkAnnotationROIWidget2D&);  //Not implemented
 };
 
 #endif

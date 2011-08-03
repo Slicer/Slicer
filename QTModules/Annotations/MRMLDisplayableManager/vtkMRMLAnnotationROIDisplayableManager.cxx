@@ -12,6 +12,8 @@
 // AnnotationModule/VTKWidgets includes
 #include <vtkAnnotationROIRepresentation.h>
 #include <vtkAnnotationROIWidget.h>
+#include <vtkAnnotationROIRepresentation2D.h>
+#include <vtkAnnotationROIWidget2D.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -115,48 +117,6 @@ public:
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationROIDisplayableManager::~vtkMRMLAnnotationROIDisplayableManager()
 {
-  std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter;
-  for (iter = this->Contour2DActors.begin(); iter != this->Contour2DActors.end(); iter++)
-    {
-    iter->second->Delete();
-    }
-  this->Contour2DActors.clear();
-
-  std::map<vtkMRMLAnnotationNode*, vtkPlane*>::iterator iter1;
-  for (iter1 = this->Contour2DPlanes.begin(); iter1 != this->Contour2DPlanes.end(); iter1++)
-    {
-    iter1->second->Delete();
-    }
-  this->Contour2DPlanes.clear();
-
-  std::map<vtkMRMLAnnotationNode*, vtkCutter*>::iterator iter2;
-  for (iter2 = this->Contour2DCutters.begin(); iter2 != this->Contour2DCutters.end(); iter2++)
-    {
-    iter2->second->Delete();
-    }
-  this->Contour2DCutters.clear();
-
-  std::map<vtkMRMLAnnotationNode*, vtkCubeSource*>::iterator iter3;
-  for (iter3 = this->Contour2DCubes.begin(); iter3 != this->Contour2DCubes.end(); iter3++)
-    {
-    iter3->second->Delete();
-    }
-  this->Contour2DCubes.clear();
-
-  std::map<vtkMRMLAnnotationNode*, vtkTransform*>::iterator iter4; 
-  for (iter4 = this->Contour2DTransforms.begin(); iter4 != this->Contour2DTransforms.end(); iter4++)
-    {
-    iter4->second->Delete();
-    }
-  this->Contour2DTransforms.clear();
-
-  std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*>::iterator iter5; 
-  for (iter5 = this->Contour2DTransformFilters.begin(); iter5 != this->Contour2DTransformFilters.end(); iter5++)
-    {
-    iter5->second->Delete();
-    }
-  this->Contour2DTransformFilters.clear();
-
 }
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
@@ -183,8 +143,16 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
     return 0;
     }
 
+  vtkAnnotationROIWidget* boxWidget = NULL;
 
-  vtkAnnotationROIWidget* boxWidget = vtkAnnotationROIWidget::New();
+  if (this->Is2DDisplayableManager())
+    {
+    boxWidget = vtkAnnotationROIWidget2D::New();
+    }
+  else
+    {
+    boxWidget = vtkAnnotationROIWidget::New();
+    }
 
   boxWidget->SetInteractor(this->GetInteractor());
   boxWidget->SetCurrentRenderer(this->GetRenderer());
@@ -197,89 +165,11 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   boxRepresentation->SetPlaceFactor(1.0);
 
-  // we place the widget around 0,0,0
-  double bounds[6] = {0,0,0,0,0,0};
-  bounds[0]=-1;
-  bounds[1]=1;
-  bounds[2]=-1;
-  bounds[3]=1;
-  bounds[4]=-1;
-  bounds[5]=1;
+  this->PropagateMRMLToWidget(node, boxWidget);
 
-  boxRepresentation->PlaceWidget(bounds);
-
-  boxRepresentation->NeedToRenderOn();
-  //this->RequestRender();
-  // end of starting placement
-
-  // now, we move the widget to the position according to the MRML node
-  // this is saved as origin and radius
-  // we need to get the transformation matrix of the boxRepresentation
-  // and modify it according to MRML
-
-  vtkTransform* transform = vtkTransform::New();
-  boxRepresentation->GetTransform(transform);
-
-  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
-
-  //std::cout << "Now coming the matrix from rep before modific." << std::endl;
-  //transform->PrintSelf(std::cout,vtkIndent(1));
-
-  // we need to save the origin here in the matrix
-  //double origin[3];
-  double origin[3];
-  int originRetVal = roiNode->GetXYZ(origin);
-  double radius[3];
-  int radiusRetVal = roiNode->GetRadiusXYZ(radius);
-
-  if(!originRetVal || !radiusRetVal)
-    {
-      vtkErrorMacro("CreateWidget: Failed to initialize a new ROI node!");
-      return NULL;
-    }
-
-  matrix->SetElement(0,3,origin[0]);
-  matrix->SetElement(1,3,origin[1]);
-  matrix->SetElement(2,3,origin[2]);
-
-  // we need to save the radius here in the matrix
-  //double radius[3];
-  matrix->SetElement(0,0,radius[0]*2.0);
-  matrix->SetElement(1,1,radius[1]*2.0);
-  matrix->SetElement(2,2,radius[2]*2.0);
-
-  //matrix->DeepCopy(newMatrix);
-
-  //std::cout << "Just the matrix after modific." << std::endl;
-  //matrix->PrintSelf(std::cout,vtkIndent(1));
-
-  transform->SetMatrix(matrix);
-
-  //std::cout << "Now coming the transform after new matrix but before setting to rep" << std::endl;
-  //transform->PrintSelf(std::cout,vtkIndent(1));
-
-  boxRepresentation->SetTransform(transform);
-
-  //vtkTransform* transformAfterSet = vtkTransform::New();
-  //boxRepresentation->GetTransform(transformAfterSet);
-  //std::cout << "Now coming the transform from rep" << std::endl;
-  //transformAfterSet->PrintSelf(std::cout,vtkIndent(1));
-
-  //boxWidget->ProcessEventsOff();
-
-  boxRepresentation->EndWidgetInteraction(origin);
   boxRepresentation->NeedToRenderOn();
 
   boxWidget->On();
-
-  matrix->Delete();
-  transform->Delete();
-
-
-  if (this->Is2DDisplayableManager())
-    {
-    this->Update2DCountour(node);
-    }
 
   return boxWidget;
 
@@ -302,12 +192,6 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
     return;
     }
 
-  if (this->Is2DDisplayableManager())
-    {
-    // cannot manipulate ROI in 2d views
-    return;
-    }
-
   vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
   myCallback->SetNode(node);
   myCallback->SetWidget(widget);
@@ -320,14 +204,14 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
 
 }
 
-void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *vtkNotUsed(widget), vtkMRMLNode *node)
+void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node)
 {
-  this->Update2DCountour(vtkMRMLAnnotationNode::SafeDownCast(node));
+  this->PropagateMRMLToWidget(vtkMRMLAnnotationNode::SafeDownCast(node), widget);
 }
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   if (!sliceNode)
@@ -335,111 +219,68 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
     return;
     }
 
-  vtkCubeSource *cube = NULL;
-  vtkPlane *plane = NULL;
-  vtkCutter *cutter = NULL;
-  vtkTransformPolyDataFilter *transformFilter = NULL;
-  vtkTransform *transform = NULL;
-  vtkActor2D *actor = NULL;
+  // cast to the specific widget
+  vtkAnnotationROIWidget2D* boxWidget = vtkAnnotationROIWidget2D::SafeDownCast(widget);
 
-  std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter = Contour2DActors.find(node);
-  if (iter == Contour2DActors.end())
+  if (!boxWidget)
     {
-    // create new pipeline
-    cube = vtkCubeSource::New();
-    plane = vtkPlane::New();
-
-    cutter = vtkCutter::New();
-    cutter->SetInput(cube->GetOutput());
-    cutter->SetCutFunction(plane);
-
-    transform = vtkTransform::New();
-    transformFilter = vtkTransformPolyDataFilter::New();
-    transformFilter->SetInput(cutter->GetOutput());
-    transformFilter->SetTransform(transform);
-
-    vtkPolyDataMapper2D *mapper = vtkPolyDataMapper2D::New();
-    mapper->SetInput(transformFilter->GetOutput());
-
-    actor = vtkActor2D::New();
-    actor->SetMapper(mapper);
-
-    this->GetRenderer()->AddActor2D(actor);
-   
-    this->Contour2DActors[node] = actor;
-    this->Contour2DCutters[node] = cutter;
-    this->Contour2DPlanes[node] = plane;
-    this->Contour2DCubes[node] = cube;
-    this->Contour2DTransforms[node] = transform;
-    this->Contour2DTransformFilters[node] = transformFilter;
-
-    mapper->Delete();
-    }
-  else
-    {
-    actor = iter->second;
-
-    std::map<vtkMRMLAnnotationNode*, vtkPlane*>::iterator iter1 = Contour2DPlanes.find(node);
-    if (iter1 == Contour2DPlanes.end())
-      {
-      vtkErrorMacro("Update2DCountour:plane not found")
-      return;
-      }
-    plane = iter1->second;
-
-    std::map<vtkMRMLAnnotationNode*, vtkCutter*>::iterator iter2 = Contour2DCutters.find(node);
-    if (iter2 == Contour2DCutters.end())
-      {
-      vtkErrorMacro("Update2DCountour:cutter not found")
-      return;
-      }
-    cutter = iter2->second;
-
-    std::map<vtkMRMLAnnotationNode*, vtkCubeSource*>::iterator iter3 = Contour2DCubes.find(node);
-    if (iter3 == Contour2DCubes.end())
-      {
-      vtkErrorMacro("Update2DCountour:cube source not found")
-      return;
-      }
-    cube = iter3->second;
-
-
-    std::map<vtkMRMLAnnotationNode*, vtkTransform*>::iterator iter4 = Contour2DTransforms.find(node);
-    if (iter4 == Contour2DTransforms.end())
-      {
-      vtkErrorMacro("Update2DCountour: transform not found")
-      return;
-      }
-    transform = iter4->second;
-
-    std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*>::iterator iter5 = Contour2DTransformFilters.find(node);
-    if (iter5 == Contour2DTransformFilters.end())
-      {
-      vtkErrorMacro("Update2DCountour:transform filter not found")
-      return;
-      }
-    transformFilter = iter5->second;
-
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    return;
     }
 
   // cast to the specific mrml node
   vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
 
-  double xyz[4]={0,0,0,1};
-  roiNode->GetXYZ(xyz);
-  cube->SetCenter(xyz);
+  if (!roiNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
+    return;
+    }
 
-  double rxyz[4] = {0,0,0,0};
-  roiNode->GetRadiusXYZ(rxyz);
-  cube->SetXLength(2*rxyz[0]);
-  cube->SetYLength(2*rxyz[1]);
-  cube->SetZLength(2*rxyz[2]);
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkAnnotationROIRepresentation2D * rep = vtkAnnotationROIRepresentation2D::SafeDownCast(boxWidget->GetRepresentation());
+  
+  if (rep) 
+    {
+    // update widget from mrml
+    double xyz[3];
+    double rxyz[3];
+    roiNode->GetXYZ(xyz);
+    roiNode->GetRadiusXYZ(rxyz);
+
+    double bounds[6];
+    for (int i=0; i<3; i++)
+      {
+      bounds[  i] = xyz[i]-rxyz[i];
+      bounds[3+i] = xyz[i]+rxyz[i];
+      }
+    double b[6];
+    b[0] = bounds[0];
+    b[1] = bounds[3];
+    b[2] = bounds[1];
+    b[3] = bounds[4];
+    b[4] = bounds[2];
+    b[5] = bounds[5];
+
+    rep->PlaceWidget(b);
+    }
+
+  //this->SetParentTransformToWidget(roiNode, boxWidget);
 
   // handle ROI transform to world space
   vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   transformToWorld->Identity();
 
-  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
+  vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
   if (tnode != NULL && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
@@ -457,6 +298,8 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
   mat->Multiply4x4(rasToXY, transformToWorld, mat);
   rasToXY->DeepCopy(mat);
 
+  vtkTransform *transform = rep->GetIntersectionPlaneTransform();
+    
   transform->SetMatrix(rasToXY);
 
   //
@@ -491,11 +334,21 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
     normal[i] = normal[i]*lenInv;
     }
 
+  vtkPlane *plane = rep->GetIntersectionPlane();
+
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
-  cutter->Update();
-  transformFilter->Update();
+  rep->UpdateIntersections();
+
+  // re-render the widget
+  rep->NeedToRenderOn();
+  boxWidget->Modified();
+
+  // enable processing of modified events
+  this->m_Updating = 0;
+
+
 
   return;
 }
@@ -503,15 +356,6 @@ void vtkMRMLAnnotationROIDisplayableManager::Update2DCountour(vtkMRMLAnnotationN
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
-  if (this->Is2DDisplayableManager())
-    {
-    std::map<vtkMRMLAnnotationNode*, vtkActor2D*>::iterator iter = this->Contour2DActors.find(vtkMRMLAnnotationNode::SafeDownCast(node));
-    if (iter != this->Contour2DActors.end())
-      {
-      this->GetRenderer()->RemoveActor2D(iter->second);
-      //this->Contour2DActors.erase(iter);
-      }
-    }
   this->Superclass::OnMRMLSceneNodeRemovedEvent(node);
 }
 
@@ -534,7 +378,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   if (this->Is2DDisplayableManager())
     {
-    this->Update2DCountour(node);
+    this->PropagateMRMLToWidget2D(node, widget);
     return;
     }
 
@@ -609,11 +453,6 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
-  if (this->Is2DDisplayableManager())
-    {
-    return;
-    }
-
   if (!widget)
     {
     vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
@@ -702,7 +541,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     {
 
     // switch to updating state to avoid events mess
-    this->m_Updating = 1;
+    //this->m_Updating = 1;
 
     vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);

@@ -28,12 +28,6 @@ class vtkMRMLAnnotationROIDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
-class vtkActor2D;
-class vtkPlane;
-class vtkCutter;
-class vtkCubeSource;
-class vtkTransform;
-class vtkTransformPolyDataFilter;
 
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationROIDisplayableManager :
@@ -60,6 +54,7 @@ protected:
 
   /// Propagate properties of MRML node to widget.
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
+  virtual void PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
 
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
@@ -75,18 +70,6 @@ protected:
 
   /// Set mrml parent transform to widgets
   virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget);
-
-  /// Update 2D countour pipeline
-  void Update2DCountour(vtkMRMLAnnotationNode* node);
-
-  /// Map of 2d countor objects indexed using associated node
-  std::map<vtkMRMLAnnotationNode*, vtkActor2D*> Contour2DActors;
-  std::map<vtkMRMLAnnotationNode*, vtkPlane*> Contour2DPlanes;
-  std::map<vtkMRMLAnnotationNode*, vtkCutter*> Contour2DCutters;
-  std::map<vtkMRMLAnnotationNode*, vtkCubeSource*> Contour2DCubes;
-  std::map<vtkMRMLAnnotationNode*, vtkTransform*> Contour2DTransforms;
-  std::map<vtkMRMLAnnotationNode*, vtkTransformPolyDataFilter*> Contour2DTransformFilters;
-
 
 private:
 

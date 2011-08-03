@@ -99,8 +99,15 @@ public:
 
   void Initialize(vtkMRMLScene* mrmlScene);
 
-  int GetVisibility() {return this->GetVisible();}
-  void SetVisibility(int flag) {this->SetVisible(flag);}
+  int GetVisibility() 
+  {
+    return this->GetVisible();
+  }
+
+  void SetVisibility(int flag) 
+  {
+    this->SetVisible(flag);
+  }
 
   /// 
   /// Get/Set for ROI Position in RAS cooridnates
@@ -112,8 +119,13 @@ public:
   //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
   // returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetXYZ(double point[3]);
-  int SetXYZ(double newControl[3]) { return this->SetControlPoint(0, newControl);}
-  int SetXYZ(double nC1, double nC2, double nC3) {
+  int SetXYZ(double newControl[3]) 
+  { 
+    return this->SetControlPoint(0, newControl);
+  }
+
+  int SetXYZ(double nC1, double nC2, double nC3) 
+  {
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetXYZ(newControl) ;
   }
@@ -125,8 +137,14 @@ public:
   /// void SetRadiusXYZ(double* RadiusXYZ);
   /// vtkGetVectorMacro(RadiusXYZ,double,3);
   bool GetRadiusXYZ(double point[3]);
-  int SetRadiusXYZ(double newControl[3]) { return this->SetControlPoint(1, newControl);}
-  int SetRadiusXYZ(double nC1, double nC2, double nC3) {
+
+  int SetRadiusXYZ(double newControl[3]) 
+  { 
+    return this->SetControlPoint(1, newControl);
+  }
+
+  int SetRadiusXYZ(double nC1, double nC2, double nC3) 
+  {
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetRadiusXYZ(newControl);
   }
