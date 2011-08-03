@@ -724,11 +724,11 @@
     node->ResetNthURI(0, "http://www.nowhere.com/newfilename.txt");     \
     node->ResetNthURI(100, "ftp://not.in.list");                        \
     node->ResetNthURI(100, NULL);                                       \
-    const char *dataDirName = "/testing/a/directory";                   \
+    const char *dataDirName = "/test-ing/a/dir ect.ory";                \
     node->SetDataDirectory(dataDirName);                                \
     node->SetFileName("/tmp/file.txt");                                 \
     node->SetDataDirectory(dataDirName);                                \
-    if (strcmp("/testing/a/directory/file.txt", node->GetFileName()) != 0) \
+    if (strcmp("/test-ing/a/dir ect.ory/file.txt", node->GetFileName()) != 0) \
       {                                                                 \
       std::cerr << "Setting DataDirectory to " << dataDirName << " failed, got new file name of " << node->GetFileName() << std::endl; \
       return EXIT_FAILURE;                                              \
