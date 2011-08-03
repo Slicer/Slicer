@@ -149,6 +149,13 @@ bool qMRMLDisplayNodeWidget::visibility()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setVisibilityVisible(bool visible)
+{
+  Q_D(const qMRMLDisplayNodeWidget);
+  d->VisibilityCheckBox->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::setSelected(bool selected)
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -164,6 +171,13 @@ bool qMRMLDisplayNodeWidget::selected()const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SelectedCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSelectedVisible(bool visible)
+{
+  Q_D(const qMRMLDisplayNodeWidget);
+  d->SelectedCheckBox->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -185,6 +199,13 @@ bool qMRMLDisplayNodeWidget::clipping()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setClippingVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  d->ClippingCheckBox->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -200,6 +221,13 @@ bool qMRMLDisplayNodeWidget::sliceIntersectionVisible()const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SliceIntersectionVisibilityCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSliceIntersectionVisibleVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  d->SliceIntersectionVisibilityCheckBox->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------
