@@ -828,8 +828,9 @@ void vtkMRMLStorageNode::SetDataDirectory(const char *dataDirName)
     }
   // reset the filename
   vtksys_stl::string filePath = vtksys::SystemTools::GetFilenamePath(this->GetFileName());
+  vtkDebugMacro("SetDataDirectory: from FileName " << (this->GetFileName() ? this->GetFileName() : "NULL") << ", got filePath = " << filePath.c_str());
   vtksys_stl::vector<vtksys_stl::string> pathComponents;
-  vtksys::SystemTools::SplitPath(filePath.c_str(), pathComponents);
+  vtksys::SystemTools::SplitPath(dataDirName, pathComponents);
   vtksys_stl::string fileName, newFileName; 
   if (filePath != vtksys_stl::string(dataDirName))
     {

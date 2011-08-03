@@ -728,6 +728,15 @@
     node->SetDataDirectory(dataDirName);                                \
     node->SetFileName("/tmp/file.txt");                                 \
     node->SetDataDirectory(dataDirName);                                \
+    if (strcmp("/testing/a/directory/file.txt", node->GetFileName()) != 0) \
+      {                                                                 \
+      std::cerr << "Setting DataDirectory to " << dataDirName << " failed, got new file name of " << node->GetFileName() << std::endl; \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+    std::cout << "Resetting Data Directory to " << dataDirName << " succeeded, got new file name of " << node->GetFileName() << std::endl; \
+      }                                                                 \
     const char *uriPrefix = "http://www.somewhere.com/";                \
     node->SetURIPrefix(uriPrefix);                                      \
                                                                         \
