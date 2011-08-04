@@ -28,20 +28,20 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageDimensionsWidget" native="true">
+    <widget class="ctkCoordinatesWidget" name="ImageDimensionsWidget">
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="decimals" stdset="0">
+     <property name="decimals">
       <number>0</number>
      </property>
-     <property name="minimum" stdset="0">
+     <property name="minimum">
       <double>0.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>100000.000000000000000</double>
      </property>
-     <property name="coordinates" stdset="0">
+     <property name="coordinates">
       <string>1,1,1</string>
      </property>
     </widget>
@@ -54,14 +54,14 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageSpacingWidget" native="true">
-     <property name="decimals" stdset="0">
+    <widget class="ctkCoordinatesWidget" name="ImageSpacingWidget">
+     <property name="decimals">
       <number>2</number>
      </property>
-     <property name="minimum" stdset="0">
+     <property name="minimum">
       <double>0.010000000000000</double>
      </property>
-     <property name="coordinates" stdset="0">
+     <property name="coordinates">
       <string>1,1,1</string>
      </property>
     </widget>
@@ -74,14 +74,14 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageOriginWidget" native="true">
-     <property name="decimals" stdset="0">
+    <widget class="ctkCoordinatesWidget" name="ImageOriginWidget">
+     <property name="decimals">
       <number>4</number>
      </property>
-     <property name="minimum" stdset="0">
+     <property name="minimum">
       <double>-1000000.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>1000000.000000000000000</double>
      </property>
     </widget>

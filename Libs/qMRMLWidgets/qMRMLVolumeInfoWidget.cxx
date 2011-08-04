@@ -210,8 +210,6 @@ void qMRMLVolumeInfoWidget::setDataTypeEditable(bool enable)
   d->ScanOrderComboBox->setEnabled(enable);
   d->NumberOfScalarsSpinBox->setEnabled(enable);
   d->ScalarTypeComboBox->setEnabled(enable);
-  d->MaxScalarDoubleSpinBox->setEnabled(enable);
-  d->MinScalarDoubleSpinBox->setEnabled(enable);
 }
 
 //------------------------------------------------------------------------------
