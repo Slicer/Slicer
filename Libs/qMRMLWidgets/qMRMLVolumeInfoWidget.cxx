@@ -36,6 +36,7 @@
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
@@ -106,7 +107,6 @@ void qMRMLVolumeInfoWidgetPrivate::init()
   QObject::connect(this->LabelMapCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setLabelMap(bool)));
   // Window level presets are read-only
-  
   q->setDataTypeEditable(false);
   q->setLabelMapEditable(true);
   q->setEnabled(this->VolumeNode != 0);
@@ -210,6 +210,8 @@ void qMRMLVolumeInfoWidget::setDataTypeEditable(bool enable)
   d->ScanOrderComboBox->setEnabled(enable);
   d->NumberOfScalarsSpinBox->setEnabled(enable);
   d->ScalarTypeComboBox->setEnabled(enable);
+  d->MaxScalarDoubleSpinBox->setEnabled(enable);
+  d->MinScalarDoubleSpinBox->setEnabled(enable);
 }
 
 //------------------------------------------------------------------------------
@@ -275,7 +277,26 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   
   d->ScalarTypeComboBox->setCurrentIndex( d->ScalarTypeComboBox->findData(
     image ? image->GetScalarType() : -1));
-  
+
+  if (image)
+    {
+    double typeRange[2];
+    vtkDataArray::GetDataTypeRange(image->GetScalarType(), typeRange);
+    d->MinScalarDoubleSpinBox->setRange(typeRange[0], typeRange[1]);
+    d->MaxScalarDoubleSpinBox->setRange(typeRange[0], typeRange[1]);
+
+    double* scalarRange = image->GetScalarRange();
+    d->MinScalarDoubleSpinBox->setValue(scalarRange[0]);
+    d->MaxScalarDoubleSpinBox->setValue(scalarRange[1]);
+    }
+  else
+    {
+    d->MinScalarDoubleSpinBox->setRange(0., 0.);
+    d->MaxScalarDoubleSpinBox->setRange(0., 0.);
+    d->MinScalarDoubleSpinBox->setValue(0.);
+    d->MaxScalarDoubleSpinBox->setValue(0.);
+    }
+
   vtkMRMLStorageNode* storageNode = d->VolumeNode->GetStorageNode();
   d->FileNameLineEdit->setText(storageNode ? storageNode->GetFileName() : "");
   
@@ -436,3 +457,5 @@ void qMRMLVolumeInfoWidget::setLabelMap(bool enable)
   scalarNode->SetLabelMap( enable );
   displayNode->Delete();
 }
+
+
