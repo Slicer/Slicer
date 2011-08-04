@@ -146,7 +146,42 @@ def loadVolume(filename):
   filetype = qSlicerIO.VolumeFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
+def openData():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddDataDialog()
 
+def openVolume():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddVolumeDialog()
+
+def openModel():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddModelDialog()
+
+def openScalarOverlay():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddScalarOverlayDialog()
+
+def openTransform():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddTransformDialog()
+
+def openColorTable():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddColorTableDialog()
+
+def openFiducial():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddFiducialDialog()
+
+def openDTI():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openAddDTIDialog()
+
+def openSaveData():
+  from slicer import app, qSlicerIO
+  return app.coreIOManager().openSaveDataDialog()
+  
 #
 # Module
 #
