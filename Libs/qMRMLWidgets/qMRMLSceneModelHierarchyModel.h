@@ -28,11 +28,26 @@ class qMRMLSceneModelHierarchyModelPrivate;
 class QMRML_WIDGETS_EXPORT qMRMLSceneModelHierarchyModel : public qMRMLSceneModel
 {
   Q_OBJECT
+  ///
+  /// Control in which column vtkMRMLModelDisplayNode::Color are displayed
+  /// (Qt::DecorationRole). Even if a vtkMRMLModelNode doesn't have a color
+  /// proper, the color of its display node is used. If the model node has
+  /// more than one display node and their colors are different, it uses
+  /// an invalid color.
+  /// A value of -1 hides it. Hidden by default (value of -1).
+  Q_PROPERTY (int colorColumn READ colorColumn WRITE setColorColumn)
+  Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
 
 public:
   typedef qMRMLSceneModel Superclass;
   qMRMLSceneModelHierarchyModel(QObject *parent=0);
   virtual ~qMRMLSceneModelHierarchyModel();
+
+  int colorColumn()const;
+  void setColorColumn(int column);
+
+  int opacityColumn()const;
+  void setOpacityColumn(int column);
 
   ///
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
@@ -57,6 +72,11 @@ public:
   /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
   /// visibility check state changes.
   virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row);
+
+protected:
+  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneModelHierarchyModel);

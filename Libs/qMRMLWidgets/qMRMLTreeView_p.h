@@ -57,13 +57,4 @@ public:
   QMenu*                     SceneMenu;
 };
 
-//------------------------------------------------------------------------------
-class qMRMLStyledItemDelegate: public QStyledItemDelegate
-{
-  Q_OBJECT
-public:
-  qMRMLStyledItemDelegate(QObject* object);
-  using QStyledItemDelegate::initStyleOption;
-};
-
 #endif

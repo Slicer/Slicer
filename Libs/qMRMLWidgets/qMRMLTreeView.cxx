@@ -26,6 +26,7 @@
 #include <QInputDialog>
 
 // qMRML includes
+#include "qMRMLItemDelegate.h"
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLSceneModelHierarchyModel.h"
 #include "qMRMLSceneTransformModel.h"
@@ -36,12 +37,6 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLScene.h>
-
-//------------------------------------------------------------------------------
-qMRMLStyledItemDelegate::qMRMLStyledItemDelegate(QObject* object)
-  : QStyledItemDelegate(object)
-{
-}
 
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
@@ -61,7 +56,7 @@ void qMRMLTreeViewPrivate::init()
 {
   Q_Q(qMRMLTreeView);
 
-  q->setItemDelegate(new qMRMLStyledItemDelegate(q));
+  q->setItemDelegate(new qMRMLItemDelegate(q));
 
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
@@ -497,7 +492,7 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
     QModelIndex index = this->indexAt(e->pos());
     QStyleOptionViewItemV4 opt = this->viewOptions();
     opt.rect = this->visualRect(index);
-    qobject_cast<qMRMLStyledItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
+    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
     QRect decorationElement =
       this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
     //decorationElement.translate(this->visualRect(index).topLeft());
@@ -517,6 +512,10 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
 bool qMRMLTreeView::onDecorationClicked(const QModelIndex& index)
 {
   QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
+  if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
+    {
+    return false;
+    }
   if (sourceIndex.column() == this->sceneModel()->visibilityColumn())
     {
     this->toggleVisibility(index);

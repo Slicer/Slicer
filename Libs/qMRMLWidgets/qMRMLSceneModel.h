@@ -179,9 +179,47 @@ protected:
 
   virtual bool isANode(const QStandardItem* item)const;
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+  /// Generic function that updates the item data and flags from the node.
+  /// You probably want to reimplement updateItemDataFromNode() instead.
+  /// \sa updateNodeFromItemData, updateNodeFromItem, updateItemDataFromNode,
+  /// nodeFlags
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  /// To reimplement if you want custom display of the QStandardItem from
+  /// the MRML node.
+  /// Example:
+  /// <code>
+  /// void MySceneModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
+  /// if (column == 3)
+  ///   {
+  ///   item->setText(node->GetFoo());
+  ///   return;
+  ///   }
+  /// this->Superclass::updateItemDataFromNode(item, node, column);
+  /// }
+  /// </code>
+  /// \sa updateNodeFromItemData, updateNodeFromItem, updateItemFromNode,
+  /// nodeFlags
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  /// Generic function that updates the node from the item data and flags.
+  /// You probably want to reimplement updateNodeFromItemData() instead.
+  /// \sa updateItemDataFromNode, updateNodeFromItemData, updateItemFromNode,
+  /// nodeFlags
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+  /// To reimplement if you want to propagate user changes on QStandardItem
+  /// into the MRML node.
+  /// Example:
+  /// <code>
+  /// void MySceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
+  /// if (column == 3)
+  ///   {
+  ///   node->SetFoo(item->text());
+  ///   return;
+  ///   }
+  /// this->Superclass::updateNodeFromItemData(node, item);
+  /// }
+  /// </code>
+  /// \sa updateItemFromNode, updateNodeFromItemData, updateItemFromNode,
+  /// nodeFlags
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,

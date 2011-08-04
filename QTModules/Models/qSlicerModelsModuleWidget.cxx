@@ -25,6 +25,7 @@
 #include <ctkLogger.h>
 
 // qMRMLWidgets
+#include "qMRMLSceneModelHierarchyModel.h"
 
 // SlicerQt includes
 #include "qSlicerModelsModuleWidget.h"
@@ -82,8 +83,21 @@ void qSlicerModelsModuleWidget::setup()
   
   d->setupUi(this);
   d->ClipModelsNodeComboBox->setVisible(false);
-  
-  d->ModelHierarchyTreeView->setColumnHidden(1, true);
+
+  qobject_cast<qMRMLSceneModelHierarchyModel*>(
+    d->ModelHierarchyTreeView->sceneModel())->setIDColumn(-1);
+  qobject_cast<qMRMLSceneModelHierarchyModel*>(
+    d->ModelHierarchyTreeView->sceneModel())->setColorColumn(1);
+  qobject_cast<qMRMLSceneModelHierarchyModel*>(
+    d->ModelHierarchyTreeView->sceneModel())->setOpacityColumn(2);
+
+  qobject_cast<qMRMLSceneModelHierarchyModel*>(
+    d->ModelHierarchyTreeView->sceneModel())->setColumnCount(3);
+  d->ModelHierarchyTreeView->header()->setStretchLastSection(false);
+  d->ModelHierarchyTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
+  d->ModelHierarchyTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+  d->ModelHierarchyTreeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
     QStringList() << "vtkMRMLModelHierarchyNode");
 
@@ -181,6 +195,7 @@ void qSlicerModelsModuleWidget::onCollapsed(const QModelIndex & index)
   logger.trace("onCollapsed: set hierarchy node to collapsed");
 
 }
+
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
 {
@@ -204,3 +219,11 @@ void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
   hnode->SetExpanded(1);
   logger.trace("onExpanded: set hierarchy node to expanded");
 }
+/*
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  this->Superclass::setMRMLScene(scene);
+}
+*/

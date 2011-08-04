@@ -612,8 +612,12 @@ void qMRMLSceneModel::updateScene()
   sceneItem->setData("scene", qMRMLSceneModel::UIDRole);
   sceneItem->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)), qMRMLSceneModel::PointerRole);
   sceneItems << sceneItem;
-  sceneItems << new QStandardItem;
-  sceneItems[1]->setFlags(0);
+  for (int i = 1; i < this->columnCount(); ++i)
+    {
+    QStandardItem* sceneOtherColumn = new QStandardItem;
+    sceneOtherColumn->setFlags(0);
+    sceneItems << sceneOtherColumn;
+    }
   this->insertRow(oldPreItems.count(), sceneItems);
   this->setPreItems(oldScenePreItems, sceneItem);
   this->setPostItems(oldScenePostItems, sceneItem);
@@ -740,7 +744,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)co
     {
     flags = flags | Qt::ItemIsUserCheckable;
     }
-  if (column == 0)
+  if (column == d->NameColumn)
     {
     flags = flags | Qt::ItemIsEditable;
     }
@@ -1148,6 +1152,7 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
     {
     return;
     }
+  // Only nodes can be changed, scene and extra items should be not editable
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
   Q_ASSERT(mrmlNode);
   this->updateNodeFromItem(mrmlNode, item);

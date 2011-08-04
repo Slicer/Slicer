@@ -61,6 +61,8 @@ set(qMRMLWidgets_SRCS
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
   qMRMLEventLoggerWidget.h
+  qMRMLItemDelegate.cxx
+  qMRMLItemDelegate.h
   qMRMLLayoutManager.cxx
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h
@@ -166,6 +168,7 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLEventBrokerWidget.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
+  qMRMLItemDelegate.h
   qMRMLLabelComboBox.h
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h
@@ -207,7 +210,6 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLThreeDWidget.h
   qMRMLTransformSliders.h
   qMRMLTreeView.h
-  qMRMLTreeView_p.h
   qMRMLVolumeInfoWidget.h
   qMRMLVolumePropertyNodeWidget.h
   qMRMLVolumeThresholdWidget.h
