@@ -159,6 +159,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->PopupWidget->setAutoHide(true);
 
   this->SliceOffsetSlider = new ctkSliderWidget(q);
+  this->SliceOffsetSlider->setTracking(true);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
   this->SliceOffsetSlider->setPageStep(1.);
   this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
