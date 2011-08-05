@@ -353,8 +353,8 @@ void qMRMLSceneModelHierarchyModel
     vtkMRMLDisplayNode* displayNode = d->displayNode(node);
     if (displayNode)
       {
-      double displayedOpacity
-        = QString::number(displayNode->GetOpacity(), 'f', 2).toDouble();
+      QString displayedOpacity
+        = QString::number(displayNode->GetOpacity(), 'f', 2);
       item->setData(displayedOpacity, Qt::DisplayRole);
       }
     }

@@ -33,6 +33,8 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 public:
   qMRMLItemDelegate(QObject *parent = 0);
   
+  bool is0To1Value(const QModelIndex& index)const;
+
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const;
 
@@ -46,10 +48,13 @@ public:
   void updateEditorGeometry(QWidget *editor,
     const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+  virtual bool eventFilter(QObject *object, QEvent *event);
+
   // We make initStyleOption public so it can be used by qMRMLTreeView
   using QStyledItemDelegate::initStyleOption;
 
 protected slots:
+  void commitSenderData();
   void commitAndClose();
 };
 
