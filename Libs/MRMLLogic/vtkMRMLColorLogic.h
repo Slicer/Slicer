@@ -120,6 +120,12 @@ public:
   vtkGetStringMacro(UserColorFilePaths);
   vtkSetStringMacro(UserColorFilePaths);
 
+  ///
+  /// Returns a vtkMRMLColorTableNode copy (type = vtkMRMLColorTableNode::User)
+  /// of the \a color node. The node is not added to the scene and you are
+  /// responsible for deleting it.
+  static vtkMRMLColorTableNode* CopyNode(vtkMRMLColorNode* colorNode, const char* copyName);
+
 protected:
   vtkMRMLColorLogic();
   virtual ~vtkMRMLColorLogic();

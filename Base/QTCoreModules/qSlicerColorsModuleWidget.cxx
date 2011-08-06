@@ -256,22 +256,8 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
     {
     return;
     }
-  vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
-  colorNode->SetName(newColorName.toLatin1());
-  colorNode->SetTypeToUser();
-  colorNode->SetAttribute("Category", "User Generated");
-  if (currentNode->GetLookupTable())
-    {
-    double* range = colorNode->GetLookupTable()->GetRange();
-    colorNode->GetLookupTable()->SetRange(range[0], range[1]);
-    }
-  colorNode->SetNumberOfColors(currentNode->GetNumberOfColors());
-  for (int i = 0; i < currentNode->GetNumberOfColors(); ++i)
-    {
-    double color[4];
-    currentNode->GetColor(i, color);
-    colorNode->SetColor(i, currentNode->GetColorName(i), color[0], color[1], color[2]);
-    }
+  
+  vtkMRMLColorTableNode *colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toLatin1());
   this->mrmlScene()->AddNode(colorNode);
   colorNode->Delete();
   d->ColorTableComboBox->setCurrentNode(colorNode);

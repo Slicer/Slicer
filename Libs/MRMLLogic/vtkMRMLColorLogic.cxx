@@ -23,6 +23,7 @@
 #include "vtkMRMLColorTableStorageNode.h"
 
 // VTK sys includes
+#include <vtkLookupTable.h>
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
@@ -969,5 +970,27 @@ void vtkMRMLColorLogic::AddUserFileNodes()
     this->AddUserFileNode(i);
     }
 
+}
+
+//----------------------------------------------------------------------------------------
+vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy, const char* copyName)
+{
+  vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+  colorNode->SetName(copyName);
+  colorNode->SetTypeToUser();
+  colorNode->SetAttribute("Category", "User Generated");
+  if (nodeToCopy->GetLookupTable())
+    {
+    double* range = nodeToCopy->GetLookupTable()->GetRange();
+    colorNode->GetLookupTable()->SetRange(range[0], range[1]);
+    }
+  colorNode->SetNumberOfColors(nodeToCopy->GetNumberOfColors());
+  for (int i = 0; i < nodeToCopy->GetNumberOfColors(); ++i)
+    {
+    double color[4];
+    nodeToCopy->GetColor(i, color);
+    colorNode->SetColor(i, nodeToCopy->GetColorName(i), color[0], color[1], color[2]);
+    }
+  return colorNode;
 }
 
