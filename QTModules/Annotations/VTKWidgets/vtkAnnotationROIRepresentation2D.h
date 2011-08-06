@@ -103,11 +103,10 @@ public:
 
   virtual int HasTranslucentPolygonalGeometry();
 
-  virtual void SizeHandles(){};
+  virtual void SizeHandles();
 
   virtual int HighlightHandle(vtkProp *prop);
 
-  void UpdateIntersections();
   void PrintIntersections(ostream& os);
 
 protected:

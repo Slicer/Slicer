@@ -320,6 +320,9 @@ public:
     this->SetDisableModifiedEvent(0);
     }
 
+  /// Count of pending modified events
+  vtkGetMacro(ModifiedEventPending, int);
+
   /// 
   /// overrides the vtkObject method so that all changes to the node which would normally 
   /// generate a ModifiedEvent can be grouped into an 'atomic' operation.  Typical usage
@@ -342,7 +345,7 @@ public:
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   /// Returns the old flag state.
-  int InvokePendingModifiedEvent ()
+  virtual int InvokePendingModifiedEvent ()
     {
     if ( this->ModifiedEventPending )
       {

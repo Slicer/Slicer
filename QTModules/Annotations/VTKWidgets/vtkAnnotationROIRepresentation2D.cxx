@@ -77,6 +77,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->HandleToPlaneTransformFilters = new vtkTransformPolyDataFilter* [7];
 
   this->IntersectionPlane = vtkPlane::New();
+  double normal[3]={1,0,0};
+  double origin[3]={0,0,0};
+  this->IntersectionPlane->SetNormal(normal);
+  this->IntersectionPlane->SetOrigin(origin);
+
   this->IntersectionPlaneTransform = vtkTransform::New();
 
   this->HandlePicker2D = vtkPropPicker::New();
@@ -88,7 +93,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   int i;
   for (i=0; i<7; i++)
     {
-    this->HandleGeometry[i]->SetRadius(2.5);
+    this->HandleGeometry[i]->SetRadius(0);
 
     this->HandleToPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
     this->HandleToPlaneTransformFilters[i]->SetInput(this->HandleGeometry[i]->GetOutput());
@@ -102,7 +107,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
     this->HandlePicker2D->AddPickList(this->Handle2D[i]);
     this->Handle2D[i]->SetProperty(this->HandleProperties2D[i]);
+    //this->Handle2D[i]->SetVisibility(0);
     }
+    
+  this->PositionHandles();
+
 }
 
 //----------------------------------------------------------------------------
@@ -189,15 +198,6 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
     }
 }
 
-//----------------------------------------------------------------------
-void vtkAnnotationROIRepresentation2D::UpdateIntersections()
-{
-  for (int i=0; i<6; i++)
-    {
-    this->IntersectionCutters[i]->Update();
-    this->IntersectionPlaneTransformFilters[i]->Update();
-    }
-}
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
@@ -268,6 +268,7 @@ int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
 int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
 {
   int count=0;
+  /***
   this->BuildRepresentation();
   
   count += this->HexFace2D->RenderOpaqueGeometry(v);
@@ -281,6 +282,7 @@ int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
     {
     count += this->IntersectionActors[j]->RenderOpaqueGeometry(v);
     }
+  ***/
 
   return count;
 }
@@ -385,16 +387,78 @@ void vtkAnnotationROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
+#define VTK_AVERAGE(a,b,c) \
+  c[0] = (a[0] + b[0])/2.0; \
+  c[1] = (a[1] + b[1])/2.0; \
+  c[2] = (a[2] + b[2])/2.0;
+
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::PositionHandles()
 {
-  Superclass::PositionHandles();
-  for (int i=0; i<6; i++)
+  int i;
+  double *pts =
+     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
+  double *p0 = pts;
+  //double *p1 = pts + 3*1;
+  //double *p2 = pts + 3*2;
+  //double *p3 = pts + 3*3;
+  //double *p4 = pts + 3*4;
+  //double *p5 = pts + 3*5;
+  double *p6 = pts + 3*6;
+  //double *p7 = pts + 3*7;
+  double x[3];
+
+  int count=0;
+  this->Points->GetData()->Modified();
+  for (i=0; i<6; i++)
     {
     this->IntersectionFaces[i]->Modified();
+    this->IntersectionCutters[i]->Update();
+    this->IntersectionPlaneTransformFilters[i]->Update();
+
+    if (this->IntersectionCutters[i]->GetOutput()->GetNumberOfLines() > 0)
+      {
+      double pi0[3];
+      double pi1[3];
+      this->IntersectionCutters[i]->GetOutput()->GetPoint(0, pi0);
+      this->IntersectionCutters[i]->GetOutput()->GetPoint(1, pi1);
+      VTK_AVERAGE(pi0,pi1,x);
+      this->Points->SetPoint(8+i, x);
+      this->HandleGeometry[i]->SetRadius(2.5);
+      this->Handle2D[i]->SetVisibility(1);
+      count++;
+      }
+    else
+      {
+      this->HandleGeometry[i]->SetRadius(0);
+      this->Handle2D[i]->SetVisibility(0);
+      }
     }
+    
+  VTK_AVERAGE(p0,p6,x);
+  this->Points->SetPoint(14, x);
+  if (count)
+    {
+    this->HandleGeometry[6]->SetRadius(2.5);
+    this->Handle2D[6]->SetVisibility(1);
+    }
+  else
+    {
+    this->HandleGeometry[6]->SetRadius(0);
+    this->Handle2D[6]->SetVisibility(0);
+    }
+
+  for (i = 0; i < 7; ++i)
+    {
+    this->HandleGeometry[i]->SetCenter(this->Points->GetPoint(8+i));
+    this->HandleToPlaneTransformFilters[i]->Update();
+    }
+
+  this->Points->GetData()->Modified();
+
 }
 
+#undef VTK_AVERAGE
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
@@ -547,6 +611,14 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
   return this->InteractionState;
 }
 
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::SizeHandles()
+{
+  for(int i=0; i<7; i++)
+    {
+    this->HandleGeometry[i]->Modified();
+    }
+}
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::PrintIntersections(ostream& os)
 {

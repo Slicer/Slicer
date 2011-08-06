@@ -65,6 +65,28 @@ public:
       ControlPointModifiedEvent = 19010,
     };
 
+  virtual void Modified() 
+    {
+    Superclass::Modified();
+
+    if (!this->GetDisableModifiedEvent())
+      {
+      this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
+      }
+    }
+
+  /// 
+  /// Invokes any modified events that are 'pending', meaning they were generated
+  /// while the DisableModifiedEvent flag was nonzero.
+  /// Returns the old flag state.
+  virtual int InvokePendingModifiedEvent ()
+    {
+    if ( this->GetModifiedEventPending() )
+      {
+      this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
+      }
+    return Superclass::InvokePendingModifiedEvent();
+    }
 
   // Description:
   // get associated display node or NULL if not set

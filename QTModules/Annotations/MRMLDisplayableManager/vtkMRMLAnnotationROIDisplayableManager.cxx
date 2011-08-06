@@ -209,149 +209,6 @@ void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *w
   this->PropagateMRMLToWidget(vtkMRMLAnnotationNode::SafeDownCast(node), widget);
 }
 
-//---------------------------------------------------------------------------
-/// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
-{
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
-  if (!sliceNode)
-    {
-    return;
-    }
-
-  // cast to the specific widget
-  vtkAnnotationROIWidget2D* boxWidget = vtkAnnotationROIWidget2D::SafeDownCast(widget);
-
-  if (!boxWidget)
-    {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
-    return;
-    }
-
-  // cast to the specific mrml node
-  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
-
-  if (!roiNode)
-    {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
-    return;
-    }
-
-  if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
-    return;
-    }
-
-  // disable processing of modified events
-  this->m_Updating = 1;
-
-  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkAnnotationROIRepresentation2D * rep = vtkAnnotationROIRepresentation2D::SafeDownCast(boxWidget->GetRepresentation());
-  
-  if (rep) 
-    {
-    // update widget from mrml
-    double xyz[3];
-    double rxyz[3];
-    roiNode->GetXYZ(xyz);
-    roiNode->GetRadiusXYZ(rxyz);
-
-    double bounds[6];
-    for (int i=0; i<3; i++)
-      {
-      bounds[  i] = xyz[i]-rxyz[i];
-      bounds[3+i] = xyz[i]+rxyz[i];
-      }
-    double b[6];
-    b[0] = bounds[0];
-    b[1] = bounds[3];
-    b[2] = bounds[1];
-    b[3] = bounds[4];
-    b[4] = bounds[2];
-    b[5] = bounds[5];
-
-    rep->PlaceWidget(b);
-    }
-
-  //this->SetParentTransformToWidget(roiNode, boxWidget);
-
-  // handle ROI transform to world space
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
-  transformToWorld->Identity();
-
-  vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsLinear())
-    {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
-    }
-
-  // update the transform from world to screen space
-  // for the extracted cut plane
-  vtkSmartPointer<vtkMatrix4x4> rasToXY = vtkSmartPointer<vtkMatrix4x4>::New();
-  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
-  rasToXY->Invert();
-
-  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
-  mat->Identity();
-  mat->Multiply4x4(rasToXY, transformToWorld, mat);
-  rasToXY->DeepCopy(mat);
-
-  vtkTransform *transform = rep->GetIntersectionPlaneTransform();
-    
-  transform->SetMatrix(rasToXY);
-
-  //
-  // update the plane equation for the current slice cutting plane
-  // - extract from the slice matrix
-  // - normalize the normal
-  transformToWorld->Invert();
-  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
-
-  mat->Identity();
-  mat->Multiply4x4(transformToWorld, rasToXY, mat);
-  rasToXY->DeepCopy(mat);
-
-  double normal[4]={0,0,0,1};
-  double origin[4]={0,0,0,1};
-  double sum = 0;
-  int i;
-
-  for (i=0; i<3; i++)
-    {
-    normal[i] = rasToXY->GetElement(i, 2);
-    origin[i] = rasToXY->GetElement(i, 3);
-    }
-  for (i=0; i<3; i++)
-    {
-    sum += normal[i]*normal[i];
-    }
-
-  double lenInv = 1./sqrt(sum);
-  for (i=0; i<3; i++)
-    {
-    normal[i] = normal[i]*lenInv;
-    }
-
-  vtkPlane *plane = rep->GetIntersectionPlane();
-
-  plane->SetNormal(normal);
-  plane->SetOrigin(origin);
-
-  rep->UpdateIntersections();
-
-  // re-render the widget
-  rep->NeedToRenderOn();
-  boxWidget->Modified();
-
-  // enable processing of modified events
-  this->m_Updating = 0;
-
-
-
-  return;
-}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
@@ -450,6 +307,154 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 }
 
 //---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+    {
+    return;
+    }
+
+  // cast to the specific widget
+  vtkAnnotationROIWidget2D* boxWidget = vtkAnnotationROIWidget2D::SafeDownCast(widget);
+
+  if (!boxWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+
+  if (!roiNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
+    return;
+    }
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkAnnotationROIRepresentation2D * rep = vtkAnnotationROIRepresentation2D::SafeDownCast(boxWidget->GetRepresentation());
+  
+  if (!rep) 
+    {
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
+  // update widget from mrml
+  double xyz[3];
+  double rxyz[3];
+  roiNode->GetXYZ(xyz);
+  roiNode->GetRadiusXYZ(rxyz);
+
+  double bounds[6];
+  for (int i=0; i<3; i++)
+    {
+    bounds[  i] = xyz[i]-rxyz[i];
+    bounds[3+i] = xyz[i]+rxyz[i];
+    }
+  double b[6];
+  b[0] = bounds[0];
+  b[1] = bounds[3];
+  b[2] = bounds[1];
+  b[3] = bounds[4];
+  b[4] = bounds[2];
+  b[5] = bounds[5];   
+
+  //this->SetParentTransformToWidget(roiNode, boxWidget);
+
+  // handle ROI transform to world space
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  transformToWorld->Identity();
+
+  vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+
+  // update the transform from world to screen space
+  // for the extracted cut plane
+  vtkSmartPointer<vtkMatrix4x4> rasToXY = vtkSmartPointer<vtkMatrix4x4>::New();
+  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
+  rasToXY->Invert();
+
+  vtkSmartPointer<vtkMatrix4x4> XYToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  XYToWorld->Identity();
+  XYToWorld->Multiply4x4(rasToXY, transformToWorld, XYToWorld);
+
+  vtkTransform *transform = rep->GetIntersectionPlaneTransform();
+    
+  transform->SetMatrix(XYToWorld);
+
+  //
+  // update the plane equation for the current slice cutting plane
+  // - extract from the slice matrix
+  // - normalize the normal
+  transformToWorld->Invert();
+  rasToXY->DeepCopy(sliceNode->GetXYToRAS());
+
+  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
+  mat->Identity();
+  mat->Multiply4x4(transformToWorld, rasToXY, mat);
+  rasToXY->DeepCopy(mat);
+
+  double normal[4]={0,0,0,1};
+  double origin[4]={0,0,0,1};
+  double sum = 0;
+  int i;
+
+  for (i=0; i<3; i++)
+    {
+    normal[i] = rasToXY->GetElement(i, 2);
+    origin[i] = rasToXY->GetElement(i, 3);
+    }
+  for (i=0; i<3; i++)
+    {
+    sum += normal[i]*normal[i];
+    }
+
+  double lenInv = 1./sqrt(sum);
+  for (i=0; i<3; i++)
+    {
+    normal[i] = normal[i]*lenInv;
+    }
+
+  vtkPlane *plane = rep->GetIntersectionPlane();
+
+  plane->SetNormal(normal);
+  plane->SetOrigin(origin);
+
+  rep->PlaceWidget(b);
+
+  //this->SetParentTransformToWidget(roiNode, boxWidget);
+
+  // re-render the widget
+  rep->NeedToRenderOn();
+
+  boxWidget->Modified();
+
+  // enable processing of modified events
+  this->m_Updating = 0;
+
+
+
+  return;
+}
+
+//---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
@@ -491,7 +496,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 
   // disable processing of modified events
   this->m_Updating = 1;
-  roiNode->DisableModifiedEventOn();
+  int disabledModify = roiNode->StartModify();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
@@ -501,7 +506,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   rep->GetExtents(extents);
   rep->GetCenter(center);
 
-  this->GetWorldToLocalCoordinates(roiNode, center, center);
+  //this->GetWorldToLocalCoordinates(roiNode, center, center);
 
   roiNode->SetXYZ(center[0], center[1], center[2] );
   roiNode->SetRadiusXYZ(0.5*extents[0], 0.5*extents[1], 0.5*extents[2] );
@@ -510,10 +515,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   roiNode->SaveView();
 
   // enable processing of modified events
-  roiNode->DisableModifiedEventOff();
-  roiNode->Modified();
+  roiNode->EndModify(disabledModify);
 
-  roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
+  //roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
 
   // This displayableManager should now consider ModifiedEvent again
   this->m_Updating = 0;
