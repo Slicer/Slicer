@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLColorModel_p.h"
@@ -310,13 +311,17 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
       QPixmap pixmap;
       if (validColor)
         {
-        // it works to set just a QColor but if the model gets into a QComboBox,
-        // the currently selected item doesn't get a decoration
+        // It works to set just a QColor but if the model gets into a QComboBox,
+        // the currently selected item doesn't get a decoration.
+        // TODO: Cache the pixmap as it is expensive to compute and it is done
+        // for ALL the colors of the node anytime a color is changed.
         //item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), Qt::DecorationRole);
         pixmap = qMRMLUtils::createColorPixmap(
           qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
         item->setData(pixmap, Qt::DecorationRole);
+        //item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), Qt::DecorationRole);
         item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLColorModel::ColorRole);
+        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         }
       else
         {
@@ -327,12 +332,12 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         {
         item->setText(colorName);
         item->setData(QVariant(),Qt::SizeHintRole);
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         }
       else
         {
         item->setData((validColor ? pixmap.size() : QVariant()),Qt::SizeHintRole);
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         }
       item->setToolTip(colorName);
       break;
@@ -341,7 +346,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
       item->setText(colorName);
       break;
     case qMRMLColorModel::OpacityColumn:
-      item->setData(rgba[3], Qt::DisplayRole);
+      item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
       break;
     }
 }

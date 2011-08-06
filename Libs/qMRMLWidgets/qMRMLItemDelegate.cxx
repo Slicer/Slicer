@@ -32,12 +32,49 @@
 #include <ctkPopupWidget.h>
 
 // qMRML includes
+#include "qMRMLColorModel.h"
 #include "qMRMLItemDelegate.h"
 
 //------------------------------------------------------------------------------
 qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLItemDelegate::isColor(const QModelIndex& index)const
+{
+  QVariant editData = index.data(Qt::EditRole);
+  QVariant decorationData = index.data(Qt::DecorationRole);
+  if (editData.isNull() &&
+      decorationData.type() == QVariant::Color)
+    {
+    return true;
+    }
+  else if(editData.isNull() &&
+          //qobject_cast<const qMRMLColorModel*>(index.model()) != 0 &&
+          decorationData.type() == QVariant::Pixmap &&
+          index.data(qMRMLColorModel::ColorRole).type() == QVariant::Color)
+    {
+    return true;
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLItemDelegate::colorRole(const QModelIndex& index)const
+{
+  QVariant decorationData = index.data(Qt::DecorationRole);
+  QVariant colorData = index.data(qMRMLColorModel::ColorRole);
+  if (decorationData.type() == QVariant::Color)
+    {
+    return Qt::DecorationRole;
+    }
+  else if (colorData.type() == QVariant::Color)
+    {
+    return qMRMLColorModel::ColorRole;
+    }
+  return -1;
 }
 
 //------------------------------------------------------------------------------
@@ -58,11 +95,7 @@ QWidget *qMRMLItemDelegate
 ::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                const QModelIndex &index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
-  QVariant decorationData = index.data(Qt::DecorationRole);
-  
-  if (editData.isNull() &&
-      decorationData.type() == QVariant::Color)
+  if (this->isColor(index))
     {
     ctkColorPickerButton* colorPicker = new ctkColorPickerButton(parent);
     colorPicker->setProperty("changeColorOnSet", true);
@@ -110,13 +143,9 @@ QWidget *qMRMLItemDelegate
 void qMRMLItemDelegate::setEditorData(QWidget *editor,
                                       const QModelIndex &index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
-  QVariant decorationData = index.data(Qt::DecorationRole);
-
-  if (editData.isNull() &&
-      decorationData.type() == QVariant::Color)
+  if (this->isColor(index))
     {
-    QColor color = decorationData.value<QColor>();
+    QColor color = index.data(this->colorRole(index)).value<QColor>();
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
     colorPicker->blockSignals(true);
@@ -144,15 +173,12 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
 void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
-  QVariant decorationData = index.data(Qt::DecorationRole);
-  if (editData.isNull() &&
-      decorationData.type() == QVariant::Color)
+  if (this->isColor(index))
     {
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
     QColor color = colorPicker->color();
-    model->setData(index, color, Qt::DecorationRole);
+    model->setData(index, color, this->colorRole(index));
     }
   else if (this->is0To1Value(index))
     {
@@ -208,10 +234,7 @@ void qMRMLItemDelegate
 ::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                        const QModelIndex &index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
-  QVariant decorationData = index.data(Qt::DecorationRole);
-  if (editData.isNull() &&
-      decorationData.type() == QVariant::Color)
+  if (this->isColor(index))
     {
     editor->setGeometry(option.rect);
     }

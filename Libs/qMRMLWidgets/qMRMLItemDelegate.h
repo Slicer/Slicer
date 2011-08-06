@@ -33,6 +33,8 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 public:
   qMRMLItemDelegate(QObject *parent = 0);
   
+  bool isColor(const QModelIndex& index)const;
+  int colorRole(const QModelIndex& index)const;
   bool is0To1Value(const QModelIndex& index)const;
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,

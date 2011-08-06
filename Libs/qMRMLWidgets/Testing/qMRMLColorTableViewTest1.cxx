@@ -26,6 +26,9 @@
 // qMRML includes
 #include "qMRMLColorTableView.h"
 
+// MRMLLogic includes
+#include <vtkMRMLColorLogic.h>
+
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLFreeSurferProceduralColorNode.h>
@@ -89,6 +92,16 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
   colorPETNode->SetTypeToMIP();
   
   topLevel.show();
+
+  vtkSmartPointer<vtkMRMLColorTableNode> userNode
+    = vtkSmartPointer<vtkMRMLColorTableNode>::Take(
+      vtkMRMLColorLogic::CopyNode(colorTableNode, "User"));
+
+
+  qMRMLColorTableView colorTableView;
+  colorTableView.setWindowTitle("Editable");
+  colorTableView.setMRMLColorNode(userNode);
+  colorTableView.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
