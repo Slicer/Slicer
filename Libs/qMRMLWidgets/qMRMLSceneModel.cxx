@@ -768,6 +768,7 @@ void qMRMLSceneModel::updateItemDataFromNode(
   if (column == d->NameColumn)
     {
     item->setText(QString(node->GetName()));
+    item->setToolTip(node->GetNodeTagName());
     }
   if (column == d->ToolTipNameColumn)
     {

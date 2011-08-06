@@ -346,6 +346,7 @@ void qMRMLSceneModelHierarchyModel
       QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2],
                                       displayNode->GetOpacity());
       item->setData(color, Qt::DecorationRole);
+      item->setToolTip("Color");
       }
     }
   else if (column == d->OpacityColumn)
@@ -356,6 +357,7 @@ void qMRMLSceneModelHierarchyModel
       QString displayedOpacity
         = QString::number(displayNode->GetOpacity(), 'f', 2);
       item->setData(displayedOpacity, Qt::DisplayRole);
+      item->setToolTip("Opacity");
       }
     }
   this->Superclass::updateItemDataFromNode(item, node, column);
