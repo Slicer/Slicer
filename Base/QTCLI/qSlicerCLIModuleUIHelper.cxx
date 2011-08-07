@@ -246,7 +246,7 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
     {
     return;
     }
-    
+
   // Image type attribute mapping
   Self::ImageTypeAttributeToNodeType["scalar"] = "vtkMRMLScalarVolumeNode";
   Self::ImageTypeAttributeToNodeType["label"] = "vtkMRMLScalarVolumeNode";
@@ -255,7 +255,7 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
   Self::ImageTypeAttributeToNodeType["diffusion-weighted"] = "vtkMRMLDiffusionWeightedVolumeNode";
 
   // Geometry type attribute mapping
-  Self::GeometryTypeAttributeToNodeType["fiberBundle"] = "vtkMRMLFiberBundleNode";
+  Self::GeometryTypeAttributeToNodeType["fiberbundle"] = "vtkMRMLFiberBundleNode";
   Self::GeometryTypeAttributeToNodeType["model"] = "vtkMRMLModelNode";
 
   // Table type attribute mapping
