@@ -180,13 +180,8 @@ void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLine
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
-
-  int disabledModify = node->StartModify();
+  // Note that node will fire a ModifyEvent.
   node->SetModuleDescription(this->ModuleDescriptionObject);
-  node->EndModify(disabledModify);
-  
-  // Notify observer(s)
-  node->Modified();
 }
 
 //-----------------------------------------------------------------------------

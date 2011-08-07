@@ -885,6 +885,7 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
   Q_D(qSlicerCLIModuleUIHelper);
   Q_ASSERT(commandLineModuleNode);
 
+  // Block ModifyEvent to be fired, only fire 1 event at the end.
   int disabledModify = commandLineModuleNode->StartModify();
   
   foreach(qSlicerWidgetValueWrapper* widgetValueWrapper, d->WidgetValueWrappers)
@@ -893,11 +894,11 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
                                         widgetValueWrapper->name(),
                                         widgetValueWrapper->value());
     }
-
-  commandLineModuleNode->EndModify(disabledModify);
-
-  // notify observer(s)
+  // Just in case setCommandLineModuleParameter() has not generated any
+  // blocked modify event.
+  // TODO: ensure it is really useful to force a modify event
   commandLineModuleNode->Modified();
+  commandLineModuleNode->EndModify(disabledModify);
 }
 
 //-----------------------------------------------------------------------------
