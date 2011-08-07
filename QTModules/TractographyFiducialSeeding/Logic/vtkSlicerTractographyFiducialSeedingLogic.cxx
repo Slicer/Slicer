@@ -334,7 +334,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double regionSize, double sampleStep,
                                                             int maxNumberOfSeeds,
                                                             int seedSelectedFiducials,
-                                                            int vtkNotUsed(displayMode))
+                                                            int displayMode)
 {
   // 0. check inputs
   if (volumeNode == NULL || seedingyNode == NULL || fiberNode == NULL ||
@@ -425,9 +425,18 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     dnode = fiberNode->AddTubeDisplayNode();
     dnode->DisableModifiedEventOn();
     dnode->SetScalarVisibility(1);
+    dnode->SetOpacity(1);
     dnode->SetVisibility(1);
     dnode->DisableModifiedEventOff();
     newNode = 1;
+    }
+  if (displayMode == 1)
+    {
+    dnode->SetVisibility(1);
+    }
+  else
+    {
+    dnode->SetVisibility(0);
     }
 
   dnode = fiberNode->GetLineDisplayNode();
@@ -438,9 +447,18 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       {
       dnode->DisableModifiedEventOn();
       dnode->SetVisibility(0);
+      dnode->SetOpacity(1);
       dnode->SetScalarVisibility(0);
       dnode->DisableModifiedEventOff();
       }
+    }
+  if (displayMode == 0)
+    {
+    dnode->SetVisibility(1);
+    }
+  else
+    {
+    dnode->SetVisibility(0);
     }
 
   dnode = fiberNode->GetGlyphDisplayNode();
@@ -452,6 +470,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       dnode->DisableModifiedEventOn();
       dnode->SetVisibility(0);
       dnode->SetScalarVisibility(0);
+      dnode->SetOpacity(1);
       dnode->DisableModifiedEventOff();
       }
     }
