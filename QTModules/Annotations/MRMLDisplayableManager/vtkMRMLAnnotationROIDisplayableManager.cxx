@@ -264,36 +264,54 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     return;
     }
 
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+
+  if (!rep) 
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get widget representation!")
+    return;
+    }
+
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
   
-  if (rep) 
+  // handle ROI transform to world space
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  transformToWorld->Identity();
+
+  vtkMRMLTransformNode* tnode = roiNode->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
     {
-    // update widget from mrml
-    double xyz[3];
-    double rxyz[3];
-    roiNode->GetXYZ(xyz);
-    roiNode->GetRadiusXYZ(rxyz);
-
-    double bounds[6];
-    for (int i=0; i<3; i++)
-      {
-      bounds[  i] = xyz[i]-rxyz[i];
-      bounds[3+i] = xyz[i]+rxyz[i];
-      }
-    double b[6];
-    b[0] = bounds[0];
-    b[1] = bounds[3];
-    b[2] = bounds[1];
-    b[3] = bounds[4];
-    b[4] = bounds[2];
-    b[5] = bounds[5];
-
-    rep->PlaceWidget(b);
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
     }
+  transformToWorld->Invert();
+
+  rep->SetWorldToLocalMatrix(transformToWorld);
+
+  // update widget from mrml
+  double xyz[3];
+  double rxyz[3];
+  roiNode->GetXYZ(xyz);
+  roiNode->GetRadiusXYZ(rxyz);
+
+  double bounds[6];
+  for (int i=0; i<3; i++)
+    {
+    bounds[  i] = xyz[i]-rxyz[i];
+    bounds[3+i] = xyz[i]+rxyz[i];
+    }
+  double b[6];
+  b[0] = bounds[0];
+  b[1] = bounds[3];
+  b[2] = bounds[1];
+  b[3] = bounds[4];
+  b[4] = bounds[2];
+  b[5] = bounds[5];
+
+  rep->PlaceWidget(b);
 
   this->SetParentTransformToWidget(roiNode, boxWidget);
 
@@ -621,10 +639,6 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
     transformToWorld->Identity();
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
-
-    //vtkSmartPointer<vtkTransform> xform =  vtkSmartPointer<vtkTransform>::New();
-    //xform->Identity();
-    //xform->SetMatrix(transformToWorld);
 
     vtkSmartPointer<vtkPropCollection> actors =  vtkSmartPointer<vtkPropCollection>::New();
     rep->GetActors(actors);

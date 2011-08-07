@@ -93,6 +93,7 @@ public:
   virtual int ComputeInteractionState(int X, int Y, int modify=0);
   virtual void StartWidgetInteraction(double e[2]);
   virtual void WidgetInteraction(double e[2]);
+  virtual void SetInteractionState(int state);
 
   /// 
   /// Methods supporting, and required by, the rendering process.

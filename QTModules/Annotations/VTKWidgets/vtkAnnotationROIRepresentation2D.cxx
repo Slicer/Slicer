@@ -350,6 +350,43 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
 
 }
 
+//----------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::SetInteractionState(int state)
+{
+  // Clamp to allowable values
+  state = ( state < vtkAnnotationROIRepresentation::Outside ? vtkAnnotationROIRepresentation::Outside :
+            (state > vtkAnnotationROIRepresentation::Scaling ? vtkAnnotationROIRepresentation::Scaling : state) );
+  
+  // Depending on state, highlight appropriate parts of representation
+  int handle;
+  this->InteractionState = state;
+  switch (state)
+    {
+    case vtkAnnotationROIRepresentation::MoveF0:
+    case vtkAnnotationROIRepresentation::MoveF1:
+    case vtkAnnotationROIRepresentation::MoveF2:
+    case vtkAnnotationROIRepresentation::MoveF3:
+    case vtkAnnotationROIRepresentation::MoveF4:
+    case vtkAnnotationROIRepresentation::MoveF5:
+      handle = this->HighlightHandle(this->CurrentHandle2D);
+      this->HighlightFace(handle);
+      break;
+    case vtkAnnotationROIRepresentation::Rotating:
+      //this->HighlightOutline(0);
+      //this->HighlightHandle(NULL);
+      //this->HighlightFace(this->HexPicker->GetCellId());
+      break;
+    case vtkAnnotationROIRepresentation::Translating:
+    case vtkAnnotationROIRepresentation::Scaling:
+      this->HighlightHandle(this->Handle2D[6]);
+      this->HighlightFace(-1);
+      break;
+    default:
+      this->HighlightHandle(NULL);
+      this->HighlightFace(-1);
+    }
+}
+
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation2D::HighlightHandle(vtkProp *prop)
 {

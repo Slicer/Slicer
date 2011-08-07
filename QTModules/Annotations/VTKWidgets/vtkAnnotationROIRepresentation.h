@@ -38,6 +38,7 @@
 #include "qSlicerAnnotationsModuleExport.h"
 
 #include "vtkWidgetRepresentation.h"
+#include "vtkMatrix4x4.h"
 
 class vtkActor;
 class vtkPolyDataMapper;
@@ -53,7 +54,6 @@ class vtkTransform;
 class vtkPlanes;
 class vtkBox;
 class vtkDoubleArray;
-class vtkMatrix4x4;
 
 #define NUMBER_HANDLES 7
 
@@ -86,6 +86,13 @@ public:
   vtkSetMacro(InsideOut,int);
   vtkGetMacro(InsideOut,int);
   vtkBooleanMacro(InsideOut,int);
+
+  /// Get/Set optional world to local coordiante system transformation
+  void SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix)
+  {
+    this->WorldToLocalMatrix->DeepCopy(worldToLocalMatrix);
+  }
+  vtkGetObjectMacro(WorldToLocalMatrix,vtkMatrix4x4);
 
   /// 
   /// Retrieve a linear transform characterizing the transformation of the
@@ -185,7 +192,7 @@ public:
   /// returns a state based on geometric considerations (i.e., cursor near a
   /// widget feature), then based on events, the widget may modify this
   /// further.
-  void SetInteractionState(int state);
+  virtual void SetInteractionState(int state);
 
   /// 
   /// get the center of the box
@@ -278,6 +285,8 @@ protected:
   vtkPoints      *PlanePoints;
   vtkDoubleArray *PlaneNormals;
   vtkMatrix4x4   *Matrix;
+
+  vtkMatrix4x4   *WorldToLocalMatrix;
 
   //"dir" is the direction in which the face can be moved i.e. the axis passing
   //through the center

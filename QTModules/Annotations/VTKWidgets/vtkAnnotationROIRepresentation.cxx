@@ -173,6 +173,9 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   this->PlaneNormals->SetNumberOfComponents(3);
   this->PlaneNormals->SetNumberOfTuples(6);
   this->Matrix = vtkMatrix4x4::New();
+
+  this->WorldToLocalMatrix = vtkMatrix4x4::New();
+  this->WorldToLocalMatrix->Identity();
 }
 
 //----------------------------------------------------------------------------
@@ -222,6 +225,9 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
   this->SelectedFaceProperty->Delete();
   this->OutlineProperty->Delete();
   this->SelectedOutlineProperty->Delete();
+
+  this->WorldToLocalMatrix->Delete();
+
 }
 
 //----------------------------------------------------------------------
@@ -272,6 +278,7 @@ void vtkAnnotationROIRepresentation::WidgetInteraction(double e[2])
     return;
     }
   double focalPoint[4], pickPoint[4], prevPickPoint[4];
+  double pickPointWorld[4], prevPickPointWorld[4];
   double z, vpn[3];
   camera->GetViewPlaneNormal(vpn);
 
@@ -286,8 +293,12 @@ void vtkAnnotationROIRepresentation::WidgetInteraction(double e[2])
     }
   z = focalPoint[2];
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer,this->LastEventPosition[0],
-                                               this->LastEventPosition[1], z, prevPickPoint);
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, e[0], e[1], z, pickPoint);
+                                               this->LastEventPosition[1], z, prevPickPointWorld);
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, e[0], e[1], z, pickPointWorld);
+
+  this->WorldToLocalMatrix->MultiplyPoint(prevPickPointWorld, prevPickPoint);
+  this->WorldToLocalMatrix->MultiplyPoint(pickPointWorld, pickPoint);
+
 
   // Process the motion
   if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF0 )
