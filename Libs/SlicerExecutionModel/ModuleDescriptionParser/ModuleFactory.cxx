@@ -1711,7 +1711,7 @@ void ModuleFactory::GetLogoForCommandLineModuleByExecuting(ModuleDescription& mo
 
         // make a string stream of the buffer
         std::stringstream buffer;
-        buffer << stdoutbuffer << std::ends;
+        buffer << stdoutbuffer;
 
         // read the header
         buffer >> prefix;

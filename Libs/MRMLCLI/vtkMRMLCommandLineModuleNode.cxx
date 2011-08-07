@@ -246,7 +246,6 @@ void vtkMRMLCommandLineModuleNode
   std::ostringstream strvalue;
 
   strvalue << value;
-  strvalue << ends;
   
   // Set the default value of the named parameter with the value
   // specified
@@ -265,7 +264,6 @@ void vtkMRMLCommandLineModuleNode
   std::ostringstream strvalue;
 
   strvalue << value;
-  strvalue << ends;
   
   // Set the default value of the named parameter with the value
   // specified
@@ -285,7 +283,6 @@ void vtkMRMLCommandLineModuleNode
   std::ostringstream strvalue;
 
   strvalue << value;
-  strvalue << ends;
   
   // Set the default value of the named parameter with the value
   // specified

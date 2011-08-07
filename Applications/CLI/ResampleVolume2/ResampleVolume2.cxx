@@ -1006,7 +1006,7 @@ int TransformGradients( itk::MetaDataDictionary &dico ,
                //write the new gradient values (after transformation) in the metadatadictionary
                oss << transformedVector[ 0 ] << "  " <<
                       transformedVector[ 1 ] << "  " <<
-                      transformedVector[ 2 ] << std::ends ;
+                      transformedVector[ 2 ];
                entryvalue->SetMetaDataObjectValue( oss.str() ) ;
             }
             else//if the image is a DWMRI we exit the loop

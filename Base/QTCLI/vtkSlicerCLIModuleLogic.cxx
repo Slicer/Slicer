@@ -1024,8 +1024,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 if (fiducials->GetNthFiducialSelected(i))
                   {
                   pt = fiducials->GetNthFiducialXYZ(i);
-                  ptAsString << pt[0] << "," << pt[1] << "," << pt[2]
-                             << std::ends;
+                  ptAsString << pt[0] << "," << pt[1] << "," << pt[2];
                   
                   commandLineAsString.push_back(prefix + flag);
                   commandLineAsString.push_back(ptAsString.str());
@@ -1098,8 +1097,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   pt = regions->GetNthROIXYZ(i);
                   Radius = regions->GetNthROIRadiusXYZ(i);
                   roiAsString << pt[0] << "," << pt[1] << "," << pt[2] << ","
-                             << Radius[0] << "," << Radius[1] << "," << Radius[2]
-                             << std::ends;
+                             << Radius[0] << "," << Radius[1] << "," << Radius[2];
 
                   commandLineAsString.push_back(prefix + flag);
                   commandLineAsString.push_back(roiAsString.str());
