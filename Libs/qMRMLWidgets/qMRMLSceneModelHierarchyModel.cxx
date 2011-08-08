@@ -370,27 +370,34 @@ void qMRMLSceneModelHierarchyModel
   Q_D(qMRMLSceneModelHierarchyModel);
   if (item->column() == d->ColorColumn)
     {
-    vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-    if (displayNode)
+    QColor color = item->data(Qt::DecorationRole).value<QColor>();
+    // Invalid color can happen when the item hasn't been initialized yet
+    if (color.isValid())
       {
-      QColor color = item->data(Qt::DecorationRole).value<QColor>();
-      /// TODO: move {Start|End}Modify() in qMRMLSceneMode::updateNodeFromItem()
-      int wasModifying = displayNode->StartModify();
-      displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
-      displayNode->SetOpacity(color.alphaF());
-      displayNode->EndModify(wasModifying);
+      vtkMRMLDisplayNode* displayNode = d->displayNode(node);
+      if (displayNode)
+        {
+        int wasModifying = displayNode->StartModify();
+        displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+        displayNode->SetOpacity(color.alphaF());
+        displayNode->EndModify(wasModifying);
+        }
       }
     }
  else if (item->column() == d->OpacityColumn)
     {
-    vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-    if (displayNode)
+    QString displayedOpacity = item->data(Qt::DisplayRole).toString();
+    if (displayedOpacity.isEmpty())
       {
-      QString displayedOpacity = item->data(Qt::DisplayRole).toString();
-      QString currentOpacity = QString::number( displayNode->GetOpacity(), 'f', 2);
-      if (displayedOpacity != currentOpacity)
+      vtkMRMLDisplayNode* displayNode = d->displayNode(node);
+      // Invalid color can happen when the item hasn't been initialized yet
+      if (displayNode)
         {
-        displayNode->SetOpacity(displayedOpacity.toDouble());
+        QString currentOpacity = QString::number( displayNode->GetOpacity(), 'f', 2);
+        if (displayedOpacity != currentOpacity)
+          {
+          displayNode->SetOpacity(displayedOpacity.toDouble());
+          }
         }
       }
     }
