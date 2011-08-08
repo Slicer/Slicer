@@ -58,6 +58,7 @@ public:
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   bool ListenNodeModifiedEvent;
+  int PendingItemModified;
   
   int NameColumn;
   int IDColumn;

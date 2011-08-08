@@ -39,6 +39,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->ListenNodeModifiedEvent = false;
+  this->PendingItemModified = -1; // -1 means not updating
   
   this->NameColumn = -1;
   this->IDColumn = -1;
@@ -702,6 +703,9 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
 void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   Q_D(qMRMLSceneModel);
+  // We are going to make potentially multiple changes to the item. We want to
+  // refresh the node only once, so we "block" the updates in onItemChanged().
+  d->PendingItemModified = 0;
   item->setFlags(this->nodeFlags(node, column));
   // set UIDRole and set PointerRole need to be atomic
   bool blocked  = this->blockSignals(true);
@@ -709,6 +713,17 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(blocked);
   this->updateItemDataFromNode(item, node, column);
+  
+  if (d->PendingItemModified > 0)
+    {
+    d->PendingItemModified = -1;
+    this->onItemChanged(item);
+    }
+  else
+    {
+    d->PendingItemModified = -1;
+    }
+  
   if (!this->canBeAChild(node))
     {
     return;
@@ -834,8 +849,10 @@ void qMRMLSceneModel::updateItemDataFromNode(
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 {
+  int wasModifying = node->StartModify();
   this->updateNodeFromItemData(node, item);
-
+  node->EndModify(wasModifying);
+  
   // the following only applies to tree hierarchies
   if (!this->canBeAChild(node))
     {
@@ -1142,6 +1159,13 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onItemChanged(QStandardItem * item)
 {
+  Q_D(qMRMLSceneModel);
+
+  if (d->PendingItemModified >= 0)
+    {
+    ++d->PendingItemModified;
+    return;
+    }
   // when a dnd occurs, the order of the items called with onItemChanged is
   // random, it could be the item in column 1 then the item in column 0
   //qDebug() << "onItemChanged: " << item << item->row() << item->column();
