@@ -88,9 +88,15 @@ bool qSlicerFiberBundleIO::load(const IOProperties& properties)
   QStringList nodes;
   foreach(QString file, fileNames)
     {
-    vtkMRMLFiberBundleNode* node = fiberBundleLogic->AddFiberBundle(file.toLatin1().data(), 1);
+    vtkMRMLFiberBundleNode* node = fiberBundleLogic->AddFiberBundle(file.toLatin1(), 1);
     if (node)
       {
+      if (properties.contains("name"))
+        {
+        std::string uname = this->mrmlScene()->GetUniqueNameByString(
+          properties["name"].toString().toLatin1());
+        node->SetName(uname.c_str());
+        }
       nodes << node->GetID();
       }
     }

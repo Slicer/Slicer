@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QFileInfo>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
@@ -82,7 +83,7 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  QString name = fileName;
+  QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
     {
     name = properties["name"].toString();
@@ -123,8 +124,8 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
       ->module("volumes")->logic());
   Q_ASSERT(volumesLogic);
   vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(
-    fileName.toLatin1().data(),
-    name.toLatin1().data(),
+    fileName.toLatin1(),
+    name.toLatin1(),
     options,
     fileList.GetPointer());
   if (node)

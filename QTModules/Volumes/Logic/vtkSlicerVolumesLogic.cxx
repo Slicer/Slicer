@@ -167,9 +167,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     if (volname == NULL)
       {
       const vtksys_stl::string fname(filename);
-      vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-      name = this->GetMRMLScene()->GetUniqueNameByString(name.c_str());
-      volumeNode->SetName(name.c_str());
+      vtksys_stl::string baseName = vtksys::SystemTools::GetFilenameName(fname);
+      std::string uname = this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str());
+      volumeNode->SetName(uname.c_str());
       }
     else
       {
@@ -321,9 +321,9 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   if (volname == NULL)
     {
     const vtksys_stl::string fname(filename);
-    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-    name = this->GetMRMLScene()->GetUniqueNameByString(name.c_str());
-    scalarNode->SetName(name.c_str());
+    vtksys_stl::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+    std::string uname = this->GetMRMLScene()->GetUniqueNameByString(basename.c_str());
+    scalarNode->SetName(uname.c_str());
     }
   else
     {

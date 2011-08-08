@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QFileInfo>
 
 // SlicerQt includes
 //#include "qSlicerAbstractModule.h"
@@ -29,7 +30,8 @@
 // Logic includes
 #include "vtkSlicerModelsLogic.h"
 
-// MRML includes
+// VTK includes
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
@@ -71,19 +73,21 @@ bool qSlicerModelsIO::load(const IOProperties& properties)
   //   vtkSlicerModelsLogic::SafeDownCast(
   //     qSlicerCoreApplication::application()->moduleManager()
   //     ->module("Models")->logic());
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::New();
+  vtkNew<vtkSlicerModelsLogic> modelsLogic;
   modelsLogic->SetMRMLScene(this->mrmlScene());
-  Q_ASSERT(modelsLogic);
   vtkMRMLModelNode* node = modelsLogic->AddModel(
     fileName.toLatin1().data());
-  if (node)
-    {
-    this->setLoadedNodes(QStringList(QString(node->GetID())));
-    }
-  else
+  if (!node)
     {
     this->setLoadedNodes(QStringList());
+    return false;
     }
-  modelsLogic->Delete();
-  return node != 0;
+  this->setLoadedNodes( QStringList(QString(node->GetID())) );
+  if (properties.contains("name"))
+    {
+    std::string uname = this->mrmlScene()->GetUniqueNameByString(
+      properties["name"].toString().toLatin1());
+    node->SetName(uname.c_str());
+    }
+  return true;
 }

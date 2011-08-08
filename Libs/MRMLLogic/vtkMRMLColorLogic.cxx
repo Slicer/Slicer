@@ -703,8 +703,8 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
   colorStorageNode->Delete();
   
   ctnode->GetStorageNode()->SetFileName(fileName);
-  std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(ctnode->GetStorageNode()->GetFileName()).c_str();
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+  std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
+  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
   ctnode->SetName(uname.c_str());
   
   vtkDebugMacro("AddDefaultColorFiles: About to read user file " << fileName);
