@@ -98,6 +98,8 @@ void qSlicerModelsModuleWidget::setup()
   d->ModelHierarchyTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
   d->ModelHierarchyTreeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
 
+  d->ModelHierarchyTreeView->sortFilterProxyModel()->setHideChildNodeTypes(
+    QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
     QStringList() << "vtkMRMLModelHierarchyNode");
 
