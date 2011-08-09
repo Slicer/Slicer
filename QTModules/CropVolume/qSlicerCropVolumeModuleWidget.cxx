@@ -69,6 +69,7 @@ qSlicerCropVolumeModuleWidget::qSlicerCropVolumeModuleWidget(QWidget* _parent)
   : Superclass( _parent )
   , d_ptr( new qSlicerCropVolumeModuleWidgetPrivate(*this) )
 {
+  this->parametersNode = NULL;
 }
 
 //-----------------------------------------------------------------------------
