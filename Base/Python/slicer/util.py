@@ -225,7 +225,7 @@ def getNodes(pattern = ""):
     """Return a dictionary of nodes where the name or id matches the 'pattern'.
     Providing an empty 'pattern' string will return all nodes.
     """
-    import slicer
+    import slicer, fnmatch
     nodes = {}
     scene = slicer.mrmlScene
     count = scene.GetNumberOfNodes()
@@ -233,7 +233,7 @@ def getNodes(pattern = ""):
       node = scene.GetNthNode(idx)
       name = node.GetName()
       id = node.GetID()
-      if name.find(pattern) >= 0 or id.find(pattern) >= 0:
+      if fnmatch.fnmatch(name, pattern) or fnmatch.fnmatch(id, pattern):
         nodes[node.GetName()] = node
     return nodes
 
@@ -244,6 +244,26 @@ def getNode(pattern = "", index = 0):
     nodes = getNodes(pattern)
     try:
       if nodes.keys():
-        return nodes[nodes.keys()[index]]
+        return nodes.values()[index]
     except IndexError:
       return None
+
+#
+# MRML-numpy
+#
+
+def array(pattern = "", index = 0):
+  """Return the array you are "most likely to want" from the indexth
+  MRML node that matches the pattern.  Meant to be used in the python
+  console for quick debugging/testing.  More specific API should be
+  used in scripts to be sure you get exactly what you want.
+  """
+  import vtk.util.numpy_support
+  n = getNode(pattern=pattern, index=index)
+  if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
+    i = n.GetImageData()
+    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(n.GetImageData().GetDimensions())
+    return a
+  # TODO: accessors for other node types: tensors, polydata (verts, polys...), colors
+
+
