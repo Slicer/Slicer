@@ -787,7 +787,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
             # 3 = SliceToRASFlag and FieldOfViewFlag
             $logic StartSliceNodeInteraction 3 
-            $logic FitSliceToBackground $w $h
+            $logic FitSliceToAll 
             $_sliceNode UpdateMatrices
             $logic EndSliceNodeInteraction
           }
