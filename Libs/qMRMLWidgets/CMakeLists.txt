@@ -119,8 +119,8 @@ set(qMRMLWidgets_SRCS
   qMRMLSliceWidget_p.h
   qMRMLSlicesControllerToolBar.cxx
   qMRMLSlicesControllerToolBar.h
-  qMRMLSortFilterModelHierarchyProxyModel.cxx
-  qMRMLSortFilterModelHierarchyProxyModel.h
+  qMRMLSortFilterHierarchyProxyModel.cxx
+  qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.cxx
   qMRMLSortFilterProxyModel.h
   qMRMLThreeDView.cxx
@@ -200,7 +200,7 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
   qMRMLSlicesControllerToolBar.h
-  qMRMLSortFilterModelHierarchyProxyModel.h
+  qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h

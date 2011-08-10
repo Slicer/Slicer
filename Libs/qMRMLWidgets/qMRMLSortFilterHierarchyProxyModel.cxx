@@ -22,51 +22,51 @@
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
-#include "qMRMLSortFilterModelHierarchyProxyModel.h"
+#include "qMRMLSortFilterHierarchyProxyModel.h"
 
 // CTK includes
 #include <ctkLogger.h>
 
 // VTK includes
-#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLHierarchyNode.h>
 
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSortFilterModelHierarchyProxyModel");
-
-// -----------------------------------------------------------------------------
-// qMRMLSortFilterModelHierarchyProxyModelPrivate
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSortFilterHierarchyProxyModel");
 
 // -----------------------------------------------------------------------------
-class qMRMLSortFilterModelHierarchyProxyModelPrivate
+// qMRMLSortFilterHierarchyProxyModelPrivate
+
+// -----------------------------------------------------------------------------
+class qMRMLSortFilterHierarchyProxyModelPrivate
 {
 public:
-  qMRMLSortFilterModelHierarchyProxyModelPrivate();
+  qMRMLSortFilterHierarchyProxyModelPrivate();
 };
 
 // -----------------------------------------------------------------------------
-qMRMLSortFilterModelHierarchyProxyModelPrivate::qMRMLSortFilterModelHierarchyProxyModelPrivate()
+qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPrivate()
 {
 }
 
 // -----------------------------------------------------------------------------
-// qMRMLSortFilterModelHierarchyProxyModel
+// qMRMLSortFilterHierarchyProxyModel
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterModelHierarchyProxyModel::qMRMLSortFilterModelHierarchyProxyModel(QObject *vparent)
+qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *vparent)
   : qMRMLSortFilterProxyModel(vparent)
-  , d_ptr(new qMRMLSortFilterModelHierarchyProxyModelPrivate)
+  , d_ptr(new qMRMLSortFilterHierarchyProxyModelPrivate)
 {
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterModelHierarchyProxyModel::~qMRMLSortFilterModelHierarchyProxyModel()
+qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel()
 {
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterModelHierarchyProxyModel
+bool qMRMLSortFilterHierarchyProxyModel
 ::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
-  //Q_D(const qMRMLSortFilterModelHierarchyProxyModel);
+  //Q_D(const qMRMLSortFilterHierarchyProxyModel);
   bool res = this->Superclass::filterAcceptsRow(source_row, source_parent);
   if (!res)
     {
@@ -76,20 +76,29 @@ bool qMRMLSortFilterModelHierarchyProxyModel
   QStandardItem* parentItem = this->sourceItem(source_parent);
   Q_ASSERT(parentItem);
   // shouldn't fail because Superclass::filterAcceptsRow returned true
-  QStandardItem* item = parentItem->child(source_row, 0);
+  QStandardItem* item = 0;
+  // Sometimes the row is not complete, search for a non null item
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
+    {
+    item = parentItem->child(source_row, childIndex);
+    if (item)
+      {
+      break;
+      }
+    }
   Q_ASSERT(item);
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(
     this->sourceModel());
-  vtkMRMLModelHierarchyNode* node = vtkMRMLModelHierarchyNode::SafeDownCast(
-    sceneModel->mrmlNodeFromItem(item));
-  if (!node)
+  vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
+  vtkMRMLHierarchyNode* hNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+  if (!hNode)
     {
     return res;
     }
-  // Don't show vtkMRMLModelHierarchyNode if they are tied to a vtkMRMLModelNode
-  // The only vtkMRMLModelHierarchyNode to display are the ones who reference other
-  // vtkMRMLModelHierarchyNode (tree parent) or empty (tree parent to be)
-  if (node->GetModelNode())
+  // Don't show vtkMRMLHierarchyNode if they are tied to a vtkMRMLModelNode
+  // The only vtkMRMLHierarchyNode to display are the ones who reference other
+  // vtkMRMLHierarchyNode (tree parent) or empty (tree parent to be)
+  if (hNode->GetAssociatedNode())
     {
     return false;
     }

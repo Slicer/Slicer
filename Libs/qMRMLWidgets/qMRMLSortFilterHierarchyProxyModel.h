@@ -18,36 +18,36 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSortFilterModelHierarchyProxyModel_h
-#define __qMRMLSortFilterModelHierarchyProxyModel_h
+#ifndef __qMRMLSortFilterHierarchyProxyModel_h
+#define __qMRMLSortFilterHierarchyProxyModel_h
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 #include "qMRMLSortFilterProxyModel.h"
 
-class qMRMLSortFilterModelHierarchyProxyModelPrivate;
+class qMRMLSortFilterHierarchyProxyModelPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLSortFilterModelHierarchyProxyModel
+class QMRML_WIDGETS_EXPORT qMRMLSortFilterHierarchyProxyModel
   : public qMRMLSortFilterProxyModel
 {
   Q_OBJECT
 public:
   typedef qMRMLSortFilterProxyModel Superclass;
-  qMRMLSortFilterModelHierarchyProxyModel(QObject *parent=0);
-  virtual ~qMRMLSortFilterModelHierarchyProxyModel();
+  qMRMLSortFilterHierarchyProxyModel(QObject *parent=0);
+  virtual ~qMRMLSortFilterHierarchyProxyModel();
 
 protected:
-  // Don't show vtkMRMLModelHierarchyNode if they are tied to a vtkMRMLModelNode
-  // The only vtkMRMLModelHierarchyNode to display are the ones who reference other
-  // vtkMRMLModelHierarchyNode (tree parent) or empty (tree parent to be)
+  // Don't show vtkMRMLHierarchyNode if they are tied to a vtkMRMLModelNode
+  // The only vtkMRMLHierarchyNode to display are the ones who reference other
+  // vtkMRMLHierarchyNode (tree parent) or empty (tree parent to be)
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
   
 protected:
-  QScopedPointer<qMRMLSortFilterModelHierarchyProxyModelPrivate> d_ptr;
+  QScopedPointer<qMRMLSortFilterHierarchyProxyModelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSortFilterModelHierarchyProxyModel);
-  Q_DISABLE_COPY(qMRMLSortFilterModelHierarchyProxyModel);
+  Q_DECLARE_PRIVATE(qMRMLSortFilterHierarchyProxyModel);
+  Q_DISABLE_COPY(qMRMLSortFilterHierarchyProxyModel);
 };
 
 #endif

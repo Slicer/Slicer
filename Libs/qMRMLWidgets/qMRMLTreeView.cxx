@@ -30,7 +30,7 @@
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLSceneModelHierarchyModel.h"
 #include "qMRMLSceneTransformModel.h"
-#include "qMRMLSortFilterModelHierarchyProxyModel.h"
+#include "qMRMLSortFilterHierarchyProxyModel.h"
 #include "qMRMLTreeView_p.h"
 
 // MRML includes
@@ -251,7 +251,7 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
   else if (modelName == QString("ModelHierarchy"))
     {
     newModel = new qMRMLSceneModelHierarchyModel(this);
-    newFilterModel = new qMRMLSortFilterModelHierarchyProxyModel(this);
+    newFilterModel = new qMRMLSortFilterHierarchyProxyModel(this);
     }
   else if (modelName == QString(""))
     {
