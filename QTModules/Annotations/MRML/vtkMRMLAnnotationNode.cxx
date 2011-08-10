@@ -62,6 +62,7 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
   this->m_RedSliceNode = 0;
   this->m_YellowSliceNode = 0;
   this->m_GreenSliceNode = 0;
+  this->m_CameraNode = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -89,6 +90,12 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
     {
     this->m_GreenSliceNode->Delete();
     this->m_GreenSliceNode = 0;
+    }
+
+  if (this->m_CameraNode)
+    {
+    this->m_CameraNode->Delete();
+    this->m_CameraNode = 0;
     }
 
   if (this->m_Backup)
