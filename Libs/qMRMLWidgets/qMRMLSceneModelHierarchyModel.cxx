@@ -22,7 +22,7 @@
 
 // qMRML includes
 #include "qMRMLSceneModelHierarchyModel.h"
-#include "qMRMLSceneModel_p.h"
+#include "qMRMLSceneDisplayableModel_p.h"
 
 // MRMLLogic includes
 #include <vtkMRMLModelDisplayNode.h>
@@ -33,60 +33,32 @@
 // VTK includes
 
 //------------------------------------------------------------------------------
-class qMRMLSceneModelHierarchyModelPrivate: public qMRMLSceneModelPrivate
+class qMRMLSceneModelHierarchyModelPrivate: public qMRMLSceneDisplayableModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneModelHierarchyModel);
 public:
+  typedef qMRMLSceneDisplayableModelPrivate Superclass;
   qMRMLSceneModelHierarchyModelPrivate(qMRMLSceneModelHierarchyModel& object);
-  void init();
-  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node)const;
+
+  virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
 
   vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelLogic;
 
-  int ColorColumn;
-  int OpacityColumn;
 };
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelHierarchyModelPrivate
 ::qMRMLSceneModelHierarchyModelPrivate(qMRMLSceneModelHierarchyModel& object)
-  : qMRMLSceneModelPrivate(object)
+  : Superclass(object)
 {
   this->ModelLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
-  this->ColorColumn = -1;
-  this->OpacityColumn = -1;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModelPrivate::init()
+vtkMRMLHierarchyNode* qMRMLSceneModelHierarchyModelPrivate::CreateHierarchyNode()const
 {
-  Q_Q(qMRMLSceneModelHierarchyModel);
-  q->setVisibilityColumn(qMRMLSceneModel::NameColumn);
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLSceneModelHierarchyModelPrivate
-::displayNode(vtkMRMLNode* node)const
-{
-  if (vtkMRMLDisplayNode::SafeDownCast(node))
-    {
-    return vtkMRMLDisplayNode::SafeDownCast(node);
-    }
-
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  if (modelNode)
-    {
-    return modelNode->GetDisplayNode();
-    }
-
-  vtkMRMLModelHierarchyNode* modelHierarchyNode
-    = vtkMRMLModelHierarchyNode::SafeDownCast(node);
-  if (modelHierarchyNode)
-    {
-    return modelHierarchyNode->GetDisplayNode();
-    }
-  return 0;
+  return vtkMRMLModelHierarchyNode::New();
 }
 
 //------------------------------------------------------------------------------
@@ -95,7 +67,7 @@ vtkMRMLDisplayNode* qMRMLSceneModelHierarchyModelPrivate
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelHierarchyModel::qMRMLSceneModelHierarchyModel(QObject *vparent)
-  :qMRMLSceneModel(new qMRMLSceneModelHierarchyModelPrivate(*this), vparent)
+  :Superclass(new qMRMLSceneModelHierarchyModelPrivate(*this), vparent)
 {
   Q_D(qMRMLSceneModelHierarchyModel);
   d->init();
@@ -115,37 +87,12 @@ void qMRMLSceneModelHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-Qt::DropActions qMRMLSceneModelHierarchyModel::supportedDropActions()const
-{
-  return Qt::MoveAction;
-}
-
-//------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
 {
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  vtkMRMLHierarchyNode* modelHierarchyNode = 0;
-  if (modelNode)
-    {
-    vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
-    if (displayableHierarchyNode)
-      {
-      modelHierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(displayableHierarchyNode);
-      if (modelHierarchyNode)
-        {
-        //std::cout << "qMRMLSceneModelHierarchyModel::parentNode: node " << (node->GetName() != NULL ? node->GetName() : node->GetID()) << " is a model node and it has a model hierarchy node " << (modelHierarchyNode->GetName() ? modelHierarchyNode->GetName() : modelHierarchyNode->GetID()) << std::endl;
-        }
-      }
-    //Q_ASSERT(modelHierarchyNode);
-    }
-  else
-    {
-    modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
-    }
   return vtkMRMLModelHierarchyNode::SafeDownCast(
-    modelHierarchyNode ? modelHierarchyNode->GetParentNode() : 0);
+    this->Superclass::parentNode(node));
 }
-
+/*
 //------------------------------------------------------------------------------
 int qMRMLSceneModelHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 {
@@ -210,7 +157,7 @@ int qMRMLSceneModelHierarchyModel::nodeIndex(vtkMRMLNode* node)const
     }
   return -1;
 }
-
+*/
 //------------------------------------------------------------------------------
 bool qMRMLSceneModelHierarchyModel::canBeAChild(vtkMRMLNode* node)const
 {
@@ -231,7 +178,7 @@ bool qMRMLSceneModelHierarchyModel::canBeAParent(vtkMRMLNode* node)const
     }
   return false;
 }
-
+/*
 //------------------------------------------------------------------------------
 bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 {
@@ -301,135 +248,4 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
     }
   return true;
 }
-
-//------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneModelHierarchyModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
-{
-  QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
-  if (this->listenNodeModifiedEvent())
-    {
-    qvtkConnect(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                this, SLOT(onMRMLNodeModified(vtkObject*)));
-    }
-  return insertedItem;
-}
-
-//------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSceneModelHierarchyModel::nodeFlags(vtkMRMLNode* node, int column)const
-{
-  Q_D(const qMRMLSceneModelHierarchyModel);
-  QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  if (column == d->ColorColumn &&
-      d->displayNode(node) != 0)
-    {
-    flags |= Qt::ItemIsEditable;
-    }
-  if (column == d->OpacityColumn &&
-      d->displayNode(node) != 0)
-    {
-    flags |= Qt::ItemIsEditable;
-    }
-  return flags;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModel
-::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
-{
-  Q_D(qMRMLSceneModelHierarchyModel);
-  if (column == d->ColorColumn)
-    {
-    vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-    if (displayNode)
-      {
-      double* rgbF = displayNode->GetColor();
-      QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2],
-                                      displayNode->GetOpacity());
-      item->setData(color, Qt::DecorationRole);
-      item->setToolTip("Color");
-      }
-    }
-  else if (column == d->OpacityColumn)
-    {
-    vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-    if (displayNode)
-      {
-      QString displayedOpacity
-        = QString::number(displayNode->GetOpacity(), 'f', 2);
-      item->setData(displayedOpacity, Qt::DisplayRole);
-      item->setToolTip("Opacity");
-      }
-    }
-  this->Superclass::updateItemDataFromNode(item, node, column);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModel
-::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
-{
-  Q_D(qMRMLSceneModelHierarchyModel);
-  if (item->column() == d->ColorColumn)
-    {
-    QColor color = item->data(Qt::DecorationRole).value<QColor>();
-    // Invalid color can happen when the item hasn't been initialized yet
-    if (color.isValid())
-      {
-      vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-      if (displayNode)
-        {
-        int wasModifying = displayNode->StartModify();
-        displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
-        displayNode->SetOpacity(color.alphaF());
-        displayNode->EndModify(wasModifying);
-        }
-      }
-    }
- else if (item->column() == d->OpacityColumn)
-    {
-    QString displayedOpacity = item->data(Qt::DisplayRole).toString();
-    if (displayedOpacity.isEmpty())
-      {
-      vtkMRMLDisplayNode* displayNode = d->displayNode(node);
-      // Invalid color can happen when the item hasn't been initialized yet
-      if (displayNode)
-        {
-        QString currentOpacity = QString::number( displayNode->GetOpacity(), 'f', 2);
-        if (displayedOpacity != currentOpacity)
-          {
-          displayNode->SetOpacity(displayedOpacity.toDouble());
-          }
-        }
-      }
-    }
-  return this->Superclass::updateNodeFromItemData(node, item);
-}
-
-//------------------------------------------------------------------------------
-int qMRMLSceneModelHierarchyModel::colorColumn()const
-{
-  Q_D(const qMRMLSceneModelHierarchyModel);
-  return d->ColorColumn;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModel::setColorColumn(int column)
-{
-  Q_D(qMRMLSceneModelHierarchyModel);
-  d->ColorColumn = column;
-  /// TODO: refresh the items
-}
-
-//------------------------------------------------------------------------------
-int qMRMLSceneModelHierarchyModel::opacityColumn()const
-{
-  Q_D(const qMRMLSceneModelHierarchyModel);
-  return d->OpacityColumn;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModel::setOpacityColumn(int column)
-{
-  Q_D(qMRMLSceneModelHierarchyModel);
-  d->OpacityColumn = column;
-  /// TODO: refresh the items
-}
+*/

@@ -21,15 +21,16 @@
 #ifndef __qMRMLSceneHierarchyModel_h
 #define __qMRMLSceneHierarchyModel_h
 
+// qMRMLWidgets includes
 #include "qMRMLSceneModel.h"
-
 class qMRMLSceneHierarchyModelPrivate;
-class vtkMRMLNode;
+
 class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
 {
   Q_OBJECT
 
 public:
+  typedef qMRMLSceneModel Superclass;
   qMRMLSceneHierarchyModel(QObject *parent=0);
   virtual ~qMRMLSceneHierarchyModel();
 
@@ -45,6 +46,10 @@ public:
   /// if newParent == 0, set the node into the vtkMRMLScene
   virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
+protected:
+  qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
+                           QObject *parent=0);
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneHierarchyModel);
