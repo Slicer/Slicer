@@ -88,7 +88,7 @@ public:
   /// 
   /// Given this hierarchy node returns all it's 1st level children (not recursive). 
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
-  /// std::vector< vtkMRMLModelHierarchyNode > children = this->GetHierarchyChildrenNodes(parent);
+  /// std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
 //ETX
 
@@ -129,15 +129,7 @@ public:
     return GetAssociatedNodeIDReference();
   }
 
-  virtual void SetAssociatedNodeID(const char* ref) 
-  {
-    if ((this->AssociatedNodeIDReference && ref && strcmp(ref, this->AssociatedNodeIDReference)) ||
-        (this->AssociatedNodeIDReference != ref))
-      {
-      this->SetAssociatedNodeIDReference(ref);
-      this->AssociatedHierarchyIsModified(this->GetScene());
-      }
-  };
+  virtual void SetAssociatedNodeID(const char* ref);
 
 
   /// Get node associated with this hierarchy node

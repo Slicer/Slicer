@@ -256,25 +256,27 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
 
     vtkMRMLHierarchyNode *oldParentNode = this->GetParentNode();
 
-    int disableModify = this->GetDisableModifiedEvent();
-    this->SetDisableModifiedEvent(1);
+    int disableModify = this->StartModify();
 
     this->SetParentNodeIDReference(ref);
     this->SetSortingValue(++MaximumSortingValue);
 
-    this->SetDisableModifiedEvent(disableModify);
-
     this->HierarchyIsModified(this->GetScene());
+
+    this->EndModify(disableModify);
 
     vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
     if (oldParentNode)
       {
       oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
+      oldParentNode->Modified();
       }
     if (parentNode)
       {
       parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
+      parentNode->Modified();
       }
+
     }
 }
 
@@ -717,6 +719,22 @@ vtkMRMLNode* vtkMRMLHierarchyNode::GetAssociatedNode()
   return node;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLHierarchyNode::SetAssociatedNodeID(const char* ref) 
+{
+  if ((this->AssociatedNodeIDReference && ref && strcmp(ref, this->AssociatedNodeIDReference)) ||
+      (this->AssociatedNodeIDReference != ref))
+    {
+    this->SetAssociatedNodeIDReference(ref);
+    this->AssociatedHierarchyIsModified(this->GetScene());
+    vtkMRMLNode* node = this->GetAssociatedNode();
+    if (node)
+      {
+      node->Modified();
+      }
+    }
+}
+  
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::AssociatedHierarchyIsModified(vtkMRMLScene *scene)
 {
