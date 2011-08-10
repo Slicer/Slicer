@@ -291,7 +291,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="restoreViewButton">
+            <widget class="QPushButton" name="jumpSlicesButton">
              <property name="toolTip">
               <string>Reset sliceViews to the first coordinate of the highlighted annotation.</string>
              </property>

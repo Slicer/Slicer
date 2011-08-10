@@ -139,8 +139,8 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   q->connect(this->lockSelectedButton, SIGNAL(clicked()), q,
       SLOT(lockSelectedButtonClicked()));
 
-  q->connect(this->restoreViewButton, SIGNAL(clicked()), q,
-      SLOT(onRestoreViewButtonClicked()));
+  q->connect(this->jumpSlicesButton, SIGNAL(clicked()), q,
+      SLOT(onJumpSlicesButtonClicked()));
 
   q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
       SLOT(moveDownSelected()));
@@ -269,13 +269,11 @@ void qSlicerAnnotationModuleWidget::unselectAllButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
+void qSlicerAnnotationModuleWidget::onJumpSlicesButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
-
-  d->logic()->RestoreAnnotationView(d->hierarchyTreeView->firstSelectedNode());
+  d->logic()->JumpSlicesToAnnotationCoordinate(d->hierarchyTreeView->firstSelectedNode());
 }
 
 //-----------------------------------------------------------------------------

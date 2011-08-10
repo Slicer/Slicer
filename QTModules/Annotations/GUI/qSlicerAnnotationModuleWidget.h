@@ -98,8 +98,8 @@ protected slots:
   /// Add a new hierarchy.
   void onAddHierarchyButtonClicked();
 
-  /// Restore the view to when the selected annotation was created.
-  void onRestoreViewButtonClicked();
+  /// Jump the 2d Slices to the first control point of the selected annotation
+  void onJumpSlicesButtonClicked();
 
   /// Select all annotations
   void selectAllButtonClicked();

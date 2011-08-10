@@ -170,8 +170,8 @@ public:
   /// Deletes a backup of an Annotation MRML node
   void DeleteBackupNodes(const char * id);
 
-  /// Restore view of an Annotation MRML node
-  void RestoreAnnotationView(const char* id);
+  /// Jump 2d Slices to the location of the first control point of an Annotation MRML node
+  void JumpSlicesToAnnotationCoordinate(const char* id);
 
   const char * MoveAnnotationUp(const char* id);
   const char * MoveAnnotationDown(const char* id);

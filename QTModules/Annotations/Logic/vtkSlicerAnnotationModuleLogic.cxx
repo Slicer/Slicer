@@ -2342,14 +2342,14 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
 
 }
 
-  //---------------------------------------------------------------------------
-  // Restore the view when it was last modified of an AnnotationMRML node
-  //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
+//---------------------------------------------------------------------------
+// Jump the 2d slices to the first control point location of an AnnotationMRML node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char * id)
 {
   if (!id)
     {
-    vtkErrorMacro("RestoreAnnotationView: no id given");
+    vtkErrorMacro("JumpSlicesToAnnotationCoordinate: no id given");
     return;
     }
   if (!this->GetMRMLScene())
@@ -2359,49 +2359,55 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
     }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
-    if (!node)
-      {
-      vtkErrorMacro("RestoreAnnotationView: Could not get the MRML node with id " << id);
+  if (!node)
+    {
+    vtkErrorMacro("JumpSlicesToAnnotationCoordinate: Could not get the MRML node with id " << id);
+    return;
+    }
+  
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  
+  if (!annotationNode)
+    {
+    vtkErrorMacro("JumpSlicesToAnnotationCoordinate: Could not get the annotationMRML node.")
       return;
-      }
+    }
+  
+  // do not restore anything if this is a snapshot node
+  if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+    {
+    return;
+    }
+  
+  vtkMRMLAnnotationControlPointsNode* controlpointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(annotationNode);
+  
+  if (!controlpointsNode)
+    {
+    // we don't have a controlpointsNode so we can not jump the slices
+    return;
+    }
 
-    vtkMRMLAnnotationNode* annotationNode =
-        vtkMRMLAnnotationNode::SafeDownCast(node);
-
-    if (!annotationNode)
-      {
-      vtkErrorMacro("RestoreAnnotationView: Could not get the annotationMRML node.")
-      return;
-      }
-
-    // do not restore anything if this is a snapshot node
-    if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
-      {
-      return;
-      }
-
+  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode");
+  if (!mrmlNode)
+    {
+    vtkErrorMacro("JumpSlicesToAnnotationCoordinate: could not get first slice node from scene");
+    return;
+    }
+  vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
+  if (sliceNode)
+    {
     this->GetMRMLScene()->SaveStateForUndo();
+    // TODO for now only consider the first control point
+    double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
+    sliceNode->JumpAllSlices(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
+    // JumpAllSlices jumps all the other slices, not self, so JumpSlice on
+    // this node as well
+    sliceNode->JumpSlice(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
+    }
+  
+//    annotationNode->RestoreView();
 
-    vtkMRMLAnnotationControlPointsNode* controlpointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(annotationNode);
-
-    if (!controlpointsNode)
-      {
-      // we don't have a controlpointsNode so we can not jump the slices
-      return;
-      }
-
-    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));
-    if (sliceNode)
-      {
-      // TODO for now only consider the first control point
-      double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
-      sliceNode->JumpAllSlices(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
-      }
-
-
-    annotationNode->RestoreView();
-
-  }
+}
 
   //---------------------------------------------------------------------------
   const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
