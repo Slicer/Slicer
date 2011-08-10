@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Registration</category>
+  <category>Registration.Legacy</category>
   <title>Fast Rigid registration</title>
   <index>2</index>
   <description>Registers two images together using a rigid transform and mutual information.\n\nThis module was originally distributed as "Linear registration" but has been renamed to eliminate confusion with the "Affine registration" module.\n\nThis module is often used to align images of different subjects or images of the same subject from different modalities.\n\nThis module can smooth images prior to registration to mitigate noise and improve convergence. Many of the registration parameters require a working knowledge of the algorithm although the default parameters are sufficient for many registration tasks.\n\n</description>
