@@ -71,7 +71,9 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->SelectSceneViewMenuButton->setMenu(this->SceneViewMenu);
 
   // Enable magnification by default
+#ifndef Q_WS_MAC
   q->setDisableMagnification(false);
+#endif
 
   this->setDisplayMode(NavigationDisplayMode);
 }
