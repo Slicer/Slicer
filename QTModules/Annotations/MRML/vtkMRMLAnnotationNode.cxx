@@ -504,7 +504,7 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
 
   if(!this->GetDisableModifiedEvent())
   {
-  // invoke a display modified event
+  // invoke a modified event
   this->InvokeEvent(vtkCommand::ModifiedEvent);
   }
 
@@ -672,12 +672,10 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
     {
         return;
     }
-    std::cout << this->GetClassName() << " (" << this->GetID() << "): setting Locked to " << locked << std::endl;
     this->Locked = locked;
     if(!this->GetDisableModifiedEvent())
     {
-      // invoke a display modified event
-      std::cout << "Invoking LockModifiedEvent" << std::endl;
+      // invoke a lock modified event
       this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
       this->Modified();
     }
