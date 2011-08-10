@@ -154,7 +154,16 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     //Q_ASSERT(parentItem);
     return false;
     }
-  QStandardItem* item = parentItem->child(source_row, 0);
+  QStandardItem* item = 0;
+  // Sometimes the row is not complete (DnD), search for a non null item
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
+    {
+    item = parentItem->child(source_row, childIndex);
+    if (item)
+      {
+      break;
+      }
+    }
   if (item == 0)
     {
     //Q_ASSERT(item);
