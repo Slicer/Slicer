@@ -82,8 +82,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLockedAllWidgetsFromIntera
     }
   else if (currentInteractionMode == vtkMRMLInteractionNode::ViewTransform)
     {
-    // turn on processing events on the 3d widgets
-    this->UpdateLockedAllWidgets(false);
+    // reset the processing of events on the 3d widgets from the mrml nodes
+    this->UpdateLockedAllWidgetsFromNodes();
     }
 }
 
@@ -127,7 +127,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNo
     }
 
   bool isLockedOnNode = (node->GetLocked() != 0 ? true : false);
-  bool isLockedOnWidget = (widget->GetProcessEvents() != 0 ? true : false);
+  bool isLockedOnWidget = (widget->GetProcessEvents() != 0 ? false : true);
 
   // only update the processEvents state of the widget if it is different than on the node
   if (isLockedOnNode && !isLockedOnWidget)
