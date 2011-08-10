@@ -45,12 +45,14 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->IDColumn = -1;
   this->CheckableColumn = -1;
   this->VisibilityColumn = -1;
-  
+
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
   this->PartiallyVisibleIcon = QIcon(":Icons/VisiblePartially.png");
 
   this->MRMLScene = 0;
+
+  qRegisterMetaType<QStandardItem* >("QStandardItem*");
 }
 
 //------------------------------------------------------------------------------
@@ -540,8 +542,6 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
     return 0;
     }
   QModelIndex parent = indexes[0].parent();
-  // We want to do drag&drop only on the first item of a line (and not all the
-  // items
   QModelIndexList allColumnsIndexes;
   foreach(const QModelIndex& index, indexes)
     {
@@ -563,6 +563,8 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 {
   Q_D(qMRMLSceneModel);
   Q_UNUSED(column);
+  // We want to do drag&drop only into the first item of a line (and not on a
+  // randomn column.
   bool res = this->Superclass::dropMimeData(
     data, action, row, 0, parent.sibling(parent.row(), 0));
   d->DraggedNodes.clear();
@@ -1132,10 +1134,10 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
     // The node has been modified because it's part of a drag&drop action
     // (reparenting). so it means QStandardItemModel has already reparented
     // the row, no need to update the items again.
-    if (d->DraggedNodes.contains(modifiedNode))
-      {
-      continue;
-      }
+    //if (d->DraggedNodes.contains(modifiedNode))
+    //  {
+    //  continue;
+    //  }
     QStandardItem* item = this->itemFromIndex(index);
     int oldRow = item->row();
     QStandardItem* oldParent = item->parent();
@@ -1177,6 +1179,14 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
     {
     return;
     }
+
+  if (d->DraggedNodes.count())
+    {
+    this->metaObject()->invokeMethod(
+      this, "onItemChanged", Qt::QueuedConnection, Q_ARG(QStandardItem*, item));
+    return;
+    }
+
   // Only nodes can be changed, scene and extra items should be not editable
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
   Q_ASSERT(mrmlNode);
