@@ -54,6 +54,7 @@ public:
 
 public slots:
   void setHomeModuleCurrent();
+  void restoreToolbars();
 
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);

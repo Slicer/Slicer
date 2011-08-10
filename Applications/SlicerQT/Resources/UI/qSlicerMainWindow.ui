@@ -80,12 +80,6 @@
     <addaction name="actionViewCacheRemoteIOManager"/>
     <addaction name="actionViewApplicationSettings"/>
     <addaction name="separator"/>
-    <addaction name="MenuLayout"/>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
     <widget class="QMenu" name="menuWindowToolbars">
      <property name="title">
       <string>&amp;Toolbars</string>
@@ -97,12 +91,20 @@
      <addaction name="actionWindowToolbarsView"/>
      <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
+     <addaction name="separator"/>
+     <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
     <addaction name="actionWindowShowMainPanel"/>
     <addaction name="menuWindowToolbars"/>
+    <addaction name="MenuLayout"/>
     <addaction name="separator"/>
     <addaction name="actionWindowErrorLog"/>
     <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
     <addaction name="actionWindowPythonInteractor"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -601,6 +603,14 @@
    </property>
    <property name="toolTip">
     <string>Show or Hide the &quot;Mouse Mode&quot; toolbar</string>
+   </property>
+  </action>
+  <action name="actionWindowToolbarsResetToDefault">
+   <property name="text">
+    <string>Reset to default</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore the toolbars to their default state</string>
    </property>
   </action>
   <action name="actionHelpKeyboardShortcuts">

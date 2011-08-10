@@ -81,6 +81,8 @@ public:
   QStringList                   ModuleToolBarList;
   qSlicerLayoutManager*         LayoutManager;
   ctkSettingsDialog*            SettingsDialog;
+
+  QByteArray                    StartupState;
 };
 
 //-----------------------------------------------------------------------------
@@ -347,6 +349,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   d->Core = new qSlicerMainWindowCore(this);
 
   this->setupMenuActions();
+  d->StartupState = this->saveState();
   d->readSettings();
 
   // reading settings might have enable/disable toolbar visibility, need to
@@ -482,6 +485,8 @@ void qSlicerMainWindow::setupMenuActions()
   //connect ToolBars actions
   connect(d->actionWindowToolbarsModuleSelector, SIGNAL(triggered(bool)),
           d->ModuleSelectorToolBar, SLOT(setVisible(bool)));
+  connect(d->actionWindowToolbarsResetToDefault, SIGNAL(triggered()),
+          this, SLOT(restoreToolbars()));
 
   // Module ToolBar actions
   connect(d->actionModuleHome, SIGNAL(triggered()),
@@ -639,4 +644,12 @@ void qSlicerMainWindow::setHomeModuleCurrent()
   QSettings settings;
   QString homeModule = settings.value("Modules/HomeModule").toString();
   d->ModuleSelectorToolBar->selectModule(homeModule);
+}
+
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::restoreToolbars()
+{
+  Q_D(qSlicerMainWindow);
+  this->restoreState(d->StartupState);
 }
