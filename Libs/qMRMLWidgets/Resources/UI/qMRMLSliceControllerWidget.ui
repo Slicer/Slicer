@@ -85,7 +85,7 @@
    <item row="1" column="0">
     <widget class="QToolButton" name="SliceLinkButton">
      <property name="toolTip">
-      <string>Links/Unlinks the slice controls (except scales) across all Slice Viewers.</string>
+      <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
      </property>
      <property name="text">
       <string/>
@@ -106,7 +106,7 @@
    <item row="1" column="1">
     <widget class="QToolButton" name="FitToWindowToolButton">
      <property name="toolTip">
-      <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+      <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -190,6 +190,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SlicesLabelOpacity.png</normaloff>:/Icons/SlicesLabelOpacity.png</iconset>
      </property>
+      <property name="toolTip">
+       <string>Adjust label map opacity.</string>
+      </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
      </property>
@@ -198,7 +201,7 @@
    <item row="2" column="0">
     <widget class="QToolButton" name="SliceVisibilityButton">
      <property name="toolTip">
-      <string>Toggles slice visibility in the MainViewer.</string>
+      <string>Toggle slice visibility in the MainViewer.</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -222,6 +225,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SlicesComposite.png</normaloff>:/Icons/SlicesComposite.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Choose compositing between layers.</string>
+     </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
      </property>
@@ -233,6 +239,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Slice spacing mode.</string>
+     </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
      </property>
@@ -243,6 +252,9 @@
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
+     </property>
+     <property name="toolTip">
+      <string>Lightbox view.</string>
      </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
@@ -391,7 +403,7 @@
     <string>Fit to window</string>
    </property>
    <property name="toolTip">
-    <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+    <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
    </property>
   </action>
   <action name="actionRotate_to_volume_plane">
