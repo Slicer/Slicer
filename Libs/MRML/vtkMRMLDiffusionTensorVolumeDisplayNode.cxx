@@ -20,7 +20,7 @@ Version:   $Revision: 1.2 $
 
 // Teem includes
 #include <vtkDiffusionTensorGlyph.h>
-#include <vtkDiffusionTensorMathematicsSimple.h>
+#include <vtkDiffusionTensorMathematics.h>
 
 // VTK includes
 #include <vtkImageAppendComponents.h>
@@ -68,8 +68,8 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
  this->ScalarInvariant = vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy;
- this->DTIMathematics = vtkDiffusionTensorMathematicsSimple::New();
- this->DTIMathematicsAlpha = vtkDiffusionTensorMathematicsSimple::New();
+ this->DTIMathematics = vtkDiffusionTensorMathematics::New();
+ this->DTIMathematicsAlpha = vtkDiffusionTensorMathematics::New();
  this->Threshold->SetInput( this->DTIMathematics->GetOutput());
  this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
 

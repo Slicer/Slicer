@@ -8,7 +8,7 @@
 
 
 
-#include "vtkDiffusionTensorMathematicsSimple.h"
+#include "vtkDiffusionTensorMathematics.h"
 
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
@@ -37,7 +37,7 @@ int main( int argc, char * argv[] )
     std::cerr << argv[0] << ": No tensor data" << std::endl;
     return EXIT_FAILURE;
     }
-  vtkDiffusionTensorMathematicsSimple *math = vtkDiffusionTensorMathematicsSimple::New();
+  vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
 
   math->SetInput(0, reader->GetOutput());
   math->SetInput(1, reader->GetOutput());
