@@ -153,9 +153,14 @@ void qMRMLWindowLevelWidgetPrivate::scalarRange(vtkMRMLScalarVolumeDisplayNode* 
     {
     dNode->GetDisplayScalarRange(range);
     }
-  else
+  else if (this->VolumeNode->GetImageData())
     {
     this->VolumeNode->GetImageData()->GetScalarRange(range);
+    }
+  else
+    {
+    range[0] = 0.;
+    range[1] = 0.;
     }
 }
 
