@@ -35,37 +35,40 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
 {
   this->setSlider(new qMRMLDoubleRangeSlider(0));
   
-  QWidget* rangeWidget = new QWidget;
-  this->MinSpinBox = new QDoubleSpinBox;
-  this->MaxSpinBox = new QDoubleSpinBox;
+  QWidget* rangeWidget = new QWidget(this);
+  QHBoxLayout* rangeLayout = new QHBoxLayout;
+  rangeWidget->setLayout(rangeLayout);
+  rangeLayout->setContentsMargins(0,0,0,0);
+
+  this->MinSpinBox = new QDoubleSpinBox(rangeWidget);
   this->MinSpinBox->setPrefix("Min: ");
   this->MinSpinBox->setRange(-1000000., 1000000.);
   this->MinSpinBox->setValue(this->minimum());
+  connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(updateRange()));
+  rangeLayout->addWidget(this->MinSpinBox);
+
+  this->MaxSpinBox = new QDoubleSpinBox(rangeWidget);
   this->MaxSpinBox->setPrefix("Max: ");
   this->MaxSpinBox->setRange(-1000000., 1000000.);
   this->MaxSpinBox->setValue(this->maximum());
-  connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(updateRange()));
   connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(updateRange()));
+  rangeLayout->addWidget(this->MaxSpinBox);
+
   connect(this->slider(), SIGNAL(rangeChanged(double, double)),
           this, SLOT(updateSpinBoxRange(double, double)));
-  QHBoxLayout* rangeLayout = new QHBoxLayout;
-  rangeLayout->addWidget(this->MinSpinBox);
-  rangeLayout->addWidget(this->MaxSpinBox);
-  rangeLayout->setContentsMargins(0,0,0,0);
-  rangeWidget->setLayout(rangeLayout);
   
-  QWidgetAction* rangeAction = new QWidgetAction(0);
+  QWidgetAction* rangeAction = new QWidgetAction(this);
   rangeAction->setDefaultWidget(rangeWidget);
   
-  QAction* symmetricAction = new QAction(tr("Symmetric handles"),0);
+  QAction* symmetricAction = new QAction(tr("Symmetric handles"),this);
   symmetricAction->setCheckable(true);
   connect(symmetricAction, SIGNAL(toggled(bool)),
           this, SLOT(updateSymmetricMoves(bool)));
   symmetricAction->setChecked(this->symmetricMoves());
   
-  QMenu* optionsMenu = new QMenu;
+  QMenu* optionsMenu = new QMenu(this);
   optionsMenu->addAction(rangeAction);
   optionsMenu->addAction(symmetricAction);
   
