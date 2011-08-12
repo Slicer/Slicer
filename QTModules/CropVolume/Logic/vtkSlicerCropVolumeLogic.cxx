@@ -33,6 +33,7 @@
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
 #include <vtkImageData.h>
@@ -87,6 +88,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
+  vtkMRMLLinearTransformNode *movingVolumeTransform = NULL;
 
   // make sure inputs are initialized
   if(!inputVolume || !inputROI ){
@@ -234,6 +236,11 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
   cmdNode->SetParameterAsString("referenceVolume",refVolume->GetID());
   cmdNode->SetParameterAsString("outputVolume",outputVolume->GetID());
+  movingVolumeTransform = static_cast<vtkMRMLLinearTransformNode*>(inputVolume->GetParentTransformNode());
+
+  if(movingVolumeTransform != NULL)
+    cmdNode->SetParameterAsString("transformationFile",movingVolumeTransform->GetID());
+
   std::string interp = "linear";
   switch(pnode->GetInterpolationMode()){
     case 1: interp = "nn"; break;
