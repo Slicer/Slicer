@@ -120,9 +120,9 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
   q->connect(model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int,int)),
              q, SLOT(emitNodesAboutToBeRemoved(const QModelIndex&, int, int)));
   q->connect(model, SIGNAL(rowsRemoved(const QModelIndex&, int,int)),
-             q, SLOT(refreshCurrentItem()));
-  q->connect(model, SIGNAL(modelReset()), q, SLOT(refreshCurrentItem()));
-  q->connect(model, SIGNAL(layoutChanged()), q, SLOT(refreshCurrentItem()));
+             q, SLOT(refreshIfCurrentNodeHidden()));
+  q->connect(model, SIGNAL(modelReset()), q, SLOT(refreshIfCurrentNodeHidden()));
+  q->connect(model, SIGNAL(layoutChanged()), q, SLOT(refreshIfCurrentNodeHidden()));
 }
 
 // --------------------------------------------------------------------------
@@ -567,7 +567,7 @@ void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
 void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 {
   Q_D(qMRMLNodeComboBox);
-  // a straight forward implementation of setCurrentNode would be:
+  // A straight forward implementation of setCurrentNode would be:
   //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRMLSceneModel::UIDRole) : -1;
   //    if (index == -1 && d->NoneEnabled)
   //      {
@@ -601,6 +601,8 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
     QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
     // here we conditionally send the event, otherwise, nodeActivated would be
     // fired even if the user didn't manually select the node.
+    // Warning: please note that sending a KeyEvent will close the popup menu
+    // of the combobox if it is open.
     QApplication::sendEvent(d->ComboBox->view(), &event);
     }
 }
@@ -828,9 +830,17 @@ void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, in
 }
 
 //--------------------------------------------------------------------------
-void qMRMLNodeComboBox::refreshCurrentItem()
+void qMRMLNodeComboBox::refreshIfCurrentNodeHidden()
 {
-  this->setCurrentNode(this->currentNode());
+  /// Sometimes, a node can disappear/hide from the combobox
+  /// (qMRMLSortFilterProxyModel) because of a changed property.
+  /// If the node is the current node, we need to unselect it because it is
+  /// not a valid current node anymore.
+  vtkMRMLNode* node = this->currentNode();
+  if (!node)
+    {
+    this->setCurrentNode(0);
+    }
 }
 
 //--------------------------------------------------------------------------
