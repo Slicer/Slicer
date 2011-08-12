@@ -91,10 +91,6 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                 q, SLOT(reset()));
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
-                SIGNAL(currentNodeChanged(bool)),
-                SLOT(enableCommandButtonState(bool)));
-
-  this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 q, SLOT(setCurrentCommandLineModuleNode(vtkMRMLNode*)));
 
@@ -104,12 +100,12 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleWidgetPrivate::enableCommandButtonState(bool enable)
-{
-  this->ApplyPushButton->setEnabled(enable);
-  this->CancelPushButton->setEnabled(enable);
-  this->DefaultPushButton->setEnabled(enable);
-}
+//void qSlicerCLIModuleWidgetPrivate::enableCommandButtonState(bool enable)
+//{
+//  this->ApplyPushButton->setEnabled(enable);
+//  this->CancelPushButton->setEnabled(enable);
+//  this->DefaultPushButton->setEnabled(enable);
+//}
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
@@ -117,8 +113,12 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
 {
   if (!commandLineModuleNode)
     {
+    this->ApplyPushButton->setEnabled(false);
+    this->CancelPushButton->setEnabled(false);
+    this->DefaultPushButton->setEnabled(false);
     return;
     }
+
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
@@ -135,10 +135,19 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   switch (node->GetStatus())
     {
     case vtkMRMLCommandLineModuleNode::Cancelled:
+      this->CancelPushButton->setEnabled(false);
+      this->ProgressBar->setMaximum(0);
+      break;
     case vtkMRMLCommandLineModuleNode::Scheduled:
+      this->ApplyPushButton->setEnabled(false);
+      this->CancelPushButton->setEnabled(true);
       this->ProgressBar->setMaximum(0);
       break;
     case vtkMRMLCommandLineModuleNode::Running:
+      this->DefaultPushButton->setEnabled(false);
+      this->ApplyPushButton->setEnabled(false);
+      this->CancelPushButton->setEnabled(true);
+      
       this->ProgressBar->setMaximum(info->Progress != 0.0 ? 100 : 0);
       this->ProgressBar->setValue(info->Progress * 100.);
       if (info->ElapsedTime != 0.)
@@ -151,11 +160,17 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
       break;
     case vtkMRMLCommandLineModuleNode::Completed:
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
+      this->DefaultPushButton->setEnabled(true);
+      this->ApplyPushButton->setEnabled(true);
+      this->CancelPushButton->setEnabled(false);
       this->ProgressBar->setMaximum(100);
       this->ProgressBar->setValue(100);
       break;
     default:
     case vtkMRMLCommandLineModuleNode::Idle:
+      this->DefaultPushButton->setEnabled(true);
+      this->ApplyPushButton->setEnabled(true);
+      this->CancelPushButton->setEnabled(false);
       break;
     }
 }

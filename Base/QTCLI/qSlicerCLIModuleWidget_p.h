@@ -95,7 +95,6 @@ public:
   void addParameter(QFormLayout* layout, const ModuleParameter& moduleParameter);
 
 public slots:
-  void enableCommandButtonState(bool enable);
 
   /// Update the ui base on the command line module node
   void updateUiFromCommandLineModuleNode(vtkObject* commandLineModuleNode);
