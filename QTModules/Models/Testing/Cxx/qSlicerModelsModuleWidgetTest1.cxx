@@ -41,6 +41,13 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
+  if (argc < 2)
+    {
+    std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
   qSlicerModelsModule module;
   module.initialize(0);
 
@@ -69,9 +76,11 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 
   hierarchyNode3->SetParentNodeID(hierarchyNode2->GetID());
 
+  vtkMRMLModelNode* modelNode2 = modelsLogic->AddModel(argv[1]);
+  hierarchyNode3->SetAssociatedNodeID(modelNode2->GetID());
   dynamic_cast<QWidget*>(module.widgetRepresentation())->show();
 
-  if (argc < 2 || QString(argv[1]) != "-I")
+  if (argc < 3 || QString(argv[2]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

@@ -233,7 +233,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
       const_cast<qMRMLSortFilterProxyModel*>(this)->qvtkConnect(
         node, vtkCommand::ModifiedEvent,
         const_cast<qMRMLSortFilterProxyModel*>(this),
-        SLOT(invalidate()));
+        SLOT(invalidate()),0., Qt::UniqueConnection);
 
       QString nodeAttribute =
         node->GetAttribute(d->Attributes[nodeType].first.toLatin1());

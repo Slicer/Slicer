@@ -716,38 +716,33 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   this->blockSignals(blocked);
   this->updateItemDataFromNode(item, node, column);
   
-  if (d->PendingItemModified > 0)
-    {
-    d->PendingItemModified = -1;
-    this->onItemChanged(item);
-    }
-  else
-    {
-    d->PendingItemModified = -1;
-    }
+  bool itemChanged = (d->PendingItemModified > 0);
+  d->PendingItemModified = -1;
   
-  if (!this->canBeAChild(node))
+  if (this->canBeAChild(node))
     {
-    return;
+    QStandardItem* parentItem = item->parent();
+    QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
+    if (newParentItem == 0)
+      {
+      newParentItem = this->mrmlSceneItem();
+      }
+    // If the item has no parent, then it means it hasn't been put into the scene yet.
+    // and it will do it automatically.
+    if (parentItem)
+      {
+      int newIndex = this->nodeIndex(node);
+      if (parentItem != newParentItem ||
+          newIndex != item->row())
+        {
+        QList<QStandardItem*> children = parentItem->takeRow(item->row());
+        d->reparentItems(children, newIndex, newParentItem);
+        }
+      }
     }
-  QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
-  if (newParentItem == 0)
+  if (itemChanged)
     {
-    newParentItem = this->mrmlSceneItem();
-    }
-  // if the item has no parent, then it means it hasn't been put into the scene yet.
-  // and it will do it automatically.
-  if (parentItem == 0)
-    {
-    return;
-    }
-  int newIndex = this->nodeIndex(node);
-  if (parentItem != newParentItem ||
-      newIndex != item->row())
-    {
-    QList<QStandardItem*> children = parentItem->takeRow(item->row());
-    d->reparentItems(children, newIndex, newParentItem);
+    this->onItemChanged(item);
     }
 }
 
@@ -879,13 +874,19 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
     }
 
   vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
+  int desiredNodeIndex = -1;
   if (this->parentNode(node) != parent)
     {
     this->reparent(node, parent);
     }
-  else if (this->nodeIndex(node) != item->row())
+  else if ((desiredNodeIndex = this->nodeIndex(node)) != item->row())
     {
-    this->updateItemFromNode(item, node, item->column());
+    QStandardItem* parentItem = item->parent();
+    if (parentItem && desiredNodeIndex <
+          (parentItem->rowCount() - this->postItems(parentItem).count()))
+      {
+      this->updateItemFromNode(item, node, item->column());
+      }
     }
 }
 
