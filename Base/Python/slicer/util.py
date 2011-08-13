@@ -262,7 +262,9 @@ def array(pattern = "", index = 0):
   n = getNode(pattern=pattern, index=index)
   if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
     i = n.GetImageData()
-    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(n.GetImageData().GetDimensions())
+    shape = list(n.GetImageData().GetDimensions())
+    shape.reverse()
+    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
     return a
   # TODO: accessors for other node types: tensors, polydata (verts, polys...), colors
 
