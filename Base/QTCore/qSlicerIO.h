@@ -58,7 +58,7 @@ public:
     ScalarOverlayFile = 5,
     ColorTableFile = 7,
     FiducialListFile = 8,
-    DTIFile = 9,
+    FiberBundleFile = 9,
     UserFile = 32,
   };
 

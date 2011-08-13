@@ -134,8 +134,8 @@ void qSlicerDataModuleWidget::setup()
           this, SLOT(addFiducialList()));
   connect(d->AddColorTableToolButton, SIGNAL(clicked()),
           this, SLOT(addColorTable()));
-  connect(d->AddDTIToolButton, SIGNAL(clicked()),
-          this, SLOT(addDTI()));
+  connect(d->AddFiberBundleToolButton, SIGNAL(clicked()),
+          this, SLOT(addFiberBundle()));
 
   QList<QToolButton*> helpToolButtons =
     d->LoadAddSceneButton->findChildren<QToolButton*>(
@@ -282,7 +282,7 @@ void qSlicerDataModuleWidget::addColorTable()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addDTI()
+void qSlicerDataModuleWidget::addFiberBundle()
 {
-  qSlicerApplication::application()->ioManager()->openAddDTIDialog();
+  qSlicerApplication::application()->ioManager()->openAddFiberBundleDialog();
 }

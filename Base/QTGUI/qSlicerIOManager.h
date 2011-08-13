@@ -77,7 +77,7 @@ public slots:
   inline bool openAddTransformDialog();
   inline bool openAddColorTableDialog();
   inline bool openAddFiducialDialog();
-  inline bool openAddDTIDialog();
+  inline bool openAddFiberBundleDialog();
   inline bool openSaveDataDialog();
 
 protected slots:
@@ -137,9 +137,9 @@ bool qSlicerIOManager::openAddFiducialDialog()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openAddDTIDialog()
+bool qSlicerIOManager::openAddFiberBundleDialog()
 {
-  return this->openDialog(qSlicerIO::DTIFile, qSlicerFileDialog::Read);
+  return this->openDialog(qSlicerIO::FiberBundleFile, qSlicerFileDialog::Read);
 }
 
 //------------------------------------------------------------------------------

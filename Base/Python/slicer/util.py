@@ -105,9 +105,9 @@ def loadColorTable(filename):
   properties = {}
   return app.coreIOManager().loadNodes(filetype, properties)
 
-def loadDTI(filename):
+def loadFiberBundle(filename):
   from slicer import app, qSlicerIO
-  filetype = qSlicerIO.DTIFile
+  filetype = qSlicerIO.FiberBundleFile
   properties = {}
   return app.coreIOManager().loadNodes(filetype, properties)
 
@@ -174,9 +174,9 @@ def openFiducial():
   from slicer import app, qSlicerIO
   return app.coreIOManager().openAddFiducialDialog()
 
-def openDTI():
+def openFiberBundleFile():
   from slicer import app, qSlicerIO
-  return app.coreIOManager().openAddDTIDialog()
+  return app.coreIOManager().openAddFiberBundleDialog()
 
 def openSaveData():
   from slicer import app, qSlicerIO

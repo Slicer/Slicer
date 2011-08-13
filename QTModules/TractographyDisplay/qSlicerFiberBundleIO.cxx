@@ -48,7 +48,7 @@ QString qSlicerFiberBundleIO::description()const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerFiberBundleIO::fileType()const
 {
-  return qSlicerIO::DTIFile;
+  return qSlicerIO::FiberBundleFile;
 }
 
 //-----------------------------------------------------------------------------

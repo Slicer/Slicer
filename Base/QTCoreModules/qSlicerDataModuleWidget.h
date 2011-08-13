@@ -49,7 +49,7 @@ public slots:
   void addTransformation();
   void addFiducialList();
   void addColorTable();
-  void addDTI();
+  void addFiberBundle();
 
   void setMRMLIDsVisible(bool visible);
 
