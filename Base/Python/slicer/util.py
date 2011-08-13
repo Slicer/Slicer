@@ -99,35 +99,54 @@ def findChildren(widget=None,name=""):
 # IO
 #
 
-def loadColorTable(filename):
-  from slicer import app, qSlicerIO
+def loadNodeFromFile(filename, filetype, returnNode=False):
+  from slicer import app
+  from vtk import vtkCollection
+  properties = {'fileName':filename}
+
+  if returnNode:
+      loadedNodes = vtkCollection()
+      success = app.coreIOManager().loadNodes(filetype, properties, loadedNodes)
+      return success, loadedNodes.GetItemAsObject(0)
+  else:
+      success = app.coreIOManager().loadNodes(filetype, properties)
+      return success
+
+def loadColorTable(filename, returnNode=False):
+  from slicer import qSlicerIO
   filetype = qSlicerIO.ColorTableFile
-  properties = {}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, returnNode)
 
-def loadFiberBundle(filename):
-  from slicer import app, qSlicerIO
+def loadFiberBundle(filename, returnNode=False):
+  from slicer import qSlicerIO
   filetype = qSlicerIO.FiberBundleFile
-  properties = {}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, returnNode)
 
-def loadFiducialList(filename):
-  from slicer import app, qSlicerIO
+def loadFiducialList(filename, returnNode=False):
+  from slicer import qSlicerIO
   filetype = qSlicerIO.FiducialListFile
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, returnNode)
 
-def loadModel(filename):
-  from slicer import app, qSlicerIO
+def loadModel(filename, returnNode=False):
+  from slicer import qSlicerIO
   filetype = qSlicerIO.ModelFile
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, returnNode)
 
-def loadScalarOverlay(filename):
-  from slicer import app, qSlicerIO
+def loadScalarOverlay(filename, returnNode=False):
+  from slicer import qSlicerIO
   filetype = qSlicerIO.ScalarOverlayFile
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, returnNode)
+
+def loadTransform(filename, returnNode=False):
+  from slicer import qSlicerIO
+  filetype = qSlicerIO.TransformFile
+  return loadNodeFromFile(filename, filetype, returnNode)
+
+def loadVolume(filename, returnNode=False):
+  from slicer import qSlicerIO
+  filetype = qSlicerIO.VolumeFile
+  return loadNodeFromFile(filename, filetype, returnNode)
+
 
 def loadScene(filename, clear = True):
   from slicer import app, qSlicerIO
@@ -135,51 +154,40 @@ def loadScene(filename, clear = True):
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
-def loadTransform(filename):
-  from slicer import app, qSlicerIO
-  filetype = qSlicerIO.TransformFile
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
-
-def loadVolume(filename):
-  from slicer import app, qSlicerIO
-  filetype = qSlicerIO.VolumeFile
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
 def openData():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddDataDialog()
 
 def openVolume():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddVolumeDialog()
 
 def openModel():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddModelDialog()
 
 def openScalarOverlay():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddScalarOverlayDialog()
 
 def openTransform():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddTransformDialog()
 
 def openColorTable():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddColorTableDialog()
 
 def openFiducial():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddFiducialDialog()
 
 def openFiberBundleFile():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openAddFiberBundleDialog()
 
 def openSaveData():
-  from slicer import app, qSlicerIO
+  from slicer import app
   return app.coreIOManager().openSaveDataDialog()
   
 #
