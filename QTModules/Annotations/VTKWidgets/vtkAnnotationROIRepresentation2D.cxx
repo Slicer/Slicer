@@ -203,7 +203,7 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
 {
   actors->RemoveAllItems();
-  actors->AddItem(this->HexFace2D);
+  //actors->AddItem(this->HexFace2D);
   int i;
   for (i=0; i<7; i++)
     {
@@ -250,7 +250,7 @@ int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
   int count=0;
   this->BuildRepresentation();
   
-  count += this->HexFace2D->RenderOpaqueGeometry(v);
+  //count += this->HexFace2D->RenderOpaqueGeometry(v);
   // render the handles
   int j;
   for (j=0; j<7; j++)
@@ -268,10 +268,10 @@ int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
 int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
 {
   int count=0;
-  /***
+
   this->BuildRepresentation();
   
-  count += this->HexFace2D->RenderOpaqueGeometry(v);
+  //count += this->HexFace2D->RenderOpaqueGeometry(v);
   // render the handles
   int j;
   for (j=0; j<7; j++)
@@ -282,7 +282,6 @@ int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
     {
     count += this->IntersectionActors[j]->RenderOpaqueGeometry(v);
     }
-  ***/
 
   return count;
 }
@@ -293,7 +292,7 @@ int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkView
   int count=0;
   this->BuildRepresentation();
   
-  count += this->HexFace2D->RenderTranslucentPolygonalGeometry(v);
+  //count += this->HexFace2D->RenderTranslucentPolygonalGeometry(v);
 
   int j;
   for (j=0; j<7; j++)
@@ -314,7 +313,7 @@ int vtkAnnotationROIRepresentation2D::HasTranslucentPolygonalGeometry()
   int result=0;
   this->BuildRepresentation();
 
-  result |= this->HexFace2D->HasTranslucentPolygonalGeometry();
+  //result |= this->HexFace2D->HasTranslucentPolygonalGeometry();
   // render the handles
   int j;
   for (j=0; j<7; j++)

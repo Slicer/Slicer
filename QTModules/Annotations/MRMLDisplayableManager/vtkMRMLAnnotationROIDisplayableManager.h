@@ -61,6 +61,9 @@ protected:
 
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
+  /// Handler for specific SliceView actions
+  virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
+
 
   /// Update just the position for the widget, implemented by subclasses.
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);

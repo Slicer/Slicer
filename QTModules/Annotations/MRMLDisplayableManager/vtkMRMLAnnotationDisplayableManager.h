@@ -115,7 +115,7 @@ protected:
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
 
   /// Handler for specific SliceView actions
-  void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
+  virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
 
   /// Check, if the widget is displayable in the current slice geometry
   virtual bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
@@ -202,12 +202,13 @@ protected:
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);
   
+  vtkMRMLAnnotationDisplayableManagerHelper * Helper;
+
 private:
 
   vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
 
-  vtkMRMLAnnotationDisplayableManagerHelper * Helper;
 
   int DisableInteractorStyleEventsProcessing;
 

@@ -2774,8 +2774,10 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
       this->GetMRMLScene()->InsertBeforeNode(annotationNode, hierarchyNode);
 
       // set the displayable node id to point to this annotation node
+      annotationNode->SetDisableModifiedEvent(1);
       hierarchyNode->SetDisplayableNodeID(annotationNode->GetID());
-      annotationNode->Modified();
+      annotationNode->SetDisableModifiedEvent(0);
+      //annotationNode->Modified();
       }
     // it's been added to the scene, delete this pointer
     hierarchyNode->Delete();

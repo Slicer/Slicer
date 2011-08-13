@@ -522,7 +522,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
 
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
-  if(this->m_SliceNode)
+  if(this->m_SliceNode && widget == NULL)
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
     this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);

@@ -143,35 +143,49 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
     return 0;
     }
 
-  vtkAnnotationROIWidget* boxWidget = NULL;
+  vtkAnnotationROIWidget* roiWidget = NULL;
 
   if (this->Is2DDisplayableManager())
     {
-    boxWidget = vtkAnnotationROIWidget2D::New();
+    roiWidget = vtkAnnotationROIWidget2D::New();
     }
   else
     {
-    boxWidget = vtkAnnotationROIWidget::New();
+    roiWidget = vtkAnnotationROIWidget::New();
     }
 
-  boxWidget->SetInteractor(this->GetInteractor());
-  boxWidget->SetCurrentRenderer(this->GetRenderer());
+  roiWidget->SetRotationEnabled(0);
 
-  boxWidget->SetRotationEnabled(0);
+  roiWidget->CreateDefaultRepresentation();
 
-  boxWidget->CreateDefaultRepresentation();
-
-  vtkAnnotationROIRepresentation *boxRepresentation = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkAnnotationROIRepresentation *boxRepresentation = vtkAnnotationROIRepresentation::SafeDownCast(roiWidget->GetRepresentation());
 
   boxRepresentation->SetPlaceFactor(1.0);
 
-  this->PropagateMRMLToWidget(node, boxWidget);
+  this->PropagateMRMLToWidget(node, roiWidget);
+ 
+  roiWidget->SetInteractor(this->GetInteractor());
 
-  boxRepresentation->NeedToRenderOn();
+  if (this->Is2DDisplayableManager())
+    {
+    vtkPropCollection *actors = vtkPropCollection::New();
+    boxRepresentation->GetActors2D(actors);
+    for (int i=0; i<actors->GetNumberOfItems(); i++)
+      {
+      this->GetRenderer()->AddActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
+      }
+    }
+  else
+    {
+    roiWidget->SetCurrentRenderer(this->GetRenderer());
 
-  boxWidget->On();
+    boxRepresentation->NeedToRenderOn();
 
-  return boxWidget;
+    }
+
+  roiWidget->On();
+
+  return roiWidget;
 
 }
 
@@ -213,7 +227,59 @@ void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *w
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
+
+  vtkMRMLAnnotationROINode *annotationNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  if (this->Is2DDisplayableManager())
+    {
+    vtkAnnotationROIWidget2D* roiWidget = vtkAnnotationROIWidget2D::SafeDownCast(this->Helper->GetWidget(annotationNode));
+    vtkAnnotationROIRepresentation2D* rep = vtkAnnotationROIRepresentation2D::SafeDownCast(roiWidget->GetRepresentation());
+
+
+    // update actor's visbility from mrml
+    vtkPropCollection *actors = vtkPropCollection::New();
+    rep->GetActors2D(actors);
+    for (int i=0; i<actors->GetNumberOfItems(); i++)
+      {
+      this->GetRenderer()->RemoveActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
+      }
+    }
+
   this->Superclass::OnMRMLSceneNodeRemovedEvent(node);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode* sliceNode)
+{
+
+  if (!sliceNode)
+    {
+    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
+    return;
+    }
+  
+  // run through all associated nodes
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
+    {
+    
+    // we loop through all nodes
+    vtkMRMLAnnotationNode* annotationNode = *it;
+    
+    vtkAbstractWidget* widget = this->Helper->GetWidget(annotationNode);
+    if (!widget)
+      {
+      vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: We could not get the widget to the node: " << annotationNode->GetID());
+      return;
+      }
+    this->PropagateMRMLToWidget(annotationNode, widget);
+    it++;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -241,9 +307,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
 
   // cast to the specific widget
-  vtkAnnotationROIWidget* boxWidget = vtkAnnotationROIWidget::SafeDownCast(widget);
+  vtkAnnotationROIWidget* roiWidget = vtkAnnotationROIWidget::SafeDownCast(widget);
 
-  if (!boxWidget)
+  if (!roiWidget)
     {
     vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
     return;
@@ -265,7 +331,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     }
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(roiWidget->GetRepresentation());
 
   if (!rep) 
     {
@@ -313,11 +379,11 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   rep->PlaceWidget(b);
 
-  this->SetParentTransformToWidget(roiNode, boxWidget);
+  this->SetParentTransformToWidget(roiNode, roiWidget);
 
   // re-render the widget
   rep->NeedToRenderOn();
-  boxWidget->Modified();
+  roiWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -335,9 +401,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
     }
 
   // cast to the specific widget
-  vtkAnnotationROIWidget2D* boxWidget = vtkAnnotationROIWidget2D::SafeDownCast(widget);
+  vtkAnnotationROIWidget2D* roiWidget = vtkAnnotationROIWidget2D::SafeDownCast(widget);
 
-  if (!boxWidget)
+  if (!roiWidget)
     {
     vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
     return;
@@ -360,7 +426,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
 
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkAnnotationROIRepresentation2D * rep = vtkAnnotationROIRepresentation2D::SafeDownCast(boxWidget->GetRepresentation());
+  vtkAnnotationROIRepresentation2D * rep = vtkAnnotationROIRepresentation2D::SafeDownCast(roiWidget->GetRepresentation());
   
   if (!rep) 
     {
@@ -390,7 +456,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   b[4] = bounds[2];
   b[5] = bounds[5];   
 
-  //this->SetParentTransformToWidget(roiNode, boxWidget);
+  //this->SetParentTransformToWidget(roiNode, roiWidget);
 
   // handle ROI transform to world space
   vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -457,12 +523,18 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
 
   rep->PlaceWidget(b);
 
-  //this->SetParentTransformToWidget(roiNode, boxWidget);
+  // update actor's visbility from mrml
+  vtkPropCollection *actors = vtkPropCollection::New();
+  rep->GetActors2D(actors);
+  for (int i=0; i<actors->GetNumberOfItems(); i++)
+    {
+    vtkProp::SafeDownCast(actors->GetItemAsObject(i))->SetVisibility(roiNode->GetVisibility());
+    }
 
   // re-render the widget
   rep->NeedToRenderOn();
 
-  boxWidget->Modified();
+  roiWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -489,9 +561,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
     }
 
   // cast to the specific widget
-  vtkAnnotationROIWidget* boxWidget = vtkAnnotationROIWidget::SafeDownCast(widget);
+  vtkAnnotationROIWidget* roiWidget = vtkAnnotationROIWidget::SafeDownCast(widget);
 
-  if (!boxWidget)
+  if (!roiWidget)
     {
     vtkErrorMacro("PropagateWidgetToMRML: Could not get box widget!")
     return;
@@ -517,7 +589,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   int disabledModify = roiNode->StartModify();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkAnnotationROIRepresentation * rep = vtkAnnotationROIRepresentation::SafeDownCast(roiWidget->GetRepresentation());
 
   double extents[3];
   double center[3];
