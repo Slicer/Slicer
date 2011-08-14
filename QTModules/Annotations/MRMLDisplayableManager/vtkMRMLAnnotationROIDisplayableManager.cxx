@@ -381,6 +381,15 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   this->SetParentTransformToWidget(roiNode, roiWidget);
 
+  if (roiNode->GetVisibility())
+    {
+    widget->EnabledOn();
+    }
+  else
+    {
+    widget->EnabledOff();
+    }
+
   // re-render the widget
   rep->NeedToRenderOn();
   roiWidget->Modified();

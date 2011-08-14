@@ -468,6 +468,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
         {
         if (this->ReadAnnotationTextProperties(annotationNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns) < 0 )
           { 
+          annotationNode->SetDisableModifiedEvent(modFlag);
           return 0;
           }
         }
