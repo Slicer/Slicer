@@ -154,39 +154,39 @@ def loadScene(filename, clear = True):
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
-def openData():
+def openAddDataDialog():
   from slicer import app
   return app.coreIOManager().openAddDataDialog()
 
-def openVolume():
+def openAddVolumeDialog():
   from slicer import app
   return app.coreIOManager().openAddVolumeDialog()
 
-def openModel():
+def openAddModelDialog():
   from slicer import app
   return app.coreIOManager().openAddModelDialog()
 
-def openScalarOverlay():
+def openAddScalarOverlayDialog():
   from slicer import app
   return app.coreIOManager().openAddScalarOverlayDialog()
 
-def openTransform():
+def openAddTransformDialog():
   from slicer import app
   return app.coreIOManager().openAddTransformDialog()
 
-def openColorTable():
+def openAddColorTableDialog():
   from slicer import app
   return app.coreIOManager().openAddColorTableDialog()
 
-def openFiducial():
+def openAddFiducialDialog():
   from slicer import app
   return app.coreIOManager().openAddFiducialDialog()
 
-def openFiberBundleFile():
+def openAddFiberBundleDialog():
   from slicer import app
   return app.coreIOManager().openAddFiberBundleDialog()
 
-def openSaveData():
+def openSaveDataDialog():
   from slicer import app
   return app.coreIOManager().openSaveDataDialog()
   
