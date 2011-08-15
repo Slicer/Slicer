@@ -238,7 +238,13 @@ void qMRMLDisplayNodeWidget::setColor(const QColor& color)
     {
     return;
     }
-  d->MRMLDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+  // QColors loose precision in the numbers, don't reset the color if it didn't
+  // "really" change.
+  double* oldColor = d->MRMLDisplayNode->GetColor();
+  if (QColor::fromRgbF(oldColor[0], oldColor[1], oldColor[2]) != color)
+    {
+    d->MRMLDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+    }
 }
 
 //------------------------------------------------------------------------------

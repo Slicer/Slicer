@@ -208,7 +208,9 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     return;
     }
   d->ScalarsVisibilityCheckBox->setChecked(d->MRMLModelDisplayNode->GetScalarVisibility());
+  bool wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
   d->ActiveScalarComboBox->setDataSet(d->MRMLModelDisplayNode->GetPolyData());
+  d->ActiveScalarComboBox->blockSignals(wasBlocking);
   d->ActiveScalarComboBox->setCurrentArray(d->MRMLModelDisplayNode->GetActiveScalarName());
   d->ScalarsColorTableComboBox->setMRMLScene(d->MRMLModelDisplayNode->GetScene());
   d->ScalarsColorTableComboBox->setCurrentNode(d->MRMLModelDisplayNode->GetColorNodeID());

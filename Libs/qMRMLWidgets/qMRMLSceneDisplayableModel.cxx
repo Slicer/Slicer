@@ -225,8 +225,17 @@ void qMRMLSceneDisplayableModel
       if (displayNode)
         {
         int wasModifying = displayNode->StartModify();
-        displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
-        displayNode->SetOpacity(color.alphaF());
+        // QColor looses precision, don't change color/opacity if not "really"
+        // changed.
+        QColor oldColor = QColor::fromRgbF(displayNode->GetColor()[0],
+                                           displayNode->GetColor()[1],
+                                           displayNode->GetColor()[2],
+                                           displayNode->GetOpacity());
+        if (oldColor != color)
+          {
+          displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+          displayNode->SetOpacity(color.alphaF());
+          }
         displayNode->EndModify(wasModifying);
         }
       }
