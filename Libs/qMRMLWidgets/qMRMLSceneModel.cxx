@@ -1139,7 +1139,6 @@ void printStandardItem(QStandardItem* item, const QString& offset)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 {
-  Q_D(qMRMLSceneModel);
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(modifiedNode && modifiedNode->GetScene());
   //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));

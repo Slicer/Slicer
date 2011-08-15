@@ -167,7 +167,6 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
         }
       }
     }
-  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
 
   // otherwise, iterate through the scene
   vtkCollection* sceneCollection = d->MRMLScene->GetCurrentScene();
@@ -334,7 +333,6 @@ Qt::DropActions qMRMLSceneHierarchyModel::supportedDropActions()const
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
-  Q_D(const qMRMLSceneHierarchyModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
   if (this->canBeAParent(node))
     {
