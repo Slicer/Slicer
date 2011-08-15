@@ -14,9 +14,9 @@
 
 
 #include "vtkSlicerFiberBundleLogic.h"
-#include "vtkSlicerFiberBundleDisplayLogic.h"
 
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
@@ -48,69 +48,47 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
                                                   void * vtkNotUsed(callData))
 {
 
-  if (this->GetMRMLScene() == NULL)
-    {
-    vtkErrorMacro("Can't process MRML events, no MRMLScene set.");
-    return;
-    }
-
-  // If new scene with fiber bundle nodes, set up display logic properly.
-  // Make sure to only handle new bundle nodes (not already displayed).
-  // GetNthNodeByClass is how to loop.
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL
-      && (event == vtkMRMLScene::NewSceneEvent))
-    {
-
-   
-
-    // Loop through all of the fiberBundleNodes.
-    // If the node does not have a display logic node yet, then make one for it.
-    vtkMRMLFiberBundleNode *node= NULL;
-    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
-    if (nnodes > 0)
-      {
-      vtkDebugMacro("New scene event, processing " << nnodes << " fibre bundles");
-      }
-    for (int n=0; n<nnodes; n++)
-      {
-      node = 
-        vtkMRMLFiberBundleNode::
-        SafeDownCast (this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode"));
-
-      if (node == NULL)
-        {
-        vtkErrorMacro("Got null node.");
-        }
-      else
-        {
-        // Set up display logic and any other logic classes in future
-        //this->InitializeLogicForFiberBundleNode(node);
-        }
-      
-      }
-    }
-}
-
-void vtkSlicerFiberBundleLogic::InitializeLogicForFiberBundleNode(vtkMRMLFiberBundleNode *node)
-{
-  vtkErrorMacro("Adding display logic");
-  // Lauren here test if we already HAVE a display logic!
-  // Lauren put this logic element on a collection and DELETE it.
-  // If we have a new fiber bundle node set up its display logic
-  vtkSlicerFiberBundleDisplayLogic *displayLogic = vtkSlicerFiberBundleDisplayLogic::New();
-  displayLogic->DebugOn();
-  // set the MRML scene so display logic can add its extra model nodes
-  vtkErrorMacro("setting mrml scene in display logic");
-  displayLogic->SetMRMLScene(this->GetMRMLScene());
-  // Observe the bundle node which observes the display node, in order to update display
-  // when display or polydata change
-  vtkErrorMacro("setting FBN in display logic");
-  displayLogic->SetAndObserveFiberBundleNode(node);
-
-  vtkErrorMacro("Done adding display logic");
-
-  // TO DO: make a collection/array of the fiber bundle display logic objects.
-  
+//  if (this->GetMRMLScene() == NULL)
+//    {
+//    vtkErrorMacro("Can't process MRML events, no MRMLScene set.");
+//    return;
+//    }
+//
+//  // If new scene with fiber bundle nodes, set up display logic properly.
+//  // Make sure to only handle new bundle nodes (not already displayed).
+//  // GetNthNodeByClass is how to loop.
+//  if (vtkMRMLScene::SafeDownCast(caller) != NULL
+//      && (event == vtkMRMLScene::NewSceneEvent))
+//    {
+//
+//   
+//
+//    // Loop through all of the fiberBundleNodes.
+//    // If the node does not have a display logic node yet, then make one for it.
+//    vtkMRMLFiberBundleNode *node= NULL;
+//    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
+//    if (nnodes > 0)
+//      {
+//      vtkDebugMacro("New scene event, processing " << nnodes << " fibre bundles");
+//      }
+//    for (int n=0; n<nnodes; n++)
+//      {
+//      node = 
+//        vtkMRMLFiberBundleNode::
+//        SafeDownCast (this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode"));
+//
+//      if (node == NULL)
+//        {
+//        vtkErrorMacro("Got null node.");
+//        }
+//      else
+//        {
+//        // Set up display logic and any other logic classes in future
+//        //this->InitializeLogicForFiberBundleNode(node);
+//        }
+//      
+//      }
+//    }
 }
 
 

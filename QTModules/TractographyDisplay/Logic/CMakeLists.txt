@@ -17,8 +17,6 @@ set(module_logic_include_directories
 set(module_logic_SRCS
   vtkSlicerFiberBundleLogic.cxx
   vtkSlicerFiberBundleLogic.h
-  vtkSlicerFiberBundleDisplayLogic.cxx
-  vtkSlicerFiberBundleDisplayLogic.h
   )
 
 # Additional Target libraries
