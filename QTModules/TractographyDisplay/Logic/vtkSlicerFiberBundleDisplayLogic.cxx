@@ -40,6 +40,8 @@ vtkSlicerFiberBundleDisplayLogic::vtkSlicerFiberBundleDisplayLogic()
 
   this->FiberBundleNode = NULL;
 
+  this->MaxNumberOfFibersToShowByDefault = 1000;
+  this->RatioOfFibersShown = 1.;
 
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
 }
@@ -74,6 +76,22 @@ void vtkSlicerFiberBundleDisplayLogic::SetAndObserveFiberBundleNode( vtkMRMLFibe
   events->InsertNextValue(vtkMRMLFiberBundleNode::PolyDataModifiedEvent);
   vtkSetAndObserveMRMLNodeEventsMacro(this->FiberBundleNode, fiberBundleNode, events );
   events->Delete();
+
+
+  double ratioOfFibers = 1;
+  const vtkIdType numberOfFibers = this->FiberBundleNode->GetPolyData()->GetNumberOfLines();
+
+  if (numberOfFibers > this->MaxNumberOfFibersToShowByDefault )
+  {
+    ratioOfFibers = this->MaxNumberOfFibersToShowByDefault * 1. / numberOfFibers;
+  }
+
+
+  this->SetRatioOfFibersShown(ratioOfFibers);
+
+  vtkWarningMacro("Setting subsampling ratio to " << ratioOfFibers);
+
+  this->FiberBundleNode->SetSubsamplingRatio(ratioOfFibers);
 
   // Now that we have a fiber bundle node, display it.
   this->UpdateModelDisplay();
@@ -270,7 +288,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
     //vtkDebugMacro("Getting poly data from FB node");
 
     // get polylines from the fiber bundle node
-    this->LineModelNode->SetAndObservePolyData(this->FiberBundleNode->GetPolyData());
+    this->LineModelNode->SetAndObservePolyData(this->FiberBundleNode->GetSubsampledPolyData());
 
     // update the polydata and display parameters:
     // set properties according to the fiber bundle's display node
@@ -372,7 +390,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 
       // get polylines from the fiber bundle node and tube them
       vtkTubeFilter *tubeFilter = vtkTubeFilter::New();
-      tubeFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+      tubeFilter->SetInput(this->FiberBundleNode->GetSubsampledPolyData () );
       tubeFilter->SetRadius(fiberBundleDisplayNode->GetTubeRadius ( ) );
       tubeFilter->SetNumberOfSides(fiberBundleDisplayNode->GetTubeNumberOfSides ( ) );
       tubeFilter->Update ( );
@@ -490,7 +508,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
         if (DiffusionTensorDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
           {
 
-          this->DiffusionTensorGlyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
+          this->DiffusionTensorGlyphFilter->SetInput(this->FiberBundleNode->GetSubsampledPolyData () );
           this->DiffusionTensorGlyphFilter->ClampScalingOff();
 
           // TO DO: implement max # ellipsoids, random sampling features

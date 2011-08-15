@@ -24,9 +24,8 @@
 
 #include "vtkMRMLModelNode.h"
 class vtkMRMLFiberBundleDisplayNode;
-
-//class vtkCallbackCommand;
-//class vtkMRMLStorageNode;
+class vtkExtractSelectedPolyDataIds;
+class vtkCleanPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {
@@ -45,6 +44,28 @@ public:
   /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiberBundle";};
+
+  /// Get the subsampling ratio for the polydata
+  vtkGetMacro(SubsamplingRatio, float);
+
+  /// Set the subsampling ratio for the polydata
+  //
+  virtual void SetSubsamplingRatio(float);
+  virtual float GetSubsamplingRatioMinValue()
+    {
+    return 0.;
+    }
+  virtual float GetSubsamplingRatioMaxValue()
+    {
+    return 1.;
+    }
+
+  //vtkSetClampMacro(SubsamplingRatio, float, 0, 1);
+
+  /// 
+  /// Gets the subsampled PolyData converted from the real data in the node
+  virtual vtkPolyData* GetSubsampledPolyData();
+
 
   /// 
   /// get associated line display node or NULL if not set
@@ -76,12 +97,23 @@ public:
     {
     return Superclass::CreateDefaultStorageNode();
     };
+
+   vtkGetObjectMacro(ExtractSelectedPolyDataIds, vtkExtractSelectedPolyDataIds);
   
 protected:
   vtkMRMLFiberBundleNode(){};
   ~vtkMRMLFiberBundleNode(){};
   vtkMRMLFiberBundleNode(const vtkMRMLFiberBundleNode&);
   void operator=(const vtkMRMLFiberBundleNode&);
+
+  virtual void SetPolyData(vtkPolyData* polyData);
+
+  vtkExtractSelectedPolyDataIds* ExtractSelectedPolyDataIds;
+  vtkCleanPolyData* CleanPolyData;
+  float SubsamplingRatio;
+
+  virtual void PrepareSubsampling();
+  virtual void UpdateSubsampling();
 
 };
 

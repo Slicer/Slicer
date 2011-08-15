@@ -37,6 +37,7 @@ protected:
 public:
   qSlicerTractographyDisplayModuleWidgetPrivate(qSlicerTractographyDisplayModuleWidget& object);
   vtkMRMLFiberBundleNode* FiberBundleNode;
+  double PercentageOfFibersShown;
 };
 
 //-----------------------------------------------------------------------------
@@ -75,9 +76,23 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
   Q_D(qSlicerTractographyDisplayModuleWidget);
   if (vtkMRMLFiberBundleNode::SafeDownCast(FiberBundleNode))
     {
+    d->FiberBundleNode = FiberBundleNode;
     d->LineDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetLineDisplayNode());
     d->TubeDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetTubeDisplayNode());
     d->GlyphDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());
     d->GlyphPropertiesWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());
+    d->PercentageOfFibersShown = FiberBundleNode->GetSubsamplingRatio() * 100.;
+    emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
+    }
+}
+
+void qSlicerTractographyDisplayModuleWidget::setPercentageOfFibersShown(double percentage)
+{
+  Q_D(qSlicerTractographyDisplayModuleWidget);
+  if (vtkMRMLFiberBundleNode::SafeDownCast(d->FiberBundleNode))
+    {
+    d->PercentageOfFibersShown = percentage;
+    d->FiberBundleNode->SetSubsamplingRatio(d->PercentageOfFibersShown / 100.);
+    emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
     }
 }

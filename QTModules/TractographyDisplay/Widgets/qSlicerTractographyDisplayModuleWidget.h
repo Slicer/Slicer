@@ -41,10 +41,15 @@ public:
   virtual ~qSlicerTractographyDisplayModuleWidget();
 
   vtkMRMLFiberBundleNode FiberBundleNode()const;
+  double PercentageOfFibersShown()const;
 
 public slots:
   void setFiberBundleNode(vtkMRMLNode*);
   void setFiberBundleNode(vtkMRMLFiberBundleNode*);
+  void setPercentageOfFibersShown(double);
+
+signals:
+  void percentageOfFibersShownChanged(double);
 
 protected:
   virtual void setup();

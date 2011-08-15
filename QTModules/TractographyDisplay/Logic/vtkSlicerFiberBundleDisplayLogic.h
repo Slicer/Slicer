@@ -54,6 +54,22 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleDi
   void SetAndObserveFiberBundleNode( vtkMRMLFiberBundleNode *fiberBundleNode );
 
   // Description:
+  // Get the percentage of fibers to be displayed
+  vtkGetMacro ( RatioOfFibersShown, float );
+
+  // Description:
+  // Get the percentage of fibers to be displayed
+  vtkSetClampMacro ( RatioOfFibersShown, float, 0, 1 );
+
+  // Description:
+  // Get the maximum number of fibers to show by default when a new fiber bundle node is set
+  vtkGetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
+
+  // Description:
+  // Set the maximum number of fibers to show by default when a new fiber bundle node is set
+  vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
+
+  // Description:
   // Update logic state when MRML scene changes. Observes the FiberBundleNode for PolyDataModified
   // and DisplayModified events. Either causes a display update.
   virtual void ProcessMRMLEvents ( vtkObject * caller, 
@@ -124,6 +140,10 @@ protected:
   vtkMRMLFiberBundleNode *FiberBundleNode;
 
   vtkDiffusionTensorGlyph *DiffusionTensorGlyphFilter;
+
+  float RatioOfFibersShown;
+
+  vtkIdType MaxNumberOfFibersToShowByDefault;
 };
 
 #endif

@@ -22,6 +22,8 @@
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
+#include "vtkPolyData.h"
+
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
@@ -31,7 +33,7 @@ vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerFiberBundleLogic::vtkSlicerFiberBundleLogic()
 {
-
+  this->MaxNumberOfFibersToShowByDefault = 10000;
 }
 
 //----------------------------------------------------------------------------
@@ -108,6 +110,7 @@ void vtkSlicerFiberBundleLogic::InitializeLogicForFiberBundleNode(vtkMRMLFiberBu
   vtkErrorMacro("Done adding display logic");
 
   // TO DO: make a collection/array of the fiber bundle display logic objects.
+  
 }
 
 
@@ -192,6 +195,16 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     itksys_stl::string name = itksys::SystemTools::GetFilenameWithoutExtension(fname);
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     fiberBundleNode->SetName(uname.c_str());
+
+    const vtkIdType numberOfFibers = fiberBundleNode->GetPolyData()->GetNumberOfLines();
+    float subsamplingRatio = 1.;
+
+    if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
+      {
+      subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
+      }
+
+    fiberBundleNode->SetSubsamplingRatio(subsamplingRatio);
     
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
@@ -241,9 +254,9 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     fiberBundleNode->SetAndObserveDisplayNodeID(displayLineNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayTubeNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayGlyphNode->GetID());  
-    displayLineNode->SetPolyData(fiberBundleNode->GetPolyData());
-    displayTubeNode->SetPolyData(fiberBundleNode->GetPolyData());
-    displayGlyphNode->SetPolyData(fiberBundleNode->GetPolyData());
+    displayLineNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
+    displayTubeNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
+    displayGlyphNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
 
    if (notifyScene)
      {
