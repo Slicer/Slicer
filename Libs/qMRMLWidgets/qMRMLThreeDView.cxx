@@ -93,7 +93,10 @@ void qMRMLThreeDViewPrivate::init()
   q->interactor()->SetInteractorStyle(interactorStyle);
 
   // Set default background color
-  q->setBackgroundColor(qMRMLColors::viewBlue());
+  q->setBackgroundColor(QColor::fromRgbF(
+    vtkMRMLViewNode::defaultBackgroundColor()[0],
+    vtkMRMLViewNode::defaultBackgroundColor()[1], 
+    vtkMRMLViewNode::defaultBackgroundColor()[2]));
 
   // Hide orientation widget
   q->setOrientationWidgetVisible(false);
