@@ -51,11 +51,9 @@ QColor qMRMLColors::sliceOrange()
   return tango;
 }
 
-
 //------------------------------------------------------------------------------
-QColor qMRMLColors::viewBlue()
+QColor qMRMLColors::threeDViewBlue()
 {
-  QColor spindle = QColor::fromRgbF(0.70196, 0.70196, 0.90588);
-  return spindle;
+  QColor blue = QColor::fromRgb(116, 131, 233);
+  return blue;
 }
-

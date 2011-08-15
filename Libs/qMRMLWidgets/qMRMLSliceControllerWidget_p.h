@@ -21,15 +21,13 @@
 #ifndef __qMRMLSliceControllerWidget_p_h
 #define __qMRMLSliceControllerWidget_p_h
 
-// Qt includes
-class QToolButton;
-
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // qMRML includes
 #include "qMRMLSliceControllerWidget.h"
+#include "qMRMLViewControllerBar_p.h"
 #include "ui_qMRMLSliceControllerWidget.h"
 
 // MRMLLogic includes
@@ -43,7 +41,6 @@ class QToolButton;
 
 class QSpinBox;
 class QDoubleSpinBox;
-class ctkPopupWidget;
 class ctkSliderWidget;
 class ctkVTKSliceView;
 class vtkMRMLSliceNode;
@@ -57,19 +54,20 @@ struct qMRMLOrientation
 };
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceControllerWidgetPrivate: public QObject,
-                                   public Ui_qMRMLSliceControllerWidget
+class qMRMLSliceControllerWidgetPrivate
+  : public qMRMLViewControllerBarPrivate
+  , public Ui_qMRMLSliceControllerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
-protected:
-  qMRMLSliceControllerWidget* const q_ptr;
+
 public:
+  typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
   virtual ~qMRMLSliceControllerWidgetPrivate();
 
-  void init();
+  virtual void init();
 
   void setupLinkedOptionsMenu();
   void setupMoreOptionsMenu();
@@ -82,6 +80,7 @@ public:
   void fitSliceToBackground(vtkMRMLSliceLogic* sliceLogic);
   void setForegroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
   void setBackgroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
+
 public slots:
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();
@@ -112,9 +111,9 @@ public slots:
   void toggleLabelOpacity(bool toggle);
 
   void applyCustomLightbox();
+
 protected:
-  virtual void setupUi(ctkPopupWidget* widget);
-  virtual bool eventFilter(QObject*, QEvent*);
+  virtual void setupPopupUi();
   void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 
@@ -129,9 +128,7 @@ public:
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
-  QToolButton*                        PinButton;
   ctkSliderWidget*                    SliceOffsetSlider;
-  ctkPopupWidget*                     PopupWidget;
   ctkSliderWidget*                    LabelOpacitySlider;
   QToolButton*                        LabelOpacityToggleButton;
   double                              LastLabelOpacity;

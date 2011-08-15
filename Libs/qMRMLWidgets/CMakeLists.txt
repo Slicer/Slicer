@@ -141,6 +141,9 @@ set(qMRMLWidgets_SRCS
   qMRMLTreeView_p.h
   qMRMLUtils.cxx
   qMRMLUtils.h
+  qMRMLViewControllerBar.cxx
+  qMRMLViewControllerBar.h
+  qMRMLViewControllerBar_p.h
   qMRMLVolumeInfoWidget.cxx
   qMRMLVolumeInfoWidget.h
   qMRMLVolumePropertyNodeWidget.cxx
@@ -210,6 +213,8 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLThreeDWidget.h
   qMRMLTransformSliders.h
   qMRMLTreeView.h
+  qMRMLViewControllerBar.h
+  qMRMLViewControllerBar_p.h
   qMRMLVolumeInfoWidget.h
   qMRMLVolumePropertyNodeWidget.h
   qMRMLVolumeThresholdWidget.h

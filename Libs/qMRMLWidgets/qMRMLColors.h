@@ -36,7 +36,7 @@ public:
   static QColor sliceGreen();
   static QColor sliceOrange();
 
-  static QColor viewBlue();
+  static QColor threeDViewBlue();
 };
 
 #endif

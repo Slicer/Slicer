@@ -54,8 +54,6 @@ public:
   void init();
 
   qMRMLThreeDView*       ThreeDView;
-  QToolButton*           PinButton;
-  ctkPopupWidget*        PopupWidget;
   qMRMLThreeDViewControllerWidget* ThreeDController;
 };
 
@@ -65,69 +63,30 @@ qMRMLThreeDWidgetPrivate::qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object)
   : q_ptr(&object)
 {
   this->ThreeDView = 0;
-  this->PinButton = 0;
-  this->PopupWidget = 0;
   this->ThreeDController = 0;
 }
 
 //---------------------------------------------------------------------------
 qMRMLThreeDWidgetPrivate::~qMRMLThreeDWidgetPrivate()
 {
-  if (this->PopupWidget)
-    {
-    delete this->PopupWidget;
-    this->PopupWidget = 0;
-    }
 }
 
 //---------------------------------------------------------------------------
 void qMRMLThreeDWidgetPrivate::init()
 {
   Q_Q(qMRMLThreeDWidget);
-  this->ThreeDView = new qMRMLThreeDView;
   
   QVBoxLayout* layout = new QVBoxLayout(q);
+  layout->setSpacing(0);
   layout->setContentsMargins(0, 0, 0, 0);
-  layout->addWidget(this->ThreeDView);
-  
-  this->PinButton = new QToolButton(q);
-  this->PinButton->setCheckable(true);
-  this->PinButton->setAutoRaise(true);
-  this->PinButton->setFixedSize(20, 20);
-  QIcon pushPinIcon;
-  pushPinIcon.addFile(":/Icons/PushPinIn.png", QSize(), QIcon::Normal, QIcon::On);
-  pushPinIcon.addFile(":/Icons/PushPinOut.png", QSize(), QIcon::Normal, QIcon::Off);
-  this->PinButton->setIcon(pushPinIcon);
-  this->PinButton->setAutoFillBackground(true);
-  this->PinButton->move(q->width() - this->PinButton->width(), 0);
-
-  this->PopupWidget = new ctkPopupWidget;
-  this->PopupWidget->setBaseWidget(this->PinButton);
-  this->PopupWidget->setAlignment(Qt::AlignTop | Qt::AlignRight);
-  this->PopupWidget->setOrientation(Qt::Horizontal | Qt::Vertical);
-  this->PopupWidget->setHorizontalDirection(Qt::RightToLeft);
-  
-  QObject::connect(this->PinButton, SIGNAL(toggled(bool)),
-                   this->PopupWidget, SLOT(pinPopup(bool)));
 
   this->ThreeDController = new qMRMLThreeDViewControllerWidget;
+  layout->addWidget(this->ThreeDController);
+
+  this->ThreeDView = new qMRMLThreeDView;
+  layout->addWidget(this->ThreeDView);
+  
   this->ThreeDController->setThreeDView(this->ThreeDView);
-
-  QToolButton* controllerPinButton = new QToolButton(this->ThreeDController);
-  controllerPinButton->setCheckable(true);
-  controllerPinButton->setAutoRaise(true);
-  controllerPinButton->setIcon(pushPinIcon);
-  //controllerPinButton->setFixedSize(this->PinButton->size());
-  QObject::connect(controllerPinButton, SIGNAL(toggled(bool)),
-                   this->PinButton, SLOT(setChecked(bool)));
-  QObject::connect(this->PinButton, SIGNAL(toggled(bool)),
-                   controllerPinButton, SLOT(setChecked(bool)));
-  qobject_cast<QGridLayout*>(qobject_cast<QHBoxLayout*>(this->ThreeDController->layout())->itemAt(1)
-    ->layout())->addWidget(controllerPinButton, 0,3, Qt::AlignRight | Qt::AlignTop);
-
-  QHBoxLayout* popupLayout = new QHBoxLayout(this->PopupWidget);
-  popupLayout->setContentsMargins(0, 0, 0, 0);
-  popupLayout->addWidget(this->ThreeDController);
 
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->ThreeDView, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -177,12 +136,4 @@ qMRMLThreeDView* qMRMLThreeDWidget::threeDView()const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView;
-}
-
-// --------------------------------------------------------------------------
-void qMRMLThreeDWidget::resizeEvent(QResizeEvent* event)
-{
-  Q_D(qMRMLThreeDWidget);
-  d->PinButton->move(event->size().width() - d->PinButton->width(), 0);
-  this->Superclass::resizeEvent(event);
 }

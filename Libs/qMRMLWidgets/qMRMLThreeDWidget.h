@@ -66,7 +66,6 @@ public slots:
 
 protected:
   QScopedPointer<qMRMLThreeDWidgetPrivate> d_ptr;
-  virtual void resizeEvent(QResizeEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDWidget);

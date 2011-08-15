@@ -22,11 +22,13 @@
 #include <QActionGroup>
 #include <QDebug>
 #include <QInputDialog>
+#include <QLabel>
 #include <QMenu>
 
 // CTK includes
 #include <ctkButtonGroup.h>
 #include <ctkLogger.h>
+#include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
 
 // qMRML includes
@@ -51,7 +53,7 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDViewControllerW
 //---------------------------------------------------------------------------
 qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
   qMRMLThreeDViewControllerWidget& object)
-  : q_ptr(&object)
+  : Superclass(object)
 {
   this->ViewNode = 0;
   this->ThreeDView = 0;
@@ -63,12 +65,14 @@ qMRMLThreeDViewControllerWidgetPrivate::~qMRMLThreeDViewControllerWidgetPrivate(
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
+void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
 {
   Q_Q(qMRMLThreeDViewControllerWidget);
-  Q_ASSERT(widget == q);
-  this->Ui_qMRMLThreeDViewControllerWidget::setupUi(widget);
-  
+
+  this->Superclass::setupPopupUi();
+  this->PopupWidget->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+  this->Ui_qMRMLThreeDViewControllerWidget::setupUi(this->PopupWidget);
+
   // Look from axes
   QObject::connect(this->AxesWidget,
                    SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
@@ -97,7 +101,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(resetFocalPoint()));
 
   // StereoType actions
-  this->StereoTypesMapper = new ctkSignalMapper(widget);
+  this->StereoTypesMapper = new ctkSignalMapper(this->PopupWidget);
   this->StereoTypesMapper->setMapping(this->actionNoStereo,
                                       vtkMRMLViewNode::NoStereo);
   this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
@@ -108,14 +112,14 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                                       vtkMRMLViewNode::Interlaced);
   this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
                                       vtkMRMLViewNode::RedBlue);
-  QActionGroup* stereoTypesActions = new QActionGroup(widget);
+  QActionGroup* stereoTypesActions = new QActionGroup(this->PopupWidget);
   stereoTypesActions->setExclusive(true);
   stereoTypesActions->addAction(this->actionNoStereo);
   stereoTypesActions->addAction(this->actionSwitchToRedBlueStereo);
   stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
   stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
   //stereoTypesActions->addAction(this->actionSwitchToCrystalEyesStereo);
-  QMenu* stereoTypesMenu = new QMenu("Stereo Modes", widget);
+  QMenu* stereoTypesMenu = new QMenu("Stereo Modes", this->PopupWidget);
   stereoTypesMenu->addActions(stereoTypesActions->actions());
   this->StereoButton->setMenu(stereoTypesMenu);
   QObject::connect(this->StereoTypesMapper, SIGNAL(mapped(int)),
@@ -123,7 +127,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
                    this->StereoTypesMapper, SLOT(map(QAction*)));
 
-  QMenu* visibilityMenu = new QMenu("Visibility", widget);
+  QMenu* visibilityMenu = new QMenu("Visibility", this->PopupWidget);
   this->VisibilityButton->setMenu(visibilityMenu);
 
   // Show 3D Axis, 3D Axis label
@@ -135,7 +139,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(set3DAxisLabelVisible(bool)));
 
   // Background color
-  QActionGroup* backgroundColorActions = new QActionGroup(widget);
+  QActionGroup* backgroundColorActions = new QActionGroup(this->PopupWidget);
   backgroundColorActions->setExclusive(true);
   visibilityMenu->addAction(this->actionSetLightBlueBackground);
   visibilityMenu->addAction(this->actionSetBlackBackground);
@@ -151,10 +155,10 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(setBlackBackground()));
 
   // SpinView, RockView buttons
-  this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
+  this->AnimateViewButtonGroup = new ctkButtonGroup(this->PopupWidget);
   this->AnimateViewButtonGroup->addButton(this->SpinButton, vtkMRMLViewNode::Spin);
   this->AnimateViewButtonGroup->addButton(this->RockButton, vtkMRMLViewNode::Rock);
-  this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
+  this->AnimateViewButtonGroup = new ctkButtonGroup(this->PopupWidget);
   this->AnimateViewButtonGroup->addButton(this->SpinButton);
   this->AnimateViewButtonGroup->addButton(this->RockButton);
   QObject::connect(this->SpinButton, SIGNAL(toggled(bool)),
@@ -163,16 +167,26 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(rockView(bool)));
 }
 
+//---------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidgetPrivate::init()
+{
+  Q_Q(qMRMLThreeDViewControllerWidget);
+
+  this->Superclass::init();
+  this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
+  qobject_cast<QBoxLayout*>(q->layout())->addStretch(1);
+  this->setColor(qMRMLColors::threeDViewBlue());
+}
+
 // --------------------------------------------------------------------------
 // qMRMLThreeDViewControllerWidget methods
 
 // --------------------------------------------------------------------------
 qMRMLThreeDViewControllerWidget::qMRMLThreeDViewControllerWidget(QWidget* parentWidget)
-  : Superclass(parentWidget)
-  , d_ptr(new qMRMLThreeDViewControllerWidgetPrivate(*this))
+  : Superclass(new qMRMLThreeDViewControllerWidgetPrivate(*this), parentWidget)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-  d->setupUi(this);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -375,7 +389,10 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setLightBlueBackground()
 {
-  this->setBackgroundColor(qMRMLColors::viewBlue());
+  this->setBackgroundColor(QColor::fromRgbF(
+    vtkMRMLViewNode::defaultBackgroundColor()[0],
+    vtkMRMLViewNode::defaultBackgroundColor()[1],
+    vtkMRMLViewNode::defaultBackgroundColor()[2]));
 }
 
 // --------------------------------------------------------------------------

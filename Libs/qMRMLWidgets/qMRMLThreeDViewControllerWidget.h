@@ -21,15 +21,12 @@
 #ifndef __qMRMLThreeDViewControllerWidget_h
 #define __qMRMLThreeDViewControllerWidget_h
 
-// Qt includes
-#include <QWidget>
-
 // CTK includes
 #include <ctkAxesWidget.h>
 #include <ctkVTKObject.h>
 
 // qMRMLWidget includes
-#include "qMRMLWidgetsExport.h"
+#include "qMRMLViewControllerBar.h"
 class qMRMLThreeDViewControllerWidgetPrivate;
 class qMRMLThreeDView;
 
@@ -37,13 +34,13 @@ class qMRMLThreeDView;
 class vtkMRMLViewNode;
 
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
-  : public QWidget
+  : public qMRMLViewControllerBar
 {
   Q_OBJECT
   QVTK_OBJECT
 public:
   /// Superclass typedef
-  typedef QWidget Superclass;
+  typedef qMRMLViewControllerBar Superclass;
 
   /// Constructors
   explicit qMRMLThreeDViewControllerWidget(QWidget* parent = 0);
@@ -77,9 +74,6 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
-
-protected:
-  QScopedPointer<qMRMLThreeDViewControllerWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDViewControllerWidget);

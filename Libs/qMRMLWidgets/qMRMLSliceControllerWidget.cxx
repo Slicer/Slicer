@@ -21,8 +21,9 @@
 // Qt includes
 #include <QDebug>
 #include <QDoubleSpinBox>
-#include <QHBoxLayout>
 #include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
@@ -56,7 +57,7 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceControllerWidget
 
 //---------------------------------------------------------------------------
 qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object)
-  : q_ptr(&object)
+  : Superclass(object)
 {
   this->SliceLogic = 0;
   this->MRMLSliceNode = 0;
@@ -76,9 +77,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->SliceOrientationToDescription["Coronal"] = coronalOrientation;
   this->SliceOrientationToDescription["Reformat"] = obliqueOrientation;
 
-  this->PinButton = 0;
   this->SliceOffsetSlider = 0;
-  this->PopupWidget = 0;
 
   this->LabelOpacitySlider = 0;
   this->LabelOpacityToggleButton = 0;
@@ -91,105 +90,15 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
 //---------------------------------------------------------------------------
 qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate()
 {
-  delete this->PopupWidget;
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setupUi(ctkPopupWidget* widget)
+void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  Q_ASSERT(widget == this->PopupWidget);
 
-  this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->BackgroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ForegroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->LabelMapSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
-                   q, SLOT(fitSliceToBackground()));
-  QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
-                   q, SLOT(rotateSliceToBackground()));
-  QObject::connect(this->actionShow_label_volume_outline, SIGNAL(toggled(bool)),
-                   q, SLOT(showLabelOutline(bool)));
-  QObject::connect(this->actionShow_reformat_widget, SIGNAL(toggled(bool)),
-                   q, SLOT(showReformatWidget(bool)));
-  QObject::connect(this->actionCompositingAlpha_blend, SIGNAL(triggered()),
-                   q, SLOT(setCompositingToAlphaBlend()));
-  QObject::connect(this->actionCompositingReverse_alpha_blend, SIGNAL(triggered()),
-                   q, SLOT(setCompositingToReverseAlphaBlend()));
-  QObject::connect(this->actionCompositingAdd, SIGNAL(triggered()),
-                   q, SLOT(setCompositingToAdd()));
-  QObject::connect(this->actionCompositingSubtract, SIGNAL(triggered()),
-                   q, SLOT(setCompositingToSubtract()));
-  QObject::connect(this->actionSliceSpacingModeAutomatic, SIGNAL(toggled(bool)),
-                   q, SLOT(setSliceSpacingMode(bool)));
-  QObject::connect(this->actionLightbox1x1_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x1()));
-  QObject::connect(this->actionLightbox1x2_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x2()));
-  QObject::connect(this->actionLightbox1x3_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x3()));
-  QObject::connect(this->actionLightbox1x4_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x4()));
-  QObject::connect(this->actionLightbox1x6_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x6()));
-  QObject::connect(this->actionLightbox1x8_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo1x8()));
-  QObject::connect(this->actionLightbox2x2_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo2x2()));
-  QObject::connect(this->actionLightbox3x3_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo3x3()));
-  QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()),
-                   q, SLOT(setLightboxTo6x6()));
-  QObject::connect(this->actionForegroundInterpolation, SIGNAL(toggled(bool)),
-                   q, SLOT(setForegroundInterpolation(bool)));
-  QObject::connect(this->actionBackgroundInterpolation, SIGNAL(toggled(bool)),
-                   q, SLOT(setBackgroundInterpolation(bool)));
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::init()
-{
-  Q_Q(qMRMLSliceControllerWidget);
-  this->PopupWidget = new ctkPopupWidget;
-  this->setupUi(this->PopupWidget);
-  this->PopupWidget->setBaseWidget(q);
-  this->PopupWidget->setAutoHide(true);
-
-  this->SliceOffsetSlider = new ctkSliderWidget(q);
-  this->SliceOffsetSlider->setTracking(false);
-  this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
-  this->SliceOffsetSlider->setPageStep(1.);
-  this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
-  // Move the spinbox in the popup instead of having it in the slider bar
-  dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
-
-  this->PinButton = new QToolButton(q);
-  this->PinButton->setCheckable(true);
-  this->PinButton->setAutoRaise(true);
-  this->PinButton->setFixedSize(15, 15);
-  QIcon pushPinIcon;
-  pushPinIcon.addFile(":/Icons/PushPinIn.png", QSize(), QIcon::Normal, QIcon::On);
-  pushPinIcon.addFile(":/Icons/PushPinOut.png", QSize(), QIcon::Normal, QIcon::Off);
-  this->PinButton->setIcon(pushPinIcon);
-  QObject::connect(this->PinButton, SIGNAL(toggled(bool)),
-                   this->PopupWidget, SLOT(pinPopup(bool)));
-  this->PinButton->installEventFilter(this);
-
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->addWidget(this->SliceOffsetSlider);
-  layout->addWidget(this->PinButton);
-  QMargins margins = layout->contentsMargins();
-  margins.setTop(0);
-  margins.setBottom(0);
-  q->setLayout(layout);
-  layout->setContentsMargins(margins);
-
-  vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
-    vtkSmartPointer<vtkMRMLSliceLogic>::New();
-  q->setSliceLogic(defaultLogic);
+  this->Superclass::setupPopupUi();
+  this->Ui_qMRMLSliceControllerWidget::setupUi(this->PopupWidget);
 
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
@@ -246,11 +155,52 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->connect(this->LabelMapSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
                 SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
 
-  // Connect Slice offset slider
-  this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
-                q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
-  this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
-                q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->BackgroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->ForegroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->LabelMapSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
+                   q, SLOT(fitSliceToBackground()));
+  QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
+                   q, SLOT(rotateSliceToBackground()));
+  QObject::connect(this->actionShow_label_volume_outline, SIGNAL(toggled(bool)),
+                   q, SLOT(showLabelOutline(bool)));
+  QObject::connect(this->actionShow_reformat_widget, SIGNAL(toggled(bool)),
+                   q, SLOT(showReformatWidget(bool)));
+  QObject::connect(this->actionCompositingAlpha_blend, SIGNAL(triggered()),
+                   q, SLOT(setCompositingToAlphaBlend()));
+  QObject::connect(this->actionCompositingReverse_alpha_blend, SIGNAL(triggered()),
+                   q, SLOT(setCompositingToReverseAlphaBlend()));
+  QObject::connect(this->actionCompositingAdd, SIGNAL(triggered()),
+                   q, SLOT(setCompositingToAdd()));
+  QObject::connect(this->actionCompositingSubtract, SIGNAL(triggered()),
+                   q, SLOT(setCompositingToSubtract()));
+  QObject::connect(this->actionSliceSpacingModeAutomatic, SIGNAL(toggled(bool)),
+                   q, SLOT(setSliceSpacingMode(bool)));
+  QObject::connect(this->actionLightbox1x1_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x1()));
+  QObject::connect(this->actionLightbox1x2_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x2()));
+  QObject::connect(this->actionLightbox1x3_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x3()));
+  QObject::connect(this->actionLightbox1x4_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x4()));
+  QObject::connect(this->actionLightbox1x6_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x6()));
+  QObject::connect(this->actionLightbox1x8_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo1x8()));
+  QObject::connect(this->actionLightbox2x2_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo2x2()));
+  QObject::connect(this->actionLightbox3x3_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo3x3()));
+  QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()),
+                   q, SLOT(setLightboxTo6x6()));
+  QObject::connect(this->actionForegroundInterpolation, SIGNAL(toggled(bool)),
+                   q, SLOT(setForegroundInterpolation(bool)));
+  QObject::connect(this->actionBackgroundInterpolation, SIGNAL(toggled(bool)),
+                   q, SLOT(setBackgroundInterpolation(bool)));
 
   // Connect SliceCollapsibleButton
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
@@ -264,6 +214,36 @@ void qMRMLSliceControllerWidgetPrivate::init()
   // Connect link toggle
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
                 q, SLOT(setSliceLink(bool)));
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::init()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  this->Superclass::init();
+  
+  this->SliceOffsetSlider = new ctkSliderWidget(q);
+  this->SliceOffsetSlider->setTracking(false);
+  this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
+  this->SliceOffsetSlider->setPageStep(1.);
+  this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
+
+  // Connect Slice offset slider
+  this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
+                q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
+  this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
+                q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
+
+  q->layout()->addWidget(this->SliceOffsetSlider);
+  // Move the spinbox in the popup instead of having it in the slider bar
+  dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
+
+  vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
+    vtkSmartPointer<vtkMRMLSliceLogic>::New();
+  q->setSliceLogic(defaultLogic);
+
+  q->setSliceViewName("Red");
 }
 
 // --------------------------------------------------------------------------
@@ -428,16 +408,6 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   advancedMenu->addMenu(adjustDisplay);
   */
   //this->SliceMoreOptionButton->setMenu(advancedMenu);
-}
-
-//---------------------------------------------------------------------------
-bool qMRMLSliceControllerWidgetPrivate::eventFilter(QObject* object, QEvent* event)
-{
-  if (object == this->PinButton && event->type() == QEvent::Enter)
-    {
-    this->PopupWidget->showPopup();
-    }
-  return this->QObject::eventFilter(object, event);
 }
 
 //---------------------------------------------------------------------------
@@ -867,12 +837,11 @@ void qMRMLSliceControllerWidgetPrivate::applyCustomLightbox()
 // qMRMLSliceView methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLSliceControllerWidgetPrivate(*this))
+qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent)
+  : Superclass(new qMRMLSliceControllerWidgetPrivate(*this), _parent)
 {
   Q_D(qMRMLSliceControllerWidget);
   d->init();
-  this->setSliceViewName("Red");
 }
 
 // --------------------------------------------------------------------------
@@ -1055,38 +1024,30 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
   if (newSliceViewName == "Red")
     {
     buttonColor = qMRMLColors::sliceRed();
+    d->ViewLabel->setText(tr("R"));
     }
   else if (newSliceViewName == "Green")
     {
     buttonColor = qMRMLColors::sliceGreen();
+    d->ViewLabel->setText(tr("G"));
     }
   else if (newSliceViewName == "Yellow")
     {
     buttonColor =  qMRMLColors::sliceYellow();
+    d->ViewLabel->setText(tr("Y"));
     }
   else if (QColor(newSliceViewName.toLower()).isValid())
     {
     buttonColor = QColor(newSliceViewName.toLower());
+    d->ViewLabel->setText(tr("?"));
     }
   else
     {
     buttonColor = qMRMLColors::sliceOrange();
+    d->ViewLabel->setText(tr("C"));
     }
-  //d->SliceCollapsibleButton->setPalette(QPalette(buttonColor));
-  palette = d->SliceOffsetSlider->palette();
-  QLinearGradient gradient(QPointF(0.,0.), QPointF(0.,1.));
-  gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  gradient.setColorAt(0., buttonColor.lighter(102));
-  gradient.setColorAt(0.1, buttonColor);
-  gradient.setColorAt(0.8, buttonColor.darker(102));
-  gradient.setColorAt(1., buttonColor.darker(108));
-  palette.setBrush(QPalette::Window, gradient);
-  this->setAutoFillBackground(true);
-  this->setPalette(palette);
 
-  QPalette buttonPalette( buttonColor.lighter(130));
-  d->PinButton->setAutoFillBackground(true);
-  d->PinButton->setPalette(buttonPalette);
+  d->setColor(buttonColor);
 
   if (d->SliceLogic)
     {

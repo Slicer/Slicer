@@ -23,6 +23,7 @@
 
 // qMRML includes
 #include "qMRMLThreeDViewControllerWidget.h"
+#include "qMRMLViewControllerBar_p.h"
 #include "ui_qMRMLThreeDViewControllerWidget.h"
 
 // VTK includes
@@ -36,24 +37,25 @@ class vtkMRMLViewNode;
 
 //-----------------------------------------------------------------------------
 class qMRMLThreeDViewControllerWidgetPrivate
-  : public Ui_qMRMLThreeDViewControllerWidget
+  : public qMRMLViewControllerBarPrivate
+  , public Ui_qMRMLThreeDViewControllerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLThreeDViewControllerWidget);
-
-protected:
-  qMRMLThreeDViewControllerWidget* const q_ptr;
-
 public:
+  typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLThreeDViewControllerWidgetPrivate(qMRMLThreeDViewControllerWidget& object);
   virtual ~qMRMLThreeDViewControllerWidgetPrivate();
 
-  virtual void setupUi(QWidget* widget);
+  virtual void init();
 
   vtkWeakPointer<vtkMRMLViewNode>  ViewNode;
   qMRMLThreeDView*                 ThreeDView;
 
   ctkSignalMapper*                 StereoTypesMapper;
   ctkButtonGroup*                  AnimateViewButtonGroup;
+
+protected:
+  virtual void setupPopupUi();
 };
 
 #endif

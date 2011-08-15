@@ -13,12 +13,6 @@
   <property name="windowTitle">
    <string>Slice Controller</string>
   </property>
-  <property name="autoShow">
-   <bool>false</bool>
-  </property>
-  <property name="autoHide">
-   <bool>false</bool>
-  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
     <number>0</number>

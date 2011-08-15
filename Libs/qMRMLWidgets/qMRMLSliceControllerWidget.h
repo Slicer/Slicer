@@ -21,16 +21,8 @@
 #ifndef __qMRMLSliceControllerWidget_h
 #define __qMRMLSliceControllerWidget_h
 
-// Qt includes
-#include <QWidget>
-
-// CTK includes
-#include <ctkPimpl.h>
-
 // qMRMLWidget includes
-#include "qMRMLWidget.h"
-
-#include "qMRMLWidgetsExport.h"
+#include "qMRMLViewControllerBar.h"
 
 class QButtonGroup;
 class qMRMLSliceControllerWidgetPrivate;
@@ -46,13 +38,13 @@ class vtkMRMLSliceNode;
 /// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
 /// be changed. 
-class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget : public qMRMLWidget
+class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget : public qMRMLViewControllerBar
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  typedef qMRMLViewControllerBar Superclass;
   
   /// Constructors
   explicit qMRMLSliceControllerWidget(QWidget* parent = 0);
@@ -185,9 +177,6 @@ signals:
   /// This signal is emitted when the given \a imageData is modified.
   void imageDataChanged(vtkImageData * imageData);
   void renderRequested();
-
-protected:
-  QScopedPointer<qMRMLSliceControllerWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
