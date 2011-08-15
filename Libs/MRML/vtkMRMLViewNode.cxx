@@ -69,10 +69,9 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->RockCount = 0;
   this->StereoType = vtkMRMLViewNode::NoStereo;
   this->RenderMode = vtkMRMLViewNode::Perspective;
-  //--- Slicer's default light blue color
-  this->BackgroundColor[0] = 0.70196;
-  this->BackgroundColor[1] = 0.70196;
-  this->BackgroundColor[2] = 0.90588;
+  this->BackgroundColor[0] = this->defaultBackgroundColor()[0];
+  this->BackgroundColor[1] = this->defaultBackgroundColor()[1];
+  this->BackgroundColor[2] = this->defaultBackgroundColor()[2];
  }
 
 //----------------------------------------------------------------------------
@@ -516,6 +515,13 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundColor:       " << this->BackgroundColor[0] << " "
      << this->BackgroundColor[1] << " "
      << this->BackgroundColor[2] <<"\n";
+}
+
+//------------------------------------------------------------------------------
+double* vtkMRMLViewNode::defaultBackgroundColor()
+{
+  static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
+  return backgroundColor;
 }
 
 //----------------------------------------------------------------------------

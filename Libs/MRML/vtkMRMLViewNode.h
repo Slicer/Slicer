@@ -50,6 +50,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
+  ///
+  /// Return the color the view nodes have for the background by default.
+  static double* defaultBackgroundColor();
+
   /// 
   /// Indicates whether or not the view is active
   vtkGetMacro (Active, int );
