@@ -280,7 +280,7 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
         vtkIdType i = 0;
         for (i=0; i<numberOfCellsToKeep; i++)
         {
-          arr->SetValue(i, round(i * step));
+          arr->SetValue(i, int(i * step+0.5));
         }
       }
 
