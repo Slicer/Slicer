@@ -1016,25 +1016,29 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         vtkAbstractWidget* widget = this->GetWidget(node);
 
         // TODO this code blocks the movement of the widget in lightbox mode
-
-        // ..and turn it off..
-        widget->Off();
-        // ..place it and its representation to the right renderer..
-        widget->SetCurrentRenderer(currentRenderer);
-        widget->GetRepresentation()->SetRenderer(currentRenderer);
-        // ..and turn it on again!
-        widget->On();
-        // if it's a seed widget, go to complete interaction state
-        vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
-        if (seedWidget)
+        if (widget)
           {
-          vtkDebugMacro("SeedWidget: Complete interaction");
-          seedWidget->CompleteInteraction();
+          // ..and turn it off..
+          widget->Off();
+          // ..place it and its representation to the right renderer..
+          widget->SetCurrentRenderer(currentRenderer);
+          widget->GetRepresentation()->SetRenderer(currentRenderer);
+          // ..and turn it on again!
+          widget->On();
+          // if it's a seed widget, go to complete interaction state
+          vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+          if (seedWidget)
+            {
+            vtkDebugMacro("SeedWidget: Complete interaction");
+            seedWidget->CompleteInteraction();
+            }
+          
+          // we need to render again
+          if (currentRenderer)
+            {
+            currentRenderer->Render();
+            }
           }
-
-        // we need to render again
-        currentRenderer->Render();
-
         }
 
       }
