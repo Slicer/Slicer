@@ -94,7 +94,7 @@
       <double>1.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>50.000000000000000</double>
+      <double>100.000000000000000</double>
      </property>
     </widget>
    </item>
