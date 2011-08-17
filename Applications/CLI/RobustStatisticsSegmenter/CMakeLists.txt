@@ -3,14 +3,15 @@ project(RobustStatisticsSegmenter)
 find_package(ITK REQUIRED)
 include(${USE_ITK_FILE})
 
-set(CLP SFLSRobustStat3DTest)
+set(CLP RobustStatSegmenter)
 
 slicerMacroBuildCLI(
   NAME ${CLP}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   ADDITIONAL_SRCS
-    SFLSRobustStat3DTest.cxx
+    #SFLSRobustStat3DTest.cxx
+    RobustStatSegmenter.cxx
     SFLSRobustStat3DTestConsole.cxx
     labelMapPreprocessor.h
     SFLS.h
