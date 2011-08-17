@@ -325,7 +325,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
           }
 
         if (sliceCompositeNode->GetInteractionFlags() 
-            & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
+            & vtkMRMLSliceCompositeNode::LabelVolumeFlag)
           {
           cNode->SetLabelVolumeID(sliceCompositeNode->GetLabelVolumeID());
           }
