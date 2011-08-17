@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
+    <width>410</width>
     <height>308</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,6 +22,19 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QCheckBox" name="VisibilityCheckBox">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox::indicator {
+     width: 21px;
+     height: 21px;
+ }
+
+ QCheckBox::indicator:checked {
+     image: url(:/Icons/Medium/SlicerVisible.png);
+ }
+QCheckBox::indicator:unchecked {
+     image: url(:/Icons/Medium/SlicerInvisible.png);
+ }</string>
+     </property>
      <property name="text">
       <string>Visibility</string>
      </property>

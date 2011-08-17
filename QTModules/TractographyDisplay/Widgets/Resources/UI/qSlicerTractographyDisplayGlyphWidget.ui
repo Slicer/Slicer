@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -23,6 +23,13 @@
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="GlyphTypeLabel">
+     <property name="text">
+      <string>Glyph Type</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1">
     <widget class="QComboBox" name="GlyphTypeSelector">
      <property name="sizePolicy">
@@ -128,6 +135,15 @@
    </item>
    <item row="4" column="0" colspan="2">
     <widget class="QStackedWidget" name="GlyphSubPropertiesWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -207,13 +223,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Ellipsoids"/>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="GlyphTypeLabel">
-     <property name="text">
-      <string>Glyph Type</string>
-     </property>
     </widget>
    </item>
   </layout>
