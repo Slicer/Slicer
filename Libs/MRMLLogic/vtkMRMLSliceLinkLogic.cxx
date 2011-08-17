@@ -22,6 +22,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkMatrix4x4.h>
 
 // STD includes
 #include <cassert>
@@ -115,8 +116,7 @@ void vtkMRMLSliceLinkLogic::ProcessMRMLEvents(vtkObject * caller,
     assert (event == vtkCommand::ModifiedEvent);
 
     // if this is not the node that we are interacting with, short circuit
-    if (!sliceNode->GetInteracting()
-        || !sliceNode->GetInteractionFlags())
+    if (!sliceNode->GetInteracting() || !sliceNode->GetInteractionFlags())
       {
       return;
       }
@@ -134,19 +134,15 @@ void vtkMRMLSliceLinkLogic::ProcessMRMLEvents(vtkObject * caller,
       compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast (
         this->GetMRMLScene()->GetNthNodeByClass(n,"vtkMRMLSliceCompositeNode"));
 
-      // Layout/Orientation need to match for some linked behaviors of
-      // a slice node but doesn't matter for others
+      // Is the the composite node that goes with this slice node?
       if (compositeNode->GetLayoutName() 
           && !strcmp(compositeNode->GetLayoutName(), sliceNode->GetName()))
         {
-        // Setting the orientation does not require an orientation match
-        if (!(sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::OrientationFlag))
-          {
-          // Parameter to be modified does depend on matching
-          // orientation. But the orientations do not match, so break.
-          break;
-          }
+        // Matching layout
+        break;
         }
+
+      compositeNode = 0;
       }
 
     if (compositeNode && compositeNode->GetLinkedControl())
@@ -236,6 +232,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         // if (sliceNode->Matrix4x4AreEqual(sliceNode->GetSliceToRAS(), 
         //                                  sNode->GetSliceToRAS()))
           {
+          //std::cout << "Orientation match, flags = " << sliceNode->GetInteractionFlags() << std::endl;
           // std::cout << "Broadcasting SliceToRAS and FieldOfView to "
           //           << sNode->GetName() << std::endl;
           // 
@@ -243,7 +240,9 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           // Copy the slice to RAS information
           if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::SliceToRASFlag)
             {
-            sNode->SetSliceToRAS( sliceNode->GetSliceToRAS() );
+            // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
+            // does a shallow copy. So we have to explictly call DeepCopy()
+            sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
             }
 
           // Copy the field of view information. Use the new
@@ -267,12 +266,16 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         else
           {
           // Setting the orientation of the slice plane does not
-          // require that the orientations initially mathc. 
+          // require that the orientations initially match.
+          // std::cout << "Orientation mismatch, flags = " << sliceNode->GetInteractionFlags() << std::endl;
           if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::OrientationFlag)
             {
             // We could copy the orientation strings, but we really
             // want the slice to ras to match, so copy that
-            sNode->SetSliceToRAS( sliceNode->GetSliceToRAS() );
+
+            // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
+            // does a shallow copy. So we have to explictly call DeepCopy()
+            sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
 
             // Forces the internal matrices to be updated which results
             // in this being modified so a Render can occur
@@ -284,6 +287,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 
     this->BroadcastingEventsOff();
     }
+  //std::cout << "End Broadcast" << std::endl;
 }
 
 

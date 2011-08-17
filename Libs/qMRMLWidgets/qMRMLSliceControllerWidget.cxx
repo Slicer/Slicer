@@ -752,17 +752,6 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSlic
   return 0;
 }
 
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::fitSliceToBackground(vtkMRMLSliceLogic* sliceLogic)
-{
-  if (!sliceLogic || !sliceLogic->GetSliceNode())
-    {
-    logger.warn("fitSliceToBackground - Failed because sliceLogic or sliceLogic->GetSliceNode() is NULL");
-    return;
-    }
-  sliceLogic->FitSliceToAll();
-  sliceLogic->GetSliceNode()->UpdateMatrices();
-}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
@@ -1124,22 +1113,11 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
 {
   Q_D(qMRMLSliceControllerWidget);
   logger.trace(QString("fitSliceToBackground"));
-  if (!d->SliceLogics)
-    {
-    d->fitSliceToBackground(d->SliceLogic);
-    return;
-    }
-  vtkMRMLSliceLogic* sliceLogic = 0;
-  vtkCollectionSimpleIterator it;
-  for (d->SliceLogics->InitTraversal(it);
-       (sliceLogic = static_cast<vtkMRMLSliceLogic*>(
-         d->SliceLogics->GetNextItemAsObject(it)));)
-    {
-    if (sliceLogic == d->SliceLogic || this->isLinked())
-      {
-      d->fitSliceToBackground(sliceLogic);
-      }
-    }
+
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag | vtkMRMLSliceNode::FieldOfViewFlag);
+  d->SliceLogic->FitSliceToAll();
+  d->MRMLSliceNode->UpdateMatrices();
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------

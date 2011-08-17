@@ -1800,6 +1800,7 @@ void vtkMRMLSliceLogic::EndSliceCompositeNodeInteraction()
       compositeNode->InteractingOn();
       compositeNode->Modified();
       compositeNode->InteractingOff();
+      compositeNode->SetInteractionFlags(0);
       }
     }
 }
@@ -1841,6 +1842,7 @@ void vtkMRMLSliceLogic::EndSliceNodeInteraction()
       sliceNode->InteractingOn();
       sliceNode->Modified();
       sliceNode->InteractingOff();
+      sliceNode->SetInteractionFlags(0);
       }
     }
 }
