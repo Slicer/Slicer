@@ -97,6 +97,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->Interacting = 0;
   this->InteractionFlags = 0;
+
+  this->LayoutLabel = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -121,6 +123,10 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   if ( this->OrientationReference )
     {
     delete [] this->OrientationReference;
+    }
+  if ( this->LayoutLabel )
+    {
+    delete [] this->LayoutLabel;
     }
   this->SetLayoutName(NULL);
 }
@@ -533,7 +539,11 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "fieldOfView")) 
+    if (!strcmp(attName, "layoutLabel")) 
+      {
+      this->SetLayoutLabel( attValue );
+      }
+    else if (!strcmp(attName, "fieldOfView")) 
       {
       std::stringstream ss;
       double val;
@@ -699,6 +709,8 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
+  this->SetLayoutLabel(node->GetLayoutLabel());
+
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
@@ -747,6 +759,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
   
   Superclass::PrintSelf(os,indent);
+  os << "LayoutLabel: " << this->LayoutLabel << std::endl;
+
   os << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {
     os << indent << " " << this->FieldOfView[idx];

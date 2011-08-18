@@ -1013,27 +1013,22 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
   if (newSliceViewName == "Red")
     {
     buttonColor = qMRMLColors::sliceRed();
-    d->ViewLabel->setText(tr("R"));
     }
   else if (newSliceViewName == "Green")
     {
     buttonColor = qMRMLColors::sliceGreen();
-    d->ViewLabel->setText(tr("G"));
     }
   else if (newSliceViewName == "Yellow")
     {
     buttonColor =  qMRMLColors::sliceYellow();
-    d->ViewLabel->setText(tr("Y"));
     }
   else if (QColor(newSliceViewName.toLower()).isValid())
     {
     buttonColor = QColor(newSliceViewName.toLower());
-    d->ViewLabel->setText(tr("?"));
     }
   else
     {
     buttonColor = qMRMLColors::sliceOrange();
-    d->ViewLabel->setText(tr("C"));
     }
 
   d->setColor(buttonColor);
@@ -1048,6 +1043,24 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 
 //---------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLabel)
+{
+  Q_D(qMRMLSliceControllerWidget);
+
+  if (d->MRMLSliceNode)
+    {
+    logger.error("setSliceViewLabel should be called before setMRMLSliceNode !");
+    return;
+    }
+
+  d->SliceViewLabel = newSliceViewLabel;
+  d->ViewLabel->setText(d->SliceViewLabel);
+}
+
+//---------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewLabel, SliceViewLabel);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)

@@ -78,6 +78,13 @@ public:
   /// Get slice view name
   QString sliceViewName()const;
 
+  /// Set the label for the slice view (abbreviation for the view
+  /// name)
+  void setSliceViewLabel(const QString& newSliceViewLabel);
+
+  /// Get the label for the slice view (abbreviation for the view name)
+  QString sliceViewLabel()const;
+
   /// Set slice offset range
   void setSliceOffsetRange(double min, double max);
 

@@ -45,7 +45,7 @@
 // STL include
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtcoremodules.qSlicerSliceControllerWidget");
+static ctkLogger logger("org.slicer.base.qtcoremodules.qSlicerSliceControllerModuleWidget");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -79,6 +79,7 @@ qSlicerSliceControllerModuleWidgetPrivate::createSliceController(vtkMRMLSliceNod
   // slice node
   qMRMLSliceControllerWidget *widget = new qMRMLSliceControllerWidget(CTKCollapsibleButton);
   widget->setSliceViewName( sn->GetName() ); // call before setting slice node
+  widget->setSliceViewLabel( sn->GetLayoutLabel() );
   widget->setMRMLSliceNode( sn );
 
   qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sn->GetLayoutName());

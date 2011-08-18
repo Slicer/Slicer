@@ -97,6 +97,14 @@ public:
   /// \sa sliceViewName()
   void setSliceViewName(const QString& newSliceViewName);
 
+  /// \sa qMRMLSliceControllerWidget::sliceViewLabel()
+  /// \sa setSliceViewLabel()
+  QString sliceViewLabel()const;
+
+  /// \sa qMRMLSliceControllerWidget::sliceViewLabel()
+  /// \sa sliceViewLabel()
+  void setSliceViewLabel(const QString& newSliceViewLabel);
+
   /// Returns the interactor style of the view
   vtkInteractorObserver* interactorStyle()const;
 

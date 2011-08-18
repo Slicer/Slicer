@@ -204,7 +204,9 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   qMRMLSliceWidget * sliceWidget =  new qMRMLSliceWidget(q->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
+  QString sliceLayoutLabel(sliceNode->GetLayoutLabel());
   sliceWidget->setSliceViewName(sliceLayoutName);
+  sliceWidget->setSliceViewLabel(sliceLayoutLabel);
   sliceWidget->setMRMLScene(this->MRMLScene);
   sliceWidget->setMRMLSliceNode(sliceNode);
   sliceWidget->setSliceLogics(this->MRMLSliceLogics);

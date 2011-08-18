@@ -310,6 +310,20 @@ QString qMRMLSliceWidget::sliceViewName()const
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceWidget::setSliceViewLabel(const QString& newSliceViewLabel)
+{
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setSliceViewLabel(newSliceViewLabel);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLSliceWidget::sliceViewLabel()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->sliceViewLabel();
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceOrientation(const QString& orientation)
 {
   Q_D(qMRMLSliceWidget);

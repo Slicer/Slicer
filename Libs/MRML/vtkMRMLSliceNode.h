@@ -152,6 +152,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
+  ///
+  /// Label for layout. Usually a 1 or 2 character label, e.g. R, C1, etc.
+  vtkSetStringMacro(LayoutLabel);
+  vtkGetStringMacro(LayoutLabel);
+
   /// 
   /// Set the number of rows and columns to use in a LightBox display
   /// of the node
@@ -290,6 +295,8 @@ protected:
   int Dimensions[3];
   char *OrientationString;
   char *OrientationReference;
+
+  char * LayoutLabel;
 
   int LayoutGridRows;
   int LayoutGridColumns;
