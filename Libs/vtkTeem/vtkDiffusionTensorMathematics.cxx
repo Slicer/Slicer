@@ -261,7 +261,10 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  T* inPtr = reinterpret_cast<T*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
+  // - these must be of type float - output type will be float or 
+  // unsigned char RGBA depending on the Operation selected.
+  // See RequestInformation above.
+  float* inPtr = reinterpret_cast<float*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
   
   bool doMasking = false;
   short * inMaskPtr = 0;
@@ -439,8 +442,11 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   // Call special version of GetContinuousIncrements that works for Tensors
   GetContinuousIncrements(in1Data, outExt, inIncX, inIncY, inIncZ);
 
-  //Initialize inPtr to walk through tensor volume
-  T* inPtr = reinterpret_cast<T*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
+  //Initialize ptId to walk through tensor volume
+  // - these must be of type float - output type will be float or 
+  // unsigned char RGBA depending on the Operation selected.
+  // See RequestInformation above.
+  float* inPtr = reinterpret_cast<float*>(in1Data->GetArrayPointerForExtent(inTensors, outExt));
 
   // decide whether to extract eigenfunctions or just use input cols
   extractEigenvalues = self->GetExtractEigenvalues();
@@ -740,6 +746,11 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
   if (inData[0][0] == NULL)
     {
       vtkErrorMacro(<< "Input " << 0 << " must be specified.");
+      return;
+    }
+  if (inData[0][0]->GetScalarType() != VTK_FLOAT)
+    {
+      vtkErrorMacro(<< "Input tensors must be of type float");
       return;
     }
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);
