@@ -60,10 +60,6 @@ public:
   void setModuleManager(qSlicerModuleManager* moduleManager);
 public slots:
   ///
-  /// Select a module by title. It looks for the module action and triggers it
-  void selectModuleByTitle(const QString& title);
-
-  ///
   /// Select a module by name. It looks for the module action and triggers it
   void selectModule(const QString& moduleName);
 
@@ -78,17 +74,13 @@ signals:
   void moduleSelected(const QString& name);
 
 protected slots:
-  void moduleAdded(qSlicerAbstractCoreModule* );
   void moduleRemoved(qSlicerAbstractCoreModule* );
 
   void onModuleSelected(const QString& name);
   void actionSelected(QAction* action);
-  void searchModule();
 
 protected:
   QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
-  void modulesAdded(const QStringList& moduleNames);
-  bool eventFilter( QObject*, QEvent* ); 
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);

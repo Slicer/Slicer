@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QCompleter>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -30,6 +31,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
+#include "ctkMenuComboBox.h"
 
 // SlicerQt includes
 #include "qSlicerModuleSelectorToolBar.h"
@@ -49,16 +51,14 @@ public:
 
   qSlicerModulesMenu* ModulesMenu;
 
-  QPushButton* ModulesButton;
-  QMenu*       HistoryMenu;
-  QToolButton* HistoryButton;
-  QToolButton* PreviousButton;
-  QMenu*       PreviousHistoryMenu;
-  QToolButton* NextButton;
-  QMenu*       NextHistoryMenu;
-  QString      ModuleSearchText;
-  QLineEdit*   ModuleSearchLineEdit;
-  QCompleter*  ModuleSearchCompleter;
+  ctkMenuComboBox*  ModulesComboBox;
+
+  QMenu*            HistoryMenu;
+  QToolButton*      HistoryButton;
+  QToolButton*      PreviousButton;
+  QMenu*            PreviousHistoryMenu;
+  QToolButton*      NextButton;
+  QMenu*            NextHistoryMenu;
 };
 
 
@@ -67,15 +67,13 @@ qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicer
   : q_ptr(&object)
 {
   this->ModulesMenu = 0;
-  this->ModulesButton = 0;
+  this->ModulesComboBox = 0;
   this->HistoryMenu = 0;
   this->HistoryButton = 0;
   this->PreviousButton = 0;
   this->PreviousHistoryMenu = 0;
   this->NextButton = 0;
   this->NextHistoryMenu = 0;
-  this->ModuleSearchLineEdit = 0;
-  this->ModuleSearchCompleter = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -94,17 +92,22 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Modules Label
   q->addWidget(new QLabel(QObject::tr("Modules:"), q));
 
-  // Modules pushbutton
-  this->ModulesButton = new QPushButton(q);
-  this->ModulesButton->setToolTip(QObject::tr("Select a module from the module list"));
-  this->ModulesButton->setMenu(this->ModulesMenu);
-  QStyleOptionButton opt;
-  this->ModulesButton->setMinimumWidth(
-    this->ModulesButton->style()->sizeFromContents(
-      QStyle::CT_PushButton, &opt,
-      this->ModulesButton->fontMetrics().size(
-        Qt::TextShowMnemonic, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"),this->ModulesButton).width());
-  q->addWidget(this->ModulesButton);
+  // Modules comboBox
+  this->ModulesComboBox = new ctkMenuComboBox(q);
+  this->ModulesComboBox->setToolTip(QObject::tr("Select a module from the module list"));
+  this->ModulesComboBox->setMenu(this->ModulesMenu);
+  this->ModulesComboBox->setEditableBehavior(ctkMenuComboBox::EditableOnDoubleClick);
+  this->ModulesComboBox->setMinimumContentsLength(20);
+  q->addWidget(this->ModulesComboBox);
+
+  // History
+  this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
+  this->HistoryButton = new QToolButton;
+  this->HistoryButton->setIcon(historyIcon);
+  this->HistoryButton->setToolTip(QObject::tr("Modules history"));
+  this->HistoryButton->setMenu(this->HistoryMenu);
+  this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
+  q->addWidget(this->HistoryButton);
 
   // Previous button
   this->PreviousHistoryMenu = new QMenu("Modules Previous History", q);
@@ -134,26 +137,6 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   q->addWidget(this->NextButton);
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
 
-  // History
-  this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
-  this->HistoryButton = new QToolButton;
-  this->HistoryButton->setIcon(historyIcon);
-  this->HistoryButton->setToolTip(QObject::tr("Modules history"));
-  this->HistoryButton->setMenu(this->HistoryMenu);
-  this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
-  q->addWidget(this->HistoryButton);
-
-  // Search
-  this->ModuleSearchText = QObject::tr("Search a module");
-  this->ModuleSearchLineEdit = new QLineEdit(q);
-  this->ModuleSearchLineEdit->setText(this->ModuleSearchText);
-  this->ModuleSearchLineEdit->installEventFilter(q);
-  this->ModuleSearchCompleter = new QCompleter(QStringList());
-  this->ModuleSearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-  this->ModuleSearchLineEdit->setCompleter(this->ModuleSearchCompleter);
-  QObject::connect(this->ModuleSearchLineEdit, SIGNAL(textChanged(const QString&)),
-                   q, SLOT(selectModuleByTitle(const QString&)));
-  q->addWidget(this->ModuleSearchLineEdit);
 }
 
 //---------------------------------------------------------------------------
@@ -175,22 +158,6 @@ QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
   QList<QAction*> actions = this->HistoryMenu->actions();
   return actions.size() ? actions[0] : 0;
 }
-
-//---------------------------------------------------------------------------
-bool qSlicerModuleSelectorToolBar::eventFilter( QObject *obj, QEvent *event )
-{
-  Q_D(qSlicerModuleSelectorToolBar);
-  QLineEdit* ed = qobject_cast<QLineEdit*>(obj);
-  if ( ed && event->type() == QEvent::FocusIn )
-    { 
-    ed->clear();
-    } 
-  else if ( ed && event->type() == QEvent::FocusOut )
-    {
-    ed->setText(d->ModuleSearchText);
-    } 
-  return obj->eventFilter( obj, event );
-}   
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(const QString& title,
@@ -231,9 +198,6 @@ void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* module
   if (d->ModulesMenu->moduleManager())
     {
     QObject::disconnect(d->ModulesMenu->moduleManager(),
-                        SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                        this, SLOT(moduleAdded(qSlicerAbstractCoreModule*)));
-    QObject::disconnect(d->ModulesMenu->moduleManager(),
                         SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
                         this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
     }
@@ -242,38 +206,8 @@ void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* module
   if (moduleManager)
     {
     QObject::connect(moduleManager,
-                     SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                     this, SLOT(moduleAdded(qSlicerAbstractCoreModule*)));
-    QObject::connect(moduleManager,
                      SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
                      this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
-    //this->modulesAdded(moduleManager->moduleList());
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::moduleAdded(qSlicerAbstractCoreModule* moduleAdded)
-{
-  Q_D(qSlicerModuleSelectorToolBar);
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleAdded);
-  if (!module)
-    {
-    return;
-    }
-  // here we assume the completion model is not automatically sorted
-  int actionCount = d->ModuleSearchCompleter->model()->rowCount();
-  d->ModuleSearchCompleter->model()->insertRow(actionCount);
-  QModelIndex index = d->ModuleSearchCompleter->model()->index(actionCount -1, 0);
-  d->ModuleSearchCompleter->model()->setData(index, module->title());
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::modulesAdded(const QStringList& moduleNames)
-{
-  Q_D(qSlicerModuleSelectorToolBar);
-  foreach(const QString& moduleName, moduleNames)
-    {
-    this->moduleAdded(d->ModulesMenu->moduleManager()->module(moduleName));
     }
 }
 
@@ -300,13 +234,6 @@ void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 {
   Q_D(qSlicerModuleSelectorToolBar);
   d->ModulesMenu->setCurrentModule(moduleName);
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::selectModuleByTitle(const QString& title)
-{
-  Q_D(qSlicerModuleSelectorToolBar);
-  d->ModulesMenu->setCurrentModuleByTitle(title);
 }
 
 //---------------------------------------------------------------------------
@@ -372,8 +299,6 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
   d->NextHistoryMenu->clear();
   d->NextHistoryMenu->addActions(nextActions);
 
-  d->ModulesButton->setIcon(action->icon());
-  d->ModulesButton->setText(action->text());
   d->PreviousButton->setEnabled(d->PreviousHistoryMenu->actions().size());
   d->NextButton->setEnabled(d->NextHistoryMenu->actions().size());
 
@@ -381,7 +306,6 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     {
     d->insertActionOnTop(action, d->HistoryMenu);
     }
-  d->ModuleSearchLineEdit->setText(d->ModuleSearchText);
   emit moduleSelected(action->data().toString());
 }
 
@@ -415,11 +339,4 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
     // triggering the action will eventually call actionSelected()
     previousAction->trigger();
     }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::searchModule()
-{
-  Q_D(qSlicerModuleSelectorToolBar);
-  this->selectModuleByTitle(d->ModuleSearchLineEdit->text());
 }
