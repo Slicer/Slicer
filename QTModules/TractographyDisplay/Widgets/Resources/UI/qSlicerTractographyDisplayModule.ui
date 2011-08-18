@@ -248,17 +248,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -268,6 +257,17 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerTractographyDisplayWidget</class>
@@ -415,6 +415,38 @@
     <hint type="destinationlabel">
      <x>174</x>
      <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyDisplayModule</sender>
+   <signal>percentageOfFibersShownChanged(double)</signal>
+   <receiver>percentageOfFibersShown</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>percentageOfFibersShown</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>qSlicerTractographyDisplayModule</receiver>
+   <slot>setPercentageOfFibersShown(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>349</y>
     </hint>
    </hints>
   </connection>
