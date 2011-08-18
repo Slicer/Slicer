@@ -215,9 +215,11 @@ void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
 void vtkMRMLFiberBundleNode::SetSubsamplingRatio (float _arg)
   {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting subsamplingRatio to " << _arg);
-  if (this->SubsamplingRatio != (_arg<0.?0.:(_arg>1.?1.:_arg)))
+  const float oldSubsampling = this->SubsamplingRatio;
+  const float newSubsamplingRatio = (_arg<0.?0.:(_arg>1.?1.:_arg));
+  if (oldSubsampling != newSubsamplingRatio)
     {
-    this->SubsamplingRatio = (_arg<0.?0.:(_arg>1.?1.:_arg));
+    this->SubsamplingRatio = newSubsamplingRatio;
     this->UpdateSubsampling();
     this->Modified();
     }

@@ -181,6 +181,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
       {
       subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
+      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
       }
 
     fiberBundleNode->SetSubsamplingRatio(subsamplingRatio);
