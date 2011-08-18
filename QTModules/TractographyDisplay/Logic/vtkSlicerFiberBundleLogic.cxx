@@ -165,6 +165,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   vtkMRMLDiffusionTensorDisplayPropertiesNode *lineDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
   vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
   vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  glyphDTDPN->SetGlyphGeometry(vtkMRMLDiffusionTensorDisplayPropertiesNode::Ellipsoids);
 
   storageNode->SetFileName(filename);
   if (storageNode->ReadData(fiberBundleNode) != 0)

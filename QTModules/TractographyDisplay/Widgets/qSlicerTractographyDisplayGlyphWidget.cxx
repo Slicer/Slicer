@@ -122,7 +122,8 @@ void qSlicerTractographyDisplayGlyphWidget::
   Q_D(qSlicerTractographyDisplayGlyphWidget);
 
   d->DiffusionTensorDisplayPropertiesNode = node;
-
+  
+  d->GlyphTypeSelector->blockSignals(true);
   d->GlyphTypeSelector->clear();
   std::vector<int> supportedDisplayTypes;
   int i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphGeometry();
@@ -131,7 +132,9 @@ void qSlicerTractographyDisplayGlyphWidget::
     d->GlyphTypeSelector->addItem(
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometryAsString(i), i);
     }
+  d->GlyphTypeSelector->blockSignals(false);
 
+  d->GlyphEigenvectorSelector->blockSignals(true);
   d->GlyphEigenvectorSelector->clear();
   std::vector<int> supportedEigenVectorTypes;
   i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphEigenvector();
@@ -139,7 +142,8 @@ void qSlicerTractographyDisplayGlyphWidget::
     {
     d->GlyphEigenvectorSelector->addItem(
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvectorAsString(i), i);
-    } 
+    }
+  d->GlyphEigenvectorSelector->blockSignals(false);
 }
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayGlyphWidget::setGlyphType(int type)
