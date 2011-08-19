@@ -988,6 +988,10 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchies()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility )
 {
+  if (!mhnode)
+    {
+    return;
+    }
   vtkMRMLDisplayNode* dnode = mhnode->GetDisplayNode();
   if (dnode)
     {
