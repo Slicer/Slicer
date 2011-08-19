@@ -17,7 +17,7 @@
 
 #include "SeedingCLP.h"
 
-int main( int argc, const char * argv[] )
+int main( int argc, char * argv[] )
 {
 
   PARSE_ARGS;
