@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *=========================================================================*
+ *=========================================================================*/
 /*=========================================================================
  *
  *  Portions of this file are subject to the VTK Toolkit Version 3 copyright.
