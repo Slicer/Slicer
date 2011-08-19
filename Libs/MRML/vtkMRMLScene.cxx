@@ -1277,6 +1277,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     return NULL;
     }
 
+  int wasModifying = n->StartModify();
+
   //TODO convert URL to Root directory
   //n->SetSceneRootDir("");
   
@@ -1301,6 +1303,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
         this->NodeIDs[std::string(sn->GetID())] = sn;
         this->NodeIDsMTime = this->CurrentScene->GetMTime();
 
+        n->EndModify(wasModifying);
         return sn;
         }
       }
@@ -1313,10 +1316,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       oldID = n->GetID();
       }
     //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
-    int modifyStatus = n->GetDisableModifiedEvent();
-    n->SetDisableModifiedEvent(1);
     n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
-    n->SetDisableModifiedEvent(modifyStatus);
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID());
@@ -1325,9 +1325,6 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       this->ReferencedIDChanges[oldID] = newID;
       }
     }
-
-  int modifyStatus = n->GetDisableModifiedEvent();
-  n->SetDisableModifiedEvent(1);
 
   n->SetSceneRootDir(this->RootDirectory.c_str());
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
@@ -1341,7 +1338,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   this->NodeIDs[std::string(n->GetID())] = n;
   this->NodeIDsMTime = this->CurrentScene->GetMTime();
 
-  n->SetDisableModifiedEvent(modifyStatus);
+  n->EndModify(wasModifying);
   return n;
 }
 
