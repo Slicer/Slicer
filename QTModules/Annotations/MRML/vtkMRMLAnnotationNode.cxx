@@ -780,10 +780,22 @@ void vtkMRMLAnnotationNode::SaveView()
   this->m_CameraNode = vtkMRMLCameraNode::New();
 
   // now copy the current ones over to our sliceNodes
-  this->m_RedSliceNode->Copy(redSliceNode);
-  this->m_YellowSliceNode->Copy(yellowSliceNode);
-  this->m_GreenSliceNode->Copy(greenSliceNode);
-  this->m_CameraNode->Copy(cameraNode);
+  if (redSliceNode)
+    {
+    this->m_RedSliceNode->Copy(redSliceNode);
+    }
+  if (yellowSliceNode)
+    {
+    this->m_YellowSliceNode->Copy(yellowSliceNode);
+    }
+  if (greenSliceNode)
+    {
+    this->m_GreenSliceNode->Copy(greenSliceNode);
+    }
+  if (cameraNode)
+    {
+    this->m_CameraNode->Copy(cameraNode);
+    }
 
 }
 

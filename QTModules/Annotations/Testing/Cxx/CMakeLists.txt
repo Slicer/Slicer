@@ -11,6 +11,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   #qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1
   qMRMLAnnotationROIWidgetTest1.cxx
   vtkMRMLAnnotationNodeTest1.cxx
+  vtkMRMLAnnotationNodesUndoTest1.cxx
   vtkMRMLAnnotationStorageNodeTest1.cxx
   vtkMRMLAnnotationDisplayNodeTest1.cxx
   vtkMRMLAnnotationDisplayNodeTest2.cxx

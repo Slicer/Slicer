@@ -395,6 +395,18 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
     vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
+    if (textDisplayNode)
+      {
+      // TODO: get this working
+      /*
+      float textScale = textDisplayNode->GetTextScale();
+      std::cout << "Setting title text property 2d, scale to " << textScale << std::endl;
+      vtkTextProperty *textProp = rep->GetAxis()->GetTitleTextProperty();
+      textProp->SetFontSize(textScale);
+      std::cout << "\ttitle font size now = " <<
+      rep->GetAxis()->GetTitleTextProperty()->GetFontSize() << std::endl;
+      */
+      }
     // update the distance measurement
     rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
@@ -423,6 +435,16 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       }
     if (textDisplayNode)
       {
+      
+      // TODO: get this working
+      /*
+      rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
+      
+      if (rep->GetTitleTextMapper())
+        {
+        rep->GetTitleTextMapper()->GetTextProperty()->ShallowCopy(rep->GetAxis()->GetTitleTextProperty());
+        }
+      */
       if (rulerNode->GetSelected())
         {
         rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetSelectedColor());
@@ -468,8 +490,10 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     // update the distance measurement
     rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
-    rep->SetLabelPosition(lineDisplayNode->GetLabelPosition());
-
+    if (lineDisplayNode)
+      {
+      rep->SetLabelPosition(lineDisplayNode->GetLabelPosition());
+      }
     if (textDisplayNode)
       {
       double textScale = textDisplayNode->GetTextScale();

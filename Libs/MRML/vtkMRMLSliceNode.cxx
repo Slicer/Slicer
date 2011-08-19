@@ -704,6 +704,10 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 {
+  if (!anode)
+    {
+    return;
+    }
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
