@@ -95,7 +95,9 @@ void qSlicerTractographyDisplayBasicWidget::
 {
   Q_D(qSlicerTractographyDisplayBasicWidget);
   vtkMRMLFiberBundleNode *oldNode = this->fiberBundleNode();
-  vtkMRMLFiberBundleDisplayNode *oldLDN, *oldTDN, *oldGDN;
+  vtkMRMLFiberBundleDisplayNode *oldLDN = NULL;
+  vtkMRMLFiberBundleDisplayNode *oldTDN = NULL;
+  vtkMRMLFiberBundleDisplayNode *oldGDN = NULL;
 
   if (d->FiberBundleNode )
     {
