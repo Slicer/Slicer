@@ -3,6 +3,7 @@
 
 #include "vtkCacheManager.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
@@ -14,7 +15,6 @@
 #include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
@@ -1727,7 +1727,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode");
-    vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
+    // use a storable node superclass to avoid having to link to the
+    // Tractography mrml library
+    vtkMRMLStorableNode *fiberBundleNode = vtkMRMLStorableNode::SafeDownCast(node);
 
     //--- if its tag is set (but not set to generic VTKModel), we're done.
     if ( (fiberBundleNode->GetSlicerDataType() != NULL) &&

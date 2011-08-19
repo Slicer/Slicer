@@ -23,13 +23,12 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
-#include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLNonlinearTransformNode.h"
@@ -1200,7 +1199,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLModelNode *mnd = 0;
   vtkMRMLLinearTransformNode *ltnd = 0;
   vtkMRMLNonlinearTransformNode *nltnd = 0;
-  vtkMRMLFiberBundleNode *fbnd = 0;
+  vtkMRMLDisplayableNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
   vtkMRMLCommandLineModuleNode *clp = 0;
@@ -1232,7 +1231,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
   nltnd  = vtkMRMLNonlinearTransformNode::SafeDownCast(nd);
-  fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
+  fbnd  = vtkMRMLDisplayableNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
 
@@ -1302,10 +1301,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         nin->SetCenterImage(0);
         storageNode = nin;
         }
-      else if (fbnd)
+      else if (fbnd->IsA("vtkMRMLFiberBundleNode"))
         {
+        vtkDebugMacro("ProcessReadNodeData: node is a vtkMRMLFiberBundleNode");
         // Load a fiber bundle node
-        storageNode = vtkMRMLFiberBundleStorageNode::New();
+        storageNode = fbnd->CreateDefaultStorageNode();
         }
       else if (cnd)
         {
@@ -1526,16 +1526,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
       }
     }
-  else if (fbnd && !fbnd->GetDisplayNode())
+  else if (fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
     {
     // Fiber bundle node
+    fbnd->CreateDefaultDisplayNodes();
     disp = NULL;
-    vtkMRMLFiberBundleDisplayNode *fbdn = fbnd->AddLineDisplayNode();
-    fbdn->SetVisibility(1);
-    fbdn = fbnd->AddTubeDisplayNode();
-    fbdn->SetVisibility(0);
-    fbdn = fbnd->AddGlyphDisplayNode();
-    fbdn->SetVisibility(0);
     }
   else if (mnd && !mnd->GetDisplayNode())
     {

@@ -1,4 +1,4 @@
-project(vtkSlicerTractographyDisplayModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -6,27 +6,31 @@ project(vtkSlicerTractographyDisplayModuleLogic)
 
 set(module_logic_name "${PROJECT_NAME}")
 
-# The header '${PROJECT_NAME}Export.h' will be automatically configured.
-set(module_logic_export_directive "VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT")
+# The header '${module_logic_name}Export.h' will be automatically configured.
+set(module_logic_export_directive "VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT")
+
+message(STATUS "Tractography Logic: TRACTOGRAPHY_MRML_USE_vtkTeem = ${TRACTOGRAPHY_MRML_USE_vtkTeem} ")
 
 # Additional directories to include
 set(module_logic_include_directories
-
   )
 
 # Source files
 set(module_logic_SRCS
-  vtkSlicerFiberBundleLogic.cxx
-  vtkSlicerFiberBundleLogic.h
+  vtkSlicerTractographyLogic.cxx
+  vtkSlicerTractographyLogic.h
   )
-
 
 # Additional Target libraries
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
-  vtkSlicerTractographyModuleMRML
   )
-
+if(TRACTOGRAPHY_MRML_USE_vtkTeem)
+  set(module_logic_target_libraries
+      ${module_logic_target_libraries}
+      vtkSlicerTractographyModuleMRML
+  )
+endif(TRACTOGRAPHY_MRML_USE_vtkTeem)
 
 SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}

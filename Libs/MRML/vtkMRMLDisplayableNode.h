@@ -131,7 +131,14 @@ public:
       PolyDataModifiedEvent = 17001
     };
 
-  /// 
+  ///
+  /// Create and observe default display node(s)
+  ///
+  virtual void CreateDefaultDisplayNodes()
+    {
+      return;
+    };
+    
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {

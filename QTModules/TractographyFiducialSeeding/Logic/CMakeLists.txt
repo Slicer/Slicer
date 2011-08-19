@@ -1,4 +1,4 @@
-project(vtkSlicerTractographyModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -25,6 +25,7 @@ set(module_logic_SRCS
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   vtkSlicerAnnotationsModuleMRML
+  vtkSlicerTractographyModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(

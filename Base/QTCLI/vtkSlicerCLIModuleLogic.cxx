@@ -22,10 +22,10 @@
 #include <vtkMRMLDoubleArrayStorageNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
-#include <vtkMRMLFiberBundleNode.h>
-#include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLFiducialListNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
 #include <vtkMRMLROIListNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -622,8 +622,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
     vtkMRMLModelNode *mnd
       = vtkMRMLModelNode::SafeDownCast(nd);
-    vtkMRMLFiberBundleNode *fbnd
-      = vtkMRMLFiberBundleNode::SafeDownCast(nd);
+    vtkMRMLDisplayableNode *fbnd = vtkMRMLDisplayableNode::SafeDownCast(nd);
     vtkMRMLTransformNode *tnd
       = vtkMRMLTransformNode::SafeDownCast(nd);
     vtkMRMLColorTableNode *ctnd
@@ -656,9 +655,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // only write out diffusion image & tensor nodes if running an executable
       out = vtkMRMLNRRDStorageNode::New();
       }
-    else if (fbnd)
+    else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode"))
       {
-      out = vtkMRMLFiberBundleStorageNode::New();
+      out = fbnd->CreateDefaultStorageNode();
       }
     else if (mnd)
       {

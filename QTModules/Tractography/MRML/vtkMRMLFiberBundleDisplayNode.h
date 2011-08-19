@@ -6,38 +6,35 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLGlyphableVolumeSliceDisplayNode.h,v $
+  Module:    $RCSfile: vtkMRMLFiberBundleDisplayNode.h,v $
   Date:      $Date: 2006/03/19 17:12:28 $
   Version:   $Revision: 1.6 $
 
   =========================================================================auto=*/
-///  vtkMRMLGlyphableVolumeSliceDisplayNode - MRML node to represent display properties for tractography.
+///  vtkMRMLFiberBundleDisplayNode - MRML node to represent display properties for tractography.
 /// 
-/// vtkMRMLGlyphableVolumeSliceDisplayNode nodes store display properties of trajectories 
+/// vtkMRMLFiberBundleDisplayNode nodes store display properties of trajectories 
 /// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
 /// or by scalar invariants), display on/off for tensor glyphs and display of 
 /// trajectory as a line or tube.
 //
 
-#ifndef __vtkMRMLGlyphableVolumeSliceDisplayNode_h
-#define __vtkMRMLGlyphableVolumeSliceDisplayNode_h
+#ifndef __vtkMRMLFiberBundleDisplayNode_h
+#define __vtkMRMLFiberBundleDisplayNode_h
 
-#include <string>
+// MRML includes
+#include <vtkMRMLModelDisplayNode.h>
 
-#include "vtkPolyData.h"
-#include "vtkMatrix4x4.h"
+// Tractography includes
+#include "vtkSlicerTractographyModuleMRMLExport.h"
 
-#include "vtkMRML.h"
-#include "vtkMRMLModelDisplayNode.h"
+class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
-class vtkTransform;
-class vtkTransformPolyDataFilter;
-
-class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLModelDisplayNode
+class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
-  static vtkMRMLGlyphableVolumeSliceDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLGlyphableVolumeSliceDisplayNode,vtkMRMLModelDisplayNode );
+  static vtkMRMLFiberBundleDisplayNode *New (  );
+  vtkTypeMacro ( vtkMRMLFiberBundleDisplayNode,vtkMRMLModelDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
   
   //--------------------------------------------------------------------------
@@ -60,56 +57,27 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   virtual void Copy ( vtkMRMLNode *node );
   
   /// 
-  /// Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName ( ) {return "GlyphableVolumeSliceDisplayNode";};
+  /// Get node XML tag name (like Volume, FiberBundle)
+  virtual const char* GetNodeTagName() = 0;
 
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  virtual void UpdateReferenceID(const char *oldID, const char *newID)
-    { Superclass::UpdateReferenceID(oldID, newID); };
-
   /// 
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  /// 
+  /// Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// 
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-
-
-  /// 
-  /// Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData);
-
-  /// 
-  /// Gets resulting glyph PolyData 
-  virtual vtkPolyData* GetPolyData();
-  
-  /// 
-  /// Gets resulting glyph PolyData transfomed to slice XY
-  virtual vtkPolyData* GetPolyDataTransformedToSlice();
-   
-  /// 
-  /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline();
-
-  /// 
-  /// Set ImageData for a volume slice
-  virtual void SetSliceImage(vtkImageData *image);
- 
-  /// 
-  /// Set slice to RAS transformation
-  virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
-
-  /// 
-  /// Set slice to IJK transformation
-  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
@@ -179,20 +147,43 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
+  
+ 
+  /// Node reference to ALL DT nodes
+
+  /// 
+  /// Get diffusion tensor display MRML object for fiber glyph.
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
+
+  /// 
+  /// Set diffusion tensor display MRML object for fiber glyph.
+  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
+
+  /// 
+  /// Get ID of diffusion tensor display MRML object for fiber glyph.
+  vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
+
+//BTX
+  static void GetSupportedColorModes(std::vector<int> &modes);
+//ETX
+
  protected:
-  vtkMRMLGlyphableVolumeSliceDisplayNode ( );
-  ~vtkMRMLGlyphableVolumeSliceDisplayNode ( );
-  vtkMRMLGlyphableVolumeSliceDisplayNode ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
-  void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
+  vtkMRMLFiberBundleDisplayNode ( );
+  ~vtkMRMLFiberBundleDisplayNode ( );
+  vtkMRMLFiberBundleDisplayNode ( const vtkMRMLFiberBundleDisplayNode& );
+  void operator= ( const vtkMRMLFiberBundleDisplayNode& );
 
-    vtkTransform             *SliceToXYTransform;
-    vtkTransformPolyDataFilter *SliceToXYTransformer;
-    vtkMatrix4x4             *SliceToXYMatrix;
+  /// ALL MRML nodes
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
+  char *DiffusionTensorDisplayPropertiesNodeID;
 
+  void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
-    /// Enumerated
-    int ColorMode;
+  /// Enumerated
+  int ColorMode;
 
+  /// Arrays
+  //double ScalarRange[2];
 
 };
 

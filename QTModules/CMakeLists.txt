@@ -25,6 +25,7 @@ set(qtmodules
   #FiberBundles
   SceneViews
   SlicerWelcome
+  Tractography
   TractographyDisplay
   Volumes
   TractographyFiducialSeeding # tractography depends of Volumes

@@ -89,7 +89,6 @@ set(MRML_SRCS
   vtkMRMLDiffusionWeightedVolumeNode.cxx
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
-  vtkMRMLFiberBundleDisplayNode.cxx
   vtkMRMLFiducial.cxx
   vtkMRMLFiducialListNode.cxx
   vtkMRMLFiducialListStorageNode.cxx
@@ -177,11 +176,6 @@ if(MRML_USE_Teem)
       vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
       vtkMRMLDiffusionTensorVolumeNode.cxx
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
-      vtkMRMLFiberBundleGlyphDisplayNode.cxx
-      vtkMRMLFiberBundleLineDisplayNode.cxx
-      vtkMRMLFiberBundleNode.cxx
-      vtkMRMLFiberBundleStorageNode.cxx
-      vtkMRMLFiberBundleTubeDisplayNode.cxx
       vtkMRMLNRRDStorageNode.cxx
       vtkMRMLTensorVolumeNode.cxx
       vtkMRMLVectorVolumeNode.cxx
@@ -198,7 +192,6 @@ set_source_files_properties(
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLFiberBundleDisplayNode.cxx
   ABSTRACT
 )
 

@@ -20,12 +20,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLDisplayNodeTest1.cxx
   vtkMRMLDoubleArrayNodeTest1.cxx
-  vtkMRMLFiberBundleDisplayNodeTest1.cxx
-  vtkMRMLFiberBundleGlyphDisplayNodeTest1.cxx
-  vtkMRMLFiberBundleLineDisplayNodeTest1.cxx
-  vtkMRMLFiberBundleNodeTest1.cxx
-  vtkMRMLFiberBundleStorageNodeTest1.cxx
-  vtkMRMLFiberBundleTubeDisplayNodeTest1.cxx
   vtkMRMLFiducialListNodeTest1.cxx
   vtkMRMLFiducialListStorageNodeTest1.cxx
   vtkMRMLFreeSurferModelOverlayStorageNodeTest1.cxx
@@ -124,12 +118,6 @@ SIMPLE_TEST( vtkMRMLDiffusionWeightedVolumeNodeTest1 )
 SIMPLE_TEST( vtkMRMLDisplayableNodeTest1 )
 SIMPLE_TEST( vtkMRMLDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLDoubleArrayNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleDisplayNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleGlyphDisplayNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleLineDisplayNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLFiberBundleTubeDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLFiducialListNodeTest1 )
 SIMPLE_TEST( vtkMRMLFiducialListStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLFreeSurferModelOverlayStorageNodeTest1 )
