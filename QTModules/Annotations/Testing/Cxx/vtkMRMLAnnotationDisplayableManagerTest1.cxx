@@ -29,7 +29,6 @@
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
-
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -40,41 +39,7 @@
 
 #include "TestingMacros.h"
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
-char vtkMRMLAnnotationDisplayableManagerTest1EventLog[] =
-"# StreamVersion 1\n"
-"EnterEvent 585 173 0 0 0 0 0\n"
-"MouseWheelForwardEvent 444 275 0 0 0 1 0\n"
-"RenderEvent 444 275 0 0 0 0 0\n"
-"MouseWheelBackwardEvent 444 275 0 0 0 0 0\n"
-"LeaveEvent 616 400 0 0 0 0 0\n";
-
-namespace
-{
-//----------------------------------------------------------------------------
-/// Read \a filename into string \a output
-/// Note also that End-of-line will be removed
-bool readFileIntoString(const char* filename, std::string& output)
-{
-  std::ifstream istream(filename);
-  if( !istream )
-    {
-    cerr << "Could not open input file:" << filename << endl;
-    return false;
-    }
-
-  std::string line;
-  while(std::getline(istream,line))
-    {
-    output+=line;
-    }
-
-  return true;
-}
-}
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand
@@ -289,23 +254,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       std::cout << "\tcurrentSize = " << currentSize[0] << ", " << currentSize[1] << std::endl;
       }
     }
-
-  /*
-  // try triggering a mouse wheel event to see if it changes anything
-//  displayableManagerGroup->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-//  displayableManagerGroup->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
-  adm->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-  adm->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
   
-  // Event recorder playback
-  vtkInteractorEventRecorder * recorder = vtkInteractorEventRecorder::New();
-  recorder->SetInteractor(displayableManagerGroup->GetInteractor());
-  // Play the mouse wheel events
-  recorder->ReadFromInputStringOn();
-  recorder->SetInputString(vtkMRMLAnnotationDisplayableManagerTest1EventLog);
-  recorder->Play();
-  recorder->Delete();
-  */
   // check out the camera
   vtkCamera *cam = displayableManagerGroup->GetRenderer()->GetActiveCamera();
   if (cam)
