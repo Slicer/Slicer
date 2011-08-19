@@ -22,16 +22,13 @@ Version:   $Revision: 1.3 $
 #include "vtkInformation.h"
 #include "vtkIdTypeArray.h"
 
-//#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-
-#include "vtkMRMLFiberBundleStorageNode.h"
-
 #include "vtkMRMLScene.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()
@@ -40,12 +37,10 @@ vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleNode");
   if(ret)
     {
-    ((vtkMRMLFiberBundleNode*)ret)->PrepareSubsampling();
     return (vtkMRMLFiberBundleNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   ret = new vtkMRMLFiberBundleNode;
-  ((vtkMRMLFiberBundleNode*)ret)->PrepareSubsampling();
   return (vtkMRMLFiberBundleNode*)ret;
 }
 
@@ -56,16 +51,24 @@ vtkMRMLNode* vtkMRMLFiberBundleNode::CreateNodeInstance()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleNode");
   if(ret)
     {
-    ((vtkMRMLFiberBundleNode*)ret)->PrepareSubsampling();
     return (vtkMRMLFiberBundleNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   ret = new vtkMRMLFiberBundleNode;
-  ((vtkMRMLFiberBundleNode*)ret)->PrepareSubsampling();
   return (vtkMRMLFiberBundleNode*)ret;
 }
 
+//-----------------------------------------------------------------------------
+vtkMRMLFiberBundleNode::vtkMRMLFiberBundleNode()
+{
+  this->PrepareSubsampling();
+}
 
+//-----------------------------------------------------------------------------
+vtkMRMLFiberBundleNode::~vtkMRMLFiberBundleNode()
+{
+  this->CleanSubsampling();
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -221,9 +224,11 @@ void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
 void vtkMRMLFiberBundleNode::SetSubsamplingRatio (float _arg)
   {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting subsamplingRatio to " << _arg);
-  if (this->SubsamplingRatio != (_arg<0.?0.:(_arg>1.?1.:_arg)))
+  const float oldSubsampling = this->SubsamplingRatio;
+  const float newSubsamplingRatio = (_arg<0.?0.:(_arg>1.?1.:_arg));
+  if (oldSubsampling != newSubsamplingRatio)
     {
-    this->SubsamplingRatio = (_arg<0.?0.:(_arg>1.?1.:_arg));
+    this->SubsamplingRatio = newSubsamplingRatio;
     this->UpdateSubsampling();
     this->Modified();
     }
@@ -295,7 +300,32 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
       node->Modified();
       sel->Modified();
     }
+
+  vtkMRMLFiberBundleDisplayNode *node = this->GetLineDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
+
+  node = this->GetTubeDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
+  node = this->GetGlyphDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
   }
+  this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleNode::CleanSubsampling()
+{
+  this->CleanPolyData->Delete();
+  this->ExtractSelectedPolyDataIds->Delete();
 }
 
 //---------------------------------------------------------------------------
