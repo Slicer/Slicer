@@ -17,6 +17,9 @@ Version:   $Revision: 1.3 $
 
 #include "vtkDiffusionTensorGlyph.h"
 
+
+#include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
@@ -222,6 +225,11 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
               {
                 vtkDebugMacro("coloring with orientation ====================");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByOrientation( );
+                vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+                if (ColorNode)
+                {
+                  this->SetAndObserveColorNodeID(ColorNode->GetID());
+                }
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:

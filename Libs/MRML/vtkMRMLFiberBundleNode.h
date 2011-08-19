@@ -101,8 +101,8 @@ public:
    vtkGetObjectMacro(ExtractSelectedPolyDataIds, vtkExtractSelectedPolyDataIds);
   
 protected:
-  vtkMRMLFiberBundleNode(){};
-  ~vtkMRMLFiberBundleNode(){};
+  vtkMRMLFiberBundleNode();
+  ~vtkMRMLFiberBundleNode();
   vtkMRMLFiberBundleNode(const vtkMRMLFiberBundleNode&);
   void operator=(const vtkMRMLFiberBundleNode&);
 
@@ -114,6 +114,8 @@ protected:
 
   virtual void PrepareSubsampling();
   virtual void UpdateSubsampling();
+  virtual void CleanSubsampling();
+
 
 };
 

@@ -19,6 +19,8 @@ Version:   $Revision: 1.3 $
 #include "vtkPolyDataTensorToColor.h"
 #include "vtkTubeFilter.h"
 
+#include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 
@@ -242,6 +244,11 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
             {
               vtkDebugMacro("coloring with orientation =================");
               this->TensorToColor->ColorGlyphsByOrientation( );
+                vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+                if (ColorNode)
+                {
+                  this->SetAndObserveColorNodeID(ColorNode->GetID());
+                }
             }
             break;
 
