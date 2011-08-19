@@ -196,6 +196,8 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
     + visibleIndexCount * q->sizeHintForRow(0)
     + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeView*>(q)) ? q->horizontalScrollBar()->height() : 0)
     + q->frameWidth());
+  // Add half a line to give some space under the tree
+  this->TreeViewSizeHint.rheight() += q->sizeHintForRow(0) / 2;
   return this->TreeViewSizeHint;
 }
 
