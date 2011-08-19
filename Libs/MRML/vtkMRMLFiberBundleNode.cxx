@@ -290,5 +290,23 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
       node->Modified();
       sel->Modified();
     }
+
+  vtkMRMLFiberBundleDisplayNode *node = this->GetLineDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
+
+  node = this->GetTubeDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
+  node = this->GetGlyphDisplayNode();
+  if (node != NULL)
+    {
+      node->SetPolyData(this->GetSubsampledPolyData());
+    }
   }
+  this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
 }
