@@ -211,7 +211,7 @@ void vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(std::vector<int> &mod
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
-  //modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue);

@@ -69,6 +69,7 @@ public:
   void ColorGlyphsByRelativeAnisotropy();
   void ColorGlyphsByFractionalAnisotropy();
   void ColorGlyphsByTrace();
+  void ColorGlyphsByOrientation();
 
 
 protected:

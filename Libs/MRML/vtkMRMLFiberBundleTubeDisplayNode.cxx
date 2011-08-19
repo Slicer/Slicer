@@ -238,6 +238,13 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
               this->TensorToColor->ColorGlyphsByTrace( );
             }
             break;
+          case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+            {
+              vtkDebugMacro("coloring with orientation =================");
+              this->TensorToColor->ColorGlyphsByOrientation( );
+            }
+            break;
+
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
             {
               vtkDebugMacro("coloring with planar");
@@ -289,15 +296,19 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   if ( this->GetScalarVisibility() && this->TubeFilter->GetInput() != NULL )
     {
       if (this->GetColorMode ( ) != vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
-    
-     {
-    this->TensorToColor->Update();
-    double *range = this->TensorToColor->GetOutput()->GetScalarRange();
-    this->ScalarRange[0] = range[0];
-    this->ScalarRange[1] = range[1];
-    // avoid Set not to cause event loops
-    //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
-      }}
+      {
+        const int ScalarInvariant = this->GetColorMode();
+        double range[2];
+        if (vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
+        {
+          vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
+        } else {
+          this->TensorToColor->Update();
+          this->TensorToColor->GetOutput()->GetScalarRange(range);
+        }
+        this->ScalarRange[0] = range[0];
+        this->ScalarRange[1] = range[1];
+    }}
 }
 
  

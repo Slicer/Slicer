@@ -23,6 +23,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkMath.h"
 
 #include "vtkDiffusionTensorMathematics.h"
+#include <math.h>
 
 
 
@@ -68,6 +69,10 @@ void vtkPolyDataTensorToColor::ColorGlyphsByFractionalAnisotropy() {
 void vtkPolyDataTensorToColor::ColorGlyphsByTrace() {
   this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_TRACE);
 }
+void vtkPolyDataTensorToColor::ColorGlyphsByOrientation() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION);
+}
+
 
 void vtkPolyDataTensorToColor::ColorGlyphsBy(int invariant) {
   if (this->ScalarInvariant != invariant) 
@@ -108,12 +113,13 @@ int vtkPolyDataTensorToColor::RequestData(
   //vtkCellArray *verts;
   vtkIdType ptId, numPts, *pts;
   double x[3];
-  double s = 0;
+  double s;
 
   vtkDebugMacro(<< "Executing threshold points filter");
 
   numPts = input->GetNumberOfPoints();
   newPoints = vtkPoints::New();
+
   newPoints->Allocate(numPts);
   pd = input->GetPointData();
   vtkDataArray *inTensors = pd->GetTensors();
@@ -203,6 +209,7 @@ int vtkPolyDataTensorToColor::RequestData(
     (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
   {
     newScalars = vtkFloatArray::New();
+    newScalars->SetNumberOfComponents(1);
     newScalars->Allocate(numPts);
   }
   else
@@ -330,8 +337,7 @@ int vtkPolyDataTensorToColor::RequestData(
         v_maj[1]=v[1][0];
         v_maj[2]=v[2][0];
 
-        // TO DO: here output as RGB. Need to allocate 3-component scalars first.
-        s = 0;
+        vtkDiffusionTensorMathematics::RGBToIndex(fabs(v_maj[0]),fabs(v_maj[1]),fabs(v_maj[2]),s);
         break;
       case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
         s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);

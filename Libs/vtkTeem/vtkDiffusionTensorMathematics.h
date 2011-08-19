@@ -217,6 +217,8 @@ public:
   static void ModeToRGB(double Mode, double FA,
                  double &R, double &G, double &B);
 
+  static void RGBToIndex(double R, double G, 
+                  double B, double &index);
 
   /// 
   /// Helper functions to perform operations pixel-wise

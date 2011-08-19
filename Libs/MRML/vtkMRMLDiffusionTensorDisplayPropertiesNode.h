@@ -95,6 +95,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     ColorOrientationMinEigenvector = 25
   };
 
+  static bool ScalarInvariantHasKnownScalarRange(int ScalarInvariant);
+  static void ScalarInvariantKnownScalarRange(int ScalarInvariant, double range[2]);
+
   //--------------------------------------------------------------------------
   /// Display Information: Functions to choose scalar invariant
   //--------------------------------------------------------------------------

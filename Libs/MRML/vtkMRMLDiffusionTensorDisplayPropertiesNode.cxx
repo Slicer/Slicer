@@ -569,3 +569,97 @@ int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy()
 {
   return vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector;
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(int ScalarInvariant)
+{
+  switch (ScalarInvariant)
+    {
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
+      {
+      return 1;
+      break;
+      }
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D11:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
+      {
+        return 0;
+        break;
+      }
+    default:
+      return 0;
+      break;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(int ScalarInvariant, double range[2])
+{
+  switch (ScalarInvariant)
+    {
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+      {
+      range[0] = 0;
+      range[1] = 255.;
+      break;
+      }
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D11:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
+      {
+      range[0] = 0;
+      range[1] = 1.;
+      break;
+      }
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode:
+    default:
+      range[0] = -1;
+      range[1] = 1.;
+      break;
+    }
+
+}
