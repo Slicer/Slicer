@@ -74,4 +74,4 @@ SlicerMacroBuildModuleMRML(
   TARGET_LIBRARIES ${module_mrml_target_libraries}
   )
 
-MESSAGE(STATUS "******Tractography: module mrml include dirs = \n${Slicer_ModuleMRML_INCLUDE_DIRS}\ntractography mrml include dirs = \n${vtkSlicerTractographyModuleMRML_INCLUDE_DIRS}")
+# MESSAGE(STATUS "******Tractography: module mrml include dirs = \n${Slicer_ModuleMRML_INCLUDE_DIRS}\ntractography mrml include dirs = \n${vtkSlicerTractographyModuleMRML_INCLUDE_DIRS}")
