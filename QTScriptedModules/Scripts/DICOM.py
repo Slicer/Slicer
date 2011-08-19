@@ -92,9 +92,9 @@ class DICOMWidget:
     self.dicomFrame.layout().addWidget(self.dicomApp)
     # hide the search options - doesn't work yet and doesn't fit 
     # well into the frame
-    self.findChildren(self.dicomApp, 'searchOption')[0].hide()
+    self.findChildren(self.dicomApp, 'SearchOption')[0].hide()
     # make the tree a little smaller to fit in slicer
-    tree = self.findChildren(self.dicomApp, 'treeView')[0]
+    tree = self.findChildren(self.dicomApp, 'TreeView')[0]
     g = tree.geometry
     g.setHeight(100)
     self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
@@ -102,7 +102,7 @@ class DICOMWidget:
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
     tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
 
-    userFrame = self.findChildren(self.dicomApp, 'userFrame')[0]
+    userFrame = self.findChildren(self.dicomApp, 'UserFrame')[0]
     userFrame.setLayout(qt.QVBoxLayout())
     self.loadButton = qt.QPushButton('Load to Slicer')
     self.loadButton.enabled = False 
@@ -238,7 +238,7 @@ class DICOMWidget:
     while parents != []:
       p = parents.pop()
       parents += p.children()
-      if p.name == name:
+      if name == "" or p.name == name:
         children.append(p)
     return children
 
