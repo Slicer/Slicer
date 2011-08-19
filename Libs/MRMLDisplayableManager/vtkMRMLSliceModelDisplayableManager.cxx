@@ -70,7 +70,8 @@ public:
   // Volume
   void SetVolumeNodes(const std::vector<vtkMRMLDisplayableNode*>& volumes);
   // Add a volume to the list if it is not yet added. Observe its events
-  void AddVolume(vtkMRMLDisplayableNode* volume);
+  // Return true on success, false if the volume already exists.
+  bool AddVolume(vtkMRMLDisplayableNode* volume);
   // Remove the volume pointed by the iterator, return an iterator pointing to
   // the following
   std::vector<vtkMRMLDisplayableNode*>::iterator RemoveVolume(
@@ -268,22 +269,22 @@ void vtkMRMLSliceModelDisplayableManager::vtkInternal::SetVolumeNodes(
     {
     this->AddVolume(volumes[i]);
     }
-  assert(this->VolumeNodes.size() == volumes.size());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceModelDisplayableManager::vtkInternal
+bool vtkMRMLSliceModelDisplayableManager::vtkInternal
 ::AddVolume(vtkMRMLDisplayableNode* volume)
 {
   if (std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume) != this->VolumeNodes.end())
     {
     // volume already exists in the list, don't need to add it
-    return;
+    return false;
     }
   volume->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent,
                       this->External->GetMRMLCallbackCommand());
   this->VolumeNodes.push_back(volume);
   this->UpdateVolume(volume);
+  return true;
 }
 
 //---------------------------------------------------------------------------
