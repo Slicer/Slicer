@@ -24,11 +24,11 @@
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 
-#include "vtkSlicerTractographyModuleLogicExport.h"
+#include "vtkSlicerTractographyFiducialSeedingModuleLogicExport.h"
 
 class vtkImageData;
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
+class VTK_SLICER_TRACTOGRAPHY_FIDUCIAL_SEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
   public vtkMRMLNode
 {
   public:
