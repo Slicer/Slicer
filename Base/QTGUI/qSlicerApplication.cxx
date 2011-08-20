@@ -42,6 +42,8 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
+#include "qSlicerSettingsGeneralPanel.h"
+#include "qSlicerSettingsModulesPanel.h"
 
 // qMRMLWidget includes
 #include "qMRMLColorPickerWidget.h"
@@ -75,9 +77,10 @@ public:
   /// Initialize application style
   void initStyle();
 
-  qSlicerLayoutManager*               LayoutManager;
-  ctkToolTipTrapper*                  ToolTipTrapper;
+  qSlicerLayoutManager*   LayoutManager;
+  ctkToolTipTrapper*      ToolTipTrapper;
   QSharedPointer<qMRMLColorPickerWidget> ColorDialogPickerWidget;
+  ctkSettingsDialog*      SettingsDialog;
 };
 
 
@@ -91,11 +94,14 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
+  this->SettingsDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
+  delete this->SettingsDialog;
+  this->SettingsDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -130,6 +136,18 @@ void qSlicerApplicationPrivate::init()
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setEnabled(false);
+
+  //----------------------------------------------------------------------------
+  // Settings Dialog
+  //----------------------------------------------------------------------------
+  this->SettingsDialog = new ctkSettingsDialog(0);
+  this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
+  qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
+  this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
+
+  settingsModulesPanel->setRestartRequested(false);
+  QObject::connect(this->SettingsDialog, SIGNAL(accepted()),
+                   q, SLOT(onSettingDialogAccepted()));
 }
 /*
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
@@ -389,5 +407,28 @@ void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
   if (moduleWithAction)
     {
     moduleWithAction->action()->trigger();
+    }
+}
+
+// --------------------------------------------------------------------------
+ctkSettingsDialog* qSlicerApplication::settingsDialog()const
+{
+  Q_D(const qSlicerApplication);
+  return d->SettingsDialog;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerApplication::onSettingDialogAccepted()
+{
+  Q_D(qSlicerApplication);
+  qSlicerSettingsModulesPanel *settingsModulesPanel =
+    qobject_cast<qSlicerSettingsModulesPanel*>(
+      d->SettingsDialog->panel("Modules settings"));
+  Q_ASSERT(settingsModulesPanel);
+  if (settingsModulesPanel->restartRequested())
+    {
+    QString reason = tr("Since the module paths have been updated, the application should be restarted.\n\n"
+                        "Do you want to restart now?\n");
+    this->confirmRestart(reason);
     }
 }

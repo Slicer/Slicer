@@ -61,6 +61,7 @@
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQtObjectPtr.h>
 # include "qSlicerPythonManager.h"
+# include "qSlicerSettingsPythonPanel.h"
 # include <dPython.h>
 
 // PythonQt wrapper initialization methods
@@ -147,6 +148,9 @@ void initializePythonConsole(ctkPythonConsole& pythonConsole)
 
   //pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
   pythonConsole.resize(600, 280);
+
+  qSlicerApplication::application()->settingsDialog()->addPanel(
+    "Python settings", new qSlicerSettingsPythonPanel);
 
   // Show pythonConsole if required
   if(qSlicerApplication::application()->commandOptions()->showPythonInteractor())
