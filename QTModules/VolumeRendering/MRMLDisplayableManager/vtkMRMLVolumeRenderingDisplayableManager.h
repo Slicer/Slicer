@@ -80,7 +80,6 @@ public:
   //vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
 
   void SetExpectedFPS(double fps);
-  void SetGPUMemorySize(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void SetGPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -117,6 +116,8 @@ public:
   void AddDisplayNode(vtkMRMLVolumeRenderingDisplayNode* dnode);
   void RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* dnode);
   void RemoveDisplayNodes();
+
+  static int DefaultGPUMemorySize;
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager();

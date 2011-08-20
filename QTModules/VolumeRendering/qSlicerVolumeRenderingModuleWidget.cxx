@@ -85,6 +85,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentRenderingMethodChanged(int)));
 
+  this->MemorySizeComboBox->addItem("Default", 0);
+  this->MemorySizeComboBox->insertSeparator(1);
   this->MemorySizeComboBox->addItem("128 Mo", 128);
   this->MemorySizeComboBox->addItem("256 Mo", 256);
   this->MemorySizeComboBox->addItem("512 Mo", 512);

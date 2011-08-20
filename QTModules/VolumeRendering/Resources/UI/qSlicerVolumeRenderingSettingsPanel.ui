@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerVolumeRenderingSettingsPanel</class>
+ <widget class="ctkSettingsPanel" name="qSlicerVolumeRenderingSettingsPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>345</width>
+    <height>107</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Volume Rendering Settings</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="GPUMemoryLabel">
+     <property name="text">
+      <string>GPU memory size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="GPUMemoryComboBox">
+     <item>
+      <property name="text">
+       <string>128 Mo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>256 Mo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>512 Mo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1024 Mo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1.5 Go</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>2 Go</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>3 Go</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>4 Go</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkSettingsPanel</class>
+   <extends>QWidget</extends>
+   <header>ctkSettingsPanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

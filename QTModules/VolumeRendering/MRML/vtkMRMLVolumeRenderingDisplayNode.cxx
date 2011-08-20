@@ -68,7 +68,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->EstimatedSampleDistance = 1.0;
 
   this->CurrentVolumeMapper = -1;
-  this->GPUMemorySize = 256;
+  this->GPUMemorySize = 0; // means application default
 
   this->DepthPeelingThreshold = 0.0f;
   this->DistanceColorBlending = 0.0f;

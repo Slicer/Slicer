@@ -62,7 +62,7 @@ vtkCxxRevisionMacro (vtkMRMLVolumeRenderingDisplayableManager, "$Revision: 1.0 $
 
 
 bool vtkMRMLVolumeRenderingDisplayableManager::First = true;
-
+int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
 
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
@@ -460,11 +460,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetExpectedFPS(double fps)
   this->MapperGPURaycastII->SetFramerate(fps);
 }
 
-void vtkMRMLVolumeRenderingDisplayableManager::SetGPUMemorySize(vtkMRMLVolumeRenderingDisplayNode* vspNode)
-{
-  this->ComputeInternalVolumeSize(vspNode->GetGPUMemorySize());
-}
-
 void vtkMRMLVolumeRenderingDisplayableManager::SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   switch(vspNode->GetRaycastTechnique())
@@ -733,7 +728,9 @@ int vtkMRMLVolumeRenderingDisplayableManager
     }
 
   this->SetExpectedFPS(vspNode->GetExpectedFPS());
-  this->ComputeInternalVolumeSize(vspNode->GetGPUMemorySize());
+  this->ComputeInternalVolumeSize( vspNode->GetGPUMemorySize() ?
+    vspNode->GetGPUMemorySize() :
+    vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize);
 
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   this->CalculateMatrix(vspNode, matrix);

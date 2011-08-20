@@ -48,6 +48,8 @@ VTK_MAKE_INSTANTIATOR3("${qt_module_name}Instantiator"
 set(qt_module_SRCS
   ${qt_module_displayable_manager_SRCS}
   ${qt_module_displayable_manager_instantiator_SRCS}
+  qSlicerVolumeRenderingSettingsPanel.cxx
+  qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.cxx
   qSlicerVolumeRenderingModule.h
   qSlicerVolumeRenderingModuleWidget.cxx
@@ -56,12 +58,14 @@ set(qt_module_SRCS
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
+  qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.h
   qSlicerVolumeRenderingModuleWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
+  Resources/UI/qSlicerVolumeRenderingSettingsPanel.ui
   Resources/UI/qSlicerVolumeRenderingModule.ui
   )
 

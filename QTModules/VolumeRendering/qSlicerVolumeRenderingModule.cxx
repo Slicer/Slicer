@@ -2,6 +2,9 @@
 // Qt includes
 #include <QtPlugin>
 
+// QtGUI includes
+#include <qSlicerApplication.h>
+
 // VolumeRendering Logic includes
 #include <vtkSlicerVolumeRenderingLogic.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
@@ -9,6 +12,7 @@
 // VolumeRendering includes
 #include "qSlicerVolumeRenderingModule.h"
 #include "qSlicerVolumeRenderingModuleWidget.h"
+#include "qSlicerVolumeRenderingSettingsPanel.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumeRenderingModule, qSlicerVolumeRenderingModule);
@@ -66,6 +70,9 @@ QIcon qSlicerVolumeRenderingModule::icon()const
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
+  qSlicerApplication::application()->settingsDialog()->addPanel(
+    "Volume rendering", new qSlicerVolumeRenderingSettingsPanel);
+  
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
     RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 }

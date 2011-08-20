@@ -263,9 +263,10 @@ protected:
    */
   int CurrentVolumeMapper;
 
-  /* tracking GPU memory size (in Mo), not saved into scene file
+  /* Tracking GPU memory size (in Mo), not saved into scene file
    * because different machines may have different GPU memory
    * values.
+   * A value of 0 indicates to use the default value in the settings
    */
   int GPUMemorySize;
 
