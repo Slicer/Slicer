@@ -7,13 +7,6 @@
 #endif
 
 #include "RegisterImagesSlicerCLP.h"
-
-
-
-
-#undef itkDebugMacro
-#define itkDebugMacro(args) {}
-
 #include "itkImageToImageRegistrationHelper.h"
 
 // Use an anonymous namespace to keep class types and function names
