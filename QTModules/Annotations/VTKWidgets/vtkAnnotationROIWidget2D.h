@@ -116,7 +116,7 @@ public:
   /// Specify an instance of vtkWidgetRepresentation used to represent this
   /// widget in the scene. Note that the representation is a subclass of vtkProp
   /// so it can be added to the renderer independent of the widget.
-  virtual void SetRepresentation(vtkAnnotationROIRepresentation2D *r)
+  virtual void SetRepresentation(vtkAnnotationROIRepresentation *r)
     {
     this->Superclass::SetWidgetRepresentation(reinterpret_cast<vtkWidgetRepresentation*>(r));
     }
