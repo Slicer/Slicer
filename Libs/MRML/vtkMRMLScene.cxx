@@ -79,6 +79,7 @@ Version:   $Revision: 1.18 $
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <algorithm>
 
 //#define MRMLSCENE_VERBOSE 1
 
@@ -1393,7 +1394,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 {
   if (n == NULL)
     {
-    vtkErrorMacro("RemoveNode: unable to remove null node");
+    vtkDebugMacro("RemoveNode: unable to remove null node");
     return;
     }
   
@@ -2442,22 +2443,24 @@ void vtkMRMLScene::Undo()
   PushIntoRedoStack();
 
   vtkCollection* currentScene = this->CurrentScene;
-  //std::hash_map<std::string, vtkMRMLNode*> currentMap;
-  std::map<std::string, vtkMRMLNode*> currentMap;
+  // We use 2 vectors instead of a map in order to keep the ordering of the
+  // nodes.
+  std::vector<std::string> currentIDs;
+  std::vector<vtkMRMLNode*> currentNodes;
   nnodes = currentScene->GetNumberOfItems();
   for (n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
     if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
       {
-      currentMap[node->GetID()] = node;
+      currentIDs.push_back(node->GetID());
+      currentNodes.push_back(node);
       }
     }
 
-  std::map<std::string, vtkMRMLNode*> undoMap;
-  //std::hash_map<std::string, vtkMRMLNode*> undoMap;
-
   vtkCollection* undoScene = NULL;
+  std::vector<std::string> undoIDs;
+  std::vector<vtkMRMLNode*> undoNodes;
 
   if (!this->UndoStack.empty())
     {
@@ -2468,44 +2471,47 @@ void vtkMRMLScene::Undo()
       vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
       if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
         {
-        undoMap[node->GetID()] = node;
+        undoIDs.push_back(node->GetID());
+        undoNodes.push_back(node);
         }
       }
     }
 
-  //std::hash_map<std::string, vtkMRMLNode*>::iterator iter;
-  //std::hash_map<std::string, vtkMRMLNode*>::iterator curIter;
-  std::map<std::string, vtkMRMLNode*>::iterator iter;
-  std::map<std::string, vtkMRMLNode*>::iterator curIter;
+  std::vector<std::string>::iterator iterID;
+  std::vector<vtkMRMLNode*>::iterator iterNode;
+  std::vector<std::string>::iterator curIterID;
+  std::vector<vtkMRMLNode*>::iterator curIterNode;
 
   // copy back changes and add deleted nodes to the current scene
   std::vector<vtkMRMLNode*> addNodes;
 
-  for(iter=undoMap.begin(); iter != undoMap.end(); iter++) 
+  for(iterID=undoIDs.begin(), iterNode = undoNodes.begin(); iterID != undoIDs.end(); iterID++, iterNode++) 
     {
-    curIter = currentMap.find(iter->first);
-    if ( curIter == currentMap.end() ) 
+    curIterID = std::find(currentIDs.begin(), currentIDs.end(), *iterID);
+    curIterNode = currentNodes.begin() + std::distance(currentIDs.begin(), curIterID);
+    if ( curIterID == currentIDs.end() ) 
       {
       // the node was deleted, add Node back to the curreent scene
-      addNodes.push_back(iter->second);
+      addNodes.push_back(*iterNode);
       }
-    else if (iter->second != curIter->second) 
+    else if (*iterNode != *curIterNode) 
       {
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
-      this->CopyNodeInRedoStack(curIter->second);
-      curIter->second->CopyWithSceneWithSingleModifiedEvent(iter->second);
+      this->CopyNodeInRedoStack(*curIterNode);
+      (*curIterNode)->CopyWithSceneWithSingleModifiedEvent(*iterNode);
       }
     }
   
   // remove new nodes created before Undo
   std::vector<vtkMRMLNode*> removeNodes;
-  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++) 
+  for(curIterID=currentIDs.begin(), curIterNode = currentNodes.begin(); curIterID != currentIDs.end(); curIterID++, curIterNode++) 
     {
-    iter = undoMap.find(curIter->first);
-    if ( iter == undoMap.end() ) 
+    iterID = std::find(undoIDs.begin(),undoIDs.end(), *curIterID);
+    // Remove only if the node is not present in the previous state.
+    if ( iterID == undoIDs.end() ) 
       {
-      removeNodes.push_back(curIter->second);
+      removeNodes.push_back(*curIterNode);
       }
     }
 
@@ -2515,7 +2521,13 @@ void vtkMRMLScene::Undo()
     }
   for (nn=0; nn<removeNodes.size(); nn++) 
     {
-    this->RemoveNode(removeNodes[nn]);
+    vtkMRMLNode* nodeToRemove = removeNodes[nn];
+    // Maybe the node has been removed already by a side effect of a previous
+    // node removal.
+    if (!this->nodePresent(nodeToRemove))
+      {
+      this->RemoveNode(nodeToRemove);
+      }
     }
 
   if (undoScene)
