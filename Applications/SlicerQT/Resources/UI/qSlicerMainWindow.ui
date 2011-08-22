@@ -76,10 +76,6 @@
      <addaction name="actionViewLayoutThreeOverThree"/>
      <addaction name="actionViewLayoutFourOverFour"/>
     </widget>
-    <addaction name="actionViewExtensionManager"/>
-    <addaction name="actionViewCacheRemoteIOManager"/>
-    <addaction name="actionViewApplicationSettings"/>
-    <addaction name="separator"/>
     <widget class="QMenu" name="menuWindowToolbars">
      <property name="title">
       <string>&amp;Toolbars</string>
@@ -94,6 +90,10 @@
      <addaction name="separator"/>
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
+    <addaction name="actionViewExtensionManager"/>
+    <addaction name="actionViewCacheRemoteIOManager"/>
+    <addaction name="actionViewApplicationSettings"/>
+    <addaction name="separator"/>
     <addaction name="actionWindowShowMainPanel"/>
     <addaction name="menuWindowToolbars"/>
     <addaction name="MenuLayout"/>
@@ -202,19 +202,19 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget">
+      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
+       <property name="text" stdset="0">
         <string>Manipulate 3D View</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget"/>
+         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -900,7 +900,7 @@
   <action name="actionViewLayoutThreeOverThree">
    <property name="icon">
     <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
    </property>
    <property name="text">
     <string>Three over three</string>
@@ -909,7 +909,7 @@
   <action name="actionViewLayoutFourOverFour">
    <property name="icon">
     <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+     <normaloff>:/Icons/LayoutFourOverFourView.png</normaloff>:/Icons/LayoutFourOverFourView.png</iconset>
    </property>
    <property name="text">
     <string>Four over four</string>
