@@ -87,13 +87,11 @@ void vtkSlicerModelsLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
   std::vector<vtkMRMLDisplayNode*> displayNodes = modelNode->GetDisplayNodes();
   for (unsigned int i = 0; i < displayNodes.size(); ++i)
     {
-    assert(displayNodes[i]);
     this->GetMRMLScene()->RemoveNode(displayNodes[i]);
     }
   std::vector<vtkMRMLStorageNode*> storageNodes = modelNode->GetStorageNodes();
   for (unsigned int i = 0; i < storageNodes.size(); ++i)
     {
-    assert(storageNodes[i]);
     this->GetMRMLScene()->RemoveNode(storageNodes[i]);
     }
 

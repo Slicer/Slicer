@@ -421,7 +421,8 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
     }
   for ( ; it != this->DisplayNodes.end(); ++it)
     {
-    if ( (*it)->GetVisibility() != visible)
+    vtkMRMLDisplayNode* displayNode = *it;
+    if ( displayNode && displayNode->GetVisibility() != visible)
       {
       return 2;
       }
@@ -440,7 +441,11 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
   for (it = this->DisplayNodes.begin();
        it != this->DisplayNodes.end(); ++it)
     {
-    (*it)->SetVisibility(visible);
+    vtkMRMLDisplayNode* displayNode = *it;
+    if (displayNode)
+      {
+      displayNode->SetVisibility(visible);
+      }
     }
 }
 
