@@ -49,7 +49,7 @@ set(cli_modules
   ResampleVolume2
   ResampleVolume
   RigidRegistration
-  #RobustStatisticsSegmenter
+  RobustStatisticsSegmenter
   Seeding
   SparseFieldLevelSetContour
   Subtract

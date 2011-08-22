@@ -1,4 +1,4 @@
-#include "SFLSRobustStat3DTestCLP.h"
+#include "RobustStatSegmenterCLP.h"
 
 #include <iostream>
 
