@@ -113,6 +113,14 @@ class DICOMWidget:
     self.layout.addStretch(1)
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
+    databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
+    if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
+      self.mb = qt.QMessageBox(slicer.util.mainWindow())
+      self.mb.setWindowTitle('DICOM')
+      self.mb.setText('The database file path "%s" cannot be opened.' % databaseFilepath)
+      self.mb.setWindowModality(1)
+      self.mb.open()
+      return
     self.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
 
   def onTreeClicked(self,index):
