@@ -1,103 +1,56 @@
-
-#
-# Depends on:
-#  Slicer/CMake/SlicerMacroParseArguments.cmake
-#
+# SlicerExecutionModel
+find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
+include(${SlicerExecutionModel_USE_FILE})
+include(${SlicerExecutionModel_MACROS}/SEMMacroBuildCLI.cmake)
 
 macro(slicerMacroBuildCLI)
-  SLICER_PARSE_ARGUMENTS(MY
-    "NAME;ADDITIONAL_SRCS;LOGO_HEADER;TARGET_LIBRARIES;LINK_DIRECTORIES;INCLUDE_DIRECTORIES"
-    "EXECUTABLE_ONLY;NO_INSTALL"
+  set(options
+    EXECUTABLE_ONLY
+    NO_INSTALL VERBOSE
+  )
+  set(oneValueArgs  NAME LOGO_HEADER
+  )
+  set(multiValueArgs
+    ADDITIONAL_SRCS
+    TARGET_LIBRARIES
+    LINK_DIRECTORIES
+    INCLUDE_DIRECTORIES
+  )
+  CMAKE_PARSE_ARGUMENTS(MY_SLICER
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
-  message(STATUS "Configuring CLI module: ${MY_NAME}")
-  # --------------------------------------------------------------------------
-  # Sanity checks
-  # --------------------------------------------------------------------------
-  if(NOT DEFINED MY_NAME)
-    message(FATAL_ERROR "error: NAME is mandatory")
+
+  if(${MY_SLICER_EXECUTABLE_ONLY})
+    set(PASS_EXECUTABLE_ONLY EXECUTABLE_ONLY)
+  endif()
+  if(${MY_SLICER_NO_INSTALL})
+    set(PASS_NO_INSTALL NO_INSTALL)
+  endif()
+  if(${MY_SLICER_VERBOSE})
+    set(PASS_VERBOSE VERBOSE)
   endif()
 
-  if(DEFINED MY_LOGO_HEADER AND NOT EXISTS ${MY_LOGO_HEADER})
-    message(WARNING "warning: Specified LOGO_HEADER [${header}] doesn't exist")
-    set(MY_LOGO_HEADER)
-  endif()
-
-  foreach(v Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX)
-    if(NOT EXISTS "${${v}}")
-      message(FATAL_ERROR "error: Variable ${v} point to an non-existing file or directory !")
-    endif()
-  endforeach()
-
-  set(cli_xml_file ${CMAKE_CURRENT_SOURCE_DIR}/${MY_NAME}.xml)
-  if(NOT EXISTS ${cli_xml_file})
-    set(cli_xml_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}.xml)
-    if(NOT EXISTS ${cli_xml_file})
-      message(FATAL_ERROR "Xml file [${MY_NAME}.xml] doesn't exist !")
-    endif()
-  endif()
-
-  set(CLP ${MY_NAME})
-
-  # SlicerExecutionModel
-  find_package(SlicerExecutionModel REQUIRED GenerateCLP)
-  include(${GenerateCLP_USE_FILE})
-
-  set(${CLP}_SOURCE ${CLP}.cxx ${MY_ADDITIONAL_SRCS})
-  generateclp(${CLP}_SOURCE ${cli_xml_file} ${MY_LOGO_HEADER})
-
-  if(DEFINED MY_LINK_DIRECTORIES)
-    link_directories(${MY_LINK_DIRECTORIES})
-  endif()
-
-  include_directories(${Slicer_BaseCLI_INCLUDE_DIRS})
-
-  if(DEFINED MY_INCLUDE_DIRECTORIES)
-    include_directories(${MY_INCLUDE_DIRECTORIES})
-  endif()
-
-  set(cli_targets)
-
-  if(NOT MY_EXECUTABLE_ONLY)
-
-    add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-    set_target_properties(${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-    if(DEFINED MY_TARGET_LIBRARIES)
-      target_link_libraries(${CLP}Lib ${MY_TARGET_LIBRARIES})
-    endif()
-
-    add_executable(${CLP} ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
-    target_link_libraries(${CLP} ${CLP}Lib)
-
-    set(cli_targets ${CLP} ${CLP}Lib)
-
-  else()
-
-    add_executable(${CLP} ${${CLP}_SOURCE})
-    if(DEFINED MY_TARGET_LIBRARIES)
-      target_link_libraries(${CLP} ${MY_TARGET_LIBRARIES})
-    endif()
-
-    set(cli_targets ${CLP})
-
-  endif()
-
-  # Set labels associated with the target.
-  set_target_properties(${cli_targets} PROPERTIES LABELS ${CLP})
-
-  set_target_properties(${cli_targets} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
-    )
-
-  if(NOT MY_NO_INSTALL)
-    # Install each target in the production area (where it would appear in an installation)
-    # and install each target in the developer area (for running from a build)
-    install(TARGETS ${cli_targets}
-      RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-      )
-  endif()
-
+  set(cli_xml_file ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SLICER_NAME}.xml)
+  SEMMacroBuildCLI(
+    ${PASS_EXECUTABLE_ONLY}
+    ${PASS_NO_INSTALL}
+    ${PASS_VERBOSE}
+    ADDITIONAL_SRCS                 ${MY_SLICER_ADDITIONAL_SRCS}
+    TARGET_LIBRARIES                ${MY_SLICER_TARGET_LIBRARIES}
+    LINK_DIRECTORIES                ${MY_SLICER_LINK_DIRECTORIES}
+    INCLUDE_DIRECTORIES             "${MY_SLICER_INCLUDE_DIRECTORIES};${Slicer_BaseCLI_INCLUDE_DIRS}"
+    NAME                            ${MY_SLICER_NAME}
+    LOGO_HEADER                     ${MY_SLICER_LOGO_HEADER}
+    CLI_XML_FILE                    ${cli_xml_file}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX}
+    RUNTIME_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
+    INSTALL_RUNTIME_DESTINATION     ${Slicer_INSTALL_PLUGINS_BIN_DIR}
+    INSTALL_LIBRARY_DESTINATION     ${Slicer_INSTALL_PLUGINS_LIB_DIR}
+    INSTALL_ARCHIVE_DESTINATION     ${Slicer_INSTALL_PLUGINS_LIB_DIR}
+)
 endmacro()
