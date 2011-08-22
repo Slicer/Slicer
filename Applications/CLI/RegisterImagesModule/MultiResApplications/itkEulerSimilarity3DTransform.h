@@ -117,6 +117,7 @@ public:
    * vector. The rank of the Jacobian will also indicate if the 
    * transform is invertible at this point. */
   virtual const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
   EulerSimilarity3DTransform();
@@ -140,6 +141,7 @@ private:
 
   /**  Vector containing the scale. */
   TScalarType              m_Scale;
+  mutable JacobianType     m_NonThreadsafeSharedJacobian;
 
 }; //class EulerSimilarity3DTransform
 

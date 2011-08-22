@@ -122,7 +122,8 @@ public:
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the 
    * transform is invertible at this point. */
-  const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
   DecomposedAffine3DTransform();
@@ -153,6 +154,7 @@ private:
 
   /**  Vector containing the skew */
   SkewVectorType           m_Skew;
+  mutable JacobianType     m_NonThreadsafeSharedJacobian;
 
 }; //class DecomposedAffine3DTransform
 

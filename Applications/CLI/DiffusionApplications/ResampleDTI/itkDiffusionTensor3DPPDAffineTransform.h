@@ -53,7 +53,8 @@ public:
   typedef DiffusionTensor3DExtended< double >::EigenValuesArrayType EValuesType ;
   typedef DiffusionTensor3DExtended< double >::EigenVectorsMatrixType EVectorsType ;
   itkNewMacro( Self ) ;
-  TensorDataType EvaluateTransformedTensor( TensorDataType &tensor ) ;
+  using Superclass::EvaluateTransformedTensor;
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType &tensor ) ;
   void SetMatrix( MatrixTransformType &matrix ) ;
 protected:
   void PreCompute() ;

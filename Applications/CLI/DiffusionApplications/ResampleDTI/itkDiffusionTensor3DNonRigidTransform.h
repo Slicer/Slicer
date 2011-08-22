@@ -49,7 +49,7 @@ public:
   ///Evaluate the position of the transformed tensor in the output image
   PointType EvaluateTensorPosition( const PointType &point ) ;
   ///Evaluate the transformed tensor
-  TensorDataType EvaluateTransformedTensor( TensorDataType &tensor , PointType &outputPosition ) ;
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType &tensor , PointType &outputPosition ) ;
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 
 protected:

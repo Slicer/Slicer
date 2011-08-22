@@ -65,8 +65,12 @@ itkNewMacro( Self ) ;
 itkSetObjectMacro( Transform , TransformType ) ;
 ///Set the interpolation
 itkSetObjectMacro( Interpolator , InterpolatorType ) ;
+
+#if 0 //ITK_VERSION_MAJOR < 4
 ///Set the input image
-void SetInput( InputImagePointerType inputImage ) ;
+void SetInput( const InputImageType * inputImage ) ;
+#endif
+
 ///Set the output parameters (size, spacing, origin, orientation) from a reference image 
 void SetOutputParametersFromImage( InputImagePointerType Image ) ;
 ///Get the time of the last modification of the object

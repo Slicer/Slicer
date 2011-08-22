@@ -52,7 +52,7 @@ WarpTransform3D< FieldData >
     m_DerivativeWeights[ i ] = 1.0 ;
     }
   m_SizeForJacobian.Fill( 1 ) ;
-  this->m_Jacobian.SetSize( 3 , 3 ) ;
+  this->m_NonThreadsafeSharedJacobian.SetSize( 3 , 3 ) ;
 }
 
 //Returns the position of the transformed point. If input point is outside of the deformation
@@ -82,15 +82,25 @@ const typename WarpTransform3D< FieldData >::JacobianType &
 WarpTransform3D< FieldData >
 ::GetJacobian( const InputPointType & inputPoint ) const
 {
+  this->ComputeJacobianWithRespectToParameters( inputPoint, this->m_NonThreadsafeSharedJacobian );
+  return this->m_NonThreadsafeSharedJacobian;
+}
+
+template< class FieldData >
+void
+WarpTransform3D< FieldData >
+::ComputeJacobianWithRespectToParameters( const InputPointType & inputPoint, JacobianType & jacobian ) const
+{
+
 //  ZeroFluxNeumannBoundaryCondition< DeformationImageType > nbc;
   ConstNeighborhoodIteratorType bit;
   itk::ImageRegion< 3 > region ;
   itk::Index< 3 > start ;
   m_DeformationField->TransformPhysicalPointToIndex( inputPoint , start ) ;
+  jacobian.SetSize( 3 , 3 ) ;
   if( !m_DeformationField->GetLargestPossibleRegion().IsInside( start ) )
   {
-    this->m_Jacobian.Fill( 0 ) ;
-    return this->m_Jacobian ;
+    jacobian.Fill( 0 ) ;
   }
   region.SetIndex( start ) ;
   region.SetSize( m_SizeForJacobian ) ;
@@ -101,11 +111,10 @@ WarpTransform3D< FieldData >
   {
     for( unsigned int j = 0; j < 3 ; ++j )
     {
-      this->m_Jacobian( j , i ) = m_DerivativeWeights[ i ]
+      jacobian( j , i ) = m_DerivativeWeights[ i ]
                 * 0.5 * ( bit.GetNext( i )[ j ] - bit.GetPrevious( i )[ j ] ) ;
     }
   }
-  return this->m_Jacobian ;
 }
 
 

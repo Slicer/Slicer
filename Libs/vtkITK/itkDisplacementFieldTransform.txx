@@ -308,12 +308,12 @@ DisplacementFieldTransform<TScalarType, NDimensions>
    * Allocate memory for Jacobian and wrap into SpaceDimension number
    * of ITK images
    */
-  this->m_Jacobian.set_size( SpaceDimension, numberOfParameters );
-  this->m_Jacobian.Fill( NumericTraits<JacobianInternalPixelType>::Zero );
+  this->m_NonThreadsafeSharedJacobian.set_size( SpaceDimension, numberOfParameters );
+  this->m_NonThreadsafeSharedJacobian.Fill( NumericTraits<JacobianInternalPixelType>::Zero );
   SizeType size;
   size.Fill( 1 );
   m_LastSupportRegion.SetSize( size );
-  JacobianInternalPixelType * jacobianDataPointer = this->m_Jacobian.data_block();
+  JacobianInternalPixelType * jacobianDataPointer = this->m_NonThreadsafeSharedJacobian.data_block();
 
   for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
@@ -511,14 +511,21 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
 }
 
- 
 // Compute the Jacobian in one position 
 template<class TScalarType, unsigned int NDimensions>
-const 
+const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
-::JacobianType & 
+::JacobianType &
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::GetJacobian( const InputPointType & point )
+{
+   ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
+   return this->m_NonThreadsafeSharedJacobian;
+}
+
+void
+DisplacementFieldTransform<TScalarType, NDimensions>
+::ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const
 {
   // Can only compute Jacobian if parameters are set via
   // SetParameters or SetParametersByValue
@@ -533,16 +540,15 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
   typedef ImageRegionIterator<JacobianImageType> IteratorType;
   IteratorType m_Iterator[ SpaceDimension ];
-  unsigned int j;
 
   JacobianPixelType p0;
   p0.SetSize( SpaceDimension );
-  for ( j = 0; j < SpaceDimension; j++ )
+  for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     p0[j] = NumericTraits<JacobianInternalPixelType>::Zero;
     }
 
-  for ( j = 0; j < SpaceDimension; j++ )
+  for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     m_Iterator[j] = IteratorType( m_JacobianImage[j], m_LastSupportRegion );
     }
@@ -550,31 +556,30 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   while ( ! m_Iterator[0].IsAtEnd() )
     {
     // zero out jacobian elements
-    for ( j = 0; j < SpaceDimension; j++ )
+    for ( unsigned int j = 0; j < SpaceDimension; j++ )
       {
       m_Iterator[j].Set( p0 );
       }
 
-    for ( j = 0; j < SpaceDimension; j++ )
+    for ( unsigned int j = 0; j < SpaceDimension; j++ )
       {
       ++( m_Iterator[j] );
       }
     }
 
- 
   ContinuousIndexType index;
-
   this->TransformPointToContinuousIndex( point, index );
 
   // NOTE: if the support region does not lie totally within the grid
   // we assume zero displacement and return the input point
   if ( !this->InsideValidRegion( index ) )
     {
-    return this->m_Jacobian;
+    jacobian = this->m_NonThreadsafeSharedJacobian;
+    return;
     }
 
   IndexType supportIndex;
-  for( j = 0; j < SpaceDimension; j++ ) 
+  for( unsigned int j = 0; j < SpaceDimension; j++ ) 
     {
     supportIndex[j] = (long) vcl_floor(index[j] );
     }
@@ -582,14 +587,13 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
   // For each dimension, copy the weight to the support region
   unsigned long counter = 0;
-
-  for ( j = 0; j < SpaceDimension; j++ )
+  for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     m_Iterator[j] = IteratorType( m_JacobianImage[j], m_LastSupportRegion );
     }
 
   JacobianPixelType p[ SpaceDimension ];
-  for ( j = 0; j < SpaceDimension; j++ )
+  for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     // set to zeros
     p[j] = p0; 
@@ -600,11 +604,11 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     IndexType ind = m_Iterator[0].GetIndex();
     // copy weight to jacobian image
     double weight = 1.0;
-    for ( j = 0; j < SpaceDimension; j++ )
+    for ( unsigned int j = 0; j < SpaceDimension; j++ )
       {
       weight = weight * ( 1 - vcl_abs( ind[j] - index[j] ) );
       }
-    for ( j = 0; j < SpaceDimension; j++ )
+    for ( unsigned int j = 0; j < SpaceDimension; j++ )
       {
       p[j][j] = weight;
       m_Iterator[j].Set( p[j] );
@@ -612,15 +616,13 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
     // go to next coefficient in the support region
     ++ counter;
-    for ( j = 0; j < SpaceDimension; j++ )
+    for ( unsigned in j = 0; j < SpaceDimension; j++ )
       {
       ++( m_Iterator[j] );
       }
     }
-
-  // Return the results
-  return this->m_Jacobian;
-
+  jacobian=this->m_NonThreadsafeSharedJacobian;
+  return;
 }
 
 template<class TScalarType, unsigned int NDimensions>

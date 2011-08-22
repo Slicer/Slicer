@@ -32,7 +32,6 @@ EulerAnisotropicSimilarity3DTransform<TScalarType>
   m_Scale.Fill( 1.0 );
 }
 
-
 // Constructor with arguments
 template<class TScalarType>
 EulerAnisotropicSimilarity3DTransform<TScalarType>::
@@ -200,7 +199,17 @@ const typename EulerAnisotropicSimilarity3DTransform<TScalarType>::JacobianType 
 EulerAnisotropicSimilarity3DTransform<TScalarType>::
 GetJacobian( const InputPointType & p ) const
 {
-  this->m_Jacobian.Fill(0.0);
+  ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
+  return this->m_NonThreadsafeSharedJacobian;
+}
+
+template<class TScalarType>
+void
+EulerAnisotropicSimilarity3DTransform<TScalarType>::
+ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
+{
+  jacobian.SetSize( OutputSpaceDimension, ParametersDimension );
+  jacobian.Fill(0.0);
 
   const InputVectorType pp = p - this->GetCenter();
 
@@ -217,43 +226,39 @@ GetJacobian( const InputPointType & p ) const
   const double z = this->GetAngleZ();
 
   // Computed using Maxima
-  
   // Rotation jacobian
-  this->m_Jacobian[0][0] = -px*scx*cos(x)*sin(y)*sin(z)+pz*scz*cos(x)*cos(y)*sin(z)+py*scy*sin(x)*sin(z);
-  this->m_Jacobian[1][0] = px*scx*cos(x)*sin(y)*cos(z)-pz*scz*cos(x)*cos(y)*cos(z)-py*scy*sin(x)*cos(z);
-  this->m_Jacobian[2][0] = px*scx*sin(x)*sin(y)-pz*scz*sin(x)*cos(y)+py*scy*cos(x);
+  jacobian[0][0] = -px*scx*cos(x)*sin(y)*sin(z)+pz*scz*cos(x)*cos(y)*sin(z)+py*scy*sin(x)*sin(z);
+  jacobian[1][0] = px*scx*cos(x)*sin(y)*cos(z)-pz*scz*cos(x)*cos(y)*cos(z)-py*scy*sin(x)*cos(z);
+  jacobian[2][0] = px*scx*sin(x)*sin(y)-pz*scz*sin(x)*cos(y)+py*scy*cos(x);
 
-  this->m_Jacobian[0][1] = pz*scz*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+px*scx*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z));
-  this->m_Jacobian[1][1] = px*scx*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+pz*scz*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
-  this->m_Jacobian[2][1] = -pz*scz*cos(x)*sin(y)-px*scx*cos(x)*cos(y);
+  jacobian[0][1] = pz*scz*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+px*scx*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z));
+  jacobian[1][1] = px*scx*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+pz*scz*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
+  jacobian[2][1] = -pz*scz*cos(x)*sin(y)-px*scx*cos(x)*cos(y);
 
-  this->m_Jacobian[0][2] = pz*scz*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+px*scx*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-py*scy*cos(x)*cos(z);
-  this->m_Jacobian[1][2] = px*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+pz*scz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z))-py*scy*cos(x)*sin(z);
-  this->m_Jacobian[2][2] = 0.0;
+  jacobian[0][2] = pz*scz*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+px*scx*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-py*scy*cos(x)*cos(z);
+  jacobian[1][2] = px*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+pz*scz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z))-py*scy*cos(x)*sin(z);
+  jacobian[2][2] = 0.0;
 
   // Translation jacobian
-  this->m_Jacobian[0][3] = 1.0;
-  this->m_Jacobian[1][4] = 1.0;
-  this->m_Jacobian[2][5] = 1.0;
-  
+  jacobian[0][3] = 1.0;
+  jacobian[1][4] = 1.0;
+  jacobian[2][5] = 1.0;
+
   // Scaling jacobian
   // Scale_x
-  this->m_Jacobian[0][6] = px*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
-  this->m_Jacobian[1][6] = px*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
-  this->m_Jacobian[2][6] = -px*cos(x)*sin(y);
+  jacobian[0][6] = px*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
+  jacobian[1][6] = px*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
+  jacobian[2][6] = -px*cos(x)*sin(y);
 
   // Scale_y
-  this->m_Jacobian[0][7] = -py*cos(x)*sin(z);
-  this->m_Jacobian[1][7] = py*cos(x)*cos(z);
-  this->m_Jacobian[2][7] = py*sin(x);
+  jacobian[0][7] = -py*cos(x)*sin(z);
+  jacobian[1][7] = py*cos(x)*cos(z);
+  jacobian[2][7] = py*sin(x);
 
   // Scale_z
-  this->m_Jacobian[0][8] = pz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z));
-  this->m_Jacobian[1][8] = pz*(sin(y)*sin(z)-sin(x)*cos(y)*cos(z));
-  this->m_Jacobian[2][8] = pz*cos(x)*cos(y);
-
-  return this->m_Jacobian;
-
+  jacobian[0][8] = pz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z));
+  jacobian[1][8] = pz*(sin(y)*sin(z)-sin(x)*cos(y)*cos(z));
+  jacobian[2][8] = pz*cos(x)*cos(y);
 }
 
 } // namespace

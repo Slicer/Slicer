@@ -197,6 +197,7 @@ namespace itk
 
    /** Compute the Jacobian Matrix of the transformation at one point */
    virtual const JacobianType& GetJacobian(const InputPointType  &point );
+   virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
    /** Return the number of parameters that completely define the Transfom */
    virtual unsigned int GetNumberOfParameters(void) const;
@@ -265,7 +266,7 @@ namespace itk
 
   /** Check if a continuous index is inside the valid region. */
   bool InsideValidRegion( const ContinuousIndexType& index ) const;
-
+  mutable JacobianType m_NonThreadsafeSharedJacobian;
 }; //class DisplacementFieldTransform
 
 }  /// namespace itk

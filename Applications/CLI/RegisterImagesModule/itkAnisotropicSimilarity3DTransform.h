@@ -115,12 +115,13 @@ public:
   void SetScale( ScaleType scale );
   void SetScale( VectorType scale );
   itkGetConstReferenceMacro( Scale, VectorType );
-  
+
   /** This method computes the Jacobian matrix of the transformation.
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the 
    * transform is invertible at this point. */
-  const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
   AnisotropicSimilarity3DTransform(unsigned int outputSpaceDim,
@@ -143,7 +144,8 @@ private:
   AnisotropicSimilarity3DTransform(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  VectorType    m_Scale;
+  VectorType           m_Scale;
+  mutable JacobianType m_NonThreadsafeSharedJacobian;
 
 }; //class AnisotropicSimilarity3DTransform
 

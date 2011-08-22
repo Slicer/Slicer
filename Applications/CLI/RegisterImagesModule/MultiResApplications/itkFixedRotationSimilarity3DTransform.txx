@@ -127,14 +127,24 @@ const typename FixedRotationSimilarity3DTransform<TScalarType>::JacobianType &
 FixedRotationSimilarity3DTransform<TScalarType>::
 GetJacobian( const InputPointType & p ) const
 {
-  this->m_Jacobian.Fill(0.0);
+  ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
+  return this->m_NonThreadsafeSharedJacobian;
+}
+
+template<class TScalarType>
+void
+FixedRotationSimilarity3DTransform<TScalarType>::
+ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
+{
+  jacobian.SetSize( OutputSpaceDimension, ParametersDimension );
+  jacobian.Fill(0.0);
 
   const InputVectorType pp = p - this->GetCenter();
 
   // compute Jacobian with respect to the translation parameters
-  this->m_Jacobian[0][0] = 1.0;
-  this->m_Jacobian[1][1] = 1.0;
-  this->m_Jacobian[2][2] = 1.0;
+  jacobian[0][0] = 1.0;
+  jacobian[1][1] = 1.0;
+  jacobian[2][2] = 1.0;
 
   // compute Jacobian with respect to the scale parameter
   const MatrixType & matrix = this->GetMatrix();
@@ -143,11 +153,9 @@ GetJacobian( const InputPointType & p ) const
   const InputVectorType mpp = matrix * pp;
 
   // Remove back out the scale
-  this->m_Jacobian[0][3] = mpp[0] / this->GetScale();
-  this->m_Jacobian[1][3] = mpp[1] / this->GetScale();
-  this->m_Jacobian[2][3] = mpp[2] / this->GetScale();
-
-  return this->m_Jacobian;
+  jacobian[0][3] = mpp[0] / this->GetScale();
+  jacobian[1][3] = mpp[1] / this->GetScale();
+  jacobian[2][3] = mpp[2] / this->GetScale();
 }
 
 

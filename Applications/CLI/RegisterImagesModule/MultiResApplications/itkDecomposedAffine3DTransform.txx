@@ -228,10 +228,18 @@ const typename DecomposedAffine3DTransform<TScalarType>::JacobianType &
 DecomposedAffine3DTransform<TScalarType>::
 GetJacobian( const InputPointType & p ) const
 {
-  this->m_Jacobian.Fill(0.0);
+  ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
+  return this->m_NonThreadsafeSharedJacobian;
+}
+template<class TScalarType>
+void
+DecomposedAffine3DTransform<TScalarType>::
+ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
+{
+  jacobian.SetSize( 3 , 12 );
+  jacobian.Fill(0.0);
 
   const InputVectorType pp = p - this->GetCenter();
-
   const double px = pp[0];
   const double py = pp[1];
   const double pz = pp[2];
@@ -249,58 +257,55 @@ GetJacobian( const InputPointType & p ) const
   const double z = this->GetAngleZ();
 
   // Computed using Maxima
-  
+
   // Rotation jacobian
-  this->m_Jacobian[0][0] = pz*(-scx*sk2*cos(x)*sin(y)*sin(z)+scz*cos(x)*cos(y)*sin(z)+scy*sk3*sin(x)*sin(z))+py*(scy*sin(x)*sin(z)-scx*sk1*cos(x)*sin(y)*sin(z))-px*scx*cos(x)*sin(y)*sin(z);
-  this->m_Jacobian[1][0] = pz*(scx*sk2*cos(x)*sin(y)*cos(z)-scz*cos(x)*cos(y)*cos(z)-scy*sk3*sin(x)*cos(z))+py*(scx*sk1*cos(x)*sin(y)*cos(z)-scy*sin(x)*cos(z))+px*scx*cos(x)*sin(y)*cos(z);
-  this->m_Jacobian[2][0] = pz*(scx*sk2*sin(x)*sin(y)-scz*sin(x)*cos(y)+scy*sk3*cos(x))+py*(scx*sk1*sin(x)*sin(y)+scy*cos(x))+px*scx*sin(x)*sin(y);
+  jacobian[0][0] = pz*(-scx*sk2*cos(x)*sin(y)*sin(z)+scz*cos(x)*cos(y)*sin(z)+scy*sk3*sin(x)*sin(z))+py*(scy*sin(x)*sin(z)-scx*sk1*cos(x)*sin(y)*sin(z))-px*scx*cos(x)*sin(y)*sin(z);
+  jacobian[1][0] = pz*(scx*sk2*cos(x)*sin(y)*cos(z)-scz*cos(x)*cos(y)*cos(z)-scy*sk3*sin(x)*cos(z))+py*(scx*sk1*cos(x)*sin(y)*cos(z)-scy*sin(x)*cos(z))+px*scx*cos(x)*sin(y)*cos(z);
+  jacobian[2][0] = pz*(scx*sk2*sin(x)*sin(y)-scz*sin(x)*cos(y)+scy*sk3*cos(x))+py*(scx*sk1*sin(x)*sin(y)+scy*cos(x))+px*scx*sin(x)*sin(y);
 
-  this->m_Jacobian[0][1] = pz*(scz*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+scx*sk2*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z)))+py*scx*sk1*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z))+px*scx*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z));
-  this->m_Jacobian[1][1] = pz*(scx*sk2*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+scz*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z)))+py*scx*sk1*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+px*scx*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z));
-  this->m_Jacobian[2][1] = pz*(-scz*cos(x)*sin(y)-scx*sk2*cos(x)*cos(y))-py*scx*sk1*cos(x)*cos(y)-px*scx*cos(x)*cos(y);
+  jacobian[0][1] = pz*(scz*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+scx*sk2*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z)))+py*scx*sk1*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z))+px*scx*(-sin(x)*cos(y)*sin(z)-sin(y)*cos(z));
+  jacobian[1][1] = pz*(scx*sk2*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+scz*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z)))+py*scx*sk1*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+px*scx*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z));
+  jacobian[2][1] = pz*(-scz*cos(x)*sin(y)-scx*sk2*cos(x)*cos(y))-py*scx*sk1*cos(x)*cos(y)-px*scx*cos(x)*cos(y);
 
-  this->m_Jacobian[0][2] = pz*(scz*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+scx*sk2*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-scy*sk3*cos(x)*cos(z))+py*(scx*sk1*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-scy*cos(x)*cos(z))+px*scx*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z));
-  this->m_Jacobian[1][2] = pz*(scx*sk2*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+scz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z))-scy*sk3*cos(x)*sin(z))+py*(scx*sk1*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))-scy*cos(x)*sin(z))+px*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
-  this->m_Jacobian[2][2] = 0.0;
+  jacobian[0][2] = pz*(scz*(sin(x)*cos(y)*cos(z)-sin(y)*sin(z))+scx*sk2*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-scy*sk3*cos(x)*cos(z))+py*(scx*sk1*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z))-scy*cos(x)*cos(z))+px*scx*(-cos(y)*sin(z)-sin(x)*sin(y)*cos(z));
+  jacobian[1][2] = pz*(scx*sk2*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+scz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z))-scy*sk3*cos(x)*sin(z))+py*(scx*sk1*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))-scy*cos(x)*sin(z))+px*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
+  jacobian[2][2] = 0.0;
 
   // Translation jacobian
-  this->m_Jacobian[0][3] = 1.0;
-  this->m_Jacobian[1][4] = 1.0;
-  this->m_Jacobian[2][5] = 1.0;
+  jacobian[0][3] = 1.0;
+  jacobian[1][4] = 1.0;
+  jacobian[2][5] = 1.0;
   
   // Scaling jacobian
   // Scale_x
-  this->m_Jacobian[0][6] = pz*sk2*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+py*sk1*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+px*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
-  this->m_Jacobian[1][6] = pz*sk2*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z))+py*sk1*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z))+px*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
-  this->m_Jacobian[2][6] = -pz*sk2*cos(x)*sin(y)-py*sk1*cos(x)*sin(y)-px*cos(x)*sin(y);
+  jacobian[0][6] = pz*sk2*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+py*sk1*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z))+px*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z));
+  jacobian[1][6] = pz*sk2*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z))+py*sk1*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z))+px*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
+  jacobian[2][6] = -pz*sk2*cos(x)*sin(y)-py*sk1*cos(x)*sin(y)-px*cos(x)*sin(y);
 
   // Scale_y
-  this->m_Jacobian[0][7] = -pz*sk3*cos(x)*sin(z)-py*cos(x)*sin(z);
-  this->m_Jacobian[1][7] = pz*sk3*cos(x)*cos(z)+py*cos(x)*cos(z);
-  this->m_Jacobian[2][7] = pz*sk3*sin(x)+py*sin(x);
+  jacobian[0][7] = -pz*sk3*cos(x)*sin(z)-py*cos(x)*sin(z);
+  jacobian[1][7] = pz*sk3*cos(x)*cos(z)+py*cos(x)*cos(z);
+  jacobian[2][7] = pz*sk3*sin(x)+py*sin(x);
 
   // Scale_z
-  this->m_Jacobian[0][8] = pz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z));
-  this->m_Jacobian[1][8] = pz*(sin(y)*sin(z)-sin(x)*cos(y)*cos(z));
-  this->m_Jacobian[2][8] = pz*cos(x)*cos(y);
+  jacobian[0][8] = pz*(sin(x)*cos(y)*sin(z)+sin(y)*cos(z));
+  jacobian[1][8] = pz*(sin(y)*sin(z)-sin(x)*cos(y)*cos(z));
+  jacobian[2][8] = pz*cos(x)*cos(y);
 
   // Skew_1
-  this->m_Jacobian[0][9] = py*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z)) ;
-  this->m_Jacobian[1][9] = py*scx*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z)) ;
-  this->m_Jacobian[2][9] = -py*scx*cos(x)*sin(y) ;
+  jacobian[0][9] = py*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z)) ;
+  jacobian[1][9] = py*scx*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z)) ;
+  jacobian[2][9] = -py*scx*cos(x)*sin(y) ;
 
   // Skew_2
-  this->m_Jacobian[0][10] = pz*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z)) ;
-  this->m_Jacobian[1][10] = pz*scx*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
-  this->m_Jacobian[2][10] = -pz*scx*cos(x)*sin(y);
+  jacobian[0][10] = pz*scx*(cos(y)*cos(z)-sin(x)*sin(y)*sin(z)) ;
+  jacobian[1][10] = pz*scx*(cos(y)*sin(z)+sin(x)*sin(y)*cos(z));
+  jacobian[2][10] = -pz*scx*cos(x)*sin(y);
 
   // Skew_3
-  this->m_Jacobian[0][11] = -pz*scy*cos(x)*sin(z);
-  this->m_Jacobian[1][11] = pz*scy*cos(x)*cos(z);
-  this->m_Jacobian[2][11] = pz*scy*sin(x);
-  
-  return this->m_Jacobian;
-
+  jacobian[0][11] = -pz*scy*cos(x)*sin(z);
+  jacobian[1][11] = pz*scy*cos(x)*cos(z);
+  jacobian[2][11] = pz*scy*sin(x);
 }
 
 } // namespace

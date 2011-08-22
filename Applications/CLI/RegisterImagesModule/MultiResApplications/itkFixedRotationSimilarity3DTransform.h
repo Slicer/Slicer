@@ -112,6 +112,7 @@ public:
    * vector. The rank of the Jacobian will also indicate if the 
    * transform is invertible at this point. */
   virtual const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
   FixedRotationSimilarity3DTransform(unsigned int outputSpaceDim,
@@ -131,6 +132,7 @@ protected:
 private:
   FixedRotationSimilarity3DTransform(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
+  mutable JacobianType m_NonThreadsafeSharedJacobian;
 
 }; //class FixedRotationSimilarity3DTransform
 

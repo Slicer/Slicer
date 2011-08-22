@@ -82,13 +82,17 @@ DiffusionTensor3DResample< TInput ,TOutput >
 }
 
 
+#if 0 //ITK_VERSION_MAJOR < 4
 template< class TInput , class TOutput >
 void
 DiffusionTensor3DResample< TInput , TOutput >
-::SetInput( InputImagePointerType inputImage )
+::SetInput( const InputImageType * inputImage )
 {
   this->Superclass::SetInput( 0 , inputImage ) ;
 }
+#else
+//Just use the default
+#endif
 
 template< class TInput , class TOutput >
 void

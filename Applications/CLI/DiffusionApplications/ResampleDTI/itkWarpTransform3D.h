@@ -48,11 +48,41 @@ public:
   itkTypeMacro( WarpTransform3D, Transform ) ;
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ;
   const JacobianType & GetJacobian( const InputPointType &inputPoint ) const ;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian ) const ;
+#if ITK_VERSION_MAJOR >= 4
+  virtual void ComputeJacobianWithRespectToPosition(
+                                       const InputPointType & itkNotUsed(x),
+                                       JacobianType & itkNotUsed(j) ) const
+    {
+    itkExceptionMacro ("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
+    }
+#endif
+
   void SetDeformationField( DeformationImagePointerType deformationField ) ;
   const DeformationImagePointerType GetDeformationField() const
   {
     return m_DeformationField;
   }
+
+  using Superclass::TransformVector;
+  /**  Method to transform a vector. */
+  virtual OutputVectorType    TransformVector(const InputVectorType &) const
+  {
+    itkExceptionMacro ("TransformVector(const InputVectorType &) is not implemented for WarpTransform3D");
+  }
+  /**  Method to transform a vnl_vector. */
+  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
+  {
+    itkExceptionMacro ("TransformVector(const InputVnlVectorType &) is not implemented for WarpTransform3D");
+  }
+
+  using Superclass::TransformCovariantVector;
+  /**  Method to transform a CovariantVector. */
+  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const \
+  {
+    itkExceptionMacro ("TransformCovariantVector(const InputCovariantVectorType & is not implemented for WarpTransform3D");
+  }
+
 protected:
   /** Get/Set the neighborhood radius used for gradient computation */
   itkGetConstReferenceMacro( NeighborhoodRadius, RadiusType ) ;
@@ -66,21 +96,6 @@ protected:
    * transform fixed parameters through this function. Use
    * SetDeformationField() to set the transform */
   virtual void  SetFixedParameters (const ParametersType &){};
-  /**  Method to transform a vector. */
-  virtual OutputVectorType    TransformVector(const InputVectorType &) const
-  {
-    itkExceptionMacro ("TransformVector(const InputVectorType &) is not implemented for WarpTransform3D");
-  }
-  /**  Method to transform a vnl_vector. */
-  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
-  {
-    itkExceptionMacro ("TransformVector(const InputVnlVectorType &) is not implemented for WarpTransform3D");
-  }
-  /**  Method to transform a CovariantVector. */
-  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const \
-  {
-    itkExceptionMacro ("TransformCovariantVector(const InputCovariantVectorType & is not implemented for WarpTransform3D");
-  }
 
   WarpTransform3D() ;
   void operator=(const Self&); //purposely not implemented
@@ -89,6 +104,7 @@ protected:
   DeformationImagePointerType m_DeformationField ;
 //  Vector< double , 3 > m_OutputSpacing ;
   Size< 3 > m_SizeForJacobian ;
+  mutable JacobianType m_NonThreadsafeSharedJacobian;
 };
 
 }//end namespace itk

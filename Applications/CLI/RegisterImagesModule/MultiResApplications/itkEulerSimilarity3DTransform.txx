@@ -36,7 +36,7 @@ EulerSimilarity3DTransform<TScalarType>
 // Constructor with arguments
 template<class TScalarType>
 EulerSimilarity3DTransform<TScalarType>::
-EulerSimilarity3DTransform( unsigned int spaceDimension, 
+EulerSimilarity3DTransform( unsigned int spaceDimension,
                             unsigned int parametersDimension):
   Superclass(spaceDimension, parametersDimension)
 {
@@ -195,9 +195,7 @@ void
 EulerSimilarity3DTransform<TScalarType>::
 PrintSelf(std::ostream &os, Indent indent) const
 {
-
   Superclass::PrintSelf(os,indent);
-  
   os << indent << "Scale:       " << m_Scale        << std::endl;
 }
 
@@ -206,6 +204,15 @@ template<class TScalarType>
 const typename EulerSimilarity3DTransform<TScalarType>::JacobianType &
 EulerSimilarity3DTransform<TScalarType>::
 GetJacobian( const InputPointType & p ) const
+{
+  ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
+  return this->m_NonThreadsafeSharedJacobian;
+}
+
+template<class TScalarType>
+void
+EulerSimilarity3DTransform<TScalarType>::
+ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
 {
   // need to check if angles are in the right order
   const double cx = vcl_cos(this->GetAngleX());
@@ -216,48 +223,46 @@ GetJacobian( const InputPointType & p ) const
   const double sz = vcl_sin(this->GetAngleZ());
   const double ss = this->GetScale();
 
-  this->m_Jacobian.Fill(0.0);
-
+  jacobian.SetSize(OutputSpaceDimension, ParametersDimension);
+  jacobian.Fill(0.0);
   const InputVectorType pp = p - this->GetCenter();
 
   const double px = p[0] - this->GetCenter()[0];
   const double py = p[1] - this->GetCenter()[1];
   const double pz = p[2] - this->GetCenter()[2];
 
-  this->m_Jacobian[0][0] = ss*((-sz*cx*sy)*px + (sz*sx)*py + (sz*cx*cy)*pz);
-  this->m_Jacobian[1][0] = ss*((cz*cx*sy)*px + (-cz*sx)*py + (-cz*cx*cy)*pz);
-  this->m_Jacobian[2][0] = ss*((sx*sy)*px + (cx)*py + (-sx*cy)*pz);  
-    
-  this->m_Jacobian[0][1] = ss*((-cz*sy-sz*sx*cy)*px + (cz*cy-sz*sx*sy)*pz);
-  this->m_Jacobian[1][1] = ss*((-sz*sy+cz*sx*cy)*px + (sz*cy+cz*sx*sy)*pz);
-  this->m_Jacobian[2][1] = ss*((-cx*cy)*px + (-cx*sy)*pz);
-    
-  this->m_Jacobian[0][2] = ss*((-sz*cy-cz*sx*sy)*px + (-cz*cx)*py 
+  jacobian[0][0] = ss*((-sz*cx*sy)*px + (sz*sx)*py + (sz*cx*cy)*pz);
+  jacobian[1][0] = ss*((cz*cx*sy)*px + (-cz*sx)*py + (-cz*cx*cy)*pz);
+  jacobian[2][0] = ss*((sx*sy)*px + (cx)*py + (-sx*cy)*pz);  
+
+  jacobian[0][1] = ss*((-cz*sy-sz*sx*cy)*px + (cz*cy-sz*sx*sy)*pz);
+  jacobian[1][1] = ss*((-sz*sy+cz*sx*cy)*px + (sz*cy+cz*sx*sy)*pz);
+  jacobian[2][1] = ss*((-cx*cy)*px + (-cx*sy)*pz);
+
+  jacobian[0][2] = ss*((-sz*cy-cz*sx*sy)*px + (-cz*cx)*py 
                                + (-sz*sy+cz*sx*cy)*pz);
-  this->m_Jacobian[1][2] = ss*((cz*cy-sz*sx*sy)*px + (-sz*cx)*py 
+  jacobian[1][2] = ss*((cz*cy-sz*sx*sy)*px + (-sz*cx)*py 
                                + (cz*sy+sz*sx*cy)*pz);
-  this->m_Jacobian[2][2] = 0;
- 
+  jacobian[2][2] = 0;
+
   // compute derivatives for the translation part
   unsigned int blockOffset = 3;  
   for(unsigned int dim=0; dim < SpaceDimension; dim++ ) 
     {
-    this->m_Jacobian[ dim ][ blockOffset + dim ] = 1.0;
+    jacobian[ dim ][ blockOffset + dim ] = 1.0;
     }
 
   // compute Jacobian with respect to the scale parameter
 
-  this->m_Jacobian[0][6] = ((cz*cy-sz*sx*sy)*px
+  jacobian[0][6] = ((cz*cy-sz*sx*sy)*px
                             + (-sz*cx)*py 
                             + (cz*sy+sz*sx*cy)*pz);
-  this->m_Jacobian[1][6] = ((sz*cy+cz*sx*sy)*px
+  jacobian[1][6] = ((sz*cy+cz*sx*sy)*px
                             + (cz*cx)*py 
                             + (sz*sy-cz*sx*cy)*pz);
-  this->m_Jacobian[2][6] = ((-cx*sy)*px
+  jacobian[2][6] = ((-cx*sy)*px
                             + sx*py
                             + (cx*cy)*pz);
-
-  return this->m_Jacobian; 
 }
 
 } // namespace
