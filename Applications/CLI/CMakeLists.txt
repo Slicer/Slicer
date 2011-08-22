@@ -58,13 +58,9 @@ set(cli_modules
   VotingBinaryHoleFillingImageFilter
   ZeroCrossingBasedEdgeDetectionImageFilter
   )
-  
+
 if("${ITK_VERSION_MAJOR}" LESS 4)
   list(APPEND cli_modules DicomToNrrdConverter)
-  option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
-  if(BUILD_BRAINSTOOLS)
-    list(APPEND cli_modules BRAINSTools)
-  endif()
 endif()
 
 if(Slicer_USE_MIDAS)
