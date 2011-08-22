@@ -19,6 +19,7 @@
 #endif
 
 #include "BSplineDeformableRegistrationCLP.h"
+#include "itkBSplineDeformableTransform.h"
 
 
 
