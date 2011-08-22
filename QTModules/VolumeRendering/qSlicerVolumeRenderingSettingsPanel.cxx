@@ -182,8 +182,6 @@ void qSlicerVolumeRenderingSettingsPanel::setGPUMemory(int gpuMemory)
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
 {
-  Q_D(qSlicerVolumeRenderingSettingsPanel);
-  
   vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize =
     this->gpuMemory();
 

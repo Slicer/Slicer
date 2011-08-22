@@ -490,7 +490,6 @@ void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onViewApplicationSettingsActionTriggered()
 {
-  Q_D(qSlicerMainWindow);
   qSlicerApplication::application()->settingsDialog()->exec();
 }
 
