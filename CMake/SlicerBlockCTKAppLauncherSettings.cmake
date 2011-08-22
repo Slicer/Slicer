@@ -151,7 +151,7 @@ endif()
 # ENVVARS
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
-  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin"
+  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin<PATHSEP>${QT_PLUGINS_DIR}"
   )
 
 if(Slicer_USE_PYTHONQT)

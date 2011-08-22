@@ -140,18 +140,17 @@ void qSlicerCoreApplicationPrivate::init()
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
 
-#if defined(Q_WS_MAC)
   if (q->isInstalled())
     {
     // this->setupQtConf();
 
-    // Override the Qt plugins search path - Used to locate the Qt imageformats plugins.
+    // Override the Qt plugins search path - Used to locate the Qt imageformats and database plugins.
     // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
+    // See Slicer/CMake/SlicerBlockInstallQtDatabaseDriversPlugins.cmake
     QStringList qtPluginsSearchPaths;
     qtPluginsSearchPaths << this->SlicerHome + Slicer_QtPlugins_DIR;
     QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
     }
-#endif
 
   // Instantiate ErrorLogModel
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);

@@ -7,6 +7,8 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
 endif()
 
+include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtDatabaseDriverPlugins.cmake)
+
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPythonQt.cmake)
