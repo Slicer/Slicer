@@ -64,7 +64,6 @@ include(Slicer3PluginsMacros)
 include(SlicerMacroExtractRepositoryInfo)
 include(SlicerMacroGetPlatformArchitectureBitness)
 include(SlicerMacroParseArguments)
-include(SlicerMacroBuildCLI)
 include(SlicerMacroEmptyExternalProject)
 include(SlicerFunctionInstallLibrary)
 
@@ -277,6 +276,11 @@ if(Slicer_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 endif()
+
+#-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#-----------------------------------------------------------------------------
+include(SlicerMacroBuildCLI)
 
 # Clear SlicerTargets.cmake
 file(WRITE "${Slicer_BINARY_DIR}/SlicerTargets.cmake"

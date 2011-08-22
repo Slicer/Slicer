@@ -68,12 +68,20 @@ endif()
 option(Slicer_BUILD_WITH_ITKv4 "Build Slicer against ITKv4" OFF)
 mark_as_advanced(Slicer_BUILD_WITH_ITKv4)
 
-set(ITK_EXTERNAL_NAME "ITKv3")
 if(Slicer_BUILD_WITH_ITKv4)
   set(ITK_EXTERNAL_NAME "ITKv4")
+else()
+  set(ITK_EXTERNAL_NAME "ITKv3")
 endif()
 
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
+
+
+option(Slicer_BUILD_BRAINSTOOLS "Build BRAINSTools for Slicer Integration" ON)
+mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
+if(Slicer_BUILD_BRAINSTOOLS)
+    list(APPEND Slicer_DEPENDENCIES SlicerBRAINSTools)
+endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
@@ -149,10 +157,6 @@ set(slicer_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
   list(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
-endif()
-
-if(Slicer_BUILD_CLI)
-  list(APPEND slicer_superbuild_extra_args -DBUILD_BRAINSTOOLS:BOOL=${Slicer_BUILD_BRAINSTOOLS})
 endif()
 
 if(Slicer_USE_PYTHONQT)
