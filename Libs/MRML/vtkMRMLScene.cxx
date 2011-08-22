@@ -2524,7 +2524,7 @@ void vtkMRMLScene::Undo()
     vtkMRMLNode* nodeToRemove = removeNodes[nn];
     // Maybe the node has been removed already by a side effect of a previous
     // node removal.
-    if (!this->nodePresent(nodeToRemove))
+    if (!this->IsNodePresent(nodeToRemove))
       {
       this->RemoveNode(nodeToRemove);
       }
