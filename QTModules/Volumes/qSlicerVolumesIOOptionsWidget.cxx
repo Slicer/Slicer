@@ -47,6 +47,8 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
 
   // Replace the horizontal layout with a flow layout
   ctkFlowLayout* flowLayout = new ctkFlowLayout;
+  flowLayout->setPreferredExpandingDirections(Qt::Horizontal);
+  flowLayout->setAlignItems(false);
   QLayout* oldLayout = this->layout();
   int margins[4];
   oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);
