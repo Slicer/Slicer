@@ -60,7 +60,6 @@ set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 include(CMakeDependentOption)
-include(CMakeParseArguments)
 include(Slicer3PluginsMacros)
 include(SlicerMacroExtractRepositoryInfo)
 include(SlicerMacroGetPlatformArchitectureBitness)
@@ -68,6 +67,12 @@ include(SlicerMacroParseArguments)
 include(SlicerMacroBuildCLI)
 include(SlicerMacroEmptyExternalProject)
 include(SlicerFunctionInstallLibrary)
+
+if(CMAKE_PATCH_VERSION LESS 3)
+  include(Pre283CMakeParseArguments)
+else()
+  include(CMakeParseArguments)
+endif()
 
 #-----------------------------------------------------------------------------
 # Platform checks
