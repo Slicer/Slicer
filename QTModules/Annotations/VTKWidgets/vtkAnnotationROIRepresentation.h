@@ -230,7 +230,7 @@ protected:
   vtkSphereSource   **HandleGeometry;
   virtual void PositionHandles();
   virtual int HighlightHandle(vtkProp *prop); //returns cell id
-  void HighlightFace(int cellId);
+  virtual void HighlightFace(int cellId);
   void HighlightOutline(int highlight);
   void ComputeNormals();
   virtual void SizeHandles();

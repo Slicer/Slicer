@@ -107,6 +107,11 @@ public:
   virtual void SizeHandles();
 
   virtual int HighlightHandle(vtkProp *prop);
+  virtual void HighlightFace(int cellId);
+
+  vtkSetMacro(HandleSizeInPixels,int);
+  vtkGetMacro(HandleSizeInPixels,int);
+
 
   void PrintIntersections(ostream& os);
 
@@ -134,6 +139,8 @@ protected:
 
   vtkProperty2D *HandleProperties2D[NUMBER_HANDLES];
   vtkProperty2D *SelectedHandleProperty2D;
+  vtkProperty2D *SelectedFaceProperty2D;
+  vtkProperty2D *DefaultFaceProperty2D;
 
   vtkPropPicker *HandlePicker2D;
   vtkPropPicker *LastPicker2D;
@@ -143,8 +150,12 @@ protected:
 
   void CreateFaceIntersections();
 
+  double ComputeHandleRadiusInWorldCoordinates(double radInPixels);
+
   virtual void CreateDefaultProperties();
   virtual void PositionHandles();
+
+  double  HandleSizeInPixels;
 
 private:
   vtkAnnotationROIRepresentation2D(const vtkAnnotationROIRepresentation2D&);  //Not implemented

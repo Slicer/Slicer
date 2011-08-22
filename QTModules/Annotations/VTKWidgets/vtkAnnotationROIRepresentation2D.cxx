@@ -58,6 +58,8 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->LastEventPosition2D[1]=0;
   this->LastEventPosition2D[2]=0;
   this->LastEventPosition2D[3]=1;
+
+  this->HandleSizeInPixels = 4;
   
   // Set up the initial properties
   this->CreateDefaultProperties();
@@ -147,7 +149,8 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
     this->HandleProperties2D[i]=NULL;
     }
   this->SelectedHandleProperty2D->Delete();
-
+  this->SelectedFaceProperty2D->Delete();
+  this->SelectedFaceProperty2D->Delete();
 }
 
 //----------------------------------------------------------------------
@@ -205,13 +208,13 @@ void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
   actors->RemoveAllItems();
   //actors->AddItem(this->HexFace2D);
   int i;
-  for (i=0; i<7; i++)
-    {
-    actors->AddItem(this->Handle2D[i]);
-    }
   for (i=0; i<6; i++)
     {
     actors->AddItem(this->IntersectionActors[i]);
+    }
+  for (i=0; i<7; i++)
+    {
+    actors->AddItem(this->Handle2D[i]);
     }
 }
 
@@ -253,13 +256,13 @@ int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
   //count += this->HexFace2D->RenderOpaqueGeometry(v);
   // render the handles
   int j;
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderOverlay(v);
-    }
   for (j=0; j<6; j++)
     {
     count += this->IntersectionActors[j]->RenderOverlay(v);
+    }
+  for (j=0; j<7; j++)
+    {
+    count += this->Handle2D[j]->RenderOverlay(v);
     }
 
   return count;
@@ -274,13 +277,13 @@ int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
   //count += this->HexFace2D->RenderOpaqueGeometry(v);
   // render the handles
   int j;
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderOpaqueGeometry(v);
-    }
   for (j=0; j<6; j++)
     {
     count += this->IntersectionActors[j]->RenderOpaqueGeometry(v);
+    }
+  for (j=0; j<7; j++)
+    {
+    count += this->Handle2D[j]->RenderOpaqueGeometry(v);
     }
 
   return count;
@@ -295,13 +298,13 @@ int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkView
   //count += this->HexFace2D->RenderTranslucentPolygonalGeometry(v);
 
   int j;
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderTranslucentPolygonalGeometry(v);
-    }
   for (j=0; j<6; j++)
     {
     count += this->IntersectionActors[j]->RenderTranslucentPolygonalGeometry(v);
+    }
+  for (j=0; j<7; j++)
+    {
+    count += this->Handle2D[j]->RenderTranslucentPolygonalGeometry(v);
     }
 
   return count;
@@ -346,6 +349,12 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
 
   this->SelectedHandleProperty2D = vtkProperty2D::New();
   this->SelectedHandleProperty2D->SetColor(1,0,0);
+
+  this->SelectedFaceProperty2D = vtkProperty2D::New();
+  this->SelectedFaceProperty2D->SetColor(1,1,0);
+  this->SelectedFaceProperty2D->SetOpacity(0.25);
+
+  this->DefaultFaceProperty2D = vtkProperty2D::New();
 
 }
 
@@ -416,6 +425,19 @@ int vtkAnnotationROIRepresentation2D::HighlightHandle(vtkProp *prop)
   return -1;
 }
 
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::HighlightFace(int cellId)
+{
+  for (int i=0; i<6; i++)
+    {
+    this->IntersectionActors[i]->SetProperty(this->DefaultFaceProperty2D);
+    }
+
+  if ( cellId >= 0 )
+    {
+    this->IntersectionActors[cellId]->SetProperty(this->SelectedFaceProperty2D);
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
@@ -444,6 +466,8 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   //double *p7 = pts + 3*7;
   double x[3];
 
+  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
+
   int count=0;
   this->Points->GetData()->Modified();
   for (i=0; i<6; i++)
@@ -460,7 +484,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
       this->IntersectionCutters[i]->GetOutput()->GetPoint(1, pi1);
       VTK_AVERAGE(pi0,pi1,x);
       this->Points->SetPoint(8+i, x);
-      this->HandleGeometry[i]->SetRadius(2.5);
+      this->HandleGeometry[i]->SetRadius(radius);
       this->Handle2D[i]->SetVisibility(1);
       count++;
       }
@@ -475,7 +499,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   this->Points->SetPoint(14, x);
   if (count)
     {
-    this->HandleGeometry[6]->SetRadius(2.5);
+    this->HandleGeometry[6]->SetRadius(radius);
     this->Handle2D[6]->SetVisibility(1);
     }
   else
@@ -648,10 +672,45 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
 }
 
 //----------------------------------------------------------------------------
+double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(double radInPixels)
+{
+  /*
+  double *center 
+    = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
+
+  double radius =
+      this->vtkWidgetRepresentation::SizeHandlesInPixels(1.5,center);
+  return radius;
+  */
+
+ 
+  // Get transform from 2D image to world
+  vtkSmartPointer<vtkMatrix4x4> XYtoWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
+  XYtoWorldMatrix->Invert();
+  double xyz0[4] = {0,0,0,1};
+  double xyz1[4] = {radInPixels,radInPixels,0,1};
+  double wxyz0[4] = {0,0,0,1};
+  double wxyz1[4] = {0,0,0,1};
+
+  XYtoWorldMatrix->MultiplyPoint(xyz0, wxyz0);
+  XYtoWorldMatrix->MultiplyPoint(xyz1, wxyz1);
+
+  double radius = 0;
+  for (int i=0; i<3; i++)
+    {
+    radius += (wxyz1[i] - wxyz0[i])*(wxyz1[i] - wxyz0[i]);
+    }
+  return sqrt(radius/2);
+}
+
+//----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::SizeHandles()
 {
+  //double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
   for(int i=0; i<7; i++)
     {
+    //this->HandleGeometry[i]->SetRadius(radius);
     this->HandleGeometry[i]->Modified();
     }
 }
