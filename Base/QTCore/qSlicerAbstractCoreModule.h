@@ -64,7 +64,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QString contributor READ contributor)
   Q_PROPERTY(int index READ index)
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
-  Q_PROPERTY(bool hidden READ isHidden WRITE setHidden)
+  Q_PROPERTY(bool hidden READ isHidden)
   Q_PROPERTY(QString path READ path)
 
 public:
@@ -164,11 +164,6 @@ public slots:
   ///
   /// Enable/Disable the module
   virtual void setEnabled(bool enabled);
-
-  ///
-  /// Enable/Disable hide state of the module
-  /// Needs to be hidden before the module menu is created.
-  virtual void setHidden(bool hidden);
 
   ///
   /// Set the current MRML scene to the module, it is propagated to the logic

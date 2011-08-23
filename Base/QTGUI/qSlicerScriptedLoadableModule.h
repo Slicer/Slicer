@@ -41,6 +41,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
   Q_PROPERTY(QString acknowledgementText READ acknowledgementText WRITE setAcknowledgementText)
   Q_PROPERTY(QVariantMap extensions READ extensions WRITE setExtensions)
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
+  Q_PROPERTY(bool hidden READ isHidden WRITE setHidden)
 public:
 
   typedef qSlicerLoadableModule Superclass;
@@ -72,6 +73,12 @@ public:
   
   virtual QIcon icon()const;
   void setIcon(const QIcon& newIcon);
+
+  ///
+  /// Enable/Disable hide state of the module
+  /// Needs to be hidden before the module menu is created.
+  virtual bool isHidden()const;
+  void setHidden(bool hidden);
 
 protected:
 

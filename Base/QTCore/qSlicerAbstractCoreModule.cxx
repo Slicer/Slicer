@@ -186,8 +186,10 @@ CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isHidden, Hidden);
-CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setHidden, Hidden);
+bool qSlicerAbstractCoreModule::isHidden()const
+{
+  return false;
+}
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, QString, path, Path);

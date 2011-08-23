@@ -48,6 +48,7 @@ public:
   QString HelpText;
   QString AcknowledgementText;
   QIcon   Icon;
+  bool   Hidden;
   QVariantMap   Extensions;
   
   PyObject * PythonSelf;
@@ -61,6 +62,7 @@ public:
 qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 {
   this->PythonSelf = 0;
+  this->Hidden = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -243,3 +245,7 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, QVariantMap, extensions, Extensions)
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QIcon&, setIcon, Icon)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QIcon, icon, Icon)
+
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, bool, setHidden, Hidden)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, bool, isHidden, Hidden)
