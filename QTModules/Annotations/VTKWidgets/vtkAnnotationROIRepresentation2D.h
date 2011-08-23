@@ -106,6 +106,9 @@ public:
 
   virtual void SizeHandles();
 
+  vtkGetMacro(HandlesVisibility, int);
+  vtkSetMacro(HandlesVisibility, int);
+
   virtual int HighlightHandle(vtkProp *prop);
   virtual void HighlightFace(int cellId);
 
@@ -156,6 +159,7 @@ protected:
   virtual void PositionHandles();
 
   double  HandleSizeInPixels;
+  int HandlesVisibility;
 
 private:
   vtkAnnotationROIRepresentation2D(const vtkAnnotationROIRepresentation2D&);  //Not implemented

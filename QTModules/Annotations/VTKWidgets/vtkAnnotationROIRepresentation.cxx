@@ -1264,7 +1264,7 @@ void vtkAnnotationROIRepresentation::SizeHandles()
       this->vtkWidgetRepresentation::SizeHandlesInPixels(1.5,center);
   for(int i=0; i<7; i++)
     {
-    this->HandleGeometry[i]->SetRadius(radius);
+    this->HandleGeometry[i]->SetRadius(this->Handle[i]->GetVisibility()*radius);
     }
 }
 

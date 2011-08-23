@@ -377,6 +377,15 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
   b[4] = bounds[2];
   b[5] = bounds[5];
 
+  if (roiNode->GetLocked())
+    {
+    rep->HandlesOff();
+    }
+  else
+    {
+    rep->HandlesOn();
+    }
+
   rep->PlaceWidget(b);
 
   this->SetParentTransformToWidget(roiNode, roiWidget);
@@ -389,6 +398,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     {
     widget->EnabledOff();
     }
+
 
   // re-render the widget
   rep->NeedToRenderOn();
@@ -530,9 +540,12 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
+  rep->SetHandlesVisibility(roiNode->GetLocked()==0 ? 1:0);
+
   rep->PlaceWidget(b);
 
   // update actor's visbility from mrml
+
   vtkPropCollection *actors = vtkPropCollection::New();
   rep->GetActors2D(actors);
   for (int i=0; i<actors->GetNumberOfItems(); i++)

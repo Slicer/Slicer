@@ -60,6 +60,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->LastEventPosition2D[3]=1;
 
   this->HandleSizeInPixels = 4;
+  this->HandlesVisibility = 1;
   
   // Set up the initial properties
   this->CreateDefaultProperties();
@@ -484,8 +485,8 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
       this->IntersectionCutters[i]->GetOutput()->GetPoint(1, pi1);
       VTK_AVERAGE(pi0,pi1,x);
       this->Points->SetPoint(8+i, x);
-      this->HandleGeometry[i]->SetRadius(radius);
-      this->Handle2D[i]->SetVisibility(1);
+      this->HandleGeometry[i]->SetRadius(this->HandlesVisibility*radius);
+      this->Handle2D[i]->SetVisibility(this->HandlesVisibility);
       count++;
       }
     else
@@ -499,8 +500,8 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   this->Points->SetPoint(14, x);
   if (count)
     {
-    this->HandleGeometry[6]->SetRadius(radius);
-    this->Handle2D[6]->SetVisibility(1);
+    this->HandleGeometry[6]->SetRadius(this->HandlesVisibility*radius);
+    this->Handle2D[6]->SetVisibility(this->HandlesVisibility);
     }
   else
     {
@@ -519,6 +520,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
 }
 
 #undef VTK_AVERAGE
+
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
