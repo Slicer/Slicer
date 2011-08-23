@@ -109,7 +109,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 
   this->Bimodal = NULL;
   this->Accumulate = NULL;
-  this->CalculatingAutoLevel = false;
+  this->IsInCalculateAutoLevels = false;
   
   vtkEventBroker::GetInstance()->AddObservation(
     this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand  , 10000.);
@@ -385,13 +385,13 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   if (vtkImageData::SafeDownCast(caller) == this->GetScalarImageData() &&
       event == vtkCommand::ModifiedEvent)
     {
-    this->CalculateAutoLevel();
+    this->CalculateAutoLevels();
     }
   if (caller == this && event == vtkCommand::ModifiedEvent &&
-      !this->CalculatingAutoLevel)
+      !this->IsInCalculateAutoLevels)
     {
     this->SetDisableModifiedEvent(1);
-    this->CalculateAutoLevel();
+    this->CalculateAutoLevels();
     // TODO: Reset the pending event counter.
     this->SetDisableModifiedEvent(0);
     }
@@ -656,7 +656,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevel()
+void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
 {
   if (!this->GetAutoWindowLevel() && !this->GetAutoThreshold())
     {
@@ -744,7 +744,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevel()
     upper = this->Bimodal->GetMax();
     }
 
-  this->CalculatingAutoLevel = true;
+  this->IsInCalculateAutoLevels = true;
   int disabledModify = this->StartModify();
   if (this->GetAutoWindowLevel())
     {
@@ -758,5 +758,5 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevel()
                 << " window: " << window << " level: " << level
                 << " lower: " << lower << " upper: " << upper);
   this->EndModify(disabledModify);
-  this->CalculatingAutoLevel = false;
+  this->IsInCalculateAutoLevels = false;
 }

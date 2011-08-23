@@ -164,6 +164,7 @@ public:
   void SetNthDisplayNodeID(int n, const char* id);
   void AddDisplayNodeID(const char* id);
   void AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode);
+  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
 
   virtual void SetPolyData(vtkPolyData* polyData);
 

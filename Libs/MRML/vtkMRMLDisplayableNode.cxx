@@ -339,7 +339,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
     vtkMRMLDisplayNode *pnode = vtkMRMLDisplayNode::New();
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     this->DisplayNodes.push_back(pnode);
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
+    this->OnDisplayNodeAdded(pnode);
     //pnode->Delete();
     /*
     if (this->IsA("vtkMRMLVolumeNode"))
@@ -355,6 +355,13 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
     */
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode)
+{
+  this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
 {

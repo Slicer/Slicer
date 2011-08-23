@@ -640,15 +640,18 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
     vtkEventBroker::GetInstance()->AddObservation(
       imageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
-
-// Modified() is already fired by this->SetImageData(imageData);
-//  if ( this->ImageData != oldImageData )
-//    {
-//    this->Modified();
-//    }
 }
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode)
+{
+  vtkMRMLVolumeDisplayNode* vNode = vtkMRMLVolumeDisplayNode::SafeDownCast(dNode);
+  if (vNode)
+    {
+    vNode->SetInputImageData(this->ImageData);
+    }
+  this->Superclass::OnDisplayNodeAdded(dNode);
+}
 
 //-----------------------------------------------------------
 void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
@@ -672,26 +675,9 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->ModifiedSinceReadOn();
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
-    // update from mrml
-    this->UpdateFromMRML();
     return;
     }
 
-  // did the one ofthe display nodes change?
-  for (int i=0; i<this->GetNumberOfDisplayNodes(); i++)
-    {
-    vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
-    if (dnode != NULL && !dnode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") &&
-        dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
-        event ==  vtkCommand::ModifiedEvent)
-      {
-      vtkDebugMacro("ProcessMRMLEvents: got display node modified event on the " << i << "th display node");
-      // TODO still useful ?
-      this->UpdateFromMRML();
-      // once is enough
-      return;
-      }
-    }
   return;
 }
 
@@ -699,13 +685,6 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetVolumeDisplayNode()
 {
   return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-}
-
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::UpdateFromMRML()
-{
-  vtkWarningMacro("UpdateFromMRML: subclass hasn't defined this yet...");
 }
 
 //---------------------------------------------------------------------------

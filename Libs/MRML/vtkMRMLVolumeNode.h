@@ -158,18 +158,13 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
-  /// 
-  /// Subclasses can define actions to take when the mrml scene passes an event
-  /// that the image data has changed, usually call CalculateAutoLevels
-  virtual void UpdateFromMRML();
-
-
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
+  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode);
   virtual void SetImageData(vtkImageData* img);
 
   /// these are unit length direction cosines

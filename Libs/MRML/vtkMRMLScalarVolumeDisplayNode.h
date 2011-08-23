@@ -183,7 +183,7 @@ protected:
 
   virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
   void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
-  void CalculateAutoLevel();
+  void CalculateAutoLevels();
 
   ///
   /// Return the image data with scalar type, it can be in the middle of the
@@ -234,7 +234,7 @@ protected:
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
   vtkImageAccumulateDiscrete *Accumulate;
   vtkImageBimodalAnalysis *Bimodal;
-  bool CalculatingAutoLevel;
+  bool IsInCalculateAutoLevels;
 };
 
 #endif
