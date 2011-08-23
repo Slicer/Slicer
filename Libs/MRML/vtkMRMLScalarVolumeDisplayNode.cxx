@@ -33,6 +33,7 @@ Version:   $Revision: 1.2 $
 #include <vtkLookupTable.h>
 
 // STD includes
+#include <cassert>
 
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
