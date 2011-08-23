@@ -632,10 +632,6 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     // jump out
     return;
     }
-  if (this->Is2DDisplayableManager())
-    {
-    return;
-    }
 
   // place the seed where the user clicked
   this->PlaceSeed(x,y);
