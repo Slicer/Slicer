@@ -22,13 +22,15 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 // VTK includes
-class vtkImageData;
+class vtkImageAccumulateDiscrete;
+class vtkImageAppendComponents;
+class vtkImageBimodalAnalysis;
 class vtkImageCast;
+class vtkImageData;
 class vtkImageLogic;
 class vtkImageMapToColors;
-class vtkImageThreshold;
-class vtkImageAppendComponents;
 class vtkImageMapToWindowLevelColors;
+class vtkImageThreshold;
 
 // STD includes
 #include <vector>
@@ -172,7 +174,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// If no input is set, then it searches the scene to find the associated
   /// Volume node and returns its image data scalar range.
   virtual void GetDisplayScalarRange(double range[2]);
-  
+
 protected:
   vtkMRMLScalarVolumeDisplayNode();
   virtual ~vtkMRMLScalarVolumeDisplayNode();
@@ -181,6 +183,14 @@ protected:
 
   virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
   void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
+  void CalculateAutoLevel();
+
+  ///
+  /// Return the image data with scalar type, it can be in the middle of the
+  /// pipeline, it's typically the input of the threshold/windowlevel filters
+  virtual vtkImageData* GetScalarImageData();
+  
+  virtual void SetInputToImageDataPipeline(vtkImageData* input);
 
   /// 
   /// To hold preset values for window and level, so can restore this display
@@ -220,6 +230,11 @@ protected:
   std::vector<WindowLevelPreset> WindowLevelPresets;
   //ETX
 
+  /// 
+  /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
+  vtkImageAccumulateDiscrete *Accumulate;
+  vtkImageBimodalAnalysis *Bimodal;
+  bool CalculatingAutoLevel;
 };
 
 #endif

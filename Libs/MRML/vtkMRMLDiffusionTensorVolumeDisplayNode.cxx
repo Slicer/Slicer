@@ -324,7 +324,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
+void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
   this->DTIMathematics->SetInput(imageData);
   this->DTIMathematicsAlpha->SetInput(0, imageData);
@@ -341,6 +341,12 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
+}
+
+//---------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetScalarImageData()
+{
+  return vtkImageData::SafeDownCast(this->DTIMathematics->GetOutput());
 }
 
 //---------------------------------------------------------------------------

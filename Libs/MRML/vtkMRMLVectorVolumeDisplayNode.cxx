@@ -91,7 +91,7 @@ vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
+void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
   this->ShiftScale->SetInput( imageData );
   this->RGBToHSI->SetInput( imageData );
@@ -121,6 +121,12 @@ vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
+}
+
+//---------------------------------------------------------------------------
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetScalarImageData()
+{
+  return vtkImageData::SafeDownCast(this->ExtractIntensity->GetOutput());
 }
 
 //----------------------------------------------------------------------------

@@ -144,10 +144,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
     };
 
   ///
-  /// Set the input of the pipeline
-  virtual void SetInputImageData(vtkImageData *imageData);
-
-  ///
   /// Get the input of the pipeline
   virtual vtkImageData* GetInputImageData();
 
@@ -184,6 +180,12 @@ protected:
   ~vtkMRMLDiffusionTensorVolumeDisplayNode();
   vtkMRMLDiffusionTensorVolumeDisplayNode(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
+
+  ///
+  /// Set the input of the pipeline
+  virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+
+  virtual vtkImageData* GetScalarImageData();
 
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 

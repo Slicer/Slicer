@@ -92,15 +92,6 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
   void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
 
   /// 
-  /// response to update event, call calcualte auto levels
-  virtual void UpdateFromMRML();
-  
-  /// 
-  /// Extract the component defined by the diffusion tensor dispaly properties
-  /// node, and pass it on to CalculateScalarAutoLevels.
-  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
- 
-  /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

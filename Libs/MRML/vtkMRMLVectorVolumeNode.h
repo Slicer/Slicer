@@ -48,10 +48,6 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
   virtual const char* GetNodeTagName() {return "VectorVolume";};
 
   /// 
-  /// Extract a vector component and pass it on to CalculateScalarAutoLevels.
-  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
-
-  /// 
   /// Associated display MRML node
   virtual vtkMRMLVectorVolumeDisplayNode* GetVectorVolumeDisplayNode();
 

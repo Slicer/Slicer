@@ -69,7 +69,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   virtual vtkImageData* GetImageData();
 
   ///
-  /// Set the pipeline input. To be reimplemented in subclasses.
+  /// Set the pipeline input. Internally calls ConnectInputImageDataToPipeline to be
+  /// reimplemented.
   virtual void SetInputImageData(vtkImageData *imageData);
 
   ///
@@ -103,6 +104,8 @@ protected:
   ~vtkMRMLVolumeDisplayNode();
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
+  
+  virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 };
 
 #endif

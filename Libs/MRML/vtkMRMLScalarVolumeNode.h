@@ -60,10 +60,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   virtual const char* GetNodeTagName() {return "Volume";};
 
   /// 
-  /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
-  /// 
   /// Indicates if this volume is a label map, which is the output of 
   /// segmentation that labels each voxel according to its tissue type.  
   /// The alternative is a gray-level or color image.
@@ -80,23 +76,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   /// Associated display MRML node
   virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode();
 
-  virtual void UpdateFromMRML();
-  
-  /// 
-  /// Calculate good default viewing parameters, uses input image data if not
-  /// null, otherwise this node's image data
-  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL)
-    {
-    this->CalculateScalarAutoLevels(refNode, refData);
-    };
-
-  virtual void CalculateScalarAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
-                                         vtkImageData *imageData = NULL);
-  /// Description:
-  /// special case for statistics volumes
-  void CalculateStatisticsAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
-                                      vtkImageData *imageData = NULL);
-  
   /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();

@@ -86,67 +86,6 @@ void vtkMRMLVectorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
-
- 
-//----------------------------------------------------------------------------
-void vtkMRMLVectorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
-{
-  if (!refNode && !this->GetDisplayNode())
-    {
-    vtkDebugMacro("CalculateAutoLevels: input display node is null, and cannot get local display node");
-    return;
-    }
-
-  vtkMRMLVectorVolumeDisplayNode *displayNode;
-  if (refNode == NULL)
-    {
-    displayNode = this->GetVectorVolumeDisplayNode();
-    }
-  else
-    {
-    displayNode = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(refNode);
-    }
-
-  if (displayNode == NULL)
-    {
-    vtkWarningMacro("CalculateAutoLevels: unable to get a vector volume display node.");
-    return;
-    }
-
-  if (!displayNode->GetAutoWindowLevel())
-    {
-    vtkDebugMacro("CalculateAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
-    return;
-    }
-    
-  vtkImageData *imageDataScalar;
-  if (refData == NULL)
-    {
-    imageDataScalar = this->GetImageData();
-    }
-  else
-    {
-    imageDataScalar = refData;
-    }
-
-  if ( !imageDataScalar )
-    {
-    vtkDebugMacro("CalculateAutoLevels: image data is null");
-    return;
-    }
-
-  if (displayNode != NULL ) 
-    {
-    imageDataScalar = displayNode->GetExtractIntensity()->GetOutput();
-    }
-
-  if (imageDataScalar != NULL)
-    {
-    // pass it up to the superclass
-    this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
-    }
-}
-
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode* vtkMRMLVectorVolumeNode::GetVectorVolumeDisplayNode()
 {

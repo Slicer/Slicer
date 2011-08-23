@@ -56,11 +56,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionWeightedVolumeDisplay";};
 
-
-  /// 
-  /// Set the input of the pipeline
-  virtual void SetInputImageData(vtkImageData *imageData);
-
   /// 
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
@@ -85,6 +80,12 @@ protected:
   ~vtkMRMLDiffusionWeightedVolumeDisplayNode();
   vtkMRMLDiffusionWeightedVolumeDisplayNode(const vtkMRMLDiffusionWeightedVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionWeightedVolumeDisplayNode&);
+
+  /// 
+  /// Set the input of the pipeline
+  virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+
+  virtual vtkImageData* GetScalarImageData();
 
   int DiffusionComponent;
 

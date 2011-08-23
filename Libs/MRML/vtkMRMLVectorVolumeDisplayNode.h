@@ -97,10 +97,6 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
                                    void * /*callData*/ );
 
   ///
-  /// Set the input of the pipeline
-  virtual void SetInputImageData(vtkImageData *imageData);
-
-  ///
   /// Get the input of the pipeline
   virtual vtkImageData* GetInputImageData();
 
@@ -138,6 +134,12 @@ protected:
   ~vtkMRMLVectorVolumeDisplayNode();
   vtkMRMLVectorVolumeDisplayNode(const vtkMRMLVectorVolumeDisplayNode&);
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
+
+  vtkImageData* GetScalarImageData();
+
+  ///
+  /// Set the input of the pipeline
+  virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 
   int ScalarMode;
   int GlyphMode;

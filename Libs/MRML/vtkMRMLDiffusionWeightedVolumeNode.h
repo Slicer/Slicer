@@ -94,14 +94,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   virtual vtkMRMLDiffusionWeightedVolumeDisplayNode* GetDiffusionWeightedVolumeDisplayNode();
 
   /// 
-  /// Call CalculateAutoLevels
-  virtual void UpdateFromMRML();
-  
-  /// 
-  /// Extract the diffusion component and pass it to CalculateScalarAutoLevel
-  virtual void CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
-
-  /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

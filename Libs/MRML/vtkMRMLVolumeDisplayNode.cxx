@@ -102,7 +102,14 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetImageData()
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode
-::SetInputImageData(vtkImageData *vtkNotUsed(imageData))
+::SetInputImageData(vtkImageData *imageData)
+{
+  this->SetInputToImageDataPipeline(imageData);
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *vtkNotUsed(imageData))
 {
 }
 

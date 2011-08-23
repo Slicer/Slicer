@@ -623,17 +623,29 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
       this->ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
+  for (int i=0; i<this->GetNumberOfDisplayNodes(); i++)
+    {
+    vtkMRMLVolumeDisplayNode *dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(
+      this->GetNthDisplayNode(i));
+    if (dnode)
+      {
+      dnode->SetInputImageData(imageData);
+      }
+    }
+
   this->SetImageData(imageData);
+
   if (imageData != NULL)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       imageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
-  if ( this->ImageData != oldImageData )
-    {
-    this->Modified();
-    }
+// Modified() is already fired by this->SetImageData(imageData);
+//  if ( this->ImageData != oldImageData )
+//    {
+//    this->Modified();
+//    }
 }
 
 
@@ -660,7 +672,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->ModifiedSinceReadOn();
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
-    // update from mrml / calc auto levels
+    // update from mrml
     this->UpdateFromMRML();
     return;
     }
@@ -669,10 +681,12 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   for (int i=0; i<this->GetNumberOfDisplayNodes(); i++)
     {
     vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
-    if (dnode != NULL && !dnode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
+    if (dnode != NULL && !dnode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") &&
+        dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
         event ==  vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("ProcessMRMLEvents: got display node modified event on the " << i << "th display node");
+      // TODO still useful ?
       this->UpdateFromMRML();
       // once is enough
       return;
