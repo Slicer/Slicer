@@ -76,9 +76,6 @@ endif()
 
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
 
-
-option(Slicer_BUILD_BRAINSTOOLS "Build BRAINSTools for Slicer Integration" ON)
-mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
 if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES SlicerBRAINSTools)
 endif()
