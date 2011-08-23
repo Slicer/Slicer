@@ -33,7 +33,6 @@ macro(slicerMacroBuildCLI)
     set(PASS_VERBOSE VERBOSE)
   endif()
 
-  set(cli_xml_file ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SLICER_NAME}.xml)
   SEMMacroBuildCLI(
     ${PASS_EXECUTABLE_ONLY}
     ${PASS_NO_INSTALL}
@@ -44,7 +43,6 @@ macro(slicerMacroBuildCLI)
     INCLUDE_DIRECTORIES             "${MY_SLICER_INCLUDE_DIRECTORIES};${Slicer_BaseCLI_INCLUDE_DIRS}"
     NAME                            ${MY_SLICER_NAME}
     LOGO_HEADER                     ${MY_SLICER_LOGO_HEADER}
-    CLI_XML_FILE                    ${cli_xml_file}
     CLI_SHARED_LIBRARY_WRAPPER_CXX  ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX}
     RUNTIME_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_PLUGINS_LIB_DIR}"
