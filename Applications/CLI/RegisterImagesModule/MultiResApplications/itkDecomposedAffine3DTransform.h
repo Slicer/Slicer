@@ -129,8 +129,7 @@ protected:
   DecomposedAffine3DTransform();
   DecomposedAffine3DTransform(const MatrixType &matrix,
                              const OutputVectorType &offset);
-  DecomposedAffine3DTransform(unsigned int outputDims,
-                             unsigned int paramDims);
+  DecomposedAffine3DTransform(unsigned int paramDims);
   ~DecomposedAffine3DTransform(){}
 
   void PrintSelf(std::ostream &os, Indent indent) const;

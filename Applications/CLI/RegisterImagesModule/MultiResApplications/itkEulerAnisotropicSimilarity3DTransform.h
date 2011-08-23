@@ -123,8 +123,7 @@ protected:
   EulerAnisotropicSimilarity3DTransform();
   EulerAnisotropicSimilarity3DTransform(const MatrixType &matrix,
                              const OutputVectorType &offset);
-  EulerAnisotropicSimilarity3DTransform(unsigned int outputDims,
-                             unsigned int paramDims);
+  EulerAnisotropicSimilarity3DTransform(unsigned int paramDims);
   ~EulerAnisotropicSimilarity3DTransform(){}
 
   void PrintSelf(std::ostream &os, Indent indent) const;

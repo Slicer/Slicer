@@ -42,7 +42,12 @@ WarpTransform3D< FieldData >
 
 template< class FieldData >
 WarpTransform3D< FieldData >
-::WarpTransform3D():Superclass( 3 , 1 )
+::WarpTransform3D():
+#if ITK_VERSION_MAJOR >=4
+  Superclass( 1 )
+#else
+  Superclass( 3, 1 )
+#endif
 {
   m_DeformationField = 0 ;
 //  m_OutputSpacing.Fill( 1 ) ;

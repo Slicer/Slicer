@@ -27,19 +27,25 @@ namespace itk
 template <class TScalarType>
 DecomposedAffine3DTransform<TScalarType>
 ::DecomposedAffine3DTransform() :
+#if ITK_VERSION_MAJOR >=4
+  Superclass(ParametersDimension)
+#else
   Superclass(OutputSpaceDimension, ParametersDimension)
+#endif
 {
   m_Scale.Fill( 1.0 );
   m_Skew.Fill( 0.0 );
 }
 
-
 // Constructor with arguments
 template<class TScalarType>
 DecomposedAffine3DTransform<TScalarType>::
-DecomposedAffine3DTransform( unsigned int spaceDimension, 
-                            unsigned int parametersDimension):
-  Superclass(spaceDimension, parametersDimension)
+DecomposedAffine3DTransform( unsigned int parametersDimension):
+#if ITK_VERSION_MAJOR >=4
+  Superclass(parametersDimension)
+#else
+  Superclass(OutputSpaceDimension, parametersDimension)
+#endif
 {
   m_Scale.Fill( 1.0 );
   m_Skew.Fill( 0.0 );

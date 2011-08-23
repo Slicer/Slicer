@@ -115,11 +115,11 @@ public:
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
-  FixedRotationSimilarity3DTransform(unsigned int outputSpaceDim,
-                         unsigned int paramDim);
   FixedRotationSimilarity3DTransform(const MatrixType & matrix,
                          const OutputVectorType & offset);
+  FixedRotationSimilarity3DTransform(unsigned int paramDim);
   FixedRotationSimilarity3DTransform();
+
   virtual ~FixedRotationSimilarity3DTransform(){};
 
   virtual void PrintSelf(std::ostream &os, Indent indent) const;

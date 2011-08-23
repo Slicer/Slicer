@@ -123,8 +123,7 @@ protected:
   EulerSimilarity3DTransform();
   EulerSimilarity3DTransform(const MatrixType &matrix,
                              const OutputVectorType &offset);
-  EulerSimilarity3DTransform(unsigned int outputDims,
-                             unsigned int paramDims);
+  EulerSimilarity3DTransform(unsigned int paramDims);
   virtual ~EulerSimilarity3DTransform(){}
 
   virtual void PrintSelf(std::ostream &os, Indent indent) const;
