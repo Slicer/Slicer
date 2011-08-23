@@ -7,7 +7,8 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
 endif()
 
-include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtDatabaseDriverPlugins.cmake)
+set(SlicerBlockInstallQtPlugins_subdirectories imageformats sqldrivers)
+include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
@@ -21,7 +22,6 @@ else()
   if(Slicer_USE_PYTHONQT)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
   endif()
-  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtImageFormatsPlugins.cmake)
 
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
