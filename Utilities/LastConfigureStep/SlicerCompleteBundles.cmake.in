@@ -134,6 +134,7 @@ function(fixup_bundle_with_plugins app)
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.so"
     "${app_dir}/Contents/@Slicer_LIB_DIR@/*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"
+    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/sqldrivers/*${suffix}"
     )
 
   set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
