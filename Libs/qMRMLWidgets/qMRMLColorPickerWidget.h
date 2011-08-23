@@ -21,7 +21,11 @@
 #ifndef __qMRMLColorPickerWidget_h
 #define __qMRMLColorPickerWidget_h
 
+//QT include
+//#include <QModelIndex>
+
 // qMRML includes
+#include "qMRMLColorModel.h"
 #include "qMRMLWidget.h"
 #include "qMRMLWidgetsExport.h"
 
@@ -44,6 +48,9 @@ public:
   
   vtkMRMLColorNode* currentColorNode()const;
   virtual void setMRMLScene(vtkMRMLScene* scene);
+  virtual bool eventFilter(QObject* target, QEvent* event);
+  void colorSelectedBySearchBox(QModelIndex index);
+
 public slots:
   void setCurrentColorNode(vtkMRMLNode* node);
   void setCurrentColorNodeToDefault();
@@ -61,6 +68,8 @@ signals:
 protected slots:
   void onNodeAdded(vtkObject*, vtkObject*);
   void onCurrentColorNodeChanged(vtkMRMLNode* node);
+  void onTextChanged(const QString& colorText);
+
 protected:
   QScopedPointer<qMRMLColorPickerWidgetPrivate> d_ptr;
 

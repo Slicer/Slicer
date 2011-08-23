@@ -19,6 +19,10 @@
 ==============================================================================*/
 
 // QT includes
+#include <QDebug>
+#include <QDialog>
+#include <QKeyEvent>
+#include <QStringListModel>
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
@@ -59,10 +63,18 @@ void qMRMLColorPickerWidgetPrivate::init()
   this->setupUi(q);
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentColorNodeChanged(vtkMRMLNode*)));
+  QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   this->SearchBox, SLOT(clear()));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
                    q, SIGNAL(colorEntrySelected(int)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(const QColor&)),
                    q, SIGNAL(colorSelected(const QColor&)));
+
+  // SearchBox
+  this->SearchBox->setPlaceholderText("Search Color...");
+  this->SearchBox->installEventFilter(q);
+  QObject::connect(this->SearchBox, SIGNAL(textChanged(const QString&)),
+                   q, SLOT(onTextChanged(const QString&)));
 }
 
 //------------------------------------------------------------------------------
@@ -162,4 +174,65 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
   d->MRMLColorListView->setGridSize(maxSizeHint);
   // Inform that the color node has changed.
   emit currentColorNodeChanged(colorNode);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
+{
+  Q_D(qMRMLColorPickerWidget);
+  QRegExp regExp(colorText,Qt::CaseInsensitive, QRegExp::RegExp);
+  d->MRMLColorListView->sortFilterProxyModel()->setFilterRegExp(regExp);
+
+  QModelIndex start = d->MRMLColorListView->model()->index(0,0);
+  QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()
+                              ->match(
+      start, 0, d->SearchBox->text(), 1, Qt::MatchStartsWith);
+  if(indexList.count() > 0)
+    {
+    // Show to the user the current index
+    d->MRMLColorListView->setCurrentIndex(indexList[0]);
+    // Select the current index
+    this->colorSelectedBySearchBox(indexList[0]);
+    }
+  // We set the Focus on the searchBox because if we change the current
+  // index, the focus is lost.
+  d->SearchBox->setFocus();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::colorSelectedBySearchBox(QModelIndex index)
+{
+  Q_D(qMRMLColorPickerWidget);
+  QModelIndex colorIndex =
+      d->MRMLColorListView->sortFilterProxyModel()->mapToSource(
+      index);
+  int colorEntry = d->MRMLColorListView->colorModel()->colorFromIndex(
+      colorIndex);
+  emit this->colorSelected(colorEntry);
+  QColor color = d->MRMLColorListView->colorModel()->qcolorFromColor(colorEntry);
+  emit this->colorSelected(color);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
+{
+  Q_D(qMRMLColorPickerWidget);
+  if (target == d->SearchBox)
+    {
+    if (event->type() == QEvent::Show)
+      {
+      d->SearchBox->clear();
+      d->MRMLColorListView->setFocus();
+      }
+    if (event->type() == QEvent::KeyPress)
+      {
+      QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
+      if (keyEvent->key() == Qt::Key_Up ||
+          keyEvent->key() == Qt::Key_Down)
+        {
+        // give the Focus to MRMLColorListView
+        d->MRMLColorListView->setFocus();
+        }
+      }
+    }
 }
