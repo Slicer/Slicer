@@ -148,7 +148,7 @@ void qSlicerCoreApplicationPrivate::init()
     // See Slicer/CMake/SlicerBlockInstallQtImageFormatsPlugins.cmake
     // See Slicer/CMake/SlicerBlockInstallQtDatabaseDriversPlugins.cmake
     QStringList qtPluginsSearchPaths;
-    qtPluginsSearchPaths << this->SlicerHome + Slicer_QtPlugins_DIR;
+    qtPluginsSearchPaths << this->SlicerHome + "/" + Slicer_QtPlugins_DIR;
     QCoreApplication::setLibraryPaths(qtPluginsSearchPaths);
     }
 
