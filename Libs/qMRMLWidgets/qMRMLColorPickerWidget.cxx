@@ -71,7 +71,8 @@ void qMRMLColorPickerWidgetPrivate::init()
                    q, SIGNAL(colorSelected(const QColor&)));
 
   // SearchBox
-  this->SearchBox->setPlaceholderText("Search Color...");
+  this->SearchBox->setPlaceholderText("Search color...");
+  this->SearchBox->setShowSearchIcon(true);
   this->SearchBox->installEventFilter(q);
   QObject::connect(this->SearchBox, SIGNAL(textChanged(const QString&)),
                    q, SLOT(onTextChanged(const QString&)));
@@ -183,34 +184,32 @@ void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
   QRegExp regExp(colorText,Qt::CaseInsensitive, QRegExp::RegExp);
   d->MRMLColorListView->sortFilterProxyModel()->setFilterRegExp(regExp);
 
-  QModelIndex start = d->MRMLColorListView->model()->index(0,0);
-  QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()
-                              ->match(
-      start, 0, d->SearchBox->text(), 1, Qt::MatchStartsWith);
-  if(indexList.count() > 0)
-    {
-    // Show to the user the current index
-    d->MRMLColorListView->setCurrentIndex(indexList[0]);
-    // Select the current index
-    this->colorSelectedBySearchBox(indexList[0]);
-    }
-  // We set the Focus on the searchBox because if we change the current
-  // index, the focus is lost.
-  d->SearchBox->setFocus();
-}
+  QModelIndex newCurrentIndex;
 
-//------------------------------------------------------------------------------
-void qMRMLColorPickerWidget::colorSelectedBySearchBox(QModelIndex index)
-{
-  Q_D(qMRMLColorPickerWidget);
-  QModelIndex colorIndex =
-      d->MRMLColorListView->sortFilterProxyModel()->mapToSource(
-      index);
-  int colorEntry = d->MRMLColorListView->colorModel()->colorFromIndex(
-      colorIndex);
-  emit this->colorSelected(colorEntry);
-  QColor color = d->MRMLColorListView->colorModel()->qcolorFromColor(colorEntry);
-  emit this->colorSelected(color);
+  if (!d->SearchBox->text().isEmpty())
+    {
+    QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()
+                        ->index(0,0);
+    QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()
+                              ->match(start, 0,
+                                      d->SearchBox->text(), 1,
+                                      Qt::MatchStartsWith);
+
+    if (indexList.isEmpty())
+      {
+      indexList = d->MRMLColorListView->sortFilterProxyModel()
+                                ->match(start, 0,
+                                        d->SearchBox->text(), 1,
+                                        Qt::MatchContains);
+      }
+    if(indexList.count() > 0 )
+      {
+      newCurrentIndex = indexList[0];
+      }
+    }
+  // Show to the user and set the current index
+  d->MRMLColorListView->setCurrentIndex(newCurrentIndex);
+  d->SearchBox->setFocus();
 }
 
 //------------------------------------------------------------------------------
