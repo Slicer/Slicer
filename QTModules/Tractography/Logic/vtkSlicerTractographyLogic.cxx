@@ -75,10 +75,7 @@ void vtkSlicerTractographyLogic::RegisterNodes()
     return;
     }
 
-    vtkWarningMacro("RegisterNodes");
 //#ifdef TRACTOGRAPHY_MRML_USE_vtkTeem
-
-  vtkWarningMacro("RegisterNodes: use vtkTeem");
   
   vtkMRMLFiberBundleNode *fbn =
                          vtkMRMLFiberBundleNode::New();
