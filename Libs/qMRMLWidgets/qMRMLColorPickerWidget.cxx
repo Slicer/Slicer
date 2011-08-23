@@ -235,4 +235,5 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
         }
       }
     }
+  return this->qMRMLWidget::eventFilter(target, event);
 }
