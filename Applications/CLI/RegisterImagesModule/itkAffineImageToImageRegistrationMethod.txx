@@ -15,7 +15,6 @@
 
 =========================================================================*/
 
-
 #ifndef __AffineImageToImageRegistrationMethod_txx
 #define __AffineImageToImageRegistrationMethod_txx
 
@@ -24,17 +23,17 @@
 namespace itk
 {
 
-template< class TImage >
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+AffineImageToImageRegistrationMethod<TImage>
 ::AffineImageToImageRegistrationMethod( void )
 {
   this->SetTransform( AffineTransformType::New() );
   this->GetTypedTransform()->SetIdentity();
 
   this->SetInitialTransformParameters( this->GetTypedTransform()
-                                           ->GetParameters() );
+                                       ->GetParameters() );
   this->SetInitialTransformFixedParameters( this->GetTypedTransform()
-                                                ->GetFixedParameters() );
+                                            ->GetFixedParameters() );
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
@@ -44,11 +43,11 @@ AffineImageToImageRegistrationMethod< TImage >
               << std::endl;
     }
   unsigned int scaleNum = 0;
-  for(int d1=0; d1<ImageDimension; d1++)
+  for( int d1 = 0; d1 < ImageDimension; d1++ )
     {
-    for(int d2=0; d2<ImageDimension; d2++)
+    for( int d2 = 0; d2 < ImageDimension; d2++ )
       {
-      if(d1 == d2)
+      if( d1 == d2 )
         {
         scales[scaleNum] = 100;
         }
@@ -59,7 +58,7 @@ AffineImageToImageRegistrationMethod< TImage >
       ++scaleNum;
       }
     }
-  for(int d1=0; d1<ImageDimension; d1++)
+  for( int d1 = 0; d1 < ImageDimension; d1++ )
     {
     scales[scaleNum] = 1;
     ++scaleNum;
@@ -72,15 +71,15 @@ AffineImageToImageRegistrationMethod< TImage >
   this->SetNumberOfSamples( 150000 );
 }
 
-template< class TImage >
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+AffineImageToImageRegistrationMethod<TImage>
 ::~AffineImageToImageRegistrationMethod( void )
 {
 }
 
-template< class TImage >
+template <class TImage>
 void
-AffineImageToImageRegistrationMethod< TImage >
+AffineImageToImageRegistrationMethod<TImage>
 ::GenerateData( void )
 {
   // Set the center of rotation
@@ -89,29 +88,29 @@ AffineImageToImageRegistrationMethod< TImage >
   Superclass::GenerateData();
 }
 
-template< class TImage >
-typename AffineImageToImageRegistrationMethod< TImage >::TransformType *
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename AffineImageToImageRegistrationMethod<TImage>::TransformType
+* AffineImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void )
-{
-  return static_cast< TransformType  * >( Superclass::GetTransform() );
-}
+  {
+  return static_cast<TransformType  *>( Superclass::GetTransform() );
+  }
 
-template< class TImage >
-const typename AffineImageToImageRegistrationMethod< TImage >::TransformType *
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+const typename AffineImageToImageRegistrationMethod<TImage>::TransformType
+* AffineImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void ) const
-{
-  return static_cast< const TransformType  * >( Superclass::GetTransform() );
-}
+  {
+  return static_cast<const TransformType  *>( Superclass::GetTransform() );
+  }
 
-template< class TImage >
-typename AffineImageToImageRegistrationMethod< TImage >::AffineTransformPointer
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename AffineImageToImageRegistrationMethod<TImage>::AffineTransformPointer
+AffineImageToImageRegistrationMethod<TImage>
 ::GetAffineTransform( void ) const
-{   
+{
   AffineTransformPointer trans = AffineTransformType::New();
- 
+
   const TransformType * typedTransform = this->GetTypedTransform();
 
   trans->SetIdentity();
@@ -120,22 +119,20 @@ AffineImageToImageRegistrationMethod< TImage >
   trans->SetOffset( typedTransform->GetOffset() );
 
   return trans;
-}   
+}
 
-
-template< class TImage >
-void 
-AffineImageToImageRegistrationMethod< TImage >
+template <class TImage>
+void
+AffineImageToImageRegistrationMethod<TImage>
 ::SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine )
 {
   this->SetInitialTransformFixedParameters( affine->GetFixedParameters() );
   this->SetInitialTransformParameters( affine->GetParameters() );
 }
 
-
-template< class TImage >
+template <class TImage>
 void
-AffineImageToImageRegistrationMethod< TImage >
+AffineImageToImageRegistrationMethod<TImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
@@ -143,4 +140,4 @@ AffineImageToImageRegistrationMethod< TImage >
 
 };
 
-#endif 
+#endif

@@ -22,25 +22,27 @@
 // The direction of the eigenvector for the largest eigenvalue is the XAxis,
 // the direction of the eigenvector for the smallest eigenvalue is the ZAxis,
 // and the YAxis the the eigenvector for the remaining eigenvalue.
-class  vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
+class vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
 {
- public:
-  static vtkPrincipalAxesAlign* New();
-  vtkTypeMacro(vtkPrincipalAxesAlign,vtkPolyDataToPolyDataFilter);
+public:
+  static vtkPrincipalAxesAlign * New();
 
-  vtkGetVector3Macro(Center,vtkFloatingPointType);
-  vtkGetVector3Macro(XAxis,vtkFloatingPointType);
-  vtkGetVector3Macro(YAxis,vtkFloatingPointType);
-  vtkGetVector3Macro(ZAxis,vtkFloatingPointType);
+  vtkTypeMacro(vtkPrincipalAxesAlign, vtkPolyDataToPolyDataFilter);
+
+  vtkGetVector3Macro(Center, vtkFloatingPointType);
+  vtkGetVector3Macro(XAxis, vtkFloatingPointType);
+  vtkGetVector3Macro(YAxis, vtkFloatingPointType);
+  vtkGetVector3Macro(ZAxis, vtkFloatingPointType);
   void Execute();
+
   void PrintSelf(ostream& os, vtkIndent indent);
- protected:
+
+protected:
   vtkPrincipalAxesAlign();
   ~vtkPrincipalAxesAlign();
-
- private:
-  vtkPrincipalAxesAlign(vtkPrincipalAxesAlign&);
-  void operator=(const vtkPrincipalAxesAlign&);
+private:
+  vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &);
+  void operator=(const vtkPrincipalAxesAlign &);
 
   vtkFloatingPointType* Center;
   vtkFloatingPointType* XAxis;
@@ -48,11 +50,11 @@ class  vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
   vtkFloatingPointType* ZAxis;
 
   // a matrix of the eigenvalue problem
-  double** eigenvalueProblem;
+  double* * eigenvalueProblem;
   // for efficiency reasons parts of the eigenvalue problem are computed separately
-  double** eigenvalueProblemDiag;
-  double** eigenvectors;
-  double* eigenvalues;
+  double* * eigenvalueProblemDiag;
+  double* * eigenvectors;
+  double*   eigenvalues;
 };
 
 #endif

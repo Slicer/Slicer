@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -27,18 +27,18 @@ namespace itk
  * \brief Compute mean, std, min, and max of positive pixels
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ComputeStatisticsWherePositiveFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT ComputeStatisticsWherePositiveFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage InputImageType;
+  typedef TInputImage  InputImageType;
   typedef TOutputImage OutputImageType;
 
   /** Standard class typedefs. */
-  typedef ComputeStatisticsWherePositiveFilter                 Self;
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef ComputeStatisticsWherePositiveFilter                Self;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -53,11 +53,11 @@ public:
   typedef typename InputImageType::RegionType              InputImageRegionType;
   typedef typename OutputImageType::RegionType             OutputImageRegionType;
   typedef typename InputImageType::SizeType                InputSizeType;
-  
+
   /** The type to store per thread values */
-  typedef itk::Array<double>                               StoreType;
-  typedef itk::Array<unsigned long>                        CountType;
-  
+  typedef itk::Array<double>        StoreType;
+  typedef itk::Array<unsigned long> CountType;
+
   /** Get computed statistics */
   itkGetMacro( Mean, double );
   itkGetMacro( Std, double );
@@ -66,33 +66,39 @@ public:
   itkGetMacro( Ready, bool );
 protected:
   ComputeStatisticsWherePositiveFilter();
-  virtual ~ComputeStatisticsWherePositiveFilter() {}
+  virtual ~ComputeStatisticsWherePositiveFilter()
+  {
+  }
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
+
 #else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
 #endif
   // Override Modified() method to fix the ready variable:
-  void Modified(){
+  void Modified()
+  {
     this->Superclass::Modified();
     m_Ready = false;
   }
+
   using itk::Object::Modified;
   void BeforeThreadedGenerateData();
-  void AfterThreadedGenerateData();
-private:
-  ComputeStatisticsWherePositiveFilter(const Self&); // purposely not implemented
-  void operator=(const Self&);                       // purposely not implemented
 
-  // Per-thread values 
+  void AfterThreadedGenerateData();
+
+private:
+  ComputeStatisticsWherePositiveFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);                       // purposely not implemented
+
+  // Per-thread values
   StoreType m_TMean;
   StoreType m_TStd;
   StoreType m_TMin;
   StoreType m_TMax;
   CountType m_TCount;
-  
+
   // Overall values:
   double m_Mean;
   double m_Std;
@@ -102,7 +108,7 @@ private:
   // Are the data already computed?
   bool m_Ready;
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

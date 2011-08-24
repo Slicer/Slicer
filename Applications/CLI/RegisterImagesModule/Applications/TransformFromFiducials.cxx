@@ -19,97 +19,97 @@
 
 namespace
 {
-  // Function to convert a point from std::vector to itk::Point
-  // this also performs the RAS -> LPS conversion necessary
-  // from slicer -> ITK
-  itk::Point<double, 3>
-  convertStdVectorToITKPoint(const std::vector<float> & vec)
-  {
-    itk::Point<double, 3> p;
+// Function to convert a point from std::vector to itk::Point
+// this also performs the RAS -> LPS conversion necessary
+// from slicer -> ITK
+itk::Point<double, 3>
+convertStdVectorToITKPoint(const std::vector<float> & vec)
+{
+  itk::Point<double, 3> p;
 
-    // convert RAS to LPS
-    p[0] = -vec[0];
-    p[1] = -vec[1];
-    p[2] = vec[2];
-    return p;
+  // convert RAS to LPS
+  p[0] = -vec[0];
+  p[1] = -vec[1];
+  p[2] = vec[2];
+  return p;
+}
+
+// Operator to compute the squared distance between two points
+class SquaredPointDistance
+{
+public:
+  explicit SquaredPointDistance(const itk::Point<double, 3>& ctr)
+    : m_Point(ctr)
+  {
   }
 
-  // Operator to compute the squared distance between two points
-  class SquaredPointDistance
+  double operator()(const itk::Point<double, 3>& p)
   {
-  public:
-    explicit SquaredPointDistance(const itk::Point<double, 3>& ctr)
-      :m_Point(ctr)
-    {
-    }
-
-    double
-    operator()(const itk::Point<double, 3>& p)
-    {
-      return (p - m_Point).GetSquaredNorm();
-    }
-  private:
-    itk::Point<double, 3> m_Point;
-
-  };
-    
-  // Function to compute the scaling factor between two sets of points.
-  // This is the symmetric form given by 
-  //    Berthold K. P. Horn (1987),
-  //    "Closed-form solution of absolute orientation using unit quaternions,"
-  //    Journal of the Optical Society of America A, 4:629-642
-
-  double
-  computeSymmetricScale(const std::vector<itk::Point<double, 3> >& fixedPoints,
-                        const std::vector<itk::Point<double, 3> >& movingPoints, 
-                        const itk::Point<double, 3>& fixedcenter,
-                        const itk::Point<double, 3>& movingcenter)
-  {
-    std::vector<double > centeredFixedPoints(fixedPoints.size(), 0.0);
-    std::vector<double > centeredMovingPoints(movingPoints.size(), 0.0);
-
-    std::transform(fixedPoints.begin(), fixedPoints.end(),
-                   centeredFixedPoints.begin(),
-                   SquaredPointDistance(fixedcenter));
-
-    std::transform(movingPoints.begin(), movingPoints.end(),
-                   centeredMovingPoints.begin(),
-                   SquaredPointDistance(movingcenter));
-
-    double fixedmag = 0.0, movingmag = 0.0;
-    fixedmag = std::accumulate(centeredFixedPoints.begin(),
-                               centeredFixedPoints.end(),
-                               fixedmag);
-
-    movingmag = std::accumulate(centeredMovingPoints.begin(), 
-                                centeredMovingPoints.end(),
-                                movingmag);
-
-    return sqrt(movingmag/fixedmag);
+    return (p - m_Point).GetSquaredNorm();
   }
-    
+
+private:
+  itk::Point<double, 3> m_Point;
+
+};
+
+// Function to compute the scaling factor between two sets of points.
+// This is the symmetric form given by
+//    Berthold K. P. Horn (1987),
+//    "Closed-form solution of absolute orientation using unit quaternions,"
+//    Journal of the Optical Society of America A, 4:629-642
+
+double
+computeSymmetricScale(const std::vector<itk::Point<double, 3> >& fixedPoints,
+                      const std::vector<itk::Point<double, 3> >& movingPoints,
+                      const itk::Point<double, 3>& fixedcenter,
+                      const itk::Point<double, 3>& movingcenter)
+{
+  std::vector<double> centeredFixedPoints(fixedPoints.size(), 0.0);
+  std::vector<double> centeredMovingPoints(movingPoints.size(), 0.0);
+
+  std::transform(fixedPoints.begin(), fixedPoints.end(),
+                 centeredFixedPoints.begin(),
+                 SquaredPointDistance(fixedcenter) );
+
+  std::transform(movingPoints.begin(), movingPoints.end(),
+                 centeredMovingPoints.begin(),
+                 SquaredPointDistance(movingcenter) );
+
+  double fixedmag = 0.0, movingmag = 0.0;
+  fixedmag = std::accumulate(centeredFixedPoints.begin(),
+                             centeredFixedPoints.end(),
+                             fixedmag);
+
+  movingmag = std::accumulate(centeredMovingPoints.begin(),
+                              centeredMovingPoints.end(),
+                              movingmag);
+
+  return sqrt(movingmag / fixedmag);
+}
+
 }
 
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  if(fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
-     fixedLandmarks.size() != movingLandmarks.size())
+  if( fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
+      fixedLandmarks.size() != movingLandmarks.size() )
     {
-    std::cerr << "Fixed and moving landmark lists must be of the same size " <<
-      "and contain at least one point" << std::endl;
+    std::cerr << "Fixed and moving landmark lists must be of the same size "
+              << "and contain at least one point" << std::endl;
     return EXIT_FAILURE;
     }
 
-  if(transformType != "Translation" && fixedLandmarks.size() < 3)
+  if( transformType != "Translation" && fixedLandmarks.size() < 3 )
     {
-    std::cerr << "At least 3 fiducual points must be specified for Rigid or Similarity transforms" <<
-      std::endl;
+    std::cerr << "At least 3 fiducual points must be specified for Rigid or Similarity transforms"
+              << std::endl;
     return EXIT_FAILURE;
     }
 
-  if(saveTransform == "")
+  if( saveTransform == "" )
     {
     std::cerr << "An output transform must be specified" << std::endl;
     return EXIT_FAILURE;
@@ -117,8 +117,8 @@ int main(int argc, char* argv[])
 
   typedef  std::vector<itk::Point<double, 3> > PointList;
 
-  PointList fixedPoints(fixedLandmarks.size());
-  PointList movingPoints(movingLandmarks.size());
+  PointList fixedPoints(fixedLandmarks.size() );
+  PointList movingPoints(movingLandmarks.size() );
 
   // Convert both points lists to ITK points and convert RAS -> LPS
 
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
   transform->SetScale(1.0);
 
   typedef itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
-    itk::Image<short,3>, itk::Image<short,3> > InitializerType;
+                                                 itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
   InitializerType::Pointer initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
@@ -151,35 +151,35 @@ int main(int argc, char* argv[])
 
   initializer->InitializeTransform();
 
-  if(transformType == "Translation")
+  if( transformType == "Translation" )
     {
     // Clear out the computed rotaitoin if we only requested translation
     itk::Versor<double> v;
     v.SetIdentity();
     transform->SetRotation(v);
     }
-  else if(transformType == "Rigid")
+  else if( transformType == "Rigid" )
     {
     // do nothing
     }
-  else if(transformType == "Similarity")
+  else if( transformType == "Similarity" )
     {
     // Compute the scaling factor and add that in
-    itk::Point<double, 3> fixedCenter(transform->GetCenter());
-    itk::Point<double, 3> movingCenter(transform->GetCenter() + transform->GetTranslation());
-    
+    itk::Point<double, 3> fixedCenter(transform->GetCenter() );
+    itk::Point<double, 3> movingCenter(transform->GetCenter() + transform->GetTranslation() );
+
     double s = computeSymmetricScale(fixedPoints, movingPoints,
                                      fixedCenter, movingCenter);
-    transform->SetScale(s);                          
-    } 
-  else if(transformType == "Affine")
+    transform->SetScale(s);
+    }
+  else if( transformType == "Affine" )
     {
     // itk::Matrix<double, 3> a =
     //   computeAffineTransform(fixedPoints, movingPoints,
     //                          fixedCenter, movingCenter);
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
     return EXIT_FAILURE;
-    } 
+    }
   else
     {
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
@@ -191,14 +191,14 @@ int main(int argc, char* argv[])
   itk::AffineTransform<double, 3>::Pointer atransform =
     itk::AffineTransform<double, 3>::New();
 
-  atransform->SetCenter(transform->GetCenter());
-  atransform->SetMatrix(transform->GetMatrix());
-  atransform->SetTranslation(transform->GetTranslation());
+  atransform->SetCenter(transform->GetCenter() );
+  atransform->SetMatrix(transform->GetMatrix() );
+  atransform->SetTranslation(transform->GetTranslation() );
 
   itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
   twriter->SetInput(atransform);
   twriter->SetFileName(saveTransform);
-  
+
   twriter->Update();
 
   return EXIT_SUCCESS;

@@ -18,29 +18,27 @@
 
 namespace itk
 {
-    
-template< class TData , class TCoordRep >
-DiffusionTensor3DBSplineInterpolateImageFunction< TData , TCoordRep >
+
+template <class TData, class TCoordRep>
+DiffusionTensor3DBSplineInterpolateImageFunction<TData, TCoordRep>
 ::DiffusionTensor3DBSplineInterpolateImageFunction()
 {
-  m_SplineOrder = 1 ;
-}    
-    
-template< class TData , class TCoordRep >
+  m_SplineOrder = 1;
+}
+
+template <class TData, class TCoordRep>
 void
-DiffusionTensor3DBSplineInterpolateImageFunction< TData , TCoordRep >
+DiffusionTensor3DBSplineInterpolateImageFunction<TData, TCoordRep>
 ::AllocateInterpolator()
 {
-  for( int i = 0 ; i < 6 ; i++ )
+  for( int i = 0; i < 6; i++ )
     {
-    bSplineInterpolateFunction[ i ] = BSplineInterpolateFunction::New() ;
-    bSplineInterpolateFunction[ i ]->SetSplineOrder( m_SplineOrder ) ;
-    this->m_Interpol[ i ] = bSplineInterpolateFunction[ i ] ;
+    bSplineInterpolateFunction[i] = BSplineInterpolateFunction::New();
+    bSplineInterpolateFunction[i]->SetSplineOrder( m_SplineOrder );
+    this->m_Interpol[i] = bSplineInterpolateFunction[i];
     }
 }
 
-
-}//end itk namespace
+} // end itk namespace
 
 #endif
-

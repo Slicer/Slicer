@@ -28,8 +28,7 @@
 class VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT ScalingValues
 {
 public:
-  ScalingValues(const itk::ImageBase<3>* image, 
-                const itk::Point<double, 3> centerOfRotation);
+  ScalingValues(const itk::ImageBase<3>* image, const itk::Point<double, 3> centerOfRotation);
 
   double TranslationScale;
   double RotationScale;

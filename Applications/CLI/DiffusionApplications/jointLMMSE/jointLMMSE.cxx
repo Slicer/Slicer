@@ -25,7 +25,6 @@
 #include <itkImageFileWriter.h>
 #include <itkNrrdImageIO.h>
 
-
 #include "itkCastImageFilter.h"
 
 #include "itkOtsuStatistics.h"
@@ -37,63 +36,64 @@
 #define DIMENSION 3
 #define dwiPI 3.141592653589793
 
-template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
+template <class PixelType>
+int DoIt( int argc, char * argv[], PixelType )
 {
   PARSE_ARGS;
 
   // do the typedefs
 
-  typedef itk::VectorImage<PixelType,DIMENSION> DiffusionImageType;
+  typedef itk::VectorImage<PixelType, DIMENSION> DiffusionImageType;
 
-  typedef itk::Image<PixelType,DIMENSION> ScalarImageType;
+  typedef itk::Image<PixelType, DIMENSION> ScalarImageType;
 
-  typedef double                            PixelTypeDouble;
-  typedef itk::VectorImage<PixelTypeDouble,DIMENSION>    DoubleDiffusionImageType;
+  typedef double                                       PixelTypeDouble;
+  typedef itk::VectorImage<PixelTypeDouble, DIMENSION> DoubleDiffusionImageType;
 
-  typedef itk::Image<PixelTypeDouble,DIMENSION>     ScalarDoubleImageType;
+  typedef itk::Image<PixelTypeDouble, DIMENSION> ScalarDoubleImageType;
 
-  typedef itk::CovariantVector<double,DIMENSION> CovariantVectorType;
+  typedef itk::CovariantVector<double, DIMENSION> CovariantVectorType;
 
-  std::vector< CovariantVectorType > diffusionDirections;
+  std::vector<CovariantVectorType> diffusionDirections;
 
   typedef itk::ImageFileReader<DiffusionImageType> FileReaderType;
   typename FileReaderType::Pointer reader = FileReaderType::New();
   reader->SetFileName( inputVolume.c_str() );
   reader->Update();
-  
-  itk::MetaDataDictionary imgMetaDictionary = reader->GetMetaDataDictionary();    
-  std::vector<std::string> imgMetaKeys = imgMetaDictionary.GetKeys();
+
+  itk::MetaDataDictionary            imgMetaDictionary = reader->GetMetaDataDictionary();
+  std::vector<std::string>           imgMetaKeys = imgMetaDictionary.GetKeys();
   std::vector<std::string>::iterator itKey = imgMetaKeys.begin();
-  std::string metaString;
-  
+  std::string                        metaString;
+
   std::cout << "Number of keys = " << imgMetaKeys.size() << std::endl;
-  
+
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & dictionary = reader->GetMetaDataDictionary();
-  
-  typedef itk::MetaDataObject< std::string > MetaDataStringType;
-  
+
+  typedef itk::MetaDataObject<std::string> MetaDataStringType;
+
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();
-  
-  double dBValue = 1000;
-  int iFoundBValue = 0;
+
+  double       dBValue = 1000;
+  int          iFoundBValue = 0;
   unsigned int channels = 0;
   while( itr != end )
     {
     itk::MetaDataObjectBase::Pointer entry = itr->second;
-    MetaDataStringType::Pointer entryvalue =
-      dynamic_cast<MetaDataStringType *>( entry.GetPointer() ) ;
-      
+    MetaDataStringType::Pointer      entryvalue =
+      dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
+
     if( entryvalue )
       {
       ::size_t pos = itr->first.find("DWMRI_gradient");
 
-      if ( pos != std::string::npos )
+      if( pos != std::string::npos )
         {
         std::string tagkey = itr->first;
         std::string tagvalue = entryvalue->GetMetaDataObjectValue();
-        
+
         double dx[DIMENSION];
         std::sscanf(tagvalue.c_str(), "%lf %lf %lf\n", &dx[0], &dx[1], &dx[2]);
         diffusionDirections.push_back( (CovariantVectorType)(dx) );
@@ -105,8 +105,8 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
         // try to find the b-value
 
         ::size_t posB = itr->first.find("DWMRI_b-value");
-        
-        if ( posB != std::string::npos )
+
+        if( posB != std::string::npos )
           {
           std::string tagvalue = entryvalue->GetMetaDataObjectValue();
           std::sscanf(tagvalue.c_str(), "%lf\n", &dBValue );
@@ -114,23 +114,22 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
           }
         else
           {
-          //std::cout << itr->first << " " << entryvalue->GetMetaDataObjectValue() << std::endl;
+          // std::cout << itr->first << " " << entryvalue->GetMetaDataObjectValue() << std::endl;
           }
         }
       }
-      
+
     ++itr;
     }
-  
+
   // find the first zero baseline image and use it for the noise estimation
 
   ::size_t iNrOfDWIs = diffusionDirections.size();
   ::size_t iFirstBaseline = std::string::npos;
-
-  for ( ::size_t iI=0; iI<iNrOfDWIs; iI++ )
+  for( ::size_t iI = 0; iI < iNrOfDWIs; iI++ )
     {
 
-    if ( diffusionDirections[iI].GetNorm()==0 )
+    if( diffusionDirections[iI].GetNorm() == 0 )
       {
       iFirstBaseline = iI;
       std::cout << "First baseline found at index = " << iFirstBaseline << std::endl;
@@ -139,7 +138,7 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
 
     }
 
-  if ( iFirstBaseline == std::string::npos )
+  if( iFirstBaseline == std::string::npos )
     {
 
     std::cout << "Did not find an explicit baseline image." << std::endl;
@@ -164,7 +163,7 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
 
   // filter the whole thing
 
-  typedef itk::LMMSEVectorImageFilter<DiffusionImageType,DoubleDiffusionImageType> RicianLMMSEImageFilterType; 
+  typedef itk::LMMSEVectorImageFilter<DiffusionImageType, DoubleDiffusionImageType> RicianLMMSEImageFilterType;
   typename RicianLMMSEImageFilterType::Pointer ricianFilter = RicianLMMSEImageFilterType::New();
   ricianFilter->SetInput( reader->GetOutput() );
   ricianFilter->SetRadius( indexRadiusF );
@@ -172,49 +171,58 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
   ricianFilter->SetKeepValue(true);
   ricianFilter->SetMinimumNumberOfUsedVoxelsFiltering( 5 );
   typename RicianLMMSEImageFilterType::GradientType grad;
-  unsigned int nDWI = 0;
-  unsigned int nBaselines = 0;
+  unsigned int     nDWI = 0;
+  unsigned int     nBaselines = 0;
   std::vector<int> pDWI;
   std::vector<int> pBaselines;
-  for( unsigned int iI=0; iI<channels; ++iI ){
+  for( unsigned int iI = 0; iI < channels; ++iI )
+    {
     float norm = diffusionDirections[iI].GetNorm();
-    if( norm>1e-3 ){
-    grad[0] = diffusionDirections[iI][0]/norm;
-    grad[1] = diffusionDirections[iI][1]/norm;
-    grad[2] = diffusionDirections[iI][2]/norm;
-    ricianFilter->AddGradientDirection( grad );
-    ++nDWI;
-    pDWI.push_back( iI );
+    if( norm > 1e-3 )
+      {
+      grad[0] = diffusionDirections[iI][0] / norm;
+      grad[1] = diffusionDirections[iI][1] / norm;
+      grad[2] = diffusionDirections[iI][2] / norm;
+      ricianFilter->AddGradientDirection( grad );
+      ++nDWI;
+      pDWI.push_back( iI );
+      }
+    else
+      {
+      ++nBaselines;
+      pBaselines.push_back( iI );
+      }
     }
-  else{
-    ++nBaselines;
-    pBaselines.push_back( iI );
-  }
-  }
   ricianFilter->SetNDWI( nDWI );
   ricianFilter->SetNBaselines( nBaselines );
   unsigned int* indicator = new unsigned int[nDWI];
-  for( unsigned int iI=0; iI<nDWI; ++iI )
+  for( unsigned int iI = 0; iI < nDWI; ++iI )
+    {
     indicator[iI] = pDWI[iI];
+    }
   ricianFilter->SetDWI( indicator );
   delete[] indicator;
   indicator = new unsigned int[nBaselines];
-  for( unsigned int iI=0; iI<nBaselines; ++iI )
-        indicator[iI] = pBaselines[iI];
+  for( unsigned int iI = 0; iI < nBaselines; ++iI )
+    {
+    indicator[iI] = pBaselines[iI];
+    }
   ricianFilter->SetBaselines( indicator );
   delete[] indicator;
-  if( iNumNeighbors==0 )
-  iNumNeighbors = nDWI;
+  if( iNumNeighbors == 0 )
+    {
+    iNumNeighbors = nDWI;
+    }
   ricianFilter->SetNeighbours( iNumNeighbors );
-//======================================================================================================
+// ======================================================================================================
 // Noise estimation
-  typedef itk::Image<float,DiffusionImageType::ImageDimension>           NoiseImageType;
-  typedef itk::OtsuStatistics<DiffusionImageType,NoiseImageType>         StatsType;
-  typedef typename StatsType::Pointer                                    StatsPointer;
-  typedef itk::OtsuThreshold<NoiseImageType,NoiseImageType>              ThresholdType;
-  typedef typename ThresholdType::Pointer                                ThresholdPointer;
-  typedef itk::ComputeRestrictedHistogram<NoiseImageType,NoiseImageType> HistogramType;
-  typedef typename HistogramType::Pointer                                HistogramPointer;
+  typedef itk::Image<float, DiffusionImageType::ImageDimension>           NoiseImageType;
+  typedef itk::OtsuStatistics<DiffusionImageType, NoiseImageType>         StatsType;
+  typedef typename StatsType::Pointer                                     StatsPointer;
+  typedef itk::OtsuThreshold<NoiseImageType, NoiseImageType>              ThresholdType;
+  typedef typename ThresholdType::Pointer                                 ThresholdPointer;
+  typedef itk::ComputeRestrictedHistogram<NoiseImageType, NoiseImageType> HistogramType;
+  typedef typename HistogramType::Pointer                                 HistogramPointer;
   StatsPointer     stats     = StatsType::New();
   ThresholdPointer threshold = ThresholdType::New();
   HistogramPointer histogram = HistogramType::New();
@@ -239,13 +247,14 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
   histogram->SetBins( 256 );
   histogram->Update();
   double sigma  = histogram->GetMode();
-  sigma *= sqrt(2/dwiPI);
+  sigma *= sqrt(2 / dwiPI);
   std::cout << "The estimated noise is: " << sigma << std::endl;
-//======================================================================================================
+// ======================================================================================================
   ricianFilter->SetSigma( sigma );
   ricianFilter->Update();
 
-  std::cout << "number of components per pixel" << ricianFilter->GetOutput()->GetNumberOfComponentsPerPixel() << std::endl;
+  std::cout << "number of components per pixel" << ricianFilter->GetOutput()->GetNumberOfComponentsPerPixel()
+            << std::endl;
 
   // now cast it back to diffusionimagetype
 
@@ -261,7 +270,7 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
 
   itk::MetaDataDictionary metaDataDictionary;
   metaDataDictionary = reader->GetMetaDataDictionary();
-  
+
   io->SetFileTypeToBinary();
   io->SetMetaDataDictionary( metaDataDictionary );
 
@@ -276,7 +285,7 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
     {
     nrrdWriter->Update();
     }
-  catch (itk::ExceptionObject e)
+  catch( itk::ExceptionObject e )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << e << std::endl;
@@ -291,46 +300,46 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
 
 int main( int argc, char * argv[] )
 {
-  
+
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
-  //try
+  // try
   // {
-  itk::GetImageType (inputVolume, pixelType, componentType);
+  itk::GetImageType(inputVolume, pixelType, componentType);
 
   // This filter handles all types
-    
-  switch (componentType)
+
+  switch( componentType )
     {
 #ifndef WIN32
     case itk::ImageIOBase::UCHAR:
-      return DoIt( argc, argv, static_cast<unsigned char>(0));
+      return DoIt( argc, argv, static_cast<unsigned char>(0) );
       break;
     case itk::ImageIOBase::CHAR:
-      return DoIt( argc, argv, static_cast<char>(0));
+      return DoIt( argc, argv, static_cast<char>(0) );
       break;
 #endif
     case itk::ImageIOBase::USHORT:
-      return DoIt( argc, argv, static_cast<unsigned short>(0));
+      return DoIt( argc, argv, static_cast<unsigned short>(0) );
       break;
     case itk::ImageIOBase::SHORT:
-      return DoIt( argc, argv, static_cast<short>(0));
+      return DoIt( argc, argv, static_cast<short>(0) );
       break;
     case itk::ImageIOBase::UINT:
-      return DoIt( argc, argv, static_cast<unsigned int>(0));
+      return DoIt( argc, argv, static_cast<unsigned int>(0) );
       break;
     case itk::ImageIOBase::INT:
-      return DoIt( argc, argv, static_cast<int>(0));
+      return DoIt( argc, argv, static_cast<int>(0) );
       break;
 #ifndef WIN32
     case itk::ImageIOBase::ULONG:
-      return DoIt( argc, argv, static_cast<unsigned long>(0));
+      return DoIt( argc, argv, static_cast<unsigned long>(0) );
       break;
     case itk::ImageIOBase::LONG:
-      return DoIt( argc, argv, static_cast<long>(0));
+      return DoIt( argc, argv, static_cast<long>(0) );
       break;
 #endif
     case itk::ImageIOBase::FLOAT:
@@ -345,8 +354,7 @@ int main( int argc, char * argv[] )
       break;
     }
 
-  //}
-
+  // }
 
   /*catch( itk::ExceptionObject &excep)
     {
@@ -357,5 +365,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-
-

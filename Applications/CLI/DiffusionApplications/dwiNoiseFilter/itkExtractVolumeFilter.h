@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -27,60 +27,65 @@ namespace itk
  * \sa Image
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ExtractVolumeFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT ExtractVolumeFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef ExtractVolumeFilter                Self;
+  typedef ExtractVolumeFilter Self;
 
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                        InputImageType;
-  typedef typename InputImageType::Pointer   InputImagePointer;
-  typedef TOutputImage                       OutputImageType;
-  typedef typename OutputImageType::Pointer  OutputImagePointer;
+  typedef TInputImage                       InputImageType;
+  typedef typename InputImageType::Pointer  InputImagePointer;
+  typedef TOutputImage                      OutputImageType;
+  typedef typename OutputImageType::Pointer OutputImagePointer;
 
   /** Standard class typedefs. */
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( ExtractVolumeFilter, ImageToImageFilter );
-  
+
   /** Image typedef support. */
   typedef typename InputImageType::PixelType   InputPixelType;
   typedef typename OutputImageType::PixelType  OutputPixelType;
   typedef typename OutputImageType::RegionType OutputImageRegionType;
-  
+
   /** Set and get the parameters */
   itkSetMacro( VolumeNr, unsigned int );
   itkGetMacro( VolumeNr, unsigned int );
   itkSetMacro( Factor,   double       );
   itkGetMacro( Factor,   double       );
 protected:
-  ExtractVolumeFilter(){
-      m_VolumeNr = 0;
-      m_Factor   = 1.0f;
+  ExtractVolumeFilter()
+  {
+    m_VolumeNr = 0;
+    m_Factor   = 1.0f;
   }
-  virtual ~ExtractVolumeFilter() {}
+
+  virtual ~ExtractVolumeFilter()
+  {
+  }
   // Threaded filter!
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
+
 #else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
 #endif
 private:
-  ExtractVolumeFilter(const Self&);  // purposely not implemented
-  void operator=(const Self&);       // purposely not implemented
+  ExtractVolumeFilter(const Self &);  // purposely not implemented
+  void operator=(const Self &);       // purposely not implemented
+
   unsigned int m_VolumeNr;
   double       m_Factor;
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -4,7 +4,7 @@
   Module:    $RCSfile: itkOtsuStatistics.txx,v $
   Language:  C++
   Date:      $Date: 2005/05/4 14:28:51 $
-  Version:   $Revision: 1.1 
+  Version:   $Revision: 1.1
 =========================================================================*/
 #ifndef _itkOtsuStatistics_txx
 #define _itkOtsuStatistics_txx
@@ -37,17 +37,20 @@ OtsuStatistics<TInputImage, TOutputImage>::OtsuStatistics()
 /** The requested input region is larger than the corresponding output, so we need to override this method: */
 template <class TInputImage, class TOutputImage>
 void OtsuStatistics<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion() throw (InvalidRequestedRegionError)
+::GenerateInputRequestedRegion()
+throw (InvalidRequestedRegionError)
 {
   // Call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
-  
+
   // Get pointers to the input and output
-  InputImagePointer  inputPtr  = const_cast< TInputImage * >( this->GetInput() );
+  InputImagePointer  inputPtr  = const_cast<TInputImage *>( this->GetInput() );
   OutputImagePointer outputPtr = this->GetOutput();
-  
-  if ( !inputPtr || !outputPtr )
+
+  if( !inputPtr || !outputPtr )
+    {
     return;
+    }
 
   // Get a copy of the input requested region (should equal the output
   // requested region)
@@ -57,45 +60,45 @@ void OtsuStatistics<TInputImage, TOutputImage>
   inputRequestedRegion.PadByRadius( m_Radius );
 
   // Crop the input requested region at the input's largest possible region
-  inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion());
+  inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion() );
   inputPtr->SetRequestedRegion( inputRequestedRegion );
   return;
 }
 
-  
-template< class TInputImage, class TOutputImage>
-void OtsuStatistics< TInputImage, TOutputImage>
-::BeforeThreadedGenerateData( void ){
+template <class TInputImage, class TOutputImage>
+void OtsuStatistics<TInputImage, TOutputImage>
+::BeforeThreadedGenerateData( void )
+{
   m_ThreadMin.SetSize( this->GetNumberOfThreads() );
   m_ThreadMin.Fill( itk::NumericTraits<double>::max() );
   m_ThreadMax.SetSize( this->GetNumberOfThreads() );
   m_ThreadMax.Fill( itk::NumericTraits<double>::min() );
 }
 
-template< class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 #if ITK_VERSION_MAJOR < 4
-void OtsuStatistics< TInputImage, TOutputImage>
+void OtsuStatistics<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
 #else
-void OtsuStatistics< TInputImage, TOutputImage>
+void OtsuStatistics<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
 #endif
 {
   // Boundary conditions for this filter; Neumann conditions are fine
-  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;  
+  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
   // Iterators:
   ConstNeighborhoodIterator<InputImageType> bit;  // Iterator for the input image
   ImageRegionIterator<OutputImageType>      it;   // Iterator for the output image
   // Input and output
-  InputImageConstPointer   input   =  this->GetInput();
-  OutputImagePointer       output  =  this->GetOutput();
+  InputImageConstPointer input   =  this->GetInput();
+  OutputImagePointer     output  =  this->GetOutput();
   // Find the data-set boundary "faces"
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType           faceList;
-  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>                                  bC;
+  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType> bC;
   faceList = bC( input, outputRegionForThread, m_Radius );
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType::iterator fit;
-  for ( fit=faceList.begin(); fit != faceList.end(); ++fit){ // Iterate through facets
-    // Iterators:
+  for( fit = faceList.begin(); fit != faceList.end(); ++fit )  // Iterate through facets
+    { // Iterators:
     bit = ConstNeighborhoodIterator<InputImageType>(  m_Radius, input, *fit  );
     it  = ImageRegionIterator<OutputImageType>(        output,     *fit      );
     unsigned int neighborhoodSize = bit.Size();
@@ -103,7 +106,9 @@ void OtsuStatistics< TInputImage, TOutputImage>
     unsigned int nBaselines = m_Indicator.GetSize();
     // Get the normalization fator depending on the mode of operation:
     double factor;
-    switch( m_Mode ){
+
+    switch( m_Mode )
+      {
       case USE_AVERAGED_GRADIENTS:
         factor = 1.0f / (double)m_Channels;
         break;
@@ -113,71 +118,91 @@ void OtsuStatistics< TInputImage, TOutputImage>
       case USE_NEIGHBORHOOD_GRADIENTS:
         factor = 1.0f / (double)( m_Channels * neighborhoodSize );
         break;
-      case USE_AVERAGED_BASELINES: //Default!!
+      case USE_AVERAGED_BASELINES: // Default!!
       default:
         factor = 1.0f / (double)nBaselines;
         break;
-    }
+      }
     // Boundary condition:
     bit.OverrideBoundaryCondition( &nbc );
-    //===========================================================================================================================
-    for( bit.GoToBegin(),it.GoToBegin(); !bit.IsAtEnd(); ++bit,++it ){   // Iterate through pixels in the current facet
-      // Depending on the mode of operation, take the center pixel or the whole vicinity:
+    // ===========================================================================================================================
+    for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )    // Iterate through pixels in the current
+                                                                           // facet
+      { // Depending on the mode of operation, take the center pixel or the whole vicinity:
       double averagedValue = itk::NumericTraits<float>::Zero;
-      switch( m_Mode ){
+
+      switch( m_Mode )
+        {
         case USE_AVERAGED_GRADIENTS:
-          for( unsigned int k=0; k<m_Channels; ++k )
+          for( unsigned int k = 0; k < m_Channels; ++k )
+            {
             averagedValue += bit.GetCenterPixel()[k];
+            }
           break;
         case USE_NEIGHBORHOOD_BASELINES:
-          for( unsigned int p=0; p<neighborhoodSize; ++p ){
+          for( unsigned int p = 0; p < neighborhoodSize; ++p )
+            {
             InputPixelType ip = bit.GetPixel( p );
-            for( unsigned int k=0; k<nBaselines; ++k )
-              averagedValue += ip[ m_Indicator[k] ];
-          }
+            for( unsigned int k = 0; k < nBaselines; ++k )
+              {
+              averagedValue += ip[m_Indicator[k]];
+              }
+            }
           break;
         case USE_NEIGHBORHOOD_GRADIENTS:
-          for( unsigned int p=0; p<neighborhoodSize; ++p ){
+          for( unsigned int p = 0; p < neighborhoodSize; ++p )
+            {
             InputPixelType ip = bit.GetPixel( p );
-            for( unsigned int k=0; k<m_Channels; ++k )
+            for( unsigned int k = 0; k < m_Channels; ++k )
+              {
               averagedValue += ip[k];
-          }
+              }
+            }
           break;
-        case USE_AVERAGED_BASELINES: //Default!!
+        case USE_AVERAGED_BASELINES: // Default!!
         default:
-          for( unsigned int k=0; k<nBaselines; ++k )
-            averagedValue += bit.GetCenterPixel()[ m_Indicator[k] ];
+          for( unsigned int k = 0; k < nBaselines; ++k )
+            {
+            averagedValue += bit.GetCenterPixel()[m_Indicator[k]];
+            }
           break;
-      }
+        }
       averagedValue *= factor;
-      if( averagedValue>=2.0f ){
-        if( averagedValue<m_ThreadMin[threadId] )
+      if( averagedValue >= 2.0f )
+        {
+        if( averagedValue < m_ThreadMin[threadId] )
+          {
           m_ThreadMin[threadId] = averagedValue;
-        if( averagedValue>m_ThreadMax[threadId] )
+          }
+        if( averagedValue > m_ThreadMax[threadId] )
+          {
           m_ThreadMax[threadId] = averagedValue;
-      }
+          }
+        }
       it.Set( static_cast<OutputPixelType>(averagedValue) );
+      }
+    // ===========================================================================================================================
     }
-    //===========================================================================================================================
-  }
 }
-  
-  
-template< class TInputImage, class TOutputImage>
-void OtsuStatistics< TInputImage, TOutputImage>
-::AfterThreadedGenerateData( void ){
+
+template <class TInputImage, class TOutputImage>
+void OtsuStatistics<TInputImage, TOutputImage>
+::AfterThreadedGenerateData( void )
+{
   m_Min = itk::NumericTraits<double>::max();
   m_Max = itk::NumericTraits<double>::min();
-  for( int k=0; k<this->GetNumberOfThreads(); ++k ){
+  for( int k = 0; k < this->GetNumberOfThreads(); ++k )
+    {
     if( m_ThreadMin[k] < m_Min )
+      {
       m_Min = m_ThreadMin[k];
+      }
     if( m_ThreadMax[k] > m_Max )
+      {
       m_Max = m_ThreadMax[k];
-  }
+      }
+    }
 }
-
-
-
 
 /** Standard "PrintSelf" method */
 template <class TInputImage, class TOutput>

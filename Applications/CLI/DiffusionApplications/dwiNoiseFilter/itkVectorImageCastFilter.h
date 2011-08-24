@@ -15,51 +15,62 @@
 
 namespace itk
 {
-  namespace Function {
-    template< class TInput, class TOutput>
-    class Cast
-    {
-    public:
-      Cast() {}
-      ~Cast() {}
-      inline TOutput operator()( const TInput & a )
+namespace Function
+{
+template <class TInput, class TOutput>
+class Cast
+{
+public:
+  Cast()
+  {
+  }
+  ~Cast()
+  {
+  }
+  inline TOutput operator()( const TInput & a )
+  {
+    TOutput b;
+
+    b.SetSize( a.GetSize() );
+    for( unsigned int k = 0; k < a.GetSize(); ++k )
       {
-        TOutput b;
-        b.SetSize( a.GetSize() );
-        for( unsigned int k=0; k<a.GetSize(); ++k )
-          b[k] = static_cast<typename TOutput::RealValueType>( a[k] );
-        return b;
+      b[k] = static_cast<typename TOutput::RealValueType>( a[k] );
       }
-    };
+    return b;
   }
 
+};
+}
 
 template <class TInputImage, class TOutputImage>
 class ITK_EXPORT VectorImageCastFilter :
-  public UnaryFunctorImageFilter<  TInputImage,TOutputImage, Function::Cast< typename TInputImage::PixelType, typename TOutputImage::PixelType >   >
+  public UnaryFunctorImageFilter<TInputImage, TOutputImage,
+                                 Function::Cast<typename TInputImage::PixelType, typename TOutputImage::PixelType>   >
 {
 public:
   /** Standard class typedefs. */
-  typedef VectorImageCastFilter           Self;
-  typedef UnaryFunctorImageFilter<  TInputImage,  TOutputImage,  Function::Cast< typename TInputImage::PixelType, typename TOutputImage::PixelType>   > 
-                                  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef VectorImageCastFilter Self;
+  typedef UnaryFunctorImageFilter<TInputImage,  TOutputImage,
+                                  Function::Cast<typename TInputImage::PixelType, typename TOutputImage::PixelType>   >
+  Superclass;
+  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
 protected:
-  VectorImageCastFilter() {}
-  virtual ~VectorImageCastFilter() {}
-
+  VectorImageCastFilter()
+  {
+  }
+  virtual ~VectorImageCastFilter()
+  {
+  }
 private:
-  VectorImageCastFilter(const Self&);      //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  VectorImageCastFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);        // purposely not implemented
 
 };
 
 } // end namespace itk
-
 
 #endif

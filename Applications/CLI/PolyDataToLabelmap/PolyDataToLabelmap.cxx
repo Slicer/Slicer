@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -42,18 +42,18 @@
 #include "itkAnalyzeImageIOFactory.h"
 #endif
 
-typedef itk::Image< unsigned char, 3 > LabelImageType;
+typedef itk::Image<unsigned char, 3> LabelImageType;
 
-LabelImageType::Pointer BinaryErodeFilter3D ( LabelImageType::Pointer & img , unsigned int ballsize )
+LabelImageType::Pointer BinaryErodeFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3> KernalType;
+  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                     KernalType;
   typedef itk::BinaryErodeImageFilter<LabelImageType, LabelImageType, KernalType> ErodeFilterType;
   ErodeFilterType::Pointer erodeFilter = ErodeFilterType::New();
   erodeFilter->SetInput( img );
 
-  KernalType ball;
+  KernalType           ball;
   KernalType::SizeType ballSize;
-  for (int k = 0; k < 3; k++)
+  for( int k = 0; k < 3; k++ )
     {
     ballSize[k] = ballsize;
     }
@@ -65,15 +65,15 @@ LabelImageType::Pointer BinaryErodeFilter3D ( LabelImageType::Pointer & img , un
 
 }
 
-LabelImageType::Pointer BinaryDilateFilter3D ( LabelImageType::Pointer & img , unsigned int ballsize )
+LabelImageType::Pointer BinaryDilateFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3> KernalType;
+  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                      KernalType;
   typedef itk::BinaryDilateImageFilter<LabelImageType, LabelImageType, KernalType> DilateFilterType;
   DilateFilterType::Pointer dilateFilter = DilateFilterType::New();
   dilateFilter->SetInput( img );
-  KernalType ball;
+  KernalType           ball;
   KernalType::SizeType ballSize;
-  for (int k = 0; k < 3; k++)
+  for( int k = 0; k < 3; k++ )
     {
     ballSize[k] = ballsize;
     }
@@ -84,38 +84,40 @@ LabelImageType::Pointer BinaryDilateFilter3D ( LabelImageType::Pointer & img , u
   return dilateFilter->GetOutput();
 }
 
-LabelImageType::Pointer BinaryOpeningFilter3D ( LabelImageType::Pointer & img , unsigned int ballsize )
+LabelImageType::Pointer BinaryOpeningFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
   LabelImageType::Pointer imgErode = BinaryErodeFilter3D( img, ballsize);
+
   return BinaryDilateFilter3D( imgErode, ballsize );
 }
 
-LabelImageType::Pointer BinaryClosingFilter3D ( LabelImageType::Pointer & img , unsigned int ballsize )
+LabelImageType::Pointer BinaryClosingFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
   LabelImageType::Pointer imgDilate = BinaryDilateFilter3D( img, ballsize );
+
   return BinaryErodeFilter3D( imgDilate, ballsize );
 }
 
 //
 // Description: A templated procedure to execute the algorithm
-template<class T> int DoIt( int argc, char * argv[], T )
+template <class T>
+int DoIt( int argc, char * argv[], T )
 {
 
   PARSE_ARGS;
   vtkDebugLeaks::SetExitError(true);
- 
-  typedef    T       InputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
+  typedef    T InputPixelType;
 
-  typedef itk::ImageFileReader< InputImageType >  ReaderType;
-  typedef itk::ImageFileWriter< LabelImageType > WriterType;
-  
-  
+  typedef itk::Image<InputPixelType,  3> InputImageType;
+
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
+  typedef itk::ImageFileWriter<LabelImageType> WriterType;
+
   // Read the input volume
   typename ReaderType::Pointer reader = ReaderType::New();
   itk::PluginFilterWatcher watchReader(reader, "Read Input Volume",
-                                        CLPProcessInformation);
+                                       CLPProcessInformation);
   reader->SetFileName( InputVolume.c_str() );
   reader->Update();
 
@@ -127,8 +129,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
   label->FillBuffer( 0 );
 
   // read the poly data
-  vtkPolyData *polyData = NULL;
-  vtkPolyDataReader *pdReader = NULL;
+  vtkPolyData *         polyData = NULL;
+  vtkPolyDataReader *   pdReader = NULL;
   vtkXMLPolyDataReader *pdxReader = NULL;
 
   // do we have vtk or vtp models?
@@ -143,14 +145,14 @@ template<class T> int DoIt( int argc, char * argv[], T )
   if( extension == std::string(".vtk") )
     {
     pdReader = vtkPolyDataReader::New();
-    pdReader->SetFileName(surface.c_str());
+    pdReader->SetFileName(surface.c_str() );
     pdReader->Update();
     polyData = pdReader->GetOutput();
     }
   else if( extension == std::string(".vtp") )
     {
     pdxReader = vtkXMLPolyDataReader::New();
-    pdxReader->SetFileName(surface.c_str());
+    pdxReader->SetFileName(surface.c_str() );
     pdxReader->Update();
     polyData = pdxReader->GetOutput();
     }
@@ -163,20 +165,19 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // LPS vs RAS
 
   vtkPoints * allPoints = polyData->GetPoints();
-  for (int k = 0; k < allPoints->GetNumberOfPoints(); k++)
-  {
+  for( int k = 0; k < allPoints->GetNumberOfPoints(); k++ )
+    {
     double* point = polyData->GetPoint( k );
     point[0] = -point[0];
     point[1] = -point[1];
     allPoints->SetPoint( k, point[0], point[1], point[2] );
-  }  
-
+    }
 
   // do it
-//void PolyDataToLabelMap( vtkPolyData* polyData, LabelImageType::Pointer label)
+// void PolyDataToLabelMap( vtkPolyData* polyData, LabelImageType::Pointer label)
 
   vtkPolyDataPointSampler* sampler = vtkPolyDataPointSampler::New();
-  
+
   sampler->SetInput( polyData );
   sampler->SetDistance( sampleDistance );
   sampler->GenerateEdgePointsOn();
@@ -186,10 +187,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   std::cout << polyData->GetNumberOfPoints() << std::endl;
   std::cout << sampler->GetOutput()->GetNumberOfPoints() << std::endl;
-
-  for (int k = 0; k < sampler->GetOutput()->GetNumberOfPoints(); k++)
-  {
-    double *pt = sampler->GetOutput()->GetPoint( k );
+  for( int k = 0; k < sampler->GetOutput()->GetNumberOfPoints(); k++ )
+    {
+    double *                  pt = sampler->GetOutput()->GetPoint( k );
     LabelImageType::PointType pitk;
     pitk[0] = pt[0];
     pitk[1] = pt[1];
@@ -197,18 +197,18 @@ template<class T> int DoIt( int argc, char * argv[], T )
     LabelImageType::IndexType idx;
     label->TransformPhysicalPointToIndex( pitk, idx );
 
-    if ( label->GetLargestPossibleRegion().IsInside(idx) )
+    if( label->GetLargestPossibleRegion().IsInside(idx) )
       {
       label->SetPixel( idx, 255 );
       }
-  }
+    }
 
   // do morphological closing
-  LabelImageType::Pointer closedLabel = BinaryClosingFilter3D( label, 2);
-  itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel (closedLabel, closedLabel->GetLargestPossibleRegion() );
+  LabelImageType::Pointer                           closedLabel = BinaryClosingFilter3D( label, 2);
+  itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel(closedLabel, closedLabel->GetLargestPossibleRegion() );
 
   // do flood fill using binary threshold image function
-  typedef itk::BinaryThresholdImageFunction<LabelImageType>ImageFunctionType;
+  typedef itk::BinaryThresholdImageFunction<LabelImageType> ImageFunctionType;
   ImageFunctionType::Pointer func = ImageFunctionType::New();
   func->SetInputImage( closedLabel );
   func->ThresholdBelow(1);
@@ -217,38 +217,36 @@ template<class T> int DoIt( int argc, char * argv[], T )
   LabelImageType::PointType COG;
 
   // set the centre of gravity
-  //double *bounds = polyData->GetBounds();
-  COG.Fill (0.0);
-  for (vtkIdType k = 0; k < polyData->GetNumberOfPoints(); k++)
+  // double *bounds = polyData->GetBounds();
+  COG.Fill(0.0);
+  for( vtkIdType k = 0; k < polyData->GetNumberOfPoints(); k++ )
     {
     double *pt = polyData->GetPoint( k );
-    for ( int m = 0; m < 3; m++ )
+    for( int m = 0; m < 3; m++ )
       {
       COG[m] += pt[m];
       }
     }
-  for ( int m = 0; m < 3; m++ )
+  for( int m = 0; m < 3; m++ )
     {
     COG[m] /= static_cast<float>( polyData->GetNumberOfPoints() );
     }
 
   label->TransformPhysicalPointToIndex( COG, idx );
 
-  itk::FloodFilledImageFunctionConditionalIterator<LabelImageType,ImageFunctionType> floodFill( closedLabel, func, idx );
-  
-  for (floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill)
+  itk::FloodFilledImageFunctionConditionalIterator<LabelImageType, ImageFunctionType> floodFill( closedLabel, func, idx );
+  for( floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill )
     {
     LabelImageType::IndexType i = floodFill.GetIndex();
     closedLabel->SetPixel( i, 255 );
     }
   LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, 2);
-
-  for (itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel)
+  for( itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel )
     {
     LabelImageType::IndexType i = itLabel.GetIndex();
     label->SetPixel( i, finalLabel->GetPixel(i) );
     }
-       
+
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
@@ -275,41 +273,41 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 #ifdef ITKV3_COMPATIBILITY
   itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
 #endif
   try
     {
-    itk::GetImageType (InputVolume, pixelType, componentType);
+    itk::GetImageType(InputVolume, pixelType, componentType);
 
     // This filter handles all types on input, but only produces
     // signed types
-    
-    switch (componentType)
+
+    switch( componentType )
       {
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0));
+        return DoIt( argc, argv, static_cast<char>(0) );
         break;
       case itk::ImageIOBase::USHORT:
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0));
+        return DoIt( argc, argv, static_cast<short>(0) );
         break;
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0));
+        return DoIt( argc, argv, static_cast<int>(0) );
         break;
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0));
+        return DoIt( argc, argv, static_cast<long>(0) );
         break;
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0));
+        return DoIt( argc, argv, static_cast<float>(0) );
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0));
+        return DoIt( argc, argv, static_cast<double>(0) );
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
@@ -317,7 +315,7 @@ int main( int argc, char * argv[] )
         break;
       }
     }
-  catch( itk::ExceptionObject &excep)
+  catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
@@ -325,4 +323,3 @@ int main( int argc, char * argv[] )
     }
   return EXIT_SUCCESS;
 }
-

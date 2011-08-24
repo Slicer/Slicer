@@ -8,20 +8,20 @@
 class ImageRegistrationViewer
   : public itk::Command
 {
-public :
-  typedef ImageRegistrationViewer     Self;
-  typedef itk::Command                Superclass;
-  typedef itk::SmartPointer<Self>     Pointer;
-  
+public:
+  typedef ImageRegistrationViewer Self;
+  typedef itk::Command            Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+
   itkTypeMacro( ImageRegistrationViewer, Command );
 
   itkNewMacro( ImageRegistrationViewer );
-  
-  typedef itk::SingleValuedNonLinearOptimizer  OptimizerType;
-  
+
+  typedef itk::SingleValuedNonLinearOptimizer OptimizerType;
+
   itkSetMacro(DontShowParameters, bool);
   itkSetMacro(UpdateInterval, int);
-  
+
   void Execute( itk::Object * caller, const itk::EventObject & event )
   {
     Execute( (const Object *)caller, event );
@@ -35,33 +35,33 @@ public :
       return;
       }
 
-    if( typeid( event ) != typeid( itk::IterationEvent ) || object == NULL)
+    if( typeid( event ) != typeid( itk::IterationEvent ) || object == NULL )
       {
       return;
       }
-  
+
     const OptimizerType * opt = dynamic_cast<const OptimizerType *>(object);
-  
-    if(++m_Iteration % m_UpdateInterval == 0)
+
+    if( ++m_Iteration % m_UpdateInterval == 0 )
       {
 #if ITK_VERSION_MAJOR < 4
       itk::RealTimeClock::TimeStampType t = m_Clock->GetTimeStamp();
 #else
       itk::RealTimeClock::TimeStampType t = m_Clock->GetTimeInSeconds();
-#endif    
-      if(!m_DontShowParameters)
+#endif
+      if( !m_DontShowParameters )
         {
-        std::cout << "   " << m_Iteration << " : " 
+        std::cout << "   " << m_Iteration << " : "
                   << opt->GetCurrentPosition() << " = "
                   << opt->GetValue( opt->GetCurrentPosition() )
-                  << "   (" << (t - m_LastTime)/m_UpdateInterval << "s)"
+                  << "   (" << (t - m_LastTime) / m_UpdateInterval << "s)"
                   << std::endl;
         }
       else
         {
-        std::cout << "   " << m_Iteration << " : " 
+        std::cout << "   " << m_Iteration << " : "
                   << opt->GetValue( opt->GetCurrentPosition() )
-                  << "   (" << (t - m_LastTime)/m_UpdateInterval << "s)"
+                  << "   (" << (t - m_LastTime) / m_UpdateInterval << "s)"
                   << std::endl;
         }
       m_LastTime = t;
@@ -70,15 +70,15 @@ public :
 
   void Update()
   {
-    this->Execute ( (const Object *)NULL, itk::IterationEvent() );
+    this->Execute( (const Object *)NULL, itk::IterationEvent() );
   }
 
   void Reset()
   {
 #if ITK_VERSION_MAJOR < 4
-      m_LastTime = m_Clock->GetTimeStamp();
+    m_LastTime = m_Clock->GetTimeStamp();
 #else
-      m_LastTime = m_Clock->GetTimeInSeconds();
+    m_LastTime = m_Clock->GetTimeInSeconds();
 #endif
     this->m_Iteration = 0;
     this->m_UpdateInterval = 1;
@@ -95,19 +95,21 @@ protected:
   int  m_UpdateInterval;
   bool m_DontShowParameters;
 
-  ImageRegistrationViewer() 
-  { 
+  ImageRegistrationViewer()
+  {
     m_Clock = itk::RealTimeClock::New();
 #if ITK_VERSION_MAJOR < 4
-      m_LastTime = m_Clock->GetTimeStamp();
+    m_LastTime = m_Clock->GetTimeStamp();
 #else
-      m_LastTime = m_Clock->GetTimeInSeconds();
+    m_LastTime = m_Clock->GetTimeInSeconds();
 #endif
     m_Iteration = 0;
     m_UpdateInterval = 1;
-    m_DontShowParameters = false; 
+    m_DontShowParameters = false;
   };
-  ~ImageRegistrationViewer() {};
+  ~ImageRegistrationViewer()
+  {
+  };
 
 };
 

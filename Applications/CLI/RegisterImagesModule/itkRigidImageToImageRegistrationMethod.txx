@@ -15,7 +15,6 @@
 
 =========================================================================*/
 
-
 #ifndef __RigidImageToImageRegistrationMethod_txx
 #define __RigidImageToImageRegistrationMethod_txx
 
@@ -25,24 +24,24 @@
 namespace itk
 {
 
-template< class TImage >
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+RigidImageToImageRegistrationMethod<TImage>
 ::RigidImageToImageRegistrationMethod( void )
 {
   if( ImageDimension == 2 )
     {
-    typename Rigid2DTransformType::Pointer tmpTrans = 
-                                                   Rigid2DTransformType::New();
-    this->SetTransform( dynamic_cast< RigidTransformType *>( 
-                                                      tmpTrans.GetPointer()) );
+    typename Rigid2DTransformType::Pointer tmpTrans =
+      Rigid2DTransformType::New();
+    this->SetTransform( dynamic_cast<RigidTransformType *>(
+                          tmpTrans.GetPointer() ) );
     tmpTrans->Register();
     }
   else if( ImageDimension == 3 )
     {
-    typename Rigid3DTransformType::Pointer tmpTrans = 
-                                                   Rigid3DTransformType::New();
-    this->SetTransform( dynamic_cast< RigidTransformType *>( 
-                                                      tmpTrans.GetPointer()) );
+    typename Rigid3DTransformType::Pointer tmpTrans =
+      Rigid3DTransformType::New();
+    this->SetTransform( dynamic_cast<RigidTransformType *>(
+                          tmpTrans.GetPointer() ) );
     tmpTrans->Register();
     }
   else
@@ -54,11 +53,11 @@ RigidImageToImageRegistrationMethod< TImage >
   this->GetTypedTransform()->SetIdentity();
 
   this->SetInitialTransformParameters( this->GetTypedTransform()
-                                           ->GetParameters() );
+                                       ->GetParameters() );
   this->SetInitialTransformFixedParameters( this->GetTypedTransform()
-                                                ->GetFixedParameters() );
+                                            ->GetFixedParameters() );
   this->SetLastTransformParameters( this->GetTypedTransform()
-                                        ->GetParameters() );
+                                    ->GetParameters() );
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
@@ -83,34 +82,34 @@ RigidImageToImageRegistrationMethod< TImage >
   this->SetTransformMethodEnum( Superclass::RIGID_TRANSFORM );
 }
 
-template< class TImage >
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+RigidImageToImageRegistrationMethod<TImage>
 ::~RigidImageToImageRegistrationMethod( void )
 {
   this->m_Transform->UnRegister();
 }
 
-template< class TImage >
-typename RigidImageToImageRegistrationMethod< TImage >::TransformType *
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename RigidImageToImageRegistrationMethod<TImage>::TransformType
+* RigidImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void )
-{
-  return dynamic_cast< TransformType  * >( Superclass::GetTransform() );
-}
+  {
+  return dynamic_cast<TransformType  *>( Superclass::GetTransform() );
+  }
 
-template< class TImage >
-const typename RigidImageToImageRegistrationMethod< TImage >::TransformType *
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+const typename RigidImageToImageRegistrationMethod<TImage>::TransformType
+* RigidImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void ) const
-{
-  return dynamic_cast< const TransformType  * >( Superclass::GetTransform() );
-}
+  {
+  return dynamic_cast<const TransformType  *>( Superclass::GetTransform() );
+  }
 
-template< class TImage >
-typename RigidImageToImageRegistrationMethod< TImage >::AffineTransformPointer
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename RigidImageToImageRegistrationMethod<TImage>::AffineTransformPointer
+RigidImageToImageRegistrationMethod<TImage>
 ::GetAffineTransform( void ) const
-{   
+{
   typename AffineTransformType::Pointer trans = AffineTransformType::New();
 
   trans->SetIdentity();
@@ -119,21 +118,20 @@ RigidImageToImageRegistrationMethod< TImage >
   trans->SetOffset( this->GetTypedTransform()->GetOffset() );
 
   return trans;
-}   
+}
 
-template< class TImage >
-void 
-RigidImageToImageRegistrationMethod< TImage >
+template <class TImage>
+void
+RigidImageToImageRegistrationMethod<TImage>
 ::SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine )
 {
-  RigidTransformType * rigidTransform = 
-    dynamic_cast< RigidTransformType* >( this->GetTransform() );
+  RigidTransformType * rigidTransform =
+    dynamic_cast<RigidTransformType *>( this->GetTransform() );
 
   if( !rigidTransform )
     {
     itkExceptionMacro("GetTransform() didn't return a Rigid Transform");
     }
-     
 
   rigidTransform->SetCenter( affine->GetCenter() );
   rigidTransform->SetTranslation( affine->GetTranslation() );
@@ -143,7 +141,7 @@ RigidImageToImageRegistrationMethod< TImage >
   VnlMatrixType M = affine->GetMatrix().GetVnlMatrix();
 
   //
-  // Polar decomposition algorithm proposed by [Higham 86] 
+  // Polar decomposition algorithm proposed by [Higham 86]
   // SIAM J. Sci. Stat. Comput. Vol. 7, Num. 4, October 1986.
   // "Computing the Polar Decomposition - with Applications"
   // by Nicholas Higham.
@@ -156,8 +154,7 @@ RigidImageToImageRegistrationMethod< TImage >
   VnlMatrixType PQNQDiff;
 
   const unsigned int maximumIterations = 100;
-
-  for(unsigned int ni = 0; ni < maximumIterations; ni++ )
+  for( unsigned int ni = 0; ni < maximumIterations; ni++ )
     {
     // Average current Qi with its inverse transpose
     NQ = ( PQ + vnl_inverse_transpose( PQ ) ) / 2.0;
@@ -171,20 +168,20 @@ RigidImageToImageRegistrationMethod< TImage >
       PQ = NQ;
       }
     }
-  
+
   typename AffineTransformType::MatrixType QMatrix;
 
   QMatrix = NQ;
-  
+
   rigidTransform->SetMatrix( QMatrix );
 
   this->SetInitialTransformFixedParameters( rigidTransform->GetFixedParameters() );
   this->SetInitialTransformParameters( rigidTransform->GetParameters() );
 }
 
-template< class TImage >
+template <class TImage>
 void
-RigidImageToImageRegistrationMethod< TImage >
+RigidImageToImageRegistrationMethod<TImage>
 ::GenerateData( void )
 {
   // Set the center of rotation
@@ -193,10 +190,9 @@ RigidImageToImageRegistrationMethod< TImage >
   Superclass::GenerateData();
 }
 
-
-template< class TImage >
+template <class TImage>
 void
-RigidImageToImageRegistrationMethod< TImage >
+RigidImageToImageRegistrationMethod<TImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf(os, indent);
@@ -204,4 +200,4 @@ RigidImageToImageRegistrationMethod< TImage >
 
 };
 
-#endif 
+#endif

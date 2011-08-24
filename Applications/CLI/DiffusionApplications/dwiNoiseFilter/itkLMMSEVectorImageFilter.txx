@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -43,24 +43,25 @@ LMMSEVectorImageFilter<TInputImage, TOutputImage>
   m_MaximumNumberOfBins = 200000;
 }
 
-
 template <class TInputImage, class TOutputImage>
 void LMMSEVectorImageFilter<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion() throw (InvalidRequestedRegionError)
+::GenerateInputRequestedRegion()
+throw (InvalidRequestedRegionError)
 {
   // Call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
   // Get pointer to the input
-  InputImagePointer inputPtr = const_cast< TInputImage * >( this->GetInput() );
+  InputImagePointer inputPtr = const_cast<TInputImage *>( this->GetInput() );
   inputPtr->SetRequestedRegion( inputPtr->GetLargestPossibleRegion() );
 }
 
 template <class TInputImage, class TOutputImage>
-void LMMSEVectorImageFilter< TInputImage, TOutputImage>
+void LMMSEVectorImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
   // Auxiliar filters:
-  ExtractPointer    extract   = ExtractType::New();;
+  ExtractPointer extract   = ExtractType::New();;
+
   LocalMeanPointer  mean      = LocalMeanType::New();
   StatsPointer      stats     = StatsType::New();
   HistogramPointer  histogram = HistogramType::New();
@@ -69,12 +70,17 @@ void LMMSEVectorImageFilter< TInputImage, TOutputImage>
   OutputCastPointer ocast     = OutputCastType::New();
   icast->SetInput( this->GetInput() );
   // For each iteration:
-  for( unsigned int iter=0; iter<m_Iterations; ++iter ){
+  for( unsigned int iter = 0; iter < m_Iterations; ++iter )
+    {
     // Create a minipieline to compute local means and the noise:
-    if( iter==0 )
+    if( iter == 0 )
+      {
       extract->SetInput( icast->GetOutput() );
+      }
     else
+      {
       extract->SetInput( lmmse->GetOutput() );
+      }
     mean->SetInput( extract->GetOutput() );
     stats->SetInput( mean->GetOutput() );
     // Fix the corresponding parameters:
@@ -85,7 +91,9 @@ void LMMSEVectorImageFilter< TInputImage, TOutputImage>
     stats->Update();
     // Compute the statistics:
     if( !stats->GetReady() )
+      {
       itkExceptionMacro( << "Could not compute the statistics!!!" );
+      }
     double smean = stats->GetMean();
     double std   = stats->GetStd();
     double min   = stats->GetMin();
@@ -93,51 +101,66 @@ void LMMSEVectorImageFilter< TInputImage, TOutputImage>
     // Confidence factor for the std:
     double SFac = 2.0;
     // Compute the limits in the histogram:
-    double dMin = smean - SFac*std - 0.5;
-    if ( dMin<min )
-      dMin = min-0.5;
-    if ( dMin<=0 )
+    double dMin = smean - SFac * std - 0.5;
+    if( dMin < min )
+      {
+      dMin = min - 0.5;
+      }
+    if( dMin <= 0 )
+      {
       dMin = 0;
-    double dMax = smean + SFac*std;
-    if ( dMax>max )
+      }
+    double dMax = smean + SFac * std;
+    if( dMax > max )
+      {
       dMax = max;
+      }
     // Create the minipipeline to compute the histogram:
     histogram->SetInput( stats->GetOutput() );
     histogram->SetMin( dMin );
     histogram->SetMax( dMax );
     unsigned long bins = (unsigned long)(   ( dMax - dMin) * m_HistogramResolutionFactor   );
-    if( bins>m_MaximumNumberOfBins )
+    if( bins > m_MaximumNumberOfBins )
+      {
       bins = m_MaximumNumberOfBins;
+      }
     histogram->SetBins( bins );
     // Execute the pipeline:
     histogram->Update();
     // Compute the noise:
     double noiseStd  = histogram->GetMode();
-    noiseStd        *= sqrt(2/M_PI);
-    if( noiseStd>m_MaximumNoiseSTD )
+    noiseStd        *= sqrt(2 / M_PI);
+    if( noiseStd > m_MaximumNoiseSTD )
+      {
       noiseStd = m_MaximumNoiseSTD;
-    if( noiseStd<m_MinimumNoiseSTD )
+      }
+    if( noiseStd < m_MinimumNoiseSTD )
+      {
       noiseStd = m_MinimumNoiseSTD;
-    if( iter==0 )
+      }
+    if( iter == 0 )
+      {
       lmmse->SetInput(  icast->GetOutput()  );
+      }
     else
+      {
       lmmse->SetInput(  lmmse->GetOutput()  );
+      }
     // Set the parameters:
     lmmse->SetUseAbsoluteValue( m_UseAbsoluteValue );
     lmmse->SetKeepValue( m_KeepValue );
     lmmse->SetMinimumNumberOfUsedVoxelsFiltering( m_MinimumNumberOfUsedVoxelsFiltering );
-    lmmse->SetNoiseVariance( noiseStd*noiseStd );
+    lmmse->SetNoiseVariance( noiseStd * noiseStd );
     lmmse->SetRadius( m_RadiusFiltering );
     lmmse->SetChannels( m_Channels );
     lmmse->Modified();
     lmmse->Update();
-  }
+    }
   ocast->SetInput( lmmse->GetOutput() );
   ocast->Update();
   this->GraftOutput( ocast->GetOutput() );
   return;
 }
-
 
 /** Standard "PrintSelf" method */
 template <class TInputImage, class TOutput>

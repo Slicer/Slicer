@@ -26,7 +26,8 @@
 
 #include "vnl/vnl_vector.h"
 
-namespace itk {
+namespace itk
+{
 
 /** \class N3MRIBiasFieldCorrectionImageFilter.h
  * \brief Implementation of the N3 MRI bias field correction algorithm.
@@ -82,21 +83,20 @@ namespace itk {
  *
  */
 
-
 /**
  * Class definition for N3BiasFieldScaleCostFunction
  */
 
-template<class TInputImage, class TBiasFieldImage, class TMaskImage,
-  class TConfidenceImage>
+template <class TInputImage, class TBiasFieldImage, class TMaskImage,
+          class TConfidenceImage>
 class ITK_EXPORT N3BiasFieldScaleCostFunction
   : public SingleValuedCostFunction
 {
 public:
-  typedef N3BiasFieldScaleCostFunction   Self;
-  typedef SingleValuedCostFunction       Superclass;
-  typedef SmartPointer<Self>             Pointer;
-  typedef SmartPointer<const Self>       ConstPointer;
+  typedef N3BiasFieldScaleCostFunction Self;
+  typedef SingleValuedCostFunction     Superclass;
+  typedef SmartPointer<Self>           Pointer;
+  typedef SmartPointer<const Self>     ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( N3BiasFieldScaleCostFunction, SingleValuedCostFunction );
@@ -104,9 +104,9 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
-  typedef Superclass::MeasureType        MeasureType;
-  typedef Superclass::DerivativeType     DerivativeType;
-  typedef Superclass::ParametersType     ParametersType;
+  typedef Superclass::MeasureType    MeasureType;
+  typedef Superclass::DerivativeType DerivativeType;
+  typedef Superclass::ParametersType ParametersType;
 
   itkSetObjectMacro( InputImage, TInputImage );
   itkSetObjectMacro( BiasFieldImage, TBiasFieldImage );
@@ -117,17 +117,17 @@ public:
   itkGetConstMacro( MaskLabel, typename TMaskImage::PixelType );
 
   virtual MeasureType GetValue( const ParametersType & parameters ) const;
-  virtual void GetDerivative( const ParametersType & parameters,
-                              DerivativeType & derivative ) const;
+
+  virtual void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const;
+
   virtual unsigned int GetNumberOfParameters() const;
 
 protected:
   N3BiasFieldScaleCostFunction();
   virtual ~N3BiasFieldScaleCostFunction();
-
 private:
-  N3BiasFieldScaleCostFunction(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  N3BiasFieldScaleCostFunction(const Self &); // purposely not implemented
+  void operator=(const Self &);               // purposely not implemented
 
   typename TInputImage::Pointer                  m_InputImage;
   typename TBiasFieldImage::Pointer              m_BiasFieldImage;
@@ -137,22 +137,21 @@ private:
   typename TMaskImage::PixelType                 m_MaskLabel;
 };
 
-
 /**
  * Class definition for N3MRIBiasFieldCorrectionImageFilter
  */
-template<class TInputImage, class TMaskImage = Image<unsigned char,
-  ::itk::GetImageDimension<TInputImage>::ImageDimension>,
-  class TOutputImage = TInputImage>
+template <class TInputImage, class TMaskImage = Image<unsigned char,
+                                                      ::itk::GetImageDimension<TInputImage>::ImageDimension>,
+          class TOutputImage = TInputImage>
 class ITK_EXPORT N3MRIBiasFieldCorrectionImageFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+  public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef N3MRIBiasFieldCorrectionImageFilter             Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>   Superclass;
-  typedef SmartPointer<Self>                              Pointer;
-  typedef SmartPointer<const Self>                        ConstPointer;
+  typedef N3MRIBiasFieldCorrectionImageFilter           Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Runtime information support. */
   itkTypeMacro( N3MRIBiasFieldCorrectionImageFilter, ImageToImageFilter );
@@ -162,60 +161,65 @@ public:
 
   /** ImageDimension constants */
   itkStaticConstMacro( ImageDimension, unsigned int,
-    TInputImage::ImageDimension );
+                       TInputImage::ImageDimension );
 
   /** Some convenient typedefs. */
-  typedef TInputImage                                InputImageType;
-  typedef TOutputImage                               OutputImageType;
-  typedef TMaskImage                                 MaskImageType;
-  typedef typename MaskImageType::PixelType          MaskPixelType;
+  typedef TInputImage                       InputImageType;
+  typedef TOutputImage                      OutputImageType;
+  typedef TMaskImage                        MaskImageType;
+  typedef typename MaskImageType::PixelType MaskPixelType;
 
-  typedef float                                      RealType;
-  typedef Image<RealType, ImageDimension>            RealImageType;
+  typedef float                           RealType;
+  typedef Image<RealType, ImageDimension> RealImageType;
 
   /** B-spline smoothing filter typedefs */
-  typedef Vector<RealType, 1>                        ScalarType;
+  typedef Vector<RealType, 1> ScalarType;
   typedef PointSet<ScalarType,
-    itkGetStaticConstMacro( ImageDimension )>        PointSetType;
+                   itkGetStaticConstMacro( ImageDimension )>        PointSetType;
   typedef Image<ScalarType,
-    itkGetStaticConstMacro( ImageDimension )>        ScalarImageType;
+                itkGetStaticConstMacro( ImageDimension )>        ScalarImageType;
   typedef BSplineScatteredDataPointSetToImageFilter
-    <PointSetType, ScalarImageType>                  BSplineFilterType;
+  <PointSetType, ScalarImageType>                  BSplineFilterType;
   typedef typename
-    BSplineFilterType::PointDataImageType            BiasFieldControlPointLatticeType;
-  typedef typename BSplineFilterType::ArrayType      ArrayType;
+  BSplineFilterType::PointDataImageType            BiasFieldControlPointLatticeType;
+  typedef typename BSplineFilterType::ArrayType ArrayType;
 
   void SetMaskImage( const MaskImageType *mask )
-    {
+  {
     this->SetNthInput( 1, const_cast<MaskImageType *>( mask ) );
-    }
-  const MaskImageType* GetMaskImage() const
-    {
-    return static_cast<MaskImageType*>( const_cast<DataObject *>
-      ( this->ProcessObject::GetInput( 1 ) ) );
-    }
+  }
+
+  const MaskImageType * GetMaskImage() const
+  {
+    return static_cast<MaskImageType *>( const_cast<DataObject *>
+                                         ( this->ProcessObject::GetInput( 1 ) ) );
+  }
+
   void SetConfidenceImage( const RealImageType *image )
-    {
+  {
     this->SetNthInput( 2, const_cast<RealImageType *>( image ) );
-    }
-  const RealImageType* GetConfidenceImage() const
-    {
-    return static_cast<RealImageType*>( const_cast<DataObject *>
-      ( this->ProcessObject::GetInput( 2 ) ) );
-    }
+  }
+
+  const RealImageType * GetConfidenceImage() const
+  {
+    return static_cast<RealImageType *>( const_cast<DataObject *>
+                                         ( this->ProcessObject::GetInput( 2 ) ) );
+  }
 
   void SetInput1( const TInputImage *input )
-    {
+  {
     this->SetInput( input );
-    }
+  }
+
   void SetInput2( const TMaskImage *mask )
-    {
+  {
     this->SetMaskImage( mask );
-    }
+  }
+
   void SetInput3( const RealImageType *image )
-    {
+  {
     this->SetConfidenceImage( image );
-    }
+  }
 
   itkSetMacro( MaskLabel, MaskPixelType );
   itkGetConstMacro( MaskLabel, MaskPixelType );
@@ -241,17 +245,18 @@ public:
   itkSetMacro( NumberOfFittingLevels, ArrayType );
   itkGetConstMacro( NumberOfFittingLevels, ArrayType );
   void SetNumberOfFittingLevels( unsigned int n )
-    {
+  {
     ArrayType nlevels;
+
     nlevels.Fill( n );
     this->SetNumberOfFittingLevels( nlevels );
-    }
+  }
 
   itkSetMacro( NumberOfControlPoints, ArrayType );
   itkGetConstMacro( NumberOfControlPoints, ArrayType );
 
   itkGetConstMacro( LogBiasFieldControlPointLattice,
-    typename BiasFieldControlPointLatticeType::Pointer );
+                    typename BiasFieldControlPointLatticeType::Pointer );
 
   itkSetMacro( UseOptimalBiasFieldScaling, bool );
   itkGetConstMacro( UseOptimalBiasFieldScaling, bool );
@@ -261,17 +266,18 @@ public:
 
   itkGetConstMacro( ElapsedIterations, unsigned int );
   itkGetConstMacro( CurrentConvergenceMeasurement, RealType );
-
 protected:
   N3MRIBiasFieldCorrectionImageFilter();
-  ~N3MRIBiasFieldCorrectionImageFilter() {};
+  ~N3MRIBiasFieldCorrectionImageFilter()
+  {
+  };
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
   void GenerateData();
 
 private:
-  N3MRIBiasFieldCorrectionImageFilter( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  N3MRIBiasFieldCorrectionImageFilter( const Self & ); // purposely not implemented
+  void operator=( const Self & );                      // purposely not implemented
 
   typename RealImageType::Pointer SharpenImage(
     typename RealImageType::Pointer );
@@ -283,37 +289,37 @@ private:
   RealType CalculateOptimalBiasFieldScaling(
     typename RealImageType::Pointer );
 
-  MaskPixelType                               m_MaskLabel;
+  MaskPixelType m_MaskLabel;
 
   /**
    * Parameters for deconvolution with Weiner filter
    */
-  unsigned int                                m_NumberOfHistogramBins;
-  RealType                                    m_WeinerFilterNoise;
-  RealType                                    m_BiasFieldFullWidthAtHalfMaximum;
+  unsigned int m_NumberOfHistogramBins;
+  RealType     m_WeinerFilterNoise;
+  RealType     m_BiasFieldFullWidthAtHalfMaximum;
 
   /**
    * Convergence parameters
    */
-  unsigned int                                m_MaximumNumberOfIterations;
-  unsigned int                                m_ElapsedIterations;
-  RealType                                    m_ConvergenceThreshold;
-  RealType                                    m_CurrentConvergenceMeasurement;
+  unsigned int m_MaximumNumberOfIterations;
+  unsigned int m_ElapsedIterations;
+  RealType     m_ConvergenceThreshold;
+  RealType     m_CurrentConvergenceMeasurement;
 
   /**
    * B-spline fitting parameters
    */
   typename
-    BiasFieldControlPointLatticeType::Pointer m_LogBiasFieldControlPointLattice;
-  unsigned int                                m_SplineOrder;
-  ArrayType                                   m_NumberOfControlPoints;
-  ArrayType                                   m_NumberOfFittingLevels;
+  BiasFieldControlPointLatticeType::Pointer m_LogBiasFieldControlPointLattice;
+  unsigned int m_SplineOrder;
+  ArrayType    m_NumberOfControlPoints;
+  ArrayType    m_NumberOfFittingLevels;
 
   /**
    * other parameters
    */
-  RealType                                    m_BiasFieldScaling;
-  bool                                        m_UseOptimalBiasFieldScaling;
+  RealType m_BiasFieldScaling;
+  bool     m_UseOptimalBiasFieldScaling;
 
 }; // end of class
 

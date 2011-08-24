@@ -19,14 +19,13 @@
 namespace itk
 {
 
-template< class TData >
-DiffusionTensor3DTransform< TData >
+template <class TData>
+DiffusionTensor3DTransform<TData>
 ::DiffusionTensor3DTransform()
 {
-  //Initialize the Measurement Frame to Identity
-  m_MeasurementFrame.SetIdentity() ;
+  // Initialize the Measurement Frame to Identity
+  m_MeasurementFrame.SetIdentity();
 }
 
-
-}//end namespace itk
+} // end namespace itk
 #endif

@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -30,17 +30,17 @@ namespace itk
  * the pixels in a neighborhood about the corresponding input pixel.
  * Only uses pixels with values greater than zero!
  *
- * A mean filter is one of the family of linear filters.  
+ * A mean filter is one of the family of linear filters.
  *
  * \sa Image
  * \sa Neighborhood
  * \sa NeighborhoodOperator
  * \sa NeighborhoodIterator
- * 
+ *
  * \ingroup IntensityImageFilters
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MaskedMeanImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT MaskedMeanImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */
@@ -49,19 +49,19 @@ public:
   typedef typename InputImageType::Pointer      InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
   typedef typename OutputImageType::Pointer     OutputImagePointer;
-  
+
   /** Standard class typedefs. */
-  typedef MaskedMeanImageFilter                                Self;
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef MaskedMeanImageFilter                               Self;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( MaskedMeanImageFilter, ImageToImageFilter );
-  
+
   /** Set and get the minimum number of samples for reliable estimates. */
   itkSetMacro( MinimumNumberOfUsedVoxels, int );
   itkGetMacro( MinimumNumberOfUsedVoxels, int );
@@ -77,18 +77,23 @@ public:
   /** Set and get the radius of the neighborhood used to compute the mean. */
   itkSetMacro(Radius, InputSizeType);
   itkGetConstReferenceMacro(Radius, InputSizeType);
-  
+
   /** MaskedMeanImageFilter needs a larger input requested region than
    * the output requested region.  As such, MaskedMeanImageFilter needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
+  virtual void GenerateInputRequestedRegion()
+  throw (InvalidRequestedRegionError);
+
 protected:
   MaskedMeanImageFilter();
-  virtual ~MaskedMeanImageFilter() {}
+  virtual ~MaskedMeanImageFilter()
+  {
+  }
   void PrintSelf( std::ostream& os, Indent indent) const;
+
   /** MaskedMeanImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
    * routine which is called for each processing thread. The output
@@ -100,21 +105,21 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
+
 #else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
 #endif
 private:
-  MaskedMeanImageFilter(const Self&); // purposely not implemented
-  void operator=(const Self&);        // purposely not implemented
+  MaskedMeanImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);        // purposely not implemented
 
   InputSizeType m_Radius;
   int           m_MinimumNumberOfUsedVoxels;
 
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

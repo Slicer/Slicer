@@ -9,7 +9,7 @@ Clifton Park, NY, 12065, USA.
 See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
-All rights reserved. 
+All rights reserved.
 
 IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
 DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
@@ -33,14 +33,15 @@ class VTK_EXPORT RegisterImagesModuleLogic : public vtkSharedModuleLogic
 {
 public:
 
-  static RegisterImagesModuleLogic *New( );
+  static RegisterImagesModuleLogic * New();
+
   vtkTypeMacro( RegisterImagesModuleLogic, vtkSharedModuleLogic );
   void PrintSelf( ostream& os, vtkIndent indent );
-  
+
   vtkSetMRMLNodeArgumentAsStringMacro( FixedVolumeNodeId, fixedImage )
   vtkSetMRMLNodeArgumentAsStringMacro( MovingVolumeNodeId, movingImage )
   vtkSetMRMLNodeArgumentAsStringMacro( ResampledVolumeNodeId, resampledImage )
-  
+
   vtkGetMRMLNodeArgumentAsStringMacro( FixedVolumeNodeId, fixedImage )
   vtkGetMRMLNodeArgumentAsStringMacro( MovingVolumeNodeId, movingImage )
   vtkGetMRMLNodeArgumentAsStringMacro( ResampledVolumeNodeId, resampledImage )
@@ -48,41 +49,39 @@ public:
   vtkSetMRMLNodeArgumentAsStringMacro( Registration, registration );
 
   vtkSetMRMLNodeArgumentAsStringMacro( Initialization, initialization );
-  
+
   vtkSetMRMLNodeArgumentAsStringMacro( Interpolation, interpolation );
 
   vtkSetMRMLNodeArgumentAsStringMacro( LoadTransform, loadTransform );
 
   vtkSetMRMLNodeArgumentAsStringMacro( SaveTransform, saveTransform );
-  
-  vtkSetMRMLNodeArgumentAsStringMacro( RegionOfInterest, regionOfInterest );
-  
-  void SetLandmarks ( const std::vector<std::vector<float> > &fixed, 
-                      const std::vector<std::vector<float> > &moving );
 
-  int AddLandmark ( const std::vector<float> &fixed, 
-                    const std::vector<float> &moving );
-  /** Create a landmark if it doesn't exists. if landmark < 0, insert the 
+  vtkSetMRMLNodeArgumentAsStringMacro( RegionOfInterest, regionOfInterest );
+
+  void SetLandmarks( const std::vector<std::vector<float> > & fixed, const std::vector<std::vector<float> > & moving );
+
+  int AddLandmark( const std::vector<float> & fixed, const std::vector<float> & moving );
+
+  /** Create a landmark if it doesn't exists. if landmark < 0, insert the
    *  landmark at the end of the list. */
-  void SetLandmark ( int landmark, 
-                     const std::vector<float> &fixed, 
-                     const std::vector<float> &moving );
+  void SetLandmark( int landmark, const std::vector<float> & fixed, const std::vector<float> & moving );
+
   void RemoveLandmark( int landmark );
-  
+
 protected:
   vtkSetMRMLNodeArgumentAsStringMacro( FixedLandmarks, fixedLandmarks );
   vtkSetMRMLNodeArgumentAsStringMacro( MovingLandmarks, movingLandmarks );
-  
+
   RegisterImagesModuleLogic( void );
   virtual ~RegisterImagesModuleLogic( void );
-  RegisterImagesModuleLogic( const RegisterImagesModuleLogic& );
-  void operator=( const RegisterImagesModuleLogic& );
+  RegisterImagesModuleLogic( const RegisterImagesModuleLogic & );
+  void operator=( const RegisterImagesModuleLogic & );
 
   // Derived to modified the output node
   void ApplyTask( void *clientdata );
-  
-  std::vector< std::vector<float> > m_FixedLandmarks;
-  std::vector< std::vector<float> > m_MovingLandmarks;
+
+  std::vector<std::vector<float> > m_FixedLandmarks;
+  std::vector<std::vector<float> > m_MovingLandmarks;
 };
 
 #endif

@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "itkTestMain.h"
-//#include "DicomToNrrdConverter.cxx"
+// #include "DicomToNrrdConverter.cxx"
 
 /*
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);

@@ -9,7 +9,7 @@ Clifton Park, NY, 12065, USA.
 See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
-All rights reserved. 
+All rights reserved.
 
 IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
 DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
@@ -32,7 +32,7 @@ static const unsigned int  image_logo_pixel_size     = 3;
 static const unsigned long image_logo_length         = 228;
 static const unsigned long image_logo_decoded_length = 4800;
 
-static const unsigned char image_logo[] = 
+static const unsigned char image_logo[] =
   "eNrt18ENgCAQRFEa8WYnVmhJ9uDdKjwrCYkhQdYBlp3E8DP3d57rGo3ec85R0HOf7GmKG9"
   "AwS5rixqgZnaJEtzedQ7vSMkp0e9AISnR1aRxVpEtRRfeYZz8QXdbNr5F+0GeforEbo410"
   "ir7qqdjiCmjs5tBqWnYDLaMV9Cfqh6BEF6d1UdBF0FIXoTu5Mg2iui6O1rk5muIWodVuSl"

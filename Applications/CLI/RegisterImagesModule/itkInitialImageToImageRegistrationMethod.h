@@ -31,99 +31,99 @@
 namespace itk
 {
 
-template< class TImage >
-class InitialImageToImageRegistrationMethod 
-: public ImageToImageRegistrationMethod< TImage >
-  {
+template <class TImage>
+class InitialImageToImageRegistrationMethod
+  : public ImageToImageRegistrationMethod<TImage>
+{
 
-  public:
+public:
 
-    typedef InitialImageToImageRegistrationMethod     Self;
-    typedef ImageToImageRegistrationMethod< TImage >  Superclass;
-    typedef SmartPointer< Self >                      Pointer;
-    typedef SmartPointer< const Self >                ConstPointer;
+  typedef InitialImageToImageRegistrationMethod  Self;
+  typedef ImageToImageRegistrationMethod<TImage> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
-    itkTypeMacro( InitialImageToImageRegistrationMethod,
-                  ImageToImageRegistrationMethod );
+  itkTypeMacro( InitialImageToImageRegistrationMethod,
+                ImageToImageRegistrationMethod );
 
-    itkNewMacro( Self );
+  itkNewMacro( Self );
 
-    //
-    // Typedefs from Superclass
-    //
-    itkStaticConstMacro( ImageDimension, unsigned int,
-                         TImage::ImageDimension );
-    
-    typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
-                                                      TransformType;
+  //
+  // Typedefs from Superclass
+  //
+  itkStaticConstMacro( ImageDimension, unsigned int,
+                       TImage::ImageDimension );
 
-    typedef typename TransformType::Pointer           TransformPointer;
+  typedef AffineTransform<double, itkGetStaticConstMacro( ImageDimension )>
+  TransformType;
 
+  typedef typename TransformType::Pointer TransformPointer;
 
-    //
-    // Local Typedefs
-    //
-    typedef Point< double, itkGetStaticConstMacro(ImageDimension) >
-                                                LandmarkPointType;
-    typedef std::vector< LandmarkPointType >    LandmarkPointContainer;
-    
-    //
-    // Custom Methods
-    //
+  //
+  // Local Typedefs
+  //
+  typedef Point<double, itkGetStaticConstMacro(ImageDimension)>
+  LandmarkPointType;
+  typedef std::vector<LandmarkPointType> LandmarkPointContainer;
 
-    /**
-     * The function performs the casting.  This function should only appear
-     *   once in the class hierarchy.  It is provided so that member
-     *   functions that exist only in specific transforms (e.g., SetIdentity)
-     *   can be called without the caller having to do the casting. 
-     **/
-    TransformType * GetTypedTransform( void );
-    const TransformType * GetTypedTransform( void ) const;
+  //
+  // Custom Methods
+  //
 
-    /** This method creates, initializes and returns an Affine transform.  The
-     * transform is initialized with the current results available in the
-     * GetTypedTransform() method. The returned transform is not a member
-     * variable, and therefore, must be received into a SmartPointer to prevent
-     * it from being destroyed by depletion of its reference counting. */
-    TransformPointer GetAffineTransform( void ) const;
+  /**
+   * The function performs the casting.  This function should only appear
+   *   once in the class hierarchy.  It is provided so that member
+   *   functions that exist only in specific transforms (e.g., SetIdentity)
+   *   can be called without the caller having to do the casting.
+   **/
+  TransformType * GetTypedTransform( void );
 
-    itkSetMacro( NumberOfMoments, unsigned int );
-    itkGetConstMacro( NumberOfMoments, unsigned int );
+  const TransformType * GetTypedTransform( void ) const;
 
-    itkSetMacro( ComputeCenterOfRotationOnly, bool );
-    itkGetConstMacro( ComputeCenterOfRotationOnly, bool );
+  /** This method creates, initializes and returns an Affine transform.  The
+   * transform is initialized with the current results available in the
+   * GetTypedTransform() method. The returned transform is not a member
+   * variable, and therefore, must be received into a SmartPointer to prevent
+   * it from being destroyed by depletion of its reference counting. */
+  TransformPointer GetAffineTransform( void ) const;
 
-    itkSetMacro( UseLandmarks, bool );
-    itkGetConstMacro( UseLandmarks, bool );
-    
-    void SetFixedLandmarks ( const LandmarkPointContainer& fixedLandmarks );
-    void SetMovingLandmarks ( const LandmarkPointContainer& movingLandmarks );
+  itkSetMacro( NumberOfMoments, unsigned int );
+  itkGetConstMacro( NumberOfMoments, unsigned int );
 
-  protected:
+  itkSetMacro( ComputeCenterOfRotationOnly, bool );
+  itkGetConstMacro( ComputeCenterOfRotationOnly, bool );
 
-    InitialImageToImageRegistrationMethod( void );
-    virtual ~InitialImageToImageRegistrationMethod( void );
+  itkSetMacro( UseLandmarks, bool );
+  itkGetConstMacro( UseLandmarks, bool );
 
-    void PrintSelf( std::ostream & os, Indent indent ) const;
+  void SetFixedLandmarks( const LandmarkPointContainer& fixedLandmarks );
 
-    //
-    //  Methods from Superclass. Only the GenerateData() method should be
-    //  overloaded. The Update() method must not be overloaded.
-    //
-    void    GenerateData();
+  void SetMovingLandmarks( const LandmarkPointContainer& movingLandmarks );
 
-   
-  private:
+protected:
 
-    InitialImageToImageRegistrationMethod( const Self & );  // Purposely not implemented
-    void operator = ( const Self & );                       // Purposely not implemented
+  InitialImageToImageRegistrationMethod( void );
+  virtual ~InitialImageToImageRegistrationMethod( void );
 
-    unsigned int            m_NumberOfMoments;
-    bool                    m_ComputeCenterOfRotationOnly;
-    bool                    m_UseLandmarks;
-    LandmarkPointContainer  m_FixedLandmarks;
-    LandmarkPointContainer  m_MovingLandmarks;
-  };
+  void PrintSelf( std::ostream & os, Indent indent ) const;
+
+  //
+  //  Methods from Superclass. Only the GenerateData() method should be
+  //  overloaded. The Update() method must not be overloaded.
+  //
+  void    GenerateData();
+
+private:
+
+  InitialImageToImageRegistrationMethod( const Self & );    // Purposely not implemented
+  void operator =( const Self & );                          // Purposely not implemented
+
+  unsigned int           m_NumberOfMoments;
+  bool                   m_ComputeCenterOfRotationOnly;
+  bool                   m_UseLandmarks;
+  LandmarkPointContainer m_FixedLandmarks;
+  LandmarkPointContainer m_MovingLandmarks;
+};
 
 } // end namespace itk
 
@@ -131,6 +131,4 @@ class InitialImageToImageRegistrationMethod
 #include "itkInitialImageToImageRegistrationMethod.txx"
 #endif
 
-
-#endif //__ImageToImageRegistrationMethod_h
-
+#endif // __ImageToImageRegistrationMethod_h

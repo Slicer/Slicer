@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -35,65 +35,65 @@ namespace itk
  * \sa Neighborhood
  * \sa NeighborhoodOperator
  * \sa NeighborhoodIterator
- * 
+ *
  * \ingroup IntensityImageFilters
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LMMSEVectorImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT LMMSEVectorImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                                          InputImageType;
-  typedef TOutputImage                                         OutputImageType;
+  typedef TInputImage  InputImageType;
+  typedef TOutputImage OutputImageType;
 
   /** Standard class typedefs. */
-  typedef LMMSEVectorImageFilter                               Self;
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef LMMSEVectorImageFilter                              Self;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
-  typedef typename OutputImageType::Pointer                    OutputImagePointer;
-  typedef typename InputImageType::Pointer                     InputImagePointer;
-  typedef typename InputImageType::ConstPointer                InputImageConstPointer;
+  typedef typename OutputImageType::Pointer     OutputImagePointer;
+  typedef typename InputImageType::Pointer      InputImagePointer;
+  typedef typename InputImageType::ConstPointer InputImageConstPointer;
 
   /** Typedefs for internal processing */
-  typedef itk::VectorImage< float, TInputImage::ImageDimension > InternalImageType;
-  typedef typename InternalImageType::Pointer                    InternalImagePointer;
-  typedef typename InternalImageType::ConstPointer               InternalImageConstPointer;
-  
+  typedef itk::VectorImage<float, TInputImage::ImageDimension> InternalImageType;
+  typedef typename InternalImageType::Pointer                  InternalImagePointer;
+  typedef typename InternalImageType::ConstPointer             InternalImageConstPointer;
+
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( LMMSEVectorImageFilter, ImageToImageFilter );
-  
-  /** Image typedef support. */
-  typedef typename InputImageType::PixelType                        InputPixelType;
-  typedef typename OutputImageType::PixelType                       OutputPixelType;
 
-  typedef typename InputImageType::RegionType                       InputImageRegionType;
-  typedef typename OutputImageType::RegionType                      OutputImageRegionType;
-  typedef typename InputImageType::SizeType                         InputSizeType;
-  
-  typedef LMMSEVectorImageFilterStep<InternalImageType,InternalImageType> LMMSEStepType;
-  typedef typename LMMSEStepType::Pointer                                 LMMSEStepPointer;
+  /** Image typedef support. */
+  typedef typename InputImageType::PixelType  InputPixelType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
+
+  typedef typename InputImageType::RegionType  InputImageRegionType;
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  typedef typename InputImageType::SizeType    InputSizeType;
+
+  typedef LMMSEVectorImageFilterStep<InternalImageType, InternalImageType> LMMSEStepType;
+  typedef typename LMMSEStepType::Pointer                                  LMMSEStepPointer;
 
   /** Typedefs for scalar processing */
-  typedef itk::VectorImageCastFilter<InputImageType,InternalImageType>                  InputCastType;
-  typedef typename InputCastType::Pointer                                               InputCastPointer;
-  typedef itk::VectorImageCastFilter<InternalImageType,OutputImageType>                 OutputCastType;
-  typedef typename OutputCastType::Pointer                                              OutputCastPointer;
-  typedef float                                                                         ScalarPixelType;
-  typedef itk::Image< ScalarPixelType, TInputImage::ImageDimension >                    ScalarImageType;
-  typedef itk::ExtractVolumeFilter< InternalImageType, ScalarImageType >                ExtractType;
-  typedef typename ExtractType::Pointer                                                 ExtractPointer;
-  typedef itk::MaskedMeanImageFilter< ScalarImageType, ScalarImageType >                LocalMeanType;
-  typedef typename LocalMeanType::Pointer                                               LocalMeanPointer;
-  typedef itk::ComputeStatisticsWherePositiveFilter< ScalarImageType, ScalarImageType > StatsType;
-  typedef typename StatsType::Pointer                                                   StatsPointer;
-  typedef itk::ComputeRestrictedHistogram< ScalarImageType, ScalarImageType >           HistogramType;
-  typedef typename HistogramType::Pointer                                               HistogramPointer;
-  
+  typedef itk::VectorImageCastFilter<InputImageType, InternalImageType>               InputCastType;
+  typedef typename InputCastType::Pointer                                             InputCastPointer;
+  typedef itk::VectorImageCastFilter<InternalImageType, OutputImageType>              OutputCastType;
+  typedef typename OutputCastType::Pointer                                            OutputCastPointer;
+  typedef float                                                                       ScalarPixelType;
+  typedef itk::Image<ScalarPixelType, TInputImage::ImageDimension>                    ScalarImageType;
+  typedef itk::ExtractVolumeFilter<InternalImageType, ScalarImageType>                ExtractType;
+  typedef typename ExtractType::Pointer                                               ExtractPointer;
+  typedef itk::MaskedMeanImageFilter<ScalarImageType, ScalarImageType>                LocalMeanType;
+  typedef typename LocalMeanType::Pointer                                             LocalMeanPointer;
+  typedef itk::ComputeStatisticsWherePositiveFilter<ScalarImageType, ScalarImageType> StatsType;
+  typedef typename StatsType::Pointer                                                 StatsPointer;
+  typedef itk::ComputeRestrictedHistogram<ScalarImageType, ScalarImageType>           HistogramType;
+  typedef typename HistogramType::Pointer                                             HistogramPointer;
+
   /** Set and get the radius of the neighbourhoods for estimation and filtering used to compute the mean. */
   itkSetMacro( RadiusFiltering, InputSizeType );
   itkSetMacro( RadiusEstimation, InputSizeType );
@@ -119,7 +119,6 @@ public:
   itkSetMacro( KeepValue, bool );
   itkBooleanMacro( KeepValue );
 
-
   /** Minimum and maximum allowed noise standard deviations.*/
   itkSetMacro( MinimumNoiseSTD, double );
   itkGetMacro( MinimumNoiseSTD, double );
@@ -140,35 +139,41 @@ public:
   itkGetConstReferenceMacro( Channels, unsigned int );
 
   /** This filter requires the whole input to produce its output */
-  virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);  
+  virtual void GenerateInputRequestedRegion()
+  throw (InvalidRequestedRegionError);
+
 protected:
   LMMSEVectorImageFilter();
-  virtual ~LMMSEVectorImageFilter() {}
+  virtual ~LMMSEVectorImageFilter()
+  {
+  }
   void GenerateData();
+
   void PrintSelf( std::ostream& os, Indent indent) const;
+
 private:
-  LMMSEVectorImageFilter(const Self&); // purposely not implemented
-  void operator=(const Self&);         // purposely not implemented
+  LMMSEVectorImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);         // purposely not implemented
 
-  InputSizeType      m_RadiusEstimation;
-  InputSizeType      m_RadiusFiltering;
-  unsigned int       m_Iterations;
-  bool               m_UseAbsoluteValue;
-  bool               m_KeepValue;
-  
-  int                m_MinimumNumberOfUsedVoxelsEstimation;
-  int                m_MinimumNumberOfUsedVoxelsFiltering;
+  InputSizeType m_RadiusEstimation;
+  InputSizeType m_RadiusFiltering;
+  unsigned int  m_Iterations;
+  bool          m_UseAbsoluteValue;
+  bool          m_KeepValue;
 
-  double             m_MinimumNoiseSTD;
-  double             m_MaximumNoiseSTD;
+  int m_MinimumNumberOfUsedVoxelsEstimation;
+  int m_MinimumNumberOfUsedVoxelsFiltering;
 
-  unsigned int       m_FirstBaseline;
-  double             m_HistogramResolutionFactor;
+  double m_MinimumNoiseSTD;
+  double m_MaximumNoiseSTD;
 
-  unsigned int       m_Channels;
-  unsigned long      m_MaximumNumberOfBins;
+  unsigned int m_FirstBaseline;
+  double       m_HistogramResolutionFactor;
+
+  unsigned int  m_Channels;
+  unsigned long m_MaximumNumberOfBins;
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

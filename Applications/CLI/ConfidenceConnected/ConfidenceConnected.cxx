@@ -19,8 +19,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-
-
 #include "itkConfidenceConnectedImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkCurvatureFlowImageFilter.h"
@@ -35,51 +33,49 @@
 // thing should be in an anonymous namespace except for the module
 // entry point, e.g. main()
 //
-namespace {
+namespace
+{
 
 } // end of anonymous namespace
-
 
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
 
-  typedef   float           InternalPixelType;
-  const     unsigned int    Dimension = 3;
-  typedef itk::Image< InternalPixelType, Dimension >  InternalImageType;
+  typedef   float InternalPixelType;
+  const     unsigned int Dimension = 3;
+  typedef itk::Image<InternalPixelType, Dimension> InternalImageType;
 
-  typedef unsigned short OutputPixelType;
-  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
+  typedef unsigned short                         OutputPixelType;
+  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
-  typedef itk::CastImageFilter< InternalImageType, OutputImageType >
-    CastingFilterType;
+  typedef itk::CastImageFilter<InternalImageType, OutputImageType>
+  CastingFilterType;
   CastingFilterType::Pointer caster = CastingFilterType::New();
-                        
 
-  typedef  itk::ImageFileReader< InternalImageType > ReaderType;
-  typedef  itk::ImageFileWriter<  OutputImageType  > WriterType;
+  typedef  itk::ImageFileReader<InternalImageType> ReaderType;
+  typedef  itk::ImageFileWriter<OutputImageType>   WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
   reader->SetFileName( inputVolume.c_str() );
   reader->Update();
-  
+
   writer->SetFileName( outputVolume.c_str() );
 
-
-  typedef itk::CurvatureFlowImageFilter< InternalImageType, InternalImageType >
-    CurvatureFlowImageFilterType;
-  CurvatureFlowImageFilterType::Pointer smoothing = 
-                         CurvatureFlowImageFilterType::New();
+  typedef itk::CurvatureFlowImageFilter<InternalImageType, InternalImageType>
+  CurvatureFlowImageFilterType;
+  CurvatureFlowImageFilterType::Pointer smoothing =
+    CurvatureFlowImageFilterType::New();
   itk::PluginFilterWatcher watcher1(smoothing, "Smoothing",
                                     CLPProcessInformation, 0.5, 0.0);
 
-  typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType> 
-    ConnectedFilterType;
+  typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType>
+  ConnectedFilterType;
   ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
-  itk::PluginFilterWatcher watcher2(confidenceConnected, "Segmenting",
-                                    CLPProcessInformation, 0.5, 0.5);
+  itk::PluginFilterWatcher     watcher2(confidenceConnected, "Segmenting",
+                                        CLPProcessInformation, 0.5, 0.5);
 
   smoothing->SetInput( reader->GetOutput() );
   confidenceConnected->SetInput( smoothing->GetOutput() );
@@ -95,14 +91,14 @@ int main( int argc, char *argv[] )
   confidenceConnected->SetReplaceValue( labelvalue );
   confidenceConnected->SetInitialNeighborhoodRadius( neighborhood );
 
-  if (seed.size() > 0)
+  if( seed.size() > 0 )
     {
     InternalImageType::PointType lpsPoint;
     InternalImageType::IndexType index;
-    for (::size_t i=0; i<seed.size(); ++i)
+    for( ::size_t i = 0; i < seed.size(); ++i )
       {
       // seeds come in ras, convert to lps
-      lpsPoint[0] = -seed[i][0];  
+      lpsPoint[0] = -seed[i][0];
       lpsPoint[1] = -seed[i][1];
       lpsPoint[2] = seed[i][2];
 
@@ -118,7 +114,7 @@ int main( int argc, char *argv[] )
     std::cerr << "No seeds specified." << std::endl;
     return -1;
     }
-  
+
   try
     {
     writer->Update();
@@ -131,7 +127,3 @@ int main( int argc, char *argv[] )
 
   return 0;
 }
-
-
-
-

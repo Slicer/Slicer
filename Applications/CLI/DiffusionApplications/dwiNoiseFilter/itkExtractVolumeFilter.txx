@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -24,13 +24,12 @@
 namespace itk
 {
 
-
-template< class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 #if ITK_VERSION_MAJOR < 4
-void ExtractVolumeFilter< TInputImage, TOutputImage >
+void ExtractVolumeFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int itkNotUsed(threadId) )
 #else
-void ExtractVolumeFilter< TInputImage, TOutputImage >
+void ExtractVolumeFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType itkNotUsed(threadId) )
 #endif
 {
@@ -38,16 +37,18 @@ void ExtractVolumeFilter< TInputImage, TOutputImage >
   typename OutputImageType::Pointer     output = this->GetOutput();
   typename InputImageType::ConstPointer input  = this->GetInput();
   // Iterators:
-  itk::ImageRegionConstIterator<InputImageType> bit = itk::ImageRegionConstIterator<InputImageType>( input, outputRegionForThread );
-  itk::ImageRegionIterator<OutputImageType>     it  = itk::ImageRegionIterator<OutputImageType>( output, outputRegionForThread );
+  itk::ImageRegionConstIterator<InputImageType> bit = itk::ImageRegionConstIterator<InputImageType>(
+      input, outputRegionForThread );
+  itk::ImageRegionIterator<OutputImageType> it  = itk::ImageRegionIterator<OutputImageType>( output,
+                                                                                             outputRegionForThread );
   // Initiallise max and min:
-  for( bit.GoToBegin(),it.GoToBegin(); !bit.IsAtEnd(); ++bit,++it ){
+  for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )
+    {
     double current = m_Factor * static_cast<double>( bit.Get()[m_VolumeNr] );
     it.Set( static_cast<OutputPixelType>(current) );
-  }
+    }
 }
 
 } // end namespace itk
-
 
 #endif

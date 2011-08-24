@@ -1,15 +1,14 @@
 #ifndef LABELMAPPREPROCESSOR_H
 #define LABELMAPPREPROCESSOR_H
 
-
 #include "itkImage.h"
 #include "itkImageRegionIterator.h"
 
 #include <algorithm>
 
-template< typename pixel_t >
-typename itk::Image< pixel_t, 3 >::Pointer 
-preprocessLabelMap(typename itk::Image< pixel_t, 3 >::Pointer originalLabelMap, pixel_t desiredLabel)
+template <typename pixel_t>
+typename itk::Image<pixel_t, 3>::Pointer
+preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pixel_t desiredLabel)
 {
   /*
     If there is a single non-zero label in the originalLabelMap, then
@@ -25,17 +24,17 @@ preprocessLabelMap(typename itk::Image< pixel_t, 3 >::Pointer originalLabelMap, 
 
     1. count number of different labels in the originalLabelMap
 
-    2. if # = 1, return it
+    2. if #= 1, return it
 
-    3. if # = 2, if desiredLabel is not there, then return originalLableMap itself
+    3. if #= 2, if desiredLabel is not there, then return originalLableMap itself
 
-    4. if # = 2, go thru originalLabelMap and fill in a new lable map
+    4. if #= 2, go thru originalLabelMap and fill in a new lable map
        with 1 where the label matches.
-    
+
 
    */
 
-  typedef itk::Image< pixel_t, 3 > image_t;
+  typedef itk::Image<pixel_t, 3> image_t;
 
   typedef itk::ImageRegionIterator<image_t> imageRegionIterator_t;
 
@@ -45,37 +44,36 @@ preprocessLabelMap(typename itk::Image< pixel_t, 3 >::Pointer originalLabelMap, 
 
   typename image_t::SizeType sz = originalLabelMap->GetLargestPossibleRegion().GetSize();
 
-  std::vector<pixel_t> uniqueLabels(sz[0]*sz[1]*sz[2]);
-  long i = 0;
-  for (; !iter.IsAtEnd(); ++iter)
+  std::vector<pixel_t> uniqueLabels(sz[0] * sz[1] * sz[2]);
+  long                 i = 0;
+  for( ; !iter.IsAtEnd(); ++iter )
     {
-      uniqueLabels[i++] = iter.Get();
+    uniqueLabels[i++] = iter.Get();
     }
-  
-  std::sort(uniqueLabels.begin(), uniqueLabels.end());
-  typename std::vector<pixel_t>::iterator itl = std::unique(uniqueLabels.begin(), uniqueLabels.end());
-  uniqueLabels.resize( itl - uniqueLabels.begin() );    
 
-  if (uniqueLabels[0] != 0)
+  std::sort(uniqueLabels.begin(), uniqueLabels.end() );
+  typename std::vector<pixel_t>::iterator itl = std::unique(uniqueLabels.begin(), uniqueLabels.end() );
+  uniqueLabels.resize( itl - uniqueLabels.begin() );
+
+  if( uniqueLabels[0] != 0 )
     {
-      std::cerr<<"Error: least label is not 0? no background?\n";
-      raise(SIGABRT);
+    std::cerr << "Error: least label is not 0? no background?\n";
+    raise(SIGABRT);
     }
 
   short numOfLabels = uniqueLabels.size() - 1; // 0 not count
 
   // 2.
-  if (1 == numOfLabels)
+  if( 1 == numOfLabels )
     {
-      return originalLabelMap;
+    return originalLabelMap;
     }
 
-  // 3. 
-  if (!std::binary_search(uniqueLabels.begin(), uniqueLabels.end(), desiredLabel))
+  // 3.
+  if( !std::binary_search(uniqueLabels.begin(), uniqueLabels.end(), desiredLabel) )
     {
-      return originalLabelMap;
+    return originalLabelMap;
     }
-
 
   // 4.
   typename image_t::Pointer newLabelMap = image_t::New();
@@ -84,19 +82,16 @@ preprocessLabelMap(typename itk::Image< pixel_t, 3 >::Pointer originalLabelMap, 
   newLabelMap->Allocate();
   newLabelMap->FillBuffer(0);
 
-
   imageRegionIterator_t iterNew(newLabelMap, newLabelMap->GetLargestPossibleRegion() );
   iterNew.GoToBegin();
   iter.GoToBegin();
-  
-  for (; !iter.IsAtEnd(); ++iter, ++iterNew)
+  for( ; !iter.IsAtEnd(); ++iter, ++iterNew )
     {
-      if (iter.Get() == desiredLabel)
-        {
-          iterNew.Set(1);
-        }
+    if( iter.Get() == desiredLabel )
+      {
+      iterNew.Set(1);
+      }
     }
-
 
   return newLabelMap;
 }

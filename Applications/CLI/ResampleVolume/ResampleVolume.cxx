@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -21,7 +21,7 @@
 // Resample a series
 //   Usage: ResampleVolume --spacing xSpacing,ySpacing,zSpacing
 //                         InputDirectory OutputDirectory
-//                        
+//
 //
 //   Example: ResampleVolume --spacing 0,0,1.5 CT.mhd CTResample.mhd
 //            will read a volume CT.mhd and create a
@@ -42,7 +42,6 @@
 // 3) Write the new series
 //
 
-
 #include "itkPluginUtilities.h"
 
 #include "itkImageFileWriter.h"
@@ -59,10 +58,11 @@
 // thing should be in an anonymous namespace except for the module
 // entry point, e.g. main()
 //
-namespace {
+namespace
+{
 
-
-template<class T> int DoIt( int argc, char * argv[], T )
+template <class T>
+int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
   const unsigned int InputDimension = 3;
@@ -70,34 +70,44 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   typedef T PixelType;
 
-  typedef itk::Image< PixelType, InputDimension >
-    InputImageType;
-  typedef itk::Image< PixelType, OutputDimension >
-    OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >
-    ReaderType;
-  typedef itk::IdentityTransform< double, InputDimension >
-    TransformType;
-  typedef itk::LinearInterpolateImageFunction< InputImageType, double >
-    LinearInterpolatorType;
-  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double >
-    NearestNeighborInterpolatorType;
-  typedef itk::BSplineInterpolateImageFunction< InputImageType, double >
-    BSplineInterpolatorType;
+  typedef itk::Image<PixelType, InputDimension>
+  InputImageType;
+  typedef itk::Image<PixelType, OutputDimension>
+  OutputImageType;
+  typedef itk::ImageFileReader<InputImageType>
+  ReaderType;
+  typedef itk::IdentityTransform<double, InputDimension>
+  TransformType;
+  typedef itk::LinearInterpolateImageFunction<InputImageType, double>
+  LinearInterpolatorType;
+  typedef itk::NearestNeighborInterpolateImageFunction<InputImageType, double>
+  NearestNeighborInterpolatorType;
+  typedef itk::BSplineInterpolateImageFunction<InputImageType, double>
+  BSplineInterpolatorType;
 #define RADIUS 3
 
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::HammingWindowFunction<RADIUS> > HammingInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::CosineWindowFunction<RADIUS> > CosineInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::WelchWindowFunction<RADIUS> > WelchInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::LanczosWindowFunction<RADIUS> > LanczosInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::BlackmanWindowFunction<RADIUS> > BlackmanInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
+                                                    itk::Function::HammingWindowFunction<RADIUS> >
+   HammingInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
+                                                    itk::Function::CosineWindowFunction<RADIUS> >
+   CosineInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
+                                                    itk::Function::WelchWindowFunction<RADIUS> >
+   WelchInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
+                                                    itk::Function::LanczosWindowFunction<RADIUS> >
+   LanczosInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
+                                                    itk::Function::BlackmanWindowFunction<RADIUS> >
+   BlackmanInterpolatorType;
 
-  typedef itk::ResampleImageFilter< InputImageType, InputImageType >
-    ResampleFilterType;
-  typedef itk::ImageFileWriter< OutputImageType >
-    FileWriterType;
+  typedef itk::ResampleImageFilter<InputImageType, InputImageType>
+  ResampleFilterType;
+  typedef itk::ImageFileWriter<OutputImageType>
+  FileWriterType;
 
-////////////////////////////////////////////////  
+// //////////////////////////////////////////////
 // 1) Read the input series
 
   typename ReaderType::Pointer reader = ReaderType::New();
@@ -107,14 +117,14 @@ template<class T> int DoIt( int argc, char * argv[], T )
     {
     reader->Update();
     }
-  catch (itk::ExceptionObject &excp)
+  catch( itk::ExceptionObject & excp )
     {
     std::cerr << "Exception thrown while reading the input file" << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
     }
 
-////////////////////////////////////////////////  
+// //////////////////////////////////////////////
 // 2) Resample the series
   typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
   typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
@@ -137,16 +147,15 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   // Compute the size of the output. The user specifies a spacing on
   // the command line. If the spacing is 0, the input spacing will be
-  // used. The size (# of pixels) in the output is recomputed using
+  // used. The size (#of pixels) in the output is recomputed using
   // the ratio of the input and output sizes.
   typename InputImageType::SpacingType outputSpacing;
   outputSpacing[0] = outputPixelSpacing[0];
   outputSpacing[1] = outputPixelSpacing[1];
   outputSpacing[2] = outputPixelSpacing[2];
-
-  for (unsigned int i = 0; i < 3; i++)
+  for( unsigned int i = 0; i < 3; i++ )
     {
-    if (outputSpacing[i] == 0.0)
+    if( outputSpacing[i] == 0.0 )
       {
       outputSpacing[i] = inputSpacing[i];
       }
@@ -159,60 +168,60 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
   itk::PluginFilterWatcher watcher(resampler, "Resample Volume",
-    CLPProcessInformation);
+                                   CLPProcessInformation);
 
-    resampler->SetInput( reader->GetOutput() );
-    resampler->SetTransform( transform );
-    if (interpolationType == "linear")
-      {
-      resampler->SetInterpolator( linearInterpolator );
-      }
-    else if (interpolationType == "nearestNeighbor")
-      {
-      resampler->SetInterpolator( nearestNeighborInterpolator );
-      }
-    else if (interpolationType == "bspline")
-      {
-      resampler->SetInterpolator( bsplineInterpolator );
-      }
-    else if (interpolationType == "hamming")
-      {
-      resampler->SetInterpolator( hammingInterpolator );
-      }
-    else if (interpolationType == "cosine")
-      {
-      resampler->SetInterpolator( cosineInterpolator );
-      }
-    else if (interpolationType == "welch")
-      {
-      resampler->SetInterpolator( welchInterpolator );
-      }
-    else if (interpolationType == "lanczos")
-      {
-      resampler->SetInterpolator( lanczosInterpolator );
-      }
-    else if (interpolationType == "blackman")
-      {
-      resampler->SetInterpolator( blackmanInterpolator );
-      }
-    else
-      {
-      resampler->SetInterpolator( linearInterpolator );
-      }
+  resampler->SetInput( reader->GetOutput() );
+  resampler->SetTransform( transform );
+  if( interpolationType == "linear" )
+    {
+    resampler->SetInterpolator( linearInterpolator );
+    }
+  else if( interpolationType == "nearestNeighbor" )
+    {
+    resampler->SetInterpolator( nearestNeighborInterpolator );
+    }
+  else if( interpolationType == "bspline" )
+    {
+    resampler->SetInterpolator( bsplineInterpolator );
+    }
+  else if( interpolationType == "hamming" )
+    {
+    resampler->SetInterpolator( hammingInterpolator );
+    }
+  else if( interpolationType == "cosine" )
+    {
+    resampler->SetInterpolator( cosineInterpolator );
+    }
+  else if( interpolationType == "welch" )
+    {
+    resampler->SetInterpolator( welchInterpolator );
+    }
+  else if( interpolationType == "lanczos" )
+    {
+    resampler->SetInterpolator( lanczosInterpolator );
+    }
+  else if( interpolationType == "blackman" )
+    {
+    resampler->SetInterpolator( blackmanInterpolator );
+    }
+  else
+    {
+    resampler->SetInterpolator( linearInterpolator );
+    }
 
-    resampler->SetOutputOrigin ( reader->GetOutput()->GetOrigin());
-    resampler->SetOutputSpacing ( outputSpacing );
-    resampler->SetOutputDirection ( reader->GetOutput()->GetDirection());
-    resampler->SetSize ( outputSize );
-    resampler->Update ();
+  resampler->SetOutputOrigin( reader->GetOutput()->GetOrigin() );
+  resampler->SetOutputSpacing( outputSpacing );
+  resampler->SetOutputDirection( reader->GetOutput()->GetDirection() );
+  resampler->SetSize( outputSize );
+  resampler->Update();
 
-////////////////////////////////////////////////  
+// //////////////////////////////////////////////
 // 5) Write the new DICOM series
 
   typename FileWriterType::Pointer seriesWriter = FileWriterType::New();
-    seriesWriter->SetInput( resampler->GetOutput() );
-    seriesWriter->SetFileName( OutputVolume.c_str() );
-    seriesWriter->SetUseCompression(1);
+  seriesWriter->SetInput( resampler->GetOutput() );
+  seriesWriter->SetFileName( OutputVolume.c_str() );
+  seriesWriter->SetUseCompression(1);
   try
     {
     seriesWriter->Update();
@@ -228,52 +237,51 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
 } // end of anonymous namespace
 
-
 int main( int argc, char * argv[] )
 {
-  
+
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try
     {
-    itk::GetImageType (InputVolume, pixelType, componentType);
+    itk::GetImageType(InputVolume, pixelType, componentType);
 
     // This filter handles all types
-    
-    switch (componentType)
+
+    switch( componentType )
       {
       case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0));
+        return DoIt( argc, argv, static_cast<unsigned char>(0) );
         break;
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0));
+        return DoIt( argc, argv, static_cast<char>(0) );
         break;
       case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0));
+        return DoIt( argc, argv, static_cast<unsigned short>(0) );
         break;
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0));
+        return DoIt( argc, argv, static_cast<short>(0) );
         break;
       case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0));
+        return DoIt( argc, argv, static_cast<unsigned int>(0) );
         break;
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0));
+        return DoIt( argc, argv, static_cast<int>(0) );
         break;
       case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0));
+        return DoIt( argc, argv, static_cast<unsigned long>(0) );
         break;
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0));
+        return DoIt( argc, argv, static_cast<long>(0) );
         break;
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0));
+        return DoIt( argc, argv, static_cast<float>(0) );
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0));
+        return DoIt( argc, argv, static_cast<double>(0) );
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
@@ -281,7 +289,7 @@ int main( int argc, char * argv[] )
         break;
       }
     }
-  catch( itk::ExceptionObject &excep)
+  catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

@@ -3,7 +3,7 @@
   Program:   Surface Extraction Program
   Module:    $RCSfile: ExtractSurface.cxx,v $
 
-  Copyright (c) Kitware Inc. 
+  Copyright (c) Kitware Inc.
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
@@ -21,15 +21,15 @@
 
 // Description:
 // Get the PixelType and ComponentType from fileName
-void GetImageType (std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType,
-                   int & dimensions)
+void GetImageType(std::string fileName,
+                  itk::ImageIOBase::IOPixelType & pixelType,
+                  itk::ImageIOBase::IOComponentType & componentType,
+                  int & dimensions)
 {
   typedef itk::Image<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
-  imageReader->SetFileName(fileName.c_str());
+    itk::ImageFileReader<ImageType>::New();
+  imageReader->SetFileName(fileName.c_str() );
   imageReader->UpdateOutputInformation();
 
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -40,19 +40,19 @@ void GetImageType (std::string fileName,
 template <unsigned int DimensionsT>
 int DoIt( MetaCommand & command )
 {
-  typedef short     PixelType;
-  
-  typedef itk::Image< PixelType, DimensionsT >    
-                                                  ImageType;
+  typedef short PixelType;
 
-  typedef itk::BSplineImageToImageRegistrationMethod< ImageType >
-                                                  RegistrationMethodType;
+  typedef itk::Image<PixelType, DimensionsT>
+  ImageType;
 
-  typedef itk::ImageToImageRegistrationMethodTestingHelper< RegistrationMethodType >   
-                                                  TestingHelperType;
+  typedef itk::BSplineImageToImageRegistrationMethod<ImageType>
+  RegistrationMethodType;
+
+  typedef itk::ImageToImageRegistrationMethodTestingHelper<RegistrationMethodType>
+  TestingHelperType;
 
   //  Setup the registration
-  TestingHelperType  helper;
+  TestingHelperType helper;
 
   helper.SetFixedImageFileName( command.GetValueAsString("FixedImage").c_str() );
   helper.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
@@ -87,7 +87,7 @@ int DoIt( MetaCommand & command )
   registrationMethod->SetMaxIterations( command.GetValueAsInt("MaxIterations") );
 
   registrationMethod->SetRandomNumberSeed( command.GetValueAsInt("RandomNumberSeed") );
-  
+
   if( command.GetOptionWasSet("MeanSquares") )
     {
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::MEAN_SQUARED_ERROR_METRIC );
@@ -101,29 +101,28 @@ int DoIt( MetaCommand & command )
     {
     if( command.GetValueAsString("Mode") == "DRAFT" )
       {
-      //registrationMethod->SetNumberOfControlPoints( 0.5 * registrationMethod->GetNumberOfControlPoints() );
+      // registrationMethod->SetNumberOfControlPoints( 0.5 * registrationMethod->GetNumberOfControlPoints() );
       registrationMethod->SetNumberOfLevels( 2 );
-      registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations()) );
-      registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples()) );
+      registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations() ) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples() ) );
       }
     else if( command.GetValueAsString("Mode") == "NORMAL" )
       {
-      //registrationMethod->SetMaxIterations( registrationMethod->GetMaxIterations() );
-      //registrationMethod->SetNumberOfSamples( registrationMethod->GetNumberOfSamples() );
+      // registrationMethod->SetMaxIterations( registrationMethod->GetMaxIterations() );
+      // registrationMethod->SetNumberOfSamples( registrationMethod->GetNumberOfSamples() );
       }
     else if( command.GetValueAsString("Mode") == "PRECISE" )
       {
-      //registrationMethod->SetNumberOfControlPoints( 2 * registrationMethod->GetNumberOfControlPoints() );
-      registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations()) );
-      registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples()) );
+      // registrationMethod->SetNumberOfControlPoints( 2 * registrationMethod->GetNumberOfControlPoints() );
+      registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations() ) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples() ) );
       }
-    else 
+    else
       {
       std::cerr << "Mode type " << command.GetValueAsString("Mode")
                 << " not recognized.  Using NORMAL." << std::endl;
       }
     }
-
 
   // Run
   helper.PrepareRegistration();
@@ -131,8 +130,8 @@ int DoIt( MetaCommand & command )
   helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
   helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
   helper.RunRegistration();
-  //helper.PrintTest();
-  //helper.ReportResults();
+  // helper.PrintTest();
+  // helper.ReportResults();
   helper.ResampleOutputImage();
   helper.PerformRegressionTest();
 
@@ -257,8 +256,8 @@ int main(int argc, char *argv[])
     }
 
   // Determine properties of the input images
-  int dimensions = 0;
-  itk::ImageIOBase::IOPixelType pixelType;
+  int                               dimensions = 0;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try

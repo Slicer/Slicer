@@ -27,7 +27,8 @@
 
 #include "vnl/vnl_vector.h"
 
-namespace itk {
+namespace itk
+{
 
 /** \class N4MRIBiasFieldCorrectionImageFilter.h
  * \brief Implementation of the N4 MRI bias field correction algorithm.
@@ -77,18 +78,18 @@ namespace itk {
  *
  */
 
-template<class TInputImage, class TMaskImage = Image<unsigned char,
-  ::itk::GetImageDimension<TInputImage>::ImageDimension>,
-  class TOutputImage = TInputImage>
+template <class TInputImage, class TMaskImage = Image<unsigned char,
+                                                      ::itk::GetImageDimension<TInputImage>::ImageDimension>,
+          class TOutputImage = TInputImage>
 class ITK_EXPORT N4MRIBiasFieldCorrectionImageFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+  public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef N4MRIBiasFieldCorrectionImageFilter             Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>   Superclass;
-  typedef SmartPointer<Self>                              Pointer;
-  typedef SmartPointer<const Self>                        ConstPointer;
+  typedef N4MRIBiasFieldCorrectionImageFilter           Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Runtime information support. */
   itkTypeMacro( N4MRIBiasFieldCorrectionImageFilter, ImageToImageFilter );
@@ -98,61 +99,66 @@ public:
 
   /** ImageDimension constants */
   itkStaticConstMacro( ImageDimension, unsigned int,
-    TInputImage::ImageDimension );
+                       TInputImage::ImageDimension );
 
   /** Some convenient typedefs. */
-  typedef TInputImage                                InputImageType;
-  typedef TOutputImage                               OutputImageType;
-  typedef TMaskImage                                 MaskImageType;
-  typedef typename MaskImageType::PixelType          MaskPixelType;
+  typedef TInputImage                       InputImageType;
+  typedef TOutputImage                      OutputImageType;
+  typedef TMaskImage                        MaskImageType;
+  typedef typename MaskImageType::PixelType MaskPixelType;
 
-  typedef float                                      RealType;
-  typedef Image<RealType, ImageDimension>            RealImageType;
+  typedef float                           RealType;
+  typedef Image<RealType, ImageDimension> RealImageType;
 
   /** B-spline smoothing filter typedefs */
-  typedef Vector<RealType, 1>                        ScalarType;
+  typedef Vector<RealType, 1> ScalarType;
   typedef PointSet<ScalarType,
-    itkGetStaticConstMacro( ImageDimension )>        PointSetType;
+                   itkGetStaticConstMacro( ImageDimension )>        PointSetType;
   typedef Image<ScalarType,
-    itkGetStaticConstMacro( ImageDimension )>        ScalarImageType;
+                itkGetStaticConstMacro( ImageDimension )>        ScalarImageType;
   typedef BSplineScatteredDataPointSetToImageFilter
-    <PointSetType, ScalarImageType>                  BSplineFilterType;
+  <PointSetType, ScalarImageType>                  BSplineFilterType;
   typedef typename
-    BSplineFilterType::PointDataImageType            BiasFieldControlPointLatticeType;
-  typedef typename BSplineFilterType::ArrayType      ArrayType;
-  typedef Array<unsigned int>                        VariableSizeArrayType;
+  BSplineFilterType::PointDataImageType            BiasFieldControlPointLatticeType;
+  typedef typename BSplineFilterType::ArrayType ArrayType;
+  typedef Array<unsigned int>                   VariableSizeArrayType;
 
   void SetMaskImage( const MaskImageType *mask )
-    {
+  {
     this->SetNthInput( 1, const_cast<MaskImageType *>( mask ) );
-    }
-  const MaskImageType* GetMaskImage() const
-    {
-    return static_cast<MaskImageType*>( const_cast<DataObject *>
-      ( this->ProcessObject::GetInput( 1 ) ) );
-    }
+  }
+
+  const MaskImageType * GetMaskImage() const
+  {
+    return static_cast<MaskImageType *>( const_cast<DataObject *>
+                                         ( this->ProcessObject::GetInput( 1 ) ) );
+  }
+
   void SetConfidenceImage( const RealImageType *image )
-    {
+  {
     this->SetNthInput( 2, const_cast<RealImageType *>( image ) );
-    }
-  const RealImageType* GetConfidenceImage() const
-    {
-    return static_cast<RealImageType*>( const_cast<DataObject *>
-      ( this->ProcessObject::GetInput( 2 ) ) );
-    }
+  }
+
+  const RealImageType * GetConfidenceImage() const
+  {
+    return static_cast<RealImageType *>( const_cast<DataObject *>
+                                         ( this->ProcessObject::GetInput( 2 ) ) );
+  }
 
   void SetInput1( const TInputImage *input )
-    {
+  {
     this->SetInput( input );
-    }
+  }
+
   void SetInput2( const TMaskImage *mask )
-    {
+  {
     this->SetMaskImage( mask );
-    }
+  }
+
   void SetInput3( const RealImageType *image )
-    {
+  {
     this->SetConfidenceImage( image );
-    }
+  }
 
   itkSetMacro( MaskLabel, MaskPixelType );
   itkGetConstMacro( MaskLabel, MaskPixelType );
@@ -178,20 +184,21 @@ public:
   itkSetMacro( NumberOfFittingLevels, ArrayType );
   itkGetConstMacro( NumberOfFittingLevels, ArrayType );
   void SetNumberOfFittingLevels( unsigned int n )
-    {
+  {
     ArrayType nlevels;
+
     nlevels.Fill( n );
     this->SetNumberOfFittingLevels( nlevels );
-    }
+  }
 
   itkSetMacro( NumberOfControlPoints, ArrayType );
   itkGetConstMacro( NumberOfControlPoints, ArrayType );
 
   itkGetConstMacro( LogBiasFieldControlPointLattice,
-    typename BiasFieldControlPointLatticeType::Pointer );
+                    typename BiasFieldControlPointLatticeType::Pointer );
 
   itkSetClampMacro( SigmoidNormalizedAlpha, RealType, 0.0,
-    NumericTraits<RealType>::max() );
+                    NumericTraits<RealType>::max() );
   itkGetConstMacro( SigmoidNormalizedAlpha, RealType );
 
   itkSetClampMacro( SigmoidNormalizedBeta, RealType, 0.0, 1.0 );
@@ -200,17 +207,18 @@ public:
   itkGetConstMacro( ElapsedIterations, unsigned int );
   itkGetConstMacro( CurrentConvergenceMeasurement, RealType );
   itkGetConstMacro( CurrentLevel, unsigned int );
-
 protected:
   N4MRIBiasFieldCorrectionImageFilter();
-  ~N4MRIBiasFieldCorrectionImageFilter() {};
+  ~N4MRIBiasFieldCorrectionImageFilter()
+  {
+  };
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
   void GenerateData();
 
 private:
-  N4MRIBiasFieldCorrectionImageFilter( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  N4MRIBiasFieldCorrectionImageFilter( const Self & ); // purposely not implemented
+  void operator=( const Self & );                      // purposely not implemented
 
   typename RealImageType::Pointer SharpenImage(
     typename RealImageType::Pointer );
@@ -220,35 +228,34 @@ private:
     typename RealImageType::Pointer,
     typename RealImageType::Pointer );
 
-  MaskPixelType                               m_MaskLabel;
+  MaskPixelType m_MaskLabel;
 
   /**
    * Parameters for deconvolution with Weiner filter
    */
-  unsigned int                                m_NumberOfHistogramBins;
-  RealType                                    m_WeinerFilterNoise;
-  RealType                                    m_BiasFieldFullWidthAtHalfMaximum;
+  unsigned int m_NumberOfHistogramBins;
+  RealType     m_WeinerFilterNoise;
+  RealType     m_BiasFieldFullWidthAtHalfMaximum;
 
   /**
    * Convergence parameters
    */
-  VariableSizeArrayType                       m_MaximumNumberOfIterations;
-  unsigned int                                m_ElapsedIterations;
-  RealType                                    m_ConvergenceThreshold;
-  RealType                                    m_CurrentConvergenceMeasurement;
-  unsigned int                                m_CurrentLevel;
+  VariableSizeArrayType m_MaximumNumberOfIterations;
+  unsigned int          m_ElapsedIterations;
+  RealType              m_ConvergenceThreshold;
+  RealType              m_CurrentConvergenceMeasurement;
+  unsigned int          m_CurrentLevel;
 
   /**
    * B-spline fitting parameters
    */
   typename
-    BiasFieldControlPointLatticeType::Pointer m_LogBiasFieldControlPointLattice;
-  unsigned int                                m_SplineOrder;
-  ArrayType                                   m_NumberOfControlPoints;
-  ArrayType                                   m_NumberOfFittingLevels;
-  RealType                                    m_SigmoidNormalizedAlpha;
-  RealType                                    m_SigmoidNormalizedBeta;
-
+  BiasFieldControlPointLatticeType::Pointer m_LogBiasFieldControlPointLattice;
+  unsigned int m_SplineOrder;
+  ArrayType    m_NumberOfControlPoints;
+  ArrayType    m_NumberOfFittingLevels;
+  RealType     m_SigmoidNormalizedAlpha;
+  RealType     m_SigmoidNormalizedBeta;
 
 }; // end of class
 

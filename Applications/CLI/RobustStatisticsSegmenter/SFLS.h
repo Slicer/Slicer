@@ -1,23 +1,21 @@
 #ifndef SFLS_h_
 #define SFLS_h_
 
-
 // std
 #include <list>
 
 // itk
 #include "vnl/vnl_vector_fixed.h"
 
-
 class CSFLS
 {
 public:
   typedef CSFLS Self;
 
-  typedef vnl_vector_fixed< int, 3 > NodeType;
-  typedef std::list< NodeType > CSFLSLayer;
+  typedef vnl_vector_fixed<int, 3> NodeType;
+  typedef std::list<NodeType>      CSFLSLayer;
 
-  //typedef boost::shared_ptr< Self > Pointer;
+  // typedef boost::shared_ptr< Self > Pointer;
 
   // ctor
   CSFLS()
@@ -28,8 +26,8 @@ public:
     //       m_lp1.reset(new CSFLSLayer);
     //       m_lp2.reset(new CSFLSLayer);
   }
-  
-  //   static Pointer New() 
+
+  //   static Pointer New()
   //   {
   //     return Pointer(new CSFLS);
   //   }

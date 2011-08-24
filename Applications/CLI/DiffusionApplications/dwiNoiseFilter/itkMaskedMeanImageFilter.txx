@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -39,15 +39,18 @@ MaskedMeanImageFilter<TInputImage, TOutputImage>
 
 template <class TInputImage, class TOutputImage>
 void  MaskedMeanImageFilter<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion() throw (InvalidRequestedRegionError)
+::GenerateInputRequestedRegion()
+throw (InvalidRequestedRegionError)
 {
   // Call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
   // Get pointers to the input and output
-  InputImagePointer  inputPtr  = const_cast< TInputImage * >( this->GetInput() );
+  InputImagePointer  inputPtr  = const_cast<TInputImage *>( this->GetInput() );
   OutputImagePointer outputPtr = this->GetOutput();
-  if ( !inputPtr || !outputPtr )
+  if( !inputPtr || !outputPtr )
+    {
     return;
+    }
   // Get a copy of the input requested region (should equal the output
   // requested region)
   typename TInputImage::RegionType inputRequestedRegion;
@@ -61,27 +64,27 @@ void  MaskedMeanImageFilter<TInputImage, TOutputImage>
   return;
 }
 
-
-template< class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 #if ITK_VERSION_MAJOR < 4
-void MaskedMeanImageFilter< TInputImage, TOutputImage>
+void MaskedMeanImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
 #else
-void MaskedMeanImageFilter< TInputImage, TOutputImage>
+void MaskedMeanImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId )
 #endif
 {
-  
+
   unsigned int i;
+
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
 
   ConstNeighborhoodIterator<InputImageType> bit;
-  ImageRegionIterator<OutputImageType> it;
-  
+  ImageRegionIterator<OutputImageType>      it;
+
   // Allocate output
   typename OutputImageType::Pointer output = this->GetOutput();
   typename  InputImageType::ConstPointer input  = this->GetInput();
-  
+
   // Find the data-set boundary "faces"
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType faceList;
   NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType> bC;
@@ -90,37 +93,43 @@ void MaskedMeanImageFilter< TInputImage, TOutputImage>
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType::iterator fit;
 
   // support progress methods/callbacks
-  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
-  
-  InputRealType sum;
+  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
+  InputRealType sum;
   // Process each of the boundary faces.  These are N-d regions which border
   // the edge of the buffer.
-  for (fit=faceList.begin(); fit != faceList.end(); ++fit){ 
+  for( fit = faceList.begin(); fit != faceList.end(); ++fit )
+    {
     bit = ConstNeighborhoodIterator<InputImageType>(m_Radius,
                                                     input, *fit);
     unsigned int neighborhoodSize = bit.Size();
     it = ImageRegionIterator<OutputImageType>(output, *fit);
     bit.OverrideBoundaryCondition(&nbc);
     bit.GoToBegin();
-
-  for( bit.GoToBegin(),it.GoToBegin(); ! bit.IsAtEnd(); ++bit, ++it ){
-    int iNumberOfUsedVoxels = 0;
-    sum = NumericTraits<InputRealType>::Zero;
-    for (i = 0; i < neighborhoodSize; ++i){
-      if ( bit.GetPixel(i)>0 ){
-        iNumberOfUsedVoxels++;
-        sum += static_cast<InputRealType>( bit.GetPixel(i) );
+    for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )
+      {
+      int iNumberOfUsedVoxels = 0;
+      sum = NumericTraits<InputRealType>::Zero;
+      for( i = 0; i < neighborhoodSize; ++i )
+        {
+        if( bit.GetPixel(i) > 0 )
+          {
+          iNumberOfUsedVoxels++;
+          sum += static_cast<InputRealType>( bit.GetPixel(i) );
+          }
+        }
+      // Get the mean value
+      if( iNumberOfUsedVoxels >= m_MinimumNumberOfUsedVoxels && ( bit.GetCenterPixel() > 0 ) )
+        {
+        it.Set( static_cast<OutputPixelType>(sum / double(iNumberOfUsedVoxels) ) );
+        }
+      else
+        {
+        it.Set(   static_cast<OutputPixelType>( -128 )   );
+        }
+      progress.CompletedPixel();
       }
     }
-    // Get the mean value
-    if ( iNumberOfUsedVoxels>=m_MinimumNumberOfUsedVoxels && ( bit.GetCenterPixel()>0 ) )
-      it.Set( static_cast<OutputPixelType>(sum / double(iNumberOfUsedVoxels)) );
-    else
-      it.Set(   static_cast<OutputPixelType>( -128 )   );
-    progress.CompletedPixel();
-  }
-  }
 }
 
 /** Standard "PrintSelf" method */

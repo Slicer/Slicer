@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -28,18 +28,18 @@ namespace itk
  * \brief Compute mean, std, min, and max of positive pixels
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ComputeRestrictedHistogram : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT ComputeRestrictedHistogram : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                                          InputImageType;
-  typedef TOutputImage                                         OutputImageType;
+  typedef TInputImage  InputImageType;
+  typedef TOutputImage OutputImageType;
 
   /** Standard class typedefs. */
-  typedef ComputeRestrictedHistogram                           Self;
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef ComputeRestrictedHistogram                          Self;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -54,11 +54,11 @@ public:
   typedef typename InputImageType::RegionType              InputImageRegionType;
   typedef typename OutputImageType::RegionType             OutputImageRegionType;
   typedef typename InputImageType::SizeType                InputSizeType;
-  
+
   /** The type to store per thread values */
-  typedef itk::Array2D<unsigned long>                      ThreadHistogramType;
-  typedef itk::Array<unsigned long>                        HistogramType;
-  
+  typedef itk::Array2D<unsigned long> ThreadHistogramType;
+  typedef itk::Array<unsigned long>   HistogramType;
+
   /** Parameters */
   itkGetConstReferenceMacro( Min, double );
   itkGetConstReferenceMacro( Max, double );
@@ -71,43 +71,49 @@ public:
   itkGetConstReferenceMacro( Histogram, HistogramType );
 protected:
   ComputeRestrictedHistogram();
-  virtual ~ComputeRestrictedHistogram() {}
+  virtual ~ComputeRestrictedHistogram()
+  {
+  }
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
+
 #else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
 #endif
   // Override Modified() method to fix the ready variable:
-  void Modified(){
+  void Modified()
+  {
     this->Superclass::Modified();
     m_Ready = false;
   }
-  using itk::Object::Modified; 
+
+  using itk::Object::Modified;
   void BeforeThreadedGenerateData();
+
   void AfterThreadedGenerateData();
+
 private:
-  ComputeRestrictedHistogram(const Self&); // purposely not implemented
-  void operator=(const Self&);             // purposely not implemented
+  ComputeRestrictedHistogram(const Self &); // purposely not implemented
+  void operator=(const Self &);             // purposely not implemented
 
   // Per-thread histogram:
   ThreadHistogramType m_THist;
   // Complete histogram:
-  HistogramType       m_Histogram;
-  
+  HistogramType m_Histogram;
+
   // Parameters:
   double       m_Min;
   double       m_Max;
   unsigned int m_Bins;
 
   // Mode of the distribution value:
-  double       m_Mode;
-  
+  double m_Mode;
+
   // Are the data already computed?
-  bool         m_Ready;
+  bool m_Ready;
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

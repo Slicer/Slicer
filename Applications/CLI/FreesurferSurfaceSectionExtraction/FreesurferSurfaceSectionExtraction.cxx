@@ -6,7 +6,7 @@
 
 int main(int argc, char * argv [])
 {
- PARSE_ARGS;
- std::cout << "Hello World!" << std::endl;
- return EXIT_SUCCESS;
+  PARSE_ARGS;
+  std::cout << "Hello World!" << std::endl;
+  return EXIT_SUCCESS;
 }

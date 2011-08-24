@@ -33,44 +33,45 @@
 #include <vector>
 #include <algorithm>
 
-struct AdjData {
-int myIdx;
-std::vector<int> myNeighbs;
-};
+struct AdjData
+  {
+  int myIdx;
+  std::vector<int> myNeighbs;
+  };
 
-
-struct MeshData {
-std::valarray<double> MeanCurv;
-std::valarray<double> dkdx;
-std::valarray<double> dkdy;
-std::valarray<double> dkdz;
-std::valarray<double> nx;
-std::valarray<double> ny;
-std::valarray<double> nz;
+struct MeshData
+  {
+  std::valarray<double> MeanCurv;
+  std::valarray<double> dkdx;
+  std::valarray<double> dkdy;
+  std::valarray<double> dkdz;
+  std::valarray<double> nx;
+  std::valarray<double> ny;
+  std::valarray<double> nz;
 
 // derivatives w.r.t. intrinsic basis on manifold
-std::valarray<double> dkde1;
-std::valarray<double> dkde2;
-std::valarray<double> dkmag;
+  std::valarray<double> dkde1;
+  std::valarray<double> dkde2;
+  std::valarray<double> dkmag;
 
 // extra color maps to use for various purposes
-std::valarray<double> cmap0;
-std::valarray<double> cmap1;
-std::valarray<double> cmap2;
-std::valarray<double> cmap3;
+  std::valarray<double> cmap0;
+  std::valarray<double> cmap1;
+  std::valarray<double> cmap2;
+  std::valarray<double> cmap3;
 
-vtkPolyData* polydata;
-vtkPolyDataMapper *mapper;
-std::vector<AdjData> adj; // neighbors N steps into tree
-std::vector<AdjData> adjimm; // immediate neighbors; not yet computed
+  vtkPolyData* polydata;
+  vtkPolyDataMapper *mapper;
+  std::vector<AdjData> adj;    // neighbors N steps into tree
+  std::vector<AdjData> adjimm; // immediate neighbors; not yet computed
 
-std::valarray<double> kappa;
+  std::valarray<double> kappa;
 
-int adj_levels;
-int smoothH_its;
-int showLS;
-int rightHandMesh;
-};
+  int adj_levels;
+  int smoothH_its;
+  int showLS;
+  int rightHandMesh;
+  };
 
 void ComputeCurvatureData( MeshData* meshdata ); // main function
 

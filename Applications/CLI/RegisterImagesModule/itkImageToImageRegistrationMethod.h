@@ -33,147 +33,147 @@ namespace itk
  * interface to a generic image registration problem.
  *
  */
-template< class TImage >
-class ImageToImageRegistrationMethod 
-: public ProcessObject
-  {
+template <class TImage>
+class ImageToImageRegistrationMethod
+  : public ProcessObject
+{
 
-  public:
+public:
 
-    typedef ImageToImageRegistrationMethod            Self;
-    typedef ProcessObject                             Superclass;
-    typedef SmartPointer< Self >                      Pointer;
-    typedef SmartPointer< const Self >                ConstPointer;
+  typedef ImageToImageRegistrationMethod Self;
+  typedef ProcessObject                  Superclass;
+  typedef SmartPointer<Self>             Pointer;
+  typedef SmartPointer<const Self>       ConstPointer;
 
-    itkTypeMacro( ImageToImageRegistrationMethod, ProcessObject );
+  itkTypeMacro( ImageToImageRegistrationMethod, ProcessObject );
 
-    itkNewMacro( Self );
+  itkNewMacro( Self );
 
-    //
-    // Custom Typedefs
-    //
-    itkStaticConstMacro( ImageDimension, unsigned int,
-                         TImage::ImageDimension );
+  //
+  // Custom Typedefs
+  //
+  itkStaticConstMacro( ImageDimension, unsigned int,
+                       TImage::ImageDimension );
 
-    typedef Transform< double, 
-                       itkGetStaticConstMacro( ImageDimension ),
-                       itkGetStaticConstMacro( ImageDimension ) >
-                                                      TransformType;
+  typedef Transform<double,
+                    itkGetStaticConstMacro( ImageDimension ),
+                    itkGetStaticConstMacro( ImageDimension )>
+  TransformType;
 
-    typedef DataObjectDecorator< TransformType >      TransformOutputType;
+  typedef DataObjectDecorator<TransformType> TransformOutputType;
 
-    typedef typename DataObject::Pointer              DataObjectPointer;
+  typedef typename DataObject::Pointer DataObjectPointer;
 
-    typedef TImage                                    ImageType;
+  typedef TImage ImageType;
 
-    typedef typename TImage::PointType                PointType;
+  typedef typename TImage::PointType PointType;
 
-    typedef SpatialObject< itkGetStaticConstMacro( ImageDimension )  >
-                                                      MaskObjectType;
+  typedef SpatialObject<itkGetStaticConstMacro( ImageDimension )>
+  MaskObjectType;
 
-    //
-    // Custom Methods
-    //
-    itkSetMacro( RegistrationNumberOfThreads, unsigned int );
-    itkGetMacro( RegistrationNumberOfThreads, unsigned int );
+  //
+  // Custom Methods
+  //
+  itkSetMacro( RegistrationNumberOfThreads, unsigned int );
+  itkGetMacro( RegistrationNumberOfThreads, unsigned int );
 
-    itkSetObjectMacro( Observer, Command );
-    itkGetObjectMacro( Observer, Command );
+  itkSetObjectMacro( Observer, Command );
+  itkGetObjectMacro( Observer, Command );
 
-    void SetFixedImage( const ImageType * fixedImage );
-    itkGetConstObjectMacro( FixedImage, ImageType );
+  void SetFixedImage( const ImageType * fixedImage );
 
-    void SetMovingImage( const ImageType * movingImage );
-    itkGetConstObjectMacro( MovingImage, ImageType );
+  itkGetConstObjectMacro( FixedImage, ImageType );
 
-    void SetRegionOfInterest( const PointType & point1,
-                              const PointType & point2 );
-    itkSetMacro(UseRegionOfInterest, bool);
-    itkGetMacro(UseRegionOfInterest, bool);
-    itkSetMacro(RegionOfInterestPoint1, PointType);
-    itkGetMacro(RegionOfInterestPoint1, PointType);
-    itkSetMacro(RegionOfInterestPoint2, PointType);
-    itkGetMacro(RegionOfInterestPoint2, PointType);
+  void SetMovingImage( const ImageType * movingImage );
 
-    void SetFixedImageMaskObject( const MaskObjectType * maskObject );
-    itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
+  itkGetConstObjectMacro( MovingImage, ImageType );
 
-    itkSetMacro( UseFixedImageMaskObject, bool );
-    itkGetMacro( UseFixedImageMaskObject, bool );
+  void SetRegionOfInterest( const PointType & point1, const PointType & point2 );
 
-    void SetMovingImageMaskObject( const MaskObjectType * maskObject );
-    itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
+  itkSetMacro(UseRegionOfInterest, bool);
+  itkGetMacro(UseRegionOfInterest, bool);
+  itkSetMacro(RegionOfInterestPoint1, PointType);
+  itkGetMacro(RegionOfInterestPoint1, PointType);
+  itkSetMacro(RegionOfInterestPoint2, PointType);
+  itkGetMacro(RegionOfInterestPoint2, PointType);
 
-    itkSetMacro( UseMovingImageMaskObject, bool );
-    itkGetMacro( UseMovingImageMaskObject, bool );
+  void SetFixedImageMaskObject( const MaskObjectType * maskObject );
 
-    itkSetMacro( ReportProgress, bool );
-    itkGetMacro( ReportProgress, bool );
-    itkBooleanMacro( ReportProgress );
+  itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
-    /** Return the output of the registration process, which is a Transform */
-    const TransformOutputType * GetOutput( void ) const;
+  itkSetMacro( UseFixedImageMaskObject, bool );
+  itkGetMacro( UseFixedImageMaskObject, bool );
 
-  protected:
+  void SetMovingImageMaskObject( const MaskObjectType * maskObject );
 
-    ImageToImageRegistrationMethod( void );
-    virtual ~ImageToImageRegistrationMethod( void );
+  itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
-    virtual void    Initialize( void );
+  itkSetMacro( UseMovingImageMaskObject, bool );
+  itkGetMacro( UseMovingImageMaskObject, bool );
 
-    /** Method that actually computes the registration. This method is intended
-     * to be overloaded by derived classes. Those overload, however, must
-     * invoke this method in the base class. */
-    void GenerateData( void );
+  itkSetMacro( ReportProgress, bool );
+  itkGetMacro( ReportProgress, bool );
+  itkBooleanMacro( ReportProgress );
 
-    void PrintSelf( std::ostream & os, Indent indent ) const;
+  /** Return the output of the registration process, which is a Transform */
+  const TransformOutputType * GetOutput( void ) const;
 
-    /** Provide derived classes with access to the Transform member variable. */
-    itkSetObjectMacro( Transform, TransformType );
-    itkGetObjectMacro( Transform, TransformType );
-    itkGetConstObjectMacro( Transform, TransformType );
+protected:
 
-    virtual DataObjectPointer       MakeOutput( unsigned int idx );
+  ImageToImageRegistrationMethod( void );
+  virtual ~ImageToImageRegistrationMethod( void );
 
-    unsigned long                   GetMTime( void ) const;
+  virtual void    Initialize( void );
 
+  /** Method that actually computes the registration. This method is intended
+   * to be overloaded by derived classes. Those overload, however, must
+   * invoke this method in the base class. */
+  void GenerateData( void );
 
-  protected:
+  void PrintSelf( std::ostream & os, Indent indent ) const;
 
-    typename TransformType::Pointer        m_Transform;
+  /** Provide derived classes with access to the Transform member variable. */
+  itkSetObjectMacro( Transform, TransformType );
+  itkGetObjectMacro( Transform, TransformType );
+  itkGetConstObjectMacro( Transform, TransformType );
 
-  private:
+  virtual DataObjectPointer       MakeOutput( unsigned int idx );
 
-    ImageToImageRegistrationMethod( const Self & ); // Purposely not implemented
-    void operator = ( const Self & );               // Purposely not implemented
+  unsigned long                   GetMTime( void ) const;
 
-    unsigned int                           m_RegistrationNumberOfThreads;
+protected:
 
-    Command::Pointer                       m_Observer;
+  typename TransformType::Pointer        m_Transform;
+private:
 
-    typename ImageType::ConstPointer       m_FixedImage;
-    typename ImageType::ConstPointer       m_MovingImage;
+  ImageToImageRegistrationMethod( const Self & );   // Purposely not implemented
+  void operator =( const Self & );                  // Purposely not implemented
 
-    bool                                   m_UseRegionOfInterest;
-    PointType                              m_RegionOfInterestPoint1;
-    PointType                              m_RegionOfInterestPoint2;
+  unsigned int m_RegistrationNumberOfThreads;
 
-    bool                                   m_UseFixedImageMaskObject;
-    typename MaskObjectType::ConstPointer  m_FixedImageMaskObject;
+  Command::Pointer m_Observer;
 
-    bool                                   m_UseMovingImageMaskObject;
-    typename MaskObjectType::ConstPointer  m_MovingImageMaskObject;
+  typename ImageType::ConstPointer       m_FixedImage;
+  typename ImageType::ConstPointer       m_MovingImage;
 
-    bool                                   m_ReportProgress;
+  bool      m_UseRegionOfInterest;
+  PointType m_RegionOfInterestPoint1;
+  PointType m_RegionOfInterestPoint2;
 
-  };
+  bool m_UseFixedImageMaskObject;
+  typename MaskObjectType::ConstPointer  m_FixedImageMaskObject;
 
-} 
+  bool m_UseMovingImageMaskObject;
+  typename MaskObjectType::ConstPointer  m_MovingImageMaskObject;
+
+  bool m_ReportProgress;
+
+};
+
+}
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkImageToImageRegistrationMethod.txx"
 #endif
 
-
-#endif 
-
+#endif

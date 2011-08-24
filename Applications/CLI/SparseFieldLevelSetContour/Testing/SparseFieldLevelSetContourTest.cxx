@@ -16,7 +16,7 @@
 
 void RegisterTests()
 {
-REGISTER_TEST(SparseFieldLevelSetContourTest);
+  REGISTER_TEST(SparseFieldLevelSetContourTest);
 }
 
 #undef main

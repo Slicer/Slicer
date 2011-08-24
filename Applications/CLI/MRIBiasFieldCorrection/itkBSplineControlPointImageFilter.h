@@ -64,15 +64,15 @@ namespace itk
 /**
  * Class definition for ParameterCostFunction
  */
-template<class TControlPointLattice>
+template <class TControlPointLattice>
 class ITK_EXPORT ParameterCostFunction
   : public SingleValuedCostFunction
 {
 public:
-  typedef ParameterCostFunction          Self;
-  typedef SingleValuedCostFunction       Superclass;
-  typedef SmartPointer<Self>             Pointer;
-  typedef SmartPointer<const Self>       ConstPointer;
+  typedef ParameterCostFunction    Self;
+  typedef SingleValuedCostFunction Superclass;
+  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Extract dimension from input image. */
   itkStaticConstMacro( ParametricDimension, unsigned int,
@@ -84,12 +84,12 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
-  typedef Superclass::MeasureType        MeasureType;
-  typedef Superclass::DerivativeType     DerivativeType;
-  typedef Superclass::ParametersType     ParametersType;
+  typedef Superclass::MeasureType    MeasureType;
+  typedef Superclass::DerivativeType DerivativeType;
+  typedef Superclass::ParametersType ParametersType;
 
   typedef FixedArray<unsigned,
-    itkGetStaticConstMacro( ParametricDimension )>    ArrayType;
+                     itkGetStaticConstMacro( ParametricDimension )>    ArrayType;
 
   itkSetObjectMacro( ControlPointLattice, TControlPointLattice );
   itkSetMacro( Origin, typename TControlPointLattice::PointType );
@@ -102,30 +102,28 @@ public:
   itkSetMacro( DataPoint, typename TControlPointLattice::PixelType );
 
   virtual MeasureType GetValue( const ParametersType & parameters ) const;
-  virtual void GetDerivative( const ParametersType & parameters,
-                              DerivativeType & derivative ) const;
+
+  virtual void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const;
+
   virtual unsigned int GetNumberOfParameters() const;
 
 protected:
   ParameterCostFunction();
   virtual ~ParameterCostFunction();
-
 private:
-  ParameterCostFunction(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ParameterCostFunction(const Self &); // purposely not implemented
+  void operator=(const Self &);        // purposely not implemented
 
   typename TControlPointLattice::Pointer         m_ControlPointLattice;
   typename TControlPointLattice::PointType       m_Origin;
   typename TControlPointLattice::SpacingType     m_Spacing;
   typename TControlPointLattice::SizeType        m_Size;
   typename TControlPointLattice::DirectionType   m_Direction;
-  ArrayType                                      m_SplineOrder;
-  ArrayType                                      m_CloseDimension;
-
+  ArrayType m_SplineOrder;
+  ArrayType m_CloseDimension;
 
   typename TControlPointLattice::PixelType       m_DataPoint;
 };
-
 
 /**
  * Class definition for BSplineControlPointImageFilter
@@ -133,13 +131,13 @@ private:
 
 template <class TInputImage, class TOutputImage = TInputImage>
 class BSplineControlPointImageFilter
-: public ImageToImageFilter<TInputImage, TOutputImage>
+  : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  typedef BSplineControlPointImageFilter                      Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>       Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  typedef BSplineControlPointImageFilter                Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -148,45 +146,46 @@ public:
   itkStaticConstMacro( ImageDimension, unsigned int,
                        TInputImage::ImageDimension );
 
-  typedef TInputImage                                         ControlPointLatticeType;
-  typedef TOutputImage                                        ImageType;
+  typedef TInputImage  ControlPointLatticeType;
+  typedef TOutputImage ImageType;
 
   /** Image typedef support. */
-  typedef typename ImageType::PixelType                       PixelType;
-  typedef typename ImageType::RegionType                      RegionType;
-  typedef typename ImageType::IndexType                       IndexType;
-  typedef typename ImageType::PointType                       PointType;
-  typedef typename ImageType::PointType                       ContinuousIndexType;
+  typedef typename ImageType::PixelType  PixelType;
+  typedef typename ImageType::RegionType RegionType;
+  typedef typename ImageType::IndexType  IndexType;
+  typedef typename ImageType::PointType  PointType;
+  typedef typename ImageType::PointType  ContinuousIndexType;
 
-  typedef typename TOutputImage::SpacingType                  SpacingType;
-  typedef typename TOutputImage::PointType                    OriginType;
-  typedef typename TOutputImage::SizeType                     SizeType;
-  typedef typename TOutputImage::DirectionType                DirectionType;
+  typedef typename TOutputImage::SpacingType   SpacingType;
+  typedef typename TOutputImage::PointType     OriginType;
+  typedef typename TOutputImage::SizeType      SizeType;
+  typedef typename TOutputImage::DirectionType DirectionType;
 
   /** Other typedef */
-  typedef float                                               RealType;
+  typedef float RealType;
   typedef Image<RealType,
-    itkGetStaticConstMacro( ImageDimension )>                 RealImageType;
+                itkGetStaticConstMacro( ImageDimension )>                 RealImageType;
   typedef FixedArray<unsigned,
-    itkGetStaticConstMacro( ImageDimension )>                 ArrayType;
-  typedef VariableSizeMatrix<RealType>                        GradientType;
-  typedef RealImageType                                       HessianType;
+                     itkGetStaticConstMacro( ImageDimension )>                 ArrayType;
+  typedef VariableSizeMatrix<RealType> GradientType;
+  typedef RealImageType                HessianType;
 
   /** PointSet typedef support. */
   typedef PointSet<PixelType,
-    itkGetStaticConstMacro( ImageDimension )>                 PointSetType;
-  typedef typename PointSetType::PixelType                    PointDataType;
-  typedef typename PointSetType::PointDataContainer           PointDataContainerType;
+                   itkGetStaticConstMacro( ImageDimension )>                 PointSetType;
+  typedef typename PointSetType::PixelType          PointDataType;
+  typedef typename PointSetType::PointDataContainer PointDataContainerType;
 
   /** Interpolation kernel type (default spline order = 3) */
-  typedef CoxDeBoorBSplineKernelFunction<3>          KernelType;
-  typedef BSplineKernelFunction<0>                   KernelOrder0Type;
-  typedef BSplineKernelFunction<1>                   KernelOrder1Type;
-  typedef BSplineKernelFunction<2>                   KernelOrder2Type;
-  typedef BSplineKernelFunction<3>                   KernelOrder3Type;
+  typedef CoxDeBoorBSplineKernelFunction<3> KernelType;
+  typedef BSplineKernelFunction<0>          KernelOrder0Type;
+  typedef BSplineKernelFunction<1>          KernelOrder1Type;
+  typedef BSplineKernelFunction<2>          KernelOrder2Type;
+  typedef BSplineKernelFunction<3>          KernelOrder3Type;
 
   /** Helper functions */
   void SetSplineOrder( unsigned int );
+
   void SetSplineOrder( ArrayType );
   itkGetConstReferenceMacro( SplineOrder, ArrayType );
 
@@ -238,63 +237,69 @@ public:
    * Evaluate the Jacobian of the resulting B-spline object at a specified
    * point or index within the image domain.
    */
-  void EvaluateJacobianAtPoint( PointType pt, GradientType &jac )
-    {
+  void EvaluateJacobianAtPoint( PointType pt, GradientType & jac )
+  {
     this->EvaluateGradientAtPoint( pt, jac );
     GradientType I( jac.Rows(), jac.Cols() );
     I.SetIdentity();
     jac += I;
-    }
-  void EvaluateJacobianAtIndex( IndexType idx, GradientType &jac )
-    {
+  }
+
+  void EvaluateJacobianAtIndex( IndexType idx, GradientType & jac )
+  {
     this->EvaluateGradientAtIndex( idx, jac );
     GradientType I( jac.Rows(), jac.Cols() );
     I.SetIdentity();
     jac += I;
-    }
-  void EvaluateJacobianAtContinuousIndex( ContinuousIndexType cidx, GradientType &jac )
-    {
+  }
+
+  void EvaluateJacobianAtContinuousIndex( ContinuousIndexType cidx, GradientType & jac )
+  {
     this->EvaluateGradientAtContinuousIndex( cidx, jac );
     GradientType I( jac.Rows(), jac.Cols() );
     I.SetIdentity();
     jac += I;
-    }
+  }
 
   /**
    * Evaluate the Jacobian with respect to the image of the resulting B-spline
    * object at a specified point or index within the image domain.
    */
-  void EvaluateSpatialJacobianAtPoint( PointType pt, GradientType &jac )
-    {
+  void EvaluateSpatialJacobianAtPoint( PointType pt, GradientType & jac )
+  {
     this->EvaluateGradientAtPoint( pt, jac );
-    for ( unsigned int i = 0; i < jac.Cols(); i++ )
+    for( unsigned int i = 0; i < jac.Cols(); i++ )
       {
       RealType factor = static_cast<RealType>(
-        this->GetOutput()->GetLargestPossibleRegion().GetSize()[i] ) *
-        this->GetOutput()->GetSpacing()[i];
-      for ( unsigned int j = 0; j < jac.Rows(); j++ )
+          this->GetOutput()->GetLargestPossibleRegion().GetSize()[i] )
+        * this->GetOutput()->GetSpacing()[i];
+      for( unsigned int j = 0; j < jac.Rows(); j++ )
         {
         jac(i, j) *= factor;
-        if ( i == j )
+        if( i == j )
           {
           jac(i, j) += 1.0;
           }
         }
       }
-    }
-  void EvaluateSpatialJacobianAtIndex( IndexType idx, GradientType &jac )
-    {
+  }
+
+  void EvaluateSpatialJacobianAtIndex( IndexType idx, GradientType & jac )
+  {
     PointType pt;
+
     this->GetOutput()->TransformIndexToPhysicalPoint( idx, pt );
     this->EvaluateSpatialJacobianAtPoint( pt, jac );
-    }
+  }
+
   void EvaluateSpatialJacobianAtContinuousIndex( ContinuousIndexType cidx,
-    GradientType &jac )
-    {
+                                                 GradientType & jac )
+  {
     PointType pt;
+
     this->GetOutput()->TransformContinuousIndexToPhysicalPoint( cidx, pt );
     this->EvaluateSpatialJacobianAtPoint( pt, jac );
-    }
+  }
 
   /**
    * Evaluate the Hessian of the resulting B-spline object at a specified
@@ -304,7 +309,7 @@ public:
   void EvaluateHessianAtPoint( PointType, HessianType &, unsigned int );
   void EvaluateHessianAtIndex( IndexType, HessianType &, unsigned int );
   void EvaluateHessianAtContinuousIndex( ContinuousIndexType,
-    GradientType &, unsigned int );
+                                         GradientType &, unsigned int );
 
   void EvaluateHessian( PointType, GradientType &, unsigned int );
 
@@ -320,8 +325,7 @@ public:
    * lattice such that the resolution is doubled for each level.
    */
   typename ControlPointLatticeType::Pointer
-    RefineControlPointLattice( ArrayType );
-
+  RefineControlPointLattice( ArrayType );
 protected:
   BSplineControlPointImageFilter();
   virtual ~BSplineControlPointImageFilter();
@@ -330,28 +334,29 @@ protected:
   void GenerateData();
 
 private:
-  BSplineControlPointImageFilter( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  BSplineControlPointImageFilter( const Self & ); // purposely not implemented
+  void operator=( const Self & );                 // purposely not implemented
 
   void GenerateOutputImageFast();
+
   void CollapsePhiLattice( ControlPointLatticeType *, ControlPointLatticeType *,
-    RealType, unsigned int );
+                           RealType, unsigned int );
   void SetNumberOfLevels( ArrayType );
 
   /** Parameters for the output image. */
 
-  SizeType                                       m_Size;
-  SpacingType                                    m_Spacing;
-  OriginType                                     m_Origin;
-  DirectionType                                  m_Direction;
+  SizeType      m_Size;
+  SpacingType   m_Spacing;
+  OriginType    m_Origin;
+  DirectionType m_Direction;
 
-  ArrayType                                      m_NumberOfLevels;
-  bool                                           m_DoMultilevel;
-  unsigned int                                   m_MaximumNumberOfLevels;
-  vnl_matrix<RealType>                           m_RefinedLatticeCoefficients[ImageDimension];
-  ArrayType                                      m_CloseDimension;
-  ArrayType                                      m_SplineOrder;
-  ArrayType                                      m_NumberOfControlPoints;
+  ArrayType            m_NumberOfLevels;
+  bool                 m_DoMultilevel;
+  unsigned int         m_MaximumNumberOfLevels;
+  vnl_matrix<RealType> m_RefinedLatticeCoefficients[ImageDimension];
+  ArrayType            m_CloseDimension;
+  ArrayType            m_SplineOrder;
+  ArrayType            m_NumberOfControlPoints;
 
   typename KernelType::Pointer                   m_Kernel[ImageDimension];
   typename KernelOrder0Type::Pointer             m_KernelOrder0;
@@ -359,27 +364,25 @@ private:
   typename KernelOrder2Type::Pointer             m_KernelOrder2;
   typename KernelOrder3Type::Pointer             m_KernelOrder3;
 
-  RealType                                       m_BSplineEpsilon;
+  RealType m_BSplineEpsilon;
 
-  inline typename RealImageType::IndexType
-  NumberToIndex( unsigned int number, typename RealImageType::SizeType size )
-    {
+  inline typename RealImageType::IndexType NumberToIndex( unsigned int number, typename RealImageType::SizeType size )
+  {
     typename RealImageType::IndexType k;
     k[0] = 1;
-
-    for ( unsigned int i = 1; i < ImageDimension; i++ )
+    for( unsigned int i = 1; i < ImageDimension; i++ )
       {
-      k[i] = size[ImageDimension-i-1]*k[i-1];
+      k[i] = size[ImageDimension - i - 1] * k[i - 1];
       }
     typename RealImageType::IndexType index;
-    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    for( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      index[ImageDimension-i-1]
-        = static_cast<unsigned int>( number/k[ImageDimension-i-1] );
-      number %= k[ImageDimension-i-1];
+      index[ImageDimension - i - 1]
+        = static_cast<unsigned int>( number / k[ImageDimension - i - 1] );
+      number %= k[ImageDimension - i - 1];
       }
     return index;
-    }
+  }
 
 };
 

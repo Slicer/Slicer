@@ -36,23 +36,23 @@
 // thing should be in an anonymous namespace except for the module
 // entry point, e.g. main()
 //
-namespace {
+namespace
+{
 
 } // end of anonymous namespace
-
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  typedef   short  InputPixelType;
-  typedef   short  OutputPixelType;
+  typedef   short InputPixelType;
+  typedef   short OutputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::Image<InputPixelType,  3> InputImageType;
+  typedef itk::Image<OutputPixelType, 3> OutputImageType;
 
-  typedef itk::ImageFileReader< InputImageType  >  ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -61,14 +61,14 @@ int main( int argc, char * argv[] )
   writer->SetFileName( outputVolume.c_str() );
 
   typedef itk::VotingBinaryHoleFillingImageFilter<
-               InputImageType, OutputImageType >  FilterType;
+    InputImageType, OutputImageType>  FilterType;
 
-  FilterType::Pointer filter = FilterType::New();
+  FilterType::Pointer      filter = FilterType::New();
   itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling",
-    CLPProcessInformation);
+                                   CLPProcessInformation);
 
   InputImageType::SizeType indexRadius;
-  
+
   indexRadius[0] = radius[0]; // radius along x
   indexRadius[1] = radius[1]; // radius along y
   indexRadius[2] = radius[2]; // radius along z
@@ -86,4 +86,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

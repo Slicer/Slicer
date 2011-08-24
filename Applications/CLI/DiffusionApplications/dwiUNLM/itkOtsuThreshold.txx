@@ -4,7 +4,7 @@
   Module:    $RCSfile: itkOtsuStatistics.txx,v $
   Language:  C++
   Date:      $Date: 2005/05/4 14:28:51 $
-  Version:   $Revision: 1.1 
+  Version:   $Revision: 1.1
 =========================================================================*/
 #ifndef _itkOtsuThreshold_txx
 #define _itkOtsuThreshold_txx
@@ -28,106 +28,115 @@ OtsuThreshold<TInputImage, TOutputImage>::OtsuThreshold()
   m_W         = 2.0f;
 }
 
-  
-template< class TInputImage, class TOutputImage>
-void OtsuThreshold< TInputImage, TOutputImage>
-::BeforeThreadedGenerateData( void ){
+template <class TInputImage, class TOutputImage>
+void OtsuThreshold<TInputImage, TOutputImage>
+::BeforeThreadedGenerateData( void )
+{
   m_ThreadHist.SetSize( this->GetNumberOfThreads(), m_Bins );
   m_ThreadHist.Fill( 0.0f );
   m_ThreadCount.SetSize( this->GetNumberOfThreads() );
   m_ThreadCount.Fill(0.0f);
 }
 
-  
-template< class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 #if ITK_VERSION_MAJOR < 4
-void OtsuThreshold< TInputImage, TOutputImage>
+void OtsuThreshold<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
 #else
-void OtsuThreshold< TInputImage, TOutputImage>
+void OtsuThreshold<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId )
 
 #endif
 {
   // Boundary conditions for this filter; Neumann conditions are fine
-  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;  
+  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
   // Input and output
-  InputImageConstPointer   input   =  this->GetInput();
-  OutputImagePointer       output  =  this->GetOutput();
+  InputImageConstPointer input   =  this->GetInput();
+  OutputImagePointer     output  =  this->GetOutput();
   // Iterators:
-  ImageRegionConstIterator<InputImageType>  bit( input, outputRegionForThread );  // Iterator for the input image
-  ImageRegionIterator<OutputImageType>      it( output, outputRegionForThread );  // Iterator for the output image
+  ImageRegionConstIterator<InputImageType> bit( input, outputRegionForThread );   // Iterator for the input image
+  ImageRegionIterator<OutputImageType>     it( output, outputRegionForThread );   // Iterator for the output image
   // The size of each bin:
   double bfact = (double)m_Bins / ( m_Max - m_Min );
-  for( bit.GoToBegin(),it.GoToBegin(); !bit.IsAtEnd(); ++bit,++it ){   // Iterate through pixels in the current facet
-    // Compute histogram bin:
+  for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )    // Iterate through pixels in the current facet
+    { // Compute histogram bin:
     double val = static_cast<double>( bit.Get() );
-    double aux = (val-m_Min)*bfact;
-    if( aux>=0.0f && aux<m_Bins  ){
+    double aux = (val - m_Min) * bfact;
+    if( aux >= 0.0f && aux < m_Bins  )
+      {
       m_ThreadHist[threadId][(unsigned int)aux] += 1.0f;
       m_ThreadCount[threadId] += 1.0f;
-    }
+      }
     it.Set( static_cast<OutputPixelType>(val) );
-  }
+    }
 }
-  
-  
-template< class TInputImage, class TOutputImage>
-void OtsuThreshold< TInputImage, TOutputImage>
-::AfterThreadedGenerateData( void ){
+
+template <class TInputImage, class TOutputImage>
+void OtsuThreshold<TInputImage, TOutputImage>
+::AfterThreadedGenerateData( void )
+{
   double totalSamples = itk::NumericTraits<double>::Zero;
-  for( int k=0; k<this->GetNumberOfThreads(); ++k )
+
+  for( int k = 0; k < this->GetNumberOfThreads(); ++k )
+    {
     totalSamples += m_ThreadCount[k];
-  for( unsigned int b=0; b<m_Bins; ++b ){
-    for( int k=1; k<this->GetNumberOfThreads(); ++k )
+    }
+  for( unsigned int b = 0; b < m_Bins; ++b )
+    {
+    for( int k = 1; k < this->GetNumberOfThreads(); ++k )
+      {
       m_ThreadHist[0][b] += m_ThreadHist[k][b];
-  }
+      }
+    }
   double totalMean = itk::NumericTraits<double>::Zero;
-  for( unsigned int b=0; b<m_Bins; ++b ){
+  for( unsigned int b = 0; b < m_Bins; ++b )
+    {
     m_ThreadHist[0][b] /= totalSamples;
-    totalMean          += (b+1)*m_ThreadHist[0][b];
-  }
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+    totalMean          += (b + 1) * m_ThreadHist[0][b];
+    }
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
   // Compute Otsu's threshold by maximizing the between-class variance
   double freqLeft = m_ThreadHist[0][0];
   double meanLeft = 1.0;
   double meanRight = ( totalMean - freqLeft ) / ( 1.0 - freqLeft );
-  
+
   double maxVarBetween = freqLeft * ( 1.0 - freqLeft ) * pow(  fabs(meanLeft - meanRight),   m_W   );
-  int maxBinNumber = 0;
-  
+  int    maxBinNumber = 0;
+
   double freqLeftOld = freqLeft;
   double meanLeftOld = meanLeft;
-  
-  for ( unsigned int j = 1; j < m_Bins; j++ ){
+  for( unsigned int j = 1; j < m_Bins; j++ )
+    {
     freqLeft += m_ThreadHist[0][j];
-    meanLeft = ( meanLeftOld * freqLeftOld + (j+1)*m_ThreadHist[0][j] ) / freqLeft;
-    if (freqLeft == 1.0)
+    meanLeft = ( meanLeftOld * freqLeftOld + (j + 1) * m_ThreadHist[0][j] ) / freqLeft;
+    if( freqLeft == 1.0 )
+      {
       meanRight = 0.0;
+      }
     else
+      {
       meanRight = ( totalMean - meanLeft * freqLeft ) / ( 1.0 - freqLeft );
-    
+      }
+
     double varBetween = freqLeft * ( 1.0 - freqLeft ) * pow(   fabs(meanLeft - meanRight),   m_W   );
-    if ( varBetween > maxVarBetween ){
+    if( varBetween > maxVarBetween )
+      {
       maxVarBetween = varBetween;
       maxBinNumber = j;
-    }
+      }
     // cache old values
     freqLeftOld = freqLeft;
-    meanLeftOld = meanLeft; 
-  }
+    meanLeftOld = meanLeft;
+    }
   double bfact = ( m_Max - m_Min ) / (double)m_Bins;
   m_Threshold = double( m_Min + ( (double)maxBinNumber + 1.5f ) * bfact );
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
-
-
-
 
 /** Standard "PrintSelf" method */
 template <class TInputImage, class TOutput>

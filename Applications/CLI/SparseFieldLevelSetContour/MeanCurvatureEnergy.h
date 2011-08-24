@@ -19,17 +19,21 @@
 class MeanCurvatureEnergy : public MeshEnergy
 {
 public:
-MeanCurvatureEnergy( MeshData* data ) {meshdata = data;}
-virtual ~MeanCurvatureEnergy( ) {}
+  MeanCurvatureEnergy( MeshData* data )
+  {
+    meshdata = data;
+  }
+  virtual ~MeanCurvatureEnergy()
+  {
+  }
 
-double eval_energy( const std::vector<int>& C );
-std::valarray<double> getforce( const std::list<int>& C);
-std::valarray<double> getforce( const std::list<int>& C,
-const std::list<int>& L_p1, const std::list<int>& L_n1,
-const std::vector<double>& phi);
+  double eval_energy( const std::vector<int>& C );
+
+  std::valarray<double> getforce( const std::list<int>& C);
+
+  std::valarray<double> getforce( const std::list<int>& C, const std::list<int>& L_p1, const std::list<int>& L_n1,
+                                  const std::vector<double>& phi);
 
 };
-
-
 
 #endif

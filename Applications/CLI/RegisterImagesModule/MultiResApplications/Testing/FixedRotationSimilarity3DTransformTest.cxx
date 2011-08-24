@@ -7,7 +7,7 @@
 
 #include "itkFixedRotationSimilarity3DTransform.h"
 
-int FixedRotationSimilarity3DTransformTest(int, char* [])
+int FixedRotationSimilarity3DTransformTest(int, char * [])
 {
   typedef itk::FixedRotationSimilarity3DTransform<double> TransformType;
 
@@ -17,7 +17,7 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     // TransformType::TranslationType trans = identity->GetTranslation();
     // trans[0] = 1;
     // trans[1] = 2;
-    // trans[2] = 3;  
+    // trans[2] = 3;
 
     // identity->SetScale(2.0);
     // identity->SetTranslation(trans);
@@ -30,10 +30,10 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     const ParametersType parameters = identity->GetParameters();
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
-    if(parameters[0] != 0 ||
-       parameters[1] != 0 ||
-       parameters[2] != 0 ||
-       parameters[3] != 1)
+    if( parameters[0] != 0 ||
+        parameters[1] != 0 ||
+        parameters[2] != 0 ||
+        parameters[3] != 1 )
       {
       std::cerr << "ERROR: Identity trasform does not have paramteres [0,0,0,1]" << std::endl;
       return EXIT_FAILURE;
@@ -43,7 +43,7 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
 
     {
     TransformType::Pointer purerotation = TransformType::New();
-    purerotation->SetIdentity();  
+    purerotation->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -57,9 +57,9 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     axis[2] = 0;
     axis.Normalize();
 
-    const TransformType::AngleType angle = M_PI/2; // radians
+    const TransformType::AngleType angle = M_PI / 2; // radians
     purerotation->SetRotation(axis, angle);
-  
+
     std::cout << "Rotatoin about axis: " << axis << " by pi/2" << std::endl;
     std::cout << purerotation << std::endl;
 
@@ -68,10 +68,10 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != 0 ||
-       parameters[1] != 0 ||
-       parameters[2] != 0 ||
-       parameters[3] != 1)
+    if( parameters[0] != 0 ||
+        parameters[1] != 0 ||
+        parameters[2] != 0 ||
+        parameters[3] != 1 )
       {
       std::cerr << "ERROR: Pure rotation transform does not have paramteres [0,0,0,1]" << std::endl;
       return EXIT_FAILURE;
@@ -81,7 +81,7 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
 
     {
     TransformType::Pointer rigidtransform = TransformType::New();
-    rigidtransform->SetIdentity();  
+    rigidtransform->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -95,9 +95,9 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     axis[2] = 0;
     axis.Normalize();
 
-    const TransformType::AngleType angle = M_PI/2; // radians
+    const TransformType::AngleType angle = M_PI / 2; // radians
     rigidtransform->SetRotation(axis, angle);
-  
+
     std::cout << "Rotatoin about axis: " << axis << " by pi/2" << std::endl;
 
     TransformType::TranslationType trans;
@@ -115,10 +115,10 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != trans[0] ||
-       parameters[1] != trans[1] ||
-       parameters[2] != trans[2] ||
-       parameters[3] != 1)
+    if( parameters[0] != trans[0] ||
+        parameters[1] != trans[1] ||
+        parameters[2] != trans[2] ||
+        parameters[3] != 1 )
       {
       std::cerr << "ERROR: Pure rotation transform does not have paramteres [0,0,0,1]" << std::endl;
       return EXIT_FAILURE;
@@ -136,7 +136,7 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
 
     {
     TransformType::Pointer similaritytransform = TransformType::New();
-    similaritytransform->SetIdentity();  
+    similaritytransform->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -150,9 +150,9 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     axis[2] = 1;
     axis.Normalize();
 
-    const TransformType::AngleType angle = M_PI/2; // radians
+    const TransformType::AngleType angle = M_PI / 2; // radians
     similaritytransform->SetRotation(axis, angle);
-  
+
     std::cout << "Rotatoin about axis: " << axis << " by pi/2" << std::endl;
 
     TransformType::TranslationType trans;
@@ -163,7 +163,7 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     std::cout << "Translation by " << trans << std::endl;
     similaritytransform->SetTranslation(trans);
 
-    TransformType::ScaleType scale(1.5);   
+    TransformType::ScaleType scale(1.5);
 
     std::cout << "Scale by " << scale << std::endl;
     similaritytransform->SetScale(scale);
@@ -175,12 +175,13 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != trans[0] ||
-       parameters[1] != trans[1] ||
-       parameters[2] != trans[2] ||
-       parameters[3] != scale)
+    if( parameters[0] != trans[0] ||
+        parameters[1] != trans[1] ||
+        parameters[2] != trans[2] ||
+        parameters[3] != scale )
       {
-      std::cerr << "ERROR: Parameters are not translation (" << trans << ") followed by scale (" << scale << ")" << std::endl;
+      std::cerr << "ERROR: Parameters are not translation (" << trans << ") followed by scale (" << scale << ")"
+                << std::endl;
       return EXIT_FAILURE;
       }
 
@@ -189,23 +190,22 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
       similaritytransform->GetJacobian(center);
     std::cout << jacobian << std::endl;
 
-    if(jacobian[0][0] != 1.0 ||
-       jacobian[1][1] != 1.0 ||
-       jacobian[2][2] != 1.0 ||
-       jacobian[0][1] != 0.0 ||
-       jacobian[0][2] != 0.0 ||
-       jacobian[1][0] != 0.0 ||
-       jacobian[1][2] != 0.0 ||
-       jacobian[2][0] != 0.0 ||
-       jacobian[2][1] != 0.0 ||
-       jacobian[0][3] != 0.0 ||
-       jacobian[2][3] != 0.0 ||
-       jacobian[2][3] != 0.0)
+    if( jacobian[0][0] != 1.0 ||
+        jacobian[1][1] != 1.0 ||
+        jacobian[2][2] != 1.0 ||
+        jacobian[0][1] != 0.0 ||
+        jacobian[0][2] != 0.0 ||
+        jacobian[1][0] != 0.0 ||
+        jacobian[1][2] != 0.0 ||
+        jacobian[2][0] != 0.0 ||
+        jacobian[2][1] != 0.0 ||
+        jacobian[0][3] != 0.0 ||
+        jacobian[2][3] != 0.0 ||
+        jacobian[2][3] != 0.0 )
       {
       std::cerr << "Jacobian at center is incorrect" << std::endl;
       return EXIT_FAILURE;
       }
-
 
     TransformType::InputPointType centerp1;
     centerp1[0] = center[0];
@@ -216,18 +216,18 @@ int FixedRotationSimilarity3DTransformTest(int, char* [])
     jacobian = similaritytransform->GetJacobian(centerp1);
     std::cout << jacobian << std::endl;
 
-    if(jacobian[0][0] != 1.0 ||
-       jacobian[0][1] != 0.0 ||
-       jacobian[0][2] != 0.0 ||
-       jacobian[1][0] != 0.0 ||
-       jacobian[1][1] != 1.0 ||
-       jacobian[1][2] != 0.0 ||
-       jacobian[2][0] != 0.0 ||
-       jacobian[2][1] != 0.0 ||
-       jacobian[2][2] != 1.0 ||
-       fabs(jacobian[0][3] + 1.0) > 1.0e-10 ||
-       fabs(jacobian[1][3] - 0.0) > 1.0e-10 ||
-       fabs(jacobian[2][3] - 0.0) > 1.0e-10)
+    if( jacobian[0][0] != 1.0 ||
+        jacobian[0][1] != 0.0 ||
+        jacobian[0][2] != 0.0 ||
+        jacobian[1][0] != 0.0 ||
+        jacobian[1][1] != 1.0 ||
+        jacobian[1][2] != 0.0 ||
+        jacobian[2][0] != 0.0 ||
+        jacobian[2][1] != 0.0 ||
+        jacobian[2][2] != 1.0 ||
+        fabs(jacobian[0][3] + 1.0) > 1.0e-10 ||
+        fabs(jacobian[1][3] - 0.0) > 1.0e-10 ||
+        fabs(jacobian[2][3] - 0.0) > 1.0e-10 )
       {
       std::cerr << "Jacobian at center_Y + 1 is incorrect" << std::endl;
       return EXIT_FAILURE;

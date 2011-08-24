@@ -27,7 +27,8 @@
 
 #include "vnl/vnl_vector.h"
 
-namespace itk {
+namespace itk
+{
 
 /**
  * \class N4MRIBiasFieldCorrectionImageFilter.h
@@ -86,9 +87,9 @@ namespace itk {
  * IEEE Transactions on Medical Imaging, 29(6):1310-1320, June 2010.
  */
 
-template<class TInputImage, class TMaskImage =
-  Image<unsigned char, ::itk::GetImageDimension<TInputImage>::ImageDimension>,
-  class TOutputImage = TInputImage>
+template <class TInputImage, class TMaskImage =
+            Image<unsigned char, ::itk::GetImageDimension<TInputImage>::ImageDimension>,
+          class TOutputImage = TInputImage>
 class ITK_EXPORT N4MRIBiasFieldCorrectionImageFilter :
   public ImageToImageFilter<TInputImage, TOutputImage>
 {
@@ -121,17 +122,17 @@ public:
   typedef Array<unsigned int>             VariableSizeArrayType;
 
   /** B-spline smoothing filter argument typedefs */
-  typedef Vector<RealType, 1>                                             ScalarType;
-  typedef PointSet<ScalarType, itkGetStaticConstMacro( ImageDimension )>  PointSetType;
-  typedef Image<ScalarType, itkGetStaticConstMacro( ImageDimension )>     ScalarImageType;
-  typedef typename PointSetType::Pointer                                  PointSetPointer;
-  typedef typename PointSetType::PointType                                PointType;
+  typedef Vector<RealType, 1>                                            ScalarType;
+  typedef PointSet<ScalarType, itkGetStaticConstMacro( ImageDimension )> PointSetType;
+  typedef Image<ScalarType, itkGetStaticConstMacro( ImageDimension )>    ScalarImageType;
+  typedef typename PointSetType::Pointer                                 PointSetPointer;
+  typedef typename PointSetType::PointType                               PointType;
 
   /** B-sline filter typedefs */
   typedef BSplineScatteredDataPointSetToImageFilter<
     PointSetType, ScalarImageType>                          BSplineFilterType;
-  typedef typename BSplineFilterType::PointDataImageType    BiasFieldControlPointLatticeType;
-  typedef typename BSplineFilterType::ArrayType             ArrayType;
+  typedef typename BSplineFilterType::PointDataImageType BiasFieldControlPointLatticeType;
+  typedef typename BSplineFilterType::ArrayType          ArrayType;
 
   /**
    * Set mask image function.  If a binary mask image is specified, only
@@ -139,19 +140,19 @@ public:
    * to m_MaskLabel are used in estimating the bias field.
    */
   void SetMaskImage( const MaskImageType *mask )
-    {
+  {
     this->SetNthInput( 1, const_cast<MaskImageType *>( mask ) );
-    }
+  }
 
   /**
    * Get mask image function.  If a binary mask image is specified, only
    * those input image voxels corresponding with mask image values equal
    * to m_MaskLabel are used in estimating the bias field.
    */
-  const MaskImageType* GetMaskImage() const
-    {
-    return static_cast<const MaskImageType*>( this->ProcessObject::GetInput( 1 ) );
-    }
+  const MaskImageType * GetMaskImage() const
+  {
+    return static_cast<const MaskImageType *>( this->ProcessObject::GetInput( 1 ) );
+  }
 
   /**
    * Set confidence image function.  If a confidence image is specified,
@@ -164,9 +165,9 @@ public:
    * bias field.
    */
   void SetConfidenceImage( const RealImageType *image )
-    {
+  {
     this->SetNthInput( 2, const_cast<RealImageType *>( image ) );
-    }
+  }
 
   /**
    * Get confidence image function.  If a confidence image is specified,
@@ -178,10 +179,10 @@ public:
    * been done in the literature) as an alternative strategy to estimating the
    * bias field.
    */
-  const RealImageType* GetConfidenceImage() const
-    {
-    return static_cast<const RealImageType*>( this->ProcessObject::GetInput( 2 ) );
-    }
+  const RealImageType * GetConfidenceImage() const
+  {
+    return static_cast<const RealImageType *>( this->ProcessObject::GetInput( 2 ) );
+  }
 
   /**
    * Set mask label function.  If a binary mask image is specified, only those
@@ -281,12 +282,12 @@ public:
    * the mesh resolution for each subsequent fitting level.  Default = 1 level.
    */
   void SetNumberOfFittingLevels( unsigned int n )
-    {
+  {
     ArrayType nlevels;
 
     nlevels.Fill( n );
     this->SetNumberOfFittingLevels( nlevels );
-    }
+  }
 
   /**
    * Get the number of fitting levels.  One of the contributions of N4 is the
@@ -355,19 +356,21 @@ public:
    * reporting observations.
    */
   itkGetConstMacro( CurrentLevel, unsigned int );
-
 protected:
   N4MRIBiasFieldCorrectionImageFilter();
-  ~N4MRIBiasFieldCorrectionImageFilter() {}
+  ~N4MRIBiasFieldCorrectionImageFilter()
+  {
+  }
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
   void GenerateData();
 
 private:
-  N4MRIBiasFieldCorrectionImageFilter( const Self& ); //purposely not
-                                                      // implemented
-  void operator=( const Self& );                      //purposely not
-                                                      // implemented
+  N4MRIBiasFieldCorrectionImageFilter( const Self & ); // purposely not
+                                                       // implemented
+  void operator=( const Self & );                      // purposely not
+
+  // implemented
 
   // N4 algorithm functions:  The basic algorithm iterates between sharpening
   // the intensity histogram of the corrected input image and spatially
@@ -396,7 +399,6 @@ private:
    * image between the current bias field estimate and the previous estimate.
    */
   RealType CalculateConvergenceMeasurement( const RealImageType *, const RealImageType * ) const;
-
 
   MaskPixelType m_MaskLabel;
 

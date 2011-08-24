@@ -1,5 +1,5 @@
-//Copied from dtiprocess
-//available there: http://www.nitrc.org/projects/dtiprocess/
+// Copied from dtiprocess
+// available there: http://www.nitrc.org/projects/dtiprocess/
 /*=========================================================================
 
   Program:   NeuroLib (DTI command line tools)
@@ -27,14 +27,14 @@ DeformationImageType::Pointer readDeformationField(std::string warpfile, Deforma
   typedef itk::ImageFileReader<DeformationImageType> DeformationImageReader;
 
   DeformationImageReader::Pointer defreader = DeformationImageReader::New();
-  defreader->SetFileName(warpfile.c_str());
+  defreader->SetFileName(warpfile.c_str() );
 
-  if(dft == HField)
+  if( dft == HField )
     {
 
     typedef itk::HFieldToDeformationFieldImageFilter<DeformationImageType> DeformationConvertType;
     DeformationConvertType::Pointer defconv = DeformationConvertType::New();
-    defconv->SetInput(defreader->GetOutput());
+    defconv->SetInput(defreader->GetOutput() );
 //  defconv->SetSpacing(timg->GetSpacing());
     defconv->Update();
     return defconv->GetOutput();
@@ -49,5 +49,3 @@ DeformationImageType::Pointer readDeformationField(std::string warpfile, Deforma
     }
 
 }
-
-

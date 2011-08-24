@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -30,14 +30,14 @@ namespace itk
  * This transform applies a rotation, translation and anisotropic scaling
  * to the space.
  *
- * The parameters for this transform can be set either using individual 
+ * The parameters for this transform can be set either using individual
  * Set methods or in serialized form using SetParameters() and
  * SetFixedParameters().
  *
- * The serialization of the optimizable parameters is an array of 9 
+ * The serialization of the optimizable parameters is an array of 9
  * elements. The first 3 elements are the components of the versor
  * representation of 3D rotation. The next 3 parameters defines the
- * translation in each dimension. The last parameter defines the 
+ * translation in each dimension. The last parameter defines the
  * anisotropic scaling.
  *
  * The serialization of the fixed parameters is an array of 3 elements
@@ -47,17 +47,18 @@ namespace itk
  *
  * \sa VersorRigid3DTransform
  */
-template < class TScalarType=double >    // Data type for scalars (float or double)
-class ITK_EXPORT AnisotropicSimilarity3DTransform : 
-      public VersorRigid3DTransform< TScalarType > 
+template <class TScalarType = double>
+// Data type for scalars (float or double)
+class ITK_EXPORT AnisotropicSimilarity3DTransform :
+  public VersorRigid3DTransform<TScalarType>
 {
 public:
   /** Standard class typedefs. */
-  typedef AnisotropicSimilarity3DTransform                  Self;
-  typedef VersorRigid3DTransform< TScalarType >  Superclass;
-  typedef SmartPointer<Self>                     Pointer;
-  typedef SmartPointer<const Self>               ConstPointer;
-    
+  typedef AnisotropicSimilarity3DTransform    Self;
+  typedef VersorRigid3DTransform<TScalarType> Superclass;
+  typedef SmartPointer<Self>                  Pointer;
+  typedef SmartPointer<const Self>            ConstPointer;
+
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro( Self );
 
@@ -70,67 +71,72 @@ public:
   itkStaticConstMacro(OutputSpaceDimension, unsigned int, 3);
   itkStaticConstMacro(ParametersDimension, unsigned int, 9);
 
-    /** Parameters Type   */
-  typedef typename Superclass::ParametersType         ParametersType;
-  typedef typename Superclass::JacobianType           JacobianType;
-  typedef typename Superclass::ScalarType             ScalarType;
-  typedef typename Superclass::InputPointType         InputPointType;
-  typedef typename Superclass::OutputPointType        OutputPointType;
-  typedef typename Superclass::InputVectorType        InputVectorType;
-  typedef typename Superclass::OutputVectorType       OutputVectorType;
-  typedef typename Superclass::InputVnlVectorType     InputVnlVectorType;
-  typedef typename Superclass::OutputVnlVectorType    OutputVnlVectorType;
-  typedef typename Superclass::InputCovariantVectorType 
-                                                      InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType      
-                                                      OutputCovariantVectorType;
-  typedef typename Superclass::MatrixType             MatrixType;
-  typedef typename Superclass::InverseMatrixType      InverseMatrixType;
-  typedef typename Superclass::CenterType             CenterType;
-  typedef typename Superclass::OffsetType             OffsetType;
-  typedef typename Superclass::TranslationType        TranslationType;
+  /** Parameters Type   */
+  typedef typename Superclass::ParametersType      ParametersType;
+  typedef typename Superclass::JacobianType        JacobianType;
+  typedef typename Superclass::ScalarType          ScalarType;
+  typedef typename Superclass::InputPointType      InputPointType;
+  typedef typename Superclass::OutputPointType     OutputPointType;
+  typedef typename Superclass::InputVectorType     InputVectorType;
+  typedef typename Superclass::OutputVectorType    OutputVectorType;
+  typedef typename Superclass::InputVnlVectorType  InputVnlVectorType;
+  typedef typename Superclass::OutputVnlVectorType OutputVnlVectorType;
+  typedef typename Superclass::InputCovariantVectorType
+  InputCovariantVectorType;
+  typedef typename Superclass::OutputCovariantVectorType
+  OutputCovariantVectorType;
+  typedef typename Superclass::MatrixType        MatrixType;
+  typedef typename Superclass::InverseMatrixType InverseMatrixType;
+  typedef typename Superclass::CenterType        CenterType;
+  typedef typename Superclass::OffsetType        OffsetType;
+  typedef typename Superclass::TranslationType   TranslationType;
 
   /** Versor type. */
-  typedef typename Superclass::VersorType             VersorType;
-  typedef typename Superclass::AxisType               AxisType;
-  typedef typename Superclass::AngleType              AngleType;
-  typedef typename Superclass::InputVectorType        VectorType;
-  typedef          TScalarType                        ScaleType;
+  typedef typename Superclass::VersorType      VersorType;
+  typedef typename Superclass::AxisType        AxisType;
+  typedef typename Superclass::AngleType       AngleType;
+  typedef typename Superclass::InputVectorType VectorType;
+  typedef          TScalarType                 ScaleType;
 
- /** Directly set the rotation matrix of the transform.
-  * \warning The input matrix must be orthogonal with isotropic scaling
-  * to within a specified tolerance, else an exception is thrown.
-  *
-  * \sa MatrixOffsetTransformBase::SetMatrix() */
-  virtual void SetMatrix(const MatrixType &matrix);
-  
+  /** Directly set the rotation matrix of the transform.
+   * \warning The input matrix must be orthogonal with isotropic scaling
+   * to within a specified tolerance, else an exception is thrown.
+   *
+   * \sa MatrixOffsetTransformBase::SetMatrix() */
+  virtual void SetMatrix(const MatrixType & matrix);
+
   /** Set the transformation from a container of parameters This is typically
    * used by optimizers.  There are 7 parameters. The first three represent the
    * versor, the next three represent the translation and the last one
    * represents the scaling factor. */
   void SetParameters( const ParametersType & parameters );
-  virtual const ParametersType& GetParameters(void) const;
+
+  virtual const ParametersType & GetParameters(void) const;
 
   /** Set/Get the value of the isotropic scaling factor */
   void SetScale( ScaleType scale );
+
   void SetScale( VectorType scale );
+
   itkGetConstReferenceMacro( Scale, VectorType );
 
   /** This method computes the Jacobian matrix of the transformation.
    * given point or vector, returning the transformed point or
-   * vector. The rank of the Jacobian will also indicate if the 
+   * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual const JacobianType & GetJacobian(const InputPointType  &point ) const;
+  virtual const JacobianType & GetJacobian(const InputPointType  & point ) const;
+
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const;
 
 protected:
-  AnisotropicSimilarity3DTransform(const MatrixType & matrix,
-                         const OutputVectorType & offset);
+  AnisotropicSimilarity3DTransform(const MatrixType & matrix, const OutputVectorType & offset);
   AnisotropicSimilarity3DTransform(unsigned int paramDim);
   AnisotropicSimilarity3DTransform();
-  ~AnisotropicSimilarity3DTransform(){};
+  ~AnisotropicSimilarity3DTransform()
+  {
+  };
 
-  void PrintSelf(std::ostream &os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Recomputes the matrix by calling the Superclass::ComputeMatrix() and then
    * applying the scale factor. */
@@ -138,33 +144,32 @@ protected:
 
   /** Computes the parameters from an input matrix. */
   void ComputeMatrixParameters();
-  
+
 private:
-  AnisotropicSimilarity3DTransform(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  AnisotropicSimilarity3DTransform(const Self &); // purposely not implemented
+  void operator=(const Self &);                   // purposely not implemented
 
   VectorType           m_Scale;
   mutable JacobianType m_NonThreadsafeSharedJacobian;
 
-}; //class AnisotropicSimilarity3DTransform
-
+}; // class AnisotropicSimilarity3DTransform
 
 }  // namespace itk
 
 // Define instantiation macro for this template.
 #define ITK_TEMPLATE_AnisotropicSimilarity3DTransform(_, EXPORT, x, y) namespace itk { \
-  _(1(class EXPORT AnisotropicSimilarity3DTransform< ITK_TEMPLATE_1 x >)) \
-  namespace Templates { typedef AnisotropicSimilarity3DTransform< ITK_TEMPLATE_1 x > AnisotropicSimilarity3DTransform##y; } \
+  _(1 (class EXPORT AnisotropicSimilarity3DTransform<ITK_TEMPLATE_1 x> ) ) \
+  namespace Templates { typedef AnisotropicSimilarity3DTransform<ITK_TEMPLATE_1 x> AnisotropicSimilarity3DTransform##y; } \
   }
 
 /*
 #if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkAnisotropicSimilarity3DTransform+-.h"
+#include "Templates/itkAnisotropicSimilarity3DTransform+-.h"
 #endif
 */
 
 #if ITK_TEMPLATE_TXX
-# include "itkAnisotropicSimilarity3DTransform.txx"
+#include "itkAnisotropicSimilarity3DTransform.txx"
 #endif
 
 #endif /* __itkAnisotropicSimilarity3DTransform_h */

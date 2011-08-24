@@ -4,19 +4,19 @@
 #endif
 #endif
 
-
 #include "itkEulerAnisotropicSimilarity3DTransform.h"
 
 namespace
 {
-  bool almost(double x, double y, double eps)
-  {
-    return fabs(x - y) <= eps;
-  }
+bool almost(double x, double y, double eps)
+{
+  return fabs(x - y) <= eps;
+}
+
 }
 
 int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
-                                             char* itkNotUsed(argv)[])
+                                              char * itkNotUsed(argv)[])
 {
   typedef itk::EulerAnisotropicSimilarity3DTransform<double> TransformType;
 
@@ -26,7 +26,7 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     // TransformType::TranslationType trans = identity->GetTranslation();
     // trans[0] = 1;
     // trans[1] = 2;
-    // trans[2] = 3;  
+    // trans[2] = 3;
 
     // identity->SetScale(2.0);
     // identity->SetTranslation(trans);
@@ -39,15 +39,15 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     const ParametersType parameters = identity->GetParameters();
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
-    if(parameters[0] != 0 ||
-       parameters[1] != 0 ||
-       parameters[2] != 0 ||
-       parameters[3] != 0 ||
-       parameters[4] != 0 ||
-       parameters[5] != 0 ||
-       parameters[6] != 1 ||
-       parameters[7] != 1 ||
-       parameters[8] != 1)
+    if( parameters[0] != 0 ||
+        parameters[1] != 0 ||
+        parameters[2] != 0 ||
+        parameters[3] != 0 ||
+        parameters[4] != 0 ||
+        parameters[5] != 0 ||
+        parameters[6] != 1 ||
+        parameters[7] != 1 ||
+        parameters[8] != 1 )
       {
       std::cerr << "ERROR: Identity trasform does not have paramteres [0,0,0,0,0,0,1,1,1]" << std::endl;
       return EXIT_FAILURE;
@@ -57,7 +57,7 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
 
     {
     TransformType::Pointer purerotation = TransformType::New();
-    purerotation->SetIdentity();  
+    purerotation->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -65,9 +65,9 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     center[2] = 70;
     purerotation->SetCenter(center);
 
-    const TransformType::AngleType angle = M_PI/4; // radians
-    purerotation->SetRotation(angle, -angle, angle/2);
-  
+    const TransformType::AngleType angle = M_PI / 4; // radians
+    purerotation->SetRotation(angle, -angle, angle / 2);
+
     std::cout << purerotation << std::endl;
 
     typedef TransformType::ParametersType ParametersType;
@@ -75,15 +75,15 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != angle ||
-       parameters[1] != -angle ||
-       parameters[2] != angle/2 ||
-       parameters[3] != 0 ||
-       parameters[4] != 0 ||
-       parameters[5] != 0 ||
-       parameters[6] != 1 ||
-       parameters[7] != 1 ||
-       parameters[8] != 1)
+    if( parameters[0] != angle ||
+        parameters[1] != -angle ||
+        parameters[2] != angle / 2 ||
+        parameters[3] != 0 ||
+        parameters[4] != 0 ||
+        parameters[5] != 0 ||
+        parameters[6] != 1 ||
+        parameters[7] != 1 ||
+        parameters[8] != 1 )
       {
       std::cerr << "ERROR: Pure rotation transform does not have paramteres [pi/4,-pi/4,pi/8,0,0,0,1,1,1]" << std::endl;
       return EXIT_FAILURE;
@@ -93,7 +93,7 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
 
     {
     TransformType::Pointer rigidtransform = TransformType::New();
-    rigidtransform->SetIdentity();  
+    rigidtransform->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -101,9 +101,9 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     center[2] = 70;
     rigidtransform->SetCenter(center);
 
-    const TransformType::AngleType angle = M_PI/4; // radians
+    const TransformType::AngleType angle = M_PI / 4; // radians
     rigidtransform->SetRotation(angle, 0, 0);
-  
+
     TransformType::TranslationType trans;
     trans[0] = -20;
     trans[1] = 10;
@@ -119,15 +119,15 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != angle ||
-       parameters[1] != 0 ||
-       parameters[2] != 0 ||
-       parameters[3] != trans[0] ||
-       parameters[4] != trans[1] ||
-       parameters[5] != trans[2] ||
-       parameters[6] != 1 ||
-       parameters[7] != 1 || 
-       parameters[8] != 1)
+    if( parameters[0] != angle ||
+        parameters[1] != 0 ||
+        parameters[2] != 0 ||
+        parameters[3] != trans[0] ||
+        parameters[4] != trans[1] ||
+        parameters[5] != trans[2] ||
+        parameters[6] != 1 ||
+        parameters[7] != 1 ||
+        parameters[8] != 1 )
       {
       std::cerr << "ERROR: Pure rotation transform does not have paramteres [pi/2,0,0,-20,10,5,1,1,1]" << std::endl;
       return EXIT_FAILURE;
@@ -137,7 +137,7 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
 
     {
     TransformType::Pointer similaritytransform = TransformType::New();
-    similaritytransform->SetIdentity();  
+    similaritytransform->SetIdentity();
 
     TransformType::InputPointType center;
     center[0] = 50;
@@ -145,9 +145,9 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     center[2] = 70;
     similaritytransform->SetCenter(center);
 
-    const TransformType::AngleType angle = M_PI/4; // radians
-    similaritytransform->SetRotation(2*angle, -3*angle, angle);
-  
+    const TransformType::AngleType angle = M_PI / 4; // radians
+    similaritytransform->SetRotation(2 * angle, -3 * angle, angle);
+
     TransformType::TranslationType trans;
     trans[0] = -20;
     trans[1] = 10;
@@ -171,15 +171,15 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     std::cout << "Parameters" << std::endl;
     std::cout << parameters << std::endl;
 
-    if(parameters[0] != 2*angle ||
-       parameters[1] != -3*angle ||
-       parameters[2] != angle ||
-       parameters[3] != trans[0] ||
-       parameters[4] != trans[1] ||
-       parameters[5] != trans[2] ||
-       parameters[6] != scales[0] ||
-       parameters[7] != scales[1] ||
-       parameters[8] != scales[2])
+    if( parameters[0] != 2 * angle ||
+        parameters[1] != -3 * angle ||
+        parameters[2] != angle ||
+        parameters[3] != trans[0] ||
+        parameters[4] != trans[1] ||
+        parameters[5] != trans[2] ||
+        parameters[6] != scales[0] ||
+        parameters[7] != scales[1] ||
+        parameters[8] != scales[2] )
       {
       std::cerr << "ERROR: Parameters are wrong for scale free transform" << std::endl;
       return EXIT_FAILURE;
@@ -191,28 +191,27 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     std::cout << jacobian << std::endl;
 
       {
-      double tjacobian [TransformType::SpaceDimension][TransformType::ParametersDimension] = 
-        { {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-          {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0},
-          {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0}};
-
-      for(unsigned int i = 0; 
-          i < TransformType::SpaceDimension;
-          ++i)
+      double tjacobian[TransformType::SpaceDimension][TransformType::ParametersDimension] =
+            { {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0}};
+      for( unsigned int i = 0;
+           i < TransformType::SpaceDimension;
+           ++i )
         {
-        for(unsigned int j = 0; 
-            j < TransformType::ParametersDimension;
-            ++j)
+        for( unsigned int j = 0;
+             j < TransformType::ParametersDimension;
+             ++j )
           {
-          if(!almost(tjacobian[i][j], jacobian[i][j], 1.0e-10))
+          if( !almost(tjacobian[i][j], jacobian[i][j], 1.0e-10) )
             {
             std::cerr << "Jacobian does not match theoretical jacobian" << std::endl;
 
-            std::cerr << "Jacobian[" << i << "][" << j <<
-              "]: " <<  jacobian[i][j] << std::endl;
+            std::cerr << "Jacobian[" << i << "][" << j
+                      << "]: " <<  jacobian[i][j] << std::endl;
 
-            std::cerr << "TJacobian: " << 
-              tjacobian[i][j] << std::endl;
+            std::cerr << "TJacobian: "
+                      << tjacobian[i][j] << std::endl;
 
 //            return EXIT_FAILURE;
             }
@@ -232,9 +231,9 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
 
     TransformType::ParametersType p(TransformType::ParametersDimension);
     p.Fill(0.0);
-    p[0] = M_PI/8;
-    p[1] = M_PI/10;
-    p[2] = -M_PI/6;
+    p[0] = M_PI / 8;
+    p[1] = M_PI / 10;
+    p[2] = -M_PI / 6;
     p[3] = 4.0;
     p[4] = 5.0;
     p[5] = 6.0;
@@ -247,17 +246,16 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     // For documentation of the seemingly magic numbers here
     // See doc/decomposedaffine.wxm which can be viewed
     // in wxMaxima
-    double correctmat[3][3] = 
-      {{.7062135564636849,0.415745789630079,.09420375944684131},
-       {-.2984926652832313,.7200928306721389,-.5166716899989585},
-       {-.2283955810409355,.3444150891285808,.9665278146332373}};
+    double correctmat[3][3] =
+        {{.7062135564636849, 0.415745789630079, .09420375944684131},
+         {-.2984926652832313, .7200928306721389, -.5166716899989585},
+         {-.2283955810409355, .3444150891285808, .9665278146332373}};
 
     TransformType::ParametersType p2 = transform->GetParameters();
     std::cout << "Checking get parameters same as set parameters" << std::endl;
-
-    for(unsigned int i = 0; i < TransformType::ParametersDimension; ++i)
+    for( unsigned int i = 0; i < TransformType::ParametersDimension; ++i )
       {
-      if(!almost(p[i],p2[i], 1.0e-10))
+      if( !almost(p[i], p2[i], 1.0e-10) )
         {
         std::cerr << "Stored parameters not the same as those set" << std::endl;
         return EXIT_FAILURE;
@@ -267,22 +265,22 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     TransformType::MatrixType matrix = transform->GetMatrix();
     std::cout << "Checkig matrix from parameters" << std::endl;
     std::cout << matrix << std::endl;
-    for(unsigned int i = 0; i < 3; ++i)
+    for( unsigned int i = 0; i < 3; ++i )
       {
-      for(unsigned int j = 0; j < 3; ++j)
+      for( unsigned int j = 0; j < 3; ++j )
         {
-        if(!almost(matrix[i][j], correctmat[i][j], 1.e-10))
+        if( !almost(matrix[i][j], correctmat[i][j], 1.e-10) )
           {
-            std::cerr << "Transform matrix does not match theoretical matrix" << std::endl;
+          std::cerr << "Transform matrix does not match theoretical matrix" << std::endl;
 
-            std::cerr << "Matrix[" << i << "][" << j <<
-              "]: " <<  matrix[i][j] << std::endl;
+          std::cerr << "Matrix[" << i << "][" << j
+                    << "]: " <<  matrix[i][j] << std::endl;
 
-            std::cerr << "TMatrix: " << 
-              correctmat[i][j] << std::endl;
+          std::cerr << "TMatrix: "
+                    << correctmat[i][j] << std::endl;
 
-            return EXIT_FAILURE;
-          
+          return EXIT_FAILURE;
+
           }
         }
       }
@@ -297,42 +295,41 @@ int EulerAnisotropicSimilarity3DTransformTest(int itkNotUsed(argc),
     TransformType::JacobianType jacobian =
       transform->GetJacobian(point);
     std::cout << jacobian << std::endl;
-    
-    // For documentation of the seemingly magic numbers here
-    // See doc/decomposedaffine.wxm which can be viewed
-    // in wxMaxima
-    double trotblock[3][3] = 
-      {{-8.463468769516696,19.00980185243784,14.28466828369497},
-       {-14.65915791707536,-5.953980920747949,4.874119158828699},
-       {-9.933826038899356,-10.49845439702531,0.0}};
 
     // For documentation of the seemingly magic numbers here
     // See doc/decomposedaffine.wxm which can be viewed
     // in wxMaxima
-    double tscaleblock[3][3] = 
-      {{5.296601673477637,-1.38581929876693,1.712795626306205},
-       {-2.238694989624234,-2.400309435573797,-9.39403072725379},
-       {-1.712966857807016,-1.148050297095269,17.57323299333159}};
+    double trotblock[3][3] =
+        {{-8.463468769516696, 19.00980185243784, 14.28466828369497},
+         {-14.65915791707536, -5.953980920747949, 4.874119158828699},
+         {-9.933826038899356, -10.49845439702531, 0.0}};
 
-    for(unsigned int i = 0;
-        i < 3;
-        ++i)
+    // For documentation of the seemingly magic numbers here
+    // See doc/decomposedaffine.wxm which can be viewed
+    // in wxMaxima
+    double tscaleblock[3][3] =
+        {{5.296601673477637, -1.38581929876693, 1.712795626306205},
+         {-2.238694989624234, -2.400309435573797, -9.39403072725379},
+         {-1.712966857807016, -1.148050297095269, 17.57323299333159}};
+    for( unsigned int i = 0;
+         i < 3;
+         ++i )
       {
-      for(unsigned int j = 0;
-          j < 3;
-          ++j)
+      for( unsigned int j = 0;
+           j < 3;
+           ++j )
         {
-        if(!almost(jacobian[i][j], trotblock[i][j], 1.0e-10) ||
-           !almost(jacobian[i][j+3], static_cast<int>(i == j), 1.0e-10) ||
-           !almost(jacobian[i][j+6], tscaleblock[i][j], 1.0e-10))
+        if( !almost(jacobian[i][j], trotblock[i][j], 1.0e-10) ||
+            !almost(jacobian[i][j + 3], static_cast<int>(i == j), 1.0e-10) ||
+            !almost(jacobian[i][j + 6], tscaleblock[i][j], 1.0e-10) )
           {
-          std::cerr << "Error in jacobian at [" << i << 
-            "," << j << "]" << std::endl;
+          std::cerr << "Error in jacobian at [" << i
+                    << "," << j << "]" << std::endl;
           return EXIT_FAILURE;
           }
         }
       }
-      
+
     }
 
   return EXIT_SUCCESS;

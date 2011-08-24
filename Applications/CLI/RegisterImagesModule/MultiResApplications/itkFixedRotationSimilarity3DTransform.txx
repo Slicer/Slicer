@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -21,7 +21,6 @@
 #include "vnl/vnl_math.h"
 #include "vnl/vnl_det.h"
 
-
 namespace itk
 {
 
@@ -29,7 +28,7 @@ namespace itk
 template <class TScalarType>
 FixedRotationSimilarity3DTransform<TScalarType>
 ::FixedRotationSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >=4
+#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
 #else
   Superclass(OutputSpaceDimension, ParametersDimension)
@@ -39,10 +38,9 @@ FixedRotationSimilarity3DTransform<TScalarType>
 }
 
 // Constructor with arguments
-template<class TScalarType>
-FixedRotationSimilarity3DTransform<TScalarType>::
-FixedRotationSimilarity3DTransform( unsigned int paramDim) :
-#if ITK_VERSION_MAJOR >=4
+template <class TScalarType>
+FixedRotationSimilarity3DTransform<TScalarType>::FixedRotationSimilarity3DTransform( unsigned int paramDim) :
+#if ITK_VERSION_MAJOR >= 4
   Superclass(paramDim)
 #else
   Superclass(OutputSpaceDimension, paramDim)
@@ -52,15 +50,14 @@ FixedRotationSimilarity3DTransform( unsigned int paramDim) :
 }
 
 // Constructor with arguments
-template<class TScalarType>
-FixedRotationSimilarity3DTransform<TScalarType>::
-FixedRotationSimilarity3DTransform( const MatrixType & matrix,
-                        const OutputVectorType & offset) :
-  Superclass(matrix,offset)
+template <class TScalarType>
+FixedRotationSimilarity3DTransform<TScalarType>::FixedRotationSimilarity3DTransform( const MatrixType & matrix,
+                                                                                     const OutputVectorType & offset) :
+  Superclass(matrix, offset)
 {
   this->SetScale(1.0);
 }
- 
+
 // Set Parameters
 template <class TScalarType>
 void
@@ -86,13 +83,12 @@ FixedRotationSimilarity3DTransform<TScalarType>
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<<"After setting parameters ");
+  itkDebugMacro(<< "After setting parameters ");
 }
-
 
 //
 // Get Parameters
-// 
+//
 // Parameters are ordered as:
 //
 // p[0:2] = trasnlation
@@ -100,10 +96,10 @@ FixedRotationSimilarity3DTransform<TScalarType>
 //
 
 template <class TScalarType>
-const typename FixedRotationSimilarity3DTransform<TScalarType>::ParametersType &
-FixedRotationSimilarity3DTransform<TScalarType>
+const typename FixedRotationSimilarity3DTransform<TScalarType>::ParametersType
+& FixedRotationSimilarity3DTransform<TScalarType>
 ::GetParameters( void ) const
-{
+  {
   itkDebugMacro( << "Getting parameters ");
 
   // Transfer the translation
@@ -113,10 +109,10 @@ FixedRotationSimilarity3DTransform<TScalarType>
 
   this->m_Parameters[3] = this->GetScale();
 
-  itkDebugMacro(<<"After getting parameters " << this->m_Parameters );
+  itkDebugMacro(<< "After getting parameters " << this->m_Parameters );
 
   return this->m_Parameters;
-}
+  }
 
 template <class TScalarType>
 void
@@ -128,19 +124,20 @@ FixedRotationSimilarity3DTransform<TScalarType>
 }
 
 // Set parameters
-template<class TScalarType>
-const typename FixedRotationSimilarity3DTransform<TScalarType>::JacobianType &
-FixedRotationSimilarity3DTransform<TScalarType>::
-GetJacobian( const InputPointType & p ) const
-{
+template <class TScalarType>
+const typename FixedRotationSimilarity3DTransform<TScalarType>::JacobianType
+& FixedRotationSimilarity3DTransform<TScalarType>::
+GetJacobian( const InputPointType &p ) const
+  {
   ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
   return this->m_NonThreadsafeSharedJacobian;
-}
+  }
 
-template<class TScalarType>
+template <class TScalarType>
 void
-FixedRotationSimilarity3DTransform<TScalarType>::
-ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
+FixedRotationSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters( const InputPointType & p,
+                                                                                         JacobianType & jacobian )
+const
 {
   jacobian.SetSize( OutputSpaceDimension, ParametersDimension );
   jacobian.Fill(0.0);
@@ -164,14 +161,12 @@ ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType &
   jacobian[2][3] = mpp[2] / this->GetScale();
 }
 
-
 // Print self
-template<class TScalarType>
+template <class TScalarType>
 void
-FixedRotationSimilarity3DTransform<TScalarType>::
-PrintSelf(std::ostream &os, Indent indent) const
+FixedRotationSimilarity3DTransform<TScalarType>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Scale = " << this->GetScale() << std::endl;
 }
 

@@ -17,39 +17,39 @@ namespace itk
 /** \class LMMSEVectorImageFilterStep
  * \brief Applies a LMMSE filtering for Rician noise removal
  */
-  
+
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LMMSEVectorImageFilterStep : public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT LMMSEVectorImageFilterStep : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                               InputImageType;
-  typedef typename InputImageType::Pointer          InputImagePointer;
-  typedef typename InputImageType::ConstPointer     InputImageConstPointer;
-  typedef TOutputImage                              OutputImageType;
-  typedef typename OutputImageType::Pointer         OutputImagePointer;
-  typedef typename OutputImageType::ConstPointer    OutputImageConstPointer;
-  
+  typedef TInputImage                            InputImageType;
+  typedef typename InputImageType::Pointer       InputImagePointer;
+  typedef typename InputImageType::ConstPointer  InputImageConstPointer;
+  typedef TOutputImage                           OutputImageType;
+  typedef typename OutputImageType::Pointer      OutputImagePointer;
+  typedef typename OutputImageType::ConstPointer OutputImageConstPointer;
+
   /** Standard class typedefs. */
-  typedef LMMSEVectorImageFilterStep                           Self;
-  typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  typedef LMMSEVectorImageFilterStep                          Self;
+  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( LMMSEVectorImageFilterStep, ImageToImageFilter );
-  
+
   /** Image typedef support. */
-  typedef typename InputImageType::PixelType   InputPixelType;
-  typedef typename OutputImageType::PixelType  OutputPixelType;
+  typedef typename InputImageType::PixelType  InputPixelType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
 
   typedef typename InputImageType::RegionType  InputImageRegionType;
   typedef typename OutputImageType::RegionType OutputImageRegionType;
 
-  typedef typename InputImageType::SizeType    InputSizeType;
+  typedef typename InputImageType::SizeType InputSizeType;
 
   /** Set and get the radius of the neighborhood used to compute the statistics. */
   itkSetMacro( Radius, InputSizeType );
@@ -62,38 +62,43 @@ public:
   itkGetMacro( UseAbsoluteValue, bool );
   itkSetMacro( UseAbsoluteValue, bool );
   itkBooleanMacro( UseAbsoluteValue );
-  
+
   itkGetMacro( KeepValue, bool );
   itkSetMacro( KeepValue, bool );
   itkBooleanMacro( KeepValue );
-  
+
   /** The minimum number of voxels that we allow to compute local statistics and filter: */
   itkGetMacro( MinimumNumberOfUsedVoxelsFiltering, unsigned int );
   itkSetMacro( MinimumNumberOfUsedVoxelsFiltering, unsigned int );
-  
+
   /** Set and get the externally estimated noise variance */
   itkGetMacro( NoiseVariance, double );
   itkSetMacro( NoiseVariance, double );
-  
+
   /** It is necessary to override GenerateInputRequestedRegion(), since we need a larger
    region of the input than is the output */
-  virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
+  virtual void GenerateInputRequestedRegion()
+  throw (InvalidRequestedRegionError);
+
 protected:
   LMMSEVectorImageFilterStep();
-  virtual ~LMMSEVectorImageFilterStep() {}
+  virtual ~LMMSEVectorImageFilterStep()
+  {
+  }
   void PrintSelf(std::ostream& os, Indent indent) const;
+
   // Threaded filter!
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
-#else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
-#endif
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
 
+#else
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
+#endif
 private:
-  LMMSEVectorImageFilterStep(const Self&); // purposely not implemented
-  void operator=(const Self&);             // purposely not implemented
+  LMMSEVectorImageFilterStep(const Self &); // purposely not implemented
+  void operator=(const Self &);             // purposely not implemented
+
   // The size of the nieghbourhood to compute the statistics:
   InputSizeType m_Radius;
   // The number of DWI-channels to filter; we externaly set this parameter in
@@ -109,7 +114,7 @@ private:
   // it should be supplied externally:
   double m_NoiseVariance;
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

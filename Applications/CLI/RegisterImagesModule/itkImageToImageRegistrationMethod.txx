@@ -23,16 +23,16 @@
 namespace itk
 {
 
-template< class TImage >
-ImageToImageRegistrationMethod< TImage >
+template <class TImage>
+ImageToImageRegistrationMethod<TImage>
 ::ImageToImageRegistrationMethod( void )
 {
   this->SetNumberOfRequiredOutputs( 1 ); // the transform
 
   this->m_Transform = 0;
-  typename TransformOutputType::Pointer transformDecorator = 
-                                      static_cast<  TransformOutputType * >
-                                        ( this->MakeOutput(0).GetPointer() );
+  typename TransformOutputType::Pointer transformDecorator =
+    static_cast<TransformOutputType *>
+    ( this->MakeOutput(0).GetPointer() );
 
   this->ProcessObject::SetNthOutput( 0, transformDecorator.GetPointer() );
 
@@ -54,43 +54,43 @@ ImageToImageRegistrationMethod< TImage >
 
 }
 
-template< class TImage >
-ImageToImageRegistrationMethod< TImage >
+template <class TImage>
+ImageToImageRegistrationMethod<TImage>
 ::~ImageToImageRegistrationMethod( void )
 {
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::SetFixedImage( const ImageType * fixedImage )
 {
   if( this->m_FixedImage.GetPointer() != fixedImage )
     {
     this->m_FixedImage = fixedImage;
 
-    this->ProcessObject::SetNthInput(0, const_cast< ImageType * >( fixedImage ) );
+    this->ProcessObject::SetNthInput(0, const_cast<ImageType *>( fixedImage ) );
     this->Modified();
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::SetMovingImage( const ImageType * movingImage )
 {
   if( this->m_MovingImage.GetPointer() != movingImage )
     {
     this->m_MovingImage = movingImage;
 
-    this->ProcessObject::SetNthInput(1, const_cast< ImageType * >( movingImage ) );
+    this->ProcessObject::SetNthInput(1, const_cast<ImageType *>( movingImage ) );
     this->Modified();
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::SetRegionOfInterest( const PointType & point1, const PointType & point2 )
 {
   m_RegionOfInterestPoint1 = point1;
@@ -98,9 +98,9 @@ ImageToImageRegistrationMethod< TImage >
   m_UseRegionOfInterest = true;
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::SetFixedImageMaskObject( const MaskObjectType * maskObject )
 {
   if( this->m_FixedImageMaskObject.GetPointer() != maskObject )
@@ -120,9 +120,9 @@ ImageToImageRegistrationMethod< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::SetMovingImageMaskObject( const MaskObjectType * maskObject )
 {
   if( this->m_MovingImageMaskObject.GetPointer() != maskObject )
@@ -142,35 +142,35 @@ ImageToImageRegistrationMethod< TImage >
     }
 }
 
-template< class TImage >
-const typename ImageToImageRegistrationMethod< TImage >::TransformOutputType *
-ImageToImageRegistrationMethod< TImage >
-::GetOutput( ) const
-{
-  return static_cast< const TransformOutputType * >( this->ProcessObject::GetOutput( 0 ) );
-}
+template <class TImage>
+const typename ImageToImageRegistrationMethod<TImage>::TransformOutputType
+* ImageToImageRegistrationMethod<TImage>
+::GetOutput() const
+  {
+  return static_cast<const TransformOutputType *>( this->ProcessObject::GetOutput( 0 ) );
+  }
 
-template< class TImage >
+template <class TImage>
 DataObject::Pointer
-ImageToImageRegistrationMethod< TImage >
-::MakeOutput( unsigned int idx ) 
+ImageToImageRegistrationMethod<TImage>
+::MakeOutput( unsigned int idx )
 {
-  switch ( idx )
+  switch( idx )
     {
     case 0:
-      return static_cast< DataObject * >( 
+      return static_cast<DataObject *>(
                TransformOutputType::New().GetPointer() );
       break;
     default:
-      itkExceptionMacro( 
-               "MakeOutput request for an output number larger than the expected number of outputs" );
+      itkExceptionMacro(
+        "MakeOutput request for an output number larger than the expected number of outputs" );
       return 0;
     }
 }
 
-template< class TImage >
+template <class TImage>
 unsigned long
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::GetMTime( void ) const
 {
   unsigned long mtime = Superclass::GetMTime();
@@ -209,10 +209,9 @@ ImageToImageRegistrationMethod< TImage >
   return mtime;
 }
 
-
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::Initialize( void )
 {
   this->GetMultiThreader()->SetNumberOfThreads( m_RegistrationNumberOfThreads );
@@ -233,23 +232,23 @@ ImageToImageRegistrationMethod< TImage >
     }
 
   TransformOutputType * transformOutput =
-    static_cast< TransformOutputType * >( this->ProcessObject::GetOutput( 0 ) );
+    static_cast<TransformOutputType *>( this->ProcessObject::GetOutput( 0 ) );
 
   transformOutput->Set( m_Transform.GetPointer() );
 
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::GenerateData( void )
 {
   this->Update();
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationMethod< TImage >
+ImageToImageRegistrationMethod<TImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
@@ -292,7 +291,7 @@ ImageToImageRegistrationMethod< TImage >
     os << indent << "Moving Image = 0" << std::endl;
     }
 
-  os << indent << "Use region of interest = " << m_UseRegionOfInterest 
+  os << indent << "Use region of interest = " << m_UseRegionOfInterest
      << std::endl;
   os << indent << "Region of interest point1 = " << m_RegionOfInterestPoint1
      << std::endl;
@@ -301,8 +300,8 @@ ImageToImageRegistrationMethod< TImage >
 
   if( this->m_FixedImageMaskObject.IsNotNull() )
     {
-    os << indent << "Fixed Image Mask Object = " << this->m_FixedImageMaskObject 
-                 << std::endl;
+    os << indent << "Fixed Image Mask Object = " << this->m_FixedImageMaskObject
+       << std::endl;
     }
   else
     {
@@ -311,8 +310,8 @@ ImageToImageRegistrationMethod< TImage >
 
   if( this->m_MovingImageMaskObject.IsNotNull() )
     {
-    os << indent << "Moving Image Mask Object = " << this->m_MovingImageMaskObject 
-                 << std::endl;
+    os << indent << "Moving Image Mask Object = " << this->m_MovingImageMaskObject
+       << std::endl;
     }
   else
     {
@@ -323,7 +322,6 @@ ImageToImageRegistrationMethod< TImage >
 
 }
 
-
 };
 
-#endif 
+#endif

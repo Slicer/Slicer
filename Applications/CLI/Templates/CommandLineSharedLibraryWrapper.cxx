@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -32,9 +32,9 @@
 #define MODULE_IMPORT
 #endif
 
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int main(int argc, char** argv)
+int main(int argc, char* * argv)
 {
   return ModuleEntryPoint(argc, argv);
 }

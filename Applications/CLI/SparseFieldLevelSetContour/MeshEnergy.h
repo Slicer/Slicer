@@ -20,30 +20,33 @@
 class MeshEnergy
 {
 public:
-MeshEnergy() { }
-MeshEnergy( const MeshEnergy & );
-virtual ~MeshEnergy() { }
+  MeshEnergy()
+  {
+  }
+  MeshEnergy( const MeshEnergy & );
+  virtual ~MeshEnergy()
+  {
+  }
 // evaluate energy at every point indexed by C
-virtual double eval_energy( const std::vector<int>& C ) = 0;
+  virtual double eval_energy( const std::vector<int>& C ) = 0;
 
 // get the force F at the vertices for sparse field method
-virtual std::valarray<double> getforce( const std::list<int>& C ) = 0;
-virtual std::valarray<double> getforce( const std::list<int>& C,
-const std::list<int>& L_p1, const std::list<int>& L_n1,
-const std::vector<double>& phi) = 0;
+  virtual std::valarray<double> getforce( const std::list<int>& C ) = 0;
+
+  virtual std::valarray<double> getforce( const std::list<int>& C, const std::list<int>& L_p1,
+                                          const std::list<int>& L_n1,
+                                          const std::vector<double>& phi) = 0;
 
 public:
-MeshData* meshdata;
-
+  MeshData* meshdata;
 protected:
 
-void GetKappa( const std::vector<int>& C, const std::vector<double>& phi,
-std::valarray<double>& kappa);
+  void GetKappa( const std::vector<int>& C, const std::vector<double>& phi, std::valarray<double>& kappa);
 
-void GetNormalsTangentPlane( const std::vector<int>& C, const std::vector<double>& phi,
-std::valarray<double>& ne1, std::valarray<double>& ne2, MeshData* meshdata );
+  void GetNormalsTangentPlane( const std::vector<int>& C, const std::vector<double>& phi, std::valarray<double>& ne1,
+                               std::valarray<double>& ne2,
+                               MeshData* meshdata );
 
 };
 
 #endif
-

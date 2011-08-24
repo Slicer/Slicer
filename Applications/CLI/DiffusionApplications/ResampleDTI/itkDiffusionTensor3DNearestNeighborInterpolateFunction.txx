@@ -19,26 +19,25 @@
 namespace itk
 {
 
-
-template< class TData , class TCoordRep >
-typename DiffusionTensor3DNearestNeighborInterpolateFunction< TData , TCoordRep >
+template <class TData, class TCoordRep>
+typename DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
 ::TensorDataType
-DiffusionTensor3DNearestNeighborInterpolateFunction< TData , TCoordRep >
+DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
 ::EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const
-//::Evaluate( const PointType &point )
+// ::Evaluate( const PointType &point )
 {
   if( this->m_Image.IsNotNull() )
     {
-      typename DiffusionImageType::IndexType pixelIndex ;
-      this->ConvertContinuousIndexToNearestIndex( index , pixelIndex ) ;
-      return this->m_Image->GetPixel( pixelIndex ) ;
+    typename DiffusionImageType::IndexType pixelIndex;
+    this->ConvertContinuousIndexToNearestIndex( index, pixelIndex );
+    return this->m_Image->GetPixel( pixelIndex );
     }
   else
     {
-      itkExceptionMacro( << " No InputImage set" ) ;
+    itkExceptionMacro( << " No InputImage set" );
     }
 }
 
-}//end namespace itk
+} // end namespace itk
 
 #endif

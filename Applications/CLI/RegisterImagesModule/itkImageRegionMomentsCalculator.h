@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -39,7 +39,7 @@ namespace itk
  * compute the moments only on explicit request, and save their values
  * (in an ImageRegionMomentsCalculator object) for later retrieval by the user.
  *
- * The non-central moments computed by this class are not really 
+ * The non-central moments computed by this class are not really
  * intended for general use and are therefore in index coordinates;
  * that is, we pretend that the index that selects a particular
  * pixel also equals its physical coordinates.  The center of gravity,
@@ -56,15 +56,15 @@ namespace itk
  *
  * \todo It's not yet clear how multi-echo images should be handled here.
  */
-template < class TImage >
+template <class TImage>
 class ITK_EXPORT ImageRegionMomentsCalculator : public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef ImageRegionMomentsCalculator<TImage>   Self;
-  typedef Object Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef ImageRegionMomentsCalculator<TImage> Self;
+  typedef Object                               Superclass;
+  typedef SmartPointer<Self>                   Pointer;
+  typedef SmartPointer<const Self>             ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -77,18 +77,18 @@ public:
                       TImage::ImageDimension);
 
   /** Standard scalar type within this class. */
-  typedef double                       ScalarType;
+  typedef double ScalarType;
 
-  typedef typename TImage::PointType   PointType;
+  typedef typename TImage::PointType PointType;
 
   /** Standard vector type within this class. */
   typedef Vector<ScalarType, itkGetStaticConstMacro(ImageDimension)> VectorType;
 
   /** Spatial Object type within this class. */
-  typedef SpatialObject< itkGetStaticConstMacro(ImageDimension) > SpatialObjectType;
+  typedef SpatialObject<itkGetStaticConstMacro(ImageDimension)> SpatialObjectType;
 
   /** Spatial Object member types used within this class. */
-  typedef typename SpatialObjectType::Pointer SpatialObjectPointer;
+  typedef typename SpatialObjectType::Pointer      SpatialObjectPointer;
   typedef typename SpatialObjectType::ConstPointer SpatialObjectConstPointer;
 
   /** Standard matrix type within this class. */
@@ -100,41 +100,41 @@ public:
   typedef TImage ImageType;
 
   /** Standard image type pointer within this class. */
-  typedef typename ImageType::Pointer ImagePointer;
+  typedef typename ImageType::Pointer      ImagePointer;
   typedef typename ImageType::ConstPointer ImageConstPointer;
 
   /** Affine transform for mapping to and from principal axis */
-  typedef AffineTransform<double,itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
-  typedef typename AffineTransformType::Pointer      AffineTransformPointer;
+  typedef AffineTransform<double, itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
+  typedef typename AffineTransformType::Pointer                           AffineTransformPointer;
 
   /** Set the input image. */
   virtual void SetImage( const ImageType * image )
-    {
-    if ( m_Image != image )
+  {
+    if( m_Image != image )
       {
       m_Image = image;
       this->Modified();
       m_Valid = false;
       }
-    }
+  }
 
   /** Set the spatial object mask. */
-  virtual void SetSpatialObjectMask( const SpatialObject< itkGetStaticConstMacro( ImageDimension ) > * so )
-    {
-    if ( m_SpatialObjectMask != so )
+  virtual void SetSpatialObjectMask( const SpatialObject<itkGetStaticConstMacro( ImageDimension )> * so )
+  {
+    if( m_SpatialObjectMask != so )
       {
       m_SpatialObjectMask = so;
       this->Modified();
       m_Valid = false;
       }
-    }
+  }
 
   /** Method for controlling the region of interest that optionally limits the
    *   spatial extent of the computations */
   itkSetMacro(UseRegionOfInterest, bool);
   itkGetMacro(UseRegionOfInterest, bool);
   virtual void SetRegionOfInterest( const PointType & point1, const PointType & point2 )
-    {
+  {
     if( m_RegionOfInterestPoint1 != point1 || m_RegionOfInterestPoint2 != point2 )
       {
       m_RegionOfInterestPoint1 = point1;
@@ -142,7 +142,8 @@ public:
       this->Modified();
       m_Valid = false;
       }
-    }
+  }
+
   itkGetMacro(RegionOfInterestPoint1, PointType);
   itkGetMacro(RegionOfInterestPoint2, PointType);
 
@@ -224,10 +225,10 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
 private:
-  ImageRegionMomentsCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ImageRegionMomentsCalculator(const Self &); // purposely not implemented
+  void operator=(const Self &);               // purposely not implemented
 
-  bool m_Valid;                      // Have moments been computed yet?
+  bool       m_Valid;                // Have moments been computed yet?
   ScalarType m_M0;                   // Zeroth moment
   VectorType m_M1;                   // First moments about origin
   MatrixType m_M2;                   // Second moments about origin
@@ -236,17 +237,16 @@ private:
   VectorType m_Pm;                   // Principal moments (physical)
   MatrixType m_Pa;                   // Principal axes (physical)
 
-  bool       m_UseRegionOfInterest;
-  PointType  m_RegionOfInterestPoint1;
-  PointType  m_RegionOfInterestPoint2;
+  bool      m_UseRegionOfInterest;
+  PointType m_RegionOfInterestPoint1;
+  PointType m_RegionOfInterestPoint2;
 
-  ImageConstPointer m_Image;
+  ImageConstPointer         m_Image;
   SpatialObjectConstPointer m_SpatialObjectMask;
 
 };  // class ImageRegionMomentsCalculator
 
 } // end namespace itk
-
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkImageRegionMomentsCalculator.txx"

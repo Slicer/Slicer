@@ -7,7 +7,7 @@
 #endif
 
 #include <iostream>
-#include "itkTestMain.h" 
+#include "itkTestMain.h"
 
 #ifdef WIN32
 #define MODULE_IMPORT __declspec(dllimport)
@@ -15,7 +15,7 @@
 #define MODULE_IMPORT
 #endif
 
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
 void RegisterTests()
 {

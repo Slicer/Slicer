@@ -15,7 +15,6 @@
 
 =========================================================================*/
 
-
 #ifndef __ImageToImageRegistrationHelper_txx
 #define __ImageToImageRegistrationHelper_txx
 
@@ -39,8 +38,8 @@
 namespace itk
 {
 
-template< class TImage >
-ImageToImageRegistrationHelper< TImage >
+template <class TImage>
+ImageToImageRegistrationHelper<TImage>
 ::ImageToImageRegistrationHelper()
 {
   // Data
@@ -144,19 +143,19 @@ ImageToImageRegistrationHelper< TImage >
 
 }
 
-template< class TImage >
-ImageToImageRegistrationHelper< TImage >
+template <class TImage>
+ImageToImageRegistrationHelper<TImage>
 ::~ImageToImageRegistrationHelper()
 {
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::LoadFixedImage( const std::string filename ) 
+ImageToImageRegistrationHelper<TImage>
+::LoadFixedImage( const std::string filename )
 {
-  typedef ImageFileReader< TImage > ImageReaderType;
-  
+  typedef ImageFileReader<TImage> ImageReaderType;
+
   typename ImageReaderType::Pointer imageReader = ImageReaderType::New();
 
   imageReader->SetFileName( filename );
@@ -171,13 +170,13 @@ ImageToImageRegistrationHelper< TImage >
   m_CompletedResampling = false;
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::LoadMovingImage( const std::string filename ) 
+ImageToImageRegistrationHelper<TImage>
+::LoadMovingImage( const std::string filename )
 {
-  typedef ImageFileReader< TImage > ImageReaderType;
-  
+  typedef ImageFileReader<TImage> ImageReaderType;
+
   typename ImageReaderType::Pointer imageReader = ImageReaderType::New();
 
   imageReader->SetFileName( filename );
@@ -192,13 +191,13 @@ ImageToImageRegistrationHelper< TImage >
   m_CompletedResampling = false;
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::SaveImage( const std::string filename, const TImage * image ) 
+ImageToImageRegistrationHelper<TImage>
+::SaveImage( const std::string filename, const TImage * image )
 {
-  typedef ImageFileWriter< TImage >    FileWriterType;
-  
+  typedef ImageFileWriter<TImage> FileWriterType;
+
   typename FileWriterType::Pointer fileWriter = FileWriterType::New();
   fileWriter->SetUseCompression( true );
   fileWriter->SetInput( image );
@@ -206,9 +205,9 @@ ImageToImageRegistrationHelper< TImage >
   fileWriter->Update();
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SetFixedImageMaskObject( const MaskObjectType * maskObject )
 {
   if( this->m_FixedImageMaskObject.GetPointer() != maskObject )
@@ -228,9 +227,9 @@ ImageToImageRegistrationHelper< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SetMovingImageMaskObject( const MaskObjectType * maskObject )
 {
   if( this->m_MovingImageMaskObject.GetPointer() != maskObject )
@@ -250,12 +249,12 @@ ImageToImageRegistrationHelper< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::Initialize( void )
 {
-  //m_LoadedTransform = 0;  Not Initialized - since it is a user parameter
+  // m_LoadedTransform = 0;  Not Initialized - since it is a user parameter
   m_InitialTransform = 0;
   m_RigidTransform = 0;
   m_AffineTransform = 0;
@@ -293,9 +292,9 @@ ImageToImageRegistrationHelper< TImage >
 
 /** This class provides an Update() method to fit the appearance of a
  * ProcessObject API, but it is not a ProcessObject.  */
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::Update( void )
 {
   if( !(this->m_CompletedInitialization) )
@@ -303,9 +302,9 @@ ImageToImageRegistrationHelper< TImage >
     this->Initialize();
     }
 
-  if( m_EnableLoadedRegistration 
-      && ( m_LoadedMatrixTransform.IsNotNull() 
-          || m_LoadedBSplineTransform.IsNotNull() ) )
+  if( m_EnableLoadedRegistration
+      && ( m_LoadedMatrixTransform.IsNotNull()
+           || m_LoadedBSplineTransform.IsNotNull() ) )
     {
     if( m_LoadedTransformResampledImage.IsNotNull() )
       {
@@ -321,21 +320,21 @@ ImageToImageRegistrationHelper< TImage >
         {
         std::cout << "*** Resampling using loaded transform ***" << std::endl;
         }
-      m_LoadedTransformResampledImage = ResampleImage( 
-                                   m_AffineInterpolationMethodEnum,
-                                   m_MovingImage,
-                                   m_LoadedMatrixTransform,
-                                   m_LoadedBSplineTransform );
+      m_LoadedTransformResampledImage = ResampleImage(
+          m_AffineInterpolationMethodEnum,
+          m_MovingImage,
+          m_LoadedMatrixTransform,
+          m_LoadedBSplineTransform );
       m_CurrentMovingImage = m_LoadedTransformResampledImage;
-      //this->SaveImage("transform.mha",m_CurrentMovingImage);
+      // this->SaveImage("transform.mha",m_CurrentMovingImage);
       }
- 
+
     m_MatrixTransformResampledImage = 0;
     m_BSplineTransformResampledImage = 0;
- 
+
     m_CompletedStage = LOAD_STAGE;
     m_CompletedResampling = true;
- 
+
     m_CurrentMatrixTransform = 0;
     m_CurrentBSplineTransform = 0;
     }
@@ -344,9 +343,9 @@ ImageToImageRegistrationHelper< TImage >
     {
     std::cout << "*** INITIAL REGISTRATION ***" << std::endl;
     }
- 
+
   typename InitialRegistrationMethodType::Pointer regInit =
-                                        InitialRegistrationMethodType::New();
+    InitialRegistrationMethodType::New();
   regInit->SetReportProgress( m_ReportProgress );
   regInit->SetMovingImage( m_CurrentMovingImage );
   regInit->SetFixedImage( m_FixedImage );
@@ -394,20 +393,20 @@ ImageToImageRegistrationHelper< TImage >
     {
     regInit->SetComputeCenterOfRotationOnly( true );
     }
- 
+
   regInit->Update();
 
   m_InitialTransform = regInit->GetAffineTransform();
   m_CurrentMatrixTransform = m_InitialTransform;
   m_CurrentBSplineTransform = 0;
- 
+
   m_CompletedStage = INIT_STAGE;
   m_CompletedResampling = false;
 
   typename TImage::SizeType fixedImageSize;
   fixedImageSize = m_FixedImage->GetLargestPossibleRegion().GetSize();
   unsigned long fixedImageNumPixels = m_FixedImage->GetLargestPossibleRegion()
-                                                    .GetNumberOfPixels();
+    .GetNumberOfPixels();
 
   if( m_EnableRigidRegistration )
     {
@@ -422,8 +421,8 @@ ImageToImageRegistrationHelper< TImage >
     regRigid->SetReportProgress( m_ReportProgress );
     regRigid->SetMovingImage( m_CurrentMovingImage );
     regRigid->SetFixedImage( m_FixedImage );
-    regRigid->SetNumberOfSamples( (unsigned int)( m_RigidSamplingRatio 
-                                             * fixedImageNumPixels ) );
+    regRigid->SetNumberOfSamples( (unsigned int)( m_RigidSamplingRatio
+                                                  * fixedImageNumPixels ) );
     regRigid->SetSampleFromOverlap( m_SampleFromOverlap );
     regRigid->SetMinimizeMemory( m_MinimizeMemory );
     regRigid->SetMaxIterations( m_RigidMaxIterations );
@@ -444,19 +443,19 @@ ImageToImageRegistrationHelper< TImage >
       }
     if( m_SampleIntensityPortion > 0 )
       {
-      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
+      typedef MinimumMaximumImageCalculator<ImageType> MinMaxCalcType;
       typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
       calc->SetImage( m_FixedImage );
       calc->Compute();
       PixelType fixedImageMax = calc->GetMaximum();
       PixelType fixedImageMin = calc->GetMinimum();
 
-      regRigid->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SampleIntensityPortion 
-                                            * (fixedImageMax - fixedImageMin) )
-                                          + fixedImageMin ) );
+      regRigid->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>(
+                                                          ( m_SampleIntensityPortion
+                                                            * (fixedImageMax - fixedImageMin) )
+                                                          + fixedImageMin ) );
       }
-    if(m_UseRegionOfInterest)
+    if( m_UseRegionOfInterest )
       {
       regRigid->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
       }
@@ -483,7 +482,9 @@ ImageToImageRegistrationHelper< TImage >
       }
     else
       {
-      std::cerr << "ERROR: Only 2 and 3 dimensional images are supported due to rigid registration transforms limitations." << std::endl;
+      std::cerr
+      << "ERROR: Only 2 and 3 dimensional images are supported due to rigid registration transforms limitations."
+      << std::endl;
       }
     /*
     double minS = scales[0];
@@ -502,7 +503,7 @@ ImageToImageRegistrationHelper< TImage >
         }
       }*/
     regRigid->SetTransformParametersScales( scales );
-    
+
     if( m_CurrentMatrixTransform.IsNotNull() )
       {
       regRigid->GetTypedTransform()->SetCenter( m_CurrentMatrixTransform->GetCenter() );
@@ -543,7 +544,7 @@ ImageToImageRegistrationHelper< TImage >
     regAff->SetMovingImage( m_CurrentMovingImage );
     regAff->SetFixedImage( m_FixedImage );
     regAff->SetNumberOfSamples( (unsigned int)(m_AffineSamplingRatio * fixedImageNumPixels) );
-    if(m_UseRegionOfInterest)
+    if( m_UseRegionOfInterest )
       {
       regAff->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
       }
@@ -572,28 +573,28 @@ ImageToImageRegistrationHelper< TImage >
       }
     if( m_SampleIntensityPortion > 0 )
       {
-      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
+      typedef MinimumMaximumImageCalculator<ImageType> MinMaxCalcType;
       typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
       calc->SetImage( m_FixedImage );
       calc->Compute();
       PixelType fixedImageMax = calc->GetMaximum();
       PixelType fixedImageMin = calc->GetMinimum();
 
-      regAff->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SampleIntensityPortion 
-                                            * (fixedImageMax - fixedImageMin) )
-                                          + fixedImageMin ) );
+      regAff->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>(
+                                                        ( m_SampleIntensityPortion
+                                                          * (fixedImageMax - fixedImageMin) )
+                                                        + fixedImageMin ) );
       }
     regAff->SetMetricMethodEnum( m_AffineMetricMethodEnum );
     regAff->SetInterpolationMethodEnum( m_AffineInterpolationMethodEnum );
     typename AffineTransformType::ParametersType scales;
-    scales.set_size( ImageDimension*ImageDimension + ImageDimension );
+    scales.set_size( ImageDimension * ImageDimension + ImageDimension );
     unsigned int scaleNum = 0;
-    for(int d1=0; d1<ImageDimension; d1++)
+    for( int d1 = 0; d1 < ImageDimension; d1++ )
       {
-      for(int d2=0; d2<ImageDimension; d2++)
+      for( int d2 = 0; d2 < ImageDimension; d2++ )
         {
-        if(d1 == d2)
+        if( d1 == d2 )
           {
           scales[scaleNum] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedScaleMagnitude);
           }
@@ -604,7 +605,7 @@ ImageToImageRegistrationHelper< TImage >
         ++scaleNum;
         }
       }
-    for(int d1=0; d1<ImageDimension; d1++)
+    for( int d1 = 0; d1 < ImageDimension; d1++ )
       {
       scales[scaleNum] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
       ++scaleNum;
@@ -668,7 +669,7 @@ ImageToImageRegistrationHelper< TImage >
     regBspline->SetFixedImage( m_FixedImage );
     regBspline->SetMovingImage( m_CurrentMovingImage );
     regBspline->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
-    if(m_UseRegionOfInterest)
+    if( m_UseRegionOfInterest )
       {
       regBspline->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
       }
@@ -692,17 +693,17 @@ ImageToImageRegistrationHelper< TImage >
       }
     if( m_SampleIntensityPortion > 0 )
       {
-      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
+      typedef MinimumMaximumImageCalculator<ImageType> MinMaxCalcType;
       typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
       calc->SetImage( m_FixedImage );
       calc->Compute();
       PixelType fixedImageMax = calc->GetMaximum();
       PixelType fixedImageMin = calc->GetMinimum();
 
-      regBspline->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SampleIntensityPortion 
-                                            * (fixedImageMax - fixedImageMin) )
-                                          + fixedImageMin ) );
+      regBspline->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>(
+                                                            ( m_SampleIntensityPortion
+                                                              * (fixedImageMax - fixedImageMin) )
+                                                            + fixedImageMin ) );
       }
     regBspline->SetMetricMethodEnum( m_BSplineMetricMethodEnum );
     regBspline->SetInterpolationMethodEnum( m_BSplineInterpolationMethodEnum );
@@ -724,38 +725,37 @@ ImageToImageRegistrationHelper< TImage >
       std::cout << "BSpline results stored" << std::endl;
       }
     }
-  //this->SaveImage("c:/result.mha",m_CurrentMovingImage);
+  // this->SaveImage("c:/result.mha",m_CurrentMovingImage);
 }
 
-
-template< class TImage >
+template <class TImage>
 typename TImage::ConstPointer
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::ResampleImage( InterpolationMethodEnumType interpolationMethod,
                  const ImageType * movingImage,
                  const MatrixTransformType * matrixTransform,
                  const BSplineTransformType * bsplineTransform,
                  PixelType defaultPixelValue)
 {
-  typedef InterpolateImageFunction< TImage, double >  InterpolatorType;
-  typedef NearestNeighborInterpolateImageFunction< TImage, double >  
-                                                     NearestNeighborInterpolatorType;
-  typedef LinearInterpolateImageFunction< TImage, double >  
-                                                     LinearInterpolatorType;
-  typedef BSplineInterpolateImageFunction< TImage, double >  
-                                                     BSplineInterpolatorType;
-  typedef WindowedSincInterpolateImageFunction< TImage,
-                                                4,
-                                                Function::HammingWindowFunction< 4 >,
-                                                ConstantBoundaryCondition< TImage >,
-                                                double >  
-                                                     SincInterpolatorType;
-  typedef ResampleImageFilter< TImage, TImage, double >  
-                                                     ResampleImageFilterType;
+  typedef InterpolateImageFunction<TImage, double> InterpolatorType;
+  typedef NearestNeighborInterpolateImageFunction<TImage, double>
+  NearestNeighborInterpolatorType;
+  typedef LinearInterpolateImageFunction<TImage, double>
+  LinearInterpolatorType;
+  typedef BSplineInterpolateImageFunction<TImage, double>
+  BSplineInterpolatorType;
+  typedef WindowedSincInterpolateImageFunction<TImage,
+                                               4,
+                                               Function::HammingWindowFunction<4>,
+                                               ConstantBoundaryCondition<TImage>,
+                                               double>
+  SincInterpolatorType;
+  typedef ResampleImageFilter<TImage, TImage, double>
+  ResampleImageFilterType;
 
   typename InterpolatorType::Pointer interpolator = 0;
 
-  switch(interpolationMethod)
+  switch( interpolationMethod )
     {
     case OptimizedRegistrationMethodType::NEAREST_NEIGHBOR_INTERPOLATION:
       interpolator = NearestNeighborInterpolatorType::New();
@@ -765,21 +765,20 @@ ImageToImageRegistrationHelper< TImage >
       break;
     case OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION:
       interpolator = BSplineInterpolatorType::New();
-      (static_cast< BSplineInterpolatorType * >(interpolator.GetPointer()))->SetSplineOrder( 3 );
+      (static_cast<BSplineInterpolatorType *>(interpolator.GetPointer() ) )->SetSplineOrder( 3 );
       break;
     case OptimizedRegistrationMethodType::SINC_INTERPOLATION:
       interpolator = SincInterpolatorType::New();
       break;
     default:
-      std::cerr << "ERROR: Interpolation function not supported in itk::ImageToImageRegistrationHelper::ResampleImage" 
+      std::cerr << "ERROR: Interpolation function not supported in itk::ImageToImageRegistrationHelper::ResampleImage"
                 << std::endl;
       interpolator = LinearInterpolatorType::New();
       break;
     }
-  
 
-  if( movingImage == NULL 
-      && matrixTransform == NULL 
+  if( movingImage == NULL
+      && matrixTransform == NULL
       && bsplineTransform == NULL
       && m_CompletedResampling )
     {
@@ -789,6 +788,7 @@ ImageToImageRegistrationHelper< TImage >
   bool doLoaded = false;
   bool doMatrix = false;
   bool doBSpline = false;
+
   switch( m_CompletedStage )
     {
     default:
@@ -810,7 +810,7 @@ ImageToImageRegistrationHelper< TImage >
   bool resampled = false;
   bool passedImage = false;
   typename TImage::ConstPointer mImage = m_CurrentMovingImage;
-  if( movingImage != NULL)
+  if( movingImage != NULL )
     {
     mImage = movingImage;
 
@@ -844,7 +844,7 @@ ImageToImageRegistrationHelper< TImage >
 
   interpolator->SetInputImage( mImage );
 
-  if( doLoaded 
+  if( doLoaded
       && ( m_LoadedMatrixTransform.IsNotNull()
            || m_LoadedBSplineTransform.IsNotNull() ) )
     {
@@ -856,13 +856,13 @@ ImageToImageRegistrationHelper< TImage >
         }
       // Register using LoadedMatrix
       interpolator->SetInputImage( mImage );
-      typename ResampleImageFilterType::Pointer resampler = 
-                                                 ResampleImageFilterType::New();
+      typename ResampleImageFilterType::Pointer resampler =
+        ResampleImageFilterType::New();
       resampler->SetInput( mImage );
       resampler->SetInterpolator( interpolator.GetPointer() );
       // We should not be casting away constness here, but SetOutputParametersFromImage
       // Does not change the image.  This is needed to workaround fixes to ITK
-      typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+      typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
       resampler->SetOutputParametersFromImage( tmp );
       resampler->SetTransform( m_LoadedMatrixTransform );
       resampler->SetDefaultPixelValue( defaultPixelValue );
@@ -886,13 +886,13 @@ ImageToImageRegistrationHelper< TImage >
         }
       // Register using LoadedMatrix
       interpolator->SetInputImage( mImage );
-      typename ResampleImageFilterType::Pointer resampler = 
-                                                 ResampleImageFilterType::New();
+      typename ResampleImageFilterType::Pointer resampler =
+        ResampleImageFilterType::New();
       resampler->SetInput( mImage );
       resampler->SetInterpolator( interpolator.GetPointer() );
       // We should not be casting away constness here, but SetOutputParametersFromImage
       // Does not change the image.  This is needed to workaround fixes to ITK
-      typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+      typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
       resampler->SetOutputParametersFromImage( tmp );
       resampler->SetTransform( m_LoadedBSplineTransform );
       resampler->Update();
@@ -916,13 +916,13 @@ ImageToImageRegistrationHelper< TImage >
       }
     // Register using Matrix
     interpolator->SetInputImage( mImage );
-    typename ResampleImageFilterType::Pointer resampler = 
-                                               ResampleImageFilterType::New();
+    typename ResampleImageFilterType::Pointer resampler =
+      ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
     // We should not be casting away constness here, but SetOutputParametersFromImage
     // Does not change the image.  This is needed to workaround fixes to ITK
-    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( aTrans );
     resampler->Update();
@@ -945,13 +945,13 @@ ImageToImageRegistrationHelper< TImage >
       }
     // Register using BSpline
     interpolator->SetInputImage( mImage );
-    typename ResampleImageFilterType::Pointer resampler = 
-                                               ResampleImageFilterType::New();
+    typename ResampleImageFilterType::Pointer resampler =
+      ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
     // We should not be casting away constness here, but SetOutputParametersFromImage
     // Does not change the image.  This is needed to workaround fixes to ITK
-    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( bTrans );
     resampler->Update();
@@ -977,13 +977,13 @@ ImageToImageRegistrationHelper< TImage >
     tmpTransform->SetIdentity();
 
     interpolator->SetInputImage( mImage );
-    typename ResampleImageFilterType::Pointer resampler = 
-                                               ResampleImageFilterType::New();
+    typename ResampleImageFilterType::Pointer resampler =
+      ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
     // We should not be casting away constness here, but SetOutputParametersFromImage
     // Does not change the image.  This is needed to workaround fixes to ITK
-    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( tmpTransform );
     resampler->Update();
@@ -999,21 +999,21 @@ ImageToImageRegistrationHelper< TImage >
   return mImage;
 }
 
-template< class TImage >
+template <class TImage>
 typename TImage::ConstPointer
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::GetFinalMovingImage( InterpolationMethodEnumType interpolationMethod )
 {
   return ResampleImage( interpolationMethod );
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::LoadBaselineImage( const std::string filename )
 {
-  typedef ImageFileReader< TImage > ImageReaderType;
-  
+  typedef ImageFileReader<TImage> ImageReaderType;
+
   typename ImageReaderType::Pointer imageReader = ImageReaderType::New();
 
   imageReader->SetFileName( filename );
@@ -1023,10 +1023,10 @@ ImageToImageRegistrationHelper< TImage >
   SetBaselineImage( imageReader->GetOutput() );
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::ComputeBaselineDifference( )
+ImageToImageRegistrationHelper<TImage>
+::ComputeBaselineDifference()
 {
   if( m_BaselineImage.IsNull() )
     {
@@ -1039,7 +1039,7 @@ ImageToImageRegistrationHelper< TImage >
     return;
     }
 
-  typedef DifferenceImageFilter< TImage, TImage >        DifferenceFilterType;
+  typedef DifferenceImageFilter<TImage, TImage> DifferenceFilterType;
 
   typename TImage::ConstPointer imTemp = this->GetFixedImage();
   this->SetFixedImage( this->m_BaselineImage );
@@ -1067,51 +1067,51 @@ ImageToImageRegistrationHelper< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::LoadParameters( const std::string filename )
 {
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SaveParameters( const std::string filename )
 {
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::LoadTransform( std::string filename )
 {
   typedef TransformFileReader                    TransformReaderType;
   typedef TransformReaderType::TransformListType TransformListType;
-  
+
   TransformReaderType::Pointer transformReader = TransformReaderType::New();
   transformReader->SetFileName( filename );
 
-  TransformFactory< BSplineTransformType >::RegisterTransform();
+  TransformFactory<BSplineTransformType>::RegisterTransform();
 
   transformReader->Update();
 
-  TransformListType * transforms = transformReader->GetTransformList();
+  TransformListType *               transforms = transformReader->GetTransformList();
   TransformListType::const_iterator transformIt = transforms->begin();
-  while(transformIt != transforms->end())
+  while( transformIt != transforms->end() )
     {
-    if(!strcmp((*transformIt)->GetNameOfClass(), "AffineTransform"))
+    if( !strcmp( (*transformIt)->GetNameOfClass(), "AffineTransform") )
       {
-      typename MatrixTransformType::Pointer affine_read = 
-            static_cast< MatrixTransformType * >( (*transformIt).GetPointer() );
+      typename MatrixTransformType::Pointer affine_read =
+        static_cast<MatrixTransformType *>( (*transformIt).GetPointer() );
       typename MatrixTransformType::ConstPointer affine = affine_read.GetPointer();
       SetLoadedMatrixTransform( *affine.GetPointer() );
       }
 
-    if (!strcmp((*transformIt)->GetNameOfClass(), "BSplineDeformableTransform"))
+    if( !strcmp( (*transformIt)->GetNameOfClass(), "BSplineDeformableTransform") )
       {
       typename BSplineTransformType::Pointer bspline_read =
-            static_cast< BSplineTransformType * >( (*transformIt).GetPointer() );
+        static_cast<BSplineTransformType *>( (*transformIt).GetPointer() );
       typename BSplineTransformType::ConstPointer bspline = bspline_read.GetPointer();
       SetLoadedBSplineTransform( *bspline.GetPointer() );
       }
@@ -1120,17 +1120,17 @@ ImageToImageRegistrationHelper< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SaveTransform( std::string filename )
 {
-  typedef TransformFileWriter  TransformWriterType;
+  typedef TransformFileWriter TransformWriterType;
 
   TransformWriterType::Pointer transformWriter = TransformWriterType::New();
   transformWriter->SetFileName( filename );
 
-  TransformFactory< BSplineTransformType >::RegisterTransform();
+  TransformFactory<BSplineTransformType>::RegisterTransform();
 
   if( m_CurrentMatrixTransform.IsNotNull() )
     {
@@ -1148,9 +1148,9 @@ ImageToImageRegistrationHelper< TImage >
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SetLoadedMatrixTransform( const MatrixTransformType & tfm )
 {
   m_LoadedMatrixTransform = MatrixTransformType::New();
@@ -1163,10 +1163,10 @@ ImageToImageRegistrationHelper< TImage >
   m_LoadedTransformResampledImage = 0;
   m_CurrentMovingImage = m_MovingImage;
 }
-    
-template< class TImage >
+
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SetLoadedBSplineTransform( const BSplineTransformType & tfm )
 {
   m_LoadedBSplineTransform = BSplineTransformType::New();
@@ -1177,10 +1177,10 @@ ImageToImageRegistrationHelper< TImage >
   m_LoadedTransformResampledImage = 0;
   m_CurrentMovingImage = m_MovingImage;
 }
-    
-template< class TImage >
+
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::SetRegionOfInterest( const PointType & point1,
                        const PointType & point2 )
 {
@@ -1189,16 +1189,16 @@ ImageToImageRegistrationHelper< TImage >
   m_UseRegionOfInterest = true;
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::SetRegionOfInterest( const std::vector< float > & points )
+ImageToImageRegistrationHelper<TImage>
+::SetRegionOfInterest( const std::vector<float> & points )
 {
-  if(points.size() != 2*ImageDimension)
+  if( points.size() != 2 * ImageDimension )
     {
     throw "Error: size of points passed to SetRegionOfInterest is not twice the image dimension";
     }
-  for(unsigned int i=0; i<ImageDimension; i++)
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
     m_RegionOfInterestPoint1[i] = points[i];
     m_RegionOfInterestPoint2[i] = points[ImageDimension + i];
@@ -1206,101 +1206,84 @@ ImageToImageRegistrationHelper< TImage >
   m_UseRegionOfInterest = true;
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::SetFixedLandmarks( const std::vector<std::vector<float> > &fixedLandmarks )
+ImageToImageRegistrationHelper<TImage>
+::SetFixedLandmarks( const std::vector<std::vector<float> > & fixedLandmarks )
 {
   m_FixedLandmarks.clear();
-  for ( std::vector<std::vector<float> >::const_iterator i = fixedLandmarks.begin();
-        i != fixedLandmarks.end(); ++i)
+  for( std::vector<std::vector<float> >::const_iterator i = fixedLandmarks.begin();
+       i != fixedLandmarks.end(); ++i )
     {
     LandmarkPointType landmark;
-    std::copy(i->begin(), i->end(), landmark.Begin());
+    std::copy(i->begin(), i->end(), landmark.Begin() );
     m_FixedLandmarks.push_back(landmark);
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
-::SetMovingLandmarks( const std::vector<std::vector<float> > &movingLandmarks )
+ImageToImageRegistrationHelper<TImage>
+::SetMovingLandmarks( const std::vector<std::vector<float> > & movingLandmarks )
 {
   m_MovingLandmarks.clear();
-  for ( std::vector<std::vector<float> >::const_iterator i = movingLandmarks.begin();
-        i != movingLandmarks.end(); ++i)
+  for( std::vector<std::vector<float> >::const_iterator i = movingLandmarks.begin();
+       i != movingLandmarks.end(); ++i )
     {
     LandmarkPointType landmark;
-    std::copy(i->begin(), i->end(), landmark.Begin());
+    std::copy(i->begin(), i->end(), landmark.Begin() );
     m_MovingLandmarks.push_back(landmark);
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::PrintSelfHelper( std::ostream & os, Indent indent,
-                    const std::string basename,
-                    MetricMethodEnumType metric,
-                    InterpolationMethodEnumType interpolation ) const
+                   const std::string basename,
+                   MetricMethodEnumType metric,
+                   InterpolationMethodEnumType interpolation ) const
 {
   switch( metric )
     {
     case OptimizedRegistrationMethodType::MATTES_MI_METRIC:
-      {
       os << indent << basename << " Metric Method = MATTES_MI_METRIC" << std::endl;
       break;
-      }
     case OptimizedRegistrationMethodType::NORMALIZED_CORRELATION_METRIC:
-      {
       os << indent << basename << " Metric Method = CROSS_CORRELATION_METRIC" << std::endl;
       break;
-      }
     case OptimizedRegistrationMethodType::MEAN_SQUARED_ERROR_METRIC:
-      {
       os << indent << basename << " Metric Method = MEAN_SQUARED_ERROR_METRIC" << std::endl;
       break;
-      }
     default:
-      {
       os << indent << basename << " Metric Method = UNKNOWN" << std::endl;
       break;
-      }
     }
   os << indent << std::endl;
+
   switch( interpolation )
     {
     case OptimizedRegistrationMethodType::NEAREST_NEIGHBOR_INTERPOLATION:
-      {
       os << indent << basename << " Interpolation Method = NEAREST_NEIGHBOR_INTERPOLATION" << std::endl;
       break;
-      }
     case OptimizedRegistrationMethodType::LINEAR_INTERPOLATION:
-      {
       os << indent << basename << " Interpolation Method = LINEAR_INTERPOLATION" << std::endl;
       break;
-      }
     case OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION:
-      {
       os << indent << basename << " Interpolation Method = BSPLINE_INTERPOLATION" << std::endl;
       break;
-      }
     case OptimizedRegistrationMethodType::SINC_INTERPOLATION:
-      {
       os << indent << basename << " Interpolation Method = SINC_INTERPOLATION" << std::endl;
       break;
-      }
     default:
-      {
       os << indent << basename << " Interpolation Method = UNKNOWN" << std::endl;
       break;
-      }
     }
 }
 
-template< class TImage >
+template <class TImage>
 void
-ImageToImageRegistrationHelper< TImage >
+ImageToImageRegistrationHelper<TImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
@@ -1314,7 +1297,7 @@ ImageToImageRegistrationHelper< TImage >
     os << indent << "Moving Image = " << m_MovingImage << std::endl;
     }
   os << indent << std::endl;
-  os << indent << "Use region of interest = " << m_UseRegionOfInterest 
+  os << indent << "Use region of interest = " << m_UseRegionOfInterest
      << std::endl;
   os << indent << "Region of interest point1 = " << m_RegionOfInterestPoint1
      << std::endl;
@@ -1424,38 +1407,27 @@ ImageToImageRegistrationHelper< TImage >
     os << indent << "Loaded BSpline Transform = NULL" << std::endl;
     }
   os << indent << std::endl;
+
   switch( m_InitialMethodEnum )
     {
     case INIT_WITH_NONE:
-      {
       os << indent << "Initial Registration Enum = INIT_WITH_NONE" << std::endl;
       break;
-      }
     case INIT_WITH_CURRENT_RESULTS:
-      {
       os << indent << "Initial Registration Enum = INIT_WITH_CURRENT_RESULTS" << std::endl;
       break;
-      }
     case INIT_WITH_IMAGE_CENTERS:
-      {
       os << indent << "Initial Registration Enum = INIT_WITH_IMAGE_CENTERS" << std::endl;
       break;
-      }
     case INIT_WITH_CENTERS_OF_MASS:
-      {
       os << indent << "Initial Registration Enum = INIT_WITH_CENTERS_OF_MASS" << std::endl;
       break;
-      }
     case INIT_WITH_SECOND_MOMENTS:
-      {
       os << indent << "Initial Registration Enum = INIT_WITH_SECOND_MOMENTS" << std::endl;
       break;
-      }
     default:
-      {
       os << indent << "Initial Registration Enum = UNKNOWN" << std::endl;
       break;
-      }
     }
   if( m_InitialTransform.IsNotNull() )
     {
@@ -1470,7 +1442,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "Rigid Target Error = " << m_RigidTargetError << std::endl;
   os << indent << "Rigid Max Iterations = " << m_RigidMaxIterations << std::endl;
   PrintSelfHelper( os, indent, "Rigid", m_RigidMetricMethodEnum,
-                            m_RigidInterpolationMethodEnum );
+                   m_RigidInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_RigidTransform.IsNotNull() )
     {
@@ -1485,7 +1457,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "Affine Target Error = " << m_AffineTargetError << std::endl;
   os << indent << "Affine Max Iterations = " << m_AffineMaxIterations << std::endl;
   PrintSelfHelper( os, indent, "Affine", m_AffineMetricMethodEnum,
-                            m_AffineInterpolationMethodEnum );
+                   m_AffineInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_AffineTransform.IsNotNull() )
     {
@@ -1501,7 +1473,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "BSpline Max Iterations = " << m_BSplineMaxIterations << std::endl;
   os << indent << "BSpline Control Point Pixel Spacing = " << m_BSplineControlPointPixelSpacing << std::endl;
   PrintSelfHelper( os, indent, "BSpline", m_BSplineMetricMethodEnum,
-                            m_BSplineInterpolationMethodEnum );
+                   m_BSplineInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_BSplineTransform.IsNotNull() )
     {
@@ -1517,4 +1489,4 @@ ImageToImageRegistrationHelper< TImage >
 
 };
 
-#endif 
+#endif

@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -19,7 +19,6 @@
 
 #include "itkEulerSimilarity3DTransform.h"
 
-
 namespace itk
 {
 
@@ -27,7 +26,7 @@ namespace itk
 template <class TScalarType>
 EulerSimilarity3DTransform<TScalarType>
 ::EulerSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >=4
+#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
 #else
   Superclass(OutputSpaceDimension, ParametersDimension)
@@ -37,10 +36,9 @@ EulerSimilarity3DTransform<TScalarType>
 }
 
 // Constructor with arguments
-template<class TScalarType>
-EulerSimilarity3DTransform<TScalarType>::
-EulerSimilarity3DTransform(unsigned int parametersDimension):
-#if ITK_VERSION_MAJOR >=4
+template <class TScalarType>
+EulerSimilarity3DTransform<TScalarType>::EulerSimilarity3DTransform(unsigned int parametersDimension) :
+#if ITK_VERSION_MAJOR >= 4
   Superclass(parametersDimension)
 #else
   Superclass(OutputSpaceDimension, parametersDimension)
@@ -50,17 +48,16 @@ EulerSimilarity3DTransform(unsigned int parametersDimension):
 }
 
 // Constructor with arguments
-template<class TScalarType>
-EulerSimilarity3DTransform<TScalarType>::
-EulerSimilarity3DTransform( const MatrixType & matrix,
-                            const OutputVectorType & offset):
+template <class TScalarType>
+EulerSimilarity3DTransform<TScalarType>::EulerSimilarity3DTransform( const MatrixType & matrix,
+                                                                     const OutputVectorType & offset) :
   Superclass(matrix, offset)
 {
   this->ComputeMatrixParameters();
 }
 
 // Directly set the matrix
-template<class TScalarType>
+template <class TScalarType>
 void
 EulerSimilarity3DTransform<TScalarType>
 ::SetMatrix( const MatrixType & matrix )
@@ -68,7 +65,7 @@ EulerSimilarity3DTransform<TScalarType>
   // Any matrix should work - bypass orthogonality testing
   typedef MatrixOffsetTransformBase<TScalarType, 3> Baseclass;
   this->Baseclass::SetMatrix( matrix );
-} 
+}
 
 // Set Parameters
 template <class TScalarType>
@@ -81,7 +78,7 @@ EulerSimilarity3DTransform<TScalarType>
 
   // Matrix must be defined before translation so that offset can be computed
   // from translation
-  
+
   // Transfer the versor part
   this->SetVarRotation(parameters[0],
                        parameters[1],
@@ -96,19 +93,19 @@ EulerSimilarity3DTransform<TScalarType>
   newTranslation[1] = parameters[4];
   newTranslation[2] = parameters[5];
   this->SetVarTranslation(newTranslation);
-  
+
   this->ComputeOffset();
 
   // Modified is always called since we just have a pointer to the
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<<"After setting parameters ");
+  itkDebugMacro(<< "After setting parameters ");
 }
 
 //
 // Get Parameters
-// 
+//
 // Parameters are ordered as:
 //
 // p[0:2] = Euler angles in X, Y, and Z
@@ -117,10 +114,10 @@ EulerSimilarity3DTransform<TScalarType>
 //
 
 template <class TScalarType>
-const typename EulerSimilarity3DTransform<TScalarType>::ParametersType &
-EulerSimilarity3DTransform<TScalarType>
+const typename EulerSimilarity3DTransform<TScalarType>::ParametersType
+& EulerSimilarity3DTransform<TScalarType>
 ::GetParameters( void ) const
-{
+  {
   itkDebugMacro( << "Getting parameters ");
 
   this->m_Parameters[0] = this->GetAngleX();
@@ -133,10 +130,10 @@ EulerSimilarity3DTransform<TScalarType>
 
   this->m_Parameters[6] = this->m_Scale;
 
-  itkDebugMacro(<<"After getting parameters " << this->m_Parameters );
+  itkDebugMacro(<< "After getting parameters " << this->m_Parameters );
 
   return this->m_Parameters;
-}
+  }
 
 template <class TScalarType>
 void
@@ -176,7 +173,7 @@ EulerSimilarity3DTransform<TScalarType>
 
   rotation *= m_Scale;
 
-  this->SetVarMatrix ( rotation );
+  this->SetVarMatrix( rotation );
 }
 
 template <class TScalarType>
@@ -196,37 +193,36 @@ EulerSimilarity3DTransform<TScalarType>
 }
 
 // Print self
-template<class TScalarType>
+template <class TScalarType>
 void
-EulerSimilarity3DTransform<TScalarType>::
-PrintSelf(std::ostream &os, Indent indent) const
+EulerSimilarity3DTransform<TScalarType>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Scale:       " << m_Scale        << std::endl;
 }
 
 // Set parameters
-template<class TScalarType>
-const typename EulerSimilarity3DTransform<TScalarType>::JacobianType &
-EulerSimilarity3DTransform<TScalarType>::
-GetJacobian( const InputPointType & p ) const
-{
+template <class TScalarType>
+const typename EulerSimilarity3DTransform<TScalarType>::JacobianType
+& EulerSimilarity3DTransform<TScalarType>::
+GetJacobian( const InputPointType &p ) const
+  {
   ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
   return this->m_NonThreadsafeSharedJacobian;
-}
+  }
 
-template<class TScalarType>
+template <class TScalarType>
 void
-EulerSimilarity3DTransform<TScalarType>::
-ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType & jacobian ) const
+EulerSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters( const InputPointType & p,
+                                                                                 JacobianType & jacobian ) const
 {
   // need to check if angles are in the right order
-  const double cx = vcl_cos(this->GetAngleX());
-  const double sx = vcl_sin(this->GetAngleX());
-  const double cy = vcl_cos(this->GetAngleY());
-  const double sy = vcl_sin(this->GetAngleY()); 
-  const double cz = vcl_cos(this->GetAngleZ());
-  const double sz = vcl_sin(this->GetAngleZ());
+  const double cx = vcl_cos(this->GetAngleX() );
+  const double sx = vcl_sin(this->GetAngleX() );
+  const double cy = vcl_cos(this->GetAngleY() );
+  const double sy = vcl_sin(this->GetAngleY() );
+  const double cz = vcl_cos(this->GetAngleZ() );
+  const double sz = vcl_sin(this->GetAngleZ() );
   const double ss = this->GetScale();
 
   jacobian.SetSize(OutputSpaceDimension, ParametersDimension);
@@ -237,38 +233,38 @@ ComputeJacobianWithRespectToParameters( const InputPointType & p, JacobianType &
   const double py = p[1] - this->GetCenter()[1];
   const double pz = p[2] - this->GetCenter()[2];
 
-  jacobian[0][0] = ss*((-sz*cx*sy)*px + (sz*sx)*py + (sz*cx*cy)*pz);
-  jacobian[1][0] = ss*((cz*cx*sy)*px + (-cz*sx)*py + (-cz*cx*cy)*pz);
-  jacobian[2][0] = ss*((sx*sy)*px + (cx)*py + (-sx*cy)*pz);  
+  jacobian[0][0] = ss * ( (-sz * cx * sy) * px + (sz * sx) * py + (sz * cx * cy) * pz);
+  jacobian[1][0] = ss * ( (cz * cx * sy) * px + (-cz * sx) * py + (-cz * cx * cy) * pz);
+  jacobian[2][0] = ss * ( (sx * sy) * px + (cx) * py + (-sx * cy) * pz);
 
-  jacobian[0][1] = ss*((-cz*sy-sz*sx*cy)*px + (cz*cy-sz*sx*sy)*pz);
-  jacobian[1][1] = ss*((-sz*sy+cz*sx*cy)*px + (sz*cy+cz*sx*sy)*pz);
-  jacobian[2][1] = ss*((-cx*cy)*px + (-cx*sy)*pz);
+  jacobian[0][1] = ss * ( (-cz * sy - sz * sx * cy) * px + (cz * cy - sz * sx * sy) * pz);
+  jacobian[1][1] = ss * ( (-sz * sy + cz * sx * cy) * px + (sz * cy + cz * sx * sy) * pz);
+  jacobian[2][1] = ss * ( (-cx * cy) * px + (-cx * sy) * pz);
 
-  jacobian[0][2] = ss*((-sz*cy-cz*sx*sy)*px + (-cz*cx)*py 
-                               + (-sz*sy+cz*sx*cy)*pz);
-  jacobian[1][2] = ss*((cz*cy-sz*sx*sy)*px + (-sz*cx)*py 
-                               + (cz*sy+sz*sx*cy)*pz);
+  jacobian[0][2] = ss * ( (-sz * cy - cz * sx * sy) * px + (-cz * cx) * py
+                          + (-sz * sy + cz * sx * cy) * pz);
+  jacobian[1][2] = ss * ( (cz * cy - sz * sx * sy) * px + (-sz * cx) * py
+                          + (cz * sy + sz * sx * cy) * pz);
   jacobian[2][2] = 0;
 
   // compute derivatives for the translation part
-  unsigned int blockOffset = 3;  
-  for(unsigned int dim=0; dim < SpaceDimension; dim++ ) 
+  unsigned int blockOffset = 3;
+  for( unsigned int dim = 0; dim < SpaceDimension; dim++ )
     {
-    jacobian[ dim ][ blockOffset + dim ] = 1.0;
+    jacobian[dim][blockOffset + dim] = 1.0;
     }
 
   // compute Jacobian with respect to the scale parameter
 
-  jacobian[0][6] = ((cz*cy-sz*sx*sy)*px
-                            + (-sz*cx)*py 
-                            + (cz*sy+sz*sx*cy)*pz);
-  jacobian[1][6] = ((sz*cy+cz*sx*sy)*px
-                            + (cz*cx)*py 
-                            + (sz*sy-cz*sx*cy)*pz);
-  jacobian[2][6] = ((-cx*sy)*px
-                            + sx*py
-                            + (cx*cy)*pz);
+  jacobian[0][6] = ( (cz * cy - sz * sx * sy) * px
+                     + (-sz * cx) * py
+                     + (cz * sy + sz * sx * cy) * pz);
+  jacobian[1][6] = ( (sz * cy + cz * sx * sy) * px
+                     + (cz * cx) * py
+                     + (sz * sy - cz * sx * cy) * pz);
+  jacobian[2][6] = ( (-cx * sy) * px
+                     + sx * py
+                     + (cx * cy) * pz);
 }
 
 } // namespace

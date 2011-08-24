@@ -6,7 +6,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-
 #include "vtkSmartPointer.h"
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
@@ -27,7 +26,7 @@
 #define GRAD_0_TOL 1e-6
 
 int main( int argc, char * argv[] )
-  {
+{
 
 #if ITK_VERSION_MAJOR >= 4
   itk::FloatingPointExceptions::Disable();
@@ -37,9 +36,9 @@ int main( int argc, char * argv[] )
     {
     vtkSmartPointer<vtkNRRDReader> reader =
       vtkSmartPointer<vtkNRRDReader>::New();
-    reader->SetFileName(inputVolume.c_str());
+    reader->SetFileName(inputVolume.c_str() );
     reader->Update();
-    if ( reader->GetReadStatus() )
+    if( reader->GetReadStatus() )
       {
       std::cerr << argv[0] << ": Error reading Diffusion file" << std::endl;
       return EXIT_FAILURE;
@@ -52,56 +51,55 @@ int main( int argc, char * argv[] )
     vtkSmartPointer<vtkMRMLNRRDStorageNode> helper =
       vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
 
-    if ( !helper->ParseDiffusionInformation(reader,grads,bValues) )
+    if( !helper->ParseDiffusionInformation(reader, grads, bValues) )
       {
       std::cerr << argv[0] << ": Error parsing Diffusion information" << std::endl;
       return EXIT_FAILURE;
       }
 
-    //Compute the mean baseline image
+    // Compute the mean baseline image
     vtkSmartPointer<vtkImageWeightedSum> imageWeightedSum = vtkSmartPointer<vtkImageWeightedSum>::New();
     imageWeightedSum->NormalizeByWeightOn();
 
     int b0_count = 0;
-    for (int gradient_n=0; gradient_n<grads->GetNumberOfTuples(); gradient_n++)
+    for( int gradient_n = 0; gradient_n < grads->GetNumberOfTuples(); gradient_n++ )
       {
       double* gradient = grads->GetTuple3(gradient_n);
-      if (abs(gradient[0]) + abs(gradient[1]) + abs(gradient[2]) < GRAD_0_TOL)
+      if( abs(gradient[0]) + abs(gradient[1]) + abs(gradient[2]) < GRAD_0_TOL )
         {
-          vtkSmartPointer<vtkImageExtractComponents> extractComponents = vtkSmartPointer<vtkImageExtractComponents>::New();
-          extractComponents->SetInput(reader->GetOutput());
-          extractComponents->SetComponents(gradient_n);
-          extractComponents->Update();
+        vtkSmartPointer<vtkImageExtractComponents> extractComponents = vtkSmartPointer<vtkImageExtractComponents>::New();
+        extractComponents->SetInput(reader->GetOutput() );
+        extractComponents->SetComponents(gradient_n);
+        extractComponents->Update();
 
-          imageWeightedSum->AddInputConnection(extractComponents->GetOutputPort());
-          imageWeightedSum->SetWeight(b0_count++, 1.);
+        imageWeightedSum->AddInputConnection(extractComponents->GetOutputPort() );
+        imageWeightedSum->SetWeight(b0_count++, 1.);
         }
       }
     imageWeightedSum->Update();
 
-    if (b0_count == 0)
+    if( b0_count == 0 )
       {
       std::cerr << argv[0] << ": Error parsing Diffusion information, no B0 images" << std::endl;
-      return EXIT_FAILURE;       
-      } 
+      return EXIT_FAILURE;
+      }
 
-    
-    //compute DWI mask
+    // compute DWI mask
     vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter> otsu =
       vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter>::New();
-    otsu->SetInput(imageWeightedSum->GetOutput());
-    otsu->SetOmega (1 + otsuOmegaThreshold);
+    otsu->SetInput(imageWeightedSum->GetOutput() );
+    otsu->SetOmega(1 + otsuOmegaThreshold);
     otsu->SetOutsideValue(1);
     otsu->SetInsideValue(0);
     otsu->Update();
 
     vtkSmartPointer<vtkImageData> mask = vtkSmartPointer<vtkImageData>::New();
-    mask->DeepCopy(otsu->GetOutput());
+    mask->DeepCopy(otsu->GetOutput() );
 
     int *dims = mask->GetDimensions();
-    int px = dims[0]/2;
-    int py = dims[1]/2;
-    int pz = dims[2]/2;
+    int  px = dims[0] / 2;
+    int  py = dims[1] / 2;
+    int  pz = dims[2] / 2;
 
     vtkSmartPointer<vtkImageCast> cast =
       vtkSmartPointer<vtkImageCast>::New();
@@ -111,7 +109,7 @@ int main( int argc, char * argv[] )
 
     vtkSmartPointer<vtkImageSeedConnectivity> con =
       vtkSmartPointer<vtkImageSeedConnectivity>::New();
-    con->SetInput(cast->GetOutput());
+    con->SetInput(cast->GetOutput() );
     con->SetInputConnectValue(1);
     con->SetOutputConnectedValue(1);
     con->SetOutputUnconnectedValue(0);
@@ -120,15 +118,14 @@ int main( int argc, char * argv[] )
 
     vtkSmartPointer<vtkImageCast> cast1 =
       vtkSmartPointer<vtkImageCast>::New();
-    cast1->SetInput(con->GetOutput());
+    cast1->SetInput(con->GetOutput() );
     cast1->SetOutputScalarTypeToShort();
     cast1->Update();
-
 
     vtkSmartPointer<vtkImageConnectivity> conn =
       vtkSmartPointer<vtkImageConnectivity>::New();
 
-    if (removeIslands)  
+    if( removeIslands )
       {
       conn->SetBackground(1);
       conn->SetMinForeground( -32768);
@@ -136,46 +133,45 @@ int main( int argc, char * argv[] )
       conn->SetFunctionToRemoveIslands();
       conn->SetMinSize(10000);
       conn->SliceBySliceOn();
-      conn->SetInput(cast1->GetOutput());
+      conn->SetInput(cast1->GetOutput() );
       conn->Update();
       }
-
 
     vtkSmartPointer<vtkImageCast> cast2 =
       vtkSmartPointer<vtkImageCast>::New();
     cast2->SetOutputScalarTypeToUnsignedChar();
 
-    if (removeIslands)  
+    if( removeIslands )
       {
-      cast2->SetInput(conn->GetOutput());
+      cast2->SetInput(conn->GetOutput() );
       }
     else
       {
-      cast2->SetInput(cast1->GetOutput());
+      cast2->SetInput(cast1->GetOutput() );
       }
 
     vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = reader->GetRasToIjkMatrix();
     ijkToRasMatrix->Invert();
-    
-    //Save baseline
+
+    // Save baseline
     vtkSmartPointer<vtkNRRDWriter> writer =
       vtkSmartPointer<vtkNRRDWriter>::New();
-    writer->SetInput(imageWeightedSum->GetOutput());
+    writer->SetInput(imageWeightedSum->GetOutput() );
     writer->SetFileName( outputBaseline.c_str() );
     writer->UseCompressionOn();
     writer->SetIJKToRASMatrix( ijkToRasMatrix );
     writer->Write();
 
-    //Save mask
+    // Save mask
     vtkSmartPointer<vtkNRRDWriter> writer2 =
       vtkSmartPointer<vtkNRRDWriter>::New();
-    if (removeIslands)  
+    if( removeIslands )
       {
-      writer2->SetInput(conn->GetOutput());
+      writer2->SetInput(conn->GetOutput() );
       }
     else
       {
-      writer2->SetInput(cast1->GetOutput());
+      writer2->SetInput(cast1->GetOutput() );
       }
     writer2->SetFileName( thresholdMask.c_str() );
     writer2->UseCompressionOn();
@@ -184,5 +180,5 @@ int main( int argc, char * argv[] )
 
     }
 
-    return EXIT_SUCCESS;
-  }
+  return EXIT_SUCCESS;
+}

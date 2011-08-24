@@ -3,7 +3,7 @@
   Program:   Surface Extraction Program
   Module:    $RCSfile: ExtractSurface.cxx,v $
 
-  Copyright (c) Kitware Inc. 
+  Copyright (c) Kitware Inc.
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
@@ -22,15 +22,15 @@
 
 // Description:
 // Get the PixelType and ComponentType from fileName
-void GetImageType (std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType,
-                   int & dimensions)
+void GetImageType(std::string fileName,
+                  itk::ImageIOBase::IOPixelType & pixelType,
+                  itk::ImageIOBase::IOComponentType & componentType,
+                  int & dimensions)
 {
   typedef itk::Image<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
-  imageReader->SetFileName(fileName.c_str());
+    itk::ImageFileReader<ImageType>::New();
+  imageReader->SetFileName(fileName.c_str() );
   imageReader->UpdateOutputInformation();
 
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -41,22 +41,22 @@ void GetImageType (std::string fileName,
 template <unsigned int DimensionsT>
 int DoIt( MetaCommand & command )
 {
-  typedef short     PixelType;
-  
-  typedef itk::Image< PixelType, DimensionsT >    
-                                                  ImageType;
+  typedef short PixelType;
 
-  typedef itk::InitialImageToImageRegistrationMethod< ImageType >   
-                                                  InitializationMethodType;
+  typedef itk::Image<PixelType, DimensionsT>
+  ImageType;
 
-  typedef itk::RigidImageToImageRegistrationMethod< ImageType >
-                                                  RegistrationMethodType;
+  typedef itk::InitialImageToImageRegistrationMethod<ImageType>
+  InitializationMethodType;
 
-  typedef itk::ImageToImageRegistrationMethodTestingHelper< InitializationMethodType >
-                                                  InitializationHelperType;
+  typedef itk::RigidImageToImageRegistrationMethod<ImageType>
+  RegistrationMethodType;
 
-  typedef itk::ImageToImageRegistrationMethodTestingHelper< RegistrationMethodType >   
-                                                  TestingHelperType;
+  typedef itk::ImageToImageRegistrationMethodTestingHelper<InitializationMethodType>
+  InitializationHelperType;
+
+  typedef itk::ImageToImageRegistrationMethodTestingHelper<RegistrationMethodType>
+  TestingHelperType;
 
   // Use this to set center of rotation to image centers
   InitializationHelperType initializer;
@@ -65,7 +65,7 @@ int DoIt( MetaCommand & command )
   initializer.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
 
   typename InitializationMethodType::Pointer  initializationMethod = initializer.GetRegistrationMethod();
-    if( command.GetOptionWasSet("InitCenterOfImages") )
+  if( command.GetOptionWasSet("InitCenterOfImages") )
     {
     initializationMethod->SetNumberOfMoments( 0 );
     }
@@ -83,14 +83,14 @@ int DoIt( MetaCommand & command )
     {
     initializer.RunRegistration();
     }
-  catch(...)
+  catch( ... )
     {
     std::cerr << "Intialization failed" << std::endl;
     return EXIT_FAILURE;
     }
 
   //  Setup the registration
-  TestingHelperType  helper;
+  TestingHelperType helper;
 
   helper.SetFixedImageFileName( command.GetValueAsString("FixedImage").c_str() );
   helper.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
@@ -109,14 +109,14 @@ int DoIt( MetaCommand & command )
 
   typename RegistrationMethodType::Pointer  registrationMethod = helper.GetRegistrationMethod();
 
-  typedef typename RegistrationMethodType::TransformParametersScalesType    
-                                              TransformParametersScalesType;
+  typedef typename RegistrationMethodType::TransformParametersScalesType
+  TransformParametersScalesType;
 
   TransformParametersScalesType optimizerScales( registrationMethod->GetTypedTransform()->GetNumberOfParameters() );
-  const double offsetScale = 1.0 / command.GetValueAsFloat("ExpectedOffset");
-  const double rotationScale = 1.0 / command.GetValueAsFloat("ExpectedRotation");
+  const double                  offsetScale = 1.0 / command.GetValueAsFloat("ExpectedOffset");
+  const double                  rotationScale = 1.0 / command.GetValueAsFloat("ExpectedRotation");
 
-  if(DimensionsT == 2)
+  if( DimensionsT == 2 )
     {
     optimizerScales[0] = rotationScale;
 
@@ -160,8 +160,8 @@ int DoIt( MetaCommand & command )
     {
     if( command.GetValueAsString("Mode") == "DRAFT" )
       {
-      registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations()) );
-      registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples()) );
+      registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations() ) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples() ) );
       }
     else if( command.GetValueAsString("Mode") == "NORMAL" )
       {
@@ -170,19 +170,18 @@ int DoIt( MetaCommand & command )
       }
     else if( command.GetValueAsString("Mode") == "PRECISE" )
       {
-      registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations()) );
-      registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples()) );
+      registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations() ) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples() ) );
       }
-    else 
+    else
       {
       std::cerr << "Mode type " << command.GetValueAsString("Mode")
                 << " not recognized.  Using NORMAL." << std::endl;
       }
     }
 
-
   // Set the center of rotation from the initializer
-  registrationMethod->SetInitialTransformParametersFromAffineTransform( 
+  registrationMethod->SetInitialTransformParametersFromAffineTransform(
     initializer.GetRegistrationMethod()->GetTypedTransform() );
 
   // Run
@@ -193,12 +192,12 @@ int DoIt( MetaCommand & command )
     helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
     helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
     helper.RunRegistration();
-    //helper.PrintTest();
-    //helper.ReportResults();
+    // helper.PrintTest();
+    // helper.ReportResults();
     helper.ResampleOutputImage();
     helper.PerformRegressionTest();
     }
-  catch(...)
+  catch( ... )
     {
     std::cerr << "Registration class threw an exception" << std::endl;
     return EXIT_FAILURE;
@@ -322,8 +321,8 @@ int main(int argc, char *argv[])
     }
 
   // Determine properties of the input images
-  int dimensions = 0;
-  itk::ImageIOBase::IOPixelType pixelType;
+  int                               dimensions = 0;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try

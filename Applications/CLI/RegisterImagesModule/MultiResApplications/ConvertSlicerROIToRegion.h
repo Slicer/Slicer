@@ -24,15 +24,15 @@
 
 #include <vector>
 
-VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT 
-itk::ImageRegion<3>
-convertPointsToRegion(const itk::Point<double, 3>& p1,
-                      const itk::Point<double, 3>& p2,
-                      const itk::ImageBase<3>* img);
+VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT
+itk::ImageRegion<3> convertPointsToRegion(const itk::Point<double, 3>& p1, const itk::Point<double, 3>& p2,
+                                          const itk::ImageBase<3>* img);
 
-VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT 
-itk::SlicerBoxSpatialObject<3>::Pointer
-convertPointsToBoxSpatialObject(const itk::Point<double, 3>& p1,
-                                      const itk::Point<double, 3>& p2);
+VTK_REGISTERIMAGESMODULEMULTIRESAPPLICATIONS_EXPORT
+itk::SlicerBoxSpatialObject<3>::Pointer convertPointsToBoxSpatialObject(const itk::Point<double,
+                                                                                         3>& p1,
+                                                                        const itk::Point<double,
+                                                                                         3> &
+                                                                        p2);
 
 #endif

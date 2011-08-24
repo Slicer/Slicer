@@ -1,5 +1,5 @@
-//Copied from dtiprocess
-//available there: http://www.nitrc.org/projects/dtiprocess/
+// Copied from dtiprocess
+// available there: http://www.nitrc.org/projects/dtiprocess/
 /*=========================================================================
 
   Program:   NeuroLib (DTI command line tools)
@@ -23,9 +23,8 @@
 #include "dtitypes.h"
 #include <string>
 
-enum DeformationFieldType {HField, Displacement};
+enum DeformationFieldType { HField, Displacement };
 
 DeformationImageType::Pointer readDeformationField(std::string warpfile, DeformationFieldType dft);
-
 
 #endif

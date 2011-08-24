@@ -1,15 +1,13 @@
 #include "DownsampleHeuristics.h"
 #include "ConvertSlicerROIToRegion.h"
 
-
-
 namespace
 {
 
-typedef itk::Image<short, 3> ImageType;
+typedef itk::Image<short, 3>   ImageType;
 typedef ImageType::RegionType  RegionType;
 typedef RegionType::SizeType   SizeType;
-typedef RegionType::IndexType   IndexType;
+typedef RegionType::IndexType  IndexType;
 typedef ImageType::SpacingType SpacingType;
 
 ImageType::Pointer
@@ -18,16 +16,17 @@ createTestImage(SizeType size,
 {
   ImageType::Pointer image = ImageType::New();
 
-  IndexType ind = {{0,0,0}};
+  IndexType ind = {{0, 0, 0}};
 
   RegionType region;
+
   region.SetIndex(ind);
   region.SetSize(size);
 
   image->SetRegions(region);
   image->SetSpacing(spacing);
-  //image->Allocate();
-  
+  // image->Allocate();
+
   return image;
 }
 
@@ -41,28 +40,26 @@ void assign3(T& vec, J x, J y, J z)
 
 }
 
-int CountSamplesTest(int, char* [])
+int CountSamplesTest(int, char * [])
 {
   const unsigned int NTESTS = 7;
-  unsigned int sizes[NTESTS][3] = {{128,128,63},
-                                   {128,128,64},
-                                   {128,128,65},
-                                   {128,128,96},
-                                   {256,256,64},
-                                   {512,512,33},
-                                   {512,512,64}
-                                   };
+  unsigned int       sizes[NTESTS][3] = {{128, 128, 63},
+                                     {128, 128, 64},
+                                     {128, 128, 65},
+                                     {128, 128, 96},
+                                     {256, 256, 64},
+                                     {512, 512, 33},
+                                     {512, 512, 64}};
 
-  double spacings[NTESTS][3] = {{2.0,2.0,2.0},
-                                {2.0,2.0,2.0},
-                                {2.0,2.0,2.0},
-                                {2.0,2.0,2.0},
-                                {1.0,1.0,2.0},
-                                {0.2734,0.2734,3.00001},
-                                {0.2734,0.2734,3.00001}
-                                };
-  
-  for(unsigned int i = 0; i < NTESTS; ++i)
+  double spacings[NTESTS][3] = {{2.0, 2.0, 2.0},
+                                  {2.0, 2.0, 2.0},
+                                  {2.0, 2.0, 2.0},
+                                  {2.0, 2.0, 2.0},
+                                  {1.0, 1.0, 2.0},
+                                  {0.2734, 0.2734, 3.00001},
+                                  {0.2734, 0.2734, 3.00001}};
+
+  for( unsigned int i = 0; i < NTESTS; ++i )
     {
     std::cout << "===== TEST " << i  << " =====" << std::endl;
     SizeType size;
@@ -74,7 +71,6 @@ int CountSamplesTest(int, char* [])
     spacing[0] = spacings[i][0];
     spacing[1] = spacings[i][1];
     spacing[2] = spacings[i][2];
-    
 
     ImageType::Pointer image = createTestImage(size, spacing);
 
@@ -93,7 +89,6 @@ int CountSamplesTest(int, char* [])
     std::cout << "count: " << count << std::endl;
 
     }
-
 
   return EXIT_SUCCESS;
 }

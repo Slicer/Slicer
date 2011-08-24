@@ -12,17 +12,20 @@
 #define M_PI 3.1415926
 #endif
 
-int main(int argc, char ** argv)
+int main(int argc, char * * argv)
 {
   if( argc < 3 )
     {
-    std::cout << "GenerateRegisterImagesTestData <freq> <outFile> [-t transform] [-p positionX positionY positionZ] [-o orientationX orientationY orientationZ]" << std::endl;
+    std::cout
+    <<
+    "GenerateRegisterImagesTestData <freq> <outFile> [-t transform] [-p positionX positionY positionZ] [-o orientationX orientationY orientationZ]"
+    << std::endl;
     return EXIT_FAILURE;
     }
 
   typedef itk::Image<float, 3> ImageType;
 
-  ImageType::Pointer img = ImageType::New();
+  ImageType::Pointer  img = ImageType::New();
   ImageType::SizeType size;
   size[0] = 176;
   size[1] = 256;
@@ -30,31 +33,34 @@ int main(int argc, char ** argv)
   img->SetRegions( size );
   img->Allocate();
 
-  double scaleMax = M_PI / atof(argv[1]);
-  double scaleMin = M_PI / (0.5 * atof(argv[1]));
-  double scale;
-  double v, vTot;
-  int i, j, k;
+  double               scaleMax = M_PI / atof(argv[1]);
+  double               scaleMin = M_PI / (0.5 * atof(argv[1]) );
+  double               scale;
+  double               v, vTot;
+  int                  i, j, k;
   ImageType::IndexType indx;
-  for(indx[2]=0; indx[2]<(int)size[2]; indx[2]++)
+  for( indx[2] = 0; indx[2] < (int)size[2]; indx[2]++ )
     {
-    for(indx[1]=0; indx[1]<(int)size[1]; indx[1]++)
+    for( indx[1] = 0; indx[1] < (int)size[1]; indx[1]++ )
       {
-      for(indx[0]=0; indx[0]<(int)size[0]; indx[0]++)
+      for( indx[0] = 0; indx[0] < (int)size[0]; indx[0]++ )
         {
-        scale = (scaleMax-scaleMin) * (indx[0]/size[0] + indx[1]/(size[1] / 10.0) + indx[2]/1.0) / (size[2]+size[1]/10+1) + scaleMin;
+        scale =
+          (scaleMax
+           - scaleMin)
+          * (indx[0] / size[0] + indx[1] / (size[1] / 10.0) + indx[2] / 1.0) / (size[2] + size[1] / 10 + 1) + scaleMin;
         v = indx[0] * scale;
         i = (int)(v / M_PI);
-        vTot = sin( v - ((int)(v / M_PI) * M_PI) );
+        vTot = sin( v - ( (int)(v / M_PI) * M_PI) );
         v = indx[1] * scale;
         j = (int)(v / M_PI);
-        vTot += sin( v - ((int)(v / M_PI) * M_PI) );
+        vTot += sin( v - ( (int)(v / M_PI) * M_PI) );
         v = indx[2] * scale;
         k = (int)(v / M_PI);
-        vTot += sin( v - ((int)(v / M_PI) * M_PI) );
-        if( (i+j+k)%2 == 0 )
+        vTot += sin( v - ( (int)(v / M_PI) * M_PI) );
+        if( (i + j + k) % 2 == 0 )
           {
-          if( (i+j+k)%4 == 0 )
+          if( (i + j + k) % 4 == 0 )
             {
             img->SetPixel(indx, 100 - vTot * 33.33333);
             }
@@ -65,7 +71,7 @@ int main(int argc, char ** argv)
           }
         else
           {
-          if( (indx[0]+indx[1]+indx[2])%2 == 0 )
+          if( (indx[0] + indx[1] + indx[2]) % 2 == 0 )
             {
             img->SetPixel(indx, 100);
             }
@@ -80,9 +86,9 @@ int main(int argc, char ** argv)
     }
 
   int argNum = 2;
-  while( argNum < argc-1 )
+  while( argNum < argc - 1 )
     {
-    if(argv[++argNum][0] != '-')
+    if( argv[++argNum][0] != '-' )
       {
       std::cout << "Unknown arg = " << argv[argNum] << std::endl;
       return 0;
@@ -91,21 +97,21 @@ int main(int argc, char ** argv)
       {
       switch( argv[argNum][1] )
         {
-        case 't' :
+        case 't':
           {
-          typedef itk::BSplineDeformableTransform< double, 3, 3 > BSplineTransformType;
-      
-          typedef itk::TransformFileReader  TransformReaderType;
+          typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineTransformType;
+
+          typedef itk::TransformFileReader TransformReaderType;
           TransformReaderType::Pointer transformReader = TransformReaderType::New();
           transformReader->SetFileName( argv[++argNum] );
-          itk::TransformFactory< BSplineTransformType >::RegisterTransform();
+          itk::TransformFactory<BSplineTransformType>::RegisterTransform();
           transformReader->Update();
-          
+
           typedef TransformReaderType::TransformListType TransformListType;
-          TransformListType * transformList = transformReader->GetTransformList();
+          TransformListType *         transformList = transformReader->GetTransformList();
           TransformListType::iterator transformListIt = transformList->begin();
-      
-          typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType;
+
+          typedef itk::ResampleImageFilter<ImageType, ImageType> ResamplerType;
           while( transformListIt != transformList->end() )
             {
             ResamplerType::Pointer resampler = ResamplerType::New();
@@ -116,7 +122,7 @@ int main(int argc, char ** argv)
               std::cout << "Apply an affine transform..." << std::endl;
               typedef itk::AffineTransform<double, 3> TransformType;
               TransformType::Pointer transform;
-              transform = static_cast< itk::AffineTransform<double, 3> * >( transformListIt->GetPointer() );
+              transform = static_cast<itk::AffineTransform<double, 3> *>( transformListIt->GetPointer() );
               resampler->SetTransform( transform );
               found = true;
               }
@@ -124,7 +130,7 @@ int main(int argc, char ** argv)
               {
               std::cout << "Apply an bspline transform..." << std::endl;
               BSplineTransformType::Pointer transform;
-              transform = static_cast< BSplineTransformType * >( transformListIt->GetPointer() );
+              transform = static_cast<BSplineTransformType *>( transformListIt->GetPointer() );
               resampler->SetTransform( transform );
               found = true;
               }
@@ -143,16 +149,17 @@ int main(int argc, char ** argv)
               catch( ... )
                 {
                 std::cerr << "tfm = " << resampler->GetTransform() << std::endl;
-                std::cerr << "Error during resampling using transform" 
+                std::cerr << "Error during resampling using transform"
                           << std::endl;
                 }
               img = resampler->GetOutput();
               }
             ++transformListIt;
             }
+
           break;
           }
-        case 'p' :
+        case 'p':
           {
           ImageType::PointType pnt;
           pnt[0] = atof( argv[++argNum] );
@@ -161,13 +168,13 @@ int main(int argc, char ** argv)
           img->SetOrigin(pnt);
           break;
           }
-        case 'o' :
+        case 'o':
           {
-          typedef itk::Euler3DTransform< double > TransformType;
+          typedef itk::Euler3DTransform<double> TransformType;
           TransformType::Pointer tfm = TransformType::New();
-          double rotX = atof( argv[++argNum] );
-          double rotY = atof( argv[++argNum] );
-          double rotZ = atof( argv[++argNum] );
+          double                 rotX = atof( argv[++argNum] );
+          double                 rotY = atof( argv[++argNum] );
+          double                 rotZ = atof( argv[++argNum] );
           tfm->SetRotation( rotX, rotY, rotZ );
           img->SetDirection( tfm->GetMatrix() );
           break;
@@ -175,8 +182,8 @@ int main(int argc, char ** argv)
         }
       }
     }
-      
-  typedef itk::ImageFileWriter< ImageType > WriterType;
+
+  typedef itk::ImageFileWriter<ImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );
   writer->SetFileName( argv[2] );

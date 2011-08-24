@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -23,8 +23,7 @@
 #include "itkImageRegionConstIteratorWithIndex.h"
 
 namespace itk
-{ 
-
+{
 
 class ITK_EXPORT InvalidImageRegionMomentsError : public ExceptionObject
 {
@@ -32,21 +31,26 @@ public:
   /*
    * Constructor. Needed to ensure the exception object can be copied.
    */
-  InvalidImageRegionMomentsError(const char *file, unsigned int lineNumber) : ExceptionObject(file, lineNumber) { this->SetDescription("No valid image moments are availble.");}
+  InvalidImageRegionMomentsError(const char *file, unsigned int lineNumber) : ExceptionObject(file, lineNumber)
+  {
+    this->SetDescription("No valid image moments are availble.");
+  }
 
   /*
    * Constructor. Needed to ensure the exception object can be copied.
    */
-  InvalidImageRegionMomentsError(const std::string& file, unsigned int lineNumber) : ExceptionObject(file, lineNumber) { this->SetDescription("No valid image moments are availble.");}  
-  
+  InvalidImageRegionMomentsError(const std::string& file, unsigned int lineNumber) : ExceptionObject(file, lineNumber)
+  {
+    this->SetDescription("No valid image moments are availble.");
+  }
+
   itkTypeMacro(InvalidImageRegionMomentsError, ExceptionObject);
 };
 
-  
-//----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // Construct without computing moments
-template<class TImage>
-ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator(void) 
+template <class TImage>
+ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator(void)
 {
   m_Valid = false;
   m_Image = NULL;
@@ -63,20 +67,20 @@ ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator(void)
   m_RegionOfInterestPoint2.Fill(0);
 }
 
-//----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // Destructor
-template<class TImage>
+template <class TImage>
 ImageRegionMomentsCalculator<TImage>::
 ~ImageRegionMomentsCalculator()
 {
 }
 
-template<class TInputImage>
+template <class TInputImage>
 void
 ImageRegionMomentsCalculator<TInputImage>
 ::PrintSelf( std::ostream& os, Indent indent ) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Image: " << m_Image.GetPointer() << std::endl;
   os << indent << "Valid: " << m_Valid << std::endl;
   os << indent << "Zeroth Moment about origin: " << m_M0 << std::endl;
@@ -91,12 +95,11 @@ ImageRegionMomentsCalculator<TInputImage>
   os << indent << "RegionOfInterest Point2: " << m_RegionOfInterestPoint2 << std::endl;
 }
 
-//----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // Compute moments for a new or modified image
-template<class TImage>
+template <class TImage>
 void
-ImageRegionMomentsCalculator<TImage>::
-Compute()
+ImageRegionMomentsCalculator<TImage>::Compute()
 {
   m_M0 = NumericTraits<ScalarType>::Zero;
   m_M1.Fill(NumericTraits<ITK_TYPENAME VectorType::ValueType>::Zero);
@@ -106,32 +109,32 @@ Compute()
 
   typedef typename ImageType::IndexType IndexType;
 
-  if( !m_Image ) 
+  if( !m_Image )
     {
     return;
     }
-    
-  ImageRegionConstIteratorWithIndex< ImageType > it( m_Image,
-                                                     m_Image->GetRequestedRegion() ); 
+
+  ImageRegionConstIteratorWithIndex<ImageType> it( m_Image,
+                                                   m_Image->GetRequestedRegion() );
 
   while( !it.IsAtEnd() )
     {
     double value = it.Value();
-    
+
     IndexType indexPosition = it.GetIndex();
 
     Point<double, ImageDimension> physicalPosition;
-    m_Image->TransformIndexToPhysicalPoint(indexPosition, physicalPosition);  
+    m_Image->TransformIndexToPhysicalPoint(indexPosition, physicalPosition);
 
     bool isInsideRegionOfInterest = true;
-    if(m_UseRegionOfInterest)
+    if( m_UseRegionOfInterest )
       {
-      for(unsigned int i=0; i<ImageDimension; i++)
+      for( unsigned int i = 0; i < ImageDimension; i++ )
         {
-        if(! ( (physicalPosition[i]<=m_RegionOfInterestPoint1[i] 
-               && physicalPosition[i]>=m_RegionOfInterestPoint2[i])
-              || (physicalPosition[i]<=m_RegionOfInterestPoint2[i] 
-                  && physicalPosition[i]>=m_RegionOfInterestPoint1[i]) ) )
+        if( !( (physicalPosition[i] <= m_RegionOfInterestPoint1[i]
+                && physicalPosition[i] >= m_RegionOfInterestPoint2[i])
+               || (physicalPosition[i] <= m_RegionOfInterestPoint2[i]
+                   && physicalPosition[i] >= m_RegionOfInterestPoint1[i]) ) )
           {
           isInsideRegionOfInterest = false;
           break;
@@ -141,30 +144,28 @@ Compute()
 
     if( isInsideRegionOfInterest &&
         (m_SpatialObjectMask.IsNull()
-         || m_SpatialObjectMask->IsInside(physicalPosition)) )
+         || m_SpatialObjectMask->IsInside(physicalPosition) ) )
       {
       m_M0 += value;
-
-      for(unsigned int i=0; i<ImageDimension; i++)
+      for( unsigned int i = 0; i < ImageDimension; i++ )
         {
-        m_M1[i] += static_cast<double>( indexPosition[i] ) * value; 
-        for(unsigned int j=0; j<ImageDimension; j++)
+        m_M1[i] += static_cast<double>( indexPosition[i] ) * value;
+        for( unsigned int j = 0; j < ImageDimension; j++ )
           {
-          double weight = value * static_cast<double>( indexPosition[i] ) * 
-            static_cast<double>( indexPosition[j] );
+          double weight = value * static_cast<double>( indexPosition[i] )
+            * static_cast<double>( indexPosition[j] );
           m_M2[i][j] += weight;
           }
         }
-      
-      for(unsigned int i=0; i<ImageDimension; i++)
+      for( unsigned int i = 0; i < ImageDimension; i++ )
         {
-        m_Cg[i] += physicalPosition[i] * value; 
-        for(unsigned int j=0; j<ImageDimension; j++)
+        m_Cg[i] += physicalPosition[i] * value;
+        for( unsigned int j = 0; j < ImageDimension; j++ )
           {
           double weight = value * physicalPosition[i] * physicalPosition[j];
           m_Cm[i][j] += weight;
           }
-  
+
         }
       }
 
@@ -172,27 +173,26 @@ Compute()
     }
 
   // Throw an error if the total mass is zero
-  if ( m_M0 == 0.0 )
+  if( m_M0 == 0.0 )
     {
-    itkExceptionMacro(<<"Compute(): Total Mass of the image was zero. Aborting here to prevent division by zero later on.");
+    itkExceptionMacro(
+      << "Compute(): Total Mass of the image was zero. Aborting here to prevent division by zero later on.");
     }
-
   // Normalize using the total mass
-  for(unsigned int i=0; i<ImageDimension; i++)
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
     m_Cg[i] /= m_M0;
     m_M1[i] /= m_M0;
-    for(unsigned int j=0; j<ImageDimension; j++)
+    for( unsigned int j = 0; j < ImageDimension; j++ )
       {
       m_M2[i][j] /= m_M0;
       m_Cm[i][j] /= m_M0;
       }
     }
-
   // Center the second order moments
-  for(unsigned int i=0; i<ImageDimension; i++)
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    for(unsigned int j=0; j<ImageDimension; j++)
+    for( unsigned int j = 0; j < ImageDimension; j++ )
       {
       m_M2[i][j] -= m_M1[i] * m_M1[j];
       m_Cm[i][j] -= m_Cg[i] * m_Cg[j];
@@ -201,178 +201,162 @@ Compute()
 
   // Compute principal moments and axes
   vnl_symmetric_eigensystem<double> eigen( m_Cm.GetVnlMatrix() );
-  vnl_diag_matrix<double> pm = eigen.D;
-  for(unsigned int i=0; i<ImageDimension; i++)
+  vnl_diag_matrix<double>           pm = eigen.D;
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    m_Pm[i] = pm(i,i) * m_M0;
+    m_Pm[i] = pm(i, i) * m_M0;
     }
   m_Pa = eigen.V.transpose();
 
   // Add a final reflection if needed for a proper rotation,
   // by multiplying the last row by the determinant
-  vnl_real_eigensystem eigenrot( m_Pa.GetVnlMatrix() );
-  vnl_diag_matrix< vcl_complex<double> > eigenval = eigenrot.D;
-  vcl_complex<double> det( 1.0, 0.0 );
-
-  for(unsigned int i=0; i<ImageDimension; i++)
+  vnl_real_eigensystem                  eigenrot( m_Pa.GetVnlMatrix() );
+  vnl_diag_matrix<vcl_complex<double> > eigenval = eigenrot.D;
+  vcl_complex<double>                   det( 1.0, 0.0 );
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
     det *= eigenval( i, i );
     }
-
-  for(unsigned int i=0; i<ImageDimension; i++)
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    m_Pa[ ImageDimension-1 ][i] *= std::real( det );
+    m_Pa[ImageDimension - 1][i] *= std::real( det );
     }
-  
+
   /* Remember that the moments are valid */
   m_Valid = 1;
 
 }
 
-
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 // Get sum of intensities
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::ScalarType
-ImageRegionMomentsCalculator<TImage>::
-GetTotalMass() const
+ImageRegionMomentsCalculator<TImage>::GetTotalMass() const
 {
-  if (!m_Valid) 
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetTotalMass() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_M0;
 }
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get first moments about origin, in index coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::VectorType
-ImageRegionMomentsCalculator<TImage>::
-GetFirstMoments() const
+ImageRegionMomentsCalculator<TImage>::GetFirstMoments() const
 {
-  if (!m_Valid)
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetFirstMoments() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_M1;
 }
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get second moments about origin, in index coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::MatrixType
-ImageRegionMomentsCalculator<TImage>::
-GetSecondMoments() const
+ImageRegionMomentsCalculator<TImage>::GetSecondMoments() const
 {
-  if (!m_Valid)        
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetSecondMoments() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_M2;
 }
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get center of gravity, in physical coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::VectorType
-ImageRegionMomentsCalculator<TImage>::
-GetCenterOfGravity() const
+ImageRegionMomentsCalculator<TImage>::GetCenterOfGravity() const
 {
-  if (!m_Valid)        
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetCenterOfGravity() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_Cg;
 }
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get second central moments, in physical coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::MatrixType
-ImageRegionMomentsCalculator<TImage>::
-GetCentralMoments() const
+ImageRegionMomentsCalculator<TImage>::GetCentralMoments() const
 {
-  if (!m_Valid)        
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetCentralMoments() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_Cm;
 }
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get principal moments, in physical coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::VectorType
-ImageRegionMomentsCalculator<TImage>::
-GetPrincipalMoments() const
+ImageRegionMomentsCalculator<TImage>::GetPrincipalMoments() const
 {
-  if (!m_Valid)        
+  if( !m_Valid )
     {
-    itkExceptionMacro( << "GetPrincipalMoments() invoked, but the moments have not been computed. Call Compute() first.");
+    itkExceptionMacro(
+      << "GetPrincipalMoments() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_Pm;
 }
 
-
-
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get principal axes, in physical coordinates
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::MatrixType
-ImageRegionMomentsCalculator<TImage>::
-GetPrincipalAxes() const
+ImageRegionMomentsCalculator<TImage>::GetPrincipalAxes() const
 {
-  if (!m_Valid)        
+  if( !m_Valid )
     {
     itkExceptionMacro( << "GetPrincipalAxes() invoked, but the moments have not been computed. Call Compute() first.");
     }
   return m_Pa;
 }
 
-
-
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get principal axes to physical axes transform
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::AffineTransformPointer
-ImageRegionMomentsCalculator<TImage>::
-GetPrincipalAxesToPhysicalAxesTransform(void) const
+ImageRegionMomentsCalculator<TImage>::GetPrincipalAxesToPhysicalAxesTransform(void) const
 {
   typename AffineTransformType::MatrixType matrix;
   typename AffineTransformType::OffsetType offset;
-  for (unsigned int i = 0; i < ImageDimension; i++) 
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    offset[i]  = m_Cg [i];
-    for (unsigned int j = 0; j < ImageDimension; j++)
+    offset[i]  = m_Cg[i];
+    for( unsigned int j = 0; j < ImageDimension; j++ )
       {
       matrix[j][i] = m_Pa[i][j];    // Note the transposition
       }
     }
 
   AffineTransformPointer result = AffineTransformType::New();
-    
+
   result->SetMatrix(matrix);
   result->SetOffset(offset);
 
   return result;
 }
 
-
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Get physical axes to principal axes transform
 
-template<class TImage>
+template <class TImage>
 typename ImageRegionMomentsCalculator<TImage>::AffineTransformPointer
-ImageRegionMomentsCalculator<TImage>::
-GetPhysicalAxesToPrincipalAxesTransform(void) const
+ImageRegionMomentsCalculator<TImage>::GetPhysicalAxesToPrincipalAxesTransform(void) const
 {
   typename AffineTransformType::MatrixType matrix;
   typename AffineTransformType::OffsetType offset;
-  for (unsigned int i = 0; i < ImageDimension; i++) 
+  for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    offset[i]    = m_Cg [i];
-    for (unsigned int j = 0; j < ImageDimension; j++)
+    offset[i]    = m_Cg[i];
+    for( unsigned int j = 0; j < ImageDimension; j++ )
       {
       matrix[j][i] = m_Pa[i][j];    // Note the transposition
       }
@@ -389,7 +373,5 @@ GetPhysicalAxesToPrincipalAxesTransform(void) const
 }
 
 } // end namespace itk
-
-
 
 #endif

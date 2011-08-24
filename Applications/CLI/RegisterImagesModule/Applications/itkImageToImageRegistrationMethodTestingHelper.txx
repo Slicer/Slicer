@@ -3,7 +3,7 @@
   Program:   Surface Extraction Program
   Module:    $RCSfile: ExtractSurface.cxx,v $
 
-  Copyright (c) Kitware Inc. 
+  Copyright (c) Kitware Inc.
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
@@ -20,37 +20,37 @@
 namespace itk
 {
 
-template< class TRegistrationMethod >
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::ImageToImageRegistrationMethodTestingHelper()
-  {
+{
   this->m_RegistrationMethod  = RegistrationMethodType::New();
-  this->m_FixedImageReader    = NULL; //ImageReaderType::New();
-  this->m_MovingImageReader   = NULL; //ImageReaderType::New();
-  this->m_MovingImageWriter   = NULL; //ImageWriterType::New();
-  this->m_BaselineImageReader = NULL; //ImageReaderType::New();
-  this->m_DifferenceImageWriter   = NULL; //ImageWriterType::New();
+  this->m_FixedImageReader    = NULL;     // ImageReaderType::New();
+  this->m_MovingImageReader   = NULL;     // ImageReaderType::New();
+  this->m_MovingImageWriter   = NULL;     // ImageWriterType::New();
+  this->m_BaselineImageReader = NULL;     // ImageReaderType::New();
+  this->m_DifferenceImageWriter   = NULL; // ImageWriterType::New();
   this->m_ResampleFilter      = ResampleFilterType::New();
   this->m_DifferenceFilter    = DifferenceFilterType::New();
   this->m_NumberOfFailedPixelsTolerance = 100;
   this->m_RadiusTolerance     = 0;
   this->m_IntensityTolerance  = 10;
   this->m_ErrorState          = false;
-  }
+}
 
-template< class TRegistrationMethod >
-typename ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >::RegistrationMethodType *
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+typename ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>::RegistrationMethodType
+* ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::GetRegistrationMethod()
   {
   return this->m_RegistrationMethod;
   }
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetFixedImageFileName( const char * filename )
-  {
+{
   if( filename != NULL && strlen(filename) > 2 )
     {
     this->m_FixedImageReader    = ImageReaderType::New();
@@ -60,13 +60,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_FixedImageReader    = NULL;
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetMovingImageFileName( const char * filename )
-  {
+{
   if( filename != NULL && strlen(filename) > 2 )
     {
     this->m_MovingImageReader    = ImageReaderType::New();
@@ -76,13 +76,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_MovingImageReader    = NULL;
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetResampledImageFileName( const char * filename )
-  {
+{
   if( filename != NULL && strlen(filename) > 2 )
     {
     this->m_MovingImageWriter    = ImageWriterType::New();
@@ -93,13 +93,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_MovingImageWriter    = NULL;
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetBaselineImageFileName( const char * filename )
-  {
+{
   if( filename != NULL && strlen(filename) > 2 )
     {
     this->m_BaselineImageReader    = ImageReaderType::New();
@@ -109,13 +109,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_BaselineImageReader    = NULL;
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetDifferenceImageFileName( const char * filename )
-  {
+{
   if( filename != NULL && strlen(filename) > 2 )
     {
     this->m_DifferenceImageWriter    = ImageWriterType::New();
@@ -126,20 +126,19 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_DifferenceImageWriter    = NULL;
     }
-  }
+}
 
-
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::PrepareRegistration()
-  {
-  if(this->m_FixedImageReader.IsNull() )
+{
+  if( this->m_FixedImageReader.IsNull() )
     {
     std::cerr << "Error: Set fixed image filename first." << std::endl;
     return;
     }
-  if(this->m_MovingImageReader.IsNull() )
+  if( this->m_MovingImageReader.IsNull() )
     {
     std::cerr << "Error: Set moving image filename first." << std::endl;
     return;
@@ -147,7 +146,7 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
 
   this->m_RegistrationMethod->SetFixedImage( this->m_FixedImageReader->GetOutput() );
   this->m_RegistrationMethod->SetMovingImage( this->m_MovingImageReader->GetOutput() );
-  
+
   this->m_RegistrationMethod->ReportProgressOn();
 
   if( this->m_MovingImageReader.IsNotNull() )
@@ -158,13 +157,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
       this->m_MovingImageWriter->SetInput( this->m_ResampleFilter->GetOutput() );
       }
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::RunRegistration()
-  {
+{
 
   this->m_ErrorState = false;
 
@@ -177,18 +176,18 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     std::cerr << excp << std::endl;
     this->m_ErrorState = true;
     }
-  catch( ... ) 
+  catch( ... )
     {
     std::cerr << "Unknown exception" << std::endl;
     this->m_ErrorState = true;
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::ReportResults()
-  {
+{
   if( this->m_ErrorState )
     {
     return;
@@ -197,18 +196,17 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
   //
   // Registration result
   //
-  typedef typename RegistrationMethodType::TransformType  TransformType;
-  
+  typedef typename RegistrationMethodType::TransformType TransformType;
+
   typename TransformType::Pointer transform = this->m_RegistrationMethod->GetTypedTransform();
 
   std::cout << "Transform Result = " << std::endl;
   std::cout << transform << std::endl;
 }
 
-
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::ReportImagesMetaData()
 {
   if( this->m_ErrorState )
@@ -235,13 +233,13 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     std::cout << "Moving Image " << std::endl;
     this->m_MovingImageReader->GetOutput()->Print( std::cout );
     }
-  }
+}
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::ResampleOutputImage()
-  {
+{
 
   if( this->m_ErrorState )
     {
@@ -253,10 +251,10 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
 
   // SetReferenceImage() has to be called here, when we are sure that the fixed
   // image has been read. Something that should occur in the RunRegistration()
-  // method. 
+  // method.
   this->m_ResampleFilter->SetReferenceImage( this->m_FixedImageReader->GetOutput() );
   this->m_ResampleFilter->UseReferenceImageOn();
-  
+
   try
     {
     this->m_ResampleFilter->Update();
@@ -276,39 +274,37 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     this->m_MovingImageWriter->Update();
     }
-  }
+}
 
-
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetNumberOfFailedPixelsTolerance( unsigned long numberOfFailedPixels )
 {
   this->m_NumberOfFailedPixelsTolerance = numberOfFailedPixels;
 }
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetRadiusTolerance( unsigned long radius )
 {
   this->m_RadiusTolerance = radius;
 }
 
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::SetIntensityTolerance( double intensity )
 {
   this->m_IntensityTolerance = intensity;
 }
 
-
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::PerformRegressionTest()
-  {
+{
   if( this->m_ErrorState )
     {
     return;
@@ -324,7 +320,8 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
   this->m_DifferenceFilter->SetValidInput( this->m_BaselineImageReader->GetOutput() );
   this->m_DifferenceFilter->SetTestInput(  this->m_ResampleFilter->GetOutput() );
 
-  this->m_DifferenceFilter->SetDifferenceThreshold( static_cast< typename ImageType::PixelType >(this->m_IntensityTolerance) );
+  this->m_DifferenceFilter->SetDifferenceThreshold( static_cast<typename ImageType::PixelType>(this->
+                                                                                               m_IntensityTolerance) );
   this->m_DifferenceFilter->SetToleranceRadius( this->m_RadiusTolerance );
   this->m_DifferenceFilter->SetIgnoreBoundaryPixels( true );
 
@@ -360,40 +357,37 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     std::cerr << this->m_NumberOfFailedPixelsTolerance << " can be tolerated " << std::endl;
     this->m_ErrorState = true;
     }
-  else 
+  else
     {
     std::cout << "Regression Test passed !" << std::endl;
     std::cout << numberOfFailedPixels << " Failed pixels " << std::endl;
     std::cout << this->m_NumberOfFailedPixelsTolerance << " can be tolerated " << std::endl;
     }
 
-  }
+}
 
-
-template< class TRegistrationMethod >
-void 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+void
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::PrintTest()
-  {
+{
   //
   // Exercise the Print() method.
   //
   this->m_RegistrationMethod->Print( std::cout );
-  }
+}
 
-
-template< class TRegistrationMethod >
-int 
-ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
+template <class TRegistrationMethod>
+int
+ImageToImageRegistrationMethodTestingHelper<TRegistrationMethod>
 ::GetTestResult() const
-  {
+{
   if( this->m_ErrorState )
     {
     return EXIT_FAILURE;
     }
-  return EXIT_SUCCESS;  
-  }
-
+  return EXIT_SUCCESS;
+}
 
 } // end namespace itk
 

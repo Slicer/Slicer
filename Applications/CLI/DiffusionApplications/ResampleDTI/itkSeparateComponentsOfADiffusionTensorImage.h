@@ -23,56 +23,54 @@
 namespace itk
 {
 /** \class itkSeparateComponentsOfADiffusionTensorImage
- * 
- * 
+ *
+ *
  */
-template< class TInput , class TOutput >
+template <class TInput, class TOutput>
 class SeparateComponentsOfADiffusionTensorImage
-: public ImageToImageFilter
-< Image < DiffusionTensor3D < TInput > , 3 > ,
-  Image < TOutput , 3 > >
+  : public ImageToImageFilter
+  <Image<DiffusionTensor3D<TInput>, 3>,
+   Image<TOutput, 3> >
 {
-public :
-typedef TInput InputDataType ;
-typedef TOutput OutputDataType ;
-typedef ImageToImageFilter
-          < Image < DiffusionTensor3D < TInput > , 3 > ,
-            Image < TOutput , 3 > >
-Superclass ;
-typedef DiffusionTensor3D< InputDataType > InputTensorDataType ;
-typedef Image< InputTensorDataType , 3 > InputImageType ;
-typedef SeparateComponentsOfADiffusionTensorImage Self ;
-typedef SmartPointer< Self > Pointer ;
-typedef SmartPointer< const Self > ConstPointer ;
-typedef typename InputImageType::Pointer InputImagePointerType ;
-typedef Image< OutputDataType , 3 > OutputImageType ;
-typedef typename OutputImageType::Pointer OutputImagePointerType ;
-typedef itk::ImageRegionIterator< OutputImageType > OutputIteratorType ;
-typedef itk::ImageRegionConstIterator< InputImageType > InputIteratorType ;
-typedef typename OutputImageType::RegionType OutputImageRegionType ;
-//typedef typename OutputTensorDataType::RealValueType TensorRealType ;
+public:
+  typedef TInput  InputDataType;
+  typedef TOutput OutputDataType;
+  typedef ImageToImageFilter
+  <Image<DiffusionTensor3D<TInput>, 3>,
+   Image<TOutput, 3> >
+  Superclass;
+  typedef DiffusionTensor3D<InputDataType>              InputTensorDataType;
+  typedef Image<InputTensorDataType, 3>                 InputImageType;
+  typedef SeparateComponentsOfADiffusionTensorImage     Self;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef typename InputImageType::Pointer              InputImagePointerType;
+  typedef Image<OutputDataType, 3>                      OutputImageType;
+  typedef typename OutputImageType::Pointer             OutputImagePointerType;
+  typedef itk::ImageRegionIterator<OutputImageType>     OutputIteratorType;
+  typedef itk::ImageRegionConstIterator<InputImageType> InputIteratorType;
+  typedef typename OutputImageType::RegionType          OutputImageRegionType;
+// typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
-itkNewMacro( Self ) ;
-
-
-
-protected :
-SeparateComponentsOfADiffusionTensorImage() ;
+  itkNewMacro( Self );
+protected:
+  SeparateComponentsOfADiffusionTensorImage();
 #if ITK_VERSION_MAJOR < 4
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           int threadId ) ;
-#else
-void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                           ThreadIdType threadId ) ;
-#endif
-void GenerateOutputInformation() ;
-void GenerateInputRequestedRegion() ;
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
 
-private :
+#else
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+
+#endif
+  void GenerateOutputInformation();
+
+  void GenerateInputRequestedRegion();
+
+private:
 
 };
 
-}//end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkSeparateComponentsOfADiffusionTensorImage.txx"

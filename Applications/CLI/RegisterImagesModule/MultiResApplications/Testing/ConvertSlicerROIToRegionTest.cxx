@@ -14,7 +14,6 @@
 
 #include <itkImage.h>
 
-
 #include "ConvertSlicerROIToRegion.h"
 
 #include "RITestingMacros.h"
@@ -28,9 +27,10 @@ void assign3(T& vec, J x, J y, J z)
   vec[1] = y;
   vec[2] = z;
 }
+
 }
 
-int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
+int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char * itkNotUsed(argv)[])
 {
   itk::Point<double, 3> p1;
   assign3(p1, 0.0, 0.0, 0.0);
@@ -46,8 +46,8 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   itk::Image<char, 3>::Pointer testimage2 =
     itk::Image<char, 3>::New();
 
-  itk::Index<3> ind = {{0,0,0}};
-  itk::Size<3> size = {{10,10,10}};
+  itk::Index<3>          ind = {{0, 0, 0}};
+  itk::Size<3>           size = {{10, 10, 10}};
   itk::Vector<double, 3> spacing1;
   assign3(spacing1, 1, 5, 2);
   itk::Vector<double, 3> spacing2;
@@ -57,7 +57,7 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   testimage1->SetRegions(imagereg1);
   testimage1->SetSpacing(spacing1);
   testimage1->Allocate();
-  
+
   itk::ImageRegion<3> imagereg2 = itk::ImageRegion<3>(ind, size);
   testimage2->SetRegions(imagereg2);
   testimage2->SetSpacing(spacing2);
@@ -95,28 +95,28 @@ int ConvertSlicerROIToRegionTest(int itkNotUsed(argc), char* itkNotUsed(argv)[])
   // Testing spatial object
   itk::SlicerBoxSpatialObject<3>::Pointer box1 =
     convertPointsToBoxSpatialObject(p1, p2);
-  TEST_ASSERT(box1->IsInside(p1));
-  TEST_ASSERT(box1->IsInside(p2));
-  TEST_ASSERT(box1->IsInside(ponehalf));
-  TEST_ASSERT(!box1->IsInside(p3));
-  TEST_ASSERT(!box1->IsInside(p4));
+  TEST_ASSERT(box1->IsInside(p1) );
+  TEST_ASSERT(box1->IsInside(p2) );
+  TEST_ASSERT(box1->IsInside(ponehalf) );
+  TEST_ASSERT(!box1->IsInside(p3) );
+  TEST_ASSERT(!box1->IsInside(p4) );
 
   // test point ordering doesnt matter
   itk::SlicerBoxSpatialObject<3>::Pointer box2 =
     convertPointsToBoxSpatialObject(p2, p1);
-  TEST_ASSERT(box2->IsInside(p1));
-  TEST_ASSERT(box2->IsInside(p2));
-  TEST_ASSERT(box2->IsInside(ponehalf));
-  TEST_ASSERT(!box2->IsInside(p3));
-  TEST_ASSERT(!box2->IsInside(p4));
+  TEST_ASSERT(box2->IsInside(p1) );
+  TEST_ASSERT(box2->IsInside(p2) );
+  TEST_ASSERT(box2->IsInside(ponehalf) );
+  TEST_ASSERT(!box2->IsInside(p3) );
+  TEST_ASSERT(!box2->IsInside(p4) );
 
   itk::SlicerBoxSpatialObject<3>::Pointer box3 =
     convertPointsToBoxSpatialObject(p1, p4);
-  TEST_ASSERT(box3->IsInside(p1));
-  TEST_ASSERT(box3->IsInside(p2));
-  TEST_ASSERT(box3->IsInside(ponehalf));
-  TEST_ASSERT(!box3->IsInside(p3));
-  TEST_ASSERT(box3->IsInside(p4));
+  TEST_ASSERT(box3->IsInside(p1) );
+  TEST_ASSERT(box3->IsInside(p2) );
+  TEST_ASSERT(box3->IsInside(ponehalf) );
+  TEST_ASSERT(!box3->IsInside(p3) );
+  TEST_ASSERT(box3->IsInside(p4) );
 
   return EXIT_SUCCESS;
 }

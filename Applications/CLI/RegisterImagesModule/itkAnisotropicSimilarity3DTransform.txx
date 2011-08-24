@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -21,7 +21,6 @@
 #include "vnl/vnl_math.h"
 #include "vnl/vnl_det.h"
 
-
 namespace itk
 {
 
@@ -29,7 +28,7 @@ namespace itk
 template <class TScalarType>
 AnisotropicSimilarity3DTransform<TScalarType>
 ::AnisotropicSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >=4
+#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
 #else
   Superclass(OutputSpaceDimension, ParametersDimension)
@@ -40,12 +39,10 @@ AnisotropicSimilarity3DTransform<TScalarType>
   m_Scale[2] = 1.0;
 }
 
-
 // Constructor with arguments
-template<class TScalarType>
-AnisotropicSimilarity3DTransform<TScalarType>::
-AnisotropicSimilarity3DTransform(unsigned int paramDim) :
-#if ITK_VERSION_MAJOR >=4
+template <class TScalarType>
+AnisotropicSimilarity3DTransform<TScalarType>::AnisotropicSimilarity3DTransform(unsigned int paramDim) :
+#if ITK_VERSION_MAJOR >= 4
   Superclass(paramDim)
 #else
   Superclass(OutputSpaceDimension, paramDim)
@@ -54,14 +51,12 @@ AnisotropicSimilarity3DTransform(unsigned int paramDim) :
 }
 
 // Constructor with arguments
-template<class TScalarType>
-AnisotropicSimilarity3DTransform<TScalarType>::
-AnisotropicSimilarity3DTransform( const MatrixType & matrix,
-                        const OutputVectorType & offset) :
-  Superclass(matrix,offset)
+template <class TScalarType>
+AnisotropicSimilarity3DTransform<TScalarType>::AnisotropicSimilarity3DTransform( const MatrixType & matrix,
+                                                                                 const OutputVectorType & offset) :
+  Superclass(matrix, offset)
 {
 }
- 
 
 // Set the scale factor
 template <class TScalarType>
@@ -69,10 +64,10 @@ void
 AnisotropicSimilarity3DTransform<TScalarType>
 ::SetScale( ScaleType scale )
 {
-   m_Scale[0] = scale;
-   m_Scale[1] = scale;
-   m_Scale[2] = scale;
-   this->ComputeMatrix();
+  m_Scale[0] = scale;
+  m_Scale[1] = scale;
+  m_Scale[2] = scale;
+  this->ComputeMatrix();
 }
 
 // Set the scale factor
@@ -81,15 +76,14 @@ void
 AnisotropicSimilarity3DTransform<TScalarType>
 ::SetScale( VectorType scale )
 {
-   m_Scale[0] = scale[0];
-   m_Scale[1] = scale[1];
-   m_Scale[2] = scale[2];
-   this->ComputeMatrix();
+  m_Scale[0] = scale[0];
+  m_Scale[1] = scale[1];
+  m_Scale[2] = scale[2];
+  this->ComputeMatrix();
 }
 
-
 // Directly set the matrix
-template<class TScalarType>
+template <class TScalarType>
 void
 AnisotropicSimilarity3DTransform<TScalarType>
 ::SetMatrix( const MatrixType & matrix )
@@ -108,14 +102,14 @@ AnisotropicSimilarity3DTransform<TScalarType>
 
   double scale[3];
   scale[0] = sqrt( fabs( matrix.GetVnlMatrix()[0][0] * matrix.GetVnlMatrix()[0][0]
-               + matrix.GetVnlMatrix()[0][1] * matrix.GetVnlMatrix()[0][1] 
-               + matrix.GetVnlMatrix()[0][2] * matrix.GetVnlMatrix()[0][2] ));
+                         + matrix.GetVnlMatrix()[0][1] * matrix.GetVnlMatrix()[0][1]
+                         + matrix.GetVnlMatrix()[0][2] * matrix.GetVnlMatrix()[0][2] ) );
   scale[1] = sqrt( fabs( matrix.GetVnlMatrix()[1][0] * matrix.GetVnlMatrix()[1][0]
-               + matrix.GetVnlMatrix()[1][1] * matrix.GetVnlMatrix()[1][1] 
-               + matrix.GetVnlMatrix()[1][2] * matrix.GetVnlMatrix()[1][2] ));
+                         + matrix.GetVnlMatrix()[1][1] * matrix.GetVnlMatrix()[1][1]
+                         + matrix.GetVnlMatrix()[1][2] * matrix.GetVnlMatrix()[1][2] ) );
   scale[2] = sqrt( fabs( matrix.GetVnlMatrix()[2][0] * matrix.GetVnlMatrix()[2][0]
-               + matrix.GetVnlMatrix()[2][1] * matrix.GetVnlMatrix()[2][1] 
-               + matrix.GetVnlMatrix()[2][2] * matrix.GetVnlMatrix()[2][2] ));
+                         + matrix.GetVnlMatrix()[2][1] * matrix.GetVnlMatrix()[2][1]
+                         + matrix.GetVnlMatrix()[2][2] * matrix.GetVnlMatrix()[2][2] ) );
 
   MatrixType scaleMatrix;
   scaleMatrix(0, 0) = scale[0];
@@ -126,15 +120,14 @@ AnisotropicSimilarity3DTransform<TScalarType>
   MatrixType testForOrthogonal = matrix * scaleMatrix;
 
   const double tolerance = 1e-10;
-  if( !this->MatrixIsOrthogonal( testForOrthogonal, tolerance ) ) 
-    {    
+  if( !this->MatrixIsOrthogonal( testForOrthogonal, tolerance ) )
+    {
     itkExceptionMacro( << "Attempting to set a non-orthogonal matrix (after removing scaling)" );
     }
 
   typedef MatrixOffsetTransformBase<TScalarType, 3> Baseclass;
   this->Baseclass::SetMatrix( matrix );
 }
-
 
 // Set Parameters
 template <class TScalarType>
@@ -146,24 +139,24 @@ AnisotropicSimilarity3DTransform<TScalarType>
   itkDebugMacro( << "Setting parameters " << parameters );
 
   // Transfer the versor part
-  
+
   AxisType axis;
 
-  double norm = parameters[0]*parameters[0];
+  double norm = parameters[0] * parameters[0];
   axis[0] = parameters[0];
-  norm += parameters[1]*parameters[1];
+  norm += parameters[1] * parameters[1];
   axis[1] = parameters[1];
-  norm += parameters[2]*parameters[2];
+  norm += parameters[2] * parameters[2];
   axis[2] = parameters[2];
-  if( norm > 0)
+  if( norm > 0 )
     {
     norm = vcl_sqrt(norm);
     }
 
   double epsilon = 1e-10;
-  if(norm >= 1.0-epsilon)
+  if( norm >= 1.0 - epsilon )
     {
-    axis = axis / (norm+epsilon*norm);
+    axis = axis / (norm + epsilon * norm);
     }
   VersorType newVersor;
   newVersor.Set(axis);
@@ -173,9 +166,8 @@ AnisotropicSimilarity3DTransform<TScalarType>
   m_Scale[2] = parameters[8]; // must be set before calling ComputeMatrix();
   this->ComputeMatrix();
 
-  itkDebugMacro( <<"Versor is now " << this->GetVersor() );
-  
-   
+  itkDebugMacro( << "Versor is now " << this->GetVersor() );
+
   // Transfer the translation part
   TranslationType newTranslation;
   newTranslation[0] = parameters[3];
@@ -188,13 +180,12 @@ AnisotropicSimilarity3DTransform<TScalarType>
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<<"After setting parameters ");
+  itkDebugMacro(<< "After setting parameters ");
 }
-
 
 //
 // Get Parameters
-// 
+//
 // Parameters are ordered as:
 //
 // p[0:2] = right part of the versor (axis times vcl_sin(t/2))
@@ -203,10 +194,10 @@ AnisotropicSimilarity3DTransform<TScalarType>
 //
 
 template <class TScalarType>
-const typename AnisotropicSimilarity3DTransform<TScalarType>::ParametersType &
-AnisotropicSimilarity3DTransform<TScalarType>
+const typename AnisotropicSimilarity3DTransform<TScalarType>::ParametersType
+& AnisotropicSimilarity3DTransform<TScalarType>
 ::GetParameters( void ) const
-{
+  {
   itkDebugMacro( << "Getting parameters ");
 
   this->m_Parameters[0] = this->GetVersor().GetX();
@@ -222,26 +213,26 @@ AnisotropicSimilarity3DTransform<TScalarType>
   this->m_Parameters[7] = this->GetScale()[1];
   this->m_Parameters[8] = this->GetScale()[2];
 
-  itkDebugMacro(<<"After getting parameters " << this->m_Parameters );
+  itkDebugMacro(<< "After getting parameters " << this->m_Parameters );
 
   return this->m_Parameters;
-}
+  }
 
 // Set parameters
-template<class TScalarType>
-const typename AnisotropicSimilarity3DTransform<TScalarType>::JacobianType &
-AnisotropicSimilarity3DTransform<TScalarType>::
-GetJacobian( const InputPointType & p ) const
-{
+template <class TScalarType>
+const typename AnisotropicSimilarity3DTransform<TScalarType>::JacobianType
+& AnisotropicSimilarity3DTransform<TScalarType>::
+GetJacobian( const InputPointType &p ) const
+  {
   ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
   return this->m_NonThreadsafeSharedJacobian;
-}
-template<class TScalarType>
+  }
+template <class TScalarType>
 void
-AnisotropicSimilarity3DTransform<TScalarType>::
-ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const
+AnisotropicSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters(const InputPointType & p,
+                                                                                      JacobianType & jacobian) const
 {
-  typedef typename VersorType::ValueType  ValueType;
+  typedef typename VersorType::ValueType ValueType;
 
   // compute derivatives with respect to rotation
   const ValueType vx = this->GetVersor().GetX();
@@ -249,7 +240,7 @@ ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & 
   const ValueType vz = this->GetVersor().GetZ();
   const ValueType vw = this->GetVersor().GetW();
 
-  jacobian.SetSize( 3 , 9 );
+  jacobian.SetSize( 3, 9 );
   jacobian.Fill(0.0);
 
   const InputVectorType pp = p - this->GetCenter();
@@ -273,26 +264,26 @@ ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & 
   const double vzw = vz * vw;
 
   // compute Jacobian with respect to quaternion parameters
-  jacobian[0][0] = 2.0 * (               (vyw+vxz)*py + (vzw-vxy)*pz)
-                         / vw;
-  jacobian[1][0] = 2.0 * ((vyw-vxz)*px   -2*vxw   *py + (vxx-vww)*pz) 
-                         / vw;
-  jacobian[2][0] = 2.0 * ((vzw+vxy)*px + (vww-vxx)*py   -2*vxw   *pz) 
-                         / vw;
+  jacobian[0][0] = 2.0 * (               (vyw + vxz) * py + (vzw - vxy) * pz)
+    / vw;
+  jacobian[1][0] = 2.0 * ( (vyw - vxz) * px   - 2 * vxw   * py + (vxx - vww) * pz)
+    / vw;
+  jacobian[2][0] = 2.0 * ( (vzw + vxy) * px + (vww - vxx) * py   - 2 * vxw   * pz)
+    / vw;
 
-  jacobian[0][1] = 2.0 * ( -2*vyw  *px + (vxw+vyz)*py + (vww-vyy)*pz) 
-                         / vw;
-  jacobian[1][1] = 2.0 * ((vxw-vyz)*px                + (vzw+vxy)*pz) 
-                         / vw;
-  jacobian[2][1] = 2.0 * ((vyy-vww)*px + (vzw-vxy)*py   -2*vyw   *pz) 
-                         / vw;
+  jacobian[0][1] = 2.0 * ( -2 * vyw  * px + (vxw + vyz) * py + (vww - vyy) * pz)
+    / vw;
+  jacobian[1][1] = 2.0 * ( (vxw - vyz) * px                + (vzw + vxy) * pz)
+    / vw;
+  jacobian[2][1] = 2.0 * ( (vyy - vww) * px + (vzw - vxy) * py   - 2 * vyw   * pz)
+    / vw;
 
-  jacobian[0][2] = 2.0 * ( -2*vzw  *px + (vzz-vww)*py + (vxw-vyz)*pz) 
-                         / vw;
-  jacobian[1][2] = 2.0 * ((vww-vzz)*px   -2*vzw   *py + (vyw+vxz)*pz) 
-                         / vw;
-  jacobian[2][2] = 2.0 * ((vxw+vyz)*px + (vyw-vxz)*py               ) 
-                         / vw;
+  jacobian[0][2] = 2.0 * ( -2 * vzw  * px + (vzz - vww) * py + (vxw - vyz) * pz)
+    / vw;
+  jacobian[1][2] = 2.0 * ( (vww - vzz) * px   - 2 * vzw   * py + (vyw + vxz) * pz)
+    / vw;
+  jacobian[2][2] = 2.0 * ( (vxw + vyz) * px + (vyw - vxz) * py               )
+    / vw;
 
   // compute Jacobian with respect to the translation parameters
   jacobian[0][3] = 1.0;
@@ -335,7 +326,6 @@ AnisotropicSimilarity3DTransform<TScalarType>
   this->SetVarMatrix(newMatrix);
 }
 
-
 /** Compute the matrix */
 template <class TScalarType>
 void
@@ -345,14 +335,14 @@ AnisotropicSimilarity3DTransform<TScalarType>
   MatrixType matrix = this->GetMatrix();
 
   m_Scale[0] = sqrt( fabs( matrix.GetVnlMatrix()[0][0] * matrix.GetVnlMatrix()[0][0]
-               + matrix.GetVnlMatrix()[0][1] * matrix.GetVnlMatrix()[0][1] 
-               + matrix.GetVnlMatrix()[0][2] * matrix.GetVnlMatrix()[0][2] ) );
+                           + matrix.GetVnlMatrix()[0][1] * matrix.GetVnlMatrix()[0][1]
+                           + matrix.GetVnlMatrix()[0][2] * matrix.GetVnlMatrix()[0][2] ) );
   m_Scale[1] = sqrt( fabs( matrix.GetVnlMatrix()[1][0] * matrix.GetVnlMatrix()[1][0]
-               + matrix.GetVnlMatrix()[1][1] * matrix.GetVnlMatrix()[1][1] 
-               + matrix.GetVnlMatrix()[1][2] * matrix.GetVnlMatrix()[1][2] ) );
+                           + matrix.GetVnlMatrix()[1][1] * matrix.GetVnlMatrix()[1][1]
+                           + matrix.GetVnlMatrix()[1][2] * matrix.GetVnlMatrix()[1][2] ) );
   m_Scale[2] = sqrt( fabs( matrix.GetVnlMatrix()[2][0] * matrix.GetVnlMatrix()[2][0]
-               + matrix.GetVnlMatrix()[2][1] * matrix.GetVnlMatrix()[2][1] 
-               + matrix.GetVnlMatrix()[2][2] * matrix.GetVnlMatrix()[2][2] ) );
+                           + matrix.GetVnlMatrix()[2][1] * matrix.GetVnlMatrix()[2][1]
+                           + matrix.GetVnlMatrix()[2][2] * matrix.GetVnlMatrix()[2][2] ) );
 
   MatrixType scaleMatrix;
   scaleMatrix(0, 0) = m_Scale[0];
@@ -366,14 +356,13 @@ AnisotropicSimilarity3DTransform<TScalarType>
   this->SetVarVersor( v );
 
 }
- 
+
 // Print self
-template<class TScalarType>
+template <class TScalarType>
 void
-AnisotropicSimilarity3DTransform<TScalarType>::
-PrintSelf(std::ostream &os, Indent indent) const
+AnisotropicSimilarity3DTransform<TScalarType>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Scale = " << m_Scale << std::endl;
 }
 

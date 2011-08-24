@@ -7,12 +7,11 @@
 #endif
 
 #include <iostream>
-#include "itkTestMain.h" 
-
+#include "itkTestMain.h"
 
 void RegisterTests()
 {
-REGISTER_TEST(DiffusionWeightedMaskingTest);
+  REGISTER_TEST(DiffusionWeightedMaskingTest);
 }
 
 #undef main

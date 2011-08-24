@@ -6,12 +6,11 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkTestMain.h" 
-
+#include "itkTestMain.h"
 
 void RegisterTests()
 {
-REGISTER_TEST(GrayscaleModelMakerTest);
+  REGISTER_TEST(GrayscaleModelMakerTest);
 }
 
 #undef main

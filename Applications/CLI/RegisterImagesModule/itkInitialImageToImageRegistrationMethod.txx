@@ -15,7 +15,6 @@
 
 =========================================================================*/
 
-
 #ifndef __InitialImageToImageRegistrationMethod_txx
 #define __InitialImageToImageRegistrationMethod_txx
 
@@ -26,36 +25,36 @@
 namespace itk
 {
 
-template< class TImage >
-InitialImageToImageRegistrationMethod< TImage >
+template <class TImage>
+InitialImageToImageRegistrationMethod<TImage>
 ::InitialImageToImageRegistrationMethod( void )
 {
   this->SetTransform( TransformType::New() );
   this->GetTypedTransform()->SetIdentity();
 
-  this->m_NumberOfMoments = 0 ;
+  this->m_NumberOfMoments = 0;
 
   this->m_ComputeCenterOfRotationOnly = false;
-  
+
   this->m_UseLandmarks = false;
-  
+
 }
 
-template< class TImage >
-InitialImageToImageRegistrationMethod< TImage >
+template <class TImage>
+InitialImageToImageRegistrationMethod<TImage>
 ::~InitialImageToImageRegistrationMethod( void )
 {
 }
 
 /** Only the GenerateData() method should be overloaded. The Update() method
  * must not be overloaded */
-template< class TImage >
+template <class TImage>
 void
-InitialImageToImageRegistrationMethod< TImage >
+InitialImageToImageRegistrationMethod<TImage>
 ::GenerateData( void )
 {
   Superclass::GenerateData();
-  
+
   if( this->m_UseLandmarks )
     {
     typename TransformType::Pointer newTransform;
@@ -66,81 +65,79 @@ InitialImageToImageRegistrationMethod< TImage >
     typename TransformType::MatrixType matrix;
     typename TransformType::OffsetType offset;
 
-    if ( TImage::ImageDimension == 3 )
+    if( TImage::ImageDimension == 3 )
       {
-      typedef AnisotropicSimilarity3DTransform< double >  LandmarkTransformType;
-      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer< LandmarkTransformType,
-                                                 TImage, TImage > 
-                                                LandmarkTransformCalculatorType;
+      typedef AnisotropicSimilarity3DTransform<double> LandmarkTransformType;
+      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer<LandmarkTransformType,
+                                                                     TImage, TImage>
+      LandmarkTransformCalculatorType;
 
       typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
       landmarkCalc = LandmarkTransformCalculatorType::New();
       landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
       landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
 
-      typename LandmarkTransformType::Pointer landmarkTransform; 
+      typename LandmarkTransformType::Pointer landmarkTransform;
       landmarkTransform = LandmarkTransformType::New();
       landmarkTransform->SetIdentity();
       landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-
-      for(int i=0; i<TImage::ImageDimension; i++)
+      for( int i = 0; i < TImage::ImageDimension; i++ )
         {
         center[i] = landmarkTransform->GetCenter()[i];
         offset[i] = landmarkTransform->GetTranslation()[i];
-        for(int j=0; j<TImage::ImageDimension; j++)
+        for( int j = 0; j < TImage::ImageDimension; j++ )
           {
-          matrix(i, j) = landmarkTransform->GetMatrix()(i, j);
+          matrix(i, j) = landmarkTransform->GetMatrix() (i, j);
           }
         }
       }
-    else if ( TImage::ImageDimension == 2 )
+    else if( TImage::ImageDimension == 2 )
       {
-      typedef Rigid2DTransform< double >        LandmarkTransformType;
-      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer< LandmarkTransformType,
-                                                 TImage, TImage > 
-                                                LandmarkTransformCalculatorType;
+      typedef Rigid2DTransform<double> LandmarkTransformType;
+      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer<LandmarkTransformType,
+                                                                     TImage, TImage>
+      LandmarkTransformCalculatorType;
 
       typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
       landmarkCalc = LandmarkTransformCalculatorType::New();
       landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
       landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
 
-      typename LandmarkTransformType::Pointer landmarkTransform; 
+      typename LandmarkTransformType::Pointer landmarkTransform;
       landmarkTransform = LandmarkTransformType::New();
       landmarkTransform->SetIdentity();
       landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-
-      for(int i=0; i<TImage::ImageDimension; i++)
+      for( int i = 0; i < TImage::ImageDimension; i++ )
         {
         center[i] = landmarkTransform->GetCenter()[i];
         offset[i] = landmarkTransform->GetTranslation()[i];
-        for(int j=0; j<TImage::ImageDimension; j++)
+        for( int j = 0; j < TImage::ImageDimension; j++ )
           {
-          matrix(i, j) = landmarkTransform->GetMatrix()(i, j);
+          matrix(i, j) = landmarkTransform->GetMatrix() (i, j);
           }
         }
       double tf;
       double sizeFixed = 0;
-      for(int i=1; i<(int)m_FixedLandmarks.size(); i++)
+      for( int i = 1; i < (int)m_FixedLandmarks.size(); i++ )
         {
-        tf = (m_FixedLandmarks[i][0] - m_FixedLandmarks[i-1][0]);
-        sizeFixed += tf*tf;
-        tf = (m_FixedLandmarks[i][1] - m_FixedLandmarks[i-1][1]);
-        sizeFixed += tf*tf;
+        tf = (m_FixedLandmarks[i][0] - m_FixedLandmarks[i - 1][0]);
+        sizeFixed += tf * tf;
+        tf = (m_FixedLandmarks[i][1] - m_FixedLandmarks[i - 1][1]);
+        sizeFixed += tf * tf;
         }
       sizeFixed = sqrt(sizeFixed);
       double sizeMoving = 0;
-      for(int i=1; i<(int)m_MovingLandmarks.size(); i++)
+      for( int i = 1; i < (int)m_MovingLandmarks.size(); i++ )
         {
-        tf = (m_MovingLandmarks[i][0] - m_MovingLandmarks[i-1][0]);
-        sizeMoving += tf*tf;
-        tf = (m_MovingLandmarks[i][1] - m_MovingLandmarks[i-1][1]);
-        sizeMoving += tf*tf;
+        tf = (m_MovingLandmarks[i][0] - m_MovingLandmarks[i - 1][0]);
+        sizeMoving += tf * tf;
+        tf = (m_MovingLandmarks[i][1] - m_MovingLandmarks[i - 1][1]);
+        sizeMoving += tf * tf;
         }
       sizeMoving = sqrt(sizeMoving);
-      double scale = sizeMoving/sizeFixed;
+      double scale = sizeMoving / sizeFixed;
       std::cout << "scale = " << scale << std::endl;
       matrix *= scale;
       }
@@ -155,10 +152,10 @@ InitialImageToImageRegistrationMethod< TImage >
     newTransform->SetTranslation( offset );
     this->SetTransform(newTransform);
 
-    return;  
+    return;
     }
 
-  typedef ImageRegionMomentsCalculator< TImage > MomentsCalculatorType;
+  typedef ImageRegionMomentsCalculator<TImage> MomentsCalculatorType;
 
   typename MomentsCalculatorType::AffineTransformType::Pointer newTransform;
   newTransform = MomentsCalculatorType::AffineTransformType::New();
@@ -170,35 +167,34 @@ InitialImageToImageRegistrationMethod< TImage >
 
     //  Moving image info
     typename TImage::IndexType       movingCenterIndex;
-    Point<double, ImageDimension>    movingCenterPoint;
+    Point<double, ImageDimension> movingCenterPoint;
 
     size = this->GetMovingImage()->GetLargestPossibleRegion().GetSize();
-
-    for(int i=0; i<ImageDimension; i++)
+    for( int i = 0; i < ImageDimension; i++ )
       {
-      movingCenterIndex[i] = size[i]/2;
+      movingCenterIndex[i] = size[i] / 2;
       }
     this->GetMovingImage()->TransformIndexToPhysicalPoint(movingCenterIndex,
                                                           movingCenterPoint);
 
     newTransform->SetCenter(movingCenterPoint);
     }
-  else if( this->m_NumberOfMoments == 0)
+  else if( this->m_NumberOfMoments == 0 )
     {
     typename TImage::SizeType    size;
 
     //  Fixed image info
     typename TImage::IndexType        fixedCenterIndex;
-    Point<double, ImageDimension>     fixedCenterPoint;
+    Point<double, ImageDimension> fixedCenterPoint;
 
     size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
     if( !this->GetUseRegionOfInterest() )
       {
       std::cout << "Init: Using full image extent" << std::endl;
-      for( int i=0; i<ImageDimension; i++ )
+      for( int i = 0; i < ImageDimension; i++ )
         {
-        fixedCenterIndex[i] = size[i]/2;
+        fixedCenterIndex[i] = size[i] / 2;
         }
       this->GetFixedImage()->TransformIndexToPhysicalPoint(fixedCenterIndex,
                                                            fixedCenterPoint);
@@ -206,7 +202,7 @@ InitialImageToImageRegistrationMethod< TImage >
     else
       {
       std::cout << "Init: Using region of interest" << std::endl;
-      for(int i=0; i<ImageDimension; i++)
+      for( int i = 0; i < ImageDimension; i++ )
         {
         fixedCenterPoint[i] = ( this->GetRegionOfInterestPoint1()[i]
                                 + this->GetRegionOfInterestPoint2()[i] ) / 2;
@@ -215,13 +211,12 @@ InitialImageToImageRegistrationMethod< TImage >
 
     //  Moving image info
     typename TImage::IndexType       movingCenterIndex;
-    Point<double, ImageDimension>    movingCenterPoint;
+    Point<double, ImageDimension> movingCenterPoint;
 
     size = this->GetMovingImage()->GetLargestPossibleRegion().GetSize();
-
-    for(int i=0; i<ImageDimension; i++)
+    for( int i = 0; i < ImageDimension; i++ )
       {
-      movingCenterIndex[i] = size[i]/2;
+      movingCenterIndex[i] = size[i] / 2;
       }
     this->GetMovingImage()->TransformIndexToPhysicalPoint(movingCenterIndex,
                                                           movingCenterPoint);
@@ -233,9 +228,9 @@ InitialImageToImageRegistrationMethod< TImage >
     newTransform->SetCenter(movingCenterPoint);
     newTransform->SetOffset(offset);
     }
-  else 
+  else
     {
-    typedef ImageRegionMomentsCalculator< TImage > MomentsCalculatorType;
+    typedef ImageRegionMomentsCalculator<TImage> MomentsCalculatorType;
 
     typename MomentsCalculatorType::Pointer momCalc;
     momCalc = MomentsCalculatorType::New();
@@ -260,7 +255,7 @@ InitialImageToImageRegistrationMethod< TImage >
       }
 
     // HELP: ImageMomentsCalculator isn't multi-threaded :(
-    //momCalc->SetNumberOfThreads( this->GetRegistrationNumberOfThreads() );
+    // momCalc->SetNumberOfThreads( this->GetRegistrationNumberOfThreads() );
     try
       {
       momCalc->Compute();
@@ -279,8 +274,7 @@ InitialImageToImageRegistrationMethod< TImage >
     fixedImageAxesTransform = momCalc->GetPhysicalAxesToPrincipalAxesTransform();
 
     typename TransformType::InputPointType fixedImageCenterOfMass;
-
-    for(unsigned int i=0; i<this->ImageDimension; i++)
+    for( unsigned int i = 0; i < this->ImageDimension; i++ )
       {
       fixedImageCenterOfMass[i] = momCalc->GetCenterOfGravity()[i];
       }
@@ -308,20 +302,20 @@ InitialImageToImageRegistrationMethod< TImage >
       return;
       }
 
-    typename MomentsCalculatorType::AffineTransformType::Pointer 
-          movingImageAxesTransform;
-    movingImageAxesTransform = 
-          momCalc->GetPrincipalAxesToPhysicalAxesTransform();
+    typename MomentsCalculatorType::AffineTransformType::Pointer
+    movingImageAxesTransform;
+    movingImageAxesTransform =
+      momCalc->GetPrincipalAxesToPhysicalAxesTransform();
 
     typename TransformType::InputPointType movingImageCenterOfMass;
-    for(unsigned int i=0; i<this->ImageDimension; i++)
+    for( unsigned int i = 0; i < this->ImageDimension; i++ )
       {
       movingImageCenterOfMass[i] = momCalc->GetCenterOfGravity()[i];
       }
 
     typename TransformType::OffsetType offset;
     offset = movingImageCenterOfMass - fixedImageCenterOfMass;
-    
+
     if( this->m_NumberOfMoments == 1 ) // Centers of mass
       {
       newTransform->SetCenter(movingImageCenterOfMass);
@@ -330,8 +324,8 @@ InitialImageToImageRegistrationMethod< TImage >
     else  // m_NumberOfMoments == 2 // Principle axes
       {
       newTransform->SetCenter(fixedImageCenterOfMass);
-      newTransform->SetMatrix(fixedImageAxesTransform->GetMatrix());
-      newTransform->SetOffset(fixedImageAxesTransform->GetOffset());
+      newTransform->SetMatrix(fixedImageAxesTransform->GetMatrix() );
+      newTransform->SetOffset(fixedImageAxesTransform->GetOffset() );
       newTransform->Compose(movingImageAxesTransform, true);
       }
     }
@@ -339,28 +333,27 @@ InitialImageToImageRegistrationMethod< TImage >
   this->SetTransform(newTransform);
 }
 
-template< class TImage >
-typename InitialImageToImageRegistrationMethod< TImage >::TransformType *
-InitialImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename InitialImageToImageRegistrationMethod<TImage>::TransformType
+* InitialImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void )
-{
-  return static_cast< TransformType  * >( Superclass::GetTransform() );
-}
+  {
+  return static_cast<TransformType  *>( Superclass::GetTransform() );
+  }
 
-template< class TImage >
-const typename InitialImageToImageRegistrationMethod< TImage >::TransformType *
-InitialImageToImageRegistrationMethod< TImage >
+template <class TImage>
+const typename InitialImageToImageRegistrationMethod<TImage>::TransformType
+* InitialImageToImageRegistrationMethod<TImage>
 ::GetTypedTransform( void ) const
-{
-  return static_cast< const TransformType  * >( this->Superclass::GetTransform() );
-}
+  {
+  return static_cast<const TransformType  *>( this->Superclass::GetTransform() );
+  }
 
-
-template< class TImage >
-typename InitialImageToImageRegistrationMethod< TImage >::TransformPointer
-InitialImageToImageRegistrationMethod< TImage >
+template <class TImage>
+typename InitialImageToImageRegistrationMethod<TImage>::TransformPointer
+InitialImageToImageRegistrationMethod<TImage>
 ::GetAffineTransform( void ) const
-{   
+{
   typename TransformType::Pointer trans = TransformType::New();
 
   const TransformType * typededTransform = this->GetTypedTransform();
@@ -371,29 +364,29 @@ InitialImageToImageRegistrationMethod< TImage >
   trans->SetOffset( typededTransform->GetOffset() );
 
   return trans;
-}   
+}
 
-template< class TImage >
-void 
-InitialImageToImageRegistrationMethod< TImage >
-::SetFixedLandmarks ( const LandmarkPointContainer& fixedLandmarks )
+template <class TImage>
+void
+InitialImageToImageRegistrationMethod<TImage>
+::SetFixedLandmarks( const LandmarkPointContainer& fixedLandmarks )
 {
   m_FixedLandmarks = fixedLandmarks;
   this->Modified();
 }
 
-template< class TImage >
-void 
-InitialImageToImageRegistrationMethod< TImage >
-::SetMovingLandmarks ( const LandmarkPointContainer& movingLandmarks )
+template <class TImage>
+void
+InitialImageToImageRegistrationMethod<TImage>
+::SetMovingLandmarks( const LandmarkPointContainer& movingLandmarks )
 {
   m_MovingLandmarks = movingLandmarks;
   this->Modified();
 }
 
-template< class TImage >
+template <class TImage>
 void
-InitialImageToImageRegistrationMethod< TImage >
+InitialImageToImageRegistrationMethod<TImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
@@ -401,10 +394,10 @@ InitialImageToImageRegistrationMethod< TImage >
   os << indent << "Number of moments = " << this->m_NumberOfMoments << std::endl;
 
   os << indent << "Compute Center Of Rotation Only = " << this->m_ComputeCenterOfRotationOnly << std::endl;
-  
+
   os << indent << "Use Landmarks = " << this->m_UseLandmarks << std::endl;
 }
 
 };
 
-#endif 
+#endif

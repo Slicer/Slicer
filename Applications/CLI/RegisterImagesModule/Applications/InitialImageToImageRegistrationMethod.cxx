@@ -3,7 +3,7 @@
   Program:   Surface Extraction Program
   Module:    $RCSfile: ExtractSurface.cxx,v $
 
-  Copyright (c) Kitware Inc. 
+  Copyright (c) Kitware Inc.
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
@@ -22,15 +22,15 @@
 
 // Description:
 // Get the PixelType and ComponentType from fileName
-void GetImageType (std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType,
-                   int & dimensions)
+void GetImageType(std::string fileName,
+                  itk::ImageIOBase::IOPixelType & pixelType,
+                  itk::ImageIOBase::IOComponentType & componentType,
+                  int & dimensions)
 {
   typedef itk::Image<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
-  imageReader->SetFileName(fileName.c_str());
+    itk::ImageFileReader<ImageType>::New();
+  imageReader->SetFileName(fileName.c_str() );
   imageReader->UpdateOutputInformation();
 
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -41,19 +41,19 @@ void GetImageType (std::string fileName,
 template <unsigned int DimensionsT>
 int DoIt( MetaCommand & command )
 {
-  typedef short     PixelType;
-  
-  typedef itk::Image< PixelType, DimensionsT >    
-                                                  ImageType;
+  typedef short PixelType;
 
-  typedef itk::InitialImageToImageRegistrationMethod< ImageType >
-                                                  RegistrationMethodType;
+  typedef itk::Image<PixelType, DimensionsT>
+  ImageType;
 
-  typedef itk::ImageToImageRegistrationMethodTestingHelper< RegistrationMethodType >   
-                                                  TestingHelperType;
+  typedef itk::InitialImageToImageRegistrationMethod<ImageType>
+  RegistrationMethodType;
+
+  typedef itk::ImageToImageRegistrationMethodTestingHelper<RegistrationMethodType>
+  TestingHelperType;
 
   //  Setup the registration
-  TestingHelperType  helper;
+  TestingHelperType helper;
 
   helper.SetFixedImageFileName( command.GetValueAsString("FixedImage").c_str() );
   helper.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
@@ -86,10 +86,10 @@ int DoIt( MetaCommand & command )
     {
     typename RegistrationMethodType::LandmarkPointContainer fixedLandmarks;
     typename RegistrationMethodType::LandmarkPointContainer movingLandmarks;
-    std::vector< double > fixedPointList;
-    std::vector< double > movingPointList;
-    std::string fixedlms = command.GetValueAsString( "FixedLandmarks" );
-    std::string movinglms = command.GetValueAsString( "MovingLandmarks" );
+    std::vector<double> fixedPointList;
+    std::vector<double> movingPointList;
+    std::string         fixedlms = command.GetValueAsString( "FixedLandmarks" );
+    std::string         movinglms = command.GetValueAsString( "MovingLandmarks" );
     MET_StringToVector<double>( fixedlms, fixedPointList );
     MET_StringToVector<double>( movinglms, movingPointList );
     unsigned int sizeV = fixedPointList.size() / DimensionsT;
@@ -97,14 +97,14 @@ int DoIt( MetaCommand & command )
       {
       sizeV = movingPointList.size() / DimensionsT;
       }
-    for( unsigned int i=0; i<sizeV; i++)
+    for( unsigned int i = 0; i < sizeV; i++ )
       {
       typename RegistrationMethodType::LandmarkPointType fixedPoint;
       typename RegistrationMethodType::LandmarkPointType movingPoint;
-      for( unsigned int j=0; j<DimensionsT; j++)
+      for( unsigned int j = 0; j < DimensionsT; j++ )
         {
-        fixedPoint[j] = fixedPointList[i*DimensionsT + j];
-        movingPoint[j] = movingPointList[i*DimensionsT + j];
+        fixedPoint[j] = fixedPointList[i * DimensionsT + j];
+        movingPoint[j] = movingPointList[i * DimensionsT + j];
         }
       fixedLandmarks.push_back( fixedPoint );
       movingLandmarks.push_back( movingPoint );
@@ -119,8 +119,8 @@ int DoIt( MetaCommand & command )
   helper.SetIntensityTolerance( command.GetValueAsFloat("FailedIntensityTolerance") );
   helper.SetRadiusTolerance( command.GetValueAsInt("FailedOffsetTolerance") );
   helper.RunRegistration();
-  //helper.PrintTest();
-  //helper.ReportResults();
+  // helper.PrintTest();
+  // helper.ReportResults();
   helper.ResampleOutputImage();
   helper.PerformRegressionTest();
 
@@ -209,8 +209,8 @@ int main(int argc, char *argv[])
     }
 
   // Determine properties of the input images
-  int dimensions = 0;
-  itk::ImageIOBase::IOPixelType pixelType;
+  int                               dimensions = 0;
+  itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try

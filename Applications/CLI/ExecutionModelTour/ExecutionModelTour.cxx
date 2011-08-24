@@ -9,7 +9,7 @@
 
 // STD includes
 
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
@@ -20,30 +20,30 @@ int main (int argc, char *argv[])
   std::cout << "Boolean 1 = " << boolean1 << std::endl;
   std::cout << "Boolean 2 = " << boolean2 << std::endl;
   std::cout << "Boolean 3 = " << boolean3 << std::endl;
-  
+
   // tease apart the scene files and the nodes
   std::string::size_type loc;
-  std::string transform1Filename, transform2Filename;
-  std::string transform1ID, transform2ID;
-  
+  std::string            transform1Filename, transform2Filename;
+  std::string            transform1ID, transform2ID;
+
   loc = transform1.find_last_of("#");
-  if (loc != std::string::npos)
+  if( loc != std::string::npos )
     {
     transform1Filename = std::string(transform1.begin(),
                                      transform1.begin() + loc);
     loc++;
 
-    transform1ID = std::string(transform1.begin()+loc, transform1.end());
+    transform1ID = std::string(transform1.begin() + loc, transform1.end() );
     }
 
   loc = transform2.find_last_of("#");
-  if (loc != std::string::npos)
+  if( loc != std::string::npos )
     {
     transform2Filename = std::string(transform2.begin(),
                                      transform2.begin() + loc);
     loc++;
 
-    transform2ID = std::string(transform2.begin()+loc, transform2.end());
+    transform2ID = std::string(transform2.begin() + loc, transform2.end() );
     }
 
   std::cout << "Transform1 filename: " << transform1Filename << std::endl;
@@ -51,23 +51,23 @@ int main (int argc, char *argv[])
   std::cout << "Transform2 filename: " << transform2Filename << std::endl;
   std::cout << "Transform2 ID: " << transform2ID << std::endl;
 
-
-  if (transform1Filename != transform2Filename)
+  if( transform1Filename != transform2Filename )
     {
-    std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: " << transform1Filename << " and " << transform2Filename << std::endl;
+    std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: "
+              << transform1Filename << " and " << transform2Filename << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   scene->SetURL( transform1Filename.c_str() );
   scene->Import();
 
   vtkMRMLNode *node = scene->GetNodeByID( transform1ID );
-  if (node)
+  if( node )
     {
     vtkMRMLNode *outNode = scene->GetNodeByID( transform2ID );
 
-    if (outNode)
+    if( outNode )
       {
       outNode->Copy( node );
       scene->Commit( transform2Filename.c_str() );
@@ -87,7 +87,7 @@ int main (int argc, char *argv[])
 
   // Write out the return parameters in "name = value" form
   std::ofstream rts;
-  rts.open(returnParameterFile.c_str());
+  rts.open(returnParameterFile.c_str() );
   rts << "anintegerreturn =  10" << std::endl;
   rts << "abooleanreturn = true" << std::endl;
   rts << "afloatreturn = 34.2" << std::endl;
