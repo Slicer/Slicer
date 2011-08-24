@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Registration</category>
+  <category>Legacy.Registration</category>
   <title>Robust Multiresolution Affine Registration</title>
   <description>Provides affine registration using multiple resolution levels and decomposed affine transforms.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>

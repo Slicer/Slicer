@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Registration</category>
+  <category>Legacy.Registration</category>
   <title>Expert Automated Registration</title>
   <index>7</index>
   <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>

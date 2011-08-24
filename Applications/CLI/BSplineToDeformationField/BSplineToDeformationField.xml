@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Converters</category>
+  <category>Legacy.Converters</category>
   <title>BSpline to deformation field</title>
   <description>Create a dense deformation field from a bspline+bulk transform.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>

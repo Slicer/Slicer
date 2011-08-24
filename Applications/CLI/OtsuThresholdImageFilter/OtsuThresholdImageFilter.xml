@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable version="1.0" xmlns="http://slicer.org/module-description/1.0#">
   <category>
-  Filtering
+  Legacy.Filtering
   </category>
   <title>
   Otsu Threshold

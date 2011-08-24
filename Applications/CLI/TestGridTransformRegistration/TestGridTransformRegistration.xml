@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Registration</category>
+  <category>Legacy.Registration</category>
   <title>Test GridTransform registration</title>
   <index>9</index>
   <description>Generates a GridTransform to test the communication facilities</description>
