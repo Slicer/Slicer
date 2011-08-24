@@ -60,7 +60,6 @@ set(Slicer_HOME "${Slicer_BINARY_DIR}")
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
-      -DBUILD_TESTING:BOOL=ON
     #################### Propogate the Slicer Environment
     ## -- This could be some other variable to indicate a slicer build
       -DINTEGRATE_WITH_SLICER:BOOL=ON
@@ -86,6 +85,7 @@ set(Slicer_HOME "${Slicer_BINARY_DIR}")
       -DUSE_GTRACT:BOOL=ON
       -DUSE_BRAINSABC:BOOL=ON
       -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+      -DBUILD_TESTING:BOOL=OFF
     INSTALL_COMMAND ""
     DEPENDS
       ${SlicerBRAINSTools_DEPENDENCIES}
