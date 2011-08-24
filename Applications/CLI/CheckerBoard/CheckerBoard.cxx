@@ -14,14 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
-
 #include "itkResampleImageFilter.h"
 #include "itkImageFileWriter.h"
 #include "itkPluginUtilities.h"

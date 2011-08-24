@@ -18,14 +18,6 @@
 // This file is intended to be compiled and linked against a shared
 // library CLP to prevent the need to compile twice.
 
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
-
 #ifdef WIN32
 #define MODULE_IMPORT __declspec(dllimport)
 #else

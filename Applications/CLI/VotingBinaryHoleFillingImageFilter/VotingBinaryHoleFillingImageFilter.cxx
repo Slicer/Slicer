@@ -16,14 +16,6 @@
 // VotingBinaryHoleFillImageFilter.cxx example that is distributed
 // with the ITK.
 
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkVotingBinaryHoleFillingImageFilter.h"

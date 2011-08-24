@@ -25,14 +25,6 @@ This is the default space for NRRD header.
 gradient directions is the same as the ImageOrientationPatient
 
 =========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
-
 #include "itkImageSeriesReader.h"
 
 #include "itkRawImageIO.h"
