@@ -19,13 +19,14 @@
 #include "vtkSlicerTractographyLogic.h"
 
 // MRML includes
-//#ifdef TRACTOGRAPHY_MRML_USE_vtkTeem
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-#include "vtkMRMLFiberBundleLineDisplayNode.h"
-#include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLFiberBundleTubeDisplayNode.h"
-//#endif
+#include <vtkMRMLConfigure.h>
+#ifdef MRML_USE_vtkTeem
+# include "vtkMRMLFiberBundleGlyphDisplayNode.h"
+# include "vtkMRMLFiberBundleLineDisplayNode.h"
+# include "vtkMRMLFiberBundleNode.h"
+# include "vtkMRMLFiberBundleStorageNode.h"
+# include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#endif
 
 // VTK includes
 #include <vtkNew.h>
@@ -75,8 +76,7 @@ void vtkSlicerTractographyLogic::RegisterNodes()
     return;
     }
 
-//#ifdef TRACTOGRAPHY_MRML_USE_vtkTeem
-  
+#ifdef MRML_USE_vtkTeem
   vtkMRMLFiberBundleNode *fbn =
                          vtkMRMLFiberBundleNode::New();
   this->GetMRMLScene()->RegisterNodeClass (fbn);
@@ -101,7 +101,7 @@ void vtkSlicerTractographyLogic::RegisterNodes()
                          vtkMRMLFiberBundleStorageNode::New();
   this->GetMRMLScene()->RegisterNodeClass (fbsn);
   fbsn->Delete();
-//#endif
+#endif
 }
 
 
