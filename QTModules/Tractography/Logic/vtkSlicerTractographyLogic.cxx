@@ -31,7 +31,6 @@
 // VTK includes
 #include <vtkNew.h>
 
-
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTractographyLogic);
 
@@ -75,33 +74,11 @@ void vtkSlicerTractographyLogic::RegisterNodes()
     {
     return;
     }
-
 #ifdef MRML_USE_vtkTeem
-  vtkMRMLFiberBundleNode *fbn =
-                         vtkMRMLFiberBundleNode::New();
-  this->GetMRMLScene()->RegisterNodeClass (fbn);
-  fbn->Delete();
-
-  vtkMRMLFiberBundleLineDisplayNode *fbldn =
-                         vtkMRMLFiberBundleLineDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass (fbldn);
-  fbldn->Delete();
-  
-  vtkMRMLFiberBundleTubeDisplayNode *fbtdn =
-                         vtkMRMLFiberBundleTubeDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass (fbtdn);
-  fbtdn->Delete();
-  
-  vtkMRMLFiberBundleGlyphDisplayNode *fbgdn =
-                         vtkMRMLFiberBundleGlyphDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass (fbgdn);
-  fbgdn->Delete();
-
-  vtkMRMLFiberBundleStorageNode *fbsn =
-                         vtkMRMLFiberBundleStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass (fbsn);
-  fbsn->Delete();
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleLineDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleTubeDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleGlyphDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleStorageNode>().GetPointer());
 #endif
 }
-
-
