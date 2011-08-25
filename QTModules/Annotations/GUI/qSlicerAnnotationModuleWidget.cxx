@@ -109,10 +109,10 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // annotation tools
   q->connect(this->fiducialTypeButton, SIGNAL(clicked()), q,
       SLOT(onFiducialNodeButtonClicked()));
-  q->connect(this->textTypeButton, SIGNAL(clicked()), q,
-      SLOT(onTextNodeButtonClicked()));
-  q->connect(this->bidimensionalTypeButton, SIGNAL(clicked()), q,
-      SLOT(onBidimensionalNodeButtonClicked()));
+//  q->connect(this->textTypeButton, SIGNAL(clicked()), q,
+//      SLOT(onTextNodeButtonClicked()));
+//  q->connect(this->bidimensionalTypeButton, SIGNAL(clicked()), q,
+//      SLOT(onBidimensionalNodeButtonClicked()));
   q->connect(this->rulerTypeButton, SIGNAL(clicked()), q,
       SLOT(onRulerNodeButtonClicked()));
   q->connect(this->roiTypeButton, SIGNAL(clicked()), q,
@@ -142,11 +142,12 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   q->connect(this->jumpSlicesButton, SIGNAL(clicked()), q,
       SLOT(onJumpSlicesButtonClicked()));
 
+  /*
   q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
       SLOT(moveDownSelected()));
   q->connect(this->moveUpSelectedButton, SIGNAL(clicked()),
       SLOT(moveUpSelected()));
-
+  */
   q->connect(this->addHierarchyButton, SIGNAL(clicked()),
       SLOT(onAddHierarchyButtonClicked()));
   q->connect(this->deleteSelectedButton, SIGNAL(clicked()),
@@ -590,14 +591,14 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationButtons()
 {
   Q_D(qSlicerAnnotationModuleWidget);
   
-  d->textTypeButton->setChecked(false);
+  //d->textTypeButton->setChecked(false);
   //d->angleTypeButton->setChecked(false);
   d->roiTypeButton->setChecked(false);
   d->fiducialTypeButton->setChecked(false);
   //d->splineTypeButton->setChecked(false);
   //d->stickyTypeButton->setChecked(false);
   d->rulerTypeButton->setChecked(false);
-  d->bidimensionalTypeButton->setChecked(false);
+  //d->bidimensionalTypeButton->setChecked(false);
   d->screenShot->setChecked(false);
 }
 //-----------------------------------------------------------------------------
@@ -626,14 +627,14 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->textTypeButton->setEnabled(false);
+  //d->textTypeButton->setEnabled(false);
   //d->angleTypeButton->setEnabled(false);
   d->roiTypeButton->setEnabled(false);
   d->fiducialTypeButton->setEnabled(false);
   //d->splineTypeButton->setEnabled(false);
   //d->stickyTypeButton->setEnabled(false);
   d->rulerTypeButton->setEnabled(false);
-  d->bidimensionalTypeButton->setEnabled(false);
+  //d->bidimensionalTypeButton->setEnabled(false);
   d->screenShot->setEnabled(false);
 }
 
@@ -642,14 +643,14 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->textTypeButton->setEnabled(true);
+  //d->textTypeButton->setEnabled(true);
   //d->angleTypeButton->setEnabled(true);
   d->roiTypeButton->setEnabled(true);
   d->fiducialTypeButton->setEnabled(true);
   //d->splineTypeButton->setEnabled(true);
   //d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
-  d->bidimensionalTypeButton->setEnabled(true);
+  //d->bidimensionalTypeButton->setEnabled(true);
   d->screenShot->setEnabled(true);
 }
 
@@ -742,7 +743,7 @@ void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  d->textTypeButton->setChecked(true);
+  //d->textTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 
@@ -823,7 +824,7 @@ void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  d->bidimensionalTypeButton->setChecked(true);
+  //d->bidimensionalTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 
@@ -1067,12 +1068,12 @@ void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInter
     else if (activeAnnotationType == QString("vtkMRMLAnnotationBidimensionalNode"))
       {
       this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::BidimensionalNode;
-      d->bidimensionalTypeButton->setChecked(true);
+      //d->bidimensionalTypeButton->setChecked(true);
       }
     else if (activeAnnotationType == QString("vtkMRMLAnnotationTextNode"))
       {
       this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
-      d->textTypeButton->setChecked(true);
+      //d->textTypeButton->setChecked(true);
       }
     else if (activeAnnotationType == QString("vtkMRMLAnnotationROINode"))
       {

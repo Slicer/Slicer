@@ -60,7 +60,7 @@ void qSlicerAnnotationsModule::setup()
   threeDdisplayableManagers
       //<< "TextThreeDView"
       //<< "AngleThreeDView"
-      << "Text"
+      //<< "Text"
       << "Fiducial"
       //<< "Bidimensional"
       << "Ruler"
@@ -80,9 +80,9 @@ void qSlicerAnnotationsModule::setup()
   // 2D
   QStringList slicerViewDisplayableManagers;
   slicerViewDisplayableManagers
-      << "Text"
+      //<< "Text"
       << "Fiducial"
-      << "Bidimensional"
+      //<< "Bidimensional"
       << "Ruler"
       << "ROI"
       ;

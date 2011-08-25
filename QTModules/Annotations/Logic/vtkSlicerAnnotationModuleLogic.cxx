@@ -323,9 +323,9 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
     vtkDebugMacro("vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/MousePlaceMode.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistance.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensional.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensional.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationStickyNode", "");

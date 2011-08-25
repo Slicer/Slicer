@@ -15,8 +15,8 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+     <property name="text">
       <string>Annotations</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -28,23 +28,6 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QPushButton" name="textTypeButton">
-             <property name="toolTip">
-              <string>Text annotation</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QPushButton" name="fiducialTypeButton">
              <property name="toolTip">
@@ -90,32 +73,6 @@
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
                <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="bidimensionalTypeButton">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Bidimensional orthogonal measurement. This is a 2D only annotation</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -305,34 +262,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="moveUpSelectedButton">
-             <property name="toolTip">
-              <string>Move highlighted annotations up in the list</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationMoveUp.png</normaloff>:/Icons/AnnotationMoveUp.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="moveDownSelectedButton">
-             <property name="toolTip">
-              <string>Move highlighted annotations down in the list</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationMoveDown.png</normaloff>:/Icons/AnnotationMoveDown.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="addHierarchyButton">
              <property name="toolTip">
               <string>Create a new hierarchy. If a hierarchy is currently highlighted, the new one will be a sub-hierarchy.</string>
@@ -487,57 +416,43 @@
         </layout>
        </widget>
       </item>
-      <item>
-       <widget class="ctkCollapsibleGroupBox" name="advancedCollapsibleGroupBox">
-        <property name="title">
-         <string>Advanced</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <zorder>CTKCollapsibleGroupBox_3</zorder>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active" stdset="0">
+     <property name="active">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active" stdset="0">
+     <property name="active">
       <bool>true</bool>
      </property>
     </widget>
