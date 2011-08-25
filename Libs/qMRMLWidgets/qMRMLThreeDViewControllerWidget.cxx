@@ -174,7 +174,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
 
   this->Superclass::init();
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
-  qobject_cast<QBoxLayout*>(q->layout())->addStretch(1);
+  this->BarLayout->addStretch(1);
   this->setColor(qMRMLColors::threeDViewBlue());
 }
 

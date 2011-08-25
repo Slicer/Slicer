@@ -25,6 +25,8 @@
 #include <QObject>
 class QLabel;
 class QToolButton;
+class QHBoxLayout;
+class QVBoxLayout;
 
 // CTK includes
 class ctkPopupWidget;
@@ -52,6 +54,10 @@ public:
   QToolButton*                     PinButton;
   QLabel*                          ViewLabel;
   ctkPopupWidget*                  PopupWidget;
+  QWidget*                         BarWidget;
+  QHBoxLayout*                     BarLayout;
+  QVBoxLayout*                     ControllerLayout;
+  qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior;
 
   virtual bool eventFilter(QObject* object, QEvent* event);
 

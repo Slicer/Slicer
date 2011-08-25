@@ -81,6 +81,7 @@ qSlicerSliceControllerModuleWidgetPrivate::createSliceController(vtkMRMLSliceNod
   widget->setSliceViewName( sn->GetName() ); // call before setting slice node
   widget->setSliceViewLabel( sn->GetLayoutLabel() );
   widget->setMRMLSliceNode( sn );
+  widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
 
   qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sn->GetLayoutName());
   widget->setSliceLogics(layoutManager->mrmlSliceLogics());

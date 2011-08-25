@@ -235,7 +235,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
                 q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
 
-  q->layout()->addWidget(this->SliceOffsetSlider);
+  this->BarLayout->addWidget(this->SliceOffsetSlider);
+
   // Move the spinbox in the popup instead of having it in the slider bar
   dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
 
