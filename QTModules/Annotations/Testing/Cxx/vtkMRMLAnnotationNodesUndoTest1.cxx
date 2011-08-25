@@ -99,8 +99,8 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   factory->RegisterDisplayableManager("vtkMRMLAnnotationFiducialDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationRulerDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationBidimensionalDisplayableManager");
-  // need a model displayable manager for the coord transform testing/picking
-//  factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
+  // need a model displayable manager to test for superclass conflicts
+  factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
       factory->InstantiateDisplayableManagers(rr);
@@ -177,6 +177,16 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   scene->Undo();
   std::cout << "After undo for bidimensional" << std::endl;
 
+  // and one more test: add a fiducial after all the undo's are done
+  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > doFid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
+  doFid->SetFiducialWorldCoordinates(f1);
+  scene->SaveStateForUndo();
+  doFid->Initialize(scene);
+  std::cout << "After adding a new fiducial" << std::endl;
+  f1[2] = -5.4;
+  doFid->SetFiducialWorldCoordinates(f1);
+  std::cout << "After resetting the world position of the new fiducial" << std::endl;
+  
   renderRequestCallback->Delete();
   if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
   factory->Delete();
