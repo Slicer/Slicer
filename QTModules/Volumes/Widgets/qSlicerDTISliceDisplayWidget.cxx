@@ -101,64 +101,23 @@ void qSlicerDTISliceDisplayWidgetPrivate::init()
 void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBounds[2])
 {
   Q_Q(qSlicerDTISliceDisplayWidget);
-  switch(q->displayPropertiesNode() ?
-         q->displayPropertiesNode()->GetColorGlyphBy() : -1)
-    {
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D11:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
-      {
-      scalarBounds[0] = 0.;
-      scalarBounds[1] = 1.;
+  const int ScalarInvariant = (q->displayPropertiesNode() ?
+         q->displayPropertiesNode()->GetColorGlyphBy() : -1);
+
+  if vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant)
+  {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarBounds);
+  } else {
       vtkPolyData* glyphs = this->DisplayNode->GetPolyData();
       if (glyphs)
         {
         glyphs->GetScalarRange(scalarBounds);
         }
-      }
-      break;
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
-      scalarBounds[0] = 0.;
-      scalarBounds[1] = 1.414213562; // sqrt(2)
-      break;
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
-      scalarBounds[0] = 0.;
-      scalarBounds[1] = 1;
-      break;
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
-      scalarBounds[0] = 0.;
-      scalarBounds[1] = 255;
-      break;
-    default:
-      scalarBounds[0] = 0;
-      scalarBounds[1] = 255;
-      break;
-    }
-  // Calling GetPolyData() forces the Scalar Range to be recomputed if auto range 
-  // is true
-  this->DisplayNode->GetPolyData();
-  scalarBounds[0] = qMin (scalarBounds[0], q->displayNode()->GetScalarRange()[0]);
-  scalarBounds[1] = qMax (scalarBounds[1], q->displayNode()->GetScalarRange()[1]);
+  }
+//  Commented this so the glyphs and bundles are colored consistently
+//  this->DisplayNode->GetPolyData();
+//  scalarBounds[0] = qMin (scalarBounds[0], q->displayNode()->GetScalarRange()[0]);
+//  scalarBounds[1] = qMax (scalarBounds[1], q->displayNode()->GetScalarRange()[1]);
 }
 
 // --------------------------------------------------------------------------
@@ -292,8 +251,10 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
       scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
       scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
     {
+    double scalarRange[2];
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarRange);
     this->setManualScalarRange(true);
-    this->setScalarRange(0, 255);
+    this->setScalarRange(scalarRange);
     }
 }
 
