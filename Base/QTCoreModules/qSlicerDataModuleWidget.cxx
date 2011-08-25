@@ -214,6 +214,12 @@ void qSlicerDataModuleWidget::onSceneModelChanged(const QString& modelType)
   Q_D(qSlicerDataModuleWidget);
   d->MRMLTreeView->setSceneModelType( modelType );
 
+  d->MRMLTreeView->header()->setStretchLastSection(false);
+  d->MRMLTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
+  d->MRMLTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+
+  this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
+
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
 }
