@@ -153,7 +153,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddLineDisplayNode()
       vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
-      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
       glyphDTDPN->Delete();
 
       this->AddAndObserveDisplayNodeID(node->GetID());
@@ -179,8 +179,8 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddTubeDisplayNode()
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
       glyphDTDPN->Delete();
-      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-      
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
+    
       this->AddAndObserveDisplayNodeID(node->GetID());
       node->SetPolyData(this->GetSubsampledPolyData());
       }
@@ -204,7 +204,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
       glyphDTDPN->Delete();
-      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
 
       this->AddAndObserveDisplayNodeID(node->GetID());
       node->SetPolyData(this->GetSubsampledPolyData());
@@ -275,6 +275,8 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
 {
   if (this->GetPolyData())
   {
+
+    vtkDebugMacro(<< this->GetClassName() << "Updating the subsampling");
     vtkSelection* sel = vtkSelection::SafeDownCast(this->ExtractSelectedPolyDataIds->GetInput(1));
     if (sel)
     {
@@ -346,5 +348,4 @@ void vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes()
   fbdn->SetVisibility(0);
   fbdn = this->AddGlyphDisplayNode();
   fbdn->SetVisibility(0);
-  
 }

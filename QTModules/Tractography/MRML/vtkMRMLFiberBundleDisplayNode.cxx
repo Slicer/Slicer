@@ -15,10 +15,17 @@ Version:   $Revision: 1.3 $
 
 
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkExtractPolyDataGeometry.h"
+#include "vtkPlanes.h"
+#include "vtkCommand.h"
+
 vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleDisplayNode, DiffusionTensorDisplayPropertiesNodeID)
+vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleDisplayNode, AnnotationNodeID)
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleDisplayNode::New()
@@ -38,12 +45,26 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
   this->BackfaceCulling = 0;
 
+
+  this->OutputPolyData = NULL;
+
   // Enumerated
   this->ColorMode = this->colorModeSolid;
 
   this->DiffusionTensorDisplayPropertiesNode = NULL;
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
+  this->AnnotationNode = NULL;
+  this->AnnotationNodeID = NULL;
 
+  this->ExtractPolyDataGeometry = vtkExtractPolyDataGeometry::New();
+  this->ExtractPolyDataGeometry->ExtractInsideOn();
+  this->ExtractPolyDataGeometry->ExtractBoundaryCellsOn();
+  this->Planes = vtkPlanes::New();
+
+  this->FilterWithAnnotationNode = 0;
+
+  this->ScalarRange[0] = 0;
+  this->ScalarRange[1] = 255;
 }
 
 
@@ -52,6 +73,9 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 vtkMRMLFiberBundleDisplayNode::~vtkMRMLFiberBundleDisplayNode()
 {
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
+  this->SetAndObserveAnnotationNodeID(NULL);
+  this->ExtractPolyDataGeometry->Delete();
+  this->Planes->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -68,6 +92,11 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
   if (this->DiffusionTensorDisplayPropertiesNodeID != NULL) 
     {
     of << indent << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
+    }
+
+  if (this->AnnotationNodeID != NULL) 
+    {
+    of << indent << " AnnotationNodeRef=\"" << this->AnnotationNodeID << "\"";
     }
 }
 
@@ -99,7 +128,10 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
       {
       this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->FiberLineDiffusionTensorDisplayPropertiesNodeID, this);
+      }
+    else if (!strcmp(attName, "AnnotationNodeRef")) 
+      {
+      this->SetAnnotationNodeID(attValue);
       }
     }  
 
@@ -120,7 +152,8 @@ void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
- 
+  this->SetAnnotationNodeID(node->AnnotationNodeID);
+
   this->EndModify(disabledModify);
   }
 
@@ -138,6 +171,19 @@ void vtkMRMLFiberBundleDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
+  if (vtkMRMLAnnotationROINode::SafeDownCast(caller) && (event == vtkCommand::ModifiedEvent))
+  {
+   vtkDebugMacro("Updating the ROI node");
+   vtkMRMLAnnotationROINode *AnnotationROI = vtkMRMLAnnotationROINode::SafeDownCast(this->AnnotationNode);
+   AnnotationROI->GetTransformedPlanes(this->Planes);
+   this->ExtractPolyDataGeometry->SetImplicitFunction(this->Planes); 
+   //Are events meant to be cascaded?
+   if (this->GetFilterWithAnnotationNode())
+   {
+     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
+   }
+  }
+
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
@@ -148,6 +194,7 @@ void vtkMRMLFiberBundleDisplayNode::UpdateScene(vtkMRMLScene *scene)
    Superclass::UpdateScene(scene);
 
    this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(this->GetDiffusionTensorDisplayPropertiesNodeID());
+   this->SetAndObserveAnnotationNodeID(this->GetAnnotationNodeID());
 }
 
 //-----------------------------------------------------------
@@ -159,6 +206,10 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
     {
     this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
     }
+  if (this->AnnotationNodeID != NULL && this->Scene->GetNodeByID(this->AnnotationNodeID) == NULL)
+    {
+    this->SetAndObserveAnnotationNodeID(NULL);
+    }
 }
 
 
@@ -168,6 +219,10 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const c
   if (this->DiffusionTensorDisplayPropertiesNodeID && !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
     {
     this->SetDiffusionTensorDisplayPropertiesNodeID(newID);
+    }
+  if (this->AnnotationNodeID && !strcmp(oldID, this->AnnotationNodeID))
+    {
+    this->SetAnnotationNodeID(newID);
     }
 }
 
@@ -204,6 +259,68 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
   vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
 
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetFilterWithAnnotationNode(int _arg)
+  {
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting FilterWithAnnotationNode  to " << _arg); 
+  if (this->FilterWithAnnotationNode != _arg)
+    { 
+    this->FilterWithAnnotationNode = _arg;
+
+    if (this->FilterWithAnnotationNode)
+    {
+      this->ExtractPolyDataGeometry->SetInput(this->PolyData);
+    }
+
+    this->Modified();
+    this->UpdateReferences();
+    }
+  } 
+
+//----------------------------------------------------------------------------
+vtkMRMLAnnotationNode* vtkMRMLFiberBundleDisplayNode::GetAnnotationNode ( )
+{
+  vtkMRMLAnnotationNode* node = NULL;
+
+  // Find the node corresponding to the ID we have saved.
+  if  ( this->GetScene ( ) && this->GetAnnotationNodeID ( ) )
+    {
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->AnnotationNodeID );
+    node = vtkMRMLAnnotationNode::SafeDownCast ( cnode );
+    }
+
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveAnnotationNodeID ( const char *id )
+{
+  if (id)
+    {
+    vtkDebugMacro("Observing annotation Node: "<<id);
+    }
+  // Stop observing any old node
+  vtkSetAndObserveMRMLObjectMacro (this->AnnotationNode, NULL);
+
+  // Set the ID. This is the "ground truth" reference to the node.
+  this->SetAnnotationNodeID ( id );
+
+  // Get the node corresponding to the ID. This pointer is only to observe the object.
+  vtkMRMLNode *cnode = this->GetAnnotationNode ( );
+
+  // Observe the node using the pointer.
+  vtkSetAndObserveMRMLObjectMacro ( this->AnnotationNode , cnode );
+
+  vtkMRMLAnnotationROINode* AnnotationROI = vtkMRMLAnnotationROINode::SafeDownCast(this->AnnotationNode);
+  if ((this->AnnotationNode) && (AnnotationROI))
+  {
+   AnnotationROI->GetTransformedPlanes(this->Planes);
+   this->ExtractPolyDataGeometry->SetImplicitFunction(this->Planes); 
+  }
+
+}
+
 
 void vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(std::vector<int> &modes)
 {

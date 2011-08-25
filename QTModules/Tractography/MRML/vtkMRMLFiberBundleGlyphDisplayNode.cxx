@@ -14,8 +14,10 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkExtractPolyDataGeometry.h"
 
 #include "vtkDiffusionTensorGlyph.h"
+#include "vtkCleanPolyData.h"
 
 
 #include "vtkMRMLScene.h"
@@ -54,7 +56,11 @@ vtkMRMLNode* vtkMRMLFiberBundleGlyphDisplayNode::CreateNodeInstance()
 vtkMRMLFiberBundleGlyphDisplayNode::vtkMRMLFiberBundleGlyphDisplayNode()
 {
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
-
+  this->CleanPolyData = vtkCleanPolyData::New();
+  this->CleanPolyData->ConvertLinesToPointsOff();
+  this->CleanPolyData->ConvertPolysToLinesOff();
+  this->CleanPolyData->ConvertStripsToPolysOff();
+  this->CleanPolyData->PointMergingOff();
 
   this->TwoDimensionalVisibility = 0;
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
@@ -66,6 +72,7 @@ vtkMRMLFiberBundleGlyphDisplayNode::~vtkMRMLFiberBundleGlyphDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->DiffusionTensorGlyphFilter->Delete();
+  this->CleanPolyData->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -139,9 +146,17 @@ void vtkMRMLFiberBundleGlyphDisplayNode::PrintSelf(ostream& os, vtkIndent indent
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 {
-  if (this->DiffusionTensorGlyphFilter)
+  if ((this->DiffusionTensorGlyphFilter) && glyphPolyData != this->PolyData)
     {
-    this->DiffusionTensorGlyphFilter->SetInput(glyphPolyData);
+    Superclass::SetPolyData(glyphPolyData);
+    if ((this->GetFilterWithAnnotationNode()) && (this->ExtractPolyDataGeometry))
+    {
+      this->ExtractPolyDataGeometry->SetInput(glyphPolyData);
+      this->CleanPolyData->SetInput(this->ExtractPolyDataGeometry->GetOutput());
+      this->DiffusionTensorGlyphFilter->SetInput(this->CleanPolyData->GetOutput());
+    }
+    else
+      this->DiffusionTensorGlyphFilter->SetInput(glyphPolyData);
     }
 }
 
@@ -150,7 +165,7 @@ vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
 {
   if (this->DiffusionTensorGlyphFilter)
     {
-    this->UpdatePolyDataPipeline();
+    //this->UpdatePolyDataPipeline();
     //this->DiffusionTensorGlyphFilter->Update();
     return this->DiffusionTensorGlyphFilter->GetOutput();
     }
@@ -163,9 +178,22 @@ vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline() 
 {
+
+  if (this->DiffusionTensorGlyphFilter)
+  {
+    if ((this->GetFilterWithAnnotationNode()) && (this->ExtractPolyDataGeometry))
+    {
+      this->ExtractPolyDataGeometry->SetInput(this->PolyData);
+      this->CleanPolyData->SetInput(this->ExtractPolyDataGeometry->GetOutput());
+      this->DiffusionTensorGlyphFilter->SetInput(this->CleanPolyData->GetOutput());
+    } else {
+      this->DiffusionTensorGlyphFilter->SetInput(this->PolyData);
+    }
+  }
+
   // set display properties according to the tensor-specific display properties node for glyphs
   vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
-  
+ 
   if (DiffusionTensorDisplayNode != NULL) {
     // TO DO: need filter to calculate FA, average FA, etc. as requested
     
@@ -283,13 +311,17 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
     //this->ScalarVisibilityOff( );
     }
    
-  if ( this->GetScalarVisibility() && this->DiffusionTensorGlyphFilter->GetInput() != NULL )
+  if (this->GetAutoScalarRange() && this->GetScalarVisibility() && this->DiffusionTensorGlyphFilter->GetInput() != NULL )
     {
       if (this->GetColorMode ( ) != vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
       {
-        const int ScalarInvariant = this->GetColorMode();
+        int ScalarInvariant = 0;
+        if (DiffusionTensorDisplayPropertiesNode)
+        {
+         ScalarInvariant = DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( );
+        }
         double range[2];
-        if (vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
+        if ( DiffusionTensorDisplayPropertiesNode && vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
         {
           vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
         } else {

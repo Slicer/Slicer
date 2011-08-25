@@ -123,7 +123,6 @@ protected:
   virtual void UpdateSubsampling();
   virtual void CleanSubsampling();
 
-
 };
 
 #endif

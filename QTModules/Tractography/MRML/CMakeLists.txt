@@ -48,6 +48,7 @@ endif()
 set(module_mrml_target_libraries
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
+  ${ANNOTATION_LIBRARIES}
   )
 if(MRML_USE_vtkTeem)
   list(APPEND module_mrml_target_libraries vtkTeem)
