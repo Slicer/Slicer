@@ -104,9 +104,9 @@ void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBound
   const int ScalarInvariant = (q->displayPropertiesNode() ?
          q->displayPropertiesNode()->GetColorGlyphBy() : -1);
 
-  if vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant)
+  if (vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
   {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarBounds);
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, scalarBounds);
   } else {
       vtkPolyData* glyphs = this->DisplayNode->GetPolyData();
       if (glyphs)
@@ -252,9 +252,9 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
       scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
     {
     double scalarRange[2];
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarRange);
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarInvariant, scalarRange);
     this->setManualScalarRange(true);
-    this->setScalarRange(scalarRange);
+    this->setScalarRange(scalarRange[0], scalarRange[1]);
     }
 }
 

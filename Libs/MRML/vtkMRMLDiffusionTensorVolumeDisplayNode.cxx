@@ -67,7 +67,7 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
- this->ScalarInvariant = vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy;
+ this->ScalarInvariant = vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation;
  this->DTIMathematics = vtkDiffusionTensorMathematics::New();
  this->DTIMathematicsAlpha = vtkDiffusionTensorMathematics::New();
  this->Threshold->SetInput( this->DTIMathematics->GetOutput());
