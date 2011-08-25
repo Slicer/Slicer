@@ -48,6 +48,7 @@ vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()
   this->VolumeNodeID = NULL;
   this->HideFromEditors = false;
   this->InsideOut = 0;
+  this->InteractiveMode = 0;
   
   // default placement of the widget as in Slicer3
   this->SetXYZ(0,0,0);
