@@ -51,7 +51,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="frame_2">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -64,19 +64,68 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="percentageOfFibersShownLabel">
         <property name="text">
          <string>Percentage of Fibers Shown</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2">
        <widget class="ctkSliderWidget" name="percentageOfFibersShown">
         <property name="maximum">
          <double>100.000000000000000</double>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="ROIForFiberFilteringLabel">
+        <property name="text">
+         <string>ROI for fiber filtering</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QFrame" name="frame_3">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="qMRMLNodeComboBox" name="ROIForFiberFilteringMRMLNodeSelector">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLAnnotationROINode</string>
+            </stringlist>
+           </property>
+           <property name="showHidden">
+            <bool>true</bool>
+           </property>
+           <property name="selectNodeUponCreation">
+            <bool>false</bool>
+           </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="editEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="activateROIFilteringCheckBox"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -420,33 +469,17 @@
   </connection>
   <connection>
    <sender>qSlicerTractographyDisplayModule</sender>
-   <signal>percentageOfFibersShownChanged(double)</signal>
-   <receiver>percentageOfFibersShown</receiver>
-   <slot>setValue(double)</slot>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ROIForFiberFilteringMRMLNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>218</x>
-     <y>25</y>
-    </hint>
-    <hint type="destinationlabel">
      <x>174</x>
      <y>349</y>
     </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>percentageOfFibersShown</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>qSlicerTractographyDisplayModule</receiver>
-   <slot>setPercentageOfFibersShown(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>69</y>
-    </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>349</y>
+     <x>259</x>
+     <y>147</y>
     </hint>
    </hints>
   </connection>

@@ -49,6 +49,8 @@ set(module_widgets_resources
 # Additional Target libraries
 set(module_widgets_target_libraries
   vtkSlicerTractographyDisplayModuleLogic
+  ${MRML_LIBRARIES}
+  vtkSlicerAnnotationsModuleMRML
   )
 
 SlicerMacroBuildModuleWidgets(

@@ -38,6 +38,7 @@ set(qt_module_UI_SRCS
 set(qt_module_target_libraries
   vtkSlicerTractographyDisplayModuleLogic
   qSlicerTractographyDisplayModuleWidgets
+  ${MRML_LIBRARIES}
   )
 
 if(Slicer_USE_PYTHONQT)
