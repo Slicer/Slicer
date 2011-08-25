@@ -20,6 +20,7 @@
 
 #include "qSlicerTractographyDisplayModuleWidget.h"
 #include "ui_qSlicerTractographyDisplayModule.h"
+#include <QMessageBox>
 
 // VTK includes
 #include "vtkPolyData.h"
@@ -28,8 +29,10 @@
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLScene.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
@@ -73,9 +76,16 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
                    q, SLOT(setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*)));
   QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
                    q, SLOT(setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode*)));
-  QObject::connect(this->activateROISelectionCheckBox, SIGNAL(stateChanged(int)),
-                   q, SLOT(filterByAnnotationNode(int)));
-
+  QObject::connect(this->CreateNewFiberBundle, SIGNAL(clicked()),
+                   q, SLOT(createNewBundleFromSelection()));
+  QObject::connect(this->UpdateBundleFromSelection, SIGNAL(clicked()),
+                   q, SLOT(updateBundleFromSelection()));
+  QObject::connect(this->DisableROI, SIGNAL(toggled(bool)),
+                   q, SLOT(disableROISelection(bool)));
+  QObject::connect(this->PositiveROI, SIGNAL(toggled(bool)),
+                   q, SLOT(positiveROISelection(bool)));
+  QObject::connect(this->NegativeROI, SIGNAL(toggled(bool)),
+                   q, SLOT(negativeROISelection(bool)));
 }
 
 
@@ -122,13 +132,17 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
     {
       d->AnnotationMRMLNodeForFiberSelection = FiberBundleNode->GetAnnotationNode();
       d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
-      if (FiberBundleNode->GetSelectWithAnnotationNode())
+      if (!FiberBundleNode->GetSelectWithAnnotationNode())
       {
-        d->activateROISelectionCheckBox->setCheckState(Qt::Checked);
+        d->DisableROI->setChecked(true);
       }
-      else
+      else if (FiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection)
       {
-        d->activateROISelectionCheckBox->setCheckState(Qt::Unchecked);
+        d->PositiveROI->setChecked(true);
+      }
+      else if (FiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::NegativeAnnotationNodeSelection)
+      {
+        d->NegativeROI->setChecked(true);
       }
 
     }
@@ -163,7 +177,7 @@ void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBund
       double xyz[3];
       double bounds[6];
       double radius[3];
-      vtkPolyData *PolyData = d->FiberBundleNode->GetPolyData();
+      vtkPolyData *PolyData = d->FiberBundleNode->GetFilteredPolyData();
 
       PolyData->ComputeBounds();
       PolyData->GetCenter(xyz);
@@ -181,13 +195,114 @@ void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBund
   }
 }
 
-void qSlicerTractographyDisplayModuleWidget::filterByAnnotationNode(int value)
+void qSlicerTractographyDisplayModuleWidget::disableROISelection(bool arg)
+{
+  if (arg)
+  {
+    Q_D(qSlicerTractographyDisplayModuleWidget);
+    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    {
+      d->FiberBundleNode->SelectWithAnnotationNodeOff();
+    }
+  }
+}
+
+void qSlicerTractographyDisplayModuleWidget::positiveROISelection(bool arg)
+{
+  if (arg)
+  {
+    Q_D(qSlicerTractographyDisplayModuleWidget);
+    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    {
+      d->FiberBundleNode->SelectWithAnnotationNodeOn();
+      d->FiberBundleNode->SetSelectionWithAnnotationNodeModeToPositive();
+    }
+  }
+}
+
+void qSlicerTractographyDisplayModuleWidget::negativeROISelection(bool arg)
+{
+  if (arg)
+  {
+    Q_D(qSlicerTractographyDisplayModuleWidget);
+    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    {
+      d->FiberBundleNode->SelectWithAnnotationNodeOn();
+      d->FiberBundleNode->SetSelectionWithAnnotationNodeModeToNegative();
+    }
+  }
+}
+
+
+void qSlicerTractographyDisplayModuleWidget::createNewBundleFromSelection()
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
-  if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+
+  vtkMRMLFiberBundleNode *fiberBundleFromSelection = vtkMRMLFiberBundleNode::SafeDownCast(d->FiberBundleFromSelection->currentNode());
+  if (d->FiberBundleNode && fiberBundleFromSelection && (d->FiberBundleNode != fiberBundleFromSelection))
   {
-    d->FiberBundleNode->SetSelectWithAnnotationNode(value == Qt::Checked);
+    d->FiberBundleNode->GetScene()->SaveStateForUndo();
+    vtkPolyData *FilteredPolyData = vtkPolyData::New();
+    FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
+    fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
+    FilteredPolyData->Delete();
+
+    if (!fiberBundleFromSelection->GetDisplayNode())
+    {
+      fiberBundleFromSelection->CreateDefaultDisplayNodes();
+
+      if (fiberBundleFromSelection->GetStorageNode() == NULL) 
+        {
+          fiberBundleFromSelection->CreateDefaultStorageNode();
+        }
+      
+      fiberBundleFromSelection->SetModifiedSinceRead(1);
+      fiberBundleFromSelection->SetAndObserveTransformNodeID(d->FiberBundleNode->GetTransformNodeID());
+      fiberBundleFromSelection->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
+    }
+
+  } else {
+     QMessageBox::warning(this, tr("Create Bundle From ROI"),
+                                  tr("You can not use the source Fiber Bundle\n"
+                                     "as destination fiber bundle.\n"
+                                     "Use Update Bundle From ROI for this."
+                                     ),
+                                  QMessageBox::Ok);
+
   }
+}
+
+void qSlicerTractographyDisplayModuleWidget::updateBundleFromSelection()
+{
+  Q_D(qSlicerTractographyDisplayModuleWidget);
+  int proceedWithUpdate = 0;
+
+  if (d->FiberBundleNode)
+  {
+    if (d->ConfirmFiberBundleUpdate->checkState() != Qt::Checked)
+    {
+     int ret = QMessageBox::warning(this, tr("Update Bundle From ROI"),
+                                    tr("This will replace the actual fiber bundle\n"
+                                       "with the results of the selection.\n"
+                                       "Are you sure this is what you want?"
+                                       ),
+                                    QMessageBox::Ok | QMessageBox::Cancel);
+     if (ret == QMessageBox::Ok)
+        proceedWithUpdate = 1;
+     } else {
+        proceedWithUpdate = 0;
+     }
+    }
+
+    if (proceedWithUpdate || (d->ConfirmFiberBundleUpdate->checkState() == Qt::Checked))
+    {
+      d->FiberBundleNode->GetScene()->SaveStateForUndo();
+      vtkPolyData *FilteredPolyData = vtkPolyData::New();
+      FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
+      d->FiberBundleNode->SetAndObservePolyData(FilteredPolyData);
+      FilteredPolyData->Delete();
+      this->setPercentageOfFibersShown(100.);
+    }
 }
 
 

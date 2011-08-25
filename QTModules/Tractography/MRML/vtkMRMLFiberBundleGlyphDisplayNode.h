@@ -80,8 +80,6 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayN
   vtkGetMacro ( TwoDimensionalVisibility , int );
   vtkBooleanMacro ( TwoDimensionalVisibility , int );
 
-  vtkGetObjectMacro(DiffusionTensorGlyphFilter, vtkDiffusionTensorGlyph);
-  vtkGetObjectMacro(CleanPolyData, vtkCleanPolyData);
  protected:
   vtkMRMLFiberBundleGlyphDisplayNode ( );
   ~vtkMRMLFiberBundleGlyphDisplayNode ( );
@@ -96,7 +94,6 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayN
 
   /// dispaly pipeline
   vtkDiffusionTensorGlyph *DiffusionTensorGlyphFilter;
-  vtkCleanPolyData *CleanPolyData;
 };
 
 #endif

@@ -469,7 +469,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       {
       dnode->DisableModifiedEventOn();
       dnode->SetVisibility(0);
-      dnode->SetScalarVisibility(0);
+      dnode->SetScalarVisibility(1);
       dnode->SetOpacity(1);
       dnode->DisableModifiedEventOff();
       }

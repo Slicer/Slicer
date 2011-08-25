@@ -123,6 +123,24 @@ public:
   vtkGetMacro(SelectWithAnnotationNode, int);
   vtkBooleanMacro(SelectWithAnnotationNode, int);
 
+  //BTX
+  enum
+  {
+    PositiveAnnotationNodeSelection,
+    NegativeAnnotationNodeSelection
+  };
+  //ETX
+
+  vtkGetMacro(SelectionWithAnnotationNodeMode, int);
+  virtual void SetSelectionWithAnnotationNodeMode(int);
+  virtual void SetSelectionWithAnnotationNodeModeToPositive()
+  {
+    this->SetSelectionWithAnnotationNodeMode(PositiveAnnotationNodeSelection);
+  }
+  virtual void SetSelectionWithAnnotationNodeModeToNegative()
+  {
+    this->SetSelectionWithAnnotationNodeMode(NegativeAnnotationNodeSelection);
+  }
 
   /// 
   /// Gets the subsampled PolyData converted from the real data in the node
@@ -184,6 +202,7 @@ protected:
 
   /// ALL MRML nodes
   int SelectWithAnnotationNode;
+  int SelectionWithAnnotationNodeMode;
 
   vtkMRMLAnnotationNode *AnnotationNode;
   char *AnnotationNodeID;

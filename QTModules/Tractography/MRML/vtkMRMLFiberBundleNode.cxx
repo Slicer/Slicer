@@ -95,6 +95,7 @@ void vtkMRMLFiberBundleNode::WriteXML(ostream& of, int nIndent)
     of << indent << " AnnotationNodeRef=\"" << this->AnnotationNodeID << "\"";
     }
   of << indent << " SelectWithAnnotationNode=\"" << this->SelectWithAnnotationNode << "\"";
+  of << indent << " SelectionWithAnnotationNodeMode=\"" << this->SelectionWithAnnotationNodeMode << "\"";
   of << indent << " SubsamplingRatio=\"" << this->SubsamplingRatio << "\"";
 
 }
@@ -121,7 +122,11 @@ void vtkMRMLFiberBundleNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "SelectWithAnnotationNode")) 
       {
-      this->SetSubsamplingRatio(atoi(attValue));
+      this->SetSelectWithAnnotationNode(atoi(attValue));
+      }
+    else if (!strcmp(attName, "SelectionWithAnnotationNodeMode")) 
+      {
+      this->SetSelectionWithAnnotationNodeMode(atoi(attValue));
       }
     else if (!strcmp(attName, "SubsamplingRatio")) 
       {
@@ -150,6 +155,7 @@ void vtkMRMLFiberBundleNode::Copy(vtkMRMLNode *anode)
     this->SetSubsamplingRatio(node->SubsamplingRatio);
     this->SetAnnotationNodeID(node->AnnotationNodeID);
     this->SetSelectWithAnnotationNode(node->SelectWithAnnotationNode);
+    this->SetSelectionWithAnnotationNodeMode(node->SelectionWithAnnotationNodeMode);
   }
 
   this->EndModify(disabledModify);
@@ -393,6 +399,32 @@ void vtkMRMLFiberBundleNode::SetSelectWithAnnotationNode(int _arg)
   } 
 
 //----------------------------------------------------------------------------
+void vtkMRMLFiberBundleNode::SetSelectionWithAnnotationNodeMode(int _arg)
+  {
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SelectionWithAnnotationNodeMode  to " << _arg); 
+  if (this->SelectionWithAnnotationNodeMode != _arg)
+    { 
+    this->SelectionWithAnnotationNodeMode = _arg;
+
+    if (_arg == vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection)
+    {
+      this->ExtractPolyDataGeometry->ExtractInsideOn();
+      this->ExtractPolyDataGeometry->ExtractBoundaryCellsOn();
+    } else if (_arg == vtkMRMLFiberBundleNode::NegativeAnnotationNodeSelection) {
+      this->ExtractPolyDataGeometry->ExtractInsideOff();
+      this->ExtractPolyDataGeometry->ExtractBoundaryCellsOff();
+    }
+
+    this->Modified();
+    this->UpdateReferences();
+    this->ModifiedSinceRead = true;
+    this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+    }
+  } 
+
+
+
+//----------------------------------------------------------------------------
 vtkMRMLAnnotationNode* vtkMRMLFiberBundleNode::GetAnnotationNode ( )
 {
   vtkMRMLAnnotationNode* node = NULL;
@@ -532,9 +564,11 @@ void vtkMRMLFiberBundleNode::PrepareROISelection()
   this->AnnotationNodeID = NULL;
 
   this->ExtractPolyDataGeometry = vtkExtractPolyDataGeometry::New();
+  this->Planes = vtkPlanes::New();
+
   this->ExtractPolyDataGeometry->ExtractInsideOn();
   this->ExtractPolyDataGeometry->ExtractBoundaryCellsOn();
-  this->Planes = vtkPlanes::New();
+  this->SelectionWithAnnotationNodeMode = vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection;
 
   this->CleanPolyDataPostROISelection = vtkCleanPolyData::New();
   this->CleanPolyDataPostROISelection->ConvertLinesToPointsOff();

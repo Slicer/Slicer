@@ -49,7 +49,11 @@ public slots:
   void setPercentageOfFibersShown(double);
   void setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*);
   void setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode*);
-  void filterByAnnotationNode(int);
+  void disableROISelection(bool);
+  void positiveROISelection(bool);
+  void negativeROISelection(bool);
+  void createNewBundleFromSelection();
+  void updateBundleFromSelection();
 
 signals:
   void percentageOfFibersShownChanged(double);

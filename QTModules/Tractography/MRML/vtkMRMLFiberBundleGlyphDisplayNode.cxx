@@ -16,7 +16,6 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkDiffusionTensorGlyph.h"
-#include "vtkCleanPolyData.h"
 
 
 #include "vtkMRMLScene.h"
@@ -55,11 +54,6 @@ vtkMRMLNode* vtkMRMLFiberBundleGlyphDisplayNode::CreateNodeInstance()
 vtkMRMLFiberBundleGlyphDisplayNode::vtkMRMLFiberBundleGlyphDisplayNode()
 {
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
-  this->CleanPolyData = vtkCleanPolyData::New();
-  this->CleanPolyData->ConvertLinesToPointsOff();
-  this->CleanPolyData->ConvertPolysToLinesOff();
-  this->CleanPolyData->ConvertStripsToPolysOff();
-  this->CleanPolyData->PointMergingOff();
 
   this->TwoDimensionalVisibility = 0;
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
@@ -71,7 +65,6 @@ vtkMRMLFiberBundleGlyphDisplayNode::~vtkMRMLFiberBundleGlyphDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->DiffusionTensorGlyphFilter->Delete();
-  this->CleanPolyData->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -213,7 +206,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
           {
           if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
             {
-            //this->ScalarVisibilityOn( );
+            this->ScalarVisibilityOn( );
 
             switch ( DiffusionTensorDisplayNode->GetColorGlyphBy( ))
               {
