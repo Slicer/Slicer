@@ -200,7 +200,7 @@ void qSlicerTractographyDisplayModuleWidget::disableROISelection(bool arg)
   if (arg)
   {
     Q_D(qSlicerTractographyDisplayModuleWidget);
-    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
     {
       d->FiberBundleNode->SelectWithAnnotationNodeOff();
     }
@@ -212,7 +212,7 @@ void qSlicerTractographyDisplayModuleWidget::positiveROISelection(bool arg)
   if (arg)
   {
     Q_D(qSlicerTractographyDisplayModuleWidget);
-    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
     {
       d->FiberBundleNode->SelectWithAnnotationNodeOn();
       d->FiberBundleNode->SetSelectionWithAnnotationNodeModeToPositive();
@@ -225,7 +225,7 @@ void qSlicerTractographyDisplayModuleWidget::negativeROISelection(bool arg)
   if (arg)
   {
     Q_D(qSlicerTractographyDisplayModuleWidget);
-    if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
+    if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
     {
       d->FiberBundleNode->SelectWithAnnotationNodeOn();
       d->FiberBundleNode->SetSelectionWithAnnotationNodeModeToNegative();

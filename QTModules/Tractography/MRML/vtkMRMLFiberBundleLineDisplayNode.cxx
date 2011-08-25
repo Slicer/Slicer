@@ -105,7 +105,7 @@ void vtkMRMLFiberBundleLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleLineDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 {
-  if ((this->PolyData != glyphPolyData) and (this->TensorToColor))
+  if ((this->PolyData != glyphPolyData) && (this->TensorToColor))
     {
     Superclass::SetPolyData(glyphPolyData);
     this->TensorToColor->SetInput(glyphPolyData);
