@@ -57,9 +57,14 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
     if (qSlicerCoreApplication::application()->isExtension(module->path()))
       {
-      QString modulePath = QFileInfo(module->path()).path();
-      QString pythonPath = modulePath + "/Python";
-      QStringList paths; paths << modulePath << pythonPath;
+      QDir modulePath = QFileInfo(module->path()).dir();
+      QString intDir = qSlicerCoreApplication::application()->intDir();
+      if (intDir ==  modulePath.dirName())
+        {
+        modulePath.cdUp();
+        }
+      QString pythonPath = modulePath.filePath("Python");
+      QStringList paths; paths << modulePath.absolutePath() << pythonPath;
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
       foreach(const QString& path, paths)
         {
