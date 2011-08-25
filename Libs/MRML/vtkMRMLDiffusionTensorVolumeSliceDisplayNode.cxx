@@ -190,7 +190,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
   this->DiffusionTensorGlyphFilter->SetInput(image);
-  this->DiffusionTensorGlyphFilter->SetDimensions(image->GetDimensions());
+  this->DiffusionTensorGlyphFilter->SetDimensions(image ? image->GetDimensions(): 0);
   this->Modified();
 }
 

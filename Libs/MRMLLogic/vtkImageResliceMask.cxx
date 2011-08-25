@@ -14,6 +14,7 @@
 =========================================================================*/
 #include "vtkImageResliceMask.h"
 
+#include <vtkDataSetAttributes.h>
 #include "vtkImageData.h"
 #include "vtkImageStencilData.h"
 #include "vtkInformation.h"
@@ -859,6 +860,24 @@ int vtkImageResliceMask::RequestInformation(
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),outWholeExt,6);
   outInfo->Set(vtkDataObject::SPACING(), outSpacing, 3);
   outInfo->Set(vtkDataObject::ORIGIN(), outOrigin, 3);
+  
+  int numComponents = 1;
+  int scalarType = VTK_DOUBLE;
+
+  vtkInformation *inScalarInfo =
+    vtkDataObject::GetActiveFieldInformation(inInfo,
+      vtkDataObject::FIELD_ASSOCIATION_POINTS,
+      vtkDataSetAttributes::SCALARS);
+  if (inScalarInfo)
+    {
+    if (inScalarInfo->Has(vtkDataObject::FIELD_NUMBER_OF_COMPONENTS()))
+      {
+      numComponents =
+        inScalarInfo->Get(vtkDataObject::FIELD_NUMBER_OF_COMPONENTS());
+      }
+    scalarType = inScalarInfo->Get(vtkDataObject::FIELD_ARRAY_TYPE());
+    }
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, numComponents);
 
   outInfo2->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),outWholeExt,6);
   outInfo2->Set(vtkDataObject::SPACING(), outSpacing, 3);
@@ -3371,6 +3390,9 @@ void vtkImageResliceMask::ThreadedRequestData(
   vtkImageData* backgroundMask = outData[1];
   // Get the output pointer
   void *outPtr = outData[0]->GetScalarPointerForExtent(outExt);
+  int comps = outData[0]->GetNumberOfScalarComponents();
+  vtkIdType incr[3];
+  outData[0]->GetIncrements(incr);
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   if (this->HitInputExtent == 0)

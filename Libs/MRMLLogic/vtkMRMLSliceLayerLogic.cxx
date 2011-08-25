@@ -24,7 +24,11 @@
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes
+#include <vtkFloatArray.h>
 #include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkPointData.h>
 #include <vtkTransform.h>
@@ -69,10 +73,10 @@ vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
 
   this->IsLabelLayer = 0;
   
-  this->AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
-  this->AssignAttributeScalarsFromTensors= vtkAssignAttribute::New();
-  this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
-  this->AssignAttributeScalarsFromTensors->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
+  this->AssignAttributeTensorsToScalars= vtkAssignAttribute::New();
+  this->AssignAttributeScalarsToTensors= vtkAssignAttribute::New();
+  this->AssignAttributeTensorsToScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+  this->AssignAttributeScalarsToTensors->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
 
   // Create the parts for the scalar layer pipeline
   this->Slice = vtkImageLinearReslice::New();
@@ -173,8 +177,8 @@ vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
   this->ResliceAlphaCast->Delete();
   this->AlphaLogic->Delete();
 
-  this->AssignAttributeTensorsFromScalars->Delete();
-  this->AssignAttributeScalarsFromTensors->Delete();
+  this->AssignAttributeTensorsToScalars->Delete();
+  this->AssignAttributeScalarsToTensors->Delete();
    
   if ( this->VolumeDisplayNode )
     {
@@ -504,7 +508,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   
   unsigned long oldSliceMTime = this->Slice->GetMTime();
   unsigned long oldReSliceMTime = this->Reslice->GetMTime();
-  unsigned long oldAssign = this->AssignAttributeTensorsFromScalars->GetMTime();
+  unsigned long oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
   unsigned long oldLabel = this->LabelOutline->GetMTime();
   
   if ( (this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) ||
@@ -522,30 +526,99 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   // for tensors reassign scalar data
   if ( volumeNode && volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
-    this->AssignAttributeTensorsFromScalars->SetInput(volumeNode->GetImageData());
-    // this->AssignAttributeTensorsFromScalars->Update(); not necessary
-    
-    vtkImageData* interchangedImage =  this->AssignAttributeTensorsFromScalars->GetImageDataOutput();
-    if (interchangedImage)
-      {
-      interchangedImage->SetNumberOfScalarComponents(9);
-      }
-    this->Reslice->SetInput( interchangedImage );
+      vtkImageData* image = volumeNode->GetImageData();
+      vtkDataArray* tensors = image ? image->GetPointData()->GetTensors() : 0;
+      /*
+      vtkImageData* image = vtkImageData::New();
+      image->SetDimensions(2,1,1);
 
-    //Fixing horrible bug of the vtkSetAttributes Filter it doesn't copy attributes without name
-    this->Reslice->Update();
-    if ( this->Reslice->GetOutput() && 
-         this->Reslice->GetOutput()->GetPointData() && 
-         this->Reslice->GetOutput()->GetPointData()->GetScalars() &&
-         volumeNode->GetImageData() &&
-         volumeNode->GetImageData()->GetPointData() && 
-         volumeNode->GetImageData()->GetPointData()->GetTensors())
+      vtkNew<vtkFloatArray> tensors;
+      tensors->SetName("tensors");
+      tensors->SetNumberOfComponents(9);
+      // 2 tuples, identity matrices
+      tensors->InsertNextTuple9(1.,0.,0.,0.,1.,0.,0.,0.,1.);
+      tensors->InsertNextTuple9(1.,0.,0.,0.,1.,0.,0.,0.,1.);
+
+      image->GetPointData()->SetTensors(tensors.GetPointer());
+      */
+      /// HACK !
+      /// vtkAssignAttribute is not able to set these values automatically,
+      /// we do it manually instead.
+      image->SetScalarType(tensors ? tensors->GetDataType() : VTK_FLOAT);
+      image->SetNumberOfScalarComponents(tensors ? tensors->GetNumberOfComponents() : 1);
+      /// END of HACK
+/*      {
+      vtkNew<vtkAssignAttribute> assign;
+      assign->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);
+      assign->SetInput(image);
+      
+      vtkDataObject::SetActiveAttributeInfo(image->GetPipelineInformation(), 
+                                            vtkDataObject::FIELD_ASSOCIATION_POINTS,
+                                            vtkDataSetAttributes::TENSORS,
+                                            "tensors",-1,9,-1);
+      vtkNew<vtkImageReslice> cast;
+      cast->SetInputConnection(assign->GetOutputPort());
+
+      vtkNew<vtkAssignAttribute> assignBack;
+      assignBack->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
+      assignBack->SetInputConnection(cast->GetOutputPort());
+
+      assignBack->Update();
+
+      vtkImageData* imageOut = vtkImageData::SafeDownCast(assign->GetOutput());
+      vtkImageData* imageCasted = vtkImageData::SafeDownCast(cast->GetOutput());
+      vtkImageData* imageBack = vtkImageData::SafeDownCast(assignBack->GetOutput());
+
+    //if (imageBack->GetPointData()->GetNumberOfComponents() != 9)
       {
-      this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(
-        volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
+      cerr << "Input: \n";
+      image->GetPointData()->Print(cerr);
+      cerr << "Intermediate: \n";
+      imageOut->GetPointData()->Print(cerr);
+      cerr << "Casted: \n";
+      imageCasted->GetPointData()->Print(cerr);
+      cerr << "Back: \n";
+      imageBack->GetPointData()->Print(cerr);
       }
-    this->AssignAttributeScalarsFromTensors->SetInput(this->Reslice->GetOutput() );
-    this->AssignAttributeScalarsFromTensors->Update();
+      }*/
+    vtkPointData* inPointData = image ? image->GetPointData() : 0;
+    this->AssignAttributeTensorsToScalars->SetInput(image);
+    if (image)
+      {
+      /// HACK !
+      /// vtkAssignAttribute is not able to set these values automatically,
+      /// we do it manually instead.
+      vtkDataObject::SetActiveAttributeInfo(
+        image->GetPipelineInformation(),
+        vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::TENSORS,
+        tensors->GetName(), tensors->GetDataType(),
+        tensors->GetNumberOfComponents(), tensors->GetNumberOfTuples());
+      /// End of HACK !
+      }
+    this->Reslice->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
+
+    this->AssignAttributeScalarsToTensors->SetInput(this->Reslice->GetOutput() );
+    
+    bool verbose = false;
+    if (image && verbose)
+      {
+      this->AssignAttributeScalarsToTensors->Update();
+      std::cerr << "Image\n";
+      std::cerr << " typ: " << image->GetScalarType() << std::endl;
+      image->GetPointData()->Print(std::cerr);
+      vtkImageData* assignTensorToScalarsOutput = this->AssignAttributeTensorsToScalars->GetImageDataOutput();
+      std::cerr << "\nAssignTensorToScalar output: \n";
+      std::cerr << "type: " << assignTensorToScalarsOutput->GetScalarType() << std::endl;
+      assignTensorToScalarsOutput->GetPointData()->Print(std::cerr);
+      vtkPointData* reslicePointData = this->Reslice->GetOutput()->GetPointData();
+      std::cerr << "\nReslice output: \n"; 
+      std::cerr << "type: " << this->Reslice->GetOutput()->GetScalarType() << std::endl;
+      reslicePointData->Print(std::cerr);
+      vtkImageData* assignScalarsToTensorOutput = this->AssignAttributeScalarsToTensors->GetImageDataOutput();
+      std::cerr << "\nAssignScalarToTensor output: \n";
+      std::cerr << " typ: " << assignScalarsToTensorOutput->GetScalarType() << std::endl;
+      assignScalarsToTensorOutput->GetPointData()->Print(std::cerr);
+      }
     } 
   else if (volumeNode) 
     {
@@ -577,7 +650,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 
   if ( oldSliceMTime != this->Slice->GetMTime() ||
        oldReSliceMTime != this->Reslice->GetMTime() ||
-       oldAssign != this->AssignAttributeTensorsFromScalars->GetMTime() ||
+       oldAssign != this->AssignAttributeTensorsToScalars->GetMTime() ||
        oldLabel != this->LabelOutline->GetMTime() ||
        (volumeNode != 0 && (volumeNode->GetMTime() > oldReSliceMTime)) ||
        (volumeDisplayNode != 0 && (volumeDisplayNode->GetMTime() > oldReSliceMTime))
@@ -598,7 +671,7 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageData()
     }
   if (this->VolumeNode && this->VolumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
-    return this->AssignAttributeScalarsFromTensors->GetImageDataOutput();
+    return this->AssignAttributeScalarsToTensors->GetImageDataOutput();
     }
   return this->Reslice->GetOutput();
 }

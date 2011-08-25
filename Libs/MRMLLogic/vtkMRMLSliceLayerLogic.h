@@ -209,8 +209,8 @@ protected:
   vtkImageReslice *DTIReslice;
   vtkDiffusionTensorMathematics *DTIMathematics;
 
-  vtkAssignAttribute* AssignAttributeTensorsFromScalars;
-  vtkAssignAttribute* AssignAttributeScalarsFromTensors;
+  vtkAssignAttribute* AssignAttributeTensorsToScalars;
+  vtkAssignAttribute* AssignAttributeScalarsToTensors;
 
   /// TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
