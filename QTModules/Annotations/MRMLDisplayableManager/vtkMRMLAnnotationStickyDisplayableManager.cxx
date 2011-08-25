@@ -351,7 +351,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
 
     stickyNode->SetStickyCoordinates(worldCoordinates);
 
-    stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("AnnotationStickyNote"));
+    stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("N"));
 
     stickyNode->Delete();
 

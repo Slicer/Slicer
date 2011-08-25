@@ -826,7 +826,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
 
     bidimensionalNode->SetBidimensionalMeasurement(distance1,distance2);
 
-    bidimensionalNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationBidimensional"));
+    bidimensionalNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("B"));
 
     bidimensionalNode->Initialize(this->GetMRMLScene());
 

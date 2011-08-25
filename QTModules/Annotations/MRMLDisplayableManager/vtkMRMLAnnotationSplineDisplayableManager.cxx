@@ -361,7 +361,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
 
     splineNode->Initialize(this->GetMRMLScene());
 
-    splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("AnnotationSpline"));
+    splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("S"));
 
     splineNode->Delete();
 

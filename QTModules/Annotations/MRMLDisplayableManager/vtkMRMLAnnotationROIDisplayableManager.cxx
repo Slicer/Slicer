@@ -693,7 +693,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     roiNode->SetXYZ(origin);
     roiNode->SetRadiusXYZ(rx,ry,rz);
 
-    roiNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationROI"));
+    roiNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("R"));
 
     roiNode->Initialize(this->GetMRMLScene());
 

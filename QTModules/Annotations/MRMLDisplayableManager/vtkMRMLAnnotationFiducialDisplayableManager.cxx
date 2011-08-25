@@ -610,7 +610,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
   fiducialNode->SetFiducialWorldCoordinates(worldCoordinates1);
 
-  fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
+  fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("F"));
 
   fiducialNode->Initialize(this->GetMRMLScene());
 

@@ -415,7 +415,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
     vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
     angleNode->Initialize(this->GetMRMLScene());
 
-    angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("AnnotationAngle"));
+    angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("A"));
 
     angleNode->Delete();
 

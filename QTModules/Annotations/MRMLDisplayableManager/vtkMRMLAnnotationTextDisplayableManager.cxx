@@ -595,7 +595,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
 
   textNode->SetTextLabel("New text");
 
-  textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));
+  textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("T"));
 
   textNode->Initialize(this->GetMRMLScene());
 
