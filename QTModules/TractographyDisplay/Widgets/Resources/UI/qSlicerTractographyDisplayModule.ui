@@ -80,7 +80,7 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="ROIForFiberFilteringLabel">
+       <widget class="QLabel" name="ROIForFiberSelectionLabel">
         <property name="text">
          <string>ROI for fiber filtering</string>
         </property>
@@ -96,7 +96,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="qMRMLNodeComboBox" name="ROIForFiberFilteringMRMLNodeSelector">
+          <widget class="qMRMLNodeComboBox" name="ROIForFiberSelectionMRMLNodeSelector">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -123,7 +123,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="activateROIFilteringCheckBox"/>
+          <widget class="QCheckBox" name="activateROISelectionCheckBox"/>
          </item>
         </layout>
        </widget>
@@ -470,7 +470,7 @@
   <connection>
    <sender>qSlicerTractographyDisplayModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ROIForFiberFilteringMRMLNodeSelector</receiver>
+   <receiver>ROIForFiberSelectionMRMLNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

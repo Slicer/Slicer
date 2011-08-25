@@ -234,9 +234,9 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     fiberBundleNode->SetAndObserveDisplayNodeID(displayLineNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayTubeNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayGlyphNode->GetID());  
-    displayLineNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
-    displayTubeNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
-    displayGlyphNode->SetPolyData(fiberBundleNode->GetSubsampledPolyData());
+    displayLineNode->SetPolyData(fiberBundleNode->GetFilteredPolyData());
+    displayTubeNode->SetPolyData(fiberBundleNode->GetFilteredPolyData());
+    displayGlyphNode->SetPolyData(fiberBundleNode->GetFilteredPolyData());
 
    if (notifyScene)
      {

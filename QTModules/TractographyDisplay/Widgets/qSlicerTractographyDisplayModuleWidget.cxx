@@ -45,7 +45,7 @@ public:
   void init();
 
   vtkMRMLFiberBundleNode* FiberBundleNode;
-  vtkMRMLAnnotationNode* AnnotationMRMLNodeForFiberFiltering;
+  vtkMRMLAnnotationNode* AnnotationMRMLNodeForFiberSelection;
   double PercentageOfFibersShown;
 };
 
@@ -55,7 +55,7 @@ qSlicerTractographyDisplayModuleWidgetPrivate
   :q_ptr(&object)
 {
   this->FiberBundleNode = NULL;
-  this->AnnotationMRMLNodeForFiberFiltering = NULL;
+  this->AnnotationMRMLNodeForFiberSelection = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -69,11 +69,11 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
                    q, SLOT(setPercentageOfFibersShown(double)));
   QObject::connect(q, SIGNAL(percentageOfFibersShownChanged(double)),
                    this->percentageOfFibersShown, SLOT(setValue(double)));
-  QObject::connect(this->ROIForFiberFilteringMRMLNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(setAnnotationMRMLNodeForFiberFiltering(vtkMRMLNode*)));
-  QObject::connect(this->ROIForFiberFilteringMRMLNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
+  QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*)));
+  QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
                    q, SLOT(setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode*)));
-  QObject::connect(this->activateROIFilteringCheckBox, SIGNAL(stateChanged(int)),
+  QObject::connect(this->activateROISelectionCheckBox, SIGNAL(stateChanged(int)),
                    q, SLOT(filterByAnnotationNode(int)));
 
 }
@@ -120,15 +120,15 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
     vtkMRMLFiberBundleDisplayNode *FiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(FiberBundleNode->GetLineDisplayNode());
     if (FiberBundleDisplayNode)
     {
-      d->AnnotationMRMLNodeForFiberFiltering = FiberBundleDisplayNode->GetAnnotationNode();
-      d->ROIForFiberFilteringMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberFiltering);
-      if (FiberBundleDisplayNode->GetFilterWithAnnotationNode())
+      d->AnnotationMRMLNodeForFiberSelection = FiberBundleNode->GetAnnotationNode();
+      d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
+      if (FiberBundleNode->GetSelectWithAnnotationNode())
       {
-        d->activateROIFilteringCheckBox->setCheckState(Qt::Checked);
+        d->activateROISelectionCheckBox->setCheckState(Qt::Checked);
       }
       else
       {
-        d->activateROIFilteringCheckBox->setCheckState(Qt::Unchecked);
+        d->activateROISelectionCheckBox->setCheckState(Qt::Unchecked);
       }
 
     }
@@ -138,35 +138,26 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
 }
 
 
-void qSlicerTractographyDisplayModuleWidget::setAnnotationMRMLNodeForFiberFiltering(vtkMRMLNode* AnnotationMRMLNodeForFiberFiltering)
+void qSlicerTractographyDisplayModuleWidget::setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode* AnnotationMRMLNodeForFiberSelection)
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
   if (d->FiberBundleNode)
   {
-    vtkMRMLAnnotationNode* AnnotationNode = vtkMRMLAnnotationNode::SafeDownCast(AnnotationMRMLNodeForFiberFiltering);
+    vtkMRMLAnnotationNode* AnnotationNode = vtkMRMLAnnotationNode::SafeDownCast(AnnotationMRMLNodeForFiberSelection);
     if (AnnotationNode)
       {
-      d->AnnotationMRMLNodeForFiberFiltering = AnnotationNode;
-
-      int i = 0;
-      for (i=0; i < d->FiberBundleNode->GetNumberOfDisplayNodes(); i++)
-      {
-        vtkMRMLFiberBundleDisplayNode* node = vtkMRMLFiberBundleDisplayNode::SafeDownCast(d->FiberBundleNode->GetNthDisplayNode(i));
-        if (node)
-        {
-          node->SetAndObserveAnnotationNodeID(d->AnnotationMRMLNodeForFiberFiltering->GetID());
-        }
-      }
+      d->AnnotationMRMLNodeForFiberSelection = AnnotationNode;
+      d->FiberBundleNode->SetAndObserveAnnotationNodeID(d->AnnotationMRMLNodeForFiberSelection->GetID());
       }
   }
 }
 
-void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode* AnnotationMRMLNodeForFiberFiltering)
+void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode* AnnotationMRMLNodeForFiberSelection)
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
   if (d->FiberBundleNode)
   {
-    vtkMRMLAnnotationROINode* AnnotationNode = vtkMRMLAnnotationROINode::SafeDownCast(AnnotationMRMLNodeForFiberFiltering);
+    vtkMRMLAnnotationROINode* AnnotationNode = vtkMRMLAnnotationROINode::SafeDownCast(AnnotationMRMLNodeForFiberSelection);
     if (AnnotationNode)
       {
       double xyz[3];
@@ -185,7 +176,7 @@ void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBund
       AnnotationNode->SetRadiusXYZ(radius);
       AnnotationNode->UpdateReferences();
 
-      d->ROIForFiberFilteringMRMLNodeSelector->setCurrentNode(AnnotationNode);
+      d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(AnnotationNode);
       }
   }
 }
@@ -193,17 +184,9 @@ void qSlicerTractographyDisplayModuleWidget::setAnnotationROIMRMLNodeToFiberBund
 void qSlicerTractographyDisplayModuleWidget::filterByAnnotationNode(int value)
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
-  if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberFiltering)
+  if (d->FiberBundleNode and d->AnnotationMRMLNodeForFiberSelection)
   {
-    int i = 0;
-    for (i=0; i < d->FiberBundleNode->GetNumberOfDisplayNodes(); i++)
-    {
-      vtkMRMLFiberBundleDisplayNode* node = vtkMRMLFiberBundleDisplayNode::SafeDownCast(d->FiberBundleNode->GetNthDisplayNode(i));
-      if (node)
-      {
-        node->SetFilterWithAnnotationNode(value == Qt::Checked);
-      }
-    }
+    d->FiberBundleNode->SetSelectWithAnnotationNode(value == Qt::Checked);
   }
 }
 

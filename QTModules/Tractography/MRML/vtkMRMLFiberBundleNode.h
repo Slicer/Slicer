@@ -30,6 +30,9 @@
 
 class vtkMRMLFiberBundleDisplayNode;
 class vtkExtractSelectedPolyDataIds;
+class vtkMRMLAnnotationNode;
+class vtkExtractPolyDataGeometry;
+class vtkPlanes;
 class vtkCleanPolyData;
 
 class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
@@ -39,12 +42,45 @@ public:
   vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLModelNode);
   //vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
+
   
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
+
+  /// 
+  /// Read node attributes from XML (MRML) file
+  virtual void ReadXMLAttributes ( const char** atts );
+
+  /// 
+  /// Write this node's information to a MRML file in XML format.
+  virtual void WriteXML ( ostream& of, int indent );
+
+
+  /// 
+  /// Copy the node's attributes to this object
+  virtual void Copy ( vtkMRMLNode *node );
+
+  /// 
+  /// alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  /// 
+  /// Finds the storage node and read the data
+  virtual void UpdateScene(vtkMRMLScene *scene);
+
+  /// 
+  /// Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// 
   /// Get node XML tag name (like Volume, Model)
@@ -68,8 +104,29 @@ public:
   //vtkSetClampMacro(SubsamplingRatio, float, 0, 1);
 
   /// 
+  /// Get annotation MRML object.
+  vtkMRMLAnnotationNode* GetAnnotationNode ( );
+
+
+  /// 
+  /// Set the ID annotation node for interactive selection.
+  void SetAndObserveAnnotationNodeID ( const char *ID );
+
+  /// 
+  /// Get ID of diffusion tensor display MRML object for fiber glyph.
+  vtkGetStringMacro(AnnotationNodeID);
+
+  //--------------------------------------------------------------------------
+  /// Interactive Selection Support
+  //--------------------------------------------------------------------------
+  virtual void SetSelectWithAnnotationNode(int);
+  vtkGetMacro(SelectWithAnnotationNode, int);
+  vtkBooleanMacro(SelectWithAnnotationNode, int);
+
+
+  /// 
   /// Gets the subsampled PolyData converted from the real data in the node
-  virtual vtkPolyData* GetSubsampledPolyData();
+  virtual vtkPolyData* GetFilteredPolyData();
 
 
   /// 
@@ -106,6 +163,7 @@ public:
 
 
   vtkGetObjectMacro(ExtractSelectedPolyDataIds, vtkExtractSelectedPolyDataIds);
+  vtkGetObjectMacro(ExtractPolyDataGeometry, vtkExtractPolyDataGeometry);
   
 protected:
   vtkMRMLFiberBundleNode();
@@ -116,12 +174,27 @@ protected:
   virtual void SetPolyData(vtkPolyData* polyData);
 
   vtkExtractSelectedPolyDataIds* ExtractSelectedPolyDataIds;
-  vtkCleanPolyData* CleanPolyData;
+  vtkCleanPolyData* CleanPolyDataPostSubsampling;
+  vtkCleanPolyData* CleanPolyDataPostROISelection;
   float SubsamplingRatio;
 
   virtual void PrepareSubsampling();
   virtual void UpdateSubsampling();
   virtual void CleanSubsampling();
+
+  /// ALL MRML nodes
+  int SelectWithAnnotationNode;
+
+  vtkMRMLAnnotationNode *AnnotationNode;
+  char *AnnotationNodeID;
+  vtkExtractPolyDataGeometry *ExtractPolyDataGeometry;
+  vtkPlanes *Planes;
+
+  virtual void PrepareROISelection();
+  virtual void UpdateROISelection();
+  virtual void CleanROISelection();
+
+  virtual void SetAnnotationNodeID(const char* id);
 
 };
 

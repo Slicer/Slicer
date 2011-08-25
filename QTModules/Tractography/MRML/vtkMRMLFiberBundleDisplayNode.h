@@ -29,10 +29,6 @@
 #include "vtkSlicerTractographyModuleMRMLExport.h"
 
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
-class vtkMRMLAnnotationNode;
-
-class vtkExtractPolyDataGeometry;
-class vtkPlanes;
 
 class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
@@ -149,13 +145,6 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   
 
   //--------------------------------------------------------------------------
-  /// Interactive Selection Support
-  //--------------------------------------------------------------------------
-  virtual void SetFilterWithAnnotationNode(int);
-  vtkGetMacro(FilterWithAnnotationNode, int);
-  vtkBooleanMacro(FilterWithAnnotationNode, int);
-
-  //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
   
@@ -174,26 +163,11 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
-  /// 
-  /// Get annotation MRML object.
-  vtkMRMLAnnotationNode* GetAnnotationNode ( );
-
-
-  /// 
-  /// Set the ID annotation node for interactive selection.
-  void SetAndObserveAnnotationNodeID ( const char *ID );
-
-  /// 
-  /// Get ID of diffusion tensor display MRML object for fiber glyph.
-  vtkGetStringMacro(AnnotationNodeID);
-
 
 //BTX
   static void GetSupportedColorModes(std::vector<int> &modes);
 //ETX
 //
-  vtkGetObjectMacro(ExtractPolyDataGeometry, vtkExtractPolyDataGeometry);
-
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
   ~vtkMRMLFiberBundleDisplayNode ( );
@@ -207,15 +181,6 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
   /// ALL MRML nodes
-  int FilterWithAnnotationNode;
-
-  vtkMRMLAnnotationNode *AnnotationNode;
-  char *AnnotationNodeID;
-  vtkExtractPolyDataGeometry *ExtractPolyDataGeometry;
-  vtkPlanes *Planes;
-
-  virtual void SetAnnotationNodeID(const char* id);
-
 
   /// Enumerated
   int ColorMode;

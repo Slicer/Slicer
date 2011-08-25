@@ -47,7 +47,7 @@ public slots:
   void setFiberBundleNode(vtkMRMLNode*);
   void setFiberBundleNode(vtkMRMLFiberBundleNode*);
   void setPercentageOfFibersShown(double);
-  void setAnnotationMRMLNodeForFiberFiltering(vtkMRMLNode*);
+  void setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*);
   void setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode*);
   void filterByAnnotationNode(int);
 
