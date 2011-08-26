@@ -234,10 +234,7 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       this->VolumeDisplayNodeObserved == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {
-    if (this->VolumeDisplayNode && this->VolumeDisplayNodeObserved)
-      {
-      this->VolumeDisplayNode->CopyWithoutModifiedEvent(this->VolumeDisplayNodeObserved);
-      }
+    this->UpdateVolumeDisplayNode();
     int wasModifying = this->StartModify();
     this->UpdateImageDisplay();
     // Maybe the pipeline hasn't changed, but we know that the display node has changed
@@ -366,40 +363,48 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
       displayNode->Delete();
       }
     }
+    
+    if ( displayNode != this->VolumeDisplayNodeObserved &&
+         this->VolumeDisplayNode != 0)
+      {
+      vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == 0 ? "null" : "valid") << endl);
+      this->VolumeDisplayNode->Delete();
+      this->VolumeDisplayNode = 0;
+      }
+    // vtkSetAndObserveMRMLNodeMacro could fire an event but we want to wait
+    // after UpdateVolumeDisplayNode is called to fire it.
+    bool wasModifying = this->StartModify();
+    vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
+    this->UpdateVolumeDisplayNode();
+    this->EndModify(wasModifying);
+}
 
-    if ( displayNode == this->VolumeDisplayNodeObserved )
-      {
-      if (this->VolumeDisplayNode && displayNode)
-        {
-        this->VolumeDisplayNode->CopyWithoutModifiedEvent(displayNode);
-        }
-      return;
-      }
-    vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == 0 ? "null" : "valid") << endl);
-    if ( displayNode )
-      {
-      if (this->VolumeDisplayNode != 0)
-        {
-        this->VolumeDisplayNode->Delete();
-        }
-      this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode->CreateNodeInstance());
-      // copy the scene first, as CopyWithoutModifiedEvent might need the scene
-      this->VolumeDisplayNode->SetScene(displayNode->GetScene());
-      this->VolumeDisplayNode->CopyWithoutModifiedEvent(displayNode);
-      vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
-      }
-    else 
-      {
-      if (this->VolumeDisplayNodeObserved)
-        {
-        vtkSetAndObserveNoModifyMRMLNodeMacro(this->VolumeDisplayNodeObserved, 0);
-        }
-      if (this->VolumeDisplayNode)
-        {
-        this->VolumeDisplayNode->Delete();
-        this->VolumeDisplayNode = 0;
-        }
-      }
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
+{
+  if (this->VolumeDisplayNode == 0 &&
+      this->VolumeDisplayNodeObserved != 0)
+    {
+    this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(
+      this->VolumeDisplayNodeObserved->CreateNodeInstance());
+    }
+  if (this->VolumeDisplayNode == 0 ||
+      this->VolumeDisplayNodeObserved == 0)
+    {
+    return;
+    }
+  int wasDisabling = this->VolumeDisplayNode->GetDisableModifiedEvent();
+  this->VolumeDisplayNode->SetDisableModifiedEvent(1);
+  // copy the scene first because Copy() might need the scene
+  this->VolumeDisplayNode->SetScene(this->VolumeDisplayNodeObserved->GetScene());
+  this->VolumeDisplayNode->Copy(this->VolumeDisplayNodeObserved);
+  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode))
+    {
+    // Disable auto computation of CalculateScalarsWindowLevel()
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode)->SetAutoWindowLevel(0);
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode)->SetAutoThreshold(0);
+    }
+  this->VolumeDisplayNode->SetDisableModifiedEvent(wasDisabling);
 }
 
 //----------------------------------------------------------------------------
@@ -643,8 +648,10 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
     if (volumeNode != 0 && volumeNode->GetImageData() != 0)
       {
+      //int wasModifying = volumeDisplayNode->StartModify();
       volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
       volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
+      //volumeDisplayNode->EndModify(wasModifying);
       }
     }
 

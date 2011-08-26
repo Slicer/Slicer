@@ -181,6 +181,9 @@ protected:
 
   vtkImageData* GetSliceImageData();
 
+  // Copy VolumeDisplayNodeObserved into VolumeDisplayNode
+  void UpdateVolumeDisplayNode();
+
   /// 
   /// the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
