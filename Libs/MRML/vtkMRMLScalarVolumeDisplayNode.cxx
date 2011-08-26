@@ -641,12 +641,13 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
   range[1] = 255.;
 
   vtkImageData *imageData = this->GetScalarImageData();
-  if (!imageData)
+  if (!imageData || !this->GetInputImageData())
     {
     assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData());
-    vtkWarningMacro( << "No valid image data, returning default values [0, 255]");
+    vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
     return;
     }
+  imageData->Update();
   imageData->GetScalarRange(range);
   if (imageData->GetNumberOfScalarComponents() >=3 &&
       fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001) 
