@@ -1301,7 +1301,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         nin->SetCenterImage(0);
         storageNode = nin;
         }
-      else if (fbnd->IsA("vtkMRMLFiberBundleNode"))
+      else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode"))
         {
         vtkDebugMacro("ProcessReadNodeData: node is a vtkMRMLFiberBundleNode");
         // Load a fiber bundle node
@@ -1526,7 +1526,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
       }
     }
-  else if (fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
+  else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
     {
     // Fiber bundle node
     fbnd->CreateDefaultDisplayNodes();
