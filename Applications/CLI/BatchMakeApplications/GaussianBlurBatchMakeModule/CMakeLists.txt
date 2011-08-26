@@ -32,16 +32,16 @@ if(BatchMake_DIR)
       ${Slicer_BINARY_DIR}/bin/debug
       ${Slicer_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}
       ${Slicer_BINARY_DIR}/bin
-      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
-      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/release
-      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/debug
-      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
-      ${Slicer_INSTALL_PLUGINS_BIN_DIR}
-      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
-      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/release
-      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/debug
-      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
-      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR})
+      ${Slicer_INSTALL_CLIMODULES_BIN_DIR}/relwithdebinfo
+      ${Slicer_INSTALL_CLIMODULES_BIN_DIR}/release
+      ${Slicer_INSTALL_CLIMODULES_BIN_DIR}/debug
+      ${Slicer_INSTALL_CLIMODULES_BIN_DIR}/${CMAKE_BUILD_TYPE}
+      ${Slicer_INSTALL_CLIMODULES_BIN_DIR}
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/relwithdebinfo
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/release
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/debug
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/${CMAKE_BUILD_TYPE}
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR})
 
     #
     # TODO The following code will have to be updated to copy the file at build time

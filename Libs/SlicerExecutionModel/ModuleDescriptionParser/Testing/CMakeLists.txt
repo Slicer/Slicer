@@ -48,6 +48,6 @@ add_test(
 #add_test(
 #  NAME ModuleFactoryTest
 #  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:ModuleFactoryTest>
-#    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/
+#    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/
 #  )
 

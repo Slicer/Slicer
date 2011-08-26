@@ -47,7 +47,7 @@ if(BUILD_SHARED_LIBS)
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer_FORWARD_PATH_BUILD
-        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer_BUILD_CLI)
   else(WIN32)
     set(Slicer_FORWARD_PATH_BUILD
@@ -60,7 +60,7 @@ if(BUILD_SHARED_LIBS)
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer_FORWARD_PATH_BUILD
-        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}\"")
     endif(Slicer_BUILD_CLI)
   endif(WIN32)
   if(Slicer_BUILD_MODULES)
@@ -69,7 +69,7 @@ if(BUILD_SHARED_LIBS)
   endif(Slicer_BUILD_MODULES)
   if(Slicer_BUILD_CLI)
     set(Slicer_FORWARD_PATH_INSTALL
-      "${Slicer_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+      "${Slicer_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_CLIMODULES_BIN_DIR}\"")
   endif(Slicer_BUILD_CLI)
 endif(BUILD_SHARED_LIBS)
 

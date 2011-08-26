@@ -14,7 +14,7 @@ endmacro(slicer3_set_plugins_output_path)
 #
 macro(slicer3_install_plugins)
   install(TARGETS ${ARGN}
-    RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    RUNTIME DESTINATION ${Slicer_INSTALL_CLIMODULES_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
     )
 endmacro(slicer3_install_plugins)

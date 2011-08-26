@@ -258,7 +258,7 @@ endif()
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_BIN_DIR}
-  <APPLAUNCHER_DIR>/${Slicer_INSTALL_PLUGINS_BIN_DIR}
+  <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_BIN_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
   )
 

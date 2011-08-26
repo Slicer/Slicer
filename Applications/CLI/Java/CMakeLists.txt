@@ -53,7 +53,7 @@ if( Java_JAVAC_EXECUTABLE )
      ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
 
-# message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}")
+# message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/${build_type}")
   add_custom_target( ${CLP}.jar ALL
       ${Java_JAR_EXECUTABLE} cvf  ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/${build_type}/${CLP}.jar Examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
@@ -63,7 +63,7 @@ if( Java_JAVAC_EXECUTABLE )
   # install the jar file
   install (
      FILES ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/${build_type}/${CLP}.jar
-     DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
+     DESTINATION ${Slicer_INSTALL_CLIMODULES_BIN_DIR}
      )
 
   #####
@@ -88,11 +88,11 @@ if( Java_JAVAC_EXECUTABLE )
   endforeach(file)
 #  install(
 #    FILES ${TARGETS}
-#    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}
+#    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/${build_type}
 #   )
   install (
      FILES ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/${build_type}/${CLP}.tcl
-     DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
+     DESTINATION ${Slicer_INSTALL_CLIMODULES_BIN_DIR}
      )
   endif (Slicer_SOURCE_DIR)
 
@@ -130,7 +130,7 @@ foreach(file ${TARGETS})
 endforeach(file)
 install(
   FILES ${TARGETS}
-  DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}
+  DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_CLIMODULES_BIN_DIR}/${build_type}
   )
 endif (Slicer_SOURCE_DIR)
 
