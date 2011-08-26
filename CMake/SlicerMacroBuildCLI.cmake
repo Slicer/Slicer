@@ -1,7 +1,7 @@
 # SlicerExecutionModel
 find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
 include(${SlicerExecutionModel_USE_FILE})
-include(${SlicerExecutionModel_MACROS}/SEMMacroBuildCLI.cmake)
+include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 macro(slicerMacroBuildCLI)
   set(options
