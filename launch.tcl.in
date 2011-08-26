@@ -292,7 +292,7 @@ proc launch_SetEnvironment {} {
       set ::env(Slicer_LIB_DIR)    $::env(SLICER_HOME)/lib/Slicer3
       set ::env(Slicer_BIN_DIR)    $::env(SLICER_HOME)/bin
     
-      set ::env(Slicer_PLUGINS_DIR)            $::env(SLICER_HOME)/@Slicer_INSTALL_PLUGINS_LIB_DIR@
+      set ::env(Slicer_PLUGINS_DIR)            $::env(SLICER_HOME)/@Slicer_INSTALL_CLIMODULES_LIB_DIR@
       set ::env(Slicer_QTLOADABLEMODULES_DIR)  $::env(SLICER_HOME)/@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@
     
       # QtDesigner variable
@@ -474,7 +474,7 @@ proc launch_SetEnvironment {} {
       set ::env(Slicer_BIN_DIR)    [file normalize "$::Slicer_HOME/bin/$::BUILD_SUBDIR"]
       set ::env(Slicer_LIB_DIR)    [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
     
-      set ::env(Slicer_PLUGINS_DIR) [file normalize "$::env(SLICER_HOME)/@Slicer_INSTALL_PLUGINS_LIB_DIR@/$::BUILD_SUBDIR"]
+      set ::env(Slicer_PLUGINS_DIR) [file normalize "$::env(SLICER_HOME)/@Slicer_INSTALL_CLIMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
       set ::env(Slicer_QTLOADABLEMODULES_DIR) [file normalize "$::env(SLICER_HOME)/@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
     
     
