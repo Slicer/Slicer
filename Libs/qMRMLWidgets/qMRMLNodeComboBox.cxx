@@ -38,7 +38,7 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   : q_ptr(&object)
 {
@@ -54,7 +54,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->AutoDefaultText = true;
 }
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
