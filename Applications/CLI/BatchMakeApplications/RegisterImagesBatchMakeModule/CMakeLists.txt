@@ -101,7 +101,7 @@ if(BatchMake_DIR)
 #      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm"
 #      "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
     install(FILES ${RUNTIME_SUPPORT_FILES}
-      DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
+      DESTINATION ${Slicer_INSTALL_CLIMODULES_SHARE_DIR}/${PROJECT_NAME})
 
   endif(Slicer_SOURCE_DIR)
 
