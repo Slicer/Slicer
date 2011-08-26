@@ -2615,8 +2615,11 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
 
   if (!topLevelAnnotationIsActive)
     {
-    // just use the currently active annotation hierarchy
-    return this->GetActiveHierarchyNode()->GetID();
+    // just use the currently active annotation hierarchy if it exists
+    if (this->GetActiveHierarchyNode())
+      {
+      return this->GetActiveHierarchyNode()->GetID();
+      }
     }
 
   // find the per list annotation hierarchy nodes at the top level

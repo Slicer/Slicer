@@ -698,8 +698,6 @@ void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
     vtkErrorMacro("Scene was null!")
     return;
   }
-
-  mrmlScene->SaveStateForUndo();
   
   // we need to disable the modified event which would get fired when we set the new displayNode
   this->DisableModifiedEventOn();

@@ -417,7 +417,8 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
   std::vector<vtkMRMLDisplayNode*>::iterator it =
     this->DisplayNodes.begin();
-  if (it == this->DisplayNodes.end())
+  if (it == this->DisplayNodes.end() ||
+      !(*it))
     {
     return 0;
     }

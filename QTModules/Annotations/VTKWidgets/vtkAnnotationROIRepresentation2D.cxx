@@ -112,7 +112,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
     this->Handle2D[i]->SetProperty(this->HandleProperties2D[i]);
     //this->Handle2D[i]->SetVisibility(0);
     }
-    
+
+  this->DefaultFaceProperty2D = NULL;
+  this->LastPicker2D = NULL;
+  this->CurrentHandle2D = NULL;
+  
   this->PositionHandles();
 
 }
@@ -135,7 +139,7 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
   delete [] this->HandleToPlaneTransformFilters;
  
   this->IntersectionPlane->Delete();
-    this->IntersectionPlaneTransform->Delete();
+  this->IntersectionPlaneTransform->Delete();
   for (i=0; i<6; i++)
     {
     this->IntersectionFaces[i]->Delete();
@@ -151,7 +155,14 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
     }
   this->SelectedHandleProperty2D->Delete();
   this->SelectedFaceProperty2D->Delete();
-  this->SelectedFaceProperty2D->Delete();
+  if (this->DefaultFaceProperty2D)
+    {
+    this->DefaultFaceProperty2D->Delete();
+    }
+  if (this->LastPicker2D)
+    {
+    this->LastPicker2D->Delete();
+    }
 }
 
 //----------------------------------------------------------------------
@@ -404,7 +415,11 @@ int vtkAnnotationROIRepresentation2D::HighlightHandle(vtkProp *prop)
     {
       this->Handle2D[i]->SetProperty(this->HandleProperties2D[i]);
     }
-  this->CurrentHandle2D = static_cast<vtkActor2D *>(prop);
+  this->CurrentHandle2D = NULL;
+  if (prop)
+    {
+    this->CurrentHandle2D = static_cast<vtkActor2D *>(prop);
+    }
 
   if ( this->CurrentHandle2D )
     {

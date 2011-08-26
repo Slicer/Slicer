@@ -695,19 +695,21 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
 
     roiNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("R"));
 
-    roiNode->Initialize(this->GetMRMLScene());
-
-    roiNode->Delete();
-
-    // reset updating state
-    this->m_Updating = 0;
-
     // if this was a one time place, go back to view transform mode
     vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
     if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
       {
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
+
+    this->GetMRMLScene()->SaveStateForUndo();
+    
+    roiNode->Initialize(this->GetMRMLScene());
+
+    roiNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
     }
 
   }

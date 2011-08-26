@@ -413,6 +413,16 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
 
     // create MRML node
     vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
+
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+
+    this->GetMRMLScene()->SaveStateForUno();
+    
     angleNode->Initialize(this->GetMRMLScene());
 
     angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("A"));
@@ -421,13 +431,6 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
 
     // reset updating state
     this->m_Updating = 0;
-
-    // if this was a one time place, go back to view transform mode
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-      {
-      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-      }
     } // has enough clicks
 
 }

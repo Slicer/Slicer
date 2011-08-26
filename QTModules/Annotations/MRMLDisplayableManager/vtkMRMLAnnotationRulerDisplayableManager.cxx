@@ -794,21 +794,25 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
 
     rulerNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("M"));
 
-    rulerNode->Initialize(this->GetMRMLScene());
-
-    rulerNode->Delete();
-
-    // reset updating state
-    this->m_Updating = 0;
+    
 
     // if this was a one time place, go back to view transform mode
-     vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-     if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-       {
-       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-       }
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+    
+    this->GetMRMLScene()->SaveStateForUndo();
+    
+    rulerNode->Initialize(this->GetMRMLScene());
+    
+    rulerNode->Delete();
+    
+    // reset updating state
+    this->m_Updating = 0;
     }
-
+  
   }
 
 //---------------------------------------------------------------------------

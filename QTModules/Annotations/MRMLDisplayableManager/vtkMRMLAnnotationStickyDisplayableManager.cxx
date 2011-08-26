@@ -347,6 +347,15 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
     // Create the node
     vtkMRMLAnnotationStickyNode *stickyNode = vtkMRMLAnnotationStickyNode::New();
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+    
+    this->GetMRMLScene()->SaveStateForUno();
+    
     stickyNode->Initialize(this->GetMRMLScene());
 
     stickyNode->SetStickyCoordinates(worldCoordinates);
@@ -358,12 +367,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
     // reset updating state
     this->m_Updating = 0;
 
-    // if this was a one time place, go back to view transform mode
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-      {
-      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-      }
+
     }
 
   }

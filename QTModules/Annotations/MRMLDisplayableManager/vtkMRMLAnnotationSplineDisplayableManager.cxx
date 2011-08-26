@@ -359,6 +359,15 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
     splineNode->SetControlPoint(position4,3);
     splineNode->SetControlPoint(position5,4);
 
+    // if this was a one time place, go back to view transform mode
+    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+    
+    this->GetMRMLScene()->SaveStateForUno();
+    
     splineNode->Initialize(this->GetMRMLScene());
 
     splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("S"));
@@ -368,12 +377,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
     // reset updating state
     this->m_Updating = 0;
 
-    // if this was a one time place, go back to view transform mode
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
-    if (interactionNode && interactionNode->GetPlaceModePersistence() != 1)
-      {
-      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-      }
+   
     
     }
 
