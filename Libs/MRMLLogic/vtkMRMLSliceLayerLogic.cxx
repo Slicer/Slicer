@@ -586,7 +586,6 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       imageBack->GetPointData()->Print(cerr);
       }
       }*/
-    vtkPointData* inPointData = image ? image->GetPointData() : 0;
     this->AssignAttributeTensorsToScalars->SetInput(image);
     if (image)
       {

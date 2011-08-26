@@ -3390,9 +3390,6 @@ void vtkImageResliceMask::ThreadedRequestData(
   vtkImageData* backgroundMask = outData[1];
   // Get the output pointer
   void *outPtr = outData[0]->GetScalarPointerForExtent(outExt);
-  int comps = outData[0]->GetNumberOfScalarComponents();
-  vtkIdType incr[3];
-  outData[0]->GetIncrements(incr);
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   if (this->HitInputExtent == 0)
