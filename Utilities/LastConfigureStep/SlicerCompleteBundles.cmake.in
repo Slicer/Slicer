@@ -101,8 +101,8 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
   if(Slicer_BUILD_CLI)
-    if(item MATCHES "@Slicer_PLUGINS_LIB_DIR@/[^/]+\\.dylib$")
-      set(path "@executable_path@/../@Slicer_PLUGINS_LIB_DIR@")
+    if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")
+      set(path "@executable_path@/../@Slicer_CLIMODULES_LIB_DIR@")
     endif()
   endif()
 
@@ -140,7 +140,7 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
   if(Slicer_BUILD_CLI)
     list(APPEND candiates_pattern
-      "${app_dir}/Contents/@Slicer_PLUGINS_LIB_DIR@/*${suffix}"
+      "${app_dir}/Contents/@Slicer_CLIMODULES_LIB_DIR@/*${suffix}"
       )
   endif()
 
@@ -201,7 +201,7 @@ function(fixup_bundle_with_plugins app)
     list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
   if(Slicer_BUILD_CLI)
-    list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_PLUGINS_LIB_DIR@")
+    list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_CLIMODULES_LIB_DIR@")
   endif()
   list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_LIB_DIR@/iconengines")
 

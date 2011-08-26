@@ -42,7 +42,7 @@
 #define Slicer_QtPlugins_DIR "@Slicer_QtPlugins_DIR@"
 
 #define Slicer_CLIMODULES_BIN_DIR "@Slicer_CLIMODULES_BIN_DIR@"
-#define Slicer_PLUGINS_LIB_DIR "@Slicer_PLUGINS_LIB_DIR@"
+#define Slicer_CLIMODULES_LIB_DIR "@Slicer_CLIMODULES_LIB_DIR@"
 #define Slicer_PLUGINS_INCLUDE_DIR "@Slicer_PLUGINS_INCLUDE_DIR@"
 #define Slicer_PLUGINS_SHARE_DIR "@Slicer_PLUGINS_SHARE_DIR@"
 

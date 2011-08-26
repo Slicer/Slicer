@@ -244,7 +244,7 @@ set(Slicer_SHARE_DIR "share/Slicer")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
 set(Slicer_CLIMODULES_BIN_DIR "plugins")
-set(Slicer_PLUGINS_LIB_DIR "plugins")
+set(Slicer_CLIMODULES_LIB_DIR "plugins")
 set(Slicer_PLUGINS_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/plugins")
 set(Slicer_PLUGINS_SHARE_DIR "${Slicer_SHARE_DIR}/plugins")
 
@@ -265,7 +265,7 @@ set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
 set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
-set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_LIB_DIR}")
+set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
 set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_INCLUDE_DIR}")
 set(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_SHARE_DIR}")
 
