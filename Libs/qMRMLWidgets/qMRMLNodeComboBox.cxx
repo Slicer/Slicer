@@ -29,6 +29,7 @@
 #include <ctkComboBox.h>
 
 // qMRMLWidgets includes
+#include "qMRMLNodeComboBoxDelegate.h"
 #include "qMRMLNodeComboBox_p.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneModel.h"
@@ -780,6 +781,7 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
+  d->ComboBox->setItemDelegate(new qMRMLNodeComboBoxDelegate());
   d->setModel(oldModel);
 
   connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
