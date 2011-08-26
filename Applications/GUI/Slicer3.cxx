@@ -516,7 +516,7 @@ int Slicer_main(int& argc, char *argv[])
     }
 
   pythonEnv += slicerHome + "/" + Slicer_LIB_DIR + "/SlicerBaseGUI/Python" + PathSep;
-  pythonEnv += slicerHome + "/" + Slicer_PLUGINS_BIN_DIR + PathSep;
+  pythonEnv += slicerHome + "/" + Slicer_CLIMODULES_BIN_DIR + PathSep;
   vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
 
   Py_Initialize();
@@ -541,7 +541,7 @@ int Slicer_main(int& argc, char *argv[])
   pythonInitStrings.push_back(std::string("from os.path import join as j;"));
   pythonInitStrings.push_back(std::string("tk = Tkinter.Tk();"));
   pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_LIB_DIR + "', 'SlicerBaseGUI', 'Python')" + " );"));
-  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_PLUGINS_BIN_DIR + "') );"));
+  pythonInitStrings.push_back(std::string("sys.path.append ( j('" + slicerHome + "','" + Slicer_CLIMODULES_BIN_DIR + "') );"));
 
   /*
   std::string TkinitString = "import Tkinter, sys;"
@@ -551,7 +551,7 @@ int Slicer_main(int& argc, char *argv[])
     + slicerHome + "','" + Slicer_LIB_DIR + "', 'SlicerBaseGUI', 'Python')"
     + " );\n"
     "sys.path.append ( j('"
-    + slicerHome + "','" + Slicer_PLUGINS_BIN_DIR
+    + slicerHome + "','" + Slicer_CLIMODULES_BIN_DIR
     + "') );\n";
     */
   
@@ -1172,11 +1172,11 @@ int Slicer_main(int& argc, char *argv[])
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  defaultPluginsPaths = slicerHome + "/" + Slicer_PLUGINS_BIN_DIR;
+  defaultPluginsPaths = slicerHome + "/" + Slicer_CLIMODULES_BIN_DIR;
   if (hasIntDir)
     {
     defaultPluginsPaths = defaultPluginsPaths + PathSep +
-      slicerHome + "/" + Slicer_PLUGINS_BIN_DIR + "/" + intDir;
+      slicerHome + "/" + Slicer_CLIMODULES_BIN_DIR + "/" + intDir;
     }
 
   // add the default plugins directory (based on the slicer

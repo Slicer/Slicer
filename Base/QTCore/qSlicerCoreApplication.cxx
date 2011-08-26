@@ -31,7 +31,7 @@
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
-//  - Slicer_PLUGINS_BIN_DIR
+//  - Slicer_CLIMODULES_BIN_DIR
 //  - Slicer_LIB_DIR
 //  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT

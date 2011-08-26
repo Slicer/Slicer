@@ -41,10 +41,9 @@ if(APPLE)
   set(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
   set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/")
 endif()
-set(Slicer_PLUGINS_BIN_DIR "plugins")
 set(Slicer_PLUGINS_LIB_DIR "plugins")
 
-set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_BIN_DIR}")
+set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
 set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_PLUGINS_LIB_DIR}")
 
 set(Slicer_HOME "${Slicer_BINARY_DIR}")
@@ -64,7 +63,7 @@ set(Slicer_HOME "${Slicer_BINARY_DIR}")
     ## -- This could be some other variable to indicate a slicer build
       -DINTEGRATE_WITH_SLICER:BOOL=ON
       -DBRAINSTools_SUPERBUILD:BOOL=OFF
-      -DSlicer_PLUGINS_BIN_DIR:PATH=${CMAKE_BINARY_DIR}/Slicer-build/${Slicer_PLUGINS_BIN_DIR}
+      -DSlicer_PLUGINS_BIN_DIR:PATH=${CMAKE_BINARY_DIR}/Slicer-build/${Slicer_CLIMODULES_BIN_DIR}
       -DSlicer_PLUGINS_LIB_DIR:PATH=${CMAKE_BINARY_DIR}/Slicer-build/${Slicer_PLUGINS_LIB_DIR}
       -DSlicer_INSTALL_PLUGINS_BIN_DIR:PATH=${CMAKE_BINARY_DIR}/Slicer-build/${Slicer_INSTALL_PLUGINS_BIN_DIR}
       -DSlicer_INSTALL_PLUGINS_LIB_DIR:PATH=${CMAKE_BINARY_DIR}/Slicer-build/${Slicer_INSTALL_PLUGINS_LIB_DIR}
