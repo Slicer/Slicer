@@ -1803,12 +1803,12 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
   if (this == NULL)
     {
-    vtkErrorMacro("GetNodeByID: That's scary, you access a null scene !");
+    vtkErrorMacro("GetNodeByID: That's scary, you accessed a null scene !");
     return NULL;
     }
   if (id == NULL) 
     {
-    vtkDebugMacro("GetNodeByID: id is null");
+    // don't use a macro here, can cause a crash on exit
     return NULL;
     }
 
@@ -2228,7 +2228,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
   this->ClearRedoStack();
   this->SetUndoOn();
   this->PushIntoUndoStack();
-  if ( node && !node->IsA("vtkMRMLSceneSnapshotNode"))
+  if ( node && !node->IsA("vtkMRMLSceneViewNode"))
     {
     this->CopyNodeInUndoStack(node);
     }
@@ -2253,7 +2253,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
   for (n=0; n<nodes.size(); n++) 
     {
     vtkMRMLNode *node = nodes[n];
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode"))
+    if (node && !node->IsA("vtkMRMLSceneViewNode"))
       {
       this->CopyNodeInUndoStack(node);
       }
@@ -2287,7 +2287,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
   for (int n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(nodes->GetItemAsObject(n));
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+    if (node && !node->IsA("vtkMRMLSceneViewNode")) 
       {
       this->CopyNodeInUndoStack(node);
       }
@@ -2316,6 +2316,8 @@ void vtkMRMLScene::PushIntoUndoStack()
     return;
     }
 
+  std::cout << "PushIntoUndoStack" << std::endl;
+  
   vtkCollection* newScene = vtkCollection::New();
 
   vtkCollection* currentScene = this->CurrentScene;
@@ -2325,7 +2327,7 @@ void vtkMRMLScene::PushIntoUndoStack()
   for (int n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+    if (node && !node->IsA("vtkMRMLSceneViewNode")) 
       {
       newScene->AddItem(node);
       }
@@ -2353,7 +2355,7 @@ void vtkMRMLScene::PushIntoRedoStack()
   for (int n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+    if (node && !node->IsA("vtkMRMLSceneViewNode")) 
       {
       newScene->AddItem(node);
       }
@@ -2451,7 +2453,7 @@ void vtkMRMLScene::Undo()
   for (n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+    if (node && !node->IsA("vtkMRMLSceneViewNode")) 
       {
       currentIDs.push_back(node->GetID());
       currentNodes.push_back(node);
@@ -2469,7 +2471,7 @@ void vtkMRMLScene::Undo()
     for (n=0; n<nnodes; n++) 
       {
       vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-      if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+      if (node && !node->IsA("vtkMRMLSceneViewNode")) 
         {
         undoIDs.push_back(node->GetID());
         undoNodes.push_back(node);
@@ -2570,7 +2572,7 @@ void vtkMRMLScene::Redo()
   for (n=0; n<nnodes; n++) 
     {
     vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(currentScene->GetItemAsObject(n));
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+    if (node && !node->IsA("vtkMRMLSceneViewNode")) 
       {
       currentMap[node->GetID()] = node;
       }
@@ -2588,7 +2590,7 @@ void vtkMRMLScene::Redo()
     for (n=0; n<nnodes; n++) 
       {
       vtkMRMLNode *node  = dynamic_cast < vtkMRMLNode *>(undoScene->GetItemAsObject(n));
-      if (node && !node->IsA("vtkMRMLSceneSnapshotNode")) 
+      if (node && !node->IsA("vtkMRMLSceneViewNode")) 
         {
         undoMap[node->GetID()] = node;
         }
