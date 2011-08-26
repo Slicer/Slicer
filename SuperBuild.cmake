@@ -22,9 +22,7 @@
 #-----------------------------------------------------------------------------
 # Git protocole option
 #-----------------------------------------------------------------------------
-
 option(Slicer_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
-
 set(git_protocol "git")
 if(NOT Slicer_USE_GIT_PROTOCOL)
   set(git_protocol "http")
@@ -38,7 +36,6 @@ include(SlicerBlockFindQtAndCheckVersion)
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
-
 include(ExternalProject)
 include(SlicerMacroCheckExternalProjectDependency)
 
@@ -115,8 +112,7 @@ SlicerMacroCheckExternalProjectDependency(Slicer)
 
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
-#
-
+#-----------------------------------------------------------------------------
 set(slicer_cmake_boolean_args
   DOCUMENTATION_TARGET_IN_ALL
   BUILD_TESTING
