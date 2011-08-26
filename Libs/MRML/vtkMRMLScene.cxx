@@ -2316,7 +2316,6 @@ void vtkMRMLScene::PushIntoUndoStack()
     return;
     }
 
-  std::cout << "PushIntoUndoStack" << std::endl;
   
   vtkCollection* newScene = vtkCollection::New();
 
