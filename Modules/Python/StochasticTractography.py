@@ -629,7 +629,7 @@ def Execute (\
 
       nmodule = 'StochasticTractographyServer'
 
-      dir0 = os.environ['Slicer_PLUGINS_DIR']
+      dir0 = os.environ['Slicer_CLIMODULES_DIR']
       pyt0 = os.environ['PYTHONHOME']
       fdir0 = dir0 + '/' + nmodule + '/'
       curdir = os.getcwd()
@@ -657,7 +657,7 @@ def Execute (\
 
       nmodule = 'StochasticTractographyServer'
 
-      dir0 = os.environ['Slicer_PLUGINS_DIR']
+      dir0 = os.environ['Slicer_CLIMODULES_DIR']
       pyt0 = os.environ['PYTHONHOME']
       fdir0 = dir0 + '/' + nmodule + '/'
       curdir = os.getcwd()
