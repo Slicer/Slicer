@@ -357,7 +357,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode)
+void vtkMRMLDisplayableNode::OnDisplayNodeAdded(vtkMRMLDisplayNode* vtkNotUsed(dNode))
 {
   this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
 }
