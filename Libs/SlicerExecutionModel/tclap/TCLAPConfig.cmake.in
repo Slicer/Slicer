@@ -1,5 +1,0 @@
-# The TCLAP include directories.
-set(TCLAP_INCLUDE_DIRS "@TCLAP_INCLUDE_DIRS_CONFIG@")
-
-# The TCLAP USE file
-set(TCLAP_USE_FILE "@TCLAP_USE_FILE_CONFIG@")
