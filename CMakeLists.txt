@@ -181,7 +181,7 @@ mark_as_advanced(Slicer_ITK_GIT_TAG)
 # The following option has been added for conveniency so that BRAINSTOOL module can be
 # enabled/disabled at the superbuild level.
 CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
+  Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." OFF
   "Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
 
