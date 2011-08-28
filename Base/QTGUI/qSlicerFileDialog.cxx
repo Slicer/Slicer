@@ -145,6 +145,10 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     {
     fileDialog.setSidebarUrls(ioManager->favorites());
     }
+  if (ioProperties["multipleFiles"].toBool())
+    {
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+    }
   // warning: we are responsible for the memory of options
   QStringList fileDescriptions = ioManager->fileDescriptions(this->fileType());
   Q_ASSERT(fileDescriptions.count());
@@ -159,9 +163,8 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     // fileDialog will reparent optionsWidget and take care of deleting
     // optionsWidget for us.
     fileDialog.setBottomWidget(optionsWidget, tr("Options:"));
-    // TODO: support selection of more than 1 file
-    connect(&fileDialog, SIGNAL(currentChanged(const QString&)),
-            optionsWidget, SLOT(setFileName(const QString&)));
+    connect(&fileDialog, SIGNAL(fileSelectionChanged(const QStringList&)),
+            optionsWidget, SLOT(setFileNames(const QStringList&)));
     connect(optionsWidget, SIGNAL(validChanged(bool)),
             &fileDialog, SLOT(setAcceptButtonEnable(bool)));
     fileDialog.setAcceptButtonEnable(optionsWidget->isValid());
@@ -178,8 +181,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
       }
     else
       {
-      // TODO: support selection of more than 1 file
-      properties["fileName"] = fileDialog.selectedFiles()[0];
+      properties["fileName"] = fileDialog.selectedFiles();
       }
     if (d->Action == qSlicerFileDialog::Read)
       {

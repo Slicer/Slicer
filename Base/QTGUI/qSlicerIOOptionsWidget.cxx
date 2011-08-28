@@ -65,6 +65,7 @@ void qSlicerIOOptionsWidget::setFileName(const QString& fileName)
 void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
 {
   bool oldValid = this->isValid();
+  /*
   if (fileNames.count())
     {
     this->Properties["fileNames"] = fileNames;
@@ -74,6 +75,8 @@ void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
     this->Properties.remove("fileNames");
     }
   this->Properties.remove("fileName");
+  */
+  this->Properties["fileName"] = fileNames;
   bool newValid = this->isValid();
   if (oldValid != newValid)
     {

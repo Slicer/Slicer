@@ -62,7 +62,7 @@ public:
   /// The function return 0 if it fails.
   ///
   /// The map associated with most of the \a fileType should contains either
-  /// fileName (QString) or filenames (QStringList).
+  /// fileName (QString or QStringList) or fileNames (QStringList).
   /// More specific parameters could also be set. For example, the volume reader qSlicerVolumesIO
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
   ///

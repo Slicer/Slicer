@@ -221,6 +221,25 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   Q_D(qSlicerCoreIOManager);
 
   Q_ASSERT(parameters.contains("fileName"));
+  if (parameters["fileName"].type() == QVariant::StringList)
+    {
+    bool res = true;
+    QStringList fileNames = parameters["fileName"].toStringList();
+    QStringList names = parameters["name"].toStringList();
+    int nameId = 0;
+    foreach(const QString& fileName, fileNames)
+      {
+      qSlicerIO::IOProperties fileParameters = parameters;
+      fileParameters["fileName"] = fileName;
+      if (!names.isEmpty())
+        {
+        fileParameters["name"] = nameId < names.size() ? names[nameId] : names.last();
+        ++nameId;
+        } 
+      res &= this->loadNodes(fileType, fileParameters, loadedNodes);
+      }
+    return res;
+    }
   Q_ASSERT(!parameters["fileName"].toString().isEmpty());
 
   const QList<qSlicerIO*>& readers = this->ios(fileType);

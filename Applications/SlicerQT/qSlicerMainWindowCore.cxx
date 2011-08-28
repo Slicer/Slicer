@@ -103,7 +103,7 @@ void qSlicerMainWindowCore::onFileLoadSceneActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileAddVolumeActionTriggered()
 {
-  qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
+  qSlicerApplication::application()->ioManager()->openAddVolumesDialog();
 }
 
 //---------------------------------------------------------------------------

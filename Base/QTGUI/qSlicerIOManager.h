@@ -72,6 +72,7 @@ public slots:
   bool openAddSceneDialog();
   inline bool openAddDataDialog();
   inline bool openAddVolumeDialog();
+  inline bool openAddVolumesDialog();
   inline bool openAddModelDialog();
   inline bool openAddScalarOverlayDialog();
   inline bool openAddTransformDialog();
@@ -104,6 +105,14 @@ bool qSlicerIOManager::openAddDataDialog()
 bool qSlicerIOManager::openAddVolumeDialog()
 {
   return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddVolumesDialog()
+{
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["multipleFiles"] = true;
+  return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------

@@ -73,6 +73,7 @@ class qSlicerStandardFileDialogPrivate;
 //------------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog : public qSlicerFileDialog
 {
+  Q_OBJECT
 public:
   qSlicerStandardFileDialog(QObject* parent=0);
   virtual ~qSlicerStandardFileDialog();

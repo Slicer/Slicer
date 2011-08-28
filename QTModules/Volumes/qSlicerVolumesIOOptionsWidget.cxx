@@ -88,7 +88,12 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
   Q_D(const qSlicerVolumesIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
     {
-    this->Properties["name"] = d->NameLineEdit->text();
+    QStringList names = d->NameLineEdit->text().split(';');
+    for (int i = 0; i < names.count(); ++i)
+      {
+      names[i] = names[i].trimmed();
+      }
+    this->Properties["name"] = names;
     }
   else
     {
@@ -116,6 +121,15 @@ void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
-  d->NameLineEdit->setText("");
+  QStringList names;
+  foreach(const QString& fileName, fileNames)
+    {
+    QFileInfo fileInfo(fileName);
+    if (fileInfo.isFile())
+      {
+      names << fileInfo.baseName();
+      }
+    }
+  d->NameLineEdit->setText( names.join("; ") );
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }
