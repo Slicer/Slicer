@@ -58,6 +58,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->LastEventPosition2D[1]=0;
   this->LastEventPosition2D[2]=0;
   this->LastEventPosition2D[3]=1;
+  this->LastPicker2D = NULL;
 
   this->HandleSizeInPixels = 4;
   this->HandlesVisibility = 1;

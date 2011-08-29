@@ -549,8 +549,11 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       /// HACK !
       /// vtkAssignAttribute is not able to set these values automatically,
       /// we do it manually instead.
-      image->SetScalarType(tensors ? tensors->GetDataType() : VTK_FLOAT);
-      image->SetNumberOfScalarComponents(tensors ? tensors->GetNumberOfComponents() : 1);
+      if (image)
+        {
+        image->SetScalarType(tensors ? tensors->GetDataType() : VTK_FLOAT);
+        image->SetNumberOfScalarComponents(tensors ? tensors->GetNumberOfComponents() : 1);
+        }
       /// END of HACK
 /*      {
       vtkNew<vtkAssignAttribute> assign;
@@ -586,9 +589,9 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       imageBack->GetPointData()->Print(cerr);
       }
       }*/
-    this->AssignAttributeTensorsToScalars->SetInput(image);
     if (image)
       {
+      this->AssignAttributeTensorsToScalars->SetInput(image);
       /// HACK !
       /// vtkAssignAttribute is not able to set these values automatically,
       /// we do it manually instead.
