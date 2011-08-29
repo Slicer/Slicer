@@ -104,10 +104,16 @@ class DICOMWidget:
 
     userFrame = self.findChildren(self.dicomApp, 'UserFrame')[0]
     userFrame.setLayout(qt.QVBoxLayout())
+    self.treeLabel = qt.QLabel('Selection: None')
+    userFrame.layout().addWidget(self.treeLabel)
     self.loadButton = qt.QPushButton('Load to Slicer')
     self.loadButton.enabled = False 
     userFrame.layout().addWidget(self.loadButton)
     self.loadButton.connect('clicked()', self.onLoadButton)
+    self.exportButton = qt.QPushButton('Export Slicer Volume to Study...')
+    self.exportButton.enabled = False 
+    userFrame.layout().addWidget(self.exportButton)
+    self.exportButton.connect('clicked()', self.onExportButton)
 
     # Add spacer to layout
     self.layout.addStretch(1)
@@ -125,12 +131,14 @@ class DICOMWidget:
     self.model = index.model()
     self.selection = index.sibling(index.row(), 0)
     typeRole = self.selection.data(self.dicomModelTypeRole)
+    self.treeLabel.text = 'Selection: %s' % self.dicomModelTypes[typeRole]
     if typeRole > 0:
       self.loadButton.text = 'Load Selected %s to Slicer' % self.dicomModelTypes[typeRole]
       self.loadButton.enabled = True
     else:
       self.loadButton.text = 'Load to Slicer'
       self.loadButton.enabled = False 
+    self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
 
   def onLoadButton(self):
     self.progress = qt.QProgressDialog()
@@ -151,6 +159,12 @@ class DICOMWidget:
     elif role == "Image":
       pass
     self.progress = None
+
+  def onExportButton(self):
+    """Associate a slicer volume as a series in the selected dicom study"""
+    uid = self.selection.data(self.dicomModelUIDRole)
+    exportDialog = DICOMExportDialog(self.dicomDatabase, uid)
+    exportDialog.open()
 
   def loadPatient(self,patientUID):
     studies = self.dicomDatabase.studiesForPatient(patientUID)
@@ -181,8 +195,8 @@ class DICOMWidget:
   def loadSeries(self,seriesUID):
     files = self.dicomDatabase.filesForSeries(seriesUID)
     self.dicomDatabase.loadFileHeader(files[0])
-    seriesDescrition = "0008,103e"
-    d = self.dicomDatabase.headerValue(seriesDescrition)
+    seriesDescription = "0008,103e"
+    d = self.dicomDatabase.headerValue(seriesDescription)
     name = d[d.index('[')+1:d.index(']')]
     self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
 
@@ -256,6 +270,48 @@ class DICOMWidget:
         children.append(p)
     return children
 
+class DICOMExportDialog(object):
+  """Implement the Qt dialog for selecting slicer data to be exported
+  to be part of a DICOM study (e.g. a slicer volume as a new dicom series).
+  """
+
+  def __init__(self,dicomDatabase, studyUID):
+    self.dicomDatabase = dicomDatabase
+    self.studyUID = studyUID
+    seriesUID = self.dicomDatabase.seriesForStudy(studyUID)[0]
+    files = self.dicomDatabase.filesForSeries(seriesUID)
+    self.dicomDatabase.loadFileHeader(files[0])
+    seriesDescription = "0008,103e"
+    d = self.dicomDatabase.headerValue(seriesDescription)
+    name = d[d.index('[')+1:d.index(']')]
+    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
+
+  def open(self):
+
+    self.dialog = qt.QDialog(slicer.util.mainWindow())
+    self.dialog.setWindowTitle('Export to DICOM Study')
+    self.dialog.setWindowModality(1)
+    layout = qt.QVBoxLayout()
+    self.dialog.setLayout(layout)
+
+    bbox = qt.QDialogButtonBox(self.dialog)
+    ok = qt.QPushButton("Ok")
+    cancel = qt.QPushButton("Cancel")
+    bbox.addButton(ok, 0)
+    bbox.addButton(cancel, 1)
+    layout.addWidget(bbox)
+    ok.connect('clicked()', self.onOk)
+    cancel.connect('clicked()', self.onCancel)
+
+
+    self.dialog.open()
+
+  def onOk(self):
+    
+    self.dialog.close()
+
+  def onCancel(self):
+    self.dialog.close()
 
 class DICOMTestingServer(object):
   """helper class to set up the DICOM servers
