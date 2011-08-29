@@ -505,6 +505,10 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
     }
+  if (this->GetLayoutLabel())
+    {
+    of << indent << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
+    }
   if (this->OrientationString)
     {
     of << indent << " orientation=\"" << this->OrientationString << "\"";
@@ -763,7 +767,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
   
   Superclass::PrintSelf(os,indent);
-  os << "LayoutLabel: " << this->LayoutLabel << std::endl;
+  os << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
 
   os << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {
