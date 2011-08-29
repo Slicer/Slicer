@@ -202,24 +202,12 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkN
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
 {
- // if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
-  if ( this->DiffusionTensorGlyphFilter->GetInput() != NULL 
-       && this->GetDiffusionTensorDisplayPropertiesNode() != NULL 
-       && this->GetVisibility())
-    {
-    this->UpdatePolyDataPipeline();
-    }
   return this->DiffusionTensorGlyphFilter->GetOutput();
 }
 
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
 {
-  if ( this->Visibility != 0 && this->GetDiffusionTensorDisplayPropertiesNode() )
-    {
-    this->UpdatePolyDataPipeline();
-    this->SliceToXYTransformer->Update();
-    }
   return this->SliceToXYTransformer->GetOutput();
 }
 //----------------------------------------------------------------------------
