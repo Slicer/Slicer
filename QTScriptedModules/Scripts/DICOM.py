@@ -115,13 +115,11 @@ class DICOMWidget:
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
-      self.mb = qt.QMessageBox(slicer.util.mainWindow())
-      self.mb.setWindowTitle('DICOM')
-      self.mb.setText('The database file path "%s" cannot be opened.' % databaseFilepath)
-      self.mb.setWindowModality(1)
-      self.mb.open()
+      self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
       return
     self.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+    if not self.dicomDatabase.isOpen:
+      self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
 
   def onTreeClicked(self,index):
     self.model = index.model()
@@ -215,7 +213,7 @@ class DICOMWidget:
         self.exeDir = slicer.app.slicerHome 
         if slicer.app.intDir:
           self.exeDir = self.exeDir + '/' + slicer.app.intDir
-        self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build/bin'
+        self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build'
 
         # TODO: deal with Debug/RelWithDebInfo on windows
 
@@ -236,6 +234,14 @@ class DICOMWidget:
       # now start the server
       self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
       self.toggleServer.text = "Stop Server"
+
+  def messageBox(self,text,title='DICOM'):
+    self.mb = qt.QMessageBox(slicer.util.mainWindow())
+    self.mb.setWindowTitle(title)
+    self.mb.setText(text)
+    self.mb.setWindowModality(1)
+    self.mb.open()
+    return
 
   def findChildren(self,widget,name):
     """ return a list of child widgets that match the passed name """
@@ -270,8 +276,8 @@ class DICOMTestingServer(object):
     if self.qrRunning():
       self.stop()
 
-    self.dcmqrscpExecutable = self.exeDir+'/dcmqrscp'
-    self.storeSCUExecutable = self.exeDir+'/storescu'
+    self.dcmqrscpExecutable = self.exeDir+'/dcmqrdb/apps/dcmqrscp'
+    self.storeSCUExecutable = self.exeDir+'/dcmnet/apps/storescu'
 
     # make the config file
     cfg = self.tmpDir+"/dcmqrscp.cfg"
@@ -346,3 +352,30 @@ AETable END
     fp.write(config)
     fp.close()
 
+
+def DICOMTest():
+  w = slicer.modules.dicom.widgetRepresentation()
+  w.onToggleServer()
+  queryButton = slicer.util.findChildren(w.dicomApp, text='Query')[0]
+  queryButton.click()
+
+
+  print("DICOMTest Passed!")
+  return True
+
+def DICOMDemo():
+  pass
+
+
+if __name__ == "__main__":
+  import sys
+  if '--test' in sys.argv:
+    if DICOMTest():
+      exit(0)
+    exit(1)
+  if '--demo' in sys.argv:
+    DICOMDemo()
+    exit()
+  # TODO - 'exit()' returns so this code gets run
+  # even if the argument matches one of the cases above
+  #print ("usage: DICOM.py [--test | --demo]")
