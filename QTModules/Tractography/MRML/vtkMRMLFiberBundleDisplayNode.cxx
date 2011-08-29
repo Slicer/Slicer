@@ -51,8 +51,8 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->DiffusionTensorDisplayPropertiesNode = NULL;
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
 
-  this->ScalarRange[0] = 0;
-  this->ScalarRange[1] = 255;
+  this->ScalarRange[0] = 0.;
+  this->ScalarRange[1] = 1.;
 }
 
 
@@ -206,18 +206,32 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetD
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *id )
 {
-  // Stop observing any old node
-  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
+  if (
+      (id == this->GetDiffusionTensorDisplayPropertiesNodeID()) 
+      || (id == NULL || this->GetDiffusionTensorDisplayPropertiesNodeID() == NULL)
+      || (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) != 0)
+      )
+  {
+    // Stop observing any old node
+    vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
 
-  // Set the ID. This is the "ground truth" reference to the node.
-  this->SetDiffusionTensorDisplayPropertiesNodeID ( id );
+    // Set the ID. This is the "ground truth" reference to the node.
+    this->SetDiffusionTensorDisplayPropertiesNodeID ( id );
 
-  // Get the node corresponding to the ID. This pointer is only to observe the object.
-  vtkMRMLNode *cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );
+    // Get the node corresponding to the ID. This pointer is only to observe the object.
+    vtkMRMLNode *cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );
 
-  // Observe the node using the pointer.
-  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
+    // Observe the node using the pointer.
+    vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
 
+    //The new DiffusionTensorDisplayPropertiesNode can have a different setting on the properties
+    //so we emit the event that the polydata has been modified
+    if (cnode and this->PolyData)
+    {
+      this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+    }
+
+  }
 }
 
 //----------------------------------------------------------------------------

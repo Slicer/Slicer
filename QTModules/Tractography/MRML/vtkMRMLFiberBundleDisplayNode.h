@@ -178,7 +178,7 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
   char *DiffusionTensorDisplayPropertiesNodeID;
 
-  void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
+  virtual void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
   /// ALL MRML nodes
 
