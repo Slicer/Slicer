@@ -56,9 +56,9 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
 {
 
   // Default display is FA (often used) and line glyphs (quickest to render)
-  this->ScalarInvariant = this->ColorOrientation;
+  this->ScalarInvariant = this->FractionalAnisotropy;
   this->GlyphGeometry = this->Ellipsoids;
-  this->ColorGlyphBy = this->ColorOrientation;
+  this->ColorGlyphBy = this->FractionalAnisotropy;
 
   // Glyph general parameters
   this->GlyphScaleFactor = 50;
