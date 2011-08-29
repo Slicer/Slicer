@@ -94,6 +94,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
  sphere->Delete();
 
  this->VisualizationMode = 0;
+ this->AutoScalarRange = 1;
 }
 
 //----------------------------------------------------------------------------
