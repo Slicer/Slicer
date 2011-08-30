@@ -49,8 +49,8 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerMouseModeToolBar");
 qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
   : q_ptr(&object)
 {
-//  logger.setTrace();
-  logger.setOff();
+  logger.setTrace();
+  //logger.setOff();
 
   // MRMLApplicationLogic should be instantiated
   ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
@@ -173,6 +173,7 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   if (this->MRMLScene)
     {
     this->updateWidgetFromMRML();
+    this->updateWidgetFromSelectionNode();
     }
 }
 
@@ -448,6 +449,9 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
     this->changeCursorTo(QCursor());
 
     d->ViewTransformModeAction->setChecked(true);
+
+    // cancel all Annotation placements
+    interactionNode->InvokeEvent(vtkMRMLInteractionNode::EndPlacementEvent);
     }
 }
 
