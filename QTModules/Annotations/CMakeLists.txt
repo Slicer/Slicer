@@ -160,5 +160,8 @@ slicerMacroBuildQtModule(
 
 if(BUILD_TESTING)
   add_subdirectory(Testing/Cxx)
+  if(Slicer_USE_PYTHONQT)
+    add_subdirectory(Testing/Python)
+  endif()
 endif()
 
