@@ -49,8 +49,8 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerMouseModeToolBar");
 qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
   : q_ptr(&object)
 {
-  logger.setTrace();
-  //logger.setOff();
+  //logger.setTrace();
+  logger.setOff();
 
   // MRMLApplicationLogic should be instantiated
   ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
