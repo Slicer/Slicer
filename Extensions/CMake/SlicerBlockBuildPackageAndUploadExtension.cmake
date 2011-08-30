@@ -71,6 +71,20 @@ set(label ${EXTENSION_NAME})
 set_property(GLOBAL PROPERTY SubProject ${label})
 set_property(GLOBAL PROPERTY Label ${label})
 
+# If no CTestConfig.cmake file is found in EXTENSION_SOURCE_DIR,
+# one will be generated.
+if(NOT EXISTS "${EXTENSION_SOURCE_DIR}/CTestConfig.cmake")
+  message(STATUS "CTestConfig.cmake has been written to: ${EXTENSION_SOURCE_DIR}")
+  file(WRITE ${EXTENSION_SOURCE_DIR}/CTestConfig.cmake
+"set(CTEST_PROJECT_NAME \"Slicer\")
+set(CTEST_NIGHTLY_START_TIME \"3:00:00 UTC\")
+
+set(CTEST_DROP_METHOD \"http\")
+set(CTEST_DROP_SITE \"www.cdash.org\")
+set(CTEST_DROP_LOCATION \"/slicer4/submit.php?project=Slicer4\")
+set(CTEST_DROP_SITE_CDASH TRUE)")
+endif()
+
 set(track "Extensions-${CTEST_MODEL}")
 ctest_start(${CTEST_MODEL} TRACK ${track} ${EXTENSION_SOURCE_DIR} ${EXTENSION_SUPERBUILD_BINARY_DIR})
 ctest_read_custom_files(${EXTENSION_SUPERBUILD_BINARY_DIR} ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
