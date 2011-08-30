@@ -53,6 +53,12 @@ public:
   void UpdateScene(vtkMRMLScene *scene);
 
   /// 
+  /// alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+
+  /// 
   /// Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
