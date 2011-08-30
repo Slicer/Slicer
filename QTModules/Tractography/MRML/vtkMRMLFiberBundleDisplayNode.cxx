@@ -208,7 +208,7 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
 {
   if (
       (id != this->GetDiffusionTensorDisplayPropertiesNodeID()) 
-      && (id != NULL || this->GetDiffusionTensorDisplayPropertiesNodeID() == NULL)
+      && (id != NULL || this->GetDiffusionTensorDisplayPropertiesNodeID() != NULL)
       && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
       )
     {
