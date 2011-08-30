@@ -107,8 +107,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
 // --------------------------------------------------------------------------
 int qSlicerVolumeRenderingSettingsPanelPrivate::memoryFromString(const QString& memory)const
 {
-  int pos = this->MemoryRegExp.indexIn(memory);
-  Q_ASSERT(pos >= 0);
+  Q_ASSERT(this->MemoryRegExp.indexIn(memory) >= 0);
 
   QString memoryValue = this->MemoryRegExp.cap(1);
   QString memoryUnit = this->MemoryRegExp.cap(2);
