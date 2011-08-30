@@ -111,6 +111,15 @@ public:
 
         }
 
+      if (event == vtkCommand::EndInteractionEvent)
+        {
+        // save the state of the node when done moving, then call
+        // PropagateWidgetToMRML to update the node one last time
+        if (this->m_Node->GetScene())
+          {
+          this->m_Node->GetScene()->SaveStateForUndo(this->m_Node);
+          }
+        }
       // the interaction with the widget ended, now propagate the changes to MRML
       this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
@@ -412,19 +421,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       } // if point display node
     
     // update the text
-    if (fiducialNode->GetNumberOfTexts() > 0)
+    if (fiducialNode->GetName())
       {
       // create a string
       vtkStdString textString;
-      for (int i = 0; i < fiducialNode->GetNumberOfTexts(); i++)
-        {
-        if (i > 0)
-          {
-          textString.append("\n");
-          }
-        textString.append(fiducialNode->GetText(i));
-        }
-
+      textString = vtkStdString(fiducialNode->GetName());
       if (vtkStdString(handleRep->GetLabelText()) != textString)
         {
         handleRep->SetLabelText(textString.c_str());
@@ -459,7 +460,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
           }
         }//if (textDisplayNode)
       handleRep->LabelVisibilityOn();
-      }//if (fiducialNode->GetNumberOfTexts() > 0)
+      } // GetName
     else
       {
       handleRep->LabelVisibilityOff();

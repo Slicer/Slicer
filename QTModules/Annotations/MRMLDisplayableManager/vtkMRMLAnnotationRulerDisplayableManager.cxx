@@ -121,7 +121,15 @@ public:
           }
 
         }
-
+      if (event == vtkCommand::EndInteractionEvent)
+        {
+        // save the state of the node when done moving, then call
+        // PropagateWidgetToMRML to update the node one last time
+        if (this->m_Node->GetScene())
+          {
+          this->m_Node->GetScene()->SaveStateForUndo(this->m_Node);
+          }
+        }
       // the interaction with the widget ended, now propagate the changes to MRML
       this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
@@ -289,6 +297,12 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
 
+  std::string format = std::string("%-#6.3g mm");
+  if (rulerNode->GetName())
+    {
+    format = std::string(rulerNode->GetName()) + std::string(" ") + format;
+    }
+
   if (this->GetSliceNode())
     {
 
@@ -302,7 +316,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
 
     // set a specific format for the measurement text
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat(format.c_str());
 
     vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
@@ -314,7 +328,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
 
     // set a specific format for the measurement text
-    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
+    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat(format.c_str());
 
     vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
@@ -588,18 +602,14 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   vtkDistanceRepresentation *rep = vtkDistanceRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
   if (rep)
     {
-    if (rulerNode->GetNumberOfTexts() > 0)
+    if (rulerNode->GetName())
       {
-      std::string format = std::string("%-#6.3g\n");
-      for (int i = 0; i < rulerNode->GetNumberOfTexts(); i++)
-        {
-        format += std::string(rulerNode->GetText(i));
-        }
+      std::string format = std::string(rulerNode->GetName()) + std::string(" %-#6.3g mm");
       rep->SetLabelFormat(format.c_str());
       }
     else
       {
-      rep->SetLabelFormat("%-#6.3g");
+      rep->SetLabelFormat("%-#6.3g mm");
       }
     }
 
@@ -721,7 +731,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     return;
     }
 
-  // save worldCoordinates to MRML if no change
+  // save worldCoordinates to MRML if changed
   double p1[4]={0,0,0,1};
   double p2[4]={0,0,0,1};
   rulerNode->GetPositionWorldCoordinates1(p1);
