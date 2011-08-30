@@ -70,9 +70,11 @@ QIcon qSlicerVolumeRenderingModule::icon()const
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
-  qSlicerApplication::application()->settingsDialog()->addPanel(
-    "Volume rendering", new qSlicerVolumeRenderingSettingsPanel);
-  
+  if (qSlicerApplication::application())
+    {
+    qSlicerApplication::application()->settingsDialog()->addPanel(
+      "Volume rendering", new qSlicerVolumeRenderingSettingsPanel);
+    }
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
     RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 }
