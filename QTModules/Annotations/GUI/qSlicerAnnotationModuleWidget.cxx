@@ -28,6 +28,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkCommand.h"
 
+#include "qSlicerMouseModeToolBar.h"
 #include "qMRMLSceneDisplayableModel.h"
 
 // GUI includes
@@ -104,30 +105,6 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->hierarchyTreeView, SIGNAL(onPropertyEditButtonClicked(QString)),
                    q, SLOT(propertyEditButtonClicked(QString)));
 
-
-
-  // annotation tools
-  q->connect(this->fiducialTypeButton, SIGNAL(clicked()), q,
-      SLOT(onFiducialNodeButtonClicked()));
-//  q->connect(this->textTypeButton, SIGNAL(clicked()), q,
-//      SLOT(onTextNodeButtonClicked()));
-//  q->connect(this->bidimensionalTypeButton, SIGNAL(clicked()), q,
-//      SLOT(onBidimensionalNodeButtonClicked()));
-  q->connect(this->rulerTypeButton, SIGNAL(clicked()), q,
-      SLOT(onRulerNodeButtonClicked()));
-  q->connect(this->roiTypeButton, SIGNAL(clicked()), q,
-        SLOT(onROINodeButtonClicked()));
-
-  // mouse modes
-  q->connect(this->pauseButton, SIGNAL(clicked()), q,
-      SLOT(onPauseButtonClicked()));
-  q->connect(this->resumeButton, SIGNAL(clicked()), q,
-      SLOT(onResumeButtonClicked()));
-  q->connect(this->cancelButton, SIGNAL(clicked()), q,
-      SLOT(onCancelButtonClicked()));
-  q->connect(this->doneButton, SIGNAL(clicked()), q,
-      SLOT(onDoneButtonClicked()));
-
   // edit panel
   q->connect(this->selectAllButton, SIGNAL(clicked()),
         SLOT(selectAllButtonClicked()));
@@ -164,8 +141,6 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       SLOT(unlockHierarchyButtonClicked()));
 
   // Save Panel
-  q->connect(this->screenShot, SIGNAL(clicked()), q,
-      SLOT(onSnapShotButtonClicked()));
   q->connect(this->generateReport, SIGNAL(clicked()), q,
       SLOT(onReportButtonClicked()));
 
@@ -179,8 +154,6 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // update from the mrml scene
   q->refreshTree();
 
-  // update the state according to the interaction node
-  q->updateWidgetFromInteractionMode(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -460,200 +433,6 @@ void qSlicerAnnotationModuleWidget::unlockHierarchyButtonClicked()
   d->logic()->SetHierarchyAnnotationsLockFlag(NULL, false);
 }
 
-
-// Resume, Pause, Cancel and Done buttons
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::enableMouseModeButtons()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  d->pauseButton->setChecked(false);
-  d->resumeButton->setChecked(false);
-  d->cancelButton->setChecked(false);
-  d->doneButton->setChecked(false);
-  d->pauseButton->setEnabled(true);
-  d->resumeButton->setEnabled(true);
-  d->cancelButton->setEnabled(true);
-  d->doneButton->setEnabled(true);
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::disableMouseModeButtons()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  d->pauseButton->setChecked(false);
-  d->resumeButton->setChecked(false);
-  d->cancelButton->setChecked(false);
-  d->doneButton->setChecked(false);
-  d->pauseButton->setEnabled(false);
-  d->resumeButton->setEnabled(false);
-  d->cancelButton->setEnabled(false);
-  d->doneButton->setEnabled(false);
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  d->pauseButton->setChecked(false);
-  d->resumeButton->setChecked(true);
-
-  bool persistent = false;
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-  if (interactionNode)
-    {
-    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
-    }
- 
-  switch (this->m_CurrentAnnotationType)
-    {
-    case qSlicerAnnotationModuleWidget::TextNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationTextNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::AngleNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationAngleNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::FiducialNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationFiducialNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::StickyNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationStickyNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::SplineNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationSplineNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::RulerNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationRulerNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::BidimensionalNode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationBidimensionalNode", persistent);
-      break;
-    case qSlicerAnnotationModuleWidget::ROINode:
-      d->logic()->AddAnnotationNode("vtkMRMLAnnotationROINode", persistent);
-      break;
-    }
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onPauseButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  d->resumeButton->setChecked(false);
-  d->pauseButton->setChecked(true);
-  bool persistent = false;
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-  if (interactionNode)
-    {
-    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
-    }
-  d->logic()->StopPlaceMode(persistent);
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onCancelButtonClicked()
-{
-
-  this->cancelOrRemoveLastAddedAnnotationNode();
-
-  this->enableAllAnnotationTools();
-  this->resetAllAnnotationTools();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::cancelOrRemoveLastAddedAnnotationNode()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  d->logic()->CancelCurrentOrRemoveLastAddedAnnotationNode();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onDoneButtonClicked()
-{
-
-  this->enableAllAnnotationTools();
-  this->resetAllAnnotationTools();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::resetAllAnnotationButtons()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-  
-  //d->textTypeButton->setChecked(false);
-  //d->angleTypeButton->setChecked(false);
-  d->roiTypeButton->setChecked(false);
-  d->fiducialTypeButton->setChecked(false);
-  //d->splineTypeButton->setChecked(false);
-  //d->stickyTypeButton->setChecked(false);
-  d->rulerTypeButton->setChecked(false);
-  //d->bidimensionalTypeButton->setChecked(false);
-  d->screenShot->setChecked(false);
-}
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = 0;
-
-  this->resetAllAnnotationButtons();
-
-  bool persistent = false;
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-  if (interactionNode)
-    {
-    persistent = interactionNode->GetPlaceModePersistence() ? true : false;
-    }
-  d->logic()->StopPlaceMode(persistent);
-
-  this->disableMouseModeButtons();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  //d->textTypeButton->setEnabled(false);
-  //d->angleTypeButton->setEnabled(false);
-  d->roiTypeButton->setEnabled(false);
-  d->fiducialTypeButton->setEnabled(false);
-  //d->splineTypeButton->setEnabled(false);
-  //d->stickyTypeButton->setEnabled(false);
-  d->rulerTypeButton->setEnabled(false);
-  //d->bidimensionalTypeButton->setEnabled(false);
-  d->screenShot->setEnabled(false);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  //d->textTypeButton->setEnabled(true);
-  //d->angleTypeButton->setEnabled(true);
-  d->roiTypeButton->setEnabled(true);
-  d->fiducialTypeButton->setEnabled(true);
-  //d->splineTypeButton->setEnabled(true);
-  //d->stickyTypeButton->setEnabled(true);
-  d->rulerTypeButton->setEnabled(true);
-  //d->bidimensionalTypeButton->setEnabled(true);
-  d->screenShot->setEnabled(true);
-}
-
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 {
@@ -664,188 +443,6 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
     {
     d->hierarchyTreeView->setSelectedNode(d->logic()->GetActiveHierarchyNodeID());
     }
-}
-
-//-----------------------------------------------------------------------------
-//
-//
-// Add methods for the annotation tools
-//
-//
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-// Sticky Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::StickyNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  // this is a hack to export the sticky note icon
-  // *sigh*
-  QIcon icon = QIcon(":/Icons/AnnotationNote.png");
-  QPixmap pixmap = icon.pixmap(32, 32);
-  //QString tempdir = QString(std::getenv("TMPDIR"));
-
-  QString tempdir = QString("/tmp/");
-  tempdir.append("sticky.png");
-  pixmap.save(tempdir);
-  // end of hack
-
-  //d->stickyTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-
-}
-
-//-----------------------------------------------------------------------------
-// Angle Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onAngleNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::AngleNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  //d->angleTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// Text Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  //d->textTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// Spline Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::SplineNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  //d->splineTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// Ruler Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::RulerNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  d->rulerTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// Fiducial Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::FiducialNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  d->fiducialTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// Bidimensional Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType
-      = qSlicerAnnotationModuleWidget::BidimensionalNode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  //d->bidimensionalTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-// ROI Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::ROINode;
-
-  // d->logic()->SetAndObserveWidget(this);
-
-  this->enableMouseModeButtons();
-  this->onResumeButtonClicked();
-
-  this->disableAllAnnotationTools();
-
-  d->roiTypeButton->setChecked(true);
-  d->resumeButton->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -932,9 +529,6 @@ void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
 
     }
 
-  this->enableAllAnnotationTools();
-  this->resetAllAnnotationTools();
-
   // show the dialog
   this->m_SnapShotDialog->reset();
   this->m_SnapShotDialog->open();
@@ -1009,92 +603,5 @@ void qSlicerAnnotationModuleWidget::reportDialogRejected()
 
   this->m_ReportDialog->setVisible(false);
 
-}
-
-//-----------------------------------------------------------------------------
-// Respond to changes in the interaction node
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// Report dialog closed without saving
-void qSlicerAnnotationModuleWidget::updateWidgetFromInteractionMode(vtkMRMLInteractionNode *interactionNode)
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-  
-  vtkMRMLInteractionNode *iNode = interactionNode;
-  if (iNode == NULL)
-    {
-    if (this->logic()->GetMRMLScene() != NULL &&
-        this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"))
-      {
-      iNode =
-        vtkMRMLInteractionNode::SafeDownCast(
-             this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-      }
-    }
-  if (!iNode)
-    {
-    std::cout << "updateWidgetFromInteractionMode: no interaction node from which to update!" << std::endl;
-    return;
-    }
-
-   // get the annotation type from the selection node
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-                                                                           this->logic()->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-  if (!selectionNode)
-    {
-    std::cerr << "updateWidgetFromInteractionNode: No selection node in the scene, no idea what we're placing." << std::endl;
-    return;
-    }
-
-  QString activeAnnotationType(selectionNode->GetActiveAnnotationID());
-  
-  //std::cout << "updatewidgetFromInteractionMode" << std::endl;
-  if (iNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
-    {
-    this->enableMouseModeButtons();
-    this->disableAllAnnotationTools();
-    d->resumeButton->setChecked(true);
-    if (activeAnnotationType == QString("vtkMRMLAnnotationFiducialNode"))
-      {
-      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::FiducialNode;
-      d->fiducialTypeButton->setChecked(true);
-      }
-    else if (activeAnnotationType == QString("vtkMRMLAnnotationRulerNode"))
-      {
-      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::RulerNode;
-      d->rulerTypeButton->setChecked(true);
-      }
-    else if (activeAnnotationType == QString("vtkMRMLAnnotationBidimensionalNode"))
-      {
-      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::BidimensionalNode;
-      //d->bidimensionalTypeButton->setChecked(true);
-      }
-    else if (activeAnnotationType == QString("vtkMRMLAnnotationTextNode"))
-      {
-      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
-      //d->textTypeButton->setChecked(true);
-      }
-    else if (activeAnnotationType == QString("vtkMRMLAnnotationROINode"))
-      {
-      this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::ROINode;
-      d->roiTypeButton->setChecked(true);
-      }
-    else
-      {
-      std::cout << "Unhandled annotation type " << activeAnnotationType.toLatin1().data() << std::endl;
-      }
-
-    }
-  else
-    {
-    // anything else, stop and go back to where could pick any tool
-    this->resetAllAnnotationButtons();
-    this->enableAllAnnotationTools();
-    // unchecks them all
-    this->enableMouseModeButtons();
-    // then disables them
-    this->disableMouseModeButtons();
-    }
 }
 

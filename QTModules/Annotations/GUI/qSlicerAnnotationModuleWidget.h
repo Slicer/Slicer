@@ -136,50 +136,6 @@ protected slots:
   void reportDialogAccepted();
   void onReportButtonClicked();
 
-  // Mouse Mode Operation
-  void enableMouseModeButtons();
-  void disableMouseModeButtons();
-
-  void onResumeButtonClicked();
-  void onPauseButtonClicked();
-  void onCancelButtonClicked();
-  void onDoneButtonClicked();
-
-  /// enable all the annotation tool buttons
-  void enableAllAnnotationTools();
-  /// disable all the annotation tool buttons
-  void disableAllAnnotationTools();
-  /// set checked to false for the buttons
-  void resetAllAnnotationButtons();
-  /// resets the annotation buttons, stops place mode, disables mouse mode buttons
-  void resetAllAnnotationTools();
-
-  /// calls the logic method of same name
-  void cancelOrRemoveLastAddedAnnotationNode();
-
-  // Sticky Node (semi-approved)
-  void onStickyNodeButtonClicked();
-
-  // Angle Node
-  void onAngleNodeButtonClicked();
-
-  // Text Node
-  void onTextNodeButtonClicked();
-
-  // Fiducial Node
-  void onFiducialNodeButtonClicked();
-
-  // Spline Node
-  void onSplineNodeButtonClicked();
-
-  // Ruler Node
-  void onRulerNodeButtonClicked();
-
-  // Bidimensional Node
-  void onBidimensionalNodeButtonClicked();
-
-  // ROI Node
-  void onROINodeButtonClicked();
   
 protected:
   QScopedPointer<qSlicerAnnotationModuleWidgetPrivate> d_ptr;
