@@ -325,12 +325,22 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     {
     ui.tabWidget->setTabEnabled(3, true);
     ui.ROIWidget->setMRMLAnnotationROINode(roiNode);
+
+    // activate the roi tab
+    ui.tabWidget->setCurrentIndex(3);
     }
 
   else
     {
     ui.tabWidget->setTabEnabled(3, false);
     }
+
+  if (mrmlNode->IsA("vtkMRMLAnnotationFiducialNode") || mrmlNode->IsA("vtkMRMLAnnotationRulerNode")) {
+
+    // activate the points tab
+    ui.tabWidget->setCurrentIndex(1);
+
+  }
     /*
    this->setWindowTitle(
    "Annotation Properties");
