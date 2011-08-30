@@ -264,21 +264,16 @@ int DoIt( int argc, char * argv[], PixelType )
   castImageFilter->SetInput( ricianFilter->GetOutput() );
   castImageFilter->Update();
 
-  // let's write it out
-
-  typename itk::NrrdImageIO::Pointer io = itk::NrrdImageIO::New();
-
   itk::MetaDataDictionary metaDataDictionary;
   metaDataDictionary = reader->GetMetaDataDictionary();
+  castImageFilter->GetOutput()->SetMetaDataDictionary(metaDataDictionary);
 
-  io->SetFileTypeToBinary();
-  io->SetMetaDataDictionary( metaDataDictionary );
 
+  // let's write it out
   typedef itk::ImageFileWriter<DiffusionImageType> WriterType;
   typename WriterType::Pointer nrrdWriter = WriterType::New();
-  nrrdWriter->UseInputMetaDataDictionaryOff();
+  nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput( castImageFilter->GetOutput() );
-  nrrdWriter->SetImageIO(io);
   nrrdWriter->SetFileName( outputVolume.c_str() );
   nrrdWriter->UseCompressionOn();
   try
