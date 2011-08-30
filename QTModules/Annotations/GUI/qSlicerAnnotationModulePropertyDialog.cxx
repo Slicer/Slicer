@@ -94,7 +94,6 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   if (textDisplayNode)
     {
     double textScale = textDisplayNode->GetTextScale();
-    ui.textScaleSliderSpinBoxWidget->setMaximum(120);
     ui.textScaleSliderSpinBoxWidget->setValue(textScale);
 
     double opacity = textDisplayNode->GetOpacity();
