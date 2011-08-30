@@ -253,7 +253,8 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModeChangedEvent(vtkMRMLIntera
     {
     return;
     }
-  this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
+  // not needed anymore since the annotation buttons were removed
+  //this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -264,7 +265,8 @@ void vtkSlicerAnnotationModuleLogic::OnInteractionModePersistenceChangedEvent(vt
     {
     return;
     }
-  this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
+  // not needed anymore since the annotation buttons were removed
+  //this->m_Widget->updateWidgetFromInteractionMode(interactionNode);
 }
 
 //---------------------------------------------------------------------------
