@@ -13,169 +13,13 @@
   <property name="windowTitle">
    <string>Annotation</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Annotations</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_2">
-        <property name="title">
-         <string>Create</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QPushButton" name="fiducialTypeButton">
-             <property name="toolTip">
-              <string>Fiducial point</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="rulerTypeButton">
-             <property name="toolTip">
-              <string>Distance measurement</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationDistance.png</normaloff>:/Icons/AnnotationDistance.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="roiTypeButton">
-             <property name="toolTip">
-              <string>Region of Interest. This is a 3D only annotation.</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="screenShot">
-             <property name="toolTip">
-              <string>Create screenshot</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/ViewCamera.png</normaloff>:/Icons/ViewCamera.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="resumeButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Resume placement</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationPlayForward.png</normaloff>:/Icons/AnnotationPlayForward.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pauseButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Pause placement</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationPause.png</normaloff>:/Icons/AnnotationPause.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="cancelButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Cancel placement</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationCancel.png</normaloff>:/Icons/AnnotationCancel.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="doneButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>End placement</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationOkDone.png</normaloff>:/Icons/AnnotationOkDone.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
         <property name="sizePolicy">
@@ -419,40 +263,40 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer">
-     <property name="activeSizePolicy">
+   <item>
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
+   <item>
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="active">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
