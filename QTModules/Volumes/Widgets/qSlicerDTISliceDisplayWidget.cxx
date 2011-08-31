@@ -243,20 +243,20 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
 // --------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
 {
+  Q_D(qSlicerDTISliceDisplayWidget);
+  
   if (!this->displayPropertiesNode())
     {
     return;
     }
   this->displayPropertiesNode()->SetColorGlyphBy(scalarInvariant);
-  if (scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
-      scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
-      scalarInvariant == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
-    {
+
+  if (d->DisplayNode && (d->DisplayNode->GetAutoScalarRange()))
+  {
     double scalarRange[2];
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(scalarInvariant, scalarRange);
-    this->setManualScalarRange(true);
+    d->DisplayNode->GetScalarRange(scalarRange);
     this->setScalarRange(scalarRange[0], scalarRange[1]);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
