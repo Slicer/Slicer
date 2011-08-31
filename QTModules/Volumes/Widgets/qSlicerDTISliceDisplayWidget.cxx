@@ -255,8 +255,23 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
   {
     double scalarRange[2];
     d->DisplayNode->GetScalarRange(scalarRange);
+    
     this->setScalarRange(scalarRange[0], scalarRange[1]);
   }
+
+
+  if ( d->DisplayNode && (
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector 
+    ) )
+  {
+    d->DisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
+    d->GlyphScalarColorTableComboBox->setEnabled(false);
+  } else {
+    d->GlyphScalarColorTableComboBox->setEnabled(true);
+  }
+
 }
 
 // --------------------------------------------------------------------------
