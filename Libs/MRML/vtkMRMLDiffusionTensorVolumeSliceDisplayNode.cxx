@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLDisplayableNode.h"
 
 vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode, DiffusionTensorDisplayPropertiesNodeID);
 
@@ -64,21 +65,10 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 
 
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
+  this->DiffusionTensorGlyphFilter->SetInput(this->SliceImage);
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = this->colorModeScalar;
-/*  
-  this->SliceToXYTransformer = vtkTransformPolyDataFilter::New();
-
-  this->SliceToXYTransform = vtkTransform::New();
-  
-  this->SliceToXYMatrix = vtkMatrix4x4::New();
-  this->SliceToXYMatrix->Identity();
-  this->SliceToXYTransform->PreMultiply();
-  this->SliceToXYTransform->SetMatrix(this->SliceToXYMatrix);
-
-  this->SliceToXYTransformer->SetTransform(this->SliceToXYTransform);
-*/
   this->SliceToXYTransformer->SetInput(this->DiffusionTensorGlyphFilter->GetOutput());
 }
 
@@ -100,8 +90,6 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::WriteXML(ostream& of, int nIn
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-
-//  of << indent << " colorMode =\"" << this->ColorMode << "\"";
 
   if (this->DiffusionTensorDisplayPropertiesNodeID != NULL) 
     {
@@ -125,19 +113,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
     {
     attName = *(atts++);
     attValue = *(atts++);
-/*
-    if (!strcmp(attName, "colorMode")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> ColorMode;
-      }
-    else 
-*/
     if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
       {
-      this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->FiberLineDiffusionTensorDisplayPropertiesNodeID, this);
+      this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(attValue);
       }
     }  
 
@@ -191,12 +169,15 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *i
 {
   this->DiffusionTensorGlyphFilter->SetInput(image);
   this->DiffusionTensorGlyphFilter->SetDimensions(image ? image->GetDimensions(): 0);
-  this->Modified();
+
+  Superclass::SetSliceImage(image);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
+  vtkErrorMacro(<< this->GetClassName() <<" ("<<this
+                    <<"): SetPolyData method should not be used");
 }
 
 //----------------------------------------------------------------------------
@@ -217,6 +198,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
 
   if (DiffusionTensorDisplayNode == NULL ||
+      this->SliceImage == NULL ||
       DiffusionTensorDisplayNode->GetGlyphGeometry( ) == vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
     {
     this->ScalarVisibilityOff();
@@ -328,14 +310,25 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   // Moreover, if the input is null the filter would generate an error.
   if (this->GetVisibility() &&
       this->GetScalarVisibility() &&
-      this->DiffusionTensorGlyphFilter->GetInput() != NULL)
+      this->GetAutoScalarRange() &&
+      this->SliceImage != NULL)
     {
-    this->DiffusionTensorGlyphFilter->Update();
-    if (this->GetAutoScalarRange())
-      {
-      double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();
-      this->SetScalarRange(range[0], range[1]);
-      }
+          int ScalarInvariant =  0;
+          if ( DiffusionTensorDisplayPropertiesNode )
+          {
+            ScalarInvariant = DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy();
+          }
+
+          double range[2];
+          if (DiffusionTensorDisplayPropertiesNode && vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
+          {
+            vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
+          } else {
+            this->DiffusionTensorGlyphFilter->Update();
+            this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange(range);
+          }
+          this->ScalarRange[0] = range[0];
+          this->ScalarRange[1] = range[1];
     }
 }
 
@@ -357,6 +350,17 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeSliceDi
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *id )
 {
+  vtkDebugMacro(<< this->GetClassName() << ": Setting and Observing Diffusion Tensor Display Properties ID: " << id  );
+
+  if (
+      (id != this->GetDiffusionTensorDisplayPropertiesNodeID()) 
+      && id != NULL && this->GetDiffusionTensorDisplayPropertiesNodeID() != NULL
+      && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
+      )
+    {
+    return;
+    }
+
   // Stop observing any old node
   vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
 
@@ -368,6 +372,13 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
+
+  //The new DiffusionTensorDisplayPropertiesNode can have a different setting on the properties
+  //so we emit the event that the polydata has been modified
+  if (cnode && this->SliceImage)
+    {
+    this->Modified();
+    }
 
 }
 //---------------------------------------------------------------------------
