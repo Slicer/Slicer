@@ -15,7 +15,9 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
-#include <vtkTransform.h>
+#include "vtkTransform.h"
+#include "vtkImageData.h"
+#include "vtkPolyData.h"
 
 #include "vtkTransformPolyDataFilter.h"
 
@@ -54,6 +56,8 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 
 
   this->ColorMode = this->colorModeScalar;
+
+  this->SliceImage = NULL;
   
   this->SliceToXYTransformer = vtkTransformPolyDataFilter::New();
 
@@ -73,6 +77,7 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 vtkMRMLGlyphableVolumeSliceDisplayNode::~vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+  this->SetSliceImage(NULL);
   this->SliceToXYMatrix->Delete();
   this->SliceToXYTransform->Delete();
   this->SliceToXYTransformer->Delete();
@@ -166,15 +171,9 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *vtkNotUsed(image))
+void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
-/*
-    if (this->GlyphGlyphFilter)
-    {
-    this->GlyphGlyphFilter->SetInput(image);
-    this->GlyphGlyphFilter->SetDimensions(image->GetDimensions());
-    }
-*/
+   vtkSetObjectBodyMacro(SliceImage,vtkImageData,image); 
 }
 
 //----------------------------------------------------------------------------

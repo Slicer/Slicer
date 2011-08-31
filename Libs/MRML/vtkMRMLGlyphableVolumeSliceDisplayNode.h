@@ -24,14 +24,14 @@
 
 #include <string>
 
-#include "vtkPolyData.h"
-#include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLModelDisplayNode.h"
 
 class vtkTransform;
 class vtkTransformPolyDataFilter;
+class vtkMatrix4x4;
+class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
@@ -84,7 +84,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
 
   /// 
-  /// Sets polydata for glyph input (usually stored in FiberBundle node)
+  /// Sets polydata for glyph input
   virtual void SetPolyData(vtkPolyData *glyphPolyData);
 
   /// 
@@ -185,6 +185,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   vtkMRMLGlyphableVolumeSliceDisplayNode ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
 
+    vtkImageData             *SliceImage;
     vtkTransform             *SliceToXYTransform;
     vtkTransformPolyDataFilter *SliceToXYTransformer;
     vtkMatrix4x4             *SliceToXYMatrix;
