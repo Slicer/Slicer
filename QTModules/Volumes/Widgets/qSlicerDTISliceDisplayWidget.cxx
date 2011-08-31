@@ -29,6 +29,7 @@
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes
+#include "vtkPolyData.h"
 
 // STD includes
 

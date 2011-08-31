@@ -19,6 +19,7 @@
 
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
+#include <vtkMatrix4x4.h>
 
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"

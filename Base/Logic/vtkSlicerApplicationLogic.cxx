@@ -10,6 +10,7 @@
 
 // VTK includes
 #include "vtkPointData.h"
+#include "vtkPolyData.h"
 
 // MRML includes
 #include "vtkCacheManager.h"

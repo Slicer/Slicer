@@ -85,7 +85,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   /// 
   /// Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData);
+  virtual void SetPolyData(vtkPolyData *glyphPolyData);
 
   /// 
   /// Gets resulting glyph PolyData 
