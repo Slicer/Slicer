@@ -65,6 +65,11 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   headerView->checkableModelHelper()->setPropagateDepth(1);
   // Finally assign the new header to the view
   this->FileWidget->setHorizontalHeader(headerView);
+  
+  headerView->setStretchLastSection(false);
+  headerView->setResizeMode(FileColumn, QHeaderView::Stretch);
+  headerView->setResizeMode(TypeColumn, QHeaderView::ResizeToContents);
+  headerView->setResizeMode(OptionsColumn, QHeaderView::ResizeToContents);
 
   // Connect the "Options" button with the visibility of the "Options" column.
   connect(this->ShowOptionsCheckBox, SIGNAL(toggled(bool)),
@@ -107,7 +112,7 @@ void qSlicerDataDialogPrivate::addFiles()
     {
     this->addFile(file);
     }
-  this->FileWidget->resizeColumnsToContents();
+  //this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -127,7 +132,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
       this->addDirectory(entry.absoluteFilePath());
       }
     }
-  this->FileWidget->resizeColumnsToContents();
+  //this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -189,8 +194,8 @@ void qSlicerDataDialogPrivate::reset()
 void qSlicerDataDialogPrivate::showOptions(bool show)
 {
   this->ShowOptionsCheckBox->setChecked(show);
+
   this->FileWidget->setColumnHidden(OptionsColumn, !show);
-  this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
