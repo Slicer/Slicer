@@ -495,9 +495,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   //TODO - title + " FiducialList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
-  //TODO - tparameter->SetNewNodeName((title+" output").c_str());
-
+  widget->setBaseName(_label);
   widget->setRenameEnabled(true);
+
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -517,9 +517,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   //TODO - title + " RegionList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
+  widget->setBaseName(_label);
+  widget->setRenameEnabled(true);
   
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  widget->setRenameEnabled(true);
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -571,7 +572,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
-  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   // If an index is given, then it means the parameter is required (not optional)
   widget->setNoneEnabled(imageIndex.isEmpty());
   // Being able to create an image for the input is meaningless as the created
@@ -580,6 +580,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   // created node.
   widget->setAddEnabled(channel != "input");
   widget->setRenameEnabled(true);
+  widget->setBaseName(imageLabel);
+  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
   // Specify factory attributes
@@ -625,8 +628,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setShowHidden(showHidden);
   widget->setNodeTypes(QStringList(nodeType));
-  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   widget->setRenameEnabled(true);
+  widget->setBaseName(_label);
+  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -660,8 +664,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
-  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   widget->setRenameEnabled(true);
+  widget->setBaseName(_label);
+  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -701,6 +706,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   widget->setAddEnabled(nodeType != "vtkMRMLTransformNode" && channel != "input");
   widget->setRenameEnabled(true);
   widget->setNodeTypes(QStringList(nodeType));
+  widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
