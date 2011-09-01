@@ -1,10 +1,11 @@
 import os
 import glob
-import subprocess
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
+
+import DICOMLib
 
 #
 # DICOM
@@ -27,6 +28,17 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
+
+    settings = qt.QSettings()
+    if settings.contains('DICOM/RunListenerAtStart'):
+      if bool(settings.value('DICOM/RunListenerAtStart')):
+        if not hasattr(slicer, 'DICOMListener'):
+          try:
+            slicer.DICOMListener = DICOMLib.DICOMListener()
+          except UserWarning as message:
+            # TODO: how to put this into the error log?
+            print (message)
+          slicer.DICOMListener.start()
 
 
 #
@@ -70,19 +82,48 @@ class DICOMWidget:
   # sets up the widget
   def setup(self):
 
+    #
+    # servers 
+    #
+
+    # testing server - not exposed
     self.localFrame = ctk.ctkCollapsibleButton(self.parent)
     self.localFrame.setLayout(qt.QVBoxLayout())
-    self.localFrame.setText("Local Testing Server")
+    self.localFrame.setText("Servers")
     self.layout.addWidget(self.localFrame)
-    self.localFrame.collapsed = True
+    self.localFrame.collapsed = False
 
-    self.toggleServer = qt.QPushButton("Start Server")
+    self.toggleServer = qt.QPushButton("Start Testing Server")
     self.localFrame.layout().addWidget(self.toggleServer)
     self.toggleServer.connect('clicked()', self.onToggleServer)
 
     self.verboseServer = qt.QCheckBox("Verbose")
     self.localFrame.layout().addWidget(self.verboseServer)
 
+    # advanced options - not exposed to end users
+    # developers can uncomment these lines to access testing server
+    self.toggleServer.hide()
+    self.verboseServer.hide()
+
+    # Listener 
+
+    settings = qt.QSettings()
+    self.toggleListener = qt.QPushButton()
+    if hasattr(slicer, 'DICOMListener'):
+      self.toggleListener.text = "Stop Listener"
+    else:
+      self.toggleListener.text = "Start Listener"
+    self.localFrame.layout().addWidget(self.toggleListener)
+    self.toggleListener.connect('clicked()', self.onToggleListener)
+
+    self.runListenerAtStart = qt.QCheckBox("Start Listener when Slicer Starts")
+    self.localFrame.layout().addWidget(self.runListenerAtStart)
+    if settings.contains('DICOM/RunListenerAtStart'):
+      self.runListenerAtStart.checked = bool(settings.value('DICOM/RunListenerAtStart'))
+    self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
+
+
+    # the Database frame (home of the ctkDICOM widget)
     self.dicomFrame = ctk.ctkCollapsibleButton(self.parent)
     self.dicomFrame.setLayout(qt.QVBoxLayout())
     self.dicomFrame.setText("DICOM Database and Networking")
@@ -213,10 +254,24 @@ class DICOMWidget:
     selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
     mrmlLogic.PropagateVolumeSelection()
 
+  def onToggleListener(self):
+    if hasattr(slicer, 'DICOMListener'):
+      print ('stopping')
+      del slicer.DICOMListener
+      self.toggleListener.text = "Start Listener"
+    else:
+      print ('starting')
+      try:
+        slicer.DICOMListener = DICOMLib.DICOMListener()
+        slicer.DICOMListener.start()
+        self.toggleListener.text = "Stop Listener"
+      except UserWarning as message:
+        self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
+
   def onToggleServer(self):
     if self.testingServer and self.testingServer.qrRunning():
       self.testingServer.stop()
-      self.toggleServer.text = "Start Server"
+      self.toggleServer.text = "Start Testing Server"
     else:
       #
       # create&configure the testingServer if needed, start the server, and populate it
@@ -238,7 +293,7 @@ class DICOMWidget:
         self.tmpDir = tmpDir + '/DICOM'
         if not os.path.exists(self.tmpDir):
           os.mkdir(self.tmpDir)
-        self.testingServer = DICOMTestingServer(exeDir=self.exeDir,tmpDir=self.tmpDir)
+        self.testingServer = DICOMLib.DICOMTestingQRServer(exeDir=self.exeDir,tmpDir=self.tmpDir)
 
       # look for the sample data to load (only works on build trees
       # with standard naming conventions)
@@ -247,7 +302,11 @@ class DICOMWidget:
 
       # now start the server
       self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
-      self.toggleServer.text = "Stop Server"
+      self.toggleServer.text = "Stop Testing Server"
+
+  def onRunListenerAtStart(self):
+    settings = qt.QSettings()
+    settings.setValue('DICOM/RunListenerAtStart', self.runListenerAtStart.checked)
 
   def messageBox(self,text,title='DICOM'):
     self.mb = qt.QMessageBox(slicer.util.mainWindow())
@@ -313,101 +372,6 @@ class DICOMExportDialog(object):
   def onCancel(self):
     self.dialog.close()
 
-class DICOMTestingServer(object):
-  """helper class to set up the DICOM servers
-  Code here depends only on python and DCMTK executables
-  TODO: it might make sense to refactor this as a generic tool
-  for interacting with DCMTK
-  """
-
-  def __init__(self,exeDir=".",tmpDir="./DICOM"):
-    self.qrProcess = None
-    self.tmpDir = tmpDir
-    self.exeDir = exeDir
-
-  def qrRunning(self):
-    return self.qrProcess != None
-
-  def start(self,verbose=False,initialFiles=None):
-    if self.qrRunning():
-      self.stop()
-
-    self.dcmqrscpExecutable = self.exeDir+'/dcmqrdb/apps/dcmqrscp'
-    self.storeSCUExecutable = self.exeDir+'/dcmnet/apps/storescu'
-
-    # make the config file
-    cfg = self.tmpDir+"/dcmqrscp.cfg"
-    self.makeConfigFile(cfg, storageDirectory=self.tmpDir)
-
-    # start the server!
-    cmdLine = [self.dcmqrscpExecutable]
-    if verbose:
-      cmdLine.append('--verbose')
-    cmdLine.append('--config')
-    cmdLine.append(cfg)
-    self.qrProcess = subprocess.Popen(cmdLine)
-                                      # TODO: handle output
-                                      #stdin=subprocess.PIPE,
-                                      #stdout=subprocess.PIPE,
-                                      #stderr=subprocess.PIPE)
-
-    # push the data to the server!
-    if initialFiles:
-      cmdLine = [self.storeSCUExecutable]
-      if verbose:
-        cmdLine.append('--verbose')
-      cmdLine.append('-aec')
-      cmdLine.append('CTK_AE')
-      cmdLine.append('-aet')
-      cmdLine.append('CTK_AE')
-      cmdLine.append('localhost')
-      cmdLine.append('11112')
-      cmdLine += initialFiles
-      p = subprocess.Popen(cmdLine)
-      p.wait()
-
-
-  def stop(self):
-    self.qrProcess.kill()
-    self.qrProcess.communicate()
-    self.qrProcess.wait()
-    self.qrProcess = None
-
-  def makeConfigFile(self,configFile,storageDirectory='.'):
-    """ make a config file for the local instance with just
-    the parts we need (comments and examples removed).  
-    For examples and the full syntax
-    see dcmqrdb/etc/dcmqrscp.cfg and 
-    dcmqrdb/docs/dcmqrcnf.txt in the dcmtk source
-    available from dcmtk.org or the ctk distribution
-    """
-
-    template = """
-# Global Configuration Parameters
-NetworkType     = "tcp"
-NetworkTCPPort  = 11112
-MaxPDUSize      = 16384
-MaxAssociations = 16
-Display         = "no"
-
-HostTable BEGIN
-commontk_find        = (CTK_AE,localhost,11112)
-commontk_store       = (CTKSTORE,localhost,11113)
-HostTable END
-
-VendorTable BEGIN
-VendorTable END
-
-AETable BEGIN
-CTK_AE     %s        RW (200, 1024mb) ANY
-AETable END
-"""
-    config = template % storageDirectory
-
-    fp = open(configFile,'w')
-    fp.write(config)
-    fp.close()
-
 
 def DICOMTest():
   w = slicer.modules.dicom.widgetRepresentation()
@@ -421,7 +385,6 @@ def DICOMTest():
 
 def DICOMDemo():
   pass
-
 
 if __name__ == "__main__":
   import sys
