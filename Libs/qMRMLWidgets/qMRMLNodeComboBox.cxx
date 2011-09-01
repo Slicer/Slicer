@@ -116,11 +116,11 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
     {
     this->ComboBox->setModel(model);
     }
-  q->connect(model, SIGNAL(rowsInserted(const QModelIndex&, int,int)),
-             q, SLOT(emitNodesAdded(const QModelIndex&, int, int)));
-  q->connect(model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int,int)),
-             q, SLOT(emitNodesAboutToBeRemoved(const QModelIndex&, int, int)));
-  q->connect(model, SIGNAL(rowsRemoved(const QModelIndex&, int,int)),
+  q->connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+             q, SLOT(emitNodesAdded(QModelIndex,int,int)));
+  q->connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+             q, SLOT(emitNodesAboutToBeRemoved(QModelIndex,int,int)));
+  q->connect(model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
              q, SLOT(refreshIfCurrentNodeHidden()));
   q->connect(model, SIGNAL(modelReset()), q, SLOT(refreshIfCurrentNodeHidden()));
   q->connect(model, SIGNAL(layoutChanged()), q, SLOT(refreshIfCurrentNodeHidden()));
@@ -254,8 +254,8 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       }
     }
   this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem());
-  QObject::connect(this->ComboBox->view(), SIGNAL(clicked(const QModelIndex& )),
-                   q, SLOT(activateExtraItem(const QModelIndex& )),
+  QObject::connect(this->ComboBox->view(), SIGNAL(clicked(QModelIndex)),
+                   q, SLOT(activateExtraItem(QModelIndex)),
                    Qt::UniqueConnection);
   /*
   if (resetRootIndex)

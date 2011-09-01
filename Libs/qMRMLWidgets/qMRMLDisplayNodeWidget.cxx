@@ -68,7 +68,7 @@ void qMRMLDisplayNodeWidgetPrivate::init()
                    q, SLOT(setSliceIntersectionVisible(bool)));
   
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(setColor(const QColor&)));
+                   q, SLOT(setColor(QColor)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(opacityChanged(double)),
                    q, SLOT(setOpacity(double)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(ambientChanged(double)),

@@ -82,9 +82,9 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   this->GPUMemoryComboBox->insertItem(0, q->tr("0 Mo"));
   this->GPUMemoryComboBox->insertSeparator(1);
   
-  QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(const QString&)),
+  QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
-  QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentIndexChanged(const QString&)),
+  QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
 
   // Detect the amount of memory in the graphic card

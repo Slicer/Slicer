@@ -654,10 +654,10 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLLayoutLogic->SetMRMLScene(d->MRMLScene);
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeAddedEvent,
-                   d, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+                   d, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeRemovedEvent,
-                   d, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+                   d, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
                    d, SLOT(updateLayoutFromMRMLScene()));

@@ -88,13 +88,13 @@ void qMRMLAnnotationTreeViewPrivate::init()
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
 
-  QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
-                   q, SLOT(onClicked(const QModelIndex&)));
+  QObject::connect(q, SIGNAL(clicked(QModelIndex)),
+                   q, SLOT(onClicked(QModelIndex)));
 
   QObject::connect( q->selectionModel(),
-        SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
         q,
-        SLOT( onSelectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        SLOT(onSelectionChanged(QItemSelection,QItemSelection)),
         Qt::DirectConnection );
 
   q->setUniformRowHeights(true);

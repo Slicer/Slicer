@@ -65,7 +65,7 @@ void qSlicerAnnotationModuleReportDialog::createConnection()
   QPushButton* printButton = ui.buttonBox->button(QDialogButtonBox::Reset);
   this->connect(printButton, SIGNAL(clicked()), this, SLOT(onPrintButtonClicked()));
 
-  this->connect(ui.titleEdit, SIGNAL(textEdited(const QString &)), this, SLOT(onTextEdited()));
+  this->connect(ui.titleEdit, SIGNAL(textEdited(QString)), this, SLOT(onTextEdited()));
 }
 
 //-----------------------------------------------------------------------------

@@ -64,8 +64,8 @@ void qMRMLSliceWidgetPrivate::init()
   // Highligh first RenderWindowItem
   this->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
 
-  connect(this->VTKSliceView, SIGNAL(resized(const QSize&)),
-          this->SliceController, SLOT(setSliceViewSize(const QSize&)));
+  connect(this->VTKSliceView, SIGNAL(resized(QSize)),
+          this->SliceController, SLOT(setSliceViewSize(QSize)));
 
   connect(this->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
           this, SLOT(setImageData(vtkImageData*)));

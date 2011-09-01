@@ -82,12 +82,12 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
   this->EventNameToConnectionIdMap["NodeAdded"] = this->qvtkReconnect(
     this->MRMLScene, scene,
     vtkMRMLScene::NodeAddedEvent, q,
-    SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)), priority);
+    SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)), priority);
 
   this->EventNameToConnectionIdMap["NodeRemoved"] = this->qvtkReconnect(
     this->MRMLScene, scene,
     vtkMRMLScene::NodeRemovedEvent, q,
-    SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)), priority);
+    SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)), priority);
 
   this->EventNameToConnectionIdMap["NewScene"] = this->qvtkReconnect(
     this->MRMLScene, scene,

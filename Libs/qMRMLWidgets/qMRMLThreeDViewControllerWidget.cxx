@@ -76,7 +76,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   // Look from axes
   QObject::connect(this->AxesWidget,
                    SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
-                   q, SLOT(lookFromAxis(const ctkAxesWidget::Axis&)));
+                   q, SLOT(lookFromAxis(ctkAxesWidget::Axis)));
 
   // Pitch, Roll, Yaw buttons
   QObject::connect(this->PitchButton, SIGNAL(clicked()),

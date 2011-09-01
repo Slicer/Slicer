@@ -86,8 +86,8 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 
   // Modules menu
   this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"),q);
-  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(const QString&)),
-                   q, SLOT(onModuleSelected(const QString&)));
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
+                   q, SLOT(onModuleSelected(QString)));
 
   // Modules Label
   q->addWidget(new QLabel(QObject::tr("Modules:"), q));

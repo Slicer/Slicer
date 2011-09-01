@@ -118,8 +118,8 @@ void qSlicerTransformsModuleWidget::setup()
 
   // Connect minimum and maximum from the translation sliders to the matrix
   this->connect(d->TranslationSliders,
-               SIGNAL(rangeChanged(double, double)),
-               SLOT(onTranslationRangeChanged(double, double)));
+               SIGNAL(rangeChanged(double,double)),
+               SLOT(onTranslationRangeChanged(double,double)));
 
   // Notify the matrix of the current translation min/max values
   this->onTranslationRangeChanged(d->TranslationSliders->minimum(),

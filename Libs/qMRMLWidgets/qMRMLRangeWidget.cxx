@@ -56,8 +56,8 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
           this, SLOT(updateRange()));
   rangeLayout->addWidget(this->MaxSpinBox);
 
-  connect(this->slider(), SIGNAL(rangeChanged(double, double)),
-          this, SLOT(updateSpinBoxRange(double, double)));
+  connect(this->slider(), SIGNAL(rangeChanged(double,double)),
+          this, SLOT(updateSpinBoxRange(double,double)));
   
   QWidgetAction* rangeAction = new QWidgetAction(this);
   rangeAction->setDefaultWidget(rangeWidget);

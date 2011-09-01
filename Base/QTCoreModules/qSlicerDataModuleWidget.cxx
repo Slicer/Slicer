@@ -91,8 +91,8 @@ void qSlicerDataModuleWidget::setup()
   d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
   d->MRMLSceneModelComboBox->addItem(QString("ModelHierarchy"));
 
-  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(const QString&)),
-          this, SLOT(onSceneModelChanged(const QString&)));
+  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
+          this, SLOT(onSceneModelChanged(QString)));
 
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
@@ -101,8 +101,8 @@ void qSlicerDataModuleWidget::setup()
 
   // Filter on all the columns
   d->MRMLTreeView->sortFilterProxyModel()->setFilterKeyColumn(-1);
-  connect(d->FilterLineEdit, SIGNAL(textChanged(const QString&)),
-          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(const QString&)));
+  connect(d->FilterLineEdit, SIGNAL(textChanged(QString)),
+          d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(QString)));
   // hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
 

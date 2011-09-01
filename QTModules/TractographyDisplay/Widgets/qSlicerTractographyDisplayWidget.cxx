@@ -55,7 +55,7 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   QObject::connect( this->VisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setVisibility(int)) );
   QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorByCellScalars(int)) );
   QObject::connect( this->ColorBySolidCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorBySolid(int)) );
-  QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(const QColor&)) );
+  QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );
   QObject::connect( this->ColorByScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, 
                     SLOT(setColorByCellScalarsColorTable(vtkMRMLNode*)) );
   QObject::connect( this->ColorByScalarInvariantCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorByScalarInvariant(int)) );
@@ -63,7 +63,7 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
                     SLOT(onColorByScalarInvariantChanged(int)) );  
   QObject::connect( this->ColorByScalarInvariantDisplayRange, SIGNAL(rangeChanged(double,double)), q,
                     SLOT(setColorByScalarInvariantDisplayRange(double,double)) );
-  QObject::connect( this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double) ) );
+  QObject::connect( this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double)) );
 }
 
 

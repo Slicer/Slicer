@@ -47,10 +47,10 @@ void qSlicerTractographyDisplayGlyphWidgetPrivate::init()
                     SLOT(setGlyphType(int)) );
   QObject::connect( this->GlyphEigenvectorSelector, SIGNAL(currentIndexChanged(int)), q,
                     SLOT(setGlyphEigenvector(int)) );
-  QObject::connect( this->ScaleFactorSlider, SIGNAL(valueChanged(double)), q, SLOT(setGlyphScaleFactor(double) ) );
-  QObject::connect( this->SpacingSlider, SIGNAL(valueChanged(double)), q, SLOT(setGlyphSpacing(double) ) );
-  QObject::connect( this->GlyphSidesSlider, SIGNAL(valueChanged(double)), q, SLOT(setTubeGlyphNumberOfSides(double) ) );
-  QObject::connect( this->GlyphRadiusSlider, SIGNAL(valueChanged(double)), q, SLOT(setTubeGlyphRadius(double) ) );
+  QObject::connect( this->ScaleFactorSlider, SIGNAL(valueChanged(double)), q, SLOT(setGlyphScaleFactor(double)) );
+  QObject::connect( this->SpacingSlider, SIGNAL(valueChanged(double)), q, SLOT(setGlyphSpacing(double)) );
+  QObject::connect( this->GlyphSidesSlider, SIGNAL(valueChanged(double)), q, SLOT(setTubeGlyphNumberOfSides(double)) );
+  QObject::connect( this->GlyphRadiusSlider, SIGNAL(valueChanged(double)), q, SLOT(setTubeGlyphRadius(double)) );
 }
 
 

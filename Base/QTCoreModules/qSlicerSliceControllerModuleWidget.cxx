@@ -170,11 +170,11 @@ void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   // Need to listen for any new slice nodes being added
   this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeAddedEvent, 
-                      this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+                      this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
 
   // Need to listen for any slice nodes being removed
   this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeRemovedEvent, 
-                      this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+                      this, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
 
   // Listen to changes in the Layout so we only show controllers for
   // the visible SliceNodes

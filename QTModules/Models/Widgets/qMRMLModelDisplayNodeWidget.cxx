@@ -67,8 +67,8 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setScalarsVisibility(bool)));
-  QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(const QString&)),
-                   q, SLOT(setActiveScalarName(const QString&)));
+  QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(QString)),
+                   q, SLOT(setActiveScalarName(QString)));
   QObject::connect(this->ScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setScalarsColorTable(vtkMRMLNode*)));
   q->setEnabled(this->MRMLModelDisplayNode.GetPointer() != 0);

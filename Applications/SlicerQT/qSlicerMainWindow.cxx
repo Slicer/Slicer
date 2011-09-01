@@ -136,8 +136,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Connect the selector with the module panel
   this->ModulePanel->setModuleManager(moduleManager);
-  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(const QString&)),
-                   this->ModulePanel, SLOT(setModule(const QString&)));
+  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
+                   this->ModulePanel, SLOT(setModule(QString)));
 
   //----------------------------------------------------------------------------
   // MouseMode ToolBar

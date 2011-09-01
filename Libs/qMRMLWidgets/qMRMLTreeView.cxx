@@ -63,18 +63,18 @@ void qMRMLTreeViewPrivate::init()
   
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
-  //QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
-  //                 q, SLOT(onActivated(const QModelIndex&)));
-  //QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
-  //                 q, SLOT(onActivated(const QModelIndex&)));
+  //QObject::connect(q, SIGNAL(activated(QModelIndex)),
+  //                 q, SLOT(onActivated(QModelIndex)));
+  //QObject::connect(q, SIGNAL(clicked(QModelIndex)),
+  //                 q, SLOT(onActivated(QModelIndex)));
 
   q->setUniformRowHeights(true);
   
-  QObject::connect(q, SIGNAL(collapsed(const QModelIndex&)),
+  QObject::connect(q, SIGNAL(collapsed(QModelIndex)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(q, SIGNAL(expanded(const QModelIndex&)),
+  QObject::connect(q, SIGNAL(expanded(QModelIndex)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
-//QObject::connect(q->header(), SIGNAL(sectionResized(int, int, int)),
+//QObject::connect(q->header(), SIGNAL(sectionResized(int,int,int)),
   //                  q, SLOT(onSectionResized()));
   q->horizontalScrollBar()->installEventFilter(q);
   
@@ -136,8 +136,8 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
     ? static_cast<QAbstractItemModel*>(this->SortFilterModel)
     : static_cast<QAbstractItemModel*>(this->SceneModel));
   // Setting a new model to the view resets the selection model
-  QObject::connect(q->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
-                   q, SLOT(onCurrentRowChanged(const QModelIndex&)));
+  QObject::connect(q->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+                   q, SLOT(onCurrentRowChanged(QModelIndex)));
   if (!this->SortFilterModel)
     {
     return;
@@ -147,9 +147,9 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
   this->SortFilterModel->setSourceModel(this->SceneModel);
 
   // resize the view if new rows are added/removed
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
 
   q->expandToDepth(2);

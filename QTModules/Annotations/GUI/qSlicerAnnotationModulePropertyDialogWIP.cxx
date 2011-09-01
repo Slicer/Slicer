@@ -757,8 +757,8 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
       this, SLOT(onTextOpacityChanged(double)));
 
   // point
-  //this->connect(ui.pointsTableWidget, SIGNAL(itemChanged(QTableWidgetItem *)),
-  //              this, SLOT(onPointsTableWidgetChanged(QTableWidgetItem *)));
+  //this->connect(ui.pointsTableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
+  //              this, SLOT(onPointsTableWidgetChanged(QTableWidgetItem*)));
   this->connect(ui.pointUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onPointColorChanged(QColor)));
   this->connect(ui.pointSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
@@ -789,7 +789,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
                 this, SLOT(onLineLabelPositionChanged(double)));
   this->connect(ui.lineLabelVisibilityCheckBox, SIGNAL(stateChanged(int)),
                 this, SLOT(onLineLabelVisibilityStateChanged(int)));
-  this->connect(ui.lineTickSpacingLineEdit, SIGNAL(textChanged(const QString &)),
+  this->connect(ui.lineTickSpacingLineEdit, SIGNAL(textChanged(QString)),
                 this, SLOT(onLineTickSpacingChanged()));
 
   this->connect(ui.lineMaxTicksSliderSpinBoxWidget, SIGNAL(valueChanged(double)),

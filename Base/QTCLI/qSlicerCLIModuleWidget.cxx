@@ -317,9 +317,9 @@ qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
 
   d->CLIModuleUIHelper = new qSlicerCLIModuleUIHelper(this);
   this->connect(d->CLIModuleUIHelper,
-                SIGNAL(valueChanged(const QString&, const QVariant&)),
+                SIGNAL(valueChanged(QString,QVariant)),
                 d,
-                SLOT(onValueChanged(const QString&, const QVariant&)));
+                SLOT(onValueChanged(QString,QVariant)));
 
   // Set properties
   d->Title = QString::fromStdString(desc->GetTitle());

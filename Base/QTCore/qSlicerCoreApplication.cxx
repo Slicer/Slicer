@@ -159,11 +159,11 @@ void qSlicerCoreApplicationPrivate::init()
   VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
   this->AppLogic = _appLogic;
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created

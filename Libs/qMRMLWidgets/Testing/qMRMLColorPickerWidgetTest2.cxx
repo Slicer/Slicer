@@ -67,7 +67,7 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
   colorPETNode->SetTypeToRainbow();
   scene->AddNode(colorPETNode);
   
-  ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(const QColor&)));
+  ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(QColor)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

@@ -69,8 +69,8 @@ void qMRMLWindowLevelWidgetPrivate::init()
 
   q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
 
-  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setMinMaxRangeValue(double, double)));
+  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setMinMaxRangeValue(double,double)));
 
   QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setWindow(double)));
@@ -125,8 +125,8 @@ void qMRMLWindowLevelWidgetPrivate::init()
   
   this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
   this->RangeWidget->setRange(-1000000., 1000000.);
-  QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setRange(double, double)));
+  QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setRange(double,double)));
   this->RangeWidget->setToolTip("Set the range boundaries of Window/Level to control large numbers or allow fine tuning");
 }
 

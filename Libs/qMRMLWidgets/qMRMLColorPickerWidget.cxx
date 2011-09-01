@@ -67,15 +67,15 @@ void qMRMLColorPickerWidgetPrivate::init()
                    this->SearchBox, SLOT(clear()));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
                    q, SIGNAL(colorEntrySelected(int)));
-  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(const QColor&)),
-                   q, SIGNAL(colorSelected(const QColor&)));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QColor)),
+                   q, SIGNAL(colorSelected(QColor)));
 
   // SearchBox
   this->SearchBox->setPlaceholderText("Search color...");
   this->SearchBox->setShowSearchIcon(true);
   this->SearchBox->installEventFilter(q);
-  QObject::connect(this->SearchBox, SIGNAL(textChanged(const QString&)),
-                   q, SLOT(onTextChanged(const QString&)));
+  QObject::connect(this->SearchBox, SIGNAL(textChanged(QString)),
+                   q, SLOT(onTextChanged(QString)));
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ void qMRMLColorPickerWidget::setCurrentColorNode(vtkMRMLNode* node)
   Q_D(qMRMLColorPickerWidget);
   d->ColorTableComboBox->setCurrentNode(node);
   this->qvtkDisconnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
-                       this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
+                       this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
 }
 
 //------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
   if (scene && !d->ColorTableComboBox->currentNode())
     {
     this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent,
-                      this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
+                      this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
     this->setCurrentColorNodeToDefault();
    }
 }

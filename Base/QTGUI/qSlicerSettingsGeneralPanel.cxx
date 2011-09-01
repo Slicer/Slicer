@@ -62,8 +62,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   Q_Q(qSlicerSettingsGeneralPanel);
 
   this->setupUi(q);
-  QObject::connect(this->FontButton, SIGNAL(currentFontChanged(const QFont&)),
-                   q, SLOT(onFontChanged(const QFont&)));
+  QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
+                   q, SLOT(onFontChanged(QFont)));
   QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowToolTipsToggled(bool)));
   QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
@@ -74,7 +74,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, "checked",
                       SIGNAL(toggled(bool)));
   q->registerProperty("font", this->FontButton, "currentFont",
-                      SIGNAL(currentFontChanged(const QFont&)));
+                      SIGNAL(currentFontChanged(QFont)));
   q->registerProperty("MainWindow/ShowToolButtonText", this->ShowToolButtonTextCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",

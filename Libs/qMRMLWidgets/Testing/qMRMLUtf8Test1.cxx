@@ -88,7 +88,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   ctkCallback callback;
   callback.setCallback(saveScene);
   
-  QObject::connect(myLineEdit, SIGNAL(textChanged(const QString&)),
+  QObject::connect(myLineEdit, SIGNAL(textChanged(QString)),
                    &callback, SLOT(invoke()));
   myLineEdit->setText(QString("cam") + myLineEdit->text());
 

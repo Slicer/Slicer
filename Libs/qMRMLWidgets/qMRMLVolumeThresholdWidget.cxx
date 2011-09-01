@@ -40,8 +40,8 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* _parent)
 
   this->setAutoThreshold(2);
 
-  this->connect(d->VolumeThresholdRangeWidget, SIGNAL(valuesChanged(double, double)),
-                SLOT(setThreshold(double, double)));
+  this->connect(d->VolumeThresholdRangeWidget, SIGNAL(valuesChanged(double,double)),
+                SLOT(setThreshold(double,double)));
 
   this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                 SLOT(setAutoThreshold(int)));

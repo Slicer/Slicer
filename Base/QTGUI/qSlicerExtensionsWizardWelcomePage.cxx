@@ -75,8 +75,8 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
 
   q->registerField("installEnabled", this->InstallExtensionsCheckBox);
   q->registerField("uninstallEnabled", this->UninstallExtensionsCheckBox);
-  q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(const QString&)));
-  q->registerField("extensionsServerURL", this->ExtensionServerURL, "text", SIGNAL(textChanged(const QString&)));
+  q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(QString)));
+  q->registerField("extensionsServerURL", this->ExtensionServerURL, "text", SIGNAL(textChanged(QString)));
 
   q->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(QList<QVariantMap>()));
   q->registerField("retrievedListOfS4extFiles", q, "retrievedListOfS4extFiles");
@@ -88,14 +88,14 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->UninstallExtensionsCheckBox, SIGNAL(toggled(bool)),
                    q, SIGNAL(completeChanged()));
-  QObject::connect(this->ExtensionServerURL, SIGNAL(textChanged(const QString&)),
+  QObject::connect(this->ExtensionServerURL, SIGNAL(textChanged(QString)),
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
                    q, SLOT(deleteTemporaryArchiveFiles()));
   
   qRegisterMetaType<QList<QVariantMap> >("QList<QVariantMap>");
-  QObject::connect(&this->CDashAPI, SIGNAL(projectFilesReceived(const QString&, const QList<QVariantMap>&)),
-                   q, SLOT(onProjectFilesReceived(const QString&, const QList<QVariantMap>&)));
+  QObject::connect(&this->CDashAPI, SIGNAL(projectFilesReceived(QString,QList<QVariantMap>)),
+                   q, SLOT(onProjectFilesReceived(QString,QList<QVariantMap>)));
 }
 
 // --------------------------------------------------------------------------

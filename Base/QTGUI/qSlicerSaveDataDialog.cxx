@@ -78,8 +78,8 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
   this->FileWidget->setHorizontalHeader(headerView);
 
   // Connect push buttons to associated actions
-  connect(this->DirectoryButton, SIGNAL(directoryChanged(const QString&)),
-          this, SLOT(setDirectory(const QString&)));
+  connect(this->DirectoryButton, SIGNAL(directoryChanged(QString)),
+          this, SLOT(setDirectory(QString)));
   connect(this->SelectSceneDataButton, SIGNAL(clicked()),
           this, SLOT(selectModifiedSceneData()));
   connect(this->SelectDataButton, SIGNAL(clicked()),

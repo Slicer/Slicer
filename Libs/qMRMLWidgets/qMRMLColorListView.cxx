@@ -62,8 +62,8 @@ void qMRMLColorListViewPrivate::init()
   //q->setFlow(QListView::TopToBottom);
   //q->setRootIndex(sortFilterModel->mapFromSource(colorModel->mrmlColorNodeIndex()));
   
-  //QObject::connect(q, SIGNAL(activated(const QModelIndex &)),
-  //                 q, SLOT(onItemActivated(const QModelIndex &)));
+  //QObject::connect(q, SIGNAL(activated(QModelIndex)),
+  //                 q, SLOT(onItemActivated(QModelIndex)));
 }
 
 //------------------------------------------------------------------------------

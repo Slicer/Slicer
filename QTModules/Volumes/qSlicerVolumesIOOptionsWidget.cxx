@@ -65,7 +65,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   flowLayout->setContentsMargins(0,0,0,0);
   this->setLayout(flowLayout);
 
-  connect(d->NameLineEdit, SIGNAL(textChanged(const QString&)),
+  connect(d->NameLineEdit, SIGNAL(textChanged(QString)),
           this, SLOT(updateProperties()));
   connect(d->LabelMapCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));

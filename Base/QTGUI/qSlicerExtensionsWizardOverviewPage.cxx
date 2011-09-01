@@ -255,8 +255,8 @@ void qSlicerExtensionsWizardOverviewPagePrivate::init()
   this->ExtensionsTreeWidget->header()->setResizeMode(ExtensionColumn, QHeaderView::ResizeToContents);
   this->ExtensionsTreeWidget->header()->setResizeMode(StatusColumn, QHeaderView::ResizeToContents);
   
-  QObject::connect( this->ExtensionsTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
-                    q, SLOT(onItemClicked(QTreeWidgetItem*, int)));
+  QObject::connect( this->ExtensionsTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+                    q, SLOT(onItemClicked(QTreeWidgetItem*,int)));
   QObject::connect( this->InstallPushButton, SIGNAL(clicked()),
                     q, SLOT(installSelectedItems()));
   QObject::connect( this->UninstallPushButton, SIGNAL(clicked()),

@@ -215,10 +215,10 @@ void qMRMLSceneViewMenu::setMRMLScene(vtkMRMLScene* scene)
     }
 
   qvtkReconnect(d->MRMLScene, scene,
-                vtkMRMLScene::NodeAddedEvent, d, SLOT(onMRMLNodeAdded(vtkObject*, vtkObject*)));
+                vtkMRMLScene::NodeAddedEvent, d, SLOT(onMRMLNodeAdded(vtkObject*,vtkObject*)));
 
   qvtkReconnect(d->MRMLScene, scene,
-                vtkMRMLScene::NodeRemovedEvent, d, SLOT(onMRMLNodeRemoved(vtkObject*, vtkObject*)));
+                vtkMRMLScene::NodeRemovedEvent, d, SLOT(onMRMLNodeRemoved(vtkObject*,vtkObject*)));
 
   d->MRMLScene = scene;
   emit mrmlSceneChanged(scene);

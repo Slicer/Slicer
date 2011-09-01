@@ -103,26 +103,26 @@ void qSlicerSettingsPythonPanelPrivate::init()
   // Connect panel widgets with associated slots
   //
 
-  QObject::connect(this->BackgroundColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onBackgroundColorChanged(const QColor&)));
+  QObject::connect(this->BackgroundColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onBackgroundColorChanged(QColor)));
 
-  QObject::connect(this->PromptColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onPromptColorChanged(const QColor&)));
+  QObject::connect(this->PromptColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onPromptColorChanged(QColor)));
 
-  QObject::connect(this->OutputTextColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onOutputTextColorChanged(const QColor&)));
+  QObject::connect(this->OutputTextColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onOutputTextColorChanged(QColor)));
 
-  QObject::connect(this->ErrorTextColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onErrorTextColorChanged(const QColor&)));
+  QObject::connect(this->ErrorTextColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onErrorTextColorChanged(QColor)));
 
-  QObject::connect(this->StdinTextColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onStdinTextColorChanged(const QColor&)));
+  QObject::connect(this->StdinTextColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onStdinTextColorChanged(QColor)));
 
-  QObject::connect(this->CommandTextColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onCommandTextColorChanged(const QColor&)));
+  QObject::connect(this->CommandTextColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onCommandTextColorChanged(QColor)));
 
-  QObject::connect(this->WelcomeTextColorPicker, SIGNAL(colorChanged(const QColor&)),
-                   q, SLOT(onWelcomeTextColorChanged(const QColor&)));
+  QObject::connect(this->WelcomeTextColorPicker, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(onWelcomeTextColorChanged(QColor)));
 
   QObject::connect(this->ScrollBarPolicyComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onScrollBarPolicyChanged(int)));
@@ -132,25 +132,25 @@ void qSlicerSettingsPythonPanelPrivate::init()
   //
 
   q->registerProperty("Python/BackgroundColor", this->BackgroundColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/PromptColor", this->PromptColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/OutputTextColor", this->OutputTextColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/ErrorTextColor", this->ErrorTextColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/StdinTextColor", this->StdinTextColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/CommandTextColor", this->CommandTextColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/WelcomeTextColor", this->WelcomeTextColorPicker, "color",
-                      SIGNAL(colorChanged(const QColor&)));
+                      SIGNAL(colorChanged(QColor)));
 
   q->registerProperty("Python/ScrollBarPolicy", this->ScrollBarPolicyComboBox, "currentIndex",
                       SIGNAL(currentIndexChanged(int)));

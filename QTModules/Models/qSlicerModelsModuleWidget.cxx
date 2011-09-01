@@ -106,10 +106,10 @@ void qSlicerModelsModuleWidget::setup()
   // add an add hierarchy right click action on the scene and hierarchy nodes
   connect(d->ModelHierarchyTreeView,  SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
-  bool expRet = connect(d->ModelHierarchyTreeView, SIGNAL(expanded(const QModelIndex &)),
-          this, SLOT(onExpanded(const QModelIndex &)));
-  bool colRet = connect(d->ModelHierarchyTreeView, SIGNAL(collapsed(const QModelIndex &)),
-          this, SLOT(onCollapsed(const QModelIndex &)));
+  bool expRet = connect(d->ModelHierarchyTreeView, SIGNAL(expanded(QModelIndex)),
+          this, SLOT(onExpanded(QModelIndex)));
+  bool colRet = connect(d->ModelHierarchyTreeView, SIGNAL(collapsed(QModelIndex)),
+          this, SLOT(onCollapsed(QModelIndex)));
   if (!expRet)
     {
     logger.trace("Connecting expanded failed");

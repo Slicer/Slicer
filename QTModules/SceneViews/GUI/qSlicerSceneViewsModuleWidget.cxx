@@ -89,11 +89,11 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerSceneViewsModule::setupUi(widget);
 
   QObject::connect(this->hierarchyTreeView,
-                   SIGNAL(restoreSceneViewRequested(const QString&)),
-                   q, SLOT(restoreSceneView(const QString&)));
+                   SIGNAL(restoreSceneViewRequested(QString)),
+                   q, SLOT(restoreSceneView(QString)));
   QObject::connect(this->hierarchyTreeView,
-                   SIGNAL(editSceneViewRequested(const QString&)),
-                   q, SLOT(editSceneView(const QString&)));
+                   SIGNAL(editSceneViewRequested(QString)),
+                   q, SLOT(editSceneView(QString)));
 
   // setup the hierarchy treeWidget
   this->hierarchyTreeView->setLogic(this->logic());

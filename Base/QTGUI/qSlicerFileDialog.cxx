@@ -163,8 +163,8 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     // fileDialog will reparent optionsWidget and take care of deleting
     // optionsWidget for us.
     fileDialog.setBottomWidget(optionsWidget, tr("Options:"));
-    connect(&fileDialog, SIGNAL(fileSelectionChanged(const QStringList&)),
-            optionsWidget, SLOT(setFileNames(const QStringList&)));
+    connect(&fileDialog, SIGNAL(fileSelectionChanged(QStringList)),
+            optionsWidget, SLOT(setFileNames(QStringList)));
     connect(optionsWidget, SIGNAL(validChanged(bool)),
             &fileDialog, SLOT(setAcceptButtonEnable(bool)));
     fileDialog.setAcceptButtonEnable(optionsWidget->isValid());

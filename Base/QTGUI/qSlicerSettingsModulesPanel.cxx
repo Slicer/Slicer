@@ -76,8 +76,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->ModulesMenu = new qSlicerModulesMenu(q);
   this->ModulesMenu->setDuplicateActions(true);
   this->HomeModuleButton->setMenu(this->ModulesMenu);
-  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(const QString&)),
-                   q, SLOT(onHomeModuleChanged(const QString&)));
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
+                   q, SLOT(onHomeModuleChanged(QString)));
   this->ModulesMenu->setModuleManager(coreApp->moduleManager());
 
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
@@ -96,21 +96,21 @@ void qSlicerSettingsModulesPanelPrivate::init()
   q->registerProperty("disable-cli-modules", this->LoadCommandLineModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
-                      "currentModule", SIGNAL(currentModuleChanged(const QString&)));
+                      "currentModule", SIGNAL(currentModuleChanged(QString)));
   q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(const QString&)));
+                      "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(const QString&)));
+                      "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
                       "directoryList", SIGNAL(directoryListChanged()));
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(const QString&)),
-                   q, SLOT(onExensionsPathChanged(const QString&)));
-  QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(const QString&)),
-                   q, SLOT(onTemporaryPathChanged(const QString&)));
+  QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(QString)),
+                   q, SLOT(onExensionsPathChanged(QString)));
+  QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(QString)),
+                   q, SLOT(onTemporaryPathChanged(QString)));
   QObject::connect(this->AdditionalModulePathsView, SIGNAL(directoryListChanged()),
                    q, SLOT(onAdditionalModulePathsChanged()));
 

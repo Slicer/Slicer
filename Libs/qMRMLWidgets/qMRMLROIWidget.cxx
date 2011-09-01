@@ -55,11 +55,11 @@ void qMRMLROIWidgetPrivate::init()
                    q, SLOT(setDisplayClippingBox(bool)));
   QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setInteractiveMode(bool)));
-  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(updateROI()));
-  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(updateROI()));
-  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double, double)),
+  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double,double)),
                    q, SLOT(updateROI()));
   q->setEnabled(this->ROINode != 0);
 }

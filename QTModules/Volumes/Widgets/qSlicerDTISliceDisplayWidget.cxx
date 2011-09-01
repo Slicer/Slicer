@@ -84,8 +84,8 @@ void qSlicerDTISliceDisplayWidgetPrivate::init()
                    q, SLOT(setColorGlyphBy(int)));
   QObject::connect(this->GlyphManualScalarRangeCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setManualScalarRange(bool)));
-  QObject::connect(this->GlyphScalarRangeWidget, SIGNAL(valuesChanged(double, double)),
-                   q, SLOT(setScalarRange(double, double)));
+  QObject::connect(this->GlyphScalarRangeWidget, SIGNAL(valuesChanged(double,double)),
+                   q, SLOT(setScalarRange(double,double)));
   QObject::connect(this->GlyphGeometryComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setGlyphGeometry(int)));
   QObject::connect(this->GlyphScaleSliderWidget, SIGNAL(valueChanged(double)),

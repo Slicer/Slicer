@@ -257,8 +257,8 @@ void qMRMLEventBrokerWidgetPrivate::setupUi(QWidget* parentWidget)
   headers << "Object/Type"  << "Elapsed" << "Total" << "Comment";
   this->ConnectionsTreeWidget->setHeaderLabels(headers);
 
-  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
-                   parentWidget, SLOT(onItemChanged(QTreeWidgetItem*, int)));
+  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
+                   parentWidget, SLOT(onItemChanged(QTreeWidgetItem*,int)));
 
   QVBoxLayout* vBoxLayout = new QVBoxLayout;
   vBoxLayout->addWidget(this->ConnectionsTreeWidget);

@@ -139,8 +139,8 @@ void qSlicerColorsModuleWidget::setup()
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));
   connect(d->NumberOfColorsSpinBox, SIGNAL(valueChanged(int)),
           this, SLOT(setNumberOfColors(int)));
-  connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)),
-          this, SLOT(setLookupTableRange(double, double)));
+  connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double,double)),
+          this, SLOT(setLookupTableRange(double,double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
 
