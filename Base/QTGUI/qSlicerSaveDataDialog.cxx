@@ -659,12 +659,38 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
 
   // save an explicit default scene view recording the state of the scene when
   // saved to file
-  vtkMRMLSceneViewNode * newSceneViewNode = vtkMRMLSceneViewNode::New();
-  newSceneViewNode->SetScene(this->MRMLScene);
-  newSceneViewNode->SetName(this->MRMLScene->GetUniqueNameByString("Master Scene View"));
-  newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
+  const char *defaultSceneName = "Master Scene View";
+  vtkMRMLSceneViewNode * newSceneViewNode = NULL;
+  vtkMRMLSceneViewNode *sceneViewNode = NULL;
+  vtkCollection *oldSceneViewNodes = this->MRMLScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName);
+  if (oldSceneViewNodes->GetNumberOfItems() == 0)
+    {
+    // make a new one
+    newSceneViewNode = vtkMRMLSceneViewNode::New();
+    newSceneViewNode->SetScene(this->MRMLScene);
+    newSceneViewNode->SetName(this->MRMLScene->GetUniqueNameByString(defaultSceneName));
+    newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
+    this->MRMLScene->AddNode(newSceneViewNode);
+
+    // create a storage node
+    vtkMRMLStorageNode *storageNode = newSceneViewNode->CreateDefaultStorageNode();
+    // set the file name from the node name
+    std::string fname = std::string(newSceneViewNode->GetName()) + std::string(".png");
+    storageNode->SetFileName(fname.c_str());
+    this->MRMLScene->AddNode(storageNode);
+    newSceneViewNode->SetAndObserveStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
+
+    // use the new one
+    sceneViewNode = newSceneViewNode;
+    }
+  else
+    {
+    // take the first one and over write it
+    sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(oldSceneViewNodes->GetItemAsObject(0));
+    }
   // take a screen shot of the full layout
-  newSceneViewNode->SetScreenShotType(4);
+  sceneViewNode->SetScreenShotType(4);
   // create a screenShot of the full layout
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
   // don't block the screenshot
@@ -674,23 +700,23 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   // convert to vtkImageData
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
-  newSceneViewNode->SetScreenShot(imageData);
+  sceneViewNode->SetScreenShot(imageData);
   // mark it modified since read so that the screen shot will get saved to disk
-  newSceneViewNode->ModifiedSinceReadOn();
-  newSceneViewNode->StoreScene();
-  this->MRMLScene->AddNode(newSceneViewNode);
-  // create a storage node
-  vtkMRMLStorageNode *storageNode = newSceneViewNode->CreateDefaultStorageNode();
-  // set the file name from the node name
-  std::string fname = std::string(newSceneViewNode->GetName()) + std::string(".png");
-  storageNode->SetFileName(fname.c_str());
-  this->MRMLScene->AddNode(storageNode);
-  newSceneViewNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  sceneViewNode->ModifiedSinceReadOn();
+  sceneViewNode->StoreScene();
+  
   // force a write
-  storageNode->WriteData(newSceneViewNode);
+  sceneViewNode->GetStorageNode()->WriteData(sceneViewNode);
   // clean up
-  newSceneViewNode->Delete();
-  storageNode->Delete();
+  if (newSceneViewNode)
+    {
+    newSceneViewNode->Delete();
+    }
+  if (oldSceneViewNodes->GetNumberOfItems() > 0)
+    {
+    oldSceneViewNodes->RemoveAllItems();
+    oldSceneViewNodes->Delete();
+    }
   
   // remove unreferenced nodes
   vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
