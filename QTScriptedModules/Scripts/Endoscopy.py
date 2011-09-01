@@ -71,7 +71,7 @@ class EndoscopyWidget:
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
     inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
-    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLFiducialListNode']
+    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLAnnotationHierarchyNode', 'vtkMRMLFiducialListNode']
     inputFiducialsNodeSelector.noneEnabled = True
     inputFiducialsNodeSelector.addEnabled = False
     inputFiducialsNodeSelector.removeEnabled = False
@@ -282,22 +282,38 @@ class EndoscopyComputePath:
     self.h11 = lambda t:   t**3 -   t**2
 
     # n is the number of control points in the piecewise curve
-    self.n = self.fids.GetNumberOfFiducials()
-    n = self.n
-    
-    if n == 0: return
 
-    # get control point data
-    # sets self.p
-    self.p = numpy.zeros((n,3))
-    for i in xrange(n):
-      self.p[i] = self.fids.GetNthFiducialXYZ(i)
+    if self.fids.GetClassName() == "vtkMRMLAnnotationHierarchyNode":
+      # slicer4 style hierarchy nodes
+      collection = vtk.vtkCollection()
+      self.fids.GetChildrenDisplayableNodes(collection)
+      self.n = collection.GetNumberOfItems()
+      if self.n == 0: 
+        return
+      self.p = numpy.zeros((self.n,3))
+      for i in xrange(self.n):
+        f = collection.GetItemAsObject(i)
+        coords = [0,0,0]
+        f.GetFiducialCoordinates(coords)
+        self.p[i] = coords
+    else: 
+      # slicer3 style fiducial lists
+      self.n = self.fids.GetNumberOfFiducials()
+      n = self.n
+      if n == 0:
+        return
+      # get control point data
+      # sets self.p
+      self.p = numpy.zeros((n,3))
+      for i in xrange(n):
+        self.p[i] = self.fids.GetNthFiducialXYZ(i)
 
     # calculate the tangent vectors
     # - fm is forward difference
     # - m is average of in and out vectors
     # - first tangent is out vector, last is in vector
     # - sets self.m
+    n = self.n
     fm = numpy.zeros((n,3))
     for i in xrange(0,n-1):
       fm[i] = self.p[i+1] - self.p[i]
