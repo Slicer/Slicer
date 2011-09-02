@@ -110,14 +110,19 @@ QWidget *qMRMLItemDelegate
     }
   else if (this->is0To1Value(index))
     {
-    ctkSliderWidget* slider = new ctkSliderWidget;
+    ctkSliderWidget* slider = new ctkSliderWidget(parent);
     slider->setDecimals(2);
     slider->setSingleStep(0.1);
     slider->setRange(0., 1.);
+    slider->setPopupSlider(true);
+    QSize s = slider->popup()->size();
+    slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
+    //slider->setParent(parent);
 
     QDoubleSpinBox *spinBox = slider->spinBox();
     spinBox->setFrame(false);
-    spinBox->setParent(parent);
+    /*
+    //spinBox->setParent(parent);
 
     ctkPopupWidget* popupWidget = new ctkPopupWidget;
     QHBoxLayout* layout = new QHBoxLayout;
@@ -131,10 +136,10 @@ QWidget *qMRMLItemDelegate
     
     QObject::connect(spinBox, SIGNAL(destroyed(QObject*)),
                      popupWidget, SLOT(deleteLater()));
-
+    */
     QObject::connect(slider, SIGNAL(valueChanged(double)),
                      this, SLOT(commitSenderData()));
-    return spinBox;
+    return slider;
     }
   return this->QStyledItemDelegate::createEditor(parent, option, index);
 }
@@ -159,9 +164,9 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
     }
   else if (this->is0To1Value(index))
     {
-    QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
-    spinBox->setValue(value);
+    sliderWidget->setValue(value);
     }
   else
     {
@@ -182,9 +187,9 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
     }
   else if (this->is0To1Value(index))
     {
-    QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
-    spinBox->interpretText();
-    QString value = QString::number(spinBox->value(), 'f', 2);
+    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    //spinBox->interpretText();
+    QString value = QString::number(sliderWidget->value(), 'f', 2);
     model->setData(index, value, Qt::EditRole);
     }
   else
@@ -197,11 +202,11 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
 void qMRMLItemDelegate::commitSenderData()
 {
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
-  ctkSliderWidget* sliderEditor = qobject_cast<ctkSliderWidget*>(editor);
-  if (sliderEditor)
-    {
-    editor = sliderEditor->spinBox();
-    }
+  //ctkSliderWidget* sliderEditor = qobject_cast<ctkSliderWidget*>(editor);
+  //if (sliderEditor)
+  //  {
+  //  editor = sliderEditor->spinBox();
+  //  }
   emit commitData(editor);
 }
 
@@ -251,8 +256,8 @@ void qMRMLItemDelegate
 //------------------------------------------------------------------------------
 bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
-  QWidget *editor = qobject_cast<QWidget*>(object);
-  if (editor && 
+  ctkSliderWidget* editor = qobject_cast<ctkSliderWidget*>(object);
+  if (editor &&
       (event->type() == QEvent::FocusOut ||
       (event->type() == QEvent::Hide && editor->isWindow())))
     {
@@ -262,8 +267,8 @@ bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
       QWidget* widget = QApplication::focusWidget();
       while (widget)
         {
-        ctkSliderWidget* editorSliderWidget = qobject_cast<ctkSliderWidget*>(widget);
-        if (editorSliderWidget && editorSliderWidget->spinBox() == editor)
+        ctkPopupWidget* sliderPopupWidget = qobject_cast<ctkPopupWidget*>(widget);
+        if (sliderPopupWidget && sliderPopupWidget == qobject_cast<ctkSliderWidget*>(editor)->popup())
           {
           return false;
           }
