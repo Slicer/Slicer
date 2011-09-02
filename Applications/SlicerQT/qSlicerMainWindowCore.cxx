@@ -132,9 +132,18 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 {
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QString saveFileName = QFileDialog::getSaveFileName(this->widget(), tr("Slicer Data Bundle Directory"), tempDir, tr("Zip Files (*.zip *.ZIP)"));
-  if (saveFileName.isEmpty())
+  QFileDialog pickDirectoryDialog(this->widget());
+  pickDirectoryDialog.setFileMode(QFileDialog::Directory);
+  pickDirectoryDialog.setDirectory(tempDir);
+  QString saveDirName;
+  if (pickDirectoryDialog.exec())
     {
+    QDir qtDirName = pickDirectoryDialog.directory();
+    saveDirName = qtDirName.absolutePath();
+    }
+  if (saveDirName.isEmpty())
+    {
+    std::cout << "No directory name chosen!" << std::endl;
     return;
     }
   // pass in a screen shot
@@ -144,8 +153,7 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
 
-  // TBD: to split the save to dir and zip into separate methods
-  const char *retval = qSlicerCoreApplication::application()->mrmlApplicationLogic()->Zip(saveFileName.toAscii().data(), tempDir.toAscii().data(), imageData);
+  const char *retval = qSlicerCoreApplication::application()->mrmlApplicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toAscii().data(), imageData);
   if (retval)
     {
     QString returnFileName = QString(retval);
