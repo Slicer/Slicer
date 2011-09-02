@@ -157,12 +157,11 @@ int vtkSlicerModuleLogic::IsModuleLibDirectoryDefined()
 void vtkSlicerModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
-
   os << indent << "SlicerLogic:             " << this->GetClassName() << "\n";
 }
 
-void
-vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
+//----------------------------------------------------------------------------
+void vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
 {
   // get the slicer home dir
   vtksys_stl::string slicerHome;

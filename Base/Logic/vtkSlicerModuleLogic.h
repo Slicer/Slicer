@@ -38,15 +38,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstract
 
   ///  
   /// The name of the Module
-  vtkGetStringMacro (ModuleName);
-  vtkSetStringMacro (ModuleName);
+  vtkGetStringMacro(ModuleName);
+  vtkSetStringMacro(ModuleName);
   
   /// 
   /// Set/Get the location of this module (if it was loaded dynamically
   /// this could be the full path to the dynamic library, or the full path
   /// to the pkgIndex.tcl file if the module is a scripted module, etc).
-  vtkSetStringMacro(ModuleLocation);
   vtkGetStringMacro(ModuleLocation);
+  vtkSetStringMacro(ModuleLocation);
 
   /// 
   /// Get the path to the module's resources directory.
