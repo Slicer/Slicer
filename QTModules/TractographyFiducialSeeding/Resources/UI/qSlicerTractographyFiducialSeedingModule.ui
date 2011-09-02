@@ -32,12 +32,12 @@
    </item>
    <item row="0" column="1">
     <widget class="qMRMLNodeComboBox" name="ParameterNodeSelector">
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLTractographyFiducialSeedingNode</string>
       </stringlist>
      </property>
-     <property name="showHidden">
+     <property name="showHidden" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -51,12 +51,12 @@
    </item>
    <item row="1" column="1">
     <widget class="qMRMLNodeComboBox" name="DTINodeSelector">
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLDiffusionTensorVolumeNode</string>
       </stringlist>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
     </widget>
@@ -70,16 +70,16 @@
    </item>
    <item row="2" column="1">
     <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector">
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLAnnotationHierarchyNode</string>
        <string>vtkMRMLModelNode</string>
       </stringlist>
      </property>
-     <property name="showChildNodeTypes">
+     <property name="showChildNodeTypes" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
     </widget>
@@ -93,12 +93,12 @@
    </item>
    <item row="3" column="1">
     <widget class="qMRMLNodeComboBox" name="FiberNodeSelector">
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLFiberBundleNode</string>
       </stringlist>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -114,12 +114,12 @@
     <widget class="QComboBox" name="StoppingCriteriaComboBox">
      <item>
       <property name="text">
-       <string>Linear Measure</string>
+       <string>Fractional Anisotropy</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Fractional Anisotropy</string>
+       <string>Linear Measure</string>
       </property>
      </item>
     </widget>
@@ -132,18 +132,15 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="ctkSliderWidget" name="StoppingValueSpinBoxLabel">
-     <property name="maximum">
+    <widget class="ctkSliderWidget" name="StoppingValueSpinBoxLabel" native="true">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -152,22 +149,18 @@
      <property name="text">
       <string>Stopping Track Curvature</string>
      </property>
-
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBoxLabel">
-     <property name="minimum">
+    <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBoxLabel" native="true">
+     <property name="minimum" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>0.700000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -179,15 +172,12 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="ctkSliderWidget" name="IntegrationStepSpinBoxLabel">
-     <property name="maximum">
+    <widget class="ctkSliderWidget" name="IntegrationStepSpinBoxLabel" native="true">
+     <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>0.500000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -199,15 +189,12 @@
     </widget>
    </item>
    <item row="8" column="1">
-    <widget class="ctkSliderWidget" name="MinimumPathSpinBoxLabel">
-     <property name="maximum">
+    <widget class="ctkSliderWidget" name="MinimumPathSpinBoxLabel" native="true">
+     <property name="maximum" stdset="0">
       <double>200.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>20.000000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -219,15 +206,12 @@
     </widget>
    </item>
    <item row="9" column="1">
-    <widget class="ctkSliderWidget" name="FiducialRegionSpinBoxLabel">
-     <property name="maximum">
+    <widget class="ctkSliderWidget" name="FiducialRegionSpinBoxLabel" native="true">
+     <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>2.000000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -239,15 +223,12 @@
     </widget>
    </item>
    <item row="10" column="1">
-    <widget class="ctkSliderWidget" name="FiducialStepSpinBoxLabel">
-     <property name="minimum">
+    <widget class="ctkSliderWidget" name="FiducialStepSpinBoxLabel" native="true">
+     <property name="minimum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
-     </property>
-     <property name="spinBoxAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -312,11 +293,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkAddRemoveComboBox</class>
-   <extends>QWidget</extends>
-   <header>ctkAddRemoveComboBox.h</header>
-  </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>

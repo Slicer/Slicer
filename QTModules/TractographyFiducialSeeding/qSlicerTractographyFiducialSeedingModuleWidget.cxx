@@ -3,6 +3,8 @@
 // MRML includes
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationFiducialNode.h"
 
 // Tractography Logic includes
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
@@ -22,13 +24,86 @@ class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
 //-----------------------------------------------------------------------------
 qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerTractographyFiducialSeedingModuleWidgetPrivate)
+  , settingFiberBundleNode(false),
+  d_ptr(new qSlicerTractographyFiducialSeedingModuleWidgetPrivate)
 {
   this->TractographyFiducialSeedingNode = 0;
 }
 //-----------------------------------------------------------------------------
 qSlicerTractographyFiducialSeedingModuleWidget::~qSlicerTractographyFiducialSeedingModuleWidget()
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyFiducialSeedingModuleWidget::enter()
+{
+  if (this->mrmlScene() == 0)
+  {
+    return;
+  }
+
+  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+
+  vtkMRMLNode *node = 0;
+
+  // if we dont have a parameter node create it
+  if (this->TractographyFiducialSeedingNode == 0)
+  {
+    vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
+    node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+    if (node)
+    {
+      tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+      this->setTractographyFiducialSeedingNode(tnode);
+    }
+  }
+
+  // if we have one dti volume node select it
+  std::vector<vtkMRMLNode*> nodes;
+  this->mrmlScene()->GetNodesByClass("vtkMRMLDiffusionTensorVolumeNode", nodes);
+  if (nodes.size() == 1 && d->DTINodeSelector->currentNode() == 0)
+  {
+    this->setDiffusionTensorVolumeNode(nodes[0]);
+  }
+
+  // if we have one Fiducial List node select it
+  std::string fiducialName = "";
+  nodes.clear();
+  this->mrmlScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode", nodes);
+  if (nodes.size() > 1 && d->FiducialNodeSelector->currentNode() == 0)
+  {
+    for (unsigned int i=0; i<nodes.size(); i++)
+    {
+      vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(nodes[i]);
+      vtkCollection *cnodes = vtkCollection::New();
+      hnode->GetDirectChildren(cnodes);
+      if (cnodes->GetNumberOfItems() > 0 && vtkMRMLAnnotationFiducialNode::SafeDownCast(cnodes->GetItemAsObject(0)) != NULL)
+      {
+        this->setSeedingNode(nodes[i]);
+        fiducialName = nodes[i]->GetName();
+        cnodes->RemoveAllItems();
+        cnodes->Delete();
+        break;
+      }
+      cnodes->RemoveAllItems();
+      cnodes->Delete();
+    }
+  }
+  
+  // if we dont' have FiberBundleNode create it
+  nodes.clear();
+  this->mrmlScene()->GetNodesByClass("vtkMRMLFiberBundleNode", nodes);
+  if (nodes.size() == 0 && d->FiberNodeSelector->currentNode() == 0)
+  {
+    vtkMRMLFiberBundleNode *fnode = vtkMRMLFiberBundleNode::New();
+    this->mrmlScene()->AddNode(fnode);
+    //fnode->SetName(std::string(std::string("FiberTract_")+fiducialName).c_str());
+    fnode->Delete();
+    this->setFiberBundleNode(fnode);
+  }
+
+  this->updateWidgetFromMRML();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -280,12 +355,27 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
 {
+  if (settingFiberBundleNode)
+  {
+    return;
+  }
+  settingFiberBundleNode = true;
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
   if (this->TractographyFiducialSeedingNode)
   {
+    if (this->TractographyFiducialSeedingNode->GetInputFiducialRef())
+    {
+      vtkMRMLNode *seedNode = this->mrmlScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputFiducialRef());
+      if (seedNode && seedNode->GetName() && fiberBundleNode->GetName())
+      {
+        fiberBundleNode->SetName(std::string(std::string(fiberBundleNode->GetName()) +
+                      std::string("_")+std::string(seedNode->GetName())).c_str());
+      }
+    }
     this->TractographyFiducialSeedingNode->SetOutputFiberRef(fiberBundleNode ?
                                                              fiberBundleNode->GetID() : "" );
   }
+  settingFiberBundleNode = false;
 }
 
 

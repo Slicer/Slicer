@@ -40,6 +40,8 @@ public:
   /// Get current fiber bundlde node
   vtkMRMLFiberBundleNode* fiberBundleNode();
 
+  virtual void enter();
+
 public slots:
 
   /// 
@@ -99,6 +101,8 @@ protected:
   virtual void setup();
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
+
+  bool settingFiberBundleNode;
 
 protected:
   QScopedPointer<qSlicerTractographyFiducialSeedingModuleWidgetPrivate> d_ptr;
