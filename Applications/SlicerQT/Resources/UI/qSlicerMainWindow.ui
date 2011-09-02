@@ -37,6 +37,15 @@
     <addaction name="actionFileAddVolume"/>
     <addaction name="actionFileAddTransform"/>
     <addaction name="actionFileSaveScene"/>
+    <widget class="QMenu" name="menuSDB">
+     <property name="title">
+      <string>Slicer Data Bundle</string>
+     </property>
+     <addaction name="actionSDBSaveToDirectory"/>
+     <addaction name="actionSDBZipDirectory"/>
+     <addaction name="actionSDBZipToDCM"/>
+    </widget>
+    <addaction name="menuSDB"/>
     <addaction name="actionFileCloseScene"/>
     <addaction name="separator"/>
     <addaction name="actionFileExit"/>
@@ -390,6 +399,48 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSDBSaveToDirectory">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Scene To Directory</string>
+   </property>
+   <property name="toolTip">
+    <string>UNDER CONSTRUCTION: Save the current scene to a stand alone directory.</string>
+   </property>
+  </action>
+  <action name="actionSDBZipDirectory">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zip Directory</string>
+   </property>
+   <property name="toolTip">
+    <string>Zip a stand alone directory containing a scene.</string>
+   </property>
+  </action>
+  <action name="actionSDBZipToDCM">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+   </property>
+   <property name="text">
+    <string>DICOM from Zip</string>
+   </property>
+   <property name="toolTip">
+    <string>Encapsulate Zip file as a DICOM secondary capture</string>
    </property>
   </action>
   <action name="actionFileCloseScene">

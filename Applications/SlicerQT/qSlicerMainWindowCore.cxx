@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAction>
 #include <QDesktopServices>
+#include <QFileDialog>
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
@@ -41,9 +42,17 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
+#include "qMRMLUtils.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
+
+// MRML Logic includes
+#include <vtkMRMLApplicationLogic.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkImageData.h>
 
 //---------------------------------------------------------------------------
 // qSlicerMainWindowCorePrivate methods
@@ -116,6 +125,48 @@ void qSlicerMainWindowCore::onFileAddTransformActionTriggered()
 void qSlicerMainWindowCore::onFileSaveSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openSaveDataDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
+{
+  // open a file dialog to let the user choose where to save
+  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
+  QString saveFileName = QFileDialog::getSaveFileName(this->widget(), tr("Slicer Data Bundle Directory"), tempDir, tr("Zip Files (*.zip *.ZIP)"));
+  if (saveFileName.isEmpty())
+    {
+    return;
+    }
+  // pass in a screen shot
+  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
+  QPixmap screenShot = QPixmap::grabWidget(widget);
+  // convert to vtkImageData
+  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
+
+  // TBD: to split the save to dir and zip into separate methods
+  const char *retval = qSlicerCoreApplication::application()->mrmlApplicationLogic()->Zip(saveFileName.toAscii().data(), tempDir.toAscii().data(), imageData);
+  if (retval)
+    {
+    QString returnFileName = QString(retval);
+    std::cout << "Saved scene to file " << returnFileName.toAscii().data() << std::endl;
+    }
+  else
+    {
+    std::cerr << "Error saving scene to file!" << std::endl;
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onSDBZipDirectoryActionTriggered()
+{
+  // NOT IMPLEMENTED YET
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onSDBZipToDCMActionTriggered()
+{
+  // NOT IMPLEMENTED YET
 }
 
 //---------------------------------------------------------------------------

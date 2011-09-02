@@ -50,6 +50,9 @@ public slots:
   void onFileAddVolumeActionTriggered();
   void onFileAddTransformActionTriggered();
   void onFileSaveSceneActionTriggered();
+  void onSDBSaveToDirectoryActionTriggered();
+  void onSDBZipDirectoryActionTriggered();
+  void onSDBZipToDCMActionTriggered();
   void onFileCloseSceneActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();

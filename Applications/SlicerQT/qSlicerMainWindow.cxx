@@ -427,6 +427,11 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(FileAddVolume);
   qSlicerMainWindowCore_connect(FileAddTransform);
   qSlicerMainWindowCore_connect(FileSaveScene);
+
+  qSlicerMainWindowCore_connect(SDBSaveToDirectory);
+  qSlicerMainWindowCore_connect(SDBZipDirectory);
+  qSlicerMainWindowCore_connect(SDBZipToDCM);
+  
   qSlicerMainWindowCore_connect(FileCloseScene);
   this->connect(d->actionFileExit, SIGNAL(triggered()),
                 this, SLOT(close()));

@@ -27,6 +27,7 @@ set(include_dirs
   ${MRML_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
+  ${LibArchive_INCLUDE_DIR}
   )
 include_directories(${include_dirs})
 
@@ -89,6 +90,7 @@ set(libs
   vtkTeem
   RemoteIO
   ${VTK_LIBRARIES}
+  ${LibArchive_LIBRARY}
   )
 target_link_libraries(${lib_name} ${libs})
 

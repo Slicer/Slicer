@@ -28,6 +28,7 @@
 
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
+class vtkImageData;
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic : public vtkMRMLAbstractLogic 
 {
@@ -58,6 +59,23 @@ public:
   /// Fit all the volumes into their views
   void FitSliceToAll();
 
+  /// Save the scene into a self contained directory and zip it up. Use the
+  /// tempDir to stage the scene. If screenShot is not null, use it as the
+  /// screen shot for a scene view
+  /// Returns the final zip file name on success, null on failure.
+  const char * Zip(const char *zipFileName, const char *tempDir, vtkImageData *screenShot = NULL);
+  
+  /// Save the scene into a self contained directory, sdbDir
+  /// If screenShot is not null, use it as the screen shot for a scene view
+  /// Returns the path to the self contained directory, null on failure
+  //const char *SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
+  
+  /// Save directory into a zip file. If sdbDir does not exist, pass that to
+  /// SaveSceneToSlicerDataBundleDirectory along with the screenShot.
+  /// If zipFileName is null, use the base of the mrml scene's URL
+  /// Returns the final zip file name on success, null on failure.
+  //const char * ZipSlicerDataBundleDirectory(const char *zipFileName, const char *sdbDir, vtkImageData *screenShot = NULL);
+  
 protected:
 
   vtkMRMLApplicationLogic();
