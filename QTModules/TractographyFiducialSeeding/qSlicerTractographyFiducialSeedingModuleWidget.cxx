@@ -67,7 +67,6 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
   }
 
   // if we have one Fiducial List node select it
-  std::string fiducialName = "";
   nodes.clear();
   this->mrmlScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode", nodes);
   if (nodes.size() > 1 && d->FiducialNodeSelector->currentNode() == 0)
@@ -77,10 +76,10 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
       vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(nodes[i]);
       vtkCollection *cnodes = vtkCollection::New();
       hnode->GetDirectChildren(cnodes);
-      if (cnodes->GetNumberOfItems() > 0 && vtkMRMLAnnotationFiducialNode::SafeDownCast(cnodes->GetItemAsObject(0)) != NULL)
+      if (cnodes->GetNumberOfItems() > 0 && cnodes->GetNumberOfItems() < 5 &&
+          vtkMRMLAnnotationFiducialNode::SafeDownCast(cnodes->GetItemAsObject(0)) != NULL)
       {
         this->setSeedingNode(nodes[i]);
-        fiducialName = nodes[i]->GetName();
         cnodes->RemoveAllItems();
         cnodes->Delete();
         break;
