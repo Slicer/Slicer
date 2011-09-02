@@ -30,8 +30,9 @@
 
 int qSlicerUtilsTest1(int, char * [] )
 {
+  //-----------------------------------------------------------------------------
   // Test isExecutableName()
-  
+  //-----------------------------------------------------------------------------
   QStringList executableNames;
   executableNames << "Threshold.bat" << "Threshold.com"
                   << "Threshold.sh" << "Threshold.csh"
@@ -63,7 +64,9 @@ int qSlicerUtilsTest1(int, char * [] )
       }
     }
 
+  //-----------------------------------------------------------------------------
   // Test executableExtension()
+  //-----------------------------------------------------------------------------
 #ifdef _WIN32
   QString expectedExecutableExtension = ".exe";
 #else
@@ -78,8 +81,9 @@ int qSlicerUtilsTest1(int, char * [] )
     return EXIT_FAILURE;
     }
 
+  //-----------------------------------------------------------------------------
   // Test extractModuleNameFromLibraryName()
-  
+  //-----------------------------------------------------------------------------
   QStringList libraryNames;
   libraryNames << "ThresholdLib.dll"
                << "Threshold.dll"
