@@ -491,7 +491,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       rep->GetAxis()->SetTitlePosition(lineDisplayNode->GetLabelPosition());
       rep->GetAxis()->SetTickLength(lineDisplayNode->GetTickSpacing());
       rep->GetAxis()->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
-      }
+      //rep->SetRulerMode(lineDisplayNode->GetMaxTicks()? 1:0);
+      rep->SetNumberOfRulerTicks(lineDisplayNode->GetMaxTicks());
+      rep->SetRulerDistance(lineDisplayNode->GetMaxTicks()? 10:10e6);
+
+    }
     rep->NeedToRenderOn();
     }
   else
