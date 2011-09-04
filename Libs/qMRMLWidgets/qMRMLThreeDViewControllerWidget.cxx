@@ -170,8 +170,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidgetPrivate::init()
 {
-  Q_Q(qMRMLThreeDViewControllerWidget);
-
   this->Superclass::init();
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
   this->BarLayout->addStretch(1);
