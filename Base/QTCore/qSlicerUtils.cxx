@@ -45,13 +45,29 @@ bool qSlicerUtils::isExecutableName(const QString& name)
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerUtils::isCLIExecutable(const QString& name)
+bool qSlicerUtils::isCLIExecutable(const QString& filePath)
 {
 #ifdef _WIN32
   return name.endsWith(".exe", Qt::CaseInsensitive);
 #else
-  return !QFileInfo(name).fileName().contains('.');
+  return !QFileInfo(filePath).fileName().contains('.');
 #endif
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
+{
+  // See http://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+  QRegExp regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
+  return regex.exactMatch(QFileInfo(filePath).fileName());
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::isLoadableModule(const QString& filePath)
+{
+  // See http://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+  QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
+  return regex.exactMatch(QFileInfo(filePath).fileName());
 }
 
 //------------------------------------------------------------------------------

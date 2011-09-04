@@ -114,6 +114,82 @@ int qSlicerUtilsTest1(int, char * [] )
     }
 
   //-----------------------------------------------------------------------------
+  // Test isCLILoadableModule()
+  //-----------------------------------------------------------------------------
+  QStringList validFilePaths;
+  validFilePaths << "ThresholdLib.dll"
+                 << "ThresholdLib.DLL"
+                 << "libThresholdLib.dylib"
+                 << "libThresholdLib.so";
+  foreach (const QString& filePath, validFilePaths)
+    {
+    if (!qSlicerUtils::isCLILoadableModule(filePath))
+      {
+      std::cerr << __LINE__ << " - Error in  isCLILoadableModule()\n"
+                << "\tfilePath [" << qPrintable(filePath)
+                << "] is expected to be valid" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  QStringList invalidFilePaths;
+  invalidFilePaths << "libThresholdLib.dll"
+                   << "ThresholdLib.dylib"
+                   << "ThresholdLib.so"
+                   << "libThresholdLib.xyz"
+                   << "libLib.so"
+                   << "Lib.so"
+                   << "Lib.dll"
+                   << "libThresholdlib.so"
+                   << "Thresholdlib.so";
+  foreach (const QString& filePath, invalidFilePaths)
+    {
+    if (qSlicerUtils::isCLILoadableModule(filePath))
+      {
+      std::cerr << __LINE__ << " - Error in  isCLILoadableModule()\n"
+                << "\tfilePath [" << qPrintable(filePath)
+                << "] is expected to be invalid" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+  //-----------------------------------------------------------------------------
+  // Test isLoadableModule()
+  //-----------------------------------------------------------------------------
+  validFilePaths.clear();
+  validFilePaths << "qSlicerThresholdModule.dll"
+                 << "qSlicerThresholdModule.DLL"
+                 << "libqSlicerThresholdModule.dylib"
+                 << "libqSlicerThresholdModule.so";
+  foreach (const QString& filePath, validFilePaths)
+    {
+    if (!qSlicerUtils::isLoadableModule(filePath))
+      {
+      std::cerr << __LINE__ << " - Error in  isLoadableModule()\n"
+                << "\tfilePath [" << qPrintable(filePath)
+                << "] is expected to be valid" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  invalidFilePaths.clear();
+  invalidFilePaths << "libqSlicerThresholdModule.dll"
+                   << "qSlicerThresholdModule.dylib"
+                   << "qSlicerThresholdModule.so"
+                   << "libqSlicerThresholdModule.xyz"
+                   << "qSlicerModule.dll"
+                   << "libQSlicerThresholdmodule.so"
+                   << "QSlicerThresholdmodule.so";
+  foreach (const QString& filePath, invalidFilePaths)
+    {
+    if (qSlicerUtils::isLoadableModule(filePath))
+      {
+      std::cerr << __LINE__ << " - Error in  isLoadableModule()\n"
+                << "\tfilePath [" << qPrintable(filePath)
+                << "] is expected to be invalid" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+  //-----------------------------------------------------------------------------
   // Test executableExtension()
   //-----------------------------------------------------------------------------
 #ifdef _WIN32

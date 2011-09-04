@@ -37,9 +37,18 @@ public:
   /// \note The comparison is case insensitive
   static bool isExecutableName(const QString& name);
 
-  ///
-  /// Returns true if the name matches the CLI executable file name requirements
-  static bool isCLIExecutable(const QString& name);
+  /// Returns \a true if the \a filePath matches the CLI executable file name requirements
+  static bool isCLIExecutable(const QString& filePath);
+
+  /// Returns \a true if the \a filePath matches the CLI loadable module file name requirements.
+  /// \note Associated \a fileName is expected to match the following
+  /// regular expression: "(lib)?.+Lib\\.(dll|DLL|so|dylib)"
+  static bool isCLILoadableModule(const QString& filePath);
+
+  /// Return \a true if \a filePath matches the loadable module file name requirements.
+  /// \note Associated \a fileName is expected to match the following
+  /// regular expression: "(lib)?qSlicer.+Module\\.(so, dll, dylib)"
+  static bool isLoadableModule(const QString& filePath);
 
   ///
   /// Look for target file in build intermediate directory.
