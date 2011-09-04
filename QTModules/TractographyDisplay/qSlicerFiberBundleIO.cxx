@@ -82,7 +82,7 @@ bool qSlicerFiberBundleIO::load(const IOProperties& properties)
   vtkSlicerFiberBundleLogic* fiberBundleLogic =
     vtkSlicerFiberBundleLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()
-      ->module("tractographydisplay")->logic());
+      ->module("TractographyDisplay")->logic());
   Q_ASSERT(fiberBundleLogic);
 
   QStringList nodes;

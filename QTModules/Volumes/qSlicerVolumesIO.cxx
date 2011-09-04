@@ -121,7 +121,7 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
   vtkSlicerVolumesLogic* volumesLogic =
     vtkSlicerVolumesLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()
-      ->module("volumes")->logic());
+      ->module("Volumes")->logic());
   Q_ASSERT(volumesLogic);
   vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(
     fileName.toLatin1(),

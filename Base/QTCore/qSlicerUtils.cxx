@@ -117,7 +117,7 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
     moduleName.remove(index, 3);
     }
 
-  return moduleName.toLower();
+  return moduleName;
 }
 
 //-----------------------------------------------------------------------------

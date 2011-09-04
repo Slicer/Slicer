@@ -96,7 +96,7 @@ void runCli(void * data)
 //-----------------------------------------------------------------------------
 int qSlicerCLIModuleTest1(int argc, char * argv[])
 {
-  QString cliModuleName("cli4test");
+  QString cliModuleName("CLI4Test");
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
   qSlicerApplication app(argc, argv);
@@ -138,7 +138,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     moduleManager->loadModule(name);
     }
 
-  qSlicerAbstractCoreModule * module = moduleManager->module("cli4test");
+  qSlicerAbstractCoreModule * module = moduleManager->module("CLI4Test");
   if (!module)
     {
     std::cerr << "Line " << __LINE__

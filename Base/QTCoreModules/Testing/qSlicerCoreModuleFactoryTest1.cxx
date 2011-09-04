@@ -30,7 +30,7 @@
 int qSlicerCoreModuleFactoryTest1(int, char * [] )
 {
   QString className = "qSlicerCamerasModule";
-  QString expectedModuleName = "cameras";
+  QString expectedModuleName = "Cameras";
 
   QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);
   if (moduleName != expectedModuleName)

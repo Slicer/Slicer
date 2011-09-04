@@ -41,7 +41,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   // Register core modules
   moduleFactoryManager.registerModules("qSlicerCoreModuleFactory");
 
-  QString moduleName = "transforms";
+  QString moduleName = "Transforms";
   
   if (!moduleFactoryManager.moduleTitle( moduleName ).isEmpty())
     {

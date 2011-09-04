@@ -65,7 +65,7 @@ bool qSlicerTransformsIO::load(const IOProperties& properties)
   vtkSlicerTransformLogic* transformLogic =
     vtkSlicerTransformLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()
-      ->module("transforms")->logic());
+      ->module("Transforms")->logic());
   Q_ASSERT(transformLogic && transformLogic->GetMRMLScene() == this->mrmlScene());
   //transformLogic->SetMRMLScene(this->mrmlScene());
   vtkMRMLTransformNode* node = transformLogic->AddTransform(

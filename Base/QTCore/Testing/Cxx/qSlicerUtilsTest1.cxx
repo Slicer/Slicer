@@ -142,14 +142,14 @@ int qSlicerUtilsTest1(int, char * [] )
                << "qSlicerThresholdModule.so"
                << "qSlicerThreshold.dylib";
              
-  QString expectedModuleName = "threshold";
+  QString expectedModuleName = "Threshold";
 
   foreach (const QString& libraryName, libraryNames)
     {
     QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
     if (moduleName != expectedModuleName)
       {
-      std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl
+      std::cerr << __LINE__ << " - Error in  extractModuleNameFromLibraryName()" << std::endl
                             << "moduleName = " << qPrintable(moduleName) << std::endl
                             << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
       return EXIT_FAILURE;

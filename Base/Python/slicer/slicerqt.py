@@ -79,11 +79,11 @@ class _Internal():
   def setSlicerModuleNames( self ):
     """Add module names as attributes of module slicer.moduleNames"""
     for name in moduleNames():
-      setattr( slicer.moduleNames, name, name )
+      setattr( slicer.moduleNames, name.lower(), name )
 
   def setSlicerModules( self, module ):
     """Add modules as attributes of module slicer.modules"""
-    setattr( slicer.modules, module.name, module )
+    setattr( slicer.modules, module.name.lower(), module )
 
 
 _internalInstance = _Internal()

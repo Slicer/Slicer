@@ -107,7 +107,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   QStringList moduleNames = moduleFactoryManager->moduleNames();
 
-  qSlicerAbstractCoreModule * volumesModule = moduleManager->module("volumes");
+  qSlicerAbstractCoreModule * volumesModule = moduleManager->module("Volumes");
   if(!volumesModule){
     qWarning() << "CropVolume: ERROR: volumes module reference was not found!";
     return -3;
@@ -224,7 +224,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       return -3;
   }
 
-  qSlicerAbstractCoreModule * module = moduleManager->module("resamplevolume2");
+  qSlicerAbstractCoreModule * module = moduleManager->module("ResampleVolume2");
   if(!module){
       qWarning() << "CropVolume: ERROR: resamplevolume2 module reference was not found!";
       return -3;

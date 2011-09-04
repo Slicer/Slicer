@@ -149,5 +149,5 @@ QString qSlicerCoreModuleFactory::extractModuleName(const QString& className)
     moduleName.remove(index, 6);
     }
 
-  return moduleName.toLower();
+  return moduleName;
 }

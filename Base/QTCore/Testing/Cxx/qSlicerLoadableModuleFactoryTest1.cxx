@@ -36,7 +36,7 @@ int qSlicerLoadableModuleFactoryTest1(int, char * [] )
                << "libThreshold.so.2.3"
                << "libThreshold.dylib";
              
-  QString expectedModuleName = "threshold";
+  QString expectedModuleName = "Threshold";
 
   foreach (const QString& libraryName, libraryNames)
     {

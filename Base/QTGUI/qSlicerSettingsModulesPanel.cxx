@@ -84,7 +84,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
                    q, SLOT(onShowHiddenModulesChanged(bool)));
 
   // Default values
-  this->ModulesMenu->setCurrentModule("welcome");
+  this->ModulesMenu->setCurrentModule("Welcome");
   this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
 

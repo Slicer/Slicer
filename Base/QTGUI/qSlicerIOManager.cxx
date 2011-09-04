@@ -300,10 +300,10 @@ void qSlicerIOManager::openScreenshotDialog()
   Q_D(qSlicerIOManager);
   // try opening the Annotation module's screen shot
   qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
-  if (moduleManager && moduleManager->isLoaded("annotations") == false)
+  if (moduleManager && moduleManager->isLoaded("Annotations") == false)
     {
     // load it?
-    if (moduleManager->loadModule("annotations") == false)
+    if (moduleManager->loadModule("Annotations") == false)
       {
       qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to load Annotations module (annotations).";
       }
@@ -312,7 +312,7 @@ void qSlicerIOManager::openScreenshotDialog()
   qSlicerAbstractCoreModule *modulePointer = NULL;
   if (moduleManager)
     {
-    modulePointer = moduleManager->module("annotations");
+    modulePointer = moduleManager->module("Annotations");
     }
   if (modulePointer)
     {
@@ -343,17 +343,17 @@ void qSlicerIOManager::openSceneViewsDialog()
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
     return;
     }
-  if (moduleManager->isLoaded("sceneviews") == false)
+  if (moduleManager->isLoaded("SceneViews") == false)
     {
     // load it?
-    if (moduleManager->loadModule("sceneviews") == false)
+    if (moduleManager->loadModule("SceneViews") == false)
       {
       qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to load Scene Views module (sceneviews).";
       return;
       }
     }
   
-  qSlicerAbstractCoreModule *modulePointer = moduleManager->module("sceneviews");
+  qSlicerAbstractCoreModule *modulePointer = moduleManager->module("SceneViews");
   if (modulePointer == NULL)
     {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";

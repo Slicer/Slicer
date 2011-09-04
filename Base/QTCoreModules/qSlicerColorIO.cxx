@@ -66,7 +66,7 @@ bool qSlicerColorIO::load(const IOProperties& properties)
   vtkSlicerColorLogic* colorLogic =
     vtkSlicerColorLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()
-        ->module("colors")->logic());
+        ->module("Colors")->logic());
   Q_ASSERT(colorLogic && colorLogic->GetMRMLScene() == this->mrmlScene());
   //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
   //Q_ASSERT(colorLogic);

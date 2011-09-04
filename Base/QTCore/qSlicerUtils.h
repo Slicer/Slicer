@@ -57,9 +57,9 @@ public:
 
   /// Extract module name given a library name
   /// For example:
-  ///  on linux, libThresholdLib.so -> threshold
-  ///  on mac, libThresholdLib.{dylib, bundle, so} -> threshold
-  ///  on windows, ThresholdLib.dll -> threshold
+  ///  on linux, libThresholdLib.so -> Threshold
+  ///  on mac, libThresholdLib.{dylib, bundle, so} -> Threshold
+  ///  on windows, ThresholdLib.dll -> Threshold
   static QString extractModuleNameFromLibraryName(const QString& libraryName);
 
   /// Return \a true if the plugin identified with its \a path is loaded from an install tree.
