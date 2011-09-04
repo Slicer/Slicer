@@ -98,12 +98,19 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       )
   endif()
 
-  set(VTK_BUILD_STEP "")
+  set(CUSTOM_BUILD_COMMAND)
+  if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
+    # Use ${MAKE} as build command to propagate parallel make option
+    SET(CUSTOM_BUILD_COMMAND BUILD_COMMAND "$(MAKE)")
+  endif()
+
   if(UNIX)
     configure_file(SuperBuild/VTK_build_step.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake
       @ONLY)
-    set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
+    set(CUSTOM_BUILD_COMMAND BUILD_COMMAND ${CMAKE_COMMAND}
+      -DMAKE_COMMAND=$(MAKE)
+      -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
 
   # Set CMake OSX variable to pass down the external project
@@ -121,6 +128,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     GIT_REPOSITORY "${git_protocol}://${Slicer_VTK_GIT_REPOSITORY}"
     GIT_TAG ${Slicer_VTK_GIT_TAG}
     CMAKE_GENERATOR ${gen}
+    ${CUSTOM_BUILD_COMMAND}
     CMAKE_ARGS
       ${ep_common_flags}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
@@ -140,7 +148,6 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       ${VTK_PYTHON_ARGS}
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}
-    BUILD_COMMAND ${VTK_BUILD_STEP}
     INSTALL_COMMAND ""
     DEPENDS
       ${VTK_DEPENDENCIES}
