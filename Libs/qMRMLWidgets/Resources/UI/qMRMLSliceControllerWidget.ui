@@ -788,8 +788,8 @@
    </property>
    <property name="icon">
     <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
-     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
+     <normaloff>:/Icons/SliceInterpolationOff.png</normaloff>
+     <normalon>:/Icons/SliceInterpolationOn.png</normalon>:/Icons/SliceInterpolationOff.png</iconset>
    </property>
    <property name="text">
     <string>Interpolate foreground</string>
@@ -804,8 +804,8 @@
    </property>
    <property name="icon">
     <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
-     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
+     <normaloff>:/Icons/SliceInterpolationOff.png</normaloff>
+     <normalon>:/Icons/SliceInterpolationOn.png</normalon>:/Icons/SliceInterpolationOff.png</iconset>
    </property>
    <property name="text">
     <string>Interpolate background</string>

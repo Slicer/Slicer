@@ -35,6 +35,8 @@
     <file>Icons/SliceViewerFG.png</file>
     <file>Icons/SliceViewerLB.png</file>
     <file>Icons/SliceViewerOR.png</file>
+    <file>Icons/SliceInterpolationOn.png</file>
+    <file>Icons/SliceInterpolationOff.png</file>
 
     <file>Icons/SlicerAutomaticSliceSpacing.png</file>
     <file>Icons/SlicerManualSliceSpacing.png</file>
