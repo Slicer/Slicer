@@ -150,8 +150,16 @@ public slots:
   // Advanced options
   /// Rotate to volume plane
   void rotateSliceToBackground();
+  
+  void setLabelMapHidden(bool hide);
+  void setForegroundHidden(bool hide);
+  void setBackgroundHidden(bool hide);
+
   /// Label opacity
-  void setLabelOpacity(double opacity);
+  void setLabelMapOpacity(double opacity);
+  void setForegroundOpacity(double opacity);
+  void setBackgroundOpacity(double opacity);
+  
   /// Label outline
   void showLabelOutline(bool show);
   /// Reformat widget
@@ -177,8 +185,13 @@ public slots:
   void setLightboxTo3x3();
   void setLightboxTo6x6();
   // interpolation
-  void setForegroundInterpolation(bool);
-  void setBackgroundInterpolation(bool);
+  void setForegroundInterpolation(bool nearestNeighbor);
+  void setBackgroundInterpolation(bool nearestNeighbor);
+  
+  void setNavigatorEnabled(bool enable);
+  void setCrosshairMode(int mode);
+  void setCrosshairThickness(int thickness);
+  void setSliceIntersectionVisible(bool show);
 signals:
 
   /// This signal is emitted when the given \a imageData is modified.

@@ -71,13 +71,13 @@ qMRMLViewControllerBarPrivate::~qMRMLViewControllerBarPrivate()
 //---------------------------------------------------------------------------
 void qMRMLViewControllerBarPrivate::init()
 {
+  Q_Q(qMRMLViewControllerBar);
   // Widget contains
   // VBoxLayout (ControllerLayout)
   //    Widget (BarWidget)
   //        HBoxLayout (BarLayout)
   //    Optional PopupWidget (packed under BarWidget if ControllerBar is a panel)
 
-  Q_Q(qMRMLViewControllerBar);
   this->setParent(q);
 
   this->BarWidget = new QWidget(q);
@@ -99,7 +99,7 @@ void qMRMLViewControllerBarPrivate::init()
   margins.setBottom(0);
   this->BarLayout->setContentsMargins(margins);
 
-  this->PopupWidget = new ctkPopupWidget;
+  this->PopupWidget = new ctkPopupWidget(q);
   this->setupPopupUi();
 
   this->PinButton = new QToolButton(q);
@@ -132,7 +132,6 @@ void qMRMLViewControllerBarPrivate::init()
 void qMRMLViewControllerBarPrivate::setupPopupUi()
 {
   Q_Q(qMRMLViewControllerBar);
-  this->PopupWidget->setBaseWidget(q);
   this->PopupWidget->setAutoShow(false);
   this->PopupWidget->setAutoHide(true);
   this->PopupWidget->setOrientation(Qt::Vertical);
@@ -207,22 +206,22 @@ void qMRMLViewControllerBar::setLayoutBehavior(LayoutBehavior behavior)
     {
     if (behavior == qMRMLViewControllerBar::Popup)
       {
-      d->PopupWidget->setParent(0);
-      d->PopupWidget->setBaseWidget(this);
       d->PopupWidget->setAutoShow(false);
       d->PopupWidget->setAutoHide(true);
       d->ControllerLayout->removeWidget(d->PopupWidget);
+      d->PopupWidget->setActive(true);
+      d->PopupWidget->setWindowFlags(d->PopupWidget->windowFlags() | Qt::ToolTip);
       d->PinButton->show();
       }
     else
       {
-      d->PopupWidget->setParent(this);
-      d->PopupWidget->setBaseWidget(0);
       d->PopupWidget->setAutoShow(false);
       d->PopupWidget->setAutoHide(false);
       d->ControllerLayout->addWidget(d->PopupWidget);
       d->PinButton->hide();
       //d->PinButton->setDown(1);
+      d->PopupWidget->setActive(false);
+      d->PopupWidget->setWindowFlags(d->PopupWidget->windowFlags() & ~Qt::ToolTip);
       d->PopupWidget->pinPopup(true);
       }
     }
