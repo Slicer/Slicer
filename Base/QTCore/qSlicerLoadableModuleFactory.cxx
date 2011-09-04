@@ -172,3 +172,13 @@ qSlicerLoadableModuleFactoryItem* qSlicerLoadableModuleFactory::createFactoryFil
 {
   return new qSlicerLoadableModuleFactoryItem();
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerLoadableModuleFactory::isValidFile(const QFileInfo& file)const
+{
+  if (!Superclass::isValidFile(file))
+    {
+    return false;
+    }
+  return qSlicerUtils::isLoadableModule(file.absoluteFilePath());
+}

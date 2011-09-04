@@ -65,6 +65,8 @@ public:
 protected:
   virtual qSlicerLoadableModuleFactoryItem* createFactoryFileBasedItem();
 
+  virtual bool isValidFile(const QFileInfo& file)const;
+
 protected:
   QScopedPointer<qSlicerLoadableModuleFactoryPrivate> d_ptr;
 

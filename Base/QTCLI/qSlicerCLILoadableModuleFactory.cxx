@@ -125,3 +125,13 @@ void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDir
 {
   this->TempDirectory = newTempDirectory;
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file)const
+{
+  if (!Superclass::isValidFile(file))
+    {
+    return false;
+    }
+  return qSlicerUtils::isCLILoadableModule(file.absoluteFilePath());
+}

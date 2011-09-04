@@ -47,6 +47,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
   public ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>
 {
 public:
+  typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactory();
 
   /// Reimplemented to scan the directory of the command line modules
@@ -65,6 +66,8 @@ public:
 protected:
   virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
     createFactoryFileBasedItem();
+
+  virtual bool isValidFile(const QFileInfo& file)const;
 
 private:
   QString TempDirectory;

@@ -98,9 +98,15 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
 //-----------------------------------------------------------------------------
 bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
 {
-  return ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file) &&
-    file.isExecutable() &&
-    qSlicerUtils::isCLIExecutable(file.absoluteFilePath());
+  if (!this->Superclass::isValidFile(file))
+    {
+    return false;
+    }
+  if (!file.isExecutable())
+    {
+    return false;
+    }
+  return qSlicerUtils::isCLIExecutable(file.absoluteFilePath());
 }
 
 //-----------------------------------------------------------------------------
