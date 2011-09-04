@@ -19,8 +19,10 @@
 ==============================================================================*/
 
 // QT includes
-#include <QStringList>
+#include <QDebug>
+#include <QDir>
 #include <QFileInfo>
+#include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerUtils.h"
@@ -116,4 +118,79 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
     }
 
   return moduleName.toLower();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::isPluginInstalled(const QString& path, const QString& applicationHomeDir)
+{
+  QDir pathDir = QFileInfo(path).dir();
+  QString canonicalPath = pathDir.canonicalPath();
+
+  if (canonicalPath.startsWith(applicationHomeDir))
+    {
+    return !QFile::exists(applicationHomeDir + "/CMakeCache.txt");
+    }
+
+  if (QFile::exists(canonicalPath + "/CMakeCache.txt"))
+    {
+    return false;
+    }
+
+  while(pathDir.cdUp())
+    {
+    if (QFile::exists(pathDir.path() + "/CMakeCache.txt"))
+      {
+      return false;
+      }
+    }
+
+  return true;
+
+//  bool hasIntermediateDir = false;
+//  foreach(const QString& intDir, QStringList() << "Debug" << "RelWithDebInfo" << "Release" << "MinSizeRel")
+//    {
+//    if (pathDir.dirName() == intDir)
+//      {
+//      hasIntermediateDir = true;
+//      break;
+//      }
+//    }
+//  qDebug() << "hasIntermediateDir" << hasIntermediateDir;
+//  if (hasIntermediateDir)
+//    {
+//    pathDir.cdUp();
+//    }
+//  QString canonicalPathWithoutIntermediateDir = pathDir.canonicalPath();
+//  qDebug() << "canonicalPathWithoutIntermediateDir" << canonicalPathWithoutIntermediateDir;
+
+//  // Determine in which build subdirectory the file is
+//  QString buildSubDir;
+//  foreach(buildSubDir, buildSubDirs)
+//    {
+//    if (canonicalPathWithoutIntermediateDir.endsWith(buildSubDir))
+//      {
+//      break;
+//      }
+//    }
+//  qDebug() << "buildSubDir" << buildSubDir;
+//  Q_ASSERT(!buildSubDir.isEmpty());
+
+//  if (buildSubDir != ".")
+//    {
+//  QStringList buildSubDirParts = buildSubDir.split("/");
+//  qDebug() << "buildSubDirParts" << buildSubDirParts;
+//  for(int i = 0; i < buildSubDirParts.count(); ++i)
+//    {
+//    pathDir.cdUp();
+//    }
+//  qDebug() << "pathDir" << pathDir.path();
+
+//  //QString canonicalPathWithoutSubDir = canonicalPathWithoutIntermediateDir;
+
+//  //qDebug() << "pathDir" << pathDir.path();
+//  //qDebug() << "RelPath to subdir" << pathDir.relativeFilePath(pathDir.path() + "/" + buildSubDir);
+
+//  //pathDir.cd(pathDir.relativeFilePath(pathDir.path() + "/" + buildSubDir));
+//  //qDebug() << "pathDir" << pathDir.path();
+//  return !pathDir.exists("CMakeCache.txt");
 }

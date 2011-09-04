@@ -61,8 +61,13 @@ public:
   ///  on mac, libThresholdLib.{dylib, bundle, so} -> threshold
   ///  on windows, ThresholdLib.dll -> threshold
   static QString extractModuleNameFromLibraryName(const QString& libraryName);
-  
-  
+
+  /// Return \a true if the plugin identified with its \a path is loaded from an install tree.
+  /// \note Since internally the function looks for the existence of CMakeCache.txt, it will
+  /// return an incorrect result if the plugin is installed in the build tree of 
+  /// an other project.
+  static bool isPluginInstalled(const QString& path, const QString& applicationHomeDir);
+
 private:
   /// Not implemented
   qSlicerUtils(){}
