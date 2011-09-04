@@ -26,6 +26,7 @@
 
 // SlicerQT includes
 #include "qSlicerCoreApplication.h"
+#include "qSlicerUtils.h"
 
 // For:
 //  - Slicer_CLIMODULES_BIN_DIR
@@ -57,4 +58,11 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     app->addLibraryPath(path);
     }
   return cmdLineModulePaths; 
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
+{
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  return qSlicerUtils::isPluginInstalled(path, app->slicerHome());
 }

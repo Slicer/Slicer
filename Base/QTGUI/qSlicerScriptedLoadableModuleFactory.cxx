@@ -25,6 +25,7 @@
 #include "qSlicerScriptedLoadableModuleFactory.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerScriptedLoadableModule.h"
+#include "qSlicerUtils.h"
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
@@ -56,6 +57,9 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   //qDebug() << "module->helpText()" << module->helpText();
   //qDebug() << "module->acknowledgementText()" << module->acknowledgementText();
   module->setPath(this->path());
+
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
 
   return module.take();
 }
