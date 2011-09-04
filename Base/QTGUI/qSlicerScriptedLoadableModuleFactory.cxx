@@ -28,7 +28,7 @@
 #include "qSlicerUtils.h"
 
 // For:
-//  - Slicer_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer_QTSCRIPTEDMODULES_LIB_DIR
 
 //----------------------------------------------------------------------------
 // ctkFactoryScriptedItem methods

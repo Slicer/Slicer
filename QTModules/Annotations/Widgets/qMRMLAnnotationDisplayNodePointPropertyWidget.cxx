@@ -34,7 +34,6 @@ qMRMLAnnotationDisplayNodePointPropertyWidgetPrivate::qMRMLAnnotationDisplayNode
 //-----------------------------------------------------------------------------
 void qMRMLAnnotationDisplayNodePointPropertyWidgetPrivate::setupUi(qMRMLAnnotationDisplayNodePropertyWidget * widget)
 {
-
 }
 
 //-----------------------------------------------------------------------------
