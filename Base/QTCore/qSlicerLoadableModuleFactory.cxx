@@ -121,12 +121,6 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 
   QStringList additionalModulePaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
-  foreach(const QString& path, qtModulePaths)
-    {
-    QString currentPath(vtksys::SystemTools::GetEnv("PATH"));
-    vtksys::SystemTools::PutEnv(QString("PATH=%1;%2").arg(path).arg(currentPath).toLatin1());
-    app->addLibraryPath(path);
-    }
 
   //qDebug() << "qtModulePaths:" << qtModulePaths;
   

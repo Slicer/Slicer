@@ -102,15 +102,6 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
   // installation or build tree) to the user paths
   QStringList additionalModulePaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
-  foreach(const QString& path, qtModulePaths)
-    {
-    app->addLibraryPath(path);
-    }
-
-//   foreach (QString path, app->libraryPaths())
-//     {
-//     qDebug() << "scriptedModulePaths:" << path;
-//     }
 
 //  qDebug() << "scriptedModulePaths:" << qtModulePaths;
   
