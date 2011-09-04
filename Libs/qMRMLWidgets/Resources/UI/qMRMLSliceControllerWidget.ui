@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>207</width>
-    <height>66</height>
+    <width>269</width>
+    <height>92</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,259 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="5">
-    <widget class="QToolButton" name="LabelMapLayerOptionButton">
+   <item row="0" column="0" colspan="5">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item>
+      <widget class="QFrame" name="SliceFrame">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="SliceLinkButton">
+          <property name="toolTip">
+           <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/LinkOff.png</normaloff>
+            <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkComboBox" name="SliceOrientationSelector">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Ignored">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>65</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <property name="elideMode">
+           <enum>Qt::ElideMiddle</enum>
+          </property>
+          <item>
+           <property name="text">
+            <string>Axial</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sagittal</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Coronal</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Reformat</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="SliceVisibilityButton">
+          <property name="toolTip">
+           <string>Toggle slice visibility in the 3D view.</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="FitToWindowToolButton">
+          <property name="toolTip">
+           <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="LightBoxToolButton">
+          <property name="toolTip">
+           <string>Lightbox view.</string>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="ShowReformatWidgetToolButton">
+          <property name="toolTip">
+           <string>Show reformat widget in 3D view</string>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
+            <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="SliceMoreOptionButton">
+          <property name="toolTip">
+           <string>Advanced options</string>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>2</width>
+         <height>19</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QFrame" name="GlobalFrame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="GlobalSliceLinkButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/LinkOn.png</normaloff>
+            <disabledoff>:/Icons/LinkOn.png</disabledoff>:/Icons/LinkOn.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="CrosshairButton">
+          <property name="toolTip">
+           <string>Navigation</string>
+          </property>
+          <property name="icon">
+           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicesCrosshair.png</normaloff>:/Icons/SlicesCrosshair.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QToolButton" name="LabelMapOptionButton">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -32,13 +283,52 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
+      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerLB.png</normaloff>:/Icons/SliceViewerLB.png</iconset>
      </property>
     </widget>
    </item>
-   <item row="0" column="6">
-    <widget class="qMRMLNodeComboBox" name="LabelMapSelector">
+   <item row="1" column="1">
+    <widget class="QToolButton" name="LabelMapVisibilityButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="LabelMapOutlineButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -76,54 +366,11 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QToolButton" name="SliceLinkButton">
-     <property name="toolTip">
-      <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/LinkOff.png</normaloff>
-       <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
+   <item row="2" column="0">
+    <widget class="QToolButton" name="ForegroundOptionButton">
+     <property name="enabled">
       <bool>false</bool>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QToolButton" name="FitToWindowToolButton">
-     <property name="toolTip">
-      <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QToolButton" name="RotateToVolumePlaneToolButton">
-     <property name="toolTip">
-      <string>Rotate to volume plane</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QToolButton" name="ShowLabelVolumeOutlineToolButton"/>
-   </item>
-   <item row="1" column="5">
-    <widget class="QToolButton" name="ForegroundLayerOptionButton">
      <property name="toolTip">
       <string>Select options for the Foreground Layer</string>
      </property>
@@ -131,7 +378,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
+      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerFG.png</normaloff>:/Icons/SliceViewerFG.png</iconset>
      </property>
      <property name="popupMode">
@@ -139,8 +386,50 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="6">
-    <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector">
+   <item row="2" column="1">
+    <widget class="QToolButton" name="ForegroundVisibilityButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QToolButton" name="ForegroundInterpolationButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -178,85 +467,11 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
-    <widget class="QToolButton" name="LabelOpacityToolButton">
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SlicesLabelOpacity.png</normaloff>:/Icons/SlicesLabelOpacity.png</iconset>
-     </property>
-      <property name="toolTip">
-       <string>Adjust label map opacity.</string>
-      </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QToolButton" name="SliceVisibilityButton">
-     <property name="toolTip">
-      <string>Toggle slice visibility in the MainViewer.</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/VisibleOff.png</normaloff>
-       <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
+   <item row="3" column="0">
+    <widget class="QToolButton" name="BackgroundOptionButton">
+     <property name="enabled">
       <bool>false</bool>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QToolButton" name="ShowReformatWidgetToolButton"/>
-   </item>
-   <item row="2" column="2">
-    <widget class="QToolButton" name="CompositingToolButton">
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SlicesComposite.png</normaloff>:/Icons/SlicesComposite.png</iconset>
-     </property>
-     <property name="toolTip">
-      <string>Choose compositing between layers.</string>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QToolButton" name="SliceSpacingModeToolButton">
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
-     </property>
-     <property name="toolTip">
-      <string>Slice spacing mode.</string>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QToolButton" name="LightBoxToolButton">
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
-     </property>
-     <property name="toolTip">
-      <string>Lightbox view.</string>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="5">
-    <widget class="QToolButton" name="BackgroundLayerOptionButton">
      <property name="toolTip">
       <string>Select options for the Background Layer</string>
      </property>
@@ -264,7 +479,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
+      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
      </property>
      <property name="popupMode">
@@ -272,8 +487,53 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="6">
-    <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector">
+   <item row="3" column="1">
+    <widget class="QToolButton" name="BackgroundVisibilityButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QToolButton" name="BackgroundInterpolationButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -311,71 +571,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Minimum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="ctkComboBox" name="SliceOrientationSelector">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>65</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
-       </property>
-       <property name="sizeAdjustPolicy">
-        <enum>QComboBox::AdjustToContents</enum>
-       </property>
-       <property name="elideMode">
-        <enum>Qt::ElideMiddle</enum>
-       </property>
-       <item>
-        <property name="text">
-         <string>Axial</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Sagittal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Coronal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Reformat</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
   <action name="actionHotLinked">
    <property name="checkable">
@@ -390,7 +585,7 @@
   </action>
   <action name="actionFit_to_window">
    <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
    </property>
    <property name="text">
@@ -402,7 +597,7 @@
   </action>
   <action name="actionRotate_to_volume_plane">
    <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
    </property>
    <property name="text">
@@ -412,17 +607,20 @@
     <string>Rotate to volume plane</string>
    </property>
   </action>
-  <action name="actionShow_label_volume_outline">
+  <action name="actionLabelMapOutline">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
      <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
    </property>
    <property name="text">
-    <string>Hide label volume outlines</string>
+    <string>Hide labelmap outlines</string>
    </property>
    <property name="toolTip">
     <string>Toggle between showing label map volume with regions outlined or filled.</string>
@@ -433,9 +631,9 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
-     <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SliceWidgetOff.png</normaloff>
+     <normalon>:/Icons/SliceWidgetOn.png</normalon>:/Icons/SliceWidgetOff.png</iconset>
    </property>
    <property name="text">
     <string>Show reformat widget</string>
@@ -478,7 +676,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png</iconset>
    </property>
    <property name="text">
@@ -585,16 +783,204 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
+     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
+   </property>
    <property name="text">
-    <string>Interpolation</string>
+    <string>Interpolate foreground</string>
    </property>
   </action>
   <action name="actionBackgroundInterpolation">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
+     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
+   </property>
    <property name="text">
-    <string>Interpolation</string>
+    <string>Interpolate background</string>
+   </property>
+  </action>
+  <action name="actionLabelMapVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOn.png</normaloff>
+     <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show LabelMap</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle labelmap visibility</string>
+   </property>
+  </action>
+  <action name="actionForegroundVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOn.png</normaloff>
+     <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Foreground</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle foreground visibility</string>
+   </property>
+  </action>
+  <action name="actionBackgroundVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOn.png</normaloff>
+     <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Background</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle background visibility</string>
+   </property>
+  </action>
+  <action name="actionShow_in_3D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOff.png</normaloff>
+     <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show in 3D</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle slice visibility in 3D view</string>
+   </property>
+  </action>
+  <action name="actionCrosshairNavigator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Navigator</string>
+   </property>
+  </action>
+  <action name="actionCrosshairNo_crosshair">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>No crosshair</string>
+   </property>
+  </action>
+  <action name="actionCrosshairBasic_crosshair">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Basic crosshair</string>
+   </property>
+  </action>
+  <action name="actionCrosshairBasic_intersection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Basic + intersection</string>
+   </property>
+  </action>
+  <action name="actionCrosshairBasic_hashmarks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Basic + hashmarks</string>
+   </property>
+  </action>
+  <action name="actionCrosshairBasic_hashmarks_intersection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Basic + hashmarks + intersection</string>
+   </property>
+  </action>
+  <action name="actionCrosshairSmall_basic">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Small basic</string>
+   </property>
+  </action>
+  <action name="actionCrosshairSmall_basic_intersection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Small basic + intersection</string>
+   </property>
+  </action>
+  <action name="actionCrosshairFine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fine</string>
+   </property>
+  </action>
+  <action name="actionCrosshairMedium">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Medium</string>
+   </property>
+  </action>
+  <action name="actionCrosshairThick">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Thick</string>
+   </property>
+  </action>
+  <action name="actionCrosshairSlice_intersections">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Slice intersections</string>
+   </property>
+   <property name="toolTip">
+    <string>Slice intersections</string>
    </property>
   </action>
  </widget>
@@ -615,9 +1001,63 @@
    <header>ctkPopupWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qMRMLWidgets.qrc"/>
+  <include location="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>LabelMapComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>LabelMapOptionButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ForegroundComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ForegroundOptionButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BackgroundComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>BackgroundOptionButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

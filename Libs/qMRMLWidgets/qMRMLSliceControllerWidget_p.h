@@ -41,6 +41,7 @@
 
 class QSpinBox;
 class QDoubleSpinBox;
+class ctkSignalMapper;
 class ctkSliderWidget;
 class ctkVTKSliceView;
 class vtkMRMLSliceNode;
@@ -68,11 +69,18 @@ public:
   virtual ~qMRMLSliceControllerWidgetPrivate();
 
   virtual void init();
+  virtual void setColor(QColor color);
 
   void setupLinkedOptionsMenu();
+  void setupLightboxMenu();
+  void setupCompositingMenu();
+  void setupCrosshairMenu();
+  void setupSliceSpacingMenu();
   void setupMoreOptionsMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
+  
+  void enableVisibilityButtons();
 
   vtkMRMLSliceLogic* compositeNodeLogic(vtkMRMLSliceCompositeNode* node);
   vtkMRMLSliceLogic* sliceNodeLogic(vtkMRMLSliceNode* node);
@@ -81,11 +89,17 @@ public:
   void setBackgroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
 
 public slots:
+  /// Update widget state when the scene is modified
+  void onMRMLSceneChanged(vtkObject*,void*,ulong,void*);
+
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();
 
   /// Update widget state using the associated MRML slice composite node
   void updateWidgetFromMRMLSliceCompositeNode();
+
+  /// Update widget state using the crosshair node
+  void updateWidgetFromCrosshairNode(vtkObject* node);
 
   /// Called after a foregound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
@@ -105,10 +119,6 @@ public slots:
   void updateFromForegroundDisplayNode(vtkObject* displayNode);
   void updateFromBackgroundDisplayNode(vtkObject* displayNode);
 
-  void toggleControllerWidgetGroupVisibility();
-
-  void toggleLabelOpacity(bool toggle);
-
   void applyCustomLightbox();
 
 protected:
@@ -127,11 +137,18 @@ public:
   QString                             SliceViewName;
   QString                             SliceViewLabel;
   QButtonGroup*                       ControllerButtonGroup;
+  ctkSignalMapper*                    CrosshairMapper;
+  ctkSignalMapper*                    CrosshairThicknessMapper;
 
   ctkSliderWidget*                    SliceOffsetSlider;
-  ctkSliderWidget*                    LabelOpacitySlider;
-  QToolButton*                        LabelOpacityToggleButton;
-  double                              LastLabelOpacity;
+  double                              LastLabelMapOpacity;
+  double                              LastForegroundOpacity;
+  double                              LastBackgroundOpacity;
+
+  QMenu*                              LightboxMenu;
+  QMenu*                              CompositingMenu;
+  QMenu*                              CrosshairMenu;
+  QMenu*                              SliceSpacingMenu;
 
   QDoubleSpinBox*                     SliceSpacingSpinBox;
 

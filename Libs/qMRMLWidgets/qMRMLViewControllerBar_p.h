@@ -49,7 +49,7 @@ public:
   virtual ~qMRMLViewControllerBarPrivate();
 
   virtual void init();
-  void setColor(QColor color);
+  virtual void setColor(QColor color);
 
   QToolButton*                     PinButton;
   QLabel*                          ViewLabel;

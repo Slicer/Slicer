@@ -32,6 +32,7 @@
 // CTK includes
 #include <ctkLogger.h>
 #include <ctkPopupWidget.h>
+#include <ctkSignalMapper.h>
 #include <ctkSliderWidget.h>
 
 // qMRML includes
@@ -42,6 +43,7 @@
 #include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
+#include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -77,12 +79,20 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->SliceOrientationToDescription["Coronal"] = coronalOrientation;
   this->SliceOrientationToDescription["Reformat"] = obliqueOrientation;
 
+  this->CrosshairMapper = 0;
+  this->CrosshairThicknessMapper = 0;
+
+  this->LastLabelMapOpacity = 1.;
+  this->LastForegroundOpacity = 1.;
+  this->LastBackgroundOpacity = 1.;
+
   this->SliceOffsetSlider = 0;
 
-  this->LabelOpacitySlider = 0;
-  this->LabelOpacityToggleButton = 0;
-  this->LastLabelOpacity = 1.;
-
+  this->LightboxMenu = 0;
+  this->CompositingMenu = 0;
+  this->CrosshairMenu = 0;
+  this->SliceSpacingMenu = 0;
+  
   this->LightBoxRowsSpinBox = 0;
   this->LightBoxColumnsSpinBox = 0;
 }
@@ -90,6 +100,16 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
 //---------------------------------------------------------------------------
 qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate()
 {
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setColor(QColor barColor)
+{
+  //this->SliceOffsetSlider->spinBox()->setAutoFillBackground(true);
+  this->Superclass::setColor(barColor);
+  QPalette spinBoxPalette( this->SliceOffsetSlider->spinBox()->palette());
+  spinBoxPalette.setColor(QPalette::Base, barColor.lighter(130));
+  this->SliceOffsetSlider->spinBox()->setPalette(spinBoxPalette);
 }
 
 //---------------------------------------------------------------------------
@@ -103,70 +123,32 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
   // need to add the LabelMap attribute for them.
-  this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
+  this->LabelMapComboBox->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
   // Note: the min width is currently set in the UI file directly
   //// Set the slice controller widgets a min width.
-  //int volumeSelectorMinWidth = this->LabelMapSelector->fontMetrics().width("Xxxxxxxx") + 20;
+  //int volumeSelectorMinWidth = this->LabelMapComboBox->fontMetrics().width("Xxxxxxxx") + 20;
   //this->SliceOrientationSelector->setMinimumWidth(volumeSelectorMinWidth);
-  //this->LabelMapSelector->setMinimumWidth(volumeSelectorMinWidth);
-  //this->BackgroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
-  //this->ForegroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
+  //this->LabelMapComboBox->setMinimumWidth(volumeSelectorMinWidth);
+  //this->BackgroundComboBox->setMinimumWidth(volumeSelectorMinWidth);
+  //this->ForegroundComboBox->setMinimumWidth(volumeSelectorMinWidth);
 
   // Populate the Linked menu
   this->setupLinkedOptionsMenu();
 
-  // Populate Advanced menu
-  this->setupMoreOptionsMenu();
-
-  // Populate Foreground menu
-  QMenu* foregroundMenu = new QMenu(tr("Advanced foreground layer"), this->ForegroundLayerOptionButton);
-  foregroundMenu->addAction(this->actionForegroundInterpolation);
-  this->ForegroundLayerOptionButton->setMenu(foregroundMenu);
-  // Populate Background menu
-  QMenu* backgroundMenu = new QMenu(tr("Advanced background layer"), this->BackgroundLayerOptionButton);
-  backgroundMenu->addAction(this->actionBackgroundInterpolation);
-  this->BackgroundLayerOptionButton->setMenu(backgroundMenu);
+  // Connect link toggle
+  this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
+                q, SLOT(setSliceLink(bool)));
 
   // Connect Orientation selector
   this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)),
                 q, SLOT(setSliceOrientation(QString)));
 
-  // Connect Foreground layer selector
-  this->connect(this->ForegroundLayerNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
-  // when the user select an entry already selected, we want to synchronize with the linked
-  // slice logics as they mighy not have the same entry selected
-  this->connect(this->ForegroundLayerNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
-                SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
-
-  // Connect Background layer selector
-  this->connect(this->BackgroundLayerNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
-  // when the user select an entry already selected, we want to synchronize with the linked
-  // slice logics as they mighy not have the same entry selected
-  this->connect(this->BackgroundLayerNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
-                SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
-
-  // Connect Label map selector
-  this->connect(this->LabelMapSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
-  // when the user select an entry already selected, we want to synchronize with the linked
-  // slice logics as they mighy not have the same entry selected
-  this->connect(this->LabelMapSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
-                SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
-
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->BackgroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ForegroundLayerNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->LabelMapSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->actionShow_in_3D, SIGNAL(toggled(bool)),
+                   q, SLOT(setSliceVisible(bool)));
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
                    q, SLOT(fitSliceToBackground()));
   QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
                    q, SLOT(rotateSliceToBackground()));
-  QObject::connect(this->actionShow_label_volume_outline, SIGNAL(toggled(bool)),
-                   q, SLOT(showLabelOutline(bool)));
   QObject::connect(this->actionShow_reformat_widget, SIGNAL(toggled(bool)),
                    q, SLOT(showReformatWidget(bool)));
   QObject::connect(this->actionCompositingAlpha_blend, SIGNAL(triggered()),
@@ -197,23 +179,94 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setLightboxTo3x3()));
   QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()),
                    q, SLOT(setLightboxTo6x6()));
+  this->setupLightboxMenu();
+  this->setupCompositingMenu();
+  this->setupSliceSpacingMenu();
+  this->setupCrosshairMenu();
+
+  // Visibility column
+  this->connect(this->actionLabelMapVisibility, SIGNAL(triggered(bool)),
+                q, SLOT(setLabelMapHidden(bool)));
+  this->connect(this->actionForegroundVisibility, SIGNAL(triggered(bool)),
+                q, SLOT(setForegroundHidden(bool)));
+  this->connect(this->actionBackgroundVisibility, SIGNAL(triggered(bool)),
+                q, SLOT(setBackgroundHidden(bool)));
+
+  // Opacity column
+  this->connect(this->LabelMapOpacitySlider, SIGNAL(valueChanged(double)),
+                q, SLOT(setLabelMapOpacity(double)));
+  this->connect(this->ForegroundOpacitySlider, SIGNAL(valueChanged(double)),
+                q, SLOT(setForegroundOpacity(double)));
+  this->connect(this->BackgroundOpacitySlider, SIGNAL(valueChanged(double)),
+                q, SLOT(setBackgroundOpacity(double)));
+
+  // Interpolation column
+  QObject::connect(this->actionLabelMapOutline, SIGNAL(toggled(bool)),
+                   q, SLOT(showLabelOutline(bool)));
   QObject::connect(this->actionForegroundInterpolation, SIGNAL(toggled(bool)),
                    q, SLOT(setForegroundInterpolation(bool)));
   QObject::connect(this->actionBackgroundInterpolation, SIGNAL(toggled(bool)),
                    q, SLOT(setBackgroundInterpolation(bool)));
 
-  // Connect SliceCollapsibleButton
-  // See qMRMLSliceControllerWidget::setControllerButtonGroup()
-  //this->connect(this->SliceCollapsibleButton, SIGNAL(clicked()),
-  //              SLOT(toggleControllerWidgetGroupVisibility()));
+  // Connect Label map selector
+  this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->LabelMapComboBox, SIGNAL(nodeActivated(vtkMRMLNode*)),
+                SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
+  //this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
+  //              this->actionLabelMapVisibility, SLOT(setEnabled(bool)));
+  //this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
+  //              this->actionLabelMapOutline, SLOT(setEnabled(bool)));
 
-  // Connect Slice visibility toggle
-  this->connect(this->SliceVisibilityButton, SIGNAL(clicked(bool)),
-                q, SLOT(setSliceVisible(bool)));
+  // Connect Foreground layer selector
+  this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->ForegroundComboBox, SIGNAL(nodeActivated(vtkMRMLNode*)),
+                SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
+  //this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(bool)),
+  //              this->actionForegroundVisibility, SLOT(setEnabled(bool)));
+  this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(bool)),
+                this->actionForegroundInterpolation, SLOT(setEnabled(bool)));
 
-  // Connect link toggle
-  this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
-                q, SLOT(setSliceLink(bool)));
+  // Connect Background layer selector
+  this->connect(this->BackgroundComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->BackgroundComboBox, SIGNAL(nodeActivated(vtkMRMLNode*)),
+               SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
+  //this->connect(this->BackgroundComboBox, SIGNAL(currentNodeChanged(bool)),
+  //              this->actionBackgroundVisibility, SLOT(setEnabled(bool)));
+  this->connect(this->BackgroundComboBox, SIGNAL(currentNodeChanged(bool)),
+                this->actionBackgroundInterpolation, SLOT(setEnabled(bool)));
+
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->LabelMapComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->ForegroundComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->BackgroundComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  // Connect actions to buttons
+  this->SliceVisibilityButton->setDefaultAction(this->actionShow_in_3D);
+  this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
+  this->LightBoxToolButton->setMenu(this->LightboxMenu);
+  this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
+  this->setupMoreOptionsMenu();
+
+  this->LabelMapVisibilityButton->setDefaultAction(this->actionLabelMapVisibility);
+  this->ForegroundVisibilityButton->setDefaultAction(this->actionForegroundVisibility);
+  this->BackgroundVisibilityButton->setDefaultAction(this->actionBackgroundVisibility);
+
+  this->LabelMapOutlineButton->setDefaultAction(this->actionLabelMapOutline);
+  this->ForegroundInterpolationButton->setDefaultAction(this->actionForegroundInterpolation);
+  this->BackgroundInterpolationButton->setDefaultAction(this->actionBackgroundInterpolation);
+  
+  this->CrosshairButton->setMenu(this->CrosshairMenu);
 }
 
 //---------------------------------------------------------------------------
@@ -227,8 +280,21 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
   this->SliceOffsetSlider->setPageStep(1.);
-  this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
-
+  //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
+  QDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
+  spinBox->setFrame(false);
+  spinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+  spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
+  int targetHeight = spinBox->parentWidget()->layout()->sizeHint().height();//setSizeConstraint(QLayout::SetMinimumSize);
+  int fontHeight = spinBox->fontMetrics().height();
+  qreal heightRatio = static_cast<qreal>(targetHeight - 2) / fontHeight; 
+  if (heightRatio  < 1.)
+    {
+    QFont stretchedFont(spinBox->font());
+    stretchedFont.setPointSizeF(stretchedFont.pointSizeF() * heightRatio);
+    spinBox->setFont(stretchedFont);
+    }
+  
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
                 q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
@@ -238,23 +304,14 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->BarLayout->addWidget(this->SliceOffsetSlider);
 
   // Move the spinbox in the popup instead of having it in the slider bar
-  dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
+  //dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(
+  //  this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
 
   vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
     vtkSmartPointer<vtkMRMLSliceLogic>::New();
   q->setSliceLogic(defaultLogic);
 
   q->setSliceViewName("Red");
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
-{
-  //bool visible = !this->ControllerWidgetGroup->isVisibleTo(
-  //  this->ControllerWidgetGroup->parentWidget());
-  //this->ControllerWidgetGroup->setVisible(visible);
-  //this->SliceCollapsibleButton->setArrowType(
-  //  visible ? Qt::UpArrow : Qt::DownArrow);
 }
 
 // --------------------------------------------------------------------------
@@ -271,104 +328,22 @@ void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
+void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
 {
-  Q_Q(qMRMLSliceControllerWidget);
-  //QMenu* advancedMenu = new QMenu(tr("Advanced"),this->SliceMoreOptionButton);
-  //QMenu* advancedMenu = new QMenu(tr("Advanced"));
-  // Fit to window
-  //advancedMenu->addAction(this->actionFit_to_window);
-  this->FitToWindowToolButton->setDefaultAction(actionFit_to_window);
-  // Rotate to Volume Plane
-  //advancedMenu->addAction(this->actionRotate_to_volume_plane);
-  this->RotateToVolumePlaneToolButton->setDefaultAction(actionRotate_to_volume_plane);
-  // LabelMap opacity
-  QMenu* labelOpacityMenu = new QMenu(tr("Adjust Labelmap opacity"));
-  labelOpacityMenu->setIcon(QIcon(":Icons/SlicesLabelOpacity.png"));
-  QWidget* labelOpacityWidget = new QWidget(labelOpacityMenu);
-  QHBoxLayout* labelOpacityLayout = new QHBoxLayout(labelOpacityWidget);
-  labelOpacityLayout->setContentsMargins(0,0,0,0);
-  this->LabelOpacitySlider = new ctkSliderWidget(q);
-  this->LabelOpacitySlider->setRange(0., 1.);
-  this->LabelOpacitySlider->setSingleStep(0.05);
-  this->LabelOpacitySlider->setValue(this->LastLabelOpacity);
-  QObject::connect(this->LabelOpacitySlider, SIGNAL(valueChanged(double)),
-                   q, SLOT(setLabelOpacity(double)));
-  this->LabelOpacityToggleButton = new QToolButton(q);
-  this->LabelOpacityToggleButton->setText("Toggle label opacity");
-  QIcon visibilityIcon;
-  visibilityIcon.addFile(":Icons/VisibleOn.png", QSize(), QIcon::Normal, QIcon::Off);
-  visibilityIcon.addFile(":Icons/VisibleOff.png", QSize(), QIcon::Normal, QIcon::On);
-  this->LabelOpacityToggleButton->setIcon(visibilityIcon);
-  this->LabelOpacityToggleButton->setCheckable(true);
-  // clicked is fired only if the user clicks on the button, not programatically
-  QObject::connect(this->LabelOpacityToggleButton, SIGNAL(clicked(bool)),
-                   this, SLOT(toggleLabelOpacity(bool)));
-  labelOpacityLayout->addWidget(this->LabelOpacityToggleButton);
-  labelOpacityLayout->addWidget(this->LabelOpacitySlider);
-  labelOpacityWidget->setLayout(labelOpacityLayout);
-  QWidgetAction* sliderAction = new QWidgetAction(labelOpacityMenu);
-  sliderAction->setDefaultWidget(labelOpacityWidget);
-  labelOpacityMenu->addAction(sliderAction);
-  //advancedMenu->addMenu(labelOpacityMenu);
-  this->LabelOpacityToolButton->setMenu(labelOpacityMenu);
-
-  // Show label volume outline
-  //advancedMenu->addAction(this->actionShow_label_volume_outline);
-  this->ShowLabelVolumeOutlineToolButton->setDefaultAction(
-    this->actionShow_label_volume_outline);
-  // Show reformat widget
-  //advancedMenu->addAction(this->actionShow_reformat_widget);
-  this->ShowReformatWidgetToolButton->setDefaultAction(
-    this->actionShow_reformat_widget);
-  // Compositing
-  QMenu* compositingMenu = new QMenu(tr("Compositing"));
-  compositingMenu->setIcon(QIcon(":/Icons/SlicesComposite.png"));
-  compositingMenu->addAction(this->actionCompositingAlpha_blend);
-  compositingMenu->addAction(this->actionCompositingReverse_alpha_blend);
-  compositingMenu->addAction(this->actionCompositingAdd);
-  compositingMenu->addAction(this->actionCompositingSubtract);
-  QActionGroup* compositingGroup = new QActionGroup(compositingMenu);
-  compositingGroup->addAction(this->actionCompositingAlpha_blend);
-  compositingGroup->addAction(this->actionCompositingReverse_alpha_blend);
-  compositingGroup->addAction(this->actionCompositingAdd);
-  compositingGroup->addAction(this->actionCompositingSubtract);
-  //advancedMenu->addMenu(compositingMenu);
-  this->CompositingToolButton->setMenu(compositingMenu);
-
-  // Spacing mode
-  QMenu* sliceSpacingMode = new QMenu(tr("Slice spacing mode"));
-  sliceSpacingMode->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
-  sliceSpacingMode->addAction(this->actionSliceSpacingModeAutomatic);
-  QMenu* sliceSpacingManualMode = new QMenu(tr("Manual"), sliceSpacingMode);
-  sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
-  this->SliceSpacingSpinBox = new QDoubleSpinBox(sliceSpacingManualMode);
-  this->SliceSpacingSpinBox->setDecimals(3);
-  this->SliceSpacingSpinBox->setRange(0., VTK_LARGE_FLOAT);
-  this->SliceSpacingSpinBox->setSingleStep(0.001);
-  this->SliceSpacingSpinBox->setValue(1.);
-  QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setSliceSpacing(double)));
-  QWidgetAction* sliceSpacingAction = new QWidgetAction(sliceSpacingManualMode);
-  sliceSpacingAction->setDefaultWidget(this->SliceSpacingSpinBox);
-  sliceSpacingManualMode->addAction(sliceSpacingAction);
-  sliceSpacingMode->addMenu(sliceSpacingManualMode);
-  //advancedMenu->addMenu(sliceSpacingMode);
-  this->SliceSpacingModeToolButton->setMenu(sliceSpacingMode);
   // Lightbox View
-  QMenu* lightboxView = new QMenu(tr("Lightbox view"));
-  lightboxView->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
-  lightboxView->addAction(this->actionLightbox1x1_view);
-  lightboxView->addAction(this->actionLightbox1x2_view);
-  lightboxView->addAction(this->actionLightbox1x3_view);
-  lightboxView->addAction(this->actionLightbox1x4_view);
-  lightboxView->addAction(this->actionLightbox1x6_view);
-  lightboxView->addAction(this->actionLightbox1x8_view);
-  lightboxView->addAction(this->actionLightbox2x2_view);
-  lightboxView->addAction(this->actionLightbox3x3_view);
-  lightboxView->addAction(this->actionLightbox6x6_view);
-  QMenu* customLightboxMenu = new QMenu(tr("Custom"), lightboxView);
-  QWidget* customLightbox = new QWidget(lightboxView);
+  this->LightboxMenu = new QMenu(tr("Lightbox view"));
+  this->LightboxMenu->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
+  this->LightboxMenu->addAction(this->actionLightbox1x1_view);
+  this->LightboxMenu->addAction(this->actionLightbox1x2_view);
+  this->LightboxMenu->addAction(this->actionLightbox1x3_view);
+  this->LightboxMenu->addAction(this->actionLightbox1x4_view);
+  this->LightboxMenu->addAction(this->actionLightbox1x6_view);
+  this->LightboxMenu->addAction(this->actionLightbox1x8_view);
+  this->LightboxMenu->addAction(this->actionLightbox2x2_view);
+  this->LightboxMenu->addAction(this->actionLightbox3x3_view);
+  this->LightboxMenu->addAction(this->actionLightbox6x6_view);
+  QMenu* customLightboxMenu = new QMenu(tr("Custom"), this->LightboxMenu);
+  QWidget* customLightbox = new QWidget(this->LightboxMenu);
   QHBoxLayout* customLightboxLayout = new QHBoxLayout(customLightbox);
   this->LightBoxRowsSpinBox = new QSpinBox(customLightbox);
   this->LightBoxRowsSpinBox->setRange(1, 100);
@@ -386,8 +361,8 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   QWidgetAction* customLightboxAction = new QWidgetAction(customLightbox);
   customLightboxAction->setDefaultWidget(customLightbox);
   customLightboxMenu->addAction(customLightboxAction);
-  lightboxView->addMenu(customLightboxMenu);
-  QActionGroup* lightboxActionGroup = new QActionGroup(lightboxView);
+  this->LightboxMenu->addMenu(customLightboxMenu);
+  QActionGroup* lightboxActionGroup = new QActionGroup(this->LightboxMenu);
   lightboxActionGroup->addAction(this->actionLightbox1x1_view);
   lightboxActionGroup->addAction(this->actionLightbox1x2_view);
   lightboxActionGroup->addAction(this->actionLightbox1x3_view);
@@ -398,17 +373,122 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   lightboxActionGroup->addAction(this->actionLightbox3x3_view);
   lightboxActionGroup->addAction(this->actionLightbox6x6_view);
   lightboxActionGroup->addAction(customLightboxAction);
-  //advancedMenu->addMenu(lightboxView);
-  this->LightBoxToolButton->setMenu(lightboxView);
-  // Adjust display
-  /*
-  QMenu* adjustDisplay = new QMenu(tr("Adjust display"), advancedMenu);
-  adjustDisplay->setIcon(QIcon(":/Icons/SlicesWinLevThreshCol.png"));
-  adjustDisplay->addAction(this->actionAdjustDisplayForeground_volume);
-  adjustDisplay->addAction(this->actionAdjustDisplayBackground_volume);
-  advancedMenu->addMenu(adjustDisplay);
-  */
-  //this->SliceMoreOptionButton->setMenu(advancedMenu);
+}
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupCompositingMenu()
+{
+  // Compositing
+  this->CompositingMenu = new QMenu(tr("Compositing"));
+  this->CompositingMenu->setIcon(QIcon(":/Icons/SlicesComposite.png"));
+  this->CompositingMenu->addAction(this->actionCompositingAlpha_blend);
+  this->CompositingMenu->addAction(this->actionCompositingReverse_alpha_blend);
+  this->CompositingMenu->addAction(this->actionCompositingAdd);
+  this->CompositingMenu->addAction(this->actionCompositingSubtract);
+  QActionGroup* compositingGroup = new QActionGroup(this->CompositingMenu);
+  compositingGroup->addAction(this->actionCompositingAlpha_blend);
+  compositingGroup->addAction(this->actionCompositingReverse_alpha_blend);
+  compositingGroup->addAction(this->actionCompositingAdd);
+  compositingGroup->addAction(this->actionCompositingSubtract);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupCrosshairMenu()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  // Crosshair
+  QObject::connect(this->actionCrosshairNavigator, SIGNAL(triggered(bool)),
+                   q, SLOT(setNavigatorEnabled(bool)));
+  QActionGroup* crosshairActions = new QActionGroup(q);
+  crosshairActions->setExclusive(true);
+  crosshairActions->addAction(this->actionCrosshairNo_crosshair);
+  crosshairActions->addAction(this->actionCrosshairBasic_crosshair);
+  crosshairActions->addAction(this->actionCrosshairBasic_intersection);
+  crosshairActions->addAction(this->actionCrosshairBasic_hashmarks);
+  crosshairActions->addAction(this->actionCrosshairBasic_hashmarks_intersection);
+  crosshairActions->addAction(this->actionCrosshairSmall_basic);
+  crosshairActions->addAction(this->actionCrosshairSmall_basic_intersection);
+  this->CrosshairMapper = new ctkSignalMapper(q);
+  this->CrosshairMapper->setMapping(actionCrosshairNo_crosshair,
+                                    vtkMRMLCrosshairNode::NoCrosshair);
+  this->CrosshairMapper->setMapping(actionCrosshairBasic_crosshair,
+                                    vtkMRMLCrosshairNode::ShowBasic);
+  this->CrosshairMapper->setMapping(actionCrosshairBasic_intersection,
+                                    vtkMRMLCrosshairNode::ShowIntersection);
+  this->CrosshairMapper->setMapping(actionCrosshairBasic_hashmarks,
+                                    vtkMRMLCrosshairNode::ShowHashmarks);
+  this->CrosshairMapper->setMapping(actionCrosshairBasic_hashmarks_intersection,
+                                    vtkMRMLCrosshairNode::ShowAll);
+  this->CrosshairMapper->setMapping(actionCrosshairSmall_basic,
+                                    vtkMRMLCrosshairNode::ShowSmallBasic);
+  this->CrosshairMapper->setMapping(actionCrosshairSmall_basic_intersection,
+                                    vtkMRMLCrosshairNode::ShowSmallIntersection);
+  QObject::connect(crosshairActions, SIGNAL(triggered(QAction*)),
+                   this->CrosshairMapper, SLOT(map(QAction*)));
+  QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)),
+                   q, SLOT(setCrosshairMode(int)));
+  QActionGroup* crosshairThicknessActions = new QActionGroup(q);
+  crosshairThicknessActions->setExclusive(true);
+  crosshairThicknessActions->addAction(this->actionCrosshairFine);
+  crosshairThicknessActions->addAction(this->actionCrosshairMedium);
+  crosshairThicknessActions->addAction(this->actionCrosshairThick);
+  this->CrosshairThicknessMapper = new ctkSignalMapper(q);
+  this->CrosshairThicknessMapper->setMapping(actionCrosshairFine,
+                                             vtkMRMLCrosshairNode::Fine);
+  this->CrosshairThicknessMapper->setMapping(actionCrosshairMedium,
+                                             vtkMRMLCrosshairNode::Medium);
+  this->CrosshairThicknessMapper->setMapping(actionCrosshairThick,
+                                             vtkMRMLCrosshairNode::Thick);
+  QObject::connect(crosshairThicknessActions, SIGNAL(triggered(QAction*)),
+                   this->CrosshairThicknessMapper, SLOT(map(QAction*)));
+  QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)),
+                   q, SLOT(setCrosshairThickness(int)));
+  QObject::connect(this->actionCrosshairSlice_intersections, SIGNAL(triggered(bool)),
+                   q, SLOT(setSliceIntersectionVisible(bool)));
+  this->CrosshairMenu = new QMenu("Crosshair", q);
+  this->CrosshairMenu->addAction(this->actionCrosshairNavigator);
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addAction(this->actionCrosshairSlice_intersections);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  // Spacing mode
+  this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"));
+  this->SliceSpacingMenu->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
+  this->SliceSpacingMenu->addAction(this->actionSliceSpacingModeAutomatic);
+  QMenu* sliceSpacingManualMode = new QMenu(tr("Manual"), this->SliceSpacingMenu);
+  sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
+  this->SliceSpacingSpinBox = new QDoubleSpinBox(sliceSpacingManualMode);
+  this->SliceSpacingSpinBox->setDecimals(3);
+  this->SliceSpacingSpinBox->setRange(0., VTK_LARGE_FLOAT);
+  this->SliceSpacingSpinBox->setSingleStep(0.001);
+  this->SliceSpacingSpinBox->setValue(1.);
+  QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceSpacing(double)));
+  QWidgetAction* sliceSpacingAction = new QWidgetAction(sliceSpacingManualMode);
+  sliceSpacingAction->setDefaultWidget(this->SliceSpacingSpinBox);
+  sliceSpacingManualMode->addAction(sliceSpacingAction);
+  this->SliceSpacingMenu->addMenu(sliceSpacingManualMode);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
+{
+  QMenu* advancedMenu = new QMenu(tr("Advanced"), this->SliceMoreOptionButton);
+
+  advancedMenu->addMenu(this->CompositingMenu);
+  advancedMenu->addAction(this->actionRotate_to_volume_plane);
+  advancedMenu->addMenu(this->SliceSpacingMenu);
+
+  this->SliceMoreOptionButton->setMenu(advancedMenu);
 }
 
 //---------------------------------------------------------------------------
@@ -470,6 +550,69 @@ vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUn
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
+{
+  bool hasBackground = this->MRMLSliceCompositeNode ?
+    this->MRMLSliceCompositeNode->GetBackgroundVolumeID() != 0 : false;
+  bool hasForeground = this->MRMLSliceCompositeNode ?
+    this->MRMLSliceCompositeNode->GetForegroundVolumeID() != 0 : false;
+  bool hasLabelMap = this->MRMLSliceCompositeNode ?
+    this->MRMLSliceCompositeNode->GetLabelVolumeID() != 0 : false;
+
+  int volumeCount = 0;
+  volumeCount += hasBackground ? 1 : 0;
+  volumeCount += hasForeground ? 1 : 0;
+  volumeCount += hasLabelMap ? 1 : 0;
+
+  bool enableVisibility = volumeCount >= 2;
+
+  this->actionBackgroundVisibility->setEnabled(false);
+  this->BackgroundOpacitySlider->setEnabled(false);
+
+  this->actionForegroundVisibility->setEnabled(enableVisibility && hasForeground);
+  this->ForegroundOpacitySlider->setEnabled(enableVisibility && hasForeground);
+
+  this->actionLabelMapVisibility->setEnabled(enableVisibility && hasLabelMap);
+  this->LabelMapOpacitySlider->setEnabled(enableVisibility && hasLabelMap);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::onMRMLSceneChanged(
+  vtkObject* sender, void* calldata, unsigned long event, void* receiver)
+{
+  Q_Q(qMRMLSliceControllerWidget);
+  Q_UNUSED(receiver);
+  Q_UNUSED(sender);
+  if (q->mrmlScene() != sender ||
+      !q->mrmlScene() || 
+      q->mrmlScene()->GetIsUpdating())
+    {
+    return;
+    }
+  if (event == vtkMRMLScene::NodeAddedEvent)
+    {
+    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(
+      reinterpret_cast<vtkMRMLNode*>(calldata));
+    if (crosshairNode)
+      {
+      qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent,
+                  this, SLOT(updateWidgetFromCrosshairNode(vtkObject*)));
+      this->updateWidgetFromCrosshairNode(crosshairNode);
+      }
+    }
+  else if (event == vtkMRMLScene::SceneImportedEvent ||
+           event == vtkMRMLScene::SceneRestoredEvent)
+    {
+    this->updateWidgetFromMRMLSliceCompositeNode();
+    vtkMRMLNode* crosshairNode = q->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLCrosshairNode");
+    if (crosshairNode)
+      {
+      this->onMRMLSceneChanged(q->mrmlScene(), crosshairNode, vtkMRMLScene::NodeAddedEvent, 0);
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   if (!this->MRMLSliceNode)
@@ -492,12 +635,12 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->SliceOffsetSlider->setPrefix(orientation.Prefix);
 
   // Update slice visibility toggle
-  this->SliceVisibilityButton->setChecked(this->MRMLSliceNode->GetSliceVisible());
+  this->actionShow_in_3D->setChecked(this->MRMLSliceNode->GetSliceVisible());
 
   // Label Outline
   bool showOutline = this->MRMLSliceNode->GetUseLabelOutline();
-  this->actionShow_label_volume_outline->setChecked(showOutline);
-  this->actionShow_label_volume_outline->setText(showOutline ?
+  this->actionLabelMapOutline->setChecked(showOutline);
+  this->actionLabelMapOutline->setText(showOutline ?
     tr("Hide label volume outlines") : tr("Show label volume outlines"));
   // Reformat
   bool showReformat = this->MRMLSliceNode->GetWidgetVisible();
@@ -554,19 +697,27 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     }
   
   // Update "foreground layer" node selector
-  this->ForegroundLayerNodeSelector->setCurrentNode(
+  this->ForegroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
 
   // Update "background layer" node selector
-  this->BackgroundLayerNodeSelector->setCurrentNode(
+  this->BackgroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
 
   // Update "label map" node selector
-  this->LabelMapSelector->setCurrentNode(
+  this->LabelMapComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
   // Label opacity
-  this->LabelOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
+  this->LabelMapOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
+
+  //bool blocking = this->ForegroundOpacitySlider->blockSignals(true);
+  //bool blocking = this->BackgroundOpacitySlider->blockSignals(true);
+  this->ForegroundOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetForegroundOpacity());
+  //this->ForegroundOpacitySlider->blockSignals(blocking);
+  //this->BackgroundOpacitySlider->setValue(1. - this->MRMLSliceCompositeNode->GetForegroundOpacity());
+  //this->BackgroundOpacitySlider->blockSignals(blocking);
+
   // Compositing
   switch(this->MRMLSliceCompositeNode->GetCompositing())
     {
@@ -584,6 +735,28 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       break;
     }
 
+  this->actionCrosshairSlice_intersections->setChecked(
+    this->MRMLSliceCompositeNode->GetSliceIntersectionVisibility());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateWidgetFromCrosshairNode(vtkObject* node)
+{
+  vtkMRMLCrosshairNode* xnode = vtkMRMLCrosshairNode::SafeDownCast(node);
+  if (!xnode)
+    {
+    return;
+    }
+  // Crosshair
+  this->actionCrosshairNavigator->setChecked(xnode->GetNavigation());
+  // Crosshair Mode
+  QAction* crosshairAction =
+    qobject_cast<QAction*>(this->CrosshairMapper->mapping(xnode->GetCrosshairMode()));
+  crosshairAction->setChecked(true);
+  // Crosshair Thickness
+  QAction* crosshairThicknessAction =
+    qobject_cast<QAction*>(this->CrosshairThicknessMapper->mapping(xnode->GetCrosshairThickness()));
+  crosshairThicknessAction->setChecked(true);
 }
 
 // --------------------------------------------------------------------------
@@ -600,6 +773,8 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
   this->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::ForegroundVolumeFlag);
   this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
+
+  this->enableVisibilityButtons();
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
@@ -625,6 +800,8 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
   this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
 
+  this->enableVisibilityButtons();
+
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
@@ -647,6 +824,8 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
   this->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::LabelVolumeFlag);
   this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
+
+  this->enableVisibilityButtons();
 }
 
 // --------------------------------------------------------------------------
@@ -755,7 +934,7 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSlic
 
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
+void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool linear)
 {
   Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
@@ -765,7 +944,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
   if (displayNode)
     {
     q->mrmlScene()->SaveStateForUndo(displayNode);
-    displayNode->SetInterpolate(interpolate);
+    displayNode->SetInterpolate(linear);
     }
   // historic code that doesn't seem to work
   // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
@@ -783,7 +962,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
+void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool linear)
 {
   Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
@@ -793,7 +972,7 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   if (displayNode)
     {
     q->mrmlScene()->SaveStateForUndo(displayNode);
-    displayNode->SetInterpolate(interpolate);
+    displayNode->SetInterpolate(linear);
     }
   // historic code that doesn't seem to work
   // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
@@ -808,12 +987,6 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   //     volumeNode->Modified();
   //     }
   //   }
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::toggleLabelOpacity(bool hide)
-{
-  this->LabelOpacitySlider->setValue(hide ? 0. : this->LastLabelOpacity);
 }
 
 //---------------------------------------------------------------------------
@@ -855,25 +1028,35 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     return;
     }
+  //d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneImportedEvent,
+  //                 d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::NodeAddedEvent,
+                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
   d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneImportedEvent,
-                   d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
-
+                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneRestoredEvent,
+                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
   d->SliceLogic->SetMRMLScene(newScene);
 
   // Disable the node selectors as they would fire the signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means that
   // that the current node was not in the combo box list menu before
-  bool backgroundBlockSignals = d->BackgroundLayerNodeSelector->blockSignals(true);
-  bool foregroundBlockSignals = d->ForegroundLayerNodeSelector->blockSignals(true);
-  bool labelmapBlockSignals = d->LabelMapSelector->blockSignals(true);
+  bool backgroundBlockSignals = d->BackgroundComboBox->blockSignals(true);
+  bool foregroundBlockSignals = d->ForegroundComboBox->blockSignals(true);
+  bool labelmapBlockSignals = d->LabelMapComboBox->blockSignals(true);
 
   this->Superclass::setMRMLScene(newScene);
 
-  d->BackgroundLayerNodeSelector->blockSignals(backgroundBlockSignals);
-  d->ForegroundLayerNodeSelector->blockSignals(foregroundBlockSignals);
-  d->LabelMapSelector->blockSignals(labelmapBlockSignals);
+  d->BackgroundComboBox->blockSignals(backgroundBlockSignals);
+  d->ForegroundComboBox->blockSignals(foregroundBlockSignals);
+  d->LabelMapComboBox->blockSignals(labelmapBlockSignals);
 
-  d->updateWidgetFromMRMLSliceCompositeNode();
+  //d->updateWidgetFromMRMLSliceCompositeNode();
+  if (this->mrmlScene())
+    {
+    d->onMRMLSceneChanged(this->mrmlScene(), reinterpret_cast<void*>(this),
+                          vtkMRMLScene::SceneImportedEvent, 0);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -937,8 +1120,8 @@ void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButto
     //d->ControllerButtonGroup->removeButton(d->SliceCollapsibleButton);
 
     // Disconnect widget with buttonGroup
-    this->disconnect(d->ControllerButtonGroup, SIGNAL(buttonClicked(int)),
-                     d, SLOT(toggleControllerWidgetGroupVisibility()));
+    //this->disconnect(d->ControllerButtonGroup, SIGNAL(buttonClicked(int)),
+    //                 d, SLOT(toggleControllerWidgetGroupVisibility()));
     }
 
   if (newButtonGroup)
@@ -1288,7 +1471,36 @@ void qMRMLSliceControllerWidget::rotateSliceToBackground()
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setLabelOpacity(double opacity)
+void qMRMLSliceControllerWidget::setLabelMapHidden(bool hide)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  d->LabelMapOpacitySlider->setValue(hide ? 0. : d->LastLabelMapOpacity);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setForegroundHidden(bool hide)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  if (hide && d->ForegroundOpacitySlider->value() != 0.)
+    {
+    d->LastForegroundOpacity = d->ForegroundOpacitySlider->value();
+    }
+  d->ForegroundOpacitySlider->setValue(hide ? 0. : d->LastForegroundOpacity);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setBackgroundHidden(bool hide)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  if (hide && d->BackgroundOpacitySlider->value() != 0.)
+    {
+    d->LastBackgroundOpacity = 1. - d->BackgroundOpacitySlider->value();
+    }
+  d->BackgroundOpacitySlider->setValue(hide ? 0. : d->LastBackgroundOpacity);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setLabelMapOpacity(double opacity)
 {
   Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
@@ -1298,8 +1510,9 @@ void qMRMLSliceControllerWidget::setLabelOpacity(double opacity)
     }
   vtkMRMLSliceCompositeNode* node = 0;
   vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
+  for (nodes->InitTraversal(it);
+       (node = static_cast<vtkMRMLSliceCompositeNode*>(
+         nodes->GetNextItemAsObject(it)));)
     {
     if (node == d->MRMLSliceCompositeNode || this->isLinked())
       {
@@ -1308,11 +1521,44 @@ void qMRMLSliceControllerWidget::setLabelOpacity(double opacity)
     }
   // LabelOpacityToggleButton won't fire the clicked(bool) signal here because
   // we change its check state programatically.
-  d->LabelOpacityToggleButton->setChecked(opacity == 0.);
+  d->actionLabelMapVisibility->setChecked(opacity == 0.);
   if (opacity != 0.)
     {
-    d->LastLabelOpacity = opacity;
+    d->LastLabelMapOpacity = opacity;
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setForegroundOpacity(double opacity)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);
+       (node = static_cast<vtkMRMLSliceCompositeNode*>(
+         nodes->GetNextItemAsObject(it)));)
+    {
+    if (node == d->MRMLSliceCompositeNode || this->isLinked())
+      {
+      node->SetForegroundOpacity(opacity);
+      }
+    }
+  // LabelOpacityToggleButton won't fire the clicked(bool) signal here because
+  // we change its check state programatically.
+  d->actionForegroundVisibility->setChecked(opacity == 0.);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setBackgroundOpacity(double opacity)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  //this->setForegroundOpacity(1. - opacity);
+  d->actionBackgroundVisibility->setChecked(opacity == 1.);
 }
 
 //---------------------------------------------------------------------------
@@ -1549,12 +1795,12 @@ void qMRMLSliceControllerWidget::setLightboxTo6x6()
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setForegroundInterpolation(bool interpolate)
+void qMRMLSliceControllerWidget::setForegroundInterpolation(bool linear)
 {
   Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogics)
     {
-    d->setForegroundInterpolation(d->SliceLogic, interpolate);
+    d->setForegroundInterpolation(d->SliceLogic, linear);
     return;
     }
   vtkMRMLSliceLogic* sliceLogic = 0;
@@ -1564,18 +1810,18 @@ void qMRMLSliceControllerWidget::setForegroundInterpolation(bool interpolate)
     {
     if (sliceLogic == d->SliceLogic || this->isLinked())
       {
-      d->setForegroundInterpolation(sliceLogic, interpolate);
+      d->setForegroundInterpolation(sliceLogic, linear);
       }
     }
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool interpolate)
+void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool linear)
 {
   Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogics)
     {
-    d->setBackgroundInterpolation(d->SliceLogic, interpolate);
+    d->setBackgroundInterpolation(d->SliceLogic, linear);
     return;
     }
   vtkMRMLSliceLogic* sliceLogic = 0;
@@ -1585,7 +1831,79 @@ void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool interpolate)
     {
     if (sliceLogic == d->SliceLogic || this->isLinked())
       {
-      d->setBackgroundInterpolation(sliceLogic, interpolate);
+      d->setBackgroundInterpolation(sliceLogic, linear);
       }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setNavigatorEnabled(bool enable)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLCrosshairNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetNavigation(enable);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setCrosshairMode(int mode)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLCrosshairNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetCrosshairMode(mode);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setCrosshairThickness(int thicknessMode)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLCrosshairNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetCrosshairThickness(thicknessMode);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceIntersectionVisible(bool visible)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetSliceIntersectionVisibility(visible);
     }
 }
