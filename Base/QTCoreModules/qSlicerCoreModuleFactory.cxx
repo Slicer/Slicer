@@ -35,6 +35,7 @@
 #include "qSlicerScalarOverlayIO.h"
 #include "qSlicerSliceControllerModule.h"
 // endofFIXME
+#include "qSlicerUtils.h"
   
 //-----------------------------------------------------------------------------
 class qSlicerCoreModuleFactoryPrivate
@@ -134,20 +135,5 @@ QString qSlicerCoreModuleFactory::objectNameToKey(const QString& objectName)
 //-----------------------------------------------------------------------------
 QString qSlicerCoreModuleFactory::extractModuleName(const QString& className)
 {
-  QString moduleName = className;
-  
-  // Remove prefix 'qSlicer' if needed
-  if (moduleName.indexOf("qSlicer") == 0)
-    {
-    moduleName.remove(0, 7);
-    }
-
-  // Remove suffix 'Module' if needed
-  int index = moduleName.lastIndexOf("Module");
-  if (index == (moduleName.size() - 6))
-    {
-    moduleName.remove(index, 6);
-    }
-
-  return moduleName;
+  return qSlicerUtils::extractModuleNameFromClassName(className);
 }

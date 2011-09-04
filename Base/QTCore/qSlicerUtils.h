@@ -62,6 +62,11 @@ public:
   ///  on windows, ThresholdLib.dll -> Threshold
   static QString extractModuleNameFromLibraryName(const QString& libraryName);
 
+  /// Extract module name givew a \a className
+  /// For example:
+  ///  qSlicerThresholdModule -> Threshold
+  static QString extractModuleNameFromClassName(const QString& className);
+
   /// Return \a true if the plugin identified with its \a path is loaded from an install tree.
   /// \note Since internally the function looks for the existence of CMakeCache.txt, it will
   /// return an incorrect result if the plugin is installed in the build tree of 

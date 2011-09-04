@@ -157,6 +157,42 @@ int qSlicerUtilsTest1(int, char * [] )
     }
 
   //-----------------------------------------------------------------------------
+  // Test extractModuleNameFromClassName()
+  //-----------------------------------------------------------------------------
+  QString className = "qSlicerThresholdModule";
+  expectedModuleName = "Threshold";
+  QString moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
+  if (moduleName != expectedModuleName)
+    {
+    std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
+                          << "moduleName = " << qPrintable(moduleName) << std::endl
+                          << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  className = "qSlicerThresholdModuleModule";
+  expectedModuleName = "ThresholdModule";
+  moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
+  if (moduleName != expectedModuleName)
+    {
+    std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
+                          << "moduleName = " << qPrintable(moduleName) << std::endl
+                          << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  className = "qSlicerModuleThresholdModule";
+  expectedModuleName = "ModuleThreshold";
+  moduleName = qSlicerUtils::extractModuleNameFromClassName(className);
+  if (moduleName != expectedModuleName)
+    {
+    std::cerr << __LINE__ << " - Error in  extractModuleNameFromClassName()" << std::endl
+                          << "moduleName = " << qPrintable(moduleName) << std::endl
+                          << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //-----------------------------------------------------------------------------
   // Test isPluginInstalled()
   //-----------------------------------------------------------------------------
 

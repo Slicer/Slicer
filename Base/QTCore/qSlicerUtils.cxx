@@ -121,6 +121,27 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
+{
+  QString moduleName(className);
+
+  // Remove prefix 'qSlicer' if needed
+  if (moduleName.indexOf("qSlicer") == 0)
+    {
+    moduleName.remove(0, 7);
+    }
+
+  // Remove suffix 'Module' if needed
+  int index = moduleName.lastIndexOf("Module");
+  if (index == (moduleName.size() - 6))
+    {
+    moduleName.remove(index, 6);
+    }
+
+  return moduleName;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerUtils::isPluginInstalled(const QString& path, const QString& applicationHomeDir)
 {
   QDir pathDir = QFileInfo(path).dir();
