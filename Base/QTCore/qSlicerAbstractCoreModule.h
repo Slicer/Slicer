@@ -66,6 +66,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
   Q_PROPERTY(bool hidden READ isHidden)
   Q_PROPERTY(QString path READ path)
+  Q_PROPERTY(bool isInstalled READ isInstalled)
 
 public:
 
@@ -158,6 +159,11 @@ public:
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
   QString path()const;
   void setPath(const QString& newPath);
+
+  /// Return true is this instance of the module is loaded from an installed directory
+  /// \todo Ideally this function should be added within the qSlicerLoadableModule.
+  bool isInstalled()const;
+  void setInstalled(bool value);
 
 public slots:
 
