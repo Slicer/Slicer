@@ -255,6 +255,7 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
     if (moduleLogic)
       {
       moduleLogic->SetApplicationLogic(d->AppLogic);
+      moduleLogic->SetModuleName(this->name().toLatin1());
       }
     d->Logic->SetMRMLScene(this->mrmlScene());
     }
