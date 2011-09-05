@@ -165,49 +165,49 @@ void initializePythonConsole(ctkPythonConsole& pythonConsole)
 //----------------------------------------------------------------------------
 void registerLoadableModuleFactory(
   qSlicerModuleFactoryManager * moduleFactoryManager,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& coreModuleFactoryRegisteredItems)
+  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
 {
   qSlicerLoadableModuleFactory* loadableModuleFactory = new qSlicerLoadableModuleFactory();
-  loadableModuleFactory->setRegisteredItems(coreModuleFactoryRegisteredItems);
+  loadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
   moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory", loadableModuleFactory);
 }
 
 //----------------------------------------------------------------------------
 void registerScriptedLoadableModuleFactory(
   qSlicerModuleFactoryManager * moduleFactoryManager,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& coreModuleFactoryRegisteredItems)
+  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
 {
 #ifdef Slicer_BUILD_QTSCRIPTEDMODULES
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
     qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =
       new qSlicerScriptedLoadableModuleFactory();
-    scriptedLoadableModuleFactory->setRegisteredItems(coreModuleFactoryRegisteredItems);
+    scriptedLoadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
     moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
                                           scriptedLoadableModuleFactory);
     }
 #else
   Q_UNUSED(moduleFactoryManager);
-  Q_UNUSED(coreModuleFactoryRegisteredItems);
+  Q_UNUSED(moduleFactorySharedRegisteredItemKeys);
 #endif
 }
 
 //----------------------------------------------------------------------------
 void registerCLIModuleFactory(
   qSlicerModuleFactoryManager * moduleFactoryManager, const QString& tempDirectory,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& coreModuleFactoryRegisteredItems)
+  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
 {
   qSlicerCLILoadableModuleFactory* cliLoadableModuleFactory =
     new qSlicerCLILoadableModuleFactory();
   cliLoadableModuleFactory->setTempDirectory(tempDirectory);
-  cliLoadableModuleFactory->setRegisteredItems(coreModuleFactoryRegisteredItems);
+  cliLoadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
   moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
                                         cliLoadableModuleFactory);
 
   qSlicerCLIExecutableModuleFactory* cliExecutableModuleFactory =
     new qSlicerCLIExecutableModuleFactory();
   cliExecutableModuleFactory->setTempDirectory(tempDirectory);
-  cliExecutableModuleFactory->setRegisteredItems(coreModuleFactoryRegisteredItems);
+  cliExecutableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
   moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
                                         cliExecutableModuleFactory);
 }
@@ -299,18 +299,18 @@ int main(int argc, char* argv[])
 
   if (!app.commandOptions()->disableLoadableModules())
     {
-    registerLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
+    registerLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->sharedItems());
     }
   if (!app.commandOptions()->disableScriptedLoadableModules())
     {
-    registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->registeredItems());
+    registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->sharedItems());
     }
   if (!app.commandOptions()->disableCLIModules())
     {
     registerCLIModuleFactory(
           moduleFactoryManager,
           qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory(),
-          coreModuleFactory->registeredItems());
+          coreModuleFactory->sharedItems());
     }
 
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());

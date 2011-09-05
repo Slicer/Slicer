@@ -202,7 +202,7 @@ void qSlicerModuleFactoryManager::registerModules(const QString& factoryName)
   factory->registerItems();
   
   // Keep track of the registered modules and their associated factory
-  foreach(const QString& key, factory->keys())
+  foreach(const QString& key, factory->itemKeys())
     {
     d->ModuleNameToFactoryCache[key] = factory;
     }
@@ -225,7 +225,7 @@ void qSlicerModuleFactoryManager::instantiateModules(const QString& factoryName)
   Q_ASSERT(d->RegisteredFactories.contains(factoryName));
   qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
 
-  foreach(const QString& key, factory->keys())
+  foreach(const QString& key, factory->itemKeys())
     {
     d->instantiateModule(factory, key);
     }
@@ -268,7 +268,7 @@ QStringList qSlicerModuleFactoryManager::moduleNames() const
   QStringList names;
   foreach (const QString& factoryName, d->RegisteredFactories.keys())
     {
-    names << d->RegisteredFactories[factoryName]->keys();
+    names << d->RegisteredFactories[factoryName]->itemKeys();
     }
   return names;
 }
@@ -279,7 +279,7 @@ QStringList qSlicerModuleFactoryManager::moduleNames(const QString& factoryName)
   Q_D(const qSlicerModuleFactoryManager);
   Q_ASSERT(d->RegisteredFactories.contains(factoryName));
   qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
-  return factory->keys();
+  return factory->itemKeys();
 }
 
 //-----------------------------------------------------------------------------
