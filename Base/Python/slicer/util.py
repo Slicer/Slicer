@@ -80,10 +80,11 @@ def showStatusMessage(message, duration = 0):
   if mw:
     mw.statusBar().showMessage(message, duration)
 
-def findChildren(widget=None,name="",text=""):
+def findChildren(widget=None,name="",text="",title=""):
   """ return a list of child widgets that match the passed name """
   # TODO: figure out why the native QWidget.findChildren method
   # does not seem to work from PythonQt
+  import slicer, fnmatch
   if not widget:
     widget = mainWindow()
   children = []
@@ -91,12 +92,19 @@ def findChildren(widget=None,name="",text=""):
   while parents != []:
     p = parents.pop()
     parents += p.children()
-    if name and p.name == name:
+    if name and fnmatch.fnmatch(p.name, name):
       children.append(p)
     elif text: 
       try:
         p.text
-        if p.text == text:
+        if fnmatch.fnmatch(p.text, text):
+          children.append(p)
+      except AttributeError:
+        pass
+    elif title: 
+      try:
+        p.title
+        if fnmatch.fnmatch(p.title, title):
           children.append(p)
       except AttributeError:
         pass
