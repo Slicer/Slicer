@@ -671,10 +671,16 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
       }
     else
       {
+      const char *observerClass = "No observer class";
+      if ( observation->GetObserver() )
+        {
+        observerClass = observation->GetObserver()->GetClassName();
+        }
+
       this->LogFile << " " \
           << observation->GetSubject()->GetClassName() 
           << " -> "
-          << observation->GetObserver()->GetClassName() 
+          << observerClass
           << " [ label = \"" 
           << eventStringPointer
           << "\" ];\n" ;
