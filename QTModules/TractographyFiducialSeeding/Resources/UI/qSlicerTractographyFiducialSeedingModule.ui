@@ -262,7 +262,7 @@
    <item row="13" column="0">
     <widget class="QLabel" name="label_13">
      <property name="text">
-      <string>Display Tracts As:</string>
+      <string>Create Tracts Initially As:</string>
      </property>
     </widget>
    </item>

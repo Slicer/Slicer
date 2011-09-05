@@ -430,11 +430,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     dnode->DisableModifiedEventOff();
     newNode = 1;
     }
-  if (displayMode == 1)
+  if (oldPoly == NULL && displayMode == 1)
     {
     dnode->SetVisibility(1);
     }
-  else
+  else if (oldPoly == NULL && displayMode == 0)
     {
     dnode->SetVisibility(0);
     }
@@ -452,11 +452,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       dnode->DisableModifiedEventOff();
       }
     }
-  if (displayMode == 0)
+  if (oldPoly == NULL && displayMode == 0)
     {
     dnode->SetVisibility(1);
     }
-  else
+  else if (oldPoly == NULL && displayMode == 1)
     {
     dnode->SetVisibility(0);
     }
