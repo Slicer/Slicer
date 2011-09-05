@@ -22,12 +22,13 @@
 #include <QDebug>
 
 // CTK includes
+#include <ctkWidgetsUtils.h>
 
 // SlicerQt includes
 #include "qSlicerModulePanel.h"
 #include "ui_qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
 //---------------------------------------------------------------------------
@@ -166,8 +167,22 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   d->HelpCollapsibleButton->setVisible(!help.isEmpty());
   d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
+  d->AcknowledgementLabel->clear();
+  qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
+  if (guiModule && !guiModule->logo().isNull())
+    {
+    d->AcknowledgementLabel->document()->addResource(QTextDocument::ImageResource,
+      QUrl("module://logo.png"), QVariant(guiModule->logo()));
+    d->AcknowledgementLabel->append(
+      QString("<center><img src=\"module://logo.png\"/></center><br>"));
+    }
   QString acknowledgement = module->acknowledgementText();
-  d->AcknowledgementLabel->setHtml(acknowledgement);
+  d->AcknowledgementLabel->insertHtml(acknowledgement);
+  if (!module->contributor().isEmpty())
+    {
+    QString contributors = QString("<br><u>Contributors:</u> <i>") + module->contributor() + "</i>";
+    d->AcknowledgementLabel->append(contributors);
+    }
 
   moduleWidget->enter();
 

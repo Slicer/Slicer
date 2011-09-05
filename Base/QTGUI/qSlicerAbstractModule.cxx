@@ -54,6 +54,13 @@ QIcon qSlicerAbstractModule::icon()const
 {
   return QIcon();
 }
+
+//-----------------------------------------------------------------------------
+QImage qSlicerAbstractModule::logo()const
+{
+  return QImage();
+}
+
 /*
 //-----------------------------------------------------------------------------
 QAction* qSlicerAbstractModule::createAction()

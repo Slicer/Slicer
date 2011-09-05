@@ -43,6 +43,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
   /// This property holds the module's icon.
   /// It is also the icon of the module QAction (see \a action()).
   Q_PROPERTY(QIcon icon READ icon)
+  Q_PROPERTY(QImage logo READ logo)
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
@@ -53,6 +54,9 @@ public:
   /// is needed, the icon is used. It's the icon shown in the module selector
   /// as well as in the frequently used module toolbar (if any).
   virtual QIcon icon()const;
+
+  /// The logo of the module, the credits given by the grants or instution
+  virtual QImage logo()const;
 
   /// Returns then associated QAction of the module. It contains all the
   /// informations relative to the module. The text (QAction::text()) and icon
