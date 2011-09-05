@@ -131,7 +131,6 @@ void qMRMLViewControllerBarPrivate::init()
 //---------------------------------------------------------------------------
 void qMRMLViewControllerBarPrivate::setupPopupUi()
 {
-  Q_Q(qMRMLViewControllerBar);
   this->PopupWidget->setAutoShow(false);
   this->PopupWidget->setAutoHide(true);
   this->PopupWidget->setOrientation(Qt::Vertical);
