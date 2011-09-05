@@ -775,7 +775,7 @@ class HelperBox(object):
     """color table dialog"""
 
     if not self.colorSelect:
-      self.colorSelect = qt.QFrame()
+      self.colorSelect = qt.QDialog(slicer.util.mainWindow())
       self.colorSelect.setLayout( qt.QVBoxLayout() )
 
       self.colorPromptLabel = qt.QLabel()
@@ -826,8 +826,6 @@ class HelperBox(object):
       self.colorDialogCancel.connect("clicked()", self.colorSelect.hide)
 
     self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+"-label"))
-    p = qt.QCursor().pos()
-    self.colorSelect.setGeometry(p.x(), p.y(), 400, 200)
     self.colorSelect.show()
 
   # colorSelect callback (slot)
