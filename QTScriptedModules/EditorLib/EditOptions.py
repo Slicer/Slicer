@@ -1394,7 +1394,7 @@ class MakeModelOptions(EditOptions):
 
   def onGoToModelMaker(self):
     m = slicer.util.mainWindow()
-    m.moduleSelector().selectModuleByTitle('Model Maker')
+    m.moduleSelector().selectModule('ModelMaker')
 
   def onApply(self):
     #
