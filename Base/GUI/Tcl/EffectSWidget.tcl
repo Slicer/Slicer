@@ -682,14 +682,18 @@ itcl::body EffectSWidget::apply {} {
 }
 
 itcl::body EffectSWidget::errorDialog { errorText } {
-  set dialog [vtkKWMessageDialog New]
-  $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  $dialog SetStyleToMessage
-  $dialog SetText $errorText
-  $dialog Create
-  $dialog Invoke
-  $dialog Delete
+  if { [info command vtkKWMessageDialog] == "" } {
+    puts "Error: $errorText"
+  } else {
+    set dialog [vtkKWMessageDialog New]
+    $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetStyleToMessage
+    $dialog SetText $errorText
+    $dialog Create
+    $dialog Invoke
+    $dialog Delete
+  }
 }
 
 itcl::body EffectSWidget::setProgressFilter { filter {description ""} } {
