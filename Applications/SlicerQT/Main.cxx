@@ -340,7 +340,7 @@ int main(int argc, char* argv[])
       qWarning() << "Encountered null module name";
       continue;
       }
-    qWarning() << "checking module " << name;
+    qWarning() << "Checking module " << name;
     splashMessage(splashScreen, "Loading module \"" + name + "\"...");
     moduleManager->loadModule(name);
     }
