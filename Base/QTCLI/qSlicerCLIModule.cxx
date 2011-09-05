@@ -23,6 +23,9 @@
 // Qt includes
 #include <QDebug>
 
+// CTK includes
+#include <ctkWidgetsUtils.h>
+
 // SlicerQT includes
 #include "qMRMLNodeComboBox.h"
 #include "qSlicerCLIModuleWidget.h"
@@ -33,6 +36,7 @@
 
 // ModuleDescriptionParser includes
 #include <ModuleDescriptionParser.h>
+#include <ModuleLogo.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModulePrivate
@@ -46,6 +50,7 @@ public:
   QString           Help;
   QString           Category;
   QString           Contributor;
+  QImage            Logo;
   int               Index;
 
   QString           EntryPoint;
@@ -112,6 +117,7 @@ CTK_GET_CPP(qSlicerCLIModule, QString, category, Category);
 CTK_GET_CPP(qSlicerCLIModule, QString, contributor, Contributor);
 CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
 CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
+CTK_GET_CPP(qSlicerCLIModule, QImage, logo, Logo);
 CTK_GET_CPP(qSlicerCLIModule, QString, helpText, Help);
 CTK_SET_CPP(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
 CTK_GET_CPP(qSlicerCLIModule, QString, tempDirectory, TempDirectory);
@@ -140,6 +146,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   d->Title = QString::fromStdString(desc.GetTitle());
   d->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
   d->Contributor = QString::fromStdString(desc.GetContributor());
+  d->Logo = this->moduleLogoToImage(desc.GetLogo());
   bool ok = false;
   d->Index = QString::fromStdString(desc.GetIndex()).toInt(&ok);
   if (!ok)
@@ -216,5 +223,25 @@ void qSlicerCLIModule::cancel(vtkMRMLCommandLineModuleNode* node)
     }
   qDebug() << "Cancel module processing...";
   node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::setLogo(const ModuleLogo& logo)
+{
+  Q_D(qSlicerCLIModule);
+  d->Logo = this->moduleLogoToImage(logo);
+}
+
+//-----------------------------------------------------------------------------
+QImage qSlicerCLIModule::moduleLogoToImage(const ModuleLogo& logo)
+{
+  if (logo.GetBufferLength() == 0)
+    {
+    return QImage();
+    }
+  return ctk::kwIconToQImage(reinterpret_cast<const unsigned char*>(logo.GetLogo()),
+                             logo.GetWidth(), logo.GetHeight(),
+                             logo.GetPixelSize(), logo.GetBufferLength(),
+                             logo.GetOptions());
 }
 

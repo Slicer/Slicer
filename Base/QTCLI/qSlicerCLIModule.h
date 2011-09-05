@@ -29,6 +29,7 @@
 
 #include "qSlicerBaseQTCLIExport.h"
 
+class ModuleLogo;
 class vtkMRMLCommandLineModuleNode;
 class vtkSlicerCLIModuleLogic;
 
@@ -79,10 +80,10 @@ public:
   /// 'createLogic' method.
   Q_INVOKABLE vtkSlicerCLIModuleLogic* cliModuleLogic();
 
-
   virtual QString title() const;
   virtual QString category() const;
   virtual QString contributor() const;
+  virtual QImage logo() const;
 
   /// Using the following function to create a commandLineModule node will ensure
   /// ensure the created node is selected within the UI.
@@ -96,6 +97,11 @@ public:
   /// Abort the execution of the module associated with \a node
   void cancel(vtkMRMLCommandLineModuleNode* node);
 
+  void setLogo(const ModuleLogo& logo);
+
+  /// Convert a ModuleLogo into a QIcon
+  /// \todo: Find a better place for this util function
+  static QImage moduleLogoToImage(const ModuleLogo& logo);
 protected:
   /// 
   virtual void setup();

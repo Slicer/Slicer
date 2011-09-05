@@ -26,6 +26,9 @@
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerUtils.h"
 
+// SlicerExecutionModule
+#include <ModuleLogo.h>
+
 //-----------------------------------------------------------------------------
 qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
   const QString& newTempDirectory) : TempDirectory(newTempDirectory)
@@ -82,6 +85,36 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
 
+  if (module->logo().isNull())
+    {
+    ModuleLogo logo;
+    const char* logoImage = 0;
+    int width = 0;
+    int height = 0;
+    int pixelSize = 0;
+    unsigned long bufferLength = 0;
+    if (this->symbolAddress("ModuleLogoImage"))
+      {
+      logoImage = reinterpret_cast<const char *>(this->symbolAddress("ModuleLogoImage"));
+      width = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoWidth"));
+      height = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoHeight"));
+      pixelSize = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoPixelSize"));
+      bufferLength = *reinterpret_cast<unsigned long*>(this->symbolAddress("ModuleLogoLength"));
+      }
+    else
+      {
+      typedef const char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength);
+      ModuleLogoFunction logoFunction = reinterpret_cast<ModuleLogoFunction>(
+        this->symbolAddress("GetModuleLogo"));
+      logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
+      }
+    if (logoImage != 0)
+      {
+      logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
+      module->setLogo(logo);
+      }
+    }
+
   return module.take();
 }
 
@@ -95,6 +128,12 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
   QStringList cmdLineModuleSymbols;
   cmdLineModuleSymbols << "XMLModuleDescription";
   cmdLineModuleSymbols << "ModuleEntryPoint";
+  cmdLineModuleSymbols << "ModuleLogoImage";
+  cmdLineModuleSymbols << "ModuleLogoWidth";
+  cmdLineModuleSymbols << "ModuleLogoHeight";
+  cmdLineModuleSymbols << "ModuleLogoPixelSize";
+  cmdLineModuleSymbols << "ModuleLogoLength";
+  cmdLineModuleSymbols << "GetModuleLogo";
   this->setSymbols(cmdLineModuleSymbols);
 
   this->TempDirectory = QDir::tempPath();
