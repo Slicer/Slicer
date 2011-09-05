@@ -188,8 +188,7 @@ class EditOptions(object):
     return ""
 
   def statusText(self,text):
-    # TODO: update on an application level status line
-    print( text )
+    slicer.util.showStatusMessage(text)
 
 #### Labeler
 class LabelerOptions(EditOptions):
@@ -1656,7 +1655,6 @@ class GrowCutSegmentOptions(EditOptions):
     for d in paintdefaults:
       param = "Paint,"+d[0]
       pvalue = self.parameterNode.GetParameter(param)
-      print pvalue
       if pvalue == '':
         self.parameterNode.SetParameter(param, d[1])
     for d in growcutdefaults:

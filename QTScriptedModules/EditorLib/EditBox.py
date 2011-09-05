@@ -205,7 +205,7 @@ class EditBox(object):
   # create a row of the edit box given a list of 
   # effect names (items in _effects(list)
   #
-  def createButtonRow(self, effects):
+  def createButtonRow(self, effects, rowLabel=""):
 
     f = qt.QFrame(self.parent)
     self.parent.layout().addWidget(f)
@@ -213,7 +213,11 @@ class EditBox(object):
     hbox = qt.QHBoxLayout()
     f.setLayout( hbox )
 
-    hbox.addStretch(1)
+    if rowLabel:
+      label = qt.QLabel(rowLabel)
+      hbox.addWidget(label)
+
+
     for effect in effects:
       # check that the effect belongs in our list of effects before including
       # (handles non-embedded widgets where the caller has supplied a custom list of effects)
@@ -242,6 +246,32 @@ class EditBox(object):
     self.findEffects()
 
     #
+    # the buttons
+    #
+    self.rowFrames = []
+    self.actions = {}
+    self.buttons = {}
+    self.icons = {}
+    self.callbacks = {}
+
+    # if not using embedded format: create all of the buttons
+    # createButtonRow() ensures that only effects in self.effects are exposed,
+    # so if the user supplied a list of effects only those in that list will be exposed
+    if (not self.embedded):
+      self.createButtonRow( ("DefaultTool", "EraseLabel", "Paint", "Draw", "LevelTracing", "ImplicitRectangle", "IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
+      self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel", "MakeModel", "GrowCutSegment") )
+      extensions = []
+      for k in slicer.modules.editorExtensions:
+        extensions.append(k)
+      self.createButtonRow( extensions )
+      # TODO: add back prev/next fiducial
+      #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
+      self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint"), rowLabel="Undo/Redo: " )
+    # if using embedded format: create all of the buttons in the effects list in a single row
+    else:
+      self.createButtonRow(self.effects)
+
+    #
     # the labels (not shown in embedded format)
     #
     self.toolsActiveToolFrame = qt.QFrame(self.parent)
@@ -255,35 +285,6 @@ class EditBox(object):
     self.toolsActiveToolName.setText( '' )
     self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
     self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
-    
-    #
-    # the buttons
-    #
-    self.rowFrames = []
-    self.actions = {}
-    self.buttons = {}
-    self.icons = {}
-    self.callbacks = {}
-
-    # if not using embedded format: create all of the buttons
-    # createButtonRow() ensures that only effects in self.effects are exposed,
-    # so if the user supplied a list of effects only those in that list will be exposed
-    if (not self.embedded):
-      self.createButtonRow( ("DefaultTool", "EraseLabel") )
-      self.createButtonRow( ("Paint", "Draw", "LevelTracing", "ImplicitRectangle") )
-      self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
-      self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
-      extensions = []
-      for k in slicer.modules.editorExtensions:
-        extensions.append(k)
-      self.createButtonRow( extensions )
-      self.createButtonRow( ("MakeModel", "GrowCutSegment") )
-      # TODO: add back prev/next fiducial
-      #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
-      self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
-    # if using embedded format: create all of the buttons in the effects list in a single row
-    else:
-      self.createButtonRow(self.effects)
 
     self.updateCheckPointButtons()
    
@@ -329,22 +330,23 @@ itcl::body EditBox::setButtonState {effect state} {
     from slicer import app
     
     #
-    # if an effect was added, build an options GUI
+    # if an model effect was selected, build an options GUI
     # - check to see if it is an extension effect,
     # if not, try to create it, else ignore it
     #
-    if self.currentOption:
-      self.currentOption.__del__()
-      self.currentOption = None
-    if effect in slicer.modules.editorExtensions.keys():
-      self.currentOption = slicer.modules.editorExtensions[effect](self.optionsFrame)
-    else:
-      try:
-        options = eval("%sOptions" % effect)
-        self.currentOption = options(self.optionsFrame)
-      except NameError, AttributeError:
-        print ("No options for %s." % effect)
-        pass
+    if not self.nonmodal.__contains__(effect):
+      if self.currentOption:
+        self.currentOption.__del__()
+        self.currentOption = None
+      if effect in slicer.modules.editorExtensions.keys():
+        self.currentOption = slicer.modules.editorExtensions[effect](self.optionsFrame)
+      else:
+        try:
+          options = eval("%sOptions" % effect)
+          self.currentOption = options(self.optionsFrame)
+        except NameError, AttributeError:
+          # No options for this effect, skip it
+          pass
 
     #
     # If there is no background volume or label map, do nothing

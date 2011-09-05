@@ -97,8 +97,9 @@ class EditorWidget:
     viewsController = slicer.util.findChildren(mainWindow, 'MRMLThreeDViewsControllerWidget')[0]
     viewsController.disableMagnification = True
 
-    # resume the current effect, if we left the editor and re-entered
-    self.resumeEffect()
+    # resume the current effect, if we left the editor and re-entered or pick default
+    # TODO: not fully implemented
+    #self.activateEffect()
     
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
@@ -118,9 +119,17 @@ class EditorWidget:
     if self.toolsBox:
       self.toolsBox.pauseEffect()
 
-  def resumeEffect(self):
+  def activateEffect(self):
     if self.toolsBox:
+      # if you can, resume what the user was working on
       self.toolsBox.resumeEffect()
+      if not self.toolsBox.currentOption:
+        # if not, try to load the paint tool
+        try:
+          self.toolsBox.selectEffect('Paint')
+        except KeyError:
+          # oh well, no paint effect so let the user pick their own
+          pass
 
   # TODO need similar functionality as exit() to cancel brushes when widget is destroyed
 
@@ -183,9 +192,6 @@ class EditorWidget:
     else:
       self.editLabelMapsFrame = self.parent
 
-    # create and add EditColor directly to "edit label map" section
-    self.toolsColor = EditorLib.EditColor(self.editLabelMapsFrame)
-
     # if creating a standard editor widget, create frame holding both the effect
     # options and edit box:
     if (self.embedded == False):
@@ -197,11 +203,17 @@ class EditorWidget:
     else:
       self.effectsToolsFrame = self.parent
 
-    # create and add frame for effect options
+    # create frame for effect options
     self.createEffectOptionsFrame()
 
     # create and add frame for EditBox
     self.createEditBox()
+
+    # create and add EditColor directly to "edit label map" section
+    self.toolsColor = EditorLib.EditColor(self.editLabelMapsFrame)
+
+    # put the tool options below the color selector
+    self.editLabelMapsFrame.layout().addWidget(self.effectOptionsFrame)
 
     # Add spacer to layout
     self.layout.addStretch(1)
@@ -211,11 +223,10 @@ class EditorWidget:
   def createEffectOptionsFrame(self):
     if (not self.effectsToolsFrame):
       return
-    self.effectOptionsFrame = qt.QFrame(self.effectsToolsFrame)
+    self.effectOptionsFrame = qt.QFrame(self.editLabelMapsFrame)
     self.effectOptionsFrame.setLayout(qt.QVBoxLayout())
     self.effectOptionsFrame.setMinimumWidth(150)
     #self.effectOptionsFrame.setStyleSheet('border: 2px solid black')
-    self.effectsToolsFrame.layout().addWidget(self.effectOptionsFrame)
 
   # creates the EditBox and its frame
   # assumes self.effectsToolsFrame, its layout, and effectOptionsFrame has already been created
