@@ -318,6 +318,7 @@ int main(int argc, char* argv[])
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");
   moduleFactoryManager->registerAllModules();
+  qDebug() << "Number of registered modules:" << moduleManager->moduleList().count();
 
   splashMessage(splashScreen, "Instantiating modules...");
   moduleFactoryManager->instantiateAllModules();
@@ -332,7 +333,7 @@ int main(int argc, char* argv[])
     }
 
   // Load all available modules
-  QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
+  QStringList moduleNames = moduleFactoryManager->moduleNames();
   foreach(const QString& name, moduleNames)
     {
     if (name.isNull())
@@ -340,10 +341,11 @@ int main(int argc, char* argv[])
       qWarning() << "Encountered null module name";
       continue;
       }
-    qWarning() << "Checking module " << name;
+    qWarning() << "Loading module" << name;
     splashMessage(splashScreen, "Loading module \"" + name + "\"...");
     moduleManager->loadModule(name);
     }
+  qDebug() << "Number of loaded modules:" << moduleManager->loadedModules().count();
 
   splashMessage(splashScreen, QString());
 
