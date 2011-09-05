@@ -680,6 +680,7 @@ proc EditorPerformPreviousCheckPoint {} {
 
   EditorRestoreData $restoreArray
   EditorUpdateCheckPointButtons 
+  EditorForceSliceRender $restore(nodeID)
 }
 
 # called by button presses or keystrokes
@@ -699,8 +700,28 @@ proc EditorPerformNextCheckPoint {} {
   set ::Editor(nextCheckPointImages) [lrange $::Editor(nextCheckPointImages) 0 end-1]
   EditorRestoreData $restoreArray
   EditorUpdateCheckPointButtons 
+  EditorForceSliceRender $restore(nodeID)
 }
 
+
+proc EditorForceSliceRender {nodeID} {
+  # TODO: workaround for new pipeline in slicer4
+  # - editing image data of the calling modified on the node
+  #   does not pull the pipeline chain
+  # - so we trick it by changing the image data first
+  set node [$::slicer3::MRMLScene GetNodeByID $nodeID]
+  $node SetModifiedSinceRead 1
+  set workaround 1
+  if { $workaround } {
+    set tempImageData [vtkImageData New]
+    set imageData [$node GetImageData]
+    $node SetAndObserveImageData $tempImageData
+    $node SetAndObserveImageData $imageData
+    $tempImageData Delete
+  } else {
+    $node Modified
+  }
+}
 
 #
 # helper to display error
