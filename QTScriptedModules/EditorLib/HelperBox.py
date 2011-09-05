@@ -2,6 +2,7 @@ import os
 import re
 from __main__ import tcl
 from __main__ import qt
+from __main__ import ctk
 from __main__ import vtk
 from __main__ import slicer
 import ColorBox
@@ -593,12 +594,6 @@ class HelperBox(object):
   def onSelect(self, node):
     self.select()
 
-  def onAdvanced(self):
-    if self.structuresToggle.checked:
-      self.structuresFrame.show()
-    else:
-      self.structuresFrame.hide()
-
   def onStructuresClicked(self, modelIndex):
     self.edit(int(self.structures.item(modelIndex.row(),0).text()))
     
@@ -670,11 +665,9 @@ class HelperBox(object):
     # Structures Frame
     # 
 
-    self.structuresToggle = qt.QCheckBox("Advanced...", self.masterFrame)
-    self.structuresToggle.setChecked(False)
-    self.masterFrame.layout().addWidget(self.structuresToggle)
-
-    self.structuresFrame = qt.QGroupBox("Per-Structure Volumes", self.masterFrame)
+    self.structuresFrame = ctk.ctkCollapsibleGroupBox(self.masterFrame)
+    self.structuresFrame.title = "Per-Structure Volumes"
+    self.structuresFrame.collapsed = True
     self.structuresFrame.setLayout(qt.QVBoxLayout())
     self.masterFrame.layout().addWidget(self.structuresFrame)
 
@@ -695,8 +688,6 @@ class HelperBox(object):
     self.splitButton = qt.QPushButton("Split Merge Volume", self.structuresFrame)
     self.splitButton.setToolTip( "Split distinct labels from merge volume into new volumes" )
     self.structureButtonsFrame.layout().addWidget(self.splitButton)
-
-    self.structuresFrame.hide()
 
     # structures view
 
@@ -753,7 +744,6 @@ class HelperBox(object):
     # buttons pressed
     self.addStructureButton.connect("clicked()", self.addStructure)
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
-    self.structuresToggle.connect("clicked()", self.onAdvanced)
     # selection changed event
     self.structuresView.connect("clicked(QModelIndex)", self.onStructuresClicked)
     # invoked event
