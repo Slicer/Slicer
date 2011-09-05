@@ -39,6 +39,7 @@ if { [itcl::find class PaintEffect] == "" } {
     variable _currentPosition "0 0 0"
     variable _paintCoordinates ""
     variable _feedbackActors ""
+    variable _lastRadius 0
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -95,7 +96,10 @@ itcl::body PaintEffect::destructor {} {
 
 itcl::configbody PaintEffect::radius {
   if { $radius != "" } {
-    $this createGlyph $o(brush)
+    if { $radius != $_lastRadius } {
+      $this createGlyph $o(brush)
+      set _lastRadius $radius
+    }
   }
 }
 
@@ -104,7 +108,6 @@ itcl::configbody PaintEffect::radius {
 # ------------------------------------------------------------------
 
 itcl::body PaintEffect::createGlyph { {polyData ""} } {
-
   #
   # get the brush radius in XY space
   # - assume uniform scaling between XY and RAS which
@@ -449,7 +452,7 @@ itcl::body PaintEffect::paintAddPoint {x y} {
 
 itcl::body PaintEffect::paintApply {} {
   if { $_paintCoordinates != "" } {
-    $this queryLayers 0 0 
+    $this queryLayers 0 0
     EditorStoreCheckPoint $_layers(label,node)
   }
   foreach xy $_paintCoordinates {
@@ -457,6 +460,23 @@ itcl::body PaintEffect::paintApply {} {
   }
   set _paintCoordinates ""
   paintFeedback
+
+  # TODO: workaround for new pipeline in slicer4
+  # - editing image data of the calling modified on the node
+  #   does not pull the pipeline chain
+  # - so we trick it by changing the image data first
+  $_layers(label,node) SetModifiedSinceRead 1
+  set workaround 1
+  if { $workaround } {
+    if { ![info exists o(tempImageData)] } {
+      set o(tempImageData) [vtkNew vtkImageData]
+    }
+    set imageData [$_layers(label,node) GetImageData]
+    $_layers(label,node) SetAndObserveImageData $o(tempImageData)
+    $_layers(label,node) SetAndObserveImageData $imageData
+  } else {
+    $_layers(label,node) Modified
+  }
 }
 
 
@@ -556,22 +576,6 @@ itcl::body PaintEffect::paintBrush {x y} {
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
 
-  # TODO: workaround for new pipeline in slicer4
-  # - editing image data of the calling modified on the node
-  #   does not pull the pipeline chain
-  # - so we trick it by changing the image data first
-  $_layers(label,node) SetModifiedSinceRead 1
-  set workaround 1
-  if { $workaround } {
-    if { ![info exists o(tempImageData)] } {
-      set o(tempImageData) [vtkNew vtkImageData]
-    }
-    set imageData [$_layers(label,node) GetImageData]
-    $_layers(label,node) SetAndObserveImageData $o(tempImageData)
-    $_layers(label,node) SetAndObserveImageData $imageData
-  } else {
-    $_layers(label,node) Modified
-  }
 
   return
 }
