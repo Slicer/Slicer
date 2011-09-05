@@ -615,8 +615,6 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 {
-  vtkImageData *oldImageData = this->ImageData;
-
   if (this->ImageData != NULL)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
