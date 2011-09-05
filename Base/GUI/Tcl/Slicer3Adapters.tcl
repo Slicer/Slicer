@@ -470,7 +470,10 @@ namespace eval Slicer3Adapters {
     # parts of the application
 
     # methods
-    method AddBinding {args} {puts "TODO: ignoring AddBinding $args"}
+    method AddBinding {args} {
+      # silently ignore
+      #puts "TODO: ignoring AddBinding $args"
+    }
   }
 
   itcl::class vtkMRMLScriptedModuleNode {
