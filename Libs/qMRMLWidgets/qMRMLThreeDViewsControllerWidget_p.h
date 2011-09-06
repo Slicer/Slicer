@@ -33,6 +33,7 @@
 #include <vtkWeakPointer.h>
 
 class QAction;
+class QTimer;
 class ctkButtonGroup;
 class qMRMLSceneViewMenu;
 class vtkMRMLViewNode;
@@ -76,7 +77,8 @@ public:
   qMRMLSceneViewMenu*              SceneViewMenu;
 
   bool                             DisableMagnification;
-  
+
+  QTimer*                          DisplayModeTimer;
 };
 
 #endif
