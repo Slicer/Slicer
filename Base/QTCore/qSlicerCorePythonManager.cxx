@@ -68,13 +68,25 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   paths << app->slicerHome() + "/" Slicer_LIB_DIR;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
-  paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR;
-  paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR;
+  bool appendQtLoadableModulePythonPaths = true;
+#else
+  bool appendQtLoadableModulePythonPaths = app->isInstalled();
 #endif
+  if (appendQtLoadableModulePythonPaths)
+    {
+    paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR;
+    paths << app->slicerHome() + "/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR;
+    }
 
 #ifdef Slicer_BUILD_QTSCRIPTEDMODULES
-  paths << app->slicerHome() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR;
+  bool appendQtScriptedModulePythonPaths = true;
+#else
+  bool appendQtScriptedModulePythonPaths = app->isInstalled();
 #endif
+  if(appendQtScriptedModulePythonPaths)
+    {
+    paths << app->slicerHome() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR;
+    }
 
   QString executableExtension = qSlicerUtils::executableExtension();
   if (!app->isInstalled())

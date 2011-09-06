@@ -81,7 +81,7 @@ set(KIT_SRCS
   qSlicerWidget.h
   )
 
-if(Slicer_BUILD_QTSCRIPTEDMODULES)
+if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_SRCS
     qSlicerScriptedLoadableModuleFactory.cxx
     qSlicerScriptedLoadableModuleFactory.h
@@ -146,7 +146,7 @@ set(KIT_MOC_SRCS
   qSlicerWidget.h
   )
 
-if(Slicer_BUILD_QTSCRIPTEDMODULES)
+if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedLoadableModuleWidget.h
@@ -159,7 +159,7 @@ if(Slicer_USE_PYTHONQT)
     qSlicerBaseQTGUIPythonQtDecorators.h
     qSlicerSettingsPythonPanel.h
     )
-endif(Slicer_USE_PYTHONQT)
+endif()
 
 # UI files
 set(KIT_UI_SRCS

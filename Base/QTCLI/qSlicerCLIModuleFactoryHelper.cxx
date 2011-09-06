@@ -25,11 +25,8 @@
 #include "qSlicerCLIModuleFactoryHelper.h"
 
 // SlicerQT includes
-#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreApplication.h" // For: Slicer_CLIMODULES_BIN_DIR, Slicer_BUILD_CLI
 #include "qSlicerUtils.h"
-
-// For:
-//  - Slicer_CLIMODULES_BIN_DIR
 
 //-----------------------------------------------------------------------------
 const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
@@ -41,15 +38,22 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
   Q_ASSERT(!app->slicerHome().isEmpty());
 
   QStringList defaultCmdLineModulePaths;
-
-  defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_BIN_DIR;
-  if (!app->intDir().isEmpty())
-     {
-     // On Win32, *both* paths have to be there, since scripts are installed
-     // in the install location, and exec/libs are *automatically* installed
-     // in intDir.
-     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_BIN_DIR + "/" + app->intDir();
-     }
+#ifdef Slicer_BUILD_CLI
+  bool appendDefaultCmdLineModulePaths = true;
+#else
+  bool appendDefaultCmdLineModulePaths = app->isInstalled();
+#endif
+  if (appendDefaultCmdLineModulePaths)
+    {
+    defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_BIN_DIR;
+    if (!app->intDir().isEmpty())
+       {
+       // On Win32, *both* paths have to be there, since scripts are installed
+       // in the install location, and exec/libs are *automatically* installed
+       // in intDir.
+       defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_BIN_DIR + "/" + app->intDir();
+       }
+    }
 
   QStringList additionalModulePaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QStringList cmdLineModulePaths = additionalModulePaths + defaultCmdLineModulePaths;
