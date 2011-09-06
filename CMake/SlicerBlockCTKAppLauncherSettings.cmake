@@ -82,6 +82,13 @@ set(SLICER_LIBRARY_PATHS_BUILD
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
 
+# The following lines allow Slicer to load a CLI module extension that depends
+# on libraries (i.e a logic class) provided by a loadable module extension.
+list(APPEND SLICER_LIBRARY_PATHS_BUILD ../${Slicer_QTLOADABLEMODULES_LIB_DIR})
+if(CMAKE_CONFIGURATION_TYPES)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ../${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>)
+endif()
+
 if(Slicer_BUILD_CLI)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
@@ -226,6 +233,13 @@ set(SLICER_LIBRARY_PATHS_INSTALLED
   # External projects
   <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
   )
+
+# The following lines allow Slicer to load a CLI module extension that depends
+# on libraries (i.e a logic class) provided by a loadable module extension.
+list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ../${Slicer_QTLOADABLEMODULES_LIB_DIR})
+if(CMAKE_CONFIGURATION_TYPES)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ../${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>)
+endif()
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED

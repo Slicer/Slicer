@@ -48,6 +48,8 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   module->setModuleType("CommandLineModule");
   module->setEntryPoint(this->path());
 
+  ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
+
   QProcess cli;
   cli.start(this->path(), QStringList(QString("--xml")));
   bool res = cli.waitForFinished(5000);
