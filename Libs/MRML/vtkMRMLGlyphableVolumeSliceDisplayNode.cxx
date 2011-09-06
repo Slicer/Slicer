@@ -70,6 +70,11 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 
   //this->SliceToXYTransformer->SetInput(this->GlyphGlyphFilter->GetOutput());
   this->SliceToXYTransformer->SetTransform(this->SliceToXYTransform);
+
+  // don't backface cull the glyphs - they may not be geometrically consistent
+  // since they have been transformed in ways that may have flipped them.
+  // See issue 1368
+  this->BackfaceCulling = 0;
 }
 
 
