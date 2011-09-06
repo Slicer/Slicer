@@ -734,6 +734,16 @@ itcl::body EffectSWidget::progressCallback { event caller description } {
 proc EffectSWidget::Add {effect} {
   foreach sw [itcl::find objects -class SliceSWidget] {
     set sliceGUI [$sw cget -sliceGUI]
+    set backgroundNode [[[$sliceGUI GetLogic]  GetBackgroundLayer] GetVolumeNode]
+    set labelNode [[[$sliceGUI GetLogic]  GetLabelLayer] GetVolumeNode]
+    if { $backgroundNode == "" || $labelNode == "" } {
+      # don't create an effect if no background/label node defined
+      continue
+    }
+    if { [$backgroundNode GetImageData] == "" || [$labelNode GetImageData] == "" } {
+      # don't create an effect if no background/label image data defined
+      continue
+    }
     if { [info command $sliceGUI] != "" } {
       $effect #auto $sliceGUI
     }
