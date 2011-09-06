@@ -246,7 +246,6 @@ int main(int argc, char* argv[])
 {
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
-  //qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::AA_DisablePython);
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
