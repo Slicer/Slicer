@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QInputDialog>
+#include <QTimer>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -49,6 +50,7 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
   this->ActiveMRMLThreeDViewNode = 0;
   this->SceneViewMenu = 0;
   this->DisableMagnification = true;
+  this->DisplayModeTimer = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -70,10 +72,14 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
           this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
   this->SelectSceneViewMenuButton->setMenu(this->SceneViewMenu);
 
+  this->DisplayModeTimer = new QTimer(widget);
+  this->DisplayModeTimer->setSingleShot(true);
+  this->DisplayModeTimer->setInterval(100);
+  connect(this->DisplayModeTimer, SIGNAL(timeout()),
+          widget, SLOT(updateDisplayMode()));
+
   // Enable magnification by default
-#ifndef Q_WS_MAC
   q->setDisableMagnification(false);
-#endif
 
   this->setDisplayMode(NavigationDisplayMode);
 }
@@ -178,6 +184,20 @@ void qMRMLThreeDViewsControllerWidget::setDisplayModeToMagnification()
   d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::MagnificationDisplayMode);
 }
 
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::updateDisplayMode()
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  if (d->VTKMagnify->hasCursorInObservedWidget())
+    {
+    d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::MagnificationDisplayMode);
+    }
+  else
+    {
+    d->setDisplayMode(qMRMLThreeDViewsControllerWidgetPrivate::NavigationDisplayMode);
+    }
+}
+
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLThreeDViewsControllerWidget, bool, disableMagnification, DisableMagnification)
 
@@ -188,9 +208,9 @@ void qMRMLThreeDViewsControllerWidget::setDisableMagnification(bool disableMagni
   if (disableMagnification)
     {
     disconnect(d->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
-            this, SLOT(setDisplayModeToMagnification()));
+               d->DisplayModeTimer, SLOT(start()));
     disconnect(d->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
-            this, SLOT(setDisplayModeToNavigation()));
+               d->DisplayModeTimer, SLOT(start()));
     }
   else
     {
@@ -199,9 +219,9 @@ void qMRMLThreeDViewsControllerWidget::setDisableMagnification(bool disableMagni
     // on whether the mouse is within an observed QVTKWidget (i.e. within a
     // ctkVTKSliceView).
     connect(d->VTKMagnify, SIGNAL(enteredObservedWidget(QVTKWidget*)),
-            this, SLOT(setDisplayModeToMagnification()));
+            d->DisplayModeTimer, SLOT(start()));
     connect(d->VTKMagnify, SIGNAL(leftObservedWidget(QVTKWidget*)),
-            this, SLOT(setDisplayModeToNavigation()));
+            d->DisplayModeTimer, SLOT(start()));
     }
   d->DisableMagnification = disableMagnification;
 }

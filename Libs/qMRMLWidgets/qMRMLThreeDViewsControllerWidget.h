@@ -66,7 +66,7 @@ public slots:
   void setActiveThreeDRenderer(vtkRenderer* newActiveRenderer);
   void setDisplayModeToNavigation();
   void setDisplayModeToMagnification();
-
+  void updateDisplayMode();
 signals:
 
   void screenshotButtonClicked();
