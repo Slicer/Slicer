@@ -81,37 +81,75 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
 
-  if (module->logo().isNull())
+  ModuleLogo logo;
+  if (updateLogo(this, logo))
     {
-    ModuleLogo logo;
-    const char* logoImage = 0;
-    int width = 0;
-    int height = 0;
-    int pixelSize = 0;
-    unsigned long bufferLength = 0;
-    if (this->symbolAddress("ModuleLogoImage"))
-      {
-      logoImage = reinterpret_cast<const char *>(this->symbolAddress("ModuleLogoImage"));
-      width = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoWidth"));
-      height = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoHeight"));
-      pixelSize = *reinterpret_cast<int *>(this->symbolAddress("ModuleLogoPixelSize"));
-      bufferLength = *reinterpret_cast<unsigned long*>(this->symbolAddress("ModuleLogoLength"));
-      }
-    else
-      {
-      typedef const char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength);
-      ModuleLogoFunction logoFunction = reinterpret_cast<ModuleLogoFunction>(
-        this->symbolAddress("GetModuleLogo"));
-      logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
-      }
-    if (logoImage != 0)
-      {
-      logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
-      module->setLogo(logo);
-      }
+    module->setLogo(logo);
     }
 
   return module.take();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFactoryItem* item,
+                                                     ModuleLogo& logo)
+{
+  if (!item)
+    {
+    return false;
+    }
+
+  const char* logoImage = 0;
+  int width = 0;
+  int height = 0;
+  int pixelSize = 0;
+  unsigned long bufferLength = 0;
+
+  void * resolvedGetModuleLogoSymbol = item->symbolAddress("GetModuleLogo");
+  void * resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
+
+  if(resolvedGetModuleLogoSymbol)
+    {
+    typedef const char * (*ModuleLogoFunction)(
+          int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long * /*bufferLength*/);
+    ModuleLogoFunction logoFunction =
+        reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
+    logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
+    }
+  else if(resolvedModuleLogoImageSymbol)
+    {
+    logoImage = reinterpret_cast<const char *>(resolvedModuleLogoImageSymbol);
+    QStringList expectedSymbols;
+    expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
+                    << "ModuleLogoPixelSize" << "ModuleLogoLength";
+    QList<void*> resolvedSymbols;
+    foreach(const QString& symbol, expectedSymbols)
+      {
+      void * resolvedSymbol = item->symbolAddress(symbol);
+      if (resolvedSymbol)
+        {
+        resolvedSymbols << resolvedSymbol;
+        }
+      else
+        {
+        item->appendLoadErrorString(QString("Failed to resolve expected symbol '%1'").arg(symbol));
+        }
+      }
+    if (resolvedSymbols.count() == 4)
+      {
+      width = *reinterpret_cast<int *>(resolvedSymbols.at(0));
+      height = *reinterpret_cast<int *>(resolvedSymbols.at(1));
+      pixelSize = *reinterpret_cast<int *>(resolvedSymbols.at(2));
+      bufferLength = *reinterpret_cast<unsigned long *>(resolvedSymbols.at(3));
+      }
+    }
+
+  if(resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
+    {
+    logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
+    return true;
+    }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,17 +159,7 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
 {
   // Set the list of required symbols for CmdLineLoadableModule,
   // if one of these symbols can't be resolved, the library won't be registered.
-  QStringList cmdLineModuleSymbols;
-  cmdLineModuleSymbols << "XMLModuleDescription";
-  cmdLineModuleSymbols << "ModuleEntryPoint";
-  cmdLineModuleSymbols << "ModuleLogoImage";
-  cmdLineModuleSymbols << "ModuleLogoWidth";
-  cmdLineModuleSymbols << "ModuleLogoHeight";
-  cmdLineModuleSymbols << "ModuleLogoPixelSize";
-  cmdLineModuleSymbols << "ModuleLogoLength";
-  cmdLineModuleSymbols << "GetModuleLogo";
-  this->setSymbols(cmdLineModuleSymbols);
-
+  this->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
   this->TempDirectory = QDir::tempPath();
 }
 

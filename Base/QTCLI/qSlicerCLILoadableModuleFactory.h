@@ -30,6 +30,8 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 
+class ModuleLogo;
+
 //-----------------------------------------------------------------------------
 class qSlicerCLILoadableModuleFactoryItem
   : public ctkFactoryLibraryItem<qSlicerAbstractCoreModule>
@@ -38,6 +40,7 @@ public:
   qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory);
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
+  static bool updateLogo(qSlicerCLILoadableModuleFactoryItem* item, ModuleLogo& logo);
 private:
   QString TempDirectory;
 };
