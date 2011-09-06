@@ -51,10 +51,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   if (!xmlDescription)
     {
-    if (this->verbose())
-      {
-      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
-      }
+    this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
+    this->appendInstantiateErrorString("Failed to retrieve Xml Description");
     return 0;
     }
 
@@ -66,10 +64,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   if (!moduleEntryPoint)
     {
-    if (this->verbose())
-      {
-      qWarning() << "Failed to retrieve Module Entry Point - Path:" << this->path();
-      }
+    this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
+    this->appendInstantiateErrorString("Failed to retrieve Module Entry Point");
     return 0;
     }
 

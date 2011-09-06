@@ -58,17 +58,16 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   QString xmlDescription = cli.readAllStandardOutput();
   if (xmlDescription.isEmpty())
     {
-    if (this->verbose())
-      {
-      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
-      }
+    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString("Failed to retrieve Xml Description");
     return 0;
     }
   if (!xmlDescription.startsWith("<?xml"))
     {
-    qWarning() << "For command line executable: " << this->path();
-    qWarning() << "XML description doesn't start right away."
-               << "There is extra output before the XML is print.";
+    this->appendInstantiateWarningString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateWarningString(QLatin1String("XML description doesn't start right away."));
+    this->appendInstantiateWarningString(QString("Output before '<?xml' is [%1]").arg(
+                                           xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
     }
 
