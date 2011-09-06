@@ -350,8 +350,8 @@ class HelperBox(object):
     accum = vtk.vtkImageAccumulate()
     accum.SetInput(merge.GetImageData())
     accum.Update()
-    lo = accum.GetMin()[0]
-    hi = accum.GetMax()[0]
+    lo = int(accum.GetMin()[0])
+    hi = int(accum.GetMax()[0])
 
     thresholder = vtk.vtkImageThreshold()
     for i in xrange(lo,hi+1):
