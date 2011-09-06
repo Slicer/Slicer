@@ -293,7 +293,7 @@ QStringList qSlicerModuleFactoryManager::instantiatedModuleNames() const
 qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::instantiateModule(const QString& name)
 {
   Q_D(qSlicerModuleFactoryManager);
-  
+
   // Retrieve the factory name associated with the module
   qSlicerModuleFactoryManagerPrivate::Map2ConstIterator iter =
     d->ModuleNameToFactoryCache.constFind(name);
@@ -301,17 +301,13 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::instantiateModule(const 
   Q_ASSERT(iter != d->ModuleNameToFactoryCache.constEnd());
   if (iter == d->ModuleNameToFactoryCache.constEnd())
     {
-    qWarning() << "Failed to retrieve factory name for module:" << name;
+    QString description = QString("Attempt to instantiate \"%1\" ").arg(name);
+    QString msg = QString("%1 [Failed to retrieve factory name]").arg(description, -70, QChar('.'));
+    qCritical().nospace() << qPrintable(msg);
     return 0;
     }
 
-  qSlicerAbstractCoreModule* module = d->instantiateModule(*iter, name);
-  if (!module)
-    {
-    qCritical() << "Failed to instantiate module:" << name;
-    }
-  
-  return module;
+  return d->instantiateModule(*iter, name);
 }
 
 //-----------------------------------------------------------------------------
