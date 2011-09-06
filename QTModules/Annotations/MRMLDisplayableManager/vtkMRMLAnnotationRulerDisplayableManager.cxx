@@ -300,7 +300,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   std::string format = std::string("%-#6.3g mm");
   if (rulerNode->GetName())
     {
-    format = std::string(rulerNode->GetName()) + std::string(" ") + format;
+    format = std::string(rulerNode->GetName()) + std::string(": ") + format;
     }
 
   if (this->GetSliceNode())
@@ -608,7 +608,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     {
     if (rulerNode->GetName())
       {
-      std::string format = std::string(rulerNode->GetName()) + std::string(" %-#6.3g mm");
+      std::string format = std::string(rulerNode->GetName()) + std::string(": %-#6.3g mm");
       rep->SetLabelFormat(format.c_str());
       }
     else
