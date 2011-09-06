@@ -16,6 +16,9 @@
 // Qt includes
 #include <QObject>
 
+// PythonQt includes
+#include <PythonQt.h>
+
 // CTK includes
 #include <ctkAbstractPythonManager.h>
 
@@ -48,17 +51,28 @@ public:
     pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerPythonManager::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerCommandOptions::staticMetaObject);
+    // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
 public slots:
 
   //----------------------------------------------------------------------------
   // qSlicerAbstractModule
+
+  //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* widgetRepresentation(qSlicerAbstractModule* _module)
     {
     return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->widgetRepresentation());
     }
-  
+
+  //----------------------------------------------------------------------------
+  // qSlicerAbstractModule
+
+  //----------------------------------------------------------------------------
+  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget * _moduleWidget)
+    {
+    return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
+    }
 };
 
 #endif
