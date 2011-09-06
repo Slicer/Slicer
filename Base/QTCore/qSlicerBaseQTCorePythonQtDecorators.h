@@ -50,23 +50,31 @@ public slots:
   //----------------------------------------------------------------------------
   // qSlicerCoreApplication
   
+  //----------------------------------------------------------------------------
   // static methods
+
+  //----------------------------------------------------------------------------
   void static_qSlicerCoreApplication_setTestingEnabled()
     {
     qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::AA_EnableTesting, true);
     }
 
+  //----------------------------------------------------------------------------
   bool static_qSlicerCoreApplication_testingEnabled()
     {
     return qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
     }
 
+  //----------------------------------------------------------------------------
   // instance methods
+
+  //----------------------------------------------------------------------------
   void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event)
     {
     app->sendEvent(_receiver, _event);
     }
 
+  //----------------------------------------------------------------------------
   void processEvents(qSlicerCoreApplication* app)
     {
     app->processEvents();
