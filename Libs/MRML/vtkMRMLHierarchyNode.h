@@ -218,6 +218,13 @@ protected:
 
   /// is this a node that's only supposed to have one child?
   int AllowMultipleChildren;
+
+  /// Invoke hierarchy modified event(s)
+  /// It should be fired on any node that see its location changed relative to
+  /// it parent, and also on a parent that add/remove/move a child
+  /// Invoke the event on the passed node if not null, otherwise on the
+  /// associated node if not null.
+  void InvokeHierarchyModifiedEvent(vtkMRMLNode *node = NULL);
 };
 
 #endif

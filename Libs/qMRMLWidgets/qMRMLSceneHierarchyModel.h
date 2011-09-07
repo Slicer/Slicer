@@ -50,6 +50,9 @@ protected:
   qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
                            QObject *parent=0);
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+
+  QStandardItem* insertNode(vtkMRMLNode* node);
+  QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row);
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneHierarchyModel);

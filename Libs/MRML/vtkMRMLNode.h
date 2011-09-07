@@ -414,6 +414,13 @@ public:
   vtkSetMacro(Selected, int);
   vtkBooleanMacro(Selected, int);
 
+  /// HierarchyModifiedEvent is generated when the hierarchy node with which
+  /// this node is associated changes
+  enum
+    {
+      HierarchyModifiedEvent = 16000
+    };
+
 protected:
   
   vtkMRMLNode();

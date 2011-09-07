@@ -347,3 +347,25 @@ QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int 
     }
   return flags;
 }
+
+//------------------------------------------------------------------------------
+QStandardItem* qMRMLSceneHierarchyModel::insertNode(vtkMRMLNode* node)
+{
+  return this->Superclass::insertNode(node);
+}
+
+//------------------------------------------------------------------------------
+QStandardItem* qMRMLSceneHierarchyModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
+{
+  QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
+  if (this->listenNodeModifiedEvent())
+    {
+    if (node)
+      {
+      qvtkConnect(node, vtkMRMLNode::HierarchyModifiedEvent,
+                  this, SLOT(onMRMLNodeModified(vtkObject*)));
+      }
+    }
+  return insertedItem;
+}
+

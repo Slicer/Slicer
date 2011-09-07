@@ -276,7 +276,7 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
       parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
       parentNode->Modified();
       }
-
+    this->InvokeHierarchyModifiedEvent();
     }
 }
 
@@ -730,7 +730,8 @@ void vtkMRMLHierarchyNode::SetAssociatedNodeID(const char* ref)
     vtkMRMLNode* node = this->GetAssociatedNode();
     if (node)
       {
-      node->Modified();
+//      node->Modified();
+      this->InvokeHierarchyModifiedEvent(node);
       }
     }
 }
@@ -756,14 +757,44 @@ void vtkMRMLHierarchyNode::SetSortingValue(double value)
     this->SortingValue = value; 
     this->Modified(); 
 
-    // if there is an associated node, call modified on it to trigger updates in
-    // q widgets
-    vtkMRMLNode *associatedNode = this->GetAssociatedNode();
-    if (associatedNode)
-      {
-      associatedNode->Modified();
-      }
+    this->InvokeHierarchyModifiedEvent();
+    
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLHierarchyNode::InvokeHierarchyModifiedEvent(vtkMRMLNode *node)
+{
+  if (node)
+    {
+    // invoke it on the passed node
+    vtkDebugMacro("InvokeHierarchyModifiedEvent: passed node: " << node->GetID());
+    node->InvokeEvent(vtkMRMLNode::HierarchyModifiedEvent);
+    return;
+    }
+  // if there is an associated node, invoke a hierarchy modified on it to trigger updates in
+  // q widgets
+  vtkMRMLNode *associatedNode = this->GetAssociatedNode();
+  if (associatedNode)
+    {
+    vtkDebugMacro("InvokeHierarchyModifiedEvent: associated node " << associatedNode->GetID());
+    associatedNode->InvokeEvent(vtkMRMLNode::HierarchyModifiedEvent);
+    }
+  /*
+  else
+    {
+    // there is no node associated with this hierarchy, are there children?
+    if (this->GetNumberOfChildrenNodes())
+      {
+      // invoke it on the top level children
+      std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
+      for (unsigned int i = 0; i < children.size(); ++i)
+        {
+        vtkDebugMacro("InvokeHierarchyModifiedEvent: child " << i << ", id = " << children[i]->GetID());
+        children[i]->InvokeEvent(vtkMRMLNode::HierarchyModifiedEvent);
+        }
+      }
+    }
+  */
+}
 // End
