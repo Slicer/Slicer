@@ -219,7 +219,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   // use the prepared volume as the reference for resampling
 
-  if(!moduleNames.contains("resamplevolume2")){
+  if(!moduleNames.contains("ResampleVolume2")){
       qWarning() << "CropVolume: ERROR: resamplevolume2 module name was not found in the list of registered modules!";
       return -3;
   }
