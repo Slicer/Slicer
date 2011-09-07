@@ -26,22 +26,27 @@
         <file>Icons/AnnotationDelete.png</file>
         <file>Icons/AnnotationLine.png</file>
         <file>Icons/AnnotationText.png</file>
+        <file>Icons/AnnotationTextWithArrow.png</file>
         <file>Icons/AnnotationReport.png</file>
         <file>Icons/AnnotationInvisible.png</file>
         <file>Icons/AnnotationDistance.png</file>
+        <file>Icons/AnnotationDistanceWithArrow.png</file>
         <file>Icons/AnnotationMouseModeTransform.png</file>
         <file>Icons/AnnotationROI.png</file>
+        <file>Icons/AnnotationROIWithArrow.png</file>
         <file>Icons/AnnotationSaveAnnotations.png</file>
         <file>Icons/AnnotationScreenShot.png</file>
         <file>Icons/AnnotationSaveScene.png</file>
         <file>Icons/AnnotationResetView.png</file>
         <file>Icons/AnnotationPoint.png</file>
+        <file>Icons/AnnotationPointWithArrow.png</file>
         <file>Icons/AnnotationSelectAll.png</file>
         <file>Icons/AnnotationDeselectAll.png</file>
         <file>Icons/AnnotationLayout.png</file>
         <file>Icons/AnnotationVisibility.png</file>
         <file>Icons/AnnotationVolumesModule.png</file>
         <file>Icons/AnnotationBidimensional.png</file>
+        <file>Icons/AnnotationBidimensionalWithArrow.png</file>
         <file>Icons/AnnotationEditBidimensional.png</file>
         <file>Icons/Annotation.png</file>
         <file>Icons/ViewCamera.png</file>

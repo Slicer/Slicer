@@ -323,12 +323,11 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   if (selectionNode)
     {
     vtkDebugMacro("vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/MousePlaceMode.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationText.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistance.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensional.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationTextWithArrow.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png");
+//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png");
+    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationStickyNode", "");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png");
