@@ -58,6 +58,7 @@ public:
 
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLSceneImportedEvent();
+  void OnMRMLSceneRestoredEvent();
   void OnMRMLSceneViewNodeModifiedEvent(vtkMRMLNode* node);
   void OnMRMLSceneClosedEvent();
 

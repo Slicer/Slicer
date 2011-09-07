@@ -86,6 +86,8 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
 }
@@ -110,7 +112,15 @@ void vtkSlicerSceneViewsModuleLogic::ProcessMRMLEvents(
     this->OnMRMLSceneImportedEvent();
     return;
     }
-  
+  if (event == vtkMRMLScene::SceneAboutToBeRestoredEvent)
+    {
+    // this->OnMRMLSceneAboutToBeRestoredEvent();
+    }
+  if (event == vtkMRMLScene::SceneRestoredEvent)
+    {
+    this->OnMRMLSceneRestoredEvent();
+    return;
+    }
   vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
   if (!sceneViewNode)
     {
@@ -179,6 +189,16 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneImportedEvent()
     }
 }
 
+//-----------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneRestoredEvent()
+{
+  vtkDebugMacro("OnMRMLSceneRestoredEvent");
+  // update from the updated scene
+  if (this->m_Widget)
+    {
+    this->m_Widget->refreshTree();
+    }
+}
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneViewNodeModifiedEvent(vtkMRMLNode* node)
 {
