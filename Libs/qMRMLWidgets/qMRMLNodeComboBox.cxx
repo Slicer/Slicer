@@ -781,7 +781,13 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
-  d->ComboBox->setItemDelegate(new qMRMLNodeComboBoxDelegate());
+
+  /// Set the new item delegate to force the highlight in case the item is not
+  /// selectable but current.
+  qMRMLNodeComboBoxDelegate* newItem =
+      new qMRMLNodeComboBoxDelegate(this->parent(), this->comboBox());
+  d->ComboBox->setItemDelegate(newItem);
+
   d->setModel(oldModel);
 
   connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
