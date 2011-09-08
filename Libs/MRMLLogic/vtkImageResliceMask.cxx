@@ -31,6 +31,7 @@
 # undef VTK_USE_UINT64
 # define VTK_USE_UINT64 0
 
+#include <cassert>
 
 vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision$");
 vtkStandardNewMacro(vtkImageResliceMask);
@@ -3391,6 +3392,18 @@ void vtkImageResliceMask::ThreadedRequestData(
   // Get the output pointer
   void *outPtr = outData[0]->GetScalarPointerForExtent(outExt);
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
+
+  int wholeExtent0[6];
+  outData[0]->GetWholeExtent(wholeExtent0);
+  int wholeExtent1[6];
+  outData[1]->GetWholeExtent(wholeExtent1);
+
+  assert( wholeExtent0[0] <= outExt[0] && wholeExtent0[1] >= outExt[1] &&
+          wholeExtent0[2] <= outExt[2] && wholeExtent0[3] >= outExt[3] &&
+          wholeExtent0[4] <= outExt[4] && wholeExtent0[5] >= outExt[5] );
+  assert( wholeExtent1[0] <= outExt[0] && wholeExtent1[1] >= outExt[1] &&
+          wholeExtent1[2] <= outExt[2] && wholeExtent1[3] >= outExt[3] &&
+          wholeExtent1[4] <= outExt[4] && wholeExtent1[5] >= outExt[5] );        
 
   if (this->HitInputExtent == 0)
     {
