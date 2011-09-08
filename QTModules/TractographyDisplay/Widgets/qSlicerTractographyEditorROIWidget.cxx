@@ -177,15 +177,18 @@ void qSlicerTractographyEditorROIWidget::setAnnotationROIMRMLNodeToFiberBundleEn
       PolyData->ComputeBounds();
       PolyData->GetCenter(xyz);
       PolyData->GetBounds(bounds);
-      radius[0] = bounds[1] - bounds[0];
-      radius[1] = bounds[3] - bounds[2];
-      radius[2] = bounds[5] - bounds[4];
+
+      radius[0] = (bounds[1] - bounds[0]) / 2.;
+      radius[1] = (bounds[3] - bounds[2]) / 2.;
+      radius[2] = (bounds[5] - bounds[4]) / 2.;
 
       AnnotationNode->SetXYZ(xyz);
       AnnotationNode->SetRadiusXYZ(radius);
       AnnotationNode->UpdateReferences();
 
       d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(AnnotationNode);
+
+      d->PositiveROI->setChecked(true);
       }
   }
 }
