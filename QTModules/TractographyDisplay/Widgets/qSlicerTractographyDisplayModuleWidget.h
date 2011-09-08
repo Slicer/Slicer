@@ -40,20 +40,13 @@ public:
   qSlicerTractographyDisplayModuleWidget(QWidget *parent=0);
   virtual ~qSlicerTractographyDisplayModuleWidget();
 
-  vtkMRMLFiberBundleNode FiberBundleNode()const;
+  vtkMRMLFiberBundleNode fiberBundleNode()const;
   double PercentageOfFibersShown()const;
 
 public slots:
   void setFiberBundleNode(vtkMRMLNode*);
   void setFiberBundleNode(vtkMRMLFiberBundleNode*);
   void setPercentageOfFibersShown(double);
-  void setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*);
-  void setAnnotationROIMRMLNodeToFiberBundleEnvelope(vtkMRMLNode*);
-  void disableROISelection(bool);
-  void positiveROISelection(bool);
-  void negativeROISelection(bool);
-  void createNewBundleFromSelection();
-  void updateBundleFromSelection();
 
 signals:
   void percentageOfFibersShownChanged(double);
