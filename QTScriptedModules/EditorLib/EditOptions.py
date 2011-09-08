@@ -224,6 +224,7 @@ class LabelerOptions(EditOptions):
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
     self.threshold.spinBoxAlignment = 0xff # put enties on top
+    self.threshold.singleStep = 0.01
     self.setRangeWidgetToBackgroundRange(self.threshold)
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
@@ -907,6 +908,7 @@ class ThresholdOptions(EditOptions):
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
     self.threshold.spinBoxAlignment = 0xff # put enties on top
+    self.threshold.singleStep = 0.01
     # set min/max based on current range
     success, lo, hi = self.getBackgroundScalarRange()
     if success:
@@ -999,8 +1001,8 @@ class ThresholdOptions(EditOptions):
     super(ThresholdOptions,self).updateGUIFromMRML(caller,event)
     min = self.parameterNode.GetParameter("Threshold,min")
     max = self.parameterNode.GetParameter("Threshold,max")
-    self.threshold.setMinimumValue( int(float(min)) )
-    self.threshold.setMaximumValue( int(float(max)) )
+    self.threshold.setMinimumValue( float(min) )
+    self.threshold.setMaximumValue( float(max) )
     tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te configure -range "%s %s" }' % (min, max))
     self.updatingGUI = False
 
