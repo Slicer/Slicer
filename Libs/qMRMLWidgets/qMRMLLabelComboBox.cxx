@@ -39,6 +39,7 @@ public:
   int                 CurrentColor;
   int                 MaximumColorCount;
   bool                ColorNameVisible;
+  bool                LabelValueVisible;
 };
 
 // --------------------------------------------------------------------------
@@ -54,6 +55,7 @@ qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object)
   this->CurrentColor = -1;
   this->MaximumColorCount = 0;
   this->ColorNameVisible = true;
+  this->LabelValueVisible = false;
 }
 
 // ------------------------------------------------------------------------------
@@ -215,6 +217,21 @@ void qMRMLLabelComboBox::setColorNameVisible(bool visible)
     }
 }
 
+// ------------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLLabelComboBox, bool, labelValueVisible, LabelValueVisible);
+
+// -------------------------------------------------------------------------------
+void qMRMLLabelComboBox::setLabelValueVisible(bool visible)
+{
+  Q_D(qMRMLLabelComboBox);
+
+  if ( visible != d->LabelValueVisible )
+    {
+    d->LabelValueVisible = visible;
+    this->updateWidgetFromMRML();
+    }
+}
+
 // ---------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setMaximumColorCount(int maximum)
 {
@@ -288,14 +305,19 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     
     QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
     
+    QString text = "";
+
+    if (d->LabelValueVisible)
+      {
+      text.append(QString("%1, ").arg(i));
+      }
+
     if ( d->ColorNameVisible )
       {
-      d->ComboBox->addItem(colorIcon, colorName);
+      text += colorName;
       }
-    else
-      {
-      d->ComboBox->addItem(colorIcon,"");
-      }
+
+    d->ComboBox->addItem(colorIcon, text);
 
     }
   d->CurrentColor = -1;

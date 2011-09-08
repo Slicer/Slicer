@@ -41,6 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
   Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor USER true)
   Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount)
   Q_PROPERTY(bool colorNameVisible READ colorNameVisible WRITE setColorNameVisible)
+  Q_PROPERTY(bool labelValueVisible READ labelValueVisible WRITE setLabelValueVisible)
 
 public:
 
@@ -59,6 +60,10 @@ public:
   ///Display or not the colors names
   bool colorNameVisible() const;
   void setColorNameVisible(bool visible);
+
+  ///Display or not the label values
+  bool labelValueVisible() const;
+  void setLabelValueVisible(bool visible);
 
   virtual void printAdditionalInfo();
 
