@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerTractographyEditorROIWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerTractographyEditorROIWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>410</width>
+    <height>161</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="ROIForFiberSelectionLabel">
+     <property name="text">
+      <string>ROI for Fiber Selection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="qMRMLNodeComboBox" name="ROIForFiberSelectionMRMLNodeSelector">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLAnnotationROINode</string>
+      </stringlist>
+     </property>
+     <property name="showHidden">
+      <bool>true</bool>
+     </property>
+     <property name="selectNodeUponCreation">
+      <bool>true</bool>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="editEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="DisableROI">
+        <property name="text">
+         <string>Disable ROI</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="PositiveROI">
+        <property name="text">
+         <string>Positive ROI</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="NegativeROI">
+        <property name="text">
+         <string>Negative ROI</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="CreateNewFiberBundle">
+     <property name="toolTip">
+      <string>Create a new fiber bundle using the ROI selection and the percentage of fibers shown as input.</string>
+     </property>
+     <property name="text">
+      <string>Create Bundle From ROI</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="qMRMLNodeComboBox" name="FiberBundleFromSelection">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLFiberBundleNode</string>
+      </stringlist>
+     </property>
+     <property name="showHidden">
+      <bool>true</bool>
+     </property>
+     <property name="selectNodeUponCreation">
+      <bool>true</bool>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="editEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="UpdateBundleFromSelection">
+     <property name="toolTip">
+      <string>Crop the fiber bundle using the ROI selection and the percentage of fibers shown as input.</string>
+     </property>
+     <property name="text">
+      <string>Update Bundle From ROI</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="ConfirmFiberBundleUpdate">
+     <property name="text">
+      <string>Confirm update</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>qSlicerTractographyEditorROIWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>FiberBundleFromSelection</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyEditorROIWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ROIForFiberSelectionMRMLNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>22</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
