@@ -70,7 +70,7 @@ def registerScriptedDisplayableManagers(sliceWidget):
   # is a performance slowdown due to the tcl/python wrapping layer.
   # In native tcl the performance is good, as it probably would be in native python or C++
   # Probably this should go into CTK as a native behavior of the slice viewer.
-  tcl('%s configure -calculateAnnotations 1' % sWidget)
+  tcl('%s configure -calculateAnnotations 0' % sWidget)
   tcl('''
     # turn off event processing for all swidget instances
     foreach sw [itcl::find objects -isa SWidget] {

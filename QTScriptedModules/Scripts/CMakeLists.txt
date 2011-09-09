@@ -1,5 +1,6 @@
 
 set(KIT_PYTHON_SCRIPTS
+    DataProbe.py
     DICOM.py
     Editor.py
     LabelStatistics.py

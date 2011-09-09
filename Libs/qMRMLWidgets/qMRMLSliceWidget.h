@@ -69,14 +69,14 @@ public:
   void addDisplayableManager(const QString& displayableManager);
 
   /// Get slice controller
-  qMRMLSliceControllerWidget* sliceController()const;
+  Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
   /// \sa setMRMLSliceNode()
-  vtkMRMLSliceNode* mrmlSliceNode()const;
+  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
 
   // \sa qMRMLSliceControllerWidget::sliceLogic()
-  vtkMRMLSliceLogic* sliceLogic()const;
+  Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic()const;
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()
   /// \sa setSliceOrientation()
@@ -84,10 +84,10 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::imageData()
   /// \sa setImageData();
-  vtkImageData* imageData()const;
+  Q_INVOKABLE vtkImageData* imageData()const;
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceCompositeNode()
-  vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
+  Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewName()
   /// \sa setSliceViewName()
@@ -106,7 +106,10 @@ public:
   void setSliceViewLabel(const QString& newSliceViewLabel);
 
   /// Returns the interactor style of the view
-  vtkInteractorObserver* interactorStyle()const;
+  /// A const vtkInteractorObserver pointer is returned as you shouldn't
+  /// mess too much with it. If you do, be aware that you are probably
+  /// unsynchronizing the view from the nodes/logics.
+  Q_INVOKABLE vtkInteractorObserver* interactorStyle()const;
 
   /// Return the overlay corner annotation of the view
   vtkCornerAnnotation* overlayCornerAnnotation()const;

@@ -219,7 +219,7 @@
         </sizepolicy>
        </property>
        <property name="text" stdset="0">
-        <string>Manipulate 3D View</string>
+        <string>Data Probe</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
