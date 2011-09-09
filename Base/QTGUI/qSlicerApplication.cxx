@@ -341,58 +341,58 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
   if (node->IsA("vtkMRMLCameraNode") || 
       node->IsA("vtkMRMLViewNode"))
     {
-    return "cameras";
+    return "Cameras";
     }
   else if (node->IsA("vtkMRMLSliceNode") ||
            node->IsA("vtkMRMLSliceCompositeNode") ||
            node->IsA("vtkMRMLSliceLayerNode"))
     {
-    return "slicecontroller";
+    return "SliceController";
     }
   else if (node->IsA("vtkMRMLAnnotationNode") ||
            node->IsA("vtkMRMLAnnotationDisplayNode") ||
            node->IsA("vtkMRMLAnnotationStorageNode") ||
            node->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
-    return "annotations";
+    return "Annotations";
     }
   else if (node->IsA("vtkMRMLTransformNode") ||
            node->IsA("vtkMRMLTransformStorageNode"))
     {
-    return "transforms";
+    return "Transforms";
     }
   else if (node->IsA("vtkMRMLColorNode"))
     {
-    return "colors";
+    return "Colors";
     }
   else if (nodeClassName.contains("vtkMRMLFiberBundle"))
     {
-    return "tractographydisplay";
+    return "TractographyDisplay";
     }
   else if (node->IsA("vtkMRMLModelNode") ||
            node->IsA("vtkMRMLModelDisplayNode") ||
            node->IsA("vtkMRMLModelHierarchyNode") ||
            node->IsA("vtkMRMLModelStorageNode"))
     {
-    return "models";
+    return "Models";
     }
   else if (node->IsA("vtkMRMLSceneViewNode") ||
            node->IsA("vtkMRMLSceneViewStorageNode"))
     {
-    return "sceneviews";
+    return "SceneViews";
     }
   else if (node->IsA("vtkMRMLVolumeNode") ||
            node->IsA("vtkMRMLVolumeDisplayNode") ||
            node->IsA("vtkMRMLVolumeArchetypeStorageNode") ||
            node->IsA("vtkMRMLVolumeHeaderlessStorageNode"))
     {
-    return "volumes";
+    return "Volumes";
     }
   else if (node->IsA("vtkMRMLVolumePropertyNode") ||
            node->IsA("vtkMRMLVolumePropertyStorageNode") ||
            node->IsA("vtkMRMLVolumeRenderingDisplayNode"))
     {
-    return "volumerendering";
+    return "VolumeRendering";
     }
   qWarning() << "Couldn't find a module for node class" << node->GetClassName();
   return "data";
