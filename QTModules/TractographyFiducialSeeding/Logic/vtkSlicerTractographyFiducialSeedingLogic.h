@@ -74,6 +74,8 @@ public:
 
   void SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node);
 
+  int IsObservedNode(vtkMRMLNode *node);
+
 protected:
   vtkSlicerTractographyFiducialSeedingLogic();
   ~vtkSlicerTractographyFiducialSeedingLogic();

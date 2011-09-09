@@ -193,12 +193,14 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
   vtkMRMLHierarchyNode *node = (vtkMRMLHierarchyNode *) anode;
-  this->SetParentNodeID(node->ParentNodeIDReference);
-  this->SetAssociatedNodeID(node->AssociatedNodeIDReference);
-  this->SetSortingValue(node->SortingValue);
+  //this->SetParentNodeID(node->ParentNodeIDReference);
+  this->SetParentNodeIDReference(node->ParentNodeIDReference);
+  this->SetAssociatedNodeIDReference(node->AssociatedNodeIDReference);
+  this->SortingValue = node->SortingValue;
   this->SetAllowMultipleChildren(node->AllowMultipleChildren);
 
   this->EndModify(disabledModify);
+  this->InvokeHierarchyModifiedEvent();
 }
 
 //----------------------------------------------------------------------------

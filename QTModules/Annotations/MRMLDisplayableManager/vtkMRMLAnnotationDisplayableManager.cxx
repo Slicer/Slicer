@@ -52,7 +52,7 @@
 
 typedef void (*fp)(void);
 
-#define NUMERIC_ZERO 0.000001
+#define NUMERIC_ZERO 0.001
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);

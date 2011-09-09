@@ -2738,15 +2738,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     vtkMRMLAnnotationHierarchyNode* hierarchyNode =
         vtkMRMLAnnotationHierarchyNode::New();
 
-    if (toplevelIDForThisClass)
-      {
-      hierarchyNode->SetParentNodeID(toplevelIDForThisClass);
-      }
-    else
-      {
-      hierarchyNode->SetParentNodeID(this->GetActiveHierarchyNodeID());
-      }
-    hierarchyNode->SetScene(this->GetMRMLScene());
+    //hierarchyNode->SetScene(this->GetMRMLScene());
 
     if (!annotationNode)
       {
@@ -2783,6 +2775,16 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
       annotationNode->SetDisableModifiedEvent(0);
       //annotationNode->Modified();
       }
+    
+    if (toplevelIDForThisClass)
+      {
+      hierarchyNode->SetParentNodeID(toplevelIDForThisClass);
+      }
+    else
+      {
+      hierarchyNode->SetParentNodeID(this->GetActiveHierarchyNodeID());
+      }
+
     // it's been added to the scene, delete this pointer
     hierarchyNode->Delete();
     return true;
