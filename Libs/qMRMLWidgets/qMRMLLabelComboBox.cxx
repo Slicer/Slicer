@@ -309,7 +309,14 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
 
     if (d->LabelValueVisible)
       {
-      text.append(QString("%1, ").arg(i));
+      text.append(QString("%1").arg(i));
+
+      if (d->ColorNameVisible)
+        {
+        // add delimiter if the colorName is visible as well
+        text.append(", ");
+        }
+
       }
 
     if ( d->ColorNameVisible )
