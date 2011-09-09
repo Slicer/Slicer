@@ -22,7 +22,6 @@
 #define __qMRMLNodeComboBoxDelegate_h
 
 //QT includes
-#include <QComboBox>
 #include <QItemDelegate>
 
 // qMRMLWidgets includes
@@ -34,7 +33,10 @@
 /// e.g. "Add/Remove/Edit node" actions.
 /// The highlight color is slightly more transparent than the style palette
 /// highlight color to indicates that the item is not really selectable
-/// but correspond to an action. 
+/// but correspond to an action.
+
+class QComboBox;
+
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxDelegate : public QItemDelegate
 {
   Q_OBJECT

@@ -20,6 +20,7 @@
 
 //QT include
 #include <QAbstractItemView>
+#include <QComboBox>
 #include <QPainter>
 #include <QStandardItemModel>
 
