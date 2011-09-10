@@ -103,7 +103,10 @@ class DataProbeInfoWidget(object):
       if colorNode:
         labelValue = colorNode.GetColorName(labelIndex)
       return "%s (%d)" % (labelValue, labelIndex)
-    for c in xrange(imageData.GetNumberOfScalarComponents()):
+    numberOfComponents = imageData.GetNumberOfScalarComponents()
+    if numberOfComponents > 3:
+      return "%d components" % numberOfComponents
+    for c in xrange(numberOfComponents):
       component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
       if component == int(component):
         component = int(component)
