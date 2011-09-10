@@ -46,7 +46,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
 
   vtkMRMLNode *node = 0;
 
-  // if we dont have a parameter node create it
+  // if we have a parameter node select it
   if (this->TractographyFiducialSeedingNode == 0)
   {
     vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
@@ -54,6 +54,14 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
     if (node)
     {
       tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+      this->setTractographyFiducialSeedingNode(tnode);
+      return;
+    }
+    else 
+    {
+      tnode = vtkMRMLTractographyFiducialSeedingNode::New();
+      this->mrmlScene()->AddNode(tnode);
+      tnode->Delete();
       this->setTractographyFiducialSeedingNode(tnode);
     }
   }
@@ -115,16 +123,11 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
   {
     vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
     vtkMRMLNode *node = scene->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
-    if (node == 0)
+    if (node)
     {
-      tnode = vtkMRMLTractographyFiducialSeedingNode::New();
-      scene->AddNode(tnode);
-      tnode->Delete();
-    }
-    else {
       tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+      this->setTractographyFiducialSeedingNode(tnode);
     }
-    this->setTractographyFiducialSeedingNode(tnode);
   }
 }
 
@@ -235,6 +238,7 @@ vtkMRMLFiberBundleNode* qSlicerTractographyFiducialSeedingModuleWidget::fiberBun
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeedingNode(vtkMRMLNode *node)
 {
+
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
 
   // each time the node is modified, the logic creates tracks
@@ -365,7 +369,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLN
     if (this->TractographyFiducialSeedingNode->GetInputFiducialRef())
     {
       vtkMRMLNode *seedNode = this->mrmlScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputFiducialRef());
-      if (seedNode && seedNode->GetName() && fiberBundleNode->GetName())
+      if (fiberBundleNode && seedNode && seedNode->GetName() && fiberBundleNode->GetName())
       {
         fiberBundleNode->SetName(std::string(std::string(fiberBundleNode->GetName()) +
                       std::string("_")+std::string(seedNode->GetName())).c_str());
