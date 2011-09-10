@@ -65,6 +65,11 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
       this->setTractographyFiducialSeedingNode(tnode);
     }
   }
+  else
+  {
+    this->updateWidgetFromMRML();
+    return;
+  }
 
   // if we have one dti volume node select it
   std::vector<vtkMRMLNode*> nodes;
