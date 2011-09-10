@@ -101,7 +101,7 @@ if { [itcl::find class SWidget] == "" } {
 
     public variable enabled "true"  ;# if not enabled, subclasses should not process events
 
-    public variable forceAnnotationsOff 0  ;# don't show annotations at all
+    public variable forceAnnotationsOff 1  ;# don't show annotations at all
 
     variable _vtkObjects ""
     variable _pickState "outside"
