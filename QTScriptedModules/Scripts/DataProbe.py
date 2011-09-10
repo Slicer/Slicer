@@ -113,9 +113,17 @@ class DataProbeInfoWidget(object):
 
   def processEvent(self,observee,event):   
     if event == 'LeaveEvent':
-      self.frame.hide()
-    else:
-      self.frame.show()
+      self.viewerColor.text = ""
+      self.viewerName.text = ""
+      self.viewerRAS.text = ""
+      self.viewerOrient.text = ""
+      self.viewerSpacing.text = ""
+      layers = ('L', 'F', 'B')
+      for layer in layers:
+        self.layerNames[layer].text = ""
+        self.layerIJKs[layer].text = ""
+        self.layerValues[layer].text = ""
+      return
     if self.sliceWidgetsPerStyle.has_key(observee):
       sliceWidget = self.sliceWidgetsPerStyle[observee]
       sliceLogic = sliceWidget.sliceLogic()
