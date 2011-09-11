@@ -23,6 +23,7 @@
 
 // CTK includes
 #include <ctkFlowLayout.h>
+#include <ctkUtils.h>
 
 /// Volumes includes
 #include "qSlicerVolumesIOOptionsWidget.h"
@@ -75,6 +76,9 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
           this, SLOT(updateProperties()));
   connect(d->OrientationCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
+
+  // Single file by default
+  d->SingleFileCheckBox->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,12 +113,7 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
 void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
-  QFileInfo fileInfo(fileName);
-  if (fileInfo.isFile())
-    {
-    d->NameLineEdit->setText(fileInfo.baseName());
-    }
-  this->qSlicerIOOptionsWidget::setFileName(fileName);
+  this->setFileNames(QStringList(fileName));
 }
 
 //-----------------------------------------------------------------------------
@@ -122,14 +121,23 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
   QStringList names;
+  bool onlyNumberInName = false;
+  bool onlyNumberInExtension = false;
   foreach(const QString& fileName, fileNames)
     {
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
       {
+      // Name
       names << fileInfo.baseName();
+      // Single file
+      // If the name (or the extension) is just a number, then it must be a 2D
+      // slice from a 3D volume, so uncheck Single File.
+      fileInfo.baseName().toInt(&onlyNumberInName);
+      fileInfo.suffix().toInt(&onlyNumberInExtension);
       }
     }
   d->NameLineEdit->setText( names.join("; ") );
+  d->SingleFileCheckBox->setChecked(!onlyNumberInName && !onlyNumberInExtension);
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }
