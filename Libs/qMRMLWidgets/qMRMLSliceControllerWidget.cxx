@@ -93,6 +93,8 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->CrosshairMenu = 0;
   this->SliceSpacingMenu = 0;
   
+  this->SliceSpacingSpinBox = 0;
+  this->SliceFOVSpinBox = 0;
   this->LightBoxRowsSpinBox = 0;
   this->LightBoxColumnsSpinBox = 0;
 }
@@ -464,7 +466,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"));
   this->SliceSpacingMenu->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
   this->SliceSpacingMenu->addAction(this->actionSliceSpacingModeAutomatic);
-  QMenu* sliceSpacingManualMode = new QMenu(tr("Manual"), this->SliceSpacingMenu);
+  QMenu* sliceSpacingManualMode = new QMenu(tr("Manual spacing"), this->SliceSpacingMenu);
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
   this->SliceSpacingSpinBox = new QDoubleSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
@@ -477,6 +479,23 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   sliceSpacingAction->setDefaultWidget(this->SliceSpacingSpinBox);
   sliceSpacingManualMode->addAction(sliceSpacingAction);
   this->SliceSpacingMenu->addMenu(sliceSpacingManualMode);
+
+  QMenu* sliceFOVMenu = new QMenu(tr("Field of view"), this->SliceSpacingMenu);
+  sliceFOVMenu->setIcon(QIcon(":/Icon/SlicesFieldOfView.png"));
+  QWidget* sliceFOVWidget = new QWidget(this->SliceSpacingMenu);
+  QHBoxLayout* sliceFOVLayout = new QHBoxLayout(sliceFOVWidget);
+  sliceFOVLayout->setContentsMargins(0,0,0,0);
+  this->SliceFOVSpinBox = new QDoubleSpinBox(sliceFOVWidget);
+  this->SliceFOVSpinBox->setRange(0., 10000.);
+  this->SliceFOVSpinBox->setValue(250.);
+  QObject::connect(this->SliceFOVSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceFOV(double)));
+  sliceFOVLayout->addWidget(this->SliceFOVSpinBox);
+  sliceFOVWidget->setLayout(sliceFOVLayout);
+  QWidgetAction* sliceFOVAction = new QWidgetAction(sliceFOVMenu);
+  sliceFOVAction->setDefaultWidget(sliceFOVWidget);
+  sliceFOVMenu->addAction(sliceFOVAction);
+  this->SliceSpacingMenu->addMenu(sliceFOVMenu);
 }
 
 // --------------------------------------------------------------------------
@@ -650,6 +669,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   // Slice spacing mode
   this->actionSliceSpacingModeAutomatic->setChecked(
     this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
+  double fov[3];
+  this->MRMLSliceNode->GetFieldOfView(fov);
+  this->SliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
+  // Lightbox
   int rows = this->MRMLSliceNode->GetLayoutGridRows();
   int columns = this->MRMLSliceNode->GetLayoutGridColumns();
   this->actionLightbox1x1_view->setChecked(rows == 1 && columns == 1);
@@ -1705,6 +1728,34 @@ void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
       spacing[1] = current[1];
       spacing[2] = sliceSpacing;
       node->SetPrescribedSliceSpacing(spacing);
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceFOV(double fov)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  double oldFov[3];
+  d->MRMLSliceNode->GetFieldOfView(oldFov);
+  if (qAbs(qMin(oldFov[0], oldFov[1])- fov) < 0.01)
+    {
+    return;
+    }
+  if (!d->SliceLogics)
+    {
+    d->SliceLogic->FitFOVToBackground(fov);
+    return;
+    }
+  vtkMRMLSliceLogic* sliceLogic = 0;
+  vtkCollectionSimpleIterator it;
+  for (d->SliceLogics->InitTraversal(it);
+       (sliceLogic = static_cast<vtkMRMLSliceLogic*>(
+          d->SliceLogics->GetNextItemAsObject(it)));)
+    {
+    if (sliceLogic == d->SliceLogic || this->isLinked())
+      {
+      sliceLogic->FitFOVToBackground(fov);
       }
     }
 }

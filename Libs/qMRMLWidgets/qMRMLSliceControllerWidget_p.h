@@ -151,7 +151,7 @@ public:
   QMenu*                              SliceSpacingMenu;
 
   QDoubleSpinBox*                     SliceSpacingSpinBox;
-
+  QDoubleSpinBox*                     SliceFOVSpinBox;
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
 

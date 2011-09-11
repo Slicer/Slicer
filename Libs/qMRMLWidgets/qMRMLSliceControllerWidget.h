@@ -172,7 +172,8 @@ public slots:
   void setCompositingToSubtract();
   /// Slice spacing
   void setSliceSpacingMode(bool automatic);
-  void setSliceSpacing(double);
+  void setSliceSpacing(double spacing);
+  void setSliceFOV(double fov);
   // Lightbox
   void setLightbox(int rows, int columns);
   void setLightboxTo1x1();
