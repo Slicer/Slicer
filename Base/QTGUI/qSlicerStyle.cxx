@@ -60,16 +60,20 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
             else
               {
               r = proxy()->subControlRect(cc, slider, SC_SliderGroove ,widget);
+              QPoint center = r.center();
               if (slider->orientation == Qt::Horizontal)
                 {
                 // If there is no widget, use QStyle::PM_SliderThickness
-                r.setHeight(widget ? widget->height() : r.height());
+                r.setHeight(widget ? widget->height() :
+                            this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
                 }
               else
                 {
                 // If there is no widget, use QStyle::PM_SliderThickness
-                r.setWidth(widget ? widget->width() : r.width());
+                r.setWidth(widget ? widget->width() :
+                           this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
                 }
+              r.moveCenter(center);
               if (r.isValid() && r.contains(pt))
                 {
                 sc = SC_SliderGroove;
