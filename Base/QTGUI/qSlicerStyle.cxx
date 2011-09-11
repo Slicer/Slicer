@@ -42,6 +42,49 @@ qSlicerStyle::~qSlicerStyle()
 
 }
 
+//------------------------------------------------------------------------------
+QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
+                                                       const QPoint &pt, const QWidget *widget) const
+{
+  SubControl sc = SC_None;
+  switch (cc) {
+  // Hot area for the groove shall be the entire height of the widget
+#ifndef QT_NO_SLIDER
+    case CC_Slider:
+        if (const QStyleOptionSlider *slider = qstyleoption_cast<const QStyleOptionSlider *>(opt)) {
+            QRect r = proxy()->subControlRect(cc, slider, SC_SliderHandle, widget);
+            if (r.isValid() && r.contains(pt))
+              {
+              sc = SC_SliderHandle;
+              }
+            else
+              {
+              r = proxy()->subControlRect(cc, slider, SC_SliderGroove ,widget);
+              if (slider->orientation == Qt::Horizontal)
+                {
+                // If there is no widget, use QStyle::PM_SliderThickness
+                r.setHeight(widget ? widget->height() : r.height());
+                }
+              else
+                {
+                // If there is no widget, use QStyle::PM_SliderThickness
+                r.setWidth(widget ? widget->width() : r.width());
+                }
+              if (r.isValid() && r.contains(pt))
+                {
+                sc = SC_SliderGroove;
+                }
+            }
+        }
+        break;
+#endif // QT_NO_SLIDER
+    default:
+      sc = Superclass::hitTestComplexControl(cc, opt, pt, widget);
+      break;
+    }
+  return sc;
+}
+
 // --------------------------------------------------------------------------
 int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
                               const QWidget * widget)const
@@ -155,7 +198,8 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
         }
       break;
 #ifndef QT_NO_SLIDER
-      // Reimplemented to work around bug: http://bugreports.qt.nokia.com/browse/QTBUG-13318
+    // <HACK>
+    // Reimplemented to work around bug: http://bugreports.qt.nokia.com/browse/QTBUG-13318
     case CC_Slider:
         if (const QStyleOptionSlider *slider = qstyleoption_cast<const QStyleOptionSlider *>(option))
           {
@@ -195,9 +239,10 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
             break;
             }
           }
+        // </HACK>
 #endif // QT_NO_SLIDER
     default:
-      return Superclass::subControlRect(control, option, subControl, widget);
+      rect = Superclass::subControlRect(control, option, subControl, widget);
       break;
     }
   return rect;

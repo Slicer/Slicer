@@ -37,6 +37,9 @@ public:
   qSlicerStyle();
   virtual ~qSlicerStyle();
 
+  virtual SubControl hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
+                                           const QPoint &pt, const QWidget *widget) const;
+
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option = 0,
                           const QWidget * widget = 0)const;
 
