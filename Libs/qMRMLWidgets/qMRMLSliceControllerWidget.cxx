@@ -217,8 +217,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                 SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
   //this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
   //              this->actionLabelMapVisibility, SLOT(setEnabled(bool)));
-  //this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
-  //              this->actionLabelMapOutline, SLOT(setEnabled(bool)));
+  this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
+                this->actionLabelMapOutline, SLOT(setEnabled(bool)));
 
   // Connect Foreground layer selector
   this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
