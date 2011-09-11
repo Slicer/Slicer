@@ -104,6 +104,8 @@ protected:
 
   bool settingFiberBundleNode;
 
+  bool settingMRMLScene;
+
 protected:
   QScopedPointer<qSlicerTractographyFiducialSeedingModuleWidgetPrivate> d_ptr;
 

@@ -23,8 +23,9 @@ class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
 
 //-----------------------------------------------------------------------------
 qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent)
-  : Superclass(_parent)
-  , settingFiberBundleNode(false),
+  : Superclass(_parent), 
+  settingFiberBundleNode(false),
+  settingMRMLScene(false),
   d_ptr(new qSlicerTractographyFiducialSeedingModuleWidgetPrivate)
 {
   this->TractographyFiducialSeedingNode = 0;
@@ -121,6 +122,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
+  this->settingMRMLScene = true;
   this->Superclass::setMRMLScene(scene);
 
   // find parameters node or create it if there is no one in the scene
@@ -134,6 +136,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
       this->setTractographyFiducialSeedingNode(tnode);
     }
   }
+  this->settingMRMLScene = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -142,9 +145,6 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
   Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
 
-
-  QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
-                                             SLOT(setTractographyFiducialSeedingNode(vtkMRMLNode*)));
 
   QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
                                        SLOT(setDiffusionTensorVolumeNode(vtkMRMLNode*)));
@@ -202,6 +202,10 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
   QObject::connect(d->MaxNumberSeedsNumericInput, 
                 SIGNAL(valueChanged(int)),
                 SLOT(setMaxNumberSeeds(int)));
+
+  QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
+                                             SLOT(setTractographyFiducialSeedingNode(vtkMRMLNode*)));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -243,6 +247,10 @@ vtkMRMLFiberBundleNode* qSlicerTractographyFiducialSeedingModuleWidget::fiberBun
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeedingNode(vtkMRMLNode *node)
 {
+  if (this->settingMRMLScene)
+  {
+    return;
+  }
 
   vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
 
@@ -266,6 +274,10 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeed
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setSeedingNode(vtkMRMLNode *node)
 {
+  if (this->settingMRMLScene)
+  {
+    return;
+  }
 
   if (this->TractographyFiducialSeedingNode)
   {
@@ -314,6 +326,11 @@ static double round_num(double num)
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNode(vtkMRMLNode *node)
 {
+  if (this->settingMRMLScene)
+  {
+    return;
+  }
+
   Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
 
   vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
@@ -363,6 +380,11 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
 {
+  if (this->settingMRMLScene)
+  {
+    return;
+  }
+
   if (settingFiberBundleNode)
   {
     return;
