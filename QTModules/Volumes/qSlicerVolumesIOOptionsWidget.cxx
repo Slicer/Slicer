@@ -112,7 +112,6 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
 //-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 {
-  Q_D(qSlicerVolumesIOOptionsWidget);
   this->setFileNames(QStringList(fileName));
 }
 
