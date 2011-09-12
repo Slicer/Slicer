@@ -251,7 +251,6 @@ itcl::body ModelSWidget::highlight { } {
   $property SetOpacity $opacity
 
   return
-
 }
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
@@ -292,14 +291,20 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   # control visibility based on ModelDisplayNode and 
   # transform based on transform node
   if { $_modelNode != "" && [$_modelNode GetPolyData] != "" } { 
-    $o(cutter) SetInput [$_modelNode GetPolyData]
+    # TODO: this is a special case (hack) for Fiber Bundles
+    # since we actually want to see their tube output, not the 
+    # original streamlines (which would be dots)
+    if { [$_modelNode IsA "vtkMRMLFiberBundleNode"] } {
+      $o(cutter) SetInput [[$_modelNode GetDisplayNode] GetPolyData]
+    } else {
+      $o(cutter) SetInput [$_modelNode GetPolyData]
+    }
 
     # handle model transform to world space
     set tnode [$_modelNode GetParentTransformNode]
     if { $tnode != "" } {
         $tnode GetMatrixTransformToWorld $transformToWorld
     }
-
   }
 
 
@@ -372,6 +377,7 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   $this positionActors
   $o(cutter) Modified
   [$sliceGUI GetSliceViewer] RequestRender
+
 }
 
 #

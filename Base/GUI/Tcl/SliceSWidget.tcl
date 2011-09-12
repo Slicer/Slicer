@@ -1378,13 +1378,15 @@ itcl::body SliceSWidget::jumpOtherSlices { r a s } {
 }
 
 itcl::body SliceSWidget::addSliceModelSWidgets {} {
-  set class "vtkMRMLModelNode"
-  set number [$slicer3::MRMLScene GetNumberOfNodesByClass $class]
-  for {set n 0} {$n < $number} {incr n} {
-    set modelNode [$::slicer3::MRMLScene GetNthNodeByClass $n $class]
-    set modelSWidget [ModelSWidget #auto $sliceGUI]
-    $modelSWidget configure -modelID [$modelNode GetID]
-    lappend _swidgets $modelSWidget
+  set classes "vtkMRMLModelNode vtkMRMLFiberBundleNode"
+  foreach class $classes {
+    set number [$slicer3::MRMLScene GetNumberOfNodesByClass $class]
+    for {set n 0} {$n < $number} {incr n} {
+      set modelNode [$::slicer3::MRMLScene GetNthNodeByClass $n $class]
+      set modelSWidget [ModelSWidget #auto $sliceGUI]
+      $modelSWidget configure -modelID [$modelNode GetID]
+      lappend _swidgets $modelSWidget
+    }
   }
 }
 
