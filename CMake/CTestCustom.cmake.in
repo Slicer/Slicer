@@ -71,10 +71,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "tcl.tcl.unix.*warning: cast"
   #  warning: '...' is deprecated (declared at ...)
   "tcl.tcl.unix.*warning:.*is deprecated"
+  "tcl.tcl.unix.*warning:.*ignoring return value of"
 
   # Tk
   "tcl.tk.unix.*warning: cast"
   "System.Library.Frameworks.Tk.framework.Headers.X11.Xlib.h.*warning: function declaration isn't a prototype"
+  "tcl.tk.unix.*warning:.*ignoring return value of"
 
   # incrTcl
   "generic.itk_(option|archetype).*warning"
