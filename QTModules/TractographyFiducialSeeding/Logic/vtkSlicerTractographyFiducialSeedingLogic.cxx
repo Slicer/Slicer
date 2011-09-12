@@ -36,6 +36,7 @@
 // ITKSYS includes
 
 // STD includes
+#include <algorithm>
 
 vtkCxxRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerTractographyFiducialSeedingLogic);
@@ -153,18 +154,14 @@ void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
   return;
 }
 
-
+//----------------------------------------------------------------------------
 int vtkSlicerTractographyFiducialSeedingLogic::IsObservedNode(vtkMRMLNode *node)
 {
-  for (unsigned int i=0; i < this->ObservedNodes.size(); i++)
-    {
-    if (this->ObservedNodes[i] = vtkMRMLTransformableNode::SafeDownCast(node))
-      {
-      return 1;
-      }
-    }
-  return 0;
+  std::vector<vtkMRMLTransformableNode *>::const_iterator observedNodeIt =
+    std::find(this->ObservedNodes.begin(), this->ObservedNodes.end(),node)
+  return observedNodeIt != this->ObservedNodes.end();
 }
+
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
