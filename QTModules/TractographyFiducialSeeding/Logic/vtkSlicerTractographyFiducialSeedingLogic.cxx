@@ -158,7 +158,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
 int vtkSlicerTractographyFiducialSeedingLogic::IsObservedNode(vtkMRMLNode *node)
 {
   std::vector<vtkMRMLTransformableNode *>::const_iterator observedNodeIt =
-    std::find(this->ObservedNodes.begin(), this->ObservedNodes.end(),node)
+    std::find(this->ObservedNodes.begin(), this->ObservedNodes.end(),node);
   return observedNodeIt != this->ObservedNodes.end();
 }
 
