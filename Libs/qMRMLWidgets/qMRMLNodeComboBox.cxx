@@ -30,6 +30,7 @@
 
 // qMRMLWidgets includes
 #include "qMRMLNodeComboBoxDelegate.h"
+#include "qMRMLNodeComboBoxMenuDelegate.h"
 #include "qMRMLNodeComboBox_p.h"
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneModel.h"
@@ -266,6 +267,34 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     q->setCurrentNode(currentNode.toString());
     }
   */
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
+{
+  Q_Q(qMRMLNodeComboBox);
+  QStyleOptionComboBox opt;
+  opt.editable = false;
+
+  if (this->ComboBox->style()->styleHint(
+      QStyle::SH_ComboBox_Popup, &opt, this->ComboBox))
+    {
+      if (force ||
+          qobject_cast<qMRMLNodeComboBoxDelegate *>(this->ComboBox->itemDelegate()))
+        {
+        this->ComboBox->setItemDelegate(
+            new qMRMLNodeComboBoxMenuDelegate(q->parent(), q->comboBox()));
+        }
+    }
+    else
+    {
+      if (force ||
+          qobject_cast<qMRMLNodeComboBoxMenuDelegate *>(this->ComboBox->itemDelegate()))
+        {
+        this->ComboBox->setItemDelegate(
+            new qMRMLNodeComboBoxDelegate(q->parent(), q->comboBox()));
+        }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -782,12 +811,6 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
 
-  /// Set the new item delegate to force the highlight in case the item is not
-  /// selectable but current.
-  qMRMLNodeComboBoxDelegate* newItem =
-      new qMRMLNodeComboBoxDelegate(this->parent(), this->comboBox());
-  d->ComboBox->setItemDelegate(newItem);
-
   d->setModel(oldModel);
 
   connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
@@ -798,6 +821,10 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
                                          QSizePolicy::Expanding,
                                          QSizePolicy::DefaultType));
   delete oldComboBox;
+
+  /// Set the new item delegate to force the highlight in case the item is not
+  /// selectable but current.
+  d->updateDelegate(true);
 }
 
 //--------------------------------------------------------------------------
@@ -863,4 +890,15 @@ void qMRMLNodeComboBox::setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)
 {
   Q_D(qMRMLNodeComboBox);
   d->ComboBox->setSizeAdjustPolicy(policy);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::changeEvent(QEvent *event)
+{
+  Q_D(qMRMLNodeComboBox);
+  if(event->type() == QEvent::StyleChange)
+    {
+    d->updateDelegate();
+    }
+  this->Superclass::changeEvent(event);
 }

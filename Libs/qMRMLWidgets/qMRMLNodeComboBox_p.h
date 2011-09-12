@@ -48,6 +48,7 @@ public:
   void updateDefaultText();
   void updateNoneItem(bool resetRootIndex = true);
   void updateActionItems(bool resetRootIndex = true);
+  void updateDelegate(bool force = false);
   QString nodeTypeLabel()const;
 
   QComboBox*        ComboBox;

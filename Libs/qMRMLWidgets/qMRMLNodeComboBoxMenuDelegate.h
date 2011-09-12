@@ -18,60 +18,50 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLNodeComboBoxDelegate_h
-#define __qMRMLNodeComboBoxDelegate_h
+#ifndef __qMRMLNodeComboBoxMenuDelegate_h
+#define __qMRMLNodeComboBoxMenuDelegate_h
 
 //QT includes
-#include <QItemDelegate>
+#include <QAbstractItemDelegate>
 
 // qMRMLWidgets includes
 #include "qMRMLWidgetsExport.h"
 
-/// Item delegate to show unselectable items highlighted when the mouse is
+/// Abstract Item delegate to show unselectable items highlighed when the mouse is
 /// over them to give a feeling of selectable item.
 /// This is used in qMRMLNodeComboBox for the extra items:
-/// e.g. "Add/Remove/Edit node" actions.
-/// The highlight color is slightly more transparent than the style palette
+/// e.g. "Add/Remove/Edit node" actions
+/// The highlight color is slightly more treansparent than the style palette
 /// highlight color to indicates that the item is not really selectable
 /// but correspond to an action.
 
-/// We reimplemente the code form QT "QComboBoxDelegate" used in the class QComboBox.
+/// We reimplemente the code from QT "QComboMenuDelegate" used in the class QComboBox.
 
 class QComboBox;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxDelegate : public QItemDelegate
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDelegate
 {
   Q_OBJECT
-public :
-  typedef QItemDelegate Superclass;
-  qMRMLNodeComboBoxDelegate(QObject* parent, QComboBox* comboBox);
-
-  static bool isSeparator(const QModelIndex &index);
-  static void setSeparator(QAbstractItemModel *model, const QModelIndex &index);
+public:
+  typedef QAbstractItemDelegate Superclass;
+  qMRMLNodeComboBoxMenuDelegate(QObject *parent, QComboBox *cmb);
 
 protected:
-  /// Reimplemented to force the highlight in case the item is not selectable
-  /// but current. The highlight color used is then slightly different from
-  /// the default color
   virtual void paint(QPainter *painter,
                      const QStyleOptionViewItem &option,
                      const QModelIndex &index) const;
-
   virtual QSize sizeHint(const QStyleOptionViewItem &option,
                          const QModelIndex &index) const;
 
-  virtual void drawDisplay(QPainter *painter,
-                           const QStyleOptionViewItem &option,
-                           const QRect &rect,
-                           const QString &text) const;
-
-  virtual void drawFocus(QPainter *painter,
-                         const QStyleOptionViewItem &option,
-                         const QRect &rect) const;
-
 private:
-  QComboBox* mCombo;
-  Q_DISABLE_COPY(qMRMLNodeComboBoxDelegate);
+  /// Reimplemented to force the highlight in case the item is not selectable
+  /// but current. The highlight color used is then slightly different from
+  /// the default color
+  QStyleOptionMenuItem getStyleOption(const QStyleOptionViewItem &option,
+                                      const QModelIndex &index) const;
+  QComboBox *mCombo;
+  Q_DISABLE_COPY(qMRMLNodeComboBoxMenuDelegate);
 };
 
-#endif // __qMRMLNodeComboBoxDelegate_h
+
+#endif // __qMRMLNodeComboBoxMenuDelegate_h

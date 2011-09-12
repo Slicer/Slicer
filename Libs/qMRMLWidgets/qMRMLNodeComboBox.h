@@ -280,6 +280,8 @@ protected:
   void setComboBox(QComboBox* comboBox);
   QComboBox* comboBox()const;
 
+  virtual void changeEvent(QEvent* event);
+
 protected slots:
   void activateExtraItem(const QModelIndex& index);
   void emitCurrentNodeChanged(int index);

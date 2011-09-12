@@ -82,6 +82,8 @@ set(qMRMLWidgets_SRCS
   qMRMLNodeComboBox.h
   qMRMLNodeComboBoxDelegate.cxx
   qMRMLNodeComboBoxDelegate.h
+  qMRMLNodeComboBoxMenuDelegate.cxx
+  qMRMLNodeComboBoxMenuDelegate.h
   qMRMLNodeComboBox_p.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
@@ -185,6 +187,7 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLNavigationView.h
   qMRMLNodeComboBox.h
   qMRMLNodeComboBoxDelegate.h
+  qMRMLNodeComboBoxMenuDelegate.h
   qMRMLNodeFactory.h
   qMRMLRangeWidget.h
   qMRMLROIWidget.h
