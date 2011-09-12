@@ -154,14 +154,6 @@ public:
   vtkGetMacro(Resolution,int);
 
   /// 
-  /// If the points in the image are organized into a 2D array (image),
-  /// The dimensions of that array. 
-  /// Two numbers: the number of columns and rows of pixels in each image.
-  /// If any of the numbers are < 1 a 1D point structure is assumed.
-  vtkGetVector2Macro(Dimensions, int);
-  vtkSetVector2Macro(Dimensions, int);
-
-  /// 
   /// Resolution of the output glyphs in each dimension. 
   /// It is used only if Dimensions is set > 1 .
   /// This parameter is a integer value
@@ -188,7 +180,6 @@ protected:
   int MaskGlyphs;  /// mask glyphs outside of the brain for example, using the Mask
   int Resolution; /// allows skipping some tensors for lower resolution glyphing
 
-  int Dimensions[2];
   int DimensionResolution[2];
 
   vtkMatrix4x4 *VolumePositionMatrix;

@@ -55,8 +55,6 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
   // Default to highest rendering resolution
   this->Resolution = 1;
 
-  this->Dimensions[0] = 0;
-  this->Dimensions[1] = 0;
   this->DimensionResolution[0] = 20;
   this->DimensionResolution[1] = 20;
 
@@ -218,7 +216,6 @@ int vtkDiffusionTensorGlyph::RequestData(
   inTensors = pd->GetTensors();
   inScalars = pd->GetScalars();
   numPts = input->GetNumberOfPoints();
-
   if ( !inTensors || numPts < 1 )
     {
     vtkErrorMacro(<<"No data to glyph!");
@@ -236,12 +233,19 @@ int vtkDiffusionTensorGlyph::RequestData(
   int colLength = 1;
   int row = 0;
   int col = 0;
-  if (this->Dimensions[0] > 1 && this->Dimensions[1] > 1)
+  // TODO: use UpdateExtent not WholeExtent
+  int inWholeExtent[6];
+  input->GetWholeExtent(inWholeExtent);
+  int dimensions[3];
+  dimensions[0] = inWholeExtent[1] - inWholeExtent[0] + 1;
+  dimensions[1] = inWholeExtent[3] - inWholeExtent[2] + 1;
+  dimensions[2] = inWholeExtent[5] - inWholeExtent[4] + 1;
+  if (dimensions[0] > 1 && dimensions[1] > 1)
     {
     skipRows = DimensionResolution[1];
     skipCols = DimensionResolution[0];
-    rowLength = Dimensions[0];
-    colLength = Dimensions[1];
+    rowLength = dimensions[0];
+    colLength = dimensions[1];
     if (skipCols) 
       {
       numInputPts = (numInputPts+1)/skipCols;
