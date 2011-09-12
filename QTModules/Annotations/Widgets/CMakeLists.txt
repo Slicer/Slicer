@@ -17,25 +17,25 @@ set(module_widgets_include_directories
 set(module_widgets_SRCS
   qMRMLAnnotationROIWidget.cxx
   qMRMLAnnotationROIWidget.h
-  qMRMLAnnotationDisplayNodePropertyWidget.cxx
-  qMRMLAnnotationDisplayNodePropertyWidget.h
-  qMRMLAnnotationDisplayNodePointPropertyWidget.cxx
-  qMRMLAnnotationDisplayNodePointPropertyWidget.h
-  qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  #qMRMLAnnotationDisplayNodePropertyWidget.cxx
+  #qMRMLAnnotationDisplayNodePropertyWidget.h
+  #qMRMLAnnotationDisplayNodePointPropertyWidget.cxx
+  #qMRMLAnnotationDisplayNodePointPropertyWidget.h
+  #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
   )
 
 # Headers that should run through moc
 set(module_widgets_MOC_SRCS
   qMRMLAnnotationROIWidget.h
-  qMRMLAnnotationDisplayNodePropertyWidget.h  
-  qMRMLAnnotationDisplayNodePointPropertyWidget.h
-  qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  #qMRMLAnnotationDisplayNodePropertyWidget.h  
+  #qMRMLAnnotationDisplayNodePointPropertyWidget.h
+  #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
   )
 
 # UI files
 set(module_widgets_UI_SRCS
   Resources/UI/qMRMLAnnotationROIWidget.ui
-  Resources/UI/qMRMLAnnotationDisplayNodePointPropertyWidget.ui
+  #Resources/UI/qMRMLAnnotationDisplayNodePointPropertyWidget.ui
   )
 
 # Resources
