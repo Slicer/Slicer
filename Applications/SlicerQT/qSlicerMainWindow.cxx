@@ -148,7 +148,31 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->MouseModeToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
+  //----------------------------------------------------------------------------
+  // Capture tool bar
+  //----------------------------------------------------------------------------
+  // Capture bar needs to listen to the MRML scene and the layout
+  this->CaptureToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->CaptureToolBar,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->CaptureToolBar->setMRMLScene(
+      qSlicerApplication::application()->mrmlScene());
+ 
+  QObject::connect(this->CaptureToolBar,
+                   SIGNAL(screenshotButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openScreenshotDialog()));
 
+  // to get the scene views module dialog to pop up when a button is pressed
+  // in the capture tool bar, we emit a signal, and the
+  // io manager will deal with the sceneviews module
+  QObject::connect(this->CaptureToolBar,
+                   SIGNAL(sceneViewButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openSceneViewsDialog()));
+  
   //----------------------------------------------------------------------------
   // Hide toolbars by default
   //----------------------------------------------------------------------------
@@ -179,6 +203,14 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutChanged(int)));
 
 
+  // Capture tool bar needs to listen to the layout manager
+  QObject::connect(this->LayoutManager,
+                   SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
+                   this->CaptureToolBar,
+                   SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
+  this->CaptureToolBar->setActiveMRMLThreeDViewNode(
+      this->LayoutManager->activeMRMLThreeDViewNode());
+  
   //----------------------------------------------------------------------------
   // View Toolbar
   //----------------------------------------------------------------------------
@@ -297,6 +329,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   d->actionWindowToolbarsModuleSelector->setChecked(d->ModuleSelectorToolBar->isVisibleTo(this));
   d->actionWindowToolbarsModules->setChecked(d->ModuleToolBar->isVisibleTo(this));
   d->actionWindowToolbarsMouseMode->setChecked(d->MouseModeToolBar->isVisibleTo(this));
+  d->actionWindowToolbarsCapture->setChecked(d->CaptureToolBar->isVisibleTo(this));
 }
 
 //-----------------------------------------------------------------------------

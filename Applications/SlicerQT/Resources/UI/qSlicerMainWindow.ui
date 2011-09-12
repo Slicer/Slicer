@@ -96,6 +96,7 @@
      <addaction name="actionWindowToolbarsView"/>
      <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
+     <addaction name="actionWindowToolbarsCapture"/>
      <addaction name="separator"/>
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
@@ -284,6 +285,20 @@
    </property>
    <property name="windowTitle">
     <string>Mouse Mode ToolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="qMRMLCaptureToolBar" name="CaptureToolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Capture ToolBar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -628,6 +643,20 @@
     <string>Show or Hide the &quot;Mouse Mode&quot; toolbar</string>
    </property>
   </action>
+  <action name="actionWindowToolbarsCapture">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Capture</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Capture&quot; toolbar</string>
+   </property>
+  </action>
   <action name="actionWindowToolbarsResetToDefault">
    <property name="text">
     <string>Reset to default</string>
@@ -968,6 +997,11 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCaptureToolBar</class>
+   <extends>QToolBar</extends>
+   <header>qMRMLCaptureToolBar.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -14,6 +14,8 @@ set(designer_plugin_SRCS
   qMRMLWidgetsPlugin.cxx
   qMRMLWidgetsPlugin.h
 
+  qMRMLCaptureToolBarPlugin.h
+  qMRMLCaptureToolBarPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeWidgetPlugin.cxx
@@ -82,6 +84,7 @@ set(designer_plugin_SRCS
 set(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
+  qMRMLCaptureToolBarPlugin.h
   qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.h

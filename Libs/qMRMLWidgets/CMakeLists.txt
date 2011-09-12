@@ -31,6 +31,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
 # Sources
 #
 set(qMRMLWidgets_SRCS
+  qMRMLCaptureToolBar.cxx
+  qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.cxx
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
@@ -157,6 +159,7 @@ set(qMRMLWidgets_SRCS
 
 # Headers that should run through moc
 set(qMRMLWidgets_MOC_SRCS
+  qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h
@@ -222,6 +225,7 @@ set(qMRMLWidgets_MOC_SRCS
 
 # UI files
 set(qMRMLWidgets_UI_SRCS
+  Resources/UI/qMRMLCaptureToolBar.ui
   Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
