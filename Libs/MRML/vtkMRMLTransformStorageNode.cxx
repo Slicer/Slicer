@@ -199,7 +199,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         result = 0;
         }
       }
-    catch (itk::ExceptionObject &exc)
+    catch (itk::ExceptionObject &
+#ifndef NDEBUG
+           exc
+#endif
+          )
       {
       // File specified may not contain a grid image. Can we safely
       // error out quitely?
