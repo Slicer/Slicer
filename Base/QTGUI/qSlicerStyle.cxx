@@ -110,10 +110,6 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
       break;
     case QStyle::PM_LayoutHorizontalSpacing:
     case QStyle::PM_LayoutVerticalSpacing:
-      if (widget && widget->objectName() == "MRMLSlicesControllerWidget")
-        {// should be done at the application level..
-        return 2;
-        }
       return 3; // 6 by default
       break;
     case QStyle::PM_SliderLength:

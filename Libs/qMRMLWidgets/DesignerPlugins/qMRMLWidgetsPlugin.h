@@ -47,9 +47,7 @@
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
 #include "qMRMLSliceWidgetPlugin.h"
-#include "qMRMLSlicesControllerToolBarPlugin.h"
 #include "qMRMLThreeDViewPlugin.h"
-#include "qMRMLThreeDViewsControllerWidgetPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeViewPlugin.h"
 #include "qMRMLVolumeInfoWidgetPlugin.h"
@@ -94,10 +92,8 @@ public:
             << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
-            << new qMRMLSlicesControllerToolBarPlugin
             << new qMRMLSliceWidgetPlugin
             << new qMRMLThreeDViewPlugin
-            << new qMRMLThreeDViewsControllerWidgetPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeViewPlugin
             << new qMRMLVolumeInfoWidgetPlugin

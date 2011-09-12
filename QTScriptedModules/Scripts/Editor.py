@@ -90,13 +90,6 @@ class EditorWidget:
     self.parameterNode = slicer.mrmlScene.GetNodeByID(nodeID)
     self.parameterNodeTag = self.parameterNode.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
 
-    # get access to the magnifier window and turn it off while using 
-    # the Editor to improve performance (TODO: this should probably be
-    # a setting on the app)
-    mainWindow = slicer.util.mainWindow()
-    viewsController = slicer.util.findChildren(mainWindow, 'MRMLThreeDViewsControllerWidget')[0]
-    viewsController.disableMagnification = True
-
     # resume the current effect, if we left the editor and re-entered or pick default
     # TODO: not fully implemented
     #self.activateEffect()
@@ -104,12 +97,6 @@ class EditorWidget:
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
     self.pauseEffect()
-    # get access to the magnifier window and turn it off while using 
-    # the mouse tool to improve performance (TODO: this should probably be
-    # a setting on the app)
-    mainWindow = slicer.util.mainWindow()
-    viewsController = slicer.util.findChildren(mainWindow, 'MRMLThreeDViewsControllerWidget')[0]
-    viewsController.disableMagnification = False
 
   def updateGUIFromMRML(self, caller, event):
     if self.toolsBox:

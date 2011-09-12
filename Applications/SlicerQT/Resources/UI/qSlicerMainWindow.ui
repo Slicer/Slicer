@@ -186,32 +186,7 @@
       <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget" native="true">
-       <property name="text" stdset="0">
-        <string>Manipulate Slice Views</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="margin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="qMRMLSlicesControllerToolBar" name="MRMLSlicesControllerToolBar">
-          <property name="iconSize">
-           <size>
-            <width>18</width>
-            <height>18</height>
-           </size>
-          </property>
-          <property name="floatable">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget" native="true">
+      <widget class="ctkCollapsibleButton" name="DataProbeCollapsibleWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -222,9 +197,6 @@
         <string>Data Probe</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget" native="true"/>
-        </item>
        </layout>
       </widget>
      </item>
@@ -975,11 +947,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLSlicesControllerToolBar</class>
-   <extends>QToolBar</extends>
-   <header>qMRMLSlicesControllerToolBar.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -1001,12 +968,6 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLThreeDViewsControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLThreeDViewsControllerWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

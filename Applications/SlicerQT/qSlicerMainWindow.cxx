@@ -178,55 +178,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
                    q, SLOT(onLayoutChanged(int)));
 
-  //----------------------------------------------------------------------------
-  // Slices Controller Toolbar
-  //----------------------------------------------------------------------------
-  // Slices controller toolbar listens to the MRML scene
-  this->MRMLSlicesControllerToolBar->setMRMLScene(
-    qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->MRMLSlicesControllerToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(
-    this->LayoutManager->mrmlSliceLogics());
-
-  //----------------------------------------------------------------------------
-  // 3D Views Controller Toolbar
-  //----------------------------------------------------------------------------
-  // ThreeDViews controller toolbar listens to LayoutManager
-  // TODO The current active view could be a property of the layoutNode ?
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->MRMLThreeDViewsControllerWidget,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  this->MRMLThreeDViewsControllerWidget->setMRMLScene(
-      qSlicerApplication::application()->mrmlScene());
-  QObject::connect(this->LayoutManager,
-                   SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
-                   this->MRMLThreeDViewsControllerWidget,
-                   SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
-  this->MRMLThreeDViewsControllerWidget->setActiveMRMLThreeDViewNode(
-      this->LayoutManager->activeMRMLThreeDViewNode());
-  QObject::connect(this->LayoutManager,
-                   SIGNAL(activeThreeDRendererChanged(vtkRenderer*)),
-                   this->MRMLThreeDViewsControllerWidget,
-                   SLOT(setActiveThreeDRenderer(vtkRenderer*)));
-  this->MRMLThreeDViewsControllerWidget->setActiveThreeDRenderer(
-      this->LayoutManager->activeThreeDRenderer());
-
-  QObject::connect(this->MRMLThreeDViewsControllerWidget,
-                   SIGNAL(screenshotButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openScreenshotDialog()));
-
-  // to get the scene views module dialog to pop up when a button is pressed
-  // in the views controller widget, we emit a signal, and the
-  // io manager will deal with the sceneviews module
-  QObject::connect(this->MRMLThreeDViewsControllerWidget,
-                   SIGNAL(sceneViewButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openSceneViewsDialog()));
 
   //----------------------------------------------------------------------------
   // View Toolbar
@@ -586,27 +537,6 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
     if (action->data().toInt() == layout)
       {
       action->trigger();
-      }
-    }
-
-  // Connect any newly created qMRMLSliceWidgets to the magnify widget
-  ctkVTKMagnifyView * magnifyView
-      = d->MRMLThreeDViewsControllerWidget->magnifyView();
-  vtkMRMLScene * scene = qSlicerApplication::application()->mrmlScene();
-  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int i = 0; i < numNodes; i++ )
-    {
-    vtkMRMLNode * node = scene->GetNthNodeByClass(i, "vtkMRMLSliceNode");
-    vtkMRMLSliceNode * sliceNode = static_cast<vtkMRMLSliceNode *>(node);
-    Q_ASSERT(sliceNode);
-    qMRMLSliceWidget * sliceWidget
-        = d->LayoutManager->sliceWidget(sliceNode->GetLayoutName());
-    Q_ASSERT(sliceWidget);
-    QVTKWidget * VTKWidget = sliceWidget->sliceView()->VTKWidget();
-    Q_ASSERT(VTKWidget);
-    if (!magnifyView->isObserved(VTKWidget))
-      {
-      magnifyView->observe(VTKWidget);
       }
     }
 }

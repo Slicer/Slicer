@@ -66,24 +66,34 @@ class DataProbeInfoWidget(object):
 
 
   def refreshObservers(self):
+    """ When the layout changes, drop the observers from
+    all the old widgets and create new observers for the 
+    newly created widgets"""
+    # remove observers and reset
     for observee,tag in self.styleObserverTags:
       observee.RemoveObserver(tag)
     self.sliceWidgetsPerStyle = {}
+    # get new slice nodes
     layoutManager = slicer.app.layoutManager()
     sliceNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLSliceNode')
     sliceNodes.InitTraversal()
     for nodeIndex in xrange(sliceNodes.GetNumberOfItems()):
+      # find the widget for each node in scene
       sliceNode = sliceNodes.GetNextItemAsObject()
       sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
       if sliceWidget:
+        # add obserservers and keep track of tags
         style = sliceWidget.sliceView().interactorStyle()
         self.sliceWidgetsPerStyle[style] = sliceWidget
         events = ("MouseMoveEvent", "EnterEvent", "LeaveEvent")
         for event in events:
           tag = style.AddObserver(event, self.processEvent)
           self.styleObserverTags.append([style,tag])
+      # TODO: also observe the slice nodes
 
   def getPixelString(self,volumeNode,ijk):
+    """Given a volume node, create a human readable
+    string describing the contents"""
     # TODO: the volume nodes should have a way to generate 
     # these strings in a generic way
     if not volumeNode:
@@ -114,18 +124,20 @@ class DataProbeInfoWidget(object):
     return pixel[:-2] 
 
 
-  def processEvent(self,observee,event):   
+  def processEvent(self,observee,event):
+    # TODO: use a timer to delay calculation and compress events
     if event == 'LeaveEvent':
-      self.viewerColor.text = ""
-      self.viewerName.text = ""
-      self.viewerRAS.text = ""
-      self.viewerOrient.text = ""
-      self.viewerSpacing.text = ""
+      # reset all the readouts
+      self.viewerColor.setText( "" )
+      self.viewerName.setText( "" )
+      self.viewerRAS.setText( "" )
+      self.viewerOrient.setText( "" )
+      self.viewerSpacing.setText( "" )
       layers = ('L', 'F', 'B')
       for layer in layers:
-        self.layerNames[layer].text = ""
-        self.layerIJKs[layer].text = ""
-        self.layerValues[layer].text = ""
+        self.layerNames[layer].setText( "" )
+        self.layerIJKs[layer].setText( "" )
+        self.layerValues[layer].setText( "" )
       return
     if self.sliceWidgetsPerStyle.has_key(observee):
       sliceWidget = self.sliceWidgetsPerStyle[observee]
@@ -134,17 +146,17 @@ class DataProbeInfoWidget(object):
       interactor = observee.GetInteractor()
       xy = interactor.GetEventPosition()
       # populate the widgets
-      self.viewerColor.text = " "
+      self.viewerColor.setText( " " )
       self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % sliceNode.GetLayoutName())
-      self.viewerName.text = sliceNode.GetLayoutName()
+      self.viewerName.setText( "  " + sliceNode.GetLayoutName() + "  " )
       # TODO: get z value from lightbox
       ras = sliceNode.GetXYToRAS().MultiplyPoint(xy+(0,1))[:3]
-      self.viewerRAS.text = "RAS: %.1f, %.1f, %.1f" % ras
-      self.viewerOrient.text = sliceWidget.sliceOrientation
-      self.viewerSpacing.text = "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2]
+      self.viewerRAS.setText( "RAS: (%.1f, %.1f, %.1f)" % ras )
+      self.viewerOrient.setText( "  " + sliceWidget.sliceOrientation )
+      self.viewerSpacing.setText( "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2] )
       if sliceNode.GetSliceSpacingMode() == 1:
-        self.viewerSpacing.text = "(" + self.viewerSpacing.text + ")"
-      self.viewerSpacing.text = "Sp: " + self.viewerSpacing.text
+        self.viewerSpacing.setText( "(" + self.viewerSpacing.text + ")" )
+      self.viewerSpacing.setText( " Sp: " + self.viewerSpacing.text )
       layerLogicCalls = (('L', sliceLogic.GetLabelLayer), 
                          ('F', sliceLogic.GetForegroundLayer), 
                          ('B', sliceLogic.GetBackgroundLayer))
@@ -165,57 +177,93 @@ class DataProbeInfoWidget(object):
             ijkLabel += "%d, " % index
           ijkLabel = ijkLabel[:-2]
           valueLabel = self.getPixelString(volumeNode,ijk)
-        self.layerNames[layer].text = nameLabel
-        self.layerIJKs[layer].text = ijkLabel
-        self.layerValues[layer].text = valueLabel
+        self.layerNames[layer].setText( '<b>' + nameLabel )
+        self.layerIJKs[layer].setText( '(' + ijkLabel + ')' )
+        self.layerValues[layer].setText( '<b>' + valueLabel )
 
   def createSmall(self):
-
+    """Make the internals of the widget to display in the
+    Data Probe frame (lower left of slicer main window by default)"""
     # top row - things about the viewer itself
     self.viewerFrame = qt.QFrame(self.frame)
     self.viewerFrame.setLayout(qt.QHBoxLayout())
     self.frame.layout().addWidget(self.viewerFrame)
     self.viewerColor = qt.QLabel(self.viewerFrame)
     self.viewerFrame.layout().addWidget(self.viewerColor)
-    self.viewerFrame.layout().addStretch(1)
     self.viewerName = qt.QLabel(self.viewerFrame)
     self.viewerFrame.layout().addWidget(self.viewerName)
-    self.viewerFrame.layout().addStretch(1)
     self.viewerRAS = qt.QLabel()
     self.viewerFrame.layout().addWidget(self.viewerRAS)
-    self.viewerFrame.layout().addStretch(1)
     self.viewerOrient = qt.QLabel()
     self.viewerFrame.layout().addWidget(self.viewerOrient)
-    self.viewerFrame.layout().addStretch(1)
     self.viewerSpacing = qt.QLabel()
     self.viewerFrame.layout().addWidget(self.viewerSpacing)
     self.viewerFrame.layout().addStretch(1)
 
     # the grid - things about the layers
-    self.layerGrid = qt.QFrame(self.frame)
-    self.layerGrid.setLayout(qt.QGridLayout())
-    self.frame.layout().addWidget(self.layerGrid)
-    layers = ('L', 'F', 'B')
-    self.layerNames = {}
-    self.layerIJKs = {}
-    self.layerValues = {}
-    row = 0
-    for layer in layers:
-      col = 0
-      self.layerGrid.layout().addWidget(qt.QLabel(layer), row, col)
-      col += 1
-      self.layerNames[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerNames[layer], row, col)
-      col += 1
-      self.layerIJKs[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerIJKs[layer], row, col)
-      col += 1
-      self.layerValues[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerValues[layer], row, col)
-      col += 1
-      row += 1
-
-    
+    if True:
+      # this method makes labels
+      self.layerGrid = qt.QFrame(self.frame)
+      self.layerGrid.setLayout(qt.QGridLayout())
+      self.frame.layout().addWidget(self.layerGrid)
+      layers = ('L', 'F', 'B')
+      self.layerNames = {}
+      self.layerIJKs = {}
+      self.layerValues = {}
+      row = 0
+      for layer in layers:
+        col = 0
+        self.layerGrid.layout().addWidget(qt.QLabel(layer), row, col)
+        col += 1
+        self.layerNames[layer] = qt.QLabel()
+        self.layerGrid.layout().addWidget(self.layerNames[layer], row, col)
+        col += 1
+        self.layerIJKs[layer] = qt.QLabel()
+        self.layerGrid.layout().addWidget(self.layerIJKs[layer], row, col)
+        col += 1
+        self.layerValues[layer] = qt.QLabel()
+        self.layerGrid.layout().addWidget(self.layerValues[layer], row, col)
+        self.layerGrid.layout().setColumnStretch(col,100)
+        col += 1
+        row += 1
+    else:
+      # this method use a model/view
+      self.layerView = qt.QTableView(self.frame)
+      self.layerView.verticalHeader().hide()
+      self.frame.layout().addWidget(self.layerView)
+      self.layerModel = qt.QStandardItemModel()
+      self.layerView.setModel(self.layerModel)
+      layers = ('L', 'F', 'B')
+      self.layerNames = {}
+      self.layerIJKs = {}
+      self.layerValues = {}
+      self.items = []
+      row = 0
+      for layer in layers:
+        col = 0
+        item = qt.QStandardItem()
+        item.setText(layer)
+        self.layerModel.setItem(row,col,item)
+        self.items.append(item)
+        col += 1
+        self.layerNames[layer] = qt.QStandardItem()
+        self.layerModel.setItem(row,col,self.layerNames[layer])
+        col += 1
+        self.layerIJKs[layer] = qt.QStandardItem()
+        self.layerModel.setItem(row,col,self.layerIJKs[layer])
+        col += 1
+        self.layerValues[layer] = qt.QStandardItem()
+        self.layerModel.setItem(row,col,self.layerValues[layer])
+        col += 1
+        row += 1
+      self.layerView.setColumnWidth(0,15)
+      self.layerView.setColumnWidth(1,80)
+      self.layerView.setColumnWidth(2,65)
+      self.layerView.setColumnWidth(3,55)
+      self.layerModel.setHeaderData(0,1,"")
+      self.layerModel.setHeaderData(1,1,"Volume")
+      self.layerModel.setHeaderData(2,1,"IJK")
+      self.layerModel.setHeaderData(3,1,"Value")
 
     # goto module button
     self.goToModule = qt.QPushButton('->', self.frame)
@@ -224,8 +272,6 @@ class DataProbeInfoWidget(object):
     self.goToModule.connect("clicked()", self.onGoToModule)
     # hide this for now - there's not much to see in the module itself
     self.goToModule.hide()
-
-    
 
   def onGoToModule(self):
     m = slicer.util.mainWindow()
@@ -236,6 +282,12 @@ class DataProbeInfoWidget(object):
 #
 
 class DataProbeWidget:
+  """This builds the module contents - nothing here"""
+  # TODO: this could have a more in-depth set of information
+  # about the volumes and layers in the slice views
+  # and possibly other view types as well
+  # TODO: Since this is empty for now, it should be hidden
+  # from the Modules menu.
 
   def __init__(self, parent=None):
     self.observerTags = []
