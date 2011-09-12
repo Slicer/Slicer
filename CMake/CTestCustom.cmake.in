@@ -227,5 +227,5 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "_configtest.*error"
   "collect2: ld returned 1 exit status"
   # See http://www.cmake.org/pipermail/cmake/2011-May/044448.html
-  "([^ :]+):([0-9]+): ([^ \\t])"
+  "/usr/include/secure/_stdio.h:67:1: ,"
   )
