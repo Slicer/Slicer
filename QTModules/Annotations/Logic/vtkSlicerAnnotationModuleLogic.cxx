@@ -2706,7 +2706,10 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
       }
     else
       {
-      vtkErrorMacro("AddHierarchyNodeForAnnotation: annotation node is null or has no scene or id, not checking for existing hierarchy node");
+      if (annotationNode)
+        {
+        vtkErrorMacro("AddHierarchyNodeForAnnotation: annotation node has no scene or id, not checking for existing hierarchy node");
+        }
       }
 
     if (!this->GetActiveHierarchyNodeID())
