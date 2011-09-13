@@ -522,7 +522,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
 
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
-  if(this->m_SliceNode && widget == NULL)
+  if(this->m_SliceNode)
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
     this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
@@ -1442,7 +1442,7 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 
   double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
 
-  if (distance > NUMERIC_ZERO)
+  if (distance > 1.0) // TODO find a better value?
     {
     changed = true;
     }
