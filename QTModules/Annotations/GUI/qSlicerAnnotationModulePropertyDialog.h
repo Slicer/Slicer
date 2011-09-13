@@ -46,7 +46,8 @@ public:
 
 
 protected:
-  
+  /// update the ui.typeLabel from the node with m_id
+  void updateTypeLabelText();
 protected slots:
 
     void onCoordinateChanged(QString text);

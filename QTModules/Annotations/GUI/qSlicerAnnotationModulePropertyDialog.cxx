@@ -69,14 +69,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   // backup the current annotationNode
   this->m_logic->BackupAnnotationNode(this->m_id);
 
-  // build the typeLabelText including name and id of the annotation
-  QString * typeLabelText = new QString("Name: ");
-  typeLabelText->append(this->m_logic->GetAnnotationName(this->m_id));
-  typeLabelText->append(" (");
-  typeLabelText->append(this->m_id);
-  typeLabelText->append(")");
-
-  ui.typeLabel->setText(*typeLabelText);
+  this->updateTypeLabelText();
 
   // update the typeIcon according to the annotation type
   QIcon icon = QIcon(this->m_logic->GetAnnotationIcon(this->m_id.c_str()));
@@ -1196,6 +1189,10 @@ void qSlicerAnnotationModulePropertyDialog::onTextOpacityChanged(double value)
     {
     return;
     }
+  if (textDisplayNode->GetScene())
+    {
+    textDisplayNode->GetScene()->SaveStateForUndo(textDisplayNode);
+    }
   textDisplayNode->SetOpacity(value);
 }
 
@@ -1251,7 +1248,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
   int row = tableItem->row();
   int col = tableItem->column();
   QString newString = tableItem->text();
-  double newValue = newString.toDouble();
+
   vtkMRMLNode *node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
   if (!node)
     {
@@ -1262,7 +1259,18 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
     {
     return;
     }
-//  std::cout << "onPointsTableWidgetChanged: row = " << row << ", col = " << col << ", newValue = " << newValue << std::endl;
+//  std::cout << "onPointsTableWidgetChanged: row = " << row << ", col = " <<  col << ", newValue = " << newValue << std::endl;
+  if (col == 0)
+    {
+    // change the name
+    const char *newName = newString.toAscii().data();
+    pointsNode->SetName(newName);
+    // update the label string too if this is a fiducial
+    this->updateTypeLabelText();
+    return;
+    }
+  // otherwise it's the coordinate that changed
+  double newValue = newString.toDouble();
   // get the point coordinates corresponding to this row
   double *oldCoords = pointsNode->GetControlPointCoordinates(row);
   double newCoords[3];
@@ -1302,6 +1310,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
       newCoords[2] != oldCoords[2])
     {
     //std::cout << "Setting control point for point " << row << ", to " << newCoords[0] << ", " << newCoords[1] << ", " << newCoords[2] << std::endl;
+    if (pointsNode->GetScene())
+      {
+      pointsNode->GetScene()->SaveStateForUndo(pointsNode);
+      }
     pointsNode->SetControlPoint(row, newCoords);
     }
 }
@@ -1342,6 +1354,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
     {
     return;
     }
+  if (pointDisplayNode->GetScene())
+    {
+    pointDisplayNode->GetScene()->SaveStateForUndo(pointDisplayNode);
+    }
   pointDisplayNode->SetGlyphScale(value);
 }
 
@@ -1353,6 +1369,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
   if (!pointDisplayNode)
     {
     return;
+    }
+  if (pointDisplayNode->GetScene())
+    {
+    pointDisplayNode->GetScene()->SaveStateForUndo(pointDisplayNode);
     }
   pointDisplayNode->SetOpacity(value);
 }
@@ -1366,6 +1386,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
     {
     return;
     }
+  if (pointDisplayNode->GetScene())
+    {
+    pointDisplayNode->GetScene()->SaveStateForUndo(pointDisplayNode);
+    }
   pointDisplayNode->SetAmbient(value);
 }
 
@@ -1378,6 +1402,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
     {
     return;
     }
+  if (pointDisplayNode->GetScene())
+    {
+    pointDisplayNode->GetScene()->SaveStateForUndo(pointDisplayNode);
+    }
   pointDisplayNode->SetDiffuse(value);
 }
 
@@ -1389,6 +1417,10 @@ void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
   if (!pointDisplayNode)
     {
     return;
+    }
+  if (pointDisplayNode->GetScene())
+    {
+    pointDisplayNode->GetScene()->SaveStateForUndo(pointDisplayNode);
     }
   pointDisplayNode->SetSpecular(value);
 }
@@ -1427,6 +1459,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineWidthChanged(double value)
     {
     return;
     }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
+    }
   lineDisplayNode->SetLineThickness(value);
 }
 
@@ -1439,6 +1475,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineLabelPositionChanged(double va
     {
     return;
     }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
+    }
   lineDisplayNode->SetLabelPosition(value);
 }
 
@@ -1450,6 +1490,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineLabelVisibilityStateChanged(in
   if (!lineDisplayNode)
     {
     return;
+    }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
     }
   if (state)
     {
@@ -1472,6 +1516,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineTickSpacingChanged()
     }
   QString plainText = ui.lineTickSpacingLineEdit->text();
   double value = plainText.toDouble();
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
+    }
   lineDisplayNode->SetTickSpacing(value);
 }
 
@@ -1483,6 +1531,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineMaxTicksChanged(double value)
   if (!lineDisplayNode)
     {
     return;
+    }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
     }
   lineDisplayNode->SetMaxTicks(int(value));
 }
@@ -1496,6 +1548,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineOpacityChanged(double value)
     {
     return;
     }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
+    }
   lineDisplayNode->SetOpacity(value);
 }
 
@@ -1507,6 +1563,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineAmbientChanged(double value)
   if (!lineDisplayNode)
     {
     return;
+    }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
     }
   lineDisplayNode->SetAmbient(value);
 }
@@ -1520,6 +1580,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineDiffuseChanged(double value)
     {
     return;
     }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
+    }
   lineDisplayNode->SetDiffuse(value);
 }
 
@@ -1531,6 +1595,10 @@ void qSlicerAnnotationModulePropertyDialog::onLineSpecularChanged(double value)
   if (!lineDisplayNode)
     {
     return;
+    }
+  if (lineDisplayNode->GetScene())
+    {
+    lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
     }
   lineDisplayNode->SetSpecular(value);
 }
@@ -1667,3 +1735,19 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineMaxTicksSliderSpinBoxWidget->setEnabled(lock);
 }
 
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::updateTypeLabelText()
+{
+  // build the typeLabelText including name and id of the annotation
+  QString * typeLabelText = new QString("Name: ");
+  typeLabelText->append(this->m_logic->GetAnnotationName(this->m_id));
+  typeLabelText->append(" (");
+  typeLabelText->append(this->m_id);
+  typeLabelText->append(")");
+
+  if (ui.typeLabel->text().compare(*typeLabelText) != 0)
+    {
+    ui.typeLabel->setText(*typeLabelText);
+    }
+}
