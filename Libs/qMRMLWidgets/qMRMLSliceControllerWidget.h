@@ -38,7 +38,8 @@ class vtkMRMLSliceNode;
 /// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
 /// be changed. 
-class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget : public qMRMLViewControllerBar
+class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
+  : public qMRMLViewControllerBar
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
@@ -77,6 +78,9 @@ public:
 
   /// Get slice view name
   QString sliceViewName()const;
+
+  /// Return the color associated to the slice view
+  static QColor sliceViewColor(const QString& sliceViewName);
 
   /// Set the label for the slice view (abbreviation for the view
   /// name)

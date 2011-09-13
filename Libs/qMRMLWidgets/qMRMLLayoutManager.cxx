@@ -79,6 +79,7 @@ void qMRMLLayoutManagerPrivate::init()
   Q_Q(qMRMLLayoutManager);
   this->SliceControllerButtonGroup = new QButtonGroup(q);
   this->SliceControllerButtonGroup->setExclusive(false);
+  q->setSpacing(1);
 }
 
 //------------------------------------------------------------------------------

@@ -1209,36 +1209,12 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
     return;
     }
 
-  QPalette palette;
-
   // If name matches either 'Red, 'Green' or 'Yellow' set the
   // corresponding color (legacy colors). If the name matches an SVG color keyword
   // http://www.w3.org/TR/SVG/types.html#ColorKeywords, then use that.
   // Set Orange otherwise.
-  QColor buttonColor;
-
-  if (newSliceViewName == "Red")
-    {
-    buttonColor = qMRMLColors::sliceRed();
-    }
-  else if (newSliceViewName == "Green")
-    {
-    buttonColor = qMRMLColors::sliceGreen();
-    }
-  else if (newSliceViewName == "Yellow")
-    {
-    buttonColor =  qMRMLColors::sliceYellow();
-    }
-  else if (QColor(newSliceViewName.toLower()).isValid())
-    {
-    buttonColor = QColor(newSliceViewName.toLower());
-    }
-  else
-    {
-    buttonColor = qMRMLColors::sliceOrange();
-    }
-
-  d->setColor(buttonColor);
+  QColor barColor = qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
+  d->setColor(barColor);
 
   if (d->SliceLogic)
     {
@@ -1250,6 +1226,33 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 
 //---------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
+
+//---------------------------------------------------------------------------
+QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
+{
+  QColor color;
+  if (sliceViewName == "Red")
+    {
+    color = qMRMLColors::sliceRed();
+    }
+  else if (sliceViewName == "Green")
+    {
+    color = qMRMLColors::sliceGreen();
+    }
+  else if (sliceViewName == "Yellow")
+    {
+    color =  qMRMLColors::sliceYellow();
+    }
+  else if (QColor(sliceViewName.toLower()).isValid())
+    {
+    color = QColor(sliceViewName.toLower());
+    }
+  else
+    {
+    color = qMRMLColors::sliceOrange();
+    }
+  return color;
+}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLabel)
