@@ -47,13 +47,14 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   :qMRMLSceneDisplayableModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
-  this->setNameColumn(-1);
+  this->setNameColumn(4);
   this->setIDColumn(-1);
+  this->setVisibilityColumn(-1);
   this->setCheckableColumn(qMRMLSceneAnnotationModel::CheckedColumn);
 
-  this->setColumnCount(6);
+  this->setColumnCount(7);
   this->setHorizontalHeaderLabels(
-    QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Text");
+          QStringList() << "" << "Vis" << "Lock" << "Edit" << "Name" << "Value" << "Description");
 }
 
 //------------------------------------------------------------------------------
@@ -103,13 +104,13 @@ void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStand
         if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
           {
           // also set the name
-          annotationNode->SetName(item->text().toLatin1());
+          //annotationNode->SetName(item->text().toLatin1());
           }
         }
       else if (hierarchyNode)
         {
-        // if we have a hierarchy node, the name can be changed by editing the textcolumn
-        hierarchyNode->SetName(item->text().toLatin1());
+        // if we have a hierarchy node, the description can be changed by editing the textcolumn
+        hierarchyNode->SetDescription(item->text().toLatin1());
         }
       else if (snapshotNode)
         {
@@ -195,7 +196,7 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         }
       else if (hnode)
         {
-        item->setText(QString(node->GetName()));
+        item->setText(QString(node->GetDescription()));
         }
       break;
     }
@@ -207,14 +208,11 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
   QFlags<Qt::ItemFlag> flags = this->qMRMLSceneDisplayableModel::nodeFlags(node, column);
   // remove the ItemIsEditable flag from any possible item (typically at column 0)
   flags = flags & ~Qt::ItemIsEditable;
-  // and set it to the right column
-  switch(column)
+  // and set it to the text and names columns
+  if (column == this->nameColumn() ||
+      column == qMRMLSceneAnnotationModel::TextColumn)
     {
-    case qMRMLSceneAnnotationModel::TextColumn:
-      flags = flags | Qt::ItemIsEditable;
-      break;
-    default:
-      break;
+    flags = flags | Qt::ItemIsEditable;
     }
   return flags;
 }
