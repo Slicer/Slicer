@@ -24,19 +24,13 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionFileLoadScene"/>
-    <addaction name="actionFileImportScene"/>
-    <addaction name="actionFileAddData"/>
-    <addaction name="actionFileAddVolume"/>
-    <addaction name="actionFileAddTransform"/>
-    <addaction name="actionFileSaveScene"/>
     <widget class="QMenu" name="menuSDB">
      <property name="title">
       <string>Slicer Data Bundle</string>
@@ -45,6 +39,12 @@
      <addaction name="actionSDBZipDirectory"/>
      <addaction name="actionSDBZipToDCM"/>
     </widget>
+    <addaction name="actionFileLoadScene"/>
+    <addaction name="actionFileImportScene"/>
+    <addaction name="actionFileAddData"/>
+    <addaction name="actionFileAddVolume"/>
+    <addaction name="actionFileAddTransform"/>
+    <addaction name="actionFileSaveScene"/>
     <addaction name="menuSDB"/>
     <addaction name="actionFileCloseScene"/>
     <addaction name="separator"/>
@@ -100,9 +100,9 @@
      <addaction name="separator"/>
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
-    <addaction name="actionViewExtensionManager"/>
-    <addaction name="actionViewCacheRemoteIOManager"/>
     <addaction name="actionViewApplicationSettings"/>
+    <addaction name="actionWindowPythonInteractor"/>
+    <addaction name="actionViewExtensionManager"/>
     <addaction name="separator"/>
     <addaction name="actionWindowShowMainPanel"/>
     <addaction name="menuWindowToolbars"/>
@@ -110,12 +110,6 @@
     <addaction name="separator"/>
     <addaction name="actionWindowErrorLog"/>
     <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
-    <addaction name="actionWindowPythonInteractor"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -141,7 +135,6 @@
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
    <addaction name="menuFeeback"/>
   </widget>
@@ -184,21 +177,20 @@
       </widget>
      </item>
      <item>
-      <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
+      <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="DataProbeCollapsibleWidget" native="true">
+      <widget class="ctkCollapsibleButton" name="DataProbeCollapsibleWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" stdset="0">
+       <property name="text">
         <string>Data Probe</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
       </widget>
      </item>
     </layout>
@@ -509,7 +501,7 @@
     <string>Raise the &quot;Extension Manager&quot; wizard that provides status and information about available extensions</string>
    </property>
    <property name="shortcut">
-    <string>/</string>
+    <string>Ctrl+4</string>
    </property>
   </action>
   <action name="actionViewCacheRemoteIOManager">
@@ -528,7 +520,7 @@
     <string>The Application Settings interface provides options for saving many of Slicer's Interface and Remote Data Handling options to the Application Registry, so they are preserved across sessions.</string>
    </property>
    <property name="shortcut">
-    <string>F2</string>
+    <string>Ctrl+2</string>
    </property>
   </action>
   <action name="actionWindowShowMainPanel">
@@ -545,10 +537,10 @@
     <string>Collapse/Expand the GUI panel and allows Slicer's viewers to occupy the entire application window</string>
    </property>
    <property name="shortcut">
-    <string>F5</string>
+    <string>Ctrl+5</string>
    </property>
   </action>
-  <action name="actionWindowShowBottomPanel">
+  <action name="actionWindowMaximizeView">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -556,13 +548,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Bottom Panel</string>
+    <string>&amp;Maximize view</string>
    </property>
    <property name="toolTip">
-    <string>Collapse/Expand the bottom split-panel in which Slice viewers are conventionally displayed, allowing the 3D view to occupy the vertical extent of the application window.</string>
+    <string>Maximize/Minimize the current view.</string>
    </property>
    <property name="shortcut">
-    <string>F6</string>
+    <string>Ctrl+6</string>
    </property>
   </action>
   <action name="actionWindowErrorLog">
@@ -573,7 +565,7 @@
     <string>Raise the error log display.</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+E</string>
+    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="actionWindowPythonInteractor">
@@ -584,7 +576,7 @@
     <string>Raise the Python Interactor for scripted interaction with Slicer data.</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>Ctrl+3</string>
    </property>
   </action>
   <action name="actionWindowToolbarsLoadSave">
@@ -685,6 +677,9 @@
    <property name="text">
     <string>Interface Documentation (www)</string>
    </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="actionHelpSlicerPublications">
    <property name="text">
@@ -697,6 +692,9 @@
    </property>
    <property name="toolTip">
     <string>Provide a description of the Slicer3 effort and its support.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
    </property>
   </action>
   <action name="actionFeedbackReportBug">
@@ -970,18 +968,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -997,6 +983,12 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLCaptureToolBar</class>
