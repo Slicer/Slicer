@@ -57,6 +57,8 @@ void qSlicerTractographyDisplayBasicWidgetPrivate::init()
                     SLOT(setTubeVisibility(int)) );
   QObject::connect( this->GlyphVisibility, SIGNAL(stateChanged(int)), q,
                     SLOT(setGlyphVisibility(int)) );
+  QObject::connect( this->TubeSliceIntersectVisibility, SIGNAL(stateChanged(int)), q,
+                    SLOT(setTubeSliceIntersectVisibility(int)) );
 }
 
 
@@ -152,8 +154,11 @@ void qSlicerTractographyDisplayBasicWidget::
 
   if ( d->FiberBundleNode->GetTubeDisplayNode() )
     {
-    d->TubeVisibility->setChecked( 
-      d->FiberBundleNode->GetTubeDisplayNode()->GetVisibility() );
+    int tubeVis = d->FiberBundleNode->GetTubeDisplayNode()->GetVisibility();
+    d->TubeVisibility->setChecked(tubeVis);
+    d->TubeSliceIntersectVisibility->setEnabled(tubeVis);
+    d->TubeSliceIntersectVisibility->setChecked(
+      d->FiberBundleNode->GetTubeDisplayNode()->GetSliceIntersectionVisibility() );
     }
 
   if ( d->FiberBundleNode->GetGlyphDisplayNode() )
@@ -196,4 +201,15 @@ void qSlicerTractographyDisplayBasicWidget::
   if (dNode)
     dNode->SetVisibility( (state > 0) );
 
+}
+
+void qSlicerTractographyDisplayBasicWidget::
+  setTubeSliceIntersectVisibility(int state)
+{
+  Q_D(qSlicerTractographyDisplayBasicWidget);
+  if(!d->FiberBundleNode)
+    return;
+  vtkMRMLFiberBundleDisplayNode* dNode = d->FiberBundleNode->GetTubeDisplayNode();
+  if(dNode)
+    dNode->SetSliceIntersectionVisibility(state > 0);
 }

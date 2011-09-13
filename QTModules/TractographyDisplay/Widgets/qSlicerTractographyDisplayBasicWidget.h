@@ -34,6 +34,7 @@ public slots:
   void setFiberBundleNode(vtkMRMLFiberBundleNode*);
   void setLineVisibility(int);
   void setTubeVisibility(int);
+  void setTubeSliceIntersectVisibility(int);
   void setGlyphVisibility(int);
 
 protected slots:
