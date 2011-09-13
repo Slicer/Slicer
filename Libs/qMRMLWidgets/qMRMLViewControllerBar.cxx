@@ -157,10 +157,27 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
   QPalette palette = this->BarWidget->palette();
   QLinearGradient gradient(QPointF(0.,0.), QPointF(0.,1.));
   gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  gradient.setColorAt(0., barColor.lighter(102));
-  gradient.setColorAt(0.1, barColor);
-  gradient.setColorAt(0.8, barColor.darker(102));
-  gradient.setColorAt(1., barColor.darker(108));
+  // Light gradient
+  //gradient.setColorAt(0., barColor.lighter(102));
+  //gradient.setColorAt(0.1, barColor);
+  //gradient.setColorAt(0.8, barColor.darker(102));
+  //gradient.setColorAt(1., barColor.darker(108));
+  // Glass effect
+  //gradient.setColorAt(0., barColor.lighter(120));
+  //gradient.setColorAt(0.498, barColor.darker(118));
+  //gradient.setColorAt(0.5, barColor.darker(145));
+  //gradient.setColorAt(1., barColor.darker(165));
+  // Dialog effect
+  int hue = barColor.hue();
+  int sat = barColor.saturation();
+  double valueCoef = static_cast<double>(barColor.value()) / 240.;
+  gradient.setColorAt(0.0, QColor::fromHsv(hue, sat, qMin(255., 358. * valueCoef)));
+  gradient.setColorAt(0.15, QColor::fromHsv(hue, sat, qMin(255., 224 * valueCoef)));
+  gradient.setColorAt(0.24, QColor::fromHsv(hue, sat, qMin(255., 213 * valueCoef)));
+  gradient.setColorAt(0.65, QColor::fromHsv(hue, sat, qMin(255., 255 * valueCoef)));
+  gradient.setColorAt(0.71, QColor::fromHsv(hue, sat, qMin(255., 246 * valueCoef)));
+  gradient.setColorAt(0.85, QColor::fromHsv(hue, sat, qMin(255., 253 * valueCoef)));
+  gradient.setColorAt(1.0, QColor::fromHsv(hue, sat, qMin(255., 191 * valueCoef)));
   palette.setBrush(QPalette::Window, gradient);
   this->BarWidget->setPalette(palette);
 
