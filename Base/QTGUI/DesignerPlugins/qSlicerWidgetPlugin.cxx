@@ -23,23 +23,24 @@
 #include "qSlicerWidget.h"
 
 // --------------------------------------------------------------------------
-qSlicerWidgetPlugin::qSlicerWidgetPlugin()
+qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject* parent)
+  : qSlicerQTGUIAbstractPlugin(parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerWidget* _widget = new qSlicerWidget(_parent);
-  QPalette slicerPalette = _widget->palette();
+  qSlicerWidget* widget = new qSlicerWidget(parentWidget);
+  QPalette slicerPalette = widget->palette();
 
   // Apply Slicer Palette using the non-member function defined in qSlicerApplication
   //qSlicerApplyPalette(slicerPalette);
   qSlicerStyle style;
 
-  _widget->setPalette(style.standardPalette());
-  _widget->setAutoFillBackground(true);
-  return _widget;
+  widget->setPalette(style.standardPalette());
+  widget->setAutoFillBackground(true);
+  return widget;
 }
 
 // --------------------------------------------------------------------------

@@ -21,14 +21,15 @@
 #include "qSlicerMouseModeToolBarPlugin.h"
 #include "qSlicerMouseModeToolBar.h"
 
-qSlicerMouseModeToolBarPlugin::qSlicerMouseModeToolBarPlugin()
+qSlicerMouseModeToolBarPlugin::qSlicerMouseModeToolBarPlugin(QObject* parent)
+  : qSlicerQTGUIAbstractPlugin(parent)
 {
 }
 
-QWidget *qSlicerMouseModeToolBarPlugin::createWidget(QWidget *_parent)
+QWidget *qSlicerMouseModeToolBarPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerMouseModeToolBar* _widget = new qSlicerMouseModeToolBar(_parent);
-  return _widget;
+  qSlicerMouseModeToolBar* widget = new qSlicerMouseModeToolBar(parentWidget);
+  return widget;
 }
 
 QString qSlicerMouseModeToolBarPlugin::domXml() const

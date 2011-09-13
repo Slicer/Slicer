@@ -23,11 +23,12 @@
 
 #include "qSlicerQTGUIAbstractPlugin.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerModulePanelPlugin : 
-  public qSlicerQTGUIAbstractPlugin
+class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerModulePanelPlugin
+  : public qSlicerQTGUIAbstractPlugin
 {
+  Q_OBJECT
 public:
-  qSlicerModulePanelPlugin();
+  qSlicerModulePanelPlugin(QObject* parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

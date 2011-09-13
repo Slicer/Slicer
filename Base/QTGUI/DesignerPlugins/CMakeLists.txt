@@ -26,6 +26,7 @@ set(designer_plugin_SRCS
 set(designer_plugin_MOC_SRCS
   qSlicerQTGUIPlugins.h
 
+  qSlicerQTGUIAbstractPlugin.h
   qSlicerModulePanelPlugin.h
   qSlicerMouseModeToolBarPlugin.h
   qSlicerWidgetPlugin.h

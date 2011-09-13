@@ -23,16 +23,20 @@
 
 // QT includes
 #include <QDesignerCustomWidgetInterface>
+#include <QObject>
 
+// QTGUI includes
 #include "qSlicerBaseQTGUIPlugin_Export.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin :
-  public QDesignerCustomWidgetInterface
+class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerQTGUIAbstractPlugin 
+  : public QObject
+  , public QDesignerCustomWidgetInterface
 {
+  Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
 
-  qSlicerQTGUIAbstractPlugin();
+  qSlicerQTGUIAbstractPlugin(QObject* parent = 0);
   // Don't reimplement this method.
   QString group() const;
   // You can reimplement these methods

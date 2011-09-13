@@ -23,13 +23,14 @@
 
 #include "qSlicerQTGUIAbstractPlugin.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerWidgetPlugin : 
-  public qSlicerQTGUIAbstractPlugin
+class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerWidgetPlugin
+  : public qSlicerQTGUIAbstractPlugin
 {
+  Q_OBJECT
 public:
-  qSlicerWidgetPlugin();
+  qSlicerWidgetPlugin(QObject* parent = 0);
   
-  QWidget *createWidget(QWidget *_parent);
+  QWidget *createWidget(QWidget* parentWidget);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;

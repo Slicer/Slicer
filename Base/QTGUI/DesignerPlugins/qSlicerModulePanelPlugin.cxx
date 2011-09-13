@@ -21,14 +21,15 @@
 #include "qSlicerModulePanelPlugin.h"
 #include "qSlicerModulePanel.h"
 
-qSlicerModulePanelPlugin::qSlicerModulePanelPlugin()
+qSlicerModulePanelPlugin::qSlicerModulePanelPlugin(QObject* parent)
+  : qSlicerQTGUIAbstractPlugin(parent)
 {
 }
 
-QWidget *qSlicerModulePanelPlugin::createWidget(QWidget *_parent)
+QWidget *qSlicerModulePanelPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerModulePanel* _widget = new qSlicerModulePanel(_parent);
-  return _widget;
+  qSlicerModulePanel* widget = new qSlicerModulePanel(parentWidget);
+  return widget;
 }
 
 QString qSlicerModulePanelPlugin::domXml() const
