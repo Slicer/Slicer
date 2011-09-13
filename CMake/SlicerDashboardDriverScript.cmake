@@ -83,6 +83,9 @@ set(track ${model}${CTEST_TRACK_SUFFIX})
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 0)
+if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
+  set(CTEST_USE_LAUNCHERS 1)
+endif()
 #if(NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
 #  set(CTEST_USE_LAUNCHERS 1)
 #endif()
