@@ -349,12 +349,6 @@ QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int 
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneHierarchyModel::insertNode(vtkMRMLNode* node)
-{
-  return this->Superclass::insertNode(node);
-}
-
-//------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneHierarchyModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
 {
   QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
