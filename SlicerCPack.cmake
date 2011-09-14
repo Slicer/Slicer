@@ -10,6 +10,8 @@ endif()
 set(SlicerBlockInstallQtPlugins_subdirectories imageformats sqldrivers)
 include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
+include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
+
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPythonQt.cmake)
