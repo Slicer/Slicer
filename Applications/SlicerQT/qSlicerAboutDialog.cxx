@@ -51,7 +51,7 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
     + "r" + slicer->repositoryRevision());
   d->CreditsTextEdit->append("");
   d->CreditsTextEdit->append(slicer->copyrights());
-  d->CreditsTextEdit->moveCursor(QTextCursor::Start,QTextCursor::MoveAnchor);
+  d->CreditsTextEdit->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
 }
 
 //-----------------------------------------------------------------------------
