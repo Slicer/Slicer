@@ -74,9 +74,10 @@ void qSlicerIconComboBox::showPopup()
     
   // CustomSize
   //
+  const int numberOfItems = this->count();
   QSize itemSize = QSize( this->view()->sizeHintForColumn(0), this->view()->sizeHintForRow(0));
-  const int itemsPerRow = listRect.width() / itemSize.width();
-  const int itemsPerColumns = static_cast<int>(0.999 + static_cast<double>(this->count()) / itemsPerRow);
+  const int itemsPerRow = itemSize.width() ? listRect.width() / itemSize.width() : 0;
+  const int itemsPerColumns = itemsPerRow ? static_cast<int>(0.999 + static_cast<double>(numberOfItems) / itemsPerRow) : 0;
   listRect.setWidth( itemsPerRow * itemSize.width() );
   listRect.setHeight( itemsPerColumns * itemSize.height() );
   

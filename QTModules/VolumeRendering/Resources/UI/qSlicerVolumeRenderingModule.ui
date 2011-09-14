@@ -640,7 +640,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../Annotation/Resources/qSlicerAnnotationModule.qrc"/>
+  <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
  </resources>
  <connections>
   <connection>
