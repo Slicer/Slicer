@@ -40,9 +40,9 @@ SlicerMacroBuildModuleLogic(
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/presets.xml
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/presets.xml
+  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${qt_module_name}/presets.xml
   COPYONLY)
 
 install(
-  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/presets.xml
-  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR} COMPONENT Runtime)
+  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${qt_module_name}/presets.xml
+  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${qt_module_name} COMPONENT Runtime)
