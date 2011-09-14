@@ -52,7 +52,7 @@ public:
     VisibilityColumn = 1,
     LockColumn = 2,
     EditColumn = 3,
-    ValueColumn = 5,
+    ValueColumn = 4,
     TextColumn = 6
   };
 

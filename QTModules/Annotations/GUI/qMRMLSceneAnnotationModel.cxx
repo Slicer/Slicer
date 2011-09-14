@@ -47,14 +47,14 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   :qMRMLSceneDisplayableModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
-  this->setNameColumn(4);
+  this->setNameColumn(5);
   this->setIDColumn(-1);
   this->setVisibilityColumn(-1);
   this->setCheckableColumn(qMRMLSceneAnnotationModel::CheckedColumn);
 
   this->setColumnCount(7);
   this->setHorizontalHeaderLabels(
-          QStringList() << "" << "Vis" << "Lock" << "Edit" << "Name" << "Value" << "Description");
+          QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Name" << "Description");
 }
 
 //------------------------------------------------------------------------------
