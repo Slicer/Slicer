@@ -62,7 +62,9 @@ void qMRMLSliceWidgetPrivate::init()
   this->setupUi(q);
 
   // Highligh first RenderWindowItem
+  this->VTKSliceView->setHighlightedBoxColor(QColor(102, 102, 119));
   this->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
+  this->VTKSliceView->findChild<QVTKWidget*>()->installEventFilter(q);
 
   connect(this->VTKSliceView, SIGNAL(resized(QSize)),
           this->SliceController, SLOT(setSliceViewSize(QSize)));
@@ -384,4 +386,24 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceLogics(logics);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSliceWidget::eventFilter(QObject* object, QEvent* event)
+{
+  Q_D(qMRMLSliceWidget);
+  if (this->isAncestorOf(qobject_cast<QWidget*>(object)))
+    {
+    if (event->type() == QEvent::FocusIn)
+      {
+      d->VTKSliceView->setHighlightedBoxColor(Qt::white);
+      d->VTKSliceView->scheduleRender();
+      }
+    else if (event->type() == QEvent::FocusOut)
+      {
+      d->VTKSliceView->setHighlightedBoxColor(QColor(102, 102, 119));
+      d->VTKSliceView->scheduleRender();
+      }
+    }
+  return this->Superclass::eventFilter(object, event);
 }

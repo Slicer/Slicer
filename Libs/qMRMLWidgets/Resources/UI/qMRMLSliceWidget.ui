@@ -40,13 +40,6 @@
         <property name="renderEnabled">
          <bool>true</bool>
         </property>
-        <property name="highlightedBoxColor">
-         <color>
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
-         </color>
-        </property>
        </widget>
       </item>
      </layout>

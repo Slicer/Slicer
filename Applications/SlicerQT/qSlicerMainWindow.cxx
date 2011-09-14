@@ -185,11 +185,24 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionWindowToolbarsUndoRedo->trigger();
   this->actionWindowToolbarsLayout->trigger();
 
+  // Color of the spacing between views:
+  QFrame* layoutFrame = new QFrame(this->CentralWidget);
+  QHBoxLayout* centralLayout = new QHBoxLayout(this->CentralWidget);
+  centralLayout->setContentsMargins(0, 0, 0, 0);
+  centralLayout->addWidget(layoutFrame);
+
+  QPalette oldPalette = this->CentralWidget->palette();
+  QPalette centralPalette = oldPalette;
+  centralPalette.setColor(QPalette::Window, QColor(64, 64, 72)); // Payne's grey
+  this->CentralWidget->setAutoFillBackground(true);
+  this->CentralWidget->setPalette(centralPalette);
+  layoutFrame->setPalette(oldPalette);
+
   //----------------------------------------------------------------------------
   // Layout Manager
   //----------------------------------------------------------------------------
   // Instanciate and assign the layout manager to the slicer application
-  this->LayoutManager = new qSlicerLayoutManager(this->CentralWidget);
+  this->LayoutManager = new qSlicerLayoutManager(layoutFrame);
   this->LayoutManager->setScriptedDisplayableManagerDirectory(
       qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(this->LayoutManager);

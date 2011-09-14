@@ -122,6 +122,8 @@ public:
   /// mess too much with it. If you do, be aware that you are probably
   /// unsynchronizing the view from the nodes/logics.
   Q_INVOKABLE const ctkVTKSliceView* sliceView()const;
+
+  virtual bool eventFilter(QObject* object, QEvent* event);
 public slots:
 
   void setMRMLScene(vtkMRMLScene * newScene);
