@@ -35,12 +35,12 @@ public slots:
   void setFiberBundleDisplayNode(vtkMRMLNode *node);
   void setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode *node);
 
-  void setVisibility(int);
-  void setColorByScalarInvariant(int);
+  void setVisibility(bool);
+  void setColorByScalarInvariant();
   void onColorByScalarInvariantChanged(int);
   void setColorByScalarInvariantDisplayRange(double, double);
-  void setColorByCellScalars(int);
-  void setColorBySolid(int);
+  void setColorByCellScalars();
+  void setColorBySolid();
   void onColorBySolidChanged(const QColor&);
   void setColorByCellScalarsColorTable(vtkMRMLNode*);
   void setOpacity(double); 

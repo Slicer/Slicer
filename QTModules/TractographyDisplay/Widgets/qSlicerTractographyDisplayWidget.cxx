@@ -52,13 +52,13 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
 
   this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
-  QObject::connect( this->VisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setVisibility(int)) );
-  QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorByCellScalars(int)) );
-  QObject::connect( this->ColorBySolidCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorBySolid(int)) );
+  QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(int)) );
+  QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
+  QObject::connect( this->ColorBySolidCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
   QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );
   QObject::connect( this->ColorByScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, 
                     SLOT(setColorByCellScalarsColorTable(vtkMRMLNode*)) );
-  QObject::connect( this->ColorByScalarInvariantCheckBox, SIGNAL(stateChanged(int)), q, SLOT(setColorByScalarInvariant(int)) );
+  QObject::connect( this->ColorByScalarInvariantCheckBox, SIGNAL(clicked()), q, SLOT(setColorByScalarInvariant()) );
   QObject::connect( this->ColorByScalarInvariantComboBox, SIGNAL(currentIndexChanged(int)), q,
                     SLOT(onColorByScalarInvariantChanged(int)) );  
   QObject::connect( this->ColorByScalarInvariantDisplayRange, SIGNAL(rangeChanged(double,double)), q,
@@ -126,7 +126,7 @@ void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBun
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setVisibility(int state)
+void qSlicerTractographyDisplayWidget::setVisibility(bool state)
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
@@ -138,9 +138,8 @@ void qSlicerTractographyDisplayWidget::setVisibility(int state)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setColorBySolid(int state)
+void qSlicerTractographyDisplayWidget::setColorBySolid()
 {
-  Q_UNUSED(state);
   Q_D(qSlicerTractographyDisplayWidget);
   
   if (!d->FiberBundleDisplayNode) 
@@ -164,7 +163,7 @@ void qSlicerTractographyDisplayWidget::onColorBySolidChanged(const QColor &color
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setColorByScalarInvariant(int)
+void qSlicerTractographyDisplayWidget::setColorByScalarInvariant()
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
@@ -205,9 +204,8 @@ void qSlicerTractographyDisplayWidget::onColorByScalarInvariantChanged(int scala
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setColorByCellScalars(int state)
+void qSlicerTractographyDisplayWidget::setColorByCellScalars()
 {
-  Q_UNUSED(state);
   Q_D(qSlicerTractographyDisplayWidget);
   
   if (!d->FiberBundleDisplayNode) 
@@ -252,7 +250,6 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
     {
     return;
     }
-  this->m_updating = 1;
   
   d->VisibilityCheckBox->setChecked( d->FiberBundleDisplayNode->GetVisibility() );
   d->OpacitySlider->setValue( d->FiberBundleDisplayNode->GetOpacity() );
@@ -284,5 +281,4 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         }
         break;
    }
-   this->m_updating = 0;
 }
