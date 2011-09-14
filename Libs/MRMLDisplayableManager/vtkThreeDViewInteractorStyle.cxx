@@ -14,7 +14,9 @@
 =========================================================================*/
 #include "vtkThreeDViewInteractorStyle.h"
 
+// VTK includes
 #include "vtkCamera.h"
+#include "vtkCallbackCommand.h"
 #include "vtkMath.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
@@ -104,6 +106,7 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
                   << this->Interactor->GetEventPosition()[1]);
     return;
     }
+  this->GrabFocus(this->EventCallbackCommand);
   
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
@@ -232,6 +235,10 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
       break;
     }
 
+  if ( this->Interactor )
+    {
+    this->ReleaseFocus();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -244,6 +251,7 @@ void vtkThreeDViewInteractorStyle::OnMiddleButtonDown()
     return;
     }
   
+  this->GrabFocus(this->EventCallbackCommand);
   this->StartPan();
 }
 
@@ -255,6 +263,10 @@ void vtkThreeDViewInteractorStyle::OnMiddleButtonUp()
     case VTKIS_PAN:
       this->EndPan();
       break;
+    }
+  if ( this->Interactor )
+    {
+    this->ReleaseFocus();
     }
 }
 
@@ -268,6 +280,7 @@ void vtkThreeDViewInteractorStyle::OnRightButtonDown()
     return;
     }
   
+  this->GrabFocus(this->EventCallbackCommand);
   this->StartDolly();
 }
 
@@ -279,6 +292,10 @@ void vtkThreeDViewInteractorStyle::OnRightButtonUp()
     case VTKIS_DOLLY:
       this->EndDolly();
       break;
+    }
+  if ( this->Interactor )
+    {
+    this->ReleaseFocus();
     }
 }
 
@@ -292,11 +309,13 @@ void vtkThreeDViewInteractorStyle::OnMouseWheelForward()
     return;
     }
   
+  this->GrabFocus(this->EventCallbackCommand);
   this->StartDolly();
   double factor = this->MotionFactor * 0.2 * this->MouseWheelMotionFactor;
   // Slicer; invert direction to match right button drag
   this->Dolly(pow((double)1.1, -1. * factor));
   this->EndDolly();
+  this->ReleaseFocus();
 }
 
 //----------------------------------------------------------------------------
@@ -309,11 +328,13 @@ void vtkThreeDViewInteractorStyle::OnMouseWheelBackward()
     return;
     }
   
+  this->GrabFocus(this->EventCallbackCommand);
   this->StartDolly();
   double factor = this->MotionFactor * -0.2 * this->MouseWheelMotionFactor;
   // Slicer; invert direction to match right button drag
   this->Dolly(pow((double)1.1, -1. * factor));
   this->EndDolly();
+  this->ReleaseFocus();
 }
 
 //----------------------------------------------------------------------------
