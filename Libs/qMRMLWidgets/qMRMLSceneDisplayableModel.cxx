@@ -166,12 +166,12 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
 {
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  if (column == d->ColorColumn &&
+  if (column == this->colorColumn() &&
       d->displayNode(node) != 0)
     {
     flags |= Qt::ItemIsEditable;
     }
-  if (column == d->OpacityColumn &&
+  if (column == this->opacityColumn() &&
       d->displayNode(node) != 0)
     {
     flags |= Qt::ItemIsEditable;
@@ -184,7 +184,7 @@ void qMRMLSceneDisplayableModel
 ::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
-  if (column == d->ColorColumn)
+  if (column == this->colorColumn())
     {
     vtkMRMLDisplayNode* displayNode = d->displayNode(node);
     if (displayNode)
@@ -196,7 +196,7 @@ void qMRMLSceneDisplayableModel
       item->setToolTip("Color");
       }
     }
-  else if (column == d->OpacityColumn)
+  else if (column == this->opacityColumn())
     {
     vtkMRMLDisplayNode* displayNode = d->displayNode(node);
     if (displayNode)
@@ -215,7 +215,7 @@ void qMRMLSceneDisplayableModel
 ::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
   Q_D(qMRMLSceneDisplayableModel);
-  if (item->column() == d->ColorColumn)
+  if (item->column() == this->colorColumn())
     {
     QColor color = item->data(Qt::DecorationRole).value<QColor>();
     // Invalid color can happen when the item hasn't been initialized yet
@@ -240,7 +240,7 @@ void qMRMLSceneDisplayableModel
         }
       }
     }
- else if (item->column() == d->OpacityColumn)
+  else if (item->column() == this->opacityColumn())
     {
     QString displayedOpacity = item->data(Qt::EditRole).toString();
     if (!displayedOpacity.isEmpty())
@@ -289,3 +289,4 @@ void qMRMLSceneDisplayableModel::setOpacityColumn(int column)
   d->OpacityColumn = column;
   /// TODO: refresh the items
 }
+

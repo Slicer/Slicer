@@ -766,14 +766,13 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
-  Q_D(const qMRMLSceneModel);
   QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled
                              | Qt::ItemIsSelectable;
-  if (column == d->CheckableColumn && node->GetSelectable())
+  if (column == this->checkableColumn() && node->GetSelectable())
     {
     flags = flags | Qt::ItemIsUserCheckable;
     }
-  if (column == d->NameColumn)
+  if (column == this->nameColumn())
     {
     flags = flags | Qt::ItemIsEditable;
     }
@@ -794,24 +793,24 @@ void qMRMLSceneModel::updateItemDataFromNode(
   QStandardItem* item, vtkMRMLNode* node, int column)
 {
   Q_D(qMRMLSceneModel);
-  if (column == d->NameColumn)
+  if (column == this->nameColumn())
     {
     item->setText(QString(node->GetName()));
     item->setToolTip(node->GetNodeTagName());
     }
-  if (column == d->ToolTipNameColumn)
+  if (column == this->toolTipNameColumn())
     {
     item->setToolTip(QString(node->GetName()));
     }
-  if (column == d->IDColumn)
+  if (column == this->idColumn())
     {
     item->setText(QString(node->GetID()));
     }
-  if (column == d->CheckableColumn)
+  if (column == this->checkableColumn())
     {
     item->setCheckState(node->GetSelected() ? Qt::Checked : Qt::Unchecked);
     }
-  if (column == d->VisibilityColumn)
+  if (column == this->visibilityColumn())
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
     vtkMRMLDisplayableNode* displayableNode =
@@ -911,24 +910,24 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
   Q_D(qMRMLSceneModel);
-  if (item->column() == d->NameColumn)
+  if (item->column() == this->nameColumn())
     {
     node->SetName(item->text().toLatin1());
     }
   // ToolTip can't be edited, don't change the node
-  // if (item->column() == d->ToolTipNameColumn)
+  // if (item->column() == this->toolTipNameColumn())
   // {
   // }
-  if (item->column() == d->IDColumn)
+  if (item->column() == this->idColumn())
     {
     // Too dangerous
     //node->SetName(item->text().toLatin1());
     }
-  if (item->column() == d->CheckableColumn)
+  if (item->column() == this->checkableColumn())
     {
     node->SetSelected(item->checkState() == Qt::Checked ? 1 : 0);
     }
-  if (item->column() == d->VisibilityColumn)
+  if (item->column() == this->visibilityColumn())
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
