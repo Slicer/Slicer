@@ -51,7 +51,7 @@ void qSlicerActionsDialogPrivate::init()
 
 //------------------------------------------------------------------------------
 qSlicerActionsDialog::qSlicerActionsDialog(QWidget* parentWidget)
-  : QDialog(parentWidget)
+  : Superclass(parentWidget)
   , d_ptr(new qSlicerActionsDialogPrivate(*this))
 {
   Q_D(qSlicerActionsDialog);
