@@ -35,6 +35,7 @@ if { [itcl::find class ModelSWidget] == "" } {
     public variable visibility "1"
 
     variable _modelNode ""
+    variable _modelDisplayNode ""
     variable _modelNodeObservation ""
     variable _modelDisplayNodeObservation ""
     variable _sliceCompositeNode ""
@@ -142,11 +143,6 @@ itcl::body ModelSWidget::updateModelNode {} {
     #error "no node for id $modelID"
     return
   }
-  set displayNode [$modelNode GetDisplayNode]
-  if { $displayNode == "" } {
-    #error "no display node for id $modelID"
-    return
-  }
 
   # remove observation from old node and add to new node
   # then set input to pipeline
@@ -154,16 +150,32 @@ itcl::body ModelSWidget::updateModelNode {} {
     if { $_modelNodeObservation != "" } {
       $::slicer3::Broker RemoveObservation $_modelNodeObservation
     }
-    if { $_modelDisplayNodeObservation != "" } {
-      $::slicer3::Broker RemoveObservation $_modelDisplayNodeObservation
-    }
     set _modelNode $modelNode
     if { $_modelNode != "" } {
       $o(cutter) SetInput [$_modelNode GetPolyData]
       set _modelNodeObservation [$::slicer3::Broker AddObservation $_modelNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $_modelNode AnyEvent"]
-      if { $displayNode != "" } {
-        set _modelDisplayNodeObservation [$::slicer3::Broker AddObservation $displayNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $displayNode AnyEvent"]
-      }
+    }
+  }
+
+
+  # remove observation from old node and add to new node
+  # then set input to pipeline
+ 
+  # TODO: this is a special case (hack) for Fiber Bundles
+  # since we actually want to see their tube output, not the 
+  # original streamlines (which would be dots)
+  if { [$_modelNode IsA "vtkMRMLFiberBundleNode"] } {
+    set displayNode [$modelNode GetTubeDisplayNode]
+  } else {
+    set displayNode [$modelNode GetDisplayNode]
+  }
+  if { $displayNode != $_modelDisplayNode } {
+    if { $_modelDisplayNodeObservation != "" } {
+      $::slicer3::Broker RemoveObservation $_modelDisplayNodeObservation
+    }
+    set _modelDisplayNode $displayNode
+    if { $_modelDisplayNode != "" } {
+      set _modelDisplayNodeObservation [$::slicer3::Broker AddObservation $displayNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $displayNode AnyEvent"]
     }
   }
 
@@ -198,9 +210,8 @@ itcl::body ModelSWidget::highlight { } {
   set color "0.5 0.5 0.5"
   set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
   if { $modelNode != "" } {
-    set displayNode [$modelNode GetDisplayNode]
-    if { $displayNode != "" } {
-      set color [$displayNode GetColor]
+    if { $_modelDisplayNode != "" } {
+      set color [$_modelDisplayNode GetColor]
       $o(mapper) SetScalarVisibility 0
 
 
@@ -215,14 +226,14 @@ itcl::body ModelSWidget::highlight { } {
       #   before being mapped through the color lookup table
       #
       if { 0 } {
-        $o(mapper) SetScalarVisibility [$displayNode GetScalarVisibility]
-        set colorNode [$displayNode GetColorNode]
+        $o(mapper) SetScalarVisibility [$_modelDisplayNode GetScalarVisibility]
+        set colorNode [$_modelDisplayNode GetColorNode]
         if { $colorNode != "" } {
           set lut [$colorNode GetLookupTable]
           $o(mapper) SetLookupTable $lut
         }
         set polyData [$modelNode GetPolyData]
-        set scalarName [$displayNode GetActiveScalarName]
+        set scalarName [$_modelDisplayNode GetActiveScalarName]
         if { $scalarName != "" } {
           set pointData [$polyData GetPointData]
           set pointScalars [$pointData GetScalars $scalarName]
@@ -232,12 +243,12 @@ itcl::body ModelSWidget::highlight { } {
             $o(mapper) SetScalarModeToUsePointData
             $o(mapper) SetColorModeToMapScalars
             $o(mapper) UseLookupTableScalarRangeOff
-            eval $o(mapper) SetScalarRange [$displayNode GetScalarRange]
+            eval $o(mapper) SetScalarRange [$_modelDisplayNode GetScalarRange]
           } elseif { $cellScalars != "" } {
             $o(mapper) SetScalarModeToUseCellData
             $o(mapper) SetColorModeToDefault
             $o(mapper) UseLookupTableScalarRangeOff
-            eval $o(mapper) SetScalarRange [$displayNode GetScalarRange]
+            eval $o(mapper) SetScalarRange [$_modelDisplayNode GetScalarRange]
           } else {
             $o(mapper) SetScalarModeToDefault
           }
@@ -267,6 +278,11 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   $this updateModelNode
+  if { $_modelDisplayNode == "" } {
+    # no display node, do nothing
+    $this configure -visibility 0
+    return
+  }
 
   if { [info command $_modelNode] == "" || [$_modelNode GetPolyData] == "" } {
     # the model was deleted behind our back, 
@@ -275,9 +291,8 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  set displayNode [$_modelNode GetDisplayNode]
-  if { $displayNode != "" } {
-    $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
+  if { $_modelDisplayNode != "" } {
+    $this configure -visibility [$_modelDisplayNode GetSliceIntersectionVisibility]
   }
 
   if { !$visibility } {
@@ -295,7 +310,9 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     # since we actually want to see their tube output, not the 
     # original streamlines (which would be dots)
     if { [$_modelNode IsA "vtkMRMLFiberBundleNode"] } {
-      $o(cutter) SetInput [[$_modelNode GetDisplayNode] GetPolyData]
+      if { $_modelDisplayNode != "" } {
+        $o(cutter) SetInput [$_modelDisplayNode GetPolyData]
+      }
     } else {
       $o(cutter) SetInput [$_modelNode GetPolyData]
     }
