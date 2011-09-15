@@ -133,14 +133,17 @@
    </item>
    <item row="5" column="1">
     <widget class="ctkSliderWidget" name="StoppingValueSpinBoxLabel" native="true">
+     <property name="minimum" stdset="0">
+      <double>0.0100000000000000</double>
+     </property>
      <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
      <property name="value" stdset="0">
-      <double>0.100000000000000</double>
+      <double>0.250000000000000</double>
      </property>
      <property name="singleStep" stdset="0">
-      <double>0.100000000000000</double>
+      <double>0.010000000000000</double>
      </property>
     </widget>
    </item>
@@ -154,13 +157,16 @@
    <item row="6" column="1">
     <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBoxLabel" native="true">
      <property name="minimum" stdset="0">
-      <double>0.100000000000000</double>
+      <double>0.010000000000000</double>
      </property>
      <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
      </property>
      <property name="value" stdset="0">
       <double>0.700000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.010000000000000</double>
      </property>
     </widget>
    </item>
@@ -173,11 +179,17 @@
    </item>
    <item row="7" column="1">
     <widget class="ctkSliderWidget" name="IntegrationStepSpinBoxLabel" native="true">
+     <property name="minimum" stdset="0">
+      <double>0.100000000000000</double>
+     </property>
      <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
      </property>
      <property name="value" stdset="0">
       <double>0.500000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.010000000000000</double>
      </property>
     </widget>
    </item>
@@ -196,6 +208,9 @@
      <property name="value" stdset="0">
       <double>20.000000000000000</double>
      </property>
+     <property name="singleStep" stdset="0">
+      <double>1.00000000000000</double>
+     </property>
     </widget>
    </item>
    <item row="9" column="0">
@@ -211,7 +226,10 @@
       <double>10.000000000000000</double>
      </property>
      <property name="value" stdset="0">
-      <double>2.000000000000000</double>
+      <double>2.500000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.010000000000000</double>
      </property>
     </widget>
    </item>
@@ -225,10 +243,16 @@
    <item row="10" column="1">
     <widget class="ctkSliderWidget" name="FiducialStepSpinBoxLabel" native="true">
      <property name="minimum" stdset="0">
-      <double>1.000000000000000</double>
+      <double>0.200000000000000</double>
      </property>
      <property name="maximum" stdset="0">
       <double>10.000000000000000</double>
+     </property>
+     <property name="value" stdset="0">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.010000000000000</double>
      </property>
     </widget>
    </item>
