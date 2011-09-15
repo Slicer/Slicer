@@ -45,8 +45,8 @@ private:
   Q_DISABLE_COPY(qMRMLEventBrokerConnection);
 };
 
-class QMRML_WIDGETS_EXPORT qMRMLConnectionFactory
-  : public ctkVTKObjectEventsObserver::ctkVTKConnectionFactory
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLConnectionFactory: public ctkVTKConnectionFactory
 {
 public:
   virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;

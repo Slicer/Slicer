@@ -109,11 +109,7 @@ void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
 
-  if (!dynamic_cast<qMRMLConnectionFactory*>(ctkVTKObjectEventsObserver::connectionFactory))
-    {
-    delete ctkVTKObjectEventsObserver::connectionFactory;
-    ctkVTKObjectEventsObserver::connectionFactory = new qMRMLConnectionFactory;
-    }
+  ctkVTKConnectionFactory::setInstance(new qMRMLConnectionFactory);
 
   this->ColorDialogPickerWidget =
     QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));

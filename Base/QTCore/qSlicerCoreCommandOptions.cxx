@@ -23,6 +23,7 @@
 #include <QDir>
 
 // CTK includes
+#include <ctkPimpl.h>
 
 // SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"
