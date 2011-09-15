@@ -1279,55 +1279,56 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     lnode->GetMatrixTransformToWorld(transformToWorld);
     }
  
-  std::vector<vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(model);
-  vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(model);
+  std::vector<vtkMRMLDisplayNode *> displayNodes = this->GetDisplayNode(model);
+  vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
   
-  for (unsigned int i=0; i<dnodes.size(); i++)
+  for (unsigned int i=0; i<displayNodes.size(); i++)
     {
-    vtkMRMLDisplayNode *dnode = dnodes[i];
-    vtkMRMLDisplayNode *mdnode = dnode;
-    if (dnode != 0)
+    vtkMRMLDisplayNode *thisDisplayNode = displayNodes[i];
+    vtkMRMLDisplayNode *modelDisplayNode = thisDisplayNode;
+    if (thisDisplayNode != 0)
       {
-      vtkProp3D *prop = this->GetActorByID(dnode->GetID());
+      vtkProp3D *prop = this->GetActorByID(thisDisplayNode->GetID());
       if (prop == 0)
         {
         continue;
         }
-      // use hierarchy dispaly node if it exists
-      if (hdnode)
+      // use hierarchy display node if it exists
+      if (hierarchyDisplayNode)
         {
-        dnode = hdnode;
+        thisDisplayNode = hierarchyDisplayNode;
+        modelDisplayNode = hierarchyDisplayNode;
         }
         
       vtkActor *actor = vtkActor::SafeDownCast(prop);
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
 
-      prop->SetVisibility(mdnode->GetVisibility());
-      this->Internal->DisplayedVisibility[dnode->GetID()] = mdnode->GetVisibility();
+      prop->SetVisibility(modelDisplayNode->GetVisibility());
+      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
 
       if (actor)
         {
-        actor->GetMapper()->SetScalarVisibility(mdnode->GetScalarVisibility());
+        actor->GetMapper()->SetScalarVisibility(modelDisplayNode->GetScalarVisibility());
         // if the scalars are visible, set active scalars, try to get the lookup
         // table
-        if (mdnode->GetScalarVisibility())
+        if (modelDisplayNode->GetScalarVisibility())
           {
-          if (mdnode->GetColorNode() != 0)
+          if (modelDisplayNode->GetColorNode() != 0)
             {
-            if (mdnode->GetColorNode()->GetLookupTable() != 0)
+            if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
-              actor->GetMapper()->SetLookupTable(mdnode->GetColorNode()->GetLookupTable());
+              actor->GetMapper()->SetLookupTable(modelDisplayNode->GetColorNode()->GetLookupTable());
               }
-            else if (mdnode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
-                     vtkMRMLProceduralColorNode::SafeDownCast(mdnode->GetColorNode())->GetColorTransferFunction() != 0)
+            else if (modelDisplayNode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
+                     vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode())->GetColorTransferFunction() != 0)
               {
-              actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(mdnode->GetColorNode())->GetColorTransferFunction()));
+              actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode())->GetColorTransferFunction()));
               }
             }
 
           int cellScalarsActive = 0;
-          if (mdnode->GetActiveScalarName() == 0)
+          if (modelDisplayNode->GetActiveScalarName() == 0)
             {
             // see if there are scalars on the poly data that are not set as
             // active on the display node
@@ -1340,14 +1341,14 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               if (pointScalarName.compare("") != 0)
                 {
                 vtkDebugMacro("Setting the display node's active scalar to " << pointScalarName.c_str());
-                dnode->SetActiveScalarName(pointScalarName.c_str());
+                modelDisplayNode->SetActiveScalarName(pointScalarName.c_str());
                 }
               else
                 {
                 if (cellScalarName.compare("") != 0)
                   {
                   vtkDebugMacro("Setting the display node's active scalar to " << cellScalarName.c_str());
-                  dnode->SetActiveScalarName(cellScalarName.c_str());
+                  modelDisplayNode->SetActiveScalarName(cellScalarName.c_str());
                   }
                 else
                   {
@@ -1356,24 +1357,24 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
                 }
               }
             }
-          if (mdnode->GetActiveScalarName() != 0)
+          if (modelDisplayNode->GetActiveScalarName() != 0)
             {
             vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
             if (mnode)
               {
-              mnode->SetActiveScalars(mdnode->GetActiveScalarName(), "Scalars");
-              if (strcmp(mdnode->GetActiveScalarName(), mnode->GetActiveCellScalarName("scalars")) == 0)
+              mnode->SetActiveScalars(modelDisplayNode->GetActiveScalarName(), "Scalars");
+              if (strcmp(modelDisplayNode->GetActiveScalarName(), mnode->GetActiveCellScalarName("scalars")) == 0)
                 {
                 cellScalarsActive = 1;
                 }
               }
-            actor->GetMapper()->SelectColorArray(mdnode->GetActiveScalarName());
+            actor->GetMapper()->SelectColorArray(modelDisplayNode->GetActiveScalarName());
             }
           if (!cellScalarsActive)
             {
             // set the scalar range
-            actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
-            //if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
+            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
+            //if (!(thisDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode")))
             //  {
             // WHY need this, does not show glyph colors otherwise
             //actor->GetMapper()->SetScalarModeToUsePointFieldData();
@@ -1381,40 +1382,40 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             actor->GetMapper()->SetScalarModeToUsePointData();            
             actor->GetMapper()->SetColorModeToMapScalars();            
             actor->GetMapper()->UseLookupTableScalarRangeOff();
-            actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
+            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
             }
           else
             {
             actor->GetMapper()->SetScalarModeToUseCellFieldData();
             actor->GetMapper()->SetColorModeToDefault();
             actor->GetMapper()->UseLookupTableScalarRangeOff();
-            actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
+            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
             }
           }
         //// }
-        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
+        actor->GetProperty()->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
 
-        if (mdnode)
+        if (modelDisplayNode)
           {
-          if (mdnode->GetSelected())
+          if (modelDisplayNode->GetSelected())
             {
-            vtkDebugMacro("Model display node " << mdnode->GetName() << " is selected...");
-            actor->GetProperty()->SetColor(mdnode->GetSelectedColor());
-            actor->GetProperty()->SetAmbient(mdnode->GetSelectedAmbient());
-            actor->GetProperty()->SetSpecular(mdnode->GetSelectedSpecular());
+            vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
+            actor->GetProperty()->SetColor(modelDisplayNode->GetSelectedColor());
+            actor->GetProperty()->SetAmbient(modelDisplayNode->GetSelectedAmbient());
+            actor->GetProperty()->SetSpecular(modelDisplayNode->GetSelectedSpecular());
             }
           else
             {
-            //vtkWarningMacro("Model display node " << mdnode->GetName() << " is not selected...");
-            actor->GetProperty()->SetColor(dnode->GetColor());
-            actor->GetProperty()->SetAmbient(dnode->GetAmbient());
-            actor->GetProperty()->SetSpecular(dnode->GetSpecular());
+            //vtkWarningMacro("Model display node " << modelDisplayNode->GetName() << " is not selected...");
+            actor->GetProperty()->SetColor(modelDisplayNode->GetColor());
+            actor->GetProperty()->SetAmbient(modelDisplayNode->GetAmbient());
+            actor->GetProperty()->SetSpecular(modelDisplayNode->GetSpecular());
             }
           }
-        actor->GetProperty()->SetOpacity(dnode->GetOpacity());
-        actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
-        actor->GetProperty()->SetSpecularPower(dnode->GetPower());
-        if (dnode->GetTextureImageData() != 0)
+        actor->GetProperty()->SetOpacity(modelDisplayNode->GetOpacity());
+        actor->GetProperty()->SetDiffuse(modelDisplayNode->GetDiffuse());
+        actor->GetProperty()->SetSpecularPower(modelDisplayNode->GetPower());
+        if (modelDisplayNode->GetTextureImageData() != 0)
           {
           if (actor->GetTexture() == 0)
             {
@@ -1423,7 +1424,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             actor->SetTexture(texture);
             texture->Delete();
             }
-          actor->GetTexture()->SetInput(dnode->GetTextureImageData());
+          actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
           actor->GetProperty()->SetColor(1., 1., 1.);
           }
         else
@@ -1433,9 +1434,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         }
       else if (imageActor)
         {
-        if (dnode->GetTextureImageData() != 0)
+        if (modelDisplayNode->GetTextureImageData() != 0)
           {
-          imageActor->SetInput(dnode->GetTextureImageData());
+          imageActor->SetInput(modelDisplayNode->GetTextureImageData());
           }
         else
           {
