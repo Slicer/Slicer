@@ -123,9 +123,13 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->Superclass::setupPopupUi();
   this->Ui_qMRMLSliceControllerWidget::setupUi(this->PopupWidget);
 
-  this->LabelMapOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
-  this->ForegroundOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
-  this->BackgroundOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
+  this->LabelMapOpacitySlider->slider()->setOrientation(Qt::Vertical);
+  this->ForegroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
+  this->BackgroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
+
+  this->LabelMapOpacitySlider->popup()->setHideDelay(400);
+  this->ForegroundOpacitySlider->popup()->setHideDelay(400);
+  this->BackgroundOpacitySlider->popup()->setHideDelay(400);
 
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
