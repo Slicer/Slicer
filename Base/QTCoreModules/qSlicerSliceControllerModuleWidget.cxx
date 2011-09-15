@@ -77,7 +77,8 @@ qSlicerSliceControllerModuleWidgetPrivate::createSliceController(vtkMRMLSliceNod
 
   // create the SliceControllerWidget and wire it to the appropriate
   // slice node
-  qMRMLSliceControllerWidget *widget = new qMRMLSliceControllerWidget(CTKCollapsibleButton);
+  qMRMLSliceControllerWidget *widget =
+    new qMRMLSliceControllerWidget(this->SliceControllersCollapsibleButton);
   widget->setSliceViewName( sn->GetName() ); // call before setting slice node
   widget->setSliceViewLabel( sn->GetLayoutLabel() );
   widget->setMRMLSliceNode( sn );
@@ -134,6 +135,7 @@ void qSlicerSliceControllerModuleWidget::setup()
 {
   Q_D(qSlicerSliceControllerModuleWidget);
   d->setupUi(this);
+  d->SliceInformationCollapsibleButton->setCollapsed(true);
 }
 
 //-----------------------------------------------------------------------------

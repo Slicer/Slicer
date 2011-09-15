@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+    <widget class="ctkCollapsibleButton" name="SliceControllersCollapsibleButton" native="true">
      <property name="text" stdset="0">
       <string>Slice Controllers</string>
      </property>
@@ -23,7 +23,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton_2" native="true">
+    <widget class="ctkCollapsibleButton" name="SliceInformationCollapsibleButton" native="true">
      <property name="enabled">
       <bool>true</bool>
      </property>
