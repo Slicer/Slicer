@@ -48,8 +48,18 @@ public:
 protected:
   /// update the ui.typeLabel from the node with m_id
   void updateTypeLabelText();
+  /// update the ui.idLabel from the node with m_id
+  void updateIDLabelText();
+  /// update the ui.nameLineEdit from the node with m_id
+  void updateNameText();
 protected slots:
 
+  void onNameLineEditChanged();
+  void onAllColorChanged(QColor qcolor);
+  void onSizeSmallPushButtonClicked();
+  void onSizeMediumPushButtonClicked();
+  void onSizeLargePushButtonClicked();
+  
     void onCoordinateChanged(QString text);
 
     void onPointsTableWidgetChanged(QTableWidgetItem *tableItem);

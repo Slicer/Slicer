@@ -729,16 +729,19 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationName(const char * id)
     return 0;
     }
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      node);
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
-  if (!annotationNode)
+  if (annotationNode)
     {
-    vtkErrorMacro("GetAnnotationName: Could not get the annotationMRML node.")
-    return 0;
+    return annotationNode->GetName();
     }
 
-  return annotationNode->GetName();
+  vtkMRMLAnnotationHierarchyNode *hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hierarchyNode)
+    {
+    return hierarchyNode->GetName();
+    }
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -2049,14 +2052,19 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
 
-  if (!annotationNode)
+  if (annotationNode)
     {
-    vtkErrorMacro("GetAnnotationVisibility: Could not get the annotationMRML node.")
-    return 0;
+    return annotationNode->GetVisible();
     }
 
-  // lock this annotation
-  return annotationNode->GetVisible();
+  // is it a heirarchy node?
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hnode && hnode->GetDisplayNode())
+    {
+    return hnode->GetDisplayNode()->GetVisibility();
+    }
+    
+  return 0;
 
 }
 
@@ -2083,18 +2091,21 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
     return;
     }
 
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      node);
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
-  if (!annotationNode)
+  if (annotationNode)
     {
-    vtkErrorMacro("SetAnnotationVisibility: Could not get the annotationMRML node.")
+    // show/hide this annotation
+    annotationNode->SetVisible(!annotationNode->GetVisible());
     return;
     }
 
-  // show/hide this annotation
-  annotationNode->SetVisible(!annotationNode->GetVisible());
-
+  // or it might be a hierarchy node
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  if (hnode && hnode->GetDisplayNode())
+    {
+    hnode->GetDisplayNode()->SetVisibility(!hnode->GetDisplayNode()->GetVisibility());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -2120,13 +2131,14 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool
     return;
     }
 
-  // special case for snapshot nodes
-  if (node->IsA("vtkMRMLAnnotationSnapshotNode"))
+  // special case for snapshot and hierarchy nodes
+  if (node->IsA("vtkMRMLAnnotationSnapshotNode") ||
+      node->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
     // directly bail out
     return;
     }
-  // end of special case for snapshot nodes
+  // end of special case
 
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
@@ -2199,7 +2211,10 @@ void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
 
   if (!annotationNode)
     {
-    vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRML node.")
+    if (!node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      {
+      vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRML node.");
+      }
     return;
     }
 
@@ -2256,7 +2271,10 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 
   if (!annotationNode)
     {
-    vtkErrorMacro("RestoreAnnotationNode: Could not get the annotationMRML node.")
+    if (!node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      {
+      vtkErrorMacro("RestoreAnnotationNode: Could not get the annotationMRML node.");
+      }
     return;
     }
 
@@ -2269,7 +2287,7 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 
     if (!displayNode)
       {
-      vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRMLDisplay node:" << displayNode)
+      vtkErrorMacro("RestoreAnnotationNode: Could not get the annotationMRMLDisplay node:" << displayNode)
       }
     else
       {
@@ -2317,7 +2335,10 @@ void vtkSlicerAnnotationModuleLogic::DeleteBackupNodes(const char * id)
 
   if (!annotationNode)
     {
-    vtkErrorMacro("DeleteBackupNodes: Could not get the annotationMRML node.")
+    if (!node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      {
+      vtkErrorMacro("DeleteBackupNodes: Could not get the annotationMRML node.");
+      }
     return;
     }
 
@@ -3399,6 +3420,7 @@ const char * vtkSlicerAnnotationModuleLogic::AddDisplayNodeForHierarchyNode(vtkM
     vtkErrorMacro("AddDisplayNodeForHierarchyNode: error creating a new display node");
     return NULL;
     }
+  dnode->SetVisibility(1);
   if (this->GetMRMLScene())
     {
     this->GetMRMLScene()->AddNode(dnode);  

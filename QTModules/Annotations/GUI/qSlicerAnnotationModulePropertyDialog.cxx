@@ -24,6 +24,9 @@
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLFiducialListNode.h"
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 {
@@ -45,8 +48,10 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
     // hierarchies
 
     // TODO show the display widget
+    ui.advancedCollapsibleButton->hide();
 
-    ui.tabWidget->hide();
+    // init so it updates the general properties
+    this->initialize();
 
     }
   else
@@ -69,14 +74,45 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   // backup the current annotationNode
   this->m_logic->BackupAnnotationNode(this->m_id);
 
+  this->updateNameText();
   this->updateTypeLabelText();
-
+  this->updateIDLabelText();
+  
   // update the typeIcon according to the annotation type
   QIcon icon = QIcon(this->m_logic->GetAnnotationIcon(this->m_id.c_str()));
   QPixmap pixmap = icon.pixmap(32, 32);
 
   ui.typeIcon->setPixmap(pixmap);
 
+  // load the visiblity status
+  int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
+
+  if (!visible)
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
+    }
+  else
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
+    }
+  
+  // customise the all color picker button
+  ui.allColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
+
+  // if it's a hierarchy node, don't show the size or lock buttons
+  if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
+    {
+    ui.sizeSmallPushButton->setEnabled(false);
+    ui.sizeMediumPushButton->setEnabled(false);
+    ui.sizeLargePushButton->setEnabled(false);
+
+    ui.lockUnlockButton->setEnabled(false);
+
+    // the rest is hidden, so just return
+    return;
+    }
   // load the current annotation text
   vtkStdString text = this->m_logic->GetAnnotationText(this->m_id.c_str());
 
@@ -141,19 +177,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   this->lockUnlockInterface(locked);
 
-  // load the visiblity status
-  int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
 
-  if (!visible)
-    {
-    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
-    ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
-    }
-  else
-    {
-    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
-    ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
-    }
 
   vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
   if (!mrmlNode)
@@ -173,22 +197,17 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     for (int p = 0; p < pointsNode->GetNumberOfControlPoints(); p++)
       {
       ui.pointsTableWidget->insertRow(p);
-      const char *name = pointsNode->GetName();
-      if (name)
-        {
-        ui.pointsTableWidget->setItem(p,0,new QTableWidgetItem(name));
-        }
       double *coord = pointsNode->GetControlPointCoordinates(p);
       
       if (coord)
         {
         QString qnum;
         qnum.setNum(coord[0]);
-        ui.pointsTableWidget->setItem(p,1,new QTableWidgetItem(qnum));
+        ui.pointsTableWidget->setItem(p,0,new QTableWidgetItem(qnum));
         qnum.setNum(coord[1]);
-        ui.pointsTableWidget->setItem(p,2,new QTableWidgetItem(qnum));
+        ui.pointsTableWidget->setItem(p,1,new QTableWidgetItem(qnum));
         qnum.setNum(coord[2]);
-        ui.pointsTableWidget->setItem(p,3,new QTableWidgetItem(qnum));
+        ui.pointsTableWidget->setItem(p,2,new QTableWidgetItem(qnum));
         }
       }
     }
@@ -327,407 +346,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.tabWidget->setTabEnabled(3, false);
     }
 
-  if (mrmlNode->IsA("vtkMRMLAnnotationFiducialNode") || mrmlNode->IsA("vtkMRMLAnnotationRulerNode")) {
-
+  if (mrmlNode->IsA("vtkMRMLAnnotationFiducialNode") || mrmlNode->IsA("vtkMRMLAnnotationRulerNode"))
+    {
     // activate the points tab
     ui.tabWidget->setCurrentIndex(1);
-
-  }
-    /*
-   this->setWindowTitle(
-   "Annotation Properties");
-   this->SaveStateForUndo(
-   node);
-
-   // COORDINATES
-   QDoubleValidator *doubleVal = new QDoubleValidator(
-   this);
-
-   for (int i = 0; i < m_logic->GetNumberOfControlPoints(
-   vtkMRMLAnnotationControlPointsNode::SafeDownCast(
-   node)) * 3; ++i)
-   {
-   m_lineEditList.push_back(
-   new QLineEdit(
-   ui.CTKCollapsibleGroupBox_4));
-   m_lineEditList[i]->setValidator(
-   doubleVal);
-   }
-
-   m_gridLayout = new QGridLayout(
-   ui.CTKCollapsibleGroupBox_4);
-   m_gridLayout->addWidget(
-   ui.annotationTypeBrowser,
-   0,
-   0,
-   2,
-   3);
-   m_gridLayout->addWidget(
-   ui.textLabel,
-   2,
-   0,
-   1,
-   1);
-   m_gridLayout->addWidget(
-   ui.annotationTextEdit,
-   2,
-   1,
-   2,
-   2);
-   m_gridLayout->addWidget(
-   ui.annotationValueBrowser,
-   4,
-   0,
-   2,
-   3);
-   m_gridLayout->addWidget(
-   ui.coordinatesLabel,
-   6,
-   0,
-   1,
-   3);
-
-   double* pos;
-   for (int id = 0; id < m_logic->GetNumberOfControlPoints(
-   node); ++id)
-   {
-   pos = m_logic->GetAnnotationControlPointsCoordinate(
-   node,
-   id);
-
-   for (int i = 0; i < 3; i++)
-   {
-   QString posString(
-   "");
-   posString.append(
-   QString(
-   "%1").arg(
-   QString::number(
-   double(
-   pos[i]),
-   'f',
-   2)));
-   this->m_lineEditList[i + id * 3]->setText(
-   posString);
-   this->connect(
-   this->m_lineEditList[i + id * 3],
-   SIGNAL(textChanged(QString)),
-   this,
-   SLOT(onCoordinateChanged(QString)));
-   this->m_gridLayout->addWidget(
-   m_lineEditList[i + id * 3],
-   7 + id,
-   i % 3,
-   1,
-   1);
-   }
-   }
-
-   // Lock/Unlock properties
-   if (vtkMRMLAnnotationNode::SafeDownCast(
-   node) != NULL)
-   {
-   if (vtkMRMLAnnotationNode::SafeDownCast(
-   node)->GetLocked() == 1)
-   {
-   ui.annotationTextEdit->setEnabled(
-   false);
-   for (int i = 0; i < m_logic->GetNumberOfControlPoints(
-   vtkMRMLAnnotationControlPointsNode::SafeDownCast(
-   node)) * 3; ++i)
-   {
-   m_lineEditList[i]->setEnabled(
-   false);
-   }
-   ui.textTab->setEnabled(
-   false);
-   ui.pointTab->setEnabled(
-   false);
-   ui.lineTab->setEnabled(
-   false);
-   }
-   else
-   {
-   ui.annotationTextEdit->setEnabled(
-   true);
-   for (int i = 0; i < m_logic->GetNumberOfControlPoints(
-   vtkMRMLAnnotationControlPointsNode::SafeDownCast(
-   node)) * 3; ++i)
-   {
-   m_lineEditList[i]->setEnabled(
-   true);
-   }
-   ui.textTab->setEnabled(
-   true);
-   ui.pointTab->setEnabled(
-   true);
-   ui.lineTab->setEnabled(
-   true);
-   }
-
-   }
-
-   // Type
-   QString typeString;
-   typeString.append(
-   "<p>Annotation Type: ") .append(
-   "<img src='") .append(
-   m_logic->GetIconName(
-   node,
-   false)) .append(
-   "'>") .append(
-   "</p>");
-   ui.annotationTypeBrowser->setHtml(
-   typeString);
-
-   // Text Properties
-   QString textString = QString(
-   m_logic->GetAnnotationTextProperty(
-   node));
-   ui.annotationTextEdit->setText(
-   textString);
-
-   // Text Format
-   //const char* textFormat = m_logic->GetAnnotationTextFormatProperty(node);
-
-   // Value
-   std::vector<double> vv = m_logic->GetAnnotationMeasurement(
-   node);
-   char valuechar[100];
-   QString valueString;
-   //sprintf( valuechar, textFormat, vv);
-   valueString.append(
-   "<p>Value: <b>").append(
-   QString(
-   valuechar)).append(
-   "</b></p>");
-   ui.annotationValueBrowser->setHtml(
-   valueString);
-
-   double value;
-
-   // Default CollapsibleGroupBox Properties
-   QVBoxLayout* groupBoxLayout = new QVBoxLayout;
-   ui.displayPropertiesCTKCollapsibleGroupBox->setLayout(
-   groupBoxLayout);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(
-   true);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setChecked(
-   false);
-
-   if (node->IsA(
-   "vtkMRMLAnnotationStickyNode"))
-   {
-   ui.coordinatesLabel->setVisible(
-   false);
-   ui.annotationValueBrowser->setVisible(
-   false);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(
-   false);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setVisible(
-   false);
-   return;
-   }
-
-   if (node->IsA(
-   "vtkMRMLAnnotationTextNode"))
-   {
-   ui.coordinatesLabel->setVisible(
-   true);
-   ui.annotationValueBrowser->setVisible(
-   false);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(
-   true);
-   ui.displayPropertiesCTKCollapsibleGroupBox->setChecked(
-   true);
-
-   ui.lineTab->setVisible(
-   false);
-   ui.pointTab->setVisible(
-   false);
-   return;
-   }
-
-   // Text Display Properties
-   if (node->IsA(
-   "vtkMRMLFiducialListNode"))
-   {
-   vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
-   node);
-   double* color;
-   QColor qcolor;
-
-   color = fNode->GetColor();
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.textUnselectedColorPickerButton->setColor(
-   qcolor);
-   ui.textUnselectedColorPickerButton->setText(
-   "Selected Text Color");
-   ui.pointUnselectedColorPickerButton->setColor(
-   qcolor);
-   ui.pointUnselectedColorPickerButton->setText(
-   "Selected Point Color");
-   color = fNode->GetSelectedColor();
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.textSelectedColorPickerButton->setColor(
-   qcolor);
-   ui.textSelectedColorPickerButton->setText(
-   "Text Color");
-   ui.pointSelectedColorPickerButton->setColor(
-   qcolor);
-   ui.pointSelectedColorPickerButton->setText(
-   "Point Color");
-
-   ui.textScaleSliderSpinBoxWidget->setValue(
-   fNode->GetTextScale());
-   ui.pointOpacitySliderSpinBoxWidget->setValue(
-   fNode->GetOpacity());
-   ui.pointAmbientSliderSpinBoxWidget->setValue(
-   fNode->GetAmbient());
-   ui.pointDiffuseSliderSpinBoxWidget->setValue(
-   fNode->GetDiffuse());
-   ui.pointSpecularSliderSpinBoxWidget->setValue(
-   fNode->GetSpecular());
-
-   ui.lineTab->setEnabled(
-   false);
-   return;
-   }
-
-   double* color;
-   QColor qcolor;
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->TEXT_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.textUnselectedColorPickerButton->setColor(
-   qcolor);
-   //ui.textUnselectedColorPickerButton->setColor(m_logic->getColor(node, m_logic->TEXT_COLOR));
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->TEXT_SELECTED_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.textSelectedColorPickerButton->setColor(
-   qcolor);
-   //ui.textSelectedColorPickerButton->setColor(m_logic->getColor(node, m_logic->TEXT_SELECTED_COLOR));
-   ui.textUnselectedColorPickerButton->setText(
-   "Selected Text Color");
-   ui.textSelectedColorPickerButton->setText(
-   "Text Color");
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->TEXT_SCALE,
-   value);
-   ui.textScaleSliderSpinBoxWidget->setValue(
-   value);
-
-   // Point Display Properties
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->POINT_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.pointUnselectedColorPickerButton->setColor(
-   qcolor);
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->POINT_SELECTED_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.pointSelectedColorPickerButton->setColor(
-   qcolor);
-   ui.pointUnselectedColorPickerButton->setText(
-   "Selected Point Color");
-   ui.pointSelectedColorPickerButton->setText(
-   "Point Color");
-   //ui.pointSizeSliderSpinBoxWidget->setValue( m_logic->getPointSize(node) ); // ToDo
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->POINT_OPACITY,
-   value);
-   ui.pointOpacitySliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->POINT_AMBIENT,
-   value);
-   ui.pointAmbientSliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->POINT_DIFFUSE,
-   value);
-   ui.pointDiffuseSliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->POINT_SPECULAR,
-   value);
-   ui.pointSpecularSliderSpinBoxWidget->setValue(
-   value);
-
-   // Line Display Properties
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->LINE_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.lineUnselectedColorPickerButton->setColor(
-   qcolor);
-   color = m_logic->GetAnnotationLinesPropertiesColor(
-   node,
-   m_logic->LINE_SELECTED_COLOR);
-   this->TurnColorArrayToQColor(
-   color,
-   qcolor);
-   ui.lineSelectedColorPickerButton->setColor(
-   qcolor);
-   ui.lineUnselectedColorPickerButton->setText(
-   "Selected Line Color");
-   ui.lineSelectedColorPickerButton->setText(
-   "Line Color");
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->LINE_WIDTH,
-   value);
-   ui.lineWidthSliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->LINE_OPACITY,
-   value);
-   ui.lineOpacitySliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->LINE_AMBIENT,
-   value);
-   ui.lineAmbientSliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->LINE_DIFFUSE,
-   value);
-   ui.lineDiffuseSliderSpinBoxWidget->setValue(
-   value);
-   m_logic->GetAnnotationLinesPropertiesDouble(
-   node,
-   m_logic->LINE_SPECULAR,
-   value);
-   ui.lineSpecularSliderSpinBoxWidget->setValue(
-   value);
-   */
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -736,6 +359,14 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
   this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
 
+  // global
+  this->connect(ui.nameLineEdit, SIGNAL(textChanged(QString)), this,
+                SLOT(onNameLineEditChanged()));
+  this->connect(ui.allColorPickerButton, SIGNAL(colorChanged(QColor)),
+                this, SLOT(onAllColorChanged(QColor)));
+  this->connect(ui.sizeSmallPushButton, SIGNAL(clicked()), this, SLOT(onSizeSmallPushButtonClicked()));
+  this->connect(ui.sizeMediumPushButton, SIGNAL(clicked()), this, SLOT(onSizeMediumPushButtonClicked()));
+  this->connect(ui.sizeLargePushButton, SIGNAL(clicked()), this, SLOT(onSizeLargePushButtonClicked()));
   // text
   this->connect(ui.annotationTextEdit, SIGNAL(textChanged()), this,
       SLOT(onTextChanged()));
@@ -803,117 +434,6 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   
   this->connect(ui.lockUnlockButton, SIGNAL(clicked()), this, SLOT(onLockUnlockButtonClicked()));
   this->connect(ui.visibleInvisibleButton, SIGNAL(clicked()), this, SLOT(onVisibleInvisibleButtonClicked()));
-   /*
-   this->connect(
-   ui.annotationTextEdit,
-   SIGNAL(textChanged()),
-   this,
-   SLOT(onTextChanged()));
-   this->connect(
-   this,
-   SIGNAL(rejected()),
-   this,
-   SLOT(onDialogRejected()));
-   this->connect(
-   this,
-   SIGNAL(accepted()),
-   this,
-   SLOT(onDialogAccepted()));
-
-   this->connect(
-   ui.textUnselectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onTextColorChanged(QColor)));
-   this->connect(
-   ui.textSelectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onTextSelectedColorChanged(QColor)));
-   this->connect(
-   ui.textScaleSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onTextScaleChanged(double)));
-
-   this->connect(
-   ui.pointUnselectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onPointColorChanged(QColor)));
-   this->connect(
-   ui.pointSelectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onPointSelectedColorChanged(QColor)));
-   this->connect(
-   ui.pointSizeSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onPointSizeChanged(double)));
-   this->connect(
-   ui.pointOpacitySliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onPointOpacityChanged(double)));
-   this->connect(
-   ui.pointAmbientSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onPointAmbientChanged(double)));
-   this->connect(
-   ui.pointDiffuseSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onPointDiffuseChanged(double)));
-   this->connect(
-   ui.pointSpecularSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onPointSpecularChanged(double)));
-
-   this->connect(
-   ui.lineUnselectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onLineColorChanged(QColor)));
-   this->connect(
-   ui.lineSelectedColorPickerButton,
-   SIGNAL(colorChanged(QColor)),
-   this,
-   SLOT(onLineSelectedColorChanged(QColor)));
-   this->connect(
-   ui.lineWidthSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onLineWidthChanged(double)));
-   this->connect(
-   ui.lineOpacitySliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onLineOpacityChanged(double)));
-   this->connect(
-   ui.lineAmbientSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onLineAmbientChanged(double)));
-   this->connect(
-   ui.lineDiffuseSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onLineDiffuseChanged(double)));
-   this->connect(
-   ui.lineSpecularSliderSpinBoxWidget,
-   SIGNAL(valueChanged(double)),
-   this,
-   SLOT(onLineSpecularChanged(double)));
-
-   this->connect(
-   ui.CTKCollapsibleGroupBox_4,
-   SIGNAL(clicked()),
-   this,
-   SLOT(onCollapsibleGroupBoxClicked()));
-   */
 }
 
 //------------------------------------------------------------------------------
@@ -1260,15 +780,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
     return;
     }
 //  std::cout << "onPointsTableWidgetChanged: row = " << row << ", col = " <<  col << ", newValue = " << newValue << std::endl;
-  if (col == 0)
-    {
-    // change the name
-    const char *newName = newString.toAscii().data();
-    pointsNode->SetName(newName);
-    // update the label string too if this is a fiducial
-    this->updateTypeLabelText();
-    return;
-    }
+ 
   // otherwise it's the coordinate that changed
   double newValue = newString.toDouble();
   // get the point coordinates corresponding to this row
@@ -1739,15 +1251,159 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateTypeLabelText()
 {
-  // build the typeLabelText including name and id of the annotation
-  QString * typeLabelText = new QString("Name: ");
-  typeLabelText->append(this->m_logic->GetAnnotationName(this->m_id));
-  typeLabelText->append(" (");
-  typeLabelText->append(this->m_id);
-  typeLabelText->append(")");
-
-  if (ui.typeLabel->text().compare(*typeLabelText) != 0)
+  // build the typeLabelText including name and class of the annotation
+  QString typeLabelText("Type: ");
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (mrmlNode)
     {
-    ui.typeLabel->setText(*typeLabelText);
+    typeLabelText.append(mrmlNode->GetClassName());
+    }
+  
+  if (ui.typeLabel->text().compare(typeLabelText) != 0)
+    {
+    ui.typeLabel->setText(typeLabelText);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::updateIDLabelText()
+{
+  QString * idLabelText = new QString("ID: ");
+  idLabelText->append(this->m_id);
+
+  if (ui.idLabel->text().compare(*idLabelText) != 0)
+    {
+    ui.idLabel->setText(*idLabelText);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::updateNameText()
+{
+  QString nameText = QString("%1").arg(this->m_logic->GetAnnotationName(this->m_id));
+  ui.nameLineEdit->setText(nameText);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onNameLineEditChanged()
+{
+  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!node)
+    {
+    return;
+    }
+  // change the name
+  QString newNameString = ui.nameLineEdit->text();
+  const char *newName = newNameString.toAscii().data();
+  node->SetName(newName);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
+{
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
+
+  // is it a hierarchy node?
+  if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
+    {
+    vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+    if (mrmlNode)
+      {
+      vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
+      if (hnode && hnode->GetDisplayNode())
+        {
+        hnode->GetDisplayNode()->SetSelectedColor(color);
+        return;
+        }
+      }
+    }
+
+  // otherwise look for the display nodes on regular annotation nodes
+  // and update the unselected color buttons to reflect the new colour
+  
+  // get the text display node
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (textDisplayNode)
+    {
+    textDisplayNode->SetColor(color);
+    ui.textUnselectedColorPickerButton->setColor(qcolor);
+    }
+  // get the point display node
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
+  if (pointDisplayNode)
+    {
+    pointDisplayNode->SetColor(color);
+    ui.pointUnselectedColorPickerButton->setColor(qcolor);
+    }
+  // get the line display node
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  if (lineDisplayNode)
+    {
+    lineDisplayNode->SetColor(color);
+    ui.lineUnselectedColorPickerButton->setColor(qcolor);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onSizeSmallPushButtonClicked()
+{
+  // get and use the default sizes from the display nodes and scale them down
+  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  double defaultTextSize = defaultTextDisplayNode->GetTextScale();
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (textDisplayNode)
+    {
+    textDisplayNode->SetTextScale(defaultTextSize / 2.0);
+    }
+
+  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
+  if (pointDisplayNode)
+    {
+    pointDisplayNode->SetGlyphScale(defaultPointSize / 2.0);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog:: onSizeMediumPushButtonClicked()
+{
+  // get and use the default sizes from the display nodes
+  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  double defaultTextSize = defaultTextDisplayNode->GetTextScale();
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (textDisplayNode)
+    {
+    textDisplayNode->SetTextScale(defaultTextSize);
+    }
+
+  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
+  if (pointDisplayNode)
+    {
+    pointDisplayNode->SetGlyphScale(defaultPointSize);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog:: onSizeLargePushButtonClicked()
+{
+  // get and use the default sizes from the display nodes and scale them up
+  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  double defaultTextSize = defaultTextDisplayNode->GetTextScale();
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (textDisplayNode)
+    {
+    textDisplayNode->SetTextScale(defaultTextSize * 2.0);
+    }
+
+  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
+  if (pointDisplayNode)
+    {
+    pointDisplayNode->SetGlyphScale(defaultPointSize * 2.0);
     }
 }
