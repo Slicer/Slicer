@@ -123,6 +123,10 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->Superclass::setupPopupUi();
   this->Ui_qMRMLSliceControllerWidget::setupUi(this->PopupWidget);
 
+  this->LabelMapOpacitySlider->spinBox()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  this->ForegroundOpacitySlider->spinBox()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  this->BackgroundOpacitySlider->spinBox()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
   this->LabelMapOpacitySlider->slider()->setOrientation(Qt::Vertical);
   this->ForegroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
   this->BackgroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
@@ -130,6 +134,15 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->LabelMapOpacitySlider->popup()->setHideDelay(400);
   this->ForegroundOpacitySlider->popup()->setHideDelay(400);
   this->BackgroundOpacitySlider->popup()->setHideDelay(400);
+
+  this->LabelMapOpacitySlider->popup()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+  this->ForegroundOpacitySlider->popup()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+  this->BackgroundOpacitySlider->popup()->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+
+  int popupHeight = this->PopupWidget->sizeHint().height() / 2;
+  this->LabelMapOpacitySlider->popup()->setFixedHeight(popupHeight);
+  this->ForegroundOpacitySlider->popup()->setFixedHeight(popupHeight);
+  this->BackgroundOpacitySlider->popup()->setFixedHeight(popupHeight);
 
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
