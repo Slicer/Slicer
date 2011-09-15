@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <QSettings>
 
 // CTK includes
 #include "ctkScreenshotDialog.h"
@@ -34,6 +35,8 @@ public:
   /// Return true if a dialog is created, false if a dialog already existed
   bool startProgressDialog(int steps = 1);
   void stopProgressDialog();
+  void readSettings();
+  void writeSettings();
 
   QStringList                   History;
   QList<QUrl>                   Favorites;
@@ -58,7 +61,7 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
 void qSlicerIOManagerPrivate::init()
 {
   Q_Q(qSlicerIOManager);
-  this->Favorites << QUrl::fromLocalFile(QDir::homePath());
+
   //p->registerDialog(new qSlicerStandardFileDialog(p));
   q->registerDialog(new qSlicerDataDialog(q));
   q->registerDialog(new qSlicerModelsDialog(q));
@@ -111,6 +114,42 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerIOManagerPrivate::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("ioManager");
+
+  if (!settings.value("favoritesPaths").toList().isEmpty())
+    {
+    foreach (const QString& varUrl, settings.value("favoritesPaths").toStringList())
+      {
+      this->Favorites << QUrl(varUrl);
+      }
+    }
+  else
+    {
+    this->Favorites << QUrl::fromLocalFile(QDir::homePath());
+    }
+
+  settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManagerPrivate::writeSettings()
+{
+  Q_Q(qSlicerIOManager);
+  QSettings settings;
+  settings.beginGroup("ioManager");
+  QStringList list;
+  foreach (const QUrl& url, q->favorites())
+    {
+    list << url.toString();
+    }
+  settings.setValue("favoritesPaths", QVariant(list));
+  settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerIOManager methods
 
 //-----------------------------------------------------------------------------
@@ -119,11 +158,14 @@ qSlicerIOManager::qSlicerIOManager(QObject* _parent):Superclass(_parent)
 {
   Q_D(qSlicerIOManager);
   d->init();
+  d->readSettings();
 }
 
 //-----------------------------------------------------------------------------
 qSlicerIOManager::~qSlicerIOManager()
 {
+  Q_D(qSlicerIOManager);
+  d->writeSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -183,10 +225,15 @@ const QStringList& qSlicerIOManager::history()const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerIOManager::addFavorite(const QUrl& url)
+void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 {
   Q_D(qSlicerIOManager);
-  d->Favorites << url;
+  QList<QUrl> newFavorites;
+  foreach(const QUrl& url, urls)
+    {
+    newFavorites << url;
+    }
+  d->Favorites = newFavorites;
 }
 
 //-----------------------------------------------------------------------------

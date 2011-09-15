@@ -42,7 +42,7 @@ public:
   void addHistory(const QString& path);
   const QStringList& history()const;
 
-  void addFavorite(const QUrl& urls);
+  void setFavorites(const QList<QUrl>& urls);
   const QList<QUrl>& favorites()const;
 
   ///

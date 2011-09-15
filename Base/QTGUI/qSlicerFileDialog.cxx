@@ -137,7 +137,6 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   // don't match the filter -> we don't want to show files that don't match
   // the filter.
   fileDialog.setOption(QFileDialog::DontUseNativeDialog);
-
   fileDialog.setNameFilters(
     qSlicerFileDialog::nameFilters(d->FileType));
   fileDialog.setHistory(ioManager->history());
@@ -197,6 +196,13 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
                d->Action == qSlicerFileDialog::Write);
       }
     }
+
+  // If the favorite list has change, we set it in the ioManager.
+  if (fileDialog.sidebarUrls() != ioManager->favorites())
+    {
+    ioManager->setFavorites(fileDialog.sidebarUrls());
+    }
+
   // If options is not a qSlicerIOOptionsWidget, we are responsible for
   // deleting options. If it is, then fileDialog would have reparent
   // the options and take care of its destruction
