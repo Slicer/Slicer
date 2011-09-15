@@ -274,7 +274,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 {
   Q_Q(qMRMLNodeComboBox);
   QStyleOptionComboBox opt;
-  opt.editable = false;
+  opt.editable = this->ComboBox->isEditable();
 
   if (this->ComboBox->style()->styleHint(
       QStyle::SH_ComboBox_Popup, &opt, this->ComboBox))
@@ -286,7 +286,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
             new qMRMLNodeComboBoxMenuDelegate(q->parent(), q->comboBox()));
         }
     }
-    else
+  else
     {
       if (force ||
           qobject_cast<qMRMLNodeComboBoxMenuDelegate *>(this->ComboBox->itemDelegate()))
@@ -824,7 +824,11 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   /// Set the new item delegate to force the highlight in case the item is not
   /// selectable but current.
-  d->updateDelegate(true);
+  if (d->ComboBox)
+    {
+    d->updateDelegate(
+      d->ComboBox->view()->metaObject()->className() == QString("QComboBoxListView"));
+    }
 }
 
 //--------------------------------------------------------------------------
