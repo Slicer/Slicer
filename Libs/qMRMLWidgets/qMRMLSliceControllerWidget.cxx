@@ -30,6 +30,7 @@
 #include <QWidgetAction>
 
 // CTK includes
+#include <ctkDoubleSlider.h>
 #include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
@@ -121,6 +122,10 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   this->Superclass::setupPopupUi();
   this->Ui_qMRMLSliceControllerWidget::setupUi(this->PopupWidget);
+
+  this->LabelMapOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
+  this->ForegroundOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
+  this->BackgroundOpacitySlider->findChild<ctkDoubleSlider*>()->setOrientation(Qt::Vertical);
 
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No

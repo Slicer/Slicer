@@ -59,6 +59,19 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="SliceVisibilityButton">
+          <property name="toolTip">
+           <string>Toggle slice visibility in the 3D view.</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="ctkComboBox" name="SliceOrientationSelector">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Ignored">
@@ -101,19 +114,6 @@
             <string>Reformat</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="SliceVisibilityButton">
-          <property name="toolTip">
-           <string>Toggle slice visibility in the 3D view.</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
          </widget>
         </item>
         <item>
