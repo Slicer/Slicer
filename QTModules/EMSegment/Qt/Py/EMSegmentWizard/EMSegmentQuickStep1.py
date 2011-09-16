@@ -33,6 +33,9 @@ class EMSegmentQuickStep1( EMSegmentStep ) :
     '''
     slicer.modules.emsegmentinitialdistance = 4
 
+    # just call to copy the emsegmenter task to a temp dir
+    self.logic().GetTasks()
+
     self.__layout = self.__parent.createUserInterface()
 
     infoLabel = qt.QLabel( 'This module provides EM segmentation without an atlas.\nIt is possible to segment different structures by manual sampling.\n\n' )
