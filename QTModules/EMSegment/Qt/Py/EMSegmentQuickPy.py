@@ -50,7 +50,7 @@ class EMSegmentQuickPyWidget:
         self.__logic = slicer.modules.emsegmentlogic
       except AttributeError:
         self.__logic = slicer.modulelogic.vtkEMSegmentLogic()
-        self.__logic.SetModuleName( "EMSegment Quick" )
+        self.__logic.SetModuleName( "EMSegment" )
         self.__logic.SetMRMLScene( slicer.mrmlScene )
         self.__logic.RegisterNodes()
         self.__logic.InitializeEventListeners()
