@@ -191,7 +191,8 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     displayLineNode->SetScene(this->GetMRMLScene());
     displayTubeNode->SetScene(this->GetMRMLScene());
     displayGlyphNode->SetScene(this->GetMRMLScene());
-   
+  
+    displayLineNode->SetVisibility(1);
     displayTubeNode->SetVisibility(0);
     displayGlyphNode->SetVisibility(0);
     if (notifyScene)
