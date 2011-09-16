@@ -83,9 +83,10 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
 {
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
 
-  this->RemoveMRMLNodesObservers();
+  this->ProcessMRMLEvents(this->TractographyFiducialSeedingNode, vtkCommand::ModifiedEvent, NULL);
+  //this->RemoveMRMLNodesObservers();
 
-  this->AddMRMLNodesObservers();
+  //this->AddMRMLNodesObservers();
 
   return;
 }
