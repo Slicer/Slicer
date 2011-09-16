@@ -225,7 +225,6 @@ set(qMRMLWidgets_MOC_SRCS
 
 # UI files
 set(qMRMLWidgets_UI_SRCS
-  Resources/UI/qMRMLCaptureToolBar.ui
   Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui

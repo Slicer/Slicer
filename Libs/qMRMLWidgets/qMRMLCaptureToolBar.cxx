@@ -19,20 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QMenu>
-#include <QToolButton>
-#include <QWidgetAction>
 #include <QInputDialog>
+#include <QToolButton>
 
 // CTK includes
 #include <ctkLogger.h>
-#include <ctkSignalMapper.h>
 
 // qMRML includes
 #include "qMRMLCaptureToolBar.h"
-#include "ui_qMRMLCaptureToolBar.h"
 #include "qMRMLSceneViewMenu.h"
 #include "qMRMLNodeFactory.h"
 
@@ -51,7 +46,6 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLCaptureToolBar");
 
 //-----------------------------------------------------------------------------
 class qMRMLCaptureToolBarPrivate
-  : public Ui_qMRMLCaptureToolBar
 {
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLCaptureToolBar);
@@ -59,30 +53,24 @@ protected:
   qMRMLCaptureToolBar* const q_ptr;
 public:
   qMRMLCaptureToolBarPrivate(qMRMLCaptureToolBar& object);
-
-  virtual void setupUi(QWidget* widget);
-/*
-  QToolButton* ScreenshotButton;
-  QToolButton* SceneViewButton;
-*/
+  void init();
+  void setMRMLScene(vtkMRMLScene* newScene);
+  QAction*                         ScreenshotAction;
+  QAction*                         SceneViewAction;
   qMRMLSceneViewMenu*              SceneViewMenu;
 
   // TODO In LayoutManager, use GetActive/IsActive flag ...
   vtkWeakPointer<vtkMRMLViewNode>  ActiveMRMLThreeDViewNode;
+  vtkSmartPointer<vtkMRMLScene>    MRMLScene;
 
-  void setMRMLScene(vtkMRMLScene* newScene);
 public slots:
   void onMRMLSceneAboutToBeClosedEvent();
   void onMRMLSceneImportedEvent();
   void onMRMLSceneClosedEvent();
   void updateWidgetFromMRML();
   void createSceneView();
-
-public:
-
-  vtkSmartPointer<vtkMRMLScene>            MRMLScene;
-  
 };
+
 //--------------------------------------------------------------------------
 // qMRMLCaptureToolBarPrivate methods
 
@@ -90,61 +78,55 @@ public:
 qMRMLCaptureToolBarPrivate::qMRMLCaptureToolBarPrivate(qMRMLCaptureToolBar& object)
   : q_ptr(&object)
 {
-  this->ActiveMRMLThreeDViewNode = 0;
-  
+  this->ScreenshotAction = 0;
+  this->SceneViewAction = 0;
   this->SceneViewMenu = 0;
-  /*
-  this->SceneViewButton = 0;
-  this->SelectSceneViewMenuButton = 0;
-  this->ScreenshotButton = 0;
-  */
 }
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::updateWidgetFromMRML()
 {
-  if (!this->MRMLScene)
-    {
-    return;
-    }
+  Q_Q(qMRMLCaptureToolBar);
   // Enable buttons
-  this->ScreenshotButton->setEnabled(this->ActiveMRMLThreeDViewNode != 0);
+  q->setEnabled(this->MRMLScene != 0);
+  this->ScreenshotAction->setEnabled(this->ActiveMRMLThreeDViewNode != 0);
 }
 
 //---------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::setupUi(QWidget* widget)
+void qMRMLCaptureToolBarPrivate::init()
 {
-  // Q_Q(qMRMLCaptureToolBar);
-  this->Ui_qMRMLCaptureToolBar::setupUi(widget);
+  Q_Q(qMRMLCaptureToolBar);
 
-  // start no ui
-  /*
   // Screenshot button
-  this->ScreenshotButton = new QToolButton();
-  this->ScreenshotButton->setCheckable(true);
-  this->ScreenshotButton->setToolTip(QObject::tr("Capture a screenshot of the full layout, 3D view or slice views."));
-  this->ScreenshotButton->setIcon(QIcon(":/Icons/ViewCapture.png"));
-  this->ScreenshotButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->ScreenshotButton->setText(QObject::tr("Screenshot"));
-  
+  this->ScreenshotAction = new QAction(q);
+  this->ScreenshotAction->setIcon(QIcon(":/Icons/ViewCapture.png"));
+  this->ScreenshotAction->setText(q->tr("Screenshot"));
+  this->ScreenshotAction->setToolTip(q->tr(
+    "Capture a screenshot of the full layout, 3D view or slice views."));
+  QObject::connect(this->ScreenshotAction, SIGNAL(triggered()),
+                   q, SIGNAL(screenshotButtonClicked()));
+  q->addAction(this->ScreenshotAction);
+
   // Scene View buttons
-  this->SceneViewButton = new QToolButton();
-  this->SceneViewButton->setToolTip(QObject::tr("Capture and name a scene view."));
+  this->SceneViewAction = new QAction(q);
+  this->SceneViewAction->setIcon(QIcon(":/Icons/ViewCamera.png"));
+  this->SceneViewAction->setText(q->tr("Scene view"));
+  this->SceneViewAction->setToolTip(q->tr("Capture and name a scene view."));
+  QObject::connect(this->SceneViewAction, SIGNAL(triggered()),
+                   q, SIGNAL(sceneViewButtonClicked()));
+  q->addAction(this->SceneViewAction);
 
-  this->SelectSceneViewMenuButton = new QToolButton();
-  this->SelectSceneViewMenuButton->setToolTip(QObject::tr("Restore or delete saved scene views."));
-  this->SelectSceneViewMenuButton->setIcon(QIcon(":/Icons/ViewCameraSelect.png"));
-  this->SelectSceneViewMenuButton->setPopupMode(QToolButton::InstantPopup);
-  // end no ui
-  */
-  this->SceneViewMenu = new qMRMLSceneViewMenu(widget);
-  this->SelectSceneViewMenuButton->setMenu(this->SceneViewMenu);
-  
-  
-  QObject::connect(widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-          this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
-  
-
+  // Scene view menu
+  QToolButton* sceneViewMenuButton = new QToolButton(q);
+  sceneViewMenuButton->setText(q->tr("Restore view"));
+  sceneViewMenuButton->setIcon(QIcon(":/Icons/ViewCameraSelect.png"));
+  sceneViewMenuButton->setToolTip(QObject::tr("Restore or delete saved scene views."));
+  this->SceneViewMenu = new qMRMLSceneViewMenu(sceneViewMenuButton);
+  sceneViewMenuButton->setMenu(this->SceneViewMenu);
+  sceneViewMenuButton->setPopupMode(QToolButton::InstantPopup);
+  //QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+  //                 this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
+  q->addWidget(sceneViewMenuButton);
 }
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
@@ -168,13 +150,9 @@ void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->MRMLScene = newScene;
 
   this->SceneViewMenu->setMRMLScene(newScene);
-    
+
   // Update UI
-  q->setEnabled(this->MRMLScene != 0);
-  if (this->MRMLScene)
-    {
-    this->updateWidgetFromMRML();
-    }
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -188,10 +166,6 @@ void qMRMLCaptureToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
 void qMRMLCaptureToolBarPrivate::onMRMLSceneImportedEvent()
 {
   Q_Q(qMRMLCaptureToolBar);
-
-  // re-enable in case it didn't get re-enabled for scene load
-  q->setEnabled(true);
-  
   // update the state from mrml
   this->updateWidgetFromMRML();
 }
@@ -205,8 +179,6 @@ void qMRMLCaptureToolBarPrivate::onMRMLSceneClosedEvent()
     {
     return;
     }
-  // reenable it and update
-  q->setEnabled(true);
   this->updateWidgetFromMRML();
 }
 
@@ -234,7 +206,6 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
   newSceneViewNode->StoreScene();
 }
 
-
 // --------------------------------------------------------------------------
 // qMRMLCaptureToolBar methods
 
@@ -244,46 +215,35 @@ qMRMLCaptureToolBar::qMRMLCaptureToolBar(const QString& title, QWidget* parentWi
    , d_ptr(new qMRMLCaptureToolBarPrivate(*this))
 {
   Q_D(qMRMLCaptureToolBar);
-  d->setupUi(this);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
-qMRMLCaptureToolBar::qMRMLCaptureToolBar(QWidget* _parent) : Superclass(_parent)
+qMRMLCaptureToolBar::qMRMLCaptureToolBar(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLCaptureToolBarPrivate(*this))
 {
   Q_D(qMRMLCaptureToolBar);
-  d->setupUi(this);
-
-  QObject::connect(d->ScreenshotButton, SIGNAL(clicked()), SIGNAL(screenshotButtonClicked()));
-  QObject::connect(d->SceneViewButton, SIGNAL(clicked()), SIGNAL(sceneViewButtonClicked()));
+  d->init();
 }
 
 //---------------------------------------------------------------------------
 qMRMLCaptureToolBar::~qMRMLCaptureToolBar()
 {
-
 }
-
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBar::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLCaptureToolBar);
-
-//  this->Superclass::setMRMLScene(scene);
   d->setMRMLScene(scene);
-
 }
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBar::setActiveMRMLThreeDViewNode(
-    vtkMRMLViewNode * newActiveMRMLThreeDViewNode)
+  vtkMRMLViewNode * newActiveMRMLThreeDViewNode)
 {
   Q_D(qMRMLCaptureToolBar);
-
   d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;
-
   d->updateWidgetFromMRML();
 }
-
-
