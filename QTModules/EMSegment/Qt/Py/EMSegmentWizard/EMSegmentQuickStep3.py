@@ -35,6 +35,8 @@ class EMSegmentQuickStep3( EMSegmentStep ) :
     self.__classWeightSpinBoxes = []
     self.__classWeightCheckBoxes = []
 
+    self.__noSamples = True
+
     slicer.sliceWidgetRed_interactorStyle.AddObserver( vtk.vtkCommand.LeftButtonReleaseEvent, self.onClickInRedSliceView )
     slicer.sliceWidgetYellow_interactorStyle.AddObserver( vtk.vtkCommand.LeftButtonReleaseEvent, self.onClickInYellowSliceView )
     slicer.sliceWidgetGreen_interactorStyle.AddObserver( vtk.vtkCommand.LeftButtonReleaseEvent, self.onClickInGreenSliceView )
@@ -123,6 +125,10 @@ class EMSegmentQuickStep3( EMSegmentStep ) :
     '''
     '''
     self.__parent.validate( desiredBranchId )
+
+    if self.__noSamples:
+      self.__parent.validationFailed( desiredBranchId, 'Sampling Error', 'Please specify at least one sample!' )
+      return
 
     self.__parent.validationSucceeded( desiredBranchId )
 
@@ -338,6 +344,9 @@ class EMSegmentQuickStep3( EMSegmentStep ) :
 
     # add the manual sample intensity values to the table
     for m in range( numberOfSamples ):
+
+      if self.__noSamples:
+        self.__noSamples = False
 
       # create new row
       self.__manualSampleTable.insertRow( self.__manualSampleTable.rowCount )
