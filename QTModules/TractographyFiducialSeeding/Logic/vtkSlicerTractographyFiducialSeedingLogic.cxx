@@ -597,13 +597,13 @@ void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
-  Superclass::SetMRMLSceneInternal(newScene);
+  //Superclass::SetMRMLSceneInternal(newScene);
 
-  if (this->GetMRMLScene() == NULL)
-    {
-    vtkWarningMacro("SetMRMLSceneInternal: no scene to listen to!");
-    return;
-    }
+  //if (this->GetMRMLScene() == NULL)
+  //  {
+  //  vtkWarningMacro("SetMRMLSceneInternal: no scene to listen to!");
+  //  return;
+  //  }
 
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

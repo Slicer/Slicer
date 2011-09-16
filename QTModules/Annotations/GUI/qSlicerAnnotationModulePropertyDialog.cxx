@@ -43,6 +43,12 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   // now build the user interface
   ui.setupUi(this);
 
+  // Hide widgets for now
+  ui.DescriptionLabel->setVisible(false);
+  ui.DescriptionTextEdit->setVisible(false);
+  ui.RASLabel->setVisible(false);
+  ui.RASCoordinatesWidget->setVisible(false);
+
   if (this->m_logic->IsAnnotationHierarchyNode(id))
     {
     // hierarchies
@@ -1247,41 +1253,23 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineMaxTicksSliderSpinBoxWidget->setEnabled(lock);
 }
 
-
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateTypeLabelText()
 {
-  // build the typeLabelText including name and class of the annotation
-  QString typeLabelText("Type: ");
   vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (mrmlNode)
-    {
-    typeLabelText.append(mrmlNode->GetClassName());
-    }
-  
-  if (ui.typeLabel->text().compare(typeLabelText) != 0)
-    {
-    ui.typeLabel->setText(typeLabelText);
-    }
+  ui.typeNameLabel->setText(mrmlNode ? mrmlNode->GetNodeTagName() : "");
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateIDLabelText()
 {
-  QString * idLabelText = new QString("ID: ");
-  idLabelText->append(this->m_id);
-
-  if (ui.idLabel->text().compare(*idLabelText) != 0)
-    {
-    ui.idLabel->setText(*idLabelText);
-    }
+  ui.idNameLabel->setText(QString::fromStdString(this->m_id));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateNameText()
 {
-  QString nameText = QString("%1").arg(this->m_logic->GetAnnotationName(this->m_id));
-  ui.nameLineEdit->setText(nameText);
+  ui.nameLineEdit->setText(this->m_logic->GetAnnotationName(this->m_id));
 }
 
 //-----------------------------------------------------------------------------
