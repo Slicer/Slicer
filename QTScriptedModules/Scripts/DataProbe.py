@@ -27,6 +27,8 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     # Trigger the menu to be added when application has started up
     qt.QTimer.singleShot(0, self.addView);
     
+  def __del__(self):
+    self.infoWidget.removeObservers()
 
   def addView(self):
     """
@@ -40,10 +42,8 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     except IndexError:
       print("No Data Probe frame - cannot create DataProbe")
       return
-    infoWidget = DataProbeInfoWidget(parent,type='small')
-    parent.layout().insertWidget(0,infoWidget.frame)
-    globals()['infoWidget'] = infoWidget
-
+    self.infoWidget = DataProbeInfoWidget(parent,type='small')
+    parent.layout().insertWidget(0,self.infoWidget.frame)
 
 class DataProbeInfoWidget(object):
 
@@ -64,22 +64,27 @@ class DataProbeInfoWidget(object):
     if type == 'small':
       self.createSmall()
 
+  def __del__(self):
+    self.removeObservers()
+
+  def removeObservers(self):
+    # remove observers and reset
+    for observee,tag in self.styleObserverTags:
+      observee.RemoveObserver(tag)
+    self.styleObserverTags = []
+    self.sliceWidgetsPerStyle = {}
 
   def refreshObservers(self):
     """ When the layout changes, drop the observers from
     all the old widgets and create new observers for the 
     newly created widgets"""
-    # remove observers and reset
-    for observee,tag in self.styleObserverTags:
-      observee.RemoveObserver(tag)
-    self.sliceWidgetsPerStyle = {}
+    self.removeObservers()
     # get new slice nodes
     layoutManager = slicer.app.layoutManager()
-    sliceNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLSliceNode')
-    sliceNodes.InitTraversal()
-    for nodeIndex in xrange(sliceNodes.GetNumberOfItems()):
+    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+    for nodeIndex in xrange(sliceNodeCount):
       # find the widget for each node in scene
-      sliceNode = sliceNodes.GetNextItemAsObject()
+      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
       sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
       if sliceWidget:
         # add obserservers and keep track of tags
@@ -313,4 +318,5 @@ class DataProbeWidget:
     pass
 
   def setup(self):
-    self.parent.layout().addWidget(qt.QLabel("hoot!"))
+    self.parent.layout().addWidget(qt.QLabel("Nothing here..."))
+    self.parent.layout().addStretch(1)
