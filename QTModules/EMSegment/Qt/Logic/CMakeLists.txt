@@ -7,7 +7,7 @@ project(vtkSlicerEMSegmentModuleLogic)
 SET(module_logic_name "${PROJECT_NAME}")
 
 # The header '${PROJECT_NAME}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_EMSEGMENT_MODULE_LOGIC_EXPORT")
+SET(module_logic_export_directive "VTK_EMSEGMENT_EXPORT")
 
 # Additional directories to include
 SET(module_logic_include_directories
