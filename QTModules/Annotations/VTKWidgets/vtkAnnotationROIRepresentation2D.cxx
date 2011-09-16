@@ -264,41 +264,12 @@ void vtkAnnotationROIRepresentation2D::ReleaseGraphicsResources(vtkWindow *w)
 int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
 {
   int count=0;
-  this->BuildRepresentation();
-  
-  //count += this->HexFace2D->RenderOpaqueGeometry(v);
-  // render the handles
-  int j;
-  for (j=0; j<6; j++)
-    {
-    count += this->IntersectionActors[j]->RenderOverlay(v);
-    }
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderOverlay(v);
-    }
-
   return count;
 }
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
 {
   int count=0;
-
-  this->BuildRepresentation();
-  
-  //count += this->HexFace2D->RenderOpaqueGeometry(v);
-  // render the handles
-  int j;
-  for (j=0; j<6; j++)
-    {
-    count += this->IntersectionActors[j]->RenderOpaqueGeometry(v);
-    }
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderOpaqueGeometry(v);
-    }
-
   return count;
 }
 
@@ -306,20 +277,6 @@ int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
 int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *v)
 {
   int count=0;
-  this->BuildRepresentation();
-  
-  //count += this->HexFace2D->RenderTranslucentPolygonalGeometry(v);
-
-  int j;
-  for (j=0; j<6; j++)
-    {
-    count += this->IntersectionActors[j]->RenderTranslucentPolygonalGeometry(v);
-    }
-  for (j=0; j<7; j++)
-    {
-    count += this->Handle2D[j]->RenderTranslucentPolygonalGeometry(v);
-    }
-
   return count;
 }
 
@@ -327,20 +284,6 @@ int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkView
 int vtkAnnotationROIRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   int result=0;
-  this->BuildRepresentation();
-
-  //result |= this->HexFace2D->HasTranslucentPolygonalGeometry();
-  // render the handles
-  int j;
-  for (j=0; j<7; j++)
-    {
-    result |= this->Handle2D[j]->HasTranslucentPolygonalGeometry();
-    }
-  for (j=0; j<6; j++)
-    {
-    result |= this->IntersectionActors[j]->HasTranslucentPolygonalGeometry();
-    }
-
   return result;
 }
 

@@ -540,7 +540,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
-  rep->SetHandlesVisibility(roiNode->GetLocked()==0 ? 1:0);
+  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetVisibility() ? 1:0);
 
   rep->PlaceWidget(b);
 
