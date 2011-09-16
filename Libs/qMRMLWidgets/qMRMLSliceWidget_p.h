@@ -67,6 +67,7 @@ public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLSliceNode*                  MRMLSliceNode;
+  QColor                             InactiveBoxColor;
 };
 
 #endif

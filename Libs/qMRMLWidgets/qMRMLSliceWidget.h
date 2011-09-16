@@ -123,7 +123,7 @@ public:
   /// unsynchronizing the view from the nodes/logics.
   Q_INVOKABLE const ctkVTKSliceView* sliceView()const;
 
-  virtual bool eventFilter(QObject* object, QEvent* event);
+  //virtual bool eventFilter(QObject* object, QEvent* event);
 public slots:
 
   void setMRMLScene(vtkMRMLScene * newScene);

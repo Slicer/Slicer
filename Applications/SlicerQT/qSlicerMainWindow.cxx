@@ -191,12 +191,17 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   centralLayout->setContentsMargins(0, 0, 0, 0);
   centralLayout->addWidget(layoutFrame);
 
-  QPalette oldPalette = this->CentralWidget->palette();
-  QPalette centralPalette = oldPalette;
-  centralPalette.setColor(QPalette::Window, QColor(102, 102, 119)); // Payne's grey
+  QColor windowColor = this->CentralWidget->palette().color(QPalette::Window);
+  QPalette centralPalette = this->CentralWidget->palette();
+  centralPalette.setColor(QPalette::Window, QColor(95, 95, 113));
   this->CentralWidget->setAutoFillBackground(true);
   this->CentralWidget->setPalette(centralPalette);
-  layoutFrame->setPalette(oldPalette);
+
+  // Restore the palette for the children
+  centralPalette.setColor(QPalette::Window, windowColor);
+  layoutFrame->setPalette(centralPalette);
+  layoutFrame->setAttribute(Qt::WA_NoSystemBackground, true);
+  layoutFrame->setAttribute(Qt::WA_TranslucentBackground, true);
 
   //----------------------------------------------------------------------------
   // Layout Manager

@@ -53,6 +53,7 @@ qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
 {
   this->DisplayableManagerGroup = 0;
   this->MRMLSliceNode = 0;
+  this->InactiveBoxColor = QColor(95, 95, 113);
 }
 
 //---------------------------------------------------------------------------
@@ -62,9 +63,8 @@ void qMRMLSliceWidgetPrivate::init()
   this->setupUi(q);
 
   // Highligh first RenderWindowItem
-  this->VTKSliceView->setHighlightedBoxColor(QColor(102, 102, 119));
-  this->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
-  this->VTKSliceView->findChild<QVTKWidget*>()->installEventFilter(q);
+  this->VTKSliceView->setHighlightedBoxColor(this->InactiveBoxColor);
+  //this->VTKSliceView->findChild<QVTKWidget*>()->installEventFilter(q);
 
   connect(this->VTKSliceView, SIGNAL(resized(QSize)),
           this->SliceController, SLOT(setSliceViewSize(QSize)));
@@ -161,6 +161,10 @@ void qMRMLSliceWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->VTKSliceView->lightBoxRendererManager()->SetRenderWindowLayout(
     this->MRMLSliceNode->GetLayoutGridRows(),
     this->MRMLSliceNode->GetLayoutGridColumns());
+  bool displayLightboxBorders =
+    this->MRMLSliceNode->GetLayoutGridRows() != 1 ||
+    this->MRMLSliceNode->GetLayoutGridColumns() != 1;
+  this->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, displayLightboxBorders);
 }
 
 // --------------------------------------------------------------------------
@@ -247,25 +251,6 @@ vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->mrmlSliceCompositeNode();
 }
-
-namespace
-{
-//---------------------------------------------------------------------------
-bool slicer_qcolor_is_valid_color(const QString& colorName)
-{
-#if QT_VERSION < 0x040700
-  if (colorName.startsWith("compare"))
-    {
-    return false;
-    }
-  QColor c;
-  c.setNamedColor(colorName);
-  return c.isValid();
-#else
-  return QColor::isValidColor(colorName);
-#endif
-}
-} // end namespace
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
@@ -388,22 +373,22 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
   d->SliceController->setSliceLogics(logics);
 }
 
-// --------------------------------------------------------------------------
-bool qMRMLSliceWidget::eventFilter(QObject* object, QEvent* event)
-{
-  Q_D(qMRMLSliceWidget);
-  if (this->isAncestorOf(qobject_cast<QWidget*>(object)))
-    {
-    if (event->type() == QEvent::FocusIn)
-      {
-      d->VTKSliceView->setHighlightedBoxColor(Qt::white);
-      d->VTKSliceView->scheduleRender();
-      }
-    else if (event->type() == QEvent::FocusOut)
-      {
-      d->VTKSliceView->setHighlightedBoxColor(QColor(102, 102, 119));
-      d->VTKSliceView->scheduleRender();
-      }
-    }
-  return this->Superclass::eventFilter(object, event);
-}
+//// --------------------------------------------------------------------------
+//bool qMRMLSliceWidget::eventFilter(QObject* object, QEvent* event)
+//{
+//  Q_D(qMRMLSliceWidget);
+//  if (this->isAncestorOf(qobject_cast<QWidget*>(object)))
+//    {
+//    if (event->type() == QEvent::FocusIn)
+//      {
+//      d->VTKSliceView->setHighlightedBoxColor(Qt::white);
+//      d->VTKSliceView->scheduleRender();
+//      }
+//    else if (event->type() == QEvent::FocusOut)
+//      {
+//      d->VTKSliceView->setHighlightedBoxColor(d->InactiveBoxColor);
+//      d->VTKSliceView->scheduleRender();
+//      }
+//    }
+//  return this->Superclass::eventFilter(object, event);
+//}
