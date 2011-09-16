@@ -52,7 +52,7 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
 
   this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
-  QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(int)) );
+  QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
   QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
   QObject::connect( this->ColorBySolidCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
   QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );

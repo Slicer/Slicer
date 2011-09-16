@@ -156,7 +156,6 @@ void qSlicerTractographyDisplayBasicWidget::
     {
     int tubeVis = d->FiberBundleNode->GetTubeDisplayNode()->GetVisibility();
     d->TubeVisibility->setChecked(tubeVis);
-    d->TubeSliceIntersectVisibility->setEnabled(tubeVis);
     d->TubeSliceIntersectVisibility->setChecked(
       d->FiberBundleNode->GetTubeDisplayNode()->GetSliceIntersectionVisibility() );
     }
