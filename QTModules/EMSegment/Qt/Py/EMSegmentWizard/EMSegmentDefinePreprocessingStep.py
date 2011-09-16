@@ -134,10 +134,13 @@ class EMSegmentDefinePreprocessingStep( EMSegmentStep ) :
     message.setModal( False )
     message.show()
 
+    slicer.app.processEvents()
+
     # run preprocessing
     returnValue = tcl( "::EMSegmenterPreProcessingTcl::Run" )
 
     message.hide()
+    slicer.app.processEvents()
 
     if not returnValue or int( returnValue ) != 0:
       # something went wrong!

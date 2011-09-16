@@ -27,11 +27,13 @@ class EMSegmentQuickSegmentationStep( EMSegmentStep ) :
     message = qt.QMessageBox( qt.QMessageBox.NoIcon, "Please wait", "Please wait while pre-processing runs..", qt.QMessageBox.Ignore )
     message.setModal( False )
     message.show()
+    slicer.app.processEvents()
 
     # run preprocessing
     returnValue = tcl( "::EMSegmenterPreProcessingTcl::Run" )
 
     message.hide()
+    slicer.app.processEvents()
 
     if not returnValue or int( returnValue ) != 0:
       # something went wrong!
@@ -98,11 +100,13 @@ class EMSegmentQuickSegmentationStep( EMSegmentStep ) :
     message = qt.QMessageBox( qt.QMessageBox.NoIcon, "Please wait", "Please wait while the segmentation runs..", qt.QMessageBox.Ignore )
     message.setModal( False )
     message.show()
+    slicer.app.processEvents()
 
     # start the segmentation
     returnValue = self.logic().StartSegmentationWithoutPreprocessing( slicer.app.appLogic() )
 
     message.hide()
+    slicer.app.processEvents()
 
     if returnValue != 0:
       # something went wrong!

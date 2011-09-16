@@ -57,11 +57,13 @@ class EMSegmentStartSegmentationStep( EMSegmentStep ) :
     message = qt.QMessageBox( qt.QMessageBox.NoIcon, "Please wait", "Please wait while the segmentation runs..", qt.QMessageBox.Ignore )
     message.setModal( False )
     message.show()
+    slicer.app.processEvents()
 
     # start the segmentation
     returnValue = self.logic().StartSegmentationWithoutPreprocessing( slicer.app.appLogic() )
 
     message.hide()
+    slicer.app.processEvents()
 
     if returnValue != 0:
       # something went wrong!
