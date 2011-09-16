@@ -178,7 +178,13 @@ endif()
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin<PATHSEP>${QT_PLUGINS_DIR}"
+  "Slicer_HOME=${Slicer_BINARY_DIR}" # See note below
   )
+
+# Note: The addition of Slicer_HOME to the build environment has been motivated by
+#       EMSegmentCommandLine executable. Indeed, this CLI is instantiating
+#       qSlicerApplication which requires Slicer_HOME to be set so that it could
+#       properly initialize the python environment and execute both python and Tcl scripts.
 
 if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
