@@ -26,7 +26,7 @@ include(SlicerMacroParseArguments)
 macro(slicerMacroBuildQtModule)
   SLICER_PARSE_ARGUMENTS(QTMODULE
     "NAME;TITLE;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "NO_INSTALL"
+    "NO_INSTALL;NO_TITLE"
     ${ARGN}
     )
   message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME}")
@@ -52,7 +52,9 @@ macro(slicerMacroBuildQtModule)
   # --------------------------------------------------------------------------
   # Define Module title
   # --------------------------------------------------------------------------
-  add_definitions(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
+  if(NOT QTMODULE_NO_TITLE)
+    add_definitions(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
+  endif()
 
   # --------------------------------------------------------------------------
   # Include dirs
