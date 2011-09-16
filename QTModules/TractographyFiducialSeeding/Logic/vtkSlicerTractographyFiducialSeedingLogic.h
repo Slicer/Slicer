@@ -86,6 +86,9 @@ protected:
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes();
 
+  // Initialize listening to MRML events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
   void AddMRMLNodesObservers();
 
   void RemoveMRMLNodesObservers();
