@@ -239,6 +239,11 @@ SlicerMacroBuildBaseQtLibrary(
   WRAP_PYTHONQT
   )
 
+# HACK - Export library qSlicerBaseQTCorePythonQt so that
+#        command line module (ie EMSegmentCommandLine) can
+#        initialize both python environment and python manager.
+set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS qSlicerBaseQTGUIPythonQt)
+
 #-----------------------------------------------------------------------------
 # Slicer icon engine
 #-----------------------------------------------------------------------------
