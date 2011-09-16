@@ -272,7 +272,7 @@ void qSlicerMainWindowCore::onHelpBrowseTutorialsActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Documentation"));
+  QDesktopServices::openUrl(QUrl("http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0"));
 }
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpSlicerPublicationsActionTriggered()
@@ -287,22 +287,13 @@ void qSlicerMainWindowCore::onHelpAboutSlicerQTActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFeedbackReportBugActionTriggered()
+void qSlicerMainWindowCore::onHelpReportBugOrFeatureRequestActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
 }
+
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFeedbackReportUsabilityIssueActionTriggered()
+void qSlicerMainWindowCore::onHelpVisualBlogActionTriggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
-}
-//---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFeedbackMakeFeatureRequestActionTriggered()
-{
-  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
-}
-//---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFeedbackCommunitySlicerVisualBlogActionTriggered()
-{
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog"));
+  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer4:VisualBlog"));
 }

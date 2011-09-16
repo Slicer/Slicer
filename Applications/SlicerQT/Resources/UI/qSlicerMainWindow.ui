@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -116,27 +116,19 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpKeyboardShortcuts"/>
-    <addaction name="actionHelpBrowseTutorials"/>
     <addaction name="actionHelpInterfaceDocumentation"/>
+    <addaction name="actionHelpBrowseTutorials"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpSlicerPublications"/>
+    <addaction name="actionHelpVisualBlog"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpReportBugOrFeatureRequest"/>
     <addaction name="actionHelpAboutSlicerQT"/>
-   </widget>
-   <widget class="QMenu" name="menuFeeback">
-    <property name="title">
-     <string>Feedback</string>
-    </property>
-    <addaction name="actionFeedbackReportBug"/>
-    <addaction name="actionFeedbackReportUsabilityIssue"/>
-    <addaction name="actionFeedbackMakeFeatureRequest"/>
-    <addaction name="separator"/>
-    <addaction name="actionFeedbackCommunitySlicerVisualBlog"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
-   <addaction name="menuFeeback"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="PanelDockWidget">
@@ -667,7 +659,7 @@
   </action>
   <action name="actionHelpBrowseTutorials">
    <property name="text">
-    <string>Browse tutorials (www)</string>
+    <string>Browse tutorials</string>
    </property>
    <property name="toolTip">
     <string>Raise Slicer's training page in your favorite web browser</string>
@@ -675,15 +667,15 @@
   </action>
   <action name="actionHelpInterfaceDocumentation">
    <property name="text">
-    <string>Interface Documentation (www)</string>
+    <string>Interface Documentation</string>
    </property>
    <property name="shortcut">
-    <string>F1</string>
+    <string>Ctrl+1</string>
    </property>
   </action>
   <action name="actionHelpSlicerPublications">
    <property name="text">
-    <string>Slicer Publications (www)</string>
+    <string>Slicer Publications</string>
    </property>
   </action>
   <action name="actionHelpAboutSlicerQT">
@@ -691,15 +683,12 @@
     <string>About SlicerQT</string>
    </property>
    <property name="toolTip">
-    <string>Provide a description of the Slicer3 effort and its support.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+1</string>
+    <string>Provides a description of the Slicer effort and its support.</string>
    </property>
   </action>
-  <action name="actionFeedbackReportBug">
+  <action name="actionHelpReportBugOrFeatureRequest">
    <property name="text">
-    <string>Feedback: report a bug (www)</string>
+    <string>Report a bug</string>
    </property>
    <property name="toolTip">
     <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any bug you encounter can quickly and easily be reported.</string>
@@ -721,9 +710,9 @@
     <string>Open your Firefox web browser to http://www.na-mic.org/Bug/my_view_page.php so that community feature requests can easily be collected.</string>
    </property>
   </action>
-  <action name="actionFeedbackCommunitySlicerVisualBlog">
+  <action name="actionHelpVisualBlog">
    <property name="text">
-    <string>Community: Slicer Visual Blog (www)</string>
+    <string>Visual Blog</string>
    </property>
    <property name="toolTip">
     <string>Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community.</string>
@@ -1001,6 +990,8 @@
   <include location="../SlicerQT.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Resources/qSlicerLogos.qrc"/>
+  <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
  <connections>

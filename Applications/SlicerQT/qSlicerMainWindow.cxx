@@ -258,19 +258,14 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // TODO: all these icons are a little bit too much.
   QIcon networkIcon = q->style()->standardIcon(QStyle::SP_DriveNetIcon);
   QIcon informationIcon = q->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-  QIcon criticalIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
-  QIcon warningIcon = q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
   QIcon questionIcon = q->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
 
   this->actionHelpBrowseTutorials->setIcon(networkIcon);
   this->actionHelpInterfaceDocumentation->setIcon(networkIcon);
   this->actionHelpSlicerPublications->setIcon(networkIcon);
   this->actionHelpAboutSlicerQT->setIcon(informationIcon);
-  this->actionFeedbackReportBug->setIcon(criticalIcon);
-  this->actionFeedbackReportUsabilityIssue->setIcon(warningIcon);
-  this->actionFeedbackMakeFeatureRequest->setIcon(questionIcon);
-  this->actionFeedbackCommunitySlicerVisualBlog->setIcon(networkIcon);
-
+  this->actionHelpReportBugOrFeatureRequest->setIcon(questionIcon);
+  this->actionHelpVisualBlog->setIcon(networkIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -469,10 +464,8 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(HelpSlicerPublications);
   qSlicerMainWindowCore_connect(HelpAboutSlicerQT);
 
-  qSlicerMainWindowCore_connect(FeedbackReportBug);
-  qSlicerMainWindowCore_connect(FeedbackReportUsabilityIssue);
-  qSlicerMainWindowCore_connect(FeedbackMakeFeatureRequest);
-  qSlicerMainWindowCore_connect(FeedbackCommunitySlicerVisualBlog);
+  qSlicerMainWindowCore_connect(HelpReportBugOrFeatureRequest);
+  qSlicerMainWindowCore_connect(HelpVisualBlog);
 
   //connect ToolBars actions
   connect(d->actionWindowToolbarsModuleSelector, SIGNAL(triggered(bool)),

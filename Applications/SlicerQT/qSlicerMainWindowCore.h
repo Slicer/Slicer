@@ -64,13 +64,11 @@ public slots:
   void onHelpBrowseTutorialsActionTriggered();
   void onHelpInterfaceDocumentationActionTriggered();
   void onHelpSlicerPublicationsActionTriggered();
+  void onHelpVisualBlogActionTriggered();
+
+  void onHelpReportBugOrFeatureRequestActionTriggered();
   void onHelpAboutSlicerQTActionTriggered();
 
-  void onFeedbackReportBugActionTriggered();
-  void onFeedbackReportUsabilityIssueActionTriggered();
-  void onFeedbackMakeFeatureRequestActionTriggered();
-
-  void onFeedbackCommunitySlicerVisualBlogActionTriggered();
 protected:
   qSlicerMainWindow* widget() const;
 
