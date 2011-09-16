@@ -220,7 +220,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
     d->WidgetRepresentation = this->createWidgetRepresentation();
     if (d->WidgetRepresentation == 0)
       {
-      qDebug() << "Warning, the module "<<this->title()<< "has no widget representation";
+      qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
       return 0;
       }
     // internally sets the logic and call setup, 
