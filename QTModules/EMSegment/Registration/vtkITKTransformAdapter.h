@@ -2,7 +2,7 @@
 #define __vtkITKTransformAdapter_h
 
 #include "vtkObject.h"
-#include "vtkEMSegmentWin32Header.h"
+#include "vtkEMSegment.h"
 #include "vtkWarpTransform.h"
 #include "itkTransform.h"
 

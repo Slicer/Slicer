@@ -7,7 +7,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkGridTransform.h"
 #include "vtkTransform.h"
-#include "vtkEMSegmentWin32Header.h"
+#include "vtkEMSegment.h"
 
 class VTK_EMSEGMENT_EXPORT vtkBSplineRegistrator : 
   public vtkObject
