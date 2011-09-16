@@ -60,6 +60,8 @@ public:
   QTreeWidgetItem* itemFromEvent(QTreeWidgetItem* subjectItem, unsigned long long event)const;
   QTreeWidgetItem* itemFromObservation(vtkObservation* observation)const;
 
+  vtkObject* objectFromItem(QTreeWidgetItem*)const;
+
   void setObjectToItem(QTreeWidgetItem* item, vtkObject* object)const;
   void showItem(QTreeWidgetItem* item);
 
@@ -200,6 +202,16 @@ void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkOb
 }
 
 //------------------------------------------------------------------------------
+vtkObject* qMRMLEventBrokerWidgetPrivate::objectFromItem(QTreeWidgetItem* item)const
+{
+  if (!item)
+    {
+    return 0;
+    }
+  return reinterpret_cast<vtkObject*>(item->data(NameColumn, Qt::UserRole).value<long long>());
+}
+
+//------------------------------------------------------------------------------
 void qMRMLEventBrokerWidgetPrivate::showItem(QTreeWidgetItem* item)
 {
   if (!item)
@@ -259,6 +271,8 @@ void qMRMLEventBrokerWidgetPrivate::setupUi(QWidget* parentWidget)
 
   QObject::connect(this->ConnectionsTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                    parentWidget, SLOT(onItemChanged(QTreeWidgetItem*,int)));
+  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+                   parentWidget, SLOT(onCurrentItemChanged(QTreeWidgetItem*)));
 
   QVBoxLayout* vBoxLayout = new QVBoxLayout;
   vBoxLayout->addWidget(this->ConnectionsTreeWidget);
@@ -335,6 +349,13 @@ void qMRMLEventBrokerWidget::onItemChanged(QTreeWidgetItem* item, int column)
         }
       }
     }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLEventBrokerWidget::onCurrentItemChanged(QTreeWidgetItem* currentItem)
+{
+  Q_D(qMRMLEventBrokerWidget);
+  emit this->currentObjectChanged(d->objectFromItem(currentItem));
 }
 
 //------------------------------------------------------------------------------

@@ -193,7 +193,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   QPalette oldPalette = this->CentralWidget->palette();
   QPalette centralPalette = oldPalette;
-  centralPalette.setColor(QPalette::Window, QColor(64, 64, 72)); // Payne's grey
+  centralPalette.setColor(QPalette::Window, QColor(102, 102, 119)); // Payne's grey
   this->CentralWidget->setAutoFillBackground(true);
   this->CentralWidget->setPalette(centralPalette);
   layoutFrame->setPalette(oldPalette);

@@ -24,11 +24,23 @@
 #include "qSlicerEventBrokerModuleWidget.h"
 #include "ui_qSlicerEventBrokerModule.h"
 
+#include <sstream>
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModule
 {
 public:
+  virtual void setupUi(qSlicerWidget* widget);
 };
+
+//-----------------------------------------------------------------------------
+void qSlicerEventBrokerModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
+{
+  this->Ui_qSlicerEventBrokerModule::setupUi(widget);
+  QObject::connect(this->EventBrokerWidget, SIGNAL(currentObjectChanged(vtkObject*)),
+          widget, SLOT(onCurrentObjectChanged(vtkObject*)));
+}
 
 //-----------------------------------------------------------------------------
 qSlicerEventBrokerModuleWidget::qSlicerEventBrokerModuleWidget(QWidget* _parent)
@@ -47,4 +59,17 @@ void qSlicerEventBrokerModuleWidget::setup()
 {
   Q_D(qSlicerEventBrokerModuleWidget);
   d->setupUi(this);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEventBrokerModuleWidget::onCurrentObjectChanged(vtkObject* object)
+{
+  Q_D(qSlicerEventBrokerModuleWidget);
+  if (!object)
+    {
+    return;
+    }
+  std::stringstream dumpStream;
+  object->Print(dumpStream);
+  d->TextEdit->setText(QString::fromStdString(dumpStream.str()));
 }

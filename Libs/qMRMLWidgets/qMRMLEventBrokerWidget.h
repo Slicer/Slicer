@@ -29,8 +29,9 @@
 
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLEventBrokerWidgetPrivate;
+class QModelIndex;
 class QTreeWidgetItem;
+class qMRMLEventBrokerWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkObject;
@@ -47,9 +48,13 @@ public slots:
   void refresh();
   void resetElapsedTimes();
   void expandElapsedTimeItems();
-  
+
+signals:
+  void currentObjectChanged(vtkObject*);
+
 protected slots:
   void onItemChanged(QTreeWidgetItem* item, int column);
+  void onCurrentItemChanged(QTreeWidgetItem* currentItem);
 
 protected:
   QScopedPointer<qMRMLEventBrokerWidgetPrivate> d_ptr;
