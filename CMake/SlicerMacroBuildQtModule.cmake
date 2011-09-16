@@ -89,8 +89,11 @@ macro(slicerMacroBuildQtModule)
   #-----------------------------------------------------------------------------
   # Sources
   #-----------------------------------------------------------------------------
+  set(QTMODULE_MOC_OUTPUT)
   QT4_WRAP_CPP(QTMODULE_MOC_OUTPUT ${QTMODULE_MOC_SRCS})
+  set(QTMODULE_UI_CXX)
   QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
+  set(QTMODULE_QRC_SRCS)
   if(DEFINED QTMODULE_RESOURCES)
     QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${QTMODULE_RESOURCES})
   endif()
