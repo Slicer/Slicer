@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title> TclInterpreter </title>
+  <description>
+          You can easily run tcl commands from the shell without having to start up slicer Slicer3-build/lib/Slicer3/Plugins/EMSegmentTclInterpreter 'tcl file name' 'options for tcl file'   </description>
+  <version>
+            1.0     </version>
+  <documentation-url>
+            </documentation-url>
+  <license></license>
+  <contributor>
+            Kilian Pohl </contributor>
+  <acknowledgements>
+  </acknowledgements>
+</executable>

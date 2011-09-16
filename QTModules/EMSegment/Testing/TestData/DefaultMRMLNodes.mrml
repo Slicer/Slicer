@@ -1,0 +1,20 @@
+<MRML >
+<EMSTemplate
+  id="vtkMRMLEMSTemplateNode1"  name="vtkMRMLEMSTemplateNode1"  hideFromEditors="false"  selectable="true"  selected="false"  TreeNodeID="vtkMRMLEMSTreeNode1"  GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1"  SpatialAtlasNodeID="vtkMRMLEMSAtlasNode1"  SubParcellationNodeID="vtkMRMLEMSVolumeCollectionNode1"  EMSWorkingDataNodeID="vtkMRMLEMSWorkingDataNode1" ></EMSTemplate>
+ <EMSGlobalParameters
+  id="vtkMRMLEMSGlobalParametersNode1"  name="vtkMRMLEMSGlobalParametersNode1"  hideFromEditors="false"  selectable="true"  selected="false"  NumberOfTargetInputChannels="0"   InputChannelNames=""   WorkingDirectory="NULL"   SegmentationBoundaryMin="0 0 0"   SegmentationBoundaryMax="0 0 0"   RegistrationAffineType="0"   RegistrationDeformableType="0"   RegistrationInterpolationType="0"   RegistrationPackageType="0"   RegistrationAtlasVolumeKey=""   RegistrationTargetVolumeKey=""   EnableTargetToTargetRegistration="0"   SaveIntermediateResults="0"   SaveSurfaceModels="0"   MultithreadingEnabled="1"   UpdateIntermediateData="1"   EnableSubParcellation="0"   MinimumIslandSize="1"   Island2DFlag="0"   AMFSmoothing="0"   Colormap="NULL"  TemplateFileName="NULL"  TemplateSaveAfterSegmentation="0"  TaskTclFileName="GenericTask.tcl"  TaskPreProcessingSetting="NULL"  ></EMSGlobalParameters>
+ <EMSTree
+  id="vtkMRMLEMSTreeNode1"  name="Root"  hideFromEditors="false"  selectable="true"  selected="false"  ParentNodeID="NULL"  TreeParametersNodeID="NULL"  ChildNodeIDs=""   ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode1"  LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode1"  ColorRGB="1 0 0"  InputChannelWeights=""  SpatialPriorVolumeName=""  SpatialPriorWeight="1"  ClassProbability="0"  ExcludeFromIncompleteEStep="0"  PrintWeights="0"  ></EMSTree>
+ <EMSTreeParametersLeaf
+  id="vtkMRMLEMSTreeParametersLeafNode1"  name="vtkMRMLEMSTreeParametersLeafNode1"  hideFromEditors="false"  selectable="true"  selected="false" PrintQuality="0"  IntensityLabel="1000"  LogMean=""  LogMeanCorrection=""  LogCovariance=""  LogCovarianceCorrection=""  DistributionSpecificationMethod="0"  DistributionSamplePointsRAS=""  SubParcellationVolumeName=""  ></EMSTreeParametersLeaf>
+ <EMSTreeParametersParent
+  id="vtkMRMLEMSTreeParametersParentNode1"  name="vtkMRMLEMSTreeParametersParentNode1"  hideFromEditors="false"  selectable="true"  selected="false" Alpha="0.99"  PrintBias="0"  BiasCalculationMaxIterations="-1"  SmoothingKernelWidth="11"  SmoothingKernelSigma="5"  BiasCorrectionType="0"  UseLLS_Recompute_Means="0"  StopEMType="0"  StopEMMaxIterations="4"  StopEMValue="0"  StopMFAType="0"  StopMFAMaxIterations="2"  StopMFAValue="0"  PrintFrequency="0"  PrintLabelMap="0"  PrintEMLabelMapConvergence="0"  PrintEMWeightsConvergence="0"  PrintMFALabelMapConvergence="0"  PrintMFAWeightsConvergence="0"  MFA2DFlag="0"  GenerateBackgroundProbability="0"  ></EMSTreeParametersParent>
+ <EMSAtlas
+  id="vtkMRMLEMSAtlasNode1"  name="vtkMRMLEMSAtlasNode1"  hideFromEditors="false"  selectable="true"  selected="false"  NodeIDs=""   NumberOfTrainingSamples="-1"  ></EMSAtlas>
+ <EMSVolumeCollection
+  id="vtkMRMLEMSVolumeCollectionNode1"  name="vtkMRMLEMSVolumeCollectionNode1"  hideFromEditors="false"  selectable="true"  selected="false"  NodeIDs=""  ></EMSVolumeCollection>
+ <EMSWorkingData
+  id="vtkMRMLEMSWorkingDataNode1"  name="vtkMRMLEMSWorkingDataNode1"  hideFromEditors="false"  selectable="true"  selected="false"  InputTargetNodeID="vtkMRMLEMSVolumeCollectionNode2"   InputTargetNodeIsValid="0"  AlignedTargetNodeID="NULL"   AlignedTargetNodeIsValid="0"   InputAtlasNodeIsValid="0"  AlignedAtlasNodeID="NULL"   AlignedAtlasNodeIsValid="0"  AlignedSubParcellationNodeID="NULL"  OutputSegmentationNodeID="NULL"  ></EMSWorkingData>
+ <EMSVolumeCollection
+  id="vtkMRMLEMSVolumeCollectionNode2"  name="vtkMRMLEMSVolumeCollectionNode2"  hideFromEditors="false"  selectable="true"  selected="false"  NodeIDs=""  ></EMSVolumeCollection>
+</MRML>

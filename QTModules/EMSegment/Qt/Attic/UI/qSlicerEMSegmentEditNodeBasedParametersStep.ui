@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerEMSegmentEditNodeBasedParametersStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentEditNodeBasedParametersStep">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>668</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="AnatomicalTreeGroupBox">
+     <property name="title">
+      <string>Anatomical Tree</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
+        <property name="classWeightColumnVisible">
+         <bool>true</bool>
+        </property>
+        <property name="updateClassWeightColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="atlasWeightColumnVisible">
+         <bool>true</bool>
+        </property>
+        <property name="displayAlphaCheckBoxVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>150</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="BasicTab">
+      <attribute name="title">
+       <string>Basic</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="StoppingConditionsTab">
+      <attribute name="title">
+       <string>Stopping Conditions</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentAnatomicalTreeWidget</class>
+   <extends>qSlicerEMSegmentWidget</extends>
+   <header>qSlicerEMSegmentAnatomicalTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWidget</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerEMSegmentWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>qSlicerEMSegmentEditNodeBasedParametersStep</sender>
+   <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>3</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>32</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentEditNodeBasedParametersStep</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>259</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

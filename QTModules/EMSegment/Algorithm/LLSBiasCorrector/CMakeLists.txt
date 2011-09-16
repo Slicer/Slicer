@@ -1,0 +1,25 @@
+
+PROJECT(bias)
+
+INCLUDE (${CMAKE_ROOT}/Modules/FindITK.cmake)
+IF (USE_ITK_FILE)
+  INCLUDE(${USE_ITK_FILE})
+ENDIF (USE_ITK_FILE)
+
+#INCLUDE_DIRECTORIES(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/../common
+#)
+
+ADD_EXECUTABLE(test
+  test.cxx
+#  Log.cxx
+)
+
+ADD_EXECUTABLE(bias
+  bias.cxx
+#  Log.cxx
+)
+
+TARGET_LINK_LIBRARIES(bias ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES(test ${ITK_LIBRARIES})
+

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/Weight.png</file>
+        <file>Icons/EMSegment.png</file>
+        <file>Icons/EMSegmentQuick.png</file>
+    </qresource>
+</RCC>

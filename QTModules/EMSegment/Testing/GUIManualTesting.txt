@@ -1,0 +1,56 @@
+GUI Tests
+=========================
+1) Slicer loads without crashing and exits without vtk leaks
+
+2) No parameter node is loaded
+  a) go back and forth through all steps with no errors or warnings
+  b) go from each step to finish and back---no errors or warnings
+  c) buttons are disabled
+  d) run gives appropriate message
+  e) Slicer exits without vtk leaks
+
+3) Tutorial parameters are loaded---look at all parameters but don't change
+  a) go back and forth through all steps with no errors or warnings
+  b) go from each step to finish and back---no errors or warnings
+  c) buttons are disabled/enabled appropriately
+  d) run gives appropriate message
+  e) Slicer exits without vtk leaks
+  f) results match 
+
+4) Build tutorial by hand
+  a) run gives appropriate message
+  b) Slicer exits without vtk leaks
+  c) results match 
+  d) save now works
+  e) saved mrml matches
+
+5) Misc
+  a) add, remove, move target images---check that appropriate data is maintained
+  b) add, remove, move, nodes in tree---check that data is appropriate
+  c) test manual sampling thouroughly
+    right position?
+    right intensity?
+    works with moving / adding / removing targets?
+    works with moving / adding / removing tree nodes?
+
+Current Bugs
+=========================
+2/8: changing label: weird tcl error
+4/8: want tabs to move between entry boxes
+6/8: can't edit input channel weights
+8/8: hide save panel
+
+13 June 07 --- davisb
+=========================
+1) OK
+2) OK
+3) Minor Warnings:
+  c) 8/9 should be disabled (not implemented)
+  b) warnings on step 8/9
+Warning: In /usr/local/dev/src/Slicer3/Modules/EMSegment/vtkEMSegmentMRMLManager.cxx, line 2265
+vtkEMSegmentMRMLManager (0x41d0210): AtlasVolumeName is NULL/blank.
+Warning: In /usr/local/dev/src/Slicer3/Modules/EMSegment/vtkEMSegmentMRMLManager.cxx, line 2320
+vtkEMSegmentMRMLManager (0x41d0210): TargetVolumeName is NULL/blank.
+4) 
+  Warning 1/9: regarding checking mrml nodes but no output volume
+  

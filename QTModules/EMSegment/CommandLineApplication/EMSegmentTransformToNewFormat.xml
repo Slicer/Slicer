@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Utilities
+  </category>
+  <title>
+  Transform MRML Files to New EMSegmenter Standard
+  </title>
+  <description>
+  Transform MRML Files to New EMSegmenter Standard
+  </description>
+  <parameters>
+    <label>Inputs and Outputs</label>
+    <description>input and output mrml file </description>
+
+    <file fileExtensions=".mrml">
+      <name>inputMRMLFileName</name>
+      <longflag>inputMRMLFileName</longflag>
+      <flag>i</flag>
+      <description>Active MRML scene that contains EMSegment algorithm parameters in the format before 3.6.3 - please include absolute  file name in path.</description>
+      <label>input MRML Scene Filename</label>
+      <channel>input</channel>
+    </file>  
+
+    <file fileExtensions=".mrml">
+      <name>outputMRMLFileName</name>
+      <longflag>outputMRMLFileName</longflag>
+      <flag>o</flag>
+      <description>Write out the MRML scene after transformation to format 3.6.3 has been made. - has to be in the same directory as the input MRML file due to Slicer Core bug  - please include absolute  file name in path </description>
+      <label>Output MRML scene filename.</label>
+      <channel>output</channel>
+    </file>
+
+    <boolean>
+      <name>templateFlag</name>
+      <longflag>templateFlag</longflag>
+      <flag>t</flag>
+      <description>Set to true if the transformed mrml file should be used as template file </description>
+      <label>Create Template file</label>
+      <default>false</default>
+    </boolean>
+
+  </parameters>
+
+</executable>
+
