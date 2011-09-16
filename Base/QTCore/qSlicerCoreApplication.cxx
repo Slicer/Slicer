@@ -231,6 +231,18 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
+  // Since some standalone executable (i.e EMSegmentCommandLine) can create
+  // an instance of qSlicer(Core)Application so that the environment and the
+  // python manager are properly initialized. This executable will have
+  // to set Slicer_HOME. If not, the current directory associated with that
+  // executable will be considered and initialization code expecting Slicer_HOME
+  // to be properly set will fail.
+  QString slicerHome = this->Environment.value("Slicer_HOME");
+  if (!slicerHome.isEmpty())
+    {
+    //qDebug() << "qSlicerCoreApplication: Slicer_HOME externally set to" << slicerHome;
+    return slicerHome;
+    }
   QDir slicerBinDir(this->SlicerBin);
   bool cdUpRes = slicerBinDir.cdUp();
   if (!cdUpRes)
@@ -300,10 +312,12 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   Q_Q(qSlicerCoreApplication);
   this->SlicerBin = QString();
   this->IntDir = QString();
+  // Note: On Linux, QCoreApplication::applicationDirPath() will attempt
+  //       to get the path using the "/proc" filesystem.
   QDir slicerBinDir(q->applicationDirPath());
   if ( !slicerBinDir.exists() )
     {
-    qCritical() << "Cannot find Slicer3 executable" << q->applicationDirPath();
+    qCritical() << "Cannot find Slicer executable" << q->applicationDirPath();
     return ;
     }
   QDir slicerLibDir = slicerBinDir;
