@@ -25,6 +25,7 @@
 #include "qMRMLSceneModel_p.h"
 
 // MRML includes
+#include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
@@ -815,6 +816,12 @@ void qMRMLSceneModel::updateItemDataFromNode(
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(node);
+    vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
+      vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+    if (displayableHierarchyNode)
+      {
+      displayNode = displayableHierarchyNode->GetDisplayNode();
+      }
     int visible = -1;
     if (displayNode)
       {
@@ -930,7 +937,14 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
   if (item->column() == this->visibilityColumn())
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
-    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(node);
+    vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
+      vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+    if (displayableHierarchyNode)
+      {
+      displayNode = displayableHierarchyNode->GetDisplayNode();
+      }
     int visible = -1;
     if (item->icon().cacheKey() == d->HiddenIcon.cacheKey())
       {

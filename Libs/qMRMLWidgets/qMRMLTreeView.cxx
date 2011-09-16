@@ -35,6 +35,7 @@
 
 // MRML includes
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLScene.h>
 
@@ -534,6 +535,12 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
     vtkMRMLDisplayNode::SafeDownCast(node);
   vtkMRMLDisplayableNode* displayableNode =
     vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
+      vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+  if (displayableHierarchyNode)
+    {
+    displayNode = displayableHierarchyNode->GetDisplayNode();
+    }
   if (displayNode)
     {
     displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);

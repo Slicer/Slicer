@@ -166,6 +166,11 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
 {
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
+  if (column == this->visibilityColumn() &&
+      d->displayNode(node) != 0)
+    {
+    flags |= Qt::ItemIsEditable;
+    }
   if (column == this->colorColumn() &&
       d->displayNode(node) != 0)
     {
@@ -196,7 +201,7 @@ void qMRMLSceneDisplayableModel
       item->setToolTip("Color");
       }
     }
-  else if (column == this->opacityColumn())
+  if (column == this->opacityColumn())
     {
     vtkMRMLDisplayNode* displayNode = d->displayNode(node);
     if (displayNode)
@@ -240,7 +245,7 @@ void qMRMLSceneDisplayableModel
         }
       }
     }
-  else if (item->column() == this->opacityColumn())
+  if (item->column() == this->opacityColumn())
     {
     QString displayedOpacity = item->data(Qt::EditRole).toString();
     if (!displayedOpacity.isEmpty())
