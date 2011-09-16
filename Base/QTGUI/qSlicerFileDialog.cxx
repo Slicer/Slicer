@@ -150,11 +150,11 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     }
   // warning: we are responsible for the memory of options
   QStringList fileDescriptions = ioManager->fileDescriptions(this->fileType());
-  Q_ASSERT(fileDescriptions.count());
-  qSlicerIOOptions* options = ioManager->fileOptions(fileDescriptions[0]);
+  qSlicerIOOptions* options = fileDescriptions.count() ?
+    ioManager->fileOptions(fileDescriptions[0]) : 0;
   qSlicerIOOptionsWidget* optionsWidget =
     dynamic_cast<qSlicerIOOptionsWidget*>(options);
-  // options is not necessary a qSLicerIOOptionsWidget (for the case of
+  // options is not necessary a qSlicerIOOptionsWidget (for the case of
   // readers/modules with no UI. If there is a UI then add it inside the  file
   // dialog.
   if (optionsWidget)
