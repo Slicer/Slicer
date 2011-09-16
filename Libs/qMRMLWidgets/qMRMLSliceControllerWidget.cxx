@@ -303,7 +303,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider = new ctkSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
-  this->SliceOffsetSlider->setPageStep(1.);
+
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
   QDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
   spinBox->setFrame(false);
@@ -1324,6 +1324,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 {
   Q_D(qMRMLSliceControllerWidget);
   d->SliceOffsetSlider->setSingleStep(resolution);
+  d->SliceOffsetSlider->setPageStep(resolution);
 }
 
 // --------------------------------------------------------------------------
