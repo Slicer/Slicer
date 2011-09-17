@@ -29,16 +29,29 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
+    # initialize the dicom infrastructure
     settings = qt.QSettings()
+    # the dicom listener is also global, but only started on app start if 
+    # the user so chooses
     if settings.contains('DICOM/RunListenerAtStart'):
       if bool(settings.value('DICOM/RunListenerAtStart')):
-        if not hasattr(slicer, 'DICOMListener'):
-          try:
-            slicer.DICOMListener = DICOMLib.DICOMListener()
-          except UserWarning as message:
-            # TODO: how to put this into the error log?
-            print (message)
-          slicer.DICOMListener.start()
+        # the dicom database is a global object for slicer
+        databaseDirectory = settings.value('DatabaseDirectory')
+        if databaseDirectory: 
+          slicer.dicomDatabase = ctk.ctkDICOMDatabase()
+          slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+          if not hasattr(slicer, 'dicomListener'):
+            try:
+              slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+            except UserWarning as message:
+              # TODO: how to put this into the error log?
+              print ('Problem trying to start DICOMListener:\n %s' % message)
+            slicer.dicomListener.start()
+            
+  def __del__(self):
+    if hasattr(slicer, 'dicomListener'):
+      print('trying to stop listener')
+      slicer.dicomListener.stop()
 
 
 #
@@ -52,7 +65,6 @@ class DICOMWidget:
 
   def __init__(self, parent=None):
     self.testingServer = None
-    self.dicomDatabase = ctk.ctkDICOMDatabase()
 
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
@@ -69,6 +81,8 @@ class DICOMWidget:
     else:
       self.parent = parent
       self.layout = parent.layout()
+
+    globals()['d'] = self
 
   def enter(self):
     pass
@@ -109,7 +123,7 @@ class DICOMWidget:
 
     settings = qt.QSettings()
     self.toggleListener = qt.QPushButton()
-    if hasattr(slicer, 'DICOMListener'):
+    if hasattr(slicer, 'dicomListener'):
       self.toggleListener.text = "Stop Listener"
     else:
       self.toggleListener.text = "Start Listener"
@@ -138,7 +152,10 @@ class DICOMWidget:
     tree = self.findChildren(self.dicomApp, 'TreeView')[0]
     g = tree.geometry
     g.setHeight(100)
-    self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
+    if self.dicomApp.databaseDirectory:
+      self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
+    if hasattr(slicer, 'dicomListener'):
+      slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
     tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
@@ -160,12 +177,14 @@ class DICOMWidget:
     self.layout.addStretch(1)
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
+    if not hasattr(slicer, 'dicomDatabase'):
+      slicer.dicomDatabase = ctk.ctkDICOMDatabase()
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
       return
-    self.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-    if not self.dicomDatabase.isOpen:
+    slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+    if not slicer.dicomDatabase.isOpen:
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
 
   def onTreeClicked(self,index):
@@ -204,11 +223,11 @@ class DICOMWidget:
   def onExportButton(self):
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
-    exportDialog = DICOMExportDialog(self.dicomDatabase, uid)
+    exportDialog = DICOMExportDialog(slicer.dicomDatabase, uid)
     exportDialog.open()
 
   def loadPatient(self,patientUID):
-    studies = self.dicomDatabase.studiesForPatient(patientUID)
+    studies = slicer.dicomDatabase.studiesForPatient(patientUID)
     s = 1
     self.progress.setLabelText("Loading Studies")
     self.progress.setValue(1)
@@ -221,7 +240,7 @@ class DICOMWidget:
         break
 
   def loadStudy(self,studyUID):
-    series = self.dicomDatabase.seriesForStudy(studyUID)
+    series = slicer.dicomDatabase.seriesForStudy(studyUID)
     s = 1
     origText = self.progress.labelText
     for serie in series:
@@ -234,12 +253,12 @@ class DICOMWidget:
         break
 
   def loadSeries(self,seriesUID):
-    files = self.dicomDatabase.filesForSeries(seriesUID)
-    self.dicomDatabase.loadFileHeader(files[0])
+    files = slicer.dicomDatabase.filesForSeries(seriesUID)
+    slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
-    d = self.dicomDatabase.headerValue(seriesDescription)
+    d = slicer.dicomDatabase.headerValue(seriesDescription)
     name = d[d.index('[')+1:d.index(']')]
-    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
+    self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
     fileList = vtk.vtkStringArray()
@@ -255,18 +274,24 @@ class DICOMWidget:
     mrmlLogic.PropagateVolumeSelection()
 
   def onToggleListener(self):
-    if hasattr(slicer, 'DICOMListener'):
-      print ('stopping')
-      del slicer.DICOMListener
+    if hasattr(slicer, 'dicomListener'):
+      slicer.dicomListener.stop()
+      del slicer.dicomListener
       self.toggleListener.text = "Start Listener"
     else:
-      print ('starting')
       try:
-        slicer.DICOMListener = DICOMLib.DICOMListener()
-        slicer.DICOMListener.start()
+        slicer.dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
+        slicer.dicomListener.start()
+        slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
         self.toggleListener.text = "Stop Listener"
       except UserWarning as message:
         self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
+
+  def onListenerAddedFile(self):
+    newFile = slicer.dicomListener.lastFileAdded
+    if newFile:
+      slicer.util.showStatusMessage("Loaded: %s" % newFile, 1000)
+    self.dicomApp.resetModel()
 
   def onToggleServer(self):
     if self.testingServer and self.testingServer.qrRunning():
@@ -334,16 +359,15 @@ class DICOMExportDialog(object):
   to be part of a DICOM study (e.g. a slicer volume as a new dicom series).
   """
 
-  def __init__(self,dicomDatabase, studyUID):
-    self.dicomDatabase = dicomDatabase
+  def __init__(self,studyUID):
     self.studyUID = studyUID
-    seriesUID = self.dicomDatabase.seriesForStudy(studyUID)[0]
-    files = self.dicomDatabase.filesForSeries(seriesUID)
-    self.dicomDatabase.loadFileHeader(files[0])
+    seriesUID = slicer.dicomDatabase.seriesForStudy(studyUID)[0]
+    files = slicer.dicomDatabase.filesForSeries(seriesUID)
+    slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
-    d = self.dicomDatabase.headerValue(seriesDescription)
+    d = slicer.dicomDatabase.headerValue(seriesDescription)
     name = d[d.index('[')+1:d.index(']')]
-    self.loadFiles(self.dicomDatabase.filesForSeries(seriesUID), name)
+    self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def open(self):
 

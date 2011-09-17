@@ -1,7 +1,7 @@
 import os
-import subprocess
 import slicer
 from __main__ import qt
+from __main__ import ctk
 
 #########################################################
 #
@@ -24,33 +24,34 @@ class DICOMServer(object):
 
   def __init__(self):
     self.process = None
+    self.connections = {}
     self.exeDir = slicer.app.slicerHome 
     if slicer.app.intDir:
       self.exeDir = self.exeDir + '/' + slicer.app.intDir
-    self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build'
-
-    # TODO: deal with Debug/RelWithDebInfo on windows
+    self.exeDir = self.exeDir + '/../CTK-build/CMakeExternals/Install/bin'
+    if not os.path.exists(self.exeDir):
+      self.exeDir = slicer.app.slicerHome + '/bin'
+    self.exeExtension = ""
+    if os.name == 'nt':
+      self.exeExtension = ".exe"
 
   def __del__(self):
     self.stop()
 
-  def start(self, cmdList, cwd="."):
+  def start(self, cmd, args):
     if self.process != None:
       self.stop()
 
     # start the server!
-    self.process = subprocess.Popen(cmdList, cwd=self.incomingDir)
-                                      # TODO: handle output
-                                      #stdin=subprocess.PIPE,
-                                      #stdout=subprocess.PIPE,
-                                      #stderr=subprocess.PIPE)
+    self.process = qt.QProcess()
+    self.process.start(cmd, args)
 
   def stop(self):
-    self.process.kill()
-    self.process.communicate()
-    self.process.wait()
-    self.process = None
-
+    if hasattr(self,'process'):
+      if self.process:
+        print("stopping DICOM listener")
+        self.process.kill()
+        self.process = None
 
 class DICOMListener(DICOMServer):
   """helper class to run dcmtk's storescp as listener
@@ -61,14 +62,19 @@ class DICOMListener(DICOMServer):
   this task as a QObject callable from PythonQt
   """
 
-  def __init__(self):
+  def __init__(self,database,fileAddedCallback=None):
     super(DICOMListener,self).__init__()
-
+    self.dicomDatabase = database
+    self.indexer = ctk.ctkDICOMIndexer()
+    self.fileAddedCallback = fileAddedCallback
+    self.lastFileAdded = None
     settings = qt.QSettings()
 
     dir = settings.value('DatabaseDirectory')
     if not dir:
-      raise( UserWarning('Database directory not set: will cannot start DICOMListener') )
+      raise( UserWarning('Database directory not set: cannot start DICOMListener') )
+    if not os.path.exists(dir):
+      os.mkdir(dir)
     self.incomingDir = dir + "/incoming"
     if not os.path.exists(self.incomingDir):
       os.mkdir(self.incomingDir)
@@ -82,13 +88,45 @@ class DICOMListener(DICOMServer):
     super(DICOMListener,self).__del__()
 
   def start(self):
-
-    self.storeSCPExecutable = self.exeDir+'/dcmnet/apps/storescp'
-
+    self.storeSCPExecutable = self.exeDir+'/storescp'+self.exeExtension
+    dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
     # start the server!
-    cmdList = [self.storeSCPExecutable, str(self.port)]
-    super(DICOMListener,self).start(cmdList, cwd=self.incomingDir)
+    onReceptionCallback = "%s --load-short --print-short --print-filename --search PatientName #f" % dcmdumpExecutable
+    args = [str(self.port), 
+        '--output-directory' , self.incomingDir,
+        '--exec-on-reception', onReceptionCallback]
+    print("starting DICOM listener")
+    super(DICOMListener,self).start(self.storeSCPExecutable, args)
 
+    self.process.connect('readyReadStandardOutput()', self.readFromListener)
+
+
+  def readFromListener(self):
+    print('================ready to read from listener===================')
+    while self.process.canReadLine():
+      line = str(self.process.readLine())
+      print ("From Listener: %s" % (line) )
+      searchTag = '# dcmdump (1/1): '
+      tagStart = line.find(searchTag)
+      if tagStart != -1:
+        dicomFile = line[tagStart + len(searchTag):].strip()
+        dicomFilePath = self.incomingDir + '/' + dicomFile
+        destinationDir = os.path.dirname(self.dicomDatabase.databaseFilename)
+        print()
+        print()
+        print()
+        print ("indexing: %s into %s " % (dicomFilePath, destinationDir) )
+        self.indexer.addFile( self.dicomDatabase, dicomFilePath, destinationDir )
+        print ("done indexing")
+        self.lastFileAdded = dicomFilePath
+        if self.fileAddedCallback:
+          print ("calling callback...")
+          self.fileAddedCallback()
+          print ("callback done")
+        else:
+          print ("no callback")
+    stdErr = str(self.process.readAllStandardError())
+    print ("processed stderr")
 
 class DICOMTestingQRServer(object):
   """helper class to set up the DICOM servers
