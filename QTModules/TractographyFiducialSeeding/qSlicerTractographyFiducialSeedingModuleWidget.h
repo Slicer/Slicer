@@ -48,6 +48,9 @@ public slots:
   /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
+  /// Process loaded scene
+  void onSceneImportedEvent();
+
   /// Set current parameter node
   void setTractographyFiducialSeedingNode(vtkMRMLNode *node);
 

@@ -123,6 +123,9 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
 void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->settingMRMLScene = true;
+
+  qvtkReconnect(this->mrmlScene(), scene, vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
+
   this->Superclass::setMRMLScene(scene);
 
   // find parameters node or create it if there is no one in the scene
@@ -140,11 +143,17 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerTractographyFiducialSeedingModuleWidget::onSceneImportedEvent()
+{
+  this->enter();
+}
+
+
+//-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 {
   Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
-
 
   QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
                                        SLOT(setDiffusionTensorVolumeNode(vtkMRMLNode*)));
