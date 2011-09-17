@@ -131,8 +131,6 @@ void qMRMLCaptureToolBarPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  Q_Q(qMRMLCaptureToolBar);
-
   if (newScene == this->MRMLScene)
     {
     return;
@@ -165,18 +163,15 @@ void qMRMLCaptureToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::onMRMLSceneImportedEvent()
 {
-  Q_Q(qMRMLCaptureToolBar);
-  // update the state from mrml
   this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::onMRMLSceneClosedEvent()
 {
-  Q_Q(qMRMLCaptureToolBar);
-  Q_ASSERT(this->MRMLScene);
   if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
     {
+    Q_ASSERT(this->MRMLScene);
     return;
     }
   this->updateWidgetFromMRML();
