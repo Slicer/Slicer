@@ -560,8 +560,8 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
     {
     return;
     }
-  d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
-  d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
+  //d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
+  //d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
 }
 
 //---------------------------------------------------------------------------

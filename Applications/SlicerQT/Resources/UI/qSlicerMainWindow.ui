@@ -54,8 +54,6 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionEditUndo"/>
-    <addaction name="actionEditRedo"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -223,8 +221,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionEditUndo"/>
-   <addaction name="actionEditRedo"/>
   </widget>
   <widget class="QToolBar" name="ViewToolBar">
    <property name="windowTitle">
