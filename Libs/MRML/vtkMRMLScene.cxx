@@ -100,7 +100,7 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->CurrentScene =  vtkCollection::New();
   this->UndoStackSize = 100;
-  this->UndoFlag = true;
+  this->UndoFlag = false;
   this->InUndo = false;
 
   this->ReferencedIDs.clear() ;
@@ -455,6 +455,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   vtkTimerLog* timer = vtkTimerLog::New();
   timer->StartTimer();
 #endif
+  bool undoFlag = this->GetUndoFlag();
   this->SetUndoOff();
   this->SetIsClosing(true);
   
@@ -492,7 +493,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
 
 
   this->Modified();
-  this->SetUndoOn();
+  this->SetUndoFlag(undoFlag);
 
   // Unless I'm wrong, this should be at the very end. SceneAboutToBeClosedEvent
   // is the event that gives a "chance" to objects to release resources.
@@ -2215,6 +2216,11 @@ void vtkMRMLScene::AddReservedID(const char *id)
 //
 void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->InUndo) 
     {
     return;
@@ -2226,7 +2232,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     }
 
   this->ClearRedoStack();
-  this->SetUndoOn();
+  //this->SetUndoOn();
   this->PushIntoUndoStack();
   if ( node && !node->IsA("vtkMRMLSceneViewNode"))
     {
@@ -2237,6 +2243,11 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->InUndo ) 
     {
     return;
@@ -2247,7 +2258,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     }
 
   this->ClearRedoStack();
-  this->SetUndoOn();
+  //this->SetUndoOn();
   this->PushIntoUndoStack();
   unsigned int n;
   for (n=0; n<nodes.size(); n++) 
@@ -2263,6 +2274,11 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->InUndo) 
     {
     return;
@@ -2279,7 +2295,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     }
   
   this->ClearRedoStack();
-  this->SetUndoOn();
+  //this->SetUndoOn();
   this->PushIntoUndoStack();
 
   int nnodes = nodes->GetNumberOfItems();
@@ -2297,6 +2313,11 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->GetIsUpdating())
     {
     return;
@@ -2428,6 +2449,11 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
 // -- move the current scene on the redo stack
 void vtkMRMLScene::Undo()
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->UndoStack.size() == 0) 
     {
     return;
@@ -2551,6 +2577,11 @@ void vtkMRMLScene::Undo()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::Redo()
 {
+  if (!this->UndoFlag) 
+    {
+    return;
+    }
+
   if (this->RedoStack.size() == 0) 
     {
     return;
