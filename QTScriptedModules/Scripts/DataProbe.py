@@ -152,7 +152,8 @@ class DataProbeInfoWidget(object):
       xy = interactor.GetEventPosition()
       # populate the widgets
       self.viewerColor.setText( " " )
-      self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % sliceNode.GetLayoutName())
+      sc = slicer.qMRMLSliceControllerWidget();
+      self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % sc.sliceViewColor(sliceNode.GetLayoutName()))
       self.viewerName.setText( "  " + sliceNode.GetLayoutName() + "  " )
       # TODO: get z value from lightbox
       ras = sliceNode.GetXYToRAS().MultiplyPoint(xy+(0,1))[:3]

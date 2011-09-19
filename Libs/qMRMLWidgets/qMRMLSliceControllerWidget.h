@@ -80,7 +80,7 @@ public:
   QString sliceViewName()const;
 
   /// Return the color associated to the slice view
-  static QColor sliceViewColor(const QString& sliceViewName);
+  Q_INVOKABLE static QColor sliceViewColor(const QString& sliceViewName);
 
   /// Set the label for the slice view (abbreviation for the view
   /// name)
