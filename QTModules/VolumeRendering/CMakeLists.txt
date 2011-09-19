@@ -48,6 +48,8 @@ VTK_MAKE_INSTANTIATOR3("${qt_module_name}Instantiator"
 set(qt_module_SRCS
   ${qt_module_displayable_manager_SRCS}
   ${qt_module_displayable_manager_instantiator_SRCS}
+  qSlicerVolumeRenderingIO.cxx
+  qSlicerVolumeRenderingIO.h
   qSlicerVolumeRenderingSettingsPanel.cxx
   qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.cxx
@@ -58,6 +60,7 @@ set(qt_module_SRCS
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
+  qSlicerVolumeRenderingIO.h
   qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.h
   qSlicerVolumeRenderingModuleWidget.h
@@ -95,7 +98,6 @@ slicerMacroBuildQtModule(
   TARGET_LIBRARIES ${qt_module_target_libraries}
   RESOURCES ${qt_module_resources}
   )
-
 
 if(BUILD_TESTING)
   add_subdirectory(Testing)

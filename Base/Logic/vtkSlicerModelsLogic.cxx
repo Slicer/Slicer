@@ -310,7 +310,8 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
   
   // check for local or remote files
   int useURI = 0; //false ;
-  if (this->GetMRMLScene()->GetCacheManager() != NULL)
+  if (this->GetMRMLScene() &&
+      this->GetMRMLScene()->GetCacheManager() != NULL)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     vtkDebugMacro("AddScalar: file name is remote: " << filename);

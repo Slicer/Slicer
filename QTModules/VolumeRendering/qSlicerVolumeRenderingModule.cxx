@@ -4,12 +4,14 @@
 
 // QtGUI includes
 #include <qSlicerApplication.h>
+#include <qSlicerCoreIOManager.h>
 
 // VolumeRendering Logic includes
 #include <vtkSlicerVolumeRenderingLogic.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
 // VolumeRendering includes
+#include "qSlicerVolumeRenderingIO.h"
 #include "qSlicerVolumeRenderingModule.h"
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
@@ -77,6 +79,9 @@ void qSlicerVolumeRenderingModule::setup()
     }
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
     RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
+
+  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+    new qSlicerVolumeRenderingIO(this));
 }
 
 //-----------------------------------------------------------------------------

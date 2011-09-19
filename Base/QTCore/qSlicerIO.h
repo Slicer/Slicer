@@ -59,6 +59,7 @@ public:
     ColorTableFile = 7,
     FiducialListFile = 8,
     FiberBundleFile = 9,
+    TransferFunctionFile = 10,
     UserFile = 32,
   };
 

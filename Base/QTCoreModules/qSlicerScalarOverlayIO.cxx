@@ -22,9 +22,9 @@
 #include <QDebug>
 
 // SlicerQt includes
-//#include "qSlicerAbstractModule.h"
-//#include "qSlicerCoreApplication.h"
-//#include "qSlicerModuleManager.h"
+#include "qSlicerAbstractModule.h"
+#include "qSlicerCoreApplication.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerScalarOverlayIO.h"
 #include "qSlicerScalarOverlayIOOptionsWidget.h"
 
@@ -81,13 +81,9 @@ bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
       this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1().data()));
   Q_ASSERT(modelNode);
 
-  // FIXME: Use the following commented lines when qSlicerModelsIO.[x/cxx] will
-  // be in the same directory than the Models module. Create its own logic for
-  // now.
-  //vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(
-  //  qSlicerCoreApplication::application()->moduleManager()
-  //  ->module("Models")->logic());
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::New();
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleManager()
+    ->module("Models")->logic());
   Q_ASSERT(modelsLogic);
 
   vtkMRMLStorageNode* node = modelsLogic->AddScalar(fileName.toLatin1().data(), modelNode);

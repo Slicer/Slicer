@@ -759,8 +759,8 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
 }
 
 //----------------------------------------------------------------------------
-
-vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile (const char* filename)
+vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic
+::AddVolumePropertyFromFile (const char* filename)
 {
   vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
   vtkMRMLVolumePropertyStorageNode *vpStorageNode = vtkMRMLVolumePropertyStorageNode::New();
@@ -814,12 +814,10 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     vpNode->SetScene(this->GetMRMLScene());
     vpStorageNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNodeNoNotify(vpStorageNode);  
+    this->GetMRMLScene()->AddNode(vpStorageNode);
     vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
 
-    this->GetMRMLScene()->AddNode(vpNode);  
-
-    //this->Modified();  
+    this->GetMRMLScene()->AddNode(vpNode);
 
     // the scene points to it still
     vpNode->Delete();
@@ -844,7 +842,7 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     {
     vpStorageNode->Delete();
     }
-  return vpNode;  
+  return vpNode;
 }
 
 //---------------------------------------------------------------------------
