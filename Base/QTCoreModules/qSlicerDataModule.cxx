@@ -32,6 +32,7 @@
 #include "qSlicerDataModuleWidget.h"
 
 // SlicerLogic includes
+#include <vtkSlicerApplicationLogic.h>
 #include <vtkSlicerColorLogic.h>
 
 // VTK includes
