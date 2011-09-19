@@ -1,4 +1,3 @@
-#define ITK_LEAN_AND_MEAN
 #include "vtkBSplineRegistrator.h"
 #include "vtkObjectFactory.h"
 
@@ -14,6 +13,7 @@
 #include "itkLBFGSBOptimizer.h"
 #include "itkMultiResolutionImageRegistrationMethod.h"
 #include "itkMultiResolutionPyramidImageFilter.h"
+#include "itkBSplineDeformableTransform.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkNormalizedCorrelationImageToImageMetric.h"
 #include "itkMeanSquaresImageToImageMetric.h"
@@ -86,9 +86,9 @@ public:
   typedef itk::SmartPointer<Self>    Pointer;
   itkNewMacro( Self );
 protected:
-  CommandStartLevelUpdate() 
-  { 
-    this->m_SamplingRatio = 0.33; 
+  CommandStartLevelUpdate()
+  {
+    this->m_SamplingRatio = 0.33;
     this->m_NumberOfIterations = 10;
   }
   double m_SamplingRatio;
@@ -104,7 +104,7 @@ public:
   itkSetMacro(SamplingRatio, double);
   itkSetMacro(NumberOfIterations, int);
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * /*caller*/, const itk::EventObject & /*event*/)
   {
     return;
   }
@@ -120,17 +120,17 @@ public:
       }
     int level       = registration->GetCurrentLevel();
     int totalLevels = registration->GetNumberOfLevels();
-    std::cerr << "   ### Starting registration level: " 
+    std::cerr << "   ### Starting registration level: "
               <<  level+1 << " of " << totalLevels << " ###" << std::endl;
-    MetricPointer metric = 
+    MetricPointer metric =
       dynamic_cast<MetricPointer>(registration->GetMetric());
     if (metric != NULL)
       {
-      int numVoxels = 
+      int numVoxels =
         registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetNumberOfPixels();
-      
-      double samplingRatio = 
+
+      double samplingRatio =
         1.0 -
         registration->GetCurrentLevel() *
         (1.0 - m_SamplingRatio) / (registration->GetNumberOfLevels() - 1.0);
@@ -139,11 +139,11 @@ public:
         SetNumberOfSpatialSamples(static_cast<unsigned long>
                                   (samplingRatio * numVoxels));
 
-      std::cerr << "       Image Size: " << 
+      std::cerr << "       Image Size: " <<
         registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetSize() << std::endl;
-      std::cerr << "       Number of spatial samples: " 
-                << metric->GetNumberOfSpatialSamples() 
+      std::cerr << "       Number of spatial samples: "
+                << metric->GetNumberOfSpatialSamples()
                 << " (" << floor(100 * samplingRatio) << "%)"
                 << std::endl;
       }
@@ -152,13 +152,13 @@ public:
       (registration->GetOptimizer());
     if (optimizer)
     {
-      int numIterations = this->m_NumberOfIterations * 
+      int numIterations = this->m_NumberOfIterations *
         (registration->GetNumberOfLevels() - registration->GetCurrentLevel());
 
       optimizer->SetMaximumNumberOfIterations(numIterations);
       optimizer->SetMaximumNumberOfEvaluations(numIterations);
-      std::cerr << "       Max Iterations: " 
-                << optimizer->GetMaximumNumberOfIterations() 
+      std::cerr << "       Max Iterations: "
+                << optimizer->GetMaximumNumberOfIterations()
                 << std::endl;
     }
   }
@@ -167,7 +167,7 @@ public:
 class vtkMyCallback : public vtkCommand
 {
 public:
-  static vtkMyCallback *New() 
+  static vtkMyCallback *New()
   { return new vtkMyCallback; }
   virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long, void*)
   {
@@ -190,7 +190,7 @@ vtkBSplineRegistrator()
 
   this->NumberOfIterations = 0;
   this->IntensityInterpolationType = vtkBSplineRegistrator::Linear;
-  
+
   this->ImageToImageMetric   = vtkBSplineRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
   this->NumberOfKnotPoints = 5;
@@ -217,13 +217,13 @@ PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   this->Transform->PrintSelf(os, indent);
-  os << indent << "NumberOfIterations: " << this->NumberOfIterations 
+  os << indent << "NumberOfIterations: " << this->NumberOfIterations
      << std::endl;
-  os << indent << "MetricComputationSamplingRatio: " 
+  os << indent << "MetricComputationSamplingRatio: "
      << this->MetricComputationSamplingRatio << std::endl;
-  os << indent << "ImageToImageMetric: " 
+  os << indent << "ImageToImageMetric: "
      << GetStringFromMetricType(this->ImageToImageMetric);
-  os << indent << "InterpolationType: " 
+  os << indent << "InterpolationType: "
      << GetStringFromInterpolationType(this->IntensityInterpolationType)
      << std::endl;
 }
@@ -296,7 +296,7 @@ ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
 
 //----------------------------------------------------------------------------
 template <class TVoxel>
-void 
+void
 vtkBSplineRegistrator::
 RegisterImagesInternal3()
 {
@@ -324,9 +324,9 @@ RegisterImagesInternal3()
                                     spacingForChangeInformationFilter);
 
   vtkImagePermute* permuteFixedImage = vtkImagePermute::New();
-  vtkImageChangeInformation* changeInformationFixedImage = 
+  vtkImageChangeInformation* changeInformationFixedImage =
     vtkImageChangeInformation::New();
-  
+
   permuteFixedImage->SetInput(this->FixedImage);
   permuteFixedImage->SetFilteredAxes(filteredAxesForPermuteFilter);
 
@@ -350,9 +350,9 @@ RegisterImagesInternal3()
                                     spacingForChangeInformationFilter);
 
   vtkImagePermute* permuteMovingImage = vtkImagePermute::New();
-  vtkImageChangeInformation* changeInformationMovingImage = 
+  vtkImageChangeInformation* changeInformationMovingImage =
     vtkImageChangeInformation::New();
-  
+
   permuteMovingImage->SetInput(this->MovingImage);
   permuteMovingImage->SetFilteredAxes(filteredAxesForPermuteFilter);
 
@@ -378,7 +378,7 @@ RegisterImagesInternal3()
   vtkImageExport* fixedImageVTKToITKExporter  = vtkImageExport::New();
   fixedImageVTKToITKExporter->SetInput(fixedImageCaster->GetOutput());
 
-  typename ImageImportType::Pointer fixedImageITKImporter = 
+  typename ImageImportType::Pointer fixedImageITKImporter =
     ImageImportType::New();
   ConnectPipelines(fixedImageVTKToITKExporter, fixedImageITKImporter);
   fixedImageITKImporter->Update();
@@ -392,7 +392,7 @@ RegisterImagesInternal3()
   vtkImageExport* movingImageVTKToITKExporter = vtkImageExport::New();
   movingImageVTKToITKExporter->SetInput(movingImageCaster->GetOutput());
 
-  typename ImageImportType::Pointer movingImageITKImporter = 
+  typename ImageImportType::Pointer movingImageITKImporter =
     ImageImportType::New();
   ConnectPipelines(movingImageVTKToITKExporter, movingImageITKImporter);
   movingImageITKImporter->Update();
@@ -401,13 +401,13 @@ RegisterImagesInternal3()
   // set up multires registration
   typedef typename itk::MultiResolutionPyramidImageFilter
     <ITKImageType, ITKImageType>   ImagePyramidType;
-  typename ImagePyramidType::Pointer fixedImagePyramid = 
+  typename ImagePyramidType::Pointer fixedImagePyramid =
     ImagePyramidType::New();
-  typename ImagePyramidType::Pointer movingImagePyramid = 
+  typename ImagePyramidType::Pointer movingImagePyramid =
     ImagePyramidType::New();
   typedef typename itk::MultiResolutionImageRegistrationMethod
     <ITKImageType, ITKImageType> MultiResolutionRegistrationType;
-  typename MultiResolutionRegistrationType::Pointer multiResRegistration = 
+  typename MultiResolutionRegistrationType::Pointer multiResRegistration =
     MultiResolutionRegistrationType::New();
 
   // set images
@@ -420,15 +420,15 @@ RegisterImagesInternal3()
   //
   // use heuristics to determine pyramid schedule
   std::cerr << "   Determining registration pyramid schedule...";
-  typename ITKImageType::SizeType fixedImageSize = 
-    fixedImageITKImporter->GetOutput()->GetBufferedRegion().GetSize();  
-  
+  typename ITKImageType::SizeType fixedImageSize =
+    fixedImageITKImporter->GetOutput()->GetBufferedRegion().GetSize();
+
   // don't downsample too much or too little
   // int minDesiredSide = 64;
   int maxDesiredSide = 128;
 
   int initialNumberOfLevels = 3;
-  int initialShrinkFactor = 
+  int initialShrinkFactor =
     static_cast<int>(std::pow(static_cast<double>(2.0),
                               static_cast<double>(initialNumberOfLevels)));
 
@@ -437,7 +437,7 @@ RegisterImagesInternal3()
   movingImagePyramid->SetNumberOfLevels(initialNumberOfLevels);
   movingImagePyramid->SetStartingShrinkFactors(initialShrinkFactor);
 
-  typename ImagePyramidType::ScheduleType initialSchedule = 
+  typename ImagePyramidType::ScheduleType initialSchedule =
     fixedImagePyramid->GetSchedule();
 
   // don't upsamaple too much
@@ -485,13 +485,13 @@ RegisterImagesInternal3()
   movingImagePyramid->SetNumberOfLevels(finalNumberOfLevels);
   fixedImagePyramid->SetSchedule(finalSchedule);
   movingImagePyramid->SetSchedule(finalSchedule);
-  
+
   multiResRegistration->SetFixedImagePyramid(fixedImagePyramid);
   multiResRegistration->SetMovingImagePyramid(movingImagePyramid);
   multiResRegistration->SetNumberOfLevels(finalNumberOfLevels);
 
   std::cerr << "DONE" << std::endl;
-      
+
   //
   // set up metric
   switch (this->ImageToImageMetric)
@@ -511,7 +511,7 @@ RegisterImagesInternal3()
                                    this->MetricComputationSamplingRatio));
       multiResRegistration->SetMetric(metric);
       std::cerr << "   Metric: MMI" << std::endl;
-      std::cerr << "   Sampling Ratio: " 
+      std::cerr << "   Sampling Ratio: "
                 << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
@@ -522,7 +522,7 @@ RegisterImagesInternal3()
       typename MMetricType::Pointer    metric  = MMetricType::New();
       multiResRegistration->SetMetric(metric);
       std::cerr << "   Metric: NCC" << std::endl;
-      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) " 
+      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) "
                 << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
@@ -540,7 +540,7 @@ RegisterImagesInternal3()
       vtkErrorMacro("Unknown metric type: " << this->ImageToImageMetric);
       return;
     };
-    
+
   //
   // set up interpolator
   switch (this->IntensityInterpolationType)
@@ -550,7 +550,7 @@ RegisterImagesInternal3()
       typedef itk::NearestNeighborInterpolateImageFunction<
         ITKImageType,
         double >    InterpolatorType;
-      typename InterpolatorType::Pointer interpolator  = 
+      typename InterpolatorType::Pointer interpolator  =
         InterpolatorType::New();
       multiResRegistration->SetInterpolator(interpolator);
       std::cerr << "   Interpolation: Nearest neighbor" << std::endl;
@@ -562,14 +562,14 @@ RegisterImagesInternal3()
       typedef itk::LinearInterpolateImageFunction<
         ITKImageType,
         double          >    InterpolatorType;
-      typename InterpolatorType::Pointer   
+      typename InterpolatorType::Pointer
         interpolator  = InterpolatorType::New();
       multiResRegistration->SetInterpolator(interpolator);
       std::cerr << "   Interpolation: Linear" << std::endl;
       }
       break;
     default:
-      vtkErrorMacro(<< "Unknown interpolation type: " 
+      vtkErrorMacro(<< "Unknown interpolation type: "
                     << this->IntensityInterpolationType);
       return;
     };
@@ -594,9 +594,9 @@ RegisterImagesInternal3()
         itkMatrix(i,j) = (*vtkMatrix)[i][j];
         }
       itkOffset[i] = (*vtkMatrix)[i][3];
-      }    
+      }
 
-    ITKBulkTransformType::Pointer itkBulkTransform = 
+    ITKBulkTransformType::Pointer itkBulkTransform =
       ITKBulkTransformType::New();
     itkBulkTransform->SetMatrix(itkMatrix);
     itkBulkTransform->SetOffset(itkOffset);
@@ -614,9 +614,9 @@ RegisterImagesInternal3()
   totalGridSize = gridSizeOnImage + gridBorderSize;
   bSplineRegion.SetSize(totalGridSize);
 
-  TransformType::SpacingType spacing = 
+  TransformType::SpacingType spacing =
     fixedImageITKImporter->GetOutput()->GetSpacing();
-  TransformType::OriginType  origin  = 
+  TransformType::OriginType  origin  =
     fixedImageITKImporter->GetOutput()->GetOrigin();
 
   for (unsigned int r = 0; r < 3; ++r)
@@ -634,11 +634,11 @@ RegisterImagesInternal3()
   std::cerr << "   BSpline spacing: " << spacing << std::endl;
   std::cerr << "   BSpline origin: "  << origin  << std::endl;
   std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
-  std::cerr << "   BSpline knots on image:       "     
+  std::cerr << "   BSpline knots on image:       "
             << gridSizeOnImage << std::endl;
-  std::cerr << "   BSpline knots total:          "     
+  std::cerr << "   BSpline knots total:          "
             << totalGridSize << std::endl;
-  std::cerr << "   BSpline number of parameters: " << numberOfParameters 
+  std::cerr << "   BSpline number of parameters: " << numberOfParameters
             << std::endl;
 
   TransformType::ParametersType params(numberOfParameters);
@@ -654,7 +654,7 @@ RegisterImagesInternal3()
   typedef itk::LBFGSBOptimizer                       OptimizerType;
   OptimizerType::Pointer optimizer =                 OptimizerType::New();
   multiResRegistration->SetOptimizer(optimizer);
-  
+
   OptimizerType::BoundSelectionType boundSelect(numberOfParameters);
   OptimizerType::BoundValueType     upperBound(numberOfParameters);
   OptimizerType::BoundValueType     lowerBound(numberOfParameters);
@@ -664,26 +664,26 @@ RegisterImagesInternal3()
   optimizer->SetBoundSelection(boundSelect);
   optimizer->SetUpperBound(upperBound);
   optimizer->SetLowerBound(lowerBound);
-  
+
   optimizer->SetCostFunctionConvergenceFactor(1e+4);
   optimizer->SetProjectedGradientTolerance(1e-10);
   optimizer->SetMaximumNumberOfIterations(this->NumberOfIterations);
   optimizer->SetMaximumNumberOfEvaluations(this->NumberOfIterations);
   optimizer->SetMaximumNumberOfCorrections(10);
-  
+
   std::cerr << "   Optimization: LBFGSB" << std::endl;
   std::cerr << "   Max iterations: " << this->NumberOfIterations << std::endl;
-  
+
   //
   // set up command observer
   CommandIterationUpdate<OptimizerType>::Pointer observer =
     CommandIterationUpdate<OptimizerType>::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
-  typename CommandStartLevelUpdate<MultiResolutionRegistrationType, itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>, OptimizerType >::Pointer 
-    startLevelCommand = 
+  typename CommandStartLevelUpdate<MultiResolutionRegistrationType, itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>, OptimizerType >::Pointer
+    startLevelCommand =
     CommandStartLevelUpdate
-    <MultiResolutionRegistrationType, 
+    <MultiResolutionRegistrationType,
     itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>,
     OptimizerType>::New();
   startLevelCommand->SetSamplingRatio(this->MetricComputationSamplingRatio);
@@ -694,17 +694,25 @@ RegisterImagesInternal3()
   // everything should be set up, run the registration
   //
 
-  try 
+  try
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-    std::cerr << "   Iteration         Image Match" 
+    std::cerr << "   Iteration         Image Match"
               << std::endl;
-    double timeStart = clock->GetTimeStamp();
+#if ITK_VERSION_MAJOR < 4
+    const double timeStart = clock->GetTimeStamp();
+#else
+    const double timeStart = clock->GetTimeInSeconds();
+#endif
 
     multiResRegistration->StartRegistration();
-    
-    double timeStop = clock->GetTimeStamp();
-    double timeLength = (timeStop - timeStart);
+
+#if ITK_VERSION_MAJOR < 4
+    const double timeStop = clock->GetTimeStamp();
+#else
+    const double timeStop = clock->GetTimeInSeconds();
+#endif
+    const double timeLength = (timeStop - timeStart);
     std::cerr << "  DONE, time = " << timeLength << std::endl;
     }
   catch( itk::ExceptionObject & err )
@@ -737,12 +745,12 @@ RegisterImagesInternal3()
   double gridSamplingFactor = 2.0;
   double transformSpacing[3];
   int    transformExtent[6];
-  changeInformationFixedImage->GetOutput()->GetSpacing(transformSpacing);  
-  changeInformationFixedImage->GetOutput()->GetExtent(transformExtent);  
+  changeInformationFixedImage->GetOutput()->GetSpacing(transformSpacing);
+  changeInformationFixedImage->GetOutput()->GetExtent(transformExtent);
   for (int i = 0; i < 3; ++i)
     {
     transformSpacing[i] *= gridSamplingFactor;
-    transformExtent[i*2+1] = 
+    transformExtent[i*2+1] =
       static_cast<int>(std::ceil(transformExtent[i*2+1] / gridSamplingFactor));
     }
 
@@ -783,7 +791,7 @@ RegisterImagesInternal3()
 
 //----------------------------------------------------------------------------
 template <class TFixedImageVoxel, class TMovingImageVoxel>
-void 
+void
 vtkBSplineRegistrator::
 RegisterImagesInternal2()
 {
@@ -794,32 +802,32 @@ RegisterImagesInternal2()
   // double) in order to reduce code bloat.
   typedef itk::JoinTraits<TFixedImageVoxel, TMovingImageVoxel> TraitsType;
   typedef typename TraitsType::ValueType             CommonImageVoxelType;
-  typedef 
+  typedef
     typename RegistrationVoxelTypeTraits<CommonImageVoxelType>::
-    RegistrationVoxelType 
+    RegistrationVoxelType
     RegistrationVoxelType;
   this->RegisterImagesInternal3<RegistrationVoxelType>();
 }
 
 //----------------------------------------------------------------------------
 template <class TFixedImageVoxel>
-void 
+void
 vtkBSplineRegistrator::
 RegisterImagesInternal1()
 {
   switch (this->MovingImage->GetScalarType())
-    {  
+    {
     vtkTemplateMacro((RegisterImagesInternal2<TFixedImageVoxel,VTK_TT>()));
     }
 }
 
 //----------------------------------------------------------------------------
-void 
+void
 vtkBSplineRegistrator::
 RegisterImages()
 {
   switch (this->FixedImage->GetScalarType())
-    {  
+    {
     vtkTemplateMacro((RegisterImagesInternal1<VTK_TT>()));
     }
 }
