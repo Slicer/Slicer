@@ -26,14 +26,18 @@ class DICOMServer(object):
     self.process = None
     self.connections = {}
     self.exeDir = slicer.app.slicerHome 
-    if slicer.app.intDir:
-      self.exeDir = self.exeDir + '/' + slicer.app.intDir
+    # note: even in a windows build tree CTK's install does not include a "Debug" or "Release" intDir
     self.exeDir = self.exeDir + '/../CTK-build/CMakeExternals/Install/bin'
     if not os.path.exists(self.exeDir):
       self.exeDir = slicer.app.slicerHome + '/bin'
     self.exeExtension = ""
     if os.name == 'nt':
-      self.exeExtension = ".exe"
+      self.exeExtension = '.exe'
+
+    self.QProcessState = {}
+    self.QProcessState[0] = 'NotRunning'
+    self.QProcessState[1] = 'Starting'
+    self.QProcessState[2] = 'Running'
 
   def __del__(self):
     self.stop()
@@ -41,10 +45,21 @@ class DICOMServer(object):
   def start(self, cmd, args):
     if self.process != None:
       self.stop()
+    self.cmd = cmd
+    self.args = args
 
     # start the server!
     self.process = qt.QProcess()
+    self.process.connect('stateChanged(QProcess::ProcessState newState)', self.onStateChanged)
+    print ("Starting %s with " % cmd, args)
     self.process.start(cmd, args)
+
+
+  def onStateChanged(newState):
+    print("process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
+    if newState == 0:
+      print('error is: %d' % self.process.error())
+  
 
   def stop(self):
     if hasattr(self,'process'):
