@@ -130,7 +130,7 @@ class SampleDataWidget:
       self.log.insertPlainText('\n')
       self.log.ensureCursorVisible()
       self.log.repaint()
-      mrmlLogic = slicer.app.mrmlApplicationLogic()
+      mrmlLogic = slicer.app.applicationLogic()
       selNode = mrmlLogic.GetSelectionNode()
       selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
       mrmlLogic.PropagateVolumeSelection(1)
