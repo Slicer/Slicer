@@ -60,6 +60,11 @@ qSlicerVolumesIO::qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* _paren
 }
 
 //-----------------------------------------------------------------------------
+qSlicerVolumesIO::~qSlicerVolumesIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerVolumesIO::setLogic(vtkSlicerVolumesLogic* logic)
 {
   Q_D(qSlicerVolumesIO);

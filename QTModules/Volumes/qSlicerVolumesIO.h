@@ -21,9 +21,6 @@
 #ifndef __qSlicerVolumesIO
 #define __qSlicerVolumesIO
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerIO.h"
 class qSlicerVolumesIOPrivate;
@@ -37,6 +34,7 @@ class qSlicerVolumesIO: public qSlicerIO
 public: 
   qSlicerVolumesIO(QObject* parent = 0);
   qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerVolumesIO();
 
   vtkSlicerVolumesLogic* logic()const;
   void setLogic(vtkSlicerVolumesLogic* logic);

@@ -55,6 +55,11 @@ qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
+qSlicerVolumeRenderingIO::~qSlicerVolumeRenderingIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
   : qSlicerIO(_parent)
   , d_ptr(new qSlicerVolumeRenderingIOPrivate)

@@ -362,11 +362,11 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
 
   // this is a hack right now for platforms other than mac
   // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
-  this->setVisible(false);
+  //this->setVisible(false);
 
   QPixmap screenShot = QPixmap::grabWidget(widget);
 
-  this->setVisible(true);
+  //this->setVisible(true);
 
   // set preview (unscaled)
   ui.screenshotPlaceholder->setPixmap(screenShot.scaled(

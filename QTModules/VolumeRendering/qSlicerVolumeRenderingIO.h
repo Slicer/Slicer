@@ -21,8 +21,8 @@
 #ifndef __qSlicerVolumeRenderingIO
 #define __qSlicerVolumeRenderingIO
 
-// SlicerQt includes
-#include "qSlicerIO.h"
+// SlicerQT includes
+#include <qSlicerIO.h>
 
 // Volume Rendering includes
 class qSlicerVolumeRenderingIOPrivate;
@@ -36,6 +36,7 @@ class qSlicerVolumeRenderingIO: public qSlicerIO
 public: 
   qSlicerVolumeRenderingIO(QObject* parent = 0);
   qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerVolumeRenderingIO();
 
   void setLogic(vtkSlicerVolumeRenderingLogic* logic);
   vtkSlicerVolumeRenderingLogic* logic()const;

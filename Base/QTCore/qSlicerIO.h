@@ -24,12 +24,10 @@
 // Qt includes
 #include <QMap>
 #include <QObject>
+#include <QScopedPointer>
 #include <QString>
 #include <QStringList>
 #include <QVariant>
-
-// CTK includes
-#include <ctkPimpl.h>
 
 // QtCore includes
 #include "qSlicerBaseQTCoreExport.h"
