@@ -77,10 +77,11 @@ class DICOMListener(DICOMServer):
   this task as a QObject callable from PythonQt
   """
 
-  def __init__(self,database,fileAddedCallback=None):
+  def __init__(self,database,fileToBeAddedCallback=None,fileAddedCallback=None):
     super(DICOMListener,self).__init__()
     self.dicomDatabase = database
     self.indexer = ctk.ctkDICOMIndexer()
+    self.fileToBeAddedCallback = fileToBeAddedCallback
     self.fileAddedCallback = fileAddedCallback
     self.lastFileAdded = None
     settings = qt.QSettings()
@@ -131,6 +132,8 @@ class DICOMListener(DICOMServer):
         print()
         print()
         print ("indexing: %s into %s " % (dicomFilePath, destinationDir) )
+        if self.fileToBeAddedCallback:
+          self.fileToBeAddedCallback()
         self.indexer.addFile( self.dicomDatabase, dicomFilePath, destinationDir )
         print ("done indexing")
         self.lastFileAdded = dicomFilePath

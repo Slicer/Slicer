@@ -151,7 +151,7 @@ class DICOMWidget:
     # make the tree a little smaller to fit in slicer
     tree = self.findChildren(self.dicomApp, 'TreeView')[0]
     g = tree.geometry
-    g.setHeight(100)
+    g.setHeight(150)
     if self.dicomApp.databaseDirectory:
       self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
     if hasattr(slicer, 'dicomListener'):
@@ -268,10 +268,10 @@ class DICOMWidget:
     # TODO: pass in fileList once it is known to be in the right order
     volumeNode = vl.AddArchetypeVolume( files[0], name, 0 )
     # automatically select the volume to display
-    mrmlLogic = slicer.app.mrmlApplicationLogic()
-    selNode = mrmlLogic.GetSelectionNode()
+    appLogic = slicer.app.applicationLogic()
+    selNode = appLogic.GetSelectionNode()
     selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
-    mrmlLogic.PropagateVolumeSelection()
+    appLogic.PropagateVolumeSelection()
 
   def onToggleListener(self):
     if hasattr(slicer, 'dicomListener'):
@@ -282,15 +282,28 @@ class DICOMWidget:
       try:
         slicer.dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
         slicer.dicomListener.start()
+        slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
         slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
         self.toggleListener.text = "Stop Listener"
       except UserWarning as message:
         self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
 
+  def onListenerToAddFile(self):
+    """ Called when the indexer is about to add a file to the database.
+    Works around issue where ctkDICOMModel has open queries that keep the
+    database locked.
+    """
+    self.dicomApp.suspendModel()
+
+
   def onListenerAddedFile(self):
+    """Called after the listener has added a file.
+    Restore and refresh the app model
+    """
     newFile = slicer.dicomListener.lastFileAdded
     if newFile:
       slicer.util.showStatusMessage("Loaded: %s" % newFile, 1000)
+    self.dicomApp.resumeModel()
     self.dicomApp.resetModel()
 
   def onToggleServer(self):
