@@ -1,5 +1,6 @@
 #include "qSlicerAnnotationModuleSnapShotDialog.h"
 
+#include <ctkVTKWidgetsUtils.h>
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include <ctkVTKSliceView.h>
 #include "qSlicerApplication.h"
@@ -142,10 +143,7 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
   screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
 
   // ..and set it to the gui..
-  ui.screenshotPlaceholder->setPixmap(screenshot.scaled(
-      this->ui.screenshotPlaceholder->width(),
-      this->ui.screenshotPlaceholder->height(), Qt::KeepAspectRatio,
-      Qt::SmoothTransformation));
+  ui.ScreenshotWidget->setPixmap(screenshot);
 
 }
 
@@ -362,22 +360,15 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
 
   // this is a hack right now for platforms other than mac
   // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
-  //this->setVisible(false);
-
-  QPixmap screenShot = QPixmap::grabWidget(widget);
-
-  //this->setVisible(true);
+  QPixmap screenShot = QPixmap::fromImage(ctk::grabVTKWidget(widget));
 
   // set preview (unscaled)
-  ui.screenshotPlaceholder->setPixmap(screenShot.scaled(
-      this->ui.screenshotPlaceholder->width(),
-      this->ui.screenshotPlaceholder->height(), Qt::KeepAspectRatio,
-      Qt::SmoothTransformation));
+  ui.ScreenshotWidget->setPixmap(screenShot);
 
   // Rescale the image which gets saved
-  QPixmap rescaledScreenShot = screenShot.scaled(screenShot.size().width()
-      * this->ui.scaleFactorSpinBox->value(), screenShot.size().height()
-      * this->ui.scaleFactorSpinBox->value());
+  QPixmap rescaledScreenShot = screenShot.scaled(
+    screenShot.size().width() * this->ui.scaleFactorSpinBox->value(),
+    screenShot.size().height() * this->ui.scaleFactorSpinBox->value());
 
   // convert the screenshot from QPixmap to vtkImageData and store it with this class
   vtkImageData* vtkimage = vtkImageData::New();

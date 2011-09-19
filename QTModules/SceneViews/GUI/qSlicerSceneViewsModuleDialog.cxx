@@ -2,6 +2,7 @@
 
 #include <vtkSlicerSceneViewsModuleLogic.h>
 #include <ctkVTKSliceView.h>
+#include <ctkVTKWidgetsUtils.h>
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLSliceWidget.h"
@@ -356,12 +357,10 @@ void qSlicerSceneViewsModuleDialog::grabScreenShot(QString screenshotWindow)
   // this is a hack right now for platforms other than mac
   // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
   //this->setVisible(false);
-  this->hide();
 
-  QPixmap screenShot = QPixmap::grabWidget(widget);
+  QPixmap screenShot = QPixmap::fromImage(ctk::grabVTKWidget(widget));
 
   //this->setVisible(true);
-  this->show();
 
 
   ui.screenshotPlaceholder->setPixmap(screenShot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
