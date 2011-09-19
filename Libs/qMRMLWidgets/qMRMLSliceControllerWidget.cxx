@@ -1252,6 +1252,17 @@ CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
 //---------------------------------------------------------------------------
 QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
 {
+  // We try to use SVG named colors directly. However, the Slicer Red,
+  // Green, Yellow colors do not match the SVG red, green, yellow. So
+  // we use the Slicer colors instead. It would nice to use the Qt 4.7
+  // static method QColor::isValidColor() but that is not available in
+  // earlier versions of Qt. Instead, we could just try setting the
+  // color and checking whether isValid() is true but setting an
+  // invalid color emits a warning in debug builds. So we fall back to
+  // searching for the color in the list of colorNames(). Note that
+  // this is slightly different that isValidColor() as isValidColor()
+  // would also check RGB dynamic range in the #RRGGBBB style
+  // formats. 
   QColor color;
   if (sliceViewName == "Red")
     {
@@ -1265,8 +1276,10 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
     {
     color =  qMRMLColors::sliceYellow();
     }
-  else if (QColor(sliceViewName.toLower()).isValid())
+
+  else if (QColor::colorNames().contains(sliceViewName, Qt::CaseInsensitive))
     {
+    // This conditional should really have been "if (QColor::isValidColor(sliceViewName.toLower()))"
     color = QColor(sliceViewName.toLower());
     }
   else
