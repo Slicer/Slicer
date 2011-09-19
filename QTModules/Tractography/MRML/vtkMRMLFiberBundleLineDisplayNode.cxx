@@ -156,7 +156,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           this->PolyData->GetCellData()->GetArray("ClusterId")->GetRange(this->ScalarRange);
         }
 
-        IntermediatePolyData = this->OutputPolyData;
+        IntermediatePolyData = this->PolyData;
       }
       else  
       {
