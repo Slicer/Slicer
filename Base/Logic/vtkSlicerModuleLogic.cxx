@@ -26,7 +26,6 @@ vtkStandardNewMacro(vtkSlicerModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::vtkSlicerModuleLogic()
 {
-  this->ApplicationLogic = NULL;
   this->ModuleLocation = NULL;
   this->ModuleShareDirectory = NULL;
   this->ModuleLibDirectory = NULL;
@@ -41,6 +40,18 @@ vtkSlicerModuleLogic::~vtkSlicerModuleLogic()
   this->SetModuleShareDirectory(NULL);
   this->SetModuleLibDirectory(NULL);
   this->SetModuleName(NULL);
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerApplicationLogic* vtkSlicerModuleLogic::GetApplicationLogic()
+{
+  return vtkSlicerApplicationLogic::SafeDownCast(this->GetMRMLApplicationLogic());
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModuleLogic::SetApplicationLogic(vtkSlicerApplicationLogic* logic)
+{
+  this->SetMRMLApplicationLogic(logic);
 }
 
 //----------------------------------------------------------------------------

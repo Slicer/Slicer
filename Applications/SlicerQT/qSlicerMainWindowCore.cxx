@@ -44,11 +44,11 @@
 #endif
 #include "qMRMLUtils.h"
 
+// SlicerLogic includes
+#include <vtkSlicerApplicationLogic.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
-
-// MRML Logic includes
-#include <vtkMRMLApplicationLogic.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -153,7 +153,7 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
 
-  const char *retval = qSlicerCoreApplication::application()->mrmlApplicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toAscii().data(), imageData);
+  const char *retval = qSlicerCoreApplication::application()->applicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toAscii().data(), imageData);
   if (retval)
     {
     QString returnFileName = QString(retval);

@@ -103,7 +103,7 @@ class EMSegmentQuickSegmentationStep( EMSegmentStep ) :
     slicer.app.processEvents()
 
     # start the segmentation
-    returnValue = self.logic().StartSegmentationWithoutPreprocessing( slicer.app.appLogic() )
+    returnValue = self.logic().StartSegmentationWithoutPreprocessing( slicer.app.applicationLogic() )
 
     message.hide()
     slicer.app.processEvents()

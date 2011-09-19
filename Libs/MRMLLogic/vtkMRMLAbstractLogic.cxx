@@ -14,9 +14,11 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLApplicationLogic.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cassert>
@@ -33,6 +35,7 @@ public:
   ~vtkInternal();
 
   vtkMRMLScene *       MRMLScene;
+  vtkSmartPointer<vtkMRMLApplicationLogic> MRMLApplicationLogic;
 
   vtkObserverManager * MRMLObserverManager;
   int                  InMRMLCallbackFlag;
@@ -108,6 +111,23 @@ void vtkMRMLAbstractLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MRMLScene:   " << this->GetMRMLScene() << "\n";
 }
 
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()
+{
+  return this->Internal->MRMLApplicationLogic.GetPointer();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic)
+{
+  if (logic == this->Internal->MRMLApplicationLogic.GetPointer())
+    {
+    return;
+    }
+  this->Internal->MRMLApplicationLogic = logic;
+  this->Modified();
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::MRMLCallback(vtkObject *caller,unsigned long eid,

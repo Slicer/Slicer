@@ -29,7 +29,7 @@
 #include "vtkSlicerBaseLogic.h"
 
 // MRMLLogic includes
-#include <vtkMRMLAbstractLogic.h>
+#include <vtkMRMLApplicationLogic.h>
 
 //BTX
 class vtkMRMLSliceLogic;
@@ -48,13 +48,14 @@ class vtkSlicerTask;
 class SliceLogicMap;
 //ETX
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkMRMLAbstractLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
+  : public vtkMRMLApplicationLogic
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkMRMLAbstractLogic);
+  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkMRMLApplicationLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
   /// 
@@ -101,13 +102,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkMRMLAbs
 
   /// 
   /// the SelectionNode 
-  void SetSelectionNode(vtkMRMLSelectionNode* newSelectionNode);
-  vtkMRMLSelectionNode* GetSelectionNode();
+  //void SetSelectionNode(vtkMRMLSelectionNode* newSelectionNode);
+  //vtkMRMLSelectionNode* GetSelectionNode();
 
   /// 
   /// the InteractionNode
-  void SetInteractionNode(vtkMRMLInteractionNode* newInteractionNode);
-  vtkMRMLInteractionNode* GetInteractionNode();
+  //void SetInteractionNode(vtkMRMLInteractionNode* newInteractionNode);
+  //vtkMRMLInteractionNode* GetInteractionNode();
 
   /// 
   /// Perform the default behavior related to selecting a volume

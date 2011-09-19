@@ -173,9 +173,6 @@ void qSlicerCoreApplicationPrivate::init()
   //_appLogic->SetAndObserveMRMLScene(scene);
   _appLogic->CreateProcessingThread();
 
-  // Create MRMLApplicationLogic
-  this->MRMLApplicationLogic = vtkSmartPointer<vtkMRMLApplicationLogic>::New();
-
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
 
@@ -811,10 +808,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     {
     d->AppLogic->SetMRMLScene(newMRMLScene);
     }
-  if (d->MRMLApplicationLogic.GetPointer())
-    {
-    d->MRMLApplicationLogic->SetMRMLScene(newMRMLScene);
-    }
   if (d->MRMLRemoteIOLogic.GetPointer())
     {
     if (d->MRMLScene)
@@ -845,11 +838,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 CTK_GET_CPP(qSlicerCoreApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
-
-//-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerCoreApplication, vtkMRMLApplicationLogic*,
-            mrmlApplicationLogic, MRMLApplicationLogic);
+CTK_GET_CPP(qSlicerCoreApplication, vtkSlicerApplicationLogic*, applicationLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::slicerHome() const

@@ -19,6 +19,9 @@
 #ifndef __vtkMRMLAbstractLogic_h
 #define __vtkMRMLAbstractLogic_h
 
+// MRMLLogic includes
+class vtkMRMLApplicationLogic;
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkObserverManager.h>
@@ -118,7 +121,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
 
-
+  /// 
+  /// Get access to overall application state
+  virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic();
+  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
 
   ///
   /// Return a reference to the current MRML scene

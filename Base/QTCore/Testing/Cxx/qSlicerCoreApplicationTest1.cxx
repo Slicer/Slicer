@@ -130,7 +130,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
 
-  vtkSlicerApplicationLogic * logic1 = app.appLogic();
+  vtkSlicerApplicationLogic * logic1 = app.applicationLogic();
 
   if( logic1 == NULL )
     {

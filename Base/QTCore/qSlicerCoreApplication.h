@@ -102,10 +102,7 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get application logic
-  Q_INVOKABLE vtkSlicerApplicationLogic* appLogic() const;
-
-  /// Get MRML ApplicationLogic
-  Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
+  Q_INVOKABLE vtkSlicerApplicationLogic* applicationLogic() const;
 
   /// Get slicer home directory
   QString slicerHome() const;

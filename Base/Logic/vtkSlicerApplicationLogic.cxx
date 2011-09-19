@@ -26,7 +26,7 @@
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkMRMLInteractionNode.h"
+//#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
@@ -232,8 +232,8 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
     //this->Slices = vtkCollection::New();
     this->Modules = vtkCollection::New();
     this->ActiveSlice = NULL;
-    this->SelectionNode = NULL;
-    this->InteractionNode = NULL;
+    //this->SelectionNode = NULL;
+    //this->InteractionNode = NULL;
 
     this->ProcessingThreader = itk::MultiThreader::New();
     this->ProcessingThreadId = -1;
@@ -281,8 +281,8 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
         this->Modules->Delete();
         this->Modules = NULL;
     }
-  this->SetSelectionNode ( NULL );
-  this->SetInteractionNode ( NULL );
+  //this->SetSelectionNode ( NULL );
+  //this->SetInteractionNode ( NULL );
   this->SetActiveSlice ( NULL );
 
   // Note that TerminateThread does not kill a thread, it only waits
@@ -365,7 +365,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
                                             void * /*callData*/ )
 {
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::ProcessMRMLEvents is deprecated");
-
+/*
   //
   // Look for a selection node in the scene
   // - we always use the first one in the scene
@@ -395,10 +395,9 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
 
-
   vtkMRMLInteractionNode *inode;
   inode = vtkMRMLInteractionNode::SafeDownCast (
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));                                                
+          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
 
   // interaction node
   if ( inode == NULL )
@@ -414,10 +413,10 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
   if (this->GetMRMLScene()->GetNodeByID(this->InteractionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());
-    this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->InteractionNode)) );
+    //this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->InteractionNode)) );
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
-  
+  */
 }
 
 //----------------------------------------------------------------------------
@@ -429,9 +428,10 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
     }
 
   int i, nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  char *ID = this->SelectionNode->GetActiveVolumeID();
-  char *secondID = this->SelectionNode->GetSecondaryVolumeID();
-  char *labelID = this->SelectionNode->GetActiveLabelVolumeID();
+  vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
+  char *ID = selectionNode->GetActiveVolumeID();
+  char *secondID = selectionNode->GetSecondaryVolumeID();
+  char *labelID = selectionNode->GetActiveLabelVolumeID();
 
   vtkMRMLSliceCompositeNode *cnode;
   for (i = 0; i < nnodes; i++)
@@ -528,7 +528,7 @@ vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetActiveSlice()
                 << "): returning ActiveSlice address " << this->ActiveSlice );
   return this->ActiveSlice;
 }
-
+/*
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, SelectionNode, vtkMRMLSelectionNode);
 
@@ -552,7 +552,7 @@ vtkMRMLInteractionNode* vtkSlicerApplicationLogic::GetInteractionNode()
                 << "): returning InteractionNode address " << this->InteractionNode );
   return this->InteractionNode;
 }
-  
+*/
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutName)
 {

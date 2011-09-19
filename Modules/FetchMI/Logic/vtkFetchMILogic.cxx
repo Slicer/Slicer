@@ -3745,12 +3745,12 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   //--- specifies a Mouse Mode -- but no InteractionModeChangedEvent
   //--- will have been invoked for the GUI to capture.
   //--- So we invoke the event here after the scene is finished loading.
-  if ( this->ApplicationLogic )
+  if ( this->GetApplicationLogic() )
     {
-    if ( this->ApplicationLogic->GetInteractionNode() )
+    if ( this->GetApplicationLogic()->GetInteractionNode() )
       {
-      this->ApplicationLogic->GetInteractionNode()->InvokeEvent (
-                                                                 vtkMRMLInteractionNode::InteractionModeChangedEvent );
+      this->GetApplicationLogic()->GetInteractionNode()->InvokeEvent (
+        vtkMRMLInteractionNode::InteractionModeChangedEvent );
       }
     }
 }

@@ -22,7 +22,8 @@
 #include <vtkMRMLAbstractLogic.h>
 #include "vtkSlicerApplicationLogic.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstractLogic
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
+  : public vtkMRMLAbstractLogic
 {
   public:
   
@@ -33,8 +34,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstract
 
   /// 
   /// Get access to overall application state
-  vtkGetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
-  vtkSetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
+  virtual vtkSlicerApplicationLogic* GetApplicationLogic();
+  virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
 
   ///  
   /// The name of the Module
@@ -77,7 +78,6 @@ protected:
   vtkSlicerModuleLogic();
   virtual ~vtkSlicerModuleLogic();
 
-  vtkSlicerApplicationLogic * ApplicationLogic;
   char *                      ModuleLocation;
   char *                      ModuleName;
 

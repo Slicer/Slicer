@@ -138,7 +138,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
   d->ModuleList[name] = _module;
 
   // Initialize module
-  _module->initialize(qSlicerCoreApplication::application()->appLogic());
+  _module->initialize(qSlicerCoreApplication::application()->applicationLogic());
 
   // Retrieve module title
   QString _moduleTitle = d->ModuleFactoryManager.moduleTitle(name);

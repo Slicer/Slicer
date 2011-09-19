@@ -49,8 +49,8 @@
 #include "qMRMLColorPickerWidget.h"
 #include "qMRMLEventBrokerConnection.h"
 
-// MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
+// Logic includes
+#include <vtkSlicerApplicationLogic.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -230,9 +230,9 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
 {
   Q_D(qSlicerApplication);
   d->LayoutManager = layoutManager;
-  if (this->mrmlApplicationLogic())
+  if (this->applicationLogic())
     {
-    this->mrmlApplicationLogic()->SetSliceLogics(
+    this->applicationLogic()->SetSliceLogics(
       layoutManager? layoutManager->mrmlSliceLogics() : 0);
     }
 }
