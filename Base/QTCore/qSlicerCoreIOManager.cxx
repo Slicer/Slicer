@@ -126,11 +126,6 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
   :QObject(_parent)
   , d_ptr(new qSlicerCoreIOManagerPrivate)
 {
-  // FIXME move to the application level
-  this->registerIO(new qSlicerSceneIO(this));
-  this->registerIO(new qSlicerSlicer2SceneReader(this));
-  this->registerIO(new qSlicerXcedeCatalogIO(this));
-  // end FIXME
 }
 
 //-----------------------------------------------------------------------------

@@ -19,8 +19,23 @@
 ==============================================================================*/
 
 // SlicerQt includes
+#include "qSlicerApplication.h"
+#include "qSlicerDataDialog.h"
+#include "qSlicerIOManager.h"
+#include "qSlicerSaveDataDialog.h"
+#include "qSlicerSceneIO.h"
+#include "qSlicerSlicer2SceneReader.h"
+#include "qSlicerXcedeCatalogIO.h"
+
+// CoreModule includes
 #include "qSlicerDataModule.h"
 #include "qSlicerDataModuleWidget.h"
+
+// SlicerLogic includes
+#include <vtkSlicerColorLogic.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerDataModulePrivate
@@ -44,6 +59,24 @@ qSlicerDataModule::~qSlicerDataModule()
 QIcon qSlicerDataModule::icon()const
 {
   return QIcon(":/Icons/Data.png");
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModule::setup()
+{
+  this->Superclass::setup();
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  
+  ioManager->registerIO(new qSlicerSceneIO(this));
+  ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
+  vtkSmartPointer<vtkSlicerColorLogic> colorLogic =
+    vtkSmartPointer<vtkSlicerColorLogic>::New();
+  colorLogic->SetMRMLApplicationLogic(this->appLogic());
+  ioManager->registerIO(new qSlicerXcedeCatalogIO(colorLogic, this));
+
+  //p->registerDialog(new qSlicerStandardFileDialog(p));
+  ioManager->registerDialog(new qSlicerDataDialog(this));
+  ioManager->registerDialog(new qSlicerSaveDataDialog(this));
 }
 
 //-----------------------------------------------------------------------------

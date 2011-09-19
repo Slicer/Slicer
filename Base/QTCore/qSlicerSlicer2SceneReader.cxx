@@ -158,6 +158,8 @@ protected:
   qSlicerSlicer2SceneReader* const q_ptr;
 public:
   qSlicerSlicer2SceneReaderPrivate(qSlicerSlicer2SceneReader& object);
+
+  vtkSmartPointer<vtkSlicerApplicationLogic> ApplicationLogic;
   ///
   typedef QMap<QString, QString> NodeType;
   
@@ -814,9 +816,9 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
 
   //[[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
   //[$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
-  qSlicerCoreApplication::application()->appLogic()->GetSelectionNode()
+  this->ApplicationLogic->GetSelectionNode()
     ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1().data());
-  qSlicerCoreApplication::application()->appLogic()->PropagateVolumeSelection();
+  this->ApplicationLogic->PropagateVolumeSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -1169,7 +1171,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
   // set it to be the selected one, last one imported will stick
   //set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
   vtkMRMLSelectionNode* selNode = 
-    qSlicerCoreApplication::application()->appLogic()->GetSelectionNode();
+    this->ApplicationLogic->GetSelectionNode();
   //if { $selNode != "" } {
   //   $selNode SetReferenceActiveFiducialListID [$fiducialNode GetID]
   //   $::slicer3::ApplicationLogic PropagateFiducialListSelection
@@ -1177,7 +1179,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
   if (selNode != 0)
     {
     selNode->SetReferenceActiveFiducialListID(fiducialNode->GetID());
-    qSlicerCoreApplication::application()->appLogic()->PropagateFiducialListSelection();
+    this->ApplicationLogic->PropagateFiducialListSelection();
     }
 }
 
@@ -1270,13 +1272,36 @@ void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(QObject* _parent)
-  :qSlicerIO(_parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerSlicer2SceneReaderPrivate(*this))
 {
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerSlicer2SceneReaderPrivate(*this))
+{
+  this->setApplicationLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::~qSlicerSlicer2SceneReader()
 {
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerApplicationLogic* qSlicerSlicer2SceneReader::applicationLogic()const
+{
+  Q_D(const qSlicerSlicer2SceneReader);
+  return d->ApplicationLogic.GetPointer();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSlicer2SceneReader::setApplicationLogic(vtkSlicerApplicationLogic* logic)
+{
+  Q_D(qSlicerSlicer2SceneReader);
+  d->ApplicationLogic = logic;
 }
 
 //-----------------------------------------------------------------------------

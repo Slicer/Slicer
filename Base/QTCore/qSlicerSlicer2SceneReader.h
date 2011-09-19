@@ -21,13 +21,12 @@
 #ifndef __qSlicerSlicer2SceneReader
 #define __qSlicerSlicer2SceneReader
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerIO.h"
-
 class qSlicerSlicer2SceneReaderPrivate;
+
+// SlicerLogic includes
+class vtkSlicerApplicationLogic;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader: public qSlicerIO
@@ -35,7 +34,12 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerSlicer2SceneReader(QObject* parent = 0);
+  qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = 0);
   virtual ~qSlicerSlicer2SceneReader();
+
+  vtkSlicerApplicationLogic* applicationLogic()const;
+  void setApplicationLogic(vtkSlicerApplicationLogic* logic);
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;

@@ -21,13 +21,13 @@
 #ifndef __qSlicerXcedeCatalogIO
 #define __qSlicerXcedeCatalogIO
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerIO.h"
 
 class qSlicerXcedeCatalogIOPrivate;
+
+// Slicer Logic
+class vtkSlicerColorLogic;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
@@ -35,7 +35,11 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerXcedeCatalogIO(QObject* parent = 0);
+  qSlicerXcedeCatalogIO(vtkSlicerColorLogic* logic, QObject* parent = 0);
   virtual ~qSlicerXcedeCatalogIO();
+
+  vtkSlicerColorLogic* colorLogic()const;
+  void setColorLogic(vtkSlicerColorLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;

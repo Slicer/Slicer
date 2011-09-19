@@ -70,6 +70,7 @@ public:
   bool    computeFIPS2SlicerTransformCorrection();
   void    applyFIPS2SlicerTransformCorrection();
 
+  vtkSmartPointer<vtkSlicerColorLogic> ColorLogic;
   QStringList TransformIDStack; 
   QString     Directory;
   //QString     ParentId;
@@ -695,14 +696,12 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   //      //$volumeDisplayNode SetAutoThreshold 0
   else if (node["uri"].startsWith("aseg"))
     {
-    vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
     // if (colorLogic) {
     //volumeDisplayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
     // }else {
     // volumeDisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");}
     volumeDisplayNode->SetAndObserveColorNodeID(
-      colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
-    colorLogic->Delete();
+      this->ColorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
     }
         
     // } else {
@@ -769,17 +768,16 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   // [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
   if (labelMap)
     {
-    qSlicerCoreApplication::application()->appLogic()->GetSelectionNode()
+    this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
       ->SetReferenceActiveLabelVolumeID(volumeNodeID.toLatin1().data());
     }
   else
     {
-    qSlicerCoreApplication::application()->appLogic()->GetSelectionNode()
+    this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
       ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1().data());
     }
-  qSlicerCoreApplication::application()->appLogic()->PropagateVolumeSelection();
+  this->ColorLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
 }
-
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -1261,8 +1259,30 @@ qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
+qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(vtkSlicerColorLogic* logic, QObject* _parent)
+  :qSlicerIO(_parent)
+  , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
+{
+  this->setColorLogic(logic);
+}
+
+//------------------------------------------------------------------------------
 qSlicerXcedeCatalogIO::~qSlicerXcedeCatalogIO()
 {
+}
+
+//------------------------------------------------------------------------------
+vtkSlicerColorLogic* qSlicerXcedeCatalogIO::colorLogic()const
+{
+  Q_D(const qSlicerXcedeCatalogIO);
+  return d->ColorLogic.GetPointer();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerXcedeCatalogIO::setColorLogic(vtkSlicerColorLogic* logic)
+{
+  Q_D(qSlicerXcedeCatalogIO);
+  d->ColorLogic = logic;
 }
 
 //------------------------------------------------------------------------------

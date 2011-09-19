@@ -31,7 +31,6 @@ protected:
 public:
   qSlicerIOManagerPrivate(qSlicerIOManager& object);
 
-  void init();
   /// Return true if a dialog is created, false if a dialog already existed
   bool startProgressDialog(int steps = 1);
   void stopProgressDialog();
@@ -55,17 +54,6 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
   :q_ptr(&object)
 {
   this->ProgressDialog = 0;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerIOManagerPrivate::init()
-{
-  Q_Q(qSlicerIOManager);
-
-  //p->registerDialog(new qSlicerStandardFileDialog(p));
-  q->registerDialog(new qSlicerDataDialog(q));
-  q->registerDialog(new qSlicerModelsDialog(q));
-  q->registerDialog(new qSlicerSaveDataDialog(q));
 }
 
 //-----------------------------------------------------------------------------
@@ -157,7 +145,6 @@ qSlicerIOManager::qSlicerIOManager(QObject* _parent):Superclass(_parent)
   , d_ptr(new qSlicerIOManagerPrivate(*this))
 {
   Q_D(qSlicerIOManager);
-  d->init();
   d->readSettings();
 }
 

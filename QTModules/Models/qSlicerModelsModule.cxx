@@ -27,8 +27,9 @@
 #include "qSlicerModelsIO.h"
 
 // Slicer includes
-#include "qSlicerCoreApplication.h"
-#include "qSlicerCoreIOManager.h"
+#include "qSlicerApplication.h"
+#include "qSlicerIOManager.h"
+#include "qSlicerModelsDialog.h"
 
 // Slicer logic includes
 #include <vtkSlicerModelsLogic.h>
@@ -106,8 +107,9 @@ QIcon qSlicerModelsModule::icon()const
 void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerModelsIO(this));
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  ioManager->registerIO(new qSlicerModelsIO(this));
+  ioManager->registerDialog(new qSlicerModelsDialog(this));
 }
 
 //-----------------------------------------------------------------------------

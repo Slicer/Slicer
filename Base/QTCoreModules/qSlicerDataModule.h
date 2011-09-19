@@ -41,6 +41,8 @@ public:
   qSlicerDataModule(QObject *parent=0);
   virtual ~qSlicerDataModule();
 
+  virtual void setup();
+
   virtual QIcon icon()const;
   qSlicerGetTitleMacro("Data");
 
