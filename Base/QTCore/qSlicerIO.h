@@ -92,6 +92,7 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
   
+  /// Properties availables : fileMode, multipleFiles, fileType.
   virtual bool load(const IOProperties& properties);
   virtual bool save(const IOProperties& properties);
 

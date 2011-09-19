@@ -93,7 +93,8 @@ qSlicerDataDialogPrivate::~qSlicerDataDialogPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::addDirectory()
 {
-  QString directory = QFileDialog::getExistingDirectory(this);
+  qSlicerStandardFileDialog fileDialog;
+  QString directory = fileDialog.getExistingDirectory();
   if (directory.isNull())
     {
     return;
@@ -107,7 +108,9 @@ void qSlicerDataDialogPrivate::addDirectory()
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::addFiles()
 {
-  QStringList files = QFileDialog::getOpenFileNames(this);
+  qSlicerStandardFileDialog fileDialog;
+  QStringList files = fileDialog.getOpenFileName();
+
   foreach(QString file, files)
     {
     this->addFile(file);

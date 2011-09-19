@@ -127,27 +127,53 @@ qSlicerFileDialog::IOAction qSlicerStandardFileDialog::action()const
 }
 
 //-----------------------------------------------------------------------------
+ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
+    const qSlicerIO::IOProperties& ioProperties)
+{
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  ctkFileDialog* fileDialog = new ctkFileDialog();
+
+  // We don't want the odd dialog in Mac: it shows in gray filenames that
+  // don't match the filter -> we don't want to show files that don't match
+  // the filter.
+  fileDialog->setOption(QFileDialog::DontUseNativeDialog);
+  if(ioProperties["fileType"].toBool())
+    {
+    fileDialog->setNameFilters(
+      qSlicerFileDialog::nameFilters(
+        (qSlicerIO::IOFileType)ioProperties["fileType"].toInt()));
+    }
+  fileDialog->setHistory(ioManager->history());
+  if (ioManager->favorites().count())
+    {
+    fileDialog->setSidebarUrls(ioManager->favorites());
+    }
+  if (ioProperties["multipleFiles"].toBool())
+    {
+    fileDialog->setFileMode(QFileDialog::ExistingFiles);
+    }
+  if (ioProperties["fileMode"].toBool())
+    {
+    fileDialog->setOption(QFileDialog::ShowDirsOnly);
+    fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+    }
+
+  return fileDialog;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties)
 {
   Q_D(qSlicerStandardFileDialog);
   Q_ASSERT(!ioProperties.contains("fileName"));
+
+  qSlicerIO::IOProperties properties = ioProperties;
+  properties["fileType"] = d->FileType;
+  ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
+                                properties);
+
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ctkFileDialog fileDialog(qobject_cast<QWidget*>(this->parent()));
-  // We don't want the odd dialog in Mac: it shows in gray filenames that
-  // don't match the filter -> we don't want to show files that don't match
-  // the filter.
-  fileDialog.setOption(QFileDialog::DontUseNativeDialog);
-  fileDialog.setNameFilters(
-    qSlicerFileDialog::nameFilters(d->FileType));
-  fileDialog.setHistory(ioManager->history());
-  if (ioManager->favorites().count())
-    {
-    fileDialog.setSidebarUrls(ioManager->favorites());
-    }
-  if (ioProperties["multipleFiles"].toBool())
-    {
-    fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    }
+
   // warning: we are responsible for the memory of options
   QStringList fileDescriptions = ioManager->fileDescriptions(this->fileType());
   qSlicerIOOptions* options = fileDescriptions.count() ?
@@ -161,26 +187,26 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     {
     // fileDialog will reparent optionsWidget and take care of deleting
     // optionsWidget for us.
-    fileDialog.setBottomWidget(optionsWidget, tr("Options:"));
-    connect(&fileDialog, SIGNAL(fileSelectionChanged(QStringList)),
+    fileDialog->setBottomWidget(optionsWidget, tr("Options:"));
+    connect(fileDialog, SIGNAL(fileSelectionChanged(QStringList)),
             optionsWidget, SLOT(setFileNames(QStringList)));
     connect(optionsWidget, SIGNAL(validChanged(bool)),
-            &fileDialog, SLOT(setAcceptButtonEnable(bool)));
-    fileDialog.setAcceptButtonEnable(optionsWidget->isValid());
+            fileDialog, SLOT(setAcceptButtonEnable(bool)));
+    fileDialog->setAcceptButtonEnable(optionsWidget->isValid());
     }
   // we do not delete options now as it is still useful later (even if there is
   // no UI.) they are the options of the reader, UI or not.
-  bool res = fileDialog.exec();
+  bool res = fileDialog->exec();
   if (res)
     {
-    qSlicerIO::IOProperties properties = ioProperties;
+    properties = ioProperties;
     if (options)
       {
       properties.unite(options->properties());
       }
     else
       {
-      properties["fileName"] = fileDialog.selectedFiles();
+      properties["fileName"] = fileDialog->selectedFiles();
       }
     if (d->Action == qSlicerFileDialog::Read)
       {
@@ -197,11 +223,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
       }
     }
 
-  // If the favorite list has change, we set it in the ioManager.
-  if (fileDialog.sidebarUrls() != ioManager->favorites())
-    {
-    ioManager->setFavorites(fileDialog.sidebarUrls());
-    }
+  ioManager->setFavorites(fileDialog->sidebarUrls());
 
   // If options is not a qSlicerIOOptionsWidget, we are responsible for
   // deleting options. If it is, then fileDialog would have reparent
@@ -212,4 +234,39 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     options = 0;
     }
   return res;
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerStandardFileDialog::getOpenFileName(
+    const qSlicerIO::IOProperties& ioProperties)
+{
+  QStringList files;
+  ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
+                                ioProperties);
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+
+  if(fileDialog->exec() == QDialog::Accepted)
+    {
+    files = fileDialog->selectedFiles();
+    }
+  ioManager->setFavorites(fileDialog->sidebarUrls());
+  return files;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerStandardFileDialog::getExistingDirectory(
+    qSlicerIO::IOProperties ioProperties)
+{
+  QString directory;
+  ioProperties["fileMode"] = QFileDialog::Directory;
+  ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
+                                ioProperties);
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+
+  if (fileDialog->exec() == QDialog::Accepted)
+    {
+    directory = fileDialog->selectedFiles().value(0);
+    }
+  ioManager->setFavorites(fileDialog->sidebarUrls());
+  return directory;
 }

@@ -54,6 +54,7 @@ public:
   virtual qSlicerFileDialog::IOAction action()const = 0;
   ///
   /// run the dialog to select the file/files/directory
+  /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
   virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) = 0;
 
@@ -61,7 +62,8 @@ public:
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
   /// Return the namefilters of all the readers in IOManager corresponding to
   /// fileType
-  static QStringList nameFilters(qSlicerIO::IOFileType fileType);
+  static QStringList nameFilters(qSlicerIO::IOFileType fileType =
+                                 qSlicerIO::NoFile);
 
 //private:
 //  Q_DECLARE_PRIVATE(qSlicerFileDialog);
@@ -69,6 +71,7 @@ public:
 };
 
 class qSlicerStandardFileDialogPrivate;
+class ctkFileDialog;
 
 //------------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog : public qSlicerFileDialog
@@ -86,6 +89,17 @@ public:
 
   virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties());
+
+  /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
+  static QStringList getOpenFileName(const qSlicerIO::IOProperties& ioProperties =
+                                     qSlicerIO::IOProperties());
+  static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
+                                      qSlicerIO::IOProperties());
+
+protected:
+  static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties =
+                                         qSlicerIO::IOProperties());
+
 protected:
   QScopedPointer<qSlicerStandardFileDialogPrivate> d_ptr;
 
