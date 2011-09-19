@@ -26,11 +26,11 @@
 #include <QMenu>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerMouseModeToolBarPrivate;
 class vtkMRMLScene;
+class vtkSlicerApplicationLogic;
 
 ///
 /// qSlicerMouseModeToolBar is a toolbar that can be used to switch between 
@@ -49,6 +49,8 @@ public:
   virtual ~qSlicerMouseModeToolBar();
 
 public slots:
+
+  void setApplicationLogic(vtkSlicerApplicationLogic* logic);
 
   void setMRMLScene(vtkMRMLScene* newScene);
 

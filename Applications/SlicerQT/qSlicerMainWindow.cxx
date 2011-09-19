@@ -143,6 +143,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // MouseMode ToolBar
   //----------------------------------------------------------------------------
   // MouseMode toolBar should listen the MRML scene
+  this->MouseModeToolBar->setApplicationLogic(
+    qSlicerApplication::application()->applicationLogic());
   this->MouseModeToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),

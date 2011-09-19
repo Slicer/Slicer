@@ -32,7 +32,8 @@
 #include "qMRMLSliceWidget.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
-// MRMLLogic includes
+// SlicerLogic includes
+#include <vtkSlicerApplicationLogic.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -51,10 +52,6 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
 {
   //logger.setTrace();
   logger.setOff();
-
-  // MRMLApplicationLogic should be instantiated
-  ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
-  this->MRMLAppLogic = qSlicerApplication::application() ? qSlicerApplication::application()->mrmlApplicationLogic(): 0;
 
   this->CreateAndPlaceToolButton = 0;
   this->CreateAndPlaceMenu = 0;
@@ -424,6 +421,13 @@ qSlicerMouseModeToolBar::qSlicerMouseModeToolBar(QWidget* parentWidget):Supercla
 //---------------------------------------------------------------------------
 qSlicerMouseModeToolBar::~qSlicerMouseModeToolBar()
 {
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::setApplicationLogic(vtkSlicerApplicationLogic* appLogic)
+{
+  Q_D(qSlicerMouseModeToolBar);
+  d->MRMLAppLogic = appLogic;
 }
 
 //---------------------------------------------------------------------------
