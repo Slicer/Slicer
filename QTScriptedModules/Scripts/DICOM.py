@@ -257,7 +257,11 @@ class DICOMWidget:
     slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
     d = slicer.dicomDatabase.headerValue(seriesDescription)
-    name = d[d.index('[')+1:d.index(']')]
+    name = "unknown"
+    try:
+      name = d[d.index('[')+1:d.index(']')]
+    except ValueError:
+      name = "Unknown"
     self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
@@ -379,7 +383,10 @@ class DICOMExportDialog(object):
     slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
     d = slicer.dicomDatabase.headerValue(seriesDescription)
-    name = d[d.index('[')+1:d.index(']')]
+    try:
+      name = d[d.index('[')+1:d.index(']')]
+    except ValueError:
+      name = "Unknown"
     self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def open(self):
