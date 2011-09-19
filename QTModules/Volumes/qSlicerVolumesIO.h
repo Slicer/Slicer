@@ -26,6 +26,8 @@
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerVolumesIOPrivate;
+class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
@@ -34,12 +36,23 @@ class qSlicerVolumesIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerVolumesIO(QObject* parent = 0);
+  qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
+
+  vtkSlicerVolumesLogic* logic()const;
+  void setLogic(vtkSlicerVolumesLogic* logic);
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
   virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
+protected:
+  QScopedPointer<qSlicerVolumesIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerVolumesIO);
+  Q_DISABLE_COPY(qSlicerVolumesIO);
 };
 
 #endif

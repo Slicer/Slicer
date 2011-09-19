@@ -22,17 +22,12 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerVolumesIO.h"
 #include "qSlicerVolumesIOOptionsWidget.h"
 
 // Logic includes
+#include <vtkSlicerApplicationLogic.h>
 #include "vtkSlicerVolumesLogic.h"
-
-// MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
@@ -43,9 +38,39 @@
 #include <vtkStringArray.h>
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesIO::qSlicerVolumesIO(QObject* _parent)
-  :qSlicerIO(_parent)
+class qSlicerVolumesIOPrivate
 {
+  public:
+  vtkSmartPointer<vtkSlicerVolumesLogic> Logic;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerVolumesIO::qSlicerVolumesIO(QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerVolumesIOPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumesIO::qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerVolumesIOPrivate)
+{
+  this->setLogic(logic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerVolumesIO::setLogic(vtkSlicerVolumesLogic* logic)
+{
+  Q_D(qSlicerVolumesIO);
+  d->Logic = logic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerVolumesLogic* qSlicerVolumesIO::logic()const
+{
+  Q_D(const qSlicerVolumesIO);
+  return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -80,6 +105,7 @@ qSlicerIOOptions* qSlicerVolumesIO::options()const
 //-----------------------------------------------------------------------------
 bool qSlicerVolumesIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerVolumesIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
@@ -118,29 +144,18 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
       fileList->InsertNextValue(file.toLatin1().data());
       }
     }
-  vtkSlicerVolumesLogic* volumesLogic =
-    vtkSlicerVolumesLogic::SafeDownCast(
-      qSlicerCoreApplication::application()->moduleManager()
-      ->module("Volumes")->logic());
-  Q_ASSERT(volumesLogic);
-  vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(
+  Q_ASSERT(d->Logic);
+  vtkMRMLVolumeNode* node = d->Logic->AddArchetypeVolume(
     fileName.toLatin1(),
     name.toLatin1(),
     options,
     fileList.GetPointer());
   if (node)
     {
-    vtkMRMLApplicationLogic* mrmlAppLogic =
-      qSlicerCoreApplication::application()->mrmlApplicationLogic();
-    vtkSlicerApplicationLogic* slicerLogic =
-      qSlicerCoreApplication::application()->appLogic();
+    vtkSlicerApplicationLogic* appLogic =
+      d->Logic->GetApplicationLogic();
     vtkMRMLSelectionNode* selectionNode =
-      mrmlAppLogic ? mrmlAppLogic->GetSelectionNode() : 0;
-    if (!selectionNode)
-      {
-      // support old way
-      selectionNode = slicerLogic ? slicerLogic->GetSelectionNode() : 0;
-      }
+      appLogic ? appLogic->GetSelectionNode() : 0;
     if (selectionNode)
       {
       if (vtkMRMLScalarVolumeNode::SafeDownCast(node) &&
@@ -152,15 +167,11 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
         {
         selectionNode->SetReferenceActiveVolumeID(node->GetID());
         }
-      if (mrmlAppLogic)
+      if (appLogic)
         {
-        mrmlAppLogic->PropagateVolumeSelection();
+        appLogic->PropagateVolumeSelection();
         // TODO: slices should probably be fitting automatically..
-        mrmlAppLogic->FitSliceToAll();
-        }
-      else if (slicerLogic)
-        {
-        slicerLogic->PropagateVolumeSelection();
+        appLogic->FitSliceToAll();
         }
       }
     this->setLoadedNodes(QStringList(QString(node->GetID())));

@@ -39,12 +39,41 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
+
+//-----------------------------------------------------------------------------
+class qSlicerVolumeRenderingIOPrivate
+{
+  public:
+  vtkSmartPointer<vtkSlicerVolumeRenderingLogic> Logic;
+};
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(QObject* _parent)
-  :qSlicerIO(_parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerVolumeRenderingIOPrivate)
 {
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerVolumeRenderingIOPrivate)
+{
+  this->setLogic(logic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerVolumeRenderingIO::setLogic(vtkSlicerVolumeRenderingLogic* logic)
+{
+  Q_D(qSlicerVolumeRenderingIO);
+  d->Logic = logic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingIO::logic()const
+{
+  Q_D(const qSlicerVolumeRenderingIO);
+  return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -70,6 +99,7 @@ QStringList qSlicerVolumeRenderingIO::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerVolumeRenderingIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerVolumeRenderingIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
   // Name is ignored
@@ -78,13 +108,9 @@ bool qSlicerVolumeRenderingIO::load(const IOProperties& properties)
   //  {
   //  name = properties["name"].toString();
   //  }
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
-    vtkSlicerVolumeRenderingLogic::SafeDownCast(
-      qSlicerCoreApplication::application()->moduleManager()
-      ->module("VolumeRendering")->logic());
-  Q_ASSERT(volumeRenderingLogic);
+  Q_ASSERT(d->Logic.GetPointer());
   vtkMRMLVolumePropertyNode* node =
-    volumeRenderingLogic->AddVolumePropertyFromFile(fileName.toLatin1());
+    d->Logic->AddVolumePropertyFromFile(fileName.toLatin1());
   QStringList loadedNodes;
   if (node)
     {

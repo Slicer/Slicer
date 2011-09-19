@@ -1,11 +1,8 @@
 // Qt includes
 #include <QDebug>
 
-// qMRML includes
-#include <qMRMLNodeFactory.h>
-
 // SlicerQt includes
-#include <qSlicerCoreApplication.h>
+#include <qSlicerAbstractCoreModule.h>
 
 // CropVolume includes
 #include "qSlicerCropVolumeModuleWidget.h"
@@ -13,6 +10,9 @@
 
 // CropVolume Logic includes
 #include <vtkSlicerCropVolumeLogic.h>
+
+// qMRML includes
+#include <qMRMLNodeFactory.h>
 
 // MRMLAnnotation includes
 #include <vtkMRMLAnnotationROINode.h>
@@ -156,8 +156,7 @@ void qSlicerCropVolumeModuleWidget::onApply(){
   if(!logic->Apply(this->parametersNode))
     {
     std::cerr << "Propagating to the selection node" << std::endl;
-    vtkMRMLApplicationLogic *appLogic =
-      qSlicerCoreApplication::application()->mrmlApplicationLogic();
+    vtkSlicerApplicationLogic *appLogic = this->module()->appLogic();
     vtkMRMLSelectionNode *selectionNode = appLogic->GetSelectionNode();
     selectionNode->SetReferenceActiveVolumeID(this->parametersNode->GetOutputVolumeNodeID());
     appLogic->PropagateVolumeSelection();

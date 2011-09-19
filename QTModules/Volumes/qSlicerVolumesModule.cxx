@@ -105,7 +105,7 @@ void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
   qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerVolumesIO(this));
+    new qSlicerVolumesIO(vtkSlicerVolumesLogic::SafeDownCast(this->logic()), this));
 }
 
 //-----------------------------------------------------------------------------

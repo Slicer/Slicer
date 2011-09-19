@@ -81,7 +81,8 @@ void qSlicerVolumeRenderingModule::setup()
     RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 
   qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerVolumeRenderingIO(this));
+    new qSlicerVolumeRenderingIO(
+      vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic()), this));
 }
 
 //-----------------------------------------------------------------------------

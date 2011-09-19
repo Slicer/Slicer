@@ -24,6 +24,10 @@
 // SlicerQt includes
 #include "qSlicerIO.h"
 
+// Volume Rendering includes
+class qSlicerVolumeRenderingIOPrivate;
+class vtkSlicerVolumeRenderingLogic;
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingIO: public qSlicerIO
@@ -31,11 +35,24 @@ class qSlicerVolumeRenderingIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerVolumeRenderingIO(QObject* parent = 0);
+  qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
+
+  void setLogic(vtkSlicerVolumeRenderingLogic* logic);
+  vtkSlicerVolumeRenderingLogic* logic()const;
+
+  // Reimplemented for IO specific description
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerVolumeRenderingIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerVolumeRenderingIO);
+  Q_DISABLE_COPY(qSlicerVolumeRenderingIO);
 };
 
 #endif
