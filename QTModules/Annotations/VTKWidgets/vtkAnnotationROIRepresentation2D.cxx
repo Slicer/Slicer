@@ -261,20 +261,20 @@ void vtkAnnotationROIRepresentation2D::ReleaseGraphicsResources(vtkWindow *w)
 }
 
 //----------------------------------------------------------------------
-int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *v)
+int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *vtkNotUsed(v))
 {
   int count=0;
   return count;
 }
 //----------------------------------------------------------------------------
-int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *v)
+int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *vtkNotUsed(v))
 {
   int count=0;
   return count;
 }
 
 //----------------------------------------------------------------------------
-int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *v)
+int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *vtkNotUsed(v))
 {
   int count=0;
   return count;

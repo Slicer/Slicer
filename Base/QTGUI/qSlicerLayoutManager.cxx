@@ -82,8 +82,8 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 
   if (sliceWidget)
     {
-    bool disablePython = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython);
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL
+    bool disablePython = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython);
     if (!disablePython)
       {
       QString sliceLayoutName(sliceNode->GetLayoutName());

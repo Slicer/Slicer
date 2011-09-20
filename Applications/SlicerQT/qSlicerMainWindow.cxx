@@ -249,9 +249,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // Undo/Redo Toolbar
   //----------------------------------------------------------------------------
   // Listen to the scene to enable/disable the undo/redo toolbuttons
-  q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
-                 q, SLOT(onMRMLSceneModified(vtkObject*)));
-  q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
+  //q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
+  //               q, SLOT(onMRMLSceneModified(vtkObject*)));
+  //q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 
   //----------------------------------------------------------------------------
   // Icons in the menu
@@ -555,13 +555,13 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 {
-  Q_D(qSlicerMainWindow);
-
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
-  if (scene && scene->GetIsUpdating())
-    {
-    return;
-    }
+  //Q_D(qSlicerMainWindow);
+  //
+  //vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
+  //if (scene && scene->GetIsUpdating())
+  //  {
+  //  return;
+  //  }
   //d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
   //d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
 }
