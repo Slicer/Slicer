@@ -280,6 +280,9 @@ namespace eval Slicer3Adapters {
         return ""
       }
       set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
+      if { [py_eval "slicer.app.layoutManager().sliceWidget('$layoutName') == None"] == "True" } {
+        return ""
+      }
       py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().scheduleRender()"
     }
     method Render {} {
@@ -287,6 +290,9 @@ namespace eval Slicer3Adapters {
         return ""
       }
       set layoutName [[$_sliceLogic GetSliceNode] GetLayoutName]
+      if { [py_eval "slicer.app.layoutManager().sliceWidget('$layoutName') == None"] == "True" } {
+        return ""
+      }
       py_eval "slicer.app.layoutManager().sliceWidget('$layoutName').sliceView().forceRender()"
     }
     method GetHighlightColor {} {
