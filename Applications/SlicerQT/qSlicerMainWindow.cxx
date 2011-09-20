@@ -555,6 +555,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 {
+  Q_UNUSED(sender);
   //Q_D(qSlicerMainWindow);
   //
   //vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
