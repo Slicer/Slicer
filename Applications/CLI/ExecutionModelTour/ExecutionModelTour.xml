@@ -32,7 +32,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <constraints>
         <minimum>0</minimum>
         <maximum>1.e3</maximum>
-        <step>0</step>
+        <step>10</step>
       </constraints>
     </double>
   </parameters>
