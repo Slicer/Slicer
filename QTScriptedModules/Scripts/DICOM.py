@@ -163,7 +163,7 @@ class DICOMWidget:
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
 
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-    self.tree.connect('activated(const QModelIndex&)', self.onTreeClicked)
+    self.tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
     self.tree.setContextMenuPolicy(3)
     self.tree.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
 
