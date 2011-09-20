@@ -238,9 +238,10 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerStandardFileDialog::getOpenFileName(
-    const qSlicerIO::IOProperties& ioProperties)
+    qSlicerIO::IOProperties ioProperties)
 {
   QStringList files;
+  ioProperties["multipleFiles"] = QFileDialog::ExistingFiles;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
                                 ioProperties);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();

@@ -91,7 +91,7 @@ public:
                     qSlicerIO::IOProperties());
 
   /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
-  static QStringList getOpenFileName(const qSlicerIO::IOProperties& ioProperties =
+  static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
                                      qSlicerIO::IOProperties());
   static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
                                       qSlicerIO::IOProperties());
