@@ -110,14 +110,16 @@ QWidget *qMRMLItemDelegate
     }
   else if (this->is0To1Value(index))
     {
-    ctkSliderWidget* slider = new ctkSliderWidget(parent);
+    ctkSliderWidget* slider = new ctkSliderWidget(0);
     slider->setDecimals(2);
     slider->setSingleStep(0.1);
     slider->setRange(0., 1.);
     slider->setPopupSlider(true);
     QSize s = slider->popup()->size();
     slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
-    //slider->setParent(parent);
+    // ctkSliderWidget::setParent() must be called after
+    // ctkSliderWidget::setPopupSlider(true)
+    slider->setParent(parent);
 
     QDoubleSpinBox *spinBox = slider->spinBox();
     spinBox->setFrame(false);
