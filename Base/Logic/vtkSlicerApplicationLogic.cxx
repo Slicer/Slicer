@@ -418,7 +418,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
     }
   */
 }
-
+/*
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
 {
@@ -462,6 +462,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
       }
     }
 }
+*/
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateFiducialListSelection()

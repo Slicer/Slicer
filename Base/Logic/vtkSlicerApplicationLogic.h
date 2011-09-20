@@ -113,8 +113,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// 
   /// Perform the default behavior related to selecting a volume
   /// (in this case, making it the background for all SliceCompositeNodes)
-  void PropagateVolumeSelection(int fit);
-  void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}; 
+  //void PropagateVolumeSelection(int fit);
+  //void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}; 
 
   /// 
   /// Perform the default behaviour related to selecting a fiducial list
