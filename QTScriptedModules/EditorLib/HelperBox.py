@@ -35,7 +35,7 @@ class HelperBox(object):
     # instance of a ColorBox
     self.colorBox = None
     # slicer helper class
-    self.ApplicationLogic = slicer.app.mrmlApplicationLogic()
+    self.applicationLogic = slicer.app.applicationLogic()
     self.volumesLogic = slicer.modules.volumes.logic()
     self.colorLogic = slicer.modules.colors.logic()
     # qt model/view classes to track per-structure volumes
@@ -110,10 +110,10 @@ class HelperBox(object):
         self.errorDialog( "Error: selected merge label volume is not a label volume" )
       else:
         # make the source node the active background, and the label node the active label
-        selectionNode = self.ApplicationLogic.GetSelectionNode()
+        selectionNode = self.applicationLogic.GetSelectionNode()
         selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
         selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-        self.ApplicationLogic.PropagateVolumeSelection()
+        self.applicationLogic.PropagateVolumeSelection()
         mergeText = merge.GetName()
         self.merge = merge
     else:
@@ -331,10 +331,10 @@ class HelperBox(object):
       structureVolume = self.structureVolume( structureName )
       structureVolume.GetImageData().Modified()
 
-    selectionNode = self.ApplicationLogic.GetSelectionNode()
+    selectionNode = self.applicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-    self.ApplicationLogic.PropagateVolumeSelection()
+    self.applicationLogic.PropagateVolumeSelection()
 
     self.statusText( "Finished merging." )
 
@@ -467,11 +467,11 @@ class HelperBox(object):
     structureVolume = self.structureVolume( structureName )
 
     # make the master node the active background, and the structure label node the active label
-    selectionNode = self.ApplicationLogic.GetSelectionNode()
+    selectionNode = self.applicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID(self.master.GetID())
     if structureVolume:
       selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
-    self.ApplicationLogic.PropagateVolumeSelection()
+    self.applicationLogic.PropagateVolumeSelection()
 
     tcl('EditorSetPaintLabel %s' % label)
 
