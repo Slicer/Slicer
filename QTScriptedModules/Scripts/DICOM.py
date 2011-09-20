@@ -100,7 +100,7 @@ class DICOMWidget:
     # servers 
     #
 
-    # testing server - not exposed
+    # testing server - not exposed (used for development)
     self.localFrame = ctk.ctkCollapsibleButton(self.parent)
     self.localFrame.setLayout(qt.QVBoxLayout())
     self.localFrame.setText("Servers")
@@ -149,16 +149,23 @@ class DICOMWidget:
     # well into the frame
     self.findChildren(self.dicomApp, 'SearchOption')[0].hide()
     # make the tree a little smaller to fit in slicer
-    tree = self.findChildren(self.dicomApp, 'TreeView')[0]
-    g = tree.geometry
+    self.tree = self.findChildren(self.dicomApp, 'TreeView')[0]
+    g = self.tree.geometry
     g.setHeight(150)
     if self.dicomApp.databaseDirectory:
       self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
+    self.contextMenu = qt.QMenu(self.tree)
+    self.deleteAction = qt.QAction("Delete", self.contextMenu)
+    self.contextMenu.addAction(self.deleteAction)
+    self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
+
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-    tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
+    self.tree.connect('activated(const QModelIndex&)', self.onTreeClicked)
+    self.tree.setContextMenuPolicy(3)
+    self.tree.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
 
     userFrame = self.findChildren(self.dicomApp, 'UserFrame')[0]
     userFrame.setLayout(qt.QVBoxLayout())
@@ -199,6 +206,22 @@ class DICOMWidget:
       self.loadButton.text = 'Load to Slicer'
       self.loadButton.enabled = False 
     self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
+
+  def onTreeContextMenuRequested(self,pos):
+    index = self.tree.indexAt(pos)
+    self.selection = index.sibling(index.row(), 0)
+    self.contextMenu.popup(self.tree.mapToGlobal(pos))
+
+  def onContextMenuTriggered(self,action):
+    if action == self.deleteAction:
+      typeRole = self.selection.data(self.dicomModelTypeRole)
+      role = self.dicomModelTypes[typeRole]
+      uid = self.selection.data(self.dicomModelUIDRole)
+      if self.okayCancel('Delete to %s: "%s"?' % (role, uid)):
+        deleteFiles = False
+        if self.question('Delete files in addition to database entries?'):
+          # TODO: add delete option to ctkDICOMDatabase
+          self.messageBox("Delete not yet implemented")
 
   def onLoadButton(self):
     self.progress = qt.QProgressDialog()
@@ -357,6 +380,12 @@ class DICOMWidget:
     self.mb.setWindowModality(1)
     self.mb.open()
     return
+
+  def question(self,text,title='DICOM'):
+    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x14000) == 0x4000
+
+  def okayCancel(self,text,title='DICOM'):
+    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
 
   def findChildren(self,widget,name):
     """ return a list of child widgets that match the passed name """
