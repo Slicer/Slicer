@@ -18,34 +18,31 @@
 #ifndef __vtkSlicerApplicationLogic_h
 #define __vtkSlicerApplicationLogic_h
 
-// ITK includes
-#include "itkMultiThreader.h"
-#include "itkMutexLock.h"
-
-// VTK includes
-#include <vtkCollection.h>
-
 // Slicer includes
 #include "vtkSlicerBaseLogic.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
+// VTK includes
+#include <vtkCollection.h>
+
+// ITK includes
+#include <itkMultiThreader.h>
+#include <itkMutexLock.h>
+
 //BTX
 class vtkMRMLSliceLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
-class ProcessingTaskQueue;
+class vtkSlicerTask;
 class ModifiedQueue;
+class ProcessingTaskQueue;
 class ReadDataQueue;
 class ReadDataRequest;
+class SliceLogicMap;
 class WriteDataQueue;
 class WriteDataRequest;
-class vtkSlicerTask;
-//ETX
-
-//BTX
-class SliceLogicMap;
 //ETX
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
@@ -55,7 +52,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   
   /// The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkMRMLApplicationLogic);
+  vtkTypeRevisionMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
   /// 
@@ -266,6 +263,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// return an incorrect result if the plugin is installed in the build tree of
   /// an other project.
   static bool IsPluginInstalled(const std::string& filePath, const std::string& applicationHomeDir);
+
+
+  /// Get share directory associated with \a moduleName located in \a filePath
+  static std::string GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath);
+
+  /// Get Slicer-X.Y share directory associated with module located in \a filePath
+  static std::string GetModuleSlicerXYShareDirectory(const std::string& filePath);
+
+  /// Get Slicer-X.Y lib directory associated with module located in \a filePath
+  static std::string GetModuleSlicerXYLibDirectory(const std::string& filePath);
 
 protected:
 

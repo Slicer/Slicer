@@ -1972,3 +1972,117 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
   return true;
 }
 
+namespace
+{
+//----------------------------------------------------------------------------
+std::string GetModuleHomeDirectory(const std::string& filePath,
+                                   std::string& slicerSubDir,
+                                   std::string& moduleTypeSubDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return std::string();
+    }
+
+  // In the current implementation, we assume the path to a module and its resources
+  // will respectively have the following structure:
+  //   ../lib/Slicer-X.Y/<module-type>/module
+  // and
+  //   ../share/Slicer-X.Y/<module-type>/<module-name>/
+
+  std::vector<std::string> components;
+  itksys::SystemTools::SplitPath(filePath.c_str(), components, true);
+
+  // components[components.size() - 1] -> fileName
+  // components[components.size() - 2 - offset] -> {qt-scripted-modules, qt-loadable-modules, ...}
+  // components[components.size() - 3 - offset] -> Slicer-X.Y
+  // components[components.size() - 4 - offset] -> lib
+  // components[0 .. components.size() - 4 - offset] -> Common path to lib and share directory
+
+  // offset == 1 if there is an intermediate build directory
+  int offset = 0;
+  std::string intDir(".");
+  std::string possibleIntDir = components.at(components.size() - 2);
+  if (!itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Debug") ||
+      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Release") ||
+      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "RelWithDebInfo") ||
+      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "MinSizeRel"))
+    {
+    offset = 1;
+    intDir = possibleIntDir;
+    }
+
+  moduleTypeSubDir = components.at(components.size() - 2 - offset);
+  slicerSubDir = components.at(components.size() - 3 - offset);
+
+  std::string shareDirectory =
+      itksys::SystemTools::JoinPath(components.begin(), components.end() - 4 - offset);
+  return shareDirectory;
+}
+
+} // end of anonymous namespace
+
+//----------------------------------------------------------------------------
+std::string vtkSlicerApplicationLogic::GetModuleShareDirectory(const std::string& moduleName,
+                                                               const std::string& filePath)
+{
+  if (moduleName.empty())
+    {
+    vtkGenericWarningMacro( << "moduleName is an empty string !");
+    return std::string();
+    }
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return std::string();
+    }
+
+  std::string slicerSubDir;
+  std::string moduleTypeSubDir;
+  std::string shareDirectory = GetModuleHomeDirectory(filePath, slicerSubDir, moduleTypeSubDir);
+
+  shareDirectory.append("/share");
+  shareDirectory.append("/");
+  shareDirectory.append(slicerSubDir);
+  shareDirectory.append("/");
+  shareDirectory.append(moduleTypeSubDir);
+  shareDirectory.append("/");
+  shareDirectory.append(moduleName);
+
+  return shareDirectory;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkSlicerApplicationLogic::GetModuleSlicerXYShareDirectory(const std::string& filePath)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return std::string();
+    }
+  std::string slicerSubDir;
+  std::string moduleTypeSubDir;
+  std::string shareDirectory = GetModuleHomeDirectory(filePath, slicerSubDir, moduleTypeSubDir);
+  shareDirectory.append("/share");
+  shareDirectory.append("/");
+  shareDirectory.append(slicerSubDir);
+  return shareDirectory;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory(const std::string& filePath)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return std::string();
+    }
+  std::string slicerSubDir;
+  std::string moduleTypeSubDir;
+  std::string libDirectory = GetModuleHomeDirectory(filePath, slicerSubDir, moduleTypeSubDir);
+  libDirectory.append("/lib");
+  libDirectory.append("/");
+  libDirectory.append(slicerSubDir);
+  return libDirectory;
+}
