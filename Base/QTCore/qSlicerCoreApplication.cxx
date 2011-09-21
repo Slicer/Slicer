@@ -236,13 +236,13 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   // Since some standalone executable (i.e EMSegmentCommandLine) can create
   // an instance of qSlicer(Core)Application so that the environment and the
   // python manager are properly initialized. This executable will have
-  // to set Slicer_HOME. If not, the current directory associated with that
-  // executable will be considered and initialization code expecting Slicer_HOME
+  // to set SLICER_HOME. If not, the current directory associated with that
+  // executable will be considered and initialization code expecting SLICER_HOME
   // to be properly set will fail.
-  QString slicerHome = this->Environment.value("Slicer_HOME");
+  QString slicerHome = this->Environment.value("SLICER_HOME");
   if (!slicerHome.isEmpty())
     {
-    //qDebug() << "qSlicerCoreApplication: Slicer_HOME externally set to" << slicerHome;
+    //qDebug() << "qSlicerCoreApplication: SLICER_HOME externally set to" << slicerHome;
     return slicerHome;
     }
   QDir slicerBinDir(this->SlicerBin);

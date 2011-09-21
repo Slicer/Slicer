@@ -178,7 +178,7 @@ endif()
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin<PATHSEP>${QT_PLUGINS_DIR}"
-  "Slicer_HOME=${Slicer_BINARY_DIR}" # See note below
+  "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
   )
 
 # Note: The addition of Slicer_HOME to the build environment has been motivated by
