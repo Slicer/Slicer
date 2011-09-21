@@ -10,9 +10,14 @@ set(DCMTK_Apps storescu storescp dcmdump)
 foreach(dcmtk_App ${DCMTK_Apps})
   if(APPLE)
     install(FILES ${CTK_DIR}/CMakeExternals/Install/bin/${dcmtk_App}
-      DESTINATION USE_SOURCE_PERMISSIONS ${Slicer_BUNDLE_LOCATION}/bin COMPONENT Runtime)
+      DESTINATION ${Slicer_BUNDLE_LOCATION}/bin 
+      PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ
+      COMPONENT Runtime)
   else()
     install(FILES ${CTK_DIR}/CMakeExternals/Install/bin/${dcmtk_App}${EXE}
-        DESTINATION USE_SOURCE_PERMISSIONS bin COMPONENT Runtime)
+      DESTINATION bin 
+      PERMISSIONS 
+      OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ 
+      COMPONENT Runtime)
   endif()
 endforeach()
