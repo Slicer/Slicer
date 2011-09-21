@@ -1913,3 +1913,62 @@ void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
       }
     }
 }
+
+//----------------------------------------------------------------------------
+bool vtkSlicerApplicationLogic::IsExtension(const std::string& filePath, const std::string& applicationHomeDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return false;
+    }
+  if (applicationHomeDir.empty())
+    {
+    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    return false;
+    }
+  std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
+  return !itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
+                                                  const std::string& applicationHomeDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return false;
+    }
+  if (applicationHomeDir.empty())
+    {
+    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    return false;
+    }
+
+  std::string path = itksys::SystemTools::GetFilenamePath(filePath);
+  std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
+
+  if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), applicationHomeDir.c_str()))
+    {
+    return !itksys::SystemTools::FileExists(
+          std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
+    }
+
+  std::string root;
+  std::string canonicalPathWithoutRoot =
+      itksys::SystemTools::SplitPathRootComponent(canonicalPath.c_str(), &root);
+  do
+    {
+    if (itksys::SystemTools::FileExists(
+          (root + canonicalPathWithoutRoot + "/CMakeCache.txt").c_str(), true))
+      {
+      return false;
+      }
+    canonicalPathWithoutRoot = itksys::SystemTools::GetParentDirectory(canonicalPathWithoutRoot.c_str());
+    }
+  while(!canonicalPathWithoutRoot.empty());
+
+  return true;
+}
+

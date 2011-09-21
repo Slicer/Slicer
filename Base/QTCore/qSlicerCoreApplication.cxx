@@ -853,8 +853,8 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isExtension(const QString& moduleFileName)const
 {
-  return vtkSlicerModuleLogic::IsExtension(moduleFileName.toStdString(),
-                                           this->slicerHome().toStdString());
+  return vtkSlicerApplicationLogic::IsExtension(moduleFileName.toStdString(),
+                                                this->slicerHome().toStdString());
 }
 
 //-----------------------------------------------------------------------------

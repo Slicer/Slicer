@@ -28,7 +28,7 @@
 #include "qSlicerUtils.h"
 
 // SlicerLogic includes
-#include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerApplicationLogic.h"
 
 //------------------------------------------------------------------------------
 bool qSlicerUtils::isExecutableName(const QString& name)
@@ -163,5 +163,5 @@ QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& applicationHomeDir)
 {
-  return vtkSlicerModuleLogic::IsPluginInstalled(filePath.toStdString(), applicationHomeDir.toStdString());
+  return vtkSlicerApplicationLogic::IsPluginInstalled(filePath.toStdString(), applicationHomeDir.toStdString());
 }
