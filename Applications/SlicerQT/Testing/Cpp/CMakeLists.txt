@@ -1,10 +1,16 @@
 set(KIT SlicerQT)
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+set(KIT_TEST_SRCS
   qSlicerAboutDialogTest1.cxx
   qSlicerMainWindowCoreTest1.cxx
   qSlicerMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
+  )
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND KIT_TEST_SRCS qSlicerApplicationTpyclTest1.cxx)
+endif()
+create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  ${KIT_TEST_SRCS}
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -25,6 +31,10 @@ endmacro()
 #
 
 SIMPLE_TEST( qSlicerAboutDialogTest1 )
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  SIMPLE_TEST( qSlicerApplicationTpyclTest1 )
+  set_tests_properties(qSlicerApplicationTpyclTest1 PROPERTIES PASS_REGULAR_EXPRESSION stringArray)
+endif()
 SIMPLE_TEST( qSlicerMainWindowCoreTest1 )
 SIMPLE_TEST( qSlicerMainWindowTest1 )
 SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
