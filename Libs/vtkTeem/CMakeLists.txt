@@ -62,7 +62,6 @@ set(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkNRRDWriter.cxx
   vtkDiffusionTensorMathematics.cxx
-  vtkDiffusionTensorMathematicsSimple.cxx
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
   vtkPolyDataTensorToColor.cxx
