@@ -17,7 +17,7 @@
 #
 # this should be launched from within slicer as
 # 
-# $::env(TCL_DIR)/bin/wish8.4 $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ExternalProgress.tcl
+# $::env(TCL_DIR)/bin/wish8.4 $::env(SLICER_HOME)/${Slicer_SHARE_DIR}/Tcl/ExternalProgress.tcl
 #
 # - see launch.tcl.in for how platform specific variations map to these environment variables
   
@@ -27,7 +27,7 @@ package require Tk
 # slicer (build version or install version).  Cut and paste commands to test
 proc progress_Test {} {
   set wish $::env(TCL_DIR)/bin/wish8.4 
-  set script $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ExternalProgress.tcl
+  set script $::env(SLICER_HOME)/${Slicer_SHARE_DIR}/Tcl/ExternalProgress.tcl
   set script $::env(SLICER_HOME)/../Slicer3/Base/GUI/Tcl/ExternalProgress.tcl
   set fp [open "| $wish" "w"]
   puts $fp "source $script"; flush $fp

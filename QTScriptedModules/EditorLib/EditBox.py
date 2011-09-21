@@ -177,7 +177,7 @@ class EditBox(object):
     # for each effect
     # - look for implementation class of pattern *Effect
     # - get an icon name for the pushbutton
-    iconDir = os.environ['SLICER_HOME'] + '/lib/Slicer3/SlicerBaseGUI/Tcl/ImageData/'
+    iconDir = os.environ['SLICER_HOME'] + '/' + os.environ['SLICER_SHARE_DIR'] + '/Tcl/ImageData/'
     
     self.effectClasses = {}
     self.effectIconFiles = {}

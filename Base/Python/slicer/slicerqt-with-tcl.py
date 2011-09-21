@@ -17,7 +17,7 @@ def tcl(cmd):
       _tpycl.py_package(p)
 
     _tpycl.tcl_eval("""
-        set dir $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
+        set dir $::env(SLICER_HOME)/$::env(SLICER_SHARE_DIR)/Tcl
         source $dir/Slicer3Adapters.tcl
         ::Slicer3Adapters::Initialize
       """)
@@ -25,7 +25,7 @@ def tcl(cmd):
     # TODO: not clear why package require is not working 
     # - instead, source the pkgIndex directly
     _tpycl.tcl_eval("""
-        set dir $::env(SLICER_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
+        set dir $::env(SLICER_HOME)/$::env(SLICER_SHARE_DIR)/Tcl
         source $dir/pkgIndex.tcl
       """)
 

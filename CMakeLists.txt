@@ -262,8 +262,8 @@ set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VE
 set(Slicer_SHARE_DIR "share/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
-set(Slicer_CLIMODULES_BIN_DIR "cli-modules")
-set(Slicer_CLIMODULES_LIB_DIR "cli-modules")
+set(Slicer_CLIMODULES_BIN_DIR "${Slicer_LIB_DIR}/cli-modules")
+set(Slicer_CLIMODULES_LIB_DIR "${Slicer_LIB_DIR}/cli-modules")
 set(Slicer_CLIMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/cli-modules")
 
 #-----------------------------------------------------------------------------
@@ -529,9 +529,9 @@ set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 #-----------------------------------------------------------------------------
 # Qt Loadable and Scripted Modules relative directories
 #-----------------------------------------------------------------------------
-set(Slicer_QTLOADABLEMODULES_BIN_DIR "qt-loadable-modules")
-set(Slicer_QTLOADABLEMODULES_LIB_DIR "qt-loadable-modules")
-set(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR "qt-loadable-modules/Python")
+set(Slicer_QTLOADABLEMODULES_BIN_DIR "${Slicer_LIB_DIR}/qt-loadable-modules")
+set(Slicer_QTLOADABLEMODULES_LIB_DIR "${Slicer_LIB_DIR}/qt-loadable-modules")
+set(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR "${Slicer_LIB_DIR}/qt-loadable-modules/Python")
 set(Slicer_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-loadable-modules")
 set(Slicer_QTLOADABLEMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-loadable-modules")
 
@@ -542,8 +542,8 @@ set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer
 set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
 
 if(Slicer_USE_PYTHONQT)
-  set(Slicer_QTSCRIPTEDMODULES_BIN_DIR "qt-scripted-modules")
-  set(Slicer_QTSCRIPTEDMODULES_LIB_DIR "qt-scripted-modules")
+  set(Slicer_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_LIB_DIR}/qt-scripted-modules")
+  set(Slicer_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_LIB_DIR}/qt-scripted-modules")
   set(Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INCLUDE_DIR}/qt-scripted-modules")
   set(Slicer_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/qt-scripted-modules")
 

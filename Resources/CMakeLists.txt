@@ -28,19 +28,19 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     )
 endif()
 
-# Should this location change, update somewhere
+# Should this location change, update Base/Logic/vtkSlicerModuleLogic.cxx
 
 file(GLOB PARAMETERSETS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ParameterSets/*.mrml")
 
 foreach(parameterset ${PARAMETERSETS})
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${parameterset}
-    "${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Resources/${parameterset}"
+    "${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/${parameterset}"
     COPYONLY
     )
 endforeach()
 install(
   FILES ${PARAMETERSETS}
-  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Resources/ParameterSets
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/ParameterSets
   )
 

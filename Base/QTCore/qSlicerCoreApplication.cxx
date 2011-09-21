@@ -33,6 +33,7 @@
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_CLIMODULES_BIN_DIR
 //  - Slicer_LIB_DIR
+//  - Slicer_SHARE_DIR
 //  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
@@ -132,6 +133,10 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
   this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
+
+  // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
+  // their dependencies.
+  this->setEnvironmentVariable("SLICER_SHARE_DIR", Slicer_SHARE_DIR);
 
   this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
@@ -775,8 +780,6 @@ CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
 bool qSlicerCoreApplication::isInstalled()const
 {
   Q_D(const qSlicerCoreApplication);
-  // TODO: make the check more robust (using an environment variable?)
-  // If you change here, change also in launch.tcl.in
   return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
 }
 

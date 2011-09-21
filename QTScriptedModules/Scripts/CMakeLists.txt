@@ -8,10 +8,6 @@ set(KIT_PYTHON_SCRIPTS
     SampleData.py
   )
 
-subdirs(
-  DICOM2FullBrainTractography
-)
-
 if(Slicer_USE_NUMPY)
   list(APPEND KIT_PYTHON_SCRIPTS
     Endoscopy.py
@@ -26,5 +22,10 @@ ctkMacroCompilePythonScript(
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"
   RESOURCES "${KIT_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-  INSTALL_DIR ${Slicer_INSTALL_ROOT}
+  INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
+  NO_INSTALL_SUBDIR
+  )
+
+add_subdirectory(
+  DICOM2FullBrainTractography
   )

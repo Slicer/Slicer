@@ -6,6 +6,11 @@ project(SlicerBaseLogic)
 find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
 
 # --------------------------------------------------------------------------
+# Subdirectories
+# --------------------------------------------------------------------------
+add_subdirectory(Resources)
+
+# --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
 set(include_dirs
@@ -185,22 +190,3 @@ if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
-# --------------------------------------------------------------------------
-# Install support files
-# --------------------------------------------------------------------------
-
-# Should this location change, update Base/Logic/vtkSlicerColorLogic.cxx
-
-file(GLOB COLORFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/ColorFiles/*.txt")
-
-foreach(colorfile ${COLORFILES})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${colorfile}
-    ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
-    COPYONLY
-    )
-endforeach()
-install(
-  FILES ${COLORFILES}
-  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources/ColorFiles
-  )

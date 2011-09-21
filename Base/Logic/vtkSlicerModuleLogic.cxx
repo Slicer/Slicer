@@ -252,7 +252,7 @@ void vtkSlicerModuleLogic::LoadDefaultParameterSets(vtkMRMLScene *scene)
   vtksys_stl::vector<vtksys_stl::string> filesToLoad;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string(Slicer_SHARE_DIR) + "/Resources/ParameterSets");
+  filesVector.push_back(vtksys_stl::string(Slicer_SHARE_DIR) + "/ParameterSets");
   vtksys_stl::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in
