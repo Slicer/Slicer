@@ -294,6 +294,8 @@ endif()
 add_subdirectory(DesignerPlugins)
 
 # Testing
-if(BUILD_TESTING)
-  add_subdirectory(Testing)
-endif()
+# Note: Within both Testing/Cxx and Testing/Python, some code is useful to both Slicer and the
+#       Extensions. For that reason, the Testing directory is added inconditionnally.
+#       The code specific to Slicer will be excluded directly in either Testing/Python
+#       or Testing/Cxx.
+add_subdirectory(Testing)

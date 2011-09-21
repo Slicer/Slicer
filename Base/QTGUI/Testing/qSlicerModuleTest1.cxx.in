@@ -19,13 +19,12 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QTimer>
 #include <QWidget>
 
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
-#include <qSlicerCoreApplication.h>
+#include <qSlicerApplication.h>
 
 // @MODULENAME@ includes
 #include "qSlicer@MODULENAME@Module.h"
@@ -39,7 +38,7 @@
 //-----------------------------------------------------------------------------
 int qSlicer@MODULENAME@ModuleTest1( int argc, char * argv[] )
 {
-  qSlicerCoreApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
 
   QSettings * settings = app.settings();
   if(settings == 0)

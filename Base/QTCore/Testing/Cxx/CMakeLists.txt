@@ -46,14 +46,3 @@ endif()
 #
 # Test templates - Common to both Slicer and the extensions
 #
-
-set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  CACHE INTERNAL "Path to cxx test templates directory.")
-
-# Install the file so that project building against the 'installed tree' can reference it.
-if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/qSlicerUtilsTest1.cxx.in
-    DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
-    )
-endif()
