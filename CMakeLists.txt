@@ -235,12 +235,31 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
+# Today date
+#-----------------------------------------------------------------------------
+include(SlicerFunctionToday)
+TODAY(Slicer_BUILDDATE)
+
+#-----------------------------------------------------------------------------
+# Slicer version number.
+#-----------------------------------------------------------------------------
+set(Slicer_MAJOR_VERSION "4")
+set(Slicer_MINOR_VERSION "0")
+
+if(NOT Slicer_PATCH_VERSION)
+  set(Slicer_PATCH_VERSION "gamma-${Slicer_BUILDDATE}")
+endif()
+
+set(Slicer_VERSION      "${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
+set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_PATCH_VERSION}")
+
+#-----------------------------------------------------------------------------
 # Slicer sub-directories
 #-----------------------------------------------------------------------------
 set(Slicer_BIN_DIR "bin")
-set(Slicer_LIB_DIR "lib/Slicer3")
-set(Slicer_INCLUDE_DIR "include/Slicer")
-set(Slicer_SHARE_DIR "share/Slicer")
+set(Slicer_LIB_DIR "lib/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
+set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
+set(Slicer_SHARE_DIR "share/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
 set(Slicer_CLIMODULES_BIN_DIR "plugins")
@@ -300,25 +319,6 @@ file(WRITE "${Slicer_BINARY_DIR}/SlicerTargets.cmake"
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
-
-#-----------------------------------------------------------------------------
-# Today date
-#-----------------------------------------------------------------------------
-include(SlicerFunctionToday)
-TODAY(Slicer_BUILDDATE)
-
-#-----------------------------------------------------------------------------
-# Slicer version number.
-#-----------------------------------------------------------------------------
-set(Slicer_MAJOR_VERSION "4")
-set(Slicer_MINOR_VERSION "0")
-
-if(NOT Slicer_PATCH_VERSION)
-  set(Slicer_PATCH_VERSION "gamma-${Slicer_BUILDDATE}")
-endif()
-
-set(Slicer_VERSION      "${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
-set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_PATCH_VERSION}")
 
 #-----------------------------------------------------------------------------
 # Qt plugins (imageformats, ...) relative directories
