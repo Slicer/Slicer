@@ -365,9 +365,9 @@ QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::discoverRepository()
 {
-  QDir libSlicerDir(this->SlicerHome);
-  libSlicerDir.cd(Slicer_LIB_DIR);
-  QFileInfo slicerVersion(libSlicerDir, "SlicerVersion.txt");
+  QDir slicerShareDir(this->SlicerHome);
+  slicerShareDir.cd(Slicer_SHARE_DIR);
+  QFileInfo slicerVersion(slicerShareDir, "SlicerVersion.txt");
   QFile slicerVersionFile(slicerVersion.absoluteFilePath());
   if (!slicerVersionFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {

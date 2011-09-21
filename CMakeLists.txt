@@ -582,7 +582,7 @@ set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/qMRMLWidgets/
 
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
 
-set(slicer_version_file ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt)
+set(slicer_version_file ${Slicer_HOME}/${Slicer_SHARE_DIR}/SlicerVersion.txt)
 
 # Note that Slicer_BUILD is set above
 configure_file(
@@ -592,7 +592,7 @@ configure_file(
 
 install(FILES
   ${slicer_version_file}
-  DESTINATION ${Slicer_INSTALL_LIB_DIR}
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}
   COMPONENT Development
   )
 
