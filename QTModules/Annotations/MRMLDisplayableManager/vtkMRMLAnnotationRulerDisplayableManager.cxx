@@ -197,11 +197,14 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     VTK_CREATE(vtkAnnotationRulerRepresentation, dRep);
     dRep->SetHandleRepresentation(handle);
     dRep->InstantiateHandleRepresentation();
-    dRep->GetAxis()->SetNumberOfMinorTicks(4);
-    dRep->GetAxis()->SetTickLength(5);
-    dRep->GetAxis()->SetTitlePosition(0.2);
+
+    vtkAxisActor2D *axis = dRep->GetAxis();
+    axis->SetNumberOfMinorTicks(0);
+    axis->SetTickLength(6);
+    axis->SetTitlePosition(0.2);
+
     dRep->RulerModeOn();
-    dRep->SetRulerDistance(20);
+    dRep->SetRulerDistance(10);
 
     rulerWidget->SetRepresentation(dRep);
 
@@ -214,7 +217,6 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
       {
       rulerWidget->On();
       }
-
     }
   else
     {
@@ -285,9 +287,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
-
-
-
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4]={0,0,0,1};
   rulerNode->GetControlPointWorldCoordinates(0, worldCoordinates1);
@@ -334,8 +333,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
     }
 
-
-
   // add observer for end interaction
   vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
   myCallback->SetNode(node);
@@ -346,10 +343,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   myCallback->Delete();
 
   node->SaveView();
-
-  //this->m_Updating = 0;
-  //this->PropagateWidgetToMRML(widget, node);
-
 }
 
 //---------------------------------------------------------------------------
@@ -488,14 +481,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 //        rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
 //        rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
         }
-      rep->GetAxis()->SetTitlePosition(lineDisplayNode->GetLabelPosition());
-      rep->GetAxis()->SetTickLength(lineDisplayNode->GetTickSpacing());
-      rep->GetAxis()->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
-      //rep->SetRulerMode(lineDisplayNode->GetMaxTicks()? 1:0);
+      vtkAxisActor2D *axis = rep->GetAxis();
+      axis->SetTitlePosition(lineDisplayNode->GetLabelPosition());
+      axis->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
+      rep->SetRulerMode(lineDisplayNode->GetMaxTicks() ? 1 : 0);
       rep->SetNumberOfRulerTicks(lineDisplayNode->GetMaxTicks());
-      rep->SetRulerDistance(lineDisplayNode->GetMaxTicks()? 10:10e6);
-
-    }
+      rep->SetRulerDistance(lineDisplayNode->GetTickSpacing());
+      }
     rep->NeedToRenderOn();
     }
   else

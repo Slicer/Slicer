@@ -89,7 +89,13 @@ void vtkAnnotationRulerRepresentation::BuildRepresentation()
     this->AxisActor->GetPoint1Coordinate()->SetValue(displayP1);
     this->AxisActor->GetPoint2Coordinate()->SetValue(displayP2);
     this->AxisActor->SetRulerMode(this->RulerMode);
-    this->AxisActor->SetRulerDistance(this->RulerDistance);
+
+    // As the coordinate system is in DISPLAY mode, we have to be consistent
+    // and transform the rulerDistance into this coordinate system:
+    // We will just use the ratio from world to projection
+    double ratio = this->RulerDistance *
+        sqrt(vtkMath::Distance2BetweenPoints(displayP1,displayP2)) / this->Distance;
+    this->AxisActor->SetRulerDistance(ratio);
     this->AxisActor->SetNumberOfLabels(this->NumberOfRulerTicks);
 
     char string[512];
