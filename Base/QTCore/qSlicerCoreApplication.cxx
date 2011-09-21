@@ -850,8 +850,8 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isExtension(const QString& moduleFileName)const
 {
-  QString modulePath = QFileInfo(moduleFileName).canonicalPath();
-  return !modulePath.startsWith(this->slicerHome());
+  return vtkSlicerModuleLogic::IsExtension(moduleFileName.toStdString(),
+                                           this->slicerHome().toStdString());
 }
 
 //-----------------------------------------------------------------------------

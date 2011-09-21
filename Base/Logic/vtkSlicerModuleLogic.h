@@ -32,24 +32,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
   vtkTypeRevisionMacro(vtkSlicerModuleLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
   /// Get access to overall application state
   virtual vtkSlicerApplicationLogic* GetApplicationLogic();
   virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
 
-  ///  
   /// The name of the Module
   vtkGetStringMacro(ModuleName);
   vtkSetStringMacro(ModuleName);
   
-  /// 
   /// Set/Get the location of this module (if it was loaded dynamically
   /// this could be the full path to the dynamic library, or the full path
   /// to the pkgIndex.tcl file if the module is a scripted module, etc).
   vtkGetStringMacro(ModuleLocation);
   vtkSetStringMacro(ModuleLocation);
 
-  /// 
   /// Get the path to the module's resources directory.
   /// This is the location on disk where resources (data, support files)
   /// associated to this module can be found.
@@ -60,7 +56,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
   /// Slicer3 and not dynamically loaded).
   virtual const char* GetModuleShareDirectory();
 
-  /// 
   /// Get the path to the module's library directory.
   /// This is the location on disk where the module library was found. 
   /// The lib directory will be computed from ModuleLocation
@@ -72,6 +67,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
 
   /// Load any default parameter sets into the specified scene
   static void LoadDefaultParameterSets(vtkMRMLScene *);
+
+  /// Return True if \a filePath isn't contained in \a applicationHomeDir.
+  static bool IsExtension(const std::string& filePath, const std::string& applicationHomeDir);
 
 protected:
 

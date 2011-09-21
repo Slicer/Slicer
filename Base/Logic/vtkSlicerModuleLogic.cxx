@@ -40,6 +40,23 @@ vtkSlicerModuleLogic::~vtkSlicerModuleLogic()
   this->SetModuleShareDirectory(NULL);
   this->SetModuleLibDirectory(NULL);
   this->SetModuleName(NULL);
+//----------------------------------------------------------------------------
+bool vtkSlicerModuleLogic::IsExtension(const std::string& filePath, const std::string& applicationHomeDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return false;
+    }
+  if (applicationHomeDir.empty())
+    {
+    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    return false;
+    }
+  std::string extensionPath = vtksys::SystemTools::GetFilenamePath(filePath);
+  return !vtksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
+}
+
 }
 
 //----------------------------------------------------------------------------
