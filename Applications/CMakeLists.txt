@@ -4,7 +4,3 @@ if(Slicer_BUILD_CLI)
 endif()
 
 add_subdirectory(SlicerQT)
-
-if(BUILD_TESTING)
-  add_subdirectory(Testing)
-endif()
