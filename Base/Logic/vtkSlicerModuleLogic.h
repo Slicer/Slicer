@@ -8,85 +8,45 @@
 =========================================================================auto=*/
 ///  vtkSlicerModuleLogic - superclass for slicer module logic classes
 /// 
-/// Superclass for all slicer m,odule logic classes
-/// There must be a corresponding vtkSlicerGUI subclass corresponding 
-/// to each logic class that handles all GUI interaction (no GUI code
-/// goes in the logic class).
+/// Superclass for all slicer module logic classes
+/// \note No GUI code goes in the logic class.
 
 #ifndef __vtkSlicerModuleLogic_h
 #define __vtkSlicerModuleLogic_h
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-
-#include <vtkMRMLAbstractLogic.h>
+// SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
+
+// MRMLLogic includes
+#include <vtkMRMLAbstractLogic.h>
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
   : public vtkMRMLAbstractLogic
 {
-  public:
-  
+public:
   /// The Usual vtk class functions
   static vtkSlicerModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerModuleLogic,vtkMRMLAbstractLogic);
+  vtkTypeRevisionMacro(vtkSlicerModuleLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Get access to overall application state
   virtual vtkSlicerApplicationLogic* GetApplicationLogic();
   virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
 
-  /// The name of the Module
-  vtkGetStringMacro(ModuleName);
-  vtkSetStringMacro(ModuleName);
-  
-  /// Set/Get the location of this module (if it was loaded dynamically
-  /// this could be the full path to the dynamic library, or the full path
-  /// to the pkgIndex.tcl file if the module is a scripted module, etc).
-  vtkGetStringMacro(ModuleLocation);
-  vtkSetStringMacro(ModuleLocation);
-
-  /// Get the path to the module's resources directory.
-  /// This is the location on disk where resources (data, support files)
-  /// associated to this module can be found.
-  /// The resources directory will be computed from ModuleLocation
-  /// if it was set (i.e. if Slicer3 is loading this module from a
-  /// user defined location outside or even inside Slicer3), or relative to
-  /// Slicer_HOME otherwise (i.e. if the module was built directory by
-  /// Slicer3 and not dynamically loaded).
-  virtual const char* GetModuleShareDirectory();
-
-  /// Get the path to the module's library directory.
-  /// This is the location on disk where the module library was found. 
-  /// The lib directory will be computed from ModuleLocation
-  /// if it was set (i.e. if Slicer3 is loading this module from a
-  /// user defined location outside or even inside Slicer3), or relative to
-  /// Slicer_HOME otherwise (i.e. if the module was built directory by
-  /// Slicer3 and not dynamically loaded).
-  virtual const char* GetModuleLibDirectory();
-
+  std::string GetModuleShareDirectory()const;
+  void SetModuleShareDirectory(const std::string& shareDirectory);
 
 protected:
 
   vtkSlicerModuleLogic();
   virtual ~vtkSlicerModuleLogic();
 
-  char *                      ModuleLocation;
-  char *                      ModuleName;
-
-  virtual int IsModuleShareDirectoryDefined();
-  virtual int IsModuleLibDirectoryDefined();
-
-  vtkSetStringMacro(ModuleShareDirectory);
-  vtkSetStringMacro(ModuleLibDirectory);
-
 private:
 
   vtkSlicerModuleLogic(const vtkSlicerModuleLogic&); // Not implemented
   void operator=(const vtkSlicerModuleLogic&);       // Not implemented
 
-  char *ModuleShareDirectory;
-  char *ModuleLibDirectory;
+  std::string ModuleShareDirectory;
 };
 
 #endif

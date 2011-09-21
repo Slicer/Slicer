@@ -223,7 +223,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
       qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
       return 0;
       }
-    // internally sets the logic and call setup, 
+    // internally sets the logic and call setup,
     d->WidgetRepresentation->setModule(this);
     // Note: setMRMLScene should be called after setup (just to make sure widgets
     // are well written and can handle empty mrmlscene
@@ -255,7 +255,8 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
     if (moduleLogic)
       {
       moduleLogic->SetApplicationLogic(d->AppLogic);
-      moduleLogic->SetModuleName(this->name().toLatin1());
+      moduleLogic->SetModuleShareDirectory(vtkSlicerApplicationLogic::GetModuleShareDirectory(
+                                       this->name().toStdString(), this->path().toStdString()));
       }
     d->Logic->SetMRMLScene(this->mrmlScene());
     }
