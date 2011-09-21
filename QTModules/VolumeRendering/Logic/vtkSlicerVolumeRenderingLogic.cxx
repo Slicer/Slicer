@@ -32,6 +32,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkImageData.h>
 #include <vtkLookupTable.h>
+#include <vtkNew.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPointData.h>
 #include <vtkVolumeProperty.h>
@@ -859,15 +860,21 @@ vtkMRMLScene* vtkSlicerVolumeRenderingLogic::GetPresetsScene()
 //---------------------------------------------------------------------------
 bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
 {
-  vtkMRMLVolumePropertyNode *vrNode = vtkMRMLVolumePropertyNode::New();
-  //Register node class
-  this->PresetsScene->RegisterNodeClass(vrNode);
-  vrNode->Delete();
+  this->PresetsScene->RegisterNodeClass(vtkNew<vtkMRMLVolumePropertyNode>().GetPointer());
 
-  vtksys_stl::string presetFileName(
-    this->GetModuleShareDirectory());
-  presetFileName += "/presets.xml";
+  if (this->GetModuleShareDirectory().empty())
+    {
+    vtkErrorMacro(<< "Failed to load presets: Share directory *NOT* set !");
+    return false;
+    }
 
+  std::string presetFileName = this->GetModuleShareDirectory() + "/presets.xml";
   scene->SetURL(presetFileName.c_str());
-  return scene->Connect() == 1;
+  int connected = scene->Connect();
+  if (connected != 1)
+    {
+    vtkErrorMacro(<< "Failed to load presets [" << presetFileName << "]");
+    return false;
+    }
+  return true;
 }
