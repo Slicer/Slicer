@@ -262,9 +262,9 @@ set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VE
 set(Slicer_SHARE_DIR "share/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
-set(Slicer_CLIMODULES_BIN_DIR "plugins")
-set(Slicer_CLIMODULES_LIB_DIR "plugins")
-set(Slicer_CLIMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/plugins")
+set(Slicer_CLIMODULES_BIN_DIR "cli-modules")
+set(Slicer_CLIMODULES_LIB_DIR "cli-modules")
+set(Slicer_CLIMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/cli-modules")
 
 #-----------------------------------------------------------------------------
 # Slicer install directories
