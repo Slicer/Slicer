@@ -172,3 +172,19 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
     logger.error(QString("Failed to add VTK object: %1").arg(name));
     }
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerCorePythonManager::appendPythonPath(const QString& path)
+{
+  // TODO Make sure PYTHONPATH is updated
+  this->executeString(QString("import sys; sys.path.append('%1'); del sys").arg(path));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
+{
+  foreach(const QString& path, paths)
+    {
+    this->appendPythonPath(path);
+    }
+}

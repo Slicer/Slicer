@@ -69,14 +69,9 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
       QString pythonPath = modulePath.filePath("Python");
       QStringList paths; paths << modulePath.absolutePath() << pythonPath;
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-      foreach(const QString& path, paths)
-        {
-        //qSlicerCoreApplication::application()->appendEnvironmentVariable("PYTHONPATH", path, ':');
-        pythonManager->executeString(QString(
-              "import sys; sys.path.append('%1'); del sys").arg(path));
-        }
+      pythonManager->appendPythonPaths(paths);
       // Update current application directory, so that *PythonD modules can be loaded
-      ctkScopedCurrentDir scopedCurrentDir(modulePath.path());
+      ctkScopedCurrentDir scopedCurrentDir(modulePath.absolutePath());
       pythonManager->executeString(QString(
             "from slicer.util import importVTKClassesFromDirectory;"
             "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"

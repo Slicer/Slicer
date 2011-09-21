@@ -41,6 +41,14 @@ public:
   /// Convenient function allowing to add a VTK object to the interpreter main module
   void addVTKObjectToPythonMain(const QString& name, vtkObject * object);
 
+  /// Append \a path to \a sys.path
+  /// \todo Add these methods to ctkAbstractPythonManager
+  /// \sa appendPythonPaths
+  void appendPythonPath(const QString& path);
+
+  /// Append \a paths to \a sys.path
+  void appendPythonPaths(const QStringList& paths);
+
   /// List of directories containing Python modules.
   virtual QStringList pythonPaths();
   
