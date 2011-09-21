@@ -6,11 +6,9 @@
 
 ==========================================================================*/
 
-// Slicer configure - Should be included first
-
 // VTK includes
-#include "vtkPointData.h"
-#include "vtkPolyData.h"
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
 
 // MRML includes
 #include "vtkCacheManager.h"
@@ -26,7 +24,6 @@
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
-//#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
@@ -49,13 +46,13 @@
 #include "vtkSlicerColorLogic.h"
 #include "vtkSlicerTask.h"
 
-// ITK includes
-#include "itksys/SystemTools.hxx"
+// ITKSYS includes
+#include <itksys/SystemTools.hxx>
 
 // STD includes
 #include <algorithm>
 #ifdef linux
-# include "unistd.h"
+# include <unistd.h>
 #endif
 #include <queue>
 
@@ -229,11 +226,8 @@ class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
     this->Views = vtkCollection::New();
-    //this->Slices = vtkCollection::New();
     this->Modules = vtkCollection::New();
     this->ActiveSlice = NULL;
-    //this->SelectionNode = NULL;
-    //this->InteractionNode = NULL;
 
     this->ProcessingThreader = itk::MultiThreader::New();
     this->ProcessingThreadId = -1;
