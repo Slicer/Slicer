@@ -23,33 +23,7 @@ Version:   $Revision: 1.2 $
 
 
 //------------------------------------------------------------------------------
-vtkMRMLFiniteElementMeshNode* vtkMRMLFiniteElementMeshNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementMeshNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementMeshNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  vtkMRMLFiniteElementMeshNode* newnode = new vtkMRMLFiniteElementMeshNode;
-  return newnode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLFiniteElementMeshNode* vtkMRMLFiniteElementMeshNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementMeshNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementMeshNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  vtkMRMLFiniteElementMeshNode* newnode = new vtkMRMLFiniteElementMeshNode;
-  return newnode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiniteElementMeshNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementMeshNode::vtkMRMLFiniteElementMeshNode()

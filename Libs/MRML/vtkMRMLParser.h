@@ -18,23 +18,23 @@
 #ifndef __vtkMRMLParser_h
 #define __vtkMRMLParser_h
 
-#include <stack> 
-
-//#include "vtkObjectFactory.h"
-#include "vtkXMLParser.h"
-
+// MRML includes
 #include "vtkMRML.h"
 class vtkMRMLNode;
 class vtkMRMLScene;
 
+// VTK includes
+#include "vtkXMLParser.h"
 class vtkCollection;
+
+// STD includes
+#include <stack>
 
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:
   static vtkMRMLParser *New();
   vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
-  //void PrintSelf(ostream& os, vtkIndent indent){}
   
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
   void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};

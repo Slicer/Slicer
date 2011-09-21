@@ -390,17 +390,8 @@ static inline int vtkImageGCRFloor(float x, float &f)
   return ix;
 }
 
-vtkImageGCR* vtkImageGCR::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageGCR");
-  if(ret)
-    {
-    return (vtkImageGCR*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageGCR;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkImageGCR);
 
 vtkImageGCR::vtkImageGCR()
 {

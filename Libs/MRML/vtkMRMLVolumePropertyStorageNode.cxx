@@ -24,32 +24,8 @@ Version:   $Revision: 1.2 $
 
 #include <sstream>
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumePropertyStorageNode* vtkMRMLVolumePropertyStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumePropertyStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumePropertyStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumePropertyStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumePropertyStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumePropertyStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumePropertyStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumePropertyStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyStorageNode::vtkMRMLVolumePropertyStorageNode()

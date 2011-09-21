@@ -21,36 +21,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLFiniteElementBuildingBlockNode.h"
 #include "vtkMRMLScene.h"
 
-
-
 //------------------------------------------------------------------------------
-vtkMRMLFiniteElementBuildingBlockNode* vtkMRMLFiniteElementBuildingBlockNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementBuildingBlockNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementBuildingBlockNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.  
-  vtkMRMLFiniteElementBuildingBlockNode* newnode = new vtkMRMLFiniteElementBuildingBlockNode;
-  return newnode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLFiniteElementBuildingBlockNode* vtkMRMLFiniteElementBuildingBlockNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementBuildingBlockNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementBuildingBlockNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-   vtkMRMLFiniteElementBuildingBlockNode* newnode = new vtkMRMLFiniteElementBuildingBlockNode;
-   return newnode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiniteElementBuildingBlockNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementBuildingBlockNode::vtkMRMLFiniteElementBuildingBlockNode()

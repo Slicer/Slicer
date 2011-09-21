@@ -38,31 +38,7 @@ Version:   $Revision: 1.2 $
 // STD includes
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeDisplayNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()

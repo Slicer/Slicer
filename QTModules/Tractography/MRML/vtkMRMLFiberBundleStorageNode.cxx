@@ -18,31 +18,8 @@ Version:   $Revision: 1.2 $
 
 
 
-//------------------------------------------------------------------------------
-vtkMRMLFiberBundleStorageNode* vtkMRMLFiberBundleStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleStorageNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiberBundleStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiberBundleStorageNode);
 
 //----------------------------------------------------------------------------
 int vtkMRMLFiberBundleStorageNode::SupportedFileType(const char *fileName)

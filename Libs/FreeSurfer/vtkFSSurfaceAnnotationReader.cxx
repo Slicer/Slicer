@@ -16,17 +16,8 @@
 #include "vtkFSIO.h"
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceAnnotationReader* vtkFSSurfaceAnnotationReader::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceAnnotationReader");
-  if(ret)
-  {
-      return (vtkFSSurfaceAnnotationReader*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceAnnotationReader;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceAnnotationReader);
 
 vtkFSSurfaceAnnotationReader::vtkFSSurfaceAnnotationReader()
 {

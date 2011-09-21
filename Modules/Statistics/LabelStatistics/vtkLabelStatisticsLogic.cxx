@@ -26,17 +26,8 @@ Version:   $Revision: 1.2 $
 #include "vtkImageMathematics.h"
 #include "vtkImageToImageStencil.h"
 
-vtkLabelStatisticsLogic* vtkLabelStatisticsLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkLabelStatisticsLogic");
-  if(ret)
-    {
-      return (vtkLabelStatisticsLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkLabelStatisticsLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkLabelStatisticsLogic);
 
 
 //----------------------------------------------------------------------------

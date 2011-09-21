@@ -47,18 +47,8 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
-//------------------------------------------------------------------------------
-vtkAtlasCreatorGUI* vtkAtlasCreatorGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkAtlasCreatorGUI");
-  if(ret)
-    {
-      return (vtkAtlasCreatorGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkAtlasCreatorGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkAtlasCreatorGUI);
 
 
 //----------------------------------------------------------------------------

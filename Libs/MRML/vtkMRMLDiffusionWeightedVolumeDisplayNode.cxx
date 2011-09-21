@@ -27,31 +27,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeDisplayNode* vtkMRMLDiffusionWeightedVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionWeightedVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionWeightedVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionWeightedVolumeDisplayNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionWeightedVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionWeightedVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionWeightedVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionWeightedVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeDisplayNode::vtkMRMLDiffusionWeightedVolumeDisplayNode()

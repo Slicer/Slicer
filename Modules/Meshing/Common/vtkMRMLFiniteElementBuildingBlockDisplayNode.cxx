@@ -24,31 +24,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 //#include "vtkMimxBuildingBlockSource.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLFiniteElementBuildingBlockDisplayNode* vtkMRMLFiniteElementBuildingBlockDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementBuildingBlockDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiniteElementBuildingBlockDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiniteElementBuildingBlockDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiniteElementBuildingBlockDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementBuildingBlockDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiniteElementBuildingBlockDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiniteElementBuildingBlockDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLFiniteElementBuildingBlockDisplayNode);
 
 
 //----------------------------------------------------------------------------

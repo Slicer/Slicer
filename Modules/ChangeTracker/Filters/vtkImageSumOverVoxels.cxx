@@ -22,15 +22,8 @@ void vtkImageSumOverVoxels::ComputeInputUpdateExtent(int inExt[6], int vtkNotUse
   this->GetInput()->GetWholeExtent(inExt);
 }
  
-//------------------------------------------------------------------------------
-vtkImageSumOverVoxels* vtkImageSumOverVoxels::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageSumOverVoxels");
-  if(ret) return (vtkImageSumOverVoxels*)ret;
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageSumOverVoxels;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkImageSumOverVoxels);
 
 
 //----------------------------------------------------------------------------

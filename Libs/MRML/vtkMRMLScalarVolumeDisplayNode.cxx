@@ -35,31 +35,8 @@ Version:   $Revision: 1.2 $
 // STD includes
 #include <cassert>
 
-//------------------------------------------------------------------------------
-vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLScalarVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScalarVolumeDisplayNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLScalarVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLScalarVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScalarVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()

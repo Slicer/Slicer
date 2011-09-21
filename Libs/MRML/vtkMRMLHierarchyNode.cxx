@@ -45,18 +45,8 @@ bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHi
   return d1->GetSortingValue() < d2->GetSortingValue();
 }
 
-//------------------------------------------------------------------------------
-vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLHierarchyNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLHierarchyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
@@ -86,20 +76,6 @@ vtkMRMLHierarchyNode::~vtkMRMLHierarchyNode()
     delete [] this->AssociatedNodeIDReference;
     this->AssociatedNodeIDReference = NULL;
     }
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLHierarchyNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLHierarchyNode;
 }
 
 

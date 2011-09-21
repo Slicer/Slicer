@@ -25,39 +25,7 @@ Version:   $Revision: 1.2 $
 
 
 //------------------------------------------------------------------------------
-vtkMRMLFiniteElementImageNode* vtkMRMLFiniteElementImageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementImageNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementImageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-
-  vtkMRMLFiniteElementImageNode* newnode = new vtkMRMLFiniteElementImageNode;
-
-  // these two lines caused memory leaks!
-  //vtkMimxImageActor* newactor = new vtkMimxImageActor;
-  //newnode->SetMimxImageActor(newactor);
-  return newnode;
-
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLScalarVolumeNode* vtkMRMLFiniteElementImageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementImageNode");
-  if(ret)
-    {
-      return (vtkMRMLFiniteElementImageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  vtkMRMLFiniteElementImageNode* newnode = new vtkMRMLFiniteElementImageNode;
-  return newnode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiniteElementImageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementImageNode::vtkMRMLFiniteElementImageNode()

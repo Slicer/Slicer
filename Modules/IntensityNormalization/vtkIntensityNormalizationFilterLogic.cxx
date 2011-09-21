@@ -25,17 +25,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
-vtkIntensityNormalizationFilterLogic* vtkIntensityNormalizationFilterLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkIntensityNormalizationFilterLogic");
-  if(ret)
-    {
-      return (vtkIntensityNormalizationFilterLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkIntensityNormalizationFilterLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkIntensityNormalizationFilterLogic);
 
 
 //----------------------------------------------------------------------------

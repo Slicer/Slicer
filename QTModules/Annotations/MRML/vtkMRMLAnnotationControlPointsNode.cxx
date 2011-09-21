@@ -18,31 +18,8 @@
 // - talk to Steve if we have to do anything when UpdatingScene 
 // - NumberingScheme should not be in annotation node - should be in fiducial nodes - just put it here right now 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationControlPointsNode* vtkMRMLAnnotationControlPointsNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationControlPointsNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationControlPointsNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationControlPointsNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationControlPointsNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationControlPointsNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationControlPointsNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationControlPointsNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationControlPointsNode);
 
 vtkMRMLAnnotationControlPointsNode::vtkMRMLAnnotationControlPointsNode() 
 {

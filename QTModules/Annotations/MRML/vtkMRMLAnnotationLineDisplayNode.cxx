@@ -1,34 +1,15 @@
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// MRMLAnnotation includes
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLineDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationLineDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationLineDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationLineDisplayNode;
-}
+// VTK includes
+#include <vtkObjectFactory.h>
 
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationLineDisplayNode::CreateNodeInstance()
-{
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationLineDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationLineDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationLineDisplayNode;
-}
+// STD includes
+#include <sstream>
 
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationLineDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
@@ -39,7 +20,6 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->TickSpacing = 5.0;
   this->MaxTicks = 99;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
@@ -55,8 +35,6 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " tickSpacing=\"" << this->TickSpacing << "\"";
   of << " maxTicks=\"" << this->MaxTicks << "\"";
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
@@ -111,7 +89,6 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -160,9 +137,9 @@ void vtkMRMLAnnotationLineDisplayNode::UpdateScene(vtkMRMLScene *scene)
 void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
 {
     if (this->LineThickness == thickness)
-    {
-        return;
-    }
+      {
+      return;
+      }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LineThickness to " << thickness);
     this->LineThickness = thickness;
    
@@ -175,26 +152,21 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
     this->ModifiedSinceReadOn();
 }
 
-
-
 //----------------------------------------------------------------------------
 // Create a backup of this node and store it with the node.
 void vtkMRMLAnnotationLineDisplayNode::CreateBackup()
 {
-
   vtkMRMLAnnotationLineDisplayNode * backupNode = vtkMRMLAnnotationLineDisplayNode::New();
 
   backupNode->CopyWithoutModifiedEvent(this);
 
   this->m_Backup = backupNode;
-
 }
 
 //----------------------------------------------------------------------------
 // Restores the backup of this node.
 void vtkMRMLAnnotationLineDisplayNode::RestoreBackup()
 {
-
   if (this->m_Backup)
     {
     this->CopyWithSingleModifiedEvent(this->m_Backup);
@@ -203,10 +175,4 @@ void vtkMRMLAnnotationLineDisplayNode::RestoreBackup()
     {
     vtkErrorMacro("RestoreBackup - could not get the attached backup")
     }
-
 }
-
-
-
-
-

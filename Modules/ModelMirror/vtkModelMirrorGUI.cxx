@@ -32,18 +32,8 @@
 #include "vtkCommand.h"
 
 
-//------------------------------------------------------------------------------
-vtkModelMirrorGUI* vtkModelMirrorGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkModelMirrorGUI");
-  if(ret)
-    {
-      return (vtkModelMirrorGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkModelMirrorGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkModelMirrorGUI);
 
 
 //----------------------------------------------------------------------------

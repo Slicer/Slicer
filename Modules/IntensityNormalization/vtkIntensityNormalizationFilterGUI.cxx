@@ -38,18 +38,8 @@ Version:   $Revision: 1.2 $
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 
-//------------------------------------------------------------------------------
-vtkIntensityNormalizationFilterGUI* vtkIntensityNormalizationFilterGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkIntensityNormalizationFilterGUI");
-  if(ret)
-    {
-      return (vtkIntensityNormalizationFilterGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkIntensityNormalizationFilterGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkIntensityNormalizationFilterGUI);
 
 
 //----------------------------------------------------------------------------

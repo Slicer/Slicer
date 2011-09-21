@@ -1,10 +1,11 @@
 #include "vtkXNDHandler.h"
 #include <sstream>
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkXNDHandler );
 vtkCxxRevisionMacro ( vtkXNDHandler, "$Revision: 1.0 $" );
 
-
+//----------------------------------------------------------------------------
 size_t xnd_read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
   size_t retcode;
@@ -19,6 +20,7 @@ size_t xnd_read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
   return retcode;
 }
 
+//----------------------------------------------------------------------------
 size_t xnd_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   if (stream == NULL)
@@ -30,6 +32,7 @@ size_t xnd_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
+//----------------------------------------------------------------------------
 // write header
 size_t xnd_writeheader_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -42,6 +45,7 @@ size_t xnd_writeheader_callback(void *ptr, size_t size, size_t nmemb, void *stre
   return written;
 }
 
+//----------------------------------------------------------------------------
 size_t xnd_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
                             double dlnow, double ultotal, double ulnow)
 {
@@ -60,27 +64,21 @@ size_t xnd_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
   return 0;
 }
 
-
-
 //----------------------------------------------------------------------------
 vtkXNDHandler::vtkXNDHandler()
 {
 }
-
 
 //----------------------------------------------------------------------------
 vtkXNDHandler::~vtkXNDHandler()
 {
 }
 
-
 //----------------------------------------------------------------------------
 void vtkXNDHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf ( os, indent );
 }
-
-
 
 //----------------------------------------------------------------------------
 
@@ -122,7 +120,6 @@ void vtkXNDHandler::PrintSelf(ostream& os, vtkIndent indent)
 //  # http://localhost:8000/data/demo-sample-project/subj02/CT/demo-howto
 //
 //----------------------------------------------------------------------------
-
 
 //--- for downloading
 //----------------------------------------------------------------------------
@@ -174,7 +171,6 @@ void vtkXNDHandler::StageFileRead(const char * source,
 
   fclose(this->LocalFile);
 }
-
 
 //--- for uploading
 //----------------------------------------------------------------------------
@@ -236,8 +232,6 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     free(post_data);
     }
 }
-
-
 
 //----------------------------------------------------------------------------
 int vtkXNDHandler::PostTag ( const char *svr, const char *label,
@@ -438,12 +432,6 @@ int vtkXNDHandler::PostMetadata( const char *serverPath,
   return 1;
 }
 
-
-
-
-
-
-
 //----------------------------------------------------------------------------
 int vtkXNDHandler::DeleteResource ( const char *uri, const char *temporaryResponseFileName )
 {
@@ -513,8 +501,6 @@ int vtkXNDHandler::DeleteResource ( const char *uri, const char *temporaryRespon
   return ( result );
 }
 
-
-
 //--- for querying
 //----------------------------------------------------------------------------
 const char *vtkXNDHandler::QueryServer( const char *uri, const char *destination)
@@ -567,14 +553,12 @@ const char *vtkXNDHandler::QueryServer( const char *uri, const char *destination
   return ( returnString );
 }
 
-
 //----------------------------------------------------------------------------
 const char* vtkXNDHandler::GetXMLDeclaration()
 {
   const char *returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   return  (returnString);
 }
-
 
 //----------------------------------------------------------------------------
 const char* vtkXNDHandler::GetNameSpace()

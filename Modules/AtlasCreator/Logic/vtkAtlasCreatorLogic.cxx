@@ -23,17 +23,8 @@ Version:   $Revision: 1.2 $
 
 // STD includes
 
-vtkAtlasCreatorLogic* vtkAtlasCreatorLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkAtlasCreatorLogic");
-  if(ret)
-    {
-      return (vtkAtlasCreatorLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkAtlasCreatorLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkAtlasCreatorLogic);
 
 
 //----------------------------------------------------------------------------

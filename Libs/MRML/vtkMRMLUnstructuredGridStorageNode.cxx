@@ -25,31 +25,8 @@ Version:   $Revision: 1.2 $
 #include "itksys/SystemTools.hxx"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLUnstructuredGridStorageNode* vtkMRMLUnstructuredGridStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridStorageNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLUnstructuredGridStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLUnstructuredGridStorageNode);
 
 //----------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)

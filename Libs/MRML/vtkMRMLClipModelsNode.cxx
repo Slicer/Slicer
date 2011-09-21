@@ -11,39 +11,18 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLClipModelsNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
+
 //------------------------------------------------------------------------------
-vtkMRMLClipModelsNode* vtkMRMLClipModelsNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLClipModelsNode");
-  if(ret)
-    {
-    return (vtkMRMLClipModelsNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLClipModelsNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLClipModelsNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLClipModelsNode");
-  if(ret)
-    {
-    return (vtkMRMLClipModelsNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLClipModelsNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLClipModelsNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLClipModelsNode::vtkMRMLClipModelsNode()

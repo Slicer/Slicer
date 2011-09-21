@@ -16,18 +16,8 @@
 #include "vtkImageData.h"
 
 
-//------------------------------------------------------------------------------
-vtkImageAccumulateDiscrete* vtkImageAccumulateDiscrete::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageAccumulateDiscrete");
-  if(ret)
-    {
-    return (vtkImageAccumulateDiscrete*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageAccumulateDiscrete;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkImageAccumulateDiscrete);
 
 //----------------------------------------------------------------------------
 // Constructor sets default values

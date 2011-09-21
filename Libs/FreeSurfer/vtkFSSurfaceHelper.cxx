@@ -17,17 +17,8 @@
 #include <vtkObjectFactory.h>
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceHelper* vtkFSSurfaceHelper::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceHelper");
-  if(ret)
-    {
-    return (vtkFSSurfaceHelper*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceHelper;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceHelper);
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceHelper::vtkFSSurfaceHelper()

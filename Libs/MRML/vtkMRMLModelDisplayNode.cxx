@@ -19,32 +19,8 @@ Version:   $Revision: 1.3 $
 
 vtkCxxSetObjectMacro(vtkMRMLModelDisplayNode, PolyData, vtkPolyData)
 
-//------------------------------------------------------------------------------
-vtkMRMLModelDisplayNode* vtkMRMLModelDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLModelDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLModelDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLModelDisplayNode);
 
 //-----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()

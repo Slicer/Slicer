@@ -14,32 +14,8 @@
 
 // STd includes
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationFiducialsStorageNode* vtkMRMLAnnotationFiducialsStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationFiducialsStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationFiducialsStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationFiducialsStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAnnotationFiducialsStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationFiducialsStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationFiducialsStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationFiducialsStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialsStorageNode);
 
  
 //----------------------------------------------------------------------------

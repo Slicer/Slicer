@@ -48,18 +48,8 @@
 vtkCxxRevisionMacro ( vtkNeuroNavGUI, "$Revision: 1.0 $");
 
 
-vtkNeuroNavGUI* vtkNeuroNavGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkNeuroNavGUI");
-  if (ret)
-    {
-    return (vtkNeuroNavGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkNeuroNavGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkNeuroNavGUI);
 
 
 

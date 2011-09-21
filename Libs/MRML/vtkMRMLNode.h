@@ -104,6 +104,15 @@ void class::Set##name (const char* _arg)            \
   vtkSetReferenceStringBodyMacro(name);             \
   }
 #endif
+
+#ifndef vtkMRMLNodeNewMacro
+#define vtkMRMLNodeNewMacro(newClass) \
+  vtkStandardNewMacro(newClass); \
+  vtkMRMLNode* newClass::CreateNodeInstance() \
+  { \
+    return newClass::New(); \
+  }
+#endif
 //ETX
 
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject

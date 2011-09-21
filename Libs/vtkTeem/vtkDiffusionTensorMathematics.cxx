@@ -43,17 +43,7 @@ vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatri
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,ScalarMask,vtkImageData);
 
 //----------------------------------------------------------------------------
-vtkDiffusionTensorMathematics* vtkDiffusionTensorMathematics::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkDiffusionTensorMathematics");
-  if(ret)
-    {
-    return (vtkDiffusionTensorMathematics*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkDiffusionTensorMathematics;
-}
+vtkStandardNewMacro(vtkDiffusionTensorMathematics);
 
 
 //----------------------------------------------------------------------------

@@ -24,31 +24,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLFiberBundleTubeDisplayNode* vtkMRMLFiberBundleTubeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleTubeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleTubeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleTubeDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiberBundleTubeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleTubeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleTubeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleTubeDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLFiberBundleTubeDisplayNode);
 
 
 //----------------------------------------------------------------------------

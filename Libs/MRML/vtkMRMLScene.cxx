@@ -575,18 +575,8 @@ vtkMRMLScene *vtkMRMLScene::GetActiveScene() {
   return (vtkMRMLScene::ActiveScene);
 }
 
-//------------------------------------------------------------------------------
-vtkMRMLScene* vtkMRMLScene::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScene");
-  if(ret) 
-    {
-    return (vtkMRMLScene*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScene;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkMRMLScene);
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className) 

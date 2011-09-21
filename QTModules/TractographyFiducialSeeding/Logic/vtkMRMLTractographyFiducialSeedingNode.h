@@ -15,14 +15,14 @@
 #define __vtkMRMLTractographyFiducialSeedingNode_h
 
 // MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
+#include <vtkMRML.h>
+#include <vtkMRMLNode.h>
+#include <vtkMRMLStorageNode.h>
 
 // VTK includes
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
+#include <vtkTransform.h>
 
 #include "vtkSlicerTractographyFiducialSeedingModuleLogicExport.h"
 
@@ -31,7 +31,7 @@ class vtkImageData;
 class VTK_SLICER_TRACTOGRAPHY_FIDUCIAL_SEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
   public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLTractographyFiducialSeedingNode *New();
   vtkTypeMacro(vtkMRMLTractographyFiducialSeedingNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);

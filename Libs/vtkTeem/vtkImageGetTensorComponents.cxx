@@ -20,17 +20,7 @@
 #include <vtkStructuredPointsWriter.h>
 
 //----------------------------------------------------------------------------
-vtkImageGetTensorComponents* vtkImageGetTensorComponents::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageGetTensorComponents");
-  if(ret)
-    {
-      return (vtkImageGetTensorComponents*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageGetTensorComponents;
-}
+vtkStandardNewMacro(vtkImageGetTensorComponents);
 
 
 using namespace std;

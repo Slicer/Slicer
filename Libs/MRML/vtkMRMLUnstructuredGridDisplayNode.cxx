@@ -21,31 +21,8 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLUnstructuredGridDisplayNode* vtkMRMLUnstructuredGridDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLUnstructuredGridDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLUnstructuredGridDisplayNode);
 
 
 //----------------------------------------------------------------------------

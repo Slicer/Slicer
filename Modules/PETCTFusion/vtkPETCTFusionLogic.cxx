@@ -98,17 +98,7 @@ itk::ExposeMetaData<double>(*dictionary[i], "7053|1000", suv);
 
 
 //----------------------------------------------------------------------------
-vtkPETCTFusionLogic* vtkPETCTFusionLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkPETCTFusionLogic");
-  if(ret)
-    {
-      return (vtkPETCTFusionLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkPETCTFusionLogic;
-}
+vtkStandardNewMacro(vtkPETCTFusionLogic);
 
 
 //----------------------------------------------------------------------------

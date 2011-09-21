@@ -38,32 +38,8 @@ Version:   $Revision: 1.2 $
 
 
 
-//------------------------------------------------------------------------------
-vtkMRMLTransformStorageNode* vtkMRMLTransformStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransformStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLTransformStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransformStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLTransformStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransformStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLTransformStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransformStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()

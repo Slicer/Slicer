@@ -3,31 +3,8 @@
 #include "vtkMRMLAnnotationTextNode.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationTextNode* vtkMRMLAnnotationTextNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationTextNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationTextNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationTextNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationTextNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationTextNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationTextNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationTextNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationTextNode);
 
 //-----------------------------------------------------------------------------
 vtkMRMLAnnotationTextNode::vtkMRMLAnnotationTextNode()

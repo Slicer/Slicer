@@ -28,31 +28,7 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLArrayPlotNode* vtkMRMLArrayPlotNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLArrayPlotNode"); if(ret)
-    {
-      return (vtkMRMLArrayPlotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLArrayPlotNode;
-}
-
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLArrayPlotNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLArrayPlotNode");
-  if(ret)
-    {
-      return (vtkMRMLArrayPlotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLArrayPlotNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLArrayPlotNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLArrayPlotNode::vtkMRMLArrayPlotNode()
@@ -60,7 +36,6 @@ vtkMRMLArrayPlotNode::vtkMRMLArrayPlotNode()
   this->Array = NULL;
   this->ErrorBar = 0;
 }
-
 
 //----------------------------------------------------------------------------
 vtkMRMLArrayPlotNode::~vtkMRMLArrayPlotNode()

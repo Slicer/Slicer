@@ -24,32 +24,8 @@ Version:   $Revision: 1.14 $
 #include "vtkMatrix4x4.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLTensorVolumeNode* vtkMRMLTensorVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTensorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLTensorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTensorVolumeNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLTensorVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTensorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLTensorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTensorVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTensorVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()

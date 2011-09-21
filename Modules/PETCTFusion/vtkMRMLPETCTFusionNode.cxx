@@ -9,18 +9,8 @@
 #include "vtkMRMLScene.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLPETCTFusionNode* vtkMRMLPETCTFusionNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLPETCTFusionNode");
-  if(ret)
-    {
-      return (vtkMRMLPETCTFusionNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLPETCTFusionNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLPETCTFusionNode);
 
 //----------------------------------------------------------------------------
 

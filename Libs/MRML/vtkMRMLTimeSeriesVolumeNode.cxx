@@ -18,32 +18,8 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTimeSeriesVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLTimeSeriesVolumeNode* vtkMRMLTimeSeriesVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLTimeSeriesVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTimeSeriesVolumeNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLTimeSeriesVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLTimeSeriesVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTimeSeriesVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTimeSeriesVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTimeSeriesVolumeNode::vtkMRMLTimeSeriesVolumeNode()

@@ -24,32 +24,7 @@ Version:   $Revision: 1.0 $
 vtkCxxSetObjectMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode, GlyphSource, vtkPolyData);
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorDisplayPropertiesNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorDisplayPropertiesNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorDisplayPropertiesNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorDisplayPropertiesNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionTensorDisplayPropertiesNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorDisplayPropertiesNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorDisplayPropertiesNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorDisplayPropertiesNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayPropertiesNode()

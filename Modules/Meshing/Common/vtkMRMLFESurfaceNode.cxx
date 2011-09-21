@@ -23,42 +23,8 @@ Version:   $Revision: 1.2 $
 //***
 #include "vtkMimxSurfacePolyDataActor.h"
 
-
-
-
 //------------------------------------------------------------------------------
-vtkMRMLFESurfaceNode* vtkMRMLFESurfaceNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFESurfaceNode");
-  if(ret)
-    {
-      return (vtkMRMLFESurfaceNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  vtkMRMLFESurfaceNode* newnode = new vtkMRMLFESurfaceNode;
-  // next two lines caused leaks!
-  //vtkMimxSurfacePolyDataActor* newactor = new vtkMimxSurfacePolyDataActor;
-  //newnode->SetMimxSurfacePolyDataActor(newactor);
-  return newnode;
-  
-
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLModelNode* vtkMRMLFESurfaceNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFESurfaceNode");
-  if(ret)
-    {
-      return (vtkMRMLFESurfaceNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  vtkMRMLFESurfaceNode* newnode = new vtkMRMLFESurfaceNode;
-  return newnode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFESurfaceNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFESurfaceNode::vtkMRMLFESurfaceNode()

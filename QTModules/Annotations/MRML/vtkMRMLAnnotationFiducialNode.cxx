@@ -4,31 +4,8 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include <vtkPolyData.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationFiducialNode* vtkMRMLAnnotationFiducialNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationFiducialNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationFiducialNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationFiducialNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationFiducialNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationFiducialNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationFiducialNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationFiducialNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialNode);
 
 
 //---------------------------------------------------------------------------

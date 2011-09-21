@@ -5,32 +5,8 @@
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationRulerStorageNode* vtkMRMLAnnotationRulerStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationRulerStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationRulerStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationRulerStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAnnotationRulerStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationRulerStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationRulerStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationRulerStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationRulerStorageNode::vtkMRMLAnnotationRulerStorageNode()

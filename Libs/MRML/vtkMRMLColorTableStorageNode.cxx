@@ -26,31 +26,7 @@ Version:   $Revision: 1.6 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLColorTableStorageNode* vtkMRMLColorTableStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorTableStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLColorTableStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorTableStorageNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLColorTableStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorTableStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLColorTableStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorTableStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLColorTableStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()

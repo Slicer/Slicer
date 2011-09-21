@@ -110,7 +110,6 @@ void vtkKWMimxGroupBase::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 //----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 void vtkKWMimxGroupBase::AddMeshToDisplay( vtkUnstructuredGrid *mesh, 
             const char *namePrefix, const char *foundationName, const char *elementSetName)
 {

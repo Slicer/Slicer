@@ -33,15 +33,12 @@ class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
-  static vtkMRMLFiberBundleDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLFiberBundleDisplayNode,vtkMRMLModelDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent );
+  vtkTypeMacro(vtkMRMLFiberBundleDisplayNode, vtkMRMLModelDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
-
-  virtual vtkMRMLNode* CreateNodeInstance (  );
 
   /// 
   /// Read node attributes from XML (MRML) file

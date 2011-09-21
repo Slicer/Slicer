@@ -24,31 +24,7 @@ vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionImageVolumeNode, MaskNodeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionImageVolumeNode, DiffusionWeightedNodeID);
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionImageVolumeNode* vtkMRMLDiffusionImageVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionImageVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionImageVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionImageVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionImageVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionImageVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionImageVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionImageVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionImageVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionImageVolumeNode::vtkMRMLDiffusionImageVolumeNode()

@@ -21,17 +21,8 @@
 #endif
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceReader* vtkFSSurfaceReader::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceReader");
-  if(ret)
-    {
-    return (vtkFSSurfaceReader*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceReader;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceReader);
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceReader::vtkFSSurfaceReader()

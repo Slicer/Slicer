@@ -138,17 +138,8 @@ vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
   //}
 }
 
-vtkVolumeRenderingLogic* vtkVolumeRenderingLogic::New()
-{
- // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingLogic");
-  if(ret)
-    {
-      return (vtkVolumeRenderingLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkVolumeRenderingLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkVolumeRenderingLogic);
 
 void vtkVolumeRenderingLogic::PrintSelf(std::ostream &os, vtkIndent indent)
 {

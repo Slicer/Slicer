@@ -36,30 +36,8 @@ Version:   $Revision: 1.2 $
 
 
 
-//------------------------------------------------------------------------------
-vtkMRMLIGTLConnectorNode* vtkMRMLIGTLConnectorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLIGTLConnectorNode"); if(ret)
-    {
-      return (vtkMRMLIGTLConnectorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLIGTLConnectorNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLIGTLConnectorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLIGTLConnectorNode");
-  if(ret)
-    {
-      return (vtkMRMLIGTLConnectorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLIGTLConnectorNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLIGTLConnectorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()

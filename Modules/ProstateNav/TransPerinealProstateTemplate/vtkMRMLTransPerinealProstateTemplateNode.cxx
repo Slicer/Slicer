@@ -67,31 +67,8 @@ static const unsigned int STATUS_SCANNER=1;
 static const char STATUS_SCANNER_OFF[]="Scanner: OFF";
 static const char STATUS_SCANNER_ON[]="Scanner: ON";
 
-//------------------------------------------------------------------------------
-vtkMRMLTransPerinealProstateTemplateNode* vtkMRMLTransPerinealProstateTemplateNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransPerinealProstateTemplateNode");
-  if(ret)
-    {
-      return (vtkMRMLTransPerinealProstateTemplateNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransPerinealProstateTemplateNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLTransPerinealProstateTemplateNode* vtkMRMLTransPerinealProstateTemplateNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransPerinealProstateTemplateNode");
-  if(ret)
-    {
-      return (vtkMRMLTransPerinealProstateTemplateNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransPerinealProstateTemplateNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTransPerinealProstateTemplateNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTransPerinealProstateTemplateNode::vtkMRMLTransPerinealProstateTemplateNode()

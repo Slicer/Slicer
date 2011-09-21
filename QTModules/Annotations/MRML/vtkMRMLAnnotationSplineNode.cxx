@@ -8,31 +8,8 @@
 
 #include <vtkObjectFactory.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationSplineNode* vtkMRMLAnnotationSplineNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationSplineNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationSplineNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationSplineNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationSplineNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationSplineNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationSplineNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationSplineNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationSplineNode);
 
 
 //----------------------------------------------------------------------------

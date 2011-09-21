@@ -6,33 +6,8 @@
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLModelTransformNode, "$Revision: 1.0 $");
 
-
-//------------------------------------------------------------------------------
-vtkMRMLModelTransformNode* vtkMRMLModelTransformNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelTransformNode");
-  if(ret)
-    {
-      return (vtkMRMLModelTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelTransformNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelTransformNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelTransformNode");
-  if(ret)
-    {
-      return (vtkMRMLModelTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelTransformNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLModelTransformNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLModelTransformNode::vtkMRMLModelTransformNode()
@@ -45,9 +20,6 @@ vtkMRMLModelTransformNode::vtkMRMLModelTransformNode()
   this->TransformNormals = 1;
 }
 
-
-
-
 //----------------------------------------------------------------------------
 vtkMRMLModelTransformNode::~vtkMRMLModelTransformNode()
 {
@@ -56,7 +28,6 @@ vtkMRMLModelTransformNode::~vtkMRMLModelTransformNode()
   this->SetTransformNodeID ( NULL );
   this->SetNewModelName ( NULL );
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -76,9 +47,7 @@ void vtkMRMLModelTransformNode::Copy(vtkMRMLNode *anode)
     this->SetTransformNormals(node->GetTransformNormals());
   }
   this->EndModify(disabledModify);
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelTransformNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -86,7 +55,6 @@ void vtkMRMLModelTransformNode::PrintSelf(ostream& os, vtkIndent indent)
   //TODO  
   vtkMRMLNode::PrintSelf(os,indent);
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelTransformNode::WriteXML(ostream& of, int nIndent)
@@ -113,10 +81,7 @@ void vtkMRMLModelTransformNode::WriteXML(ostream& of, int nIndent)
     }
 
   of << indent << " transformNormals=\"" << this->TransformNormals << "\"";
-
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelTransformNode::ReadXMLAttributes(const char** atts)
@@ -157,5 +122,3 @@ void vtkMRMLModelTransformNode::ReadXMLAttributes(const char** atts)
 
   this->EndModify(disabledModify);
 }
-
-

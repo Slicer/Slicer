@@ -1,38 +1,19 @@
+
+// MRML includes
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
+// VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkVolumeProperty.h>
 
+// STD includes
 #include <sstream>
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyNode::New()
-{
-    // First try to create the object from the vtkObjectFactory
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumePropertyNode");
-    if(ret)
-    {
-        return (vtkMRMLVolumePropertyNode*)ret;
-    }
-    // If the factory was unable to create the object, then create it here.
-    return new vtkMRMLVolumePropertyNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLVolumePropertyNode::CreateNodeInstance(void)
-{
-    // First try to create the object from the vtkObjectFactory
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumePropertyNode");
-    if(ret)
-    {
-        return (vtkMRMLVolumePropertyNode*)ret;
-    }
-    // If the factory was unable to create the object, then create it here.
-    return new vtkMRMLVolumePropertyNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)

@@ -23,39 +23,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLBrpRobotCommandNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLBrpRobotCommandNode* vtkMRMLBrpRobotCommandNode::New()
-{
-  vtkMRMLBrpRobotCommandNode* ret;
-
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* r = vtkObjectFactory::CreateInstance("vtkMRMLBrpRobotCommandNode");
-  if(r)
-    {
-    ret =  (vtkMRMLBrpRobotCommandNode*)r;
-    }
-  else
-    {
-    // If the factory was unable to create the object, then create it here.
-    ret =  new vtkMRMLBrpRobotCommandNode;
-    }
-  
-  return ret;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLBrpRobotCommandNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLBrpRobotCommandNode");
-  if(ret)
-    {
-    return (vtkMRMLBrpRobotCommandNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLBrpRobotCommandNode;
-}
-
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLBrpRobotCommandNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLBrpRobotCommandNode::vtkMRMLBrpRobotCommandNode()
@@ -68,7 +37,6 @@ vtkMRMLBrpRobotCommandNode::vtkMRMLBrpRobotCommandNode()
   this->StepToCommandMap["PointVerification"]="MANUAL";
   this->StepToCommandMap["TransperinealProstateRobotManualControl"]="PLANNING";
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLBrpRobotCommandNode::PrintSelf(ostream& os, vtkIndent indent)

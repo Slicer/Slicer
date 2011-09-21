@@ -1,10 +1,10 @@
 #include "vtkHIDHandler.h"
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkHIDHandler );
 vtkCxxRevisionMacro ( vtkHIDHandler, "$Revision: 1.0 $" );
 
-
-
+//----------------------------------------------------------------------------
 size_t hid_read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
   size_t retcode;
@@ -19,6 +19,7 @@ size_t hid_read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
   return retcode;
 }
 
+//----------------------------------------------------------------------------
 size_t hid_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   if (stream == NULL)
@@ -30,6 +31,7 @@ size_t hid_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
+//----------------------------------------------------------------------------
 size_t hid_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
                             double dlnow, double ultotal, double ulnow)
 {
@@ -48,19 +50,15 @@ size_t hid_ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal,
   return 0;
 }
 
-
-
 //----------------------------------------------------------------------------
 vtkHIDHandler::vtkHIDHandler()
 {
 }
 
-
 //----------------------------------------------------------------------------
 vtkHIDHandler::~vtkHIDHandler()
 {
 }
-
 
 //----------------------------------------------------------------------------
 void vtkHIDHandler::PrintSelf(ostream& os, vtkIndent indent)
@@ -68,11 +66,9 @@ void vtkHIDHandler::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf ( os, indent );
 }
 
-
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileRead(const char * source,
                                   const char *destination)
-
 {
   if (source == NULL || destination == NULL)
     {
@@ -88,7 +84,6 @@ void vtkHIDHandler::StageFileRead(const char * source,
 
   this->InitTransfer( );
 
-  
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
@@ -121,12 +116,9 @@ void vtkHIDHandler::StageFileRead(const char * source,
   fclose(this->LocalFile);
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileWrite(const char *source,
                                    const char *vtkNotUsed(destination))
-
 {
   // need to use the -k argument for signed... how to
   // do with curl_easy?
@@ -165,9 +157,6 @@ void vtkHIDHandler::StageFileWrite(const char *source,
   
   fclose(this->LocalFile);
 }
-
-
-
 
 //--- for querying
 //----------------------------------------------------------------------------
@@ -223,6 +212,3 @@ const char* vtkHIDHandler::QueryServer( const char *uri, const char *destination
   fclose(this->LocalFile);
   return ( returnString );
 }
-
-
-

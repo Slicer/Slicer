@@ -1,44 +1,26 @@
+
+// MRMLAnnotation includes
+#include "vtkMRMLAnnotationLineDisplayNode.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
+#include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
+
+// MRML includes
+#include "vtkMRMLTransformNode.h"
+
+// VTK includes
+#include <vtkDoubleArray.h>
+#include <vtkGeneralTransform.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPlanes.h>
+#include <vtkPolyData.h>
+
+// STD includes
 #include <sstream>
 
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMath.h"
-#include <vtkObjectFactory.h>
-#include "vtkPlanes.h"
-#include <vtkPolyData.h>
-#include "vtkDoubleArray.h"
-#include "vtkGeneralTransform.h"
-
 //------------------------------------------------------------------------------
-vtkMRMLAnnotationROINode* vtkMRMLAnnotationROINode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationROINode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationROINode*)ret;
-    }
-  
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationROINode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationROINode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationROINode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationROINode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationROINode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationROINode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()

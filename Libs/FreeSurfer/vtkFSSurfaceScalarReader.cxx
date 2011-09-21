@@ -18,17 +18,8 @@
 #include "vtkByteSwap.h"
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceScalarReader* vtkFSSurfaceScalarReader::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceScalarReader");
-  if(ret)
-    {
-    return (vtkFSSurfaceScalarReader*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceScalarReader;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceScalarReader);
 
 vtkFSSurfaceScalarReader::vtkFSSurfaceScalarReader()
 {

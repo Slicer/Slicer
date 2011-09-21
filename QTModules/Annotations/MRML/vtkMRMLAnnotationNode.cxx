@@ -23,31 +23,8 @@
 // - NumberingScheme should not be in annotation node - should be in fiducial nodes - just put it here right now 
 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationNode* vtkMRMLAnnotationNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationNode);
 
 
 //----------------------------------------------------------------------------

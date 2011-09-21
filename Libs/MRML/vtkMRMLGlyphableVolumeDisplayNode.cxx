@@ -27,31 +27,7 @@ Version:   $Revision: 1.2 $
 vtkCxxSetReferenceStringMacro(vtkMRMLGlyphableVolumeDisplayNode, GlyphColorNodeID);
 
 //------------------------------------------------------------------------------
-vtkMRMLGlyphableVolumeDisplayNode* vtkMRMLGlyphableVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeDisplayNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLGlyphableVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeDisplayNode::vtkMRMLGlyphableVolumeDisplayNode()

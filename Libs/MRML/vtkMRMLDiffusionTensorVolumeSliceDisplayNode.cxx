@@ -28,31 +28,7 @@ Version:   $Revision: 1.3 $
 vtkCxxSetReferenceStringMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode, DiffusionTensorDisplayPropertiesNodeID);
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeSliceDisplayNode* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeSliceDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeSliceDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeSliceDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeSliceDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceDisplayNode()

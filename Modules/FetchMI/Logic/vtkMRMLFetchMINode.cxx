@@ -18,33 +18,8 @@ vtkCxxRevisionMacro ( vtkMRMLFetchMINode, "$Revision: 1.0 $");
 //--- we'll change this eventually to be "Tagname"
 //----------------------------------------------------------------------------
 
-
-//------------------------------------------------------------------------------
-vtkMRMLFetchMINode* vtkMRMLFetchMINode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFetchMINode");
-  if(ret)
-    {
-      return (vtkMRMLFetchMINode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFetchMINode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFetchMINode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFetchMINode");
-  if(ret)
-    {
-      return (vtkMRMLFetchMINode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFetchMINode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFetchMINode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFetchMINode::vtkMRMLFetchMINode()
@@ -64,16 +39,11 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    //--- as appropriate.
    this->ResourceDescription = vtkTagTable::New();
    this->ResourceDescription->SetName ( "ResourceDescription");
-
-
-   
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
 {
-
   //---
   //--- DEVELOPERS NOTE: extend here as new web services are added.
   //---
@@ -109,11 +79,9 @@ void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
     }
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
 {
-  
   if ( this->SelectedTagTable )
     {
     this->SetSelectedTagTable ( NULL );
@@ -207,7 +175,6 @@ void vtkMRMLFetchMINode::WriteXML(ostream& vtkNotUsed(of), int vtkNotUsed(nInden
 */
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::ReadXMLAttributes(const char** vtkNotUsed(atts))
 {
@@ -296,11 +263,6 @@ void vtkMRMLFetchMINode::ReadXMLAttributes(const char** vtkNotUsed(atts))
 */
 }
 
-
-
-
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::SetServer ( const char *s)
 {
@@ -342,17 +304,11 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
   this->InvokeEvent ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::SetServiceType ( const char *s)
 {
   this->SetSelectedServiceType (s);
 }
-
-
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::RaiseErrorEvent ()
@@ -360,16 +316,11 @@ void vtkMRMLFetchMINode::RaiseErrorEvent ()
   this->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::RaiseErrorChoice ()
 {
   this->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorChoiceEvent );
 }
-
-
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -438,17 +389,12 @@ void vtkMRMLFetchMINode::Copy(vtkMRMLNode *anode)
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
   vtkMRMLNode::PrintSelf(os,indent);
   os << indent << "TagTableCollection: " << this->GetTagTableCollection() << "\n";
   os << indent << "SelectedServer: " << (this->SelectedServer == NULL ? "null" :  this->SelectedServer) << "\n";
   os << indent << "SelectedServiceType: " << (this->SelectedServiceType == NULL ? "null" : this->SelectedServiceType) << "\n";
   os << indent << "ErrorMessage: " << this->GetErrorMessage() << "\n";
 }
-
-
-

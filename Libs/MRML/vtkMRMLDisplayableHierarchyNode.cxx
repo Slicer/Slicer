@@ -28,32 +28,7 @@ Version:   $Revision: 1.3 $
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayableHierarchyNode, DisplayNodeID);
 
 //------------------------------------------------------------------------------
-vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDisplayableHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLDisplayableHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDisplayableHierarchyNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDisplayableHierarchyNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDisplayableHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLDisplayableHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDisplayableHierarchyNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLDisplayableHierarchyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()

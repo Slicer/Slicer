@@ -90,17 +90,8 @@ struct DigitsToCharacters
 typedef std::pair<vtkCommandLineModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
 
-vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkCommandLineModuleLogic");
-  if(ret)
-    {
-      return (vtkCommandLineModuleLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkCommandLineModuleLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkCommandLineModuleLogic);
 
 
 //----------------------------------------------------------------------------

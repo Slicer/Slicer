@@ -26,30 +26,8 @@ Version:   $Revision: 1.2 $
 #include "igtlMessageBase.h"
 #include "igtlMessageHeader.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLImageMetaListNode* vtkMRMLImageMetaListNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLImageMetaListNode"); if(ret)
-    {
-      return (vtkMRMLImageMetaListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLImageMetaListNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLImageMetaListNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLImageMetaListNode");
-  if(ret)
-    {
-      return (vtkMRMLImageMetaListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLImageMetaListNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLImageMetaListNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLImageMetaListNode::vtkMRMLImageMetaListNode()

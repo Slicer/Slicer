@@ -25,32 +25,8 @@ vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, BackgroundVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, ForegroundVolumeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, LabelVolumeID);
 
-//------------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode* vtkMRMLSliceCompositeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceCompositeNode");
-  if(ret)
-    {
-    return (vtkMRMLSliceCompositeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSliceCompositeNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLSliceCompositeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceCompositeNode");
-  if(ret)
-    {
-    return (vtkMRMLSliceCompositeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSliceCompositeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLSliceCompositeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()

@@ -27,32 +27,8 @@ Version:   $Revision: 1.2 $
 
 // STD includes
 
-//------------------------------------------------------------------------------
-vtkMRMLCropVolumeParametersNode* vtkMRMLCropVolumeParametersNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCropVolumeParametersNode");
-  if(ret)
-    {
-    return (vtkMRMLCropVolumeParametersNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCropVolumeParametersNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLCropVolumeParametersNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCropVolumeParametersNode");
-  if(ret)
-    {
-    return (vtkMRMLCropVolumeParametersNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCropVolumeParametersNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLCropVolumeParametersNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()

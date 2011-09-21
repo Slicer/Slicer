@@ -5,19 +5,15 @@
 vtkStandardNewMacro ( vtkHIDTagTable );
 vtkCxxRevisionMacro(vtkHIDTagTable, "$Revision: 1.0 $");
 
-
 //----------------------------------------------------------------------------
 vtkHIDTagTable::vtkHIDTagTable()
 {
 }
 
-
 //----------------------------------------------------------------------------
 vtkHIDTagTable::~vtkHIDTagTable()
 {
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkHIDTagTable::PrintSelf ( ostream &os, vtkIndent indent )
@@ -25,7 +21,6 @@ void vtkHIDTagTable::PrintSelf ( ostream &os, vtkIndent indent )
   this->vtkObject::PrintSelf ( os, indent );
   os << indent << "HIDTagTable: " << this->GetClassName ( ) << "\n";
 }
-
 
 //----------------------------------------------------------------------------
 void vtkHIDTagTable::Initialize( )
@@ -41,9 +36,4 @@ void vtkHIDTagTable::Initialize( )
   this->SelectTag ( "File_Type");
   this->SelectTag ( "Subject");
   this->SelectTag ( "Experiment");
-
 }
-
-
-
-

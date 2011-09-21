@@ -45,18 +45,8 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 
-//------------------------------------------------------------------------------
-vtkLabelStatisticsGUI* vtkLabelStatisticsGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkLabelStatisticsGUI");
-  if(ret)
-    {
-      return (vtkLabelStatisticsGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkLabelStatisticsGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkLabelStatisticsGUI);
 
 
 //----------------------------------------------------------------------------

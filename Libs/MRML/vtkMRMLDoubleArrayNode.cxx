@@ -12,40 +12,21 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-
+// MRML includes
 #include "vtkMRMLDoubleArrayNode.h"
 
+// VTK includes
 #include <vtkDoubleArray.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
 #include <sstream>
 
+//------------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLDoubleArrayNode, Array, vtkDoubleArray)
 
 //------------------------------------------------------------------------------
-vtkMRMLDoubleArrayNode* vtkMRMLDoubleArrayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDoubleArrayNode"); if(ret)
-    {
-      return (vtkMRMLDoubleArrayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDoubleArrayNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLDoubleArrayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDoubleArrayNode");
-  if(ret)
-    {
-      return (vtkMRMLDoubleArrayNode*)ret;
-    }
-  // If The Factory was unable to create the object, then create it here.
-  return new vtkMRMLDoubleArrayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDoubleArrayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDoubleArrayNode::vtkMRMLDoubleArrayNode()

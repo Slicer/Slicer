@@ -2150,9 +2150,7 @@ void vtkImageResliceMaskExecute(vtkImageResliceMask *self,
 }
 
 //----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 // The remainder of this file is the 'optimized' version of the code.
-//----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
 // application of the transform has different forms for fixed-point

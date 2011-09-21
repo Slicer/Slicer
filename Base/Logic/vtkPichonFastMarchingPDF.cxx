@@ -46,18 +46,8 @@ vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
   updateRate=1000;
 }
 
-vtkPichonFastMarchingPDF* vtkPichonFastMarchingPDF::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkPichonFastMarchingPDF");
-  if(ret)
-    {
-      return (vtkPichonFastMarchingPDF*)ret;
-    }
-
-  // If the factory was unable to create the object, then create it here.
-  return new vtkPichonFastMarchingPDF;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkPichonFastMarchingPDF);
 
 vtkPichonFastMarchingPDF::~vtkPichonFastMarchingPDF()
 {

@@ -1,33 +1,12 @@
 
-#include "vtkObjectFactory.h"
-
+// MRMLAnnotation includes
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationDisplayNode* vtkMRMLAnnotationDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationDisplayNode;
-}
+// VTK includes
+#include <vtkObjectFactory.h>
 
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationDisplayNode::CreateNodeInstance()
-{
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationDisplayNode;
-}
-
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()

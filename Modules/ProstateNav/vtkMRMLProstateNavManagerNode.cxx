@@ -27,30 +27,8 @@ Version:   $Revision: 1.2 $
 #include "vtkSmartPointer.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLProstateNavManagerNode* vtkMRMLProstateNavManagerNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLProstateNavManagerNode"); if(ret)
-    {
-      return (vtkMRMLProstateNavManagerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLProstateNavManagerNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLProstateNavManagerNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLProstateNavManagerNode");
-  if(ret)
-    {
-      return (vtkMRMLProstateNavManagerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLProstateNavManagerNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLProstateNavManagerNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLProstateNavManagerNode::vtkMRMLProstateNavManagerNode()

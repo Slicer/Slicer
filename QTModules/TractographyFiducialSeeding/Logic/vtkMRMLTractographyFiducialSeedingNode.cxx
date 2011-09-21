@@ -12,40 +12,20 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// MRMLTractographyFiducialSeeding includes
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
-#include "vtkMRMLScene.h"
-
-
 //------------------------------------------------------------------------------
-vtkMRMLTractographyFiducialSeedingNode* vtkMRMLTractographyFiducialSeedingNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTractographyFiducialSeedingNode");
-  if(ret)
-    {
-      return (vtkMRMLTractographyFiducialSeedingNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTractographyFiducialSeedingNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLTractographyFiducialSeedingNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTractographyFiducialSeedingNode");
-  if(ret)
-    {
-      return (vtkMRMLTractographyFiducialSeedingNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTractographyFiducialSeedingNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTractographyFiducialSeedingNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()

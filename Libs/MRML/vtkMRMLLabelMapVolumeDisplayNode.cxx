@@ -24,32 +24,8 @@ Version:   $Revision: 1.2 $
 // STD includes
 #include <cassert>
 
-//------------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLabelMapVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLLabelMapVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLabelMapVolumeDisplayNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLLabelMapVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLabelMapVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLLabelMapVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLabelMapVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLLabelMapVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode::vtkMRMLLabelMapVolumeDisplayNode()

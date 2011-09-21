@@ -28,31 +28,8 @@ Version:   $Revision: 1.3 $
 
 vtkCxxSetObjectMacro(vtkMRMLUnstructuredGridNode, UnstructuredGrid, vtkUnstructuredGrid);
 
-//------------------------------------------------------------------------------
-vtkMRMLUnstructuredGridNode* vtkMRMLUnstructuredGridNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLUnstructuredGridNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLUnstructuredGridNode");
-  if(ret)
-    {
-    return (vtkMRMLUnstructuredGridNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLUnstructuredGridNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLUnstructuredGridNode);
 
 vtkMRMLUnstructuredGridNode::vtkMRMLUnstructuredGridNode()
 {

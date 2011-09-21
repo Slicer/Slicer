@@ -22,30 +22,8 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 
 
-//------------------------------------------------------------------------------
-vtkMRMLXYPlotManagerNode* vtkMRMLXYPlotManagerNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLXYPlotManagerNode"); if(ret)
-    {
-      return (vtkMRMLXYPlotManagerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLXYPlotManagerNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLXYPlotManagerNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLXYPlotManagerNode");
-  if(ret)
-    {
-      return (vtkMRMLXYPlotManagerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLXYPlotManagerNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLXYPlotManagerNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLXYPlotManagerNode::vtkMRMLXYPlotManagerNode()

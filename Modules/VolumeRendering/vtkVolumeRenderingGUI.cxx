@@ -190,17 +190,8 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 
 }
 
-vtkVolumeRenderingGUI* vtkVolumeRenderingGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingGUI");
-  if(ret)
-  {
-    return (vtkVolumeRenderingGUI*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkVolumeRenderingGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkVolumeRenderingGUI);
 
 void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
 {

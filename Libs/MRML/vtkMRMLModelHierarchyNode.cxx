@@ -20,32 +20,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLModelHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelHierarchyNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelHierarchyNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLModelHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelHierarchyNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLModelHierarchyNode);
 
 
 //----------------------------------------------------------------------------

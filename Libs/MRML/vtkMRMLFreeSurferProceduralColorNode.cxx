@@ -20,35 +20,11 @@ Version:   $Revision: 1.0 $
 
 #include "vtkFSLookupTable.h"
 
+//------------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLFreeSurferProceduralColorNode, LookupTable, vtkFSLookupTable);
 
 //------------------------------------------------------------------------------
-vtkMRMLFreeSurferProceduralColorNode* vtkMRMLFreeSurferProceduralColorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFreeSurferProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLFreeSurferProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFreeSurferProceduralColorNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFreeSurferProceduralColorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFreeSurferProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLFreeSurferProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFreeSurferProceduralColorNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLFreeSurferProceduralColorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()

@@ -29,37 +29,11 @@ Version:   $Revision: 1.3 $
 #include "vtkSmartPointer.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialListNode");
-  if(ret)
-    {
-    return (vtkMRMLFiducialListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialListNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFiducialListNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialListNode");
-  if(ret)
-    {
-    return (vtkMRMLFiducialListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialListNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLFiducialListNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 {
-
   this->FiducialList = vtkCollection::New();
   this->SymbolScale = 5.0;
   this->TextScale = 4.5;

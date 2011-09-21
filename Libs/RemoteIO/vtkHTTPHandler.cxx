@@ -1,23 +1,11 @@
 #include "vtkHTTPHandler.h"
 #include <vtkPermissionPrompter.h>
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkHTTPHandler );
 vtkCxxRevisionMacro ( vtkHTTPHandler, "$Revision: 1.0 $" );
 
-/*------------------------------------------------------------------------------
-vtkHTTPHandler* vtkHTTPHandler::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkHTTPHandler");
-  if(ret)
-    {
-    return static_cast<vtkHTTPHandler*>(ret);
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkHTTPHandler;
-}
-*/
-
+//----------------------------------------------------------------------------
 size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
   size_t retcode;
@@ -32,6 +20,7 @@ size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
   return retcode;
 }
 
+//----------------------------------------------------------------------------
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   if (stream == NULL)
@@ -43,6 +32,7 @@ size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
+//----------------------------------------------------------------------------
 size_t ProgressCallback(FILE* vtkNotUsed( outputFile ), double dltotal, double dlnow, double ultotal, double ulnow)
 {
   if(ultotal == 0)

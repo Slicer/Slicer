@@ -21,17 +21,7 @@
 
 
 //----------------------------------------------------------------------------
-vtkImageSetTensorComponents* vtkImageSetTensorComponents::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageSetTensorComponents");
-  if(ret)
-    {
-      return (vtkImageSetTensorComponents*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageSetTensorComponents;
-}
+vtkStandardNewMacro(vtkImageSetTensorComponents);
 
 
 using namespace std;

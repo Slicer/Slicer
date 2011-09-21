@@ -25,18 +25,7 @@ Version:   $Revision: 1.8 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLParser* vtkMRMLParser::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLParser");
-  if(ret) 
-    {
-    return (vtkMRMLParser*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLParser;
-}
-
+vtkStandardNewMacro(vtkMRMLParser);
 
 //------------------------------------------------------------------------------
 void vtkMRMLParser::StartElement(const char* tagName, const char** atts)

@@ -16,17 +16,8 @@
 #include "vtkObjectFactory.h"
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceLabelReader* vtkFSSurfaceLabelReader::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceLabelReader");
-  if(ret)
-    {
-    return (vtkFSSurfaceLabelReader*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceLabelReader;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceLabelReader);
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceLabelReader::vtkFSSurfaceLabelReader()

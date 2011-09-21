@@ -21,32 +21,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumeRenderingScenarioNode* vtkMRMLVolumeRenderingScenarioNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingScenarioNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingScenarioNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingScenarioNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeRenderingScenarioNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingScenarioNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingScenarioNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingScenarioNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingScenarioNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingScenarioNode::vtkMRMLVolumeRenderingScenarioNode()

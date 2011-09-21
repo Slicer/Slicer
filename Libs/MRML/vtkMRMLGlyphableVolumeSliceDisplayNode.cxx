@@ -24,37 +24,11 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLGlyphableVolumeSliceDisplayNode* vtkMRMLGlyphableVolumeSliceDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeSliceDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeSliceDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeSliceDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLGlyphableVolumeSliceDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeSliceDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeSliceDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeSliceDisplayNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeSliceDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
-
-
   this->ColorMode = this->colorModeScalar;
 
   this->SliceImage = NULL;

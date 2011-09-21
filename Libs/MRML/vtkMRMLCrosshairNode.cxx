@@ -12,37 +12,17 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLCrosshairNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
+
 //------------------------------------------------------------------------------
-vtkMRMLCrosshairNode* vtkMRMLCrosshairNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCrosshairNode");
-  if(ret)
-    {
-    return (vtkMRMLCrosshairNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCrosshairNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLCrosshairNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCrosshairNode");
-  if(ret)
-    {
-    return (vtkMRMLCrosshairNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCrosshairNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLCrosshairNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()

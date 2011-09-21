@@ -44,31 +44,7 @@ Version:   $Revision: 1.2 $
 
 
 //------------------------------------------------------------------------------
-vtkMRMLFreeSurferModelOverlayStorageNode* vtkMRMLFreeSurferModelOverlayStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFreeSurferModelOverlayStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFreeSurferModelOverlayStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFreeSurferModelOverlayStorageNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFreeSurferModelOverlayStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFreeSurferModelOverlayStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFreeSurferModelOverlayStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFreeSurferModelOverlayStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFreeSurferModelOverlayStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFreeSurferModelOverlayStorageNode::vtkMRMLFreeSurferModelOverlayStorageNode()

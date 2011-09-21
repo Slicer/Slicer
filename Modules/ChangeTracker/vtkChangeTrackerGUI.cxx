@@ -35,18 +35,7 @@ vtkCxxSetObjectMacro(vtkChangeTrackerGUI,Node,vtkMRMLChangeTrackerNode);
 vtkCxxSetObjectMacro(vtkChangeTrackerGUI,Logic,vtkChangeTrackerLogic);
 
 //----------------------------------------------------------------------------
-vtkChangeTrackerGUI* vtkChangeTrackerGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkChangeTrackerGUI");
-  if (ret)
-    {
-    return (vtkChangeTrackerGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkChangeTrackerGUI;
-}
+vtkStandardNewMacro(vtkChangeTrackerGUI);
 
 //----------------------------------------------------------------------------
 vtkChangeTrackerGUI::vtkChangeTrackerGUI()

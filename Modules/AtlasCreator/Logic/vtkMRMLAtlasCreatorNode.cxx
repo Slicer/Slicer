@@ -12,44 +12,21 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-
+// MRMLAtlasCreator includes
 #include "vtkMRMLAtlasCreatorNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAtlasCreatorNode* vtkMRMLAtlasCreatorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAtlasCreatorNode");
-  if(ret)
-    {
-      return (vtkMRMLAtlasCreatorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAtlasCreatorNode;
-}
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAtlasCreatorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAtlasCreatorNode");
-  if(ret)
-    {
-      return (vtkMRMLAtlasCreatorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAtlasCreatorNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAtlasCreatorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAtlasCreatorNode::vtkMRMLAtlasCreatorNode()
 {
-
   this->OriginalImagesFilePathList = 0;
   this->SegmentationsFilePathList = 0;
   this->OutputDirectory = 0;
@@ -92,13 +69,11 @@ vtkMRMLAtlasCreatorNode::vtkMRMLAtlasCreatorNode()
   this->DryrunMode = 0;
 
   this->TestMode = 0;
-
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLAtlasCreatorNode::~vtkMRMLAtlasCreatorNode()
 {
-
   if (this->OriginalImagesFilePathList)
     {
     delete [] this->OriginalImagesFilePathList;
@@ -170,9 +145,7 @@ vtkMRMLAtlasCreatorNode::~vtkMRMLAtlasCreatorNode()
     delete [] this->TransformsDirectory;
     this->TransformsDirectory = 0;
     }
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAtlasCreatorNode::WriteXML(ostream& of, int nIndent)
@@ -219,25 +192,21 @@ void vtkMRMLAtlasCreatorNode::WriteXML(ostream& of, int nIndent)
 
   of << " IgnoreTemplateSegmentation =\"" << this->IgnoreTemplateSegmentation << "\"";
 
-
   if (this->LabelsList != 0)
     {
     of << " LabelsList =\"" << this->LabelsList << "\"";
     }
-
 
   if (this->RegistrationType != 0)
     {
     of << " RegistrationType =\"" << this->RegistrationType << "\"";
     }
 
-
   of << " SaveTransforms =\"" << this->SaveTransforms << "\"";
   of << " DeleteAlignedImages =\"" << this->DeleteAlignedImages << "\"";
   of << " DeleteAlignedSegmentations =\"" << this->DeleteAlignedSegmentations << "\"";
   of << " NormalizeAtlases =\"" << this->NormalizeAtlases << "\"";
   of << " NormalizeTo =\"" << this->NormalizeTo << "\"";
-
 
   if (this->OutputCast != 0)
     {
@@ -272,13 +241,10 @@ void vtkMRMLAtlasCreatorNode::WriteXML(ostream& of, int nIndent)
     of << " TransformsDirectory =\"" << this->TransformsDirectory << "\"";
     }
 
-
   of << " UseDRAMMS =\"" << this->UseDRAMMS << "\"";
-
 
   of << " DebugMode =\"" << this->DebugMode << "\"";
   of << " DryrunMode =\"" << this->DryrunMode << "\"";
-
 }
 
 //----------------------------------------------------------------------------
@@ -646,7 +612,6 @@ void vtkMRMLAtlasCreatorNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLAtlasCreatorNode::InitializeByDefault()
 {
-
   this->SetOriginalImagesFilePathList("");
   this->SetSegmentationsFilePathList("");
   this->SetOutputDirectory("");
@@ -696,4 +661,3 @@ void vtkMRMLAtlasCreatorNode::Launch()
 {
   this->InvokeEvent(vtkMRMLAtlasCreatorNode::LaunchComputationEvent);
 }
-

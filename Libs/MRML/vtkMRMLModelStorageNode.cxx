@@ -69,32 +69,8 @@ typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterTyp
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
 // development meeting, to move ijk coordinates to voxel centers."
 
-//------------------------------------------------------------------------------
-vtkMRMLModelStorageNode* vtkMRMLModelStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelStorageNode");
-  if(ret)
-  {
-    return (vtkMRMLModelStorageNode*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelStorageNode");
-  if(ret)
-  {
-    return (vtkMRMLModelStorageNode*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLModelStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()

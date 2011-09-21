@@ -11,31 +11,24 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+// MRMLTractography includes
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleNode.h"
+
+// MRML includes
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkCommand.h"
+// VTK includes
+#include <vtkCommand.h>
 
+// STD includes
+#include <sstream>
+
+//----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleDisplayNode, DiffusionTensorDisplayPropertiesNodeID)
-
-//------------------------------------------------------------------------------
-vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleDisplayNode::New()
-{
-  return NULL;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiberBundleDisplayNode::CreateNodeInstance()
-{
-  return NULL;
-}
-
 
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
@@ -54,8 +47,6 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->ScalarRange[0] = 0.;
   this->ScalarRange[1] = 1.;
 }
-
-
 
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode::~vtkMRMLFiberBundleDisplayNode()
@@ -79,8 +70,6 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
     of << indent << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
     }
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
@@ -113,7 +102,6 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 
   this->EndModify(disabledModify);
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -176,7 +164,6 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
@@ -185,8 +172,6 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const c
     this->SetDiffusionTensorDisplayPropertiesNodeID(newID);
     }
 }
-
-
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetDiffusionTensorDisplayPropertiesNode ( )
@@ -232,7 +217,6 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
     {
     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
     }
-
 }
 
 //----------------------------------------------------------------------------

@@ -19,33 +19,8 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
 
-
 //------------------------------------------------------------------------------
-vtkMRMLFiducialListStorageNode* vtkMRMLFiducialListStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialListStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFiducialListStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialListStorageNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLFiducialListStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducialListStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLFiducialListStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducialListStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiducialListStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()

@@ -29,32 +29,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkColorTransferFunction.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLModelNode* vtkMRMLModelNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelNode");
-  if(ret)
-    {
-    return (vtkMRMLModelNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelNode");
-  if(ret)
-    {
-    return (vtkMRMLModelNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLModelNode);
 
 
 //----------------------------------------------------------------------------

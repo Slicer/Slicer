@@ -10,31 +10,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationRulerNode* vtkMRMLAnnotationRulerNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationRulerNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationRulerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationRulerNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationRulerNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationRulerNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationRulerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationRulerNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerNode);
 
 
 //----------------------------------------------------------------------------

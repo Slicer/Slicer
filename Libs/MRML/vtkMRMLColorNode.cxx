@@ -27,31 +27,7 @@ Version:   $Revision: 1.0 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* vtkMRMLColorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorNode");
-  if(ret)
-    {
-    return (vtkMRMLColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLColorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorNode");
-  if(ret)
-    {
-    return (vtkMRMLColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLColorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLColorNode::vtkMRMLColorNode()

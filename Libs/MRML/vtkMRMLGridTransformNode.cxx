@@ -23,32 +23,8 @@ Version:   $Revision: 1.14 $
 
 #include "vtkSmartPointer.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLGridTransformNode* vtkMRMLGridTransformNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGridTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLGridTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGridTransformNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLGridTransformNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGridTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLGridTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGridTransformNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLGridTransformNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()

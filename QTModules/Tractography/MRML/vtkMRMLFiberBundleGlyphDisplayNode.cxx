@@ -23,31 +23,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLFiberBundleGlyphDisplayNode* vtkMRMLFiberBundleGlyphDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleGlyphDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleGlyphDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleGlyphDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiberBundleGlyphDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleGlyphDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleGlyphDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleGlyphDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLFiberBundleGlyphDisplayNode);
 
 
 //----------------------------------------------------------------------------

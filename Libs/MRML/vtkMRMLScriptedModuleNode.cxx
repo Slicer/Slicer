@@ -12,38 +12,14 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLScriptedModuleNode.h"
 
-
-//------------------------------------------------------------------------------
-vtkMRMLScriptedModuleNode* vtkMRMLScriptedModuleNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScriptedModuleNode");
-  if(ret)
-    {
-      return (vtkMRMLScriptedModuleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScriptedModuleNode;
-}
+// VTK includes
+#include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLScriptedModuleNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScriptedModuleNode");
-  if(ret)
-    {
-      return (vtkMRMLScriptedModuleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScriptedModuleNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLScriptedModuleNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()

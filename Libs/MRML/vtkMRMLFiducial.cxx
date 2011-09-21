@@ -22,18 +22,7 @@ Version:   $Revision: 1.3 $
 //#include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLFiducial* vtkMRMLFiducial::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiducial");
-  if(ret)
-    {
-    return (vtkMRMLFiducial*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiducial;
-}
-
+vtkStandardNewMacro(vtkMRMLFiducial);
 
 //----------------------------------------------------------------------------
 vtkMRMLFiducial::vtkMRMLFiducial()

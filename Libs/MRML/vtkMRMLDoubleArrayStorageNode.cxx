@@ -21,31 +21,7 @@ Version:   $Revision: 1.6 $
 #include <vtkStringArray.h>
 
 //------------------------------------------------------------------------------
-vtkMRMLDoubleArrayStorageNode* vtkMRMLDoubleArrayStorageNode::New()
-{
-    // First try to create the object from the vtkObjectFactory
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDoubleArrayStorageNode");
-    if(ret)
-    {
-        return (vtkMRMLDoubleArrayStorageNode*)ret;
-    }
-    // If the factory was unable to create the object, then create it here.
-    return new vtkMRMLDoubleArrayStorageNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDoubleArrayStorageNode::CreateNodeInstance()
-{
-    // First try to create the object from the vtkObjectFactory
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDoubleArrayStorageNode");
-    if(ret)
-    {
-        return (vtkMRMLDoubleArrayStorageNode*)ret;
-    }
-    // If the factory was unable to create the object, then create it here.
-    return new vtkMRMLDoubleArrayStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDoubleArrayStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDoubleArrayStorageNode::vtkMRMLDoubleArrayStorageNode()

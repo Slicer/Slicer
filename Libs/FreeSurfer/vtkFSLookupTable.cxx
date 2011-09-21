@@ -11,21 +11,15 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
+
+// FreeSurfer includes
 #include "vtkFSLookupTable.h"
 
-#include "vtkObjectFactory.h"
+// VTK includes
+#include <vtkObjectFactory.h>
 
-vtkFSLookupTable* vtkFSLookupTable::New()
-{
-     // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSLookupTable");
-  if(ret)
-  {
-      return (vtkFSLookupTable*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSLookupTable;
-}
+//------------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSLookupTable);
 
 //------------------------------------------------------------------------------
 vtkFSLookupTable::vtkFSLookupTable()

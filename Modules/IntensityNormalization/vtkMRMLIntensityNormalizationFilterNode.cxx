@@ -22,18 +22,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLIntensityNormalizationFilterNode* vtkMRMLIntensityNormalizationFilterNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLIntensityNormalizationFilterNode");
-  if(ret)
-    {
-      return (vtkMRMLIntensityNormalizationFilterNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLIntensityNormalizationFilterNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLIntensityNormalizationFilterNode);
 
 //----------------------------------------------------------------------------
 

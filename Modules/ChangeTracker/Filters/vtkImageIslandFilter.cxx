@@ -376,15 +376,8 @@ template<class T> void EMStack<T>::Print() {
 
 
 
-//------------------------------------------------------------------------------
-vtkImageIslandFilter* vtkImageIslandFilter::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageIslandFilter");
-  if(ret) return (vtkImageIslandFilter*)ret;
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageIslandFilter;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkImageIslandFilter);
 
 //----------------------------------------------------------------------------
 vtkImageIslandFilter::vtkImageIslandFilter()

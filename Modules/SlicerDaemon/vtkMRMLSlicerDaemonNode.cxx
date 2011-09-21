@@ -22,18 +22,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLSlicerDaemonNode* vtkMRMLSlicerDaemonNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSlicerDaemonNode");
-  if(ret)
-    {
-      return (vtkMRMLSlicerDaemonNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSlicerDaemonNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLSlicerDaemonNode);
 
 //----------------------------------------------------------------------------
 

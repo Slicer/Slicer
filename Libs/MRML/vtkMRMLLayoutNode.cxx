@@ -9,31 +9,8 @@
 // MRML includes
 #include "vtkMRMLLayoutNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLLayoutNode* vtkMRMLLayoutNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLayoutNode");
-  if(ret)
-    {
-    return (vtkMRMLLayoutNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLayoutNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLLayoutNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLayoutNode");
-  if(ret)
-    {
-    return (vtkMRMLLayoutNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLayoutNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLLayoutNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLLayoutNode::vtkMRMLLayoutNode()

@@ -21,32 +21,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumeRenderingParametersNode* vtkMRMLVolumeRenderingParametersNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingParametersNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingParametersNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingParametersNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeRenderingParametersNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingParametersNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingParametersNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingParametersNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingParametersNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()

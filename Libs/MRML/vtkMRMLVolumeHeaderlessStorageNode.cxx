@@ -36,32 +36,8 @@ Version:   $Revision: 1.3 $
 
 // STD includes
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumeHeaderlessStorageNode* vtkMRMLVolumeHeaderlessStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeHeaderlessStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeHeaderlessStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeHeaderlessStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeHeaderlessStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeHeaderlessStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeHeaderlessStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumeHeaderlessStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()

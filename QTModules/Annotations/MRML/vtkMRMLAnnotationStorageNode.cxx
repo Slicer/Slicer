@@ -7,32 +7,8 @@
 #include "vtkStringArray.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationStorageNode* vtkMRMLAnnotationStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAnnotationStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationStorageNode::vtkMRMLAnnotationStorageNode()

@@ -19,18 +19,8 @@
 
 vtkCxxRevisionMacro(vtkTensorMask, "$Revision: 1.28 $");
 
-//------------------------------------------------------------------------------
-vtkTensorMask* vtkTensorMask::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkTensorMask");
-  if(ret)
-    {
-      return (vtkTensorMask*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkTensorMask;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkTensorMask);
 
 //----------------------------------------------------------------------------
 vtkTensorMask::vtkTensorMask()

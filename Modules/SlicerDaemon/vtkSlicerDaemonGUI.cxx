@@ -38,18 +38,8 @@ Version:   $Revision: 1.2 $
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 
-//------------------------------------------------------------------------------
-vtkSlicerDaemonGUI* vtkSlicerDaemonGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerDaemonGUI");
-  if(ret)
-    {
-      return (vtkSlicerDaemonGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkSlicerDaemonGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkSlicerDaemonGUI);
 
 
 //----------------------------------------------------------------------------

@@ -5,32 +5,8 @@
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationAngleStorageNode* vtkMRMLAnnotationAngleStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationAngleStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationAngleStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationAngleStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAnnotationAngleStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationAngleStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationAngleStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationAngleStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationAngleStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleStorageNode::vtkMRMLAnnotationAngleStorageNode()

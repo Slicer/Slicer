@@ -10,31 +10,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationAngleNode* vtkMRMLAnnotationAngleNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationAngleNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationAngleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationAngleNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationAngleNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationAngleNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationAngleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationAngleNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationAngleNode);
 
 
 //----------------------------------------------------------------------------

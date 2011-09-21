@@ -36,18 +36,8 @@
 #include "vtkCommand.h"
 
 
-//------------------------------------------------------------------------------
-vtkModelTransformGUI* vtkModelTransformGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkModelTransformGUI");
-  if(ret)
-    {
-      return (vtkModelTransformGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkModelTransformGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkModelTransformGUI);
 
 
 //----------------------------------------------------------------------------

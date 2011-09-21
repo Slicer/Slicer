@@ -39,32 +39,8 @@ Version:   $Revision: 1.6 $
 #include <vtksys/Directory.hxx>
 
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumeArchetypeStorageNode* vtkMRMLVolumeArchetypeStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeArchetypeStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeArchetypeStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeArchetypeStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeArchetypeStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeArchetypeStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeArchetypeStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()

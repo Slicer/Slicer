@@ -5,33 +5,8 @@
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLModelMirrorNode, "$Revision: 1.0 $");
 
-
-//------------------------------------------------------------------------------
-vtkMRMLModelMirrorNode* vtkMRMLModelMirrorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelMirrorNode");
-  if(ret)
-    {
-      return (vtkMRMLModelMirrorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelMirrorNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLModelMirrorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLModelMirrorNode");
-  if(ret)
-    {
-      return (vtkMRMLModelMirrorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLModelMirrorNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLModelMirrorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLModelMirrorNode::vtkMRMLModelMirrorNode()
@@ -43,9 +18,6 @@ vtkMRMLModelMirrorNode::vtkMRMLModelMirrorNode()
   this->NewModelName = NULL;
 }
 
-
-
-
 //----------------------------------------------------------------------------
 vtkMRMLModelMirrorNode::~vtkMRMLModelMirrorNode()
 {
@@ -54,7 +26,6 @@ vtkMRMLModelMirrorNode::~vtkMRMLModelMirrorNode()
   this->SetNewModelName ( NULL );
   this->MirrorPlane = 0;
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -66,7 +37,6 @@ void vtkMRMLModelMirrorNode::Copy(vtkMRMLNode *anode)
   //vtkMRMLModelMirrorNode *node = (vtkMRMLModelMirrorNode *) anode;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLModelMirrorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -74,23 +44,14 @@ void vtkMRMLModelMirrorNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLNode::PrintSelf(os,indent);
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLModelMirrorNode::WriteXML(ostream& vtkNotUsed(of), int vtkNotUsed(nIndent))
 {
   //TODO
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLModelMirrorNode::ReadXMLAttributes(const char** vtkNotUsed(atts))
 {
   //TODO
 }
-
-
-
-
-
-
-

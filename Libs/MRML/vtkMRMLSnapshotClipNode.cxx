@@ -21,32 +21,8 @@ Version:   $Revision: 1.14 $
 
 #include "vtkMRMLScene.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLSnapshotClipNode* vtkMRMLSnapshotClipNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSnapshotClipNode");
-  if(ret)
-    {
-    return (vtkMRMLSnapshotClipNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSnapshotClipNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLSnapshotClipNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSnapshotClipNode");
-  if(ret)
-    {
-    return (vtkMRMLSnapshotClipNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSnapshotClipNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLSnapshotClipNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSnapshotClipNode::vtkMRMLSnapshotClipNode()

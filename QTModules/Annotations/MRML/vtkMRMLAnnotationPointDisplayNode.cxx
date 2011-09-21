@@ -1,8 +1,12 @@
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// MRMLAnnotation includes
 #include "vtkMRMLAnnotationPointDisplayNode.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] = 
 {
@@ -23,33 +27,8 @@ const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
   "Diamond3D"
 };
 
-
-
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationPointDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationPointDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationPointDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationPointDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationPointDisplayNode::CreateNodeInstance()
-{
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationPointDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationPointDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationPointDisplayNode;
-}
-
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationPointDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
@@ -57,7 +36,6 @@ vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
   this->GlyphType = vtkMRMLAnnotationPointDisplayNode::Sphere3D;
   this->GlyphScale = 5.0;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::WriteXML(ostream& of, int nIndent)
@@ -70,8 +48,6 @@ void vtkMRMLAnnotationPointDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " glyphScale=\"" << this->GlyphScale << "\"";
   of << " glyphType=\"" << this->GlyphType << "\"";
  }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
@@ -102,7 +78,6 @@ void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
     }
   this->EndModify(disabledModify);
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.

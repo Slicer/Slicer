@@ -20,8 +20,8 @@ vtkCxxRevisionMacro(vtkSlicerRayCastImageDisplayHelper, "$Revision: 1.4 $");
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
 vtkInstantiatorNewMacro(vtkSlicerRayCastImageDisplayHelper);
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 vtkSlicerRayCastImageDisplayHelper* vtkSlicerRayCastImageDisplayHelper::New()
 {
   // First try to create the object from the vtkObjectFactory

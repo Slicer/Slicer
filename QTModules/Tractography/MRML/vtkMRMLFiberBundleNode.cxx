@@ -12,58 +12,39 @@ Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 
+// VTK includes
+#include <vtkCleanPolyData.h>
+#include <vtkCommand.h>
+#include <vtkExtractPolyDataGeometry.h>
+#include <vtkExtractSelectedPolyDataIds.h>
+#include <vtkIdTypeArray.h>
+#include <vtkInformation.h>
+#include <vtkObjectFactory.h>
+#include <vtkPlanes.h>
+#include <vtkSelection.h>
+#include <vtkSelectionNode.h>
+
+// TractographyMRML includes
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+
+// MRML includes
+#include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationROINode.h>
+
+// STD includes
 #include <math.h>
 
-#include "vtkObjectFactory.h"
-#include "vtkCommand.h"
-#include "vtkExtractSelectedPolyDataIds.h"
-#include "vtkExtractPolyDataGeometry.h"
-#include "vtkPlanes.h"
-#include "vtkCleanPolyData.h"
-#include "vtkSelection.h"
-#include "vtkSelectionNode.h"
-#include "vtkInformation.h"
-#include "vtkIdTypeArray.h"
-
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-#include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleLineDisplayNode.h"
-#include "vtkMRMLFiberBundleTubeDisplayNode.h"
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-
+//------------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleNode, AnnotationNodeID);
 
 //------------------------------------------------------------------------------
-vtkMRMLFiberBundleNode* vtkMRMLFiberBundleNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  ret = new vtkMRMLFiberBundleNode;
-  return (vtkMRMLFiberBundleNode*)ret;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiberBundleNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  ret = new vtkMRMLFiberBundleNode;
-  return (vtkMRMLFiberBundleNode*)ret;
-}
+vtkMRMLNodeNewMacro(vtkMRMLFiberBundleNode);
 
 //-----------------------------------------------------------------------------
 vtkMRMLFiberBundleNode::vtkMRMLFiberBundleNode()

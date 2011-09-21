@@ -23,32 +23,8 @@ Version:   $Revision: 1.14 $
 
 vtkCxxSetObjectMacro(vtkMRMLLinearTransformNode, MatrixTransformToParent, vtkMatrix4x4);
 
-//------------------------------------------------------------------------------
-vtkMRMLLinearTransformNode* vtkMRMLLinearTransformNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLinearTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLLinearTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLinearTransformNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLLinearTransformNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLinearTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLLinearTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLinearTransformNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()

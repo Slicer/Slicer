@@ -67,6 +67,7 @@
 #include <unistd.h>
 #endif
 
+//----------------------------------------------------------------------------
 struct DigitsToCharacters
 {
   char operator() (char in)
@@ -82,20 +83,8 @@ struct DigitsToCharacters
 
 typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
-
 //----------------------------------------------------------------------------
-vtkSlicerCLIModuleLogic* vtkSlicerCLIModuleLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerCLIModuleLogic");
-  if(ret)
-    {
-      return vtkSlicerCLIModuleLogic::SafeDownCast(ret);
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkSlicerCLIModuleLogic;
-}
-
+vtkStandardNewMacro(vtkSlicerCLIModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
@@ -155,7 +144,6 @@ vtkSlicerCLIModuleLogic
 
   return fname;
 }
-
 
 //----------------------------------------------------------------------------
 std::string

@@ -3,31 +3,8 @@
 #include "vtkMRMLScene.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationStickyNode* vtkMRMLAnnotationStickyNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationStickyNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationStickyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationStickyNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationStickyNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationStickyNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationStickyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationStickyNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationStickyNode);
 
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationStickyNode::SetSticky(const char* text,int selectedFlag)

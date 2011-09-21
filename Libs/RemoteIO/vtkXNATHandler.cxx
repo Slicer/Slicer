@@ -7,42 +7,25 @@
 
 #include <string>
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkXNATHandler );
 vtkCxxRevisionMacro ( vtkXNATHandler, "$Revision: 1.0 $" );
-
-/*/------------------------------------------------------------------------------
-vtkXNATHandler* vtkXNATHandler::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXNATHandler");
-  if(ret)
-    {
-    return static_cast<vtkXNATHandler*>(ret);
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkXNATHandler;
-}
-*/
 
 //----------------------------------------------------------------------------
 vtkXNATHandler::vtkXNATHandler()
 {
 }
 
-
 //----------------------------------------------------------------------------
 vtkXNATHandler::~vtkXNATHandler()
 {
 }
-
 
 //----------------------------------------------------------------------------
 void vtkXNATHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf ( os, indent );
 }
-
-
 
 //----------------------------------------------------------------------------
 int vtkXNATHandler::CanHandleURI ( const char *uri )
@@ -79,9 +62,6 @@ int vtkXNATHandler::CanHandleURI ( const char *uri )
     }
   return ( 0 );
 }
-
-
-
 
 //----------------------------------------------------------------------------
 void vtkXNATHandler::StageFileRead(const char * source,
@@ -168,13 +148,11 @@ void vtkXNATHandler::StageFileRead(const char * source,
   // TODO: we should use the retval to set a flag for the GUI
 }
 
-
 //----------------------------------------------------------------------------
 void vtkXNATHandler::StageFileWrite(const char * zipfile,
                                     const char * username, const char *password,
                                     const char *hostname, const char *sessionID )
 {
-
   if (zipfile == NULL)
     {
     vtkErrorMacro("StageFileWrite: source file name is null");
@@ -235,7 +213,4 @@ void vtkXNATHandler::StageFileWrite(const char * zipfile,
       this->GetPermissionPrompter()->SetRemember ( 0 );
       }
     }
-
 }
-
-

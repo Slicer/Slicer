@@ -23,17 +23,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
-vtkSlicerDaemonLogic* vtkSlicerDaemonLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerDaemonLogic");
-  if(ret)
-    {
-      return (vtkSlicerDaemonLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkSlicerDaemonLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkSlicerDaemonLogic);
 
 
 //----------------------------------------------------------------------------

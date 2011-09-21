@@ -25,31 +25,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 #include "vtkMimxBoundingBoxSource.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLFiniteElementMeshDisplayNode* vtkMRMLFiniteElementMeshDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementMeshDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiniteElementMeshDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiniteElementMeshDisplayNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLFiniteElementMeshDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiniteElementMeshDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiniteElementMeshDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiniteElementMeshDisplayNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLFiniteElementMeshDisplayNode);
 
 
 void vtkMRMLFiniteElementMeshDisplayNode::UpdatePolyDataPipeline()

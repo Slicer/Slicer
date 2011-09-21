@@ -571,8 +571,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 }
 
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryVolume {node} {
 void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
 {
@@ -779,8 +778,7 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   this->ColorLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
 }
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryModel {node} {
 void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
 {
@@ -1031,8 +1029,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
     }
 }
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryOverlay {node} {
 void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
 {

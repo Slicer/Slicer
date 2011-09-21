@@ -11,10 +11,15 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
+
 #include "vtkPrincipalAxesAlign.h"
+
+// VTK includes
+#include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkMath.h>
+
+//----------------------------------------------------------------------------
 void vtkPrincipalAxesAlign::Execute()
 {
   vtkPolyData *         input = (vtkPolyData *)this->Inputs[0];
@@ -105,19 +110,10 @@ void vtkPrincipalAxesAlign::Execute()
   ZAxis[2] = eigenvectors[2][2];
 }
 
-vtkPrincipalAxesAlign * vtkPrincipalAxesAlign::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkPrincipalAxesAlign");
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkPrincipalAxesAlign);
 
-  if( ret )
-    {
-    return (vtkPrincipalAxesAlign *)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkPrincipalAxesAlign;
-}
-
+//----------------------------------------------------------------------------
 vtkPrincipalAxesAlign::vtkPrincipalAxesAlign()
 {
   Center = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
@@ -164,6 +160,7 @@ vtkPrincipalAxesAlign::vtkPrincipalAxesAlign()
   eigenvalues[0] = eigenvalues[1] = eigenvalues[2] = 0.0;
 }
 
+//----------------------------------------------------------------------------
 vtkPrincipalAxesAlign::~vtkPrincipalAxesAlign()
 {
   free(Center);
@@ -182,6 +179,7 @@ vtkPrincipalAxesAlign::~vtkPrincipalAxesAlign()
   free(eigenvalues);
 }
 
+//----------------------------------------------------------------------------
 void vtkPrincipalAxesAlign::PrintSelf(ostream& os, vtkIndent indent)
 {
   int i;

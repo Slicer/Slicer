@@ -28,31 +28,8 @@ Version:   $Revision: 1.14 $
 
 // STD includes
 
-//------------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLScalarVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScalarVolumeNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLScalarVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLScalarVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()

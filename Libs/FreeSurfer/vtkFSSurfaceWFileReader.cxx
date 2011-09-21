@@ -17,17 +17,8 @@
 #include "vtkFSIO.h"
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceWFileReader* vtkFSSurfaceWFileReader::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceWFileReader");
-  if(ret)
-    {
-    return (vtkFSSurfaceWFileReader*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkFSSurfaceWFileReader;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkFSSurfaceWFileReader);
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader::vtkFSSurfaceWFileReader()

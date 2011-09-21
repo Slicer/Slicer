@@ -12,53 +12,32 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-
-#include "vtkObjectFactory.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLTransformNode.h"
+// MRML includes
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLVolumeNode.h"
 
-#include "vtkSmartPointer.h"
-#include "vtkMatrix4x4.h"
-#include "vtkMath.h"
+// VTK includes
+#include <vtkMath.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
-#include "vnl/vnl_double_3.h"
+// VNL includes
+#include <vnl/vnl_double_3.h>
 
+//------------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLSliceNode, SliceToRAS, vtkMatrix4x4);
 
 //------------------------------------------------------------------------------
-vtkMRMLSliceNode* vtkMRMLSliceNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceNode");
-  if(ret)
-    {
-      return (vtkMRMLSliceNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSliceNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLSliceNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSliceNode");
-  if(ret)
-    {
-      return (vtkMRMLSliceNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSliceNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLSliceNode);
 
 //----------------------------------------------------------------------------
 // Constructor
 vtkMRMLSliceNode::vtkMRMLSliceNode()
 {
-    // set by user
+  // set by user
   this->SliceToRAS = vtkMatrix4x4::New();
   this->SliceToRAS->Identity();
 
@@ -67,7 +46,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->OrientationString = NULL;
   this->OrientationReference = NULL;
 
-    // calculated by UpdateMatrices()
+  // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
   this->XYToRAS = vtkMatrix4x4::New();
 
@@ -169,7 +148,6 @@ void vtkMRMLSliceNode::SetOrientationToReformat()
     this->SetOrientationString( "Reformat" );
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToAxial()
 {
@@ -211,7 +189,6 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
     this->SetOrientationReference( "Sagittal" );
     this->UpdateMatrices();
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToCoronal()

@@ -32,32 +32,8 @@ vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveViewID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLayoutID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveVolumeID);
 
-//------------------------------------------------------------------------------
-vtkMRMLSelectionNode* vtkMRMLSelectionNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSelectionNode");
-  if(ret)
-    {
-    return (vtkMRMLSelectionNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSelectionNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLSelectionNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSelectionNode");
-  if(ret)
-    {
-    return (vtkMRMLSelectionNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSelectionNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()

@@ -37,31 +37,8 @@ Version:   $Revision: 1.2 $
 
 #include "vtkProstateNavTargetDescriptor.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLTransRectalProstateRobotNode* vtkMRMLTransRectalProstateRobotNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransRectalProstateRobotNode");
-  if(ret)
-    {
-      return (vtkMRMLTransRectalProstateRobotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransRectalProstateRobotNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLTransRectalProstateRobotNode* vtkMRMLTransRectalProstateRobotNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTransRectalProstateRobotNode");
-  if(ret)
-    {
-      return (vtkMRMLTransRectalProstateRobotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTransRectalProstateRobotNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTransRectalProstateRobotNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTransRectalProstateRobotNode::vtkMRMLTransRectalProstateRobotNode()
@@ -123,21 +100,17 @@ void vtkMRMLTransRectalProstateRobotNode::WriteXML(ostream& of, int nIndent)
 
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLTransRectalProstateRobotNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
-
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTransRectalProstateRobotNode::Copy(vtkMRMLNode *anode)
 {
-
   Superclass::Copy(anode);
   vtkMRMLTransRectalProstateRobotNode *node = (vtkMRMLTransRectalProstateRobotNode *) anode;
 
@@ -147,6 +120,7 @@ void vtkMRMLTransRectalProstateRobotNode::Copy(vtkMRMLNode *anode)
   
 }
 
+//----------------------------------------------------------------------------
 int vtkMRMLTransRectalProstateRobotNode::Init(vtkSlicerApplication* app)
 { 
   this->Superclass::Init(app);

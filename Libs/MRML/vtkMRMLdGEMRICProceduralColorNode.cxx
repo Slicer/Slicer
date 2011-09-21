@@ -12,39 +12,15 @@ Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 
-#include "vtkColorTransferFunction.h"
+// VTK includes
+#include <vtkColorTransferFunction.h>
+#include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
-vtkMRMLdGEMRICProceduralColorNode* vtkMRMLdGEMRICProceduralColorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLdGEMRICProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLdGEMRICProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLdGEMRICProceduralColorNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLdGEMRICProceduralColorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLdGEMRICProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLdGEMRICProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLdGEMRICProceduralColorNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLdGEMRICProceduralColorNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLdGEMRICProceduralColorNode::vtkMRMLdGEMRICProceduralColorNode()
@@ -73,19 +49,14 @@ vtkMRMLdGEMRICProceduralColorNode::~vtkMRMLdGEMRICProceduralColorNode()
 void vtkMRMLdGEMRICProceduralColorNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
   Superclass::WriteXML(of, nIndent);
-
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLdGEMRICProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
-
   Superclass::ReadXMLAttributes(atts);
-  
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -109,7 +80,6 @@ void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-
 void vtkMRMLdGEMRICProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
@@ -135,7 +105,6 @@ void vtkMRMLdGEMRICProceduralColorNode::SetTypeTo3T()
 {
   this->SetType(this->dGEMRIC3T);
 }
-
 
 //---------------------------------------------------------------------------
 const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsIDString()
@@ -168,7 +137,6 @@ const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
 //---------------------------------------------------------------------------
 void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
 {
-
   this->Type = type;
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
@@ -257,4 +225,3 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
   // invoke a type  modified event
   this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
 }
-

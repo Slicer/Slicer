@@ -20,32 +20,8 @@ Version:   $Revision: 1.14 $
 #include "vtkImageExtractComponents.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLVectorVolumeNode* vtkMRMLVectorVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVectorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLVectorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVectorVolumeNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVectorVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVectorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLVectorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVectorVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeNode::vtkMRMLVectorVolumeNode()

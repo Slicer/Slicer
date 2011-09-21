@@ -26,32 +26,7 @@ Version:   $Revision: 1.0 $
 vtkCxxSetObjectMacro(vtkMRMLColorTableNode, LookupTable, vtkLookupTable);
 
 //------------------------------------------------------------------------------
-vtkMRMLColorTableNode* vtkMRMLColorTableNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorTableNode");
-  if(ret)
-    {
-    return (vtkMRMLColorTableNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorTableNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLColorTableNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLColorTableNode");
-  if(ret)
-    {
-    return (vtkMRMLColorTableNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLColorTableNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLColorTableNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLColorTableNode::vtkMRMLColorTableNode()

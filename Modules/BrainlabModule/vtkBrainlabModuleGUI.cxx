@@ -27,18 +27,7 @@ vtkCxxSetObjectMacro(vtkBrainlabModuleGUI,Node,vtkMRMLNode);
 
 
 //----------------------------------------------------------------------------
-vtkBrainlabModuleGUI* vtkBrainlabModuleGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkBrainlabModuleGUI");
-  if (ret)
-    {
-    return (vtkBrainlabModuleGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkBrainlabModuleGUI;
-}
+vtkStandardNewMacro(vtkBrainlabModuleGUI);
 
 //----------------------------------------------------------------------------
 vtkBrainlabModuleGUI::vtkBrainlabModuleGUI()

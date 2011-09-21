@@ -28,32 +28,8 @@ Version:   $Revision: 1.2 $
 // STD includes
 #include <sstream>
 
-//------------------------------------------------------------------------------
-vtkMRMLVectorVolumeDisplayNode* vtkMRMLVectorVolumeDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVectorVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLVectorVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVectorVolumeDisplayNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVectorVolumeDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVectorVolumeDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLVectorVolumeDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVectorVolumeDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()

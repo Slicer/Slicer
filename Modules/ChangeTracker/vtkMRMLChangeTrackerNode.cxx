@@ -23,18 +23,8 @@ Version:   $Revision: 1.2 $
 
 #include <vtksys/ios/sstream>
 
-//------------------------------------------------------------------------------
-vtkMRMLChangeTrackerNode* vtkMRMLChangeTrackerNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLChangeTrackerNode");
-  if(ret)
-    {
-      return (vtkMRMLChangeTrackerNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLChangeTrackerNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLChangeTrackerNode);
 
 //----------------------------------------------------------------------------
 

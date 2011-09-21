@@ -5,31 +5,8 @@
 
 #include <vtkObjectFactory.h>
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationHierarchyNode* vtkMRMLAnnotationHierarchyNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationHierarchyNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLAnnotationHierarchyNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationHierarchyNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationHierarchyNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationHierarchyNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationHierarchyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationHierarchyNode::vtkMRMLAnnotationHierarchyNode()

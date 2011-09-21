@@ -19,18 +19,8 @@
 //#include <math.h>
 //#include <stdlib.h>
 
-//------------------------------------------------------------------------------
-vtkImageBimodalAnalysis* vtkImageBimodalAnalysis::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageBimodalAnalysis");
-  if(ret)
-  {
-    return (vtkImageBimodalAnalysis*)ret;
-  }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkImageBimodalAnalysis;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkImageBimodalAnalysis);
 
 //----------------------------------------------------------------------------
 // Constructor sets default values

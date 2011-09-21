@@ -9,31 +9,8 @@
 #include <vtkSmartPointer.h>
 
 
-//------------------------------------------------------------------------------
-vtkMRMLROIListNode* vtkMRMLROIListNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLROIListNode");
-  if(ret)
-    {
-    return (vtkMRMLROIListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLROIListNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLROIListNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLROIListNode");
-  if(ret)
-    {
-    return (vtkMRMLROIListNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLROIListNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLROIListNode);
 
 
 //----------------------------------------------------------------------------

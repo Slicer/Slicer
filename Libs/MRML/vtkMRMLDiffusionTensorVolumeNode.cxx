@@ -20,31 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLNRRDStorageNode.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeNode* vtkMRMLDiffusionTensorVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionTensorVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionTensorVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionTensorVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionTensorVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()

@@ -23,18 +23,7 @@
 
 
 //----------------------------------------------------------------------------
-vtkBrainlabModuleLogic* vtkBrainlabModuleLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkBrainlabModuleLogic");
-  if(ret)
-    {
-    return (vtkBrainlabModuleLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkBrainlabModuleLogic;
-}
+vtkStandardNewMacro(vtkBrainlabModuleLogic);
 
 
 //----------------------------------------------------------------------------

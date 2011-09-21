@@ -31,32 +31,7 @@ vtkCxxSetObjectMacro(vtkMRMLCameraNode, AppliedTransform, vtkMatrix4x4);
 vtkCxxSetReferenceStringMacro(vtkMRMLCameraNode, InternalActiveTag);
 
 //------------------------------------------------------------------------------
-vtkMRMLCameraNode* vtkMRMLCameraNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCameraNode");
-  if(ret)
-    {
-    return (vtkMRMLCameraNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCameraNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLCameraNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCameraNode");
-  if(ret)
-    {
-    return (vtkMRMLCameraNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLCameraNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLCameraNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()

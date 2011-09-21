@@ -24,31 +24,7 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionWeightedVolumeNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionWeightedVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionWeightedVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionWeightedVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLDiffusionWeightedVolumeNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLDiffusionWeightedVolumeNode");
-  if(ret)
-    {
-    return (vtkMRMLDiffusionWeightedVolumeNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLDiffusionWeightedVolumeNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLDiffusionWeightedVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()

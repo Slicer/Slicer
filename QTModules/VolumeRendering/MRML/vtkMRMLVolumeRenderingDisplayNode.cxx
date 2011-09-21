@@ -17,32 +17,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 
 
-//------------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkMRMLVolumeRenderingDisplayNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingDisplayNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLVolumeRenderingDisplayNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLVolumeRenderingDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingDisplayNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()

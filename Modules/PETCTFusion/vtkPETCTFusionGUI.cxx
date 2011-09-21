@@ -65,20 +65,8 @@
 vtkCxxRevisionMacro ( vtkPETCTFusionGUI, "$Revision: 1.0 $");
 
 
-//------------------------------------------------------------------------------
-vtkPETCTFusionGUI* vtkPETCTFusionGUI::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
-    vtkObjectFactory::CreateInstance("vtkPETCTFusionGUI");
-
-  if(ret)
-    {
-      return (vtkPETCTFusionGUI*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkPETCTFusionGUI;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkPETCTFusionGUI);
 
 
 

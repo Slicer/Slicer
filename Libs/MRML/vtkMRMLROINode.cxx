@@ -11,31 +11,8 @@
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLROINode* vtkMRMLROINode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLROINode");
-  if(ret)
-    {
-    return (vtkMRMLROINode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLROINode;
-}
- 
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLROINode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLROINode");
-  if(ret)
-    {
-    return (vtkMRMLROINode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLROINode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLROINode);
 
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)

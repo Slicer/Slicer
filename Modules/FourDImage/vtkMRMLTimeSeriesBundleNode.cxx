@@ -23,32 +23,8 @@ Version:   $Revision: $
 #include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLScene.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLTimeSeriesBundleNode* vtkMRMLTimeSeriesBundleNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesBundleNode");
-  if(ret)
-    {
-    return (vtkMRMLTimeSeriesBundleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTimeSeriesBundleNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesBundleNode");
-  if(ret)
-    {
-    return (vtkMRMLTimeSeriesBundleNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLTimeSeriesBundleNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLTimeSeriesBundleNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTimeSeriesBundleNode::vtkMRMLTimeSeriesBundleNode()

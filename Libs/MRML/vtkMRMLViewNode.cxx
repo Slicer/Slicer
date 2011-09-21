@@ -18,31 +18,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLScene.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLViewNode* vtkMRMLViewNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLViewNode");
-  if(ret)
-    {
-    return (vtkMRMLViewNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLViewNode;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLViewNode");
-  if(ret)
-    {
-    return (vtkMRMLViewNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLViewNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLViewNode);
 
 
 //----------------------------------------------------------------------------

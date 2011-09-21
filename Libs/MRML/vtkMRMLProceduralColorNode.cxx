@@ -21,32 +21,8 @@ Version:   $Revision: 1.0 $
 // STD includes
 #include <sstream>
 
-//------------------------------------------------------------------------------
-vtkMRMLProceduralColorNode* vtkMRMLProceduralColorNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLProceduralColorNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLProceduralColorNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLProceduralColorNode");
-  if(ret)
-    {
-    return (vtkMRMLProceduralColorNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLProceduralColorNode;
-}
+//----------------------------------------------------------------------------
+vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 
 
 //----------------------------------------------------------------------------

@@ -22,30 +22,8 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSmartPointer.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLRobotNode* vtkMRMLRobotNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLRobotNode"); if(ret)
-    {
-      return (vtkMRMLRobotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLRobotNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLRobotNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLRobotNode");
-  if(ret)
-    {
-      return (vtkMRMLRobotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLRobotNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLRobotNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLRobotNode::vtkMRMLRobotNode()

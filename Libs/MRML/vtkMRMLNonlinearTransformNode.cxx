@@ -24,32 +24,8 @@ Version:   $Revision: 1.14 $
 vtkCxxSetObjectMacro(vtkMRMLNonlinearTransformNode,WarpTransformToParent,vtkWarpTransform);
 
 
-//------------------------------------------------------------------------------
-vtkMRMLNonlinearTransformNode* vtkMRMLNonlinearTransformNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLNonlinearTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLNonlinearTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLNonlinearTransformNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLNonlinearTransformNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLNonlinearTransformNode");
-  if(ret)
-    {
-    return (vtkMRMLNonlinearTransformNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLNonlinearTransformNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLNonlinearTransformNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLNonlinearTransformNode::vtkMRMLNonlinearTransformNode()

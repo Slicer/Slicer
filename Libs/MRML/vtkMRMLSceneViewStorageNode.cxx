@@ -34,32 +34,8 @@
 #include "vtkImageData.h"
 #include "vtkStringArray.h"
 
-//------------------------------------------------------------------------------
-vtkMRMLSceneViewStorageNode* vtkMRMLSceneViewStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSceneViewStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLSceneViewStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSceneViewStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLSceneViewStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLSceneViewStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLSceneViewStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLSceneViewStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLSceneViewStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewStorageNode::vtkMRMLSceneViewStorageNode()

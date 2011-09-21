@@ -1,28 +1,21 @@
-#include "vtkMRMLLogic.h"
-#include "vtkMRMLScene.h"
 
+// MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 
-// STD includes
-#include "vtkObjectFactory.h"
+// MRMLLogic includes
+#include "vtkMRMLLogic.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
 #include <set>
 
-
-//------------------------------------------------------------------------------
-vtkMRMLLogic* vtkMRMLLogic::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLogic");
-  if(ret)
-    {
-    return (vtkMRMLLogic*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLLogic;
-}
+//----------------------------------------------------------------------------
+vtkStandardNewMacro(vtkMRMLLogic);
 
 //------------------------------------------------------------------------------
 vtkMRMLLogic::vtkMRMLLogic()
@@ -30,6 +23,7 @@ vtkMRMLLogic::vtkMRMLLogic()
   this->Scene = NULL;
 }
 
+//------------------------------------------------------------------------------
 vtkMRMLLogic::~vtkMRMLLogic()
 {
 }

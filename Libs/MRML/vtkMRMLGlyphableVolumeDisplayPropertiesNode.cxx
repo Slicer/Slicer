@@ -18,36 +18,11 @@ Version:   $Revision: 1.0 $
 
 #include "vtkMRMLGlyphableVolumeDisplayPropertiesNode.h"
 
-
+//------------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLGlyphableVolumeDisplayPropertiesNode, GlyphSource, vtkPolyData);
 
 //------------------------------------------------------------------------------
-vtkMRMLGlyphableVolumeDisplayPropertiesNode* vtkMRMLGlyphableVolumeDisplayPropertiesNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayPropertiesNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeDisplayPropertiesNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeDisplayPropertiesNode;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLGlyphableVolumeDisplayPropertiesNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayPropertiesNode");
-  if(ret)
-    {
-    return (vtkMRMLGlyphableVolumeDisplayPropertiesNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLGlyphableVolumeDisplayPropertiesNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeDisplayPropertiesNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeDisplayPropertiesNode::vtkMRMLGlyphableVolumeDisplayPropertiesNode()

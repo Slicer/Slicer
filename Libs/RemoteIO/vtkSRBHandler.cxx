@@ -2,43 +2,25 @@
 
 #include <string>
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSRBHandler );
 vtkCxxRevisionMacro ( vtkSRBHandler, "$Revision: 1.0 $" );
-
-/*------------------------------------------------------------------------------
-vtkSRBHandler* vtkSRBHandler::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSRBHandler");
-  if(ret)
-    {
-    return static_cast<vtkSRBHandler*>(ret);
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkSRBHandler;
-}
-*/
-
 
 //----------------------------------------------------------------------------
 vtkSRBHandler::vtkSRBHandler()
 {
 }
 
-
 //----------------------------------------------------------------------------
 vtkSRBHandler::~vtkSRBHandler()
 {
 }
-
 
 //----------------------------------------------------------------------------
 void vtkSRBHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf ( os, indent );
 }
-
-
 
 //----------------------------------------------------------------------------
 int vtkSRBHandler::CanHandleURI ( const char *uri )
@@ -76,8 +58,6 @@ int vtkSRBHandler::CanHandleURI ( const char *uri )
   return ( 0 );
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkSRBHandler::InitTransfer( )
 {
@@ -104,7 +84,6 @@ int vtkSRBHandler::CloseTransfer( )
     }
   return EXIT_SUCCESS;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
@@ -151,7 +130,6 @@ void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
 
   // TODO: we should use the retval to set a flag for the GUI
 }
-
 
 //----------------------------------------------------------------------------
 void vtkSRBHandler::StageFileWrite(const char * source, const char * destination)

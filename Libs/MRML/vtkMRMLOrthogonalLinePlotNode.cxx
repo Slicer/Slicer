@@ -12,42 +12,20 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-
-#include <sstream>
-
+// MRML includes
 #include "vtkMRMLOrthogonalLinePlotNode.h"
 
-#include "vtkDataObject.h"
-#include "vtkFieldData.h"
-#include "vtkDoubleArray.h"
+// VTK includes
+#include <vtkDataObject.h>
+#include <vtkDoubleArray.h>
+#include <vtkFieldData.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLOrthogonalLinePlotNode* vtkMRMLOrthogonalLinePlotNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLOrthogonalLinePlotNode"); if(ret)
-    {
-      return (vtkMRMLOrthogonalLinePlotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLOrthogonalLinePlotNode;
-}
-
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLOrthogonalLinePlotNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLOrthogonalLinePlotNode");
-  if(ret)
-    {
-      return (vtkMRMLOrthogonalLinePlotNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLOrthogonalLinePlotNode;
-}
-
+vtkMRMLNodeNewMacro(vtkMRMLOrthogonalLinePlotNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLOrthogonalLinePlotNode::vtkMRMLOrthogonalLinePlotNode()
@@ -56,17 +34,14 @@ vtkMRMLOrthogonalLinePlotNode::vtkMRMLOrthogonalLinePlotNode()
   this->Point[1] = 0.0;
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLOrthogonalLinePlotNode::~vtkMRMLOrthogonalLinePlotNode()
 {
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLOrthogonalLinePlotNode::WriteXML(ostream& of, int nIndent)
 {
-
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
 
@@ -100,7 +75,6 @@ void vtkMRMLOrthogonalLinePlotNode::WriteXML(ostream& of, int nIndent)
   //of << " valueYErr=\"" << ssYerr.str() << "\"";
 
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLOrthogonalLinePlotNode::ReadXMLAttributes(const char** atts)
@@ -208,7 +182,6 @@ void vtkMRMLOrthogonalLinePlotNode::ReadXMLAttributes(const char** atts)
 
 }
 
-
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
@@ -221,7 +194,6 @@ void vtkMRMLOrthogonalLinePlotNode::Copy(vtkMRMLNode *anode)
   //int type = node->GetType();
   
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLOrthogonalLinePlotNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
@@ -249,13 +221,11 @@ void vtkMRMLOrthogonalLinePlotNode::ProcessMRMLEvents( vtkObject *caller, unsign
   return;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLOrthogonalLinePlotNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
 }
-
 
 //----------------------------------------------------------------------------
 int vtkMRMLOrthogonalLinePlotNode::GetXRange(double* xrange)
@@ -271,7 +241,6 @@ int vtkMRMLOrthogonalLinePlotNode::GetXRange(double* xrange)
     }
 }
 
-
 //----------------------------------------------------------------------------
 int vtkMRMLOrthogonalLinePlotNode::GetYRange(double* yrange)
 {
@@ -285,7 +254,6 @@ int vtkMRMLOrthogonalLinePlotNode::GetYRange(double* yrange)
     return 1;
     }
 }
-
 
 //----------------------------------------------------------------------------
 vtkDataObject* vtkMRMLOrthogonalLinePlotNode::GetDrawObject(double* xrange, double* yrange)
@@ -345,7 +313,4 @@ vtkDataObject* vtkMRMLOrthogonalLinePlotNode::GetDrawObject(double* xrange, doub
       return NULL;
       }
     }
-
 }
-
-

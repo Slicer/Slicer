@@ -8,32 +8,8 @@
 
 // KP: Deal with TEXT - annotation label 
 
-//------------------------------------------------------------------------------
-vtkMRMLAnnotationControlPointsStorageNode* vtkMRMLAnnotationControlPointsStorageNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationControlPointsStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationControlPointsStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationControlPointsStorageNode;
-}
-
 //----------------------------------------------------------------------------
-
-vtkMRMLNode* vtkMRMLAnnotationControlPointsStorageNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationControlPointsStorageNode");
-  if(ret)
-    {
-    return (vtkMRMLAnnotationControlPointsStorageNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLAnnotationControlPointsStorageNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLAnnotationControlPointsStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationControlPointsStorageNode::vtkMRMLAnnotationControlPointsStorageNode()

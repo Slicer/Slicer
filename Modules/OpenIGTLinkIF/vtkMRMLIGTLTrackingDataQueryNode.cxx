@@ -28,30 +28,8 @@ Version:   $Revision: 1.2 $
 
 #include "igtl_header.h"  // to define maximum length of message name
 
-//------------------------------------------------------------------------------
-vtkMRMLIGTLTrackingDataQueryNode* vtkMRMLIGTLTrackingDataQueryNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLIGTLTrackingDataQueryNode"); if(ret)
-    {
-      return (vtkMRMLIGTLTrackingDataQueryNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLIGTLTrackingDataQueryNode;
-}
-
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLIGTLTrackingDataQueryNode::CreateNodeInstance()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLIGTLTrackingDataQueryNode");
-  if(ret)
-    {
-      return (vtkMRMLIGTLTrackingDataQueryNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLIGTLTrackingDataQueryNode;
-}
+vtkMRMLNodeNewMacro(vtkMRMLIGTLTrackingDataQueryNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLIGTLTrackingDataQueryNode::vtkMRMLIGTLTrackingDataQueryNode()
