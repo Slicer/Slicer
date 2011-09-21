@@ -721,32 +721,6 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
 endif()
 
 #-----------------------------------------------------------------------------
-# Launcher for slicer
-#-----------------------------------------------------------------------------
-add_subdirectory(Utilities/Launcher)
-
-# on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
-if(APPLE)
-  set(QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSCRIPT QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
-
-  foreach(qtlib ${QTLIBLIST})
-    if(QT_${qtlib}_LIBRARY_RELEASE AND APPLE)
-        get_filename_component(QT_FRAMEWORK_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-        set(Slicer_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer_QT_FRAMEWORK_DIRS}")
-    endif()
-  endforeach()
-endif()
-
-configure_file(
-  ${Slicer_SOURCE_DIR}/launch.tcl.in
-  "${Slicer_BINARY_DIR}/${Slicer_LIB_DIR}/launch.tcl"
-  )
-install(
-  FILES "${Slicer_BINARY_DIR}/${Slicer_LIB_DIR}/launch.tcl"
-  DESTINATION ${Slicer_INSTALL_LIB_DIR}
-  )
-
-#-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
 
