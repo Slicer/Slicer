@@ -2,7 +2,7 @@
 
   Program: 3D Slicer
 
-  Copyright (c) 2010 Kitware Inc.
+  Copyright (c) Kitware Inc.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
