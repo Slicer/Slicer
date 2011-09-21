@@ -37,6 +37,9 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkImageData.h>
 
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
 // STD includes
 #include <cassert>
 #include <sstream>
@@ -44,6 +47,14 @@
 // LibArchive includes
 #include <archive.h>
 #include <archive_entry.h>
+
+// For LoadDefaultParameterSets
+#ifdef WIN32
+# include <windows.h>
+#else
+# include <dirent.h>
+# include <errno.h>
+#endif
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLApplicationLogic, "$Revision$");
@@ -939,4 +950,126 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
   sdbScene->Commit();
 
   return sdbScene->GetURL();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
+                                                      const std::vector<std::string>& directories)
+{
+
+  // build up the vector
+  vtksys_stl::vector<vtksys_stl::string> filesVector;
+  vtksys_stl::vector<vtksys_stl::string> filesToLoad;
+  //filesVector.push_back(""); // for relative path
+
+// Didn't port this next block of code yet.  Would need to add a
+//   UserParameterSetsPath to the object and some window
+//
+//   // add the list of dirs set from the application
+//   if (this->UserColorFilePaths != NULL)
+//     {
+//     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
+//     // parse out the list, breaking at delimiter strings
+// #ifdef WIN32
+//     const char *delim = ";";
+// #else
+//     const char *delim = ":";
+// #endif
+//     char *ptr = strtok(this->UserColorFilePaths, delim);
+//     while (ptr != NULL)
+//       {
+//       std::string dir = std::string(ptr);
+//       vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
+//       DirectoriesToCheck.push_back(dir);
+//       ptr = strtok(NULL, delim);
+//       }
+//     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
+
+
+  // Get the list of parameter sets in these dir
+  for (unsigned int d = 0; d < directories.size(); d++)
+    {
+    vtksys_stl::string dirString = directories[d];
+    //vtkDebugMacro("\nLoadDefaultParameterSets: checking for parameter sets in dir " << d << " = " << dirString.c_str());
+
+    filesVector.clear();
+    filesVector.push_back(dirString);
+    filesVector.push_back(vtksys_stl::string("/"));
+
+#ifdef WIN32
+    WIN32_FIND_DATA findData;
+    HANDLE fileHandle;
+    int flag = 1;
+    std::string search ("*.*");
+    dirString += "/";
+    search = dirString + search;
+
+    fileHandle = FindFirstFile(search.c_str(), &findData);
+    if (fileHandle != INVALID_HANDLE_VALUE)
+      {
+      while (flag)
+        {
+        // add this file to the vector holding the base dir name so check the
+        // file type using the full path
+        filesVector.push_back(vtksys_stl::string(findData.cFileName));
+#else
+    DIR *dp;
+    struct dirent *dirp;
+    if ((dp  = opendir(dirString.c_str())) == NULL)
+      {
+      vtkGenericWarningMacro("Error(" << errno << ") opening " << dirString.c_str());
+      }
+    else
+      {
+      while ((dirp = readdir(dp)) != NULL)
+        {
+        // add this file to the vector holding the base dir name
+        filesVector.push_back(vtksys_stl::string(dirp->d_name));
+#endif
+
+        vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
+        int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
+        if (fileType == vtksys::SystemTools::FileTypeText)
+          {
+          //vtkDebugMacro("\nAdding " << fileToCheck.c_str() << " to list of potential parameter sets. Type = " << fileType);
+          filesToLoad.push_back(fileToCheck);
+          }
+        else
+          {
+          //vtkDebugMacro("\nSkipping potential parameter set " << fileToCheck.c_str() << ", file type = " << fileType);
+          }
+        // take this file off so that can build the next file name
+        filesVector.pop_back();
+
+#ifdef WIN32
+        flag = FindNextFile(fileHandle, &findData);
+        } // end of while flag
+      FindClose(fileHandle);
+      } // end of having a valid fileHandle
+#else
+        } // end of while loop over reading the directory entries
+      closedir(dp);
+      } // end of able to open dir
+#endif
+
+    } // end of looping over dirs
+
+  // Save the URL and root directory of the scene so it can
+  // be restored after loading presets
+  std::string url = scene->GetURL();
+  std::string rootdir = scene->GetRootDirectory();
+
+  // Finally, load each of the parameter sets
+  vtksys_stl::vector<vtksys_stl::string>::iterator fit;
+  for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
+    {
+    scene->SetURL( (*fit).c_str() );
+    scene->Import();
+    }
+
+  // restore URL and root dir
+  scene->SetURL(url.c_str());
+  scene->SetRootDirectory(rootdir.c_str());
+
+  return filesToLoad.size();
 }

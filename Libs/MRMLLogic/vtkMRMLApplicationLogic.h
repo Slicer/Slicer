@@ -53,7 +53,7 @@ public:
   /// Perform the default behavior related to selecting a volume
   /// (in this case, making it the background for all SliceCompositeNodes)
   void PropagateVolumeSelection(int fit);
-  void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}; 
+  void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}
 
 
   /// Fit all the volumes into their views
@@ -75,6 +75,11 @@ public:
   /// If zipFileName is null, use the base of the mrml scene's URL
   /// Returns the final zip file name on success, null on failure.
   //const char * ZipSlicerDataBundleDirectory(const char *zipFileName, const char *sdbDir, vtkImageData *screenShot = NULL);
+
+  /// Load any default parameter sets into the specified scene
+  /// Returns the total number of loaded parameter sets
+  static int LoadDefaultParameterSets(vtkMRMLScene * scene,
+                                      const std::vector<std::string>& directories);
   
 protected:
 

@@ -42,7 +42,6 @@ int vtkDataIOManagerLogicTest1(int , char * [] )
             << (node1->GetModuleLibDirectory() ?
                 node1->GetModuleLibDirectory() : "ERROR") << std::endl;
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  node1->LoadDefaultParameterSets(scene);
 
   return EXIT_SUCCESS;
 }
