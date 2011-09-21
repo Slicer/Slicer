@@ -76,11 +76,11 @@ public:
   ///  qSlicerThresholdModule -> Threshold
   static QString extractModuleNameFromClassName(const QString& className);
 
-  /// Return \a true if the plugin identified with its \a path is loaded from an install tree.
-  /// \note Since internally the function looks for the existence of CMakeCache.txt, it will
+  /// Return \a true if the plugin identified with its \a filePath is loaded from an install tree.
+  /// \warning Since internally the function looks for the existence of CMakeCache.txt, it will
   /// return an incorrect result if the plugin is installed in the build tree of 
   /// an other project.
-  static bool isPluginInstalled(const QString& path, const QString& applicationHomeDir);
+  static bool isPluginInstalled(const QString& filePath, const QString& applicationHomeDir);
 
 private:
   /// Not implemented

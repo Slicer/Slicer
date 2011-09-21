@@ -57,6 +57,45 @@ bool vtkSlicerModuleLogic::IsExtension(const std::string& filePath, const std::s
   return !vtksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
 }
 
+//----------------------------------------------------------------------------
+bool vtkSlicerModuleLogic::IsPluginInstalled(const std::string& filePath,
+                                             const std::string& applicationHomeDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return false;
+    }
+  if (applicationHomeDir.empty())
+    {
+    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    return false;
+    }
+
+  std::string path = vtksys::SystemTools::GetFilenamePath(filePath);
+  std::string canonicalPath = vtksys::SystemTools::GetRealPath(path.c_str());
+
+  if (vtksys::SystemTools::StringStartsWith(canonicalPath.c_str(), applicationHomeDir.c_str()))
+    {
+    return !vtksys::SystemTools::FileExists(
+          std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
+    }
+
+  std::string root;
+  std::string canonicalPathWithoutRoot =
+      vtksys::SystemTools::SplitPathRootComponent(canonicalPath.c_str(), &root);
+  do
+    {
+    if (vtksys::SystemTools::FileExists(
+          (root + canonicalPathWithoutRoot + "/CMakeCache.txt").c_str(), true))
+      {
+      return false;
+      }
+    canonicalPathWithoutRoot = vtksys::SystemTools::GetParentDirectory(canonicalPathWithoutRoot.c_str());
+    }
+  while(!canonicalPathWithoutRoot.empty());
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
