@@ -10,15 +10,15 @@
 
 =========================================================================auto=*/
 
+// MRML includes
 #include "vtkMRMLDisplayableHierarchyNode.h"
-
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScene.h"
 
 #include "TestingMacros.h"
 
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLScene.h"
-
+//----------------------------------------------------------------------------
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
@@ -36,8 +36,9 @@ public:
     return "vtkMRMLNodeTestHelper1";
     }
 };
- 
-int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
+
+//----------------------------------------------------------------------------
+int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [])
 {
   vtkSmartPointer< vtkMRMLDisplayableHierarchyNode > node1 = vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New();
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
@@ -63,11 +64,7 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
   std::cout << "GetUnexpandedParentNode = " << (pnode1 == NULL ? "NULL" : "not null") << std::endl;
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLDisplayNode> dnode =  vtkSmartPointer<vtkMRMLDisplayNode>::New();
-  if (dnode == NULL)
-    {
-    std::cout << "Warning: cannot instantiate a vtkMRMLDisplayNode\n";
-    }
+
   // need a concrete display node
   vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> dnode2 = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
   std::cout << "Adding node 1\n";

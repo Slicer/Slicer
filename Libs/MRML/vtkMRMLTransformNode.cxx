@@ -12,10 +12,12 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-
-#include <vtkGeneralTransform.h>
+// MRML includes
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
+
+// VTK includes
+#include <vtkGeneralTransform.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::vtkMRMLTransformNode()
@@ -42,7 +44,6 @@ void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 {
-
   Superclass::ReadXMLAttributes(atts);
 }
 
@@ -81,7 +82,6 @@ int  vtkMRMLTransformNode::IsTransformToWorldLinear()
       return 1;
       }
     }
-
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +151,6 @@ int  vtkMRMLTransformNode::IsTransformToNodeLinear(vtkMRMLTransformNode* node)
 void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node, 
                                                vtkGeneralTransform* transformToNode)
 {
-
   if (this->IsTransformNodeMyParent(node)) 
     {
     vtkMRMLTransformNode *parent = this->GetParentTransformNode();
@@ -213,7 +212,10 @@ int vtkMRMLTransformNode::IsTransformNodeMyParent(vtkMRMLTransformNode* node)
       return parent->IsTransformNodeMyParent(node);
       }
     }
-  else return 0;
+  else
+    {
+    return 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -239,5 +241,3 @@ vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
 {
   return vtkMRMLTransformStorageNode::New();
 }
-
-// End

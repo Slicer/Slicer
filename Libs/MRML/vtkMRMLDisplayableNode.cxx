@@ -26,6 +26,7 @@ Version:   $Revision: 1.3 $
 
 // STD includes
 
+//----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLDisplayableNode, PolyData, vtkPolyData)
 
 //----------------------------------------------------------------------------
@@ -67,8 +68,6 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
     }
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 {
@@ -97,7 +96,6 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
     }  
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -118,6 +116,7 @@ void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *ne
     this->Modified();
     }
 }
+
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -141,7 +140,6 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
     }
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -179,12 +177,10 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
-    vtkMRMLDisplayNode *pnode = vtkMRMLDisplayNode::New();
+    vtkMRMLDisplayNode *pnode = 0;
     this->DisplayNodes.push_back(pnode);
-
     this->SetAndObserveNthDisplayNodeID(i, this->DisplayNodeIDs[i].c_str());
     }
-   
 }
 
 //-----------------------------------------------------------
@@ -196,7 +192,7 @@ void vtkMRMLDisplayableNode::UpdateReferences()
     if (this->Scene->GetNodeByID(this->DisplayNodeIDs[i]) == NULL)
       {
       this->SetAndObserveNthDisplayNodeID(i, NULL);
-      }    
+      }
     }
 }
 
@@ -294,10 +290,8 @@ void vtkMRMLDisplayableNode::SetAndObserveDisplayNodeID(const char *displayNodeI
   vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
   this->AddAndObserveDisplayNode(dnode);
 
-  this->Modified(); 
-
+  this->Modified();
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID)
@@ -317,7 +311,6 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     vtkSetAndObserveMRMLObjectMacro(this->DisplayNodes[n], dnode);
     }
   this->Modified(); 
-
 }
 
 //----------------------------------------------------------------------------
@@ -336,7 +329,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
 {
   if (dnode) 
     {
-    vtkMRMLDisplayNode *pnode = vtkMRMLDisplayNode::New();
+    vtkMRMLDisplayNode *pnode = 0;
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     this->DisplayNodes.push_back(pnode);
     this->OnDisplayNodeAdded(pnode);
@@ -456,4 +449,3 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
       }
     }
 }
-

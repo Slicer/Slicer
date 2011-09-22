@@ -18,18 +18,19 @@
 #ifndef __vtkMRMLStorageNode_h
 #define __vtkMRMLStorageNode_h
 
+// MRML includes
 #include "vtkMRMLNode.h"
 class vtkURIHandler;
 
 // VTK includes
 class vtkStringArray;
 
+// STD includes
 #include <vector>
 
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
-  public:
-  static vtkMRMLStorageNode *New(){return NULL;};
+public:
   vtkTypeMacro(vtkMRMLStorageNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 

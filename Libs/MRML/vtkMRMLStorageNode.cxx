@@ -12,21 +12,25 @@ Version:   $Revision: 1.1.1.1 $
 
 =========================================================================auto=*/
 
-#include <sstream>
 
+// MRML includes
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkCommand.h"
-#include "vtkStringArray.h"
-#include "vtkURIHandler.h"
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkStringArray.h>
+#include <vtkURIHandler.h>
 
+// VTKSYS includes
 #include <vtksys/SystemTools.hxx>
 
-#include <itksys/SystemTools.hxx>
+// STD includes
+#include <sstream>
 
+//----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler)
 
 //----------------------------------------------------------------------------
@@ -96,7 +100,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
     std::string name = this->FileName;
     if (this->GetScene() && !this->IsFilePathRelative(this->FileName))
       {
-      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
+      name = vtksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
       }
     
     of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
@@ -133,9 +137,8 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
     std::string name = this->GetNthFileName(i);
     if (this->GetScene() && !this->IsFilePathRelative(this->GetNthFileName(i)))
       {
-      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->GetNthFileName(i));
+      name = vtksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->GetNthFileName(i));
       }
-
 
     of << indent << " fileListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
     if (this->GetScene() && this->IsFilePathRelative(this->GetNthFileName(i)))
@@ -169,7 +172,6 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " readState=\"" << this->ReadState <<  "\"";
   of << indent << " writeState=\"" << this->WriteState <<  "\"";
-  
 }
 
 //----------------------------------------------------------------------------
@@ -288,7 +290,6 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     }
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -317,7 +318,6 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
   this->SetWriteState(node->WriteState);
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -759,7 +759,6 @@ void vtkMRMLStorageNode::ResetNthFileName(int n, const char* fileName)
     {
     vtkErrorMacro("RestNthFileName: file name number " << n << " not already set, returning.");
     }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -810,7 +809,6 @@ void vtkMRMLStorageNode::ResetNthURI(int n, const char* uri)
     {
     vtkErrorMacro("RestNthURI: URI number " << n << " not already set, returning.");
     }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -827,12 +825,12 @@ void vtkMRMLStorageNode::SetDataDirectory(const char *dataDirName)
     return;
     }
   // reset the filename
-  vtksys_stl::string filePath = vtksys::SystemTools::GetFilenamePath(this->GetFileName());
+  std::string filePath = vtksys::SystemTools::GetFilenamePath(this->GetFileName());
   vtkDebugMacro("SetDataDirectory: from FileName " << (this->GetFileName() ? this->GetFileName() : "NULL") << ", got filePath = " << filePath.c_str());
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(dataDirName, pathComponents);
-  vtksys_stl::string fileName, newFileName; 
-  if (filePath != vtksys_stl::string(dataDirName))
+  std::string fileName, newFileName;
+  if (filePath != std::string(dataDirName))
     {
     fileName = vtksys::SystemTools::GetFilenameName(this->GetFileName());
     pathComponents.push_back(fileName);
@@ -898,7 +896,7 @@ int vtkMRMLStorageNode::IsFilePathRelative(const char * filepath)
     }
   else
     {
-    vtksys_stl::vector<vtksys_stl::string> components;
+    std::vector<std::string> components;
     vtksys::SystemTools::SplitPath((const char*)filepath, components);
     if (components[0] == "") 
       {

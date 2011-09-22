@@ -12,15 +12,16 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-
-#include "vtkIntArray.h"
-#include "vtkMatrixToLinearTransform.h"
-#include "vtkMatrix4x4.h"
-
+// MRML includes
 #include "vtkMRMLLinearTransformNode.h"
-
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkIntArray.h>
+#include <vtkMatrixToLinearTransform.h>
+#include <vtkMatrix4x4.h>
+
+//----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLTransformableNode, TransformNodeID);
 
 //----------------------------------------------------------------------------
@@ -30,7 +31,6 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 
   this->TransformNodeID = NULL;
   this->TransformNode = NULL;
-
 }
 
 //----------------------------------------------------------------------------
@@ -266,4 +266,3 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(double *in, double *out)
     vtkErrorMacro("TransformPointToWorld: not a linear transform");
     }
 }
-// End

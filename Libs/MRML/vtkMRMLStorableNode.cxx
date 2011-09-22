@@ -11,14 +11,18 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkTagTable.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::vtkMRMLStorableNode()
@@ -26,7 +30,6 @@ vtkMRMLStorableNode::vtkMRMLStorableNode()
   this->UserTagTable = vtkTagTable::New();
   this->SlicerDataType = "";
 }
-
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::~vtkMRMLStorableNode()
@@ -445,11 +448,10 @@ void vtkMRMLStorableNode::AddAndObserveStorageNode(vtkMRMLStorageNode *dnode)
 {
   if (dnode) 
     {
-    vtkMRMLStorageNode *pnode = vtkMRMLStorageNode::New();
+    vtkMRMLStorageNode *pnode = 0;
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     //vtkSetMRMLObjectMacro(pnode, dnode);
     this->StorageNodes.push_back(pnode);
-    //pnode->Delete();
     }
 }
 
@@ -465,7 +467,6 @@ vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
     }
   return node;
 }
-
 */
 
 //---------------------------------------------------------------------------

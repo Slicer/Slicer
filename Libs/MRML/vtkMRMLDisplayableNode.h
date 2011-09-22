@@ -33,7 +33,6 @@ class vtkPolyData;
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:
-  static vtkMRMLDisplayableNode *New(){return NULL;};
   vtkTypeMacro(vtkMRMLDisplayableNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   

@@ -124,7 +124,6 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
     friend class vtkMRMLScene;
   //ETX
 public:
-  static vtkMRMLNode *New();
   vtkTypeMacro(vtkMRMLNode,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   

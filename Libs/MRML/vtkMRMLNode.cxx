@@ -11,28 +11,20 @@ Date:      $Date: 2006/03/17 15:10:09 $
 Version:   $Revision: 1.11 $
 
 =========================================================================auto=*/
+
+// MRML includes
 #include "vtkMRMLNode.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
 
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
+
+// STD includes
 #include <sstream>
-
-#include "itksys/SystemTools.hxx"
-#include <vtksys/stl/string>
-
-//------------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLNode");
-  if(ret)
-    {
-    return (vtkMRMLNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return NULL;
-}
+#include <string>
 
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
@@ -129,7 +121,6 @@ vtkMRMLNode::~vtkMRMLNode()
 //----------------------------------------------------------------------------
 void vtkMRMLNode::CopyWithScene(vtkMRMLNode *node)
 {
-
   if (node->GetScene())
     {
     this->SetScene(node->GetScene());
@@ -144,7 +135,6 @@ void vtkMRMLNode::CopyWithScene(vtkMRMLNode *node)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::CopyID(vtkMRMLNode *node)
 {
-
   if (node->GetID()) 
     {
     this->SetID( node->GetID() );
@@ -259,12 +249,10 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLNode::WriteNodeBodyXML(ostream &, int )
 {
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ProcessMRMLEvents ( vtkObject *, unsigned long , void *)
@@ -275,7 +263,6 @@ void vtkMRMLNode::ProcessMRMLEvents ( vtkObject *, unsigned long , void *)
 void vtkMRMLNode::UpdateReferenceID(const char *, const char *)
 {
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ReadXMLAttributes(const char** atts)
@@ -431,11 +418,10 @@ const char*  vtkMRMLNode::ConstructID(const char * str, int index)
 }
 
 //----------------------------------------------------------------------------
-void  vtkMRMLNode::ConstructAndSetID(const char * str, int index)
+void vtkMRMLNode::ConstructAndSetID(const char * str, int index)
 {
     this->SetID(this->ConstructID(str, index));
 }
-
 
 //----------------------------------------------------------------------------
 const char * vtkMRMLNode::URLEncodeString(const char *inString)
@@ -449,24 +435,24 @@ const char * vtkMRMLNode::URLEncodeString(const char *inString)
     return "";
     }
   
-  vtksys_stl::string kwInString = vtksys_stl::string(inString);
+  std::string kwInString = std::string(inString);
   // encode %
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%", "%25");
   // encode space
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      " ", "%20");
   // encode single quote
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "'", "%27");
   // encode greater than
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      ">", "%3E");
   // encode less than
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "<", "%3C");
   // encode double quote
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "\"", "%22");
 
   this->DisableModifiedEventOn();
@@ -486,27 +472,27 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
     {
     return "";
     }
-  vtksys_stl::string kwInString = vtksys_stl::string(inString);
+  std::string kwInString = std::string(inString);
 
   // decode in the opposite order they were encoded in
   
   // decode double quote
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%22", "\"");
   // decode less than
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%3C", "<");
   // decode greater than
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%3E", ">");
   // decode single quote
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%27", "'");
   // decode space
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%20", " ");
   // decode %
-  itksys::SystemTools::ReplaceString(kwInString,
+  vtksys::SystemTools::ReplaceString(kwInString,
                                      "%25", "%");
 
   this->DisableModifiedEventOn();
@@ -514,4 +500,3 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
   this->DisableModifiedEventOff();
   return (this->GetTempURLString());
 }
-

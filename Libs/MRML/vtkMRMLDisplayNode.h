@@ -32,8 +32,7 @@ class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
-  public:
-  static vtkMRMLDisplayNode *New(){return NULL;};
+public:
   vtkTypeMacro(vtkMRMLDisplayNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -41,7 +40,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   
   /// 
   /// Gets PlyData converted from the real data in the node
-  virtual vtkPolyData* GetPolyData() {return NULL;};
+  virtual vtkPolyData* GetPolyData() {return NULL;}
   
   /// 
   /// Gets ImageData converted from the real data in the node
@@ -49,7 +48,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   /// up-to-date. You can call Update() on the returned vtkImageData or use
   /// GetUpToDateImageData() instead.
   /// \sa GetUpToDateImageData()
-  virtual vtkImageData* GetImageData() {return NULL;};
+  virtual vtkImageData* GetImageData() {return NULL;}
 
   ///
   /// Gets ImageData and ensure it's up-to-date by calling Update() on the
@@ -64,11 +63,11 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 
   /// 
   /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline() {};
+  virtual void UpdatePolyDataPipeline() {}
  
   /// 
   /// Update the pipeline based on this node attributes
-  virtual void UpdateImageDataPipeline() {};
+  virtual void UpdateImageDataPipeline() {}
  
   /// 
   /// Read node attributes from XML file

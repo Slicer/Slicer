@@ -12,10 +12,9 @@
 
 #include "vtkMRMLDisplayNode.h"
 
-
-
 #include "TestingMacros.h"
 
+//----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
 {
 public:
@@ -45,26 +44,17 @@ public:
     return "Testing is good";
     }
 };
- 
-int vtkMRMLDisplayNodeTest1(int , char * [] )
+
+//----------------------------------------------------------------------------
+int vtkMRMLDisplayNodeTest1(int , char * [])
 {
-
-  vtkSmartPointer< vtkMRMLDisplayNode > node0 = vtkSmartPointer< vtkMRMLDisplayNode >::New();
-  
-  if( node0 != NULL )
-    {
-    std::cerr << "This abstract class is not returning a NULL pointer from its New() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   // EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
-  
+
   EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
-   
 
   return EXIT_SUCCESS;
 }

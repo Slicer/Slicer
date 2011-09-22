@@ -37,8 +37,7 @@ class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
-  public:
-  static vtkMRMLVolumeNode *New(){return NULL;};
+public:
   vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 

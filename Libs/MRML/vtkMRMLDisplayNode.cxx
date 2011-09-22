@@ -11,25 +11,29 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <algorithm>
-#include <sstream>
 
+// MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
 
+// STD includes
+#include <algorithm>
+#include <sstream>
+
+//----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 {
-
   // Strings
   this->Color[0] = 0.5;
   this->Color[1] = 0.5;
@@ -70,7 +74,6 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   // add observer to process visualization pipeline
   vtkEventBroker::GetInstance()->AddObservation( 
     this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-
 }
 
 //----------------------------------------------------------------------------
@@ -78,7 +81,6 @@ vtkMRMLDisplayNode::~vtkMRMLDisplayNode()
 {
   this->SetAndObserveTextureImageData(NULL);
   this->SetAndObserveColorNodeID( NULL);
-
 }
 
 //----------------------------------------------------------------------------
@@ -188,7 +190,6 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
       this->Modified();
       }
     }
-
 }
 
 //----------------------------------------------------------------------------
@@ -383,7 +384,6 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
     this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -395,7 +395,6 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLDisplayNode *node = (vtkMRMLDisplayNode *) anode;
 
   // Strings
-
   this->SetColor(node->Color);
   this->SetSelectedColor(node->SelectedColor);
   
@@ -473,33 +472,31 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "ViewNodeIDs[" << i << "]: " <<
       this->ViewNodeIDs[i] << "\n";
     }
-
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
 {
-    if (this->Scene == NULL)
+  if (this->Scene == NULL)
+    {
+    return NULL;
+    }
+  int numNodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
+  for (int i=0; i<numNodes; i++)
+    {
+    vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(this->Scene->GetNthNodeByClass(i, "vtkMRMLDisplayableNode"));
+    int ndnodes = model->GetNumberOfDisplayNodes();
+    for (int k=0; k<ndnodes; k++)
       {
-      return NULL;
-      }
-    int numNodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
-    for (int i=0; i<numNodes; i++)
-      {
-      vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(this->Scene->GetNthNodeByClass(i, "vtkMRMLDisplayableNode"));
-      int ndnodes = model->GetNumberOfDisplayNodes();
-      for (int k=0; k<ndnodes; k++)
+      const char *id = model->GetNthDisplayNodeID(k);
+      if (id && !strcmp(id, this->GetID()))
         {
-        const char *id = model->GetNthDisplayNodeID(k);
-        if (id && !strcmp(id, this->GetID()))
-          {
-          return model;
-          }
+        return model;
         }
       }
-    return NULL;
+    }
+  return NULL;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
@@ -518,7 +515,6 @@ void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
     }
 }
 
-
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
@@ -530,7 +526,7 @@ void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene *scene)
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::UpdateReferences()
 {
-   Superclass::UpdateReferences();
+  Superclass::UpdateReferences();
 
   if (this->ColorNodeID != NULL && this->Scene->GetNodeByID(this->ColorNodeID) == NULL)
     {
@@ -551,7 +547,6 @@ void vtkMRMLDisplayNode::UpdateReferences()
     viewNodeIDs = this->ViewNodeIDs;
     this->Modified();
     }
-
 }
 
 //----------------------------------------------------------------------------

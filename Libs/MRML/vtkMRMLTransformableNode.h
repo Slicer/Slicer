@@ -29,8 +29,7 @@ class vtkMatrix4x4;
 
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 {
-  public:
-  static vtkMRMLTransformableNode *New(){return NULL;};
+public:
   vtkTypeMacro(vtkMRMLTransformableNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -108,7 +107,3 @@ protected:
 };
 
 #endif
-
-
- 
-

@@ -11,19 +11,21 @@ Date:      $Date: 2006/03/17 17:01:53 $
 Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
+
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
-#include "vtkCallbackCommand.h"
-#include "vtkMatrix4x4.h"
+#include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
-#include "vtkSmartPointer.h"
+#include <vtkMatrix4x4.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 
+//----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLVolumeNode, ImageData, vtkImageData);
 
 //----------------------------------------------------------------------------
@@ -50,7 +52,6 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
     }
 
   this->ImageData = NULL;
-
 }
 
 //----------------------------------------------------------------------------
@@ -86,7 +87,6 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " origin=\"" 
     << this->Origin[0] << " " << this->Origin[1] << " " << this->Origin[2] << "\"";
-
 }
 
 //----------------------------------------------------------------------------
@@ -191,7 +191,6 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   anode->SetDisableModifiedEvent(amode);
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -209,7 +208,6 @@ void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode *node)
   this->SetOrigin(node->GetOrigin());
   this->SetSpacing(node->GetSpacing());
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -250,7 +248,6 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 {
@@ -264,7 +261,6 @@ void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double ir, double ia, double is,
                                               double jr, double ja, double js,
                                               double kr, double ka, double ks)
@@ -281,7 +277,6 @@ void vtkMRMLVolumeNode::SetIJKToRASDirections(double ir, double ia, double is,
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetIToRASDirection(double ir, double ia, double is)
 {
   IJKToRASDirections[0][0] = ir;
@@ -290,7 +285,6 @@ void vtkMRMLVolumeNode::SetIToRASDirection(double ir, double ia, double is)
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetJToRASDirection(double jr, double ja, double js)
 {
   IJKToRASDirections[0][1] = jr;
@@ -299,7 +293,6 @@ void vtkMRMLVolumeNode::SetJToRASDirection(double jr, double ja, double js)
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetKToRASDirection(double kr, double ka, double ks)
 {
   IJKToRASDirections[0][2] = kr;
@@ -307,9 +300,7 @@ void vtkMRMLVolumeNode::SetKToRASDirection(double kr, double ka, double ks)
   IJKToRASDirections[2][2] = ks;
 }
 
-
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
@@ -319,7 +310,6 @@ void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
@@ -329,7 +319,6 @@ void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 {
   for (int i=0; i<3; i++) 
@@ -339,7 +328,6 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
 {
   if (argMat == NULL) 
@@ -381,7 +369,6 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLVolumeNode::SetRASToIJKMatrix(vtkMatrix4x4* mat)
 {
   vtkSmartPointer<vtkMatrix4x4> m = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -608,8 +595,7 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
     default:
       vtkErrorWithObjectMacro (ijkToRAS, "Max components "<< max_comp << " not in valid range 0,1,2\n");
       return "";
-    }        
- 
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -657,7 +643,6 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
   Superclass::UpdateScene(scene);
 
   this->SetAndObserveImageData(this->GetImageData());
-
 }
 
 //---------------------------------------------------------------------------
@@ -710,6 +695,4 @@ void vtkMRMLVolumeNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
   vtkMatrix4x4::Multiply4x4(transformMatrix,ijkToRASMatrix,newIJKToRASMatrix);
   
   this->SetIJKToRASMatrix(newIJKToRASMatrix);
-
 }
-

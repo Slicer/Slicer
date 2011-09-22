@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 
 // STD includes
 
+//----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayableHierarchyNode, DisplayNodeID);
 
 //------------------------------------------------------------------------------
@@ -111,7 +112,6 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -125,13 +125,11 @@ void vtkMRMLDisplayableHierarchyNode::Copy(vtkMRMLNode *anode)
   this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetExpanded(node->Expanded);
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
   Superclass::PrintSelf(os,indent);
 
   os << indent << "DisplayNodeID: " <<
@@ -204,9 +202,7 @@ void vtkMRMLDisplayableHierarchyNode::SetAndObserveDisplayNodeID(const char *dis
   vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
 
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNode, dnode);
-
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
@@ -247,8 +243,6 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetUnExpandedP
   return node;
 }
 
-
-  
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection *children)
 {
@@ -256,7 +250,6 @@ void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection 
 }
 
 //----------------------------------------------------------------------------
-
 void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
 {
   if (this->GetScene() == NULL)
@@ -284,12 +277,9 @@ void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
       }
     }
   this->RemoveHierarchyChildrenNodes();
-
 }
 
-
 //----------------------------------------------------------------------------
-
 void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
 {
   if (this->GetScene() == NULL)
@@ -322,6 +312,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
 
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode* 
 vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(vtkMRMLScene *scene,
                                                              const char *displayableNodeID)
