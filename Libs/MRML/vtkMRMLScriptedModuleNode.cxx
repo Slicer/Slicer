@@ -24,29 +24,12 @@ vtkMRMLNodeNewMacro(vtkMRMLScriptedModuleNode);
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()
 {
-  this->Value = NULL;
-  this->ParameterList = NULL;
-  this->ModuleName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
 {
-  this->SetValue(NULL);
-  this->SetParameterList(NULL);
-
-  if (this->Value)
-    {
-    delete [] this->Value;
-    this->Value = NULL;
-    }
-  if (this->ModuleName)
-    {
-    delete [] this->ModuleName;
-    this->ModuleName = NULL;
-    }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
@@ -57,13 +40,7 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->ModuleName != NULL)
-    {
-    of << " ModuleName =\"" << this->ModuleName << "\""; 
-    }
-
-  std::map<std::string, std::string>::iterator iter;
-
+  ParameterMap::iterator iter;
   int i = 0;
   for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
     {
@@ -79,16 +56,12 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != 0)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if ( !strcmp(attName, "ModuleName") )
-      {
-      this->SetModuleName( attValue );
-      }
-    else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
+    if ( !strncmp(attName, "parameter", strlen("parameter") ) )
       {
       std::string satt(attValue);
       int space = (int)satt.find(" ", 0);
@@ -108,16 +81,18 @@ void vtkMRMLScriptedModuleNode::Copy(vtkMRMLNode *anode)
   vtkMRMLScriptedModuleNode *node = (vtkMRMLScriptedModuleNode *) anode;
 
   this->Parameters = node->Parameters;
+}
 
-  this->SetModuleName( this->GetModuleName() );
+//----------------------------------------------------------------------------
+const char* vtkMRMLScriptedModuleNode::GetNodeTagName()
+{
+  return "ScriptedModule";
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLNode::PrintSelf(os,indent);
-
-  os << indent << "ModuleName: " << (this->GetModuleName() ? this->GetModuleName() : "(none)") << "\n";
 
   std::map<std::string, std::string>::iterator iter;
 
@@ -128,84 +103,85 @@ void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLScriptedModuleNode
+void vtkMRMLScriptedModuleNode
 ::SetParameter(const std::string& name, const std::string& value)
 {
-  // Set the default value of the named parameter with the value
-  // specified
-  const std::string *currentValue = this->GetParameter(name);
-  if (currentValue == NULL || (currentValue != NULL && value != *currentValue ) )
+  const std::string currentValue = this->GetParameter(name);
+  if (value != currentValue)
     {
     this->Parameters[name] = value;
     this->Modified();
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLScriptedModuleNode::UnsetParameter(const std::string& name)
+{
+  int count = this->Parameters.erase(name);
+  if (count > 0)
+    {
+    this->Modified();
+    }
+}
 
 //----------------------------------------------------------------------------
-const std::string *
-vtkMRMLScriptedModuleNode
+void vtkMRMLScriptedModuleNode::UnsetAllParameters()
+{
+  std::string::size_type count = this->Parameters.size();
+  this->Parameters.clear();
+  if (count != this->Parameters.size())
+    {
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLScriptedModuleNode
 ::GetParameter(const std::string& name) const
 {
   if ( this->Parameters.find(name) == this->Parameters.end() )
     {
-    return (NULL);
+    return std::string();
     }
-  return &(this->Parameters.find(name)->second);
+  return this->Parameters.find(name)->second;
 }
 
 //----------------------------------------------------------------------------
-const char *
-vtkMRMLScriptedModuleNode
-::GetParameter(const char *name)
+int vtkMRMLScriptedModuleNode::GetParameterCount()
 {
-  this->RequestParameter(name);
-  return (this->GetValue());
+  return this->Parameters.size();
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLScriptedModuleNode
-::SetParameter(const char *name, const char *value)
+std::string vtkMRMLScriptedModuleNode::GetParameterNamesAsCommaSeparatedList()
 {
-  std::string sname(name);
-  std::string svalue(value);
-  this->SetParameter(sname, svalue);
-}
-
-//----------------------------------------------------------------------------
-void
-vtkMRMLScriptedModuleNode
-::RequestParameter(const char *name)
-{
-  std::string sname(name);
-  const std::string *svaluep = this->GetParameter(sname);
-  this->SetDisableModifiedEvent(1);
-  if ( svaluep )
+  std::vector<std::string> names = this->GetParameterNames();
+  std::string namesAsStr;
+  std::vector<std::string>::iterator it = names.begin();
+  if (it != names.end())
     {
-    this->SetValue (svaluep->c_str());
+    namesAsStr = *it;
+    ++it;
     }
-  else
+  for(; it != names.end(); ++it)
     {
-    this->SetValue ("");
+    namesAsStr.append(",").append(*it);
     }
-  this->SetDisableModifiedEvent(0);
+  return namesAsStr;
 }
 
-
 //----------------------------------------------------------------------------
-void
-vtkMRMLScriptedModuleNode
-::RequestParameterList()
+std::vector<std::string> vtkMRMLScriptedModuleNode::GetParameterNames()
 {
-  std::string list("");
+  // If the number of parameter associated with a node become huge, it
+  // could be interesting to cache the list of names instead of recomputing
+  // each time the function is called.
+  std::vector<std::string> names;
 
-  std::map<std::string, std::string>::iterator iter;
-
-  for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
+  ParameterMap::iterator it;
+  for(it = this->Parameters.begin(); it != this->Parameters.end(); ++it)
     {
-    list += "\"" + iter->first + "\" \"" + iter->second + "\" ";
+    names.push_back(it->first);
     }
-  this->SetParameterList (list.c_str());
+  return names;
 }

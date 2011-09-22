@@ -14,80 +14,69 @@
 #ifndef __vtkMRMLScriptedModuleNode_h
 #define __vtkMRMLScriptedModuleNode_h
 
+// MRML includes
 #include "vtkMRMLNode.h"
 
-// Description: 
-// The scripted module node is simply a MRMLNode container for 
-// an arbitrary keyword value pair map
+// STD includes
+#include <string>
+#include <vector>
+
+/// The scripted module node is simply a MRMLNode container for
+/// an arbitrary keyword value pair map
 
 class VTK_MRML_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLScriptedModuleNode *New();
   vtkTypeMacro(vtkMRMLScriptedModuleNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName()
-    {return "ScriptedModule";};
+  /// Get node XML tag name (like Volume, Model)
+  virtual const char* GetNodeTagName();
 
-  // Description: The name of the Module - this is used to 
-  // customize the node selectors and other things
-  vtkGetStringMacro (ModuleName);
-  vtkSetStringMacro (ModuleName);
-
-  // Description:
-  // Get/Set a parameter for the module.
-//BTX
+  /// Set module parameter
   void SetParameter(const std::string& name, const std::string& value);
-  const std::string* GetParameter(const std::string &name) const;
-//ETX  
 
-  void SetParameter(const char *name, const char *value);
-  void RequestParameter(const char *name);
-  const char *GetParameter(const char *name);
-  vtkSetStringMacro(Value);
-  vtkGetStringMacro(Value);
-  // Description:
-  // Parameter List is a space separated keyword/value pair string.
-  // Note: you must call RequestParameterList first to update the value
-  void RequestParameterList();
-  vtkGetStringMacro(ParameterList);
+  /// Unset the parameter identified by \a name
+  void UnsetParameter(const std::string& name);
 
+  /// Unset all parameters
+  /// \sa UnsetParameter
+  void UnsetAllParameters();
+
+  /// Get module parameter identified by \a name
+  std::string GetParameter(const std::string& name) const;
+
+  /// Get number of parameters
+  int GetParameterCount();
+
+  /// Get list of parameter names separated by a comma
+  /// \sa GetParameterNames
+  std::string GetParameterNamesAsCommaSeparatedList();
+
+  /// Get list of parameter names
+  std::vector<std::string> GetParameterNames();
 
 protected:
-  // to be used internally
-  vtkSetStringMacro(ParameterList);
-
-//BTX
-  std::map<std::string, std::string> Parameters;
-//ETX
-  char *ParameterList;
-  char *Value;
-
-  char *ModuleName;
-  
-private:
   vtkMRMLScriptedModuleNode();
   ~vtkMRMLScriptedModuleNode();
+
   vtkMRMLScriptedModuleNode(const vtkMRMLScriptedModuleNode&);
   void operator=(const vtkMRMLScriptedModuleNode&);
-
+  
+  typedef std::map<std::string, std::string> ParameterMap;
+  ParameterMap Parameters;
 };
 
 #endif
