@@ -31,7 +31,7 @@ set(qtmodules
   TractographyFiducialSeeding # tractography depends of Volumes
   CropVolume
   VolumeRendering # Volume Rendering depends of Volumes
-  #EMSegment
+  EMSegment
   )
 if(BUILD_TESTING)
   list(APPEND qtmodules ModuleTemplate)
