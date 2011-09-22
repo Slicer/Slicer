@@ -53,6 +53,7 @@ public:
   ///
   /// Return the color the view nodes have for the background by default.
   static double* defaultBackgroundColor();
+  static double* defaultBackgroundColor2();
 
   /// 
   /// Indicates whether or not the view is active
@@ -98,6 +99,11 @@ public:
   /// Background color
   vtkGetVector3Macro (BackgroundColor, double);
   vtkSetVector3Macro (BackgroundColor, double);
+
+  /// 
+  /// Background color 2
+  vtkGetVector3Macro (BackgroundColor2, double);
+  vtkSetVector3Macro (BackgroundColor2, double);
 
   /// 
   /// Turn on and off animated spinning or rocking.
@@ -209,6 +215,7 @@ protected:
   double FieldOfView;
   double LetterSize;
   double BackgroundColor[3];
+  double BackgroundColor2[3];
   
   /// 
   /// parameters of automatic spin

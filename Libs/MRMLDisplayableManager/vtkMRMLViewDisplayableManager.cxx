@@ -375,10 +375,17 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
 {
   double backgroundColor[3] = {0.0, 0.0, 0.0};
   this->External->GetMRMLViewNode()->GetBackgroundColor(backgroundColor);
+  double backgroundColor2[3] = {0.0, 0.0, 0.0};
+  this->External->GetMRMLViewNode()->GetBackgroundColor2(backgroundColor2);
   vtkDebugWithObjectMacro(this->External, << "UpdateBackgroundColor (" <<
                 backgroundColor[0] << ", " << backgroundColor[1] << ", "
                 << backgroundColor[2] << ")");
   this->External->GetRenderer()->SetBackground(backgroundColor);
+  this->External->GetRenderer()->SetBackground2(backgroundColor2);
+  bool gradient = backgroundColor[0] != backgroundColor2[0] ||
+                  backgroundColor[1] != backgroundColor2[1] ||
+                  backgroundColor[2] != backgroundColor2[2];
+  this->External->GetRenderer()->SetGradientBackground(true);
 
   // If new background color is White, switch axis color label to black
   if (backgroundColor[0] == 1.0 && backgroundColor[1] == 1.0 && backgroundColor[2] == 1.0)

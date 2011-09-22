@@ -390,7 +390,11 @@ void qMRMLThreeDViewControllerWidget::setLightBlueBackground()
   this->setBackgroundColor(QColor::fromRgbF(
     vtkMRMLViewNode::defaultBackgroundColor()[0],
     vtkMRMLViewNode::defaultBackgroundColor()[1],
-    vtkMRMLViewNode::defaultBackgroundColor()[2]));
+    vtkMRMLViewNode::defaultBackgroundColor()[2]),
+    QColor::fromRgbF(
+    vtkMRMLViewNode::defaultBackgroundColor2()[0],
+    vtkMRMLViewNode::defaultBackgroundColor2()[1],
+    vtkMRMLViewNode::defaultBackgroundColor2()[2]));
 }
 
 // --------------------------------------------------------------------------
@@ -406,18 +410,24 @@ void qMRMLThreeDViewControllerWidget::setWhiteBackground()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewControllerWidget::setBackgroundColor(const QColor& newColor)
+void qMRMLThreeDViewControllerWidget::setBackgroundColor(
+  const QColor& newColor, QColor newColor2)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   if (!d->ViewNode)
     {
     return;
     }
-  double rgbF[3];
-  rgbF[0] = newColor.redF();
-  rgbF[1] = newColor.greenF();
-  rgbF[2] = newColor.blueF();
-  d->ViewNode->SetBackgroundColor(rgbF);
+  int wasModifying = d->ViewNode->StartModify();
+  // The ThreeDView displayable manager will change the background color of
+  // the renderer.
+  d->ViewNode->SetBackgroundColor(newColor.redF(), newColor.greenF(), newColor.blueF());
+  if (!newColor2.isValid())
+    {
+    newColor2 = newColor;
+    }
+  d->ViewNode->SetBackgroundColor2(newColor2.redF(), newColor2.greenF(), newColor2.blueF());
+  d->ViewNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------

@@ -49,6 +49,9 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor[0] = this->defaultBackgroundColor()[0];
   this->BackgroundColor[1] = this->defaultBackgroundColor()[1];
   this->BackgroundColor[2] = this->defaultBackgroundColor()[2];
+  this->BackgroundColor2[0] = this->defaultBackgroundColor2()[0];
+  this->BackgroundColor2[1] = this->defaultBackgroundColor2()[1];
+  this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
  }
 
 //----------------------------------------------------------------------------
@@ -83,6 +86,9 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   // background color
   of << indent << " backgroundColor=\"" << this->BackgroundColor[0] << " "
      << this->BackgroundColor[1] << " " << this->BackgroundColor[2] << "\"";
+
+  of << indent << " backgroundColor2=\"" << this->BackgroundColor2[0] << " "
+     << this->BackgroundColor2[1] << " " << this->BackgroundColor2[2] << "\"";
 
   
   // spin or rock?
@@ -178,10 +184,11 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 {
+  bool isBackgroundColor2Set = false;
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
-    
+
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
@@ -218,6 +225,22 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> val;
       this->BackgroundColor[2] = val;
+      }
+      
+    else if (!strcmp(attName, "backgroundColor2"))
+      {
+      isBackgroundColor2Set = true;
+      std::stringstream ss;
+      ss << attValue;
+      double val;
+      ss >> val;
+      this->BackgroundColor2[0] = val;
+      ss << attValue;
+      ss >> val;
+      this->BackgroundColor2[1] = val;
+      ss << attValue;
+      ss >> val;
+      this->BackgroundColor2[2] = val;
       }
     
     else if (!strcmp(attName, "boxVisible")) 
@@ -426,7 +449,13 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
-    
+  // Old MRML scene files don't have backgroundColor2 property ( < Slicer 4.0)
+  if (!isBackgroundColor2Set)
+    {
+    this->BackgroundColor2[0] = this->BackgroundColor[0];
+    this->BackgroundColor2[1] = this->BackgroundColor[1];
+    this->BackgroundColor2[2] = this->BackgroundColor[2];
+    }
   this->EndModify(disabledModify);
 }
 
@@ -492,13 +521,28 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundColor:       " << this->BackgroundColor[0] << " "
      << this->BackgroundColor[1] << " "
      << this->BackgroundColor[2] <<"\n";
+  os << indent << "BackgroundColor2:       " << this->BackgroundColor2[0] << " "
+     << this->BackgroundColor2[1] << " "
+     << this->BackgroundColor2[2] <<"\n";
 }
 
 //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor()
 {
-  static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
+  //static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
+  static double backgroundColor[3] = {0.7568627450980392,
+                                      0.7647058823529412,
+                                      0.9098039215686275};
   return backgroundColor;
+}
+
+//------------------------------------------------------------------------------
+double* vtkMRMLViewNode::defaultBackgroundColor2()
+{
+  static double backgroundColor2[3] = {0.4549019607843137,
+                                       0.4705882352941176,
+                                       0.7450980392156863};
+  return backgroundColor2;
 }
 
 //----------------------------------------------------------------------------

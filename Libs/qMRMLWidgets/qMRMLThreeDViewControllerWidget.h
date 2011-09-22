@@ -66,10 +66,19 @@ public slots:
   void set3DAxisVisible(bool visible);
   void set3DAxisLabelVisible(bool visible);
 
+  /// Utility function to change the color of the background to blue
   void setLightBlueBackground();
+
+  /// Utility function to change the color of the background to black
   void setBlackBackground();
+
+  /// Utility function to change the color of the background to white
   void setWhiteBackground();
-  void setBackgroundColor(const QColor& color);
+
+  /// If the second color is not set, the first color is used.
+  void setBackgroundColor(const QColor& color,
+                          QColor color2 = QColor());
+
   void setStereoType(int newStereoType);
 
 protected slots:
