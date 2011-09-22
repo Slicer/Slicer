@@ -203,6 +203,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
+  ///
+  /// The meanings for the flags are:
+  ///    ForegroundVolumeFlag - broadcast the foreground volume selection
+  ///    BackgroundVolumeFlag - broadcast the background volume selection
+  ///    LabelVolumeFlag - broadcast the label volume selection
   enum InteractionFlagType
   {
     None = 0,
@@ -215,7 +220,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   ///
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
-  /// fields are used propagate linked behaviors. This flag is a
+  /// fields are used to propagate linked behaviors. This flag is a
   /// bitfield, with multiple parameters OR'd to composte the flag.
   vtkSetMacro(InteractionFlags, unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);

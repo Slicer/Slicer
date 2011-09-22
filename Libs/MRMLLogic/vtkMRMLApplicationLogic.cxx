@@ -97,6 +97,7 @@ vtkMRMLApplicationLogic::vtkInternal::~vtkInternal()
 vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
 {
   this->Internal = new vtkInternal;
+  this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
 }
 
 //----------------------------------------------------------------------------

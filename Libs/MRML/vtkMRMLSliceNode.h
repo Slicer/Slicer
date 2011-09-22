@@ -255,19 +255,26 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
+  ///
+  /// The meanings for the flags are:
+  ///    SliceToRASFlag - broadcast the SliceToRAS matrix to all linked viewers
+  ///    FieldOfViewFlag - broadcast a specific field of view setting
+  ///    OrientationFlag - broadcast the orientation 
+  ///    ResetFieldOfViewFlag - broadcast a message to reset the field of view
   enum InteractionFlagType
   {
     None = 0,
     SliceToRASFlag = 1,
-    FieldOfViewFlag = 2, 
-    OrientationFlag = 4
-    // Next one needs to be 8
+    FieldOfViewFlag = 2, // broadcast a specific field of view setting
+    OrientationFlag = 4,
+    ResetFieldOfViewFlag = 8 // broadcast a reset to all viewers
+    // Next one needs to be 16
   };
 
   ///
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
-  /// fields are used propagate linked behaviors. This flag is a
+  /// fields are used to propagate linked behaviors. This flag is a
   /// bitfield, with multiple parameters OR'd to composte the flag.
   vtkSetMacro(InteractionFlags, unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);

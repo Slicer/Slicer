@@ -14,6 +14,8 @@
 
 // MRMLLogic includes
 #include "vtkMRMLSliceLinkLogic.h"
+#include "vtkMRMLSliceLogic.h"
+#include "vtkMRMLApplicationLogic.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
@@ -209,7 +211,7 @@ void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 {
   // only broadcast a slice node event if we are not already actively
-  // broadcasting events and we actively interacting with the node
+  // broadcasting events and we are actively interacting with the node
   // std::cout << "BroadcastingEvents: " << this->GetBroadcastingEvents()
   //           << ", Interacting: " << sliceNode->GetInteracting()
   //           << std::endl;
@@ -263,25 +265,53 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           // in this being modified so a Render can occur
           sNode->UpdateMatrices();
           }
-        else
+
+        //
+        // Some parameters and commands do not require the
+        // orientations to match. These are handled here.
+        //
+
+        // Setting the orientation of the slice plane does not
+        // require that the orientations initially match.
+        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::OrientationFlag)
           {
-          // Setting the orientation of the slice plane does not
-          // require that the orientations initially match.
-          // std::cout << "Orientation mismatch, flags = " << sliceNode->GetInteractionFlags() << std::endl;
-          if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::OrientationFlag)
+          // We could copy the orientation strings, but we really
+          // want the slice to ras to match, so copy that
+          
+          // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
+          // does a shallow copy. So we have to explictly call DeepCopy()
+          sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
+          
+          // Forces the internal matrices to be updated which results
+          // in this being modified so a Render can occur
+          sNode->UpdateMatrices();
+          }
+        
+        // Reseting the field of view does not require the
+        // orientations to match
+        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::ResetFieldOfViewFlag)
+          {
+          // need the logic for this slice (sNode)
+          vtkMRMLSliceLogic* logic;
+          vtkCollectionSimpleIterator it;
+          vtkCollection* logics = this->GetMRMLApplicationLogic()->GetSliceLogics();
+          for (logics->InitTraversal(it); 
+               (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
             {
-            // We could copy the orientation strings, but we really
-            // want the slice to ras to match, so copy that
-
-            // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
-            // does a shallow copy. So we have to explictly call DeepCopy()
-            sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
-
-            // Forces the internal matrices to be updated which results
-            // in this being modified so a Render can occur
-            sNode->UpdateMatrices();
+            if (logic->GetSliceNode() == sNode)
+              {
+              logic->FitSliceToAll();
+              sNode->UpdateMatrices();
+              break;
+              }
             }
           }
+
+        //
+        // End of the block for broadcasting parametes and command
+        // that do not require the orientation to match
+        //
+
         }
       }
 

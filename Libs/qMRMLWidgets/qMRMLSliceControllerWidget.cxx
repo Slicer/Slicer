@@ -1373,7 +1373,13 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
   Q_D(qMRMLSliceControllerWidget);
   logger.trace(QString("fitSliceToBackground"));
 
-  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag | vtkMRMLSliceNode::FieldOfViewFlag);
+  // This is implemented as sending a "reset field of view" command to
+  // all the slice viewers. An alternative implementation is call
+  // reset the field of view for the current slice and broadcast that
+  // set of field of view parameters settings to the other viewers.
+  // This can be done by changing the interaction flag to
+  // vtkMRMLSliceNode::FieldOfViewFlag 
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
   d->SliceLogic->FitSliceToAll();
   d->MRMLSliceNode->UpdateMatrices();
   d->SliceLogic->EndSliceNodeInteraction();

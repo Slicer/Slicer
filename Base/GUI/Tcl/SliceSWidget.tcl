@@ -786,8 +786,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             # nodes
             set logic [$sliceGUI GetLogic]
 
-            # 3 = SliceToRASFlag and FieldOfViewFlag
-            $logic StartSliceNodeInteraction 3 
+            # 8 = ResetFieldOfViewFlag
+            $logic StartSliceNodeInteraction 8
             $logic FitSliceToAll 
             $_sliceNode UpdateMatrices
             $logic EndSliceNodeInteraction
