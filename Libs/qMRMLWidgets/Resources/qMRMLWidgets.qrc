@@ -1,17 +1,15 @@
-<!DOCTYPE RCC><RCC version="1.0">
+<RCC>
   <qresource>
+    <file>Icons/LayoutCompareViewGrid.png</file>
     <file>Icons/VisibleOff.png</file>
     <file>Icons/VisibleOn.png</file>
     <file>Icons/VisibleOrInvisible.png</file>
     <file>Icons/VisiblePartially.png</file>
-
     <file>Icons/LinkOff.png</file>
     <file>Icons/LinkOn.png</file>
     <file>Icons/HotLinkOn.png</file>
-
     <file>Icons/PushPinIn.png</file>
     <file>Icons/PushPinOut.png</file>
-
     <file>Icons/LayoutChooseView.png</file>
     <file>Icons/LayoutCompareView.png</file>
     <file>Icons/LayoutConventionalView.png</file>
@@ -29,7 +27,6 @@
     <file>Icons/LayoutTriple3DView.png</file>
     <file>Icons/LayoutThreeOverThreeView.png</file>
     <file>Icons/LayoutFourOverFourView.png</file>
-
     <file>Icons/SliceMoreOptions.png</file>
     <file>Icons/SliceViewerBG.png</file>
     <file>Icons/SliceViewerFG.png</file>
@@ -37,7 +34,6 @@
     <file>Icons/SliceViewerOR.png</file>
     <file>Icons/SliceInterpolationOn.png</file>
     <file>Icons/SliceInterpolationOff.png</file>
-
     <file>Icons/SlicerAutomaticSliceSpacing.png</file>
     <file>Icons/SlicerManualSliceSpacing.png</file>
     <file>Icons/SlicesAnnotation.png</file>
@@ -57,10 +53,8 @@
     <file>Icons/SlicesWinLevThreshCol.png</file>
     <file>Icons/SliceWidgetOff.png</file>
     <file>Icons/SliceWidgetOn.png</file>
-
     <file>Icons/SnapshotDelete.png</file>
     <file>Icons/SnapshotRestore.png</file>
-
     <file>Icons/ViewAxis.png</file>
     <file>Icons/ViewCamera.png</file>
     <file>Icons/ViewCameraSelect.png</file>
@@ -77,7 +71,6 @@
     <file>Icons/ViewYaw.png</file>
     <file>Icons/ViewZoomIn.png</file>
     <file>Icons/ViewZoomOut.png</file>
-
     <file>Icons/ClippingUnion.png</file>
     <file>Icons/ClippingIntersection.png</file>
     <file>Icons/RedSpacePositive.png</file>
@@ -86,7 +79,6 @@
     <file>Icons/YellowSpaceNegative.png</file>
     <file>Icons/GreenSpacePositive.png</file>
     <file>Icons/GreenSpaceNegative.png</file>
-
     <file alias="AbdomenColors">Icons/LUTs/AbdomenColors.png</file>
     <file alias="blankLUT">Icons/LUTs/blankLUT.png</file>
     <file alias="dGEMRIC-3T">Icons/LUTs/cartilegeMIdGEMRIC-3T.png</file>

@@ -60,7 +60,7 @@ public:
   vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );  
 
   /// 
-  /// configure each compare viewer in lightbox mode.
+  /// CompareView lightbox configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
   vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );  
   vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
@@ -106,14 +106,20 @@ public:
       SlicerLayout3DPlusLightboxView, // really used ?, Remove?
       SlicerLayoutThreeOverThreeView, 
       SlicerLayoutFourOverFourView,
+      SlicerLayoutCompareGridView,
       SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };
 
   /// Adds a layout description with integer identifier
-  /// "layout". Returns without making any modifications if the
+  /// "layout". Returns false without making any modifications if the
   /// integer identifier "layout" is already in use.
-  void AddLayoutDescription(int layout, const char* layoutDescription);
+  bool AddLayoutDescription(int layout, const char* layoutDescription);
+
+  /// Modifies a layout description for integer identifier
+  /// "layout". Returns false without making any modifications if the
+  /// integer identifier "layout" is NOT already in use.
+  bool SetLayoutDescription(int layout, const char* layoutDescription);
 
   /// Query whether a layout exists with a specified integer identifier
   bool IsLayoutDescription(int layout);
@@ -125,20 +131,20 @@ public:
   // Get the layout description currently displayed. Used
   // internally. This is XML description corresponding to the ivar
   // ViewArrangement which is the integer identifier for the
-  // layout. ViewArrangement and CurrentViewArrangement may not
+  // layout. ViewArrangement and CurrentViewDescription may not
   // correspond while a view is being switched.
-  vtkGetStringMacro(CurrentViewArrangement);
+  vtkGetStringMacro(CurrentLayoutDescription);
 
-  // Get the XML data model of the CurrentViewArrangement
+  // Get the XML data model of the CurrentViewDescription
   vtkGetObjectMacro(LayoutRootElement, vtkXMLDataElement);
 
   // You are responsible to delete the returned dataElement.
   static vtkXMLDataElement* ParseLayout(const char* description);
 
 protected:
-  void UpdateLayoutDescription();
-  void SetLayoutDescription(const char* description);
-  vtkSetStringMacro(CurrentViewArrangement);
+  void UpdateCurrentLayoutDescription();
+  void SetAndParseCurrentLayoutDescription(const char* description);
+  vtkSetStringMacro(CurrentLayoutDescription);
 
 protected:
   vtkMRMLLayoutNode();
@@ -162,7 +168,7 @@ protected:
   int SecondaryPanelSize;
 
   std::map<int, std::string> Layouts;
-  char*                      CurrentViewArrangement;
+  char*                      CurrentLayoutDescription;
   vtkXMLDataElement*         LayoutRootElement;
 };
 

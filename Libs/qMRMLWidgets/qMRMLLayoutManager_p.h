@@ -91,6 +91,8 @@ public:
   void updateLayoutNode(int layout);
 
   void setLayoutInternal(int layout);
+  void setLayoutNumberOfCompareViewRowsInternal(int num);
+  void setLayoutNumberOfCompareViewColumnsInternal(int num);
 
   vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
   vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;

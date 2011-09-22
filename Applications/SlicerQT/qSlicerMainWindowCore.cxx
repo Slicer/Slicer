@@ -201,6 +201,18 @@ void qSlicerMainWindowCore::setLayout(int layout)
   qSlicerApplication::application()->layoutManager()->setLayout(layout);
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::setLayoutNumberOfCompareViewRows(int num)
+{
+  qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewRows(num);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::setLayoutNumberOfCompareViewColumns(int num)
+{
+  qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewColumns(num);
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowCore::onWindowErrorLogActionTriggered()
 {

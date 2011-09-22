@@ -498,9 +498,37 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
   QDomDocument newLayout;
   newLayout.setContent(QString(
     this->MRMLLayoutNode ?
-    this->MRMLLayoutNode->GetCurrentViewArrangement() : ""));
+    this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
   q->setLayout(newLayout);
   emit q->layoutChanged(layout);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewRowsInternal(int num)
+{
+  // Set the number of viewers on the layout node. This will trigger a
+  // callback to in qMRMLLayoutLogic to redefine the layouts for the
+  // comparison modes.
+  Q_Q(qMRMLLayoutManager);
+  // Update LayoutNode
+  if (this->MRMLLayoutNode)
+    {
+    this->MRMLLayoutNode->SetNumberOfCompareViewRows(num);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewColumnsInternal(int num)
+{
+  // Set the number of viewers on the layout node. This will trigger a
+  // callback to in qMRMLLayoutLogic to redefine the layouts for the
+  // comparison modes.
+  Q_Q(qMRMLLayoutManager);
+  // Update LayoutNode
+  if (this->MRMLLayoutNode)
+    {
+    this->MRMLLayoutNode->SetNumberOfCompareViewColumns(num);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -722,6 +750,22 @@ void qMRMLLayoutManager::setLayout(int layout)
     return;
     }
   d->setLayoutInternal(layout);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::setLayoutNumberOfCompareViewRows(int num)
+{
+  Q_D(qMRMLLayoutManager);
+
+  d->setLayoutNumberOfCompareViewRowsInternal(num);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::setLayoutNumberOfCompareViewColumns(int num)
+{
+  Q_D(qMRMLLayoutManager);
+
+  d->setLayoutNumberOfCompareViewColumnsInternal(num);
 }
 
 //------------------------------------------------------------------------------

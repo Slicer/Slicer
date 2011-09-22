@@ -24,6 +24,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QToolButton>
+#include <QMenu>
 
 // CTK includes
 #include <ctkConfirmExitDialog.h>
@@ -221,6 +222,41 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
                    q, SLOT(onLayoutChanged(int)));
+
+  // Add menus for configuring compare view
+  QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->addAction(this->actionViewLayoutCompare_2_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_3_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_4_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_5_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_6_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_7_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompare_8_viewers);
+  this->actionViewLayoutCompare->setMenu(compareMenu);
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
+                   q, SLOT(onLayoutCompareActionTriggered(QAction*)));
+
+  // ... and for widescreen version of compare view as well
+  compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_2_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_3_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_4_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_5_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_6_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_7_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareWidescreen_8_viewers);
+  this->actionViewLayoutCompareWidescreen->setMenu(compareMenu);
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
+                   q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
+  
+  // ... and for the grid version of the compare views
+  compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->addAction(this->actionViewLayoutCompareGrid_2x2_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareGrid_3x3_viewers);
+  compareMenu->addAction(this->actionViewLayoutCompareGrid_4x4_viewers);
+  this->actionViewLayoutCompareGrid->setMenu(compareMenu);
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
+                   q, SLOT(onLayoutCompareGridActionTriggered(QAction*)));
 
 
   // Capture tool bar needs to listen to the layout manager
@@ -454,8 +490,30 @@ void qSlicerMainWindow::setupMenuActions()
   d->actionViewLayoutTabbedSlice->setData(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
   d->actionViewLayoutCompare->setData(vtkMRMLLayoutNode::SlicerLayoutCompareView);
   d->actionViewLayoutCompareWidescreen->setData(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView);
+  d->actionViewLayoutCompareGrid->setData(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
   d->actionViewLayoutThreeOverThree->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView);
   d->actionViewLayoutFourOverFour->setData(vtkMRMLLayoutNode::SlicerLayoutFourOverFourView);
+
+  d->actionViewLayoutCompare_2_viewers->setData(2);
+  d->actionViewLayoutCompare_3_viewers->setData(3);
+  d->actionViewLayoutCompare_4_viewers->setData(4);
+  d->actionViewLayoutCompare_5_viewers->setData(5);
+  d->actionViewLayoutCompare_6_viewers->setData(6);
+  d->actionViewLayoutCompare_7_viewers->setData(7);
+  d->actionViewLayoutCompare_8_viewers->setData(8);
+
+  d->actionViewLayoutCompareWidescreen_2_viewers->setData(2);
+  d->actionViewLayoutCompareWidescreen_3_viewers->setData(3);
+  d->actionViewLayoutCompareWidescreen_4_viewers->setData(4);
+  d->actionViewLayoutCompareWidescreen_5_viewers->setData(5);
+  d->actionViewLayoutCompareWidescreen_6_viewers->setData(6);
+  d->actionViewLayoutCompareWidescreen_7_viewers->setData(7);
+  d->actionViewLayoutCompareWidescreen_8_viewers->setData(8);
+
+  d->actionViewLayoutCompareGrid_2x2_viewers->setData(2);
+  d->actionViewLayoutCompareGrid_3x3_viewers->setData(3);
+  d->actionViewLayoutCompareGrid_4x4_viewers->setData(4);
+
 
   qSlicerMainWindowCore_connect(WindowErrorLog);
   qSlicerMainWindowCore_connect(WindowPythonInteractor);
@@ -570,13 +628,66 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
 {
-  this->core()->setLayout(action->data().toInt());
+  Q_D(qSlicerMainWindow);
+  bool found;
+  // std::cerr << "onLayoutActionTriggered: " << action->text().toStdString() << std::endl;
+  foreach(QAction* maction, d->MenuLayout->actions())
+    {
+    if (action->text() == maction->text())
+      {
+      found = true;
+      }
+    }
+
+  if (found)
+    {
+    this->core()->setLayout(action->data().toInt());
+    }
 }
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onLayoutCompareActionTriggered(QAction* action)
+{
+  Q_D(qSlicerMainWindow);
+
+  // std::cerr << "onLayoutCompareActionTriggered: " << action->text().toStdString() << std::endl;
+
+  // we need to communicate both the layout change and the number of viewers. 
+  this->core()->setLayout(d->actionViewLayoutCompare->data().toInt());
+  this->core()->setLayoutNumberOfCompareViewRows(action->data().toInt());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onLayoutCompareWidescreenActionTriggered(QAction* action)
+{
+  Q_D(qSlicerMainWindow);
+
+  // std::cerr << "onLayoutCompareWidescreenActionTriggered: " << action->text().toStdString() << std::endl;
+
+  // we need to communicate both the layout change and the number of viewers.
+  this->core()->setLayout(d->actionViewLayoutCompareWidescreen->data().toInt());
+  this->core()->setLayoutNumberOfCompareViewColumns(action->data().toInt());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onLayoutCompareGridActionTriggered(QAction* action)
+{
+  Q_D(qSlicerMainWindow);
+
+  // std::cerr << "onLayoutCompareGridActionTriggered: " << action->text().toStdString() << std::endl;
+
+  // we need to communicate both the layout change and the number of viewers.
+  this->core()->setLayout(d->actionViewLayoutCompareGrid->data().toInt());
+  this->core()->setLayoutNumberOfCompareViewRows(action->data().toInt());
+  this->core()->setLayoutNumberOfCompareViewColumns(action->data().toInt());
+}
+
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onLayoutChanged(int layout)
 {
   Q_D(qSlicerMainWindow);
+  // std::cerr << "onLayoutChanged: " << layout << std::endl;
 
   // Trigger the action associated with the new layout
   foreach(QAction* action, d->MenuLayout->actions())

@@ -125,6 +125,10 @@ protected:
   /// all the nodes that are found in the layout.
   vtkCollection*     GetViewsFromLayout(vtkXMLDataElement* root);
 
+  /// Define the compare view layouts available based on settings
+  /// in the layout node
+  void UpdateCompareViewLayoutDefinitions();
+
   /// Utility functions to browse XML data elements
   vtkXMLDataElement* GetNextViewElement(vtkXMLDataElement* viewElement);
   vtkXMLDataElement* GetNextElement(vtkXMLDataElement* element);

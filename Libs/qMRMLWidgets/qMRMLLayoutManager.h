@@ -87,6 +87,11 @@ public slots:
   /// It creates views if needed.
   void setLayout(int newLayout);
 
+  /// Change the number of viewers in comparison modes
+  /// It creates views if needed.
+  void setLayoutNumberOfCompareViewRows(int num);
+  void setLayoutNumberOfCompareViewColumns(int num);
+
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);

@@ -57,6 +57,8 @@ public slots:
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();
   void setLayout(int);
+  void setLayoutNumberOfCompareViewRows(int);
+  void setLayoutNumberOfCompareViewColumns(int);
   void onWindowErrorLogActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 

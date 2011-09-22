@@ -12,7 +12,13 @@
 
 // STD includes
 #include <cassert>
+#include <sstream>
 
+// Standard layouts definitions
+// 
+// CompareView layouts are defined programmatically in the method
+// UpdateCompareViewLayoutDefinitions() 
+//
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
@@ -215,72 +221,6 @@ const char* triple3DEndoscopyView =
   "   </item>"
   "   <item>"
   "    <view class=\"vtkMRMLViewNode\" type=\"endoscopy\"/>"
-  "   </item>"
-  "  </layout>"
-  " </item>"
-  "</layout>";
-
-const char* compareView =
-  "<layout type=\"vertical\" split=\"true\" >"
-  " <item>"
-  "  <layout type=\"horizontal\">"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">R</property>"
-  "    </view>"
-  "   </item>"
-  "   <item>"
-  "    <view class=\"vtkMRMLViewNode\"/>"
-  "   </item>"
-  "  </layout>"
-  " </item>"
-  " <item>"
-  "  <layout type=\"vertical\">"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">C1</property>"
-  "    </view>"
-  "   </item>"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">C2</property>"
-  "    </view>"
-  "   </item>"
-  "  </layout>"
-  " </item>"
-  "</layout>";
-
-const char* compareWidescreenView =
-  "<layout type=\"horizontal\" split=\"true\" >"
-  " <item>"
-  "  <layout type=\"vertical\">"
-  "   <item>"
-  "    <view class=\"vtkMRMLViewNode\"/>"
-  "   </item>"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">R</property>"
-  "    </view>"
-  "   </item>"
-  "  </layout>"
-  " </item>"
-  " <item>"
-  "  <layout type=\"horizontal\">"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare1\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">C1</property>"
-  "    </view>"
-  "   </item>"
-  "   <item>"
-  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare2\">"
-  "     <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">C2</property>"
-  "    </view>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -548,8 +488,182 @@ void vtkMRMLLayoutLogic::UpdateFromLayoutNode()
     {
     this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
     }
+  this->UpdateCompareViewLayoutDefinitions();
   this->CreateMissingViews();
   this->UpdateViewCollectionsFromLayout();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
+{
+  // std::cerr << "UpdateCompareViewLayoutDefinitions" << std::endl;
+
+  if (!this->LayoutNode)
+    {
+    return;
+    }
+
+  // Horizonal compare viewers
+  std::stringstream compareView;
+  compareView << "<layout type=\"vertical\" split=\"true\" >"
+    " <item>"
+    "  <layout type=\"horizontal\">"
+    "   <item>"
+    "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+    "     <property name=\"orientation\" action=\"default\">Axial</property>"
+    "     <property name=\"viewlabel\" action=\"default\">R</property>"
+    "    </view>"
+    "   </item>"
+    "   <item>"
+    "    <view class=\"vtkMRMLViewNode\"/>"
+    "   </item>"
+    "  </layout>"
+    " </item>"
+    " <item>"
+    "  <layout type=\"vertical\">";
+  
+  for (int i=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+    {
+    compareView <<     
+      "   <item>"
+      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i << "\">"
+      "     <property name=\"orientation\" action=\"default\">Axial</property>"
+      "     <property name=\"viewlabel\" action=\"default\">" << i << "</property>"
+      "     <property name=\"lightboxrows\" action=\"default\">1</property>"
+      "     <property name=\"lightboxcolumns\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
+      "    </view>"
+      "   </item>";
+      }
+  compareView << 
+    "  </layout>"
+    " </item>"
+    "</layout>";
+
+  if (this->LayoutNode)
+    {
+    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView))
+      {
+      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
+                                             compareView.str().c_str());
+      }
+    else
+      {
+      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
+                                             compareView.str().c_str());
+      }
+    }
+
+  // Vertical compare viewers
+  std::stringstream compareWidescreenView;
+  compareWidescreenView <<   "<layout type=\"horizontal\" split=\"true\" >"
+    " <item>"
+    "  <layout type=\"vertical\">"
+    "   <item>"
+    "    <view class=\"vtkMRMLViewNode\"/>"
+    "   </item>"
+    "   <item>"
+    "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+    "     <property name=\"orientation\" action=\"default\">Axial</property>"
+    "     <property name=\"viewlabel\" action=\"default\">R</property>"
+    "    </view>"
+    "   </item>"
+    "  </layout>"
+    " </item>"
+    " <item>"
+    "  <layout type=\"horizontal\">";
+
+  for (int i=1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
+    {
+    compareWidescreenView << 
+      "   <item>"
+      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i<< "\">"
+      "     <property name=\"orientation\" action=\"default\">Axial</property>"
+      "     <property name=\"viewlabel\" action=\"default\">" << i << "</property>"
+      "     <property name=\"lightboxrows\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxRows() << "</property>"
+      "     <property name=\"lightboxcolumns\" action=\"default\">1</property>"
+      "    </view>"
+      "   </item>";
+    }
+  compareWidescreenView << 
+    "  </layout>"
+    " </item>"
+    "</layout>";
+
+  if (this->LayoutNode)
+    {
+    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView))
+      {
+      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
+                                          compareWidescreenView.str().c_str());
+      }
+    else
+      {
+      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
+                                          compareWidescreenView.str().c_str());
+      }
+    }
+
+
+  // Grid compare viewers
+  std::stringstream compareViewGrid;
+  compareViewGrid << "<layout type=\"vertical\" split=\"true\" >"
+    " <item>"
+    "  <layout type=\"horizontal\">"
+    "   <item>"
+    "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+    "     <property name=\"orientation\" action=\"default\">Axial</property>"
+    "     <property name=\"viewlabel\" action=\"default\">R</property>"
+    "    </view>"
+    "   </item>"
+    "   <item>"
+    "    <view class=\"vtkMRMLViewNode\"/>"
+    "   </item>"
+    "  </layout>"
+    " </item>"
+    " <item>"
+    "  <layout type=\"vertical\">";
+  
+    for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+      {
+      compareViewGrid <<
+        "   <item>"
+        "    <layout type=\"horizontal\">";
+      for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns(); 
+           ++j,++k)
+        {
+        compareViewGrid <<     
+          "     <item>"
+          "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
+          "       <property name=\"orientation\" action=\"default\">Axial</property>"
+          "       <property name=\"viewlabel\" action=\"default\">" << k << "</property>"
+          "       <property name=\"lightboxrows\" action=\"default\">1</property>"
+          "       <property name=\"lightboxcolumns\" action=\"default\">1</property>"
+          "      </view>"
+          "     </item>";
+        }
+      compareViewGrid << 
+        "     </layout>"
+        "    </item>";
+      }
+    compareViewGrid << 
+      "  </layout>"
+      " </item>"
+      "</layout>";
+
+
+  if (this->LayoutNode)
+    {
+    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView))
+      {
+      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
+                                             compareViewGrid.str().c_str());
+      }
+    else
+      {
+      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
+                                             compareViewGrid.str().c_str());
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -611,10 +725,6 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          tabbed3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView,
                                          tabbedSliceView);
-  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
-                                         compareView);
-  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
-                                         compareWidescreenView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView,
                                          threeOverThreeView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourOverFourView,
@@ -625,6 +735,9 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          conventionalWidescreenView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTriple3DEndoscopyView,
                                          triple3DEndoscopyView);
+  // add the CompareView modes which are defined programmatically
+  this->UpdateCompareViewLayoutDefinitions();
+
 }
 
 //----------------------------------------------------------------------------
@@ -733,7 +846,35 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
       }
     sliceNode->SetLayoutLabel(value.c_str());
     }
-    
+  // Lightbox
+  if (name == std::string("lightboxrows"))
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
+    if (!sliceNode)
+      {
+      vtkWarningMacro("Invalid lightboxrows property.");
+      return;
+      }
+    std::stringstream ss;
+    int n;
+    ss << value;
+    ss >> n;
+    sliceNode->SetLayoutGridRows(n);
+    }
+  if (name == std::string("lightboxcolumns"))
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
+    if (!sliceNode)
+      {
+      vtkWarningMacro("Invalid lightboxcolumns property.");
+      return;
+      }
+    std::stringstream ss;
+    int n;
+    ss << value;
+    ss >> n;
+    sliceNode->SetLayoutGridColumns(n);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -879,6 +1020,10 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
     vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
     if (viewNode)
       {
+      // View already exisits, just apply the default properties for
+      // the layout
+      ViewProperties properties = this->GetViewElementProperties(viewElement);
+      this->ApplyProperties(properties, viewNode, "default");
       continue;
       }
     ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
