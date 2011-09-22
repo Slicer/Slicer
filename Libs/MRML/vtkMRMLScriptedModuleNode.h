@@ -45,6 +45,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
+  /// The name of the Module - this is used to
+  /// customize the node selectors and other things
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
+
   /// Set module parameter
   void SetParameter(const std::string& name, const std::string& value);
 
@@ -77,6 +82,7 @@ protected:
   
   typedef std::map<std::string, std::string> ParameterMap;
   ParameterMap Parameters;
+  char *ModuleName;
 };
 
 #endif

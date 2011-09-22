@@ -24,11 +24,17 @@ vtkMRMLNodeNewMacro(vtkMRMLScriptedModuleNode);
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()
 {
+  this->ModuleName = 0;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
 {
+  if (this->ModuleName)
+    {
+    delete [] this->ModuleName;
+    this->ModuleName = 0;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -38,7 +44,12 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   // Write all MRML node attributes into output stream
 
-  vtkIndent indent(nIndent);
+  vtkIndent indent(nIndent); 
+
+  if (this->ModuleName != 0)
+    {
+    of << " ModuleName =\"" << this->ModuleName << "\"";
+    }
 
   ParameterMap::iterator iter;
   int i = 0;
@@ -61,7 +72,11 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if ( !strncmp(attName, "parameter", strlen("parameter") ) )
+    if ( !strcmp(attName, "ModuleName") )
+      {
+      this->SetModuleName( attValue );
+      }
+    else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
       {
       std::string satt(attValue);
       int space = (int)satt.find(" ", 0);
@@ -80,6 +95,7 @@ void vtkMRMLScriptedModuleNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLScriptedModuleNode *node = (vtkMRMLScriptedModuleNode *) anode;
 
+  this->SetModuleName(node->GetModuleName());
   this->Parameters = node->Parameters;
 }
 
@@ -95,6 +111,8 @@ void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLNode::PrintSelf(os,indent);
 
   std::map<std::string, std::string>::iterator iter;
+
+  os << indent << "ModuleName: " << (this->GetModuleName() ? this->GetModuleName() : "(none)") << "\n";
 
   for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
     {
