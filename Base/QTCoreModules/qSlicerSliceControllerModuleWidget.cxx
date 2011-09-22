@@ -81,6 +81,7 @@ qSlicerSliceControllerModuleWidgetPrivate::createSliceController(vtkMRMLSliceNod
     new qMRMLSliceControllerWidget(this->SliceControllersCollapsibleButton);
   widget->setSliceViewName( sn->GetName() ); // call before setting slice node
   widget->setSliceViewLabel( sn->GetLayoutLabel() );
+  widget->setSliceViewColor( sn->GetLayoutColor() );
   widget->setMRMLSliceNode( sn );
   widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
 
