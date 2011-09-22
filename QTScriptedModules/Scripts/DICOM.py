@@ -125,6 +125,7 @@ class DICOMWidget:
     self.toggleListener = qt.QPushButton()
     if hasattr(slicer, 'dicomListener'):
       self.toggleListener.text = "Stop Listener"
+      slicer.dicomListener.process.connect('stateChanged(int)',self.onListenerStateChanged)
     else:
       self.toggleListener.text = "Start Listener"
     self.localFrame.layout().addWidget(self.toggleListener)
@@ -154,6 +155,8 @@ class DICOMWidget:
     g.setHeight(150)
     if self.dicomApp.databaseDirectory:
       self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
+    else:
+      self.promptForDatabaseDirectory()
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
@@ -193,6 +196,17 @@ class DICOMWidget:
     slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
     if not slicer.dicomDatabase.isOpen:
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+
+  def promptForDatabaseDirectory(self):
+    fileDialog = qt.QFileDialog(slicer.util.mainWindow())
+    fileDialog.setWindowModality(1)
+    fileDialog.setWindowTitle("Select DICOM Database Directory")
+    fileDialog.setFileMode(2) # prompt for directory
+    fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
+    label = qt.QLabel("<p>The Slicer DICOM module stores a local database with an index to all datasets that are pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.")
+    layout = fileDialog.layout()
+    layout.addWidget(label, layout.rowCount(), 1, -1, -1)
+    fileDialog.open()
 
   def onTreeClicked(self,index):
     self.model = index.model()
@@ -309,11 +323,26 @@ class DICOMWidget:
       try:
         slicer.dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
         slicer.dicomListener.start()
+        self.onListenerStateChanged(slicer.dicomListener.process.state())
+        slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
         slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
         slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
         self.toggleListener.text = "Stop Listener"
       except UserWarning as message:
         self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
+
+  def onListenerStateChanged(self,newState):
+    """ Called when the indexer process state changes
+    so we can provide feedback to the user
+    """
+    if newState == 0:
+      slicer.util.showStatusMessage("DICOM Listener not running")
+    if newState == 1:
+      slicer.util.showStatusMessage("DICOM Listener starting")
+    if newState == 2:
+      slicer.util.showStatusMessage("DICOM Listener running")
+
+
 
   def onListenerToAddFile(self):
     """ Called when the indexer is about to add a file to the database.
@@ -434,7 +463,6 @@ class DICOMExportDialog(object):
     layout.addWidget(bbox)
     ok.connect('clicked()', self.onOk)
     cancel.connect('clicked()', self.onCancel)
-
 
     self.dialog.open()
 
