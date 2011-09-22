@@ -28,10 +28,12 @@
 // MRML includes
 
 // VTK includes
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <algorithm>
+#include <vector>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLDisplayableManagerFactory);

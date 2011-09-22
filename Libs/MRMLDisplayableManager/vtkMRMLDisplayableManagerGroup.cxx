@@ -19,8 +19,10 @@
 ==============================================================================*/
 
 // MRMLDisplayableManager includes
+#include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLDisplayableManagerFactory.h"
+
 #ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
 #endif
@@ -30,14 +32,16 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkInstantiator.h>
+#include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
-#include <vtkInstantiator.h>
 
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <vector>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLDisplayableManagerGroup, "$Revision: 13859 $");
