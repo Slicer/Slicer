@@ -258,8 +258,8 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceViewName(newSliceViewName);
 
-  QColor sliceViewColor =
-    qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
+  // QColor sliceViewColor =
+  //   qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
 
 //Don't apply the color of the slice to the highlight box
 //  double highlightedBoxColor[3];
@@ -289,6 +289,20 @@ QString qMRMLSliceWidget::sliceViewLabel()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceViewLabel();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceWidget::setSliceViewColor(const QString& newSliceViewColor)
+{
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setSliceViewColor(newSliceViewColor);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLSliceWidget::sliceViewColor()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->sliceViewColor();
 }
 
 //---------------------------------------------------------------------------

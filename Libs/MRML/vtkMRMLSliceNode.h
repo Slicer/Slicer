@@ -153,9 +153,14 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   }
 
   ///
-  /// Label for layout. Usually a 1 or 2 character label, e.g. R, C1, etc.
+  /// Label for layout. Usually a 1 character label, e.g. R, 1, 2, etc.
   vtkSetStringMacro(LayoutLabel);
   vtkGetStringMacro(LayoutLabel);
+
+  ///
+  /// Color for layout. Hex string of the form #RRGGBB or an SVG named color
+  vtkSetStringMacro(LayoutColor);
+  vtkGetStringMacro(LayoutColor);
 
   /// 
   /// Set the number of rows and columns to use in a LightBox display
@@ -304,6 +309,7 @@ protected:
   char *OrientationReference;
 
   char * LayoutLabel;
+  char * LayoutColor;
 
   int LayoutGridRows;
   int LayoutGridColumns;

@@ -136,6 +136,7 @@ public:
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
   QString                             SliceViewLabel;
+  QString                             SliceViewColor;
   QButtonGroup*                       ControllerButtonGroup;
   ctkSignalMapper*                    CrosshairMapper;
   ctkSignalMapper*                    CrosshairThicknessMapper;

@@ -1231,12 +1231,15 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
     return;
     }
 
-  // If name matches either 'Red, 'Green' or 'Yellow' set the
-  // corresponding color (legacy colors). If the name matches an SVG color keyword
-  // http://www.w3.org/TR/SVG/types.html#ColorKeywords, then use that.
-  // Set Orange otherwise.
-  QColor barColor = qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
-  d->setColor(barColor);
+  // Colors are now first class properties not derived from the
+  // name...
+
+  // // If name matches either 'Red, 'Green' or 'Yellow' set the
+  // // corresponding color (legacy colors). If the name matches an SVG color keyword
+  // // http://www.w3.org/TR/SVG/types.html#ColorKeywords, then use that.
+  // // Set Orange otherwise.
+  // QColor barColor = qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
+  // d->setColor(barColor);
 
   if (d->SliceLogic)
     {
@@ -1276,7 +1279,14 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
     {
     color =  qMRMLColors::sliceYellow();
     }
-
+  else if (sliceViewName.startsWith("Compare"))
+    {
+    color = qMRMLColors::sliceOrange();
+    }
+  else if (sliceViewName.startsWith("Slice"))
+    {
+    color = qMRMLColors::sliceGray();
+    }
   else if (QColor::colorNames().contains(sliceViewName, Qt::CaseInsensitive))
     {
     // This conditional should really have been "if (QColor::isValidColor(sliceViewName.toLower()))"
@@ -1284,7 +1294,7 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
     }
   else
     {
-    color = qMRMLColors::sliceOrange();
+    color = qMRMLColors::sliceGray();
     }
   return color;
 }
@@ -1306,6 +1316,26 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
 
 //---------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewLabel, SliceViewLabel);
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceViewColor(const QString& newSliceViewColor)
+{
+  Q_D(qMRMLSliceControllerWidget);
+
+  if (d->MRMLSliceNode)
+    {
+    logger.error("setSliceViewColor should be called before setMRMLSliceNode !");
+    return;
+    }
+
+  d->SliceViewColor = newSliceViewColor;
+
+  QColor barColor(d->SliceViewColor);
+  d->setColor(barColor);
+}
+
+//---------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewColor, SliceViewColor);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)

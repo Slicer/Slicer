@@ -89,6 +89,13 @@ public:
   /// Get the label for the slice view (abbreviation for the view name)
   QString sliceViewLabel()const;
 
+  /// Set the color for the slice view (hex string #RRGGBB or SVG
+  /// color name)
+  void setSliceViewColor(const QString& newSliceViewColor);
+
+  /// Get the color for the slice view (as a string)
+  QString sliceViewColor()const;
+
   /// Set slice offset range
   void setSliceOffsetRange(double min, double max);
 

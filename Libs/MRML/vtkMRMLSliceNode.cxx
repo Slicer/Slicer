@@ -78,6 +78,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->InteractionFlags = 0;
 
   this->LayoutLabel = NULL;
+  this->LayoutColor = new char[8];
+  strcpy(this->LayoutColor, "#8C8C8C");
 }
 
 //----------------------------------------------------------------------------
@@ -106,6 +108,10 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   if ( this->LayoutLabel )
     {
     delete [] this->LayoutLabel;
+    }
+  if ( this->LayoutColor )
+    {
+    delete [] this->LayoutColor;
     }
   this->SetLayoutName(NULL);
 }
@@ -486,6 +492,10 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
     }
+  if (this->GetLayoutColor())
+    {
+    of << indent << " layoutColor=\"" << this->GetLayoutColor() << "\"";
+    }
   if (this->OrientationString)
     {
     of << indent << " orientation=\"" << this->OrientationString << "\"";
@@ -523,6 +533,10 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "layoutLabel")) 
       {
       this->SetLayoutLabel( attValue );
+      }
+    else if (!strcmp(attName, "layoutColor")) 
+      {
+      this->SetLayoutColor( attValue );
       }
     else if (!strcmp(attName, "fieldOfView")) 
       {
@@ -695,6 +709,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
   this->SetLayoutLabel(node->GetLayoutLabel());
+  this->SetLayoutColor(node->GetLayoutColor());
 
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
@@ -745,6 +760,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
   os << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
+  os << "LayoutColor: " << (this->LayoutColor ? this->LayoutColor : "(null)") << std::endl;
 
   os << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {

@@ -206,8 +206,10 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
   QString sliceLayoutLabel(sliceNode->GetLayoutLabel());
+  QString sliceLayoutColor(sliceNode->GetLayoutColor());
   sliceWidget->setSliceViewName(sliceLayoutName);
   sliceWidget->setSliceViewLabel(sliceLayoutLabel);
+  sliceWidget->setSliceViewColor(sliceLayoutColor);
   sliceWidget->setMRMLScene(this->MRMLScene);
   sliceWidget->setMRMLSliceNode(sliceNode);
   sliceWidget->setSliceLogics(this->MRMLSliceLogics);
@@ -318,18 +320,15 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     QString layoutName = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
 #ifndef QT_NO_DEBUG
-    // Note: The following has to be done since QColor::isValidColor is not available with Qt < 4.7
-    bool startWithCompare = layoutName.startsWith("Compare");
+    // Check whether a valid viewer color is assigned
     bool validColor = false;
-    if(!startWithCompare)
+    if (sliceNode->GetLayoutColor())
       {
-      // To avoid warning 'unknown color', let's check if the color is valid only if it doesn't
-      // start with 'Compare'
       QColor c;
-      c.setNamedColor(layoutName.toLower());
+      c.setNamedColor(sliceNode->GetLayoutColor());
       validColor = c.isValid();
       }
-    Q_ASSERT(startWithCompare || validColor);
+    Q_ASSERT(validColor);
 #endif
     if (!this->sliceWidget(sliceNode))
       {

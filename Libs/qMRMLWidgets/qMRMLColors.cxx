@@ -26,6 +26,7 @@
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceRed()
 {
+  // 243, 74, 51 -> #F34A33
   QColor flamingo = QColor::fromRgbF(0.952941176471, 0.290196078431, 0.2);
   return flamingo;
 }
@@ -33,6 +34,7 @@ QColor qMRMLColors::sliceRed()
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceGreen()
 {
+  // 110, 176, 75 -> #6EB04B
   QColor chelseaCucumber = QColor::fromRgbF(0.43137254902, 0.690196078431, 0.294117647059);
   return chelseaCucumber;
 }
@@ -40,6 +42,7 @@ QColor qMRMLColors::sliceGreen()
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceYellow()
 {
+  // 237, 213, 76 -> #EDD54C
   QColor ronchy = QColor::fromRgbF(0.929411764706, 0.835294117647, 0.298039215686);
   return ronchy;
 }
@@ -47,6 +50,7 @@ QColor qMRMLColors::sliceYellow()
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceOrange()
 {
+  // 225, 112, 18 -> #E17012
   QColor tango = QColor::fromRgbF(0.882352941176, 0.439215686275, 0.0705882352941);
   return tango;
 }
@@ -54,6 +58,15 @@ QColor qMRMLColors::sliceOrange()
 //------------------------------------------------------------------------------
 QColor qMRMLColors::threeDViewBlue()
 {
+  // 116, 131, 233 -> #7483E9
   QColor blue = QColor::fromRgb(116, 131, 233);
   return blue;
+}
+
+//------------------------------------------------------------------------------
+QColor qMRMLColors::sliceGray()
+{
+  // #8C8C8C
+  QColor gray = QColor("#8C8C8C");
+  return gray;
 }
