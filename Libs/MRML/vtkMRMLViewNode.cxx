@@ -52,11 +52,17 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor2[0] = this->defaultBackgroundColor2()[0];
   this->BackgroundColor2[1] = this->defaultBackgroundColor2()[1];
   this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
+  this->ViewLabel = new char[2];
+  strcpy(this->ViewLabel, "1");
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode()
 {
+  if ( this->ViewLabel )
+    {
+    delete [] this->ViewLabel;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -73,6 +79,11 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
+
+  if (this->GetViewLabel())
+    {
+    of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
+    }
 
   of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
   of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
@@ -195,7 +206,11 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "fieldOfView")) 
+    if (!strcmp(attName, "layoutLabel")) 
+      {
+      this->SetViewLabel( attValue );
+      }
+    else if (!strcmp(attName, "fieldOfView")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -470,6 +485,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   vtkMRMLViewNode *node = (vtkMRMLViewNode *) anode;
 
 
+  this->SetViewLabel(node->GetViewLabel());
   this->SetBoxVisible(node->GetBoxVisible());
   this->SetFiducialsVisible(node->GetFiducialsVisible());
   this->SetFiducialLabelsVisible(node->GetFiducialLabelsVisible());
@@ -500,6 +516,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
 
+  os << indent << "ViewLabel: " << (this->ViewLabel ? this->ViewLabel : "(null)") << std::endl;
   os << indent << "Active:        " << this->Active << "\n";
   os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";

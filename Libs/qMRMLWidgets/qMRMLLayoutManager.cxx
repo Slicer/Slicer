@@ -241,6 +241,7 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode
 
   logger.trace("createThreeDWidget - instantiated new qMRMLThreeDWidget");
   threeDWidget = new qMRMLThreeDWidget(q->viewport());
+  threeDWidget->setViewLabel(viewNode->GetViewLabel());
   threeDWidget->setMRMLScene(this->MRMLScene);
   threeDWidget->setMRMLViewNode(viewNode);
 
@@ -508,7 +509,8 @@ void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewRowsInternal(int num
   // Set the number of viewers on the layout node. This will trigger a
   // callback to in qMRMLLayoutLogic to redefine the layouts for the
   // comparison modes.
-  Q_Q(qMRMLLayoutManager);
+
+  //Q_Q(qMRMLLayoutManager);
   // Update LayoutNode
   if (this->MRMLLayoutNode)
     {
@@ -522,7 +524,8 @@ void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewColumnsInternal(int 
   // Set the number of viewers on the layout node. This will trigger a
   // callback to in qMRMLLayoutLogic to redefine the layouts for the
   // comparison modes.
-  Q_Q(qMRMLLayoutManager);
+
+  //Q_Q(qMRMLLayoutManager);
   // Update LayoutNode
   if (this->MRMLLayoutNode)
     {

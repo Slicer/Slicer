@@ -759,18 +759,18 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
   
   Superclass::PrintSelf(os,indent);
-  os << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
-  os << "LayoutColor: " << (this->LayoutColor ? this->LayoutColor : "(null)") << std::endl;
+  os << indent << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
+  os << indent << "LayoutColor: " << (this->LayoutColor ? this->LayoutColor : "(null)") << std::endl;
 
-  os << "FieldOfView:\n ";
+  os << indent << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {
-    os << indent << " " << this->FieldOfView[idx];
+    os << indent << indent << " " << this->FieldOfView[idx];
   }
   os << "\n";
 
-  os << "Dimensions:\n ";
+  os << indent << "Dimensions:\n ";
   for (idx = 0; idx < 3; ++idx) {
-    os << indent << " " << this->Dimensions[idx];
+    os << indent << indent << " " << this->Dimensions[idx];
   }
   os << "\n";
 
@@ -787,11 +787,11 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Jump mode: ";
   if (this->JumpMode == CenteredJumpSlice)
     {
-    std::cout << "Centered\n";
+    os << indent << "Centered\n";
     }
   else
     {
-    std::cout << "Offset\n";
+    os << indent << "Offset\n";
     }
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());

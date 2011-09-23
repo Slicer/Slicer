@@ -46,6 +46,13 @@ public:
   explicit qMRMLThreeDViewControllerWidget(QWidget* parent = 0);
   virtual ~qMRMLThreeDViewControllerWidget();
 
+  /// Set the label for the 3D view (abbreviation for the view
+  /// name)
+  void setViewLabel(const QString& newViewLabel);
+
+  /// Get the label for the view (abbreviation for the view name)
+  QString viewLabel()const;
+
 public slots:
   void setThreeDView(qMRMLThreeDView* threeDView);
   void setMRMLViewNode(vtkMRMLViewNode* viewNode);

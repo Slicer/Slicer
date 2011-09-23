@@ -137,3 +137,17 @@ qMRMLThreeDView* qMRMLThreeDWidget::threeDView()const
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView;
 }
+
+//---------------------------------------------------------------------------
+void qMRMLThreeDWidget::setViewLabel(const QString& newViewLabel)
+{
+  Q_D(qMRMLThreeDWidget);
+  d->ThreeDController->setViewLabel(newViewLabel);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLThreeDWidget::viewLabel()const
+{
+  Q_D(const qMRMLThreeDWidget);
+  return d->ThreeDController->viewLabel();
+}

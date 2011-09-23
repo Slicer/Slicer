@@ -151,6 +151,11 @@ public:
   /// specifies orthographic or perspective rendering
   vtkGetMacro (RenderMode, int );
   vtkSetMacro (RenderMode, int );
+
+  ///
+  /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
+  vtkSetStringMacro(ViewLabel);
+  vtkGetStringMacro(ViewLabel);
   
   /// Modes for automatically controlling camera 
   enum
@@ -254,6 +259,10 @@ protected:
   /// 
   /// Indicates whether or not the View is visible
   int Visibility;
+
+  ///
+  /// Label to show for the view (shortcut for the name)
+  char * ViewLabel;
   
   /// 
   /// When a view is set Active, make other views inactive.

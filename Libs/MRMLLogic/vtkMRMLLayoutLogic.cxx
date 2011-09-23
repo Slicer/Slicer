@@ -3,7 +3,8 @@
 
 // MRML includes
 #include "vtkMRMLLayoutNode.h"
-#include <vtkMRMLSliceNode.h>
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLViewNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -22,7 +23,9 @@
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\"/>"
+  "  <view class=\"vtkMRMLViewNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   " <item>"
   "  <layout type=\"horizontal\">"
@@ -63,7 +66,9 @@ const char* fourUpView =
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\"/>"
+  "    <view class=\"vtkMRMLViewNode\">"
+  "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    </view>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -90,7 +95,9 @@ const char* fourUpView =
 const char* oneUp3DView =
   "<layout type=\"horizontal\">"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\"/>"
+  "  <view class=\"vtkMRMLViewNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   "</layout>";
 const char* oneUpRedView =
@@ -127,31 +134,18 @@ const char* oneUpGreenView =
 const char* tabbed3DView =
   "<layout type=\"tab\">"
   " <item multiple=\"true\">"
-  "  <view class=\"vtkMRMLViewNode\"/>"
+  "  <view class=\"vtkMRMLViewNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   "</layout>";
 
 const char* tabbedSliceView =
   "<layout type=\"tab\">"
-  " <item name=\"Red slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
-  "   <property name=\"orientation\" action=\"default\">Axial</property>"
-  "     <property name=\"viewlabel\" action=\"default\">R</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
-  "  </view>"
-  " </item>"
-  " <item name=\"Yellow slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
-  "   <property name=\"orientation\" action=\"default\">Sagittal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">Y</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
-  "  </view>"
-  " </item>"
-  " <item name=\"Green slice\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
-  "   <property name=\"orientation\" action=\"default\">Coronal</property>"
-  "     <property name=\"viewlabel\" action=\"default\">G</property>"
-  "     <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
+  " <item multiple=\"true\">"
+  "  <view class=\"vtkMRMLSliceNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "   <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
   "  </view>"
   " </item>"
   "</layout>";
@@ -161,10 +155,14 @@ const char* dual3DView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\"/>"
+  "    <view class=\"vtkMRMLViewNode\">"
+  "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "     <property name=\"viewlabel\" action=\"default\">2</property>"
+  "    </view>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -198,7 +196,9 @@ const char* dual3DView =
 const char* conventionalWidescreenView =
   "<layout type=\"horizontal\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\"/>"
+  "  <view class=\"vtkMRMLViewNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   " <item>"
   "  <layout type=\"vertical\">"
@@ -230,15 +230,21 @@ const char* conventionalWidescreenView =
 const char* triple3DEndoscopyView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\"/>"
+  "  <view class=\"vtkMRMLViewNode\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "     <property name=\"viewlabel\" action=\"default\">2</property>"
+  "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"endoscopy\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"endoscopy\">"
+  "     <property name=\"viewlabel\" action=\"default\">3</property>"
+  "    </view>"
   "   </item>"
   "  </layout>"
   " </item>"
@@ -303,7 +309,9 @@ const char* fourOverFourView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\"/>"
+  "    <view class=\"vtkMRMLViewNode\">"
+  "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    </view>"
   "   </item>"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -331,7 +339,9 @@ const char* fourOverFourView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\"/>"
+  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "     <property name=\"viewlabel\" action=\"default\">2</property>"
+  "    </view>"
   "   </item>"
   "   <item>"
   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice4\">"
@@ -875,12 +885,20 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
   if (name == std::string("viewlabel"))
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
-    if (!sliceNode)
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(view);
+    if (!sliceNode && !viewNode)
       {
       vtkWarningMacro("Invalid view label property.");
       return;
       }
-    sliceNode->SetLayoutLabel(value.c_str());
+    if (sliceNode)
+      {
+      sliceNode->SetLayoutLabel(value.c_str());
+      }
+    if (viewNode)
+      {
+      viewNode->SetViewLabel(value.c_str());
+      }
     }
   // ViewColor
   if (name == std::string("viewcolor"))

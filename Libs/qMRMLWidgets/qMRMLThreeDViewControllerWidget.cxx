@@ -199,6 +199,25 @@ void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)
   d->ThreeDView = view;
 }
 
+//---------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+
+  if (d->ViewNode)
+    {
+    logger.error("setViewLabel should be called before setViewNode !");
+    return;
+    }
+
+  d->ThreeDViewLabel = newViewLabel;
+  d->ViewLabel->setText(d->ThreeDViewLabel);
+}
+
+//---------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLThreeDViewControllerWidget, QString, viewLabel, ThreeDViewLabel);
+
+
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
     vtkMRMLViewNode * viewNode)

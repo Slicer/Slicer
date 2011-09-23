@@ -34,6 +34,7 @@ class ctkButtonGroup;
 class ctkSignalMapper;
 class qMRMLSceneViewMenu;
 class vtkMRMLViewNode;
+class QString;
 
 //-----------------------------------------------------------------------------
 class qMRMLThreeDViewControllerWidgetPrivate
@@ -53,6 +54,8 @@ public:
 
   ctkSignalMapper*                 StereoTypesMapper;
   ctkButtonGroup*                  AnimateViewButtonGroup;
+  
+  QString                          ThreeDViewLabel;
 
 protected:
   virtual void setupPopupUi();

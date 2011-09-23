@@ -60,6 +60,14 @@ public:
   /// \sa qMRMLThreeDView::addDisplayableManager
   void addDisplayableManager(const QString& displayableManager);
 
+  /// \sa qMRMLThreeDControllerWidget::viewLabel()
+  /// \sa setiewLabel()
+  QString viewLabel()const;
+
+  /// \sa qMRMLThreeDControllerWidget::viewLabel()
+  /// \sa viewLabel()
+  void setViewLabel(const QString& newViewLabel);
+
 public slots:
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
