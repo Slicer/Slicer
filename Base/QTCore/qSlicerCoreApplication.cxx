@@ -1027,6 +1027,18 @@ QString qSlicerCoreApplication::repositoryRevision()const
 }
 
 //-----------------------------------------------------------------------------
+int qSlicerCoreApplication::majorVersion() const
+{
+  return Slicer_MAJOR_VERSION;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::minorVersion() const
+{
+  return Slicer_MINOR_VERSION;
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::platform()const
 {
   Q_D(const qSlicerCoreApplication);

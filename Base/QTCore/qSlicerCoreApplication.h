@@ -48,15 +48,17 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(QString slicerHome READ slicerHome)
+  Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
-  Q_PROPERTY(QString intDir READ intDir)
-  Q_PROPERTY(bool isInstalled READ isInstalled)
-  Q_PROPERTY(QString repositoryUrl READ repositoryUrl)
-  Q_PROPERTY(QString repositoryBranch READ repositoryBranch)
-  Q_PROPERTY(QString repositoryRevision READ repositoryRevision)
-  Q_PROPERTY(QString platform READ platform)
+  Q_PROPERTY(QString intDir READ intDir CONSTANT)
+  Q_PROPERTY(bool isInstalled READ isInstalled CONSTANT)
+  Q_PROPERTY(QString repositoryUrl READ repositoryUrl CONSTANT)
+  Q_PROPERTY(QString repositoryBranch READ repositoryBranch CONSTANT)
+  Q_PROPERTY(QString repositoryRevision READ repositoryRevision CONSTANT)
+  Q_PROPERTY(int majorVersion READ majorVersion CONSTANT)
+  Q_PROPERTY(int minorVersion READ minorVersion CONSTANT)
+  Q_PROPERTY(QString platform READ platform CONSTANT)
 public:
 
   typedef QApplication Superclass;
@@ -195,6 +197,12 @@ public:
   /// Return the source repository Revision associated to this build
   /// \sa discoverRepository
   QString repositoryRevision()const;
+
+  /// Return the Slicer major version number
+  int majorVersion() const;
+
+  /// Return the Slicer minor version number
+  int minorVersion() const;
 
   /// Return the source repository Platform associated to this build
   /// \sa discoverRepository
