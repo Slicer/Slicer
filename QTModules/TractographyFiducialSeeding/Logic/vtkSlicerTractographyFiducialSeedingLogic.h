@@ -45,6 +45,9 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Get parameters node
+  vtkGetObjectMacro (TractographyFiducialSeedingNode, vtkMRMLTractographyFiducialSeedingNode);
+
   void CreateTractsForOneSeed(vtkSeedTracts *seed,
                               vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                               vtkMRMLTransformableNode *transformableNode,
