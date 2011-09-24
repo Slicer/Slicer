@@ -52,8 +52,6 @@ vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingL
 //----------------------------------------------------------------------------
 vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
 {
-  this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), NULL);
-
   this->MaskPoints->Delete();
   this->RemoveMRMLNodesObservers();
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
