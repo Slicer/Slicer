@@ -452,6 +452,7 @@ void vtkMRMLViewDisplayableManager::Create()
   // If there is a active camera available, it means the vtkMRMLCameraDisplayableManager
   // has already been created and ActiveCameraChangedEvent already invoked.
   this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+  this->Superclass::Create();
 }
 
 //---------------------------------------------------------------------------

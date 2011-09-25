@@ -112,9 +112,11 @@ protected:
   /// A no-op if IsCreated() return True
   void CreateIfPossible();
 
-  /// Called after a valid MRML DisplayableNode is set
+  /// Called after a valid MRML DisplayableNode is set.
+  /// By default it simulates a ModifiedEvent event on the displayable node
+  /// so that ProcessMRMLEvents(displayableNode, ModifiedEvent) is called.
   /// \note GetRenderer() and GetMRMLDisplayableNode() will return valid object
-  virtual void Create(){}
+  virtual void Create();
 
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();

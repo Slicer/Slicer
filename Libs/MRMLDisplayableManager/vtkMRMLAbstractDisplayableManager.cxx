@@ -443,6 +443,12 @@ void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::Create()
+{
+  this->ProcessMRMLEvents(this->GetMRMLDisplayableNode(), vtkCommand::ModifiedEvent, 0);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager
 ::SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup * group)
 {
