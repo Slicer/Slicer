@@ -503,6 +503,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetStereoType ( node->GetStereoType ( ) );
   this->SetRenderMode ( node->GetRenderMode() );
   this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
+  this->SetBackgroundColor2 ( node->GetBackgroundColor2 ( ) );
   // Important: do not use SetActive or RemoveActiveFlagInScene will be called
   this->Active = node->GetActive();
   this->Visibility = node->GetVisibility();
