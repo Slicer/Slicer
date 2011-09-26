@@ -2,11 +2,12 @@
 
 from __main__ import _qSlicerCoreApplicationInstance as app
 from slicer.util import importVTKClassesFromDirectory
+from os import path
 
 # HACK Ideally constant from vtkSlicerConfigure and vtkSlicerVersionConfigure should
 #      be wrapped.
-slicer_qt_loadable_modules_lib_subdir =  "/lib/Slicer-%d.%d/qt-loadable-modules" % (app.majorVersion, app.minorVersion)
-directory = app.slicerHome + slicer_qt_loadable_modules_lib_subdir + "/Python"
+slicer_qt_loadable_modules_lib_subdir =  path.join("lib", "Slicer-%d.%d", "qt-loadable-modules") % (app.majorVersion, app.minorVersion)
+directory = path.join(app.slicerHome, slicer_qt_loadable_modules_lib_subdir, "Python")
 importVTKClassesFromDirectory(directory, __name__, filematch = "vtkSlicer*ModuleMRML.py")
 
 # Removing things the user shouldn't have to see.
