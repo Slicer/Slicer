@@ -1,56 +1,36 @@
-#include "qSlicerAnnotationModuleSnapShotDialog.h"
+// QT includes
+#include <QVariant>
 
-#include <ctkVTKWidgetsUtils.h>
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
-#include <ctkVTKSliceView.h>
+// QSlicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
-#include "qMRMLSliceWidget.h"
-#include "qMRMLThreeDView.h"
-#include "qMRMLThreeDWidget.h"
-#include "qMRMLUtils.h"
 
-#include "vtkImageData.h"
+// AnnotationsWidgets includes
+#include "qSlicerAnnotationModuleSnapShotDialog.h"
 
-// QT includes
-#include <QButtonGroup>
-#include <QList>
-#include <QFontMetrics>
-#include <QDebug>
-#include <QMessageBox>
-#include <QFileDialog>
+// AnnotationLogics includes
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+
+// VTK includes
+#include <vtkImageData.h>
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationModuleSnapShotDialog::qSlicerAnnotationModuleSnapShotDialog()
+qSlicerAnnotationModuleSnapShotDialog
+::qSlicerAnnotationModuleSnapShotDialog(QWidget* parentWidget)
+  :Superclass(parentWidget)
 {
-
   this->m_Logic = 0;
-
-  this->m_vtkImageData = 0;
-
-  this->m_Id = vtkStdString("");
-
-  ui.setupUi(this);
-
-  createConnection();
-
+  this->setLayoutManager(qSlicerApplication::application()->layoutManager());
+  this->setWindowTitle("Annotation Screenshot");
 }
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
 {
-
   if (this->m_Logic)
     {
     this->m_Logic = 0;
     }
-
-  if (this->m_vtkImageData)
-    {
-    this->m_vtkImageData->Delete();
-    this->m_vtkImageData = 0;
-    }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -63,316 +43,95 @@ void qSlicerAnnotationModuleSnapShotDialog::setLogic(vtkSlicerAnnotationModuleLo
     }
 
   this->m_Logic = logic;
-
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
+void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 {
-  if (!this->m_Logic)
+  if (!this->m_Logic || !nodeId)
     {
-    qErrnoWarning("initialize: We need the Annotation module logic here!");
+    qErrnoWarning("initialize: We need a logic and a valid node here!");
     return;
     }
 
-  this->m_Id = vtkStdString(nodeId);
+  // Activate the mode "review"
+  this->setData(QVariant(nodeId));
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetAnnotationName(this->m_Id.c_str());
+  vtkStdString name = this->m_Logic->GetAnnotationName(nodeId);
 
   // ..and set it in the GUI
-  this->ui.nameEdit->setText(name.c_str());
+  this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  vtkStdString description = this->m_Logic->GetSnapShotDescription(this->m_Id);
-
+  vtkStdString description = this->m_Logic->GetSnapShotDescription(nodeId);
   // ..and set it in the GUI
-  this->ui.descriptionTextEdit->setText(description.c_str());
+  this->setDescription(QString::fromStdString(description));
 
   // get the screenshot type..
-  int screenshotType = this->m_Logic->GetSnapShotScreenshotType(this->m_Id);
+  int screenshotType = this->m_Logic->GetSnapShotScreenshotType(nodeId);
 
   // ..and set it in the GUI
-  switch (screenshotType)
-    {
-    case 0:
-      // 3D view
-      this->ui.threeDViewRadio->setChecked(true);
-      break;
-    case 1:
-      // red Slice view
-      this->ui.redSliceViewRadio->setChecked(true);
-      break;
-    case 2:
-      // yellow Slice view
-      this->ui.yellowSliceViewRadio->setChecked(true);
-      break;
-    case 3:
-      // green Slice view
-      this->ui.greenSliceViewRadio->setChecked(true);
-      break;
-    case 4:
-      // full Layout
-      this->ui.fullLayoutRadio->setChecked(true);
-    default:
-      // as fallback, just treat this case as a full layout
-      this->ui.fullLayoutRadio->setChecked(true);
-    }
+  this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
-  double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(this->m_Id);
-  this->ui.scaleFactorSpinBox->setValue(scaleFactor);
-  this->ui.scaleFactorSpinBox->setEnabled(false);
+  double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(nodeId);
+  this->setScaleFactor(scaleFactor);
 
-  // we want to disable the modification of the screenshot since this snapshot was created earlier
-  // to change a screenshot of an old snapshot, there is a workaround by restoring it, deleting it and creating a new one
-  this->ui.threeDViewRadio->setEnabled(false);
-  this->ui.redSliceViewRadio->setEnabled(false);
-  this->ui.yellowSliceViewRadio->setEnabled(false);
-  this->ui.greenSliceViewRadio->setEnabled(false);
-  this->ui.fullLayoutRadio->setEnabled(false);
-
-  // get the actual screenshot..
-  this->m_vtkImageData = this->m_Logic->GetSnapShotScreenshot(this->m_Id);
-
-  // ..and convert it from vtkImageData to QImage..
-  QImage qimage;
-  qMRMLUtils::vtkImageDataToQImage(this->m_vtkImageData, qimage);
-
-  // ..and then to QPixmap..
-  QPixmap screenshot;
-  screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
-
-  // ..and set it to the gui..
-  ui.ScreenshotWidget->setPixmap(screenshot);
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::createConnection()
-{
-
-  // connect the OK and CANCEL button to the individual Slots
-  this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
-  this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
-
-  this->connect(ui.threeDViewRadio, SIGNAL(clicked()), this, SLOT(
-      onThreeDViewRadioClicked()));
-  this->connect(ui.redSliceViewRadio, SIGNAL(clicked()), this, SLOT(
-      onRedSliceViewRadioClicked()));
-  this->connect(ui.yellowSliceViewRadio, SIGNAL(clicked()), this, SLOT(
-      onYellowSliceViewRadioClicked()));
-  this->connect(ui.greenSliceViewRadio, SIGNAL(clicked()), this, SLOT(
-      onGreenSliceViewRadioClicked()));
-  this->connect(ui.fullLayoutRadio, SIGNAL(clicked()), this, SLOT(
-      onFullLayoutRadioClicked()));
-  this->connect(ui.scaleFactorSpinBox, SIGNAL(valueChanged(double)), this, SLOT(
-      onScaleFactorSpinBoxChanged()));
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onDialogRejected()
-{
-
-  // emit an event which gets caught by main GUI window
-  emit dialogRejected();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
-{
-
-  // name
-  QString name = this->ui.nameEdit->text();
-  QByteArray nameBytes = name.toLatin1();
-
-  // description
-  QString description = this->ui.descriptionTextEdit->toPlainText();
-  QByteArray descriptionBytes = description.toLatin1();
-
-  // we need to know of which type the screenshot is
-  int screenshotType = -1;
-
-  if (this->ui.threeDViewRadio->isChecked())
-    {
-    screenshotType = 0;
-    }
-  else if (this->ui.redSliceViewRadio->isChecked())
-    {
-    screenshotType = 1;
-    }
-  else if (this->ui.yellowSliceViewRadio->isChecked())
-    {
-    screenshotType = 2;
-    }
-  else if (this->ui.greenSliceViewRadio->isChecked())
-    {
-    screenshotType = 3;
-    }
-  else if (this->ui.fullLayoutRadio->isChecked())
-    {
-    screenshotType = 4;
-    }
-
-  if (!strcmp(this->m_Id, ""))
-    {
-    // this is a new snapshot
-    this->m_Logic->CreateSnapShot(nameBytes.data(), descriptionBytes.data(),
-        screenshotType, this->ui.scaleFactorSpinBox->value(), this->m_vtkImageData);
-    }
-  else
-    {
-    // this snapshot already exists
-    this->m_Logic->ModifySnapShot(this->m_Id, nameBytes.data(),
-        descriptionBytes.data(), screenshotType, this->ui.scaleFactorSpinBox->value(), this->m_vtkImageData);
-    }
-
-  // emit an event which gets caught by main GUI window
-  emit dialogAccepted();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onThreeDViewRadioClicked()
-{
-  this->grabScreenShot("ThreeD");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onRedSliceViewRadioClicked()
-{
-  this->grabScreenShot("Red");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onYellowSliceViewRadioClicked()
-{
-  this->grabScreenShot("Yellow");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onGreenSliceViewRadioClicked()
-{
-  this->grabScreenShot("Green");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onFullLayoutRadioClicked()
-{
-  this->grabScreenShot("");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onScaleFactorSpinBoxChanged()
-{
-
-  // check which screenshot should be grabbed
-
-  if (this->ui.fullLayoutRadio->isChecked())
-    {
-    // Full Layout
-    this->grabScreenShot("");
-    }
-  else if (this->ui.threeDViewRadio->isChecked())
-    {
-    // 3D view
-    this->grabScreenShot("ThreeD");
-    }
-  else if (this->ui.redSliceViewRadio->isChecked())
-    {
-    // Red
-    this->grabScreenShot("Red");
-    }
-  else if (this->ui.yellowSliceViewRadio->isChecked())
-    {
-    // Yellow
-    this->grabScreenShot("Yellow");
-    }
-  else if (this->ui.greenSliceViewRadio->isChecked())
-    {
-    // Green
-    this->grabScreenShot("Green");
-    }
-
+  vtkImageData* imageData = this->m_Logic->GetSnapShotScreenshot(nodeId);
+  this->setImageData(imageData);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::reset()
 {
-  this->ui.fullLayoutRadio->setEnabled(true);
-  this->ui.threeDViewRadio->setEnabled(true);
-  this->ui.redSliceViewRadio->setEnabled(true);
-  this->ui.yellowSliceViewRadio->setEnabled(true);
-  this->ui.greenSliceViewRadio->setEnabled(true);
+  QString name("Screenshot");
+  // check to see if it's an already used name for a node (redrawing the
+  // dialog causes it to reset and calling GetUniqueNameByString increments
+  // the number each time).
+  vtkCollection *col =
+    this->m_Logic->GetMRMLScene()->GetNodesByName(name.toLatin1());
+  if (col->GetNumberOfItems() > 0)
+    {
+    // get a new unique name
+    name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toLatin1());
+    }
 
-  this->ui.threeDViewRadio->setChecked(false);
-  this->ui.redSliceViewRadio->setChecked(false);
-  this->ui.yellowSliceViewRadio->setChecked(false);
-  this->ui.greenSliceViewRadio->setChecked(false);
-  this->ui.fullLayoutRadio->setChecked(true);
-
-  this->ui.scaleFactorSpinBox->setEnabled(true);
-  this->ui.scaleFactorSpinBox->setValue(1.0);
-
-  this->grabScreenShot("");
-  this->ui.descriptionTextEdit->clear();
-
-  // we want a default name which is easily overwritable by just typing
-  this->ui.nameEdit->setText(
-      this->m_Logic->GetMRMLScene()->GetUniqueNameByString("Screenshot"));
-  this->ui.nameEdit->setFocus();
-  this->ui.nameEdit->selectAll();
-
-  // reset the id
-  this->m_Id = vtkStdString("");
+  this->resetDialog();
+  this->setNameEdit(name);
 }
 
 //-----------------------------------------------------------------------------
-// Grab a screenshot of the 3DView or any sliceView.
-// The screenshotWindow is Red, Green, Yellow for a sliceView or empty for a ThreeDView
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWindow)
+void qSlicerAnnotationModuleSnapShotDialog::accept()
 {
-  QWidget* widget = 0;
+  // name
+  QString name = this->nameEdit();
+  QByteArray nameBytes = name.toLatin1();
 
-  if (screenshotWindow.length() > 0)
+  // description
+  QString description = this->description();
+  QByteArray descriptionBytes = description.toLatin1();
+
+  // we need to know of which type the screenshot is
+  int screenshotType = static_cast<int>(this->widgetType());
+
+  if (this->data().toString().isEmpty())
     {
-    if (screenshotWindow == "ThreeD")
-      {
-      // create a screenShot of the first 3DView
-      widget
-          = qSlicerApplication::application()->layoutManager()->threeDWidget(0)->threeDView();
-      }
-    else
-      {
-      // create a screenShot of a specific sliceView
-      widget
-          = const_cast<ctkVTKSliceView*> (qSlicerApplication::application()->layoutManager()->sliceWidget(
-              screenshotWindow)->sliceView());
-      }
+    // this is a new snapshot
+    this->m_Logic->CreateSnapShot(nameBytes.data(),
+                                  descriptionBytes.data(),
+                                  screenshotType,
+                                  this->scaleFactor(),
+                                  this->imageData());
     }
   else
     {
-    // create a screenShot of the full layout
-    widget = qSlicerApplication::application()->layoutManager()->viewport();
+    // this snapshot already exists
+    this->m_Logic->ModifySnapShot(vtkStdString(this->data().toString().toLatin1()),
+                                  nameBytes.data(),
+                                  descriptionBytes.data(),
+                                  screenshotType,
+                                  this->scaleFactor(),
+                                  this->imageData());
     }
-
-  // this is a hack right now for platforms other than mac
-  // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
-  QPixmap screenShot = QPixmap::fromImage(ctk::grabVTKWidget(widget));
-
-  // set preview (unscaled)
-  ui.ScreenshotWidget->setPixmap(screenShot);
-
-  // Rescale the image which gets saved
-  QPixmap rescaledScreenShot = screenShot.scaled(
-    screenShot.size().width() * this->ui.scaleFactorSpinBox->value(),
-    screenShot.size().height() * this->ui.scaleFactorSpinBox->value());
-
-  // convert the screenshot from QPixmap to vtkImageData and store it with this class
-  vtkImageData* vtkimage = vtkImageData::New();
-  qMRMLUtils::qImageToVtkImageData(rescaledScreenShot.toImage(), vtkimage);
-  this->m_vtkImageData = vtkimage;
+  this->Superclass::accept();
 }
-

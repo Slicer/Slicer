@@ -2881,7 +2881,6 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
   //---------------------------------------------------------------------------
   void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot)
   {
-
     if (!screenshot)
       {
       vtkErrorMacro("CreateSnapShot: No screenshot was set.")

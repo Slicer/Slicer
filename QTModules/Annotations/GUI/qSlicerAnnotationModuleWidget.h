@@ -76,7 +76,7 @@ public slots:
 
     /// a public slot allowing other modules to open up the screen capture
     /// dialog
-    void onSnapShotButtonClicked();
+    void grabSnapShot();
 
     /// Update the label showing the active annotation hierarchy, triggered from
     /// the logic modifying the active hierarchy node
@@ -127,16 +127,11 @@ protected slots:
   void propertyRestored();
   void propertyAccepted();
 
-  // Snapshot dialog
-  void snapshotRejected();
-  void snapshotAccepted();
-
   // Report dialog
   void reportDialogRejected();
   void reportDialogAccepted();
   void onReportButtonClicked();
 
-  
 protected:
   QScopedPointer<qSlicerAnnotationModuleWidgetPrivate> d_ptr;
 
@@ -148,7 +143,6 @@ private:
 
   qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;
-  qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog;
 
   /// Type of current Annotations - described by enum
   int m_CurrentAnnotationType;

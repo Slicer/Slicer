@@ -133,5 +133,5 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
 {
   Q_ASSERT(this->widgetRepresentation());
   dynamic_cast<qSlicerAnnotationModuleWidget*>(this->widgetRepresentation())
-      ->onSnapShotButtonClicked();
+      ->grabSnapShot();
 }

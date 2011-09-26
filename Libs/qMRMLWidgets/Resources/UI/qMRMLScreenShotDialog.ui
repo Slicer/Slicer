@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerAnnotationModuleSnapShotDialog</class>
- <widget class="QDialog" name="qSlicerAnnotationModuleSnapShotDialog">
+ <class>qMRMLScreenShotDialog</class>
+ <widget class="QDialog" name="qMRMLScreenShotDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>352</height>
+    <width>461</width>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Annotation Screenshot</string>
+   <string notr="true">Annotation Screenshot</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -44,7 +44,7 @@
           <string>Full layout</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerAnnotationModule.qrc">
+          <iconset resource="../qMRMLWidgets.qrc">
            <normaloff>:/Icons/AnnotationLayout.png</normaloff>:/Icons/AnnotationLayout.png</iconset>
          </property>
          <property name="checked">
@@ -58,7 +58,7 @@
           <string>3D View</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerAnnotationModule.qrc">
+          <iconset resource="../qMRMLWidgets.qrc">
            <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
          </property>
          <property name="checked">
@@ -72,7 +72,7 @@
           <string>Red Slice View</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerAnnotationModule.qrc">
+          <iconset resource="../qMRMLWidgets.qrc">
            <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
          </property>
         </widget>
@@ -83,7 +83,7 @@
           <string>Yellow Slice View</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerAnnotationModule.qrc">
+          <iconset resource="../qMRMLWidgets.qrc">
            <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
          </property>
         </widget>
@@ -94,7 +94,7 @@
           <string>Green Slice View</string>
          </property>
          <property name="icon">
-          <iconset resource="../qSlicerAnnotationModule.qrc">
+          <iconset resource="../qMRMLWidgets.qrc">
            <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
          </property>
         </widget>
@@ -201,40 +201,139 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerAnnotationModule.qrc"/>
+  <include location="../qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>qSlicerAnnotationModuleSnapShotDialog</receiver>
-   <slot>accept()</slot>
+   <signal>rejected()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>396</y>
+     <x>345</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
-     <x>304</x>
-     <y>208</y>
+     <x>326</x>
+     <y>231</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>qSlicerAnnotationModuleSnapShotDialog</receiver>
-   <slot>reject()</slot>
+   <signal>accepted()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>396</y>
+     <x>395</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel">
-     <x>304</x>
-     <y>208</y>
+     <x>388</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullLayoutRadio</sender>
+   <signal>clicked()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>216</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>threeDViewRadio</sender>
+   <signal>clicked()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>redSliceViewRadio</sender>
+   <signal>clicked()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yellowSliceViewRadio</sender>
+   <signal>clicked()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>157</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>greenSliceViewRadio</sender>
+   <signal>clicked()</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>scaleFactorSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>qMRMLScreenShotDialog</receiver>
+   <slot>grabScreenShot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>235</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>grabScreenShot()</slot>
+ </slots>
 </ui>

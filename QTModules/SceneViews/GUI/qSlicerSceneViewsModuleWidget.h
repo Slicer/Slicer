@@ -41,7 +41,7 @@ public slots:
 
     /// Refresh the tree from MRML
     void refreshTree();
-                                       
+
 protected slots:
 
   void moveDownSelected();

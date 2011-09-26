@@ -10,7 +10,6 @@
 #include <QButtonGroup>
 #include <QList>
 #include <QFontMetrics>
-#include <QDebug>
 #include <QMessageBox>
 #include <QTextBrowser>
 #include <QFile>
@@ -60,6 +59,8 @@ public:
   void setupUi(qSlicerWidget* widget);
 
   vtkSlicerAnnotationModuleLogic* logic() const;
+
+  qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog;
 };
 
 //-----------------------------------------------------------------------------
@@ -74,7 +75,7 @@ qSlicerAnnotationModuleWidgetPrivate::logic() const
 qSlicerAnnotationModuleWidgetPrivate::qSlicerAnnotationModuleWidgetPrivate(qSlicerAnnotationModuleWidget& object)
   : q_ptr(&object)
 {
-
+  this->m_SnapShotDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -153,7 +154,6 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // update from the mrml scene
   q->refreshTree();
-
 }
 
 //-----------------------------------------------------------------------------
@@ -161,10 +161,12 @@ qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
   , d_ptr(new qSlicerAnnotationModuleWidgetPrivate(*this))
 {
+  Q_D(qSlicerAnnotationModuleWidget);
   this->m_ReportDialog = 0;
-  this->m_SnapShotDialog = 0;
   this->m_PropertyDialog = 0;
   this->m_CurrentAnnotationType = 0;
+
+  d->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -175,13 +177,6 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
     this->m_ReportDialog->close();
     delete this->m_ReportDialog;
     this->m_ReportDialog = 0;
-    }
-
-  if (this->m_SnapShotDialog)
-    {
-    this->m_SnapShotDialog->close();
-    delete this->m_SnapShotDialog;
-    this->m_SnapShotDialog = 0;
     }
 
   if (this->m_PropertyDialog)
@@ -268,34 +263,18 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
     {
 
     // the selected entry is a snapshot node,
-    // we check if we have to create a new dialog..
 
-    if (!this->m_SnapShotDialog)
-      {
-
-      // no snapshot dialog exists yet..
-
-      this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
-
-      // pass a pointer to the logic class
-      this->m_SnapShotDialog->setLogic(d->logic());
-
-      // create slots which listen to events fired by the OK and CANCEL button on the dialog
-      this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
-          SLOT(snapshotRejected()));
-      this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
-          SLOT(snapshotAccepted()));
-
-      }
+    // pass a pointer to the logic class
+    d->m_SnapShotDialog->setLogic(d->logic());
 
     // reset all fields of the dialog
-    this->m_SnapShotDialog->reset();
+    d->m_SnapShotDialog->reset();
 
     // now we initialize it with existing values
-    this->m_SnapShotDialog->initialize(mrmlIdArray.data());
+    d->m_SnapShotDialog->loadNode(mrmlIdArray.data());
 
     // in any case, show the dialog
-    this->m_SnapShotDialog->open();
+    d->m_SnapShotDialog->open();
 
     // bail out, everything below is not for snapshots
     return;
@@ -328,9 +307,9 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
     this->m_PropertyDialog->setVisible(true);
 
-    this->connect(this->m_PropertyDialog, SIGNAL(dialogRejected()), this,
+    this->connect(this->m_PropertyDialog, SIGNAL(rejected()), this,
         SLOT(propertyRestored()));
-    this->connect(this->m_PropertyDialog, SIGNAL(dialogAccepted()), this,
+    this->connect(this->m_PropertyDialog, SIGNAL(accepted()), this,
         SLOT(propertyAccepted()));
 
     }
@@ -487,53 +466,18 @@ void qSlicerAnnotationModuleWidget::refreshTree()
 
 //-----------------------------------------------------------------------------
 // Annotation SnapShot functionality
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// Signal callback when the OK button of the snapshot dialog was clicked
-void qSlicerAnnotationModuleWidget::snapshotAccepted()
+void qSlicerAnnotationModuleWidget::grabSnapShot()
 {
-
-  this->m_SnapShotDialog->setVisible(false);
-  //std::cout << "Snapshot accepted" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-// Signal callback when the CANCEL button of the snapshot dialog was clicked
-void qSlicerAnnotationModuleWidget::snapshotRejected()
-{
-  this->m_SnapShotDialog->setVisible(false);
-  //std::cout << "Snapshot rejected" << std::endl;
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
-{
-
   Q_D(qSlicerAnnotationModuleWidget);
 
-  if (!this->m_SnapShotDialog)
-    {
-
-    this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
-
-    // pass a pointer to the logic class
-    this->m_SnapShotDialog->setLogic(d->logic());
-
-    // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
-        SLOT(snapshotRejected()));
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(snapshotAccepted()));
-
-    }
-
   // show the dialog
-  this->m_SnapShotDialog->reset();
-  this->m_SnapShotDialog->open();
-
+  d->m_SnapShotDialog->setLogic(d->logic());
+  d->m_SnapShotDialog->reset();
+  d->m_SnapShotDialog->open();
 }
+
 
 //-----------------------------------------------------------------------------
 // Annotation Report functionality
@@ -554,16 +498,12 @@ void qSlicerAnnotationModuleWidget::onReportButtonClicked()
     // pass a pointer to the logic class
     this->m_ReportDialog->setLogic(d->logic());
 
-
-
     // create slots which listen to events fired by the OK and CANCEL button on the dialog
     this->connect(this->m_ReportDialog, SIGNAL(dialogRejected()), this,
         SLOT(reportDialogRejected()));
     this->connect(this->m_ReportDialog, SIGNAL(dialogAccepted()), this,
         SLOT(reportDialogAccepted()));
-
     }
-
 
   VTK_CREATE(vtkCollection,collection);
 

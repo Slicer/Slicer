@@ -124,7 +124,6 @@ set(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
-  Resources/UI/qSlicerAnnotationModuleSnapShotDialog.ui
   )
 
 # Resources

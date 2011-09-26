@@ -8,7 +8,6 @@
 #include <QButtonGroup>
 #include <QList>
 #include <QFontMetrics>
-#include <QDebug>
 #include <QMessageBox>
 #include <QTextBrowser>
 #include <QFile>
@@ -184,7 +183,7 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
   if (d->SceneViewDialog)
     {
     // now we initialize it with existing values
-    d->SceneViewDialog->initialize(mrmlId);
+    d->SceneViewDialog->loadNode(mrmlId);
     }
 }
 

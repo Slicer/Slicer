@@ -114,6 +114,8 @@ set(qMRMLWidgets_SRCS
   qMRMLSceneHierarchyModel.h
   qMRMLSceneDisplayableModel.cxx
   qMRMLSceneDisplayableModel.h
+  qMRMLScreenShotDialog.cxx
+  qMRMLScreenShotDialog.h
   qMRMLSliceControllerWidget.cxx
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
@@ -200,6 +202,7 @@ set(qMRMLWidgets_MOC_SRCS
   qMRMLSceneTransformModel.h
   qMRMLSceneHierarchyModel.h
   qMRMLSceneDisplayableModel.h
+  qMRMLScreenShotDialog.h
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
   qMRMLSliceInformationWidget.h
@@ -232,6 +235,7 @@ set(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLModelInfoWidget.ui
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
+  Resources/UI/qMRMLScreenShotDialog.ui
   Resources/UI/qMRMLSliceControllerWidget.ui
   Resources/UI/qMRMLSliceInformationWidget.ui
   Resources/UI/qMRMLSliceWidget.ui

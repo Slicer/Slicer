@@ -73,7 +73,6 @@ set(qt_module_MOC_SRCS
 #-----------------------------------------------------------------------
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerSceneViewsModule.ui
-  Resources/UI/qSlicerSceneViewsModuleDialog.ui
   )
 
 # Resources
