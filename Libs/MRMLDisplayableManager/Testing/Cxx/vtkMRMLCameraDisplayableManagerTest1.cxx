@@ -33,7 +33,7 @@
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h> 
+#include <vtkRenderWindowInteractor.h>
 #include <vtkErrorCode.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkWindowToImageFilter.h>
