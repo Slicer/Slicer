@@ -33,9 +33,9 @@
 #include <vtkMRMLSceneViewNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtksys/SystemTools.hxx>
 #include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -67,8 +67,8 @@ public:
   vtkInternal();
   ~vtkInternal();
 
-  vtkMRMLSelectionNode *    SelectionNode;
-  vtkMRMLInteractionNode *  InteractionNode;
+  vtkSmartPointer<vtkMRMLSelectionNode>    SelectionNode;
+  vtkSmartPointer<vtkMRMLInteractionNode>  InteractionNode;
   vtkSmartPointer<vtkCollection> SliceLogics;
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
 };
@@ -79,9 +79,6 @@ public:
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic::vtkInternal::vtkInternal()
 {
-  this->SelectionNode = 0;
-  this->InteractionNode = 0;
-  
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
 }
 
@@ -103,14 +100,6 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic::~vtkMRMLApplicationLogic()
 {
-  if (this->Internal->SelectionNode)
-    {
-    this->Internal->SelectionNode->UnRegister(this);
-    }
-  if (this->Internal->InteractionNode)
-    {
-    this->Internal->InteractionNode->UnRegister(this);
-    }
   delete this->Internal;
 }
 
@@ -147,37 +136,31 @@ void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 {
-  vtkMRMLSelectionNode * selectionNode = 0;
+  vtkMRMLNode * selectionNode = 0;
   if (newScene)
     {
     // Selection Node
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        newScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    selectionNode = newScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode");
     if (!selectionNode)
       {
-      selectionNode =
-          vtkMRMLSelectionNode::SafeDownCast(newScene->AddNode(vtkMRMLSelectionNode::New()));
-      assert(selectionNode);
-      selectionNode->Delete();
+      selectionNode = newScene->AddNode(vtkNew<vtkMRMLSelectionNode>().GetPointer());
       }
+    assert(vtkMRMLSelectionNode::SafeDownCast(selectionNode));
     }
-  this->SetSelectionNode(selectionNode);
+  this->SetSelectionNode(vtkMRMLSelectionNode::SafeDownCast(selectionNode));
 
-  vtkMRMLInteractionNode * interactionNode = 0;
+  vtkMRMLNode * interactionNode = 0;
   if (newScene)
     {
     // Interaction Node
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast (
-        newScene->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    interactionNode = newScene->GetNthNodeByClass(0, "vtkMRMLInteractionNode");
     if (!interactionNode)
       {
-      interactionNode =
-          vtkMRMLInteractionNode::SafeDownCast(newScene->AddNode(vtkMRMLInteractionNode::New()));
-      assert(interactionNode);
-      interactionNode->Delete();
+      interactionNode = newScene->AddNode(vtkNew<vtkMRMLInteractionNode>().GetPointer());
       }
+    assert(vtkMRMLInteractionNode::SafeDownCast(interactionNode));
     }
-  this->SetInteractionNode(interactionNode);
+  this->SetInteractionNode(vtkMRMLInteractionNode::SafeDownCast(interactionNode));
 
   this->Superclass::SetMRMLSceneInternal(newScene);
 
@@ -191,15 +174,7 @@ void vtkMRMLApplicationLogic::SetSelectionNode(vtkMRMLSelectionNode *selectionNo
     {
     return;
     }
-  if (this->Internal->SelectionNode)
-    {
-    this->Internal->SelectionNode->UnRegister(this);
-    }
   this->Internal->SelectionNode = selectionNode;
-  if (this->Internal->SelectionNode)
-    {
-    this->Internal->SelectionNode->Register(this);
-    }
   this->Modified();
 }
 
@@ -210,15 +185,7 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode *interac
     {
     return;
     }
-  if (this->Internal->InteractionNode)
-    {
-    this->Internal->InteractionNode->UnRegister(this);
-    }
   this->Internal->InteractionNode = interactionNode;
-  if (this->Internal->InteractionNode)
-    {
-    this->Internal->InteractionNode->Register(this);
-    }
   this->Modified();
 }
 
@@ -350,7 +317,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     }
 
   vtkDebugMacro("Zip: zipFileName = " << zipFileName << ", temp dir = " << tempDir);
-  
+
   vtksys_stl::string archiveFileName;
   vtksys_stl::string newName;
   if (!zipFileName)
@@ -391,11 +358,11 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   newName.append(".tar.gz");
   vtkWarningMacro("Zip: Have an older version of LibArchive which only supports .tar.gz and not zip.\nChanging archive extension to tar.gz, newName = " << newName.c_str());
 #endif
-  
+
   vtkDebugMacro("Zip: file name = " << newName << ", temp dir = " << tempDir);
 
-  
-  
+
+
   // if the zip file is not absolute, put it in the temp dir
   if (vtksys::SystemTools::FileIsFullPath(newName.c_str()))
     {
@@ -408,7 +375,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     archivePathComponents.push_back(newName);
     archiveFileName = vtksys::SystemTools::JoinPath(archivePathComponents);
     }
-    
+
   vtkDebugMacro("Zip: saving to file " << archiveFileName);
 
   // does it exist already?
@@ -422,8 +389,8 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
       return NULL;
       }
     }
-    
-  // zip things up in a folder with the name of the archive file 
+
+  // zip things up in a folder with the name of the archive file
   vtksys_stl::string rootDir = vtksys::SystemTools::GetParentDirectory(archiveFileName.c_str());
   vtksys_stl::vector<vtksys_stl::string> rootPathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), rootPathComponents);
@@ -452,12 +419,12 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
       return NULL;
       }
     }
-  
+
   // create a new scene
   vtkSmartPointer<vtkMRMLScene> zipScene = vtkSmartPointer<vtkMRMLScene>::New();
-  
+
   zipScene->SetRootDirectory(rootDir.c_str());
-  
+
   // put the mrml scene file in the new directory
   vtksys_stl::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(newName) + vtksys_stl::string(".mrml");
   rootPathComponents.push_back(urlStr);
@@ -465,7 +432,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   zipScene->SetURL(urlStr.c_str());
   rootPathComponents.pop_back();
   vtkDebugMacro("Zip: set new scene url to " << zipScene->GetURL());
-  
+
   // create a data directory
   vtksys_stl::vector<vtksys_stl::string> pathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
@@ -482,7 +449,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
       return NULL;
       }
     }
-                                       
+
   // copy all the nodes into a new scene so can work on it without changing
   // the current scene
   int numNodes = this->GetMRMLScene()->GetNumberOfNodes();
@@ -557,7 +524,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
                 }
               vtkDebugMacro("Zip: found unique file name " << uniqueFileName.c_str());
               snode->SetFileName(uniqueFileName.c_str());
-              
+
               }
             snode->WriteData(storableNode);
             }
@@ -598,7 +565,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   // write the scene to disk, changes paths to relative
   vtkDebugMacro("Zip: calling commit on the scene, to url " << zipScene->GetURL());
   zipScene->Commit();
-  
+
   // collect a list of file names that will go into the zip archive
   // doing this after the commit so that get the relative paths
   std::vector<std::string> FilesToZip;
@@ -642,7 +609,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
       std::cout << "\t" << z << ": " << FilesToZip[z].c_str() << std::endl;
       }
     }
-  
+
   // now zip it up using LibArchive
   struct archive *a;
   struct archive_entry *entry, *dirEntry;
@@ -653,7 +620,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   int len;
   // have to read the contents of the files to add them to the archive
   FILE *fd;
-  
+
 
   a = archive_write_new();
 
@@ -679,7 +646,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   // this line was in the example
   //archive_write_set_compression_none(a);
 #endif
-  
+
   archive_write_open_filename(a, archiveFileName.c_str());
 
   // add the data directory
@@ -693,7 +660,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   archive_entry_set_size(dirEntry, 512);
   archive_write_header(a, dirEntry);
   archive_entry_free(dirEntry);
-  
+
   // add the files
   for (unsigned int f = 0; f < FilesToZip.size(); ++f)
     {
@@ -748,7 +715,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     {
     vtkDebugMacro("Zip: succeeded in writing the zip file " << archiveFileName << ", write returned " << retval);
     }
-  
+
   return archiveFileName.c_str();
 }
 
@@ -806,9 +773,9 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
 
     // create a new scene
   vtkSmartPointer<vtkMRMLScene> sdbScene = vtkSmartPointer<vtkMRMLScene>::New();
-  
+
   sdbScene->SetRootDirectory(rootDir.c_str());
-  
+
   // put the mrml scene file in the new directory
   vtksys_stl::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(rootDir.c_str()) + vtksys_stl::string(".mrml");
   rootPathComponents.push_back(urlStr);
@@ -908,7 +875,7 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
                 }
               vtkDebugMacro("SaveSceneToSlicerDataBundleDirectory: found unique file name " << uniqueFileName.c_str());
               snode->SetFileName(uniqueFileName.c_str());
-              
+
               }
             snode->WriteData(storableNode);
             }

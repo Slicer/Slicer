@@ -34,8 +34,8 @@ public:
   vtkInternal();
   ~vtkInternal();
 
-  vtkMRMLScene *       MRMLScene;
-  vtkSmartPointer<vtkMRMLApplicationLogic> MRMLApplicationLogic;
+  vtkMRMLScene *           MRMLScene;
+  vtkMRMLApplicationLogic* MRMLApplicationLogic;
 
   vtkObserverManager * MRMLObserverManager;
   int                  InMRMLCallbackFlag;
@@ -43,7 +43,7 @@ public:
 
   vtkCallbackCommand * LogicCallbackCommand;
   int                  InLogicCallbackFlag;
-  
+
   bool                 DisableModifiedEvent;
   int                  ModifiedEventPending;
 };
@@ -54,6 +54,7 @@ public:
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 {
+  this->MRMLApplicationLogic = 0;
   this->MRMLScene = 0;
 
   this->MRMLObserverManager = vtkObserverManager::New();
@@ -62,7 +63,7 @@ vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 
   this->InLogicCallbackFlag = false;
   this->LogicCallbackCommand = vtkCallbackCommand::New();
-  
+
   this->DisableModifiedEvent = false;
   this->ModifiedEventPending = 0;
 }
@@ -115,13 +116,13 @@ void vtkMRMLAbstractLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()
 {
-  return this->Internal->MRMLApplicationLogic.GetPointer();
+  return this->Internal->MRMLApplicationLogic;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic)
 {
-  if (logic == this->Internal->MRMLApplicationLogic.GetPointer())
+  if (logic == this->Internal->MRMLApplicationLogic)
     {
     return;
     }
@@ -155,7 +156,7 @@ void vtkMRMLAbstractLogic::MRMLCallback(vtkObject *caller,unsigned long eid,
 
 //----------------------------------------------------------------------------
 // Description:
-// the LogicCallback is a static function to relay modified events from the 
+// the LogicCallback is a static function to relay modified events from the
 // observed mrml node back into the gui layer for further processing
 //
 void vtkMRMLAbstractLogic::LogicCallback(vtkObject *caller, unsigned long eid,
@@ -390,7 +391,7 @@ void vtkMRMLAbstractLogic::SetDisableModifiedEvent(bool onOff)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractLogic::Modified() 
+void vtkMRMLAbstractLogic::Modified()
 {
   if (this->GetDisableModifiedEvent())
     {

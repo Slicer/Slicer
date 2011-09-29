@@ -6,45 +6,45 @@
 
 ==========================================================================*/
 
+// Slicer includes
+#include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerColorLogic.h"
+#include "vtkSlicerTask.h"
+
 // VTK includes
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
 // MRML includes
-#include "vtkCacheManager.h"
-#include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLCommandLineModuleNode.h"
-#include "vtkMRMLCrosshairNode.h"
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLDoubleArrayStorageNode.h"
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
-#include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelHierarchyNode.h"
-#include "vtkMRMLNRRDStorageNode.h"
-#include "vtkMRMLNonlinearTransformNode.h"
-#include "vtkMRMLSelectionNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLTransformStorageNode.h"
-#include "vtkMRMLVectorVolumeDisplayNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include <vtkCacheManager.h>
+#include <vtkMRMLColorTableStorageNode.h>
+#include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLCrosshairNode.h>
+#include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLDoubleArrayNode.h>
+#include <vtkMRMLDoubleArrayStorageNode.h>
+#include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
+#include <vtkMRMLFreeSurferModelStorageNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
+#include <vtkMRMLNonlinearTransformNode.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLTransformStorageNode.h>
+#include <vtkMRMLVectorVolumeDisplayNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // MRMLLogic includes
-#include "vtkMRMLSliceLogic.h"
-
-// Slice includes
-#include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkSlicerTask.h"
+#include <vtkMRMLSliceLogic.h>
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
@@ -56,12 +56,11 @@
 #endif
 #include <queue>
 
+//----------------------------------------------------------------------------
 // Private implementaton of an std::map
 class SliceLogicMap : public std::map<std::string, vtkSmartPointer<vtkMRMLSliceLogic> > {};
 
-vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision$");
-vtkStandardNewMacro(vtkSlicerApplicationLogic);
-
+//----------------------------------------------------------------------------
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
 class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
 class ReadDataRequest
@@ -73,7 +72,7 @@ public:
       m_TargetNodes.clear();
       m_SourceNodes.clear();
       m_IsScene = false;
-      
+
       m_TargetNodes.push_back(node);
       m_Filename = filename;
       m_DisplayData = displayData;
@@ -86,7 +85,7 @@ public:
       m_TargetNodes.clear();
       m_SourceNodes.clear();
       m_IsScene = false;
-      
+
       m_TargetNodes.push_back(node);
       m_Filename = filename;
       m_DisplayData = displayData;
@@ -120,17 +119,17 @@ public:
         {
         return m_TargetNodes[0];
         }
-      
+
       return empty;
     }
-  
+
   const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
   const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
   const std::string& GetFilename() const { return m_Filename; }
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
   int GetIsScene() const { return m_IsScene; };
-  
+
 protected:
   std::vector<std::string> m_TargetNodes;
   std::vector<std::string> m_SourceNodes;
@@ -138,10 +137,11 @@ protected:
   int m_DisplayData;
   int m_DeleteFile;
   bool m_IsScene;
-  
+
 };
 class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 
+//----------------------------------------------------------------------------
 class WriteDataRequest
 {
 public:
@@ -151,7 +151,7 @@ public:
       m_TargetNodes.clear();
       m_SourceNodes.clear();
       m_IsScene = false;
-      
+
       m_TargetNodes.push_back(node);
       m_Filename = filename;
       m_DisplayData = displayData;
@@ -164,7 +164,7 @@ public:
       m_TargetNodes.clear();
       m_SourceNodes.clear();
       m_IsScene = false;
-      
+
       m_TargetNodes.push_back(node);
       m_Filename = filename;
       m_DisplayData = displayData;
@@ -198,17 +198,17 @@ public:
         {
         return m_TargetNodes[0];
         }
-      
+
       return empty;
     }
-  
+
   const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
   const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
   const std::string& GetFilename() const { return m_Filename; }
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
   int GetIsScene() const { return m_IsScene; };
-  
+
 protected:
   std::vector<std::string> m_TargetNodes;
   std::vector<std::string> m_SourceNodes;
@@ -216,88 +216,71 @@ protected:
   int m_DisplayData;
   int m_DeleteFile;
   bool m_IsScene;
-  
+
 };
 class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 
-
+//----------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision$");
+vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-    this->Views = vtkCollection::New();
-    this->Modules = vtkCollection::New();
-    this->ActiveSlice = NULL;
+  this->Views = vtkSmartPointer<vtkCollection>::New();
+  this->Modules = vtkSmartPointer<vtkCollection>::New();
+  this->ActiveSlice = 0;
 
-    this->ProcessingThreader = itk::MultiThreader::New();
-    this->ProcessingThreadId = -1;
-    this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock = itk::MutexLock::New();
-    this->ProcessingTaskQueueLock = itk::MutexLock::New();
+  this->ProcessingThreader = itk::MultiThreader::New();
+  this->ProcessingThreadId = -1;
+  this->ProcessingThreadActive = false;
+  this->ProcessingThreadActiveLock = itk::MutexLock::New();
+  this->ProcessingTaskQueueLock = itk::MutexLock::New();
 
-    this->ModifiedQueueActive = false;
-    this->ModifiedQueueActiveLock = itk::MutexLock::New();
-    this->ModifiedQueueLock = itk::MutexLock::New();
+  this->ModifiedQueueActive = false;
+  this->ModifiedQueueActiveLock = itk::MutexLock::New();
+  this->ModifiedQueueLock = itk::MutexLock::New();
 
-    this->ReadDataQueueActive = false;
-    this->ReadDataQueueActiveLock = itk::MutexLock::New();
-    this->ReadDataQueueLock = itk::MutexLock::New();
+  this->ReadDataQueueActive = false;
+  this->ReadDataQueueActiveLock = itk::MutexLock::New();
+  this->ReadDataQueueLock = itk::MutexLock::New();
 
-    this->WriteDataQueueActive = false;
-    this->WriteDataQueueActiveLock = itk::MutexLock::New();
-    this->WriteDataQueueLock = itk::MutexLock::New();
-    
-    this->InternalTaskQueue = new ProcessingTaskQueue;
-    this->InternalModifiedQueue = new ModifiedQueue;
+  this->WriteDataQueueActive = false;
+  this->WriteDataQueueActiveLock = itk::MutexLock::New();
+  this->WriteDataQueueLock = itk::MutexLock::New();
 
-    this->InternalSliceLogicMap = new SliceLogicMap;    
+  this->InternalTaskQueue = new ProcessingTaskQueue;
+  this->InternalModifiedQueue = new ModifiedQueue;
 
-    this->InternalReadDataQueue = new ReadDataQueue;
-    this->InternalWriteDataQueue = new WriteDataQueue;
-    
+  this->InternalSliceLogicMap = new SliceLogicMap;
+
+  this->InternalReadDataQueue = new ReadDataQueue;
+  this->InternalWriteDataQueue = new WriteDataQueue;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
-  if (this->Views)
-    {
-        this->Views->Delete();
-        this->Views = NULL;
-    }
-  //if (this->Slices)
-  //  {
-  //      this->Slices->Delete();
-  //      this->Slices = NULL;
-  //  }
-  if (this->Modules)
-    {
-        this->Modules->Delete();
-        this->Modules = NULL;
-    }
-  //this->SetSelectionNode ( NULL );
-  //this->SetInteractionNode ( NULL );
-  this->SetActiveSlice ( NULL );
+  this->SetActiveSlice(0);
 
   // Note that TerminateThread does not kill a thread, it only waits
   // for the thread to finish.  We need to signal the thread that we
   // want to terminate
   if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
     {
-    // Signal the processingThread that we are terminating. 
+    // Signal the processingThread that we are terminating.
     this->ProcessingThreadActiveLock->Lock();
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock->Unlock();
-    
+
     // Wait for the thread to finish and clean up the state of the threader
     this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-    
+
     this->ProcessingThreadId = -1;
     }
-  
+
   delete this->InternalTaskQueue;
-  this->InternalTaskQueue = 0;
-  
+
   this->ModifiedQueueLock->Lock();
   while (!(*this->InternalModifiedQueue).empty())
     {
@@ -307,44 +290,18 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
     }
   this->ModifiedQueueLock->Unlock();
   delete this->InternalModifiedQueue;
-  this->InternalModifiedQueue = 0;
-  
   delete this->InternalReadDataQueue;
-  this->InternalReadDataQueue = 0;
-
-  //vtkMRMLSliceLogic *l;
-  //if (this->InternalSliceLogicMap)
-  //{
-         // SliceLogicMap::iterator lit;
-         // for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end();)
-         // {
-                //  l = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-                //  l->SetAndObserveMRMLScene(NULL);
-                //  l->Delete();
-                //  this->InternalSliceLogicMap->erase(lit++);  
-         // }
-  //}
-
   delete this->InternalSliceLogicMap;
-
   delete this->InternalWriteDataQueue;
-  this->InternalWriteDataQueue = 0;
 
-  // TODO - unregister/delete ivars
+  this->ClearCollections();
 }
 
-
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ClearCollections ( ) {
-    if ( this->Views) {
-        this->Views->RemoveAllItems ( );
-    }
-    //if ( this->Slices ) {
-    //    this->Slices->RemoveAllItems ( );
-    //}
-    if ( this->Modules ) {
-        this->Modules->RemoveAllItems ( );
-    }
+void vtkSlicerApplicationLogic::ClearCollections()
+{
+  this->Views->RemoveAllItems();
+  this->Modules->RemoveAllItems();
 }
 
 //----------------------------------------------------------------------------
@@ -354,8 +311,8 @@ unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
+void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
+                                            unsigned long /*event*/,
                                             void * /*callData*/ )
 {
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::ProcessMRMLEvents is deprecated");
@@ -412,60 +369,15 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
     }
   */
 }
-/*
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
-{
-  if ( !this->SelectionNode || !this->GetMRMLScene() )
-    {
-    return;
-    }
-
-  int i, nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
-  char *ID = selectionNode->GetActiveVolumeID();
-  char *secondID = selectionNode->GetSecondaryVolumeID();
-  char *labelID = selectionNode->GetActiveLabelVolumeID();
-
-  vtkMRMLSliceCompositeNode *cnode;
-  for (i = 0; i < nnodes; i++)
-    {
-    cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-            this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if(!cnode->GetDoPropagateVolumeSelection())
-      {
-      continue;
-      }
-    cnode->SetBackgroundVolumeID( ID );
-    cnode->SetForegroundVolumeID( secondID );
-    cnode->SetLabelVolumeID( labelID );
-    }
-
-  if (!fit) return;
-
-  if (this->InternalSliceLogicMap)
-    {
-    SliceLogicMap::iterator lit;
-    for (lit = this->InternalSliceLogicMap->begin();
-         lit != this->InternalSliceLogicMap->end(); ++lit)
-      {
-      vtkMRMLSliceLogic *l = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-      vtkMRMLSliceNode *sliceNode = l->GetSliceNode();
-      int *dims = sliceNode->GetDimensions();
-      l->FitSliceToAll(dims[0], dims[1]);
-      }
-    }
-}
-*/
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
 {
-  if ( !this->SelectionNode || !this->GetMRMLScene() )
+  if(!this->GetMRMLScene() || !this->GetSelectionNode())
     {
     return;
     }
-  //char *ID = this->SelectionNode->GetActiveFiducialListID();
+  //char *ID = this->GetSelectionNode()->GetActiveFiducialListID();
 
   // set the Fiducials GUI to show the active list? it's watching the node for
   // now
@@ -476,8 +388,8 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
-  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; 
-} 
+  os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n";
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::Connect (const char *URL)
@@ -512,7 +424,19 @@ int vtkSlicerApplicationLogic::Commit(const char *URL)
     }
   return (0);
 };
-  
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkSlicerApplicationLogic::GetViews()
+{
+  return this->Views;
+}
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkSlicerApplicationLogic::GetModules()
+{
+  return this->Modules;
+}
+
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, ActiveSlice, vtkMRMLSliceLogic);
 
@@ -556,7 +480,7 @@ vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutNa
     {
     SliceLogicMap::const_iterator lend = (*this->InternalSliceLogicMap).end();
     SliceLogicMap::const_iterator lit =     (*this->InternalSliceLogicMap).find(layoutName);
-    
+
     if ( lit != lend)
       return (vtkMRMLSliceLogic::SafeDownCast((*lit).second));
     else
@@ -615,7 +539,7 @@ void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
     (*this->InternalSliceLogicMap).erase(mit);
     }
 }
-  
+
 
 void vtkSlicerApplicationLogic::CreateSliceLogics()
 {
@@ -644,7 +568,7 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
   sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetName("Green");
   this->AddSliceLogic("Green", sliceLogic);
-    
+
 
   SliceLogicMap::iterator lit;
   for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
@@ -656,7 +580,7 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
     //if (this->Slices)
     //      this->Slices->AddItem(sliceLogic);
     }
-    
+
   events->Delete();
 }
 
@@ -686,7 +610,7 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->ProcessingThreadActiveLock->Lock();
     this->ProcessingThreadActive = true;
     this->ProcessingThreadActiveLock->Unlock();
-    
+
     this->ProcessingThreadId
       = this->ProcessingThreader
       ->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback,
@@ -772,7 +696,7 @@ ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic
 ::ProcessingThreaderCallback( void *arg )
 {
-  
+
 #ifdef ITK_USE_WIN32_THREADS
   // Adjust the priority of this thread
   SetThreadPriority(GetCurrentThread(),
@@ -784,7 +708,7 @@ vtkSlicerApplicationLogic
   int ret = nice(20);
   ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
-    
+
   // pull out the reference to the appLogic
   vtkSlicerApplicationLogic *appLogic
     = (vtkSlicerApplicationLogic*)
@@ -801,7 +725,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 {
   int active = true;
   vtkSmartPointer<vtkSlicerTask> task = 0;
-  
+
   while (active)
     {
     // Check to see if we should be shutting down
@@ -816,20 +740,20 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
       if ((*this->InternalTaskQueue).size() > 0)
         {
         // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
-        
+
         // only handle processing tasks in this thread
         task = (*this->InternalTaskQueue).front();
         if ( task->GetType() == vtkSlicerTask::Processing )
           {
           (*this->InternalTaskQueue).pop();
           }
-        else 
+        else
           {
           task = NULL;
           }
         }
       this->ProcessingTaskQueueLock->Unlock();
-      
+
       // process the task (should this be in a separate thread?)
       if (task)
         {
@@ -847,7 +771,7 @@ ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic
 ::NetworkingThreaderCallback( void *arg )
 {
-  
+
 #ifdef ITK_USE_WIN32_THREADS
   // Adjust the priority of this thread
   SetThreadPriority(GetCurrentThread(),
@@ -859,7 +783,7 @@ vtkSlicerApplicationLogic
   int ret = nice(20);
   ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
-    
+
   // pull out the reference to the appLogic
   vtkSlicerApplicationLogic *appLogic
     = (vtkSlicerApplicationLogic*)
@@ -876,7 +800,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 {
   int active = true;
   vtkSmartPointer<vtkSlicerTask> task = 0;
-  
+
   while (active)
     {
     // Check to see if we should be shutting down
@@ -896,13 +820,13 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
           {
           (*this->InternalTaskQueue).pop();
           }
-        else 
+        else
           {
           task = NULL;
           }
         }
       this->ProcessingTaskQueueLock->Unlock();
-      
+
       // process the task (should this be in a separate thread?)
       if (task)
         {
@@ -933,7 +857,7 @@ int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
     (*this->InternalTaskQueue).push( task );
     //std::cout << (*this->InternalTaskQueue).size() << std::endl;
     this->ProcessingTaskQueueLock->Unlock();
-    
+
     return true;
     }
 
@@ -1078,7 +1002,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     (*this->InternalModifiedQueue).pop();
 
     // pop off any extra copies of the same object to save some updates
-    while (!(*this->InternalModifiedQueue).empty() 
+    while (!(*this->InternalModifiedQueue).empty()
            && (obj == (*this->InternalModifiedQueue).front()))
       {
       (*this->InternalModifiedQueue).pop();
@@ -1199,12 +1123,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
   vtkMRMLCommandLineModuleNode *clp = 0;
-  
+
   nd = this->GetMRMLScene()->GetNodeByID( req.GetNode().c_str() );
 
   vtkDebugMacro("ProcessReadNodeData: read data request node id = " << nd->GetID());
 
-  // volumes may inherit from each other, 
+  // volumes may inherit from each other,
   // should be in the reverse order of inheritance
   if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd))
     {
@@ -1222,7 +1146,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     {
     svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
     }
-  
+
 
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
@@ -1232,7 +1156,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
 
   clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
-  
+
   bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
   bool storageNodeExists = false;
   int numStorageNodes = 0;
@@ -1280,9 +1204,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         // Load a scalar or vector volume node
         //
-        // Need to maintain the original coordinate frame established by 
-        // the images sent to the execution model 
-        vtkMRMLVolumeArchetypeStorageNode *vin 
+        // Need to maintain the original coordinate frame established by
+        // the images sent to the execution model
+        vtkMRMLVolumeArchetypeStorageNode *vin
           = vtkMRMLVolumeArchetypeStorageNode::New();
         vin->SetCenterImage(0);
         storageNode = vin;
@@ -1291,8 +1215,8 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         // Load a diffusion tensor or a diffusion weighted node
         //
-        // Need to maintain the original coordinate frame established by 
-        // the images sent to the execution model 
+        // Need to maintain the original coordinate frame established by
+        // the images sent to the execution model
         vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
         nin->SetCenterImage(0);
         storageNode = nin;
@@ -1383,13 +1307,13 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       }
      // done making a new storage node
     }
-  
+
     // Have the storage node read the data into the current node
     if (storageNode)
       {
       try
         {
-        vtkMRMLStorableNode *storableNode1 = 
+        vtkMRMLStorableNode *storableNode1 =
           vtkMRMLStorableNode::SafeDownCast(nd);
         if ( storableNode1 && storableNode1->GetStorageNode() == NULL  &&
              !storageNodeExists)
@@ -1419,9 +1343,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
             storageNode->SetFileName( NULL ); // clear temp file name
             }
           }
-        // since this was read from a temp location, 
+        // since this was read from a temp location,
         // mark it as needing to be saved when the scene is saved
-        nd->SetModifiedSinceRead(1); 
+        nd->SetModifiedSinceRead(1);
         }
       catch (itk::ExceptionObject& exc)
         {
@@ -1450,7 +1374,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       clp->ReadParameterFile(req.GetFilename());
       }
 
-    
+
     // Delete the file if requested
     if (req.GetDeleteFile())
       {
@@ -1489,7 +1413,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     // Scalar or vector volume node
     if (svnd)
       {
-      if (svnd->GetLabelMap()) 
+      if (svnd->GetLabelMap())
         {
         disp = vtkMRMLLabelMapVolumeDisplayNode::New();
         }
@@ -1533,7 +1457,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     // Model node
     vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
     disp = modelDisplayNode;
-    if (mnd->GetPolyData()) 
+    if (mnd->GetPolyData())
       {
       modelDisplayNode->SetPolyData(mnd->GetPolyData());
       }
@@ -1551,9 +1475,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   else if (ltnd || nltnd)
     {
     // Linear transform node
-    // (no display node)  
+    // (no display node)
     }
-  
+
   // Set up the display node.  If we already have a display node,
   // just use that one.
   //
@@ -1585,32 +1509,32 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (displayNode)
       {
       displayNode->SetDefaultColorMap();
-      } 
-    if (svnd) 
+      }
+    if (svnd)
       {
       svnd->SetAndObserveDisplayNodeID( disp->GetID() );
       }
-    else if (vvnd) 
+    else if (vvnd)
       {
       vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
       }
-    else if (dtvnd) 
+    else if (dtvnd)
       {
       dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
       // add slice display nodes
       vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(disp)->AddSliceGlyphDisplayNodes( dtvnd );
       }
-    else if (dwvnd) 
+    else if (dwvnd)
       {
       dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
       }
-    else if (mnd) 
+    else if (mnd)
       {
       mnd->SetAndObserveDisplayNodeID( disp->GetID() );
       }
     disp->Delete();
     }
-    
+
   // Cause the any observers to fire (we may have avoided calling
   // modified on the node)
   //
@@ -1620,7 +1544,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   // propagate selection.
   //
   // Models are always displayed when loaded above.
-  // 
+  //
   // Tensors? Vectors?
   if (req.GetDisplayData())
     {
@@ -1628,7 +1552,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
       }
-    else 
+    else
       {
       svnd = NULL;
       }
@@ -1689,7 +1613,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 
     return;
     }
-  
+
   vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
   miniscene->SetURL( req.GetFilename().c_str() );
   miniscene->Import();
@@ -1741,16 +1665,16 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
         // the target scene
         vtkMRMLModelNode *smnd = smhnd->GetModelNode();
         vtkMRMLDisplayNode *sdnd = smhnd->GetDisplayNode();
-        
+
         // add the model and display referenced by source model hierarchy node
         if (smnd)
           {
           // set the model node to be modified, as it was read from a temp
           // location
-          smnd->SetModifiedSinceRead(1); 
+          smnd->SetModifiedSinceRead(1);
           // get display node BEFORE we add nodes to the target scene
           vtkMRMLDisplayNode *sdnd1 = smnd->GetDisplayNode();
-          
+
           vtkMRMLNode *tmodel = this->GetMRMLScene()->CopyNode(smnd);
           vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
           vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
@@ -1762,13 +1686,13 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
             mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
             }
           }
-        
+
         if (sdnd)
           {
           vtkMRMLNode *dnd = this->GetMRMLScene()->CopyNode(sdnd);
           tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
           }
-        
+
         // add any children model hierarchy nodes, rinse, repeat
         //
         // need a way to recurse - JVM
@@ -1795,12 +1719,12 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 // to the target scene
                 vtkMRMLModelNode *smnd1 = mhnd->GetModelNode();
                 vtkMRMLDisplayNode *sdnd1 = mhnd->GetDisplayNode();
-                
+
                 vtkMRMLNode *tchild = this->GetMRMLScene()->CopyNode(mhnd);
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
                 tcmhd->SetParentNodeID( tmhnd->GetID() );
-                
+
                 if (smnd1)
                   {
                   // set it as modified
@@ -1819,7 +1743,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }
-                
+
                 if (sdnd1)
                   {
                   vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd);
@@ -1845,11 +1769,11 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   << std::endl;
       vtkWarningMacro( << information.str().c_str() );
       }
-    
+
     ++sit;
     ++tit;
     }
-  
+
   // Delete the file if requested
   if (req.GetDeleteFile())
     {
@@ -1889,10 +1813,10 @@ void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
         vtkWarningMacro( << information.str().c_str() );
         }
       }
-    
+
     return;
     }
-  
+
   // Delete the file if requested
   if (req.GetDeleteFile())
     {
