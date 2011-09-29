@@ -2776,8 +2776,6 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
 
       this->GetMRMLScene()->AddNode(hierarchyNode);
 
-      // we want it to be the active hierarchy from now on
-      this->SetActiveHierarchyNodeID(hierarchyNode->GetID());
       }
     else
       {
@@ -2809,6 +2807,12 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
       hierarchyNode->SetParentNodeID(this->GetActiveHierarchyNodeID());
       }
 
+    if (!annotationNode)
+      {
+      // we want it to be the active hierarchy from now on (do this after
+      // setting the parent node id)
+      this->SetActiveHierarchyNodeID(hierarchyNode->GetID());
+      }
     // it's been added to the scene, delete this pointer
     hierarchyNode->Delete();
     return true;
