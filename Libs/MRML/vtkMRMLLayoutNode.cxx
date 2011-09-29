@@ -58,8 +58,8 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes, since the parsing of the string is dependent on the
-  // order here. 
-  
+  // order here.
+
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
@@ -88,15 +88,15 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
-  
+
   const char* attName;
   const char* attValue;
-  
-  while (*atts != NULL) 
+
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "currentViewArrangement")) 
+    if (!strcmp(attName, "currentViewArrangement"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -184,7 +184,8 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
 {
   // if the view arrangement definition has not been changed, return
-  if (this->ViewArrangement == arrNew 
+  if (this->ViewArrangement == arrNew
+      && this->GetCurrentLayoutDescription()
       && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew))
     {
     return;
@@ -329,17 +330,17 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetMainPanelSize( node->GetMainPanelSize() );
   this->SetSecondaryPanelSize( node->GetSecondaryPanelSize() );
   this->SetSelectedModule( node->GetSelectedModule() );
-  
+
   this->EndModify(disabledModify);
 
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
 
   Superclass::PrintSelf(os,indent);
-  
+
   // Layout:
   os << indent << "ViewArrangement: " << this->ViewArrangement  << "\n";
   os << indent << "GUIPanelVisibility: " << this->GUIPanelVisibility  << "\n";
@@ -361,5 +362,3 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Selected module: (none)\n";
     }
 }
-
-

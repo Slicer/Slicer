@@ -16,30 +16,30 @@ public:
   vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLNode);
   virtual vtkMRMLNode* CreateNodeInstance();
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRML methods
   //--------------------------------------------------------------------------
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
+
   /// Get/Set for Current layout
   vtkGetMacro (ViewArrangement, int );
   virtual void SetViewArrangement ( int );
 
   vtkGetMacro (GUIPanelVisibility, int);
   vtkSetMacro (GUIPanelVisibility, int);
-  
+
   vtkGetMacro ( BottomPanelVisibility, int );
   vtkSetMacro (BottomPanelVisibility, int );
 
@@ -47,26 +47,26 @@ public:
   vtkGetMacro (GUIPanelLR, int );
   vtkSetMacro (GUIPanelLR, int );
 
-  /// 
+  ///
   /// Control the collapse state of the SliceControllers
   vtkGetMacro (CollapseSliceControllers, int);
   vtkSetMacro (CollapseSliceControllers, int);
 
-  /// 
+  ///
   /// CompareView configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewRows, int );
-  vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);  
+  vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);
   vtkGetMacro ( NumberOfCompareViewColumns, int );
-  vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );  
+  vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );
 
-  /// 
+  ///
   /// CompareView lightbox configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
-  vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );  
+  vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );
   vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
-  vtkSetClampMacro ( NumberOfCompareViewLightboxColumns, int, 1, 50 );  
+  vtkSetClampMacro ( NumberOfCompareViewLightboxColumns, int, 1, 50 );
 
-  /// 
+  ///
   /// Set/Get the size of the main and secondary panels (size of Frame1
   /// in each panel)
   vtkGetMacro( MainPanelSize, int);
@@ -77,7 +77,7 @@ public:
   /// Set/Get the size of the last selected module
   vtkGetStringMacro( SelectedModule);
   vtkSetStringMacro( SelectedModule);
-  
+
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
 
@@ -104,7 +104,7 @@ public:
       SlicerLayoutSingleLightboxView, // Remove?
       SlicerLayoutTriple3DEndoscopyView, // Up to here, all layouts are Slicer 3 compatible
       SlicerLayout3DPlusLightboxView, // really used ?, Remove?
-      SlicerLayoutThreeOverThreeView, 
+      SlicerLayoutThreeOverThreeView,
       SlicerLayoutFourOverFourView,
       SlicerLayoutCompareGridView,
       SlicerLayoutCustomView = 99,
