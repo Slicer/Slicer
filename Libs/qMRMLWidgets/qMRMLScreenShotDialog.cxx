@@ -54,12 +54,12 @@ public:
   void setCheckedRadioButton(int type);
   void setWidgetEnabled(bool state);
 
-  QWeakPointer<qMRMLLayoutManager>   layoutManager;
-  vtkSmartPointer<vtkImageData>      imageData;
+  QWeakPointer<qMRMLLayoutManager>   LayoutManager;
+  vtkSmartPointer<vtkImageData>      ImageData;
   /// The ID of the associated snapshot node.
   /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).
-  QVariant                           data;
-  QButtonGroup*                      widgetTypeGroup;
+  QVariant                           Data;
+  QButtonGroup*                      WidgetTypeGroup;
 };
 
 //-----------------------------------------------------------------------------
@@ -68,27 +68,27 @@ qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog
 {
   qRegisterMetaType<qMRMLScreenShotDialog::WidgetType>(
       "qMRMLScreenShotDialog::WidgetType");
-  this->widgetTypeGroup = 0;
+  this->WidgetTypeGroup = 0;
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialogPrivate::setupUi(QDialog* dialog)
 {
   this->Ui_qMRMLScreenShotDialog::setupUi(dialog);
-  this->widgetTypeGroup = new QButtonGroup(dialog);
-  this->widgetTypeGroup->setExclusive(true);
-  this->widgetTypeGroup->addButton(this->fullLayoutRadio, qMRMLScreenShotDialog::FullLayout);
-  this->widgetTypeGroup->addButton(this->threeDViewRadio, qMRMLScreenShotDialog::ThreeD);
-  this->widgetTypeGroup->addButton(this->redSliceViewRadio, qMRMLScreenShotDialog::Red);
-  this->widgetTypeGroup->addButton(this->yellowSliceViewRadio, qMRMLScreenShotDialog::Yellow);
-  this->widgetTypeGroup->addButton(this->greenSliceViewRadio, qMRMLScreenShotDialog::Green);
+  this->WidgetTypeGroup = new QButtonGroup(dialog);
+  this->WidgetTypeGroup->setExclusive(true);
+  this->WidgetTypeGroup->addButton(this->fullLayoutRadio, qMRMLScreenShotDialog::FullLayout);
+  this->WidgetTypeGroup->addButton(this->threeDViewRadio, qMRMLScreenShotDialog::ThreeD);
+  this->WidgetTypeGroup->addButton(this->redSliceViewRadio, qMRMLScreenShotDialog::Red);
+  this->WidgetTypeGroup->addButton(this->yellowSliceViewRadio, qMRMLScreenShotDialog::Yellow);
+  this->WidgetTypeGroup->addButton(this->greenSliceViewRadio, qMRMLScreenShotDialog::Green);
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialogPrivate::setCheckedRadioButton(int type)
 {
   QRadioButton* widgetButton =
-    qobject_cast<QRadioButton*>(this->widgetTypeGroup->button(type));
+    qobject_cast<QRadioButton*>(this->WidgetTypeGroup->button(type));
   widgetButton->setChecked(true);
 }
 
@@ -124,14 +124,14 @@ qMRMLScreenShotDialog::~qMRMLScreenShotDialog()
 void qMRMLScreenShotDialog::setLayoutManager(qMRMLLayoutManager* newlayoutManager)
 {
   Q_D(qMRMLScreenShotDialog);
-  d->layoutManager = newlayoutManager;
+  d->LayoutManager = newlayoutManager;
 }
 
 //-----------------------------------------------------------------------------
 qMRMLLayoutManager* qMRMLScreenShotDialog::layoutManager() const
 {
   Q_D(const qMRMLScreenShotDialog);
-  return d->layoutManager.data();
+  return d->LayoutManager.data();
 }
 
 //-----------------------------------------------------------------------------
@@ -168,15 +168,15 @@ QString qMRMLScreenShotDialog::description() const
 void qMRMLScreenShotDialog::setData(const QVariant& newData)
 {
   Q_D(qMRMLScreenShotDialog);
-  d->data = newData;
-  d->setWidgetEnabled(!d->data.isValid());
+  d->Data = newData;
+  d->setWidgetEnabled(!d->Data.isValid());
 }
 
 //-----------------------------------------------------------------------------
 QVariant qMRMLScreenShotDialog::data() const
 {
   Q_D(const qMRMLScreenShotDialog);
-  return d->data;
+  return d->Data;
 }
 
 //-----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ void qMRMLScreenShotDialog::setWidgetType(qMRMLScreenShotDialog::WidgetType newT
 qMRMLScreenShotDialog::WidgetType qMRMLScreenShotDialog::widgetType() const
 {
   Q_D(const qMRMLScreenShotDialog);
-  return qMRMLScreenShotDialog::WidgetType(d->widgetTypeGroup->checkedId());
+  return qMRMLScreenShotDialog::WidgetType(d->WidgetTypeGroup->checkedId());
 }
 
 //-----------------------------------------------------------------------------
@@ -211,7 +211,7 @@ double qMRMLScreenShotDialog::scaleFactor() const
 void qMRMLScreenShotDialog::setImageData(vtkImageData* screenshot)
 {
   Q_D(qMRMLScreenShotDialog);
-  d->imageData = screenshot;
+  d->ImageData = screenshot;
   QImage qimage;
   qMRMLUtils::vtkImageDataToQImage(screenshot,qimage);
   // set preview
@@ -222,7 +222,7 @@ void qMRMLScreenShotDialog::setImageData(vtkImageData* screenshot)
 vtkImageData* qMRMLScreenShotDialog::imageData() const
 {
   Q_D(const qMRMLScreenShotDialog);
-  return d->imageData.GetPointer();
+  return d->ImageData.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -278,19 +278,19 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     {
     case qMRMLScreenShotDialog::ThreeD:
       // Create a scrennshot of the first 3DView
-      widget = d->layoutManager.data()->threeDWidget(0)->threeDView();
+      widget = d->LayoutManager.data()->threeDWidget(0)->threeDView();
       break;
     case qMRMLScreenShotDialog::Red:
     case qMRMLScreenShotDialog::Yellow:
     case qMRMLScreenShotDialog::Green:
       // Create a screenshot of a specific sliceView
       widget = const_cast<ctkVTKSliceView*>(
-          d->layoutManager.data()->sliceWidget(this->enumToString(screenshotWindow))->sliceView());
+          d->LayoutManager.data()->sliceWidget(this->enumToString(screenshotWindow))->sliceView());
       break;
     case qMRMLScreenShotDialog::FullLayout:
     default:
       // Create a screenshot of the full layout
-      widget = d->layoutManager.data()->viewport();
+      widget = d->LayoutManager.data()->viewport();
       break;
     }
 
