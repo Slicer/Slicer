@@ -1263,7 +1263,7 @@ void qSlicerAnnotationModulePropertyDialog::updateTypeLabelText()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::updateIDLabelText()
 {
-  ui.idNameLabel->setText(QString::fromStdString(this->m_id));
+//  ui.idNameLabel->setText(QString::fromStdString(this->m_id));
 }
 
 //-----------------------------------------------------------------------------

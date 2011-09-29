@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>273</height>
+    <height>307</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -120,13 +120,6 @@
      <item row="1" column="1" colspan="2">
       <widget class="QLineEdit" name="nameLineEdit"/>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="IdLabel">
-       <property name="text">
-        <string>ID:</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="DescriptionLabel">
        <property name="text">
@@ -217,13 +210,6 @@
      </item>
      <item row="2" column="4">
       <widget class="ctkCoordinatesWidget" name="RASCoordinatesWidget"/>
-     </item>
-     <item row="2" column="1" colspan="2">
-      <widget class="QLabel" name="idNameLabel">
-       <property name="text">
-        <string>vtkMRMLAnnotationTexNode1</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
@@ -403,6 +389,12 @@
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>4</number>
             </attribute>
             <column>
              <property name="text">
