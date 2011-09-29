@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -13,21 +13,15 @@
 #ifndef __qSlicerBaseQTGUIPythonQtDecorators_h
 #define __qSlicerBaseQTGUIPythonQtDecorators_h
 
-// Qt includes
-#include <QObject>
-
 // PythonQt includes
 #include <PythonQt.h>
-
-// CTK includes
-#include <ctkAbstractPythonManager.h>
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleRepresentation.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAbstractModule.h"
-#include "qSlicerPythonManager.h"
 #include "qSlicerCommandOptions.h"
+#include "qSlicerPythonManager.h"
 
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -45,12 +39,11 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerBaseQTGUIPythonQtDecorators : public QOb
 
 public:
 
-  qSlicerBaseQTGUIPythonQtDecorators(ctkAbstractPythonManager* pythonManager)
+  qSlicerBaseQTGUIPythonQtDecorators()
     {
-    Q_ASSERT(pythonManager);
-    pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerPythonManager::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerCommandOptions::staticMetaObject);
+    PythonQt::self()->registerClass(&qSlicerAbstractModuleWidget::staticMetaObject);
+    PythonQt::self()->registerClass(&qSlicerPythonManager::staticMetaObject);
+    PythonQt::self()->registerClass(&qSlicerCommandOptions::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
@@ -74,5 +67,11 @@ public slots:
     return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
     }
 };
+
+//-----------------------------------------------------------------------------
+void initqSlicerBaseQTGUIPythonQtDecorators()
+{
+  PythonQt::self()->addDecorators(new qSlicerBaseQTGUIPythonQtDecorators);
+}
 
 #endif

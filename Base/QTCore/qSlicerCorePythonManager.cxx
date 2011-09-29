@@ -19,26 +19,22 @@
 ==============================================================================*/
 // Qt includes
 
+// PythonQt includes
+#include <PythonQt.h>
+
 // CTK includes
 #include <ctkLogger.h>
-#include <ctkCorePythonQtDecorators.h>
-#include <ctkDICOMCorePythonQtDecorators.h>
 
 // PythonQt includes
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerUtils.h"
 #include "qSlicerCorePythonManager.h"
-#include "qSlicerBaseQTCorePythonQtDecorators.h"
+#include "vtkSlicerConfigure.h"
 
 // VTK includes
 #include <vtkPythonUtil.h>
-
-
-// PythonQt wrapper initialization methods
-void PythonQt_init_org_commontk_CTKCore(PyObject*);
-void PythonQt_init_org_commontk_CTKDICOMCore(PyObject*);
-void PythonQt_init_org_commontk_CTKVisualizationVTKCore(PyObject*);
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtcore.qSlicerCorePythonManager");
@@ -47,7 +43,6 @@ static ctkLogger logger("org.slicer.base.qtcore.qSlicerCorePythonManager");
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -59,8 +54,8 @@ qSlicerCorePythonManager::~qSlicerCorePythonManager()
 QStringList qSlicerCorePythonManager::pythonPaths()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  
-  QStringList paths;  
+
+  QStringList paths;
   paths << Superclass::pythonPaths();
   paths << app->slicerHome() + "/" Slicer_BIN_DIR "/" + app->intDir();
   paths << app->slicerHome() + "/" Slicer_BIN_DIR "/Python";
@@ -92,10 +87,17 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   if (!app->isInstalled())
     {
     // Add here python path specific to the BUILD tree
-    paths << qSlicerUtils::searchTargetInIntDir(QLatin1String(VTK_DIR)+"/bin",
-                                                QString("vtkWrapPython%1").arg(executableExtension));
+#ifdef CMAKE_INTDIR
+    paths << VTK_DIR"/bin/"CMAKE_INTDIR"/";
+#else
+    paths << VTK_DIR"/bin/";
+#endif
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
-
+#ifdef CMAKE_INTDIR
+    paths << CTK_DIR"/CTK-build/bin/"CMAKE_INTDIR"/";
+#else
+    paths << CTK_DIR"/CTK-build/bin/";
+#endif
     paths << QString("%1/CTK-build/bin/Python").arg(CTK_DIR);
     }
   else
@@ -115,7 +117,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 #endif
     paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/site-packages";
     }
-  
+
   return paths;
 }
 
@@ -123,16 +125,6 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 void qSlicerCorePythonManager::preInitialization()
 {
   Superclass::preInitialization();
-
-  // Initialize wrappers
-  PythonQt_init_org_commontk_CTKCore(0);
-  PythonQt_init_org_commontk_CTKDICOMCore(0);
-  PythonQt_init_org_commontk_CTKVisualizationVTKCore(0);
-
-  // Register decorators
-  this->registerPythonQtDecorator(new ctkCorePythonQtDecorators());
-  this->registerPythonQtDecorator(new ctkDICOMCorePythonQtDecorators());
-  this->registerPythonQtDecorator(new qSlicerBaseQTBasePythonQtDecorators(this));
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 

@@ -196,14 +196,13 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # PythonQt wrapping
   # --------------------------------------------------------------------------
   if(Slicer_USE_PYTHONQT AND SLICERQTBASELIB_WRAP_PYTHONQT)
-    set(KIT_PYTHONQT_SRCS) # Clear variable
-    ctkMacroWrapPythonQt("org.slicer.base" ${lib_name}
-      KIT_PYTHONQT_SRCS "${SLICERQTBASELIB_SRCS}" FALSE)
-    add_library(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
-    target_link_libraries(${lib_name}PythonQt ${lib_name})
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-      set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
-    endif()
+    ctkMacroBuildLibWrapper(
+      NAMESPACE "org.slicer.base"
+      TARGET ${lib_name}
+      SRCS "${SLICERQTBASELIB_SRCS}"
+      INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
+      INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
+      )
   endif()
 
   # --------------------------------------------------------------------------

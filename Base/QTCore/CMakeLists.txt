@@ -90,9 +90,6 @@ set(KIT_resources
 if(Slicer_USE_PYTHONQT)
 
   list(APPEND KIT_target_libraries
-    CTKCorePythonQt
-    CTKDICOMCorePythonQt
-    CTKVisualizationVTKCorePythonQt
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils
     )
@@ -113,7 +110,6 @@ if(Slicer_USE_PYTHONQT)
   # Headers that should run through moc
   list(APPEND KIT_MOC_SRCS
     qSlicerCorePythonManager.h
-    qSlicerBaseQTCorePythonQtDecorators.h
     )
 
 endif(Slicer_USE_PYTHONQT)
@@ -128,11 +124,6 @@ SlicerMacroBuildBaseQtLibrary(
   RESOURCES ${KIT_resources}
   WRAP_PYTHONQT
   )
-
-# HACK - Export library qSlicerBaseQTCorePythonQt so that
-#        command line module (ie EMSegmentCommandLine) can
-#        initialize both python environment and python manager.
-set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS qSlicerBaseQTCorePythonQt)
 
 # Plugins
 #add_subdirectory(Plugins)

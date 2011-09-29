@@ -64,17 +64,6 @@
 # include "qSlicerSettingsPythonPanel.h"
 # include <dPython.h>
 
-// PythonQt wrapper initialization methods
-void PythonQt_init_org_slicer_base_qSlicerBaseQTCore(PyObject*);
-void PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(PyObject*);
-
-//---------------------------------------------------------------------------
-void PythonPreInitialization()
-{
-  // Initialize wrappers
-  PythonQt_init_org_slicer_base_qSlicerBaseQTCore(0);
-  PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(0);
-}
 #endif
 
 namespace
@@ -113,7 +102,6 @@ void setApplicationDisablePythonAttribute(int argc, char* argv[])
 void initializePython()
 {
   qSlicerApplication * app = qSlicerApplication::application();
-  app->pythonManager()->setInitializationFunction(PythonPreInitialization);
   app->corePythonManager()->mainContext(); // Initialize python
 #ifdef Q_WS_WIN
   // HACK - Since on windows setting an environment variable using putenv doesn't propagate
@@ -313,7 +301,7 @@ int main(int argc, char* argv[])
     }
 
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
-  
+
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");
   moduleFactoryManager->registerAllModules();

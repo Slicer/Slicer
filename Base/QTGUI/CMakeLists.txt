@@ -156,7 +156,6 @@ endif()
 # PythonQt decorator
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
-    qSlicerBaseQTGUIPythonQtDecorators.h
     qSlicerSettingsPythonPanel.h
     )
 endif()
@@ -194,16 +193,7 @@ set(KIT_target_libraries
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
-    CTKWidgetsPythonQt
-    CTKDICOMWidgetsPythonQt
-    CTKScriptingPythonWidgetsPythonQt
-    CTKVisualizationVTKWidgetsPythonQt
     )
-  if(qMRMLWidgets_WRAP_PYTHON)
-    list(APPEND KIT_target_libraries
-      qMRMLWidgetsPythonQt
-    )
-  endif()
 endif()
 
 # Resources
@@ -239,11 +229,6 @@ SlicerMacroBuildBaseQtLibrary(
   WRAP_PYTHONQT
   )
 
-# HACK - Export library qSlicerBaseQTCorePythonQt so that
-#        command line module (ie EMSegmentCommandLine) can
-#        initialize both python environment and python manager.
-set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS qSlicerBaseQTGUIPythonQt)
-
 #-----------------------------------------------------------------------------
 # Slicer icon engine
 #-----------------------------------------------------------------------------
@@ -264,7 +249,7 @@ add_library(qSlicerIconEnginePlugin
 target_link_libraries(qSlicerIconEnginePlugin
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES})
-  
+
 # Set iconengine output path
 set_target_properties(qSlicerIconEnginePlugin PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_LIB_DIR}/iconengines"

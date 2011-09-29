@@ -53,18 +53,11 @@ add_executable(${KIT}CxxTests ${Tests})
 
 set(target_libraries
   qSlicerAnnotationsModuleWidgets
-   )
-
-if(Slicer_USE_PYTHONQT)
-  set(target_libraries
-      ${target_libraries}
-      qSlicerAnnotationsModuleWidgetsPythonQt
-      )
-endif()
+  )
 
 target_link_libraries(${KIT}CxxTests ${lib_name}
   ${target_libraries}
-)
+  )
 
 #macro(SIMPLE_TEST  TESTNAME)
 #  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})

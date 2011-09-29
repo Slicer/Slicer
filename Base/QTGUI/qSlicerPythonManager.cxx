@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -10,28 +10,20 @@
 
 =========================================================================auto=*/
 
-// PythonQT includes
+// Qt includes
+#include <QVariant>
 
 // CTK includes
 #include <ctkLogger.h>
-#include <ctkWidgetsPythonQtDecorators.h>
-#include <ctkDICOMWidgetsPythonQtDecorators.h>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerBaseQTGUIPythonQtDecorators.h"
+#include "qSlicerPythonManager.h"
 
 #ifdef Slicer_USE_PYTHONQT_WITH_TCL
 // SlicerVTK includes
 #include "vtkEventBroker.h"
 #endif
-
-// PythonQt wrapper initialization methods
-void PythonQt_init_org_commontk_CTKWidgets(PyObject*);
-void PythonQt_init_org_commontk_CTKDICOMWidgets(PyObject*);
-void PythonQt_init_org_commontk_CTKScriptingPythonWidgets(PyObject*);
-void PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(PyObject*);
-void PythonQt_init_org_slicer_libs_qMRMLWidgets(PyObject*);
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerPythonManager");
@@ -40,7 +32,6 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerPythonManager");
 //-----------------------------------------------------------------------------
 qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_parent)
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -53,29 +44,17 @@ qSlicerPythonManager::~qSlicerPythonManager()
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerPythonManager::pythonPaths()
-{  
-  QStringList paths;  
+{
+  QStringList paths;
   paths << Superclass::pythonPaths();
-  
-  return paths; 
+
+  return paths;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerPythonManager::preInitialization()
 {
   Superclass::preInitialization();
-  
-  // Initialize wrappers
-  PythonQt_init_org_commontk_CTKWidgets(0);
-  PythonQt_init_org_commontk_CTKDICOMWidgets(0);
-  PythonQt_init_org_commontk_CTKScriptingPythonWidgets(0);
-  PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(0);
-  PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
-
-  // Register decorators
-  this->registerPythonQtDecorator(new ctkWidgetsPythonQtDecorators());
-  this->registerPythonQtDecorator(new ctkDICOMWidgetsPythonQtDecorators());
-  this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));
 }
 
 //-----------------------------------------------------------------------------

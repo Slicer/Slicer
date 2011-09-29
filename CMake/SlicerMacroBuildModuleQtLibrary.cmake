@@ -182,14 +182,20 @@ macro(SlicerMacroBuildModuleQtLibrary)
   # PythonQt wrapping
   # --------------------------------------------------------------------------
   if(Slicer_USE_PYTHONQT AND MODULEQTLIBRARY_WRAP_PYTHONQT)
-    set(KIT_PYTHONQT_SRCS) # Clear variable
-    ctkMacroWrapPythonQt("org.slicer.module" ${lib_name}
-      KIT_PYTHONQT_SRCS "${MODULEQTLIBRARY_SRCS}" FALSE)
-    add_library(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
-    target_link_libraries(${lib_name}PythonQt ${lib_name})
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-      set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+    if(MODULEQTLIBRARY_NO_INSTALL)
+      set(MODULEQTLIBRARY_NO_INSTALL_OPTION "NO_INSTALL")
     endif()
+    ctkMacroBuildLibWrapper(
+      NAMESPACE "org.slicer.module"
+      TARGET ${lib_name}
+      SRCS "${MODULEQTLIBRARY_SRCS}"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      INSTALL_BIN_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
+      INSTALL_LIB_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
+      ${MODULEQTLIBRARY_NO_INSTALL_OPTION}
+      )
   endif()
 
 endmacro()

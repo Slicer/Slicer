@@ -2,17 +2,17 @@
 
 __kits_to_load = [
 # slicer libs
-'freesurfer', 
-'mrml', 
+'freesurfer',
+'mrml',
 'mrmlcli',
-'mrmlLogic', 
-'remoteio', 
-'teem', 
-'PythonQt.qMRMLWidgets',
+'mrmlLogic',
+'remoteio',
+'teem',
+'qMRMLWidgetsPythonQt',
 # slicer base libs
 'logic',
-'PythonQt.qSlicerBaseQTCore',
-'PythonQt.qSlicerBaseQTGUI',
+'qSlicerBaseQTCorePythonQt',
+'qSlicerBaseQTGUIPythonQt',
 # slicer module logic
 'modulelogic',
 # slicer module mrml
@@ -25,6 +25,6 @@ for kit in __kits_to_load:
      exec "from %s import *" % (kit)
    except ImportError as detail:
      print detail
-   
+
 # Removing things the user shouldn't have to see.
 del __kits_to_load

@@ -13,15 +13,6 @@
 #include "qSlicerAnnotationsModule.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
-// needed to get the CMake variables
-
-#ifdef Slicer_USE_PYTHONQT
-  // PythonQT includes
-  #include <PythonQt.h>
-
-  void PythonQt_init_org_slicer_module_qSlicerAnnotationsModuleWidgets(PyObject*);
-#endif
-
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationsModule, qSlicerAnnotationsModule);
 
@@ -47,14 +38,6 @@ qSlicerAnnotationsModule::~qSlicerAnnotationsModule()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsModule::setup()
 {
-
-#ifdef Slicer_USE_PYTHONQT
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
-    PythonQt_init_org_slicer_module_qSlicerAnnotationsModuleWidgets(0);
-    }
-#endif
-
   // 3D
   QStringList threeDdisplayableManagers;
   threeDdisplayableManagers

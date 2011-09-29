@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -13,11 +13,8 @@
 #ifndef __qSlicerBaseQTCorePythonQtDecorators_h
 #define __qSlicerBaseQTCorePythonQtDecorators_h
 
-// Qt includes
-#include <QObject>
-
-// CTK includes
-#include <ctkAbstractPythonManager.h>
+// PythonQt includes
+#include <PythonQt.h>
 
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
@@ -37,11 +34,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerBaseQTBasePythonQtDecorators : public Q
   Q_OBJECT
 public:
 
-  qSlicerBaseQTBasePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
+  qSlicerBaseQTBasePythonQtDecorators()
     {
-    Q_ASSERT(pythonManager);
-    pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerAbstractCoreModule::staticMetaObject);
+    PythonQt::self()->registerClass(&qSlicerCoreApplication::staticMetaObject);
+    PythonQt::self()->registerClass(&qSlicerAbstractCoreModule::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
@@ -49,7 +45,7 @@ public slots:
 
   //----------------------------------------------------------------------------
   // qSlicerCoreApplication
-  
+
   //----------------------------------------------------------------------------
   // static methods
 
@@ -80,5 +76,11 @@ public slots:
     app->processEvents();
     }
 };
+
+//-----------------------------------------------------------------------------
+void initqSlicerBaseQTCorePythonQtDecorators()
+{
+  PythonQt::self()->addDecorators(new qSlicerBaseQTBasePythonQtDecorators);
+}
 
 #endif

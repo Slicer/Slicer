@@ -325,15 +325,13 @@ endif()
 # PythonQt wrapping
 # --------------------------------------------------------------------------
 if(qMRMLWidgets_WRAP_PYTHON)
-  set(KIT_PYTHONQT_SRCS) # Clear variable
-  ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
-    KIT_PYTHONQT_SRCS "${qMRMLWidgets_SRCS}" FALSE)
-  add_library(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
-  list(APPEND targets_to_export ${lib_name}PythonQt)
-  target_link_libraries(${lib_name}PythonQt ${lib_name})
-  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
-  endif()
+  ctkMacroBuildLibWrapper(
+    NAMESPACE "org.slicer.libs"
+    TARGET ${lib_name}
+    SRCS "${qMRMLWidgets_SRCS}"
+    INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
+    INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
+    )
 endif()
 
 # --------------------------------------------------------------------------

@@ -37,18 +37,6 @@
 // STD includes
 #include <cstdlib>
 
-// PythonQt wrapper initialization methods
-void PythonQt_init_org_slicer_base_qSlicerBaseQTCore(PyObject*);
-void PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(PyObject*);
-
-//---------------------------------------------------------------------------
-void PythonPreInitialization()
-{
-  // Initialize wrappers
-  PythonQt_init_org_slicer_base_qSlicerBaseQTCore(0);
-  PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(0);
-}
-
 namespace
 {
 //---------------------------------------------------------------------------
@@ -73,7 +61,6 @@ int qSlicerApplicationTpyclTest1(int argc, char * argv[])
     // HACK - Copied from Slicer/Applications/SlicerQT/Main.cxx
     //        Ideally, it should possible possible to initialize both python environment
     //        and python manager without having to instantiate qSlicerApplication.
-    app.pythonManager()->setInitializationFunction(PythonPreInitialization);
     app.corePythonManager()->mainContext(); // Initialize python
 #ifdef Q_WS_WIN
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate

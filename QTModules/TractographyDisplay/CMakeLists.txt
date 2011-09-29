@@ -41,10 +41,6 @@ set(qt_module_target_libraries
   ${MRML_LIBRARIES}
   )
 
-if(Slicer_USE_PYTHONQT)
-  #list(APPEND qt_module_target_libraries qSlicerTractographyDisplayModuleWidgetsPythonQt)
-endif()
-
 # Resources
 set(qt_module_resources
 )

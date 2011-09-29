@@ -78,8 +78,6 @@ set(SlicerQT_LIBRARIES
 if(Slicer_USE_PYTHONQT)
   set(SlicerQT_LIBRARIES
     ${SlicerQT_LIBRARIES}
-    qSlicerBaseQTCorePythonQt
-    qSlicerBaseQTGUIPythonQt
     )
 endif()
 
