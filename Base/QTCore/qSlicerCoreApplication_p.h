@@ -59,7 +59,7 @@ public:
   /// \see http://doc.qt.nokia.com/latest/qt-conf.html
   /// \sa QLibraryInfo
   void setupQtConf();
-  
+
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
 
@@ -108,7 +108,6 @@ public:
   /// MRMLScene and AppLogic pointers
   vtkSmartPointer<vtkMRMLScene>               MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic>  AppLogic;
-  vtkSmartPointer<vtkMRMLApplicationLogic>    MRMLApplicationLogic;
   vtkSmartPointer<vtkMRMLRemoteIOLogic>       MRMLRemoteIOLogic;
 
   /// Data manager
@@ -122,14 +121,14 @@ public:
   /// IntDir should be set to either Debug,
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                     IntDir;
-  
+
   /// Variable set extracting information from SlicerVersion.txt
   /// \sa discoverRepository
   QString                                     RepositoryUrl;
   QString                                     RepositoryBranch;
   QString                                     RepositoryRevision;
   QString                                     Platform;
-  
+
   QSettings*                                  Settings;
 
   /// ModuleManager - It should exist only one instance of the factory

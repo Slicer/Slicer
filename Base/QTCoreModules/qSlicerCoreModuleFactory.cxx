@@ -36,7 +36,7 @@
 #include "qSlicerSliceControllerModule.h"
 // endofFIXME
 #include "qSlicerUtils.h"
-  
+
 //-----------------------------------------------------------------------------
 class qSlicerCoreModuleFactoryPrivate
 {
@@ -67,7 +67,7 @@ template<typename ClassType>
 void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 {
   Q_Q(qSlicerCoreModuleFactory);
-  
+
   QString _moduleName;
   if (!q->registerQObject<ClassType>(_moduleName))
     {
@@ -108,21 +108,20 @@ void qSlicerCoreModuleFactory::registerItems()
   //d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerSliceControllerModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
-  
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->registerIO(new qSlicerColorIO());
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->registerIO(new qSlicerFiducialsIO());
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->registerIO(new qSlicerTransformsIO());
-  // FIXME: Move the following to the Models module (when it will be ready in Qt.)
+
   Q_ASSERT(qSlicerCoreApplication::application());
   if(!qSlicerCoreApplication::application())
     {
     return;
     }
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->registerIO(new qSlicerScalarOverlayIO());
+  qSlicerCoreIOManager * ioManager =
+      qSlicerCoreApplication::application()->coreIOManager();
+
+  ioManager->registerIO(new qSlicerColorIO());
+  ioManager->registerIO(new qSlicerFiducialsIO());
+  ioManager->registerIO(new qSlicerTransformsIO());
+  // FIXME: Move the following to the Models module (when it will be ready in Qt.)
+  ioManager->registerIO(new qSlicerScalarOverlayIO());
   // endofFIXME
 }
 

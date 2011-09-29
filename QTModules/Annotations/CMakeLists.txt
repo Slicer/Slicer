@@ -61,15 +61,15 @@ set(VTKWidget_SRCS
 
   VTKWidgets/vtkAnnotationGlyphSource2D.cxx
   VTKWidgets/vtkAnnotationGlyphSource2D.h
-  
+
   VTKWidgets/vtkAnnotationROIRepresentation.h
   VTKWidgets/vtkAnnotationROIRepresentation.cxx
   VTKWidgets/vtkAnnotationROIRepresentation2D.h
   VTKWidgets/vtkAnnotationROIRepresentation2D.cxx
   VTKWidgets/vtkAnnotationROIWidget.h
-  VTKWidgets/vtkAnnotationROIWidget.cxx  
+  VTKWidgets/vtkAnnotationROIWidget.cxx
   VTKWidgets/vtkAnnotationROIWidget2D.h
-  VTKWidgets/vtkAnnotationROIWidget2D.cxx  
+  VTKWidgets/vtkAnnotationROIWidget2D.cxx
   )
 
 set(GUI_SRCS

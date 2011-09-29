@@ -71,10 +71,6 @@
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-  
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
 
@@ -84,8 +80,6 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreCommandOptions * coreCommandOptions,
   qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
-  this->AppLogic = 0;
-  this->MRMLScene = 0;
   this->Settings = 0;
   this->ExitWhenDone = false;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
@@ -162,8 +156,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   // Create the application Logic object,
-  VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
-  this->AppLogic = _appLogic;
+  this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
@@ -175,13 +168,12 @@ void qSlicerCoreApplicationPrivate::init()
   // -- allows any dependent nodes to be created
   // Note that Interaction and Selection Node are now created
   // in MRMLApplicationLogic.
-  //_appLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
-  //_appLogic->SetAndObserveMRMLScene(scene);
-  _appLogic->CreateProcessingThread();
+  //this->AppLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
+  //this->AppLogic->SetAndObserveMRMLScene(scene);
+  this->AppLogic->CreateProcessingThread();
 
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
-
   this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->temporaryPath().toLatin1());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
@@ -608,7 +600,7 @@ void qSlicerCoreApplication::parseArguments(bool& exitWhenDone)
 void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 {
   Q_D(qSlicerCoreApplication);
-  
+
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
@@ -618,7 +610,7 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     d->terminate();
     return;
     }
-    
+
   if (options->displayVersionAndExit())
     {
     std::cout << qPrintable(this->applicationName() + " " +

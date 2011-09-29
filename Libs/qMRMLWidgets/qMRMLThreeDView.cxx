@@ -229,7 +229,7 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
   q->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
   q->setRockIncrement(this->MRMLViewNode->GetRockCount());
   q->setRockLength(this->MRMLViewNode->GetRockLength());
-  
+
   q->setSpinEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
   q->setRockEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
 }
@@ -326,7 +326,7 @@ void qMRMLThreeDView::resetFocalPoint()
     // Save current visiblity state of Box and AxisLabel
     savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
-    
+
     // Hide Box and AxisLabel so they don't get taken into account when computing
     // the view boundaries
     d->MRMLViewNode->SetBoxVisible(0);

@@ -57,7 +57,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   this->CreateAndPlaceMenu = 0;
 
   this->PersistenceCheckBox = 0;
-  
+
   this->ViewTransformModeAction = 0;
 
   this->ActionGroup = 0;
@@ -71,7 +71,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   // RotateMode action
   this->ViewTransformModeAction = new QAction(q);
   this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
-  this->ViewTransformModeAction->setText("&Rotate"); 
+  this->ViewTransformModeAction->setText("&Rotate");
   this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
   this->ViewTransformModeAction->setCheckable(true);
   connect(this->ViewTransformModeAction, SIGNAL(triggered()),
@@ -80,7 +80,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   q->addAction(this->ViewTransformModeAction);
 
   // place once
-  
+
   this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
 
   this->CreateAndPlaceToolButton = new QToolButton();
@@ -104,12 +104,12 @@ void qSlicerMouseModeToolBarPrivate::init()
                 SLOT(onPersistenceCheckBoxStateChanged(int)));
 
   q->addWidget(this->PersistenceCheckBox);
-  
+
   //q->addSeparator();
-  
 
 
-  
+
+
   QList<QAction*> actionList;
   // actionList << this->SinglePickModeAction <<
   // this->PersistentPickModeAction << this->PersistentPlaceModeAction << this->SinglePlaceModeAction
@@ -194,7 +194,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
       if ( selectionNode )
         {
         const char *activeAnnotationID = selectionNode->GetActiveAnnotationID();
-        this->updateWidgetToAnnotation(activeAnnotationID);        
+        this->updateWidgetToAnnotation(activeAnnotationID);
         }
       }
       break;
@@ -213,8 +213,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
 {
   Q_Q(qSlicerMouseModeToolBar);
   Q_ASSERT(this->MRMLScene);
-  
-  // get the currently active annotation 
+  // get the currently active annotation
   vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
   if (!selectionNode)
     {
@@ -222,7 +221,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
     }
   logger.debug(QString("updateWidgetFromSelectionNode: ") + QString(selectionNode->GetID()) );
 
-  
+
   // make sure that all the elements in the selection node have actions in the
   // create and place menu
   int numIDs = selectionNode->GetNumberOfAnnotationIDsInList();
@@ -275,7 +274,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
 void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annotationID)
 {
   Q_Q(qSlicerMouseModeToolBar);
-  
+
   if (!annotationID)
     {
     logger.debug("updateWidgetToAnnotation: null active annotation id, resetting to view transform");
@@ -333,7 +332,7 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
 
   // re-enable in case it didn't get re-enabled for scene load
   q->setEnabled(true);
-  
+
   // update the state from mrml
   this->updateWidgetFromMRML();
 }
@@ -351,7 +350,7 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneClosedEvent()
   q->setEnabled(true);
   this->updateWidgetFromMRML();
 }
-                      
+
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onInteractionNodeModeChangedEvent()
 {
@@ -386,14 +385,14 @@ void qSlicerMouseModeToolBarPrivate::onInteractionNodeModePersistenceChanged()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onActiveAnnotationIDChangedEvent()
 {
-  logger.trace("onActiveAnnotationIDChangedEvent" ); 
+  logger.trace("onActiveAnnotationIDChangedEvent" );
   this->updateWidgetFromSelectionNode();
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onAnnotationIDListModifiedEvent()
 {
-  logger.trace("onAnnotationIDListModifiedEvent" ); 
+  logger.trace("onAnnotationIDListModifiedEvent" );
   this->updateWidgetFromSelectionNode();
 }
 
@@ -446,9 +445,9 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
   if (interactionNode)
     {
     logger.trace("switchToViewTransformMode");
-    
+
     interactionNode->SwitchToViewTransformMode();
-    
+
     // reset cursor to default
     this->changeCursorTo(QCursor());
 
@@ -578,9 +577,9 @@ bool qSlicerMouseModeToolBar::isActionTextInMenu(QString actionText, QMenu *menu
 void qSlicerMouseModeToolBar::onPersistenceCheckBoxStateChanged(int state)
 {
   Q_D(qSlicerMouseModeToolBar);
-  
+
   vtkMRMLInteractionNode *interactionNode = d->MRMLAppLogic->GetInteractionNode();
-  
+
   if (interactionNode)
     {
     if (state == Qt::Checked)

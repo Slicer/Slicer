@@ -334,7 +334,7 @@ void qSlicerApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
 {
   QString nodeClassName = node->GetClassName();
-  if (node->IsA("vtkMRMLCameraNode") || 
+  if (node->IsA("vtkMRMLCameraNode") ||
       node->IsA("vtkMRMLViewNode"))
     {
     return "Cameras";
@@ -399,7 +399,7 @@ void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
 {
   QString moduleName = this->nodeModule(node);
   qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
-  qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module); 
+  qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (moduleWithAction)
     {
     moduleWithAction->action()->trigger();
