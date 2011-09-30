@@ -84,7 +84,7 @@ public:
       // sanity checks end
 
 
-      if (this->m_DisplayableManager->GetSliceNode())
+      if (this->m_DisplayableManager->Is2DDisplayableManager())
         {
 
         // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
