@@ -66,7 +66,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   // Set up the initial properties
   this->CreateDefaultProperties();
   this->SelectedHandleProperty2D = vtkProperty2D::New();
-  this->SelectedHandleProperty2D->SetColor(1,0,0);
+  this->SelectedHandleProperty2D->SetColor(.2,1,.2);
 
   // The face of the hexahedra
   this->HexFaceMapper2D = vtkPolyDataMapper2D::New();
@@ -294,18 +294,57 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
     {
       this->HandleProperties2D[i]=vtkProperty2D::New();
     }
-  this->HandleProperties2D[0]->SetColor(1,0,1);
-  this->HandleProperties2D[1]->SetColor(1,0,0);
-  this->HandleProperties2D[2]->SetColor(1,1,1);
-  this->HandleProperties2D[3]->SetColor(.89,.6,.07);
-  this->HandleProperties2D[4]->SetColor(0,0,1);
-  this->HandleProperties2D[5]->SetColor(0.2,0.2,0.2);
-  this->HandleProperties2D[6]->SetColor(1,1,1);
 
-
+  // lavender
+  this->HandleProperties2D[0]->SetColor(.781, .633, .867);
+  // dark violet
+  this->HandleProperties2D[1]->SetColor(.5585, .343, .91);
+  // dark red
+  this->HandleProperties2D[2]->SetColor(.51562, .38281, .15234);
+  this->HandleProperties2D[2]->SetColor(.75, .121, .26953);
+  // orange
+  this->HandleProperties2D[3]->SetColor(.9101, .39453, 0.0);
+  this->HandleProperties2D[3]->SetColor(.9765, .488, .1133);
+// dark blue
+  this->HandleProperties2D[4]->SetColor(.140625, .30468, .5);
+  this->HandleProperties2D[4]->SetColor(.1328, .4531, .5351);
+  // light blue
+  this->HandleProperties2D[5]->SetColor(.33984, .69140, .71875);
+  this->HandleProperties2D[5]->SetColor(.582, .898, .871);
+  // yellow
+  this->HandleProperties2D[6]->SetColor(0.953125, .738281, 0.0);
+  this->HandleProperties2D[6]->SetColor(0.973125, .798281, 0.0);
+  // green
   this->SelectedHandleProperty2D = vtkProperty2D::New();
-  this->SelectedHandleProperty2D->SetColor(1,0,0);
+  this->SelectedHandleProperty2D->SetColor(.2,1,.2);
 
+  // not sure why this was specified twice, but i've left it
+  // that way for now after adjusting colors.
+  // bottom chunk is likely duplicate code.
+
+  // lavender
+  this->HandleProperties2D[0]->SetColor(.781, .633, .867);
+  // dark violet
+  this->HandleProperties2D[1]->SetColor(.5585, .343, .91);
+  // dark red
+  this->HandleProperties2D[2]->SetColor(.51562, .38281, .15234);
+  this->HandleProperties2D[2]->SetColor(.75, .121, .26953);
+  // orange
+  this->HandleProperties2D[3]->SetColor(.9101, .39453, 0.0);
+  this->HandleProperties2D[3]->SetColor(.9765, .488, .1133);
+  // dark blue
+  this->HandleProperties2D[4]->SetColor(.140625, .30468, .5);
+  this->HandleProperties2D[4]->SetColor(.1328, .4531, .5351);
+  // light blue
+  this->HandleProperties2D[5]->SetColor(.33984, .69140, .71875);
+  this->HandleProperties2D[5]->SetColor(.582, .898, .871);
+  // yellow
+  this->HandleProperties2D[6]->SetColor(0.953125, .738281, 0.0);
+  this->HandleProperties2D[6]->SetColor(0.973125, .798281, 0.0);
+  // green
+  this->SelectedHandleProperty2D = vtkProperty2D::New();
+  this->SelectedHandleProperty2D->SetColor(.2,1,.2);
+  
   this->SelectedFaceProperty2D = vtkProperty2D::New();
   this->SelectedFaceProperty2D->SetColor(1,1,0);
   this->SelectedFaceProperty2D->SetOpacity(0.25);

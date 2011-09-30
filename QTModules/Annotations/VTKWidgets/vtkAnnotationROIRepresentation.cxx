@@ -707,16 +707,25 @@ void vtkAnnotationROIRepresentation::CreateDefaultProperties()
     {
       this->HandleProperties[i]=vtkProperty::New();
     }
-  this->HandleProperties[0]->SetColor(1,0,1);
-  this->HandleProperties[1]->SetColor(1,0,0);
-  this->HandleProperties[2]->SetColor(1,1,1);
-  this->HandleProperties[3]->SetColor(.89,.6,.07);
-  this->HandleProperties[4]->SetColor(0,0,1);
-  this->HandleProperties[5]->SetColor(0,0,0);
-  this->HandleProperties[6]->SetColor(1,1,1);
+
+  // lavender
+  this->HandleProperties[0]->SetColor(.781, .633, .867);
+  // dark violet
+  this->HandleProperties[1]->SetColor(.5585, .343, .91);
+  // dark red
+  this->HandleProperties[2]->SetColor(.75, .121, .26953);
+  // orange
+  this->HandleProperties[3]->SetColor(.9765, .588, .1133);
+  // dark turquoise
+  this->HandleProperties[4]->SetColor(.1328, .4531, .5351);
+  // cyan
+  this->HandleProperties[5]->SetColor(.582, .898, .871);
+  // yellow
+  this->HandleProperties[6]->SetColor(0.973125, .898281, 0.2);
 
   this->SelectedHandleProperty = vtkProperty::New();
-  this->SelectedHandleProperty->SetColor(1,0,0);
+  // green
+  this->SelectedHandleProperty->SetColor(.453125, .96796, .33593);
 
 
   // Face properties
