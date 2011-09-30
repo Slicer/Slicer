@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>269</width>
-    <height>92</height>
+    <width>275</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/LinkOff.png</normaloff>
             <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
           </property>
@@ -65,6 +65,20 @@
           </property>
           <property name="checked">
            <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="FitToWindowToolButton">
+          <property name="toolTip">
+           <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -117,26 +131,12 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="FitToWindowToolButton">
-          <property name="toolTip">
-           <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
-          </property>
-          <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-            <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QToolButton" name="LightBoxToolButton">
           <property name="toolTip">
            <string>Lightbox view.</string>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
           </property>
           <property name="popupMode">
@@ -153,7 +153,7 @@
            <string>Show reformat widget in 3D view</string>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
             <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
           </property>
@@ -168,7 +168,7 @@
            <string>Advanced options</string>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
           </property>
           <property name="popupMode">
@@ -234,7 +234,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/LinkOn.png</normaloff>
             <disabledoff>:/Icons/LinkOn.png</disabledoff>:/Icons/LinkOn.png</iconset>
           </property>
@@ -255,7 +255,7 @@
            <string>Navigation</string>
           </property>
           <property name="icon">
-           <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SlicesCrosshair.png</normaloff>:/Icons/SlicesCrosshair.png</iconset>
           </property>
           <property name="popupMode">
@@ -283,7 +283,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+      <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerLB.png</normaloff>:/Icons/SliceViewerLB.png</iconset>
      </property>
     </widget>
@@ -334,7 +334,7 @@
     </widget>
    </item>
    <item row="1" column="4">
-    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -350,25 +350,22 @@
      <property name="toolTip">
       <string>Select the label map</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
      </property>
     </widget>
    </item>
@@ -384,7 +381,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+      <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerFG.png</normaloff>:/Icons/SliceViewerFG.png</iconset>
      </property>
      <property name="popupMode">
@@ -441,7 +438,7 @@
     </widget>
    </item>
    <item row="2" column="4">
-    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -457,25 +454,22 @@
      <property name="toolTip">
       <string>Select the foreground</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
      </property>
     </widget>
    </item>
@@ -491,7 +485,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+      <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
      </property>
      <property name="popupMode">
@@ -551,7 +545,7 @@
     </widget>
    </item>
    <item row="3" column="4">
-    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -567,25 +561,22 @@
      <property name="toolTip">
       <string>Select the background</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
      </property>
     </widget>
    </item>
@@ -603,7 +594,7 @@
   </action>
   <action name="actionFit_to_window">
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
    </property>
    <property name="text">
@@ -615,7 +606,7 @@
   </action>
   <action name="actionRotate_to_volume_plane">
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
    </property>
    <property name="text">
@@ -633,7 +624,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
      <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
    </property>
@@ -649,7 +640,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SliceWidgetOff.png</normaloff>
      <normalon>:/Icons/SliceWidgetOn.png</normalon>:/Icons/SliceWidgetOff.png</iconset>
    </property>
@@ -694,7 +685,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png</iconset>
    </property>
    <property name="text">
@@ -805,7 +796,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SliceInterpolationOff.png</normaloff>
      <normalon>:/Icons/SliceInterpolationOn.png</normalon>:/Icons/SliceInterpolationOff.png</iconset>
    </property>
@@ -821,7 +812,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SliceInterpolationOff.png</normaloff>
      <normalon>:/Icons/SliceInterpolationOn.png</normalon>:/Icons/SliceInterpolationOff.png</iconset>
    </property>
@@ -837,7 +828,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/VisibleOn.png</normaloff>
      <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
    </property>
@@ -856,7 +847,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/VisibleOn.png</normaloff>
      <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
    </property>
@@ -875,7 +866,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/VisibleOn.png</normaloff>
      <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
    </property>
@@ -891,7 +882,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/VisibleOff.png</normaloff>
      <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
    </property>
@@ -1004,11 +995,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkComboBox</class>
    <extends>QComboBox</extends>
    <header>ctkComboBox.h</header>
@@ -1024,9 +1010,14 @@
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="F:/work/Slicer/Slicer4/Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
