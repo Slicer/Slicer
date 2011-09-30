@@ -23,29 +23,29 @@
 // SlicerQt includes
 
 // Slices QTModule includes
-#include "qSlicerSliceControllerModule.h"
-#include "qSlicerSliceControllerModuleWidget.h"
+#include "qSlicerViewControllersModule.h"
+#include "qSlicerViewControllersModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSliceControllerModulePrivate
+class qSlicerViewControllersModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerSliceControllerModule::qSlicerSliceControllerModule(QObject* _parent)
+qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
   :Superclass(_parent)
-  , d_ptr(new qSlicerSliceControllerModulePrivate)
+  , d_ptr(new qSlicerViewControllersModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSliceControllerModule::~qSlicerSliceControllerModule()
+qSlicerViewControllersModule::~qSlicerViewControllersModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSliceControllerModule::acknowledgementText()const
+QString qSlicerViewControllersModule::acknowledgementText()const
 {
   return "This module was developed by Jean-Christophe Fillion-Robin, Kitware Inc. "
          "This work was supported by NIH grant 3P41RR013218-12S1, "
@@ -53,19 +53,19 @@ QString qSlicerSliceControllerModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSliceControllerModule::setup()
+void qSlicerViewControllersModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSliceControllerModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerViewControllersModule::createWidgetRepresentation()
 {
-  return new qSlicerSliceControllerModuleWidget;
+  return new qSlicerViewControllersModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerSliceControllerModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 {
   return 0;
 }

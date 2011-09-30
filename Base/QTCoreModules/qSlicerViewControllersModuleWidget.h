@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSliceControllerModuleWidget_h
-#define __qSlicerSliceControllerModuleWidget_h
+#ifndef __qSlicerViewControllersModuleWidget_h
+#define __qSlicerViewControllersModuleWidget_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -29,10 +29,10 @@
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class qSlicerSliceControllerModuleWidgetPrivate;
+class qSlicerViewControllersModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerSliceControllerModuleWidget :
+class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerViewControllersModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
@@ -40,8 +40,8 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerSliceControllerModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSliceControllerModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerSliceControllerModuleWidget();
+  qSlicerViewControllersModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerViewControllersModuleWidget();
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
@@ -53,11 +53,11 @@ protected:
   virtual void setup();
 
 protected:
-  QScopedPointer<qSlicerSliceControllerModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerViewControllersModuleWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSliceControllerModuleWidget);
-  Q_DISABLE_COPY(qSlicerSliceControllerModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerViewControllersModuleWidget);
+  Q_DISABLE_COPY(qSlicerViewControllersModuleWidget);
 };
 
 #endif

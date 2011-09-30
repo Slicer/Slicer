@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSliceControllerModule_h
-#define __qSlicerSliceControllerModule_h
+#ifndef __qSlicerViewControllersModule_h
+#define __qSlicerViewControllersModule_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -29,9 +29,9 @@
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class qSlicerSliceControllerModulePrivate;
+class qSlicerViewControllersModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerSliceControllerModule :
+class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerViewControllersModule :
   public qSlicerCoreModule
 {
   Q_OBJECT
@@ -39,8 +39,8 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerSliceControllerModule :
 public:
 
   typedef qSlicerCoreModule Superclass;
-  qSlicerSliceControllerModule(QObject *parent=0);
-  virtual ~qSlicerSliceControllerModule();
+  qSlicerViewControllersModule(QObject *parent=0);
+  virtual ~qSlicerViewControllersModule();
 
   qSlicerGetTitleMacro("View Controllers");
 
@@ -58,11 +58,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerSliceControllerModulePrivate> d_ptr;
+  QScopedPointer<qSlicerViewControllersModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSliceControllerModule);
-  Q_DISABLE_COPY(qSlicerSliceControllerModule);
+  Q_DECLARE_PRIVATE(qSlicerViewControllersModule);
+  Q_DISABLE_COPY(qSlicerViewControllersModule);
 };
 
 #endif

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerSliceControllerModule</class>
- <widget class="qSlicerWidget" name="qSlicerSliceControllerModule">
+ <class>qSlicerViewControllersModule</class>
+ <widget class="qSlicerWidget" name="qSlicerViewControllersModule">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -132,7 +132,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerSliceControllerModule</sender>
+   <sender>qSlicerViewControllersModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLSliceNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -148,7 +148,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerSliceControllerModule</sender>
+   <sender>qSlicerViewControllersModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLSliceInformationWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

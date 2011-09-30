@@ -33,7 +33,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerScalarOverlayIO.h"
-#include "qSlicerSliceControllerModule.h"
+#include "qSlicerViewControllersModule.h"
 // endofFIXME
 #include "qSlicerUtils.h"
 
@@ -106,7 +106,7 @@ void qSlicerCoreModuleFactory::registerItems()
   // vtkMRMLROINode are obsolete, one should use the Annotations module to
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();
-  d->registerCoreModule<qSlicerSliceControllerModule>();
+  d->registerCoreModule<qSlicerViewControllersModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
 
   Q_ASSERT(qSlicerCoreApplication::application());

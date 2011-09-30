@@ -3,7 +3,7 @@ set(KIT QTCoreModules)
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
-set(modulenames Cameras Colors Data EventBroker ROI SliceController Transforms)
+set(modulenames Cameras Colors Data EventBroker ROI ViewControllers Transforms)
 SlicerMacroConfigureGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
