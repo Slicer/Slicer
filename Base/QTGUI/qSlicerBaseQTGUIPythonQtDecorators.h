@@ -33,7 +33,7 @@
 // for non-static methods.
 //
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerBaseQTGUIPythonQtDecorators : public QObject
+class qSlicerBaseQTGUIPythonQtDecorators : public QObject
 {
   Q_OBJECT
 
