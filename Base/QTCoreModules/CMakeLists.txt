@@ -56,10 +56,10 @@ set(KIT_SRCS
   qSlicerScalarOverlayIOOptionsWidget.cxx
   qSlicerScalarOverlayIOOptionsWidget.h
 
-  qSlicerViewControllerModule.cxx
-  qSlicerViewControllerModule.h
-  qSlicerViewControllerModuleWidget.cxx
-  qSlicerViewControllerModuleWidget.h
+  qSlicerViewControllersModule.cxx
+  qSlicerViewControllersModule.h
+  qSlicerViewControllersModuleWidget.cxx
+  qSlicerViewControllersModuleWidget.h
 
   qSlicerTransformsIO.cxx
   qSlicerTransformsIO.h
@@ -94,8 +94,8 @@ set(KIT_MOC_SRCS
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.h
 
-  qSlicerViewControllerModule.h
-  qSlicerViewControllerModuleWidget.h
+  qSlicerViewControllersModule.h
+  qSlicerViewControllersModuleWidget.h
 
   qSlicerTransformsIO.h
   qSlicerTransformsModule.h
@@ -110,7 +110,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
-  Resources/UI/qSlicerViewControllerModule.ui
+  Resources/UI/qSlicerViewControllersModule.ui
   Resources/UI/qSlicerTransformsModule.ui
 )
 
