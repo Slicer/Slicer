@@ -29,7 +29,7 @@
 // for non-static methods.
 //
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerBaseQTBasePythonQtDecorators : public QObject
+class qSlicerBaseQTBasePythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
