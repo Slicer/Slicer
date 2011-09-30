@@ -52,7 +52,7 @@ public:
   /// Get the 3D View node observed by view.
   vtkMRMLViewNode* mrmlViewNode()const;
 
-  /// Get a reference to the underlying Slice View
+  /// Get a reference to the underlying ThreeD View
   /// Becareful if you change the threeDView, you might
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLThreeDView* threeDView()const;

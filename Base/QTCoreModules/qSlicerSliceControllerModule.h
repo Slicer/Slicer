@@ -42,7 +42,7 @@ public:
   qSlicerSliceControllerModule(QObject *parent=0);
   virtual ~qSlicerSliceControllerModule();
 
-  qSlicerGetTitleMacro("Slice Controllers");
+  qSlicerGetTitleMacro("View Controllers");
 
   /// Return acknowledgements
   virtual QString acknowledgementText()const;

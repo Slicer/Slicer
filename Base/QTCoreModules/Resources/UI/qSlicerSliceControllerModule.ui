@@ -23,6 +23,14 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="ThreeDViewControllersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
+      <string>3D View Controllers</string>
+     </property>
+     <layout class="QVBoxLayout" name="ThreeDViewControllersLayout"/>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="SliceInformationCollapsibleButton" native="true">
      <property name="enabled">
       <bool>true</bool>

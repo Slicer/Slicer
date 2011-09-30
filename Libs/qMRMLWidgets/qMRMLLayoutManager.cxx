@@ -813,3 +813,12 @@ void qMRMLLayoutManager::setupView(QDomElement viewElement, QWidget*view)
   viewNode->SetAttribute("MappedInLayout", "1");
   view->setWindowTitle(viewNode->GetName());
 }
+
+
+//------------------------------------------------------------------------------
+QWidget* qMRMLLayoutManager::viewWidget(vtkMRMLNode* viewNode) const
+{
+  Q_D(const qMRMLLayoutManager);
+  
+  return d->viewWidget(viewNode);
+}

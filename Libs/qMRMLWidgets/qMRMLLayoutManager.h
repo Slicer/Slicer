@@ -33,6 +33,7 @@ class qMRMLLayoutManagerPrivate;
 class vtkCollection;
 class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
+class vtkMRMLNode;
 class vtkMRMLViewNode;
 class vtkRenderer;
 
@@ -51,7 +52,13 @@ public:
   explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
   virtual ~qMRMLLayoutManager();
 
+  /// Return the MRMLScene for the LayoutManager
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+
+  /// Get the view widget representing a particular node (can be used
+  /// for SliceNodes or ViewNodes, returning qMRMLSliceWidget or
+  /// qMRMLThreeDWidget respectively).
+  Q_INVOKABLE QWidget* viewWidget(vtkMRMLNode *n) const;
 
   /// Get SliceViewWidget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
@@ -59,7 +66,7 @@ public:
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
 
-  /// Get ThreeDRenderView identified by \a id
+  /// Get ThreeDWidget identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
