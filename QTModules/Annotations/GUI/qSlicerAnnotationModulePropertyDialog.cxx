@@ -43,11 +43,9 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   // now build the user interface
   ui.setupUi(this);
 
-  // Hide widgets for now
-  ui.DescriptionLabel->setVisible(false);
-  ui.DescriptionTextEdit->setVisible(false);
-  ui.RASLabel->setVisible(false);
-  ui.RASCoordinatesWidget->setVisible(false);
+ 
+  ui.DescriptionLabel->setVisible(true);
+  ui.DescriptionTextEdit->setVisible(true);
 
   if (this->m_logic->IsAnnotationHierarchyNode(id))
     {
@@ -105,8 +103,37 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     }
   
   // customise the all color picker button
+  ui.allColorPickerButton->setToolTip(tr("Set unselected color of whole annotation (points, text, lines), use advanced pane to set individual colors"));
   ui.allColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
+  // if all the display nodes are the same colour, update the colour on the
+  // button to show it, otherwise will be black
+  this->UpdateAllColorButton();
 
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  
+  // hide the RAS if it's not a fiducial
+  if (!mrmlNode->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    ui.RASLabel->setVisible(false);
+    ui.RASCoordinatesWidget->setVisible(false);
+    }
+  else
+    {
+    ui.RASLabel->setVisible(true);
+    ui.RASCoordinatesWidget->setVisible(true);
+    // update
+    vtkMRMLAnnotationFiducialNode *fidNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(mrmlNode);
+    double *pos = fidNode->GetFiducialCoordinates();
+    if (pos)
+      {
+      ui.RASCoordinatesWidget->setCoordinates(pos);
+      }
+    }
+  
   // if it's a hierarchy node, don't show the size or lock buttons
   if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
     {
@@ -119,11 +146,14 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // the rest is hidden, so just return
     return;
     }
+
+
   // load the current annotation text
   vtkStdString text = this->m_logic->GetAnnotationText(this->m_id.c_str());
 
   ui.annotationTextEdit->setText(text.c_str());
-
+  ui.DescriptionTextEdit->setText(text.c_str());
+  
   // load the current annotation text scale
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
@@ -185,11 +215,6 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
 
 
-  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-  if (!mrmlNode)
-    {
-    return;
-    }
   vtkMRMLAnnotationControlPointsNode *pointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(mrmlNode);
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = NULL;
   if (pointsNode)
@@ -373,6 +398,9 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.sizeSmallPushButton, SIGNAL(clicked()), this, SLOT(onSizeSmallPushButtonClicked()));
   this->connect(ui.sizeMediumPushButton, SIGNAL(clicked()), this, SLOT(onSizeMediumPushButtonClicked()));
   this->connect(ui.sizeLargePushButton, SIGNAL(clicked()), this, SLOT(onSizeLargePushButtonClicked()));
+  this->connect(ui.DescriptionTextEdit, SIGNAL(textChanged()), this,
+      SLOT(onDescriptionTextChanged()));
+  this->connect(ui.RASCoordinatesWidget, SIGNAL(coordinatesChanged(double*)), this, SLOT(onRASCoordinatesChanged(double*)));
   // text
   this->connect(ui.annotationTextEdit, SIGNAL(textChanged()), this,
       SLOT(onTextChanged()));
@@ -485,11 +513,40 @@ void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 }
 
 //------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onDescriptionTextChanged()
+{
+  QString text = ui.DescriptionTextEdit->toPlainText();
+  QByteArray bytes = text.toLatin1();
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
+}
+
+//------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
   QString text = ui.annotationTextEdit->toPlainText();
   QByteArray bytes = text.toLatin1();
   this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onRASCoordinatesChanged(double *coords)
+{
+  if (!coords)
+    {
+    return;
+    }
+  vtkMRMLNode *node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  // only update if it's a fiducial
+  if (!node || !node->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    return;
+    }
+  vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
+  if (!fiducialNode)
+    {
+    return;
+    }
+  fiducialNode->SetFiducialCoordinates(coords[0], coords[1], coords[2]);
 }
 
 //------------------------------------------------------------------------------
@@ -1195,6 +1252,61 @@ void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
+{
+  // use black as a default
+  qcolor.setRgbF(0.0, 0.0, 0.0, 1.0);
+  
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(mrmlNode);
+  if (!displayableNode)
+    {
+    return;
+    }
+  int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  double *firstColor = NULL;
+  bool allTheSame = true;
+  for (int i = 0; i < numDisplayNodes; ++i)
+    {
+    vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+    if (displayNode)
+      {
+      if (i == 0)
+        {
+        firstColor = displayNode->GetColor();
+        }
+      else
+        {
+        double *thisColor = displayNode->GetColor();
+        if (thisColor && firstColor && 
+            (thisColor[0] != firstColor[0] ||
+             thisColor[1] != firstColor[1] ||
+             thisColor[2] != firstColor[2]))
+          {
+          allTheSame = false;
+          break;
+          }
+        }
+      }
+    }
+
+  if (allTheSame)
+    {
+    this->TurnColorArrayToQColor(firstColor, qcolor); 
+    }
+}
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::UpdateAllColorButton()
+{
+  QColor allColor;
+  this->GetAllColor(allColor);
+  ui.allColorPickerButton->setColor(allColor);
+}
+//-----------------------------------------------------------------------------
 // Methods for closing the property dialog
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
@@ -1317,6 +1429,7 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
     textDisplayNode->SetColor(color);
     ui.textUnselectedColorPickerButton->setColor(qcolor);
     }
+  
   // get the point display node
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (pointDisplayNode)

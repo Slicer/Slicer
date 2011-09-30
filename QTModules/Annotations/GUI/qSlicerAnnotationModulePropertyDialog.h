@@ -44,6 +44,11 @@ public:
   static void TurnQColorToColorArray(double* color, QColor &qcolor);
   static void FormatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
 
+  /// for the current m_id node, if all display nodes have the same unselected
+  /// colour, return it, otherwise return black.
+  void GetAllColor(QColor &qcolor);
+  /// use the GetAllColor method and set the all color button
+  void UpdateAllColorButton();
 
 protected:
   /// update the ui.typeLabel from the node with m_id
@@ -83,7 +88,9 @@ protected slots:
     void onLineDiffuseChanged(double value);
     void onLineSpecularChanged(double value);
 
+  void onDescriptionTextChanged();
   void onTextChanged();
+  void onRASCoordinatesChanged(double *coords);
   void onDialogRejected();
   void onDialogAccepted();
   void onTextUnselectedColorChanged(QColor qcolor);
@@ -104,7 +111,8 @@ signals:
     void doublePropertyChanged(double, char*, int);
     void colorPropertyChanged(QColor, char*, int);
     void itemChanged(QTableWidgetItem *);
-
+  void coordinatesChanged(double*);
+  
 private:
 
     void SaveLinesNode(vtkMRMLAnnotationLinesNode* node);
