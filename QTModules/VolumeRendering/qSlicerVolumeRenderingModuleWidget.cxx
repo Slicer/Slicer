@@ -1,6 +1,9 @@
 // Qt includes
 #include <QSettings>
 
+// CTK includes
+#include <ctkUtils.h>
+
 // qMRMLWidgets include
 #include "qMRMLSceneModel.h"
 
@@ -15,6 +18,9 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkPiecewiseFunction.h>
+#include <vtkVector.h>
+#include <vtkVolumeProperty.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
@@ -34,6 +40,7 @@ public:
 
   vtkMRMLVolumeRenderingDisplayNode* DisplayNode;
   QMap<int, int>                     LastTechniques;
+  double                             OldPresetPosition;
 };
 
 //-----------------------------------------------------------------------------
@@ -46,6 +53,7 @@ qSlicerVolumeRenderingModuleWidgetPrivate
   : q_ptr(&object)
 {
   this->DisplayNode = 0;
+  this->OldPresetPosition = 0.;
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +93,10 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentRenderingMethodChanged(int)));
 
-  this->MemorySizeComboBox->addItem("Default", 0);
+  QSettings settings;
+  int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
+  this->MemorySizeComboBox->addItem(
+    QString("Default (%1 Mo)").arg(defaultGPUMemorySize), 0);
   this->MemorySizeComboBox->insertSeparator(1);
   this->MemorySizeComboBox->addItem("128 Mo", 128);
   this->MemorySizeComboBox->addItem("256 Mo", 256);
@@ -145,12 +156,20 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(applyPreset(vtkMRMLNode*)));
-  
+
+  QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(volumePropertyChanged()),
+                   q, SLOT(updatePresetSliderRange()));
+
+  QObject::connect(this->PresetOffsetSlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(offsetPreset(double)));
+  QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(resetOffset()));
+
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
   this->InputsCollapsibleButton->setEnabled(false);;
-  this->RenderingCollapsibleButton->setCollapsed(true);
-  this->RenderingCollapsibleButton->setEnabled(false);
+  this->AdvancedCollapsibleButton->setCollapsed(true);
+  this->AdvancedCollapsibleButton->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
@@ -779,4 +798,38 @@ void qSlicerVolumeRenderingModuleWidget::applyPreset(vtkMRMLNode* node)
     return;
     }
   volumePropertyNode->CopyParameterSet(presetNode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::offsetPreset(double newPosition)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  d->VolumePropertyNodeWidget->moveAllPoints(newPosition - d->OldPresetPosition, 0.);
+  d->OldPresetPosition = newPosition;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::resetOffset()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  // Reset the slider position to the center.
+  d->OldPresetPosition = 0.;
+  d->PresetOffsetSlider->setValue(0.);
+  this->updatePresetSliderRange();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkPiecewiseFunction* function =
+    d->VolumePropertyNodeWidget->volumeProperty()->GetScalarOpacity();
+  double range[2];
+  function->GetRange(range);
+  double width = range[1] - range[0];
+  bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
+  d->PresetOffsetSlider->setSingleStep(
+    ctk::closestPowerOfTen(width) / 10.);
+  d->PresetOffsetSlider->setRange(-width, width);
+  d->PresetOffsetSlider->blockSignals(wasBlocking);
 }

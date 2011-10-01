@@ -27,6 +27,9 @@
 // MRML includes
 #include <vtkMRMLVolumePropertyNode.h>
 
+// VTK includes
+#include <vtkVolumeProperty.h>
+
 //-----------------------------------------------------------------------------
 class qMRMLVolumePropertyNodeWidgetPrivate
   : public Ui_qMRMLVolumePropertyNodeWidget
@@ -75,6 +78,13 @@ qMRMLVolumePropertyNodeWidget::~qMRMLVolumePropertyNodeWidget()
 }
 
 // --------------------------------------------------------------------------
+vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty()const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->VolumeProperty->volumeProperty();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(
   vtkMRMLNode* volumePropertyNode)
 {
@@ -98,6 +108,23 @@ void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(
 void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
 {
   Q_D(qMRMLVolumePropertyNodeWidget);
-  d->VolumeProperty->setVolumeProperty(
-    d->VolumePropertyNode ? d->VolumePropertyNode->GetVolumeProperty() : 0);
+  vtkVolumeProperty* newVolumeProperty =
+    d->VolumePropertyNode ? d->VolumePropertyNode->GetVolumeProperty() : 0;
+  qvtkReconnect(d->VolumeProperty->volumeProperty(), newVolumeProperty,
+                vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
+  d->VolumeProperty->setVolumeProperty(newVolumeProperty);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::moveAllPoints(double x, double y)
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->VolumeProperty->moveAllPoints(x, y);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor)
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->VolumeProperty->spreadAllPoints(factor);
 }

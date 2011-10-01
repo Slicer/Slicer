@@ -6,21 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>680</height>
+    <width>333</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Volume Render</string>
   </property>
   <layout class="QFormLayout" name="formLayout_2">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="VolumeNodeLabel">
+    <widget class="QCheckBox" name="VisibilityCheckBox">
      <property name="text">
       <string>Volume:</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+       <normaloff>:/Icons/VisibleOff.png</normaloff>
+       <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
      </property>
     </widget>
    </item>
@@ -54,20 +62,23 @@
       <string>Inputs</string>
      </property>
      <property name="checked">
-      <bool>true</bool>
-     </property>
-     <property name="collapsed">
       <bool>false</bool>
      </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="1" column="0">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
        <widget class="QLabel" name="DisplayNodeLlabel">
         <property name="text">
          <string>Display:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="qMRMLNodeComboBox" name="DisplayNodeComboBox">
         <property name="enabled">
          <bool>false</bool>
@@ -82,14 +93,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="ROINodeLabel">
         <property name="text">
          <string>ROI:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="qMRMLNodeComboBox" name="ROINodeComboBox">
         <property name="nodeTypes">
          <stringlist>
@@ -104,14 +115,14 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="VolumePropertyNodeLabel">
         <property name="text">
          <string>Property:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="qMRMLNodeComboBox" name="VolumePropertyNodeComboBox">
         <property name="nodeTypes">
          <stringlist>
@@ -126,31 +137,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="ViewNodeLabel">
         <property name="text">
          <string>View:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="VisibilityLabel">
-        <property name="text">
-         <string>Visible:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="VisibilityCheckBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
+      <item row="3" column="1">
        <widget class="qMRMLCheckableNodeComboBox" name="ViewCheckableNodeComboBox">
         <property name="nodeTypes">
          <stringlist>
@@ -166,14 +160,148 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="RenderingCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+     <property name="text">
+      <string>Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QFormLayout" name="formLayout_11">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="PresetsLabel">
+        <property name="text">
+         <string>Preset:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="CropLabel">
+        <property name="text">
+         <string>Crop:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="ROICropCheckBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Enable</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="ROICropDisplayCheckBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Display box</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/VisibleOff.png</normaloff>
+            <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ROIFitPushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Fit to Volume</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+            <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="RenderingMethodLabel">
+        <property name="text">
+         <string>Rendering:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="RenderingMethodComboBox">
+        <item>
+         <property name="text">
+          <string>VTK CPU Ray Casting</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>VTK GPU Ray Casting</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>VTK OpenGL 3D Texture Mapping</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>NCI GPU Ray Casting</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkDoubleSlider" name="PresetOffsetSlider">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="pageStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="AdvancedCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Rendering</string>
+      <string>Advanced...</string>
      </property>
      <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <property name="contentsFrameShape">
@@ -181,7 +309,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTabWidget" name="RenderingTabWidget">
+       <widget class="QTabWidget" name="AdvancedTabWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -190,37 +318,6 @@
           <string>Techniques</string>
          </attribute>
          <layout class="QFormLayout" name="formLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="RenderingMethodLabel">
-            <property name="text">
-             <string>Rendering Method:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="RenderingMethodComboBox">
-            <item>
-             <property name="text">
-              <string>VTK CPU Ray Casting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>VTK GPU Ray Casting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>VTK OpenGL 3D Texture Mapping</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>NCI GPU Ray Casting</string>
-             </property>
-            </item>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="MemorySizeLabel">
             <property name="text">
@@ -230,6 +327,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QComboBox" name="MemorySizeComboBox">
+            <property name="toolTip">
+             <string>Amount of memory in Mo available on the GPU for rendering. &quot;Default&quot; can be modified in the settings.</string>
+            </property>
             <property name="currentIndex">
              <number>-1</number>
             </property>
@@ -513,21 +613,13 @@
           <string>Volume Properties</string>
          </attribute>
          <layout class="QFormLayout" name="formLayout_10">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
           <property name="margin">
            <number>0</number>
           </property>
-          <item row="1" column="0">
-           <widget class="QLabel" name="PresetsLabel">
-            <property name="text">
-             <string>Apply a preset:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox">
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
+          <item row="1" column="0" colspan="2">
            <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget">
             <property name="enabled">
              <bool>false</bool>
@@ -544,35 +636,8 @@
           <property name="fieldGrowthPolicy">
            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="ROICropLabel">
-            <property name="text">
-             <string>Crop:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="ROICropCheckBox">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
+          <item row="0" column="0" colspan="2">
            <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QPushButton" name="ROIFitPushButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Fit ROI to Volume</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -615,13 +680,13 @@
    <header>qSlicerWidget.h</header>
    <container>1</container>
   </customwidget>
-   <customwidget>
-     <class>qSlicerPresetComboBox</class>
-     <extends>qMRMLNodeComboBox</extends>
-     <header>qSlicerPresetComboBox.h</header>
-     <container>1</container>
-   </customwidget>
-   <customwidget>
+  <customwidget>
+   <class>qSlicerPresetComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qSlicerPresetComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -634,6 +699,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkDoubleSlider</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSlider.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
@@ -641,6 +711,7 @@
  </customwidgets>
  <resources>
   <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
+  <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -650,12 +721,12 @@
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>396</x>
-     <y>179</y>
+     <x>323</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
-     <x>180</x>
-     <y>456</y>
+     <x>158</x>
+     <y>278</y>
     </hint>
    </hints>
   </connection>
@@ -666,8 +737,8 @@
    <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>606</x>
-     <y>142</y>
+     <x>323</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
@@ -698,12 +769,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>315</x>
-     <y>105</y>
+     <x>323</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>320</x>
-     <y>142</y>
+     <x>323</x>
+     <y>62</y>
     </hint>
    </hints>
   </connection>
@@ -714,28 +785,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>296</x>
-     <y>105</y>
+     <x>323</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>298</x>
-     <y>179</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>DisplayNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>VisibilityCheckBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>546</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>520</x>
-     <y>80</y>
+     <x>323</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -746,28 +801,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>371</x>
-     <y>105</y>
+     <x>323</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>372</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>InputsCollapsibleButton</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>145</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>149</x>
-     <y>58</y>
+     <x>323</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
@@ -782,8 +821,8 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>289</x>
-     <y>216</y>
+     <x>323</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
@@ -794,12 +833,12 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
+     <x>332</x>
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
-     <y>142</y>
+     <x>323</x>
+     <y>62</y>
     </hint>
    </hints>
   </connection>
@@ -810,12 +849,12 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>548</x>
+     <x>332</x>
      <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
-     <y>179</y>
+     <x>323</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -826,12 +865,12 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>389</x>
+     <x>332</x>
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>602</x>
-     <y>105</y>
+     <x>323</x>
+     <y>60</y>
     </hint>
    </hints>
   </connection>
@@ -842,11 +881,11 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
+     <x>332</x>
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>445</x>
+     <x>332</x>
      <y>19</y>
     </hint>
    </hints>
@@ -858,35 +897,19 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>300</x>
-     <y>339</y>
+     <x>323</x>
+     <y>205</y>
     </hint>
     <hint type="destinationlabel">
-     <x>169</x>
-     <y>541</y>
+     <x>119</x>
+     <y>330</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>VolumeNodeComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>RenderingCollapsibleButton</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>107</x>
-     <y>12</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>104</x>
-     <y>268</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>RenderingCollapsibleButton</receiver>
+   <receiver>AdvancedCollapsibleButton</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -895,7 +918,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>240</x>
-     <y>276</y>
+     <y>253</y>
     </hint>
    </hints>
   </connection>
@@ -906,28 +929,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>93</x>
-     <y>157</y>
+     <x>215</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>74</x>
-     <y>348</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ROINodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ROIFitPushButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>190</x>
-     <y>150</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>307</x>
-     <y>578</y>
+     <x>123</x>
+     <y>174</y>
     </hint>
    </hints>
   </connection>
@@ -938,12 +945,92 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>189</y>
+     <x>260</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
-     <x>144</x>
-     <y>391</y>
+     <x>122</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROICropDisplayCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ROIWidget</receiver>
+   <slot>setDisplayClippingBox(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>594</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ROICropDisplayCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumePropertyNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>PresetOffsetSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ROIFitPushButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumeNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>VisibilityCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>109</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>8</y>
     </hint>
    </hints>
   </connection>

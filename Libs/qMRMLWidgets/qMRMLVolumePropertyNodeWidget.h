@@ -35,6 +35,10 @@ class qMRMLVolumePropertyNodeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLVolumePropertyNode;
 
+// VTK includes
+class vtkControlPointsItem;
+class vtkVolumeProperty;
+
 class QMRML_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidget
   : public QWidget
 {
@@ -47,11 +51,21 @@ public:
   explicit qMRMLVolumePropertyNodeWidget(QWidget* parent=0);
   virtual ~qMRMLVolumePropertyNodeWidget();
 
+  /// Return the VTK volume property associated with the MRML volume property
+  /// node.
+  vtkVolumeProperty* volumeProperty()const;
+
 public slots:
   ///
   /// Convenient function to connect with signal/slots
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
   void setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode* volumePropertyNode);
+
+  void moveAllPoints(double x, double y = 0.);
+  void spreadAllPoints(double factor);
+
+signals:
+  void volumePropertyChanged();
 
 protected slots:
   void updateFromVolumePropertyNode();
