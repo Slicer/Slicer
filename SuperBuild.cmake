@@ -71,7 +71,7 @@ else()
   set(ITK_EXTERNAL_NAME "ITKv3")
 endif()
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment)
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
 
 if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES SlicerBRAINSTools)
@@ -245,6 +245,8 @@ ExternalProject_Add(${proj}
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
     # EMSegment
     -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR}
+    # ChangeTrackerPy
+    -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR}
   INSTALL_COMMAND ""
   )
 
