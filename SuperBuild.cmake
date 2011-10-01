@@ -71,7 +71,7 @@ else()
   set(ITK_EXTERNAL_NAME "ITKv3")
 endif()
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment)
 
 if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES SlicerBRAINSTools)
@@ -243,6 +243,8 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # qCDashAPI
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
+    # EMSegment
+    -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR}
   INSTALL_COMMAND ""
   )
 

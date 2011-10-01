@@ -31,7 +31,6 @@ set(qtmodules
   TractographyFiducialSeeding # tractography depends of Volumes
   CropVolume
   VolumeRendering # Volume Rendering depends of Volumes
-  EMSegment
   )
 if(BUILD_TESTING)
   list(APPEND qtmodules ModuleTemplate)
@@ -40,3 +39,10 @@ endif()
 foreach(module ${qtmodules})
   add_subdirectory(${module})
 endforeach(module)
+
+# NOTE: EMSegment source code is checkout from Slicer3 repository using
+#       "External_EMSegment.cmake".
+#add_subdirectory(
+#  ${EMSegment_SOURCE_DIR}
+#  ${CMAKE_CURRENT_BINARY_DIR}/EMSegment
+#  )
