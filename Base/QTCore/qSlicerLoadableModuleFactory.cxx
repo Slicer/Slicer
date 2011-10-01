@@ -77,6 +77,10 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
             "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"
             "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRML.py');"
             ).arg(pythonPath));
+      pythonManager->executeString(QString(
+            "from slicer.util import importQtClassesFromDirectory;"
+            "importQtClassesFromDirectory('%1', 'slicer.modulewidget', filematch='qSlicer*PythonQt.*');"
+            ).arg(modulePath.absolutePath()));
       }
     }
 #endif
@@ -101,7 +105,7 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
   Q_ASSERT(!app->slicerHome().isEmpty());
-  
+
   QStringList defaultQTModulePaths;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
@@ -125,8 +129,8 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
 
   //qDebug() << "qtModulePaths:" << qtModulePaths;
-  
-  return qtModulePaths; 
+
+  return qtModulePaths;
 }
 
 //-----------------------------------------------------------------------------

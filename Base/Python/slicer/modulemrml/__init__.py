@@ -11,4 +11,4 @@ directory = path.join(app.slicerHome, slicer_qt_loadable_modules_lib_subdir, "Py
 importVTKClassesFromDirectory(directory, __name__, filematch = "vtkSlicer*ModuleMRML.py")
 
 # Removing things the user shouldn't have to see.
-del app, importVTKClassesFromDirectory, directory, slicer_qt_loadable_modules_lib_subdir
+del app, importVTKClassesFromDirectory, directory, slicer_qt_loadable_modules_lib_subdir, path

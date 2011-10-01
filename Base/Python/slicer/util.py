@@ -23,36 +23,46 @@ def restart():
 
 def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
   import glob, os
-  for fname in glob.glob(directory + '/' + filematch):
+  for fname in glob.glob(os.path.join(directory, filematch)):
     try:
       vtk_module_name = os.path.splitext(os.path.basename(fname))[0]
-      importVTKClasses(vtk_module_name, dest_module_name)
+      importModuleObjects(vtk_module_name, dest_module_name, 'vtkclass')
     except ImportError as detail:
       # TODO: this message should go in the application error log (how?)
       print detail
 
-def importVTKClasses(vtk_module_name, dest_module_name):
-  """Import VTK classes from module identified by vtk_module_name into
-  the module identified by 'dest_module_name'."""
+def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
+  import glob, os
+  for fname in glob.glob(os.path.join(directory, filematch)):
+    try:
+      qt_module_name = os.path.splitext(os.path.basename(fname))[0]
+      importModuleObjects(qt_module_name, dest_module_name, 'PythonQtClassWrapper')
+    except ImportError as detail:
+      # TODO: this message should go in the application error log (how?)
+      print detail
 
-  # Obtain a reference to the module idenitifed by 'dest_module_name'
+def importModuleObjects(from_module_name, dest_module_name, type_name):
+  """Import object of type 'type_name' from module identified
+  by 'from_module_name' into the module identified by 'dest_module_name'."""
+
+  # Obtain a reference to the module identifed by 'dest_module_name'
   import sys
   dest_module = sys.modules[dest_module_name]
 
-  exec "import %s" % (vtk_module_name)
+  exec "import %s" % (from_module_name)
 
   # Obtain a reference to the associated VTK module
-  module = eval(vtk_module_name)
+  module = eval(from_module_name)
 
   # Loop over content of the python module associated with the given VTK python library
   for item_name in dir(module):
 
     # Obtain a reference associated with the current object
-    item = eval("%s.%s" % (vtk_module_name, item_name))
+    item = eval("%s.%s" % (from_module_name, item_name))
 
-    # Add the vtk class to dest_module_globals_dict if any
-    if type(item).__name__ == 'vtkclass':
-      exec("from %s import %s" % (vtk_module_name, item_name))
+    # Add the object to dest_module_globals_dict if any
+    if type(item).__name__ == type_name:
+      exec("from %s import %s" % (from_module_name, item_name))
       exec("dest_module.%s = %s"%(item_name, item_name))
 
 #
@@ -60,7 +70,7 @@ def importVTKClasses(vtk_module_name, dest_module_name):
 #
 
 def lookupTopLevelWidget(objectName, verbose = True):
-  """Loop over all top level widget associated with 'slicer.app' and 
+  """Loop over all top level widget associated with 'slicer.app' and
   return the one matching 'objectName'"""
   from slicer import app
   for w in app.topLevelWidgets():
@@ -94,14 +104,14 @@ def findChildren(widget=None,name="",text="",title=""):
     parents += p.children()
     if name and fnmatch.fnmatch(p.name, name):
       children.append(p)
-    elif text: 
+    elif text:
       try:
         p.text
         if fnmatch.fnmatch(p.text, text):
           children.append(p)
       except AttributeError:
         pass
-    elif title: 
+    elif title:
       try:
         p.title
         if fnmatch.fnmatch(p.title, title):
@@ -204,7 +214,7 @@ def openAddFiberBundleDialog():
 def openSaveDataDialog():
   from slicer import app
   return app.coreIOManager().openSaveDataDialog()
-  
+
 #
 # Module
 #
