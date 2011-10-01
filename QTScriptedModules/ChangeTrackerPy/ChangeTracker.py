@@ -5,10 +5,10 @@ import ChangeTrackerWizard
 class ChangeTracker:
   def __init__( self, parent ):
     parent.title = "ChangeTracker"
-    parent.category = ""
-    parent.contributor = "Andrey Fedorov"
-    parent.helpText = """Help text"""
-    parent.acknowledgementText = """Ack text"""
+    parent.category = "Wizards"
+    parent.contributor = "Andrey Fedorov, Ron Kikinis (PI)"
+    parent.helpText = "THIS MODULE IS UNDER DEVELOPMENT!!!"
+    parent.acknowledgementText = "UNDER DEVELOPMENT"
     self.parent = parent
 
 class ChangeTrackerWidget:
