@@ -294,6 +294,10 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
     {
     assert(vtkInternal::APIMethodNames[i]);
+    if (!PyObject_HasAttrString(self, vtkInternal::APIMethodNames[i]))
+      {
+      continue;
+      }
     PyObject * method = PyObject_GetAttrString(self, vtkInternal::APIMethodNames[i]);
     //std::cout << "method:" << method << std::endl;
     this->Internal->PythonAPIMethods[i] = method;
@@ -304,4 +308,3 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   this->Internal->PythonSource = pythonSource;
   this->Internal->PythonSelf = self;
 }
-

@@ -176,6 +176,10 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   for (int i = 0; i < Pimpl::APIMethodCount; ++i)
     {
     Q_ASSERT(Pimpl::APIMethodNames[i]);
+    if (!PyObject_HasAttrString(self, Pimpl::APIMethodNames[i]))
+      {
+      continue;
+      }
     PyObject * method = PyObject_GetAttrString(self, Pimpl::APIMethodNames[i]);
     //qDebug() << "method:" << method;
     d->PythonAPIMethods[i] = method;
