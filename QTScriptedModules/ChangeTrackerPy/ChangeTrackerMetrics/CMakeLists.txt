@@ -1,0 +1,2 @@
+ADD_SUBDIRECTORY(IntensityDifferenceMetric)
+ADD_SUBDIRECTORY(DemonsRegistrationSegmentationMetric)
