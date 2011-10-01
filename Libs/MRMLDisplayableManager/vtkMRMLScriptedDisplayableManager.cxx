@@ -101,6 +101,10 @@ vtkMRMLScriptedDisplayableManager::vtkInternal::~vtkInternal()
 {
   if (this->PythonSelf)
     {
+    for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
+      {
+      Py_XDECREF(this->PythonAPIMethods[i]);
+      }
     Py_DECREF(this->PythonSelf);
     }
 }

@@ -80,6 +80,11 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
 {
   if (this->PythonSelf)
     {
+    for (int i = 0; i < Self::APIMethodCount; ++i)
+      {
+      Py_XDECREF(this->PythonAPIMethods[i]);
+      }
+
     Py_DECREF(this->PythonSelf);
     }
 }

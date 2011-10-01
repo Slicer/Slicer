@@ -46,7 +46,7 @@ public:
 
 protected:
   virtual void setup();
-  
+
 protected:
   QScopedPointer<qSlicerScriptedLoadableModuleWidgetPrivate> d_ptr;
 
