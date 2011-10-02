@@ -123,7 +123,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::enter()
   {
     vtkMRMLFiberBundleNode *fnode = vtkMRMLFiberBundleNode::New();
     this->mrmlScene()->AddNode(fnode);
-    //fnode->SetName(std::string(std::string("FiberTract_")+fiducialName).c_str());
+    fnode->SetName(std::string(std::string("FiberBundle")).c_str()); //+fiducialName).c_str());
     fnode->Delete();
     this->setFiberBundleNode(fnode);
   }
