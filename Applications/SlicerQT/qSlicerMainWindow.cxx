@@ -629,13 +629,14 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
 {
   Q_D(qSlicerMainWindow);
-  bool found;
+  bool found = false;
   // std::cerr << "onLayoutActionTriggered: " << action->text().toStdString() << std::endl;
   foreach(QAction* maction, d->MenuLayout->actions())
     {
     if (action->text() == maction->text())
       {
       found = true;
+      break;
       }
     }
 
