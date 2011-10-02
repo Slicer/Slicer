@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-  <class>qMRMLAnnotationROIWidget</class>
-  <widget class="QWidget" name="qMRMLAnnotationROIWidget">
+  <class>qMRMLROIWidget</class>
+  <widget class="QWidget" name="qMRMLROIWidget">
     <property name="geometry">
       <rect>
         <x>0</x>
