@@ -13,7 +13,7 @@ __kits_to_load = [
 'logic',
 'qSlicerBaseQTCorePythonQt',
 'qSlicerBaseQTGUIPythonQt',
-'qSlicerBaseQTCLIPythonQt'
+'qSlicerBaseQTCLIPythonQt',
 # slicer module
 'modulelogic',
 'modulemrml',
