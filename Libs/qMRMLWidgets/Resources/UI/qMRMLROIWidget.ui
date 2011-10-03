@@ -1977,7 +1977,7 @@
           <item>
             <widget class="QToolButton" name="DisplayClippingBoxButton">
               <property name="icon">
-                <iconset resource="../../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+                <iconset resource="../qMRMLWidgets.qrc">
                   <normaloff>:/Icons/VisibleOff.png</normaloff>
                   <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
               </property>
@@ -2052,7 +2052,7 @@
     </customwidget>
   </customwidgets>
   <resources>
-    <include location="../../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+    <include location="../qMRMLWidgets.qrc"/>
   </resources>
   <connections/>
 </ui>
