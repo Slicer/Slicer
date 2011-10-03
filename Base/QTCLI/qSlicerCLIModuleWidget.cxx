@@ -28,7 +28,8 @@
 #include "vtkSlicerCLIModuleLogic.h"
 #include "qSlicerCLIModuleUIHelper.h"
 
-// MRML includes
+// CLIMRML includes
+#include "vtkMRMLCommandLineModuleNode.h"
 
 //-----------------------------------------------------------------------------
 // qSlicerCLIModuleWidgetPrivate methods
@@ -126,45 +127,25 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   // Update parameters
   this->CLIModuleUIHelper->updateUi(node);
 
-  // Update progress
-  this->StatusLabel->setText(node->GetStatusString());
-  this->ProgressBar->setVisible(node->GetStatus() != vtkMRMLCommandLineModuleNode::Idle &&
-                                node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled);
-  this->StageProgressBar->setVisible(node->GetStatus() == vtkMRMLCommandLineModuleNode::Running);
-  ModuleProcessInformation* info = node->GetModuleDescription().GetProcessInformation();
   switch (node->GetStatus())
     {
     case vtkMRMLCommandLineModuleNode::Cancelled:
       this->CancelPushButton->setEnabled(false);
-      this->ProgressBar->setMaximum(0);
       break;
     case vtkMRMLCommandLineModuleNode::Scheduled:
       this->ApplyPushButton->setEnabled(false);
       this->CancelPushButton->setEnabled(true);
-      this->ProgressBar->setMaximum(0);
       break;
     case vtkMRMLCommandLineModuleNode::Running:
       this->DefaultPushButton->setEnabled(false);
       this->ApplyPushButton->setEnabled(false);
       this->CancelPushButton->setEnabled(true);
-      
-      this->ProgressBar->setMaximum(info->Progress != 0.0 ? 100 : 0);
-      this->ProgressBar->setValue(info->Progress * 100.);
-      if (info->ElapsedTime != 0.)
-        {
-        this->StatusLabel->setText(QString("%1 (%2)").arg(node->GetStatusString()).arg(info->ElapsedTime));
-        }
-      this->StageProgressBar->setMaximum(info->StageProgress != 0.0 ? 100 : 0);
-      this->StageProgressBar->setFormat(info->ProgressMessage);
-      this->StageProgressBar->setValue(info->StageProgress * 100.);
       break;
     case vtkMRMLCommandLineModuleNode::Completed:
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
       this->DefaultPushButton->setEnabled(true);
       this->ApplyPushButton->setEnabled(true);
       this->CancelPushButton->setEnabled(false);
-      this->ProgressBar->setMaximum(100);
-      this->ProgressBar->setValue(100);
       break;
     default:
     case vtkMRMLCommandLineModuleNode::Idle:
@@ -197,6 +178,7 @@ void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLine
   Q_ASSERT(node);
   // Note that node will fire a ModifyEvent.
   node->SetModuleDescription(this->ModuleDescriptionObject);
+  this->CLIProgressBar->setCommandLineModuleNode(vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode));
 }
 
 //-----------------------------------------------------------------------------

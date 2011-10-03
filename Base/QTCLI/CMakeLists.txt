@@ -46,6 +46,8 @@ set(KIT_SRCS
   qSlicerCLIModuleWidget.cxx
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
+  qSlicerCLIProgressBar.cxx
+  qSlicerCLIProgressBar.h
   )
 
 # Headers that should run through moc
@@ -54,6 +56,7 @@ set(KIT_MOC_SRCS
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
   qSlicerCLIModuleUIHelper.h
+  qSlicerCLIProgressBar.h
   )
 
 # UI files

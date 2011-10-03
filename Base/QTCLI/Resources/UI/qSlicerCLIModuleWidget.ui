@@ -34,7 +34,7 @@
         <x>0</x>
         <y>0</y>
         <width>433</width>
-        <height>393</height>
+        <height>397</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -42,8 +42,8 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ctkCollapsibleButton" name="ModuleCollapsibleButton">
-         <property name="text">
+        <widget class="ctkCollapsibleButton" name="ModuleCollapsibleButton" native="true">
+         <property name="text" stdset="0">
           <string>Module Title</string>
          </property>
          <layout class="QVBoxLayout" name="VerticalLayout">
@@ -53,13 +53,13 @@
           <item>
            <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
             <item row="0" column="1">
-             <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector">
-              <property name="nodeTypes">
+             <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector" native="true">
+              <property name="nodeTypes" stdset="0">
                <stringlist>
                 <string>vtkMRMLCommandLineModuleNode</string>
                </stringlist>
               </property>
-              <property name="showHidden">
+              <property name="showHidden" stdset="0">
                <bool>true</bool>
               </property>
              </widget>
@@ -71,47 +71,10 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="StatusLabelLabel">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Status:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="StatusLabel">
-              <property name="text">
-               <string>Idle</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QProgressBar" name="ProgressBar">
-              <property name="maximum">
-               <number>100</number>
-              </property>
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" colspan="2">
-             <widget class="QProgressBar" name="StageProgressBar">
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
            </layout>
+          </item>
+          <item>
+           <widget class="qSlicerCLIProgressBar" name="CLIProgressBar" native="true"/>
           </item>
          </layout>
         </widget>
@@ -124,7 +87,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <zorder>ModuleCollapsibleButton</zorder>
         </widget>
        </item>
       </layout>
@@ -205,6 +167,12 @@
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerCLIProgressBar</class>
+   <extends>QWidget</extends>
+   <header>qSlicerCLIProgressBar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
