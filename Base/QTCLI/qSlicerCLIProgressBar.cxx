@@ -19,13 +19,14 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QFormLayout>
+#include <QApplication>
 #include <QDebug>
-#include <QtGui/QApplication>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QProgressBar>
-// SlicerQt includes
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QLabel>
+#include <QProgressBar>
+
+// Slicer includes
 #include "qSlicerCLIProgressBar.h"
 
 // MRML includes
@@ -48,11 +49,11 @@ public:
 
 private:
 
-  QGridLayout *GridLayout;
-  QLabel *StatusLabelLabel;
-  QLabel *StatusLabel;
-  QProgressBar *ProgressBar;
-  QProgressBar *StageProgressBar;
+  QGridLayout *  GridLayout;
+  QLabel *       StatusLabelLabel;
+  QLabel *       StatusLabel;
+  QProgressBar * ProgressBar;
+  QProgressBar * StageProgressBar;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
 
@@ -74,7 +75,7 @@ void qSlicerCLIProgressBarPrivate::init()
   // Create widget .. layout
   this->GridLayout = new QGridLayout(this->q_ptr);
   this->GridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-  
+
   this->StatusLabelLabel = new QLabel();
   this->StatusLabelLabel->setObjectName(QString::fromUtf8("StatusLabelLabel"));
   QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -112,7 +113,7 @@ void qSlicerCLIProgressBarPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerCLIProgressBar::qSlicerCLIProgressBar(QWidget* _parent)
-  : Superclass(_parent) 
+  : Superclass(_parent)
   , d_ptr(new qSlicerCLIProgressBarPrivate(*this))
 {
   Q_D(qSlicerCLIProgressBar);
@@ -159,7 +160,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
-  
+
   // Update progress
   d->StatusLabel->setText(node->GetStatusString());
   d->ProgressBar->setVisible(node->GetStatus() != vtkMRMLCommandLineModuleNode::Idle &&
@@ -169,7 +170,6 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   switch (node->GetStatus())
     {
     case vtkMRMLCommandLineModuleNode::Cancelled:
-      
       d->ProgressBar->setMaximum(0);
       break;
     case vtkMRMLCommandLineModuleNode::Scheduled:

@@ -22,15 +22,15 @@
 #define __qSlicerCLIProgressBar_h
 
 // Qt includes
+#include <QGridLayout>
 #include <QScopedPointer>
 #include <QWidget>
-#include <QtGui/QGridLayout>
 
 // CTK includes
 #include <ctkVTKObject.h>
 
+// Slicer includes
 #include "qSlicerBaseQTCLIExport.h"
-#include "qSlicerWidget.h"
 
 class vtkMRMLCommandLineModuleNode;
 class qSlicerCLIProgressBarPrivate;
@@ -42,7 +42,6 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
 public:
 
   typedef QWidget Superclass;
-  //qSlicerCLIProgressBar(QWidget *parent=0,QVBoxLayout* _parentLayout=0);
   qSlicerCLIProgressBar(QWidget *parent=0);
   virtual ~qSlicerCLIProgressBar();
 

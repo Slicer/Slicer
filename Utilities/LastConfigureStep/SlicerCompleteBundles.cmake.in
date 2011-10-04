@@ -65,15 +65,15 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
   if(Slicer_USE_PYTHONQT)
-    
+
     if(item MATCHES "libpython[^/]+\\.dylib$")
       set(path "@executable_path@/../lib/Python/lib")
     endif()
-    
+
     if(item MATCHES "@Slicer_LIB_DIR@/[^/]+Python\\.so$")
       set(path "@executable_path@/../@Slicer_LIB_DIR@")
     endif()
-    
+
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
@@ -112,7 +112,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
       set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
     endif()
   endif()
-  
+
   math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
   set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
   gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
@@ -126,7 +126,7 @@ endfunction()
 function(fixup_bundle_with_plugins app)
   set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
-  
+
   set(candiates_pattern
     "${app_dir}/Contents/@Slicer_LIB_DIR@/designer/*${suffix}"
     "${app_dir}/Contents/@Slicer_LIB_DIR@/iconengines/*${suffix}"
@@ -211,7 +211,7 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
 
   gp_clear_log()
-  
+
   gp_log_message("Calling fixup_bundle with")
   gp_log_message("app=${app_dir}")
   gp_log_message("<Slicer_SUPERBUILD_DIR>=${Slicer_SUPERBUILD_DIR}")
@@ -231,7 +231,7 @@ function(fixup_bundle_with_plugins app)
     endif()
     gp_log_message("  ${path}")
   endforeach()
-  
+
   # Keep track of libs count and current lib being fixed
   list(LENGTH libs libs_count)
   set(ENV{FIXUP_LIBS_COUNT} ${libs_count})

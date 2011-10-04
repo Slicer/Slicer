@@ -162,7 +162,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   this->CaptureToolBar->setMRMLScene(
       qSlicerApplication::application()->mrmlScene());
- 
+
   QObject::connect(this->CaptureToolBar,
                    SIGNAL(screenshotButtonClicked()),
                    qSlicerApplication::application()->ioManager(),
@@ -175,7 +175,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(sceneViewButtonClicked()),
                    qSlicerApplication::application()->ioManager(),
                    SLOT(openSceneViewsDialog()));
-  
+
   //----------------------------------------------------------------------------
   // Hide toolbars by default
   //----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionViewLayoutCompareWidescreen->setMenu(compareMenu);
   QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
-  
+
   // ... and for the grid version of the compare views
   compareMenu = new QMenu(q->tr("Select number of viewers..."));
   compareMenu->addAction(this->actionViewLayoutCompareGrid_2x2_viewers);
@@ -266,7 +266,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
   this->CaptureToolBar->setActiveMRMLThreeDViewNode(
       this->LayoutManager->activeMRMLThreeDViewNode());
-  
+
   //----------------------------------------------------------------------------
   // View Toolbar
   //----------------------------------------------------------------------------
@@ -466,7 +466,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(SDBSaveToDirectory);
   qSlicerMainWindowCore_connect(SDBZipDirectory);
   qSlicerMainWindowCore_connect(SDBZipToDCM);
-  
+
   qSlicerMainWindowCore_connect(FileCloseScene);
   this->connect(d->actionFileExit, SIGNAL(triggered()),
                 this, SLOT(close()));
@@ -653,7 +653,7 @@ void qSlicerMainWindow::onLayoutCompareActionTriggered(QAction* action)
 
   // std::cerr << "onLayoutCompareActionTriggered: " << action->text().toStdString() << std::endl;
 
-  // we need to communicate both the layout change and the number of viewers. 
+  // we need to communicate both the layout change and the number of viewers.
   this->core()->setLayout(d->actionViewLayoutCompare->data().toInt());
   this->core()->setLayoutNumberOfCompareViewRows(action->data().toInt());
 }

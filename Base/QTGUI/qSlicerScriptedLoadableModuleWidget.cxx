@@ -84,7 +84,7 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
       {
       Py_XDECREF(this->PythonAPIMethods[i]);
       }
-
+    //qDebug() << "=> ~qSlicerScriptedLoadableModuleWidgetPrivate - PythonSelf->ob_refcnt" << this->PythonSelf->ob_refcnt;
     Py_DECREF(this->PythonSelf);
     }
 }
@@ -96,15 +96,12 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
 qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget* parentWidget)
   :Superclass(parentWidget), d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
 {
-  QVBoxLayout * layout = new QVBoxLayout(this);
-  Q_ASSERT(layout);
-  Q_UNUSED(layout);
+  new QVBoxLayout(this);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -153,7 +150,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     return false;
     }
 
-  //qDebug() << "classToInstantiate:" << classToInstantiate;
+  //qDebug() << "qSlicerScriptedLoadableModuleWidget::setPythonSource - classToInstantiate:" << classToInstantiate;
 
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)
@@ -186,7 +183,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
       continue;
       }
     PyObject * method = PyObject_GetAttrString(self, Pimpl::APIMethodNames[i]);
-    //qDebug() << "method:" << method;
+    //qDebug() << Pimpl::APIMethodNames[i] << "method:" << method;
     d->PythonAPIMethods[i] = method;
     }
 
