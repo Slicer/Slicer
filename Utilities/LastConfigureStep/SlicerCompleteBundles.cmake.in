@@ -144,18 +144,25 @@ function(fixup_bundle_with_plugins app)
       )
   endif()
 
+  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND candiates_pattern
       "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
       "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
       )
+    if(Slicer_USE_PYTHONQT)
+      list(APPEND candiates_pattern
+        "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
+        )
+    endif()
   endif()
 
-  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
   if(Slicer_USE_PYTHONQT)
     list(APPEND candiates_pattern
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
+      "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
       "${app_dir}/Contents/lib/Python/lib/*${suffix}"
       "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
       "${app_dir}/Contents/lib/Python/lib/python2.6/site-packages/*.so"
