@@ -102,7 +102,7 @@
       </layout>
      </item>
      <item>
-      <widget class="ctkThumbnailWidget" name="ScreenshotWidget">
+      <widget class="ctkThumbnailLabel" name="ScreenshotWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
          <horstretch>0</horstretch>
@@ -195,9 +195,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkThumbnailWidget</class>
+   <class>ctkThumbnailLabel</class>
    <extends>QWidget</extends>
-   <header>ctkThumbnailWidget.h</header>
+   <header>ctkThumbnailLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
