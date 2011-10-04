@@ -23,9 +23,9 @@ const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
   "ThickArrow2D",
   "HookedArrow2D",
   "StarBurst2D",
-  "Sphere3D",
-  "Diamond3D"
+  "Sphere3D"
 };
+//  "Diamond3D"
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationPointDisplayNode);

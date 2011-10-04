@@ -74,7 +74,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
     StarBurst2D,
     Sphere3D,
     Diamond3D,
-    GlyphMax = Diamond3D,
+    GlyphMax = Sphere3D,
   };
   //ETX
   /// Return the min/max glyph types, for iterating over them in tcl
