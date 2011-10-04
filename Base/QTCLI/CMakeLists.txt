@@ -85,6 +85,7 @@ SlicerMacroBuildBaseQtLibrary(
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
+  WRAP_PYTHONQT
   )
 
 # Plugin
