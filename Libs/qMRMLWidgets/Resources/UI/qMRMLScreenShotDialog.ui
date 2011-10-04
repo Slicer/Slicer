@@ -44,7 +44,7 @@
           <string>Full layout</string>
          </property>
          <property name="icon">
-          <iconset resource="../qMRMLWidgets.qrc">
+          <iconset>
            <normaloff>:/Icons/AnnotationLayout.png</normaloff>:/Icons/AnnotationLayout.png</iconset>
          </property>
          <property name="checked">
@@ -104,7 +104,7 @@
      <item>
       <widget class="ctkThumbnailWidget" name="ScreenshotWidget">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
