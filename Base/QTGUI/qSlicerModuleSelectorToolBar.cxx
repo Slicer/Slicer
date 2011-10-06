@@ -96,7 +96,6 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->ModulesComboBox = new ctkMenuComboBox(q);
   this->ModulesComboBox->setToolTip(QObject::tr("Select a module from the module list"));
   this->ModulesComboBox->setMenu(this->ModulesMenu);
-  this->ModulesComboBox->setEditableBehavior(ctkMenuComboBox::EditableOnPopup);
   this->ModulesComboBox->setMinimumContentsLength(20);
   q->addWidget(this->ModulesComboBox);
 
