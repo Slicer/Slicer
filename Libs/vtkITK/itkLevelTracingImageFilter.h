@@ -101,6 +101,7 @@ protected:
 
   void GenerateData();
 
+  using Superclass::MakeOutput;
   DataObjectPointer MakeOutput(unsigned int output);
 
   /// To control overloaded versions of ComputeThreshold
