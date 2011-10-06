@@ -41,6 +41,10 @@ if(NOT DEFINED WITH_EXTENSIONS)
   set(WITH_EXTENSIONS OFF)
 endif()
 
+if(NOT DEFINED MIDAS_PACKAGE_URL)
+  set(MIDAS_PACKAGE_URL "http://tarsonis.kitwarein.com/Midas3")
+endif()
+
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} should be defined in top-level script !")
@@ -253,6 +257,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # Build and upload Slicer packages
         #-----------------------------------------------------------------------------
         include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
+        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASUploadPackage.cmake")
         set(packages)
         message("Packaging ...")
         SlicerFunctionCTestPackage(
@@ -261,9 +266,18 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
           RETURN_VAR packages)
         message("Uploading ...")
         foreach(p ${packages})
-          ctest_upload(FILES ${p})
-          if(run_ctest_submit)
-            ctest_submit(PARTS Upload)
+          SlicerFunctionMIDASUploadPackage(${p} "installer" slicer_midas_upload_status)
+          if(slicer_midas_upload_status STREQUAL "fail")
+            ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
+            if(run_ctest_submit)
+              ctest_submit(PARTS Upload)
+            endif()
+          else()
+            include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASCTestUploadURL.cmake")
+            SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
+            if(run_ctest_submit)
+              ctest_submit(PARTS Upload)
+            endif()
           endif()
         endforeach()
       endif()
