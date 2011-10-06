@@ -12,6 +12,15 @@ include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
 include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 
+# Install Slicer
+set(CPACK_INSTALL_CMAKE_PROJECTS "${Slicer_BINARY_DIR};Slicer;ALL;/")
+
+# Install CTK Apps and Plugins (PythonQt modules, QtDesigner plugins ...)
+if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimeApplications;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimePlugins;/")
+endif()
+
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPythonQt.cmake)
@@ -19,8 +28,7 @@ if(NOT APPLE)
   include(InstallRequiredSystemLibraries)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallCMakeProjects.cmake)
 else()
-  # Note: Since CPACK_INSTALL_CMAKE_PROJECTS isn't defined, CPack will default to the current project
-  #       and slicer install rules will be considered.
+
   if(Slicer_USE_PYTHONQT)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
   endif()

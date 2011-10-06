@@ -1,11 +1,5 @@
 
 # -------------------------------------------------------------------------
-# Install Slicer
-# -------------------------------------------------------------------------
-set(CPACK_INSTALL_CMAKE_PROJECTS
-  "${Slicer_BINARY_DIR};Slicer;ALL;/")
-
-# -------------------------------------------------------------------------
 # Install VTK
 # -------------------------------------------------------------------------
 if(NOT "${VTK_DIR}" STREQUAL "" AND EXISTS "${VTK_DIR}/CMakeCache.txt")
@@ -51,6 +45,6 @@ endif()
 # Install CTK
 # -------------------------------------------------------------------------
 if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;Runtime;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimeLibraries;/")
 endif()
 
