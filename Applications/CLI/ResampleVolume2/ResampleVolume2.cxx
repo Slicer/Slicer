@@ -19,6 +19,7 @@
 #include <itkMetaDataObject.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkResampleImageFilter.h>
+#include <itkBSplineInterpolateImageFunction.h>
 #include <itkRigid3DTransform.h>
 #include <itkTransformFileReader.h>
 #include <itkVectorResampleImageFilter.h>

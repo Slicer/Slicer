@@ -18,7 +18,7 @@
 
 #include "itkResampleImageFilter.h"
 #include "itkConstrainedValueAdditionImageFilter.h"
-
+#include "itkBSplineInterpolateImageFunction.h"
 #include "itkPluginUtilities.h"
 #include "AddCLP.h"
 

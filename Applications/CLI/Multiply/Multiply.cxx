@@ -17,6 +17,7 @@
 #include "itkImageFileWriter.h"
 
 #include "itkResampleImageFilter.h"
+#include "itkBSplineInterpolateImageFunction.h"
 #include "itkConstrainedValueMultiplicationImageFilter.h"
 
 #include "itkPluginUtilities.h"

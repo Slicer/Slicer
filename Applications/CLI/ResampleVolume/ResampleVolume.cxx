@@ -47,6 +47,7 @@
 #include "itkImageFileWriter.h"
 
 #include "itkResampleImageFilter.h"
+#include "itkBSplineInterpolateImageFunction.h"
 
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
