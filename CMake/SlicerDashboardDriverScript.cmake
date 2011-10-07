@@ -45,6 +45,10 @@ if(NOT DEFINED MIDAS_PACKAGE_URL)
   set(MIDAS_PACKAGE_URL "http://tarsonis.kitwarein.com/Midas3")
 endif()
 
+if(EXISTS "${CTEST_LOG_FILE}")
+  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
+endif()
+
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} should be defined in top-level script !")
