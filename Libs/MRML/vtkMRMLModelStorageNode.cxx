@@ -23,6 +23,7 @@
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkSTLReader.h"
+#include "vtkOBJReader.h"
 
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkSTLWriter.h"
@@ -181,7 +182,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       reader->Update();
       modelNode->SetAndObservePolyData(reader->GetOutput());
       }
-    else if (extension == std::string(".vtk")) 
+    else if (extension == std::string(".vtk"))
       {
       vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(fullName.c_str());
@@ -203,7 +204,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
           modelNode->SetAndObservePolyData(reader->GetOutput());
           }
         }
-    }  
+      }
     else if (extension == std::string(".vtp")) 
       {
       vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
@@ -214,6 +215,13 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     else if (extension == std::string(".stl")) 
       {
       vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
+      reader->SetFileName(fullName.c_str());
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Update();
+      }
+    else if (extension == std::string(".obj"))
+      {
+      vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
       reader->SetFileName(fullName.c_str());
       modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
@@ -433,7 +441,8 @@ int vtkMRMLModelStorageNode::SupportedFileType(const char *fileName)
     extension.compare(".g") == 0 ||
     extension.compare(".byu") == 0 ||
     extension.compare(".meta") == 0 ||
-    extension.compare(".stl") == 0 )
+    extension.compare(".stl") == 0 ||
+    extension.compare(".obj") == 0 )
   {
     return 1;
   }

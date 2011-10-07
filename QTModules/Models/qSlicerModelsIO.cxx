@@ -57,7 +57,7 @@ QStringList qSlicerModelsIO::extensions()const
 {
   return QStringList()
     << "Model (*.vtk *.vtp *.g *.byu *.stl *.orig"
-         "*.inflated *.sphere *.white *.smoothwm *.pial)";
+         "*.inflated *.sphere *.white *.smoothwm *.pial *.obj)";
 }
 
 //-----------------------------------------------------------------------------
