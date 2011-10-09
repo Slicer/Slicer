@@ -55,20 +55,15 @@
 #ifndef __vtkImageResliceMask_h
 #define __vtkImageResliceMask_h
 
-
-#include "vtkThreadedImageAlgorithm.h"
-
-/// interpolation mode constants
-#define VTK_RESLICE_NEAREST 0
-#define VTK_RESLICE_LINEAR 1
-#define VTK_RESLICE_CUBIC 3
-
-class vtkImageData;
-class vtkAbstractTransform;
-class vtkMatrix4x4;
-class vtkImageStencilData;
-
 #include "vtkMRMLLogicWin32Header.h"
+
+// VTK includes
+#include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
+#include <vtkThreadedImageAlgorithm.h>
+class vtkAbstractTransform;
+class vtkImageData;
+class vtkImageStencilData;
+class vtkMatrix4x4;
 
 class VTK_MRML_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
 {

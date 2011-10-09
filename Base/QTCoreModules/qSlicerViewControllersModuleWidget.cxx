@@ -90,8 +90,6 @@ qSlicerViewControllersModuleWidgetPrivate::~qSlicerViewControllersModuleWidgetPr
 void 
 qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSlicerLayoutManager *layoutManager)
 {
-  Q_Q(qSlicerViewControllersModuleWidget);
-
   if (this->ControllerMap.find(n) != this->ControllerMap.end())
     {
     logger.trace(QString("createController - Node already added to module"));
