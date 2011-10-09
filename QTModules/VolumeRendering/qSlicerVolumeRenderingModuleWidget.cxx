@@ -164,6 +164,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(offsetPreset(double)));
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(resetOffset()));
+  QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(resetOffset()));
 
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
@@ -822,6 +824,10 @@ void qSlicerVolumeRenderingModuleWidget::resetOffset()
 void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+  if (!d->VolumePropertyNodeWidget->volumeProperty())
+    {
+    return;
+    }
   vtkPiecewiseFunction* function =
     d->VolumePropertyNodeWidget->volumeProperty()->GetScalarOpacity();
   double range[2];
@@ -829,7 +835,7 @@ void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
   double width = range[1] - range[0];
   bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
   d->PresetOffsetSlider->setSingleStep(
-    ctk::closestPowerOfTen(width) / 10.);
+    ctk::closestPowerOfTen(width) / 100.);
   d->PresetOffsetSlider->setRange(-width, width);
   d->PresetOffsetSlider->blockSignals(wasBlocking);
 }

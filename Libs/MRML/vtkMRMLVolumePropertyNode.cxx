@@ -4,8 +4,11 @@
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkIntArray.h>
 #include <vtkObjectFactory.h>
+#include <vtkNew.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkVolumeProperty.h>
 
@@ -18,16 +21,25 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
 {
+    this->TransferFunctionEvents = vtkIntArray::New();
+    this->TransferFunctionEvents->InsertNextValue(vtkCommand::StartEvent);
+    this->TransferFunctionEvents->InsertNextValue(vtkCommand::EndEvent);
+    this->TransferFunctionEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+
     this->VolumeProperty = NULL;
 
     vtkVolumeProperty *node  = vtkVolumeProperty::New();
-    vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, node);
-    vtkObserveMRMLObjectMacro(node->GetScalarOpacity());
-    vtkObserveMRMLObjectMacro(node->GetGradientOpacity());
-    vtkObserveMRMLObjectMacro(node->GetRGBTransferFunction());
+    vtkSetAndObserveMRMLObjectEventsMacro(
+      this->VolumeProperty, node, this->TransferFunctionEvents);
     node->Delete();
 
-    this->HideFromEditors = 0;
+    // Observe the transfer functions
+    this->SetColor(node->GetRGBTransferFunction());
+    this->SetScalarOpacity(node->GetScalarOpacity());
+    this->SetGradientOpacity(node->GetGradientOpacity());
+
+    this->SetHideFromEditors(0);
+    this->Interaction = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -40,6 +52,7 @@ vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction());
     vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
     }
+  this->TransferFunctionEvents->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -223,7 +236,20 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     void *callData )
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  this->Modified();
+  switch (event)
+    {
+    case vtkCommand::StartEvent:
+      ++this->Interaction;
+      break;
+    case vtkCommand::EndEvent:
+      --this->Interaction;
+    case vtkCommand::ModifiedEvent:
+      if (!this->Interaction)
+        {
+        this->Modified();
+        }
+      break;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -324,7 +350,9 @@ void vtkMRMLVolumePropertyNode
 {
   vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity(component));
   this->VolumeProperty->SetScalarOpacity(component, newScalarOpacity);
-  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity(component));
+  vtkObserveMRMLObjectEventsMacro(
+    this->VolumeProperty->GetScalarOpacity(component),
+    this->TransferFunctionEvents);
 }
 
 //---------------------------------------------------------------------------
@@ -333,7 +361,9 @@ void vtkMRMLVolumePropertyNode
 {
   vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity(component));
   this->VolumeProperty->SetGradientOpacity(component, newGradientOpacity);
-  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity(component));
+  vtkObserveMRMLObjectEventsMacro(
+    this->VolumeProperty->GetGradientOpacity(component),
+    this->TransferFunctionEvents);
 }
 
 //---------------------------------------------------------------------------
@@ -342,5 +372,7 @@ void vtkMRMLVolumePropertyNode
 {
   vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction(component));
   this->VolumeProperty->SetColor(component, newColorFunction);
-  vtkObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction(component));
+  vtkObserveMRMLObjectEventsMacro(
+    this->VolumeProperty->GetRGBTransferFunction(component),
+    this->TransferFunctionEvents);
 }

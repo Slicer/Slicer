@@ -8,9 +8,10 @@
 
 #include "vtkMRMLStorableNode.h"
 
-class vtkVolumeProperty;
-class vtkPiecewiseFunction;
 class vtkColorTransferFunction;
+class vtkIntArray;
+class vtkPiecewiseFunction;
+class vtkVolumeProperty;
 
 #include <string>
 #include <vtksys/stl/vector>
@@ -131,10 +132,17 @@ protected:
     /// Use ->Delete() to delete object
     ~vtkMRMLVolumePropertyNode(void);
 
+    ///
+    /// Events observed on the transfer functions
+    vtkIntArray* TransferFunctionEvents;
+
     /// 
     /// Main parameters for visualization
     vtkVolumeProperty* VolumeProperty;
 
+    ///
+    /// Interaction
+    int Interaction;
 private:
     /// 
     /// Caution: Not implemented
