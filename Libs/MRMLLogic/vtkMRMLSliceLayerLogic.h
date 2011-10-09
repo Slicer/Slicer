@@ -53,16 +53,13 @@
 #include "vtkImageCast.h"
 #include "vtkLookupTable.h"
 
-//
-#include "vtkImageResliceMask.h"
-#include "vtkImageReslice.h"
-#include "vtkImageLinearReslice.h"
-#include "vtkAssignAttribute.h"
+class vtkAssignAttribute;
+class vtkImageResliceMask;
+class vtkImageReslice;
+class vtkImageLinearReslice;
 
 // STL includes
-#include <cstdlib>
-
-#include "vtkMRMLLogicWin32Header.h"
+//#include <cstdlib>
 
 class vtkDiffusionTensorMathematics;
 class vtkImageLabelOutline;

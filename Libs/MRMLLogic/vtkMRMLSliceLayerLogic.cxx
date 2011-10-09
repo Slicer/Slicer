@@ -24,15 +24,19 @@
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 // VTK includes
+#include <vtkAssignAttribute.h>
+#include <vtkDiffusionTensorMathematics.h>
 #include <vtkFloatArray.h>
 #include <vtkImageData.h>
+#include <vtkImageLinearReslice.h>
+#include <vtkImageResliceMask.h>
+#include <vtkImageReslice.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 #include <vtkPointData.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkDiffusionTensorMathematics.h>
 
 //
 #include "vtkImageLabelOutline.h"

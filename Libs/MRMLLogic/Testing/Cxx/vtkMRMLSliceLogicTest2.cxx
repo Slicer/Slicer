@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkImageResliceMask.h>
 #include <vtkImageViewer2.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>

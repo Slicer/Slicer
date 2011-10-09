@@ -30,6 +30,7 @@
 #include <vtkImageBlend.h>
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
+#include <vtkImageReslice.h>
 #include <vtkMath.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataCollection.h>
