@@ -126,7 +126,7 @@ class EndoscopyWidget:
     viewAngleSlider.connect('valueChanged(double)', self.viewAngleSliderValueChanged)
     viewAngleSlider.decimals = 0
     viewAngleSlider.minimum = 30
-    viewAngleSlider.maximum = 70
+    viewAngleSlider.maximum = 180
     flythroughFormLayout.addRow("View Angle:", viewAngleSlider)
     
     # Play button
