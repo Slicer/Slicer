@@ -77,7 +77,7 @@ public:
   /// current InteractionNode
   /// Allow to add/remove Interactor style observer in case the InteractionNode MouseMode
   /// is updated. InteractorStyleObserver are enabled if MouseMode
-  /// is either: vtkMRMLInteractionNode::Place or vtkMRMLInteractionNode::PickManipulate
+  /// is one of the ones matching ActiveInteractionModes
   /// \note Since we want to keep the virtual method ProcessMRMLEvent of the base class pure,
   /// the pattern MRMLObserverManager/ProcessMRMLEvent is not used here.
   static void DoMRMLInteractionNodeCallback(vtkObject* vtk_obj, unsigned long event,
@@ -152,6 +152,8 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(
   this->InteractorStyleObservableEvents.push_back(vtkCommand::MiddleButtonReleaseEvent);
   this->InteractorStyleObservableEvents.push_back(vtkCommand::MouseWheelBackwardEvent);
   this->InteractorStyleObservableEvents.push_back(vtkCommand::MouseWheelForwardEvent);
+  this->InteractorStyleObservableEvents.push_back(vtkCommand::EnterEvent);
+  this->InteractorStyleObservableEvents.push_back(vtkCommand::LeaveEvent);
 }
 
 //-----------------------------------------------------------------------------
@@ -309,16 +311,12 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
   if (this->MRMLInteractionNode)
     {
     int currentInteractionMode = this->MRMLInteractionNode->GetCurrentInteractionMode();
-    switch (currentInteractionMode)
-      {
-      case vtkMRMLInteractionNode::Place:
-        this->SetAndObserveInteractorStyle(
-            this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
-        updateObserver = (this->InteractorStyle != 0);
-        break;
-      default:
-        this->SetAndObserveInteractorStyle(0);
-      }
+    if ( currentInteractionMode & this->External->ActiveInteractionModes() )
+      this->SetAndObserveInteractorStyle(
+          this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
+      updateObserver = (this->InteractorStyle != 0);
+    } else {
+      this->SetAndObserveInteractorStyle(0);
     }
 
   // Update observe if it applies
@@ -482,7 +480,7 @@ void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
     this->Internal->Renderer->Register(this);
     }
 
-  this->AdditionnalInitializeStep();
+  this->AdditionalInitializeStep();
 
   this->Modified();
 }
@@ -528,6 +526,11 @@ vtkMRMLSelectionNode* vtkMRMLAbstractDisplayableManager::GetSelectionNode()
 vtkMRMLNode * vtkMRMLAbstractDisplayableManager::GetMRMLDisplayableNode()
 {
   return this->Internal->MRMLDisplayableNode;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractDisplayableManager::ActiveInteractionModes() { 
+  return vtkMRMLInteractionNode::Place; 
 }
 
 //---------------------------------------------------------------------------

@@ -86,7 +86,14 @@ protected:
   /// \note Initialization occurs before the MRMLDisplayableNode is set and observed
   /// \warning That function should NOT be used directly !
   /// \sa SetRenderer
-  virtual void AdditionnalInitializeStep(){}
+  virtual void AdditionalInitializeStep(){}
+
+  /// Subclass can overload this method to specify under which InteractionNode modes
+  /// this Displayable Manger InteractorStyle events.
+  /// By default events only arrive when in Place mode (good for annotations)
+  /// but if you want a continuous read out of, for example, slice positions while
+  /// the mouse moves set this to include Place and ViewTransform
+  virtual int ActiveInteractionModes();
 
   virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void * callData);
 
@@ -97,8 +104,8 @@ protected:
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
 
   /// \brief Allow to specify additonal events that the DisplayableNode will observe
-  /// \warning Should be called within AdditionnalInitializeStep() method
-  /// \sa AdditionnalInitializeStep()
+  /// \warning Should be called within AdditionalInitializeStep() method
+  /// \sa AdditionalInitializeStep()
   void AddMRMLDisplayableManagerEvent(int eventId);
 
   /// Set MRML DisplayableNode
@@ -136,10 +143,10 @@ protected:
   /// to efficiently call RenderWindow->Render()
   void RequestRender();
 
-  /// Usually used inside AdditionnalInitializeStep()
+  /// Usually used inside AdditionalInitializeStep()
   /// Allows to add observer to the current interactor style that will call the
   /// virtual method OnInteractorStyleEvent accordingly.
-  /// \sa AdditionnalInitializeStep RemoveInteractorStyleObservableEvent
+  /// \sa AdditionalInitializeStep RemoveInteractorStyleObservableEvent
   void AddInteractorStyleObservableEvent(int eventid);
 
   /// \sa AddInteractorStyleObservableEvent
@@ -157,6 +164,8 @@ protected:
   ///   <li>vtkCommand::MiddleButtonReleaseEvent</li>
   ///   <li>vtkCommand::MouseWheelBackwardEvent</li>
   ///   <li>vtkCommand::MouseWheelForwardEvent</li>
+  ///   <li>vtkCommand::EnterEvent</li>
+  ///   <li>vtkCommand::LeaveEvent</li>
   /// </ul>
   /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
   virtual void OnInteractorStyleEvent(int eventid);

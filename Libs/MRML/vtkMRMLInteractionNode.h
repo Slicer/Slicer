@@ -43,12 +43,14 @@ public:
   virtual void NormalizeAllMouseModes();
 
   /// mouse modes
+  /// note: any new modes should be powers of 2 to allow
+  /// bit field operations
   enum
     {
       //SelectRegion,
       //LassoRegion,
-      Place,
-      ViewTransform,
+      Place = 0x1,
+      ViewTransform = 0x2,
     };
 
   /// events
