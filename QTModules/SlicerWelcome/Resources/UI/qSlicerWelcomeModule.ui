@@ -15,6 +15,99 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_12">
    <item>
+    <widget class="QFrame" name="ButtonsFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="LoadDicomDataButton">
+        <property name="text">
+         <string>Load DICOM Data</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/SlicerLoadDicom-Original.png</normaloff>:/Images/SlicerLoadDicom-Original.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="LoadNonDicomDataButton">
+        <property name="text">
+         <string>Load non-DICOM Data</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/SlicerLoadData-Original.png</normaloff>:/Images/SlicerLoadData-Original.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="LoadSampleDataButton">
+        <property name="text">
+         <string>Load Sample Data</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/SlicerWWW-Original.png</normaloff>:/Images/SlicerWWW-Original.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="ViewTutorialsButton">
+        <property name="text">
+         <string>Browse Tutorials</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerWelcomeModule.qrc">
+          <normaloff>:/Images/SlicerViewTutorials-Original.png</normaloff>:/Images/SlicerViewTutorials-Original.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>30</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="WelcomeAndAboutCollapsibleWidget">
      <property name="text">
       <string>Welcome &amp;&amp; About</string>
@@ -552,7 +645,73 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerWelcomeModule.qrc"/>
+  <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>LoadDicomDataButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerWelcomeModuleWidget</receiver>
+   <slot>loadDicomData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LoadSampleDataButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerWelcomeModuleWidget</receiver>
+   <slot>loadRemoteSampleData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LoadNonDicomDataButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerWelcomeModuleWidget</receiver>
+   <slot>loadNonDicomData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>424</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ViewTutorialsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerWelcomeModuleWidget</receiver>
+   <slot>presentTutorials()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>424</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>454</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

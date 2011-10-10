@@ -42,6 +42,14 @@ public:
   qSlicerWelcomeModuleWidget(QWidget *parent=0);
   virtual ~qSlicerWelcomeModuleWidget();
 
+
+public slots:
+  int loadDicomData();
+  int loadNonDicomData();
+  int loadRemoteSampleData();
+  int presentTutorials();
+
+  
 protected:
   virtual void setup();
 
