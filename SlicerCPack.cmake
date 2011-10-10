@@ -12,8 +12,7 @@ include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
 include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
 
-# Install Slicer
-set(CPACK_INSTALL_CMAKE_PROJECTS "${Slicer_BINARY_DIR};Slicer;ALL;/")
+set(CPACK_INSTALL_CMAKE_PROJECTS)
 
 # Install CTK Apps and Plugins (PythonQt modules, QtDesigner plugins ...)
 if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
@@ -56,6 +55,9 @@ else()
     "install(SCRIPT \"${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake\")")
   add_subdirectory(${slicer_complete_bundle_directory} ${slicer_complete_bundle_directory}-binary)
 endif()
+
+# Install Slicer
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;ALL;/")
 
 # -------------------------------------------------------------------------
 # Package properties
