@@ -50,6 +50,11 @@ public:
   /// use the GetAllColor method and set the all color button
   void UpdateAllColorButton();
 
+  /// look for the annotation display nodes for the node with id and set the
+  /// unselected color on each one. If it's the currently displayed node,
+  /// update the buttons as well.
+  void SetColorOnAnnotationDisplayNodes(const char *id, QColor qcolor);
+
 protected:
   /// update the ui.typeLabel from the node with m_id
   void updateTypeLabelText();

@@ -55,6 +55,22 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="hierarchyPushCheckBox">
+         <property name="toolTip">
+          <string>Propagate changes to all nodes in this list. If not checked, only when the hiearchy is collapsed will the nodes below it use these display properties.</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>Apply to List</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -180,31 +196,31 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QPushButton" name="sizeSmallPushButton">
-         <property name="text">
-          <string>small</string>
-         </property>
          <property name="toolTip">
           <string>Change the annotation size to small by setting the scale on all components of the annotation (text, point, line) to half of the medium scale</string>
+         </property>
+         <property name="text">
+          <string>small</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="sizeMediumPushButton">
-         <property name="text">
-          <string>Medium</string>
-         </property>
          <property name="toolTip">
           <string>Change the annotation size to medium (default) by setting the scale on all components of the annotation (text, point, line)</string>
+         </property>
+         <property name="text">
+          <string>Medium</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="sizeLargePushButton">
-         <property name="text">
-          <string>LARGE</string>
-         </property>
          <property name="toolTip">
           <string>Change the annotation size to large by setting the scale on all components of the annotation (text, point, line) to double the medium scale</string>
+         </property>
+         <property name="text">
+          <string>LARGE</string>
          </property>
         </widget>
        </item>

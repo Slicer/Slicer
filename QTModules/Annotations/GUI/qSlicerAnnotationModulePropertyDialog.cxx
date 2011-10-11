@@ -137,14 +137,21 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   // if it's a hierarchy node, don't show the size or lock buttons
   if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
     {
-    ui.sizeSmallPushButton->setEnabled(false);
-    ui.sizeMediumPushButton->setEnabled(false);
-    ui.sizeLargePushButton->setEnabled(false);
+    ui.hierarchyPushCheckBox->show();
+    
+    ui.sizeLabel->hide();
+    ui.sizeSmallPushButton->hide();
+    ui.sizeMediumPushButton->hide();
+    ui.sizeLargePushButton->hide();
 
-    ui.lockUnlockButton->setEnabled(false);
+    ui.lockUnlockButton->hide(); 
 
     // the rest is hidden, so just return
     return;
+    }
+  else
+    {
+    ui.hierarchyPushCheckBox->hide();
     }
 
 
@@ -1262,6 +1269,21 @@ void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
     {
     return;
     }
+
+  if (mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
+    {
+    vtkMRMLAnnotationHierarchyNode *hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
+    if (hierarchyNode && hierarchyNode->GetDisplayNode())
+      {
+      double *hierarchyColor = hierarchyNode->GetDisplayNode()->GetColor();
+      if (hierarchyColor)
+        {
+        this->TurnColorArrayToQColor(hierarchyColor, qcolor);
+        }
+      }
+    return;
+    }
+  
   vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(mrmlNode);
   if (!displayableNode)
     {
@@ -1413,36 +1435,77 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
       vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
       if (hnode && hnode->GetDisplayNode())
         {
-        hnode->GetDisplayNode()->SetSelectedColor(color);
-        return;
+        hnode->GetDisplayNode()->SetColor(color);
+        }
+      // push down to all the nodes in the hierarchy?
+      if (ui.hierarchyPushCheckBox->isChecked())
+        {
+        std::vector< vtkMRMLHierarchyNode *> allChildren;
+        hnode->GetAllChildrenNodes(allChildren);
+        for (unsigned int i = 0; i < allChildren.size(); ++i)
+          {
+          // set hierarchy display node color
+          vtkMRMLDisplayableHierarchyNode *dispHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]);
+          if (dispHierarchyNode && dispHierarchyNode->GetDisplayNode())
+            {
+            dispHierarchyNode->GetDisplayNode()->SetColor(color);
+            }
+          // and associated node colour
+          if (allChildren[i]->GetAssociatedNode())
+            {
+            this->SetColorOnAnnotationDisplayNodes(allChildren[i]->GetAssociatedNode()->GetID(), qcolor);
+            }
+          }
         }
       }
+    return;
     }
 
-  // otherwise look for the display nodes on regular annotation nodes
+  // look for the display nodes on regular annotation nodes
   // and update the unselected color buttons to reflect the new colour
-  
+  this->SetColorOnAnnotationDisplayNodes(this->m_id.c_str(), qcolor);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::SetColorOnAnnotationDisplayNodes(const char *id, QColor qcolor)
+{
+  if (!id)
+    {
+    return;
+    }
+  double color[3];
+  this->TurnQColorToColorArray(color, qcolor);
   // get the text display node
-  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(id);
   if (textDisplayNode)
     {
     textDisplayNode->SetColor(color);
-    ui.textUnselectedColorPickerButton->setColor(qcolor);
+    // if it's the currently displayed node, update the button
+    if (this->m_id.compare(id) == 0)
+      {
+      ui.textUnselectedColorPickerButton->setColor(qcolor);
+      }
     }
   
   // get the point display node
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
+  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(id);
   if (pointDisplayNode)
     {
     pointDisplayNode->SetColor(color);
-    ui.pointUnselectedColorPickerButton->setColor(qcolor);
+    if (this->m_id.compare(id) == 0)
+      {
+      ui.pointUnselectedColorPickerButton->setColor(qcolor);
+      }
     }
   // get the line display node
-  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(this->m_id.c_str());
+  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = this->m_logic->GetLineDisplayNode(id);
   if (lineDisplayNode)
     {
     lineDisplayNode->SetColor(color);
-    ui.lineUnselectedColorPickerButton->setColor(qcolor);
+    if (this->m_id.compare(id) == 0)
+      {
+      ui.lineUnselectedColorPickerButton->setColor(qcolor);
+      }
     }
 }
 
