@@ -19,7 +19,6 @@
 #include <vtkSliceViewInteractorStyle.h>
 
 // MRML includes
-#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLInteractionNode.h>
 
 // VTK includes
