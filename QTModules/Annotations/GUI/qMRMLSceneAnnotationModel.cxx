@@ -50,6 +50,7 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   this->setNameColumn(5);
   this->setIDColumn(-1);
   this->setVisibilityColumn(-1);
+  this->setOpacityColumn(-1);
   this->setCheckableColumn(qMRMLSceneAnnotationModel::CheckedColumn);
 
   this->setColumnCount(7);
