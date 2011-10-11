@@ -2560,7 +2560,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     {
     return NULL;
     }
-  const char *topLevelName = "Main Hierarchy";
+  const char *topLevelName = "All Annotations";
   char *toplevelNodeID = NULL;
   vtkCollection *col = this->GetMRMLScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode");
   vtkMRMLAnnotationHierarchyNode *toplevelNode = NULL;
