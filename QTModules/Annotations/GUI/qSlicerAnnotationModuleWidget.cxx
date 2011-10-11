@@ -305,6 +305,11 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
     this->m_PropertyDialog = propertyDialog;
 
+    // TODO: update the property dialog elements when the mrml node changes,
+    // for now just make the dialog modal so can't change the annotations
+    // while have the dialog open
+    this->m_PropertyDialog->setModal(true);
+    
     this->m_PropertyDialog->setVisible(true);
 
     this->connect(this->m_PropertyDialog, SIGNAL(rejected()), this,
