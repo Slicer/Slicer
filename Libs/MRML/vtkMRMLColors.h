@@ -13,37 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
+  This file was originally developed by Michael Jeulin-L, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-#ifndef __qMRMLColors_h
-#define __qMRMLColors_h
+#ifndef __vtkMRMLColors_h
+#define __vtkMRMLColors_h
 
-/// Qt includes
-#include <QColor>
-
-/// qMRMLWidget includes
-#include "qMRMLWidgetsExport.h"
+#include "vtkMRMLWin32Header.h"
 
 class vtkColor3d;
 
-class QMRML_WIDGETS_EXPORT qMRMLColors
+class VTK_MRML_EXPORT vtkMRMLColors
 {
 public:
 
-  static QColor sliceRed();
-  static QColor sliceYellow();
-  static QColor sliceGreen();
-  static QColor sliceOrange();
-  static QColor sliceGray();
+  static vtkColor3d sliceRed();
+  static vtkColor3d sliceYellow();
+  static vtkColor3d sliceGreen();
+  static vtkColor3d sliceOrange();
+  static vtkColor3d sliceGray();
 
-  static QColor threeDViewBlue();
+  static vtkColor3d threeDViewBlue();
 
   // Description
-  // Utility function to convert vtkColor into QColor
-  static QColor fromVTKColor(const vtkColor3d&);
+  // Utility function to convert vtkColor into double[3]
+  static void toRGBColor(const vtkColor3d&, double[3]);
 };
 
 #endif
