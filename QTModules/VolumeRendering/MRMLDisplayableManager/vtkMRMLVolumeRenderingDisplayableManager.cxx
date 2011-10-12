@@ -94,6 +94,15 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
   this->ProcessingMRMLFlag = 0;
   this->UpdatingFromMRML = 0;
 
+  this->DisplayObservedEvents = vtkIntArray::New();
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::StartEvent);
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::EndEvent);
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::StartInteractionEvent);
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::InteractionEvent);
+  this->DisplayObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
+
+  this->Interaction = 0;
 }
 
 vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
@@ -1015,6 +1024,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnVolumeRenderingDisplayNodeModif
     return;
     }
   this->InitializePipelineFromDisplayNode(dnode);
+  //this->GetInteractor()->Enable();
+  this->RequestRender();
 }
 
 //----------------------------------------------------------------------------
@@ -1055,7 +1066,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
                                                 unsigned long event,
                                                 void *callData)
 {
-  if (this->ProcessingMRMLFlag || this->UpdatingFromMRML)
+  if (this->ProcessingMRMLFlag ||
+      !this->GetMRMLScene() ||
+      this->UpdatingFromMRML)
     {
     return;
     }
@@ -1064,7 +1077,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
   vtkMRMLNode *node = NULL;
 
   // Observe ViewNode, Scenario Node, and Parameter node for modify events
-  if (event == vtkCommand::ModifiedEvent && this->GetMRMLScene())
+  if (event == vtkCommand::ModifiedEvent)
     {
     node = reinterpret_cast<vtkMRMLNode *>(caller);
 
@@ -1083,9 +1096,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
 //      }
     else if (node->IsA("vtkMRMLVolumeRenderingDisplayNode") )
       {
-      //this->UpdateDisplayNodeList();
-      this->OnVolumeRenderingDisplayNodeModified(
-        vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
+      // We don't update if we are in an interaction mode (
+      // vtkCommand::InteractionEvent will be fired, so we can ignore
+      // ModifiedEvents)
+      if (this->Interaction == 0)
+        {
+        this->OnVolumeRenderingDisplayNodeModified(
+          vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
+        }
       }
     else if(vtkMRMLAnnotationROINode::SafeDownCast(caller))
       {
@@ -1097,6 +1115,49 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *call
 
       this->SetROI(vspNode);
       this->RequestRender();
+      }
+    }
+  else if (event == vtkCommand::StartEvent ||
+           event == vtkCommand::StartInteractionEvent)
+    {
+    ++this->Interaction;
+    // We request the interactive mode, we might have nested interactions
+    // so we just start the mode for the first time.
+    if (this->Interaction == 1)
+      {
+      vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(
+        this->GetInteractor()->GetInteractorStyle());
+      if (interactorStyle->GetState() == VTKIS_NONE)
+        {
+        interactorStyle->StartState(VTKIS_VOLUME_PROPS);
+        }
+      }
+    }
+  else if (event == vtkCommand::EndEvent ||
+           event == vtkCommand::EndInteractionEvent)
+    {
+    --this->Interaction;
+    if (this->Interaction == 0)
+      {
+      vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(
+        this->GetInteractor()->GetInteractorStyle());
+      if (interactorStyle->GetState() == VTKIS_VOLUME_PROPS)
+        {
+        interactorStyle->StopState();
+        }
+      if (caller->IsA("vtkMRMLVolumeRenderingDisplayNode"))
+        {
+        this->OnVolumeRenderingDisplayNodeModified(
+          vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(caller));
+        }
+      }
+    }
+  else if (event == vtkCommand::InteractionEvent)
+    {
+    if (caller->IsA("vtkMRMLVolumeRenderingDisplayNode"))
+      {
+      this->OnVolumeRenderingDisplayNodeModified(
+        vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(caller));
       }
     }
   else if (event == vtkMRMLScene::NodeAddedEvent)
@@ -1228,12 +1289,13 @@ void vtkMRMLVolumeRenderingDisplayableManager
   this->DisplayedNode = vspNode;
   
   vtkRenderWindow* renderWindow = this->GetRenderer()->GetRenderWindow();
-  renderWindow->SetDesiredUpdateRate(this->DisplayedNode->GetExpectedFPS());
+  //renderWindow->SetDesiredUpdateRate(this->DisplayedNode->GetExpectedFPS());
   vtkRenderWindowInteractor* renderWindowInteractor =
     renderWindow ? renderWindow->GetInteractor() : 0;
   if (renderWindowInteractor)
     {
-    renderWindowInteractor->SetDesiredUpdateRate(this->DisplayedNode->GetExpectedFPS());
+    renderWindowInteractor->SetDesiredUpdateRate(
+      this->DisplayedNode->GetExpectedFPS());
     }
   // TODO: do the connection at initialization time
   vtkInteractorObserver* interactorStyle =
@@ -1317,16 +1379,18 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessLogicEvents(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToView()
+bool vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToView()
 {
   bool modified = false;
 //  vtkMRMLVolumeRenderingDisplayNode* vspNode = this->GetDisplayNode();
 
   // Only support 1 volume per view, remove any existing volume
   vtkVolumeCollection *vols = this->GetRenderer()->GetVolumes();
-  if (vols && vols->GetNextVolume() != this->GetVolumeActor())
+  vols->InitTraversal();
+  vtkVolume* firstVolume = vols ? vols->GetNextVolume() : 0;
+  if (firstVolume && firstVolume != this->GetVolumeActor())
     {
-    this->RemoveVolumeFromView(vols->GetNextVolume());
+    this->RemoveVolumeFromView(firstVolume);
     modified = true;
     }
 
@@ -1336,12 +1400,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::AddVolumeToView()
     this->GetRenderer()->AddVolume(this->GetVolumeActor() );
     modified = true;
     }
-
-  if (modified)
-    {
-    this->GetInteractor()->Enable();
-    this->RequestRender();
-    }
+  return modified;
 }
 
 //----------------------------------------------------------------------------
@@ -1491,7 +1550,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
     {
     return;
     }
-
+  /*
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   ///TODO: have vtkEventBroker::AddObservation to uniquely add an observation
   std::vector< vtkObservation *> observations =
@@ -1503,6 +1562,9 @@ void vtkMRMLVolumeRenderingDisplayableManager
                            this, this->GetMRMLCallbackCommand());
     }
   this->DisplayNodes[dnode->GetID()] = dnode;
+  */
+  vtkSetAndObserveMRMLNodeEventsMacro(
+    this->DisplayNodes[dnode->GetID()], dnode, this->DisplayObservedEvents);
   this->OnVolumeRenderingDisplayNodeModified(dnode);
 }
 

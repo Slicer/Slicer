@@ -18,6 +18,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkVector.h>
 #include <vtkVolumeProperty.h>
@@ -162,6 +163,13 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 
   QObject::connect(this->PresetOffsetSlider, SIGNAL(valueChanged(double)),
                    q, SLOT(offsetPreset(double)));
+  QObject::connect(this->PresetOffsetSlider, SIGNAL(sliderPressed()),
+                   q, SLOT(startInteraction()));
+  QObject::connect(this->PresetOffsetSlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(interaction()));
+  QObject::connect(this->PresetOffsetSlider, SIGNAL(sliderReleased()),
+                   q, SLOT(endInteraction()));
+
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(resetOffset()));
   QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -799,7 +807,47 @@ void qSlicerVolumeRenderingModuleWidget::applyPreset(vtkMRMLNode* node)
     {
     return;
     }
-  volumePropertyNode->CopyParameterSet(presetNode);
+  assert(presetNode->GetVolumeProperty());
+  assert(presetNode->GetVolumeProperty()->GetRGBTransferFunction());
+  assert(presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[1] >
+         presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[0]);
+  volumePropertyNode->Copy(presetNode);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::startInteraction()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkVolumeProperty* volumeProperty =
+    d->VolumePropertyNodeWidget->volumeProperty();
+  if (volumeProperty)
+    {
+    volumeProperty->InvokeEvent(vtkCommand::StartInteractionEvent);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::endInteraction()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkVolumeProperty* volumeProperty =
+    d->VolumePropertyNodeWidget->volumeProperty();
+  if (volumeProperty)
+    {
+    volumeProperty->InvokeEvent(vtkCommand::EndInteractionEvent);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::interaction()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkVolumeProperty* volumeProperty =
+    d->VolumePropertyNodeWidget->volumeProperty();
+  if (volumeProperty)
+    {
+    volumeProperty->InvokeEvent(vtkCommand::InteractionEvent);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -835,7 +883,8 @@ void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
   double width = range[1] - range[0];
   bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
   d->PresetOffsetSlider->setSingleStep(
-    ctk::closestPowerOfTen(width) / 100.);
+    width ? ctk::closestPowerOfTen(width) / 100. : 0.1);
+  d->PresetOffsetSlider->setPageStep(d->PresetOffsetSlider->singleStep());
   d->PresetOffsetSlider->setRange(-width, width);
   d->PresetOffsetSlider->blockSignals(wasBlocking);
 }

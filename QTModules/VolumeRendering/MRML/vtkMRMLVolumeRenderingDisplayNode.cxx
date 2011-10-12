@@ -12,18 +12,43 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// Annotations includes
+#include "vtkMRMLAnnotationROINode.h"
 
-#include "vtkObjectFactory.h"
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkIntArray.h>
+#include <vtkObjectFactory.h>
+
+//#include "vtkMatrix4x4.h"
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
+vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, VolumeNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, VolumePropertyNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, FgVolumeNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, FgVolumePropertyNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, ROINodeID);
+
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 {
-  this->HideFromEditors = 0;
+  this->ObservedEvents = vtkIntArray::New();
+  this->ObservedEvents->InsertNextValue(vtkCommand::StartEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::EndEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::StartInteractionEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::InteractionEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
 
   this->VolumeNodeID = NULL;
   this->VolumeNode = NULL;
@@ -91,6 +116,8 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->WindowLevelFg[1] = 0.0;
 
   this->PerformanceControl = 0;
+
+  this->SetHideFromEditors(false);
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +147,8 @@ vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode()
     {
     SetAndObserveROINodeID(NULL);
     }
+
+  this->ObservedEvents->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -508,27 +537,19 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumeNode()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumePropertyNodeID(const char *VolumePropertyNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
-
-  if (VolumePropertyNodeID != NULL)
-  {
-    this->SetVolumePropertyNodeID(VolumePropertyNodeID);
-    vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
-    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, node);
-  }
+  this->SetVolumePropertyNodeID(VolumePropertyNodeID);
+  vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
+  vtkSetAndObserveMRMLObjectEventsMacro(this->VolumePropertyNode, node, this->ObservedEvents);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveFgVolumePropertyNodeID(const char *VolumePropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode
+::SetAndObserveFgVolumePropertyNodeID(const char *VolumePropertyNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, NULL);
-
-  if (VolumePropertyNodeID != NULL)
-  {
-    this->SetFgVolumePropertyNodeID(VolumePropertyNodeID);
-    vtkMRMLVolumePropertyNode *node = this->GetFgVolumePropertyNode();
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, node);
-  }
+  this->SetFgVolumePropertyNodeID(VolumePropertyNodeID);
+  vtkMRMLVolumePropertyNode *node = this->GetFgVolumePropertyNode();
+  vtkSetAndObserveMRMLObjectEventsMacro(
+    this->FgVolumePropertyNode, node, this->ObservedEvents);
 }
 
 //----------------------------------------------------------------------------
@@ -536,14 +557,19 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumePropertyN
 {
   if (this->VolumePropertyNodeID == NULL)
     {
-    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
+    vtkSetAndObserveMRMLObjectEventsMacro(
+      this->VolumePropertyNode, NULL, this->ObservedEvents);
     }
   else if (this->GetScene() &&
-           ((this->VolumePropertyNode != NULL && strcmp(this->VolumePropertyNode->GetID(), this->VolumePropertyNodeID)) ||
+           ((this->VolumePropertyNode != NULL &&
+            strcmp(this->VolumePropertyNode->GetID(), this->VolumePropertyNodeID)) ||
             (this->VolumePropertyNode == NULL)) )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->VolumePropertyNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, vtkMRMLVolumePropertyNode::SafeDownCast(snode));
+    vtkSetAndObserveMRMLObjectEventsMacro(
+      this->VolumePropertyNode,
+      vtkMRMLVolumePropertyNode::SafeDownCast(snode),
+      this->ObservedEvents);
     }
   return this->VolumePropertyNode;
 }
@@ -553,14 +579,16 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumePropert
 {
   if (this->FgVolumePropertyNodeID == NULL)
     {
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, NULL);
+    vtkSetAndObserveMRMLObjectEventsMacro(this->FgVolumePropertyNode, NULL, this->ObservedEvents);
     }
   else if (this->GetScene() &&
            ((this->FgVolumePropertyNode != NULL && strcmp(this->FgVolumePropertyNode->GetID(), this->FgVolumePropertyNodeID)) ||
             (this->FgVolumePropertyNode == NULL)) )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->FgVolumePropertyNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->FgVolumePropertyNode, vtkMRMLVolumePropertyNode::SafeDownCast(snode));
+    vtkSetAndObserveMRMLObjectEventsMacro(
+      this->FgVolumePropertyNode,
+      vtkMRMLVolumePropertyNode::SafeDownCast(snode), this->ObservedEvents);
     }
   return this->FgVolumePropertyNode;
 }
@@ -612,11 +640,18 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (this->VolumePropertyNode == node)
+  if (event == vtkCommand::StartEvent ||
+      // ModifiedEvent is already forwarded by Superclass::ProcessMRMLEvents
+      event == vtkCommand::EndEvent ||
+      event == vtkCommand::StartInteractionEvent ||
+      event == vtkCommand::InteractionEvent ||
+      event == vtkCommand::EndInteractionEvent
+      )
     {
-    this->Modified();
+    this->InvokeEvent(event);
     }
-  if (this->FgVolumePropertyNode == node &&
+  if (event == vtkCommand::ModifiedEvent &&
+      this->FgVolumePropertyNode == node &&
       this->CurrentVolumeMapper == NCIGPURayCastMultiVolume &&
       this->BgFgRatio > 0.)
     {

@@ -75,6 +75,10 @@ protected slots:
   void onCurrentFusionChanged(int index);
   void onCurrentBgFgRatioChanged(double value);
 
+  void startInteraction();
+  void endInteraction();
+  void interaction();
+
   void offsetPreset(double newPosition);
   void resetOffset();
   void updatePresetSliderRange();

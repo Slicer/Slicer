@@ -20,17 +20,16 @@
 #ifndef __vtkMRMLVolumeRenderingDisplayNode_h
 #define __vtkMRMLVolumeRenderingDisplayNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLAnnotationROINode.h"
+// Volume Rendering includes
 #include "vtkSlicerVolumeRenderingModuleMRMLExport.h"
-#include "vtkMRMLVolumePropertyNode.h"
 
+// MRML includes
+#include "vtkMRMLDisplayNode.h"
+class vtkMRMLAnnotationROINode;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumePropertyNode;
 
-#include "vtkMatrix4x4.h"
+class vtkIntArray;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
@@ -226,24 +225,26 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
+  vtkIntArray* ObservedEvents;
+
   char *VolumeNodeID;
-  vtkSetReferenceStringMacro(VolumeNodeID);
+  virtual void SetVolumeNodeID(const char* arg);
   vtkMRMLVolumeNode* VolumeNode;
 
   char *VolumePropertyNodeID;
-  vtkSetReferenceStringMacro(VolumePropertyNodeID);
+  virtual void SetVolumePropertyNodeID(const char* arg);
   vtkMRMLVolumePropertyNode* VolumePropertyNode;
 
   char *FgVolumeNodeID;
-  vtkSetReferenceStringMacro(FgVolumeNodeID);
+  virtual void SetFgVolumeNodeID(const char* arg);
   vtkMRMLVolumeNode* FgVolumeNode;
 
   char *FgVolumePropertyNodeID;
-  vtkSetReferenceStringMacro(FgVolumePropertyNodeID);
+  virtual void SetFgVolumePropertyNodeID(const char* arg);
   vtkMRMLVolumePropertyNode* FgVolumePropertyNode;
 
   char *ROINodeID;
-  vtkSetReferenceStringMacro(ROINodeID);
+  virtual void SetROINodeID(const char* arg);
   vtkMRMLAnnotationROINode* ROINode;
 
   int CroppingEnabled;

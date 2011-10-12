@@ -19,9 +19,12 @@ class vtkSlicerGPURayCastVolumeMapper;
 class vtkSlicerGPURayCastMultiVolumeMapper;
 class vtkGPUVolumeRayCastMapper;
 
-class vtkTimerLog;
+class vtkIntArray;
 class vtkMatrix4x4;
 class vtkPlanes;
+class vtkTimerLog;
+
+#define VTKIS_VOLUME_PROPS 100
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
@@ -183,6 +186,9 @@ protected:
   typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;
   DisplayNodesType      DisplayNodes;
 
+  vtkIntArray* DisplayObservedEvents;
+  // When interaction is >0, we are in interactive mode (low LOD)
+  int Interaction;
 
 protected:
   void OnScenarioNodeModified();
@@ -192,7 +198,9 @@ protected:
   void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void AddVolumeToView();
+
+  /// Return true if the volume wasn't in the view.
+  bool AddVolumeToView();
   void RemoveVolumeFromView();
   void RemoveVolumeFromView(vtkVolume* volume);
   void InitializePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);

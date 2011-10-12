@@ -21,14 +21,14 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QCheckBox" name="VisibilityCheckBox">
+    <widget class="ctkCheckBox" name="VisibilityCheckBox">
      <property name="text">
       <string>Volume:</string>
      </property>
-     <property name="icon">
+     <property name="checkIcon">
       <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-       <normaloff>:/Icons/VisibleOff.png</normaloff>
-       <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+       <normaloff>:/Icons/VisibleOn.png</normaloff>
+       <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
      </property>
     </widget>
    </item>
@@ -204,17 +204,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="ROICropDisplayCheckBox">
+         <widget class="ctkCheckBox" name="ROICropDisplayCheckBox">
           <property name="enabled">
            <bool>false</bool>
           </property>
           <property name="text">
            <string>Display box</string>
           </property>
-          <property name="icon">
+          <property name="checkIcon">
            <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-            <normaloff>:/Icons/VisibleOff.png</normaloff>
-            <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+            <normaloff>:/Icons/VisibleOn.png</normaloff>
+            <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
           </property>
          </widget>
         </item>
@@ -299,7 +299,7 @@
          <string>Shift transfer functions</string>
         </property>
         <property name="text">
-         <string>STF:</string>
+         <string>Shift:</string>
         </property>
        </widget>
       </item>
@@ -701,6 +701,11 @@
    <extends>qMRMLNodeComboBox</extends>
    <header>qSlicerPresetComboBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
