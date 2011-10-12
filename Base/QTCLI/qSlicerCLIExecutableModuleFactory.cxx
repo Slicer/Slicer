@@ -26,6 +26,10 @@
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerUtils.h"
+#ifdef Q_OS_MAC
+# include "qSlicerCoreApplication.h"
+# include "vtkSlicerConfigure.h" // For Slicer_BIN_DIR
+#endif
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
@@ -93,7 +97,16 @@ qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
-  this->registerAllFileItems(qSlicerCLIModuleFactoryHelper::modulePaths());
+  QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();
+
+#ifdef Q_OS_MAC
+  // HACK - See CMakeLists.txt for additional details
+  if (qSlicerCoreApplication::application()->isInstalled())
+    {
+    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/" + Slicer_BIN_DIR);
+    }
+#endif
+  this->registerAllFileItems(modulePaths);
 }
 
 //-----------------------------------------------------------------------------

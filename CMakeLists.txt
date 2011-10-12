@@ -288,6 +288,19 @@ set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
 set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
+if(APPLE)
+  # HACK - On Mac OSX, since all libraries are fixed using the same "install_name" (specifying the
+  # location of the dependent libraries relatively to the location of Slicer executable), it
+  # is required for CLI executable to be located at same depth as Slicer executable.
+  # See also Slicer/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in
+  #
+  # A more elegant solution would be to create a "Slicer.framework" on which both "Slicer.app"
+  # and the plugins/extensions (or loadable bundles) would depend on.
+  #
+  # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
+  #       the following variable is changed.
+  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_BIN_DIR}")
+endif()
 set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
 set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")
 
