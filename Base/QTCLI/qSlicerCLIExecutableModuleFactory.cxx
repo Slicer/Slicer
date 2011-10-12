@@ -28,7 +28,6 @@
 #include "qSlicerUtils.h"
 #ifdef Q_OS_MAC
 # include "qSlicerCoreApplication.h"
-# include "vtkSlicerConfigure.h" // For Slicer_BIN_DIR
 #endif
 
 //-----------------------------------------------------------------------------
@@ -103,7 +102,7 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
   // HACK - See CMakeLists.txt for additional details
   if (qSlicerCoreApplication::application()->isInstalled())
     {
-    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/" + Slicer_BIN_DIR);
+    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/cli-executables");
     }
 #endif
   this->registerAllFileItems(modulePaths);
