@@ -23,48 +23,50 @@
 // qMRML includes
 #include "qMRMLColors.h"
 
-// VTK includes
-#include <vtkColor.h>
-#include "vtkMRMLColors.h"
-
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceRed()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::sliceRed());
+  // 243, 74, 51 -> #F34A33
+  QColor flamingo = QColor::fromRgbF(0.952941176471, 0.290196078431, 0.2);
+  return flamingo;
 }
 
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceGreen()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::sliceGreen());
+  // 110, 176, 75 -> #6EB04B
+  QColor chelseaCucumber = QColor::fromRgbF(0.43137254902, 0.690196078431, 0.294117647059);
+  return chelseaCucumber;
 }
 
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceYellow()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::sliceYellow());
+  // 237, 213, 76 -> #EDD54C
+  QColor ronchy = QColor::fromRgbF(0.929411764706, 0.835294117647, 0.298039215686);
+  return ronchy;
 }
 
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceOrange()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::sliceOrange());
+  // 225, 112, 18 -> #E17012
+  QColor tango = QColor::fromRgbF(0.882352941176, 0.439215686275, 0.0705882352941);
+  return tango;
 }
 
 //------------------------------------------------------------------------------
 QColor qMRMLColors::threeDViewBlue()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::threeDViewBlue());
+  // 116, 131, 233 -> #7483E9
+  QColor blue = QColor::fromRgb(116, 131, 233);
+  return blue;
 }
 
 //------------------------------------------------------------------------------
 QColor qMRMLColors::sliceGray()
 {
-  return qMRMLColors::fromVTKColor(vtkMRMLColors::sliceGray());
-}
-
-//------------------------------------------------------------------------------
-QColor qMRMLColors::fromVTKColor(const vtkColor3d& vtkColor)
-{
-  return QColor::fromRgbF(vtkColor.Red(), vtkColor.Green(), vtkColor.Blue());
+  // #8C8C8C
+  QColor gray = QColor("#8C8C8C");
+  return gray;
 }

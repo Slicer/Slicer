@@ -81,7 +81,6 @@ set(MRML_SRCS
   vtkMRMLCameraNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
-  vtkMRMLColors.cxx
   vtkMRMLColorTableNode.cxx
   vtkMRMLColorTableStorageNode.cxx
   vtkMRMLCrosshairNode.cxx

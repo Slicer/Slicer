@@ -27,8 +27,6 @@
 /// qMRMLWidget includes
 #include "qMRMLWidgetsExport.h"
 
-class vtkColor3d;
-
 class QMRML_WIDGETS_EXPORT qMRMLColors
 {
 public:
@@ -40,10 +38,6 @@ public:
   static QColor sliceGray();
 
   static QColor threeDViewBlue();
-
-  // Description
-  // Utility function to convert vtkColor into QColor
-  static QColor fromVTKColor(const vtkColor3d&);
 };
 
 #endif
