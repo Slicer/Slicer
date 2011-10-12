@@ -747,6 +747,8 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
   if (*roiNode == NULL)
     {
     *roiNode = vtkMRMLAnnotationROINode::New();
+    // By default, the ROI is interactive. It could be an application setting.
+    (*roiNode)->SetInteractiveMode(1);
     // by default, show the ROI only if cropping is enabled
     (*roiNode)->SetVisibility(displayNode->GetCroppingEnabled());
     this->GetMRMLScene()->AddNode(*roiNode);
