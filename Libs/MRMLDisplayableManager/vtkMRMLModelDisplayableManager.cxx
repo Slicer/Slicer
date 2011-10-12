@@ -434,13 +434,22 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     // There is no need to request a render (which can be expensive if the
     // volume rendering is on) if nothing visible has changed.
     bool requestRender = true;
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(caller);
     switch (event)
       {
+      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+        // don't go any further if the modified display node is not a model
+        if (this->IsModelDisplayable(
+              reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
+          {
+          requestRender = false;
+          break;
+          }
       case vtkCommand::ModifiedEvent:
       case vtkMRMLDisplayableNode::PolyDataModifiedEvent:
-      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
         requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(
-          vtkMRMLDisplayableNode::SafeDownCast(caller));
+          displayableNode);
         break;
       default:
         this->SetUpdateFromMRMLRequested(1);
@@ -603,6 +612,21 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* no
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* node)const
+{
+  // Not very robust, we could have displayable node having no polydata but
+  // displayed as polydata.
+  return node ? node->GetPolyData() != 0: false;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node)const
+{
+  // TODO: should probably check the type of the display node instead
+  return this->IsModelDisplayable(node ? node->GetDisplayableNode() : 0);
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     vtkMRMLDisplayableNode * modelNode)
 {
@@ -610,25 +634,27 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
 
   // If the node is already cached with an actor process only this one
   // If it was not visible and is still not visible do nothing
-  std::vector< vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(modelNode);
+  std::vector< vtkMRMLDisplayNode *> dnodes = modelNode->GetDisplayNodes();
+  bool isModelDisplayable = this->IsModelDisplayable(modelNode);
   bool updateModel = false;
   bool updateMRML = false;
   for (unsigned int i=0; i<dnodes.size(); i++)
     {
     vtkMRMLDisplayNode *dnode = dnodes[i];
     assert(dnode);
-    int visibility = dnode->GetVisibility();
+    bool visible = (dnode->GetVisibility() == 1) && this->IsModelDisplayable(dnode);
+    bool hasActor =
+      this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end();
     // If the displayNode is visible and doesn't have actors yet, then request
     // an updated
-    if (visibility == 1 &&
-        this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
+    if (visible && !hasActor)
       {
       updateMRML = true;
       break;
       }
     // If the displayNode visibility has changed or displayNode is visible, then
     // update the model.
-    if (!(visibility == 0 && this->GetDisplayedModelsVisibility(dnode) == 0))
+    if (!(!visible && this->GetDisplayedModelsVisibility(dnode) == 0))
       {
       updateModel = true;
       break;
@@ -749,9 +775,9 @@ void vtkMRMLModelDisplayableManager::UpdateModifiedModel(vtkMRMLDisplayableNode 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
 {
-  std::vector< vtkMRMLDisplayNode *> displayNodes = this->GetDisplayNode(model);
+  std::vector< vtkMRMLDisplayNode *> displayNodes = model->GetDisplayNodes();
   vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(model);
-  
+
   for (unsigned int i=0; i<displayNodes.size(); i++)
     {
     vtkMRMLDisplayNode *modelDisplayNode = displayNodes[i];
@@ -1045,25 +1071,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplaya
 }
 
 //---------------------------------------------------------------------------
-std::vector< vtkMRMLDisplayNode* > vtkMRMLModelDisplayableManager::GetDisplayNode(vtkMRMLDisplayableNode *model)
-{
-  std::vector< vtkMRMLDisplayNode* > dnodes;
-  vtkMRMLDisplayNode* dnode = 0;
-
-  int ndnodes = model->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
-    {
-    dnode = model->GetNthDisplayNode(i);
-    if (dnode)
-      {
-      dnodes.push_back(dnode);
-      }
-    }
-    
-  return dnodes;
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLDisplayNode* dnode = 0;
@@ -1180,7 +1187,7 @@ void vtkMRMLModelDisplayableManager::RemoveDispalyedID(std::string &id)
 //---------------------------------------------------------------------------
 int vtkMRMLModelDisplayableManager::GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model)
 {
-  int visibility = 1;
+  int visibility = 0;
   
   std::map<std::string, int>::iterator iter;
   iter = this->Internal->DisplayedVisibility.find(model->GetID());
@@ -1279,7 +1286,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     lnode->GetMatrixTransformToWorld(transformToWorld);
     }
  
-  std::vector<vtkMRMLDisplayNode *> displayNodes = this->GetDisplayNode(model);
+  std::vector<vtkMRMLDisplayNode *> displayNodes = model->GetDisplayNodes();
   vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
   
   for (unsigned int i=0; i<displayNodes.size(); i++)

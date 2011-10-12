@@ -132,6 +132,10 @@ public:
   
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
+  /// Return true if the node can be represented as a model
+  bool IsModelDisplayable(vtkMRMLDisplayableNode* node)const;
+  /// Return true if the display node is a model
+  bool IsModelDisplayable(vtkMRMLDisplayNode* node)const;
 protected:
 
   vtkMRMLModelDisplayableManager();
@@ -189,7 +193,6 @@ protected:
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
 
   //BTX
-  std::vector< vtkMRMLDisplayNode* > GetDisplayNode(vtkMRMLDisplayableNode *model);
   void RemoveDispalyedID(std::string &id);
   //ETX
   
