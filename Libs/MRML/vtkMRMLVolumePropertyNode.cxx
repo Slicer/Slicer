@@ -21,16 +21,19 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
 {
-  this->TransferFunctionEvents = vtkIntArray::New();
-  this->TransferFunctionEvents->InsertNextValue(vtkCommand::StartEvent);
-  this->TransferFunctionEvents->InsertNextValue(vtkCommand::EndEvent);
-  this->TransferFunctionEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->ObservedEvents = vtkIntArray::New();
+  this->ObservedEvents->InsertNextValue(vtkCommand::StartEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::EndEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::StartInteractionEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::InteractionEvent);
+  this->ObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
 
   this->VolumeProperty = NULL;
 
   vtkVolumeProperty *node  = vtkVolumeProperty::New();
   vtkSetAndObserveMRMLObjectEventsMacro(
-    this->VolumeProperty, node, this->TransferFunctionEvents);
+    this->VolumeProperty, node, this->ObservedEvents);
   node->Delete();
 
   // Observe the transfer functions
@@ -39,7 +42,6 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
   this->SetGradientOpacity(node->GetGradientOpacity());
 
   this->SetHideFromEditors(0);
-  this->Interaction = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -52,7 +54,7 @@ vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetRGBTransferFunction());
     vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
     }
-  this->TransferFunctionEvents->Delete();
+  this->ObservedEvents->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -244,18 +246,14 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
   switch (event)
     {
     case vtkCommand::StartEvent:
-      ++this->Interaction;
-      break;
     case vtkCommand::EndEvent:
-      --this->Interaction;
+    case vtkCommand::StartInteractionEvent:
+    case vtkCommand::InteractionEvent:
+    case vtkCommand::EndInteractionEvent:
+      this->InvokeEvent(event);
+      break;
     case vtkCommand::ModifiedEvent:
-      // We don't call modified when the transfer functions are doing a bunch
-      // of edits. We only call Modified at the end (when receiving EndEvent.
-      // Note that the StartEvent/EndEvent can be nested.
-      if (!this->Interaction)
-        {
-        this->Modified();
-        }
+      this->Modified();
       break;
     }
 }
@@ -278,8 +276,8 @@ std::string vtkMRMLVolumePropertyNode
 }
 
 //---------------------------------------------------------------------------
-double* vtkMRMLVolumePropertyNode
-::dataFromString(const std::string& dataString)
+int vtkMRMLVolumePropertyNode
+::dataFromString(const std::string& dataString, double* &data)
 {
   std::stringstream stream;
   stream << dataString;
@@ -291,12 +289,12 @@ double* vtkMRMLVolumePropertyNode
     return 0;
     }
 
-  double *data = new double[size];
+  data = new double[size];
   for(int i=0; i < size; ++i)
     {
     stream >> data[i];
     }
-  return data;
+  return size;
 }
 
 //---------------------------------------------------------------------------
@@ -320,12 +318,12 @@ void vtkMRMLVolumePropertyNode
 ::GetPiecewiseFunctionFromString(
   const std::string& str,vtkPiecewiseFunction* result)
 {
-  double* data = vtkMRMLVolumePropertyNode::dataFromString(str);
-  if (!data)
+  double* data = 0;
+  int size = vtkMRMLVolumePropertyNode::dataFromString(str, data);
+  if (!size)
     {
     return;
     }
-  int size = data[0];
   result->FillFromDataPointer(size/2, data);
   delete [] data;
 }
@@ -335,14 +333,14 @@ void vtkMRMLVolumePropertyNode
 ::GetColorTransferFunctionFromString(
   const std::string& str, vtkColorTransferFunction* result)
 {
-  double* data = vtkMRMLVolumePropertyNode::dataFromString(str);
-  if (!data)
+  double* data = 0;
+  int size = vtkMRMLVolumePropertyNode::dataFromString(str, data);
+  if (!size)
     {
     return;
     }
-  int size = data[0];
-  result->FillFromDataPointer(size/4,data);
-  delete[] data;
+  result->FillFromDataPointer(size/4, data);
+  delete [] data;
 }
 
 //---------------------------------------------------------------------------
@@ -362,7 +360,7 @@ void vtkMRMLVolumePropertyNode
 
   vtkObserveMRMLObjectEventsMacro(
     this->VolumeProperty->GetScalarOpacity(component),
-    this->TransferFunctionEvents);
+    this->ObservedEvents);
 }
 
 //---------------------------------------------------------------------------
@@ -376,7 +374,7 @@ void vtkMRMLVolumePropertyNode
 
   vtkObserveMRMLObjectEventsMacro(
     this->VolumeProperty->GetGradientOpacity(component),
-    this->TransferFunctionEvents);
+    this->ObservedEvents);
 }
 
 //---------------------------------------------------------------------------
@@ -390,5 +388,5 @@ void vtkMRMLVolumePropertyNode
 
   vtkObserveMRMLObjectEventsMacro(
     this->VolumeProperty->GetRGBTransferFunction(component),
-    this->TransferFunctionEvents);
+    this->ObservedEvents);
 }

@@ -41,6 +41,7 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <cassert>
 
 //-----------------------------------------------------------------------------
 qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
@@ -203,6 +204,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
     int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
     vtkScalarsToColors* colors =
       volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
+    assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
     QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
     QString toolTip = QString("<img src=\"%1\"> %2").arg(ctk::base64HTMLImageTagSrc(img)).arg(presetNode->GetName());
     sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);

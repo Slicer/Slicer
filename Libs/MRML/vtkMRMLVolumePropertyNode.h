@@ -136,21 +136,18 @@ protected:
   ~vtkMRMLVolumePropertyNode(void);
 
   //BTX
-  static double* dataFromString(const std::string& dataString);
+  static int dataFromString(const std::string& dataString, double* &data);
   static std::string dataToString(double* data, int size);
   //ETX
 
   ///
   /// Events observed on the transfer functions
-  vtkIntArray* TransferFunctionEvents;
+  vtkIntArray* ObservedEvents;
 
   ///
   /// Main parameters for visualization
   vtkVolumeProperty* VolumeProperty;
 
-  ///
-  /// Interaction
-  int Interaction;
 private:
   ///
   /// Caution: Not implemented
