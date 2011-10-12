@@ -23,6 +23,9 @@
 #include <vtkVector.h>
 #include <vtkVolumeProperty.h>
 
+// STD includes
+#include <cassert>
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModuleWidgetPrivate
