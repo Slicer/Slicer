@@ -35,6 +35,24 @@ set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 #-----------------------------------------------------------------------------
 # Sanity checks
 #------------------------------------------------------------------------------
+if(WIN32)
+  string(LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n)
+  if(n GREATER 50)
+    message(
+      FATAL_ERROR
+      "Source tree directory of ITK is too deep (${n} > 50)."
+      "Please use a shorter root directory for the ITK source tree."
+      )
+  endif()
+  string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
+  if(n GREATER 50)
+    message(
+      FATAL_ERROR
+      "Binary tree directory of ITK is too deep (${n} > 50)."
+      "Please use a shorter root directory for the ITK binary tree."
+      )
+  endif()
+endif()
 include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
 
