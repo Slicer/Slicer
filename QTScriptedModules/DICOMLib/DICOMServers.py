@@ -34,10 +34,7 @@ class DICOMServer(object):
     if os.name == 'nt':
       self.exeExtension = '.exe'
 
-    self.QProcessState = {}
-    self.QProcessState[0] = 'NotRunning'
-    self.QProcessState[1] = 'Starting'
-    self.QProcessState[2] = 'Running'
+    self.QProcessState = {0: 'NotRunning', 1: 'Starting', 2: 'Running',}
 
   def __del__(self):
     self.stop()
@@ -50,15 +47,19 @@ class DICOMServer(object):
 
     # start the server!
     self.process = qt.QProcess()
-    self.process.connect('stateChanged(QProcess::ProcessState newState)', self.onStateChanged)
+    self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
     print ("Starting %s with " % cmd, args)
     self.process.start(cmd, args)
 
 
-  def onStateChanged(newState):
+  def onStateChanged(self, newState):
     print("process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
     if newState == 0:
-      print('error is: %d' % self.process.error())
+      stdout = self.process.readAllStandardOutput()
+      stderr = self.process.readAllStandardError()
+      print('error code is: %d' % self.process.error())
+      print('standard out is: %s' % stdout)
+      print('standard error is: %s' % stderr)
   
 
   def stop(self):
