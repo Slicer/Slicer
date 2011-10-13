@@ -40,16 +40,16 @@ if(WIN32)
   if(n GREATER 50)
     message(
       FATAL_ERROR
-      "Source tree directory of ITK is too deep (${n} > 50)."
-      "Please use a shorter root directory for the ITK source tree."
+      "Source tree directory of ${PROJECT_NAME} is too deep (${n} > 50)."
+      "Please use a shorter root directory for the ${PROJECT_NAME} source tree."
       )
   endif()
   string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
   if(n GREATER 50)
     message(
       FATAL_ERROR
-      "Binary tree directory of ITK is too deep (${n} > 50)."
-      "Please use a shorter root directory for the ITK binary tree."
+      "Binary tree directory of ${PROJECT_NAME} is too deep (${n} > 50)."
+      "Please use a shorter root directory for the ${PROJECT_NAME} binary tree."
       )
   endif()
 endif()
