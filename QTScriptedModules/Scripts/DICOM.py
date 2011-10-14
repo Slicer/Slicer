@@ -10,6 +10,10 @@ import DICOMLib
 #
 # DICOM
 #
+# This code includes the GUI for the slicer module.  It is supported
+# by the DICOMLib python code which implements most of the logic
+# for data exchange and running servers.
+#
 
 class DICOM:
   def __init__(self, parent):
@@ -31,15 +35,15 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
     # initialize the dicom infrastructure
     settings = qt.QSettings()
-    # the dicom listener is also global, but only started on app start if 
-    # the user so chooses
-    if settings.contains('DICOM/RunListenerAtStart'):
-      if bool(settings.value('DICOM/RunListenerAtStart')):
-        # the dicom database is a global object for slicer
-        databaseDirectory = settings.value('DatabaseDirectory')
-        if databaseDirectory: 
-          slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-          slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+    # the dicom database is a global object for slicer
+    databaseDirectory = settings.value('DatabaseDirectory')
+    if databaseDirectory: 
+      slicer.dicomDatabase = ctk.ctkDICOMDatabase()
+      slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+      # the dicom listener is also global, but only started on app start if 
+      # the user so chooses
+      if settings.contains('DICOM/RunListenerAtStart'):
+        if bool(settings.value('DICOM/RunListenerAtStart')):
           if not hasattr(slicer, 'dicomListener'):
             try:
               slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
@@ -178,7 +182,7 @@ class DICOMWidget:
     self.loadButton.enabled = False 
     userFrame.layout().addWidget(self.loadButton)
     self.loadButton.connect('clicked()', self.onLoadButton)
-    self.exportButton = qt.QPushButton('Export Slicer Volume to Study...')
+    self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
     self.exportButton.enabled = False 
     userFrame.layout().addWidget(self.exportButton)
     self.exportButton.connect('clicked()', self.onExportButton)
@@ -260,14 +264,18 @@ class DICOMWidget:
   def onExportButton(self):
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
-    exportDialog = DICOMExportDialog(slicer.dicomDatabase, uid)
+    exportDialog = DICOMExportDialog(uid)
+    self.dicomApp.suspendModel()
     exportDialog.open()
+    self.dicomApp.resumeModel()
+    self.dicomApp.resetModel()
 
   def loadPatient(self,patientUID):
     studies = slicer.dicomDatabase.studiesForPatient(patientUID)
     s = 1
     self.progress.setLabelText("Loading Studies")
     self.progress.setValue(1)
+    slicer.app.processEvents()
     for study in studies:
       self.progress.setLabelText("Loading Study %d of %d" % (s, len(studies)))
       slicer.app.processEvents()
@@ -294,7 +302,6 @@ class DICOMWidget:
     slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
     d = slicer.dicomDatabase.headerValue(seriesDescription)
-    name = "unknown"
     try:
       name = d[d.index('[')+1:d.index(']')]
     except ValueError:
@@ -302,17 +309,7 @@ class DICOMWidget:
     self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
-    fileList = vtk.vtkStringArray()
-    for f in files:
-      fileList.InsertNextValue(f)
-    vl = slicer.modules.volumes.logic()
-    # TODO: pass in fileList once it is known to be in the right order
-    volumeNode = vl.AddArchetypeVolume( files[0], name, 0 )
-    # automatically select the volume to display
-    appLogic = slicer.app.applicationLogic()
-    selNode = appLogic.GetSelectionNode()
-    selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
-    appLogic.PropagateVolumeSelection()
+    DICOMLib.DICOMLoader(files,name)
 
   def onToggleListener(self):
     if hasattr(slicer, 'dicomListener'):
@@ -436,38 +433,66 @@ class DICOMExportDialog(object):
 
   def __init__(self,studyUID):
     self.studyUID = studyUID
-    seriesUID = slicer.dicomDatabase.seriesForStudy(studyUID)[0]
-    files = slicer.dicomDatabase.filesForSeries(seriesUID)
-    slicer.dicomDatabase.loadFileHeader(files[0])
-    seriesDescription = "0008,103e"
-    d = slicer.dicomDatabase.headerValue(seriesDescription)
-    try:
-      name = d[d.index('[')+1:d.index(']')]
-    except ValueError:
-      name = "Unknown"
-    self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def open(self):
 
+    # main dialog
     self.dialog = qt.QDialog(slicer.util.mainWindow())
     self.dialog.setWindowTitle('Export to DICOM Study')
     self.dialog.setWindowModality(1)
     layout = qt.QVBoxLayout()
     self.dialog.setLayout(layout)
 
+    self.studyLabel = qt.QLabel('Attach Data to Study: %s' % self.studyUID)
+    layout.addWidget(self.studyLabel)
+
+    # select volume
+    self.volumeSelector = slicer.qMRMLNodeComboBox(self.dialog)
+    self.volumeSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
+    self.volumeSelector.selectNodeUponCreation = False
+    self.volumeSelector.addEnabled = False
+    self.volumeSelector.noneEnabled = False
+    self.volumeSelector.removeEnabled = False
+    self.volumeSelector.showHidden = False
+    self.volumeSelector.showChildNodeTypes = False
+    self.volumeSelector.setMRMLScene( slicer.mrmlScene )
+    self.volumeSelector.setToolTip( "Pick the label map to edit" )
+    layout.addWidget( self.volumeSelector )
+
+    # DICOM Parameters
+    self.dicomFrame = qt.QFrame(self.dialog)
+    self.dicomFormLayout = qt.QFormLayout()
+    self.dicomFrame.setLayout(self.dicomFormLayout)
+    self.dicomEntries = {}
+    exporter = DICOMLib.DICOMExporter(self.studyUID)
+    self.dicomParameters = exporter.parametersFromStudy()
+    self.dicomParameters['Series Description'] = '3D Slicer Export'
+    for label in self.dicomParameters.keys():
+      self.dicomEntries[label] = qt.QLineEdit()
+      self.dicomEntries[label].text = self.dicomParameters[label]
+      self.dicomFormLayout.addRow(label+": ", self.dicomEntries[label])
+    layout.addWidget(self.dicomFrame)
+
+    # button box
     bbox = qt.QDialogButtonBox(self.dialog)
-    ok = qt.QPushButton("Ok")
-    cancel = qt.QPushButton("Cancel")
-    bbox.addButton(ok, 0)
-    bbox.addButton(cancel, 1)
+    bbox.addButton(bbox.Ok)
+    bbox.addButton(bbox.Cancel)
+    bbox.connect('accepted()', self.onOk)
+    bbox.connect('rejected()', self.onCancel)
     layout.addWidget(bbox)
-    ok.connect('clicked()', self.onOk)
-    cancel.connect('clicked()', self.onCancel)
 
     self.dialog.open()
 
   def onOk(self):
-    
+    volumeNode = self.volumeSelector.currentNode()
+    if volumeNode:
+      parameters = {}
+      for label in self.dicomParameters.keys():
+        parameters[label] = self.dicomEntries[label].text
+      try:
+        DICOMLib.DICOMExporter(self.studyUID,volumeNode,parameters)
+      except Exception as result:
+        qt.QMessageBox.warning(self.dialog, 'DICOM Export', 'Could not export data: %s' % result)
     self.dialog.close()
 
   def onCancel(self):

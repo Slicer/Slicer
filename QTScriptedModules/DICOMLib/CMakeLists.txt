@@ -1,6 +1,7 @@
 set(EditorLib_PYTHON_SCRIPTS
   __init__
   DICOMServers
+  DICOMDataExchange
   )
 
 set(EditorLib_PYTHON_RESOURCES
