@@ -60,8 +60,16 @@ protected:
   virtual void OnMRMLSliceNodeModifiedEvent(){}
 
   /// Convert device coordinates to XYZ coordinates. parameter xyz
-  /// must be preallocated to have a length of 4 elements
-  void ConvertDeviceToXYZ(double x, double y, double * xyz);
+  /// is double[3]
+  void ConvertDeviceToXYZ(double x, double y, double xyz[3]);
+
+  /// Convert RAS to XYZ coordinates. parameters ras and xyz are
+  /// double[3]. xyz[2] is the lightbox id.
+  void ConvertRASToXYZ(double ras[3], double xyz[3]);
+
+  /// Convert XYZ to RAS coordinates. parameters ras and xyz are
+  /// double[3]. xyz[2] is the lightbox id.
+  void ConvertXYZToRAS(double xyz[3], double ras[3]);
   
 private:
 

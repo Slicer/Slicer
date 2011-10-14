@@ -74,6 +74,7 @@ public:
 
   // Actors
   void SetActor(vtkActor2D* prop) {Actor = prop;};
+  void SetHighlightActor(vtkActor2D* prop) {HighlightActor = prop;};
   
   // Build the crosshair representation
   void BuildCrosshair();
@@ -89,9 +90,30 @@ public:
   // Did crosshair property change?
   bool DidCrosshairPropertyChange();
 
-  vtkMRMLCrosshairDisplayableManager*      External;  
-  vtkWeakPointer<vtkMRMLSliceCompositeNode> SliceCompositeNode;
-  vtkWeakPointer<vtkMRMLCrosshairNode>    CrosshairNode;
+  // PickStates
+  enum
+  {
+    NoPick,
+    Outside, 
+    Near, 
+    Over, 
+    Horizontal, 
+    Vertical
+  };
+
+  // ActionStates
+  enum
+  {
+    NoAction, 
+    Dragging
+  };
+
+
+  vtkMRMLCrosshairDisplayableManager*        External;  
+  int                                        PickState;
+  int                                        ActionState;
+  vtkWeakPointer<vtkMRMLSliceCompositeNode>  SliceCompositeNode;
+  vtkWeakPointer<vtkMRMLCrosshairNode>       CrosshairNode;
   vtkSmartPointer<vtkActor2D>                Actor;
   vtkSmartPointer<vtkActor2D>                HighlightActor;
   vtkSmartPointer<vtkMRMLCrosshairNode>      CrosshairNodeCache;
@@ -107,6 +129,8 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
 ::vtkInternal(vtkMRMLCrosshairDisplayableManager * external)
 {
   this->External = external;
+  this->PickState = NoPick;
+  this->ActionState = NoAction;
   this->SliceCompositeNode = 0;
   this->CrosshairNode = 0;
   this->Actor = 0;
@@ -273,6 +297,20 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
     this->CrosshairNode->AddObserver(vtkCommand::ModifiedEvent,
                                      this->External->GetMRMLCallbackCommand());
     }
+
+  // Initialize the states
+  if (this->CrosshairNode)
+    {
+    this->ActionState = NoAction;
+    if (this->CrosshairNode->GetNavigation())
+      {
+      this->PickState = Outside;
+      }
+    else
+      {
+      this->PickState = NoPick;
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -319,6 +357,14 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
       this->LightBoxRenderer->RemoveActor(this->Actor);
       }
     this->Actor = 0;
+    }
+  if (this->HighlightActor.GetPointer())
+    {
+    if (this->LightBoxRenderer)
+      {
+      this->LightBoxRenderer->RemoveActor(this->HighlightActor);
+      }
+    this->HighlightActor = 0;
     }
   
   // Get the size of the window
@@ -431,6 +477,55 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
     {
     actor->VisibilityOn();
     }
+
+  // Highlight actor
+  //
+  //
+  // Set up the VTK data structures
+  vtkNew<vtkPolyData> hpolyData;
+  vtkNew<vtkCellArray> hcellArray;
+  vtkNew<vtkCellArray> hvcellArray;
+  vtkNew<vtkPoints> hpoints;
+  hpolyData->SetLines(hcellArray.GetPointer());
+  hpolyData->SetVerts(hvcellArray.GetPointer());
+  hpolyData->SetPoints(hpoints.GetPointer());
+
+  vtkNew<vtkPolyDataMapper2D> hmapper;
+  vtkNew<vtkActor2D> hactor;
+  hmapper->SetInput(hpolyData.GetPointer());
+  hactor->SetMapper(hmapper.GetPointer());
+
+  if (this->LightBoxRenderer)
+    {
+    this->LightBoxRenderer->AddActor(hactor.GetPointer());
+    }
+  
+  // Cache the actor 
+  this->SetHighlightActor(hactor.GetPointer());
+  
+  // center dot (need to offset by half a pixel, why?
+  int cindex = hpoints->InsertNextPoint(-0.5,-0.5, 0);
+
+  // box for highlight
+  int llindex = hpoints->InsertNextPoint(-5, -5, 0);
+  int lrindex = hpoints->InsertNextPoint( 5, -5, 0);
+  int urindex = hpoints->InsertNextPoint( 5,  5, 0);
+  int ulindex = hpoints->InsertNextPoint(-5,  5, 0);
+
+  hcellArray->InsertNextCell(5);
+  hcellArray->InsertCellPoint(llindex);
+  hcellArray->InsertCellPoint(lrindex);
+  hcellArray->InsertCellPoint(urindex);
+  hcellArray->InsertCellPoint(ulindex);
+  hcellArray->InsertCellPoint(llindex);
+
+  hvcellArray->InsertNextCell(1);
+  hvcellArray->InsertCellPoint(cindex);
+
+  hactor->GetProperty()->SetColor(1.0, 0.8, 0.1);
+  hactor->GetProperty()->SetOpacity(1.0);
+
+  hactor->VisibilityOff();
 }
 
 //---------------------------------------------------------------------------
@@ -498,36 +593,32 @@ void vtkMRMLCrosshairDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       
       // update the position of the actor
       if ((this->Internal->DidCrosshairPositionChange() || builtCrosshair) 
-          && this->Internal->Actor)
+          && this->Internal->Actor && this->Internal->HighlightActor)
         {
-        vtkMatrix4x4 *rasToXYZ = vtkMatrix4x4::New();
-        rasToXYZ->DeepCopy(this->Internal->GetSliceNode()->GetXYToRAS());
-        rasToXYZ->Invert();
-
-        double *ras, rasw[4], pos[4];
-        ras = this->Internal->CrosshairNode->GetCrosshairRAS();
-        rasw[0] = ras[0]; rasw[1] = ras[1]; rasw[2] = ras[2]; rasw[3] = 1.0;
-        rasToXYZ->MultiplyPoint(rasw, pos);
-        pos[0] /= pos[3]; pos[1] /= pos[3]; pos[2] /= pos[3]; pos[3] /= pos[3];
-        this->Internal->Actor->SetPosition(pos[0], pos[1]);
-
-        rasToXYZ->Delete();
+        double xyz[3];
+        double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
+        this->ConvertRASToXYZ(ras, xyz);
+        this->Internal->Actor->SetPosition(xyz[0], xyz[1]);
+        this->Internal->HighlightActor->SetPosition(xyz[0], xyz[1]);
 
         // put the actor in the right lightbox
         if (this->Internal->LightBoxRendererManagerProxy)
           {
           vtkRenderer *renderer 
-            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(pos[2]);
+            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(xyz[2]);
           if (renderer != this->Internal->LightBoxRenderer)
             {
             if (this->Internal->LightBoxRenderer)
               {
               this->Internal->LightBoxRenderer
                 ->RemoveActor(this->Internal->Actor);
+              this->Internal->LightBoxRenderer
+                ->RemoveActor(this->Internal->HighlightActor);
               }
             if (renderer)
               {
               renderer->AddActor(this->Internal->Actor);
+              renderer->AddActor(this->Internal->HighlightActor);
               }
             this->Internal->LightBoxRenderer = renderer;
             }
@@ -585,22 +676,118 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
 
   this->Superclass::OnInteractorStyleEvent(eventid);
 
-  // Compute which lightbox and determine the RAS position of the
-  // crosshair, then set the RAS position on the Crosshair node
   if (this->Internal->CrosshairNode)
     {
-    int *pos =  this->GetInteractor()->GetEventPosition();
+    switch (eventid)
+      {
+      case vtkCommand::LeftButtonPressEvent:
+        // Button press is only meaningful in navigation mode
+        if (this->Internal->CrosshairNode->GetNavigation())
+          {
+          // check whether we are close enough to navigate
+          if (this->Internal->PickState == vtkInternal::Over)
+            {
+            this->Internal->ActionState = vtkInternal::Dragging;
+            }
+          }
+        break;
 
-    // if crosshair is tracking, convert the event position to RAS
-    // (takes into account what lightbox the cursor is in)
-    double xyz[4];
-    this->ConvertDeviceToXYZ(pos[0], pos[1], xyz);
-    double ras[4];
-    this->Internal->GetSliceNode()->GetXYToRAS()->MultiplyPoint(xyz, ras);
-    ras[0] /= ras[3]; ras[1] /= ras[3]; ras[2] /= ras[3]; ras[3] /= ras[3];
+      case vtkCommand::LeftButtonReleaseEvent:
+        // Button release is only meaningful in navigation mode
+        if (this->Internal->CrosshairNode->GetNavigation())
+          {
+          this->Internal->PickState = vtkInternal::NoPick;
+          this->Internal->ActionState = vtkInternal::NoAction;
+          }
+        break;
 
-    // set the new position on the crosshair
-    this->Internal->CrosshairNode->SetCrosshairRAS(ras);
+      case vtkCommand::MouseMoveEvent:
+        // On a mouse move, determine which lightbox is under the mouse
+        // and the RAS position of the mouse
+        int *pos =  this->GetInteractor()->GetEventPosition();
+        
+        double xyz[3];
+        this->ConvertDeviceToXYZ(pos[0], pos[1], xyz);
+
+        double ras[3];
+        this->ConvertXYZToRAS(xyz, ras);
+        
+        // Navigation mode and Cross-referencing mode handle the
+        // information differently
+        if (this->Internal->CrosshairNode->GetNavigation())
+          {
+          // Navigation mode.
+          switch (this->Internal->ActionState)
+            {
+            case vtkInternal::NoAction:
+            {
+              // Check whether we need to highlight, is the mouse
+              // close to the crosshair?
+
+              // Crosshair in XYZ
+              double *c_ras = this->Internal->CrosshairNode->GetCrosshairRAS();
+              double c_xyz[3];
+              this->ConvertRASToXYZ(c_ras, c_xyz);
+
+              // check tolerances
+              double tol = 5;
+              if ( (fabs(xyz[0] - c_xyz[0]) < tol) 
+                   && (fabs(xyz[1] - c_xyz[1]) < tol) )
+                {
+                this->Internal->PickState = vtkInternal::Over;
+                if (this->Internal->HighlightActor)
+                  {
+                  this->Internal->HighlightActor->VisibilityOn();
+                  }
+                }
+              else if ( fabs(xyz[0] - c_xyz[0]) < tol )
+                {
+                this->Internal->PickState = vtkInternal::Vertical;
+                if (this->Internal->HighlightActor)
+                  {
+                  this->Internal->HighlightActor->VisibilityOn();
+                  }
+                }
+              else if ( fabs(xyz[1] - c_xyz[1]) < tol )
+                {
+                this->Internal->PickState = vtkInternal::Horizontal;
+                if (this->Internal->HighlightActor)
+                  {
+                  this->Internal->HighlightActor->VisibilityOn();
+                  }
+                }
+              else if ( (fabs(xyz[0] - c_xyz[0]) < 2.0*tol) 
+                        && (fabs(xyz[1] - c_xyz[1]) < 2.0*tol) )
+                {
+                this->Internal->PickState = vtkInternal::Near;
+                if (this->Internal->HighlightActor)
+                  {
+                  this->Internal->HighlightActor->VisibilityOn();
+                  }
+                }
+              else
+                {
+                this->Internal->PickState = vtkInternal::Outside;
+                if (this->Internal->HighlightActor)
+                  {
+                  this->Internal->HighlightActor->VisibilityOff();
+                  }
+                }
+              break;
+            }
+            case vtkInternal::Dragging:
+              // Set the new position on the crosshair
+              this->Internal->CrosshairNode->SetCrosshairRAS(ras);
+              break;
+            }
+          }
+        else
+          {
+          // Cross-referencing mode. Set the new position on the crosshair
+          this->Internal->CrosshairNode->SetCrosshairRAS(ras);
+          }
+        break;
+      }
     }
 }
 

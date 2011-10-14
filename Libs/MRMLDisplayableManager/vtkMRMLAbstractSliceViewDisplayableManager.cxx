@@ -25,6 +25,7 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkMatrix4x4.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
@@ -74,8 +75,8 @@ vtkMRMLSliceNode * vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode(
 
 
 //---------------------------------------------------------------------------
-/// Convert display to viewport coordinates
-void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, double y, double * xyz)
+/// Convert display to viewport coordinates. XYZ is double[3]
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, double y, double xyz[3])
 {
   if (xyz == NULL || this->GetInteractor() == NULL || this->GetMRMLSliceNode() == NULL)
     {
@@ -98,6 +99,33 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, do
   xyz[0] = x - pokedRenderer->GetOrigin()[0];
   xyz[1] = y - pokedRenderer->GetOrigin()[1];
   xyz[2] = z;
-  xyz[3] = 1;
 }
+
+//---------------------------------------------------------------------------
+/// Convert RAS to viewport coordinates.
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], double xyz[3])
+{
+  vtkMatrix4x4 *rasToXYZ = vtkMatrix4x4::New();
+  rasToXYZ->DeepCopy(this->GetMRMLSliceNode()->GetXYToRAS());
+  rasToXYZ->Invert();
+
+  double rasw[4], xyzw[4];
+  rasw[0] = ras[0]; rasw[1] = ras[1]; rasw[2] = ras[2]; rasw[3] = 1.0;
+  rasToXYZ->MultiplyPoint(rasw, xyzw);
+  xyz[0] = xyzw[0]/xyzw[3]; xyz[1] = xyzw[1]/xyzw[3]; xyz[2] = xyzw[2]/xyzw[3];
+  
+  rasToXYZ->Delete();
+}
+
+//---------------------------------------------------------------------------
+/// Convert viewport coordinates to RAS
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(double xyz[3], double ras[3])
+{
+  double rasw[4], xyzw[4];
+  xyzw[0] = xyz[0]; xyzw[1] = xyz[1]; xyzw[2] = xyz[2]; xyzw[3] = 1.0;
+
+  this->GetMRMLSliceNode()->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
+  ras[0] = rasw[0]/rasw[3]; ras[1] = rasw[1]/rasw[3]; ras[2] = rasw[2]/rasw[3];
+}
+
 
