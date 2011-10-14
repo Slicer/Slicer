@@ -203,6 +203,9 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Description: " <<
     (this->Description ? this->Description : "(none)") << "\n";
 
+  os << indent << "SingletonTag: " <<
+    (this->SingletonTag ? this->SingletonTag : "(none)") << "\n";
+  
   os << indent << "HideFromEditors: " << this->HideFromEditors << "\n";
 
   os << indent << "ModifiedSinceRead: " << this->ModifiedSinceRead << "\n";

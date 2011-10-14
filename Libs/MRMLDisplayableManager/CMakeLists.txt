@@ -67,8 +67,9 @@ set(DisplayableManager_SRCS
   vtkMRMLViewDisplayableManager.cxx
 
   # DisplayableManager associated with SliceView
+  vtkMRMLCrosshairDisplayableManager.cxx
   vtkMRMLSliceModelDisplayableManager.cxx
-  )
+ )
 
 set(KIT_SRCS
   ${DisplayableManager_SRCS}
@@ -86,7 +87,10 @@ set(KIT_SRCS
 
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
-  )
+
+  # Proxy classes
+  vtkMRMLLightBoxRendererManagerProxy.cxx
+)
 set_source_files_properties(
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
@@ -129,7 +133,7 @@ set(libs
   ${VTK_LIBRARIES}
   MRML
   MRMLLogic
-  )
+ )
 
 if(MRMLDisplayableManager_USE_PYTHON)
   list(APPEND libs

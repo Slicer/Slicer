@@ -347,10 +347,11 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToUnObserve
                                 << " has already been added to the list of observable events !");
-      return;
       }
-
-    this->InteractorStyleObservableEvents.push_back(eventIdToObserve);
+    else
+      {
+      this->InteractorStyleObservableEvents.push_back(eventIdToObserve);
+      }
     }
 
   if (eventIdToUnObserve != vtkCommand::NoEvent)
@@ -365,10 +366,11 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToUnObserve
                                 << " has already NOT been added to the list of observable events !");
-      return;
       }
-
-    this->InteractorStyleObservableEvents.erase(it);
+    else
+      {
+      this->InteractorStyleObservableEvents.erase(it);
+      }
     }
 }
 
@@ -668,6 +670,6 @@ void vtkMRMLAbstractDisplayableManager::RemoveInteractorStyleObservableEvent(int
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::OnInteractorStyleEvent(int vtkNotUsed(eventid))
 {
-//  std::cout << "OnInteractorStyleEvent - eventid:" << eventid
-//            << ", eventname:" << vtkCommand::GetStringFromEventId(eventid) << std::endl;
+  // std::cout << "OnInteractorStyleEvent - eventid:" << eventid
+  //           << ", eventname:" << vtkCommand::GetStringFromEventId(eventid) << std::endl;
 }

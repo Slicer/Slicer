@@ -500,6 +500,7 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
     this->MRMLLayoutNode ?
     this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
   q->setLayout(newLayout);
+
   emit q->layoutChanged(layout);
 }
 

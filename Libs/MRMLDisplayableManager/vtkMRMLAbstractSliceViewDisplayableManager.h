@@ -58,6 +58,10 @@ protected:
 
   /// Could be overloaded if DisplayableManager subclass
   virtual void OnMRMLSliceNodeModifiedEvent(){}
+
+  /// Convert device coordinates to XYZ coordinates. parameter xyz
+  /// must be preallocated to have a length of 4 elements
+  void ConvertDeviceToXYZ(double x, double y, double * xyz);
   
 private:
 

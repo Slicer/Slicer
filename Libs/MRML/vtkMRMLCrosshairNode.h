@@ -21,12 +21,13 @@
 #define __vtkMRMLCrosshairNode_h
 
 #include "vtkMRMLNode.h"
+#include "vtkMRMLDisplayableNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLDisplayableNode
 {
   public:
   static vtkMRMLCrosshairNode *New();
-  vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

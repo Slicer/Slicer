@@ -29,7 +29,9 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLCrosshairDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 //#include <vtkSliceViewInteractorStyle.h>
 
@@ -39,10 +41,88 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
 //--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
+// qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy class
+
+//---------------------------------------------------------------------------
+class qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy : 
+  public vtkMRMLLightBoxRendererManagerProxy
+{
+public:
+  static vtkInternalLightBoxRendererManagerProxy* New();
+  vtkTypeRevisionMacro(vtkInternalLightBoxRendererManagerProxy, 
+                       vtkMRMLLightBoxRendererManagerProxy);
+
+
+  /// Method to query the mapping from an id of a LightBox frame to
+  /// the Renderer for that frame
+  virtual vtkRenderer *GetRenderer(int id);
+
+  /// Method to set the real LightBoxManager
+  virtual void SetLightBoxRendererManager(vtkLightBoxRendererManager *mgr);
+
+protected:
+  vtkInternalLightBoxRendererManagerProxy();
+  virtual ~vtkInternalLightBoxRendererManagerProxy();
+
+private:
+  vtkInternalLightBoxRendererManagerProxy(const vtkInternalLightBoxRendererManagerProxy&); // Not implemented
+  void operator=(const vtkInternalLightBoxRendererManagerProxy&);                    // Not implemented
+
+  vtkWeakPointer<vtkLightBoxRendererManager> LightBoxRendererManager;
+
+};
+
+//--------------------------------------------------------------------------
+// vtkInternalLightBoxRendereManagerProxy methods
+
+//vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy );
+vtkCxxRevisionMacro(qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy, "$Revision: 13525 $");
+
+//---------------------------------------------------------------------------
+// Using the vtkStandardNewMacro results in a link error about
+// qMRMLSLiceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::NewInstanceInternal(). 
+// So using an implementation that does not support factories.
+qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy *
+qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::New()
+{
+  return new qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy;
+}
+
+//---------------------------------------------------------------------------
+qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::vtkInternalLightBoxRendererManagerProxy()
+{
+  this->LightBoxRendererManager = 0;
+}
+
+//---------------------------------------------------------------------------
+qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::~vtkInternalLightBoxRendererManagerProxy()
+{
+  this->LightBoxRendererManager = 0;
+}
+
+//---------------------------------------------------------------------------
+vtkRenderer* qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::GetRenderer(int id)
+{
+  if (this->LightBoxRendererManager)
+    {
+    return this->LightBoxRendererManager->GetRenderer(id);
+    }
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBoxRendererManager(vtkLightBoxRendererManager *mgr)
+{
+  this->LightBoxRendererManager = mgr; 
+}
+
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -54,6 +134,7 @@ qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
   this->DisplayableManagerGroup = 0;
   this->MRMLSliceNode = 0;
   this->InactiveBoxColor = QColor(95, 95, 113);
+  this->LightBoxRendererManagerProxy = vtkInternalLightBoxRendererManagerProxy::New();
 }
 
 //---------------------------------------------------------------------------
@@ -72,8 +153,9 @@ void qMRMLSliceWidgetPrivate::init()
   connect(this->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
           this, SLOT(setImageData(vtkImageData*)));
   connect(this->SliceController, SIGNAL(renderRequested()),
-          this->VTKSliceView, SLOT(scheduleRender()));
+          this->VTKSliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
 
+  this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(this->VTKSliceView->lightBoxRendererManager());
   this->initDisplayableManagers();
 }
 
@@ -85,6 +167,7 @@ void qMRMLSliceWidgetPrivate::initDisplayableManagers()
 
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLSliceModelDisplayableManager";
+  displayableManagers << "vtkMRMLCrosshairDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {
     if (!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))
@@ -99,6 +182,13 @@ void qMRMLSliceWidgetPrivate::initDisplayableManagers()
   // Observe displayable manager group to catch RequestRender events
   this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                     this->VTKSliceView, SLOT(scheduleRender()));
+
+  // pass the lightbox manager proxy on the CrosshairDisplayableManager
+  vtkMRMLCrosshairDisplayableManager *cmgr = vtkMRMLCrosshairDisplayableManager::SafeDownCast(this->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+  if (cmgr)
+    {
+    cmgr->SetLightBoxRendererManagerProxy(this->LightBoxRendererManagerProxy);
+    }
 }
 
 //---------------------------------------------------------------------------

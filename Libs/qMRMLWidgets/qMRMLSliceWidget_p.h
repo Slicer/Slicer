@@ -29,6 +29,9 @@
 #include "qMRMLSliceWidget.h"
 #include "ui_qMRMLSliceWidget.h"
 
+// VTK include
+#include <vtkSmartPointer.h>
+
 class vtkMRMLDisplayableManagerGroup;
 class QResizeEvent;
 
@@ -68,6 +71,9 @@ public:
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLSliceNode*                  MRMLSliceNode;
   QColor                             InactiveBoxColor;
+
+  class vtkInternalLightBoxRendererManagerProxy;
+  vtkSmartPointer<vtkInternalLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
 #endif

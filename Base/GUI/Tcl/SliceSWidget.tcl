@@ -155,7 +155,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   set gridSWidget [GridSWidget #auto $sliceGUI]
   $gridSWidget configure -layer "label"
   lappend _swidgets $gridSWidget
-  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
+#  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
   lappend _swidgets [VolumeDisplaySWidget #auto $sliceGUI]
   lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
 
