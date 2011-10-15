@@ -22,7 +22,7 @@ if(NOT DEFINED ChangeTrackerPy_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/ChangeTrackerPy.git"
-    GIT_TAG "b54447c8df87cb8d6968f662eb00eb5c7aa38feb"
+    GIT_TAG "16ad47a4d23a4ac9df616c88732ef24b6506fc44"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

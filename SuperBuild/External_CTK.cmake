@@ -17,6 +17,8 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
 
+set(UPDATE_COMMAND "")
+
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(CTK)
 set(proj CTK)
