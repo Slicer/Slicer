@@ -1411,6 +1411,10 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
 
+        if { $ssgui == "" } {
+          continue
+        }
+
         set numsgui [$ssgui GetNumberOfSliceGUI]
 
         for { set i 0 } { $i < $numsgui } { incr i } {
