@@ -250,10 +250,11 @@ class DICOMWidget:
           self.messageBox("Delete not yet implemented")
 
   def onLoadButton(self):
-    self.progress = qt.QProgressDialog()
+    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
     self.progress.minimumDuration = 0
     self.progress.show()
     self.progress.setValue(0)
+    self.progress.setMaximum(100)
     uid = self.selection.data(self.dicomModelUIDRole)
     role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
     toLoad = {}
@@ -267,14 +268,17 @@ class DICOMWidget:
       self.loadSeries(uid)
     elif role == "Image":
       pass
+    self.progress.close()
     self.progress = None
 
   def onExportClicked(self):
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
-    exportDialog = DICOMExportDialog(uid)
+    exportDialog = DICOMExportDialog(uid,onExportFinished=self.onExportFinished)
     self.dicomApp.suspendModel()
     exportDialog.open()
+
+  def onExportFinished(self):
     self.dicomApp.resumeModel()
     self.dicomApp.resetModel()
 
@@ -463,8 +467,9 @@ class DICOMExportDialog(object):
   to be part of a DICOM study (e.g. a slicer volume as a new dicom series).
   """
 
-  def __init__(self,studyUID):
+  def __init__(self,studyUID,onExportFinished=None):
     self.studyUID = studyUID
+    self.onExportFinished = onExportFinished
 
   def open(self):
 
@@ -525,6 +530,8 @@ class DICOMExportDialog(object):
         DICOMLib.DICOMExporter(self.studyUID,volumeNode,parameters)
       except Exception as result:
         qt.QMessageBox.warning(self.dialog, 'DICOM Export', 'Could not export data: %s' % result)
+    if self.onExportFinished:
+      self.onExportFinished()
     self.dialog.close()
 
   def onCancel(self):
@@ -583,7 +590,7 @@ class DICOMSendDialog(object):
     settings = qt.QSettings()
     settings.setValue('DICOM.sendAddress', address)
     settings.setValue('DICOM.sendPort', port)
-    self.progress = qt.QProgressDialog()
+    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
     self.progress.minimumDuration = 0
     self.progress.setMaximum(len(self.files))
     self.progressValue = 0
@@ -591,6 +598,7 @@ class DICOMSendDialog(object):
       DICOMLib.DICOMSender(self.files, address, port, progressCallback = self.onProgress)
     except Exception as result:
       qt.QMessageBox.warning(self.dialog, 'DICOM Send', 'Could not send data: %s' % result)
+    self.progress.close()
     self.dialog.close()
 
   def onProgress(self,message):
