@@ -137,7 +137,7 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
   this->HighlightActor = 0;
   this->LightBoxRenderer = 0;
   this->LightBoxRendererManagerProxy = 0;
-  this->CrosshairNodeCache = vtkMRMLCrosshairNode::New();
+  this->CrosshairNodeCache = vtkSmartPointer<vtkMRMLCrosshairNode>::New();
 }
 
 //---------------------------------------------------------------------------
@@ -147,8 +147,10 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
   this->SetCrosshairNode(0);
   this->LightBoxRenderer = 0;
   this->LightBoxRendererManagerProxy = 0;
+  this->CrosshairNodeCache = 0;
   // everything should be empty
   assert(this->SliceCompositeNode == 0);
+  assert(this->CrosshairNode == 0);
 }
 
 
@@ -333,11 +335,13 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
     if (crosshairNode 
         && crosshairNode->GetCrosshairName() == std::string("default"))
       {
+      crosshairs->Delete();
       return crosshairNode;
       }
     }
   // no matching crosshair node is found
   assert(0);
+  crosshairs->Delete();
   return 0;
 }
 
