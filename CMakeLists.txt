@@ -36,21 +36,26 @@ set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 # Sanity checks
 #------------------------------------------------------------------------------
 if(WIN32)
-  string(LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n)
-  if(n GREATER 50)
-    message(
-      FATAL_ERROR
-      "Source tree directory of ${PROJECT_NAME} is too deep (${n} > 50)."
-      "Please use a shorter root directory for the ${PROJECT_NAME} source tree."
-      )
-  endif()
-  string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
-  if(n GREATER 50)
-    message(
-      FATAL_ERROR
-      "Binary tree directory of ${PROJECT_NAME} is too deep (${n} > 50)."
-      "Please use a shorter root directory for the ${PROJECT_NAME} binary tree."
-      )
+  option(Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK "Skip root directory length check" OFF)
+  mark_as_advanced(Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
+  if(NOT Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
+    set(root_directory_max_length 40)
+    string(LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n)
+    if(n GREATER ${root_directory_max_length})
+      message(
+        FATAL_ERROR
+        "Source tree directory of ${PROJECT_NAME} is too deep (${n} > ${root_directory_max_length})."
+        "Please use a shorter root directory for the ${PROJECT_NAME} source tree."
+        )
+    endif()
+    string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
+    if(n GREATER ${root_directory_max_length})
+      message(
+        FATAL_ERROR
+        "Binary tree directory of ${PROJECT_NAME} is too deep (${n} > ${root_directory_max_length})."
+        "Please use a shorter root directory for the ${PROJECT_NAME} binary tree."
+        )
+    endif()
   endif()
 endif()
 include(PreventInSourceBuilds)
