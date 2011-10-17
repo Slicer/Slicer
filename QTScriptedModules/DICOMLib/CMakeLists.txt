@@ -1,6 +1,6 @@
 set(EditorLib_PYTHON_SCRIPTS
   __init__
-  DICOMServers
+  DICOMProcesses
   DICOMDataExchange
   )
 

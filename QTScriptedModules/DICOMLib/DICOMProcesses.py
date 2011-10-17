@@ -8,16 +8,17 @@ from __main__ import ctk
 # 
 comment = """
 
-DICOMServers has python/qt wrapper code around
+DICOMProcesses has python/qt wrapper code around
 dcmtk command line modules.  This code is meant
-for use with the DICOM scripted module
+for use with the DICOM scripted module, but could
+also be used as a logic helper in other code
 
 # TODO : 
 """
 #
 #########################################################
 
-class DICOMServer(object):
+class DICOMProcess(object):
   """helper class to run dcmtk's executables
   Code here depends only on python and DCMTK executables
   """
@@ -65,11 +66,11 @@ class DICOMServer(object):
   def stop(self):
     if hasattr(self,'process'):
       if self.process:
-        print("stopping DICOM listener")
+        print("stopping DICOM process")
         self.process.kill()
         self.process = None
 
-class DICOMListener(DICOMServer):
+class DICOMListener(DICOMProcess):
   """helper class to run dcmtk's storescp as listener
   Code here depends only on python and DCMTK executables
   TODO: it might make sense to refactor this as a generic tool
@@ -147,13 +148,54 @@ class DICOMListener(DICOMServer):
     stdErr = str(self.process.readAllStandardError())
     print ("processed stderr")
 
+class DICOMSender(DICOMProcess):
+  """Code to send files to a remote host
+  (Uses storescu from dcmtk)
+  """
+
+  def __init__(self,files,address,port,progressCallback=None):
+    super(DICOMSender,self).__init__()
+    self.files = files
+    self.address = address
+    self.port = port
+    self.progressCallback = progressCallback
+    if not self.progressCallback:
+      self.progressCallback = self.defaultProgressCallback
+    self.send()
+
+  def __del__(self):
+    super(DICOMSender,self).__del__()
+
+  def defaultProgressCallback(self,s):
+    print(s)
+
+  def send(self):
+    self.progressCallback("Starting send to %s:%s" % (self.address, self.port))
+    for file in self.files:
+      self.start(file)
+      self.progressCallback("Sent %s to %s:%s" % (file, self.address, self.port))
+
+  def start(self,file):
+    self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
+    # run the process!
+    args = [str(self.address), str(self.port), file]
+    super(DICOMSender,self).start(self.storeSCUExecutable, args)
+    self.process.waitForFinished()
+    if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
+      stdout = self.process.readAllStandardOutput()
+      stderr = self.process.readAllStandardError()
+      print('error code is: %d' % self.process.error())
+      print('standard out is: %s' % stdout)
+      print('standard error is: %s' % stderr)
+      raise( UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port)) )
+
 class DICOMTestingQRServer(object):
   """helper class to set up the DICOM servers
   Code here depends only on python and DCMTK executables
   TODO: it might make sense to refactor this as a generic tool
   for interacting with DCMTK
   """
-  # TODO: make this use DICOMServer superclass
+  # TODO: make this use DICOMProcess superclass
 
   def __init__(self,exeDir=".",tmpDir="./DICOM"):
     self.qrProcess = None

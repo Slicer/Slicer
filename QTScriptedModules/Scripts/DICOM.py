@@ -185,7 +185,13 @@ class DICOMWidget:
     self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
     self.exportButton.enabled = False 
     userFrame.layout().addWidget(self.exportButton)
-    self.exportButton.connect('clicked()', self.onExportButton)
+    self.exportButton.connect('clicked()', self.onExportClicked)
+
+    # enable to the Send button of the app widget and take it over
+    # for our purposes - TODO: fix this to enable it at the ctkDICOM level
+    self.sendButton = slicer.util.findChildren(self.dicomApp, text='Send')[0]
+    self.sendButton.enabled = False
+    self.sendButton.connect('clicked()', self.onSendClicked)
 
     # Add spacer to layout
     self.layout.addStretch(1)
@@ -220,9 +226,11 @@ class DICOMWidget:
     if typeRole > 0:
       self.loadButton.text = 'Load Selected %s to Slicer' % self.dicomModelTypes[typeRole]
       self.loadButton.enabled = True
+      self.sendButton.enabled = True
     else:
       self.loadButton.text = 'Load to Slicer'
       self.loadButton.enabled = False 
+      self.sendButton.enabled = False
     self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
 
   def onTreeContextMenuRequested(self,pos):
@@ -261,7 +269,7 @@ class DICOMWidget:
       pass
     self.progress = None
 
-  def onExportButton(self):
+  def onExportClicked(self):
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
     exportDialog = DICOMExportDialog(uid)
@@ -269,6 +277,30 @@ class DICOMWidget:
     exportDialog.open()
     self.dicomApp.resumeModel()
     self.dicomApp.resetModel()
+
+  def onSendClicked(self):
+    """Perform a dicom store of slicer data to a peer"""
+    # TODO: this should migrate to ctk for a more complete implementation
+    # - just the basics for now
+    uid = self.selection.data(self.dicomModelUIDRole)
+    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
+    studies = []
+    if role == "Patient":
+      studies = slicer.dicomDatabase.studiesForPatient(uid)
+    if role == "Study":
+      studies = [uid]
+    series = []
+    if role == "Series":
+      series = [uid]
+    else:
+      for study in studies:
+        series += slicer.dicomDatabase.seriesForStudy(study)
+    files = []
+    for serie in series:
+      files += slicer.dicomDatabase.filesForSeries(serie)
+    sendDialog = DICOMSendDialog(files)
+    sendDialog.open()
+
 
   def loadPatient(self,patientUID):
     studies = slicer.dicomDatabase.studiesForPatient(patientUID)
@@ -498,6 +530,77 @@ class DICOMExportDialog(object):
   def onCancel(self):
     self.dialog.close()
 
+class DICOMSendDialog(object):
+  """Implement the Qt dialog for doing a DICOM Send (storage SCU)
+  """
+
+  def __init__(self,files):
+    self.files = files
+    settings = qt.QSettings()
+    self.sendAddress = settings.value('DICOM.sendAddress')
+    self.sendPort = settings.value('DICOM.sendPort')
+    self.open
+
+  def open(self):
+    # main dialog
+    self.dialog = qt.QDialog(slicer.util.mainWindow())
+    self.dialog.setWindowTitle('Send DICOM Study')
+    self.dialog.setWindowModality(1)
+    layout = qt.QVBoxLayout()
+    self.dialog.setLayout(layout)
+
+    self.studyLabel = qt.QLabel('Send %d items to destination' % len(self.files))
+    layout.addWidget(self.studyLabel)
+
+    # Send Parameters
+    self.dicomFrame = qt.QFrame(self.dialog)
+    self.dicomFormLayout = qt.QFormLayout()
+    self.dicomFrame.setLayout(self.dicomFormLayout)
+    self.dicomEntries = {}
+    self.dicomParameters = { 
+      "Destination Address": self.sendAddress,
+      "Destination Port": self.sendPort
+    }
+    for label in self.dicomParameters.keys():
+      self.dicomEntries[label] = qt.QLineEdit()
+      self.dicomEntries[label].text = self.dicomParameters[label]
+      self.dicomFormLayout.addRow(label+": ", self.dicomEntries[label])
+    layout.addWidget(self.dicomFrame)
+
+    # button box
+    bbox = qt.QDialogButtonBox(self.dialog)
+    bbox.addButton(bbox.Ok)
+    bbox.addButton(bbox.Cancel)
+    bbox.connect('accepted()', self.onOk)
+    bbox.connect('rejected()', self.onCancel)
+    layout.addWidget(bbox)
+
+    self.dialog.open()
+
+  def onOk(self):
+    address = self.dicomEntries['Destination Address'].text
+    port = self.dicomEntries['Destination Port'].text
+    settings = qt.QSettings()
+    settings.setValue('DICOM.sendAddress', address)
+    settings.setValue('DICOM.sendPort', port)
+    self.progress = qt.QProgressDialog()
+    self.progress.minimumDuration = 0
+    self.progress.setMaximum(len(self.files))
+    self.progressValue = 0
+    try:
+      DICOMLib.DICOMSender(self.files, address, port, progressCallback = self.onProgress)
+    except Exception as result:
+      qt.QMessageBox.warning(self.dialog, 'DICOM Send', 'Could not send data: %s' % result)
+    self.dialog.close()
+
+  def onProgress(self,message):
+    self.progress.show()
+    self.progressValue += 1
+    self.progress.setValue(self.progressValue)
+    self.progress.setLabelText(message)
+
+  def onCancel(self):
+    self.dialog.close()
 
 def DICOMTest():
   w = slicer.modules.dicom.widgetRepresentation()

@@ -1,2 +1,2 @@
-from DICOMServers import *
+from DICOMProcesses import *
 from DICOMDataExchange import *
