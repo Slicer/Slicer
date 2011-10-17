@@ -122,7 +122,8 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
                       << "vtkMRMLViewDisplayableManager"
-                      << "vtkMRMLModelDisplayableManager";
+                      << "vtkMRMLModelDisplayableManager"
+                      << "vtkMRMLThreeDReformatDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {
     if(!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))

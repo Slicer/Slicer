@@ -72,6 +72,7 @@ public:
   virtual void setColor(QColor color);
 
   void setupLinkedOptionsMenu();
+  void setupReformatOptionsMenu();
   void setupLightboxMenu();
   void setupCompositingMenu();
   void setupCrosshairMenu();

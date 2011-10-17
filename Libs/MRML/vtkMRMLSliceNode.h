@@ -72,6 +72,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetMacro ( WidgetVisible, int );
   vtkSetMacro ( WidgetVisible, int );
 
+  ///
+  /// The ImpplicitePlane widget mode
+  /// this lock the normal of the plane to the camera's one
+  vtkGetMacro ( PlaneLockedToCamera, int );
+  vtkSetMacro ( PlaneLockedToCamera, int );
+
   /// 
   /// Use the label outline filter on this slice?
   vtkGetMacro ( UseLabelOutline, int );
@@ -89,7 +95,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// 
   /// General 'reformat' view that allows for multiplanar reformat
   void SetOrientationToReformat();
-  
+
   ///
   /// Convenient function that calls SetOrientationToAxial(),
   /// SetOrientationToSagittal(), SetOrientationToCoronal() or
@@ -293,7 +299,6 @@ protected:
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
   void operator=(const vtkMRMLSliceNode&);
 
-
   vtkMatrix4x4 *SliceToRAS;
   vtkMatrix4x4 *XYToSlice;
   vtkMatrix4x4 *XYToRAS;
@@ -302,6 +307,7 @@ protected:
   
   int SliceVisible;
   int WidgetVisible;
+  int PlaneLockedToCamera;
   int UseLabelOutline;
   double FieldOfView[3];
   int Dimensions[3];

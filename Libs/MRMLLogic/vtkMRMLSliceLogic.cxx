@@ -24,9 +24,11 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkImageBlend.h>
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
@@ -2096,5 +2098,30 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset)
     }
   // slice is not aligned to any of the layers or out of the volume
   return SLICE_INDEX_NO_VOLUME;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic::GetSliceCompositeNode(vtkMRMLSliceNode* sliceNode)
+{
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = 0;
+  vtkMRMLScene* scene = sliceNode ? sliceNode->GetScene() : 0;
+  if (!scene || !sliceNode->GetLayoutName())
+    {
+    return sliceCompositeNode;
+    }
+  vtkMRMLNode* node;
+  vtkCollectionSimpleIterator it;
+  for (scene->GetCurrentScene()->InitTraversal(it);
+       (node = (vtkMRMLNode*)scene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
+    {
+    sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+    if (sliceCompositeNode &&
+        sliceCompositeNode->GetLayoutName() &&
+        !strcmp(sliceCompositeNode->GetLayoutName(), sliceNode->GetLayoutName()))
+      {
+      return sliceCompositeNode;
+      }
+    }
+  return 0;
 }
 

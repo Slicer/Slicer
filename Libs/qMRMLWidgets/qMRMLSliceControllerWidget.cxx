@@ -159,6 +159,9 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // Populate the Linked menu
   this->setupLinkedOptionsMenu();
 
+  // Populate the reformat menu
+  this->setupReformatOptionsMenu();
+
   // Connect link toggle
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
                 q, SLOT(setSliceLink(bool)));
@@ -173,7 +176,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(fitSliceToBackground()));
   QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
                    q, SLOT(rotateSliceToBackground()));
-  QObject::connect(this->actionShow_reformat_widget, SIGNAL(toggled(bool)),
+  QObject::connect(this->actionShow_reformat_widget, SIGNAL(triggered(bool)),
                    q, SLOT(showReformatWidget(bool)));
   QObject::connect(this->actionCompositingAlpha_blend, SIGNAL(triggered()),
                    q, SLOT(setCompositingToAlphaBlend()));
@@ -343,12 +346,27 @@ void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 {
   Q_Q(qMRMLSliceControllerWidget);
   QMenu* linkedMenu = new QMenu(tr("Linked"),this->SliceLinkButton);
+
   linkedMenu->addAction(this->actionHotLinked);
 
   QObject::connect(this->actionHotLinked, SIGNAL(toggled(bool)),
                    q, SLOT(setHotLinked(bool)));
 
   this->SliceLinkButton->setMenu(linkedMenu);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupReformatOptionsMenu()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+  QMenu* reformatMenu = new QMenu(tr("Reformat"),this->ShowReformatWidgetToolButton);
+
+  reformatMenu->addAction(this->actionLockNormalToCamera);
+
+  QObject::connect(this->actionLockNormalToCamera, SIGNAL(triggered(bool)),
+                   q, SLOT(lockReformatWidgetToCamera(bool)));
+
+  this->ShowReformatWidgetToolButton->setMenu(reformatMenu);
 }
 
 // --------------------------------------------------------------------------
@@ -1691,6 +1709,7 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
     }
   vtkMRMLSliceNode* node = 0;
   vtkCollectionSimpleIterator it;
+
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
                                    nodes->GetNextItemAsObject(it)));)
     {
@@ -1699,7 +1718,32 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
     // If slice node's reformat widget was off, turn it on and turn all the other ones off
     if (node == d->MRMLSliceNode || this->isLinked())
       {
-      node->SetWidgetVisible(show && node == d->MRMLSliceNode);
+      node->SetWidgetVisible(show);
+      }
+    }
+  if(show)
+    {
+    this->setSliceVisible(true);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::lockReformatWidgetToCamera(bool lock)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    if (node == d->MRMLSliceNode) //|| this->isLinked())
+      {
+      node->SetPlaneLockedToCamera(lock); //&& node == d->MRMLSliceNode);
       }
     }
 }

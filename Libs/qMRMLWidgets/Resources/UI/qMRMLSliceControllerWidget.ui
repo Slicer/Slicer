@@ -157,6 +157,9 @@
             <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
             <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
           <property name="autoRaise">
            <bool>true</bool>
           </property>
@@ -990,6 +993,17 @@
    </property>
    <property name="toolTip">
     <string>Slice intersections</string>
+   </property>
+  </action>
+  <action name="actionLockNormalToCamera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lock Normal To Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Lock reformat widget's normal to the camera one. </string>
    </property>
   </action>
  </widget>

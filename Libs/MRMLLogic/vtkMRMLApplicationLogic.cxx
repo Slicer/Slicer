@@ -133,7 +133,7 @@ void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
   this->Internal->SliceLogics = sliceLogics;
 }
 
-//----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 {
   vtkMRMLNode * selectionNode = 0;

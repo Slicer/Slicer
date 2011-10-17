@@ -175,6 +175,7 @@ public slots:
   void showLabelOutline(bool show);
   /// Reformat widget
   void showReformatWidget(bool show);
+  void lockReformatWidgetToCamera(bool lock);
   /// Compositing
   void setCompositing(int mode);
   void setCompositingToAlphaBlend();

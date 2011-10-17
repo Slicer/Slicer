@@ -157,7 +157,6 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   lappend _swidgets $gridSWidget
 #  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
   lappend _swidgets [VolumeDisplaySWidget #auto $sliceGUI]
-  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
 
   #lappend _swidgets [RegionsSWidget #auto $sliceGUI] ;# not used
 }

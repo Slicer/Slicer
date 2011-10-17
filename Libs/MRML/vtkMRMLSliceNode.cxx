@@ -62,6 +62,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->Dimensions[2] = 1;
   this->SliceVisible = 0;
   this->WidgetVisible = 0;
+  this->PlaneLockedToCamera = 0;
   this->UseLabelOutline = 0;
 
   this->LayoutGridColumns = 1;
