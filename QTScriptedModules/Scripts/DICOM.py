@@ -483,6 +483,20 @@ class DICOMExportDialog(object):
     self.studyLabel = qt.QLabel('Attach Data to Study: %s' % self.studyUID)
     layout.addWidget(self.studyLabel)
 
+    self.selectFrame = qt.QFrame(self.dialog)
+    layout.addWidget(self.selectFrame)
+    self.selectLayout = qt.QGridLayout()
+    self.selectFrame.setLayout(self.selectLayout)
+    self.exportScene = qt.QRadioButton("Export Entire Scene", self.selectFrame)
+    self.exportScene.setToolTip( "Create a Slicer Data Bundle in a DICOM Private Creator\n(Only compatible with Slicer)" )
+    self.exportVolume = qt.QRadioButton("Export Selected Volume", self.selectFrame)
+    self.exportVolume.setToolTip( "Create a compatible DICOM series" )
+    self.exportVolume.checked = True
+    self.selectLayout.addWidget(self.exportScene, 0, 0)
+    self.selectLayout.addWidget(self.exportVolume, 1, 0)
+    self.exportScene.connect('toggled(bool)', self.onExportRadio)
+    self.exportVolume.connect('toggled(bool)', self.onExportRadio)
+
     # select volume
     self.volumeSelector = slicer.qMRMLNodeComboBox(self.dialog)
     self.volumeSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
@@ -494,7 +508,7 @@ class DICOMExportDialog(object):
     self.volumeSelector.showChildNodeTypes = False
     self.volumeSelector.setMRMLScene( slicer.mrmlScene )
     self.volumeSelector.setToolTip( "Pick the label map to edit" )
-    layout.addWidget( self.volumeSelector )
+    self.selectLayout.addWidget( self.volumeSelector, 1, 1 )
 
     # DICOM Parameters
     self.dicomFrame = qt.QFrame(self.dialog)
@@ -519,6 +533,10 @@ class DICOMExportDialog(object):
     layout.addWidget(bbox)
 
     self.dialog.open()
+
+  def onExportRadio(self,toggled):
+    self.volumeSelector.enabled = self.exportVolume.checked
+
 
   def onOk(self):
     volumeNode = self.volumeSelector.currentNode()
