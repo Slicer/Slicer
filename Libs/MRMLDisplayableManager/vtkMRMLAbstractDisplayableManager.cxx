@@ -22,6 +22,9 @@
 #include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
@@ -93,6 +96,7 @@ public:
   bool                                      Initialized;
   bool                                      Created;
   bool                                      UpdateFromMRMLRequested;
+  vtkSmartPointer<vtkMRMLApplicationLogic>  ApplicationLogic;
   vtkRenderer*                              Renderer;
   vtkMRMLNode*                              MRMLDisplayableNode;
   vtkSmartPointer<vtkIntArray>              MRMLDisplayableNodeObservableEvents;
@@ -464,6 +468,26 @@ void vtkMRMLAbstractDisplayableManager
     }
   this->Internal->DisplayableManagerGroup = group;
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager
+::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic)
+{
+  // Sanity checks
+  if (this->Internal->ApplicationLogic.GetPointer() == applicationLogic)
+    {
+    return;
+    }
+  this->Internal->ApplicationLogic = applicationLogic;
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic* vtkMRMLAbstractDisplayableManager
+::GetMRMLApplicationLogic()const
+{
+  return this->Internal->ApplicationLogic.GetPointer();
 }
 
 //----------------------------------------------------------------------------

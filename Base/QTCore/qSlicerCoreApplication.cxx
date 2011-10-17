@@ -56,6 +56,10 @@
 // SlicerLogic includes
 #include "vtkDataIOManagerLogic.h"
 
+// MRMLDisplayable includes
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+
 // MRMLLogic includes
 #include <vtkMRMLRemoteIOLogic.h>
 
@@ -163,6 +167,10 @@ void qSlicerCoreApplicationPrivate::init()
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
+    this->AppLogic.GetPointer());
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
+    this->AppLogic.GetPointer());
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created

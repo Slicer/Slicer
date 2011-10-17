@@ -25,7 +25,8 @@
 #include "vtkMRMLScriptedDisplayableManager.h"
 #endif
 
-// MRML includes
+// MRMLLogic includes
+#include "vtkMRMLApplicationLogic.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -50,6 +51,9 @@ public:
 
   // .. and its associated convenient typedef
   typedef std::vector<std::string>::iterator DisplayableManagerClassNamesIt;
+
+  // The application logic (can be a vtkSlicerApplicationLogic
+  vtkSmartPointer<vtkMRMLApplicationLogic> ApplicationLogic;
 };
 
 //----------------------------------------------------------------------------
@@ -207,4 +211,18 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
   displayableManagerGroup->Initialize(this, newRenderer);
   return displayableManagerGroup;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic* vtkMRMLDisplayableManagerFactory
+::GetMRMLApplicationLogic()const
+{
+  return this->Internal->ApplicationLogic.GetPointer();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerFactory
+::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic)
+{
+  this->Internal->ApplicationLogic = logic;
 }

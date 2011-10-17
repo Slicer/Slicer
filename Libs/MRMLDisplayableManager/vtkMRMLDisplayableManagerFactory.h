@@ -33,6 +33,7 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkRenderer;
+class vtkMRMLApplicationLogic;
 class vtkMRMLDisplayableManagerGroup;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject
@@ -81,6 +82,11 @@ public:
   /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
   /// of each group.
   vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
+
+  /// Set the application logic. It will be passed to displayable
+  /// managers and groups to be created.
+  void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
+  vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
 
 protected:
 

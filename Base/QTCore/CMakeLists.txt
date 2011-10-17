@@ -18,6 +18,7 @@ set(KIT_include_directories
   ${ModuleDescriptionParser_INCLUDE_DIRS}
   ${MRMLCLI_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
+  ${MRMLDisplayableManager_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS} # for qSlicerXcedeCatalogIO
   )
 
@@ -74,6 +75,7 @@ set(KIT_MOC_SRCS
 set(KIT_target_libraries
   ModuleDescriptionParser
   SlicerBaseLogic
+  MRMLDisplayableManager
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
   CTKDICOMCore
