@@ -691,7 +691,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
     }
   int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  int row = this->nodeIndex(node);
+  int row = min + this->nodeIndex(node);
   if (row > max)
     {
     d->MisplacedNodes << node;
