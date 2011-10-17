@@ -1227,9 +1227,12 @@ void qSlicerAnnotationModulePropertyDialog::UpdateLockUnlockStatus(bool isLock)
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::TurnColorArrayToQColor(double* color, QColor &qcolor)
 {
-  qcolor.setRed(color[0] * 255.0001);
-  qcolor.setGreen(color[1] * 255.0001);
-  qcolor.setBlue(color[2] * 255.0001);
+  if ( color )
+    {
+    qcolor.setRed(color[0] * 255.0001);
+    qcolor.setGreen(color[1] * 255.0001);
+    qcolor.setBlue(color[2] * 255.0001);
+    }
 }
 
 //------------------------------------------------------------------------------
