@@ -39,9 +39,10 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   : q_ptr(&object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->LazyUpdate = false;
   this->ListenNodeModifiedEvent = false;
   this->PendingItemModified = -1; // -1 means not updating
-  
+
   this->NameColumn = -1;
   this->IDColumn = -1;
   this->CheckableColumn = -1;
@@ -535,6 +536,24 @@ bool qMRMLSceneModel::listenNodeModifiedEvent()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModel::setLazyUpdate(bool lazy)
+{
+  Q_D(qMRMLSceneModel);
+  if (d->LazyUpdate == lazy)
+    {
+    return;
+    }
+  d->LazyUpdate = lazy;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel::lazyUpdate()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->LazyUpdate;
+}
+
+//------------------------------------------------------------------------------
 QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
 {
   Q_D(const qMRMLSceneModel);
@@ -673,7 +692,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
   int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
   int row = this->nodeIndex(node);
-  if (min + row > max)
+  if (row > max)
     {
     d->MisplacedNodes << node;
     row = max;
@@ -1035,6 +1054,10 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
+  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+    {
+    return;
+    }
   this->insertNode(node);
 }
 
@@ -1045,6 +1068,11 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   Q_UNUSED(d);
   Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
+
+  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+    {
+    return;
+    }
 
   int connectionsRemoved =
     qvtkDisconnect(node, vtkCommand::ModifiedEvent,
@@ -1092,6 +1120,10 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   Q_UNUSED(node);
+  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+    {
+    return;
+    }
   // The removed node may had children, if they haven't been updated, they
   // are likely to be lost (not reachable when browsing the model), we need
   // to reparent them.
@@ -1242,7 +1274,12 @@ void qMRMLSceneModel::onMRMLSceneAboutToBeImported(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneImported(vtkMRMLScene* scene)
 {
+  Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
+  if (d->LazyUpdate)
+    {
+    this->updateScene();
+    }
   //this->endResetModel();
 }
 
@@ -1256,8 +1293,13 @@ void qMRMLSceneModel::onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 {
+  Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   //this->endResetModel();
+  if (d->LazyUpdate)
+    {
+    this->updateScene();
+    }
 }
 
 //------------------------------------------------------------------------------

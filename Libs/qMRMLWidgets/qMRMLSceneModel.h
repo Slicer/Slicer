@@ -42,7 +42,20 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
+
+  ///
+  /// Observe (or not) the modified event of the node and update the node item
+  /// data accordingly. It can be useful when the modified property is displayed
+  /// (name, id, visibility...)
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+
+  ///
+  /// Control wether the model actively listens to the scene.
+  /// If LazyUpdate is true, the model ignores added node events when the
+  /// scene is importing/restoring, but synchronize with the scene once its
+  /// imported/restored.
+  Q_PROPERTY (bool lazyUpdate READ lazyUpdate WRITE setLazyUpdate)
+
   ///
   /// Control in which column vtkMRMLNode names are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. First column (0) by default.
@@ -103,7 +116,10 @@ public:
   /// False by default.
   void setListenNodeModifiedEvent(bool listen);
   bool listenNodeModifiedEvent()const;
-  
+
+  bool lazyUpdate()const;
+  void setLazyUpdate(bool lazy);
+
   int nameColumn()const;
   void setNameColumn(int column);
 
@@ -118,7 +134,6 @@ public:
 
   int toolTipNameColumn()const;
   void setToolTipNameColumn(int column);
-
 
   ///
   /// Extra items that are prepended to the node list
