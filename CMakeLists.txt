@@ -192,7 +192,7 @@ mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 set(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK" FORCE)
 mark_as_advanced(Slicer_VTK_GIT_REPOSITORY)
 # By default, use a specific SHA1 associated with branch slicer-4.0-gamma on github.com/Slicer/VTK.git
-set(Slicer_VTK_GIT_TAG "b8c6adc067b8ecfea65d9797338868b3a0b874ea" CACHE STRING "VTK git tag to use" FORCE)
+set(Slicer_VTK_GIT_TAG "482695022a35dc1c03803dc20ae25ae50136e74d" CACHE STRING "VTK git tag to use" FORCE)
 mark_as_advanced(Slicer_VTK_GIT_TAG)
 set(Slicer_ITK_GIT_REPOSITORY "github.com/Slicer/ITK.git" CACHE STRING "repository from which to get ITK")
 mark_as_advanced(Slicer_ITK_GIT_REPOSITORY)
