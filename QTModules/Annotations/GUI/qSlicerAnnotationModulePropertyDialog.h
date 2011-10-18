@@ -35,25 +35,25 @@ public:
   void updateTextFromTable(QString text);
   void updateValue(QString valueString);
 
-  void SaveStateForUndo(vtkMRMLNode* node);
-  void Undo(vtkMRMLNode* node);
+  void saveStateForUndo(vtkMRMLNode* node);
+  void undo(vtkMRMLNode* node);
   void SetButtonText(int type);
-  void UpdateLockUnlockStatus(bool isLock);
+  void updateLockUnlockStatus(bool isLock);
 
   static void toQColor(const double* color, QColor &qcolor);
   static void toColor(const QColor &qcolor, double* color);
-  static void FormatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
+  static void formatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
 
   /// for the current m_id node, if all display nodes have the same unselected
   /// colour, return it, otherwise return black.
-  void GetAllColor(QColor &qcolor);
+  void getAllColor(QColor &qcolor);
   /// use the GetAllColor method and set the all color button
-  void UpdateAllColorButton();
+  void updateAllColorButton();
 
   /// look for the annotation display nodes for the node with id and set the
   /// unselected color on each one. If it's the currently displayed node,
   /// update the buttons as well.
-  void SetColorOnAnnotationDisplayNodes(const char *id, QColor qcolor);
+  void setColorOnAnnotationDisplayNodes(const char *id, QColor qcolor);
 
 protected:
   /// update the ui.typeLabel from the node with m_id
@@ -120,12 +120,12 @@ signals:
   
 private:
 
-    void SaveLinesNode(vtkMRMLAnnotationLinesNode* node);
-    void SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node);
-    void SaveAnnotationNode(vtkMRMLAnnotationNode* node);
-    void UndoLinesNode(vtkMRMLAnnotationLinesNode* node);
-    void UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node);
-    void UndoAnnotationNode(vtkMRMLAnnotationNode* node);
+    void saveLinesNode(vtkMRMLAnnotationLinesNode* node);
+    void saveControlPoints(vtkMRMLAnnotationControlPointsNode* node);
+    void saveAnnotationNode(vtkMRMLAnnotationNode* node);
+    void undoLinesNode(vtkMRMLAnnotationLinesNode* node);
+    void undoControlPoints(vtkMRMLAnnotationControlPointsNode* node);
+    void undoAnnotationNode(vtkMRMLAnnotationNode* node);
 
     // approved code starts here
     Ui::qSlicerAnnotationModulePropertyDialog ui;

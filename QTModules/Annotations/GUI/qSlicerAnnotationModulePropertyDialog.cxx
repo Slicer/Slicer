@@ -107,7 +107,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.allColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
   // if all the display nodes are the same colour, update the colour on the
   // button to show it, otherwise will be black
-  this->UpdateAllColorButton();
+  this->updateAllColorButton();
 
   vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
   if (!mrmlNode)
@@ -573,7 +573,7 @@ void qSlicerAnnotationModulePropertyDialog::updateValue(QString valueString)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
+void qSlicerAnnotationModulePropertyDialog::saveLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
   Q_UNUSED(node);
 
@@ -594,7 +594,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLines
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
+void qSlicerAnnotationModulePropertyDialog::saveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -614,7 +614,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationC
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotationNode* node)
+void qSlicerAnnotationModulePropertyDialog::saveAnnotationNode(vtkMRMLAnnotationNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -633,7 +633,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotation
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
+void qSlicerAnnotationModulePropertyDialog::saveStateForUndo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -675,7 +675,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
+void qSlicerAnnotationModulePropertyDialog::undoLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -690,7 +690,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLines
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
+void qSlicerAnnotationModulePropertyDialog::undoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -705,7 +705,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationC
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotationNode* node)
+void qSlicerAnnotationModulePropertyDialog::undoAnnotationNode(vtkMRMLAnnotationNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -719,7 +719,7 @@ void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotation
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
+void qSlicerAnnotationModulePropertyDialog::undo(vtkMRMLNode* node)
 {
   Q_UNUSED(node);
   /*
@@ -1184,7 +1184,7 @@ void qSlicerAnnotationModulePropertyDialog::onLineSpecularChanged(double value)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::UpdateLockUnlockStatus(bool isLock)
+void qSlicerAnnotationModulePropertyDialog::updateLockUnlockStatus(bool isLock)
 {
   Q_UNUSED(isLock);
   /* if (isLock)
@@ -1232,7 +1232,7 @@ void qSlicerAnnotationModulePropertyDialog::toQColor(const double* color, QColor
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::FormatValueToChar(const char* format, std::vector<
+void qSlicerAnnotationModulePropertyDialog::formatValueToChar(const char* format, std::vector<
     double> vv, QString &valueString)
 {
   char valuechar[100];
@@ -1258,7 +1258,7 @@ void qSlicerAnnotationModulePropertyDialog::toColor(const QColor &qcolor, double
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
+void qSlicerAnnotationModulePropertyDialog::getAllColor(QColor &qcolor)
 {
   // use black as a default
   qcolor.setRgbF(0.0, 0.0, 0.0, 1.0);
@@ -1321,10 +1321,10 @@ void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::UpdateAllColorButton()
+void qSlicerAnnotationModulePropertyDialog::updateAllColorButton()
 {
   QColor allColor;
-  this->GetAllColor(allColor);
+  this->getAllColor(allColor);
   ui.allColorPickerButton->setColor(allColor);
 }
 //-----------------------------------------------------------------------------
@@ -1452,7 +1452,7 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
           // and associated node colour
           if (allChildren[i]->GetAssociatedNode())
             {
-            this->SetColorOnAnnotationDisplayNodes(allChildren[i]->GetAssociatedNode()->GetID(), qcolor);
+            this->setColorOnAnnotationDisplayNodes(allChildren[i]->GetAssociatedNode()->GetID(), qcolor);
             }
           }
         }
@@ -1462,11 +1462,11 @@ void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
 
   // look for the display nodes on regular annotation nodes
   // and update the unselected color buttons to reflect the new colour
-  this->SetColorOnAnnotationDisplayNodes(this->m_id.c_str(), qcolor);
+  this->setColorOnAnnotationDisplayNodes(this->m_id.c_str(), qcolor);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::SetColorOnAnnotationDisplayNodes(const char *id, QColor qcolor)
+void qSlicerAnnotationModulePropertyDialog::setColorOnAnnotationDisplayNodes(const char *id, QColor qcolor)
 {
   if (!id)
     {
