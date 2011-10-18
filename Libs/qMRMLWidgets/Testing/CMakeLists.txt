@@ -31,7 +31,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLNodeComboBoxTest4.cxx
   qMRMLNodeComboBoxTest5.cxx
   qMRMLNodeComboBoxTest6.cxx
-  qMRMLNodeComboBoxTestLazyUpdate.cxx
+  qMRMLNodeComboBoxLazyUpdateTest1.cxx
   qMRMLNodeFactoryTest1.cxx
   qMRMLScalarInvariantComboBoxTest1.cxx
   qMRMLSceneCategoryModelTest1.cxx
@@ -119,7 +119,7 @@ SCENE_TEST(  qMRMLNodeComboBoxTest3 diffusionEditor.mrml )
 SIMPLE_TEST( qMRMLNodeComboBoxTest4 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest5 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest6 )
-SIMPLE_TEST( qMRMLNodeComboBoxTestLazyUpdate )
+SIMPLE_TEST( qMRMLNodeComboBoxLazyUpdateTest1 )
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
 SIMPLE_TEST( qMRMLScalarInvariantComboBoxTest1 )
 SIMPLE_TEST( qMRMLSceneCategoryModelTest1 )

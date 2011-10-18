@@ -35,7 +35,7 @@
 
 // STD includes
 
-int qMRMLNodeComboBoxTestLazyUpdate( int argc, char * argv [] )
+int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
