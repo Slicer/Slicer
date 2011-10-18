@@ -341,7 +341,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.lineSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
     
     // width
-    ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
+    // disable for now, widgets not using
+    //ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
+    ui.lineWidthSliderSpinBoxWidget_2->hide();
+    ui.widthLabel_2->hide();
+
     // label position
     ui.lineLabelPositionSliderSpinBoxWidget->setValue(lineDisplayNode->GetLabelPosition());
     // label visibility
