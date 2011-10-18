@@ -182,10 +182,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   double * unselectedColor = this->m_logic->GetAnnotationTextUnselectedColor(
       this->m_id.c_str());
   QColor unselectedQColor;
-  if (unselectedColor)
-  {
-    this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
-  }
+  qSlicerAnnotationModulePropertyDialog::toQColor(unselectedColor,unselectedQColor);
 
   ui.textUnselectedColorPickerButton->setDisplayColorName(false);
   ui.textUnselectedColorPickerButton->setColor(unselectedQColor);
@@ -195,10 +192,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
       this->m_id.c_str());
   QColor selectedQColor;
-  if (selectedColor)
-  {
-    this->TurnColorArrayToQColor(selectedColor,selectedQColor);
-  }
+  qSlicerAnnotationModulePropertyDialog::toQColor(selectedColor,selectedQColor);
 
   ui.textSelectedColorPickerButton->setDisplayColorName(false);
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
@@ -256,7 +250,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // unselected color
     double *pointUnSelColor = pointDisplayNode->GetColor();
     QColor pointUnSelQColor;
-    this->TurnColorArrayToQColor(pointUnSelColor,pointUnSelQColor);
+    qSlicerAnnotationModulePropertyDialog::toQColor(pointUnSelColor,pointUnSelQColor);
     ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
     ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
     ui.pointUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
@@ -264,7 +258,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // selected color
     double *pointSelColor = pointDisplayNode->GetSelectedColor();
     QColor pointSelQColor;
-    this->TurnColorArrayToQColor(pointSelColor, pointSelQColor);
+    qSlicerAnnotationModulePropertyDialog::toQColor(pointSelColor, pointSelQColor);
     ui.pointSelectedColorPickerButton->setDisplayColorName(false);
     ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
     ui.pointSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
@@ -333,7 +327,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // unselected
     double *lineUnSelColor = lineDisplayNode->GetColor();
     QColor lineUnSelQColor;
-    this->TurnColorArrayToQColor(lineUnSelColor,lineUnSelQColor);
+    qSlicerAnnotationModulePropertyDialog::toQColor(lineUnSelColor,lineUnSelQColor);
     ui.lineUnselectedColorPickerButton->setDisplayColorName(false);
     ui.lineUnselectedColorPickerButton->setColor(lineUnSelQColor);
     ui.lineUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
@@ -341,7 +335,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // selected
     double *lineSelColor = lineDisplayNode->GetSelectedColor();
     QColor lineSelQColor;
-    this->TurnColorArrayToQColor(lineSelColor, lineSelQColor);
+    qSlicerAnnotationModulePropertyDialog::toQColor(lineSelColor, lineSelQColor);
     ui.lineSelectedColorPickerButton->setDisplayColorName(false);
     ui.lineSelectedColorPickerButton->setColor(lineSelQColor);
     ui.lineSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
@@ -750,7 +744,7 @@ void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
 void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toQColor(color, qcolor);
 
   this->m_logic->SetAnnotationTextUnselectedColor(this->m_id.c_str(),color);
 }
@@ -759,7 +753,7 @@ void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor 
 void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toQColor(color, qcolor);
 
   this->m_logic->SetAnnotationTextSelectedColor(this->m_id.c_str(),color);
 }
@@ -903,7 +897,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationPointUnselectedColor(this->m_id.c_str(),color);
 }
@@ -912,7 +906,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 void qSlicerAnnotationModulePropertyDialog::onPointSelectedColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationPointColor(this->m_id.c_str(),color);
 }
@@ -1018,7 +1012,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointGlyphChanged(QString value)
 void qSlicerAnnotationModulePropertyDialog::onLineColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationLineUnselectedColor(this->m_id.c_str(),color);
 }
@@ -1027,7 +1021,7 @@ void qSlicerAnnotationModulePropertyDialog::onLineColorChanged(QColor qcolor)
 void qSlicerAnnotationModulePropertyDialog::onLineSelectedColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationLineColor(this->m_id.c_str(),color);
 }
@@ -1225,13 +1219,11 @@ void qSlicerAnnotationModulePropertyDialog::UpdateLockUnlockStatus(bool isLock)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::TurnColorArrayToQColor(double* color, QColor &qcolor)
+void qSlicerAnnotationModulePropertyDialog::toQColor(const double* color, QColor &qcolor)
 {
   if ( color )
     {
-    qcolor.setRed(color[0] * 255.0001);
-    qcolor.setGreen(color[1] * 255.0001);
-    qcolor.setBlue(color[2] * 255.0001);
+    qcolor = QColor::fromRgbF(color[0], color[1], color[2]);
     }
 }
 
@@ -1254,11 +1246,11 @@ void qSlicerAnnotationModulePropertyDialog::FormatValueToChar(const char* format
 }
 
 //------------------------------------------------------------------------------
-void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color, QColor &qcolor)
+void qSlicerAnnotationModulePropertyDialog::toColor(const QColor &qcolor, double* color)
 {
-  color[0] = qcolor.red() / 255.0;
-  color[1] = qcolor.green() / 255.0;
-  color[2] = qcolor.blue() / 255.0;
+  color[0] = qcolor.redF();
+  color[1] = qcolor.greenF();
+  color[2] = qcolor.blueF();
 }
 
 //-----------------------------------------------------------------------------
@@ -1281,7 +1273,7 @@ void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
       double *hierarchyColor = hierarchyNode->GetDisplayNode()->GetColor();
       if (hierarchyColor)
         {
-        this->TurnColorArrayToQColor(hierarchyColor, qcolor);
+        this->toQColor(hierarchyColor, qcolor);
         }
       }
     return;
@@ -1321,7 +1313,7 @@ void qSlicerAnnotationModulePropertyDialog::GetAllColor(QColor &qcolor)
 
   if (allTheSame)
     {
-    this->TurnColorArrayToQColor(firstColor, qcolor); 
+    qSlicerAnnotationModulePropertyDialog::toQColor(firstColor, qcolor); 
     }
 }
 //-----------------------------------------------------------------------------
@@ -1427,7 +1419,7 @@ void qSlicerAnnotationModulePropertyDialog::onNameLineEditChanged()
 void qSlicerAnnotationModulePropertyDialog::onAllColorChanged(QColor qcolor)
 {
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   // is it a hierarchy node?
   if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
@@ -1477,7 +1469,7 @@ void qSlicerAnnotationModulePropertyDialog::SetColorOnAnnotationDisplayNodes(con
     return;
     }
   double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
   // get the text display node
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(id);
   if (textDisplayNode)

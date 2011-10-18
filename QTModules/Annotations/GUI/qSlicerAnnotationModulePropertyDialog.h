@@ -40,8 +40,8 @@ public:
   void SetButtonText(int type);
   void UpdateLockUnlockStatus(bool isLock);
 
-  static void TurnColorArrayToQColor(double* color, QColor &qcolor);
-  static void TurnQColorToColorArray(double* color, QColor &qcolor);
+  static void toQColor(const double* color, QColor &qcolor);
+  static void toColor(const QColor &qcolor, double* color);
   static void FormatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
 
   /// for the current m_id node, if all display nodes have the same unselected
