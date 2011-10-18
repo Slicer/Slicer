@@ -608,8 +608,9 @@ void vtkMRMLCrosshairDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
         // put the actor in the right lightbox
         if (this->Internal->LightBoxRendererManagerProxy)
           {
+          int id = (int) (xyz[2] + 0.5); // round to find the lightbox
           vtkRenderer *renderer 
-            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(xyz[2]);
+            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(id);
           if (renderer != this->Internal->LightBoxRenderer)
             {
             if (this->Internal->LightBoxRenderer)
@@ -680,7 +681,7 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
 
   this->Superclass::OnInteractorStyleEvent(eventid);
 
-  if (this->Internal->CrosshairNode)
+  if (this->Internal->CrosshairNode && this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
     {
     switch (eventid)
       {
@@ -712,7 +713,7 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
         
         double xyz[3];
         this->ConvertDeviceToXYZ(pos[0], pos[1], xyz);
-
+        
         double ras[3];
         this->ConvertXYZToRAS(xyz, ras);
         
