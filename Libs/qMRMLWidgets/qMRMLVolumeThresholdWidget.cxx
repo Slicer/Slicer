@@ -115,9 +115,10 @@ void qMRMLVolumeThresholdWidget::setThreshold(double lowerThreshold, double uppe
     int disabledModify = d->VolumeDisplayNode->StartModify();
     d->VolumeDisplayNode->SetLowerThreshold(lowerThreshold);
     d->VolumeDisplayNode->SetUpperThreshold(upperThreshold);
-    if (d->VolumeDisplayNode->GetApplyThreshold() &&
-        (oldLowerThreshold != d->VolumeDisplayNode->GetLowerThreshold() ||
-         oldUpperThreshold != d->VolumeDisplayNode->GetUpperThreshold()) )
+    bool changed =
+      (oldLowerThreshold != d->VolumeDisplayNode->GetLowerThreshold() ||
+       oldUpperThreshold != d->VolumeDisplayNode->GetUpperThreshold());
+    if (changed)
       {
       this->setAutoThreshold(0);
       emit this->thresholdValuesChanged(lowerThreshold, upperThreshold);
@@ -255,6 +256,12 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
     {
     return;
     }
+
+  // We don't want the slider to fire signals saying that the threshold values
+  // have changed, it would set the AutoThrehold mode to Manual automatically
+  // even if the values have been just set programatically/automatically.
+  bool wasBlocking = d->VolumeThresholdRangeWidget->blockSignals(true);
+
   const int autoThresh = d->VolumeDisplayNode->GetAutoThreshold();
   const int applyThresh = d->VolumeDisplayNode->GetApplyThreshold();
   // 0 = manual, 1 = auto, 2 = off
@@ -278,4 +285,6 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRML()
   const double min = d->VolumeDisplayNode->GetLowerThreshold();
   const double max = d->VolumeDisplayNode->GetUpperThreshold();
   d->VolumeThresholdRangeWidget->setValues(min, max );
+
+  d->VolumeThresholdRangeWidget->blockSignals(wasBlocking);
 }
