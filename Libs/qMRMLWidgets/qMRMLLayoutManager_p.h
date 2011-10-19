@@ -117,6 +117,7 @@ public slots:
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
   void onSceneAboutToBeClosedEvent();
   void onSceneClosedEvent();
+  void onSceneRestoredEvent();
 
   /// Handle Layout node event
   void onLayoutNodeModifiedEvent(vtkObject* layoutNode);
