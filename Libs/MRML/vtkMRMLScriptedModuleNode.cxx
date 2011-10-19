@@ -129,6 +129,7 @@ void vtkMRMLScriptedModuleNode
     {
     this->Parameters[name] = value;
     this->Modified();
+    this->SetModifiedSinceRead(1);
     }
 }
 
@@ -139,6 +140,7 @@ void vtkMRMLScriptedModuleNode::UnsetParameter(const std::string& name)
   if (count > 0)
     {
     this->Modified();
+    this->SetModifiedSinceRead(1);
     }
 }
 
@@ -150,6 +152,7 @@ void vtkMRMLScriptedModuleNode::UnsetAllParameters()
   if (count != this->Parameters.size())
     {
     this->Modified();
+    this->SetModifiedSinceRead(1);
     }
 }
 

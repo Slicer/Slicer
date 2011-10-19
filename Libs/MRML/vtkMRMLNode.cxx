@@ -350,6 +350,7 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
     return;
     }
   this->Attributes[std::string(name)] = std::string(value);
+  this->SetModifiedSinceRead(1);
   this->Modified();
 }
 
