@@ -31,7 +31,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
+#include <vtkNew.h>
 
 // STD includes
 
@@ -43,12 +43,12 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLModelNode"));
   nodeSelector.setNoneEnabled(true);
 
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
-  nodeSelector.setMRMLScene(scene);
+  vtkNew<vtkMRMLScene> scene;
+  nodeSelector.setMRMLScene(scene.GetPointer());
 
   scene->SetIsImporting(true);
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  scene->AddNode(modelNode);
+  vtkNew<vtkMRMLModelNode> modelNode;
+  scene->AddNode(modelNode.GetPointer());
 
   scene->SetIsImporting(false);
   nodeSelector.show();
