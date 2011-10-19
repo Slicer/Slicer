@@ -595,55 +595,62 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 void qMRMLSceneModel::updateScene()
 {
   Q_D(qMRMLSceneModel);
-  // save extra items
-  QStringList oldPreItems = this->preItems(0);
-  QStringList oldPostItems = this->postItems(0);
 
-  QStringList oldScenePreItems, oldScenePostItems;
-  QList<QStandardItem*> oldSceneItem = this->findItems("Scene");
-  if (oldSceneItem.size())
-    {
-    oldScenePreItems = this->preItems(oldSceneItem[0]);
-    oldScenePostItems = this->postItems(oldSceneItem[0]);
-    }
   // Stop listening to all the nodes before we remove them (setRowCount) as some
   // weird behavior could arise when removing the nodes (e.g onMRMLNodeModified
   // could be called ...)
   qvtkDisconnect(0, vtkCommand::ModifiedEvent,
                  this, SLOT(onMRMLNodeModified(vtkObject*)));
-  // TBD: Because we don't call clear, I don't think restoring the column count
-  // is necessary because it shouldn't be changed.
-  int oldColumnCount = this->columnCount();
 
-  this->setRowCount(0);
+  // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
-  this->setColumnCount(oldColumnCount);
 
-  // restore extra items
-  this->setPreItems(oldPreItems, 0);
-  this->setPostItems(oldPostItems, 0);
-  if (d->MRMLScene == 0)
+  // Extra items before the scene item. Typically there is no top-level extra
+  // items, only at the Scene level (before and after the nodes)
+  const int preSceneItemCount = this->preItems(0).count();
+  const int postSceneItemCount = this->postItems(0).count();
+
+  if (!this->mrmlSceneItem() && d->MRMLScene)
     {
+    // No scene item has been created yet, but the MRMLScene is valid so we
+    // need to create one.
+    QList<QStandardItem*> sceneItems;
+    QStandardItem* sceneItem = new QStandardItem;
+    sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
+    sceneItem->setText("Scene");
+    sceneItem->setData("scene", qMRMLSceneModel::UIDRole);
+    sceneItems << sceneItem;
+    for (int i = 1; i < this->columnCount(); ++i)
+      {
+      QStandardItem* sceneOtherColumn = new QStandardItem;
+      sceneOtherColumn->setFlags(0);
+      sceneItems << sceneOtherColumn;
+      }
+    this->insertRow(preSceneItemCount, sceneItems);
+    }
+  else if (!d->MRMLScene)
+    {
+    // TBD: Because we don't call clear, I don't think restoring the column
+    // count is necessary because it shouldn't be changed.
+    const int oldColumnCount = this->columnCount();
+    this->removeRows(
+      preSceneItemCount,
+      this->rowCount() - preSceneItemCount - postSceneItemCount);
+    this->setColumnCount(oldColumnCount);
     return;
     }
 
-  // Add scene item
-  QList<QStandardItem*> sceneItems;
-  QStandardItem* sceneItem = new QStandardItem;
-  sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
-  sceneItem->setText("Scene");
-  sceneItem->setData("scene", qMRMLSceneModel::UIDRole);
-  sceneItem->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)), qMRMLSceneModel::PointerRole);
-  sceneItems << sceneItem;
-  for (int i = 1; i < this->columnCount(); ++i)
-    {
-    QStandardItem* sceneOtherColumn = new QStandardItem;
-    sceneOtherColumn->setFlags(0);
-    sceneItems << sceneOtherColumn;
-    }
-  this->insertRow(oldPreItems.count(), sceneItems);
-  this->setPreItems(oldScenePreItems, sceneItem);
-  this->setPostItems(oldScenePostItems, sceneItem);
+  // Update the scene pointer in case d->MRMLScene has changed
+  this->mrmlSceneItem()->setData(
+    QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)),
+    qMRMLSceneModel::PointerRole);
+
+  const int preNodesItemCount = this->preItems(this->mrmlSceneItem()).count();
+  const int postNodesItemCount = this->postItems(this->mrmlSceneItem()).count();
+  // Just remove the nodes, not the extra items like "None", "Create node" etc.
+  this->mrmlSceneItem()->removeRows(
+    preNodesItemCount,
+    this->mrmlSceneItem()->rowCount() - preNodesItemCount - postNodesItemCount);
 
   // Populate scene with nodes
   this->populateScene();

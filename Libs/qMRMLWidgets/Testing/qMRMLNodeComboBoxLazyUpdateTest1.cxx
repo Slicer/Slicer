@@ -24,9 +24,12 @@
 #include <QTimer>
 
 // qMRML includes
+#include "qMRMLColorTableComboBox.h"
 #include "qMRMLNodeComboBox.h"
+#include "qMRMLSceneModel.h"
 
 // MRML includes
+#include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 
@@ -40,24 +43,75 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   qMRMLNodeComboBox nodeSelector;
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLModelNode"));
+  qMRMLColorTableComboBox treeNodeSelector;
+
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLColorTableNode"));
+  nodeSelector.setShowHidden(true);
   nodeSelector.setNoneEnabled(true);
+
+  qobject_cast<qMRMLSceneModel*>(nodeSelector.sortFilterProxyModel()->sourceModel())
+    ->setLazyUpdate(true);
+  qobject_cast<qMRMLSceneModel*>(treeNodeSelector.sortFilterProxyModel()->sourceModel())
+    ->setLazyUpdate(true);
 
   vtkNew<vtkMRMLScene> scene;
   nodeSelector.setMRMLScene(scene.GetPointer());
+  treeNodeSelector.setMRMLScene(scene.GetPointer());
 
   scene->SetIsImporting(true);
-  vtkNew<vtkMRMLModelNode> modelNode;
-  scene->AddNode(modelNode.GetPointer());
+  vtkNew<vtkMRMLColorTableNode> node;
+  scene->AddNode(node.GetPointer());
+
+  if (nodeSelector.nodeCount() != 0 ||
+      treeNodeSelector.nodeCount() != 0 )
+    {
+    std::cerr << "qMRMLSceneModel::LazyUpdate failed when adding a node"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
 
   scene->SetIsImporting(false);
+
+  if (nodeSelector.nodeCount() != 1 ||
+      treeNodeSelector.nodeCount() != 1 )
+    {
+    std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  qMRMLNodeComboBox nodeSelector2;
+  nodeSelector2.setNodeTypes(QStringList("vtkMRMLColorTableNode"));
+  nodeSelector2.setShowHidden(true);
+  nodeSelector2.setNoneEnabled(true);
+
+  qMRMLColorTableComboBox treeNodeSelector2;
+
+  qobject_cast<qMRMLSceneModel*>(nodeSelector2.sortFilterProxyModel()->sourceModel())
+    ->setLazyUpdate(true);
+  qobject_cast<qMRMLSceneModel*>(treeNodeSelector2.sortFilterProxyModel()->sourceModel())
+    ->setLazyUpdate(true);
+
+  nodeSelector2.setMRMLScene(scene.GetPointer());
+  treeNodeSelector2.setMRMLScene(scene.GetPointer());
+
+  if (nodeSelector2.nodeCount() != 1 ||
+      treeNodeSelector2.nodeCount() != 1 )
+    {
+    std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
   nodeSelector.show();
-  
-  QTimer autoExit;
+  nodeSelector2.show();
+
+  treeNodeSelector.show();
+  treeNodeSelector2.show();
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(200);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
   return app.exec();
