@@ -49,16 +49,6 @@ public:
   /// Get MRML SliceNode
   vtkMRMLSliceNode * GetMRMLSliceNode();
 
-protected:
-
-  vtkMRMLAbstractSliceViewDisplayableManager();
-  virtual ~vtkMRMLAbstractSliceViewDisplayableManager();
-
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
-
-  /// Could be overloaded if DisplayableManager subclass
-  virtual void OnMRMLSliceNodeModifiedEvent(){}
-
   /// Convert device coordinates to XYZ coordinates. parameter xyz
   /// is double[3]
   void ConvertDeviceToXYZ(double x, double y, double xyz[3]);
@@ -71,6 +61,16 @@ protected:
   /// double[3]. xyz[2] is the lightbox id.
   void ConvertXYZToRAS(double xyz[3], double ras[3]);
   
+protected:
+
+  vtkMRMLAbstractSliceViewDisplayableManager();
+  virtual ~vtkMRMLAbstractSliceViewDisplayableManager();
+
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+
+  /// Could be overloaded if DisplayableManager subclass
+  virtual void OnMRMLSliceNodeModifiedEvent(){}
+
 private:
 
   vtkMRMLAbstractSliceViewDisplayableManager(const vtkMRMLAbstractSliceViewDisplayableManager&); // Not implemented

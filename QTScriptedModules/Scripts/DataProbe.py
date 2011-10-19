@@ -150,12 +150,13 @@ class DataProbeInfoWidget(object):
       sliceNode = sliceWidget.mrmlSliceNode()
       interactor = observee.GetInteractor()
       xy = interactor.GetEventPosition()
+      xyz = sliceWidget.convertDeviceToXYZ(xy);
       # populate the widgets
       self.viewerColor.setText( " " )
       self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % sliceNode.GetLayoutColor())
       self.viewerName.setText( "  " + sliceNode.GetLayoutName() + "  " )
       # TODO: get z value from lightbox
-      ras = sliceNode.GetXYToRAS().MultiplyPoint(xy+(0,1))[:3]
+      ras = sliceWidget.convertXYZToRAS(xyz)
       self.viewerRAS.setText( "RAS: (%.1f, %.1f, %.1f)" % ras )
       self.viewerOrient.setText( "  " + sliceWidget.sliceOrientation )
       self.viewerSpacing.setText( "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2] )
@@ -174,7 +175,7 @@ class DataProbeInfoWidget(object):
         if volumeNode:
           nameLabel = volumeNode.GetName()
           xyToIJK = layerLogic.GetXYToIJKTransform().GetMatrix()
-          ijkFloat = xyToIJK.MultiplyPoint(xy+(0,1))[:3]
+          ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
           ijk = []
           for element in ijkFloat:
             index = int(round(element))

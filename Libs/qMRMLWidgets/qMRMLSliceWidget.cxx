@@ -496,3 +496,72 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
 //    }
 //  return this->Superclass::eventFilter(object, event);
 //}
+
+
+// --------------------------------------------------------------------------
+QList<double> qMRMLSliceWidget::convertDeviceToXYZ(const QList<int>& xy)
+{
+  Q_D(qMRMLSliceWidget);
+
+  // Grab a displayable manager that is derived from
+  // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
+  vtkMRMLCrosshairDisplayableManager *cmgr = vtkMRMLCrosshairDisplayableManager::SafeDownCast(d->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+  if (cmgr)
+    {
+    double xyz[3];
+    cmgr->ConvertDeviceToXYZ(xy[0], xy[1], xyz);
+    QList<double> ret;
+    ret << xyz[0] << xyz[1] << xyz[2];
+    return ret;
+    }
+
+  QList<double> ret;
+  ret << 0. << 0. << 0.;
+  return ret;
+}
+
+// --------------------------------------------------------------------------
+QList<double> qMRMLSliceWidget::convertRASToXYZ(const QList<double>& ras)
+{
+  Q_D(qMRMLSliceWidget);
+
+  // Grab a displayable manager that is derived from
+  // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
+  vtkMRMLCrosshairDisplayableManager *cmgr = vtkMRMLCrosshairDisplayableManager::SafeDownCast(d->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+  if (cmgr)
+    {
+    double rasv[3], xyz[3];
+    rasv[0] = ras[0]; rasv[1] = ras[1]; rasv[2] = ras[2];
+    cmgr->ConvertRASToXYZ(rasv, xyz);
+    QList<double> ret;
+    ret << xyz[0] << xyz[1] << xyz[2];
+    return ret;
+    }
+
+  QList<double> ret;
+  ret << 0. << 0. << 0.;
+  return ret;
+}
+
+// --------------------------------------------------------------------------
+QList<double> qMRMLSliceWidget::convertXYZToRAS(const QList<double>& xyz)
+{
+  Q_D(qMRMLSliceWidget);
+
+  // Grab a displayable manager that is derived from
+  // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
+  vtkMRMLCrosshairDisplayableManager *cmgr = vtkMRMLCrosshairDisplayableManager::SafeDownCast(d->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+  if (cmgr)
+    {
+    double xyzv[3], ras[3];
+    xyzv[0] = xyz[0]; xyzv[1] = xyz[1]; xyzv[2] = xyz[2];
+    cmgr->ConvertXYZToRAS(xyzv, ras);
+    QList<double> ret;
+    ret << ras[0] << ras[1] << ras[2];
+    return ret;
+    }
+
+  QList<double> ret;
+  ret << 0. << 0. << 0.;
+  return ret;
+}
