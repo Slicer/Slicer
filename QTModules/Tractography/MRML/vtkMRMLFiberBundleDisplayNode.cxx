@@ -40,6 +40,7 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 
   // Enumerated
   this->ColorMode = this->colorModeSolid;
+  this->SetColor(1,0.157,0);
 
   this->DiffusionTensorDisplayPropertiesNode = NULL;
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
