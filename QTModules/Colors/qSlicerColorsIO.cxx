@@ -24,7 +24,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerColorIO.h"
+#include "qSlicerColorsIO.h"
 
 // Logic includes
 #include "vtkSlicerColorLogic.h"
@@ -33,36 +33,36 @@
 #include <vtkMRMLColorNode.h>
 
 //-----------------------------------------------------------------------------
-qSlicerColorIO::qSlicerColorIO(QObject* _parent)
+qSlicerColorsIO::qSlicerColorsIO(QObject* _parent)
   :qSlicerIO(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorIO::description()const
+QString qSlicerColorsIO::description()const
 {
   return "Color";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerColorIO::fileType()const
+qSlicerIO::IOFileType qSlicerColorsIO::fileType()const
 {
   return qSlicerIO::ColorTableFile;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorIO::extensions()const
+QStringList qSlicerColorsIO::extensions()const
 {
   return QStringList() << "Color (*.txt *.ctbl)";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerColorIO::load(const IOProperties& properties)
+bool qSlicerColorsIO::load(const IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  // TODO: Set the logic to qSlicerColorIO directly
+  // TODO: Set the logic to qSlicerColorsIO directly
   vtkSlicerColorLogic* colorLogic =
     vtkSlicerColorLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()

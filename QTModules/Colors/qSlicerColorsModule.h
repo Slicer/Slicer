@@ -21,22 +21,23 @@
 #ifndef __qSlicerColorsModule_h
 #define __qSlicerColorsModule_h
 
-/// CTK includes
-#include <ctkPimpl.h>
-
 /// SlicerQt includes
-#include "qSlicerCoreModule.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerLoadableModule.h"
+
+/// Colors includes
+#include "qSlicerColorsModuleExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerColorsModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerColorsModule :
-  public qSlicerCoreModule
+class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
+  Q_INTERFACES(qSlicerLoadableModule);
+
 public:
-  typedef qSlicerCoreModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerColorsModule(QObject *parent=0);
   virtual ~qSlicerColorsModule();
 

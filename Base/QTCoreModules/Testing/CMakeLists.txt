@@ -3,14 +3,13 @@ set(KIT QTCoreModules)
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
-set(modulenames Cameras Colors Data EventBroker ROI ViewControllers Transforms)
+set(modulenames Cameras Data EventBroker ROI ViewControllers Transforms)
 SlicerMacroConfigureGenericCxxModuleTests("${modulenames}" KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qSlicerCamerasModuleWidgetTest1.cxx
-  qSlicerColorsModuleWidgetTest1.cxx
   qSlicerCoreModuleTest1.cxx
   qSlicerCoreModuleFactoryTest1.cxx
   qSlicerModulePanelTest2.cxx
@@ -41,7 +40,6 @@ foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 SIMPLE_TEST( qSlicerCamerasModuleWidgetTest1 )
-SIMPLE_TEST( qSlicerColorsModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerCoreModuleTest1 )
 SIMPLE_TEST( qSlicerCoreModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerModulePanelTest2 )

@@ -19,15 +19,23 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QtPlugin>
 #include <QSettings>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerCoreIOManager.h"
+
+// Colors includes
+#include "qSlicerColorsIO.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"
 
 // Slicer Logic includes
 #include "vtkSlicerColorLogic.h"
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerColorsModule, qSlicerColorsModule);
 
 //-----------------------------------------------------------------------------
 class qSlicerColorsModulePrivate
@@ -67,6 +75,8 @@ void qSlicerColorsModule::setup()
     {
     return;
     }
+  app->coreIOManager()->registerIO(new qSlicerColorsIO());
+
   QStringList paths = app->settings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList();
 #ifdef Q_OS_WIN32
   QString joinedPaths = paths.join(";");

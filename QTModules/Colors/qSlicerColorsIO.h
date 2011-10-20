@@ -18,18 +18,18 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerColorIO
-#define __qSlicerColorIO
+#ifndef __qSlicerColorsIO
+#define __qSlicerColorsIO
 
 // SlicerQt includes
 #include "qSlicerIO.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerColorIO: public qSlicerIO
+class qSlicerColorsIO: public qSlicerIO
 {
   Q_OBJECT
 public:
-  qSlicerColorIO(QObject* parent = 0);
+  qSlicerColorsIO(QObject* parent = 0);
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;

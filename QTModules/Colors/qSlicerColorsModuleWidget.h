@@ -21,18 +21,17 @@
 #ifndef __qSlicerColorsModuleWidget_h
 #define __qSlicerColorsModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+
+// Colors includes
+#include "qSlicerColorsModuleExport.h"
 
 class qSlicerColorsModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerColorsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
+  : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:

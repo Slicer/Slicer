@@ -21,8 +21,6 @@
 // SlicerQt/CoreModules includes
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
-#include "qSlicerColorIO.h"
-#include "qSlicerColorsModule.h"
 #include "qSlicerDataModule.h"
 #include "qSlicerEventBrokerModule.h"
 #include "qSlicerFiducialsIO.h"
@@ -98,9 +96,6 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   Q_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
-  // Note: If the color module is disabled, the color logic
-  //       won't be initialized.
-  d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   d->registerCoreModule<qSlicerEventBrokerModule>();
   // vtkMRMLROINode are obsolete, one should use the Annotations module to
@@ -117,7 +112,6 @@ void qSlicerCoreModuleFactory::registerItems()
   qSlicerCoreIOManager * ioManager =
       qSlicerCoreApplication::application()->coreIOManager();
 
-  ioManager->registerIO(new qSlicerColorIO());
   ioManager->registerIO(new qSlicerFiducialsIO());
   ioManager->registerIO(new qSlicerTransformsIO());
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)
