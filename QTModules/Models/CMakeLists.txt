@@ -21,6 +21,10 @@ set(qt_module_SRCS
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.cxx
   qSlicerModelsModuleWidget.h
+  qSlicerScalarOverlayIO.cxx
+  qSlicerScalarOverlayIO.h
+  qSlicerScalarOverlayIOOptionsWidget.cxx
+  qSlicerScalarOverlayIOOptionsWidget.h
   )
 
 # Headers that should run through moc
@@ -28,11 +32,14 @@ set(qt_module_MOC_SRCS
   qSlicerModelsIO.h
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.h
+  qSlicerScalarOverlayIO.h
+  qSlicerScalarOverlayIOOptionsWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerModelsModule.ui
+  Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
 )
 
 # Additional Target libraries

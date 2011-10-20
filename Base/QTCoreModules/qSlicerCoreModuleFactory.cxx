@@ -27,7 +27,6 @@
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
-#include "qSlicerScalarOverlayIO.h"
 #include "qSlicerViewControllersModule.h"
 // endofFIXME
 #include "qSlicerUtils.h"
@@ -108,9 +107,6 @@ void qSlicerCoreModuleFactory::registerItems()
       qSlicerCoreApplication::application()->coreIOManager();
 
   ioManager->registerIO(new qSlicerFiducialsIO());
-  // FIXME: Move the following to the Models module (when it will be ready in Qt.)
-  ioManager->registerIO(new qSlicerScalarOverlayIO());
-  // endofFIXME
 }
 
 //-----------------------------------------------------------------------------

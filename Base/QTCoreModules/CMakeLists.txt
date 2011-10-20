@@ -38,11 +38,6 @@ set(KIT_SRCS
   qSlicerROIModuleWidget.cxx
   qSlicerROIModuleWidget.h
 
-  qSlicerScalarOverlayIO.cxx
-  qSlicerScalarOverlayIO.h
-  qSlicerScalarOverlayIOOptionsWidget.cxx
-  qSlicerScalarOverlayIOOptionsWidget.h
-
   qSlicerViewControllersModule.cxx
   qSlicerViewControllersModule.h
   qSlicerViewControllersModuleWidget.cxx
@@ -64,9 +59,6 @@ set(KIT_MOC_SRCS
   qSlicerROIModule.h
   qSlicerROIModuleWidget.h
 
-  qSlicerScalarOverlayIO.h
-  qSlicerScalarOverlayIOOptionsWidget.h
-
   qSlicerViewControllersModule.h
   qSlicerViewControllersModuleWidget.h
 
@@ -77,7 +69,6 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
-  Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   Resources/UI/qSlicerViewControllersModule.ui
 )
 

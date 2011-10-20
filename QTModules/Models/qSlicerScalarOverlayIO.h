@@ -23,10 +23,9 @@
 
 // SlicerQt includes
 #include "qSlicerIO.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerScalarOverlayIO: public qSlicerIO
+class qSlicerScalarOverlayIO: public qSlicerIO
 {
   Q_OBJECT
 public:
