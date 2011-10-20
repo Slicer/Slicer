@@ -21,9 +21,6 @@
 #ifndef __qSlicerVolumesModuleWidget_h
 #define __qSlicerVolumesModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
