@@ -18,11 +18,22 @@
 
 ==============================================================================*/
 
-#include "qSlicerTransformsModule.h"
+// Qt includes
+#include <QtPlugin>
 
 // SlicerQt includes
+#include "qSlicerApplication.h"
+#include "qSlicerCoreIOManager.h"
 #include "vtkSlicerTransformLogic.h"
+
+// Transforms includes
+#include "qSlicerTransformsIO.h"
+#include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerTransformsModule, qSlicerTransformsModule);
+
 
 //-----------------------------------------------------------------------------
 class qSlicerTransformsModulePrivate
@@ -80,4 +91,15 @@ QString qSlicerTransformsModule::acknowledgementText()const
     "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. "
       "with help from others at SPL, BWH (Ron Kikinis)<br>";
   return acknowledgement;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModule::setup()
+{
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (!app)
+    {
+    return;
+    }
+  app->coreIOManager()->registerIO(new qSlicerTransformsIO());
 }

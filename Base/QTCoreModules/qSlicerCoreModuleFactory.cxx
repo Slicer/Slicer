@@ -24,8 +24,6 @@
 #include "qSlicerEventBrokerModule.h"
 #include "qSlicerFiducialsIO.h"
 //#include "qSlicerROIModule.h"
-#include "qSlicerTransformsIO.h"
-#include "qSlicerTransformsModule.h"
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -100,7 +98,6 @@ void qSlicerCoreModuleFactory::registerItems()
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerViewControllersModule>();
-  d->registerCoreModule<qSlicerTransformsModule>();
 
   Q_ASSERT(qSlicerCoreApplication::application());
   if(!qSlicerCoreApplication::application())
@@ -111,7 +108,6 @@ void qSlicerCoreModuleFactory::registerItems()
       qSlicerCoreApplication::application()->coreIOManager();
 
   ioManager->registerIO(new qSlicerFiducialsIO());
-  ioManager->registerIO(new qSlicerTransformsIO());
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)
   ioManager->registerIO(new qSlicerScalarOverlayIO());
   // endofFIXME

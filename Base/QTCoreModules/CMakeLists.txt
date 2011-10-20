@@ -3,7 +3,6 @@ project(qSlicerBaseQTCoreModules)
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
-
 set(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
 
 # Additional directories to include
@@ -48,13 +47,6 @@ set(KIT_SRCS
   qSlicerViewControllersModule.h
   qSlicerViewControllersModuleWidget.cxx
   qSlicerViewControllersModuleWidget.h
-
-  qSlicerTransformsIO.cxx
-  qSlicerTransformsIO.h
-  qSlicerTransformsModule.cxx
-  qSlicerTransformsModule.h
-  qSlicerTransformsModuleWidget.cxx
-  qSlicerTransformsModuleWidget.h
   )
 
 # Headers that should run through moc
@@ -78,9 +70,6 @@ set(KIT_MOC_SRCS
   qSlicerViewControllersModule.h
   qSlicerViewControllersModuleWidget.h
 
-  qSlicerTransformsIO.h
-  qSlicerTransformsModule.h
-  qSlicerTransformsModuleWidget.h
   )
 
 # UI files
@@ -90,7 +79,6 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerROIModule.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   Resources/UI/qSlicerViewControllersModule.ui
-  Resources/UI/qSlicerTransformsModule.ui
 )
 
 # Additional Target libraries (QT libs already included)

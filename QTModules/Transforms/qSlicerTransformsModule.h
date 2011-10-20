@@ -21,25 +21,24 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
-#include "qSlicerCoreModule.h"
+#include "qSlicerLoadableModule.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+// Transforms includes
+#include "qSlicerTransformsModuleExport.h"
 
 class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerTransformsModule :
-  public qSlicerCoreModule
+class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
+  Q_INTERFACES(qSlicerLoadableModule);
 public:
 
-  typedef qSlicerCoreModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
   virtual ~qSlicerTransformsModule();
 
@@ -60,6 +59,9 @@ public:
   virtual QString acknowledgementText()const;
 
 protected:
+  /// Reimplemented to initialize the transforms IO
+  virtual void setup();
+
   ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();

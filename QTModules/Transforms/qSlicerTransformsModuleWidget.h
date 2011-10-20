@@ -21,19 +21,17 @@
 #ifndef __qSlicerTransformsModuleWidget_h
 #define __qSlicerTransformsModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+// Transforms includes
+#include "qSlicerTransformsModuleExport.h"
 
 class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerTransformsModuleWidget :
+class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
