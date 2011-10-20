@@ -18,7 +18,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <description>Create and delete scene views, move them up and down</description>
   <parameter>
     <label>Create a 3D Slicer Scene View</label>
-    <descripton>Click on the camera button to create a new scene view</description>
+    <description>Click on the camera button to create a new scene view</description>
   <parameter>
   <parameter>
     <label>Move selected view up</label>
@@ -48,7 +48,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>The short name given to this scene view. Double click to edit it.</description>
     </parameter>
     <parameter>
-      <label>Descripton</label>
+      <label>Description</label>
       <description>Some descriptive text about this scene view. Double click to edit it.</description>
     </parameter>
   </parameters>
