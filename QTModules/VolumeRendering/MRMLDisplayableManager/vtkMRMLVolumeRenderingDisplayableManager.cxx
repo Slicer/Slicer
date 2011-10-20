@@ -177,6 +177,10 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
   //  this->VolumePropertyGPURaycast3->Delete();
   //  this->VolumePropertyGPURaycast3 = NULL;
   //}
+  if (this->DisplayObservedEvents)
+    {
+    this->DisplayObservedEvents->Delete();
+    }
 }
 
 void vtkMRMLVolumeRenderingDisplayableManager::PrintSelf(std::ostream &os, vtkIndent indent)
