@@ -62,5 +62,5 @@
       <description>Field of view of the camera.  The default value of 30 approximates normal camera lenses.  Larger numbers, such as 110 or 120 approximate the wide angle lenses often used in endoscopy viewing systems.</description>
       <label>Play/Stop</label>
     </integer>
-
+  </parameters>
 </executable>
