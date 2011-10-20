@@ -40,7 +40,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="VolumeAreaLabel">
      <property name="text">
-      <string>Volume Area:</string>
+      <string>Volume:</string>
      </property>
     </widget>
    </item>
