@@ -173,7 +173,13 @@ protected:
   /// </ul>
   /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
   virtual void OnInteractorStyleEvent(int eventid);
-  
+
+  /// Set the Abort flag on the InteractorStyle event callback
+  void SetInteractorStyleAbortFlag(int f);
+  int GetInteractorStyleAbortFlag();
+  void InteractorStyleAbortFlagOn();
+  void InteractorStyleAbortFlagOff();
+
 private:
 
   vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented

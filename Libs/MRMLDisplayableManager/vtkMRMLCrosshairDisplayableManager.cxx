@@ -121,6 +121,7 @@ public:
   vtkWeakPointer<vtkMRMLLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
+
 //---------------------------------------------------------------------------
 // vtkInternal methods
 
@@ -693,6 +694,10 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
           if (this->Internal->PickState == vtkInternal::Over)
             {
             this->Internal->ActionState = vtkInternal::Dragging;
+
+            // Set the abort flag so that no other callbacks respond
+            // (may need to set a priority).
+            this->InteractorStyleAbortFlagOn();
             }
           }
         break;

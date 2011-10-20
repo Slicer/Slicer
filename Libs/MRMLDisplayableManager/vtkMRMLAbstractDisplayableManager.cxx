@@ -702,3 +702,28 @@ void vtkMRMLAbstractDisplayableManager::OnInteractorStyleEvent(int vtkNotUsed(ev
   // std::cout << "OnInteractorStyleEvent - eventid:" << eventid
   //           << ", eventname:" << vtkCommand::GetStringFromEventId(eventid) << std::endl;
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::SetInteractorStyleAbortFlag(int f)
+{
+  this->Internal->InteractorStyleCallBackCommand->SetAbortFlag(f);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractDisplayableManager::GetInteractorStyleAbortFlag()
+{
+  return this->Internal->InteractorStyleCallBackCommand->GetAbortFlag();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::InteractorStyleAbortFlagOn()
+{
+  this->Internal->InteractorStyleCallBackCommand->AbortFlagOn();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::InteractorStyleAbortFlagOff()
+{
+  this->Internal->InteractorStyleCallBackCommand->AbortFlagOff();
+}
+
