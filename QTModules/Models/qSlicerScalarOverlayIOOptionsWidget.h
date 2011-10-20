@@ -26,12 +26,12 @@
 
 // SlicerQt includes
 #include "qSlicerIOOptionsWidget.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModelsModuleExport.h"
 
 class qSlicerScalarOverlayIOOptionsWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerScalarOverlayIOOptionsWidget :
-  public qSlicerIOOptionsWidget
+class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerScalarOverlayIOOptionsWidget
+  : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:
