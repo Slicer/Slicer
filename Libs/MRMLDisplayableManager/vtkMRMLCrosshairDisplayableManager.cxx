@@ -603,6 +603,16 @@ void vtkMRMLCrosshairDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
         double xyz[3];
         double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
         this->ConvertRASToXYZ(ras, xyz);
+        
+        // This is not the place to do this. We really need to
+        // use JumpSliceByOffsetting(k, r, a, s) with k defined by the
+        // viewer that received the mouse event. 
+        if (this->Internal->CrosshairNode->GetNavigation())
+          {
+          this->Internal->GetSliceNode()->JumpSliceByOffsetting(ras[0], ras[1], ras[2]);
+          this->ConvertRASToXYZ(ras, xyz); // recompute since matrices changed
+          }
+
         this->Internal->Actor->SetPosition(xyz[0], xyz[1]);
         this->Internal->HighlightActor->SetPosition(xyz[0], xyz[1]);
 
@@ -686,6 +696,22 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
     {
     switch (eventid)
       {
+      case vtkCommand::LeaveEvent:
+        // If we are not Navigating, reposition the crosshair to the center
+        if (this->Internal->CrosshairNode->GetNavigation() == 0)
+          {
+          double xyz[3], ras[3];
+          vtkRenderer *renderer 
+            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(0);
+          xyz[0] = renderer->GetSize()[0] / 2.0;
+          xyz[1] = renderer->GetSize()[1] / 2.0;
+          xyz[2] = 0;
+          this->ConvertXYZToRAS(xyz, ras);
+        
+          this->Internal->CrosshairNode->SetCrosshairRAS(ras[0], ras[1],ras[2]);
+          }
+        break;
+
       case vtkCommand::LeftButtonPressEvent:
         // Button press is only meaningful in navigation mode
         if (this->Internal->CrosshairNode->GetNavigation())
