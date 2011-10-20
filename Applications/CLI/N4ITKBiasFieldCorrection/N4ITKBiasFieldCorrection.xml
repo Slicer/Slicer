@@ -18,7 +18,7 @@
       <name>inputImageName</name>
       <label>Input Image</label>
       <channel>input</channel>
-      <description>Input image with MRI field inhomegeneity</description>
+      <description>Input image where you observe signal inhomegeneity</description>
     </image>
     
     <image>
@@ -26,7 +26,7 @@
       <name>maskImageName</name>
       <label>Mask Image</label>
       <channel>input</channel>
-      <description>Mask of the structure of interest in the input image. Optional, but highly recommended.</description>
+      <description>Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined.</description>
     </image>
 
     <image>
@@ -42,7 +42,7 @@
       <name>outputBiasFieldName</name>
       <label>Output bias field image</label>
       <channel>output</channel>
-      <description>Recovered bias field</description>
+      <description>Recovered bias field (OPTIONAL)</description>
     </image>
 
   </parameters>
@@ -53,7 +53,7 @@
       <name>numberOfIterations</name>
       <longflag>iterations</longflag>
       <label>Number of iterations</label>
-      <description>Number of iterations at each level, separated by comma</description>
+      <description>Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.</description>
       <default>50,40,30</default>
     </integer-vector>
 
@@ -61,7 +61,7 @@
       <name>convergenceThreshold</name>
       <longflag>convergencethreshold</longflag>
       <description></description>
-      <label>Convergence threshold</label>
+      <label>Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.</label>
       <default>0.0001</default>
     </float>
 
@@ -69,7 +69,7 @@
       <name>initialMeshResolution</name>
       <longflag>meshresolution</longflag>
       <label>BSpline grid resolution</label>
-      <description>Initial resolution of the bspline grid: resolution in each of the 3 dimensions separated by comma</description>
+      <description>Resolution of the initial bspline grid defined as a sequence of three numbers. The actual resolution will be defined by adding the bspline order (default is 3) to the resolution in each dimension specified here. For example, 1,1,1 will result in a 4x4x4 grid of control points. This parameter may need to be adjusted based on your input image. In the multi-resolution N4 framework, the resolution of the bspline grid at subsequent iterations will be doubled. The number of resolutions is implicitly defined by Number of iterations parameter (the size of this list is the number of resolutions)</description>
       <default>1,1,1</default>
     </float-vector>
 
@@ -77,7 +77,7 @@
       <name>splineDistance</name>
       <longflag>splinedistance</longflag>
       <label>Spline distance</label>
-      <description>Distance between spline points; valid only if mesh resolution is not specified</description>
+      <description>An alternative means to define the spline grid, by setting the distance between the control points. This parameter is used only if the grid resolution is not specified.</description>
       <default>0</default>
     </float>
  
@@ -85,7 +85,7 @@
       <name>shrinkFactor</name>
       <longflag>shrinkfactor</longflag>
       <label>Shrink factor</label>
-      <description>Specifies upsampling scale for the input image. Should be defined as a non-zero number. 1 corresponds to no upsampling, and will result in the slowest execution.</description>
+      <description>Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time.</description>
       <default>4</default>
     </integer>
 
@@ -99,7 +99,7 @@
       <name>bsplineOrder</name>
       <longflag>bsplineorder</longflag>
       <label>BSpline order</label>
-      <description>Order of the BSpline used for fitting</description>
+      <description>Order of B-spline used in the approximation. Larger values will lead to longer execution times, may result in overfitting and poor result.</description>
       <default>3</default>
     </integer>
  
@@ -114,7 +114,7 @@
     <float-vector>
       <name>histogramSharpening</name>
       <longflag>histogramsharpening</longflag>
-      <label>Histogram sharpening</label>
+      <label>Histogram sharpening parameters</label>
       <description>A vector of up to three values. Non-zero values correspond to Bias Field Full Width at Half Maximum, Wiener filter noise, and Number of histogram bins.</description>
       <default>0,0,0</default>
     </float-vector>
