@@ -27,7 +27,6 @@
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
-#include "qSlicerViewControllersModule.h"
 // endofFIXME
 #include "qSlicerUtils.h"
 
@@ -96,7 +95,6 @@ void qSlicerCoreModuleFactory::registerItems()
   // vtkMRMLROINode are obsolete, one should use the Annotations module to
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();
-  d->registerCoreModule<qSlicerViewControllersModule>();
 
   Q_ASSERT(qSlicerCoreApplication::application());
   if(!qSlicerCoreApplication::application())

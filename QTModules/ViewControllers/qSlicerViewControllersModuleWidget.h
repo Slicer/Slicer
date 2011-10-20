@@ -27,13 +27,14 @@
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+// View Controllers includes
+#include "qSlicerViewControllersModuleExport.h"
 
 class qSlicerViewControllersModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerViewControllersModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidget
+  : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 

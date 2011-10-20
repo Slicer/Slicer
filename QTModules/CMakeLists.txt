@@ -20,9 +20,9 @@ include(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 set(qtmodules
   Colors
-  Data
   Transforms
   Annotations
+  Data
   #Measurements
   Models
   #FiberBundles
@@ -30,6 +30,7 @@ set(qtmodules
   SlicerWelcome
   Tractography
   TractographyDisplay
+  ViewControllers
   Volumes
   TractographyFiducialSeeding # tractography depends of Volumes
   CropVolume

@@ -37,11 +37,6 @@ set(KIT_SRCS
   qSlicerROIModule.h
   qSlicerROIModuleWidget.cxx
   qSlicerROIModuleWidget.h
-
-  qSlicerViewControllersModule.cxx
-  qSlicerViewControllersModule.h
-  qSlicerViewControllersModuleWidget.cxx
-  qSlicerViewControllersModuleWidget.h
   )
 
 # Headers that should run through moc
@@ -59,9 +54,6 @@ set(KIT_MOC_SRCS
   qSlicerROIModule.h
   qSlicerROIModuleWidget.h
 
-  qSlicerViewControllersModule.h
-  qSlicerViewControllersModuleWidget.h
-
   )
 
 # UI files
@@ -69,7 +61,6 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
-  Resources/UI/qSlicerViewControllersModule.ui
 )
 
 # Additional Target libraries (QT libs already included)

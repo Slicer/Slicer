@@ -21,24 +21,22 @@
 #ifndef __qSlicerViewControllersModule_h
 #define __qSlicerViewControllersModule_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
-#include "qSlicerCoreModule.h"
+#include "qSlicerLoadableModule.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerViewControllersModuleExport.h"
 
 class qSlicerViewControllersModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerViewControllersModule :
-  public qSlicerCoreModule
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
+  Q_INTERFACES(qSlicerLoadableModule);
 
 public:
 
-  typedef qSlicerCoreModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerViewControllersModule(QObject *parent=0);
   virtual ~qSlicerViewControllersModule();
 

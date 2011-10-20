@@ -19,12 +19,16 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QtPlugin>
 
 // SlicerQt includes
 
 // Slices QTModule includes
 #include "qSlicerViewControllersModule.h"
 #include "qSlicerViewControllersModuleWidget.h"
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerViewControllersModule, qSlicerViewControllersModule);
 
 //-----------------------------------------------------------------------------
 class qSlicerViewControllersModulePrivate
