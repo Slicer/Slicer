@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+ <category>Base</category>
+ <title>Models</title>
+ <description>
+This module is used for changing the appearance of and organizing 3d surface models. 
+ </description>
+ <version>4.0</version>
+ <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Models</documentation>
+ <license>slicer4</license>
+ <contributor>Alex Yarmarkovich, Isomics, SPL (Nicole Aucoin, BWH)</contributor>
+ <acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+ </acknowledgements>
+ <parameters>
+  <label>Scene</label>
+  <description>The tree view of all models and model hierarchies in the current MRML scene.</description>
+ </parameters>
+ <parameters>
+  <label>Information</label>
+  <description>Information about this surface model</description>
+  <parameter>
+   <label>Surface Area</label>
+   <description>The calculated surface area of the model, in square millimetres</description>
+  </parameter>
+  <parameter>
+   <label>Volume Area</label>
+   <description>The volume inside the surface model</description>
+  </parameter>
+ </parameters>
+ <parameters>
+  <label>Display</label>
+  <description>Control the display properties of the currently selected model in the Scene</description>
+  <parameter>
+   <label>Visible</label>
+   <description>Is this surface model visible in the 3D view?</description>
+  </parameter>
+  <parameters>
+    <label>Material Properties</label>
+    <description>Material properties of the currently selected model</description>
+   <parameter>
+    <label>Color</label>
+    <description>The RGBA color of this model</description>
+   </parameter>
+  </parameters>
+  <parameters>
+   <label>Scalars</label>
+   <description>Scalar overlay properties</description>
+   <parameter>
+    <label>none yet</label>
+    <description>TBD</label>
+   </parameter>
+  </parameters>
+ <parameters>
+  <label>Clipping</label>
+  <description>Control the clipping properties for this surface model</description>
+  <string-enumeration>
+   <label>Clipping Type</label>
+   <description>Control the clipping type, where the slice planes intersect the model</description>
+   <element>Union</element>
+   <element>Intersection</element>
+  </string-enumeration>
+  <string-enumeration>
+   <label>Red Slice Clipping</label>
+   <description>Control on which side of the red slice plane is clipped on the model</description>
+   <element>Positive</element>
+   <element>Negative</element>
+  </string-enumeration>
+  <string-enumeration>
+   <label>Yellow Slice Clipping</label>
+   <description>Control on which side of the yellow slice plane is clipped on the model</description>
+   <element>Positive</element>
+   <element>Negative</element>
+  </string-enumeration>
+  <string-enumeration>
+   <label>Green Slice Clipping</label>
+   <description>Control on which side of the green slice plane is clipped on the model</description>
+   <element>Positive</element>
+   <element>Negative</element>
+  </string-enumeration>
+ </parameters>
+</parameters>
+</executable>
