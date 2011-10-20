@@ -14,7 +14,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
  </acknowledgements>
  <parameters>
   <label>Scene</label>
-  <description>The tree view of all models and model hierarchies in the current MRML scene.</description>
+  <description>The tree view of all models and model hierarchies in the current MRML scene. You can right click on the Scene element to add hierarchies and drag and drop models into them. Control the Visible property of the model via the eye icon (open/close to show/hide the models). The model color and opacity are also displayed on the same line as the model name.</description>
  </parameters>
  <parameters>
   <label>Information</label>
@@ -24,8 +24,28 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
    <description>The calculated surface area of the model, in square millimetres</description>
   </parameter>
   <parameter>
-   <label>Volume Area</label>
-   <description>The volume inside the surface model</description>
+   <label>Volume</label>
+   <description>The volume inside the surface model, in cubed millimetres</description>
+  </parameter>
+  <parameter>
+   <label>Number of Points</label>
+   <description>Number of vertices in the surface model</description>
+  </parameter>
+  <parameter>
+   <label>Number of Cells</label>
+   <description>Number of cells in the surface model</description>
+  </parameter>
+  <parameter>
+   <label>Number of Point Scalars</label>
+   <description>Shows how many arrays of scalars are associated with the points of the surface model.</description>
+  </parameter>
+  <parameter>
+   <label>Number of Cell Scalars</label>
+   <description>Shows how many arrays of scalars are associated with the cells of the surface model.</description>
+  </parameter>
+  <parameter>
+   <label>Filename</label>
+   <description>Path to the file which this surface model was loaded from/saved to</description>
   </parameter>
  </parameters>
  <parameters>
@@ -35,6 +55,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
    <label>Visible</label>
    <description>Is this surface model visible in the 3D view?</description>
   </parameter>
+  <parameter>
+   <label>Selected</label>
+   <description>If this model is selected, it's visual appearance will change.</description>
+  </parameter>
+  <parameter>
+   <label>Clip</label>
+   <description>Is clipping (using the slice planes) enabled for this model?</description>
+  </parameter>
+  <parameter>
+   <label>Slice Intersections Visible</label>
+   <description>If this flag is set, the intersections of the model with the slices will be computed and shown as an outline on the slice planes.</description>
+  </parameter>
   <parameters>
     <label>Material Properties</label>
     <description>Material properties of the currently selected model</description>
@@ -42,13 +74,57 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <label>Color</label>
     <description>The RGBA color of this model</description>
    </parameter>
+   <parameter>
+    <label>Opacity</label>
+    <description>The object's opacity. 1.0 is totally opaque and 0.0 is completely transparent. </description>
+   </parameter>
+   <parameter>
+    <label>Ambient</label>
+    <description>The ambient lighting coefficient.</description>
+   </parameter>
+   <parameter>
+    <label>Diffuse</label>
+    <description>The diffuse lighting coefficient.</description>
+   </parameter>
+   <parameter>
+    <label>Specular</label>
+    <description>The specular lighting coefficient.</description>
+   </parameter>
+   <parameter>
+    <label>Power</label>
+    <description>The specular power.</description>
+   </parameter>
+   <parameter>
+    <label>Backface Culling</label>
+    <description></description>
+   </parameter>
+   <parameter>
+    <label>Preview</label>
+    <description>A rendering of a sphere using the current material properties, useful if the surface model isn't regular.</description>
+   </parameter>
+   <string-enumeration>
+    <label>Presets</label>
+    <description>A set of buttons allowing the user to select a new material properties from a set of defaults.</description>
+    <element>Full ambient eliminating all directional shading</element>
+    <element>Dull material properties (no specular lighting)</element>
+    <element>Smooth material properties (moderate specular lighting)</element>
+    <element>Shiny material properties (high specular lighting)</element>
+   </string-enumeration>
   </parameters>
   <parameters>
    <label>Scalars</label>
    <description>Scalar overlay properties</description>
    <parameter>
-    <label>none yet</label>
-    <description>TBD</description>
+    <label>Visible</label>
+    <description>Are the scalars visible on the surface model?</description>
+   </parameter>
+   <parameter>
+    <label>Active Scalar</label>
+    <description>A drop down menu listing the current scalar overlays associated with this model and shows which one is currently active.</description>
+   </parameter>
+   <parameter>
+    <label>Color Table</label>
+    <description>Select a color look up table used to map the scalar overlay into RGB values</description>
    </parameter>
   </parameters>
  <parameters>
