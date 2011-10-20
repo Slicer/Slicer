@@ -21,7 +21,6 @@
 // SlicerQt/CoreModules includes
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
-#include "qSlicerDataModule.h"
 #include "qSlicerEventBrokerModule.h"
 #include "qSlicerFiducialsIO.h"
 //#include "qSlicerROIModule.h"
@@ -96,7 +95,6 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   Q_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
-  d->registerCoreModule<qSlicerDataModule>();
   d->registerCoreModule<qSlicerEventBrokerModule>();
   // vtkMRMLROINode are obsolete, one should use the Annotations module to
   // interact with nodes.

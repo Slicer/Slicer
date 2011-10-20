@@ -21,17 +21,14 @@
 #ifndef __qSlicerDataModuleWidget_h
 #define __qSlicerDataModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerDataModuleExport.h"
 
 class vtkMRMLNode;
 class qSlicerDataModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerDataModuleWidget :
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

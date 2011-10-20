@@ -20,6 +20,7 @@ include(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 set(qtmodules
   Colors
+  Data
   Annotations
   #Measurements
   Models

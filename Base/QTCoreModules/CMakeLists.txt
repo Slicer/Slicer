@@ -26,12 +26,6 @@ set(KIT_SRCS
   qSlicerCamerasModuleWidget.cxx
   qSlicerCamerasModuleWidget.h
 
-
-  qSlicerDataModule.cxx
-  qSlicerDataModule.h
-  qSlicerDataModuleWidget.cxx
-  qSlicerDataModuleWidget.h
-
   qSlicerEventBrokerModule.cxx
   qSlicerEventBrokerModule.h
   qSlicerEventBrokerModuleWidget.cxx
@@ -70,9 +64,6 @@ set(KIT_MOC_SRCS
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.h
 
-  qSlicerDataModule.h
-  qSlicerDataModuleWidget.h
-
   qSlicerEventBrokerModule.h
   qSlicerEventBrokerModuleWidget.h
 
@@ -95,7 +86,6 @@ set(KIT_MOC_SRCS
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
-  Resources/UI/qSlicerDataModule.ui
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui

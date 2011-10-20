@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QtPlugin>
+
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerDataDialog.h"
@@ -37,6 +40,9 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerDataModule, qSlicerDataModule);
 
 //-----------------------------------------------------------------------------
 class qSlicerDataModulePrivate

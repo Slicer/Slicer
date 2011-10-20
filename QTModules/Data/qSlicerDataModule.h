@@ -21,23 +21,22 @@
 #ifndef __qSlicerDataModule_h
 #define __qSlicerDataModule_h
 
-/// CTK includes
-#include <ctkPimpl.h>
-
 /// SlicerQt includes
-#include "qSlicerCoreModule.h"
+#include "qSlicerLoadableModule.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+/// Data includes
+#include "qSlicerDataModuleExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerDataModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerDataModule :
-  public qSlicerCoreModule
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
+  Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerCoreModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerDataModule(QObject *parent=0);
   virtual ~qSlicerDataModule();
 
