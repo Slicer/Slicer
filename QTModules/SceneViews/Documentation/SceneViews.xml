@@ -19,7 +19,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameter>
     <label>Create a 3D Slicer Scene View</label>
     <description>Click on the camera button to create a new scene view</description>
-  <parameter>
+  </parameter>
   <parameter>
     <label>Move selected view up</label>
     <description>Move the highlighted scene view in the table up one row</description>
