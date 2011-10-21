@@ -256,8 +256,11 @@ void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
     }
 
   displayableManager->SetMRMLDisplayableManagerGroup(this);
-  displayableManager->SetMRMLApplicationLogic(
-    this->Internal->DisplayableManagerFactory->GetMRMLApplicationLogic());
+  if (this->Internal->DisplayableManagerFactory)
+    {
+    displayableManager->SetMRMLApplicationLogic(
+      this->Internal->DisplayableManagerFactory->GetMRMLApplicationLogic());
+    }
   displayableManager->SetRenderer(this->Internal->Renderer);
   displayableManager->SetAndObserveMRMLDisplayableNode(this->GetMRMLDisplayableNode());
 
