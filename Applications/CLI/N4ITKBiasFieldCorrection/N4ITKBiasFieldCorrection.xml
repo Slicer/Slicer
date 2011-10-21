@@ -60,8 +60,8 @@
     <float>
       <name>convergenceThreshold</name>
       <longflag>convergencethreshold</longflag>
-      <description></description>
-      <label>Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.</label>
+      <label>Convergence threshold</label>
+      <description>Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.</description>
       <default>0.0001</default>
     </float>
 
