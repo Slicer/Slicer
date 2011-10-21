@@ -43,6 +43,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
    <label>Number of Scalars</label>
    <description>Most CT or MR scans have one scalar component (grayscale).  Color images have three components (red, green, blue).  Tensor images have 9 components.  For diffusion weighted volumes this indicates the number of baseline and gradient volumes.</description>
   </parameter>
+  <parameter>
    <label>Scalars Type</label>
    <description>Tells the computer representation of each pixel.  Most operations work independent of scalar type.  Label map volumes must be of type Short for use with the Editor module.</description>
   </parameter>
