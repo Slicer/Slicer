@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
- <category>Base</category>
+ <category>Core</category>
  <title>Models</title>
  <description>
-This module is used for changing the appearance of and organizing 3d surface models. 
+This module is used for changing the appearance of and organizing 3d surface models.
  </description>
  <version>4.0</version>
  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Models</documentation-url>
