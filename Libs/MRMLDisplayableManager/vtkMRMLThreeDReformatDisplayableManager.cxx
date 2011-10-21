@@ -38,6 +38,7 @@
 #include <vtkImplicitPlaneRepresentation.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
@@ -137,6 +138,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
                            this->External->GetMRMLCallbackCommand());
   this->SliceNodes.insert(
     std::pair<vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*>(sliceNode,0));
+  this->UpdateWidget(sliceNode, 0);
 }
 
 //---------------------------------------------------------------------------
@@ -167,6 +169,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
     it->second->Delete();
     }
 
+  // TODO: it->first might have already been deleted
   it->first->RemoveObserver(this->External->GetMRMLCallbackCommand());
   this->SliceNodes.erase(it);
 }
@@ -222,7 +225,7 @@ vtkImplicitPlaneWidget2* vtkMRMLThreeDReformatDisplayableManager::vtkInternal::
 NewImplicitPlaneWidget()
 {
   // Instantiate implcite plane widget and his representation
-  vtkImplicitPlaneRepresentation* rep = vtkImplicitPlaneRepresentation::New();
+  vtkNew<vtkImplicitPlaneRepresentation> rep;
   double defaultBounds[6] = {100, -100, 100, -100, 100, -100};
   rep->PlaceWidget(defaultBounds);
   rep->SetOutlineTranslation(0);
@@ -232,7 +235,7 @@ NewImplicitPlaneWidget()
   // The Manager has to manage the destruction of the widgets
   vtkImplicitPlaneWidget2* planeWidget = vtkImplicitPlaneWidget2::New();
   planeWidget->SetInteractor(this->External->GetInteractor());
-  planeWidget->SetRepresentation(rep);
+  planeWidget->SetRepresentation(rep.GetPointer());
   planeWidget->SetEnabled(0);
 
   // Link widget evenement to the LogicCallbackCommand
@@ -306,9 +309,9 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
     // Update Bound size
   vtkMRMLSliceCompositeNode* sliceCompositeNode =
     vtkMRMLSliceLogic::GetSliceCompositeNode(sliceNode);
+  const char* backgroundVolumeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(
-    this->External->GetMRMLScene()->GetNodeByID(
-      sliceCompositeNode->GetBackgroundVolumeID()));
+    this->External->GetMRMLScene()->GetNodeByID(backgroundVolumeID));
   if (volumeNode)
     {
     double dimensions[3], center[3];
@@ -392,7 +395,7 @@ OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* nodeRemoved)
 
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::
-ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *vtkNotUsed(callData))
+ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
   // SceneEvent
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
@@ -403,10 +406,11 @@ ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *vtkNotUsed(callD
       vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
       this->Internal->UpdateWidget(sliceNode, planeWidget);
       this->RequestRender();
+      return;
       }
     }
 
-  return;
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //----------------------------------------------------------------------------
