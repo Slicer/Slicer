@@ -3,7 +3,7 @@
  <category>Core</category>
  <title>Volumes</title>
  <description>
-This module is used for changing the appearance of and organizing 3d surface models.
+This module is used for changing the appearance of various volume types.
  </description>
  <version>4.0</version>
  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Volumes</documentation-url>
