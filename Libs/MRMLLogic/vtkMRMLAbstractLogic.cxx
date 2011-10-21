@@ -114,7 +114,7 @@ void vtkMRMLAbstractLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()
+vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()const
 {
   return this->Internal->MRMLApplicationLogic;
 }

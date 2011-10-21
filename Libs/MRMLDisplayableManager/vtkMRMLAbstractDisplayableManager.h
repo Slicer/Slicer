@@ -79,7 +79,6 @@ protected:
   //ETX
 
   virtual void SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup* group);
-  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
   virtual void SetRenderer(vtkRenderer* newRenderer);
 
   /// Sub-class could overload that function and perform additional initialization steps
@@ -115,9 +114,6 @@ protected:
 
   /// Get associated DisplayableManager group
   vtkMRMLDisplayableManagerGroup * GetMRMLDisplayableManagerGroup();
-
-  /// Get the application logic
-  vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
 
   /// Invoke Create() and set Created flag to True
   /// A no-op if IsCreated() return True

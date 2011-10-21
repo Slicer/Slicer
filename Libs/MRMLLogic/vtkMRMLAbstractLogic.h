@@ -123,7 +123,7 @@ public:
 
   /// 
   /// Get access to overall application state
-  virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic();
+  virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
 
   ///
