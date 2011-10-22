@@ -65,13 +65,6 @@ class vtkMRMLApplicationLogic;
 #endif
 
 //----------------------------------------------------------------------------
-#ifndef vtkSetAndObserveNoModifyMRMLNodeMacro
-#define vtkSetAndObserveNoModifyMRMLNodeMacro(node,value) {                                 \
-  this->GetMRMLObserverManager()->SetAndObserveObject(vtkObjectPointer(&(node)), (value));  \
-};
-#endif
-
-//----------------------------------------------------------------------------
 #ifndef vtkSetAndObserveMRMLNodeEventsMacro
 #define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events) {                        \
   vtkObject *oldNode = (node);                                                          \

@@ -551,14 +551,6 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
   crosshair->Delete();
 
   // insert slicelogic pointers to a map InternalMRMLSliceLogicMap
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
   vtkMRMLSliceLogic *sliceLogic = vtkMRMLSliceLogic::New ( );
   sliceLogic->SetName("Red");
   this->AddSliceLogic("Red", sliceLogic);
@@ -574,14 +566,10 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
   for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
     {
     sliceLogic = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-    sliceLogic->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-    sliceLogic->ProcessLogicEvents();
-    sliceLogic->ProcessMRMLEvents(this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
+    sliceLogic->SetMRMLScene(this->GetMRMLScene());
     //if (this->Slices)
     //      this->Slices->AddItem(sliceLogic);
     }
-
-  events->Delete();
 }
 
 //----------------------------------------------------------------------------
