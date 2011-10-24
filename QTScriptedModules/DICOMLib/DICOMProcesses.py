@@ -100,6 +100,7 @@ class DICOMListener(DICOMProcess):
     self.port = settings.value('StoragePort')
     if not self.port:
       settings.setValue('StoragePort', '11112')
+      self.port = settings.value('StoragePort')
 
 
   def __del__(self):
