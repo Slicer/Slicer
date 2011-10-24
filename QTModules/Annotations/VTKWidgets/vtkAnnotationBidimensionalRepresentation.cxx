@@ -16,10 +16,6 @@
 #include <vtkTextMapper.h>
 #include <vtkWindow.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationBidimensionalRepresentation);
 vtkCxxRevisionMacro (vtkAnnotationBidimensionalRepresentation, "$Revision: 1.0 $");

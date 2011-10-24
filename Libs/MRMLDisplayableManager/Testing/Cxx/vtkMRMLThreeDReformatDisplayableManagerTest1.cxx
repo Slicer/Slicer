@@ -46,10 +46,6 @@
 
 #include "TestingMacros.h"
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
 "# StreamVersion 1\n";
 
@@ -233,7 +229,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
 
   if (record || screenshot)
     {
-    VTK_CREATE(vtkWindowToImageFilter, windowToImageFilter) ;
+    vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
     windowToImageFilter->SetMagnification(1); //set the resolution of the output image
     windowToImageFilter->Update();
@@ -243,7 +239,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
 
     vtkStdString screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
-    VTK_CREATE(vtkPNGWriter, writer);
+    vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());
     writer->SetInput(windowToImageFilter->GetOutput());
     writer->Write();

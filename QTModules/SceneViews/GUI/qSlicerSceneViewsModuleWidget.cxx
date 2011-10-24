@@ -31,10 +31,6 @@
 
 #include "qSlicerApplication.h"
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModule

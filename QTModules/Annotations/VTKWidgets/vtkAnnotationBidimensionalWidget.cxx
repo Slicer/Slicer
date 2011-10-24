@@ -8,10 +8,6 @@
 #include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationBidimensionalWidget);
 vtkCxxRevisionMacro (vtkAnnotationBidimensionalWidget, "$Revision: 1.0 $");

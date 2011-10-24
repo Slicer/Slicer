@@ -16,10 +16,6 @@
 #include <iostream>
 #include <sstream>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //-----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerSceneViewsModuleLogic, "$Revision: 1.0$")
 vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)

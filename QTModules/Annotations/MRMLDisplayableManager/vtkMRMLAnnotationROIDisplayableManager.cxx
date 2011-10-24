@@ -10,10 +10,10 @@
 #include "vtkMRMLAnnotationROIDisplayableManager.h"
 
 // AnnotationModule/VTKWidgets includes
-#include <vtkAnnotationROIRepresentation.h>
-#include <vtkAnnotationROIWidget.h>
 #include <vtkAnnotationROIRepresentation2D.h>
+#include <vtkAnnotationROIRepresentation.h>
 #include <vtkAnnotationROIWidget2D.h>
+#include <vtkAnnotationROIWidget.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -22,30 +22,26 @@
 
 // VTK includes
 #include <vtkAbstractWidget.h>
+#include <vtkActor2D.h>
+#include <vtkCubeSource.h>
+#include <vtkCutter.h>
 #include <vtkHandleRepresentation.h>
-#include <vtkObject.h>
+#include <vtkMath.h>
 #include <vtkObjectFactory.h>
+#include <vtkObject.h>
+#include <vtkPlane.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper2D.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkCutter.h>
-#include <vtkPlane.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataMapper2D.h>
-#include <vtkActor2D.h>
-#include <vtkMath.h>
-#include <vtkCubeSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
 // std includes
 #include <string>
 #include <math.h>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationROIDisplayableManager);

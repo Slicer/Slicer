@@ -45,11 +45,8 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDView");
@@ -89,8 +86,8 @@ void qMRMLThreeDViewPrivate::init()
   popupLayout->addWidget(new QToolButton);
   this->PopupWidget->setLayout(popupLayout);
 
-  VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
-  q->interactor()->SetInteractorStyle(interactorStyle);
+  vtkNew<vtkThreeDViewInteractorStyle> interactorStyle;
+  q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   // Set default background color
   q->setBackgroundColor(QColor::fromRgbF(

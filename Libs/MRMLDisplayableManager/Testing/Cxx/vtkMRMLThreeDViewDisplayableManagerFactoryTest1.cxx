@@ -28,16 +28,13 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -52,13 +49,13 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   //----------------------------------------------------------------------------
   // Since the factory is a singleton, object returned using either New() or GetInstance()
   // should be the same
-  VTK_CREATE(vtkMRMLThreeDViewDisplayableManagerFactory, factoryUsingSmartPointer);
-  if (!factoryUsingSmartPointer)
+  vtkNew<vtkMRMLThreeDViewDisplayableManagerFactory> factoryUsingSmartPointer;
+  if (!factoryUsingSmartPointer.GetPointer())
     {
     std::cerr << "Line " << __LINE__ << " - Problem with New() method" << std::endl;
     return EXIT_FAILURE;
     }
-  if (factory != factoryUsingSmartPointer)
+  if (factory != factoryUsingSmartPointer.GetPointer())
     {
     std::cerr << "Line " << __LINE__
         << " - Factory obtained using either GetInstance() or New() should be the same."
@@ -183,22 +180,22 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Renderer, RenderWindow and Interactor
-  VTK_CREATE(vtkRenderer, rr);
-  VTK_CREATE(vtkRenderWindow, rw);
-  VTK_CREATE(vtkRenderWindowInteractor, ri);
+  vtkNew<vtkRenderer> rr;
+  vtkNew<vtkRenderWindow> rw;
+  vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
-  rw->AddRenderer(rr);
-  rw->SetInteractor(ri);
+  rw->AddRenderer(rr.GetPointer());
+  rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  VTK_CREATE(vtkThreeDViewInteractorStyle, iStyle);
-  ri->SetInteractorStyle(iStyle);
+  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene and ViewNode
-  VTK_CREATE(vtkMRMLScene, scene);
-  VTK_CREATE(vtkMRMLViewNode, viewNode);
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLViewNode> viewNode;
+  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
     {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;
@@ -207,7 +204,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Instanciate DisplayableManagerGroup
-  vtkMRMLDisplayableManagerGroup * group = factory->InstantiateDisplayableManagers(rr);
+  vtkMRMLDisplayableManagerGroup * group =
+      factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)
     {
     std::cerr << "Line " << __LINE__
@@ -230,7 +228,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   group->Delete();
 
   // Try to instantiate again the DisplayableManagerGroup
-  group = factory->InstantiateDisplayableManagers(rr);
+  group = factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)
     {
     std::cerr << "Line " << __LINE__

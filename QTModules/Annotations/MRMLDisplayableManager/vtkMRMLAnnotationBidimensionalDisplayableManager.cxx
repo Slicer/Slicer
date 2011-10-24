@@ -36,10 +36,6 @@
 // STD includes
 #include <string>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationBidimensionalDisplayableManager);
 vtkCxxRevisionMacro (vtkMRMLAnnotationBidimensionalDisplayableManager, "$Revision: 1.0 $");

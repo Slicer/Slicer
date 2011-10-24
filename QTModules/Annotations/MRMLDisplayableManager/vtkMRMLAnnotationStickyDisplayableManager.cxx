@@ -3,32 +3,28 @@
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationStickyNode.h"
-#include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationStickyNode.h"
 
 #include <vtkMRMLInteractionNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkPNGReader.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkProperty.h>
-#include <vtkProperty2D.h>
-#include <vtkRenderer.h>
-#include <vtkLogoWidget.h>
+#include <vtkAbstractWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkLogoRepresentation.h>
-#include <vtkAbstractWidget.h>
+#include <vtkLogoWidget.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkObject.h>
+#include <vtkPNGReader.h>
+#include <vtkProperty2D.h>
+#include <vtkProperty.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
-
-// std includes
+// STD includes
 #include <string>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationStickyDisplayableManager);
@@ -129,7 +125,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
   this->GetRenderer()->NormalizedDisplayToViewport(x,y);
   this->GetRenderer()->ViewportToNormalizedViewport(x,y);
 
-  VTK_CREATE(vtkPNGReader,r);
+  vtkNew<vtkPNGReader> r;
 
   // a hack to get the icon
   std::stringstream s;
@@ -137,7 +133,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
   s << "/tmp/" << "sticky.png";
   r->SetFileName(s.str().c_str());
 
-  VTK_CREATE(vtkLogoRepresentation,logoRepresentation);
+  vtkNew<vtkLogoRepresentation> logoRepresentation;
   logoRepresentation->SetImage(r->GetOutput());
   logoRepresentation->SetPosition(x,y); // here we set normalized viewport
   logoRepresentation->SetPosition2(.1, .1);
@@ -145,7 +141,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
 
   vtkLogoWidget * logoWidget = vtkLogoWidget::New();
   logoWidget->SetInteractor(this->GetInteractor());
-  logoWidget->SetRepresentation(logoRepresentation);
+  logoWidget->SetRepresentation(logoRepresentation.GetPointer());
 
   logoWidget->On();
 

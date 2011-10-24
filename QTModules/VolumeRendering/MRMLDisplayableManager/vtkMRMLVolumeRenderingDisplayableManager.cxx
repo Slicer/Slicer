@@ -52,18 +52,15 @@
 #include <cmath>
 #include <algorithm> // for std::min
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLVolumeRenderingDisplayableManager);
 vtkCxxRevisionMacro (vtkMRMLVolumeRenderingDisplayableManager, "$Revision: 1.0 $");
 
-
+//---------------------------------------------------------------------------
 bool vtkMRMLVolumeRenderingDisplayableManager::First = true;
 int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
 
+//---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
   //create instances of mappers

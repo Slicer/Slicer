@@ -37,10 +37,6 @@
 // STD includes
 
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //----------------------------------------------------------------------------
 int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

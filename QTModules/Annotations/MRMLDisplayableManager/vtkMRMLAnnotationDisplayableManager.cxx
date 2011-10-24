@@ -27,28 +27,25 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPointHandleRepresentation2D.h>
 #include <vtkPropCollection.h>
-#include <vtkProperty.h>
 #include <vtkProperty2D.h>
-#include <vtkRenderer.h>
+#include <vtkProperty.h>
 #include <vtkRendererCollection.h>
+#include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSeedWidget.h>
 #include <vtkSeedRepresentation.h>
+#include <vtkSeedWidget.h>
 #include <vtkSmartPointer.h>
 #include <vtkWidgetRepresentation.h>
-#include <vtkPointHandleRepresentation2D.h>
 
 // STD includes
 #include <algorithm>
 #include <map>
 #include <vector>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 typedef void (*fp)(void);
 
@@ -95,7 +92,7 @@ void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "DisableInteractorStyleEventsProcessing = " << this->DisableInteractorStyleEventsProcessing << std::endl;
-  if (this->m_SliceNode && 
+  if (this->m_SliceNode &&
       this->m_SliceNode->GetID())
     {
     os << indent << "Slice node id = " << this->m_SliceNode->GetID() << std::endl;
@@ -118,7 +115,7 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNode(vtkMRMLAnnotationNod
     {
     return;
     }
-  VTK_CREATE(vtkIntArray, nodeEvents);
+  vtkNew<vtkIntArray> nodeEvents;
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
@@ -127,13 +124,13 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNode(vtkMRMLAnnotationNod
  if (annotationNode)// && !annotationNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
    {
    vtkUnObserveMRMLNodeMacro(annotationNode);
-   vtkObserveMRMLNodeEventsMacro(annotationNode, nodeEvents);
+   vtkObserveMRMLNodeEventsMacro(annotationNode, nodeEvents.GetPointer());
    }
 }
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 {
- 
+
 
 
   // run through all associated nodes
@@ -182,7 +179,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromInteractionNode()
     {
     return;
     }
-  
+
   // find the interaction node
   vtkMRMLInteractionNode *interactionNode =
     vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
@@ -338,7 +335,7 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       }
     else if (event == vtkMRMLInteractionNode::InteractionModeChangedEvent)
       {
-      // always update lock if the mode changed, even if this isn't the displayable manager 
+      // always update lock if the mode changed, even if this isn't the displayable manager
       // for the annotation that is getting placed, but don't update locking on persistence changed event
       this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
       }
@@ -385,7 +382,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     {
     return;
     }
-  
+
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 
   // if the scene is still updating, jump out
@@ -424,7 +421,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     }
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent:  node " << node->GetID());
-  
+
   // Node added should not be already managed
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it = std::find(
       this->Helper->AnnotationNodeList.begin(),
@@ -562,7 +559,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
   // find the annotation node that has this display node
   vtkMRMLAnnotationNode *annotationNode = this->Helper->GetAnnotationNodeFromDisplayNode(annotationDisplayNode);
- 
+
   if (!annotationNode)
     {
     return;
@@ -587,7 +584,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
     // Propagate MRML changes to widget
     this->PropagateMRMLToWidget(annotationNode, widget);
-    
+
     this->RequestRender();
     }
 }
@@ -740,16 +737,16 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
     return;
     }
-  
+
   // run through all associated nodes
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
   it = this->Helper->AnnotationNodeList.begin();
   while(it != this->Helper->AnnotationNodeList.end())
     {
-    
+
     // we loop through all nodes
     vtkMRMLAnnotationNode * annotationNode = *it;
-    
+
     vtkAbstractWidget* widget = this->Helper->GetWidget(annotationNode);
     if (!widget)
       {
@@ -889,24 +886,24 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           {
           // we create a new marker.
 
-          VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+          vtkNew<vtkPointHandleRepresentation2D> handle;
           handle->GetProperty()->SetColor(0,1,0);
           handle->SetHandleSize(3);
 
-          VTK_CREATE(vtkSeedRepresentation, rep);
-          rep->SetHandleRepresentation(handle);
+          vtkNew<vtkSeedRepresentation> rep;
+          rep->SetHandleRepresentation(handle.GetPointer());
 
           marker = vtkSeedWidget::New();
 
           marker->CreateDefaultRepresentation();
 
-          marker->SetRepresentation(rep);
+          marker->SetRepresentation(rep.GetPointer());
 
           marker->SetInteractor(this->GetInteractor());
           marker->SetCurrentRenderer(this->GetRenderer());
 
           marker->ProcessEventsOff();
-          
+
           marker->On();
           marker->CompleteInteraction();
 
@@ -929,8 +926,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           }
 
         // .. and create a new one at the intersection location
-        VTK_CREATE(vtkHandleWidget, newhandle);
-        newhandle = marker->CreateNewHandle();
+        vtkSmartPointer<vtkHandleWidget> newhandle = marker->CreateNewHandle();
         vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
 
         marker->On();
@@ -1032,7 +1028,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
             vtkDebugMacro("SeedWidget: Complete interaction");
             seedWidget->CompleteInteraction();
             }
-          
+
           // we need to render again
           if (currentRenderer)
             {
@@ -1114,7 +1110,7 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
     return;
     }
   vtkDebugMacro("OnInteractorStyleEvent " << this->m_Focus << " " << eventid);
-  
+
   if (eventid == vtkCommand::LeftButtonReleaseEvent)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
@@ -1127,7 +1123,7 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
   else if (eventid == vtkCommand::LeftButtonPressEvent)
     {
 //    vtkWarningMacro("OnInteractorStyleEvent: unhandled left button press event " << eventid);
-    }  
+    }
   else
     {
     //vtkWarningMacro("OnInteractorStyleEvent: unhandled event " << eventid);
@@ -1272,10 +1268,10 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r,
     // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
     vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    VTK_CREATE(vtkMatrix4x4, rasToXyMatrix);
+    vtkNew<vtkMatrix4x4> rasToXyMatrix;
 
     // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
+    xyToRasMatrix->Invert(xyToRasMatrix, rasToXyMatrix.GetPointer());
 
     double worldCoordinates[4];
     worldCoordinates[0] = r;
@@ -1317,7 +1313,7 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double
     }
   double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
   double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
-  
+
   if (this->Is2DDisplayableManager())
     {
     // 2D case
@@ -1520,8 +1516,8 @@ void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidge
 
 //---------------------------------------------------------------------------
 /// Convert world coordinates to local using mrml parent transform
-void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnnotationNode *node, 
-                                                                     double *worldCoordinates, 
+void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnnotationNode *node,
+                                                                     double *worldCoordinates,
                                                                      double *localCoordinates)
 {
   if (node == NULL)
@@ -1538,7 +1534,7 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnno
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
     transformToWorld->Invert();
-    
+
     double p[4];
     p[3] = 1;
     int i;

@@ -3,11 +3,11 @@
 #include <vtkSlicerAnnotationModuleLogic.h>
 
 // AnnotationModule/MRML includes
-#include <vtkMRMLAnnotationRulerNode.h>
-#include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayableManager.h>
-#include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationRulerNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // AnnotationModule/MRMLDisplayableManager includes
@@ -22,32 +22,29 @@
 #include <vtkMRMLInteractionNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkProperty.h>
-#include <vtkProperty2D.h>
-#include <vtkTextProperty.h>
-#include <vtkMath.h>
-#include <vtkRenderer.h>
+#include <vtkAbstractWidget.h>
 #include <vtkAxisActor2D.h>
+#include <vtkCubeSource.h>
+#include <vtkGlyph3D.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
-#include <vtkAbstractWidget.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
+#include <vtkLineRepresentation.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkObject.h>
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
-#include <vtkLineRepresentation.h>
-#include <vtkGlyph3D.h>
-#include <vtkCubeSource.h>
+#include <vtkProperty2D.h>
+#include <vtkProperty.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
+#include <vtkTextProperty.h>
 
 // std includes
 #include <string>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationRulerDisplayableManager);
@@ -191,11 +188,11 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     {
 
     // this is a 2D displayableManager
-    VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+    vtkNew<vtkPointHandleRepresentation2D> handle;
 //    handle->GetProperty()->SetColor(1,0,0);
 
-    VTK_CREATE(vtkAnnotationRulerRepresentation, dRep);
-    dRep->SetHandleRepresentation(handle);
+    vtkNew<vtkAnnotationRulerRepresentation> dRep;
+    dRep->SetHandleRepresentation(handle.GetPointer());
     dRep->InstantiateHandleRepresentation();
 
     vtkAxisActor2D *axis = dRep->GetAxis();
@@ -206,7 +203,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep->RulerModeOn();
     dRep->SetRulerDistance(10);
 
-    rulerWidget->SetRepresentation(dRep);
+    rulerWidget->SetRepresentation(dRep.GetPointer());
 
     bool showWidget = true;
     showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
@@ -222,28 +219,27 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     {
 
     // this is a 3D displayableManager
-    VTK_CREATE(vtkPointHandleRepresentation3D, handle2);
+    vtkNew<vtkPointHandleRepresentation3D> handle2;
 //    handle2->GetProperty()->SetColor(1,1,0);
 
-    VTK_CREATE(vtkAnnotationRulerRepresentation3D, dRep2);
-    dRep2->SetHandleRepresentation(handle2);
+    vtkNew<vtkAnnotationRulerRepresentation3D> dRep2;
+    dRep2->SetHandleRepresentation(handle2.GetPointer());
     dRep2->InstantiateHandleRepresentation();
     dRep2->RulerModeOn();
     dRep2->SetRulerDistance(10);
 
     // change ticks to a stretched cube
-    VTK_CREATE(vtkCubeSource, cubeSource);
+    vtkNew<vtkCubeSource> cubeSource;
     cubeSource->SetXLength(1.0);
     cubeSource->SetYLength(0.1);
     cubeSource->SetZLength(1.0);
     cubeSource->Update();
     //dRep2->UpdateGlyphPolyData(cubeSource->GetOutput());
 
-    rulerWidget->SetRepresentation(dRep2);
+    rulerWidget->SetRepresentation(dRep2.GetPointer());
 
     rulerWidget->SetWidgetStateToManipulate();
     rulerWidget->On();
-
     }
 
   this->PropagateMRMLToWidget(rulerNode, rulerWidget);
@@ -394,7 +390,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = rulerNode->GetAnnotationTextDisplayNode();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = rulerNode->GetAnnotationPointDisplayNode();
   vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
-  
+
   // update the location
   if (this->Is2DDisplayableManager())
     {
@@ -442,11 +438,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       }
     if (textDisplayNode)
       {
-      
+
       // TODO: get this working
       /*
       rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
-      
+
       if (rep->GetTitleTextMapper())
         {
         rep->GetTitleTextMapper()->GetTextProperty()->ShallowCopy(rep->GetAxis()->GetTitleTextProperty());
@@ -493,7 +489,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   else
     {
     /// 3d case
-    
+
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
     vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
 
@@ -609,7 +605,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       }
     }
 
-  
+
   // update the position
   this->UpdatePosition(widget, node);
 
@@ -800,7 +796,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
 
     rulerNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("M"));
 
-    
+
 
     // if this was a one time place, go back to view transform mode
     vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
@@ -808,17 +804,17 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
       {
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
-    
+
     this->GetMRMLScene()->SaveStateForUndo();
-    
+
     rulerNode->Initialize(this->GetMRMLScene());
-    
+
     rulerNode->Delete();
-    
+
     // reset updating state
     this->m_Updating = 0;
     }
-  
+
   }
 
 //---------------------------------------------------------------------------
@@ -870,7 +866,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
     {
     // get the 2d representation
     vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
-    
+
     // change the 2D location
     double displayCoordinates1[4]={0,0,0,1};
     double displayCoordinates2[4]={0,0,0,1};
@@ -901,12 +897,12 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
     // change the 3D location
     rep->SetPoint1WorldPosition(worldCoordinates1);
     rep->SetPoint2WorldPosition(worldCoordinates2);
-    
+
     rep->NeedToRenderOn();
     }
-  
+
   rulerWidget->Modified();
-  
+
   // enable processing of modified events
   this->m_Updating = 0;
 }

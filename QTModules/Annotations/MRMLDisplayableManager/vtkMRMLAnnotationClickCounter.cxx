@@ -6,10 +6,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationClickCounter);
 vtkCxxRevisionMacro (vtkMRMLAnnotationClickCounter, "$Revision: 1.0 $");
@@ -24,7 +20,6 @@ void vtkMRMLAnnotationClickCounter::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLAnnotationClickCounter::vtkMRMLAnnotationClickCounter()
 {
   this->m_Clicks = 0;
-
 }
 
 //---------------------------------------------------------------------------
@@ -52,3 +47,4 @@ bool vtkMRMLAnnotationClickCounter::HasEnoughClicks(int clicks)
 
   return false;
 }
+

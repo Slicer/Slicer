@@ -21,10 +21,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkCylinderSource.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerRepresentation3D);
 vtkCxxRevisionMacro (vtkAnnotationRulerRepresentation3D, "$Revision: 1.0 $");

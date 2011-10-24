@@ -27,24 +27,21 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
-#include <vtkSmartPointer.h>
+#include <vtkFollower.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkOutlineSource.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkBoundingBox.h>
-#include <vtkFollower.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkOutlineSource.h>
+#include <vtkSmartPointer.h>
 #include <vtkVectorText.h>
-#include <vtkProperty.h>
-#include <vtkMath.h>
 
 // STD includes
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLViewDisplayableManager );
@@ -98,12 +95,12 @@ vtkMRMLViewDisplayableManager::vtkInternal::~vtkInternal()
 void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
 {
   // Create the default bounding box
-  VTK_CREATE(vtkOutlineSource, boxSource);
-  VTK_CREATE(vtkPolyDataMapper, boxMapper);
+  vtkNew<vtkOutlineSource> boxSource;
+  vtkNew<vtkPolyDataMapper> boxMapper;
   boxMapper->SetInput(boxSource->GetOutput());
-   
+
   this->BoxAxisActor = vtkSmartPointer<vtkActor>::New();
-  this->BoxAxisActor->SetMapper(boxMapper);
+  this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
   this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);
   this->BoxAxisActor->GetProperty()->SetColor(1.0, 0.0, 1.0);
   this->BoxAxisActor->SetPickable(0);
@@ -114,16 +111,16 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
 
   for(int i = 0; i < 6; ++i)
     {
-    VTK_CREATE(vtkVectorText, axisText);
+    vtkNew<vtkVectorText> axisText;
     axisText->SetText(labels[i]);
 
-    VTK_CREATE(vtkPolyDataMapper, axisMapper);
+    vtkNew<vtkPolyDataMapper> axisMapper;
     axisMapper->SetInput(axisText->GetOutput());
 
-    VTK_CREATE(vtkFollower, axisActor);
-    axisActor->SetMapper(axisMapper);
+    vtkNew<vtkFollower> axisActor;
+    axisActor->SetMapper(axisMapper.GetPointer());
     axisActor->SetPickable(0);
-    this->AxisLabelActors.push_back(axisActor);
+    this->AxisLabelActors.push_back(axisActor.GetPointer());
 
     axisActor->GetProperty()->SetColor(1, 1, 1); // White
     axisActor->GetProperty()->SetDiffuse(0.0);
@@ -212,13 +209,13 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     double bounds[6];
     this->BoxAxisBoundingBox->GetBounds(bounds);
 
-    VTK_CREATE(vtkOutlineSource, boxSource);
+    vtkNew<vtkOutlineSource> boxSource;
     boxSource->SetBounds(bounds);
 
-    VTK_CREATE(vtkPolyDataMapper, boxMapper);
+    vtkNew<vtkPolyDataMapper> boxMapper;
     boxMapper->SetInput(boxSource->GetOutput());
 
-    this->BoxAxisActor->SetMapper(boxMapper);
+    this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
     this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);
 
     double letterSize = viewNode->GetLetterSize();

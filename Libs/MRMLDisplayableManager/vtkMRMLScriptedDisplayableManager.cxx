@@ -35,10 +35,6 @@
 
 // STD includes
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLScriptedDisplayableManager );
 vtkCxxRevisionMacro(vtkMRMLScriptedDisplayableManager, "$Revision: 13525 $");

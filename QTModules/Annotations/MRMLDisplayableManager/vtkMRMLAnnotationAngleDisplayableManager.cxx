@@ -4,32 +4,28 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationNode.h"
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
 
 // VTK includes
-#include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkProperty.h>
-#include <vtkAngleRepresentation3D.h>
-#include <vtkSphereHandleRepresentation.h>
-#include <vtkAngleWidget.h>
-#include <vtkHandleWidget.h>
-#include <vtkHandleRepresentation.h>
-#include <vtkInteractorEventRecorder.h>
 #include <vtkAbstractWidget.h>
+#include <vtkAngleRepresentation3D.h>
+#include <vtkAngleWidget.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkHandleWidget.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkObjectFactory.h>
+#include <vtkObject.h>
+#include <vtkProperty.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereHandleRepresentation.h>
 
 // Math includes
 #define _USE_MATH_DEFINES
 #include <math.h>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationAngleDisplayableManager);
@@ -117,17 +113,17 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
     return 0;
     }
 
-  VTK_CREATE(vtkSphereHandleRepresentation, handle);
+  vtkNew<vtkSphereHandleRepresentation> handle;
   handle->GetProperty()->SetColor(1,0,0);
   handle->SetHandleSize(5);
 
-  VTK_CREATE(vtkAngleRepresentation3D, rep);
-  rep->SetHandleRepresentation(handle);
+  vtkNew<vtkAngleRepresentation3D> rep;
+  rep->SetHandleRepresentation(handle.GetPointer());
   rep->InstantiateHandleRepresentation();
 
   vtkAngleWidget *angleWidget = vtkAngleWidget::New();
   angleWidget->CreateDefaultRepresentation();
-  angleWidget->SetRepresentation(rep);
+  angleWidget->SetRepresentation(rep.GetPointer());
 
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
@@ -157,7 +153,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
-  VTK_CREATE(vtkInteractorEventRecorder, recorder);
+  vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
 

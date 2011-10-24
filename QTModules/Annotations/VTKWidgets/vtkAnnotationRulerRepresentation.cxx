@@ -11,10 +11,6 @@
 #include <vtkWindow.h>
 #include <vtkTextProperty.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerRepresentation);
 vtkCxxRevisionMacro (vtkAnnotationRulerRepresentation, "$Revision: 1.0 $");

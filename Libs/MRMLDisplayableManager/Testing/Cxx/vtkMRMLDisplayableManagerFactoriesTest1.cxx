@@ -16,48 +16,45 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 #include <vtkTesting.h>
 
 // STD includes
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
 {
-  VTK_CREATE(vtkTesting, testHelper);
+  vtkNew<vtkTesting> testHelper;
   testHelper->AddArguments(argc, const_cast<const char **>(argv));
 
   vtkMRMLThreeDViewDisplayableManagerFactory * threeDViewFactory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!threeDViewFactory)
     {
-    std::cerr << "Line " << __LINE__  
-      << " - Problem with vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance() method" 
+    std::cerr << "Line " << __LINE__
+      << " - Problem with vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance() method"
       << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   vtkMRMLSliceViewDisplayableManagerFactory * slicerViewFactory = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
   if (!slicerViewFactory)
     {
-    std::cerr << "Line " << __LINE__ 
-      << " - Problem with vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance() method" 
+    std::cerr << "Line " << __LINE__
+      << " - Problem with vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance() method"
       << std::endl;
     return EXIT_FAILURE;
     }
 
   // MRML Scene
-  VTK_CREATE(vtkMRMLScene, scene);
+  vtkNew<vtkMRMLScene> scene;
 
   // MRML Application logic (Add Interaction and Selection node)
-  VTK_CREATE(vtkMRMLApplicationLogic, mrmlAppLogic);
-  mrmlAppLogic->SetMRMLScene(scene);
+  vtkNew<vtkMRMLApplicationLogic> mrmlAppLogic;
+  mrmlAppLogic->SetMRMLScene(scene.GetPointer());
 
   int currentCount = threeDViewFactory->GetRegisteredDisplayableManagerCount();
   if (currentCount != 0)
@@ -93,20 +90,20 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     }
 
   // Renderer, RenderWindow and Interactor
-  VTK_CREATE(vtkRenderer, rr);
-  VTK_CREATE(vtkRenderWindow, rw);
-  VTK_CREATE(vtkRenderWindowInteractor, ri);
+  vtkNew<vtkRenderer> rr;
+  vtkNew<vtkRenderWindow> rw;
+  vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
-  rw->AddRenderer(rr);
-  rw->SetInteractor(ri);
+  rw->AddRenderer(rr.GetPointer());
+  rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  VTK_CREATE(vtkThreeDViewInteractorStyle, iStyle);
-  ri->SetInteractorStyle(iStyle);
+  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  ri->SetInteractorStyle(iStyle.GetPointer());
 
   // ThreeD - Instantiate displayable managers
-  vtkMRMLDisplayableManagerGroup * threeDViewGroup = threeDViewFactory->InstantiateDisplayableManagers(rr);
+  vtkMRMLDisplayableManagerGroup * threeDViewGroup = threeDViewFactory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!threeDViewGroup)
     {
     std::cerr << "Line " << __LINE__
@@ -127,8 +124,8 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     }
 
   // ThreeD - Instantiate and add node to the scene
-  VTK_CREATE(vtkMRMLViewNode, viewNode);
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
+  vtkNew<vtkMRMLViewNode> viewNode;
+  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
     {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;
@@ -136,10 +133,11 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     }
 
   // ThreeD - Associate displayable node to the group
-  threeDViewGroup->SetMRMLDisplayableNode(viewNode);
+  threeDViewGroup->SetMRMLDisplayableNode(viewNode.GetPointer());
 
   // Slice - Instantiate displayable managers
-  vtkMRMLDisplayableManagerGroup * sliceViewGroup = slicerViewFactory->InstantiateDisplayableManagers(rr);
+  vtkMRMLDisplayableManagerGroup * sliceViewGroup =
+      slicerViewFactory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!sliceViewGroup)
     {
     std::cerr << "Line " << __LINE__
@@ -160,10 +158,10 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     }
 
   // Slice - Instantiate and add node to the scene
-  VTK_CREATE(vtkMRMLSliceNode, sliceNode);
+  vtkNew<vtkMRMLSliceNode> sliceNode;
   sliceNode->SetLayoutName("Red");
   sliceNode->SetName("Red-Axial");
-  nodeAdded = scene->AddNode(sliceNode);
+  nodeAdded = scene->AddNode(sliceNode.GetPointer());
   if (!nodeAdded)
     {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkSliceViewNode" << std::endl;
@@ -171,11 +169,11 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     }
 
   // Slice - Associate displayable node to the group
-  sliceViewGroup->SetMRMLDisplayableNode(sliceNode);
+  sliceViewGroup->SetMRMLDisplayableNode(sliceNode.GetPointer());
 
   // Add node to the scene
-  VTK_CREATE(vtkMRMLCameraNode, cameraNode);
-  scene->AddNode(cameraNode);
+  vtkNew<vtkMRMLCameraNode> cameraNode;
+  scene->AddNode(cameraNode.GetPointer());
 
   // Check if both displayable manager cought the event
   if (vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount != 1)

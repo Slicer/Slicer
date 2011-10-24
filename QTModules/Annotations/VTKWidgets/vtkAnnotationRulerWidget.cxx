@@ -9,10 +9,6 @@
 #include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerWidget);
 vtkCxxRevisionMacro (vtkAnnotationRulerWidget, "$Revision: 1.0 $");

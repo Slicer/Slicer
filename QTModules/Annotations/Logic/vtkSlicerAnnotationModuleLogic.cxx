@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkNew.h>
 #include <vtkPNGWriter.h>
 #include <vtkSmartPointer.h>
 
@@ -36,10 +37,6 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //-----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerAnnotationModuleLogic, "$Revision: 2.0$")
@@ -3279,7 +3276,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
       tempPath.append(".png");
       
       QByteArray tempPathArray = tempPath.toLatin1();
-      VTK_CREATE(vtkPNGWriter,w);
+      vtkNew<vtkPNGWriter> w;
       w->SetInput(image);
       w->SetFileName(tempPathArray.data());
       w->Write();

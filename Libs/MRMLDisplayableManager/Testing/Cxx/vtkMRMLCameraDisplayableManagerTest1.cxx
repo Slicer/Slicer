@@ -30,22 +30,19 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkErrorCode.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkNew.h>
+#include <vtkPNGWriter.h>
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkErrorCode.h>
-#include <vtkInteractorEventRecorder.h>
 #include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
 
 // STD includes
 
 #include "TestingMacros.h"
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 char vtkMRMLCameraDisplayableManagerTest1EventLog[] =
 "# StreamVersion 1\n"
@@ -625,7 +622,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
 
   // Save current scene
-  VTK_CREATE(vtkTesting, testHelper);
+  vtkNew<vtkTesting> testHelper;
   testHelper->AddArguments(argc, const_cast<const char **>(argv));
   vtkStdString savedScene = testHelper->GetTempDirectory();
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
@@ -719,14 +716,14 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   if (record || screenshot)
     {
-    VTK_CREATE(vtkWindowToImageFilter, windowToImageFilter) ;
+    vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(rw);
     windowToImageFilter->SetMagnification(1); //set the resolution of the output image
     windowToImageFilter->Update();
 
     vtkStdString screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
-    VTK_CREATE(vtkPNGWriter, writer);
+    vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());
     writer->SetInput(windowToImageFilter->GetOutput());
     writer->Write();

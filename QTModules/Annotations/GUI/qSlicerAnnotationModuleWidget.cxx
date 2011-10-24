@@ -22,11 +22,6 @@
 #include <QBuffer>
 #include <QImageWriter>
 
-#include "vtkObserverManager.h"
-#include "vtkCollection.h"
-#include "vtkSmartPointer.h"
-#include "vtkCommand.h"
-
 #include "qSlicerMouseModeToolBar.h"
 #include "qMRMLSceneDisplayableModel.h"
 
@@ -35,14 +30,16 @@
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
 
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkCollection.h>
+#include <vtkNew.h>
+#include <vtkObserverManager.h>
+#include <vtkSmartPointer.h>
+
 // MRML includes
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSelectionNode.h"
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
@@ -510,7 +507,7 @@ void qSlicerAnnotationModuleWidget::onReportButtonClicked()
         SLOT(reportDialogAccepted()));
     }
 
-  VTK_CREATE(vtkCollection,collection);
+  vtkNew<vtkCollection> collection;
 
   d->hierarchyTreeView->selectedAsCollection(collection.GetPointer());
 

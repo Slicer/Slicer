@@ -25,10 +25,6 @@
 // std includes
 #include <string>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationSplineDisplayableManager);
 vtkCxxRevisionMacro (vtkMRMLAnnotationSplineDisplayableManager, "$Revision: 1.0 $");

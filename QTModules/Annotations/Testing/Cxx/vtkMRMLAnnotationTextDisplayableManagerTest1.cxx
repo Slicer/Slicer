@@ -11,41 +11,36 @@
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLViewDisplayableManager.h>
 #include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLViewDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLAnnotationTextNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLAnnotationTextNode.h>
 
 // VTK includes
+#include <vtkErrorCode.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkPNGWriter.h>
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h> 
 #include <vtkSmartPointer.h>
-#include <vtkErrorCode.h>
-#include <vtkInteractorEventRecorder.h>
 #include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
 
 // STD includes
 #include <cstdlib>
 #include <iterator>
 
 #include "TestingMacros.h"
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand

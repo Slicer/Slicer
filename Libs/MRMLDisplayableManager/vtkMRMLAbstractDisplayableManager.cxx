@@ -30,20 +30,17 @@
 #include <vtkMRMLSelectionNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
 #include <vtkInteractorStyle.h>
+#include <vtkNew.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cassert>
 #include <algorithm>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
@@ -539,8 +536,8 @@ vtkMRMLNode * vtkMRMLAbstractDisplayableManager::GetMRMLDisplayableNode()
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAbstractDisplayableManager::ActiveInteractionModes() { 
-  return vtkMRMLInteractionNode::Place; 
+int vtkMRMLAbstractDisplayableManager::ActiveInteractionModes() {
+  return vtkMRMLInteractionNode::Place;
 }
 
 //---------------------------------------------------------------------------
@@ -566,7 +563,7 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  VTK_CREATE(vtkIntArray, sceneEvents);
+  vtkNew<vtkIntArray> sceneEvents;
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeImportedEvent);
@@ -574,8 +571,8 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
 //---------------------------------------------------------------------------

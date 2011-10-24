@@ -11,34 +11,35 @@
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLViewDisplayableManager.h>
 #include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLViewDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLAnnotationPointDisplayNode.h>
+#include <vtkMRMLAnnotationTextDisplayNode.h>
+#include <vtkMRMLAnnotationTextNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLAnnotationTextNode.h>
-#include <vtkMRMLAnnotationTextDisplayNode.h>
-#include <vtkMRMLAnnotationPointDisplayNode.h>
 
 // VTK includes
+#include <vtkErrorCode.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkNew.h>
+#include <vtkPNGWriter.h>
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h> 
 #include <vtkSmartPointer.h>
-#include <vtkErrorCode.h>
-#include <vtkInteractorEventRecorder.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
-#include <vtkTextWidget.h>
 #include <vtkTextRepresentation.h>
+#include <vtkTextWidget.h>
+#include <vtkWindowToImageFilter.h>
 
 
 // STD includes
@@ -46,10 +47,6 @@
 #include <iterator>
 
 #include "TestingMacros.h"
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand
@@ -254,7 +251,7 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     }
 
   vtkTextWidget* textWidget = vtkTextWidget::New();
-  VTK_CREATE(vtkTextRepresentation, textRep);
+  vtkNew<vtkTextRepresentation> textRep;
 
   textRep->SetMoving(1);
 
@@ -266,7 +263,7 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     }
   textRep->SetText(textNode->GetText(0));
 
-  textWidget->SetRepresentation(textRep);
+  textWidget->SetRepresentation(textRep.GetPointer());
   textWidget->SetInteractor(ri);
 
   if (textNode->GetTextCoordinates()[0]!=30)

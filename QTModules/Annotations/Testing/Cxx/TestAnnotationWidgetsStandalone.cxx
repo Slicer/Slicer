@@ -1,37 +1,34 @@
 
-// First include the required header files for the VTK classes we are using.
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkCommand.h"
-#include "vtkBiDimensionalWidget.h"
-#include "vtkInteractorEventRecorder.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "TestingMacros.h"
-#include "vtkSphereSource.h"
-#include "vtkInteractorStyleSwitch.h"
+// VTK includes
+#include <vtkActor.h>
+#include <vtkBiDimensionalWidget.h>
+#include <vtkCommand.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkInteractorStyleSwitch.h>
+#include <vtkNew.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSphereSource.h>
 
-// std includes
-#include <string>
+// STD includes
 #include <sstream>
+#include <string>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+#include "TestingMacros.h"
 
 // The actual test function
 int TestAnnotationWidgetsStandalone( int argc, char *argv[] )
 {
-
   bool retVal = false;
 
   vtkSphereSource *ss = vtkSphereSource::New();
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-   mapper->SetInput(ss->GetOutput());
-   vtkActor *actor = vtkActor::New();
-   actor->SetMapper(mapper);
+  mapper->SetInput(ss->GetOutput());
+  vtkActor *actor = vtkActor::New();
+  actor->SetMapper(mapper);
 
 
   // Create the RenderWindow, Renderer
@@ -66,7 +63,7 @@ int TestAnnotationWidgetsStandalone( int argc, char *argv[] )
   renderWindow->Render();
 
 
-  VTK_CREATE(vtkInteractorEventRecorder, recorder);
+  vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(renderInteractor);
   recorder->ReadFromInputStringOn();
 

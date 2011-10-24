@@ -29,10 +29,6 @@
 // STD includes
 #include <cassert>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLTestThreeDViewDisplayableManager );
 vtkCxxRevisionMacro(vtkMRMLTestThreeDViewDisplayableManager, "$Revision: 13525 $");

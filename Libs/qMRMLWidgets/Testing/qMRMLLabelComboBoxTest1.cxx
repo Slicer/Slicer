@@ -33,12 +33,9 @@
 //#include <vtkMRMLFreeSurferProceduralColorNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 
 #include "TestingMacros.h"
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 // --------------------------------------------------------------------------
 int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
@@ -47,7 +44,7 @@ int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
 
   QApplication app(argc, argv);
 
-  VTK_CREATE(vtkMRMLColorTableNode, colorTableNode);
+  vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
   
   qMRMLLabelComboBox labelComboBox;
@@ -55,7 +52,7 @@ int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
   // Test1 - Check if mrmlColorNode()/setMRMLColorNode() work
   ctkCompare(labelComboBox.mrmlColorNode(), 0);
   ctkExerciseMethod(&labelComboBox, setMRMLColorNode, mrmlColorNode,
-                    colorTableNode, colorTableNode.GetPointer());
+                    colorTableNode.GetPointer(), colorTableNode.GetPointer());
   labelComboBox.setMRMLColorNode(0);
 
   // Test2 - Check if noneEnabled()/setNoneEnabled() work
@@ -70,7 +67,7 @@ int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
   ctkCompare(labelComboBox.currentColor(), -1);
   ctkExerciseMethod(&labelComboBox, setCurrentColor, currentColor, 10, -1);
 
-  labelComboBox.setMRMLColorNode(colorTableNode);
+  labelComboBox.setMRMLColorNode(colorTableNode.GetPointer());
 
   // Test4 - Check if currentColor()/setCurrentColor() work properly when
   // a valid ColorNode has been assigned and NoneEnabled is false
@@ -90,7 +87,7 @@ int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
   ctkCompare(labelComboBox2.currentColor(), -1);
   ctkExerciseMethod(&labelComboBox2, setCurrentColor, currentColor, 10, -1);
 
-  labelComboBox2.setMRMLColorNode(colorTableNode);
+  labelComboBox2.setMRMLColorNode(colorTableNode.GetPointer());
 
   // Test6 - Check if currentColor()/setCurrentColor() work properly when
   // a valid ColorNode has been assigned and NoneEnabled is true

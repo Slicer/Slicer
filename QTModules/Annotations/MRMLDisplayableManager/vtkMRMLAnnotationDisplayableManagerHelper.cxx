@@ -9,6 +9,7 @@
 // VTK includes
 #include <vtkAbstractWidget.h>
 #include <vtkHandleWidget.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
@@ -24,10 +25,6 @@
 #include <algorithm>
 #include <map>
 #include <vector>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManagerHelper);
@@ -335,16 +332,16 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
   if (!this->SeedWidget)
     {
 
-    VTK_CREATE(vtkSphereHandleRepresentation, handle);
+    vtkNew<vtkSphereHandleRepresentation> handle;
     handle->GetProperty()->SetColor(1,0,0);
     handle->SetHandleSize(5);
 
-    VTK_CREATE(vtkSeedRepresentation, rep);
-    rep->SetHandleRepresentation(handle);
+    vtkNew<vtkSeedRepresentation> rep;
+    rep->SetHandleRepresentation(handle.GetPointer());
 
     //seed widget
     vtkSeedWidget * seedWidget = vtkSeedWidget::New();
-    seedWidget->SetRepresentation(rep);
+    seedWidget->SetRepresentation(rep.GetPointer());
 
     seedWidget->SetInteractor(interactor);
     seedWidget->SetCurrentRenderer(renderer);
@@ -365,7 +362,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
   p[1]=y;
   p[2]=0;
 
-  //VTK_CREATE(vtkHandleWidget, newhandle);
+  //vtkNew<vtkHandleWidget, newhandle);
   vtkHandleWidget * newhandle = this->SeedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
 

@@ -27,6 +27,7 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkOrientedPolygonalHandleRepresentation3D.h>
 #include <vtkPointHandleRepresentation2D.h>
@@ -41,10 +42,6 @@
 
 // STD includes
 #include <string>
-
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationFiducialDisplayableManager);
@@ -165,7 +162,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   // 2d glyphs and text need to be scaled by 1/300 to show up properly in the 2d slice windows
   this->SetScaleFactor2D(0.0033);
-  
+
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
   if (!fiducialNode)
@@ -181,31 +178,31 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     std::cout<<"No DisplayNode!"<<std::endl;
     }
 
-  VTK_CREATE(vtkSeedRepresentation, rep);
-  VTK_CREATE(vtkOrientedPolygonalHandleRepresentation3D, handle);
+  vtkNew<vtkSeedRepresentation> rep;
+  vtkNew<vtkOrientedPolygonalHandleRepresentation3D> handle;
 
   // default to a starburst glyph, update in propagate mrml to widget
-  VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+  vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
   glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
   glyphSource->Update();
   glyphSource->SetScale(1.0);
   handle->SetHandle(glyphSource->GetOutput());
 
-  
-  rep->SetHandleRepresentation(handle);
+
+  rep->SetHandleRepresentation(handle.GetPointer());
 
 
   //seed widget
   vtkSeedWidget * seedWidget = vtkSeedWidget::New();
   seedWidget->CreateDefaultRepresentation();
 
-  seedWidget->SetRepresentation(rep);
+  seedWidget->SetRepresentation(rep.GetPointer());
 
   seedWidget->SetInteractor(this->GetInteractor());
   seedWidget->SetCurrentRenderer(this->GetRenderer());
 
   //seedWidget->ProcessEventsOff();
-  
+
   // create a new handle
   vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
   if (!newhandle)
@@ -215,7 +212,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   // init the widget from the mrml node
   this->PropagateMRMLToWidget(fiducialNode, seedWidget);
-  
+
   if (this->GetSliceNode())
     {
 
@@ -314,7 +311,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-    
+
   vtkMRMLAnnotationPointDisplayNode *displayNode = fiducialNode->GetAnnotationPointDisplayNode();
 
   if (!displayNode)
@@ -338,7 +335,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
             {
             // map the 3d sphere to a filled circle, the 3d diamond to a filled
             // diamond
-            VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+            vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
             if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
               {
               glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Circle2D);
@@ -359,7 +356,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
             {
             if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
               {
-              VTK_CREATE(vtkSphereSource, sphereSource);
+              vtkNew<vtkSphereSource> sphereSource;
               sphereSource->SetRadius(0.5);
               sphereSource->SetPhiResolution(10);
               sphereSource->SetThetaResolution(10);
@@ -369,7 +366,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
             else
               {
               // the 3d diamond isn't supported yet, use a 2d diamond for now
-              VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+              vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
               glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
               glyphSource->Update();
               glyphSource->SetScale(1.0);
@@ -380,7 +377,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         else
           {
           // 2D
-          VTK_CREATE(vtkAnnotationGlyphSource2D, glyphSource);
+          vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
           glyphSource->SetGlyphType(displayNode->GetGlyphType());
           glyphSource->Update();
           glyphSource->SetScale(1.0);
@@ -389,7 +386,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         this->NodeGlyphTypes[displayNode] = displayNode->GetGlyphType();
         } // if (iter == this->NodeGlyphTypes.end() || iter->second != displayNode->GetGlyphType())
       // end of glyph type
-      
+
       if (fiducialNode->GetSelected())
         {
         // use the selected color
@@ -405,9 +402,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       handleRep->GetProperty()->SetAmbient(displayNode->GetAmbient());
       handleRep->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
       handleRep->GetProperty()->SetSpecular(displayNode->GetSpecular());
-      
+
 //    handleRep->SetHandle(glyphSource->GetOutput());
-      
+
       // the following check is only needed since we require a different uniform scale depending on 2D and 3D
       if (this->Is2DDisplayableManager())
         {
@@ -418,7 +415,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         handleRep->SetUniformScale(displayNode->GetGlyphScale());
         }
       } // if point display node
-    
+
     // update the text
     if (fiducialNode->GetName())
       {
@@ -450,7 +447,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
           if (fiducialNode->GetSelected())
             {
             handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetSelectedColor());
-            }        
+            }
           else
             {
             handleRep->GetLabelTextActor()->GetProperty()->SetColor(textDisplayNode->GetColor());
@@ -546,7 +543,7 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
   double currentCoordinates[4];
   fiducialNode->GetFiducialWorldCoordinates(currentCoordinates);
   vtkDebugMacro("PropagateWidgetToMRML: fiducial current world coordinates = " << currentCoordinates[0] << ", " << currentCoordinates[1] << ", " << currentCoordinates[2]);
-  
+
   double currentCoords[3];
   currentCoords[0] = currentCoordinates[0];
   currentCoords[1] = currentCoordinates[1];
@@ -560,7 +557,7 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
     vtkDebugMacro("PropagateWidgetToMRML: position changed.");
     positionChanged = true;
     }
-    
+
   if (positionChanged)
     {
     vtkDebugMacro("PropagateWidgetToMRML: position changed, setting fiducial coordinates");
@@ -629,7 +626,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
   // save for undo and add the node to the scene after any reset of the
   // interaction node so that don't end up back in place mode
   this->GetMRMLScene()->SaveStateForUndo();
-  
+
   fiducialNode->Initialize(this->GetMRMLScene());
 
   fiducialNode->Delete();
@@ -655,7 +652,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
     vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
     return;
     }
-  
+
   if (eventid == vtkCommand::KeyPressEvent)
     {
     char *keySym = this->GetInteractor()->GetKeySym();
@@ -680,7 +677,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
   else if (eventid == vtkCommand::KeyReleaseEvent)
     {
     vtkDebugMacro("Got a key release event");
-    }  
+    }
 }
 
 
