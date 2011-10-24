@@ -198,6 +198,10 @@ qMRMLSliceWidgetPrivate::~qMRMLSliceWidgetPrivate()
     {
     this->DisplayableManagerGroup->Delete();
     }
+  if (this->LightBoxRendererManagerProxy)
+    {
+    this->LightBoxRendererManagerProxy->Delete();
+    }
 }
 
 // --------------------------------------------------------------------------
