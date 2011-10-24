@@ -17,20 +17,18 @@
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the volumes
 
-
 #ifndef __vtkMRMLModelHierarchyLogic_h
 #define __vtkMRMLModelHierarchyLogic_h
 
 // MRML includes
 #include <vtkMRMLAbstractLogic.h>
-#include <vtkMRML.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
+//#include <vtkMRML.h>
+//#include <vtkMRMLModelNode.h>
+class vtkMRMLModelHierarchyNode;
+//#include <vtkMRMLModelHierarchyNode.h>
 
 // STD includes
 #include <cstdlib>
-
-#include "vtkMRMLLogicWin32Header.h"
 
 //BTX
 typedef std::vector< vtkMRMLModelHierarchyNode *> vtkMRMLModelHierarchyNodeList;
@@ -76,11 +74,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
     ModelHierarchyNodesMTime = 0;
     HierarchyChildrenNodesMTime = 0;
     }
-  /// 
-  /// Update logic state when MRML scene chenges
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
+
 protected:
   vtkMRMLModelHierarchyLogic();
   ~vtkMRMLModelHierarchyLogic();

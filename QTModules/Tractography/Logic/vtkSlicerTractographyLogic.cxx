@@ -50,6 +50,7 @@ void vtkSlicerTractographyLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
+/* TBD: Nothing is done with the events do we really need to add them ?
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyLogic::InitializeEventListeners()
 {
@@ -60,12 +61,7 @@ void vtkSlicerTractographyLogic::InitializeEventListeners()
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events.GetPointer());
 }
-
-//-----------------------------------------------------------------------------
-void vtkSlicerTractographyLogic::ProcessMRMLEvents(
-  vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void * vtkNotUsed(callData))
-{
-}
+*/
 
 //-----------------------------------------------------------------------------
 void vtkSlicerTractographyLogic::RegisterNodes()

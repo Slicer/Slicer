@@ -61,62 +61,38 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
 
-  this->ProcessLogicEvents();
-  this->ProcessMRMLEvents(newScene, vtkCommand::ModifiedEvent, 0);
+  this->ProcessMRMLSceneEvents(newScene, vtkCommand::ModifiedEvent, 0);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::ProcessMRMLEvents(vtkObject * caller, 
-                                            unsigned long event, 
-                                            void * callData )
+void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
-  // SliceLinkLogic needs to observe EVERY SliceNode and
-  // SliceCompositeNode in the scene.
-  if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene())
+  if (node->IsA("vtkMRMLSliceCompositeNode") 
+      || node->IsA("vtkMRMLSliceNode"))
     {
-    if (event == vtkMRMLScene::NodeAddedEvent 
-        || event == vtkMRMLScene::NodeRemovedEvent)
-      {
-      vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-      if (!node)
-        {
-        return;
-        }
-      // Return if different from SliceCompositeNode or SliceNode 
-      if (node->IsA("vtkMRMLSliceCompositeNode") 
-          || node->IsA("vtkMRMLSliceNode"))
-        {
-        if (event == vtkMRMLScene::NodeAddedEvent)
-          {
-          vtkEventBroker::GetInstance()->AddObservation(node, vtkCommand::ModifiedEvent, this, this->GetMRMLCallbackCommand());
-          }
-        else if (event == vtkMRMLScene::NodeRemovedEvent)
-          {
-          vtkEventBroker::GetInstance()->RemoveObservations(node, vtkCommand::ModifiedEvent, this, this->GetMRMLCallbackCommand());
-          }
-        return;
-        }
-      }
-
-    if (event == vtkMRMLScene::SceneAboutToBeClosedEvent ||
-        caller == 0)
-      {
-      return;
-      }
+    vtkEventBroker::GetInstance()->AddObservation(
+      node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
     }
-  if (this->GetMRMLScene()->GetIsClosing())
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  if (node->IsA("vtkMRMLSliceCompositeNode") 
+      || node->IsA("vtkMRMLSliceNode"))
     {
-    // Do we need to remove the observers?
-    return;
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
     }
+}
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+{
   // Update from SliceNode
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode && !this->GetMRMLScene()->GetIsUpdating())
     {
-    assert (event == vtkCommand::ModifiedEvent);
-
     // if this is not the node that we are interacting with, short circuit
     if (!sliceNode->GetInteracting() || !sliceNode->GetInteractionFlags())
       {
@@ -163,10 +139,9 @@ void vtkMRMLSliceLinkLogic::ProcessMRMLEvents(vtkObject * caller,
 
   // Update from SliceCompositeNode
   vtkMRMLSliceCompositeNode* compositeNode 
-    = vtkMRMLSliceCompositeNode::SafeDownCast(caller);
+    = vtkMRMLSliceCompositeNode::SafeDownCast(node);
   if (compositeNode && !this->GetMRMLScene()->GetIsUpdating())
     {
-    assert (event == vtkCommand::ModifiedEvent);
 
     // if this is not the node that we are interacting with, short circuit
     if (!compositeNode->GetInteracting() 
@@ -191,21 +166,12 @@ void vtkMRMLSliceLinkLogic::ProcessMRMLEvents(vtkObject * caller,
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::ProcessLogicEvents()
-{
-}
-
-
-
-//----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   vtkIndent nextIndent;
   nextIndent = indent.GetNextIndent();
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)

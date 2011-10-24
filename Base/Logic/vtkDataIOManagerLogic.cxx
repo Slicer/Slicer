@@ -1,3 +1,4 @@
+
 // Logic includes
 #include "vtkDataIOManagerLogic.h"
 
@@ -9,6 +10,7 @@
 #include <vtkURIHandler.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
@@ -27,6 +29,19 @@
 #include <unistd.h>
 #endif
 
+//----------------------------------------------------------------------------
+#ifndef vtkSetAndObserveDataIOManagerEventsMacro
+#define vtkSetAndObserveDataIOManagerEventsMacro(node,value,events) {         \
+  vtkObject *_oldNode = (node);                                               \
+  this->GetDataIOObserverManager()->SetAndObserveObjectEvents(                \
+     vtkObjectPointer(&(node)), (value), (events));                           \
+  vtkObject *_newNode = (node);                                               \
+  if (_oldNode != _newNode)                                                   \
+    {                                                                         \
+    this->Modified();                                                         \
+    }                                                                         \
+};
+#endif
 
 vtkStandardNewMacro ( vtkDataIOManagerLogic );
 vtkCxxRevisionMacro(vtkDataIOManagerLogic, "$Revision$");
@@ -37,8 +52,12 @@ typedef std::pair< vtkDataTransfer *, vtkMRMLNode * > TransferNodePair;
 vtkDataIOManagerLogic::vtkDataIOManagerLogic()
 {
   this->DataIOManager = NULL;
-}
 
+  this->DataIOObserverManager = vtkObserverManager::New();
+  this->DataIOObserverManager->GetCallbackCommand()->SetClientData(this);
+  this->DataIOObserverManager->GetCallbackCommand()->SetCallback(
+    vtkDataIOManagerLogic::DataIOManagerCallback);
+}
 
 //----------------------------------------------------------------------------
 vtkDataIOManagerLogic::~vtkDataIOManagerLogic()
@@ -52,6 +71,10 @@ vtkDataIOManagerLogic::~vtkDataIOManagerLogic()
       this->DataIOManager = NULL;
       }
     }
+  if (this->DataIOObserverManager)
+    {
+    this->DataIOObserverManager->Delete();
+    }
 }
 
 
@@ -63,26 +86,38 @@ void vtkDataIOManagerLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+vtkObserverManager* vtkDataIOManagerLogic::GetDataIOObserverManager()
 {
+  return this->DataIOObserverManager;
+}
 
-  vtkDataIOManager *m = vtkDataIOManager::SafeDownCast ( caller );
-  if ( m != NULL )
+//----------------------------------------------------------------------------
+void vtkDataIOManagerLogic::DataIOManagerCallback(
+  vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+{
+  vtkDataIOManagerLogic *self = reinterpret_cast<vtkDataIOManagerLogic *>(clientData);
+  assert(vtkDataIOManager::SafeDownCast(caller));
+  self->ProcessDataIOManagerEvents(caller, eid, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkDataIOManagerLogic::ProcessDataIOManagerEvents(vtkObject *caller, unsigned long event, void *callData)
+{
+  vtkDataIOManager *dataIOManager = vtkDataIOManager::SafeDownCast ( caller );
+  assert(dataIOManager);
+  vtkMRMLNode *node = reinterpret_cast <vtkMRMLNode *> (callData);
+  // ignore node events that aren't volumes or slice nodes
+  if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )
     {
-    vtkMRMLNode *node = reinterpret_cast <vtkMRMLNode *> (callData);
-    // ignore node events that aren't volumes or slice nodes
-    if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )
-      {
-      vtkDebugMacro("ProcessMRMLEvents: calling queue read on the node " << node->GetID());
-      this->QueueRead ( node );
-      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
-      }  
-    else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
-      {
-      vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
-      this->QueueWrite ( node );
-      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
-      }
+    vtkDebugMacro("ProcessMRMLEvents: calling queue read on the node " << node->GetID());
+    this->QueueRead ( node );
+    node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
+    }  
+  else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
+    {
+    vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
+    this->QueueWrite ( node );
+    node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
     }
 }
 
@@ -90,22 +125,13 @@ void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 //----------------------------------------------------------------------------
 void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *iomanager )
 {
-  //--- remove all observers and delete if we need to reset the iomanager
-  if ( this->DataIOManager!= NULL )
-    {
-    vtkSetAndObserveMRMLNodeMacro ( this->DataIOManager, NULL );
-    }
-  //--- if we're resetting to a new value
-  if ( iomanager != NULL )
-    {
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue ( vtkDataIOManager::RemoteReadEvent );
-    events->InsertNextValue ( vtkDataIOManager::RemoteWriteEvent );
-    events->InsertNextValue ( vtkDataIOManager::LocalReadEvent );
-    events->InsertNextValue ( vtkDataIOManager::LocalWriteEvent );
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->DataIOManager, iomanager, events );
-    events->Delete();
-    }
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue ( vtkDataIOManager::RemoteReadEvent );
+  events->InsertNextValue ( vtkDataIOManager::RemoteWriteEvent );
+  events->InsertNextValue ( vtkDataIOManager::LocalReadEvent );
+  events->InsertNextValue ( vtkDataIOManager::LocalWriteEvent );
+  vtkSetAndObserveDataIOManagerEventsMacro( this->DataIOManager, iomanager, events );
+  events->Delete();
 }
 
 

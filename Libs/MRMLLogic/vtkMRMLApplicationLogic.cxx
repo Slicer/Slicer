@@ -189,66 +189,6 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode *interac
   this->Modified();
 }
 
-////----------------------------------------------------------------------------
-//void vtkMRMLApplicationLogic::ProcessMRMLEvents(vtkObject * vtkNotUsed(caller),
-//                                                unsigned long vtkNotUsed(event),
-//                                                void * vtkNotUsed(callData))
-//{
-//  //
-//  // Look for a selection node in the scene:
-//  // - we always use the first one in the scene
-//  // - if it doesn't match the one we had, we switch
-//  // - if there isn't one, we create one
-//  // - we add it to the scene if needed
-//  //
-//  vtkMRMLSelectionNode *node =
-//      vtkMRMLSelectionNode::SafeDownCast(
-//          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-
-//  // selection node
-//  if (node == 0)
-//    {
-//    node = vtkMRMLSelectionNode::New();
-//    this->SetSelectionNode(node);
-//    node->Delete();
-//    }
-//  if ( this->Internal->SelectionNode != node )
-//    {
-//      this->SetSelectionNode(node);
-//    }
-//  if (this->GetMRMLScene()->GetNodeByID(this->Internal->SelectionNode->GetID()) == NULL)
-//    {
-//    this->SetMRMLScene(this->GetMRMLScene());
-//    this->SetSelectionNode(vtkMRMLSelectionNode::SafeDownCast(
-//        this->GetMRMLScene()->AddNode(this->Internal->SelectionNode)));
-//    this->SetAndObserveMRMLScene(this->GetMRMLScene());
-//    }
-
-
-//  vtkMRMLInteractionNode *inode;
-//  inode = vtkMRMLInteractionNode::SafeDownCast (
-//          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-
-//  // interaction node
-//  if (inode == 0)
-//    {
-//    inode = vtkMRMLInteractionNode::New();
-//    this->SetInteractionNode(inode);
-//    inode->Delete();
-//    }
-//  if (this->Internal->InteractionNode != inode)
-//    {
-//    this->SetInteractionNode(inode);
-//    }
-//  if (this->GetMRMLScene()->GetNodeByID(this->Internal->InteractionNode->GetID()) == 0)
-//    {
-//    this->SetMRMLScene(this->GetMRMLScene());
-//    this->SetInteractionNode(vtkMRMLInteractionNode::SafeDownCast(
-//        this->GetMRMLScene()->AddNode(this->Internal->InteractionNode)));
-//    this->SetAndObserveMRMLScene(this->GetMRMLScene());
-//    }
-//}
-
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateVolumeSelection(int fit)
 {

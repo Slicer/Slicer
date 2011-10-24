@@ -71,10 +71,6 @@ public:
                     int seedSelectedFiducials,
                     int displayMode);
 
-  virtual void ProcessMRMLEvents ( vtkObject *caller,
-                                   unsigned long event,
-                                   void *callData );
-
   void SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node);
 
   int IsObservedNode(vtkMRMLNode *node);
@@ -91,6 +87,11 @@ protected:
 
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   void AddMRMLNodesObservers();
 

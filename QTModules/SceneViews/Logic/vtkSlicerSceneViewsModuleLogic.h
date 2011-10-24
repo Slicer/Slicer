@@ -46,9 +46,6 @@ public:
   static vtkSlicerSceneViewsModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerSceneViewsModuleLogic,vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
-  
-  // MRML events
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
 
   // After a node was added, propagate to widget
   void AddNodeCompleted(vtkMRMLHierarchyNode* hierarchyNode);
@@ -56,14 +53,6 @@ public:
   // Register the widget
   void SetAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
 
-  void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  void OnMRMLSceneImportedEvent();
-  void OnMRMLSceneRestoredEvent();
-  void OnMRMLSceneViewNodeModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLSceneClosedEvent();
-
-
-  
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 
@@ -129,6 +118,13 @@ protected:
 
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneClosedEvent();
+
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
 private:
 

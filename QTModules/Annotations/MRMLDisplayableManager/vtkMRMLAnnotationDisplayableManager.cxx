@@ -289,9 +289,8 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
-                                                            unsigned long event,
-                                                            void *callData)
+void vtkMRMLAnnotationDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject *caller,unsigned long event,void *callData)
 {
 
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
@@ -342,7 +341,7 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
   else
     {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
+    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
     }
 }
 

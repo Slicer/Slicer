@@ -129,17 +129,13 @@ void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModule
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+                                                            unsigned long event,
+                                                            void *callData)
 {
-  vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
+  vtkDebugMacro("ProcessMRMLNodesEvents: Event "<< event);
 
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
-
-  if (event == vtkMRMLScene::SceneClosedEvent)
-    {
-    this->OnMRMLSceneClosedEvent();
-    return;
-    }
 
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(caller);
@@ -154,7 +150,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
         this->OnInteractionModePersistenceChangedEvent(interactionNode);
         break;
       default:
-        vtkWarningMacro("ProcessMRMLEvents: unhandled event on interaction node: " << event)
+        vtkWarningMacro("ProcessMRMLNodesEvents: unhandled event on interaction node: " << event)
         ;
       }
     return;

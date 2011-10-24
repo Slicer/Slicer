@@ -49,7 +49,8 @@ public:
   enum {
     CreateMethod = 0,
     GetMRMLSceneEventsToObserveMethod,
-    ProcessMRMLEventsMethod,
+    ProcessMRMLSceneEventsMethod,
+    ProcessMRMLNodesEventsMethod,
     RemoveMRMLObserversMethod,
     UpdateFromMRMLMethod,
     OnMRMLDisplayableNodeModifiedEventMethod,
@@ -57,25 +58,26 @@ public:
     };
 
   static int          APIMethodCount;
-  static const char * APIMethodNames[7];
+  static const char * APIMethodNames[8];
 
   std::string  PythonSource;
   PyObject *   PythonSelf;
-  PyObject *   PythonAPIMethods[7];
+  PyObject *   PythonAPIMethods[8];
 };
 
 //---------------------------------------------------------------------------
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-int vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodCount = 7;
+int vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodCount = 8;
 
 //---------------------------------------------------------------------------
-const char* vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodNames[7] =
+const char* vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodNames[8] =
 {
   "Create",
   "GetMRMLSceneEventsToObserve",
-  "ProcessMRMLEvents",
+  "ProcessMRMLSceneEvents",
+  "ProcessMRMLNodesEvents",
   "RemoveMRMLObservers",
   "UpdateFromMRML",
   "OnMRMLDisplayableNodeModifiedEvent",
@@ -160,11 +162,11 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject *caller,
                                                         unsigned long event,
                                                         void *callData)
 {
-  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLEventsMethod];
+  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
     {
     return;
@@ -175,6 +177,27 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
   PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
   PyTuple_SET_ITEM(arguments, 2,
                    vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
+
+  PyObject_CallObject(method, arguments);
+
+  Py_DECREF(arguments);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *callData)
+{
+  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
+  if (!method)
+    {
+    return;
+    }
+
+  PyObject * arguments = PyTuple_New(3);
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
+  PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
+  PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(0));
 
   PyObject_CallObject(method, arguments);
 

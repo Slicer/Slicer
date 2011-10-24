@@ -38,12 +38,6 @@ vtkSlicerFiducialsLogic::~vtkSlicerFiducialsLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerFiducialsLogic::ProcessMRMLEvents()
-{
-  // TODO: implement if needed
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerFiducialsLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);

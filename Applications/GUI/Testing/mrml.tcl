@@ -72,9 +72,7 @@ update
 
 # a SliceLogic 
 set ::slicel [vtkMRMLSliceLogic New]
-$::slicel SetAndObserveMRMLScene $::scene
-$::slicel ProcessMRMLEvents
-$::slicel ProcessLogicEvents
+$::slicel SetMRMLScene $::scene
 
 set ::slicebgl [$slicel GetBackgroundLayer]
 set ::slicefgl [$slicel GetForegroundLayer]

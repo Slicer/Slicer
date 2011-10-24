@@ -49,18 +49,6 @@ public:
   vtkTypeRevisionMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  ///
-  /// Update MRML events
-  virtual void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
-  
-  ///
-  /// Update logic events
-  virtual void ProcessLogicEvents(vtkObject * caller, unsigned long event, void * callData);  
-  
-  //BTX
-  using vtkMRMLAbstractLogic::ProcessLogicEvents; 
-  //ETX
-  
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
   virtual void RegisterNodes();

@@ -158,21 +158,9 @@ public:
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
-  /// Reimplemented to avoir calling ProcessMRMLEvents when we are added the
+  /// Reimplemented to avoir calling ProcessMRMLSceneEvents when we are added the
   /// MRMLModelNode into the scene
   virtual bool EnterMRMLCallback()const;
-
-  virtual void ProcessMRMLEvents(vtkObject * /*caller*/,
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );
-  virtual void ProcessMRMLEvents() { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
-
-  /// 
-  /// process logic events
-  virtual void ProcessLogicEvents(vtkObject * /*caller*/,
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ ) {this->ProcessLogicEvents();};
-  void ProcessLogicEvents(); 
 
   /// 
   /// Manage and syncronise the SliceNode
@@ -356,6 +344,37 @@ protected:
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
+  using vtkMRMLAbstractLogic::ProcessMRMLSceneEvents;
+  // Convenient function that updates the pipeline
+  void ProcessMRMLSceneEvents();
+  
+/// Get Logic CallbackCommand
+  vtkCallbackCommand * GetMRMLLogicCallbackCommand();
+
+  static void MRMLLogicCallback(vtkObject*caller, unsigned long eid,
+                                void* clientData, void* callData);
+
+  /// 
+  /// process logic events
+  virtual void ProcessLogicEvents(vtkObject * caller,
+                                  unsigned long event,
+                                  void * callData);
+  void ProcessLogicEvents();
+
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneAboutToBeClosedEvent();
+  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneNewEvent();
+
+  void UpdateSliceNodes();
+  void SetupCrosshairNode();
+
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+
+  vtkCallbackCommand*         MRMLLogicCallbackCommand;
   bool                        AddingSliceModelNodes;
   bool                        Initialized;
 

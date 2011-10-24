@@ -28,7 +28,6 @@
 /// This class can also be used for resampling volumes for further computation.
 //
 
-
 #ifndef __vtkMRMLSliceLayerLogic_h
 #define __vtkMRMLSliceLayerLogic_h
 
@@ -36,7 +35,6 @@
 #include "vtkMRMLAbstractLogic.h"
 
 // MRML includes
-#include "vtkMRML.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -65,7 +63,8 @@ class vtkDiffusionTensorMathematics;
 class vtkImageLabelOutline;
 class vtkTransform;
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic : public vtkMRMLAbstractLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic
+  : public vtkMRMLAbstractLogic
 {
 public:
   
@@ -145,12 +144,6 @@ public:
   void UpdateImageDisplay();
 
   /// 
-  /// provide the virtual method that updates this Logic based
-  /// on mrml changes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );
-  /// 
   /// set the Reslice transforms to reflect the current state
   /// of the VolumeNode and the SliceNode
   void UpdateTransforms();
@@ -175,6 +168,18 @@ protected:
 
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  /// 
+  /// provide the virtual method that updates this Logic based
+  /// on mrml changes
+  virtual void ProcessMRMLSceneEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void* callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void* callData);
+  void UpdateLogic();
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   vtkImageData* GetSliceImageData();
 

@@ -34,8 +34,6 @@ public:
   static vtkMRMLScriptedDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLScriptedDisplayableManager,vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   void SetPythonSource(const std::string& pythonSource);
 
@@ -45,6 +43,9 @@ protected:
   virtual ~vtkMRMLScriptedDisplayableManager();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
 
   virtual void Create();
 

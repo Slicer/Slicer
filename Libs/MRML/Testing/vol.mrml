@@ -23,7 +23,7 @@
 
 <Volume
   id="vtkMRMLScalarVolumeNode1" name="fixed.nrrd"  hideFromEditors="false" 
-  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" 
+  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLScalarVolumeDisplayNode1" 
   ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 " spacing="5.2 3.75 3.75" 
   origin="-80.6 120 120" labelMap="0" >
 </Volume>

@@ -73,7 +73,6 @@ vtkMRMLSliceNode * vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode(
   return vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }
 
-
 //---------------------------------------------------------------------------
 /// Convert display to viewport coordinates. XYZ is double[3]
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, double y, double xyz[3])

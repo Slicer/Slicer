@@ -444,7 +444,7 @@ void vtkMRMLViewDisplayableManager::Create()
 
   // Listen for ActiveCameraChangedEvent
   cameraDisplayableManager->AddObserver(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
-                                        this->GetMRMLCallbackCommand());
+                                        this->GetWidgetsCallbackCommand());
 
   // If there is a active camera available, it means the vtkMRMLCameraDisplayableManager
   // has already been created and ActiveCameraChangedEvent already invoked.
@@ -453,19 +453,12 @@ void vtkMRMLViewDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                      unsigned long event,
-                                                      void *vtkNotUsed(callData))
+void vtkMRMLViewDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject * caller,
+                         unsigned long event,
+                         void *vtkNotUsed(callData))
 {
-  if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
-    {
-    if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - ActiveCameraChangedEvent");
-      this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
-      }
-    }
-  else if(vtkMRMLViewNode::SafeDownCast(caller))
+  if(vtkMRMLViewNode::SafeDownCast(caller))
     {
     if (event == vtkCommand::ModifiedEvent)
       {
@@ -477,14 +470,30 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       }
     else if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)
       {
-      vtkDebugMacro(<< "ProcessMRMLEvents - ResetFocalPointEvent");
+      vtkDebugMacro(<< "ProcessMRMLNodesEvents - ResetFocalPointEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       }
     }
   // Default MRML Event handler is NOT needed
 //  else
 //    {
-//    this->Superclass::ProcessMRMLEvents(caller, event, callData);
+//    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
 //    }
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager
+::ProcessWidgetsEvents(vtkObject * caller,
+                       unsigned long event,
+                       void *callData)
+{
+  if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
+    {
+    if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLNodesEvents - ActiveCameraChangedEvent");
+      this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+      }
+    }
+  this->Superclass::ProcessWidgetsEvents(caller, event, callData);
+}

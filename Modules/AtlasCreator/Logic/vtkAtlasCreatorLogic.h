@@ -35,17 +35,9 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkAtlasCreatorLogic :
   vtkTypeMacro(vtkAtlasCreatorLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents(vtkObject *vtkNotUsed(caller),
-                                 unsigned long vtkNotUsed(event),
-                                 void *vtkNotUsed(callData)){};
-
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro (AtlasCreatorNode, vtkMRMLAtlasCreatorNode);
-  void SetAndObserveAtlasCreatorNode(vtkMRMLAtlasCreatorNode *n) 
-    {
-    vtkSetAndObserveMRMLNodeMacro( this->AtlasCreatorNode, n);
-    }
+  void SetAndObserveAtlasCreatorNode(vtkMRMLAtlasCreatorNode *n);
 
   // The method that creates and runs VTK or ITK pipeline
   void Apply();

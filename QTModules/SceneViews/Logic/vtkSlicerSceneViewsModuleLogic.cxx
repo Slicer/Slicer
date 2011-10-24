@@ -79,60 +79,14 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  // TBD: not needed, one should listen to the nodes directy
+  // events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::ProcessMRMLEvents(
-  vtkObject* vtkNotUsed(caller), unsigned long event, void * callData)
-{
-  // on scene closed event need to call:
-  //this->m_ActiveHierarchy = 0;
-  vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
-
-  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
-
-  if (event==vtkMRMLScene::SceneClosedEvent)
-    {
-    this->OnMRMLSceneClosedEvent();
-    return;
-    }
-  if (event == vtkMRMLScene::SceneImportedEvent)
-    {
-    this->OnMRMLSceneImportedEvent();
-    return;
-    }
-  if (event == vtkMRMLScene::SceneAboutToBeRestoredEvent)
-    {
-    // this->OnMRMLSceneAboutToBeRestoredEvent();
-    }
-  if (event == vtkMRMLScene::SceneRestoredEvent)
-    {
-    this->OnMRMLSceneRestoredEvent();
-    return;
-    }
-  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
-  if (!sceneViewNode)
-    {
-    return;
-    }
-
-  switch (event)
-    {
-    case vtkMRMLScene::NodeAddedEvent:
-      this->OnMRMLSceneNodeAddedEvent(sceneViewNode);
-      break;
-    case vtkCommand::ModifiedEvent:
-      this->OnMRMLSceneViewNodeModifiedEvent(sceneViewNode);
-      break;
-
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -196,7 +150,7 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneRestoredEvent()
     }
 }
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneViewNodeModifiedEvent(vtkMRMLNode* node)
+void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneViewNodeModifiedEvent " << node->GetID());
 
@@ -355,10 +309,9 @@ void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id, const char
   viewNode->SetScreenShot(screenshot);
   viewNode->ModifiedSinceReadOn();
 
-  // TODO why two events?
   viewNode->Modified();
-  viewNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, viewNode);
-
+  // TODO: Listen to the node directly, probably in OnMRMLSceneNodeAddedEvent
+  this->OnMRMLNodeModified(viewNode);
 }
 
 //---------------------------------------------------------------------------

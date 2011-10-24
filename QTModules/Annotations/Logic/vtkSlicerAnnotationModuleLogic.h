@@ -47,13 +47,6 @@ public:
   // Register the widget
   void SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
 
-  // MRML events
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
-  void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLSceneClosedEvent();
-  void OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode);
-  void OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode);
   //
   // Annotation Properties (interface to MRML)
   //
@@ -260,6 +253,16 @@ protected:
 
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  // MRML events
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneClosedEvent();
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller,
+                                      unsigned long event,
+                                      void *callData );
+  virtual void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
+  virtual void OnInteractionModeChangedEvent(vtkMRMLInteractionNode *interactionNode);
+  virtual void OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode);
 
 private:
 

@@ -28,8 +28,7 @@ $slicerApp StartApplication
 set appLogic [vtkNew vtkSlicerApplicationLogic]
 set scene [vtkNew vtkMRMLScene]
 namespace eval slicer3 set MRMLScene $scene
-$appLogic SetAndObserveMRMLScene $scene
-$appLogic ProcessMRMLEvents
+$appLogic SetMRMLScene $scene
 
 set colorLogic [vtkSlicerColorLogic New]
 set colorEvents [vtkIntArray New]
@@ -102,9 +101,6 @@ if { 1 } {
       set sliceLogic [vtkNew vtkMRMLSliceLogic]
       $sliceLogic SetName "DICOMViewer"
       $sliceLogic SetMRMLScene $scene
-      $sliceLogic ProcessMRMLEvents
-      $sliceLogic ProcessLogicEvents
-      $sliceLogic SetAndObserveMRMLScene $scene
 
         if { 1 } {
           set sliceGUI [vtkNew vtkSlicerSliceGUI]

@@ -23,8 +23,6 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
-#include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLLogicWin32Header.h"
 
 // STD includes
 #include <stdlib.h>
@@ -64,9 +62,6 @@ protected:
 
   vtkCacheManager *          CacheManager;
   vtkDataIOManager *         DataIOManager;
-
-
 };
 
 #endif
-

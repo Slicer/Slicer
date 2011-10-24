@@ -32,8 +32,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
   virtual void SetAndObserveDataIOManager ( vtkDataIOManager *);
-  
-  virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *calldata );
 
   /// 
   /// Methods that Queues the read
@@ -68,6 +66,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   vtkDataIOManagerLogic(const vtkDataIOManagerLogic&);
   void operator=(const vtkDataIOManagerLogic&);
 
+  vtkObserverManager* GetDataIOObserverManager();
+  vtkObserverManager* DataIOObserverManager;
+  static void DataIOManagerCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
+  virtual void ProcessDataIOManagerEvents( vtkObject *caller, unsigned long event, void *calldata );
 };
 
 #endif

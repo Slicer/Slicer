@@ -106,18 +106,3 @@ void vtkMRMLTestThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLN
   //          << (node ? node->GetName() : "None")<< std::endl;
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLTestThreeDViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                      unsigned long event,
-                                                      void *callData)
-{
-  //if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
-  //  {
-  //  
-  //  }
-  //else
-  //  {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  //  }
-}
-

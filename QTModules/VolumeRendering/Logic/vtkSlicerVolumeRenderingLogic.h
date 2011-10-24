@@ -51,20 +51,6 @@ public:
   vtkTypeRevisionMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Register local MRML nodes
-  virtual void RegisterNodes();
-
-  ///
-  /// Update MRML events
-  virtual void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
-  
-  ///
-  /// Update logic events
-  virtual void ProcessLogicEvents(vtkObject * caller, unsigned long event, void * callData);  
-  
-  //BTX
-  using vtkMRMLAbstractLogic::ProcessLogicEvents; 
-  //ETX
 
   // Description:
   // Create DisplayNode
@@ -136,7 +122,10 @@ public:
 protected:
   vtkSlicerVolumeRenderingLogic();
   virtual ~vtkSlicerVolumeRenderingLogic();
-  
+
+  // Register local MRML nodes
+  virtual void RegisterNodes();
+
   bool LoadPresets(vtkMRMLScene* scene);
   vtkMRMLScene* PresetsScene;
 private:

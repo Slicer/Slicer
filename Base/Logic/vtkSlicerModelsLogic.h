@@ -63,11 +63,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkMRMLAbstract
                               int transformNormals,
                               vtkMRMLModelNode *modelOut);
 
-  /// 
-  /// Update logic state when MRML scene chenges
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
 protected:
   vtkSlicerModelsLogic();
   ~vtkSlicerModelsLogic();

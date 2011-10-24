@@ -164,6 +164,7 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
   
+  // TBD: why do we remove the node ids ?
   for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
     {
     this->SetAndObserveNthDisplayNodeID(i, NULL);
@@ -180,6 +181,14 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLDisplayNode *pnode = 0;
     this->DisplayNodes.push_back(pnode);
     this->SetAndObserveNthDisplayNodeID(i, this->DisplayNodeIDs[i].c_str());
+    vtkMRMLNode* displayNode = scene->GetNodeByID(this->DisplayNodeIDs[i].c_str());
+    std::vector<vtkMRMLNode*> slices;
+    scene->GetNodesByClass("vtkMRMLDiffusionTensorVolumeSliceDisplayNode", slices);
+    // When calling UpdateScene, the scene is up-to-date (it is done to be
+    // imported/restored). All the nodes are in it.
+    // Therefor, there is no reason why there wouldn't be a node
+    // for each node id.
+    assert(this->DisplayNodes[i]);
     }
 }
 

@@ -46,18 +46,6 @@ vtkBrainlabModuleLogic::~vtkBrainlabModuleLogic()
   this->SetModuleName(NULL);
 }
 
-//-----------------------------------------------------------------------------
-vtkIntArray*
-vtkBrainlabModuleLogic::
-NewObservableEvents()
-{
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
-  return events;
-}
-
 //----------------------------------------------------------------------------
 void vtkBrainlabModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -65,4 +53,28 @@ void vtkBrainlabModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   // !!! todo
 }
 
+//----------------------------------------------------------------------------
+void vtkBrainlabModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  vtkSmartPointer<vtkIntArray> sceneEvents = vtkSmartPointer<vtkIntArray>::New();
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+
+  this->MRMLManager->SetMRMLScene(newScene);
+}
+
+//----------------------------------------------------------------------------
+void vtkBrainlabModuleLogic::RegisterNodes()
+{
+  this->MRMLManager->RegisterMRMLNodesWithScene();
+}
+
+//----------------------------------------------------------------------------
+void vtkBrainlabModuleLogic::ProcessMRMLSceneEvents(vtkObject *caller,
+                                                    unsigned long event,
+                                                    void *callData)
+{
+  this->MRMLManager->ProcessMRMLEvents(caller, event, callData); 
+}
 

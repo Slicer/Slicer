@@ -513,10 +513,6 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  // Pass through event handling once without observing the scene
-  // allows any dependent nodes to be created
-  applicationLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, 0);
-  applicationLogic->SetAndObserveMRMLScene(scene);
 
   // Add ViewNode
   vtkMRMLViewNode * viewNode = vtkMRMLViewNode::New();

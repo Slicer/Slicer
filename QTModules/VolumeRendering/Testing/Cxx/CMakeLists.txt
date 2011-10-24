@@ -10,6 +10,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qSlicerVolumeRenderingModuleWidgetTest1.cxx
   qSlicerVolumeRenderingModuleWidgetTest2.cxx
+  vtkMRMLVolumeRenderingDisplayableManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
@@ -34,6 +35,7 @@ foreach(testname ${KIT_TEST_NAMES})
 endforeach()
 SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest2 ${VOLUME_FILE} )
+SIMPLE_TEST( vtkMRMLVolumeRenderingDisplayableManagerTest1 )
 
 # Install the testing data
 

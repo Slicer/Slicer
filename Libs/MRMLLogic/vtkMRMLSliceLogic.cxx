@@ -28,6 +28,7 @@
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageBlend.h>
 #include <vtkImageData.h>
@@ -63,6 +64,10 @@ vtkStandardNewMacro(vtkMRMLSliceLogic);
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 {
+  this->MRMLLogicCallbackCommand = vtkCallbackCommand::New();
+  this->MRMLLogicCallbackCommand->SetClientData(this);
+  this->MRMLLogicCallbackCommand->SetCallback(vtkMRMLSliceLogic::MRMLLogicCallback);
+
   this->Initialized = false;
   this->Name = 0;
   this->BackgroundLayer = 0;
@@ -93,6 +98,11 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 {
+  if (this->MRMLLogicCallbackCommand)
+    {
+    this->MRMLLogicCallbackCommand->Delete();
+    this->MRMLLogicCallbackCommand = 0;
+    }
   this->SetName(0);
   this->SetSliceNode(0);
 
@@ -184,7 +194,7 @@ void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
 
   this->ProcessLogicEvents();
-  this->ProcessMRMLEvents(newScene, vtkCommand::ModifiedEvent, 0);
+  this->ProcessMRMLSceneEvents(newScene, vtkMRMLScene::SceneImportedEvent, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -327,112 +337,129 @@ bool vtkMRMLSliceLogic::EnterMRMLCallback()const
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller, 
-                                            unsigned long event, 
-                                            void * callData )
+void vtkMRMLSliceLogic::ProcessMRMLSceneEvents()
 {
-  if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene())
-    {
-    if (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
-      {
-      vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-      if (!node)
-        {
-        return;
-        }
-      // Return if different from SliceCompositeNode, SliceNode or VolumeNode
-      if (!(node->IsA("vtkMRMLSliceCompositeNode")
+  this->ProcessMRMLSceneEvents(NULL, vtkMRMLScene::SceneImportedEvent, NULL);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneAboutToBeClosedEvent()
+{
+  this->UpdateSliceNodeFromLayout();
+  this->DeleteSliceModel();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneImportedEvent()
+{
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneClosedEvent()
+{
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+{
+  if (!(node->IsA("vtkMRMLSliceCompositeNode")
         || node->IsA("vtkMRMLSliceNode")
         || node->IsA("vtkMRMLVolumeNode")))
-        {
-        return;
-        }
-      }
-
-    if (event == vtkMRMLScene::SceneAboutToBeClosedEvent ||
-        caller == 0)
-      {
-      this->UpdateSliceNodeFromLayout();
-      this->DeleteSliceModel();
-      return;
-      }
+    {
+    return;
     }
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  if (!(node->IsA("vtkMRMLSliceCompositeNode")
+        || node->IsA("vtkMRMLSliceNode")
+        || node->IsA("vtkMRMLVolumeNode")))
+    {
+    return;
+    }
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneRestoredEvent()
+{
+  this->UpdateSliceNodes();
+  this->SetupCrosshairNode();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneNewEvent()
+{
+  this->UpdateSliceNodes();
+  this->SetupCrosshairNode();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::UpdateSliceNodes()
+{
   if (this->GetMRMLScene()->GetIsClosing())
     {
     return;
     }
-
   // Set up the nodes and models
   this->CreateSliceModel();
   this->UpdateSliceNode();
   this->UpdateSliceCompositeNode();
-
-  //
-  // check that our referenced nodes exist, and if not set to None
-  //
-
-  /** PROBABLY DONT NEED TO DO THAT And it causes load scene to override ID's
-  if ( this->GetMRMLScene()->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() ) == 0 )
-    {
-    this->SliceCompositeNode->SetForegroundVolumeID(0);
-    }
-
-  if ( this->GetMRMLScene()->GetNodeByID( this->SliceCompositeNode->GetLabelVolumeID() ) == 0 )
-    {
-    this->SliceCompositeNode->SetLabelVolumeID(0);
-    }
-
-  if ( this->GetMRMLScene()->GetNodeByID( this->SliceCompositeNode->GetBackgroundVolumeID() ) == 0 )
-    {
-    this->SliceCompositeNode->SetBackgroundVolumeID(0);
-    }
-   **/
-
-  if ((vtkMRMLScene::SafeDownCast(caller) || 
-      vtkMRMLSliceCompositeNode::SafeDownCast(caller)) &&
-      event != vtkMRMLScene::NewSceneEvent) 
+  
+  if (this->GetProcessingMRMLSceneEvent() != vtkMRMLScene::NewSceneEvent)
     {
     this->UpdatePipeline();
     }
+}
 
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::SetupCrosshairNode()
+{
   //
   // On a new scene or restore, create the singleton for the default crosshair
   // for navigation or cursor if it doesn't already exist in scene
   //
-  if ( vtkMRMLScene::SafeDownCast(caller) && 
-        ( event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneRestoredEvent ) )
+  vtkMRMLScene *scene =  this->GetMRMLScene();
+  int n, numberOfCrosshairs = scene->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
+  int foundDefault = 0;
+  vtkMRMLCrosshairNode *crosshair;
+  for (n = 0; n < numberOfCrosshairs; n++)
     {
-    vtkMRMLScene *scene =  vtkMRMLScene::SafeDownCast(caller);
-    int n, numberOfCrosshairs = scene->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
-    int foundDefault = 0;
-    vtkMRMLCrosshairNode *crosshair;
-    for (n = 0; n < numberOfCrosshairs; n++)
+    crosshair = vtkMRMLCrosshairNode::SafeDownCast(
+        scene->GetNthNodeByClass(n, "vtkMRMLCrosshairNode"));
+    if (crosshair && !strcmp( "default", crosshair->GetCrosshairName()))
       {
-      crosshair = vtkMRMLCrosshairNode::SafeDownCast(
-          scene->GetNthNodeByClass(n, "vtkMRMLCrosshairNode"));
-      if (crosshair && !strcmp( "default", crosshair->GetCrosshairName()))
-        {
-        foundDefault = 1;
-        }
-      }
-
-    if (!foundDefault)
-      {
-      crosshair = vtkMRMLCrosshairNode::New();
-      crosshair->SetCrosshairName("default");
-      crosshair->NavigationOn();
-      scene->AddNode( crosshair );
-      crosshair->Delete();
+      foundDefault = 1;
       }
     }
 
-  // Update from SliceNode
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
-  if (sliceNode &&
-      !this->GetMRMLScene()->GetIsUpdating() &&
-      sliceNode == this->SliceNode)
+  if (!foundDefault)
     {
-    assert (event == vtkCommand::ModifiedEvent);
+    crosshair = vtkMRMLCrosshairNode::New();
+    crosshair->SetCrosshairName("default");
+    crosshair->NavigationOn();
+    scene->AddNode( crosshair );
+    crosshair->Delete();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+{
+  assert(node);
+  if (this->GetMRMLScene()->GetIsUpdating())
+    {
+    return;
+    }
+
+  // Update from SliceNode
+  if (node == this->SliceNode)
+    {
     // assert (sliceNode == this->SliceNode); not an assert because the node 
     // might have change in CreateSliceModel() or UpdateSliceNode()
     vtkMRMLDisplayNode* sliceDisplayNode =
@@ -442,6 +469,35 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       }
     }
+  else if (node == this->SliceCompositeNode)
+    {
+    this->UpdatePipeline();
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkCallbackCommand* vtkMRMLSliceLogic::GetMRMLLogicCallbackCommand()
+{
+  return this->MRMLLogicCallbackCommand;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::MRMLLogicCallback(vtkObject*caller, unsigned long eid,
+                                             void* clientData, void* callData)
+{
+  assert(vtkMRMLAbstractLogic::SafeDownCast(caller));
+  vtkMRMLSliceLogic *self = reinterpret_cast<vtkMRMLSliceLogic *>(clientData);
+
+  vtkDebugWithObjectMacro(self, "In vtkMRMLSliceLogic MRMLLogicCallback");
+  self->ProcessLogicEvents(caller, eid, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::ProcessLogicEvents(vtkObject* vtkNotUsed(caller),
+                                           unsigned long vtkNotUsed(event),
+                                           void* vtkNotUsed(callData))
+{
+  this->ProcessLogicEvents();
 }
 
 //----------------------------------------------------------------------------
@@ -572,7 +628,7 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
   // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->BackgroundLayer)
     {
-    this->BackgroundLayer->SetAndObserveMRMLScene( 0 );
+    this->BackgroundLayer->SetMRMLScene( 0 );
     this->BackgroundLayer->Delete();
     }
   this->BackgroundLayer = backgroundLayer;
@@ -585,7 +641,8 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
 
     this->BackgroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
-        this->BackgroundLayer, vtkCommand::ModifiedEvent, this, this->GetLogicCallbackCommand());
+      this->BackgroundLayer, vtkCommand::ModifiedEvent,
+      this, this->GetMRMLLogicCallbackCommand());
     }
 
   this->Modified();
@@ -597,7 +654,7 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
   // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->ForegroundLayer)
     {
-    this->ForegroundLayer->SetAndObserveMRMLScene( 0 );
+    this->ForegroundLayer->SetMRMLScene( 0 );
     this->ForegroundLayer->Delete();
     }
   this->ForegroundLayer = foregroundLayer;
@@ -609,7 +666,8 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
 
     this->ForegroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
-        this->ForegroundLayer, vtkCommand::ModifiedEvent, this, this->GetLogicCallbackCommand());
+      this->ForegroundLayer, vtkCommand::ModifiedEvent,
+      this, this->GetMRMLLogicCallbackCommand());
     }
 
   this->Modified();
@@ -621,7 +679,7 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
   // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (this->LabelLayer)
     {
-    this->LabelLayer->SetAndObserveMRMLScene( 0 );
+    this->LabelLayer->SetMRMLScene( 0 );
     this->LabelLayer->Delete();
     }
   this->LabelLayer = labelLayer;
@@ -634,7 +692,8 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
 
     this->LabelLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
-        this->LabelLayer, vtkCommand::ModifiedEvent, this, this->GetLogicCallbackCommand());
+      this->LabelLayer, vtkCommand::ModifiedEvent,
+      this, this->GetMRMLLogicCallbackCommand());
     }
 
   this->Modified();
@@ -2124,4 +2183,3 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic::GetSliceCompositeNode(vtkMRMLSlice
     }
   return 0;
 }
-

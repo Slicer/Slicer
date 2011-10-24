@@ -34,8 +34,6 @@ public:
   static vtkMRMLTestSliceViewDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLTestSliceViewDisplayableManager,vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   // For testing
   static int NodeAddedCount;

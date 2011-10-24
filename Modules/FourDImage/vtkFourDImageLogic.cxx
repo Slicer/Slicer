@@ -90,7 +90,7 @@ void vtkFourDImageLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "vtkFourDImageLogic:             " << this->GetClassName() << "\n";
 
 }
-
+/* NOT USED
 //----------------------------------------------------------------------------
 void vtkFourDImageLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
                                             unsigned long event, 
@@ -101,6 +101,7 @@ void vtkFourDImageLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
     this->InvokeEvent ( vtkCommand::ProgressEvent,callData );
     }
 }
+*/
 
 //---------------------------------------------------------------------------
 void vtkFourDImageLogic::DataCallback(vtkObject *vtkNotUsed(caller), 

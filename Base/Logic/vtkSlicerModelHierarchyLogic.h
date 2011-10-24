@@ -62,17 +62,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkMRML
     ModelHierarchyNodesMTime = 0;
     HierarchyChildrenNodesMTime = 0;
     }
-  /// 
-  /// Update logic state when MRML scene chenges
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
+
 protected:
   vtkSlicerModelHierarchyLogic();
   ~vtkSlicerModelHierarchyLogic();
   vtkSlicerModelHierarchyLogic(const vtkSlicerModelHierarchyLogic&);
   void operator=(const vtkSlicerModelHierarchyLogic&);
-  
+
   /// 
   /// Create model to hierarchy map, 
   /// return number of model hierarchy nodes

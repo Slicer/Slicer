@@ -55,20 +55,26 @@ vtkMRMLColorLogic::~vtkMRMLColorLogic()
     }
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLColorLogic::ProcessMRMLEvents(vtkObject * vtkNotUsed(caller),
-                                            unsigned long event,
-                                            void * vtkNotUsed(callData))
+//------------------------------------------------------------------------------
+void vtkMRMLColorLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkDebugMacro("vtkMRMLColorLogic::ProcessMRMLEvents: got an event " << event);
-  
-  // when there's a new scene, add the default nodes
-  //if (event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneClosedEvent)
-  if (event == vtkMRMLScene::NewSceneEvent)
+  // We are solely interested in vtkMRMLScene::NewSceneEvent,
+  // we don't want to listen to any other events.
+  vtkIntArray* sceneEvents = vtkIntArray::New();
+  sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+  sceneEvents->Delete();
+
+  if (newScene)
     {
-    vtkDebugMacro("vtkMRMLColorLogic::ProcessMRMLEvents: got a NewScene event " << event);
-    this->AddDefaultColorNodes();
+    this->OnMRMLSceneNewEvent();
     }
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLColorLogic::OnMRMLSceneNewEvent()
+{
+  this->AddDefaultColorNodes();
 }
 
 //----------------------------------------------------------------------------
@@ -435,24 +441,6 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const c
   node->Delete();  
   
   return node;
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLColorLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
-{
-  // This code is only executed in SlicerQT via:
-  // colorLogic->SetMRMLScene(scene)
-  // Slicer in KWWidget runs the old style:
-  //   colorLogic->SetAndObserveMRMLSceneEvents(scene, events)
-  vtkIntArray* sceneEvents = vtkIntArray::New();
-  sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
-  sceneEvents->Delete();
-  if (newScene)
-    {
-    this->AddDefaultColorNodes();
-    }
 }
 
 //------------------------------------------------------------------------------

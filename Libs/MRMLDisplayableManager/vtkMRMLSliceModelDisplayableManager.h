@@ -31,8 +31,8 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 /// Currently support only glyph display for Diffusion Tensor volumes.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceModelDisplayableManager :
-  public vtkMRMLAbstractSliceViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceModelDisplayableManager
+  : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
@@ -41,12 +41,14 @@ public:
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-
 protected:
 
   vtkMRMLSliceModelDisplayableManager();
   virtual ~vtkMRMLSliceModelDisplayableManager();
+
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
@@ -60,6 +62,7 @@ private:
   //BTX
   class vtkInternal;
   vtkInternal * Internal;
+  friend vtkInternal;
   //ETX
 };
 

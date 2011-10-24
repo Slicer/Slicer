@@ -55,12 +55,6 @@ void vtkSlicerModuleTemplateLogic::InitializeEventListeners()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerModuleTemplateLogic::ProcessMRMLEvents(
-  vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void * vtkNotUsed(callData))
-{
-}
-
-//-----------------------------------------------------------------------------
 void vtkSlicerModuleTemplateLogic::RegisterNodes()
 {
   if(!this->GetMRMLScene())

@@ -82,29 +82,6 @@ vtkIntArray* vtkModelMirrorLogic::NewObservableEvents()
 }
 
 
-
-
-//----------------------------------------------------------------------------
-void vtkModelMirrorLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                            unsigned long vtkNotUsed(event),
-                                            void *vtkNotUsed(callData))
-{
-
-  if ( !this->Visited )
-    {
-    return;
-    }
-  if ( this->ModelMirrorNode == NULL )
-    {
-    return;
-    }
-  if ( !this->Raised )
-    {
-    return;
-    }
-}
-
-
 //----------------------------------------------------------------------------
 void vtkModelMirrorLogic::PrintSelf(ostream& os, vtkIndent indent)
 {

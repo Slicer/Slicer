@@ -22,13 +22,6 @@ public:
   vtkTypeRevisionMacro(vtkSlicerROILogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
-  /// Update logic state when MRML scene changes
-  void ProcessMRMLEvents(); 
-  virtual void ProcessMRMLEvents ( vtkObject * caller, 
-      unsigned long event, void * callData ) 
-    { Superclass::ProcessMRMLEvents(caller, event, callData); }
-
   vtkMRMLROIListNode * AddROIList();
 
 protected:

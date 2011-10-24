@@ -70,19 +70,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   /// Load a fiducial list from file, returns NULL on failure
   vtkMRMLFiducialListNode *LoadFiducialList(const char *path);
 
-  /// 
-  /// Update logic state when MRML scene changes
-  void ProcessMRMLEvents();
-  //BTX
-  using vtkMRMLAbstractLogic::ProcessMRMLEvents;
-  //ETX
-    
 protected:
   vtkSlicerFiducialsLogic();
   ~vtkSlicerFiducialsLogic();
   vtkSlicerFiducialsLogic(const vtkSlicerFiducialsLogic&);
   void operator=(const vtkSlicerFiducialsLogic&);
-
 };
 
 #endif

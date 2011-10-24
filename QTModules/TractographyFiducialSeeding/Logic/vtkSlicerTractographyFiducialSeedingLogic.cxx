@@ -92,7 +92,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
     return;
     }
 
-  this->ProcessMRMLEvents(this->TractographyFiducialSeedingNode, vtkCommand::ModifiedEvent, NULL);
+  this->ProcessMRMLNodesEvents(this->TractographyFiducialSeedingNode, vtkCommand::ModifiedEvent, NULL);
   //this->RemoveMRMLNodesObservers();
 
   //this->AddMRMLNodesObservers();
@@ -529,47 +529,37 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   return 1;
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::OnMRMLSceneImportedEvent()
+{
+  // if we have a parameter node select it
+  vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+  if (node)
+    {
+    tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+    vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, tnode);
+    this->RemoveMRMLNodesObservers();
+    this->AddMRMLNodesObservers();
+    }
+  this->InvokeEvent(vtkMRMLScene::SceneImportedEvent);
+}
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                                                  unsigned long event,
-                                                                  void *callData) 
+void vtkSlicerTractographyFiducialSeedingLogic
+::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
-
-
-
-  vtkMRMLScene* scene = this->GetMRMLScene(); 
-  if (!scene)
-    {
+  if (node == NULL || !this->IsObservedNode(node))
+    {      
     return;
     }
+  this->OnMRMLNodeModified(node);
+}
 
-
-  if (vtkMRMLScene::NodeRemovedEvent == event)
-    {
-    vtkMRMLNode *node = reinterpret_cast < vtkMRMLNode *>(callData);
-    if (node == NULL || !this->IsObservedNode(node))
-      {      
-      return;
-      }
-    }
-
-  if (vtkMRMLScene::SceneImportedEvent == event)
-    {
-    // if we have a parameter node select it
-    vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
-    vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
-    if (node)
-      {
-      tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
-      vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, tnode);
-      this->RemoveMRMLNodesObservers();
-      this->AddMRMLNodesObservers();
-      }
-    this->InvokeEvent(vtkMRMLScene::SceneImportedEvent);
-    return;
-    }
-
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic
+::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
+{
   vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;
 
   if (snode == NULL || snode->GetEnableSeeding() == 0)
@@ -581,11 +571,13 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtk
 
   this->AddMRMLNodesObservers();
 
-  vtkMRMLDiffusionTensorVolumeNode *volumeNode = 
-        vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(scene->GetNodeByID(snode->GetInputVolumeRef()));
-  vtkMRMLNode *seedingNode = scene->GetNodeByID(snode->GetInputFiducialRef());
+  vtkMRMLDiffusionTensorVolumeNode *volumeNode =
+    vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID(snode->GetInputVolumeRef()));
+  vtkMRMLNode *seedingNode = this->GetMRMLScene()->GetNodeByID(snode->GetInputFiducialRef());
   vtkMRMLFiberBundleNode *fiberNode = 
-        vtkMRMLFiberBundleNode::SafeDownCast(scene->GetNodeByID(snode->GetOutputFiberRef()));
+    vtkMRMLFiberBundleNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID(snode->GetOutputFiberRef()));
 
   if(volumeNode == NULL || seedingNode == NULL || fiberNode == NULL) 
     {
@@ -604,8 +596,6 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLEvents(vtkObject *vtk
                      snode->GetSeedSelectedFiducials(),
                      snode->GetDisplayMode()
                      );
-  return;
-                                                            
 }
 
 //----------------------------------------------------------------------------

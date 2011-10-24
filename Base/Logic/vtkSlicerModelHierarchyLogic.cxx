@@ -26,14 +26,6 @@ vtkSlicerModelHierarchyLogic::~vtkSlicerModelHierarchyLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
-                                            void * /*callData*/)
-{
-  // TODO: implement if needed
-}
-
-//----------------------------------------------------------------------------
 int vtkSlicerModelHierarchyLogic::UpdateModelToHierarchyMap()
 {
   if (this->GetMRMLScene() == NULL)

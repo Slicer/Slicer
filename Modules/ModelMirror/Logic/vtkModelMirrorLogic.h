@@ -41,9 +41,6 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkModelMirrorLogic : public vt
   // These methods are used to turn observers on/off when module is entered/exited.
   virtual void Enter ( );
   virtual void Exit ( ) ;
-  
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData );
 
   // Description:
   // Get/Set MRML node storing parameter values

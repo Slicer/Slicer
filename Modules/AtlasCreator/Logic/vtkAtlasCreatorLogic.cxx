@@ -45,7 +45,13 @@ void vtkAtlasCreatorLogic::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 
+//----------------------------------------------------------------------------
+void vtkAtlasCreatorLogic::SetAndObserveAtlasCreatorNode(vtkMRMLAtlasCreatorNode *n)
+{
+  vtkSetAndObserveMRMLNodeMacro( this->AtlasCreatorNode, n);
+}
+
 void vtkAtlasCreatorLogic::Apply()
 {
-
 }
+

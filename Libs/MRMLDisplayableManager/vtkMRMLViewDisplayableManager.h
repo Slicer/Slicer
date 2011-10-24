@@ -34,13 +34,14 @@ public:
   static vtkMRMLViewDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
 protected:
 
   vtkMRMLViewDisplayableManager();
   virtual ~vtkMRMLViewDisplayableManager();
+
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
 
   virtual void AdditionnalInitializeStep();
 

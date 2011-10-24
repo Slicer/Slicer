@@ -1480,7 +1480,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_GlobalRef());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
-  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetMRMLScene(scene);
   moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
   moduleLogic->LazyEvaluateModuleTarget(moduleNode);
@@ -1492,7 +1492,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
-  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->SetMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
 
@@ -1538,7 +1538,7 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
-  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetMRMLScene(scene);
   moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
   moduleLogic->LazyEvaluateModuleTarget(moduleNode);
@@ -1552,16 +1552,16 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
-  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->SetMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
 
   return 0;
 }
 
-void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller,
-                                              unsigned long vtkNotUsed(event),
-                                              void *vtkNotUsed(callData))
+void vtkChangeTrackerLogic::ProcessMRMLNodesEvents(vtkObject* caller,
+                                                   unsigned long vtkNotUsed(event),
+                                                   void *vtkNotUsed(callData))
 {
   vtkMRMLScalarVolumeNode *callerNode = 
     vtkMRMLScalarVolumeNode::SafeDownCast(caller);
@@ -1607,7 +1607,7 @@ int vtkChangeTrackerLogic::ResampleScan2(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("outputVolume", ctNode->GetScan2_GlobalRef());
   // Currently, linear is the default interpolation type
 
-  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetMRMLScene(scene);
   moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
   moduleLogic->LazyEvaluateModuleTarget(moduleNode);
@@ -1619,7 +1619,7 @@ int vtkChangeTrackerLogic::ResampleScan2(vtkSlicerApplication *app){
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
-  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->SetMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
 

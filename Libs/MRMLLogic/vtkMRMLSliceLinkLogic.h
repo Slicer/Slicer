@@ -45,23 +45,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
-  /// Process MRML events. This class observes NodeAddedEvent,
-  /// NodeRemovedEvent, NewSceneEvent, SceneClosedEvent,
-  /// SceneAboutToBeClosedEvent, and SceneRestoredEvent.
-  virtual void ProcessMRMLEvents(vtkObject * /*caller*/,
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );
-  virtual void ProcessMRMLEvents() { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
-
-  /// 
-  /// Process logic events. Not currently used.
-  virtual void ProcessLogicEvents(vtkObject * /*caller*/,
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ ) {this->ProcessLogicEvents();};
-  void ProcessLogicEvents(); 
-
-
 protected:
 
   vtkMRMLSliceLinkLogic();
@@ -69,6 +52,10 @@ protected:
 
   // On a change in scene, we need to manage the observations.
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   // Used internally to control whether we are in the process of
   // broadcasting events. PIMPL it?
@@ -82,7 +69,6 @@ protected:
   /// Broadcast a slice composite node to other slice composite nodes
   void BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode *compositeNode);
 
-  
 private:
 
   vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&);
@@ -92,4 +78,3 @@ private:
 };
 
 #endif
-

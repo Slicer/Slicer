@@ -53,14 +53,6 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject* caller,
-                                            unsigned long event,
-                                            void* callData)
-{
-  this->Superclass::ProcessMRMLEvents(caller, event, callData);
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkSmartPointer<vtkIntArray> sceneEvents = vtkSmartPointer<vtkIntArray>::New();

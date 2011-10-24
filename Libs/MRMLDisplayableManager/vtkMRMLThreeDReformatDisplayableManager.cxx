@@ -79,9 +79,6 @@ public:
 
   SliceNodesLink                                SliceNodes;
   vtkMRMLThreeDReformatDisplayableManager*      External;
-
-  // Callback
-  vtkCallbackCommand* ImplicitPlaneWidgetCallbackCommand;
 };
 
 //---------------------------------------------------------------------------
@@ -92,13 +89,6 @@ vtkMRMLThreeDReformatDisplayableManager::vtkInternal::vtkInternal(
     vtkMRMLThreeDReformatDisplayableManager* _external)
 {
   this->External = _external;
-
-  // Setup Widget callback
-  this->ImplicitPlaneWidgetCallbackCommand = vtkCallbackCommand::New();
-  this->ImplicitPlaneWidgetCallbackCommand->SetClientData(
-    reinterpret_cast<void *> (_external));
-  this->ImplicitPlaneWidgetCallbackCommand->SetCallback(
-    vtkMRMLThreeDReformatDisplayableManager::WidgetCallback);
 }
 
 //---------------------------------------------------------------------------
@@ -110,8 +100,6 @@ vtkMRMLThreeDReformatDisplayableManager::vtkInternal::~vtkInternal()
     this->RemoveSliceNode(this->SliceNodes.begin());
     }
   this->SliceNodes.clear();
-
-  this->ImplicitPlaneWidgetCallbackCommand->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +123,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
   // We associate the node with the widget if an instantiation is called.
   // We add the sliceNode without instantiating the widget first.
   sliceNode->AddObserver(vtkCommand::ModifiedEvent,
-                           this->External->GetMRMLCallbackCommand());
+                           this->External->GetMRMLNodesCallbackCommand());
   this->SliceNodes.insert(
     std::pair<vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*>(sliceNode,0));
   this->UpdateWidget(sliceNode, 0);
@@ -170,7 +158,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
     }
 
   // TODO: it->first might have already been deleted
-  it->first->RemoveObserver(this->External->GetMRMLCallbackCommand());
+  it->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
   this->SliceNodes.erase(it);
 }
 
@@ -240,13 +228,13 @@ NewImplicitPlaneWidget()
 
   // Link widget evenement to the LogicCallbackCommand
   planeWidget->AddObserver(vtkCommand::StartInteractionEvent,
-                           this->ImplicitPlaneWidgetCallbackCommand);
+                           this->External->GetWidgetsCallbackCommand());
   planeWidget->AddObserver(vtkCommand::InteractionEvent,
-                           this->ImplicitPlaneWidgetCallbackCommand);
+                           this->External->GetWidgetsCallbackCommand());
   planeWidget->AddObserver(vtkCommand::EndInteractionEvent,
-                           this->ImplicitPlaneWidgetCallbackCommand);
+                           this->External->GetWidgetsCallbackCommand());
   planeWidget->AddObserver(vtkCommand::UpdateEvent,
-                           this->ImplicitPlaneWidgetCallbackCommand);
+                           this->External->GetWidgetsCallbackCommand());
 
   return planeWidget;
 }
@@ -395,27 +383,18 @@ OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* nodeRemoved)
 
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::
-ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  // SceneEvent
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
-  if (sliceNode)
-    {
-    if (event == vtkCommand::ModifiedEvent)
-      {
-      vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
-      this->Internal->UpdateWidget(sliceNode, planeWidget);
-      this->RequestRender();
-      return;
-      }
-    }
-
-  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  assert(sliceNode);
+  vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
+  this->Internal->UpdateWidget(sliceNode, planeWidget);
+  this->RequestRender();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::
-ProcessWidgetEvents(vtkObject *caller,
+ProcessWidgetsEvents(vtkObject *caller,
                     unsigned long vtkNotUsed(event),
                     void *vtkNotUsed(callData))
 {
@@ -465,22 +444,6 @@ ProcessWidgetEvents(vtkObject *caller,
   sliceNode->UpdateMatrices();
 
   this->RequestRender();
-}
-
-//----------------------------------------------------------------------------
-// Description:
-// the WidgetCallback is a static function to relay modified events from the
-// observed mrml node back into the gui layer for further processing
-//
-void vtkMRMLThreeDReformatDisplayableManager::WidgetCallback(vtkObject *caller,
-                                                             unsigned long eid,
-                                                             void *clientData,
-                                                             void *callData)
-{
-  vtkMRMLThreeDReformatDisplayableManager* self =
-    reinterpret_cast<vtkMRMLThreeDReformatDisplayableManager *>(clientData);
-
-  self->ProcessWidgetEvents(caller, eid, callData);
 }
 
 //---------------------------------------------------------------------------

@@ -42,7 +42,7 @@ public:
 
 //  enum {
 //    GetMRMLSceneEventsToObserveMethod = 0,
-//    ProcessMRMLEventsMethod,
+//    ProcessMRMLSceneEventsMethod,
 //    };
 
 //  static int          APIMethodCount;
@@ -63,7 +63,7 @@ public:
 //const char* vtkSlicerScriptedLoadableModuleLogic::vtkInternal::APIMethodNames[2] =
 //{
 //  "GetMRMLSceneEventsToObserve",
-//  "ProcessMRMLEvents",
+//  "ProcessMRMLSceneEvents",
 //};
 
 //---------------------------------------------------------------------------
@@ -129,11 +129,11 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLSceneEvents(vtkObject *caller,
 //                                                             unsigned long event,
 //                                                             void *callData)
 //{
-//  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLEventsMethod];
+//  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
 //  if (!method)
 //    {
 //    return;
@@ -151,11 +151,11 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessLogicEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
 //                                                              unsigned long event,
 //                                                              void *callData)
 //{
-//  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessLogicEventsMethod];
+//  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
 //  if (!method)
 //    {
 //    return;

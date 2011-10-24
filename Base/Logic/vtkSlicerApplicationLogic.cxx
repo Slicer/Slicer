@@ -311,66 +311,6 @@ unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
-                                            unsigned long /*event*/,
-                                            void * /*callData*/ )
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::ProcessMRMLEvents is deprecated");
-/*
-  //
-  // Look for a selection node in the scene
-  // - we always use the first one in the scene
-  // - if it doesn't match the one we had, we switch
-  // - if there isn't one, we create one
-  // - we add it to the scene if needed
-  //
-  vtkMRMLSelectionNode *node;
-  node = vtkMRMLSelectionNode::SafeDownCast (
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-
-  // selection node
-  if ( node == NULL )
-    {
-    node = vtkMRMLSelectionNode::New();
-    this->SetSelectionNode (node);
-    node->Delete();
-    }
-  if ( this->SelectionNode != node )
-    {
-      this->SetSelectionNode (node);
-    }
-  if (this->GetMRMLScene()->GetNodeByID(this->SelectionNode->GetID()) == NULL)
-    {
-    this->SetMRMLScene(this->GetMRMLScene());
-    this->SetSelectionNode ( vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->SelectionNode)) );
-    this->SetAndObserveMRMLScene(this->GetMRMLScene());
-    }
-
-  vtkMRMLInteractionNode *inode;
-  inode = vtkMRMLInteractionNode::SafeDownCast (
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
-
-  // interaction node
-  if ( inode == NULL )
-    {
-    inode = vtkMRMLInteractionNode::New();
-    this->SetInteractionNode ( inode );
-    inode->Delete ( );
-    }
-  if ( this->InteractionNode != inode )
-    {
-    this->SetInteractionNode (inode );
-    }
-  if (this->GetMRMLScene()->GetNodeByID(this->InteractionNode->GetID()) == NULL)
-    {
-    this->SetMRMLScene(this->GetMRMLScene());
-    //this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->InteractionNode)) );
-    this->SetAndObserveMRMLScene(this->GetMRMLScene());
-    }
-  */
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
 {
   if(!this->GetMRMLScene() || !this->GetSelectionNode())
@@ -583,7 +523,7 @@ void vtkSlicerApplicationLogic::DeleteSliceLogics()
     for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
       {
       sliceLogic = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-      sliceLogic->SetAndObserveMRMLScene( NULL );
+      sliceLogic->SetMRMLScene( NULL );
       sliceLogic->Delete();
       }
     (*this->InternalSliceLogicMap).clear();

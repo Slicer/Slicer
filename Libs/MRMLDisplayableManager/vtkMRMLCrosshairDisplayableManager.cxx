@@ -62,6 +62,9 @@ public:
   vtkInternal(vtkMRMLCrosshairDisplayableManager * external);
   ~vtkInternal();
 
+  vtkObserverManager* GetMRMLNodesObserverManager();
+  void Modified();
+
   // Slice
   vtkMRMLSliceNode* GetSliceNode();
   void UpdateSliceNode();
@@ -108,7 +111,6 @@ public:
     Dragging
   };
 
-
   vtkMRMLCrosshairDisplayableManager*        External;  
   int                                        PickState;
   int                                        ActionState;
@@ -154,6 +156,17 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
   assert(this->CrosshairNode == 0);
 }
 
+//---------------------------------------------------------------------------
+vtkObserverManager* vtkMRMLCrosshairDisplayableManager::vtkInternal::GetMRMLNodesObserverManager()
+{
+  return this->External->GetMRMLNodesObserverManager();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCrosshairDisplayableManager::vtkInternal::Modified()
+{
+  return this->External->Modified();
+}
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCrosshairDisplayableManager::vtkInternal::DidCrosshairPositionChange()
@@ -268,17 +281,7 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
     {
     return;
     }
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->RemoveObserver(
-      this->External->GetMRMLCallbackCommand());
-    }
-  this->SliceCompositeNode = compositeNode;
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->AddObserver(vtkCommand::ModifiedEvent,
-                                          this->External->GetMRMLCallbackCommand());
-    }
+  vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, compositeNode);
 }
 
 //---------------------------------------------------------------------------
@@ -289,17 +292,8 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
     {
     return;
     }
-  if (this->CrosshairNode)
-    {
-    this->CrosshairNode->RemoveObserver(
-      this->External->GetMRMLCallbackCommand());
-    }
-  this->CrosshairNode = crosshairNode;
-  if (this->CrosshairNode)
-    {
-    this->CrosshairNode->AddObserver(vtkCommand::ModifiedEvent,
-                                     this->External->GetMRMLCallbackCommand());
-    }
+
+  vtkSetAndObserveMRMLNodeMacro(this->CrosshairNode, crosshairNode);
 
   // Initialize the states
   if (this->CrosshairNode)
@@ -341,7 +335,7 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
       }
     }
   // no matching crosshair node is found
-  assert(0);
+  //assert(0);
   crosshairs->Delete();
   return 0;
 }
@@ -567,110 +561,109 @@ void vtkMRMLCrosshairDisplayableManager::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                            unsigned long event,
-                                                            void *callData)
+void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneRestoredEvent()
 {
-  if (caller == this->GetMRMLScene()
-      && this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->GetIsUpdating())
     {
     return;
     }
-  if (event == vtkMRMLScene::SceneImportedEvent ||
-      event == vtkMRMLScene::SceneRestoredEvent)
+  this->Internal->UpdateSliceNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneImportedEvent()
+{
+  if (this->GetMRMLScene()->GetIsUpdating())
     {
-    this->Internal->UpdateSliceNode();
     return;
     }
-  if (event == vtkCommand::ModifiedEvent)
+  this->Internal->UpdateSliceNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
+{
+  if (vtkMRMLCrosshairNode::SafeDownCast(node))
     {
-    if (vtkMRMLCrosshairNode::SafeDownCast(caller))
+    //std::cout << "Crosshair node modified: " << caller << ", " << this->Internal->CrosshairNode << std::endl;
+
+    // update the properties and style of the crosshair 
+    bool builtCrosshair = false;
+    if (this->Internal->DidCrosshairPropertyChange())
       {
-      //std::cout << "Crosshair node modified: " << caller << ", " << this->Internal->CrosshairNode << std::endl;
-
-      // update the properties and style of the crosshair 
-      bool builtCrosshair = false;
-      if (this->Internal->DidCrosshairPropertyChange())
-        {
-        this->Internal->BuildCrosshair();
-        builtCrosshair = true;
-        }
+      this->Internal->BuildCrosshair();
+      builtCrosshair = true;
+      }
+    
+    // update the position of the actor
+    if ((this->Internal->DidCrosshairPositionChange() || builtCrosshair) 
+        && this->Internal->Actor && this->Internal->HighlightActor)
+      {
+      double xyz[3];
+      double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
+      this->ConvertRASToXYZ(ras, xyz);
       
-      // update the position of the actor
-      if ((this->Internal->DidCrosshairPositionChange() || builtCrosshair) 
-          && this->Internal->Actor && this->Internal->HighlightActor)
+      // This is not the place to do this. We really need to
+      // use JumpSliceByOffsetting(k, r, a, s) with k defined by the
+      // viewer that received the mouse event. 
+      if (this->Internal->CrosshairNode->GetNavigation())
         {
-        double xyz[3];
-        double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
-        this->ConvertRASToXYZ(ras, xyz);
-        
-        // This is not the place to do this. We really need to
-        // use JumpSliceByOffsetting(k, r, a, s) with k defined by the
-        // viewer that received the mouse event. 
-        if (this->Internal->CrosshairNode->GetNavigation())
-          {
-          this->Internal->GetSliceNode()->JumpSliceByOffsetting(ras[0], ras[1], ras[2]);
-          this->ConvertRASToXYZ(ras, xyz); // recompute since matrices changed
-          }
-
-        this->Internal->Actor->SetPosition(xyz[0], xyz[1]);
-        this->Internal->HighlightActor->SetPosition(xyz[0], xyz[1]);
-
-        // put the actor in the right lightbox
-        if (this->Internal->LightBoxRendererManagerProxy)
-          {
-          int id = (int) (xyz[2] + 0.5); // round to find the lightbox
-          vtkRenderer *renderer 
-            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(id);
-          if (renderer != this->Internal->LightBoxRenderer)
-            {
-            if (this->Internal->LightBoxRenderer)
-              {
-              this->Internal->LightBoxRenderer
-                ->RemoveActor(this->Internal->Actor);
-              this->Internal->LightBoxRenderer
-                ->RemoveActor(this->Internal->HighlightActor);
-              }
-            if (renderer)
-              {
-              renderer->AddActor(this->Internal->Actor);
-              renderer->AddActor(this->Internal->HighlightActor);
-              }
-            this->Internal->LightBoxRenderer = renderer;
-            }
-          }        
-        
-        //std::cout << this->Internal->GetSliceNode()->GetSingletonTag() << " -- RAS: " << this->Internal->CrosshairNode->GetCrosshairRAS()[0] << ", " << this->Internal->CrosshairNode->GetCrosshairRAS()[1] << ", " << this->Internal->CrosshairNode->GetCrosshairRAS()[2] << ", XYZ = " << pos[0] << ", " << pos[1] << ", " << pos[2] << std::endl;
+        this->Internal->GetSliceNode()->JumpSliceByOffsetting(ras[0], ras[1], ras[2]);
+        this->ConvertRASToXYZ(ras, xyz); // recompute since matrices changed
         }
 
-      // Update the cache of the crosshair
-      this->Internal->CrosshairNodeCache->Copy(this->Internal->CrosshairNode);
+      this->Internal->Actor->SetPosition(xyz[0], xyz[1]);
+      this->Internal->HighlightActor->SetPosition(xyz[0], xyz[1]);
+
+      // put the actor in the right lightbox
+      if (this->Internal->LightBoxRendererManagerProxy)
+        {
+        int id = (int) (xyz[2] + 0.5); // round to find the lightbox
+        vtkRenderer *renderer 
+          = this->Internal->LightBoxRendererManagerProxy->GetRenderer(id);
+        if (renderer != this->Internal->LightBoxRenderer)
+          {
+          if (this->Internal->LightBoxRenderer)
+            {
+            this->Internal->LightBoxRenderer
+              ->RemoveActor(this->Internal->Actor);
+            this->Internal->LightBoxRenderer
+              ->RemoveActor(this->Internal->HighlightActor);
+            }
+          if (renderer)
+            {
+            renderer->AddActor(this->Internal->Actor);
+            renderer->AddActor(this->Internal->HighlightActor);
+            }
+          this->Internal->LightBoxRenderer = renderer;
+          }
+        }        
+      
+      //std::cout << this->Internal->GetSliceNode()->GetSingletonTag() << " -- RAS: " << this->Internal->CrosshairNode->GetCrosshairRAS()[0] << ", " << this->Internal->CrosshairNode->GetCrosshairRAS()[1] << ", " << this->Internal->CrosshairNode->GetCrosshairRAS()[2] << ", XYZ = " << pos[0] << ", " << pos[1] << ", " << pos[2] << std::endl;
       }
 
-    // if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
-    //   {
-    // //std::cout << "SLICE COMPOSITE UPDATED" << std::endl;
-    //   this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
-    //   }
-    // else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
-    //   {
-    //   //std::cout << "VOLUME UPDATED" << std::endl;
-    //   if (callData == 0)
-    //     {
-    //     this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
-    //     }
-    //   }
-    // else if (vtkMRMLDisplayNode::SafeDownCast(caller))
-    //   {
-    //   //std::cout << "DISPLAY NODE UPDATED" << std::endl;
-    //   this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
-    //   }
+    // Update the cache of the crosshair
+    this->Internal->CrosshairNodeCache->Copy(this->Internal->CrosshairNode);
     }
-  // Default MRML Event handler is NOT needed
-//  else
-//    {
-//    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-//    }
+
+  // if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
+  //   {
+  // //std::cout << "SLICE COMPOSITE UPDATED" << std::endl;
+  //   this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
+  //   }
+  // else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
+  //   {
+  //   //std::cout << "VOLUME UPDATED" << std::endl;
+  //   if (callData == 0)
+  //     {
+  //     this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
+  //     }
+  //   }
+  // else if (vtkMRMLDisplayNode::SafeDownCast(caller))
+  //   {
+  //   //std::cout << "DISPLAY NODE UPDATED" << std::endl;
+  //   this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
+  //   }
 
   // Request a render 
   this->RequestRender();

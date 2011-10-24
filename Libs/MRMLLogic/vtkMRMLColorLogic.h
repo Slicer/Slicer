@@ -45,12 +45,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
-  /// Update logic state when MRML scene chenges
-  void ProcessMRMLEvents(vtkObject * caller,
-                         unsigned long event,
-                         void * callData);
-
-  ///
   /// Add a series of color nodes, setting the types to the defaults, so that
   /// they're accessible to the rest of Slicer
   virtual void AddDefaultColorNodes();
@@ -135,6 +129,12 @@ protected:
 
   /// Reimplemented to listen to specific scene events
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  ///
+  /// Called when the scene fires vtkMRMLScene::NewSceneEvent.
+  /// We add the default LUTs.
+  virtual void OnMRMLSceneNewEvent();
+
 
   vtkMRMLColorTableNode* CreateLabelsNode();
   vtkMRMLColorTableNode* CreateDefaultTableNode(int type);

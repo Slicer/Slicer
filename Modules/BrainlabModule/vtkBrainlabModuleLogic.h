@@ -20,34 +20,21 @@ public:
 
   vtkGetObjectMacro(MRMLManager, vtkBrainlabModuleMRMLManager);
 
-  //
-  // Register all the nodes used by this module with the current MRML
-  // scene.
-  virtual void RegisterMRMLNodesWithScene()
-      { 
-      this->MRMLManager->RegisterMRMLNodesWithScene(); 
-      }
-
-  virtual void SetAndObserveMRMLScene(vtkMRMLScene* scene)
-      {
-      Superclass::SetAndObserveMRMLScene(scene);
-      this->MRMLManager->SetMRMLScene(scene);
-      }
-
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData )
-      { 
-      this->MRMLManager->ProcessMRMLEvents(caller, event, callData); 
-      }
-
-  // events to observe
-  virtual vtkIntArray* NewObservableEvents();
 
 private:
   vtkBrainlabModuleLogic();
   ~vtkBrainlabModuleLogic();
   vtkBrainlabModuleLogic(const vtkBrainlabModuleLogic&);
   void operator=(const vtkBrainlabModuleLogic&);
+
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene);
+  //
+  // Register all the nodes used by this module with the current MRML
+  // scene.
+  virtual void RegisterNodes();
+  virtual void ProcessMRMLSceneEvents(vtkObject *caller,
+                                      unsigned long event,
+                                      void *callData);
 
   // the mrml manager is created in the constructor
   vtkSetObjectMacro(MRMLManager, vtkBrainlabModuleMRMLManager);

@@ -9,7 +9,6 @@ set sc [vtkMRMLScene New]
 set logic [vtkMRMLSliceLogic New]
 $logic SetName "Red"
 $logic SetMRMLScene $sc
-$logic ProcessLogicEvents
 
 set events [vtkIntArray New]
 $events InsertNextValue 66002 ;#(vtkMRMLScene::NewSceneEvent);

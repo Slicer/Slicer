@@ -27,6 +27,7 @@
 // MRMLLogic includes
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyLogic.h>
+#include <vtkMRMLModelHierarchyNode.h>
 
 // MRML includes
 

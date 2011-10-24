@@ -8,7 +8,8 @@
 # should expose the following methods:
 #    - Create
 #    - GetMRMLSceneEventsToObserve
-#    - ProcessMRMLEvents
+#    - ProcessMRMLSceneEvents
+#    - ProcessMRMLNodesEvents
 #    - RemoveMRMLObservers
 #    - UpdateFromMRML
 #    - OnInteractorStyleEvent
@@ -69,8 +70,12 @@ class vtkScriptedExampleDisplayableManager:
     sceneEvents.InsertNextValue(66001) #vtkMRMLScene::NodeRemovedEvent
     return sceneEvents
   
-  def ProcessMRMLEvents(self, scene, eventid, node):
-    print "vtkScriptedExampleDisplayableManager - ProcessMRMLEvents(eventid,", eventid, ")"
+  def ProcessMRMLSceneEvents(self, scene, eventid, node):
+    print "vtkScriptedExampleDisplayableManager - ProcessMRMLSceneEvents(eventid,", eventid, ")"
+    pass
+
+  def ProcessMRMLNodesEvents(self, scene, eventid, callData):
+    print "vtkScriptedExampleDisplayableManager - ProcessMRMLNodesEvents(eventid,", eventid, ")"
     pass
   
   def RemoveMRMLObservers(self):

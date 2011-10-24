@@ -63,14 +63,7 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                              unsigned long vtkNotUsed(event),
-                                              void *vtkNotUsed(callData))
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
+void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),
                                             unsigned long event, 
                                             void *callData)
 {
@@ -80,7 +73,6 @@ void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller),
     }
 }
 
-//#include "vtkMRMLScalarVolumeDisplayNode.h"
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
@@ -138,7 +130,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   
   storageNode->SetFileName(filename);
   storageNode->SetCenterImage(centerImage);
-  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
  if (storageNode->ReadData(scalarNode))
     {
@@ -161,7 +153,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     volumeNode = vectorNode;
     }
 
- storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+ storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
   if (volumeNode != NULL)
     {
@@ -317,7 +309,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
   storageNode->SetUseOrientationFromFile(useOrientationFromFile);
-  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
   if (volname == NULL)
     {
@@ -378,7 +370,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   storageNode->ReadData(scalarNode);
   vtkDebugMacro("AddArchetypeScalarVolume: finished reading data into scalarNode");
 
-  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
  
   if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone ||
       storageNode->GetReadState() == vtkMRMLStorageNode::Idle)
@@ -537,13 +529,13 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
     }
   storageNode1->SetCenterImage(centerImage);
-  storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
   
   storageNode2->SetCenterImage(centerImage);
   storageNode2->SetSingleFile(singleFile);
   storageNode2->SetUseOrientationFromFile(useOrientationFromFile);
-  storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
   this->GetMRMLScene()->SaveStateForUndo();
    
@@ -655,8 +647,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
     }
 
-  storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
-  storageNode2->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
+  storageNode2->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
   
   if (nodeSetUsed != 1)
     {

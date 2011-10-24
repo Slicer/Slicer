@@ -48,8 +48,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
@@ -91,6 +89,8 @@ protected:
   vtkMRMLAnnotationDisplayableManager();
   virtual ~vtkMRMLAnnotationDisplayableManager();
 
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+
   virtual void Create();
 
   /// Remove MRML observers
@@ -103,7 +103,7 @@ protected:
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
-  /// \sa ProcessMRMLEvents
+  /// \sa ProcessMRMLSceneEvents
   virtual void OnMRMLSceneAboutToBeClosedEvent();
   virtual void OnMRMLSceneClosedEvent();
   virtual void OnMRMLSceneAboutToBeImportedEvent();

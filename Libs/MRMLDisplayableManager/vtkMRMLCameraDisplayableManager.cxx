@@ -28,6 +28,8 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 
@@ -152,35 +154,36 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* n
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
                                                         unsigned long event,
                                                         void *callData)
 {
-  if (vtkMRMLCameraNode::SafeDownCast(caller))
+  switch(event)
     {
-    switch(event)
-      {
-      // ModifiedEvent is fired anytime vtkCamera is modified (when there is a
-      // pan, zoom, rotation...)
-      // The observation is done here: vtkSetAndObserveMRMLNodeMacro(
-      // this->Internal->CameraNode, newCameraNode);
-      // TBD: maybe we could have better results if we listen to vtkCamera
-      // directly instead of vtkCameraNode
-      case vtkCommand::ModifiedEvent:
-        this->RequestRender();
-        break;
-      // Maybe something external removed the view/camera link, make sure the
-      // view observes a camera node, create a new camera node if needed
-      case vtkMRMLCameraNode::ActiveTagModifiedEvent:
-        this->UpdateCameraNode();
-        vtkDebugMacro("ProcessingMRML: got a camera node modified event");
-        break;
-      }
+    // Maybe something external removed the view/camera link, make sure the
+    // view observes a camera node, create a new camera node if needed
+    case vtkMRMLCameraNode::ActiveTagModifiedEvent:
+      assert(vtkMRMLCameraNode::SafeDownCast(caller));
+      this->UpdateCameraNode();
+      vtkDebugMacro("ProcessingMRML: got a camera node modified event");
+      break;
+    default:
+      this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+      break;
     }
-  else
-    {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
+{
+  // ModifiedEvent is fired anytime vtkCamera is modified (when there is a
+  // pan, zoom, rotation...)
+  // The observation is done here: vtkSetAndObserveMRMLNodeMacro(
+  // this->Internal->CameraNode, newCameraNode);
+  // TBD: maybe we could have better results if we listen to vtkCamera
+  // directly instead of vtkCameraNode
+  assert(vtkMRMLCameraNode::SafeDownCast(node));
+  this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
@@ -196,18 +199,16 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
     return;
     }
 
-  vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Internal->CameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
-      this, this->GetMRMLCallbackCommand());
-
   if (newCameraNode)
     {
     newCameraNode->SetActiveTag(this->GetMRMLViewNode()->GetID());
-    vtkEventBroker::GetInstance()->AddObservation(
-      newCameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
-      this, this->GetMRMLCallbackCommand());
     }
-  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, newCameraNode);
+  vtkNew<vtkIntArray> cameraNodeEvents;
+  cameraNodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::ActiveTagModifiedEvent);
+
+  vtkSetAndObserveMRMLNodeEventsMacro(
+    this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());
 
   this->SetCameraToRenderer();
   this->SetCameraToInteractor();

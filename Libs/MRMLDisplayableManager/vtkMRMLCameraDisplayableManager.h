@@ -38,8 +38,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLCameraDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-  
   virtual void RemoveMRMLObservers();
 
   void UpdateCameraNode();
@@ -65,6 +63,11 @@ protected:
   virtual void OnMRMLSceneRestoredEvent();
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller,
+                                      unsigned long event,
+                                      void *callData);
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
   virtual void AdditionnalInitializeStep();

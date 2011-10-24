@@ -38,8 +38,6 @@ public:
                        vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-
 protected:
   vtkMRMLThreeDReformatDisplayableManager();
   virtual ~vtkMRMLThreeDReformatDisplayableManager();
@@ -49,13 +47,13 @@ protected:
   virtual void Create();
 
   /// WidgetCallback is a static function to relay modified events from the Logic
-  static void WidgetCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
-  virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
 
   virtual void OnMRMLSceneImportedEvent();
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
+  virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 private:
   vtkMRMLThreeDReformatDisplayableManager(const vtkMRMLThreeDReformatDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLThreeDReformatDisplayableManager&);                     // Not Implemented

@@ -33,14 +33,6 @@ public:
   vtkTypeMacro(vtkChangeTrackerLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
- // TODO: do we need to observe MRML here?
- // pohl: I so not I follow example vtkGradnientAnisotrpoicDiffusionoFilterGUI
- // virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
- //                                  void *callData ){};
- // AF: yes, need to observe MRML events to detect completion of registration
-  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
-
-
 
   // Description: The name of the Module---this is used to construct
   // the proc invocations
@@ -158,6 +150,13 @@ private:
   ~vtkChangeTrackerLogic();
   vtkChangeTrackerLogic(const vtkChangeTrackerLogic&);
   void operator=(const vtkChangeTrackerLogic&);
+
+  // TODO: do we need to observe MRML here?
+  // pohl: I so not I follow example vtkGradnientAnisotrpoicDiffusionoFilterGUI
+  // virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+  //                                  void *callData ){};
+  // AF: yes, need to observe MRML events to detect completion of registration
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
 
   // not currently used
   vtkSetStringMacro(ProgressCurrentAction);

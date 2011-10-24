@@ -195,7 +195,7 @@ vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
 void vtkMRMLSliceLayerLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -204,9 +204,9 @@ void vtkMRMLSliceLayerLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller, 
-                                            unsigned long event, 
-                                            void *callData)
+void vtkMRMLSliceLayerLogic::ProcessMRMLSceneEvents(vtkObject * caller, 
+                                                    unsigned long event, 
+                                                    void *callData)
 {
   // ignore node events that aren't the observed volume or slice node
   if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
@@ -226,17 +226,44 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       return;
       }
     }
+  this->UpdateLogic();
+}
 
-  // ignore unimportant scene events
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
-    && (event == vtkMRMLScene::NewSceneEvent) )
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLayerLogic::UpdateLogic()
+{
+  // TBD: make sure UpdateTransforms() is not called for not a good reason as it
+  // is expensive.
+  int wasModifying = this->StartModify();
+  this->UpdateTransforms();
+  this->UpdateImageDisplay();
+  this->UpdateGlyphs();
+  this->EndModify(wasModifying);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLayerLogic::ProcessMRMLNodesEvents(vtkObject * caller,
+                                                    unsigned long event,
+                                                    void *callData)
+{
+  switch (event)
     {
-    return;
+    case vtkMRMLTransformableNode::TransformModifiedEvent:
+      if (caller == this->VolumeNode)
+        {// TBD: Needed ?
+        this->UpdateLogic();
+        }
+      break;
+    default:
+      this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+      break;
     }
+}
 
-  if (this->VolumeDisplayNodeObserved != 0 &&
-      this->VolumeDisplayNodeObserved == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
-      event == vtkCommand::ModifiedEvent)
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLayerLogic::OnMRMLNodeModified(vtkMRMLNode *node)
+{
+  if (node == this->VolumeDisplayNodeObserved)
     {
     this->UpdateVolumeDisplayNode();
     int wasModifying = this->StartModify();
@@ -245,15 +272,12 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
     // so the output has changed.
     this->Modified();
     this->EndModify(wasModifying);
-    return;
     }
-  // TBD: make sure UpdateTransforms() is not called for not a good reason as it
-  // is expensive.
-  int wasModifying = this->StartModify();
-  this->UpdateTransforms();
-  this->UpdateImageDisplay();
-  this->UpdateGlyphs();
-  this->EndModify(wasModifying);
+  else if (node == this->SliceNode ||
+           node == this->VolumeNode)
+    {
+    this->UpdateLogic();
+    }
 }
 
 //----------------------------------------------------------------------------

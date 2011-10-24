@@ -42,9 +42,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   // These methods are used to turn observers on/off when module is entered/exited.
   virtual void Enter ( );
   virtual void Exit ( ) ;
-  
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData );
 
   // Description:
   // Get/Set MRML node storing parameter values
@@ -531,6 +528,12 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   ~vtkFetchMILogic();
   vtkFetchMILogic(const vtkFetchMILogic&);
   void operator=(const vtkFetchMILogic&);
+
+  virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event,
+                                      void *callData);
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
+                                      void *callData);
 
   vtkFetchMIServerCollection *ServerCollection;
   vtkFetchMIServer *CurrentWebService;

@@ -15,6 +15,10 @@
 // MRMLLogic includes
 #include "vtkMRMLModelHierarchyLogic.h"
 
+// MRML includes
+#include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLModelNode.h"
+
 // VTK includes
 
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
@@ -30,13 +34,6 @@ vtkMRMLModelHierarchyLogic::vtkMRMLModelHierarchyLogic()
 //----------------------------------------------------------------------------
 vtkMRMLModelHierarchyLogic::~vtkMRMLModelHierarchyLogic()
 {
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/, unsigned long /*event*/,
-                                                   void * /*callData*/)
-{
-  // TODO: implement if needed
 }
 
 //----------------------------------------------------------------------------

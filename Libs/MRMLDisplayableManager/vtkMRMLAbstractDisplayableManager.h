@@ -41,7 +41,8 @@ class vtkMRMLScene;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager : public vtkMRMLAbstractLogic 
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
+  : public vtkMRMLAbstractLogic
 {
 public:
   
@@ -95,13 +96,43 @@ protected:
   /// the mouse moves set this to include Place and ViewTransform
   virtual int ActiveInteractionModes();
 
-  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void * callData);
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void * callData);
+
+  /// Receives all the events fired by any graphical object interacted by the
+  /// user (typically vtk widgets).
+  /// A typical use case is to listen to mrml nodes (using
+  /// GetMRMLNodesCallbackCommand()) and update the graphical
+  /// objects like mappers, actors, widgets... in ProcessMRMLNodesEvent, and to
+  /// listen to user interactions (using (using
+  /// GetWidgetsCallbackCommand()) like widgets and update the mrml nodes in
+  /// ProcessWidgetsEvents.
+  /// To listen to a widget (or any vtk Object), you can add an observer using
+  /// GetWidgetsCallbackCommand().
+  /// ProcessWidgetsEvents doesn't do anything by default, you need to reimplement
+  /// it.
+  virtual void ProcessWidgetsEvents(vtkObject* caller,
+                                    unsigned long event,
+                                    void * callData);
+
+  //BTX
+  /// WidgetsCallback is a static function to relay modified events from the vtk widgets
+  static void WidgetsCallback(vtkObject *caller, unsigned long eid,
+                              void *clientData, void *callData);
+  //ETX
+
+  /// Get vtkWidget callbackCommand
+  vtkCallbackCommand * GetWidgetsCallbackCommand();
+
+  /// Get widget observerManager
+  vtkObserverManager * GetWidgetsObserverManager()const;
 
   /// Called by SetMRMLScene - Used to initialize the Scene
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Could be overloaded in DisplayableManager subclass
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
 
   /// \brief Allow to specify additonal events that the DisplayableNode will observe
   /// \warning Should be called within AdditionalInitializeStep() method
@@ -121,7 +152,7 @@ protected:
 
   /// Called after a valid MRML DisplayableNode is set.
   /// By default it simulates a ModifiedEvent event on the displayable node
-  /// so that ProcessMRMLEvents(displayableNode, ModifiedEvent) is called.
+  /// so that ProcessMRMLNodesEvents(displayableNode, ModifiedEvent) is called.
   /// \note GetRenderer() and GetMRMLDisplayableNode() will return valid object
   virtual void Create();
 

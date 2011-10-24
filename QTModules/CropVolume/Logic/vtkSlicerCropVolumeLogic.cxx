@@ -56,21 +56,6 @@ vtkSlicerCropVolumeLogic::~vtkSlicerCropVolumeLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerCropVolumeLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                              unsigned long vtkNotUsed(event),
-                                              void *vtkNotUsed(callData))
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerCropVolumeLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
-                                            unsigned long vtkNotUsed(event),
-                                            void *vtkNotUsed(callData))
-{
-
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerCropVolumeLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);

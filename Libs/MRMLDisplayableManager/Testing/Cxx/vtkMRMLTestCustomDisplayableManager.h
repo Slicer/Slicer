@@ -34,8 +34,6 @@ public:
   static vtkMRMLTestCustomDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLTestCustomDisplayableManager,vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   // For testing
   static int NodeAddedCountThreeDView;

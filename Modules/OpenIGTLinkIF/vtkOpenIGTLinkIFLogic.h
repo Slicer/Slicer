@@ -132,8 +132,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   // MRML Management
   //----------------------------------------------------------------
 
-  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
-
   int  SetLocatorDriver(const char* nodeID);
   int  EnableLocatorDriver(int i);
   int  SetRealTimeImageSource(const char* nodeID);
@@ -164,6 +162,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   ~vtkOpenIGTLinkIFLogic();
   vtkOpenIGTLinkIFLogic(const vtkOpenIGTLinkIFLogic&);
   void operator=(const vtkOpenIGTLinkIFLogic&);
+
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void* callData);
 
   
   static void DataCallback(vtkObject*, unsigned long, void *, void *);

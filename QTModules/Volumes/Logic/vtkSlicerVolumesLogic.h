@@ -125,20 +125,6 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
                                         const char *name);
 
   // Description:
-  // Update MRML events
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
-  // Description:
-  // Update logic events
-  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );  
-  //BTX
-  using vtkMRMLAbstractLogic::ProcessLogicEvents; 
-  //ETX
-  
-  // Description:
   // Computes matrix we need to register
   // V1Node to V2Node given the
   // "register.dat" matrix from tkregister2 (FreeSurfer)
@@ -157,6 +143,10 @@ protected:
   virtual ~vtkSlicerVolumesLogic();
   vtkSlicerVolumesLogic(const vtkSlicerVolumesLogic&);
   void operator=(const vtkSlicerVolumesLogic&);
+
+  virtual void ProcessMRMLNodesEvents(vtkObject * caller,
+                                  unsigned long event,
+                                  void * callData);
 
   // Description:
   // Examine the file name to see if the extension is one of the supported

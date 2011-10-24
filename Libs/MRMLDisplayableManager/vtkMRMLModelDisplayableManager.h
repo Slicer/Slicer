@@ -129,8 +129,6 @@ public:
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
                              int planeDirection,
                              vtkPlane *plane);
-  
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   /// Return true if the node can be represented as a model
   bool IsModelDisplayable(vtkMRMLDisplayableNode* node)const;
@@ -149,6 +147,8 @@ protected:
   virtual void OnMRMLSceneRestoredEvent();
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
 
   ///
   /// Returns true if something visible in modelNode has changed and would

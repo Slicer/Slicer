@@ -46,11 +46,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   /// Initialize listening to MRML events
-  void InitializeEventListeners();
-  
-  /// MRML events
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-  
+  //void InitializeEventListeners();
+
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 

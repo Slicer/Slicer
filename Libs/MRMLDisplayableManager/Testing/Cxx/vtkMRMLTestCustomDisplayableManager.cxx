@@ -124,19 +124,3 @@ void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     //          << (node ? node->GetName() : "None")<< std::endl;
     }
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLTestCustomDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                      unsigned long event,
-                                                      void *callData)
-{
-  //if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
-  //  {
-  //  
-  //  }
-  //else
-  //  {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  //  }
-}
-

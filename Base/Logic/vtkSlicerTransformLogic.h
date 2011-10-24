@@ -47,18 +47,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   /// 
   /// Write transform's data to a specified file
   int SaveTransform (const char* filename, vtkMRMLTransformNode *transformNode);
-  
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                   void * /*callData*/ ) { };
-  
-  
-  /// 
-  /// Update logic events
-  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ ) {};  
-  virtual void ProcessLogicEvents() {}
 
 protected:
   vtkSlicerTransformLogic();

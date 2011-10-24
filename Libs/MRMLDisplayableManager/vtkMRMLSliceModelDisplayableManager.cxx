@@ -54,6 +54,9 @@ public:
   vtkInternal(vtkMRMLSliceModelDisplayableManager * external);
   ~vtkInternal();
 
+  vtkObserverManager* GetMRMLNodesObserverManager()const;
+  void Modified();
+
   bool IsDisplayable(vtkMRMLDisplayNode*);
   bool IsVisible(vtkMRMLDisplayNode*);
 
@@ -124,6 +127,18 @@ vtkMRMLSliceModelDisplayableManager::vtkInternal::~vtkInternal()
 }
 
 //---------------------------------------------------------------------------
+vtkObserverManager* vtkMRMLSliceModelDisplayableManager::vtkInternal::GetMRMLNodesObserverManager()const
+{
+  return this->External->GetMRMLNodesObserverManager();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSliceModelDisplayableManager::vtkInternal::Modified()
+{
+  return this->External->Modified();
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLSliceNode* vtkMRMLSliceModelDisplayableManager::vtkInternal
 ::GetSliceNode()
 {
@@ -184,17 +199,8 @@ void vtkMRMLSliceModelDisplayableManager::vtkInternal
     {
     return;
     }
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->RemoveObserver(
-      this->External->GetMRMLCallbackCommand());
-    }
-  this->SliceCompositeNode = compositeNode;
-  if (this->SliceCompositeNode)
-    {
-    this->SliceCompositeNode->AddObserver(vtkCommand::ModifiedEvent,
-                                          this->External->GetMRMLCallbackCommand());
-    }
+
+  vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, compositeNode);
   this->UpdateSliceCompositeNode(this->SliceCompositeNode);
 }
 
@@ -281,7 +287,7 @@ bool vtkMRMLSliceModelDisplayableManager::vtkInternal
     return false;
     }
   volume->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                      this->External->GetMRMLCallbackCommand());
+                      this->External->GetMRMLNodesCallbackCommand());
   this->VolumeNodes.push_back(volume);
   this->UpdateVolume(volume);
   return true;
@@ -293,7 +299,7 @@ std::vector<vtkMRMLDisplayableNode*>::iterator vtkMRMLSliceModelDisplayableManag
 {
   vtkMRMLDisplayableNode* volume = *volumeIt;
   // Stop listening to events
-  volume->RemoveObserver(this->External->GetMRMLCallbackCommand());
+  volume->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
   // Remove displaynodes and actors
   DisplayNodesType::iterator it = this->DisplayNodes.find(volume);
   if (it != this->DisplayNodes.end())
@@ -379,7 +385,7 @@ void vtkMRMLSliceModelDisplayableManager::vtkInternal::AddVolumeDisplayNode(
     return;
     }
   displayNode->AddObserver(vtkCommand::ModifiedEvent,
-                           this->External->GetMRMLCallbackCommand());
+                           this->External->GetMRMLNodesCallbackCommand());
   displayNodesIt->second.push_back(displayNode);
   this->UpdateVolumeDisplayNode(displayNode);
 }
@@ -410,7 +416,7 @@ std::vector<vtkMRMLDisplayNode*>::iterator vtkMRMLSliceModelDisplayableManager::
 {
   // Stop listening to events
   vtkMRMLDisplayNode* displayNode = *displayNodeIt;
-  displayNode->RemoveObserver(this->External->GetMRMLCallbackCommand());
+  displayNode->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
   // Remove actors associated with the displayNode
   this->RemoveActor(this->Actors.find(displayNode));
 
@@ -539,47 +545,53 @@ void vtkMRMLSliceModelDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceModelDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                            unsigned long event,
-                                                            void *callData)
+void vtkMRMLSliceModelDisplayableManager
+::OnMRMLSceneImportedEvent()
 {
-  if (caller == this->GetMRMLScene()
-      && this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->GetIsUpdating())
     {
     return;
     }
-  if (event == vtkMRMLScene::SceneImportedEvent ||
-      event == vtkMRMLScene::SceneRestoredEvent)
+  this->Internal->UpdateSliceNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSliceModelDisplayableManager
+::OnMRMLSceneRestoredEvent()
+{
+  if (this->GetMRMLScene()->GetIsUpdating())
     {
-    this->Internal->UpdateSliceNode();
     return;
     }
+  this->Internal->UpdateSliceNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSliceModelDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
+{
   if (event == vtkCommand::ModifiedEvent)
     {
     if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
       {
-    //std::cout << "SLICE COMPOSITE UPDATED" << std::endl;
       this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
+      }
+    else if (vtkMRMLDisplayNode::SafeDownCast(caller))
+      {
+      this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
       }
     else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
       {
-      //std::cout << "VOLUME UPDATED" << std::endl;
       if (callData == 0)
         {
         this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
         }
       }
-    else if (vtkMRMLDisplayNode::SafeDownCast(caller))
-      {
-      //std::cout << "DISPLAY NODE UPDATED" << std::endl;
-      this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
-      }
     }
-  // Default MRML Event handler is NOT needed
-//  else
-//    {
-//    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-//    }
+  else
+    {
+    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+    }
 }
 
 //---------------------------------------------------------------------------

@@ -100,12 +100,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// that are loaded and managed at run time
   vtkCollection* GetModules();
 
-  /// Creates a selection node if needed
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                  unsigned long /*event*/,
-                                  void * /*callData*/ );
-  virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
-
   /// Create a thread for processing
   void CreateProcessingThread();
 

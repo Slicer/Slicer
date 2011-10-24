@@ -179,7 +179,7 @@ vtkFetchMILogic::~vtkFetchMILogic()
   this->TagValuesQuery = 0;
   this->ErrorChecking = 0;
   this->ParsingError = 0;
-  this->SetAndObserveMRMLScene ( NULL );
+  this->SetMRMLScene ( NULL );
   this->Visited = false;  
   this->Raised = false;
 }
@@ -1211,6 +1211,7 @@ void vtkFetchMILogic::SetFetchMINode( vtkMRMLFetchMINode *node )
     {
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
+    // TBD: no action associated to the event, is it really needed?
     events->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
     vtkSetAndObserveMRMLNodeEventsMacro ( this->FetchMINode, node, events );
     events->Delete();
@@ -1221,11 +1222,10 @@ void vtkFetchMILogic::SetFetchMINode( vtkMRMLFetchMINode *node )
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::ProcessMRMLEvents(vtkObject *caller,
+void vtkFetchMILogic::ProcessMRMLSceneEvents(vtkObject *caller,
                                         unsigned long event,
-                                        void *vtkNotUsed(callData))
+                                        void *callData)
 {
-
   if ( !this->Visited )
     {
     return;
@@ -1242,12 +1242,35 @@ void vtkFetchMILogic::ProcessMRMLEvents(vtkObject *caller,
     return;
     }
 
-  vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
-  if ( scene == this->GetMRMLScene() && event == vtkMRMLScene::NodeAddedEvent )
+  this->Superclass::ProcessMRMLSceneEvents(caller, event, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* vtkNotUsed(node))
+{
+  this->ApplySlicerDataTypeTag();
+}
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::ProcessMRMLNodesEvents(vtkObject *caller,
+                                             unsigned long event,
+                                             void *callData)
+{
+  if ( !this->Visited )
     {
-    this->ApplySlicerDataTypeTag();
+    return;
     }
 
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic::ProcessMRMLEvents: got null FetchMINode." );
+    return;
+    }
+  if ( this->FetchMINode->GetTagTableCollection() == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic::ProcessMRMLEvents: got null FetchMINode TagTableCollection." );
+    return;
+    }
   // only do what we need it to do if module is hidden.
   if ( !this->Raised )
     {
@@ -1262,9 +1285,6 @@ void vtkFetchMILogic::ProcessMRMLEvents(vtkObject *caller,
                                           FindTagTableByName (  this->CurrentWebService->GetTagTableName() ) );
     }
 }
-
-
-
 
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)

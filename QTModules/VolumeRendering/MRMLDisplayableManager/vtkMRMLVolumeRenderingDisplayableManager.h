@@ -35,11 +35,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // TODO: do we need to observe MRML here?
-  //virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-    //                               void *callData ){};
-
-
   void Reset();
 
   void SetGUICallbackCommand(vtkCommand* callback);
@@ -59,16 +54,6 @@ public:
   //  0: invalid input parameter
   //  1: success
   int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-
-  // Description:
-  // Update MRML events
-  virtual void ProcessMRMLEvents(vtkObject * caller,
-                                 unsigned long event,
-                                 void * callData);
-  virtual void ProcessLogicEvents(vtkObject * caller,
-                                  unsigned long event,
-                                  void * callData);
 
   virtual void UpdateFromMRML();
 
@@ -128,6 +113,15 @@ protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
   void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
 
+
+  // Description:
+  // Update MRML events
+  virtual void ProcessMRMLNodesEvents(vtkObject * caller,
+                                 unsigned long event,
+                                 void * callData);
+
+  virtual void OnInteractorStyleEvent(int eventId);
+
   //virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
 
   //virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
@@ -180,7 +174,7 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode*    DisplayedNode;
 
   int SceneIsLoadingFlag;
-  int ProcessingMRMLFlag;
+  int ProcessingMRMLNodesFlag;
   int UpdatingFromMRML;
 
   typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;

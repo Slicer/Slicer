@@ -1,3 +1,23 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware Inc.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
 // MRMLLogic includes
 #include "vtkMRMLLayoutLogic.h"
 
@@ -368,7 +388,7 @@ const char* fourOverFourView =
   " </item>"
   "</layout>";
 
-
+//----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
 
@@ -404,49 +424,53 @@ void vtkMRMLLayoutLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
   sceneEvents->Delete();
 
-  this->UpdateViewNodes();
-  this->UpdateLayoutNode();
+  //this->UpdateViewNodes();
+  //this->UpdateLayoutNode();
+  this->OnMRMLSceneNewEvent();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLLayoutLogic::ProcessMRMLEvents(vtkObject * caller,
-                                            unsigned long event,
-                                            void * callData)
+void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
 {
-  vtkDebugMacro("vtkMRMLLayoutLogic::ProcessMRMLEvents: got an event " << event);
-  if (this->GetMRMLScene()->GetIsUpdating())
+  vtkDebugMacro("vtkMRMLLayoutLogic::UpdateFromMRMLScene: got a NewScene event "
+                << this->GetProcessingMRMLSceneEvent());
+  // Create default 3D view + slice views
+  this->UpdateViewNodes();
+  // Create/Retrieve Layout node
+  this->UpdateLayoutNode();
+  // Restore the layout to its old state after importing a scene
+  // TBD: check on GetIsUpdating() should be enough
+  if (((this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::SceneClosedEvent &&
+        !this->GetMRMLScene()->GetIsUpdating()) ||
+       this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::SceneImportedEvent) &&
+      this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone)
     {
-    return;
+    this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
     }
-  
-  // when there's a new scene, add the default nodes
-  //if (event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneClosedEvent)
-  if (event == vtkMRMLScene::NewSceneEvent ||
-      event == vtkMRMLScene::SceneClosedEvent ||
-      event == vtkMRMLScene::SceneImportedEvent)
-    {
-    vtkDebugMacro("vtkMRMLLayoutLogic::ProcessMRMLEvents: got a NewScene event " << event);
-    // Create default 3D view + slice views
-    this->UpdateViewNodes();
-    // Create/Retrieve Layout node
-    this->UpdateLayoutNode();
-    // Restore the layout to its old state after importing a scene
-    // TBD: check on GetIsUpdating() should be enough
-    if (((event == vtkMRMLScene::SceneClosedEvent &&
-          !this->GetMRMLScene()->GetIsUpdating()) ||
-         event == vtkMRMLScene::SceneImportedEvent) &&
-        this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone)
-      {
-      this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
-      }
-    }
-  else if (event == vtkCommand::ModifiedEvent && caller == this->LayoutNode)
-    {
-    this->UpdateFromLayoutNode();
-    //vtkMRMLAbstractLogic doesn't handle events not coming from the MRML scene.
-    return;
-    }
-  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::OnMRMLSceneImportedEvent()
+{
+  this->UpdateFromMRMLScene();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::OnMRMLSceneClosedEvent()
+{
+  this->UpdateFromMRMLScene();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::OnMRMLSceneNewEvent()
+{
+  this->UpdateFromMRMLScene();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+{
+  this->UpdateFromLayoutNode();
 }
 
 //----------------------------------------------------------------------------
@@ -726,22 +750,23 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
   // to enforce, using a priority, that it is first. The observer manager
   // can't give control over the priority so we need to do the observation
   // manually.
-  //this->GetMRMLObserverManager()->SetAndObserveObject(
+  //this->GetMRMLNodesObserverManager()->SetAndObserveObject(
   //  vtkObjectPointer(&this->LayoutNode), layoutNode);
 
   if (this->LayoutNode)
     {
-    this->LayoutNode->RemoveObservers(vtkCommand::ModifiedEvent, this->GetMRMLCallbackCommand());
+    this->LayoutNode->RemoveObservers(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand());
     }
   this->LayoutNode = layoutNode;
   if (this->LayoutNode)
     {
-    this->LayoutNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLCallbackCommand(), 10.);
+    this->LayoutNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand(), 10.);
     }
 
   // To do only once (when the layout node is set)
   this->AddDefaultLayouts();
-  this->UpdateFromLayoutNode();
+
+  this->OnMRMLNodeModified(this->LayoutNode); //this->UpdateFromLayoutNode();
 }
 
 //----------------------------------------------------------------------------
@@ -783,7 +808,6 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          triple3DEndoscopyView);
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
-
 }
 
 //----------------------------------------------------------------------------

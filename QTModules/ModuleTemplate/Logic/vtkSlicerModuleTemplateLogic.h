@@ -47,10 +47,7 @@ public:
   
   /// Initialize listening to MRML events
   void InitializeEventListeners();
-  
-  /// MRML events
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-  
+
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 

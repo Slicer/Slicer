@@ -58,24 +58,6 @@ vtkSlicerVolumeRenderingLogic::~vtkSlicerVolumeRenderingLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
-                                              unsigned long vtkNotUsed(event),
-                                              void *vtkNotUsed(callData))
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(caller), 
-                                            unsigned long event, 
-                                            void *callData)
-{
-  if (event ==  vtkCommand::ProgressEvent) 
-    {
-    this->InvokeEvent(vtkCommand::ProgressEvent,callData);
-    }
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 {
   if (this->GetMRMLScene())
@@ -97,6 +79,7 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   if (vspNode == 0 || vspNode->GetVolumeNode() == 0 || vspNode->GetVolumePropertyNode() == 0)
@@ -134,6 +117,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   functionOpacity->AdjustRange(rangeNew);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData();
@@ -157,6 +141,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateFgTranferFunctionRangeFromImage(vtkMRM
   functionOpacity->AdjustRange(rangeNew);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   if (vspNode == NULL || (!vspNode->GetFollowVolumeDisplayNode()) )
@@ -269,6 +254,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromDisplayNode(vtkMRMLV
   vspNode->EndModify(disabledModify);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   int disabledModify = vspNode->StartModify();
@@ -395,6 +381,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumePropertyFromImageData(vtkMRMLVol
   vspNode->EndModify(disabledModify);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   int disabledModify = vspNode->StartModify();
@@ -513,6 +500,8 @@ void vtkSlicerVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVo
   vspNode->EndModify(disabledModify);
 
 }
+
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
 
@@ -543,6 +532,7 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()
 {
   vtkMRMLVolumeRenderingDisplayNode *node = NULL;
@@ -558,6 +548,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
   return node;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingScenarioNode* vtkSlicerVolumeRenderingLogic::CreateScenarioNode()
 {
   vtkMRMLVolumeRenderingScenarioNode *node = NULL;
@@ -574,6 +565,7 @@ vtkMRMLVolumeRenderingScenarioNode* vtkSlicerVolumeRenderingLogic::CreateScenari
 
 // Description:
 // Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
                                           vtkMRMLVolumeNode *volumeNode, 
                                           vtkMRMLViewNode *viewNode)
@@ -597,6 +589,7 @@ void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
 
 // Description:
 // Find volume rendering display node reference in the volume
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeByID(
                                                               vtkMRMLVolumeNode *volumeNode, 
                                                               char *displayNodeID)
@@ -621,6 +614,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 
 // Description:
 // Find first volume rendering display node
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolumeRenderingDisplayNode(
                                                               vtkMRMLVolumeNode *volumeNode)
 {
@@ -643,6 +637,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolume
 
 // Description:
 // Find volume rendering display node referencing the view node and volume node
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeForViewNode(
                                                               vtkMRMLVolumeNode *volumeNode, 
                                                               vtkMRMLViewNode *viewNode)
@@ -671,7 +666,8 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 }
 
 // Description:
-  // Find volume rendering display node referencing the view node in the scene
+// Find volume rendering display node referencing the view node in the scene
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeForViewNode(
                                                               vtkMRMLViewNode *viewNode)
 {
@@ -694,6 +690,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   return NULL;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 ::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode* roiNode)
 {
@@ -721,6 +718,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 // Update vtkMRMLVolumeRenderingDisplayNode from VolumeNode,
 // if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
 // and initioalize them from VolumeNode
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
                                           vtkMRMLVolumeRenderingDisplayNode *displayNode,
                                           vtkMRMLVolumeNode *volumeNode,

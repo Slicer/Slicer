@@ -21,12 +21,6 @@ vtkSlicerROILogic::~vtkSlicerROILogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerROILogic::ProcessMRMLEvents()
-{
-  // TODO: implement if needed
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerROILogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);

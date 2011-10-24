@@ -68,11 +68,6 @@ public:
 
     void SetNumberOfPoints(int no);
 
-    /// 
-    /// 
-    /// Update logic state when MRML scene chenges
-    void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
-
     void SetLocatorTransforms();
     void UpdateSliceImages();
 

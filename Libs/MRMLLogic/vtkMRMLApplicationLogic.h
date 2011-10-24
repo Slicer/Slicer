@@ -30,7 +30,8 @@ class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkImageData;
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic : public vtkMRMLAbstractLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
+  : public vtkMRMLAbstractLogic
 {
 public:
   

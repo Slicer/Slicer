@@ -105,19 +105,3 @@ void vtkMRMLTestSliceViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNo
   //std::cout << "vtkMRMLTestSliceViewDisplayableManager - NodeAdded - "
   //          << (node ? node->GetName() : "None")<< std::endl;
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLTestSliceViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                      unsigned long event,
-                                                      void *callData)
-{
-  //if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
-  //  {
-  //  
-  //  }
-  //else
-  //  {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  //  }
-}
-

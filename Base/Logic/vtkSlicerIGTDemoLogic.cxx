@@ -303,15 +303,6 @@ int vtkSlicerIGTDemoLogic::DoRegistration()
     return 0; 
 }
 
-
-
-void vtkSlicerIGTDemoLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData)
-{
-    // TODO: implement if needed
-}
-
-
-
 void vtkSlicerIGTDemoLogic::SetLocatorTransforms()
 {
     // Get locator matrix
