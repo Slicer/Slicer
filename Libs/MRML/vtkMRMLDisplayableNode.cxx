@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 #include <vtkPolyData.h>
 
 // STD includes
+#include <cassert>
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLDisplayableNode, PolyData, vtkPolyData)

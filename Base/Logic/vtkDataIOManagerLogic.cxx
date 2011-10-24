@@ -18,6 +18,7 @@
 // ITKsys includes
 
 // STD includes
+#include <cassert>
 
 #ifdef linux 
 #include "unistd.h"
