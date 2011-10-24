@@ -204,7 +204,6 @@ protected:
   virtual void OnMRMLSceneAboutToBeImportedEvent(){}
   virtual void OnMRMLSceneImportedEvent(){}
   virtual void OnMRMLSceneRestoredEvent(){}
-  // vtkMRMLScene::NewSceneEvent is not listened by default.
   virtual void OnMRMLSceneNewEvent(){}
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/){}
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
@@ -214,6 +213,7 @@ protected:
   virtual void OnMRMLNodeModified(vtkMRMLNode* /*node*/){}
 
   /// Called each time a new scene is set. Can be reimplemented in derivated classes.
+  /// Doesn't observe the scene by default.
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 

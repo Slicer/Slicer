@@ -231,7 +231,7 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
 
   this->RegisterNodes();
 
-  this->InvokeEvent(vtkCommand::ModifiedEvent);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
