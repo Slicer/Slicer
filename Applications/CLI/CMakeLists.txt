@@ -72,7 +72,7 @@ if(Slicer_USE_BatchMake)
 endif()
 
 if(BUILD_TESTING)
-  # TODO Since the following snippet have been moved from CLI/Testing/CMakeLists.txt into 
+  # TODO Since the following snippet have been moved from CLI/Testing/CMakeLists.txt into
   # CLI/CMakeLists.txt, the variable SLICER_BRAINWEB_DATA_ROOT won't be set properly.
   # Configure the default SLICER_BRAINWEB_DATA_ROOT for the location of BrainWeb Data.
   # When this data is available, additional 3D tests are enabled.
@@ -91,7 +91,9 @@ if(BUILD_TESTING)
   set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
   set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
-  include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
+  if(ITK_VERSION_MAJOR GREATER 3)
+    include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
+  endif()
 endif()
 
 foreach(cli_module ${cli_modules})
