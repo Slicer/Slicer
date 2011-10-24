@@ -37,7 +37,7 @@ if(NOT DEFINED ITK_DIR)
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      ${ep_common_flags}
+      ${ep_common_compiler_args}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_EXAMPLES:BOOL=OFF
