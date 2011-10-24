@@ -185,10 +185,9 @@ void vtkMRMLScriptedDisplayableManager
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager
-::ProcessMRMLNodesEvents(vtkObject *caller,
-                         unsigned long event,
-                         void *vtkNotUsed(callData))
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *vtkNotUsed(callData))
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)

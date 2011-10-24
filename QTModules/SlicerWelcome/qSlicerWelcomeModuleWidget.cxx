@@ -76,95 +76,72 @@ void qSlicerWelcomeModuleWidget::setup()
            this, SLOT (presentTutorials()) );
 
   this->Superclass::setup();
-           
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerWelcomeModuleWidget::loadDicomData()
+bool qSlicerWelcomeModuleWidget::loadDicomData()
 {
-  Q_D(qSlicerWelcomeModuleWidget);
-  // open add volume ui
   qSlicerIOManager *ioManager = qSlicerApplication::application()->ioManager();
-  if (ioManager)
+  if (!ioManager)
     {
-    ioManager->openAddVolumesDialog();
-    return (1);
+    return false;
     }
-  return (0);
-
+  return ioManager->openAddVolumesDialog();
 }
 
-
 //-----------------------------------------------------------------------------
-int qSlicerWelcomeModuleWidget::loadNonDicomData()
+bool qSlicerWelcomeModuleWidget::loadNonDicomData()
 {
-  Q_D(qSlicerWelcomeModuleWidget);
-  // open the add data ui
   qSlicerIOManager *ioManager = qSlicerApplication::application()->ioManager();
-  if (ioManager)
-    {  
-      ioManager->openAddDataDialog();
-      return (1);
+  if (!ioManager)
+    {
+    return false;
     }
-  return (0);
+  return ioManager->openAddDataDialog();
 }
 
-
 //-----------------------------------------------------------------------------
-int qSlicerWelcomeModuleWidget::loadRemoteSampleData()
+bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
 {
-  Q_D(qSlicerWelcomeModuleWidget);
-
-
-
-  // is the module present?
   qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
-  qSlicerAbstractCoreModule * sampleDataModule = moduleManager->module("SampleData");
-  if(!sampleDataModule){
-  QMessageBox::warning (this, tr("Raising SampleData Module:"), tr("Unfortunately, this module is not available in this Slicer session."), QMessageBox::Ok);
-    return (0);
-    }
-
-  // open the sample data module 
-
-/*
-   //C++ test
-  qSlicerModulePanel * modulePanel =   qSlicerApplication::application()->mainWindow()->modulePanel();
-  if ( modulePanel)
+  if (!moduleManager)
     {
-    modulePanel->setModule ("SampleData");
+    return false;
+    }
+  qSlicerAbstractCoreModule * sampleDataModule = moduleManager->module("SampleData");
+  if(!sampleDataModule)
+    {
+    QMessageBox::warning (
+          this, tr("Raising SampleData Module:"),
+          tr("Unfortunately, this module is not available in this Slicer session."),
+          QMessageBox::Ok);
+    return false;
     }
 
-*/
-/*
-    // Steve's code
-    m = slicer.util.mainWindow()
-    m.moduleSelector().selectModule('SampleData')
-*/
+  // TODO Provide an easy mechanism to change the selected the module
+  qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+  if (!pythonManager)
+    {
+    QMessageBox::warning (
+          this, tr("Raising SampleData Module:"),
+          tr("Unfortunately, the python script for displaying the sample "
+             "data module is not present in this Slicer session."),
+          QMessageBox::Ok);
+    return false;
+    }
 
-      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-      if (!pythonManager)
-        {
-  QMessageBox::warning (this, tr("Raising SampleData Module:"), tr("Unfortunately, the python script for displaying the sample data module is not present in this Slicer session."), QMessageBox::Ok);
-        }
-
-      pythonManager->executeString(QString("slicer.util.mainWindow().moduleSelector().selectModule('SampleData');"));
-  
-  return (1);
+  pythonManager->executeString(
+        QString("slicer.util.mainWindow().moduleSelector().selectModule('SampleData');"));
+  return true;
 }
-
-
 
 //-----------------------------------------------------------------------------
-int qSlicerWelcomeModuleWidget::presentTutorials()
+bool qSlicerWelcomeModuleWidget::presentTutorials()
 {
-  Q_D(qSlicerWelcomeModuleWidget);
-  // open browser with slicer wiki tutorials.
+  // TODO Use appropriate URL - Wiki URL could be a setting ?
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
-  return (1);
+  return true;
 }
-
-
 
 //-----------------------------------------------------------------------------
 // qSlicerWelcomeModuleWidgetPrivate methods
@@ -176,7 +153,7 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
   ctkButtonGroup * group = new ctkButtonGroup(widget);
-  
+
   // Add all collabsibleWidgetButton to a button group
   QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
   foreach(ctkCollapsibleButton* collapsible, collapsibles)
@@ -184,5 +161,3 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     group->addButton(collapsible);
     }
 }
-
-

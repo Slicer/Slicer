@@ -36,9 +36,9 @@
 #include <sstream>
 
 // Standard layouts definitions
-// 
+//
 // CompareView layouts are defined programmatically in the method
-// UpdateCompareViewLayoutDefinitions() 
+// UpdateCompareViewLayoutDefinitions()
 //
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
@@ -586,10 +586,10 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     " <item>"
     "  <layout type=\"vertical\">";
-  
+
   for (int i=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
     {
-    compareView <<     
+    compareView <<
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i << "\">"
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -600,7 +600,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "    </view>"
       "   </item>";
       }
-  compareView << 
+  compareView <<
     "  </layout>"
     " </item>"
     "</layout>";
@@ -641,7 +641,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 
   for (int i=1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
     {
-    compareWidescreenView << 
+    compareWidescreenView <<
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i<< "\">"
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -652,7 +652,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "    </view>"
       "   </item>";
     }
-  compareWidescreenView << 
+  compareWidescreenView <<
     "  </layout>"
     " </item>"
     "</layout>";
@@ -691,16 +691,16 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     " <item>"
     "  <layout type=\"vertical\">";
-  
+
     for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
       {
       compareViewGrid <<
         "   <item>"
         "    <layout type=\"horizontal\">";
-      for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns(); 
+      for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
            ++j,++k)
         {
-        compareViewGrid <<     
+        compareViewGrid <<
           "     <item>"
           "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
           "       <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -711,11 +711,11 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
           "      </view>"
           "     </item>";
         }
-      compareViewGrid << 
+      compareViewGrid <<
         "     </layout>"
         "    </item>";
       }
-    compareViewGrid << 
+    compareViewGrid <<
       "  </layout>"
       " </item>"
       "</layout>";

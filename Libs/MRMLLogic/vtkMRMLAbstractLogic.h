@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLAbstractLogic - Superclass for MRML logic classes
-/// 
+///
 /// Superclass for all MRML logic classes.
 /// There must be a corresponding UI class that handles all UI interaction
 
@@ -119,7 +119,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
 
-  /// 
+  ///
   /// Get access to overall application state
   virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
@@ -220,7 +220,7 @@ protected:
   /// Convenient method to set and observe the scene
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
   void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
-  
+
   //BTX
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
@@ -254,35 +254,35 @@ protected:
   /// LogicCallback is a static function to relay modified events from the Logic
   static void MRMLNodesCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
   //ETX
-  
-  /// 
-  /// Start modifying the logic. Disable Modify events. 
+
+  ///
+  /// Start modifying the logic. Disable Modify events.
   /// Returns the previous state of DisableModifiedEvent flag
   /// that should be passed to EndModify() method
   inline bool StartModify() ;
 
-  /// 
-  /// End modifying the node. Enable Modify events if the 
+  ///
+  /// End modifying the node. Enable Modify events if the
   /// previous state of DisableModifiedEvent flag is 0.
   /// Return the number of pending ModifiedEvent;
   inline int EndModify(bool wasModifying);
 
   bool GetDisableModifiedEvent()const;
   void SetDisableModifiedEvent(bool onOff);
-  
-  /// 
-  /// overrides the vtkObject method so that all changes to the node which would normally 
+
+  ///
+  /// overrides the vtkObject method so that all changes to the node which would normally
   /// generate a ModifiedEvent can be grouped into an 'atomic' operation.  Typical usage
   /// would be to disable modified events, call a series of Set* operations, and then re-enable
   /// modified events and call InvokePendingModifiedEvent to invoke the event (if any of the Set*
   /// calls actually changed the values of the instance variables).
   virtual void Modified();
 
-  /// 
+  ///
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   int InvokePendingModifiedEvent();
-  
+
   int GetPendingModifiedEventCount()const;
 
 private:
@@ -298,7 +298,7 @@ private:
 };
 
 //---------------------------------------------------------------------------
-bool vtkMRMLAbstractLogic::StartModify() 
+bool vtkMRMLAbstractLogic::StartModify()
 {
   bool disabledModify = this->GetDisableModifiedEvent();
   this->SetDisableModifiedEvent(true);
@@ -306,7 +306,7 @@ bool vtkMRMLAbstractLogic::StartModify()
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::EndModify(bool previousDisableModifiedEventState) 
+int vtkMRMLAbstractLogic::EndModify(bool previousDisableModifiedEventState)
 {
   this->SetDisableModifiedEvent(previousDisableModifiedEventState);
   if (!previousDisableModifiedEventState)

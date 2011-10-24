@@ -44,7 +44,7 @@
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qMRMLLayoutManager");
 //--------------------------------------------------------------------------
-  
+
 //------------------------------------------------------------------------------
 // qMRMLLayoutManagerPrivate methods
 
@@ -815,7 +815,7 @@ QList<QWidget*> qMRMLLayoutManager::viewsFromXML(QDomElement viewElement)
   for (vtkMRMLNode* node = 0;(node = vtkMRMLNode::SafeDownCast(viewNodes->GetNextItemAsObject()));)
     {
     res  << d->viewWidget(node);
-    } 
+    }
   viewNodes->Delete();
   return res;
 }
@@ -835,6 +835,6 @@ void qMRMLLayoutManager::setupView(QDomElement viewElement, QWidget*view)
 QWidget* qMRMLLayoutManager::viewWidget(vtkMRMLNode* viewNode) const
 {
   Q_D(const qMRMLLayoutManager);
-  
+
   return d->viewWidget(viewNode);
 }

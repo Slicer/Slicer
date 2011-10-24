@@ -44,12 +44,12 @@ public:
 
 
 public slots:
-  int loadDicomData();
-  int loadNonDicomData();
-  int loadRemoteSampleData();
-  int presentTutorials();
+  bool loadDicomData();
+  bool loadNonDicomData();
+  bool loadRemoteSampleData();
+  bool presentTutorials();
 
-  
+
 protected:
   virtual void setup();
 

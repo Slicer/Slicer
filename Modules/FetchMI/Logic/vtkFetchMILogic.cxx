@@ -57,7 +57,7 @@ vtkFetchMILogic::vtkFetchMILogic()
   this->TagValuesQuery = 0;
   this->ErrorChecking = 0;
   this->ParsingError = 0;
- 
+
   this->ServerCollection = vtkFetchMIServerCollection::New();
   this->CurrentWebService = NULL;
   this->ReservedURI = NULL;
@@ -89,7 +89,7 @@ vtkFetchMILogic::vtkFetchMILogic()
    s1->SetTagTableName ( IDString);
    this->ServerCollection->AddItem ( s1 );
    s1->Delete();
-   
+
    vtkFetchMIServer *s2 = vtkFetchMIServer::New();
    s2->SetParser ( xndp);
    s2->SetWriter ( xndw);
@@ -115,7 +115,7 @@ vtkFetchMILogic::vtkFetchMILogic()
    xndw->Delete();
    xndp->Delete();
    xndc->Delete();
-   
+
    if ( this->FetchMINode != NULL )
      {
      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
@@ -131,11 +131,11 @@ vtkFetchMILogic::vtkFetchMILogic()
 
 //----------------------------------------------------------------------------
 vtkFetchMILogic::~vtkFetchMILogic()
-{ 
+{
   this->ClearExistingTagsForQuery();
 
   this->CurrentWebService = NULL;
-    
+
   if ( this->ServerCollection != NULL )
     {
     int num = this->ServerCollection->GetNumberOfItems();
@@ -180,7 +180,7 @@ vtkFetchMILogic::~vtkFetchMILogic()
   this->ErrorChecking = 0;
   this->ParsingError = 0;
   this->SetMRMLScene ( NULL );
-  this->Visited = false;  
+  this->Visited = false;
   this->Raised = false;
 }
 
@@ -312,7 +312,7 @@ void vtkFetchMILogic::CreateTemporaryFiles ( )
             pathComponents.push_back("FetchMI_DocumentDeclaration.xml");
             this->DocumentDeclarationFileName =  vtksys::SystemTools::JoinPath(pathComponents);
             vtkDebugMacro ( "XMLDocumentDeclarationFileName = " << this->DocumentDeclarationFileName );
-            
+
             //--- for now, create temporary xml header in
             //--- cache dir.
             pathComponents.pop_back();
@@ -326,7 +326,7 @@ void vtkFetchMILogic::CreateTemporaryFiles ( )
             this->MRMLCacheFileName = vtksys::SystemTools::JoinPath(pathComponents);
             vtkDebugMacro ( "MRMLCacheFileName = " << this->MRMLCacheFileName );
 
-                
+
             // Wendy: do we need to touch these files, or just create the file names?
             }
           }
@@ -447,7 +447,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     std::string msg = "No upload initiated; upload methods are not properly configured.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    return;    
+    return;
     }
   if ( this->GetCurrentWebService()->GetWebServicesClient()  == NULL )
     {
@@ -465,7 +465,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
     return;
     }
-  
+
   const char *svrName = this->GetCurrentWebService()->GetName();
   if ( svrName == NULL || !(strcmp(svrName, "" ) ) )
     {
@@ -481,7 +481,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   // uploads & downloads on individual datasets.
   //---
   this->SaveResourceSelectionState();
-  
+
   //---
   // Check to make sure all storable nodes have
   // set storage nodes with filenames
@@ -528,7 +528,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   this->GetCurrentWebService()->GetWebServicesClient()->SetURIHandler ( this->GetCurrentWebService()->GetURIHandler() );
 
   this->SaveOldURIsOnSelectedResources();
-  
+
   //---
   //--- request the upload
   //---
@@ -564,7 +564,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     std::string msg = "Error uploading datasets to the selected server. Upload cancelled.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    
+
     //--- clean up and exit
     this->SetCancelledWriteStateOnSelectedResources ();
     int success = this->RestoreURIsOnSelectedResources();
@@ -608,7 +608,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
       }
     vtkErrorMacro ( "RequestResourceUpload: Failed to post scene. Upload aborted.");
     return;
-    }         
+    }
 
 
   //---`
@@ -634,12 +634,12 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
   if ( this->GetCurrentWebService() == NULL )
     {
     vtkErrorMacro ( "RequestStorableNodesUpload: Got null current server.");
-    return 0;    
+    return 0;
     }
   if (  this->GetCurrentWebService()->GetWebServicesClient() == NULL )
     {
     vtkErrorMacro ( "RequestStorableNodesUpload: Got null client caller.");
-    return 0;    
+    return 0;
     }
   vtkURIHandler *handler = vtkURIHandler::SafeDownCast ( this->GetCurrentWebService()->GetURIHandler() );
   if ( handler == NULL )
@@ -692,7 +692,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
           return 0;
           }
         }
-      
+
       //---
       //--- empty out the URIList from past uploads/downloads in the storage node.
       //---
@@ -794,7 +794,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
               this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
               return 0;
               }
-            
+
             //---
             //--- post metadata to create a footprint for resource on server and get back URI.
             //--- invoke event that user sees if something goes wrong.
@@ -845,7 +845,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
                 this->SaveNewURIOnSelectedResource ( storageNode->GetNthURI(filenum-1), uri );
                 }
               storageNode->AddURI(uri);
-              }         
+              }
             }
           }
         }
@@ -872,7 +872,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
 
 //---------------------------------------------------------------------------
 int vtkFetchMILogic::RequestSceneUpload ( )
-{ 
+{
 
   if ( this->GetMRMLScene() == NULL )
     {
@@ -902,7 +902,7 @@ int vtkFetchMILogic::RequestSceneUpload ( )
     return 0;
     }
 
-  
+
   if ( this->SceneSelected )
     {
     //---
@@ -975,7 +975,7 @@ int vtkFetchMILogic::RequestSceneUpload ( )
 //---------------------------------------------------------------------------
 int vtkFetchMILogic::AddNewTagsToServer ( )
 {
-  std::map<std::string, std::vector<std::string> >::iterator iter;  
+  std::map<std::string, std::vector<std::string> >::iterator iter;
   for ( iter = this->CurrentWebServiceMetadata.begin();
         iter != this->CurrentWebServiceMetadata.end();
         iter++ )
@@ -1014,7 +1014,7 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
   //--- select everything, so we upload scene + all data.
   //--- then restores GUI selection state reflected by GUI.
   //---
-  //--- Note to Developers: extend this as new storagenode types 
+  //--- Note to Developers: extend this as new storagenode types
   //--- are added to Slicer.
   this->TemporarySelectedStorableNodeIDs.clear();
   this->SetTemporarySceneSelected  (this->GetSceneSelected() );
@@ -1025,7 +1025,7 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
 
   //--- Get all storables in the scene
   this->SceneSelected=1;
-  this->SelectedStorableNodeIDs.clear();      
+  this->SelectedStorableNodeIDs.clear();
   vtkMRMLNode *node = NULL;
   //---Volumes
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLVolumeNode");
@@ -1065,7 +1065,7 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
         }
       }
     }
-  
+
   //---ColorTables
   nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorTableNode");
   for (int n=0; n<nnodes; n++ )
@@ -1162,7 +1162,7 @@ int vtkFetchMILogic::WriteDocumentDeclaration ( )
 int vtkFetchMILogic::WriteMetadataForUpload (const char *nodeID )
 {
   //  return 1 if ok, 0 if not.
-  if ( this->FetchMINode == NULL) 
+  if ( this->FetchMINode == NULL)
     {
     vtkErrorMacro ( "WriteMetadataForUpload: FetchMINode is NULL.");
     return 0;
@@ -1170,7 +1170,7 @@ int vtkFetchMILogic::WriteMetadataForUpload (const char *nodeID )
   if (this->GetMRMLScene() == NULL )
     {
     vtkErrorMacro ( "WriteMetadataForUpload has null MRMLScene." );
-    return 0;        
+    return 0;
     }
   const char *metadataFilename = this->GetXMLUploadFileName();
   if ( metadataFilename == NULL )
@@ -1311,7 +1311,7 @@ void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)
   for (unsigned int i = 0; i < this->ModifiedNodes.size(); i++)
     {
     os << indent.GetNextIndent() << i << ": " << this->ModifiedNodes[i].c_str() << "\n";
-    }  
+    }
   os << indent << "SaveSceneDsecription: " << this->SaveSceneDescription << "\n";
   os << indent << "SceneSelected: " << this->SceneSelected << "\n";
 
@@ -1416,8 +1416,8 @@ void vtkFetchMILogic::ApplySlicerDataTypeTag()
   //--- DTIVolume
   //--- DWIVolume
   //--- UnstructuredGrid
-  //--- FiducialList 
-  //--- ColorTable 
+  //--- FiducialList
+  //--- ColorTable
   //---
   this->GetMRMLScene()->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
   this->SetSlicerDataTypeOnVolumeNodes();
@@ -1443,18 +1443,18 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
     {
     return;
     }
-  
+
   vtkMRMLNode *node=NULL;
   vtkMRMLStorableNode *stnode=NULL;
   vtkTagTable *t=NULL;
-  
+
   int n;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   const char *dtype = NULL;
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
-    if (node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors())
       {
       continue;
       }
@@ -1468,10 +1468,10 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
 
     vtkMRMLStorageNode* snode = vnode->GetStorageNode();
     //--- if a storage node doesn't yet exist for the node, add it.
-    if (snode == NULL) 
+    if (snode == NULL)
       {
       vtkMRMLStorageNode *storageNode;
-      if ( vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) || 
+      if ( vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) ||
             vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) )
         {
         storageNode = vtkMRMLNRRDStorageNode::New();
@@ -1481,7 +1481,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
         storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
         }
       storageNode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
+      this->GetMRMLScene()->AddNode(storageNode);
       vnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = vnode->GetStorageNode();
@@ -1492,7 +1492,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
       {
       dir += std::string("/");
       }
-    if (snode->GetFileName() == NULL && dir.c_str() != NULL) 
+    if (snode->GetFileName() == NULL && dir.c_str() != NULL)
       {
       std::string name =dir;
       name += std::string(node->GetName());
@@ -1552,8 +1552,8 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
         t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
         }
       }
-    
-    if (node->GetModifiedSinceRead()) 
+
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -1577,10 +1577,10 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
   vtkMRMLNode *node = NULL;
   vtkMRMLStorableNode *stnode = NULL;
   vtkTagTable *t = NULL;
-  
+
   int n;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
-  
+
 
   for (n=0; n<nnodes; n++)
     {
@@ -1592,7 +1592,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
       {
       continue;
       }
-    if (node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors())
       {
       //--- keep going for freesurfer overlay nodes;
       //--- they are not seen by editor, but we want to tag them.
@@ -1610,7 +1610,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
       }
     if (snode->GetFileName() == NULL && dir.c_str() != NULL)
       {
-      std::string name =dir; 
+      std::string name =dir;
       name += std::string(node->GetName());
       name += std::string(".vtk");
       snode->SetFileName(name.c_str());
@@ -1627,7 +1627,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
         }
       }
     name += snode->GetFileName();
-    
+
 
     const char *dtype = NULL;
     // Set the SlicerDataType in node
@@ -1664,7 +1664,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
         break;
         }
       }
-      
+
     //--- if we found an overlay, keep this tag on node, move on to the next model node.
     if ( taggedOverlay )
       {
@@ -1689,7 +1689,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
         dtype = mnode->GetSlicerDataType();
         }
       }
-    else 
+    else
       {
       if ( !(strcmp(mnode->GetSlicerDataType(), "VTKModel")) )
         {
@@ -1709,10 +1709,10 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
         t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
         }
       }
-    if (node->GetModifiedSinceRead()) 
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
-      this->AddSelectedStorableNode(node->GetID() );      
+      this->AddSelectedStorableNode(node->GetID() );
       }
     }
 }
@@ -1731,10 +1731,10 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
     }
 
   vtkMRMLNode *node = NULL;
-  
+
   int n;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
-  
+
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode");
@@ -1762,7 +1762,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
       {
       dir += std::string("/");
       }
-    if (snode->GetFileName() == NULL && dir.c_str() != NULL) 
+    if (snode->GetFileName() == NULL && dir.c_str() != NULL)
       {
       std::string name =dir;
       name += std::string(node->GetName());
@@ -1775,27 +1775,27 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
     fiberBundleNode->SetSlicerDataType ( "FiberBundle" );
     vtkTagTable *tt = fiberBundleNode->GetUserTagTable();
     tt->AddOrUpdateTag ( "SlicerDataType", fiberBundleNode->GetSlicerDataType(), 1 );
-    
-    if (node->GetModifiedSinceRead()) 
+
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
       }
     }
 }
-  
+
 
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
 {
   //--- UNSTRUCTURED GRID NODES
-#if !defined(MESHING_DEBUG) && defined(Slicer_BUILD_MODULES)  
-  // *** add UnstructuredGrid types 
-  // An additional datatype, MRMLUnstructuredGrid and its subclasses are 
+#if !defined(MESHING_DEBUG) && defined(Slicer_BUILD_MODULES)
+  // *** add UnstructuredGrid types
+  // An additional datatype, MRMLUnstructuredGrid and its subclasses are
   // also searched in the MRML tree.  This is done so instances of FiniteElement
   // meshes and other vtkUnstructuredGrid datatypes can be stored persistently.
-  // this code is gated by MESHING_DEBUG since the MEshing MRML modules 
-  
+  // this code is gated by MESHING_DEBUG since the MEshing MRML modules
+
   if ( this->FetchMINode == NULL )
     {
     return;
@@ -1809,11 +1809,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
   vtkMRMLNode *node;
   vtkMRMLStorableNode *stnode;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
-  
+
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
-    if (node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors())
       {
       continue;
       }
@@ -1829,11 +1829,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
+    if (snode == NULL && node->GetModifiedSinceRead())
       {
         vtkMRMLUnstructuredGridStorageNode *storageNode = vtkMRMLUnstructuredGridStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
+      this->GetMRMLScene()->AddNode(storageNode);
       gnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
@@ -1846,7 +1846,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
       }
     if (snode->GetFileName() == NULL && dir.c_str() != NULL)
       {
-      std::string name =dir; 
+      std::string name =dir;
       name += std::string(node->GetName());
       name += std::string(".vtk");
       snode->SetFileName(name.c_str());
@@ -1876,14 +1876,14 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
         }
       }
 
-    if (node->GetModifiedSinceRead()) 
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
-      this->AddSelectedStorableNode(node->GetID() );      
+      this->AddSelectedStorableNode(node->GetID() );
       }
     }
     // end of UGrid MRML node processing
-#endif  
+#endif
 
 }
 
@@ -1903,15 +1903,15 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
   vtkMRMLNode *node = NULL;
   vtkMRMLStorableNode *stnode = NULL;
   vtkTagTable *t = NULL;
-  
+
   int n;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
-  
+
   //--- sniff thru the scene; get each vtkMRMLFiducialListNode and tag it.
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
-    if (node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors())
       {
       continue;
       }
@@ -1935,11 +1935,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
       continue;
       }
     */
-    if (snode == NULL ) 
+    if (snode == NULL )
       {
       vtkMRMLFiducialListStorageNode *storageNode = vtkMRMLFiducialListStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
+      this->GetMRMLScene()->AddNode(storageNode);
       flnode->SetAndObserveStorageNodeID(storageNode->GetID());
       flnode->ModifiedSinceReadOn();
       storageNode->Delete();
@@ -1989,12 +1989,12 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
         t->AddOrUpdateTag ( "SlicerDataType", flnode->GetSlicerDataType(), 1 );
         }
       }
-    if (node->GetModifiedSinceRead()) 
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
-      this->AddSelectedStorableNode(node->GetID() );      
+      this->AddSelectedStorableNode(node->GetID() );
       }
-    
+
     }
 }
 
@@ -2014,15 +2014,15 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
   vtkMRMLNode *node = NULL;
   vtkMRMLStorableNode *stnode = NULL;
   vtkTagTable *t = NULL;
-  
+
   int n;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
-  
+
   //--- sniff thru the scene; get each vtkMRMLColorTableNode and tag it.
   for (n=0; n<nnodes; n++)
     {
     node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
-    if (node->GetHideFromEditors()) 
+    if (node->GetHideFromEditors())
       {
       continue;
       }
@@ -2037,11 +2037,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
+    if (snode == NULL && node->GetModifiedSinceRead())
       {
       vtkMRMLColorTableStorageNode *storageNode = vtkMRMLColorTableStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
+      this->GetMRMLScene()->AddNode(storageNode);
       cnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = cnode->GetStorageNode();
@@ -2090,10 +2090,10 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
         t->AddOrUpdateTag ( "SlicerDataType", cnode->GetSlicerDataType(), 1 );
         }
       }
-    if (node->GetModifiedSinceRead()) 
+    if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
-      this->AddSelectedStorableNode(node->GetID() );      
+      this->AddSelectedStorableNode(node->GetID() );
       }
     // after each new tag, invoke this event which causes the GUI to update.
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::NewNodeTaggedEvent );
@@ -2196,7 +2196,7 @@ void vtkFetchMILogic::QueryServerForTags ( )
     }
 
   const char *svrName = this->GetCurrentWebService()->GetName();
-  const char *svctype = this->GetCurrentWebService()->GetServiceType();          
+  const char *svctype = this->GetCurrentWebService()->GetServiceType();
   if ( svrName == NULL || !(strcmp(svrName, "") ) )
     {
     vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
@@ -2221,7 +2221,7 @@ void vtkFetchMILogic::QueryServerForTags ( )
   vtkURIHandler *handler = this->GetCurrentWebService()->GetURIHandler();
   handler->SetHostName (svrName );
   this->GetCurrentWebService()->GetWebServicesClient()->SetURIHandler ( handler );
-  
+
   if (this->CurrentWebService->GetWebServicesClient()->QueryServerForTags( this->GetHTTPResponseFileName() ) )
     {
     //--- then parse new tags into the container.
@@ -2371,7 +2371,7 @@ void vtkFetchMILogic::QueryServerForTagValues ( )
     }
   //--- invoke an event that updates GUI once we have queried for values for all tags.
   vtkDebugMacro ("--------------------Invoking TagResponseReadyEvent.");
-  this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::TagResponseReadyEvent );          
+  this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::TagResponseReadyEvent );
 }
 
 
@@ -2423,7 +2423,7 @@ void vtkFetchMILogic::UpdateMRMLQueryTags()
   //--- with the first value in the logic's list.
   //--
   vtkTagTable *t = this->CurrentWebService->GetTagTable();
-    
+
   std::map<std::string, std::vector<std::string> >::iterator iter;
   const char *att;
   const char *val;
@@ -2561,7 +2561,7 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
 
   if ( this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri) != NULL )
     {
-    localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);    
+    localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);
     }
   else
     {
@@ -2584,7 +2584,7 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
       //---
       std::vector<std::string> deleteTargets;
       deleteTargets.push_back ( remoteURL );
-  
+
       //---
       //--- try opening file.
       //---
@@ -2595,7 +2595,7 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
 #else
       pfile.open ( localURL.c_str(), ios::in );
 #endif
-  
+
       if ( !pfile.is_open() )
       {
       vtkErrorMacro ( "DeleteSceneFromServer: error opening temporary scene file to parse for uris to delete." );
@@ -2686,7 +2686,7 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
         std::string msg = ss.str();
         this->FetchMINode->SetErrorMessage (msg.c_str() );
         this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-        return 0;    
+        return 0;
       }
        return (1);
     }
@@ -2844,11 +2844,11 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- TODO: develop all HID logic. Now, not finished.
         //--- for now only these queries are supported:
         //--- find a mrml file
-        //curl -k "https://loci.ucsd.edu/hid/search?exp=fBIRNPhaseII__0010&subject=000670986943&file_type=MRML" 
+        //curl -k "https://loci.ucsd.edu/hid/search?exp=fBIRNPhaseII__0010&subject=000670986943&file_type=MRML"
         //--- query for subjects by experiment
         //curl -k https://loci.ucsd.edu/hid/experiments/subjects
         //--- query for experiments
-        //curl -k https://loci.ucsd.edu/hid/experiments 
+        //curl -k https://loci.ucsd.edu/hid/experiments
 
         // h->QueryServer ( uri, responseFile );
         //--- Limited query capability, so just query for mrml now.
@@ -3026,7 +3026,7 @@ void vtkFetchMILogic::RefreshValuesForTag( const char *tagname )
     {
     this->GetFetchMINode()->AddTagTablesForWebServices();
     if ( this->CurrentWebService->GetTagTable() == NULL )
-      {    
+      {
       this->GetFetchMINode()->AddTagTablesForWebServices();
       if ( this->CurrentWebService->GetTagTable() == NULL )
         {
@@ -3035,7 +3035,7 @@ void vtkFetchMILogic::RefreshValuesForTag( const char *tagname )
         }
       }
     }
-  
+
   this->ClearExistingValuesForTag(tagname);
   vtkTagTable *t = this->GetCurrentWebService()->GetTagTable();
   if ( t != NULL )
@@ -3123,7 +3123,7 @@ void vtkFetchMILogic::AddUniqueTag ( const char *tagname )
   if ( unique )
     {
     // TODO: check to see if this works
-    // create and initialize a vector of strings 
+    // create and initialize a vector of strings
     std::vector<std::string> v;
     v.clear();
     // create an entry for it in the map.
@@ -3304,7 +3304,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
     std::string msg = "No download initiated; download methods are not properly configured.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    return;    
+    return;
     }
   const char *svrName = this->GetCurrentWebService()->GetName();
   if ( svrName == NULL || !(strcmp(svrName, "" ) ) )
@@ -3315,7 +3315,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
     return;
     }
-  const char *svctype = this->GetCurrentWebService()->GetServiceType();          
+  const char *svctype = this->GetCurrentWebService()->GetServiceType();
   if (! this->ServerCollection->IsKnownServiceType(svctype) )
     {
     vtkErrorMacro ( "RequestResourceDownload: Got unknown web service type");
@@ -3329,7 +3329,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
     vtkErrorMacro ("vtkFetchMILogic: Null uri or slicerDataType." );
     return;
     }
-  
+
   //--- FOR NOW, ONLY mrml...
   //--- TODO: make this work!
   //--- make sure we have a data type we know how to handle.
@@ -3345,7 +3345,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
        (strcmp (slicerDataType, "MRML" )))
     {
     //--- retval reports an unknown slicerDataType.
-    return;    
+    return;
     }
 */
 
@@ -3356,7 +3356,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
     std::string msg = "No download initiated; download methods can not currently handle non-MRML resources.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    return;    
+    return;
     }
 
   //--- handle scene with separate set of methods.
@@ -3364,11 +3364,11 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
     {
     this->RequestSceneDownload ( uri );
     }
-  else 
+  else
     {
     //--- someday download other resource types
     }
-  
+
 
 }
 
@@ -3389,7 +3389,7 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     vtkErrorMacro("vtkFetchMILogic::RequestResourceDownload: uri isn't set or slicerDataType isn't set. uri = " << (uri == NULL ? "null" : uri) << ", slicerDataType = " << (slicerDataType == NULL ? "null" : slicerDataType));
     return;
     }
-  
+
   //--- Get the MRML Scene
   if ( this->GetMRMLScene() == NULL )
     {
@@ -3402,7 +3402,7 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     return;
     }
 
-  
+
   vtkURIHandler *handler = this->GetCurrentWebService()->GetURIHandler();
   if ( handler == NULL )
     {
@@ -3420,7 +3420,7 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     uriString = std::string("xnd") + suffix;
     vtkDebugMacro("vtkFetchMILogic::RequestResourceDownload: new uri string = " << uriString.c_str());
     }
-    
+
   if ( !(strcmp(slicerDataType, "LabelMap" )))
     {
     // is it a label map?
@@ -3450,7 +3450,7 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     storageNode->SetUseOrientationFromFile(useOrientationFromFile);
     */
     this->GetMRMLScene()->SaveStateForUndo();
-   
+
     // add storage nodes to the scene so can observe them
     this->GetMRMLScene()->AddNodeNoNotify(storageNode);
     this->GetMRMLScene()->AddNodeNoNotify(scalarNode);
@@ -3480,7 +3480,7 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
       }
 
     }
-  
+
   // get the models logic
   if ( !(strcmp(slicerDataType, "VTKModel" ) ||
          !(strcmp(slicerDataType, "FreeSurferModel" )) ) )
@@ -3505,15 +3505,15 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
 
     modelNode->SetScene(this->GetMRMLScene());
     mStorageNode->SetScene(this->GetMRMLScene());
-    displayNode->SetScene(this->GetMRMLScene()); 
+    displayNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNodeNoNotify(mStorageNode);  
+    this->GetMRMLScene()->AddNodeNoNotify(mStorageNode);
     this->GetMRMLScene()->AddNodeNoNotify(displayNode);
     modelNode->SetAndObserveStorageNodeID(mStorageNode->GetID());
-    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     displayNode->SetPolyData(modelNode->GetPolyData());
-    
-    this->GetMRMLScene()->AddNode(modelNode);  
+
+    this->GetMRMLScene()->AddNode(modelNode);
     // the scene points to it still
     modelNode->Delete();
 
@@ -3540,24 +3540,24 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     // set the uri
     fsmStorageNode->SetURI(uriString.c_str());
     modelNode->SetName("XNDFSModel");
-    
+
     //--- set its URIhandler
     fsmStorageNode->SetURIHandler(handler);
-    
+
     //--- download to cache and load.
     this->GetMRMLScene()->SaveStateForUndo();
 
     modelNode->SetScene(this->GetMRMLScene());
     fsmStorageNode->SetScene(this->GetMRMLScene());
-    displayNode->SetScene(this->GetMRMLScene()); 
+    displayNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNodeNoNotify(fsmStorageNode);  
+    this->GetMRMLScene()->AddNodeNoNotify(fsmStorageNode);
     this->GetMRMLScene()->AddNodeNoNotify(displayNode);
     modelNode->SetAndObserveStorageNodeID(fsmStorageNode->GetID());
-    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     displayNode->SetPolyData(modelNode->GetPolyData());
-    
-    this->GetMRMLScene()->AddNode(modelNode);  
+
+    this->GetMRMLScene()->AddNode(modelNode);
     // the scene points to it still
     modelNode->Delete();
 
@@ -3585,7 +3585,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
 {
   // This method will download a resource with uri
   // from the currently selected remote repository.
-  
+
   //--- Get the MRML Scene
   if ( uri == NULL )
     {
@@ -3625,7 +3625,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
     std::string msg = "No download initiated; download methods are not properly configured.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    return;    
+    return;
     }
   if ( this->GetCurrentWebService()->GetWebServicesClient()  == NULL )
     {
@@ -3660,7 +3660,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   std::string localURL;
   if ( this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri) != NULL )
     {
-    localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);    
+    localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);
     }
   else
     {
@@ -3680,7 +3680,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
 #else
       newfile.open ( localURL.c_str(), ios::in );
 #endif
-  
+
       int downloadError = 0;
       //--- did it open correctly?
       if ( !newfile.is_open() )
@@ -3707,7 +3707,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
         return;
         }
 
-      //--- does it contain an http error code?      
+      //--- does it contain an http error code?
       //--- for now, look for a line with t<title> tag and see if it contains the word "Error"
       std::string line;
       size_t pos;
@@ -3734,7 +3734,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
         this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
         return;
         }
-      
+
   //---
   //--- If no errors, proceed with DL
   //---
@@ -3743,7 +3743,7 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   //--- load the remote scene
   this->GetMRMLScene()->Connect();
 
-  if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+  if (  this->GetMRMLScene()->GetErrorCode() != 0 )
     {
     vtkErrorMacro ("RequestSceneDownload: Null or empty server name." );
     std::string msg = this->GetMRMLScene()->GetErrorMessage();
@@ -3921,7 +3921,7 @@ int vtkFetchMILogic::CheckModifiedSinceRead()
       }
     }
   return (1);
-  
+
 }
 
 
@@ -3979,16 +3979,16 @@ void vtkFetchMILogic::SaveOldURIsOnSelectedResources()
     vtkErrorMacro ("RestoreFileNamesOnSelectedResources Null FetchMI node. ");
     return;
     }
-  
+
   //--- clear out the map.
   this->OldAndNewURIs.clear();
   std::string tmp = "none";
   std::string uri;
   std::string sceneFileName = this->GetMRMLScene()->GetURL();
-  
+
   this->OldAndNewURIs.insert ( std::make_pair (sceneFileName, tmp ) );
 
-  vtkMRMLStorableNode *storableNode;  
+  vtkMRMLStorableNode *storableNode;
   vtkMRMLStorageNode *storageNode;
   for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
     {
@@ -4051,7 +4051,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
   if (numToRestore == 0 )
     {
     vtkWarningMacro ( "RestoreURIsOnSelectedResources: found no files to restore.");
-    return 0;    
+    return 0;
     }
 
   // restore the scene filename.
@@ -4130,7 +4130,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
           iter = this->OldAndNewURIs.begin();
           while ( this->OldAndNewURIs.size() != 0 && iter != this->OldAndNewURIs.end() )
             {
-            if  (iter->second == tstURI )  
+            if  (iter->second == tstURI )
               {
               //--- restore the filename, count it and mark found
               if ( iter->first == "NULL" )
@@ -4163,7 +4163,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
                 vtkErrorMacro ("RestoreURIsOnSelectedResources: can not restore the number of File names expected.");
                 storageNode->ResetURIList();
                 storageNode->SetURI ( NULL );
-                return 0;    
+                return 0;
                 }
 
               //--- search thru the map for each uri list member
@@ -4220,7 +4220,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
   if ( restoreCount != numToRestore )
     {
     vtkErrorMacro ("RestoreURIsOnSelectedResources: did not restore the number of File names expected.");
-    return 0;    
+    return 0;
     }
   return 1;
 }
@@ -4246,7 +4246,7 @@ int vtkFetchMILogic::RestoreFileNamesOnSelectedResources ( )
   if (numToRestore == 0 )
     {
     vtkWarningMacro ( "RestoreFileNamesOnSelectedResources: found no files to restore.");
-    return 0;    
+    return 0;
     }
 
   // restore the scene filename.
@@ -4314,10 +4314,10 @@ int vtkFetchMILogic::RestoreFileNamesOnSelectedResources ( )
           iter = this->OldAndNewFileNames.begin();
           while ( this->OldAndNewFileNames.size() != 0 && iter != this->OldAndNewFileNames.end() )
             {
-            if  (iter->second == tstName )  
+            if  (iter->second == tstName )
               {
               //--- restore the filename
-              storageNode->SetFileName ( iter->first.c_str() );              
+              storageNode->SetFileName ( iter->first.c_str() );
               restoreCount++;
 
               //--- prepare to restore the filenamelist enmasse
@@ -4335,12 +4335,12 @@ int vtkFetchMILogic::RestoreFileNamesOnSelectedResources ( )
               if ( (int)(FileNameList.size()) != numStorageNodeFileNames )
                 {
                 vtkErrorMacro ("RestoreFileNamesOnSelectedResources: can not restore the number of File names expected.");
-                return 0;    
+                return 0;
                 }
 
               //--- get rid of the name just restored.
               this->OldAndNewFileNames.erase ( iter++);
-              
+
               //--- reset all the filenames.
               storageNode->ResetFileNameList();
 
@@ -4379,7 +4379,7 @@ int vtkFetchMILogic::RestoreFileNamesOnSelectedResources ( )
   if ( restoreCount != numToRestore )
     {
     vtkErrorMacro ("RestoreFileNamesOnSelectedResources: did not restore the number of File names expected.");
-    return 0;    
+    return 0;
     }
   return 1;
 }
@@ -4408,7 +4408,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
 
   // clear buffer to save original filenames (scene first).
   this->OldAndNewFileNames.clear();
-  
+
   // get the cache dir
   std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
@@ -4427,7 +4427,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
       // this mimics what SlicerMRMLSaveDataWidget does.
       mrmlFileName = "SlicerScene1.mrml";
       }
-    
+
     // addthe mrml file
     pathComponents.push_back(mrmlFileName);
     // set the new url
@@ -4487,10 +4487,10 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
           //--- Set Filename to be cachedir/filename
           // get out the file name and save in case we need to restore.
           vtksys_stl::string nodeFileName = storageNode->GetFileName();
-      
+
           vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (nodeFileName );
           const char *filename = vtkFileName.c_str();
-     
+
           // add the file name to the cache dir
           pathComponents.pop_back();
           pathComponents.push_back(filename);
@@ -4500,7 +4500,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
           storageNode->SetFileName( tmp.c_str() );
 
           //--- add both old and new filenames as a pair, in case we need to restore.
-          this->OldAndNewFileNames.insert ( std::make_pair (nodeFileName.c_str(), tmp.c_str() ) );          
+          this->OldAndNewFileNames.insert ( std::make_pair (nodeFileName.c_str(), tmp.c_str() ) );
 
           //--- If the node is a multivolume, set the filename and all FileListMembers to
           //--- corresponding cachedir/filenames using AddFileName() method.
@@ -4534,14 +4534,14 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
             storageNode->AddFileName(CacheFileNameList[filenum].c_str());
 
             //--- add both old and new filenames as a pair, in case we need to restore.
-            this->OldAndNewFileNames.insert ( std::make_pair (orig[filenum].c_str(), CacheFileNameList[filenum].c_str() ) );          
+            this->OldAndNewFileNames.insert ( std::make_pair (orig[filenum].c_str(), CacheFileNameList[filenum].c_str() ) );
             }
 
           //--- Write the file (or multivolume set of files) to cache.
           //--- USE GetNumberOfFileNames to get the number of FileListMembers.
           //--- USE GetNthFileName to get each, probably SetNthFileName to set each.
           //--- If this fails, error message and return.
-      
+
           //--- Set the URIHandler on the storage node
           vtkDebugMacro("SetCacheFileNamesOnSelectedResources setting handler on storage node " << (storageNode->GetID() == NULL ? "(null)" : storageNode->GetID()));
           // *NOTE: make sure to see that DataIOManagerLogic (or whatever) checks to see
@@ -4659,7 +4659,7 @@ void vtkFetchMILogic::SetURIHandlerOnSelectedResources(vtkURIHandler *handler)
     vtkErrorMacro ("vtkFetchMILogic::SetURIHandlerOnSelectedResources: Null FetchMI node. ");
     return;
     }
-  
+
   //--- scene
   if ( this->SceneSelected )
     {
@@ -4704,7 +4704,7 @@ int  vtkFetchMILogic::PostStorableNodes()
     return 0;
     }
 
-  
+
   vtkMRMLStorableNode *storableNode;
   vtkMRMLStorageNode *storageNode;
 
@@ -4717,7 +4717,7 @@ int  vtkFetchMILogic::PostStorableNodes()
 
   vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
   pathComponents.push_back(dummy.c_str());
-  
+
   for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
     {
     std::string nodeID = this->SelectedStorableNodeIDs[n];
@@ -4742,7 +4742,7 @@ int  vtkFetchMILogic::PostStorableNodes()
         //---
         vtkMRMLFreeSurferModelOverlayStorageNode *fsmo_snode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast ( storageNode );
         vtkMRMLFreeSurferModelStorageNode *fsm_snode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast ( storageNode );
-        if ( fsmo_snode != NULL ) 
+        if ( fsmo_snode != NULL )
           {
           //--- add the original file name to the cache dir
           vtkFileName.clear();
