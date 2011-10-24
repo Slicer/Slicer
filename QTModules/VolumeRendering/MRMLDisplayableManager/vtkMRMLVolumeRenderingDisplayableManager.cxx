@@ -1412,7 +1412,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneImportedEvent()
   // SetUpdateFromMRMLRequested(1) here, it should be done somewhere else
   // maybe in OnMRMLSceneNodeAddedEvent, OnMRMLSceneNodeRemovedEvent or
   // OnMRMLDisplayableModelNodeModifiedEvent).
-  this->OnCreate();
+  if (this->GetMRMLViewNode())
+    {
+    this->OnCreate();
+    }
   //this->RequestRender();
 }
 
@@ -1532,17 +1535,13 @@ void vtkMRMLVolumeRenderingDisplayableManager
 void vtkMRMLVolumeRenderingDisplayableManager
 ::RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode *dnode)
 {
-  vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  ///TODO: have vtkEventBroker::AddObservation to uniquely add an observation
-  std::vector< vtkObservation *> observations =
-    broker->GetObservations(dnode, vtkCommand::ModifiedEvent,
-                            this, this->GetMRMLNodesCallbackCommand());
-  if (observations.size() != 0)
+  DisplayNodesType::iterator it = this->DisplayNodes.find(dnode->GetID());
+  if (it != this->DisplayNodes.end())
     {
-    broker->RemoveObservations(observations);
+    // unobserve and release
+    vtkSetAndObserveMRMLNodeMacro(it->second, 0);
+    this->DisplayNodes.erase(it);
     }
-  this->DisplayNodes.erase(dnode->GetID());
-
   if (dnode == this->DisplayedNode)
     {
     this->DisplayedNode = 0;
