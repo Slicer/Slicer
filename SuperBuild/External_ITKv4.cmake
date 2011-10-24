@@ -89,14 +89,5 @@ if(NOT DEFINED ITK_DIR)
 else()
   # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK,
   # let's add an 'empty' one
-  ExternalProject_Add(${proj}
-    SOURCE_DIR ${proj}
-    BINARY_DIR ${proj}-build
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    DEPENDS
-    ${ITKv4_DEPENDENCIES}
-    )
+  SlicerMacroEmptyExternalProject(${proj} "${ITKv4_DEPENDENCIES}")
 endif()
