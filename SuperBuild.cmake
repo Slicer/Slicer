@@ -113,7 +113,7 @@ SlicerMacroCheckExternalProjectDependency(Slicer)
 #-----------------------------------------------------------------------------
 # Set superbuild boolean args
 #-----------------------------------------------------------------------------
-set(slicer_cmake_boolean_args
+set(ep_cmake_boolean_args
   DOCUMENTATION_TARGET_IN_ALL
   BUILD_TESTING
   BUILD_SHARED_LIBS
@@ -133,27 +133,27 @@ set(slicer_cmake_boolean_args
   #Slicer_USE_WEAVE
   )
 
-set(slicer_superbuild_boolean_args)
-foreach(slicer_cmake_arg ${slicer_cmake_boolean_args})
-  list(APPEND slicer_superbuild_boolean_args -D${slicer_cmake_arg}:BOOL=${${slicer_cmake_arg}})
+set(ep_superbuild_boolean_args)
+foreach(ep_cmake_arg ${ep_cmake_boolean_args})
+  list(APPEND ep_superbuild_boolean_args -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
 endforeach()
 
 # message("CMake args:")
-# foreach(arg ${slicer_superbuild_boolean_args})
+# foreach(arg ${ep_superbuild_boolean_args})
 #   message("  ${arg}")
 # endforeach()
 
 #-----------------------------------------------------------------------------
 # Define list of additional options used to configure Slicer
 #------------------------------------------------------------------------------
-set(slicer_superbuild_extra_args)
+set(ep_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
-  list(APPEND slicer_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
+  list(APPEND ep_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  list(APPEND slicer_superbuild_extra_args
+  list(APPEND ep_superbuild_extra_args
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
@@ -161,13 +161,13 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  list(APPEND slicer_superbuild_extra_args
+  list(APPEND ep_superbuild_extra_args
     -DSlicer_TCL_DIR:PATH=${tcl_build}
     -DTCL_TK_VERSION:STRING=${TCL_TK_VERSION}
     -DTCL_TK_VERSION_DOT:STRING=${TCL_TK_VERSION_DOT}
     )
   if(TARGET incrTcl)
-    list(APPEND slicer_superbuild_extra_args
+    list(APPEND ep_superbuild_extra_args
       -DINCR_TCL_VERSION:STRING=${INCR_TCL_VERSION}
       -DINCR_TCL_VERSION_DOT:STRING=${INCR_TCL_VERSION_DOT}
       )
@@ -175,15 +175,15 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
 endif()
 
 if(Slicer_USE_BatchMake)
-  list(APPEND slicer_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
+  list(APPEND ep_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()
 
 if(Slicer_USE_OpenIGTLink)
-  list(APPEND slicer_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+  list(APPEND ep_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
 endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
-  list(APPEND slicer_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
+  list(APPEND ep_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
 # Set CMake OSX variable to pass down the external project
@@ -207,8 +207,8 @@ ExternalProject_Add(${proj}
   BINARY_DIR Slicer-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    ${slicer_superbuild_boolean_args}
-    ${slicer_superbuild_extra_args}
+    ${ep_superbuild_boolean_args}
+    ${ep_superbuild_extra_args}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
