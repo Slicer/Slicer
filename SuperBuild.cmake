@@ -119,6 +119,7 @@ set(ep_cmake_boolean_args
   BUILD_SHARED_LIBS
   WITH_COVERAGE
   WITH_MEMCHECK
+  Slicer_BUILD_BRAINSTOOLS
   Slicer_BUILD_CLI
   Slicer_BUILD_QTLOADABLEMODULES
   Slicer_BUILD_QTSCRIPTEDMODULES
@@ -184,6 +185,10 @@ endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND ep_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
+endif()
+
+if(Slicer_BUILD_BRAINSTOOLS)
+  list(APPEND ep_superbuild_extra_args -DSlicerBRAINSTools_SOURCE_DIR:PATH=${SlicerBRAINSTools_SOURCE_DIR})
 endif()
 
 # Set CMake OSX variable to pass down the external project
