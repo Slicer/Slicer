@@ -342,7 +342,7 @@ void vtkMRMLAbstractLogic
   assert(vtkMRMLScene::SafeDownCast(caller));
   assert(caller == this->GetMRMLScene());
 #ifndef _NDEBUG
-  caller;
+  (void)caller;
 #endif
 
   vtkMRMLNode * node = 0;

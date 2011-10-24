@@ -88,9 +88,6 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
 
   this->DisplayedNode = NULL;
 
-  this->ProcessingMRMLNodesFlag = 0;
-  this->UpdatingFromMRML = 0;
-
   this->DisplayObservedEvents = vtkIntArray::New();
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::StartEvent);
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::EndEvent);
@@ -1076,18 +1073,22 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnCreate()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
-                                                unsigned long event,
-                                                void *callData)
+bool vtkMRMLVolumeRenderingDisplayableManager::EnterMRMLNodesCallback()const
 {
-  if (this->ProcessingMRMLNodesFlag ||
-      !this->GetMRMLScene() ||
-      this->UpdatingFromMRML)
+  // Don't support nested calls
+  return this->GetInMRMLNodesCallbackFlag() == 1 ? false : true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject *caller,
+                         unsigned long event,
+                         void *vtkNotUsed(callData))
+{
+  if (!this->GetMRMLScene())
     {
     return;
     }
-  this->ProcessingMRMLNodesFlag = 1;
-
   vtkMRMLNode *node = NULL;
 
   // Observe ViewNode, Scenario Node, and Parameter node for modify events
@@ -1204,7 +1205,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject 
 
   // TODO add code from vtkVolumeRenderingGUI::ProcessGUIEvents
   // to observe ParametersNode (ROI, VolumeProp, volumes etc)
-  this->ProcessingMRMLNodesFlag = 0;
 }
 
 
@@ -1483,18 +1483,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMR
     {
     this->RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
     }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
-{
-  if (this->ProcessingMRMLNodesFlag || this->UpdatingFromMRML)
-    {
-    return;
-    }
-  this->UpdatingFromMRML = 1;
-  //this->InitializePipelineFromDisplayNode();
-  this->UpdatingFromMRML = 0;
 }
 
 //---------------------------------------------------------------------------

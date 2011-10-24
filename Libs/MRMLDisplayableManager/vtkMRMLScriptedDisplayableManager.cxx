@@ -162,9 +162,10 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject *caller,
-                                                        unsigned long event,
-                                                        void *callData)
+void vtkMRMLScriptedDisplayableManager
+::ProcessMRMLSceneEvents(vtkObject *caller,
+                         unsigned long event,
+                         void *callData)
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
@@ -184,9 +185,10 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject *caller
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
-                                                        unsigned long event,
-                                                        void *callData)
+void vtkMRMLScriptedDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject *caller,
+                         unsigned long event,
+                         void *vtkNotUsed(callData))
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)

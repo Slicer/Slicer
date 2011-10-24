@@ -375,7 +375,6 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onSceneRestoredEvent()
 {
-  Q_Q(qMRMLLayoutManager);
   logger.trace("onSceneRestoredEvent");
 
   if (this->MRMLLayoutNode)

@@ -211,7 +211,7 @@ protected:
 
   /// Called after the corresponding MRML event is triggered.
   /// \sa ProcessMRMLNodesEvents
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node){}
+  virtual void OnMRMLNodeModified(vtkMRMLNode* /*node*/){}
 
   /// Called each time a new scene is set. Can be reimplemented in derivated classes.
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()

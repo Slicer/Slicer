@@ -62,7 +62,7 @@ private:
   //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  friend vtkInternal;
+  friend class vtkInternal;
   //ETX
 };
 

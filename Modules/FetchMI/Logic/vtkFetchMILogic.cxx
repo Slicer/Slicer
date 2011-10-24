@@ -1254,7 +1254,7 @@ void vtkFetchMILogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* vtkNotUsed(node))
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::ProcessMRMLNodesEvents(vtkObject *caller,
                                              unsigned long event,
-                                             void *callData)
+                                             void *vtkNotUsed(callData))
 {
   if ( !this->Visited )
     {

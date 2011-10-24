@@ -55,8 +55,6 @@ public:
   //  1: success
   int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  virtual void UpdateFromMRML();
-
   // Description:
   // Get Volume Actor
   vtkVolume* GetVolumeActor(){return this->Volume;}
@@ -113,6 +111,11 @@ protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
   void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
 
+
+  // Description:
+  // Don't support nested event processing
+  // TODO: Probably a bad idea to not support nested calls
+  virtual bool EnterMRMLNodesCallback()const;
 
   // Description:
   // Update MRML events
@@ -172,10 +175,6 @@ protected:
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
   vtkMRMLVolumeRenderingDisplayNode*    DisplayedNode;
-
-  int SceneIsLoadingFlag;
-  int ProcessingMRMLNodesFlag;
-  int UpdatingFromMRML;
 
   typedef std::map<std::string, vtkMRMLVolumeRenderingDisplayNode *> DisplayNodesType;
   DisplayNodesType      DisplayNodes;

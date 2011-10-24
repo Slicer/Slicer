@@ -468,7 +468,7 @@ void vtkMRMLLayoutLogic::OnMRMLSceneNewEvent()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLLayoutLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+void vtkMRMLLayoutLogic::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
 {
   this->UpdateFromLayoutNode();
 }
