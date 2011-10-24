@@ -53,6 +53,22 @@
 char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
 "# StreamVersion 1\n";
 
+namespace 
+{
+//----------------------------------------------------------------------------
+class vtkAbortCommand: public vtkCommand
+{
+public:
+  static vtkAbortCommand *New(){ return new vtkAbortCommand; }
+  virtual void Execute (vtkObject* vtkNotUsed(caller),
+                        unsigned long vtkNotUsed(eventId),
+                        void* vtkNotUsed(callData))
+    {
+    this->SetAbortFlag(1);
+    }
+};
+};
+
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
 {
@@ -163,17 +179,6 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   sliceNodeRestored->SetWidgetVisible(1);
 
   // Simulate a scene restore
-  class vtkAbortCommand: public vtkCommand
-  {
-  public:
-    static vtkAbortCommand *New(){return new vtkAbortCommand;}
-    virtual void Execute (vtkObject* vtkNotUsed(caller),
-                          unsigned long vtkNotUsed(eventId),
-                          void* vtkNotUsed(callData))
-    {
-    this->SetAbortFlag(1);
-    }
-  };
   vtkNew<vtkAbortCommand> abortCommand;
   scene->AddObserver(vtkCommand::AnyEvent, abortCommand.GetPointer(), 10000.);
   scene->SetIsImporting(1);
