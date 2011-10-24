@@ -22,9 +22,9 @@
 #-----------------------------------------------------------------------------
 # Git protocole option
 #-----------------------------------------------------------------------------
-option(Slicer_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
+option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 set(git_protocol "git")
-if(NOT Slicer_USE_GIT_PROTOCOL)
+if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
   set(git_protocol "http")
 endif()
 
@@ -45,7 +45,7 @@ set(ep_base        "${CMAKE_BINARY_DIR}")
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
-set(ep_common_compiler_args
+set(ep_common_flags
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
   -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
