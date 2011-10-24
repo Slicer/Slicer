@@ -96,7 +96,10 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneClosedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneImportedEvent()
 {
-  this->UpdateCameraNode();
+  if (this->GetMRMLViewNode())
+    {
+    this->UpdateCameraNode();
+    }
 }
 
 //---------------------------------------------------------------------------
