@@ -18,6 +18,10 @@
 #
 ################################################################################
 
+if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
+  set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/SuperBuild)
+endif()
+
 macro(SlicerMacroCheckExternalProjectDependency proj)
   # Set indent variable if needed
   if(NOT DEFINED __indent)
@@ -49,7 +53,7 @@ macro(SlicerMacroCheckExternalProjectDependency proj)
   # Include dependencies
   foreach(dep ${${proj}_DEPENDENCIES})
     if(NOT External_${dep}_FILE_INCLUDED)
-      include(${Slicer_SOURCE_DIR}/SuperBuild/External_${dep}.cmake)
+      include(${EXTERNAL_PROJECT_DIR}/External_${dep}.cmake)
     endif()
   endforeach()
 
