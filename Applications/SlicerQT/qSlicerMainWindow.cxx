@@ -282,6 +282,18 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ViewToolBar->addWidget(layoutButton);
 
   //----------------------------------------------------------------------------
+  // Viewers Toolbar
+  //----------------------------------------------------------------------------
+  // Viewers toolBar should listen the MRML scene
+  this->ViewersToolBar->setApplicationLogic(
+    qSlicerApplication::application()->applicationLogic());
+  this->ViewersToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->ViewersToolBar,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  //----------------------------------------------------------------------------
   // Undo/Redo Toolbar
   //----------------------------------------------------------------------------
   // Listen to the scene to enable/disable the undo/redo toolbuttons

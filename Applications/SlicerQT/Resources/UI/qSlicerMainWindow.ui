@@ -290,7 +290,7 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QToolBar" name="ViewersToolBar">
+  <widget class="qSlicerViewersToolBar" name="ViewersToolBar">
    <property name="windowTitle">
     <string>Viewers Toolbar</string>
    </property>
@@ -300,7 +300,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionCrosshair"/>
   </widget>
   <action name="actionFileLoadScene">
    <property name="icon">
@@ -1127,15 +1126,6 @@
     <string>4x4 viewers</string>
    </property>
   </action>
-  <action name="actionCrosshair">
-   <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesCrosshair.png</normaloff>:/Icons/SlicesCrosshair.png</iconset>
-   </property>
-   <property name="text">
-    <string>Navigation</string>
-   </property>
-  </action>
   <action name="actionWindowToolbarsViewers">
    <property name="checkable">
     <bool>true</bool>
@@ -1165,6 +1155,11 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerViewersToolBar</class>
+   <extends>QToolBar</extends>
+   <header>qSlicerViewersToolBar.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>

@@ -77,6 +77,9 @@ set(KIT_SRCS
   qSlicerSettingsGeneralPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
+  qSlicerViewersToolBar.cxx
+  qSlicerViewersToolBar.h
+  qSlicerViewersToolBar_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
   )
@@ -143,7 +146,9 @@ set(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.h
-  qSlicerWidget.h
+  qSlicerViewersToolBar.h
+  qSlicerViewersToolBar_p.h
+ qSlicerWidget.h
   )
 
 if(Slicer_USE_PYTHONQT)
@@ -199,6 +204,7 @@ endif()
 # Resources
 set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
+  ${qMRMLWidgets_SOURCE_DIR}/Resources/qMRMLWidgets.qrc
 )
 
 # Python wrap
