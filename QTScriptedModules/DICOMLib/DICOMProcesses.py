@@ -55,7 +55,7 @@ class DICOMProcess(object):
 
   def onStateChanged(self, newState):
     print("process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
-    if newState == 0:
+    if newState == 0 and self.process:
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
       print('error code is: %d' % self.process.error())
@@ -69,6 +69,37 @@ class DICOMProcess(object):
         print("stopping DICOM process")
         self.process.kill()
         self.process = None
+
+class DICOMCommand(DICOMProcess):
+  """
+  Run a generic dcmtk command and return the stdout
+  """
+
+  def __init__(self,cmd,args):
+    super(DICOMCommand,self).__init__()
+    self.executable = self.exeDir+'/'+cmd+self.exeExtension
+    self.args = args
+
+  def __del__(self):
+    super(DICOMCommand,self).__del__()
+
+  def start(self):
+    # run the process!
+    self.process = qt.QProcess()
+    print( 'running: ', self.executable, self.args)
+    self.process.start(self.executable, self.args)
+    self.process.waitForFinished()
+    if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
+      stdout = self.process.readAllStandardOutput()
+      stderr = self.process.readAllStandardError()
+      print('exit status is: %d' % self.process.exitStatus())
+      print('exit code is: %d' % self.process.exitCode())
+      print('error is: %d' % self.process.error())
+      print('standard out is: %s' % stdout)
+      print('standard error is: %s' % stderr)
+      raise( UserWarning("Could not run %s with %s" % (self.executable, self.args)) )
+    stdout = self.process.readAllStandardOutput()
+    return stdout
 
 class DICOMListener(DICOMProcess):
   """helper class to run dcmtk's storescp as listener
@@ -110,7 +141,7 @@ class DICOMListener(DICOMProcess):
     self.storeSCPExecutable = self.exeDir+'/storescp'+self.exeExtension
     dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
     # start the server!
-    onReceptionCallback = "%s --load-short --print-short --print-filename --search PatientName #f" % dcmdumpExecutable
+    onReceptionCallback = "%s --load-short --print-short --print-filename --search PatientName %s/#f" % (dcmdumpExecutable, self.incomingDir)
     args = [str(self.port), 
         '--output-directory' , self.incomingDir,
         '--exec-on-reception', onReceptionCallback]
@@ -128,8 +159,7 @@ class DICOMListener(DICOMProcess):
       searchTag = '# dcmdump (1/1): '
       tagStart = line.find(searchTag)
       if tagStart != -1:
-        dicomFile = line[tagStart + len(searchTag):].strip()
-        dicomFilePath = self.incomingDir + '/' + dicomFile
+        dicomFilePath = line[tagStart + len(searchTag):].strip()
         destinationDir = os.path.dirname(self.dicomDatabase.databaseFilename)
         print()
         print()
