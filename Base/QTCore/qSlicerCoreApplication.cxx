@@ -52,6 +52,7 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
 #endif
+#include "qSlicerUtils.h"
 
 // SlicerLogic includes
 #include "vtkDataIOManagerLogic.h"
@@ -313,43 +314,15 @@ void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key
 void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 {
   Q_Q(qSlicerCoreApplication);
-  this->SlicerBin = QString();
-  this->IntDir = QString();
   // Note: On Linux, QCoreApplication::applicationDirPath() will attempt
   //       to get the path using the "/proc" filesystem.
-  QDir slicerBinDir(q->applicationDirPath());
-  if ( !slicerBinDir.exists() )
+  if (!QFile::exists(q->applicationDirPath()))
     {
     qCritical() << "Cannot find Slicer executable" << q->applicationDirPath();
     return ;
     }
-  QDir slicerLibDir = slicerBinDir;
-
-#if defined(Q_WS_MAC)
-  // App bundle case.
-  if (slicerBinDir.cd( QString("../") + Slicer_BIN_DIR))
-    {
-    this->SlicerBin = slicerBinDir.absolutePath();
-    return;
-    }
-  if (slicerBinDir.cd( QString("../../../../") + Slicer_BIN_DIR))
-    {
-    this->SlicerBin = slicerBinDir.absolutePath();
-    return;
-    }
-#endif
-  if (slicerLibDir.cd( QString("../") + Slicer_LIB_DIR))
-    {
-    this->SlicerBin = slicerBinDir.absolutePath();
-    return ;
-    }
-  if (slicerLibDir.cd( QString("../../") + Slicer_LIB_DIR))
-    {
-    this->IntDir = slicerBinDir.dirName();
-    slicerBinDir.cdUp();
-    this->SlicerBin = slicerBinDir.absolutePath();
-    return;
-    }
+  this->SlicerBin =
+      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_LIB_DIR, this->IntDir);
 }
 
 //-----------------------------------------------------------------------------
