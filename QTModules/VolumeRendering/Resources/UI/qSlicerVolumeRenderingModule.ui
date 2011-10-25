@@ -25,7 +25,7 @@
      <property name="text">
       <string>Volume:</string>
      </property>
-     <property name="checkIcon">
+     <property name="indicatorIcon">
       <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/VisibleOn.png</normaloff>
        <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
@@ -211,7 +211,7 @@
           <property name="text">
            <string>Display box</string>
           </property>
-          <property name="checkIcon">
+          <property name="indicatorIcon">
            <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOn.png</normaloff>
             <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
