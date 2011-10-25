@@ -78,7 +78,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->Interacting = 0;
   this->InteractionFlags = 0;
 
-  this->LayoutLabel = NULL;
+  this->LayoutLabel = new char[1];
+  strcpy(this->LayoutLabel, "");
   this->LayoutColor = new char[8];
   strcpy(this->LayoutColor, "#8C8C8C");
 }
@@ -527,6 +528,8 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
+  bool layoutColorFound = false;
+  bool layoutLabelFound = false;
   while (*atts != NULL) 
     {
     attName = *(atts++);
@@ -534,10 +537,12 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "layoutLabel")) 
       {
       this->SetLayoutLabel( attValue );
+      layoutLabelFound = true;
       }
     else if (!strcmp(attName, "layoutColor")) 
       {
       this->SetLayoutColor( attValue );
+      layoutColorFound = true;
       }
     else if (!strcmp(attName, "fieldOfView")) 
       {
@@ -577,15 +582,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       ss >> val;
       
       this->LayoutGridColumns = val;
-      }
-    else if (!strcmp(attName, "activeSlice")) 
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
-      
-      this->ActiveSlice = val;
       }
     else if (!strcmp(attName, "jumpMode")) 
       {
@@ -639,7 +635,48 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "layoutName")) 
       {
-      this->SetLayoutName( attValue );
+      // At version 18173, we started numbering nodes starting at 1
+      // instead of 0 and started number viewers starting at 1 instead
+      // of 0. Apply this mapping to layouts called Compare#
+      long versionNumber = 0;
+      if (this->GetScene()->GetLastLoadedVersion())
+        {
+        std::string version(this->GetScene()->GetLastLoadedVersion());
+        std::stringstream ss;
+        ss << version;
+        ss >> versionNumber;
+        }
+
+      if (versionNumber >= 18173)
+        {
+        this->SetLayoutName( attValue );
+        }
+      else
+        {
+        if (strncmp(attValue, "Compare", 7) == 0)
+          {
+          // need to remap the layout names AND all references...
+          std::string name(attValue);
+          std::string number(name.substr(7, name.size()-7));
+          std::stringstream ss;
+          ss << number;
+          long value;
+          ss >> value;
+          
+          // add 1.
+          value++;
+          
+          std::stringstream ss2;
+          ss2 << name.substr(0,7) << value;
+
+          this->SetLayoutName( ss2.str().c_str() );
+          }
+        else
+          {
+          // Not a compare view, just set the LayoutName
+          this->SetLayoutName( attValue );
+          }
+        }
       }
    else if (!strcmp(attName, "dimensions")) 
       {
@@ -690,6 +727,52 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       this->SetSliceSpacingMode( val );
       }
     }
+  
+  if (!layoutColorFound)
+    {
+    // Slicer3 scene file. Grok a color
+    if (std::string(this->GetLayoutName()).find("Compare") == 0)
+      {
+      this->SetLayoutColor("#E17012");
+      }
+    else if (strcmp(this->GetLayoutName(), "Red") == 0)
+      {
+      this->SetLayoutColor("#F34A33");
+      }
+    else if (strcmp(this->GetLayoutName(), "Yellow") == 0)
+      {
+      this->SetLayoutColor("#EDD54C");
+      }
+    else if (strcmp(this->GetLayoutName(), "Green") == 0)
+      {
+      this->SetLayoutColor("#6EB04B");
+      }
+    }
+
+  if (!layoutLabelFound)
+    {
+    // Slicer3 scene file. Grok a label
+    if (std::string(this->GetLayoutName()).find("Compare") == 0)
+      {
+      std::string name(this->GetLayoutName());
+      std::string number(name.substr(7, name.size()-7));
+      this->SetLayoutLabel(number.c_str());
+      }
+    else if (strcmp(this->GetLayoutName(), "Red") == 0)
+      {
+      this->SetLayoutLabel("R");
+      }
+    else if (strcmp(this->GetLayoutName(), "Yellow") == 0)
+      {
+      this->SetLayoutLabel("Y");
+      }
+    else if (strcmp(this->GetLayoutName(), "Green") == 0)
+      {
+      this->SetLayoutLabel("G");
+      }
+    }
+
+
   this->UpdateMatrices();
 
   this->EndModify(disabledModify);
