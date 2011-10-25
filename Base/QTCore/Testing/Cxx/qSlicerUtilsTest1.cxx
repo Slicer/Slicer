@@ -197,7 +197,7 @@ int qSlicerUtilsTest1(int, char * [] )
 #else
   QString expectedExecutableExtension = "";
 #endif
-  QString executableExtension = qSlicerUtils::executableExtension(); 
+  QString executableExtension = qSlicerUtils::executableExtension();
   if (executableExtension != expectedExecutableExtension)
     {
     std::cerr << __LINE__ << " - Error in  executableExtension()" << std::endl
@@ -217,7 +217,7 @@ int qSlicerUtilsTest1(int, char * [] )
                << "libThreshold.dylib"
                << "qSlicerThresholdModule.so"
                << "qSlicerThreshold.dylib";
-             
+
   QString expectedModuleName = "Threshold";
 
   foreach (const QString& libraryName, libraryNames)
@@ -404,6 +404,194 @@ int qSlicerUtilsTest1(int, char * [] )
     ctk::removeDirRecursively(dir);
     }
 
+  //-----------------------------------------------------------------------------
+  // 'tmp' directory is common to 'pathWithoutIntDir' and 'pathEndsWith' tests
+  //-----------------------------------------------------------------------------
+
+  QString lib = "lib";
+  QString libModule = lib + "/module";
+  QString libModuleRelease = libModule + "/Release";
+
+  QDir tmp = QDir::temp();
+  temporaryDirName =
+      QString("qSlicerUtilsTest1-pathWithoutIntDir.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  tmp.mkdir(temporaryDirName);
+  tmp.cd(temporaryDirName);
+  tmp.mkpath(libModuleRelease);
+
+  //-----------------------------------------------------------------------------
+  // Test pathWithoutIntDir()
+  //-----------------------------------------------------------------------------
+
+  QString inputPath = tmp.path() + "/" + libModule + "/Foo";
+  QString subDirWithoutIntDir = "lib/module";
+  QString expectedIntDir = "Foo";
+  QString currentIntDir = "";
+  QString expectedPath = tmp.path() + "/" + libModule;
+  QString currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  subDirWithoutIntDir = "lib/module";
+  expectedIntDir = "Release";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModule;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease + "/";
+  subDirWithoutIntDir = "lib/module";
+  expectedIntDir = "Release";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModule;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  subDirWithoutIntDir = "module";
+  expectedIntDir = "Release";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModule;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  subDirWithoutIntDir = "";
+  expectedIntDir = "";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModuleRelease;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
+  subDirWithoutIntDir = "lib/module";
+  expectedIntDir = "foo.txt";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModuleRelease;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  subDirWithoutIntDir = tmp.path() + "/" + libModule;
+  expectedIntDir = "Release";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModule;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  //-----------------------------------------------------------------------------
+  // Test pathEndsWith()
+  //-----------------------------------------------------------------------------
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  QString relativePath = libModuleRelease;
+  bool expected = true;
+  bool current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
+  if (current != expected)
+    {
+    std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
+                          << "current = " << current << std::endl
+                          << "expected = " << expected << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModule;
+  relativePath = "module";
+  expected = true;
+  current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
+  if (current != expected)
+    {
+    std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
+                          << "current = " << current << std::endl
+                          << "expected = " << expected << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  relativePath = tmp.path() + "/" + libModuleRelease;
+  expected = true;
+  current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
+  if (current != expected)
+    {
+    std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
+                          << "current = " << current << std::endl
+                          << "expected = " << expected << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease;
+  relativePath = tmp.path() + "/" + libModule;
+  expected = false;
+  current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
+  if (current != expected)
+    {
+    std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
+                          << "current = " << current << std::endl
+                          << "expected = " << expected << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //-----------------------------------------------------------------------------
+  // Remove 'tmp' directory
+  //-----------------------------------------------------------------------------
+  ctk::removeDirRecursively(tmp.path());
+
   return EXIT_SUCCESS;
 }
-

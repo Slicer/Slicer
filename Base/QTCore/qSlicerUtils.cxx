@@ -34,9 +34,9 @@
 bool qSlicerUtils::isExecutableName(const QString& name)
 {
   QStringList extensions;
-  extensions << ".bat" << ".com" << ".sh" << ".csh" << ".tcsh" 
+  extensions << ".bat" << ".com" << ".sh" << ".csh" << ".tcsh"
              << ".pl" << ".py" << ".tcl" << ".m" << ".exe";
-             
+
   foreach(const QString& extension, extensions)
     {
     if (name.endsWith(extension, Qt::CaseInsensitive))
@@ -90,7 +90,7 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
   return QString();
 #else
   Q_UNUSED(target);
-  return directory; 
+  return directory;
 #endif
 }
 
@@ -98,7 +98,7 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
 QString qSlicerUtils::executableExtension()
 {
 #ifdef _WIN32
-  return QLatin1String(".exe"); 
+  return QLatin1String(".exe");
 #else
   return QString();
 #endif
@@ -109,7 +109,7 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
 {
   QFileInfo libraryPath(libraryName);
   QString moduleName = libraryPath.baseName();
-  
+
   // Remove prefix 'lib' if needed
   if (moduleName.indexOf("lib") == 0)
     {
@@ -128,7 +128,7 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
     {
     moduleName.remove(index, 6);
     }
-    
+
   // Remove suffix 'Lib' if needed
   index = moduleName.lastIndexOf("Lib");
   if (index == (moduleName.size() - 3))
@@ -164,4 +164,43 @@ QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
 bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& applicationHomeDir)
 {
   return vtkSlicerApplicationLogic::IsPluginInstalled(filePath.toStdString(), applicationHomeDir.toStdString());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir)
+{
+  QString tmp;
+  return qSlicerUtils::pathWithoutIntDir(path, subDirWithoutIntDir, tmp);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerUtils::pathWithoutIntDir(const QString& path,
+                                        const QString& subDirWithoutIntDir,
+                                        QString& intDir)
+{
+  QDir pathAsDir(path);
+  if (!qSlicerUtils::pathEndsWith(path, subDirWithoutIntDir))
+    {
+    intDir = pathAsDir.dirName();
+    pathAsDir.cdUp();
+    }
+  return pathAsDir.path();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::pathEndsWith(const QString& path, const QString& relativePath)
+{
+  QString relativePathWithSlashNoEndingSlash = QDir::fromNativeSeparators(relativePath);
+  relativePathWithSlashNoEndingSlash.remove(QRegExp("\\/$")); // Remove the last '/' if any
+  int pathComponentCount = relativePathWithSlashNoEndingSlash.count("/");
+  if (QDir::isRelativePath(relativePath))
+    {
+    ++pathComponentCount;
+    }
+
+  if (!QDir(path).cd(QString("../").repeated(pathComponentCount) + relativePath))
+    {
+    return false;
+    }
+  return true;
 }

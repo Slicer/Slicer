@@ -27,11 +27,11 @@
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerUtils
 {
-  
-public:
-  typedef qSlicerUtils Self; 
 
-  /// 
+public:
+  typedef qSlicerUtils Self;
+
+  ///
   /// Return true if the string name ends with one of these executable extension:
   /// ".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".py", ".tcl", ".m", ".exe"
   /// \note The comparison is case insensitive
@@ -78,9 +78,70 @@ public:
 
   /// Return \a true if the plugin identified with its \a filePath is loaded from an install tree.
   /// \warning Since internally the function looks for the existence of CMakeCache.txt, it will
-  /// return an incorrect result if the plugin is installed in the build tree of 
+  /// return an incorrect result if the plugin is installed in the build tree of
   /// an other project.
   static bool isPluginInstalled(const QString& filePath, const QString& applicationHomeDir);
+
+  /// Return the path without the intermediate directory or return \a path if there is no
+  /// expected "IntDir".
+  /// \a subDirWithoutIntDir corresponds to N last compononent of the path excluding
+  /// the "IntDir".
+  /// \example
+  /// <table border="1">
+  ///   <tr>
+  ///     <td><b>Path</b></td>
+  ///     <td><b>subDirWithoutIntDir</b></td>
+  ///     <td><b>Return</b></td>
+  ///     <td><b>IntDir</b></td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Foo</td>
+  ///     <td>lib/module</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>Foo</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td>lib/module</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>Release</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release/</td>
+  ///     <td>lib/module</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>Release</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td>module</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>Release</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td><i>(Empty string)</i></td>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td><i>(Empty string)</i></td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release/foo.txt</td>
+  ///     <td>lib/module</td>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td>foo.txt</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>/path/to/lib/module</td>
+  ///     <td>Release</td>
+  ///   </tr>
+  /// </table>
+  static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir);
+  static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir, QString& intDir);
+
+  /// Return \a true if the \a path ends with \a relativePath
+  static bool pathEndsWith(const QString& path, const QString& relativePath);
 
 private:
   /// Not implemented
