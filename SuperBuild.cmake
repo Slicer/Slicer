@@ -154,7 +154,7 @@ if(DEFINED CTEST_CONFIGURATION_TYPE)
 endif()
 
 if(WIN32)
-  list(APPEND ep_superbuild_extra_args -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=OFF)
+  list(APPEND ep_superbuild_extra_args -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
 endif()
 
 if(Slicer_USE_PYTHONQT)
