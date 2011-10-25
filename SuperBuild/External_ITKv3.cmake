@@ -30,9 +30,14 @@ if(NOT DEFINED ITK_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/ITK.git" CACHE STRING "Repository from which to get ITK")
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "309a4221146ee34ee87cd4a3fc0cae26bd7535c4" CACHE STRING "ITK git tag to use")
+
+  mark_as_advanced(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG)
+
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://${Slicer_ITK_GIT_REPOSITORY}"
-    GIT_TAG ${Slicer_ITK_GIT_TAG}
+    GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

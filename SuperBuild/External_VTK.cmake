@@ -123,11 +123,16 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "482695022a35dc1c03803dc20ae25ae50136e74d" CACHE STRING "VTK git tag to use" FORCE)
+
+  mark_as_advanced(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG)
+
   ExternalProject_Add(${proj}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    GIT_REPOSITORY "${git_protocol}://${Slicer_VTK_GIT_REPOSITORY}"
-    GIT_TAG ${Slicer_VTK_GIT_TAG}
+    GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
     CMAKE_GENERATOR ${gen}
     ${CUSTOM_BUILD_COMMAND}
     CMAKE_ARGS
