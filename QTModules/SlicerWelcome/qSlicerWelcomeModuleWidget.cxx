@@ -28,6 +28,7 @@
 #include "ui_qSlicerWelcomeModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerApplication.h"
+#include "qSlicerIO.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
@@ -70,11 +71,13 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (loadDicomData()) );
   connect (d->LoadNonDicomDataButton, SIGNAL(clicked()),
            this, SLOT (loadNonDicomData()) );
-  connect (d->LoadSampleDataButton, SIGNAL(clicked()),
+/*
+ connect (d->LoadSampleDataButton, SIGNAL(clicked()),
            this, SLOT (loadRemoteSampleData()) );
   connect (d->ViewTutorialsButton, SIGNAL(clicked()),
            this, SLOT (presentTutorials()) );
-
+*/
+  
   this->Superclass::setup();
 }
 
@@ -99,6 +102,7 @@ bool qSlicerWelcomeModuleWidget::loadNonDicomData()
     }
   return ioManager->openAddDataDialog();
 }
+
 
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
