@@ -96,6 +96,7 @@
      <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
      <addaction name="actionWindowToolbarsCapture"/>
+     <addaction name="actionWindowToolbarsViewers"/>
      <addaction name="separator"/>
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
@@ -288,6 +289,18 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QToolBar" name="ViewersToolBar">
+   <property name="windowTitle">
+    <string>Viewers Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCrosshair"/>
   </widget>
   <action name="actionFileLoadScene">
    <property name="icon">
@@ -1114,6 +1127,26 @@
     <string>4x4 viewers</string>
    </property>
   </action>
+  <action name="actionCrosshair">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesCrosshair.png</normaloff>:/Icons/SlicesCrosshair.png</iconset>
+   </property>
+   <property name="text">
+    <string>Navigation</string>
+   </property>
+  </action>
+  <action name="actionWindowToolbarsViewers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Viewers</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1278,6 +1311,22 @@
     <hint type="destinationlabel">
      <x>269</x>
      <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsViewers</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ViewersToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>981</x>
+     <y>43</y>
     </hint>
    </hints>
   </connection>
