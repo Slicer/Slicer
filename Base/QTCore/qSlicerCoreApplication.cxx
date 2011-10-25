@@ -321,8 +321,16 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     qCritical() << "Cannot find Slicer executable" << q->applicationDirPath();
     return ;
     }
+#ifndef Q_OS_MAC
   this->SlicerBin =
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
+#else
+  QDir slicerBinAsDir(q->applicationDirPath());
+  slicerBinAsDir.cdUp(); // Move from /path/to/Content/MacOSX to /path/to/Content
+  slicerBinAsDir.cd(Slicer_BIN_DIR);
+  this->SlicerBin = slicerBinAsDir.path();
+  Q_ASSERT(qSlicerUtils::pathEndsWith(this->SlicerBin, Slicer_BIN_DIR));
+#endif
 }
 
 //-----------------------------------------------------------------------------
