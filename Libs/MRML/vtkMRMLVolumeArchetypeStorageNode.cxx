@@ -372,6 +372,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   else
     {
     volNode->SetAndObserveImageData (ici->GetOutput());
+    ici->GetOutput()->SetSource(0);
     volNode->ModifiedSinceReadOff();
     }
 
