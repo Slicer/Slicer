@@ -136,6 +136,12 @@ public:
   ///     <td>/path/to/lib/module</td>
   ///     <td>Release</td>
   ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/Foo.app/Contents/MacOSX</td>
+  ///     <td>bin</td>
+  ///     <td>/path/to/Foo.app/Contents/MacOSX</td>
+  ///     <td><i>(Empty string)</i></td>
+  ///   </tr>
   /// </table>
   static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir);
   static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir, QString& intDir);

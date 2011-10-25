@@ -535,6 +535,53 @@ int qSlicerUtilsTest1(int, char * [] )
     return EXIT_FAILURE;
     }
 
+  inputPath = tmp.path() + "/bin";
+  subDirWithoutIntDir = libModule;
+  expectedIntDir = "bin";
+  currentIntDir = "";
+  expectedPath = tmp.path();
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString fooAppContentsMacOSX("Foo.app/Contents/MacOSX");
+  tmp.mkpath(fooAppContentsMacOSX);
+  QString expectedFilePath = tmp.path() + "/" +  fooAppContentsMacOSX;
+  if (!QFile::exists(expectedFilePath))
+    {
+    std::cerr << "Line " << __LINE__ << " - Failed to create file" << qPrintable(expectedFilePath) << std::endl;
+    }
+
+  QString fooAppContentsBin("Foo.app/Contents/bin");
+  tmp.mkpath(fooAppContentsBin);
+  expectedFilePath = tmp.path() + "/" +  fooAppContentsMacOSX;
+  if (!QFile::exists(expectedFilePath))
+    {
+    std::cerr << "Line " << __LINE__ << " - Failed to create file" << qPrintable(expectedFilePath) << std::endl;
+    }
+
+  inputPath = tmp.path() + "/" + fooAppContentsMacOSX;
+  subDirWithoutIntDir = "bin";
+  expectedIntDir = "";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + fooAppContentsMacOSX;
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //-----------------------------------------------------------------------------
   // Test pathEndsWith()
