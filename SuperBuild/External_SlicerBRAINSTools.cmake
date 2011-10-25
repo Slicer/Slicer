@@ -31,7 +31,7 @@ if(NOT DEFINED SlicerBRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/jcfr/BRAINSStandAlone.git"
-    GIT_TAG "073cd81fa4c95fdbef6afab903dbbc859264695d"
+    GIT_TAG "c5cf4d37457aa36a60bb1efafdbffc7f345bf711"
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
