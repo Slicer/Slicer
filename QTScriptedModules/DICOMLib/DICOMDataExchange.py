@@ -1,10 +1,13 @@
 import os
 import glob
 import tempfile
+import zipfile
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
+
+import DICOMLib
 
 #########################################################
 #
@@ -59,14 +62,15 @@ class DICOMLoader(object):
 
 class DICOMExporter(object):
   """Code to export slicer data to dicom database
+  TODO: delete temp directories and files
   """
 
   def __init__(self,studyUID=None,volumeNode=None,parameters=None):
     self.studyUID = studyUID
     self.volumeNode = volumeNode
     self.parameters = parameters
-    if studyUID and volumeNode:
-      self.export()
+    self.referenceFile = None
+    self.sdbFile = None
 
   def parametersFromStudy(self,studyUID=None):
     """Return a dictionary of the required conversion parameters
@@ -113,7 +117,8 @@ class DICOMExporter(object):
         p['Series Number'] = str(len(series)+1)
         files = slicer.dicomDatabase.filesForSeries(series[0])
         if len(files):
-          slicer.dicomDatabase.loadFileHeader(files[0])
+          self.referenceFile = files[0]
+          slicer.dicomDatabase.loadFileHeader(self.referenceFile)
           for tag in tags.keys():
             dump = slicer.dicomDatabase.headerValue(tag)
             try:
@@ -128,10 +133,13 @@ class DICOMExporter(object):
       parameters = self.parameters
     if not parameters:
       parameters = self.parametersFromStudy()
-    self.createDICOMFiles(parameters)
+    if self.volumeNode:
+      self.createDICOMFilesForVolume(parameters)
+    else:
+      self.createDICOMFileForScene(parameters)
     self.addFilesToDatabase()
 
-  def createDICOMFiles(self, parameters):
+  def createDICOMFilesForVolume(self, volumeNode, parameters):
     """
     Export the volume data using the ITK-based utility
     TODO: confirm that resulting file is valid - may need to change the CLI
@@ -165,10 +173,98 @@ class DICOMExporter(object):
     dicomWrite = slicer.modules.imagereaddicomwrite
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
 
+  def createDICOMFileForScene(self, parameters):
+    """
+    Export the scene data:
+    - first to a directory using the utility in the mrmlScene
+    - create a zip file using python utility
+    - create secondary capture based on the sample dataset
+    - add the zip file as a private creator tag
+    TODO: confirm that resulting file is valid - may need to change the CLI
+    to include more parameters or do a new implementation ctk/DCMTK
+    See:
+    http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+    """
+
+    # set up temp directories and files
+    self.dicomDirectory = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
+    self.sceneDirectory = os.path.join(self.dicomDirectory,'scene')
+    os.mkdir(self.sceneDirectory) # known to be unique
+    self.imageFile = os.path.join(self.dicomDirectory, "scene.jpg")
+    self.zipFile = os.path.join(self.dicomDirectory, "scene.zip")
+    self.dumpFile = os.path.join(self.dicomDirectory, "dicom.dump")
+    self.sdbFile = os.path.join(self.dicomDirectory, "SlicerDataBundle.dcm")
+
+    # get the screen image
+    pixmap = qt.QPixmap.grabWidget(slicer.util.mainWindow())
+    pixmap.save(self.imageFile)
+    imageReader = vtk.vtkJPEGReader()
+    imageReader.SetFileName(self.imageFile)
+    imageReader.Update()
+
+    # save the scene to the temp dir
+    appLogic = slicer.app.applicationLogic()
+    appLogic.SaveSceneToSlicerDataBundleDirectory(self.sceneDirectory, imageReader.GetOutput())
+
+    # make the zip file
+    zip = zipfile.ZipFile( self.zipFile, "w", zipfile.ZIP_DEFLATED )
+    start = len(self.sceneDirectory) + 1
+    for root, subdirs, files in os.walk(self.sceneDirectory):
+      for f in files:
+        filePath = os.path.join(root,f)
+        archiveName = filePath[start:]
+        zip.write(filePath, archiveName)
+    zip.close()
+    zipSize = os.path.getsize(self.zipFile)
+
+    # now create the dicom file 
+    # - create the dump (capture stdout)
+    # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.dicomDirectory, self.referenceFile)
+    if not self.referenceFile:
+      self.parametersFromStudy()
+    args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
+    dump = DICOMLib.DICOMCommand('dcmdump', args).start()
+
+    # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
+    #with %s as self.zipFile and %d being its size in bytes
+    candygram = """(cadb,0010) LO [3D Slicer Candygram]                    #  20, 1 PrivateCreator
+(cadb,1008) OB =%s                                      #  %d, 1 Unknown Tag & Data
+""" % (self.zipFile, zipSize)
+
+    dump = dump + candygram
+
+    fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
+    fp.write(dump)
+    fp.close()
+
+    # cmd = "dump2dcm %s/dump.dcm %s/template.dcm" % (self.dicomDirectory, self.dicomDirectory)
+    args = ['%s/dump.dcm' % self.dicomDirectory, '%s/template.dcm' % self.dicomDirectory]
+    DICOMLib.DICOMCommand('dump2dcm', args).start()
+
+    # now create the SC data set
+    # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.dicomDirectory, self.imageFile, self.sdbFile)
+    args = ['-k', 'InstanceNumber=1', '-k', 'SeriesDescription=Slicer Data Bundle',
+      '-df', '%s/template.dcm' % self.dicomDirectory,
+      self.imageFile, self.sdbFile]
+    DICOMLib.DICOMCommand('img2dcm', args).start()
+
+
   def addFilesToDatabase(self):
     indexer = ctk.ctkDICOMIndexer()
     destinationDir = os.path.dirname(slicer.dicomDatabase.databaseFilename)
-    files = glob.glob('%s/*' % self.dicomDirectory)
+    if self.sdbFile:
+      files = [self.sdbFile]
+    else:
+      files = glob.glob('%s/*' % self.dicomDirectory)
     for file in files: 
       indexer.addFile( slicer.dicomDatabase, file, destinationDir )
       slicer.util.showStatusMessage("Loaded: %s" % file, 1000)
+
+# TODO: turn these into unit tests
+tests = """
+  dump = DICOMLib.DICOMCommand('dcmdump', ['/media/extra650/data/CTC/JANCT000/series_2/instance_706.dcm']).start()
+  
+  id = slicer.dicomDatabase.studiesForPatient('2')[0]
+  e = DICOMLib.DICOMExporter(id)
+  e.export()
+"""

@@ -18,7 +18,7 @@ import DICOMLib
 class DICOM:
   def __init__(self, parent):
     parent.title = "DICOM"
-    parent.category = "Work in Progress"
+    parent.category = "" # top level module
     parent.contributor = "Steve Pieper"
     parent.helpText = """
 The DICOM module is a place to experiment a bit with dicom classes from CTK (based on DCMTK).  It is a 'tent' because it is meant to be suitable for explorers, but may not be robust enough for civilized people.
@@ -483,6 +483,7 @@ class DICOMExportDialog(object):
     self.studyLabel = qt.QLabel('Attach Data to Study: %s' % self.studyUID)
     layout.addWidget(self.studyLabel)
 
+    # scene or volume option
     self.selectFrame = qt.QFrame(self.dialog)
     layout.addWidget(self.selectFrame)
     self.selectLayout = qt.QGridLayout()
@@ -490,7 +491,7 @@ class DICOMExportDialog(object):
     self.exportScene = qt.QRadioButton("Export Entire Scene", self.selectFrame)
     self.exportScene.setToolTip( "Create a Slicer Data Bundle in a DICOM Private Creator\n(Only compatible with Slicer)" )
     self.exportVolume = qt.QRadioButton("Export Selected Volume", self.selectFrame)
-    self.exportVolume.setToolTip( "Create a compatible DICOM series" )
+    self.exportVolume.setToolTip( "Create a compatible DICOM series of slice images" )
     self.exportVolume.checked = True
     self.selectLayout.addWidget(self.exportScene, 0, 0)
     self.selectLayout.addWidget(self.exportVolume, 1, 0)
@@ -537,17 +538,22 @@ class DICOMExportDialog(object):
   def onExportRadio(self,toggled):
     self.volumeSelector.enabled = self.exportVolume.checked
 
-
   def onOk(self):
-    volumeNode = self.volumeSelector.currentNode()
-    if volumeNode:
+    """Run the export process for either the scene or the selected volume"""
+    if self.exportScene.checked:
+      volumeNode = None
+    else:
+      volumeNode = self.volumeSelector.currentNode()
+    if volumeNode or self.exportScene.checked:
       parameters = {}
       for label in self.dicomParameters.keys():
         parameters[label] = self.dicomEntries[label].text
       try:
-        DICOMLib.DICOMExporter(self.studyUID,volumeNode,parameters)
+        exporter = DICOMLib.DICOMExporter(self.studyUID,volumeNode,parameters)
+        exporter.export()
       except Exception as result:
-        qt.QMessageBox.warning(self.dialog, 'DICOM Export', 'Could not export data: %s' % result)
+        import traceback
+        qt.QMessageBox.warning(self.dialog, 'DICOM Export', 'Could not export data: %s\n\n%s' % (result, traceback.format_exception(*sys.exc_info())))
     if self.onExportFinished:
       self.onExportFinished()
     self.dialog.close()
