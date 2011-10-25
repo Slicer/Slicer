@@ -322,7 +322,7 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     return ;
     }
   this->SlicerBin =
-      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_LIB_DIR, this->IntDir);
+      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
 }
 
 //-----------------------------------------------------------------------------
