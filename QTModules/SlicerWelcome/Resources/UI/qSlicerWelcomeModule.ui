@@ -143,7 +143,7 @@
       <item>
         <widget class="ctkCollapsibleButton" name="OverviewCollapsibleWidget">
           <property name="text">
-            <string>Quick Guide</string>
+            <string>The Main Window</string>
           </property>
           <property name="collapsed">
             <bool>true</bool>
@@ -185,7 +185,7 @@
       <item>
         <widget class="ctkCollapsibleButton" name="LoadingScenesAndDataCollapsibleWidget">
           <property name="text">
-            <string>Loading Scenes &amp;&amp; Data</string>
+            <string>Loading and Saving</string>
           </property>
           <property name="collapsed">
             <bool>true</bool>
@@ -225,48 +225,9 @@
         </widget>
       </item>
       <item>
-        <widget class="ctkCollapsibleButton" name="SavingScenesAndDataCollapsibleWidget">
-          <property name="text">
-            <string>Saving Scenes &amp;&amp; Data</string>
-          </property>
-          <property name="collapsed">
-            <bool>true</bool>
-          </property>
-          <property name="contentsFrameShape">
-            <enum>QFrame::StyledPanel</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_13">
-            <property name="spacing">
-              <number>0</number>
-            </property>
-            <property name="margin">
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="ctkFittedTextBrowser" name="CTKFittedTextBrowser">
-                <property name="sizePolicy">
-                  <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                  </sizepolicy>
-                </property>
-                <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/SavingScenesAndLoadingData.html</string>
-                  </url>
-                </property>
-              </widget>
-            </item>
-          </layout>
-        </widget>
-      </item>
-      <item>
         <widget class="ctkCollapsibleButton" name="AdjustingDataDisplayCollapsibleWidget">
           <property name="text">
-            <string>Adjusting Data Display</string>
+            <string>Display</string>
           </property>
           <property name="collapsed">
             <bool>true</bool>
@@ -306,51 +267,9 @@
         </widget>
       </item>
       <item>
-        <widget class="ctkCollapsibleButton" name="ConfiguringViewersAndLayoutCollapsibleWidget">
-          <property name="text">
-            <string>Configuring Viewers &amp;&amp; Layout</string>
-          </property>
-          <property name="collapsed">
-            <bool>true</bool>
-          </property>
-          <property name="contentsFrameShape">
-            <enum>QFrame::StyledPanel</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="spacing">
-              <number>0</number>
-            </property>
-            <property name="margin">
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="ctkFittedTextBrowser" name="textBrowser_6">
-                <property name="sizePolicy">
-                  <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                  </sizepolicy>
-                </property>
-                <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/ConfiguringViewersAndLayout.html</string>
-                  </url>
-                </property>
-                <property name="openExternalLinks">
-                  <bool>true</bool>
-                </property>
-              </widget>
-            </item>
-          </layout>
-        </widget>
-      </item>
-      <item>
         <widget class="ctkCollapsibleButton" name="MouseModesCollapsibleWidget">
           <property name="text">
-            <string>Inspecting &amp;&amp; Manipulating Data</string>
+            <string>Mouse &amp;&amp; Keyboard</string>
           </property>
           <property name="collapsed">
             <bool>true</bool>
@@ -421,48 +340,6 @@
                 <property name="source">
                   <url>
                     <string>qrc:HTML/OtherUsefulHints.html</string>
-                  </url>
-                </property>
-                <property name="openExternalLinks">
-                  <bool>true</bool>
-                </property>
-              </widget>
-            </item>
-          </layout>
-        </widget>
-      </item>
-      <item>
-        <widget class="ctkCollapsibleButton" name="CommunityCollapsibleWidget">
-          <property name="text">
-            <string>Community</string>
-          </property>
-          <property name="collapsed">
-            <bool>true</bool>
-          </property>
-          <property name="contentsFrameShape">
-            <enum>QFrame::StyledPanel</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-            <property name="spacing">
-              <number>0</number>
-            </property>
-            <property name="margin">
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="ctkFittedTextBrowser" name="textBrowser_10">
-                <property name="sizePolicy">
-                  <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                  </sizepolicy>
-                </property>
-                <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/Community.html</string>
                   </url>
                 </property>
                 <property name="openExternalLinks">
