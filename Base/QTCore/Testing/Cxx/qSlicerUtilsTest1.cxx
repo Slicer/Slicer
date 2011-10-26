@@ -440,7 +440,7 @@ int qSlicerUtilsTest1(int, char * [] )
     }
 
   inputPath = tmp.path() + "/" + libModuleRelease;
-  subDirWithoutIntDir = "lib/module";
+  subDirWithoutIntDir = QString("lib%1module").arg(QDir::separator());
   expectedIntDir = "Release";
   currentIntDir = "";
   expectedPath = tmp.path() + "/" + libModule;
@@ -505,6 +505,22 @@ int qSlicerUtilsTest1(int, char * [] )
 
   inputPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
   subDirWithoutIntDir = "lib/module";
+  expectedIntDir = "";
+  currentIntDir = "";
+  expectedPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
+  currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
+  if (currentPath != expectedPath || currentIntDir != expectedIntDir)
+    {
+    std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
+                          << "currentPath = " << qPrintable(currentPath) << std::endl
+                          << "expectedPath = " << qPrintable(expectedPath) << std::endl
+                          << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
+                          << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  inputPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
+  subDirWithoutIntDir = libModuleRelease;
   expectedIntDir = "foo.txt";
   currentIntDir = "";
   expectedPath = tmp.path() + "/" + libModuleRelease;
@@ -537,9 +553,9 @@ int qSlicerUtilsTest1(int, char * [] )
 
   inputPath = tmp.path() + "/bin";
   subDirWithoutIntDir = libModule;
-  expectedIntDir = "bin";
+  expectedIntDir = "";
   currentIntDir = "";
-  expectedPath = tmp.path();
+  expectedPath = tmp.path() + "/bin";
   currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
   if (currentPath != expectedPath || currentIntDir != expectedIntDir)
     {

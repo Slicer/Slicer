@@ -183,24 +183,23 @@ QString qSlicerUtils::pathWithoutIntDir(const QString& path,
     {
     intDir = pathAsDir.dirName();
     pathAsDir.cdUp();
+    if (!qSlicerUtils::pathEndsWith(pathAsDir.path(), subDirWithoutIntDir))
+      {
+      intDir.clear();
+      return path;
+      }
     }
   return pathAsDir.path();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::pathEndsWith(const QString& path, const QString& relativePath)
+bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
 {
-  QString relativePathWithSlashNoEndingSlash = QDir::fromNativeSeparators(relativePath);
-  relativePathWithSlashNoEndingSlash.remove(QRegExp("\\/$")); // Remove the last '/' if any
-  int pathComponentCount = relativePathWithSlashNoEndingSlash.count("/");
-  if (QDir::isRelativePath(relativePath))
-    {
-    ++pathComponentCount;
-    }
-
-  if (!QDir(path).cd(QString("../").repeated(pathComponentCount) + relativePath))
-    {
-    return false;
-    }
-  return true;
+#ifdef Q_OS_WIN32
+  Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive;
+#else
+  Qt::CaseSensitivity sensitivity = Qt::CaseSensitive;
+#endif
+  return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).
+      endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
 }

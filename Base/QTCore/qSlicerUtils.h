@@ -127,6 +127,12 @@ public:
   ///   <tr>
   ///     <td>/path/to/lib/module/Release/foo.txt</td>
   ///     <td>lib/module</td>
+  ///     <td>/path/to/lib/module/Release/foo.txt</td>
+  ///     <td><i>(Empty string)</i></td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/lib/module/Release/foo.txt</td>
+  ///     <td>lib/module/Release</td>
   ///     <td>/path/to/lib/module/Release</td>
   ///     <td>foo.txt</td>
   ///   </tr>
@@ -135,6 +141,12 @@ public:
   ///     <td>/path/to/lib/module</td>
   ///     <td>/path/to/lib/module</td>
   ///     <td>Release</td>
+  ///   </tr>
+  ///   <tr>
+  ///     <td>/path/to/bin</td>
+  ///     <td>lib/module</td>
+  ///     <td>/path/to/bin</td>
+  ///     <td><i>(Empty string)</i></td>
   ///   </tr>
   ///   <tr>
   ///     <td>/path/to/Foo.app/Contents/MacOSX</td>
@@ -146,8 +158,8 @@ public:
   static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir);
   static QString pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir, QString& intDir);
 
-  /// Return \a true if the \a path ends with \a relativePath
-  static bool pathEndsWith(const QString& path, const QString& relativePath);
+  /// Return \a true if the \a inputPath ends with \a path
+  static bool pathEndsWith(const QString& inputPath, const QString& path);
 
 private:
   /// Not implemented
