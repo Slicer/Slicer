@@ -219,9 +219,6 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-  this->Views = vtkSmartPointer<vtkCollection>::New();
-  this->Modules = vtkSmartPointer<vtkCollection>::New();
-
   this->ProcessingThreader = itk::MultiThreader::New();
   this->ProcessingThreadId = -1;
   this->ProcessingThreadActive = false;
@@ -279,15 +276,6 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
   delete this->InternalWriteDataQueue;
-
-  this->ClearCollections();
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::ClearCollections()
-{
-  this->Views->RemoveAllItems();
-  this->Modules->RemoveAllItems();
 }
 
 //----------------------------------------------------------------------------
@@ -349,18 +337,6 @@ int vtkSlicerApplicationLogic::Commit(const char *URL)
     return (this->GetMRMLScene()->Commit(URL));
     }
   return (0);
-};
-
-//----------------------------------------------------------------------------
-vtkCollection* vtkSlicerApplicationLogic::GetViews()
-{
-  return this->Views;
-}
-
-//----------------------------------------------------------------------------
-vtkCollection* vtkSlicerApplicationLogic::GetModules()
-{
-  return this->Modules;
 }
 
 /*
@@ -478,7 +454,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     }
 }
 
-
+//----------------------------------------------------------------------------
 ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic
 ::ProcessingThreaderCallback( void *arg )
@@ -508,6 +484,7 @@ vtkSlicerApplicationLogic
   return ITK_THREAD_RETURN_VALUE;
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 {
   int active = true;
@@ -583,6 +560,7 @@ vtkSlicerApplicationLogic
   return ITK_THREAD_RETURN_VALUE;
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 {
   int active = true;
@@ -627,6 +605,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
     }
 }
 
+//----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 {
   int active;
@@ -652,7 +631,7 @@ int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
   return false;
 }
 
-
+//----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 {
   int active;
@@ -679,6 +658,7 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
   return false;
 }
 
+//----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char *filename, int displayData, int deleteFile )
 {
   int active;
@@ -706,6 +686,7 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
   return false;
 }
 
+//----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char *filename, int displayData, int deleteFile )
 {
   int active;
@@ -734,12 +715,12 @@ int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char
 }
 
 
-int
-vtkSlicerApplicationLogic
-::RequestReadScene(const std::string& filename,
-                   std::vector<std::string> &targetIDs,
-                   std::vector<std::string> &sourceIDs,
-                   int displayData, int deleteFile)
+//----------------------------------------------------------------------------
+int vtkSlicerApplicationLogic::RequestReadScene(
+    const std::string& filename,
+    std::vector<std::string> &targetIDs,
+    std::vector<std::string> &sourceIDs,
+    int displayData, int deleteFile)
 {
   int active;
 
@@ -767,7 +748,7 @@ vtkSlicerApplicationLogic
   return false;
 }
 
-
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessModified()
 {
   // Check to see if we should be shutting down
@@ -813,6 +794,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestModifiedEvent, &delay);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessReadData()
 {
   // Check to see if we should be shutting down
@@ -853,6 +835,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessWriteData()
 {
   // Check to see if we should be shutting down
@@ -893,6 +876,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 {
   // What type of node is the data really? Or is it a scene
@@ -1368,11 +1352,13 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessWriteNodeData(WriteDataRequest& vtkNotUsed(req))
 {
     vtkWarningMacro("ProcessWriteNodeData: we just wrote out, not doing anything here...");
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 {
   if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
@@ -1576,6 +1562,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
 {
   if (req.GetSourceNodes().size() != req.GetTargetNodes().size())

@@ -69,30 +69,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// Return code tells result of commit.
   int Commit (const char *URL);
 
-  /// Additional methods here to manipulate the application:
-
-  /// Info needed:
-  ///   SlicerVersion
-  ///   others?
-
-
-  /// Views, Slices, Modules
-  /// -- these are the fundamental slicer elements
-  /// -- these are dynamic (discovered, create, deleted at run time)
-
-  /// Views are the 3D viewports into the mrml scene
-  /// SlicerLogic maintains the list of currently active views
-  vtkCollection* GetViews();
-
   /// Perform the default behaviour related to selecting a fiducial list
   /// (display it in the Fiducials GUI)
   void PropagateFiducialListSelection();
-
-  /// Modules
-
-  /// Modules are additional pieces of Slicer functionality
-  /// that are loaded and managed at run time
-  vtkCollection* GetModules();
 
   /// Create a thread for processing
   void CreateProcessingThread();
@@ -166,15 +145,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// Process a request to write data from a referenced node.
   void ProcessWriteData();
 
-  /// Transient Application State
-  /// -- these are elements that are inherently part of the
-  ///    currently running application and are not stored in
-  ///    the mrml tree
-  /// -- any state that is expected to be saved and restored
-  ///    must be either part of the mrml scene or
-  ///    stored in the registry part of the GUI layer
-  void ClearCollections();
-
   /// These routings act as place holders so that test scripts can
   /// turn on and off tracing.  These are just hooks
   /// for use with external tracing tool (such as AQTime)
@@ -238,11 +208,6 @@ private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
-  /// for now, make these generic collections
-  /// - maybe they should be subclassed to be type-specific?
-  vtkSmartPointer<vtkCollection> Views;
-  vtkSmartPointer<vtkCollection> Modules;
-
 //BTX
   itk::MultiThreader::Pointer ProcessingThreader;
   itk::MutexLock::Pointer ProcessingThreadActiveLock;
@@ -267,8 +232,6 @@ private:
   ModifiedQueue*       InternalModifiedQueue;
   ReadDataQueue*       InternalReadDataQueue;
   WriteDataQueue*      InternalWriteDataQueue;
-
-  /// Transient Application State
 
   /// For use with external tracing tool (such as AQTime)
   int Tracing;
