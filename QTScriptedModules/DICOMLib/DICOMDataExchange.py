@@ -52,12 +52,13 @@ class DICOMLoader(object):
       fileList.InsertNextValue(f)
     vl = slicer.modules.volumes.logic()
     # TODO: pass in fileList once it is known to be in the right order
-    volumeNode = vl.AddArchetypeVolume( files[0], name, 0 )
+    self.volumeNode = vl.AddArchetypeVolume( files[0], name, 0 )
     # automatically select the volume to display
     appLogic = slicer.app.applicationLogic()
     selNode = appLogic.GetSelectionNode()
-    selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
-    appLogic.PropagateVolumeSelection()
+    if self.volumeNode:
+      selNode.SetReferenceActiveVolumeID(self.volumeNode.GetID())
+      appLogic.PropagateVolumeSelection()
 
 
 class DICOMExporter(object):
