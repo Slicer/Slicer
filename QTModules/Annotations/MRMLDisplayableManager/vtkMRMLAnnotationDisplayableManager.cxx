@@ -443,11 +443,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
-  if (!newWidget) {
+  if (!newWidget)
+    {
     vtkErrorMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
-    // Exit here, if this is not the right displayableManager
     return;
-  }
+    }
   this->Helper->Widgets[annotationNode] = newWidget;
 
   // Add the node to the list.
