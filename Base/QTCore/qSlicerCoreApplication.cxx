@@ -325,9 +325,22 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   this->SlicerBin =
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
 #else
+  // There are two cases to consider, the application could be started from:
+  //   1) Install tree
+  //        Application location: /path/to/Foo.app/Contents/MacOSX/myapp
+  //        Binary directory:     /path/to/Foo.app/Contents/bin
+  //   2) Build tree
+  //        Application location: /path/to/build-dir/bin/Foo.app/Contents/MacOSX/myapp
+  //        Binary directory:     /path/to/build-dir/bin
+  //
   QDir slicerBinAsDir(q->applicationDirPath());
-  slicerBinAsDir.cdUp(); // Move from /path/to/Content/MacOSX to /path/to/Content
-  slicerBinAsDir.cd(Slicer_BIN_DIR);
+  slicerBinAsDir.cdUp(); // Move from /path/to/Foo.app/Contents/MacOSX to /path/to/Foo.app/Contents
+  if(!slicerBinAsDir.cd(Slicer_BIN_DIR))
+    {
+    slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app/Contents to /path/to/build-dir/bin/Foo.app
+    slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app          to /path/to/build-dir/bin
+    slicerBinAsDir.cd(Slicer_BIN_DIR);
+    }
   this->SlicerBin = slicerBinAsDir.path();
   Q_ASSERT(qSlicerUtils::pathEndsWith(this->SlicerBin, Slicer_BIN_DIR));
 #endif
