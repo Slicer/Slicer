@@ -7,16 +7,16 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
-if(DEFINED SlicerBRAINSTools_SOURCE_DIR AND NOT EXISTS ${SlicerBRAINSTools_SOURCE_DIR})
-  message(FATAL_ERROR "SlicerBRAINSTools_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED BRAINSTools_SOURCE_DIR AND NOT EXISTS ${BRAINSTools_SOURCE_DIR})
+  message(FATAL_ERROR "BRAINSTools_SOURCE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
 # Set dependency list
-set(SlicerBRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )
+set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(SlicerBRAINSTools)
-set(proj SlicerBRAINSTools)
+SlicerMacroCheckExternalProjectDependency(BRAINSTools)
+set(proj BRAINSTools)
 
 # Set CMake OSX variable to pass down the external project
 #set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -27,7 +27,7 @@ set(proj SlicerBRAINSTools)
 #    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 #endif()
 
-if(NOT DEFINED SlicerBRAINSTools_SOURCE_DIR)
+if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/jcfr/BRAINSStandAlone.git"
@@ -40,11 +40,11 @@ if(NOT DEFINED SlicerBRAINSTools_SOURCE_DIR)
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS
-      ${SlicerBRAINSTools_DEPENDENCIES}
+      ${BRAINSTools_DEPENDENCIES}
     )
-  set(SlicerBRAINSTools_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(BRAINSTools_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 else()
-  # The project is provided using SlicerBRAINSTools_DIR, nevertheless since other project may depend on SlicerBRAINSTools,
+  # The project is provided using BRAINSTools_DIR, nevertheless since other project may depend on BRAINSTools,
   # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${SlicerBRAINSTools_DEPENDENCIES}")
+  SlicerMacroEmptyExternalProject(${proj} "${BRAINSTools_DEPENDENCIES}")
 endif()

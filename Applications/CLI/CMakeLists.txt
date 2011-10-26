@@ -101,7 +101,7 @@ foreach(cli_module ${cli_modules})
 endforeach()
 
 if(Slicer_BUILD_BRAINSTOOLS)
-  # NOTE: SlicerBRAINSTools source code is checkout using "External_SlicerBRAINSTools.cmake".
+  # NOTE: BRAINSTools source code is checkout using "External_BRAINSTools.cmake".
   set(BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)
   set(BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)
   set(BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR} CACHE PATH "" FORCE)
@@ -121,7 +121,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(USE_BRAINSABC ON CACHE BOOL "" FORCE) # Since BUILD_TESTING is OFF, ReferenceAtlas is not required
   set(USE_BRAINSInitializedControlPoints ON CACHE BOOL "" FORCE)
   add_subdirectory(
-    ${SlicerBRAINSTools_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/SlicerBRAINSTools
+    ${BRAINSTools_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/BRAINSTools
     )
 endif()

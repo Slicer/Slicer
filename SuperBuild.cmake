@@ -74,7 +74,7 @@ endif()
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
 
 if(Slicer_BUILD_BRAINSTOOLS)
-    list(APPEND Slicer_DEPENDENCIES SlicerBRAINSTools)
+    list(APPEND Slicer_DEPENDENCIES BRAINSTools)
 endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
@@ -192,7 +192,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 endif()
 
 if(Slicer_BUILD_BRAINSTOOLS)
-  list(APPEND ep_superbuild_extra_args -DSlicerBRAINSTools_SOURCE_DIR:PATH=${SlicerBRAINSTools_SOURCE_DIR})
+  list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
 endif()
 
 # Set CMake OSX variable to pass down the external project
