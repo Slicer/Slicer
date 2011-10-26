@@ -62,10 +62,11 @@
                 </property>
               </widget>
             </item>
+
             <item row="0" column="1">
               <widget class="QPushButton" name="LoadNonDicomDataButton">
                 <property name="text">
-                  <string>Load non-DICOM Data</string>
+                  <string>Load Data</string>
                 </property>
                 <property name="icon">
                   <iconset resource="../qSlicerWelcomeModule.qrc">
@@ -79,9 +80,47 @@
                 </property>
               </widget>
             </item>
+
+            <item row="1" column="1">
+              <widget class="QPushButton" name="LoadSampleDataButton">
+                <property name="text">
+                  <string>Load Sample Data</string>
+                </property>
+                <property name="icon">
+                  <iconset resource="../qSlicerWelcomeModule.qrc">
+                    <normaloff>:/Images/SlicerWWW-Original.png</normaloff>:/Images/SlicerWWW-Original.png</iconset>
+                </property>
+                <property name="iconSize">
+                  <size>
+                    <width>45</width>
+                    <height>22</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+
+            <item row="1" column="0">
+              <widget class="QPushButton" name="LoadVolumeButton">
+                <property name="text">
+                  <string>Load Volume Data</string>
+                </property>
+                <property name="icon">
+                  <iconset resource="../qSlicerWelcomeModule.qrc">
+                    <normaloff>:/Images/SlicerLoadVolume-Original.png</normaloff>:/Images/SlicerLoadVolume-Original.png</iconset>
+                </property>
+                <property name="iconSize">
+                  <size>
+                    <width>45</width>
+                    <height>22</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+
           </layout>
         </widget>
       </item>
+
       <item>
         <spacer name="verticalSpacer">
           <property name="orientation">
@@ -472,7 +511,7 @@
       <sender>LoadNonDicomDataButton</sender>
       <signal>clicked()</signal>
       <receiver>qSlicerWelcomeModuleWidget</receiver>
-      <slot>loadNonDicomData()</slot>
+      <slot>loadData()</slot>
       <hints>
         <hint type="sourcelabel">
           <x>424</x>
@@ -485,10 +524,10 @@
       </hints>
     </connection>
     <connection>
-      <sender>ViewTutorialsButton</sender>
+      <sender>LoadVolumeButton</sender>
       <signal>clicked()</signal>
       <receiver>qSlicerWelcomeModuleWidget</receiver>
-      <slot>presentTutorials()</slot>
+      <slot>loadVolume()</slot>
       <hints>
         <hint type="sourcelabel">
           <x>424</x>

@@ -71,18 +71,16 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (loadDicomData()) );
   connect (d->LoadNonDicomDataButton, SIGNAL(clicked()),
            this, SLOT (loadNonDicomData()) );
-/*
  connect (d->LoadSampleDataButton, SIGNAL(clicked()),
            this, SLOT (loadRemoteSampleData()) );
-  connect (d->ViewTutorialsButton, SIGNAL(clicked()),
-           this, SLOT (presentTutorials()) );
-*/
+  connect (d->LoadVolumeButton, SIGNAL(clicked()),
+           this, SLOT (loadVolume()) );
   
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerWelcomeModuleWidget::loadDicomData()
+bool qSlicerWelcomeModuleWidget::loadVolume()
 {
   qSlicerIOManager *ioManager = qSlicerApplication::application()->ioManager();
   if (!ioManager)
@@ -91,6 +89,43 @@ bool qSlicerWelcomeModuleWidget::loadDicomData()
     }
   return ioManager->openAddVolumesDialog();
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerWelcomeModuleWidget::loadDicomData()
+{
+  //--- open the DICOM module.
+  qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
+  if (!moduleManager)
+    {
+    return false;
+    }
+  qSlicerAbstractCoreModule * dicomDataModule = moduleManager->module("DICOM");
+  if(!dicomDataModule)
+    {
+    QMessageBox::warning (
+          this, tr("Raising DICOM Module:"),
+          tr("Unfortunately, this module is not available in this Slicer session."),
+          QMessageBox::Ok);
+    return false;
+    }
+
+  // TODO Provide an easy mechanism to change the selected the module
+  qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+  if (!pythonManager)
+    {
+    QMessageBox::warning (
+          this, tr("Raising DICOM Module:"),
+          tr("Unfortunately, the python script for displaying the sample "
+             "data module is not present in this Slicer session."),
+          QMessageBox::Ok);
+    return false;
+    }
+
+  pythonManager->executeString(
+        QString("slicer.util.mainWindow().moduleSelector().selectModule('DICOM');"));
+  return true;
+}
+
 
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadNonDicomData()
