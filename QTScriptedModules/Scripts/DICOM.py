@@ -342,6 +342,8 @@ class DICOMWidget:
       name = d[d.index('[')+1:d.index(']')]
     except ValueError:
       name = "Unknown"
+    self.progress.labelText += '\nLoading %s' % name
+    slicer.app.processEvents()
     self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
 
   def loadFiles(self, files, name):
