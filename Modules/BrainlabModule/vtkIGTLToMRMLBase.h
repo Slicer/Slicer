@@ -33,12 +33,10 @@ class VTK_BRAINLABMODULE_EXPORT vtkIGTLToMRMLBase : public vtkObject
   // NOTE: if you want to define a child class that can handle multiple types
   // of OpenIGTLink messages, override GetConverterType() method to return
   // TYPE_MULTI_IGTL_NAME.
-  //BTX
   enum {
     TYPE_NORMAL,            // supports only single IGTL message type (default)
     TYPE_MULTI_IGTL_NAMES,  // supports multiple IGTL message names (device types)
   };
-  //ETX
 
  public:
 
@@ -58,10 +56,8 @@ class VTK_BRAINLABMODULE_EXPORT vtkIGTLToMRMLBase : public vtkObject
   int                  GetNumberOfIGTLNames()   { return this->IGTLNames.size(); };
   const char*          GetIGTLName(int index)   { return this->IGTLNames[index].c_str(); };
 
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer vtkNotUsed(buffer),
                                   vtkMRMLNode* vtkNotUsed(node)) { return 0; };
-  //ETX
   virtual int          MRMLToIGTL(unsigned long vtkNotUsed(event), vtkMRMLNode* vtkNotUsed(mrmlNode),
                                   int* vtkNotUsed(size), void** vtkNotUsed(igtlMsg)){ return 0; };
 
@@ -74,10 +70,8 @@ class VTK_BRAINLABMODULE_EXPORT vtkIGTLToMRMLBase : public vtkObject
 
  protected:
 
-  //BTX
   // list of IGTL names (used only when the class supports multiple IGTL names)
   std::vector<std::string>  IGTLNames;
-  //ETX
   
   int CheckCRC;
   

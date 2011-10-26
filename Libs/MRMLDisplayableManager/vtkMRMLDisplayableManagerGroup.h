@@ -110,7 +110,6 @@ protected:
   vtkMRMLDisplayableManagerGroup();
   virtual ~vtkMRMLDisplayableManagerGroup();
 
-  //BTX
   typedef vtkMRMLDisplayableManagerGroup Self;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
@@ -118,12 +117,9 @@ protected:
   /// the associated factory
   void onDisplayableManagerFactoryRegisteredEvent(const char* displayableManagerName);
   void onDisplayableManagerFactoryUnRegisteredEvent(const char* displayableManagerName);
-  //ETX
 
-  //BTX
   class vtkInternal;
   vtkInternal* Internal;
-  //ETX
 
 private:
 

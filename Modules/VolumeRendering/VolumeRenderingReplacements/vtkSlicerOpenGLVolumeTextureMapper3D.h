@@ -49,7 +49,6 @@ public:
   // not support the required extensions
   int IsRenderSupported(vtkRenderWindow*,  vtkVolumeProperty *);
   
-//BTX
 
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
@@ -57,7 +56,6 @@ public:
   // Render the volume
   virtual void Render(vtkRenderer *ren, vtkVolume *vol);
 
-//ETX
   
   // Desciption:
   // Initialize when we go to render, or go to answer the
@@ -75,7 +73,6 @@ protected:
   vtkSlicerOpenGLVolumeTextureMapper3D();
   ~vtkSlicerOpenGLVolumeTextureMapper3D();
 
-//BTX  
 
   void GetLightInformation(vtkRenderer *ren,
                            vtkVolume *vol,
@@ -84,7 +81,6 @@ protected:
                            GLfloat lightSpecularColor[2][4],
                            GLfloat halfwayVector[2][4],
                            GLfloat *ambient );  
-//ETX
    
   int              Initialized;
   GLuint           Volume1Index;

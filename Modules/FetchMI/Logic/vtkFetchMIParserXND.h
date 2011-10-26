@@ -72,9 +72,7 @@ public:
   virtual ~vtkFetchMIParserXND();
 
   vtkXMLDataParser *Parser;
-  //BTX
   std::string ErrorString;
-  //ETX
 
   vtkFetchMIParserXND(const vtkFetchMIParserXND&); // Not implemented
   void operator=(const vtkFetchMIParserXND&); // Not Implemented

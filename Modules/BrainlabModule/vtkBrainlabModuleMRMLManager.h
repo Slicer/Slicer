@@ -88,12 +88,10 @@ private:
   //
 
   vtkIdType NextVTKNodeID;
-  //BTX
   typedef vtksys_stl::map<vtkIdType, vtksys_stl::string>  VTKToMRMLMapType;
   VTKToMRMLMapType                                VTKNodeIDToMRMLNodeIDMap;
   typedef vtksys_stl::map<vtksys_stl::string, vtkIdType>  MRMLToVTKMapType;
   MRMLToVTKMapType                                MRMLNodeIDToVTKNodeIDMap;
-  //ETX
 };
 
 #endif

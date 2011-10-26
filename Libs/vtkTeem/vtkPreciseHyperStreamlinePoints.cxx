@@ -40,7 +40,6 @@ public:
     float   S;       // scalar value 
     float   D;       // distance travelled so far 
 };
-//ETX
 
 class vtkPreciseHyperArray { //;prevent man page generation
 public:

@@ -88,7 +88,6 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   /// Get Average of all DWI images
   vtkGetObjectMacro(AverageDWI,vtkImageData);
 
-//BTX
   enum
     {
       tenEstimateMethodUnknown,  /* 0 */
@@ -97,7 +96,6 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
       tenEstimateMethodNLS,      /* 3 */
       tenEstimateMethodLast
     };
-//ETX
    //Description
   vtkGetMacro(EstimationMethod,int);
   vtkSetMacro(EstimationMethod,int);
@@ -122,11 +120,9 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
  
   /// 
   /// Internal class use only
-  //BTX
   void TransformDiffusionGradients();
   int SetGradientsToContext ( tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
   int SetTenContext(  tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
-  //ETX
 
   /// 
   /// Flag to shift eigenvalues upwards to that smallest one is non-negative

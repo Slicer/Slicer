@@ -89,10 +89,8 @@ protected:
     vtkMatrix4x4 *LandmarkTransformMatrix;
     vtkTransform *LocatorNormalTransform;
 
-//BTX
     float p[3], n[3];
     float pOld[3], nOld[3];
-//ETX
 
 
     void quaternion2xyz(float* orientation, float *normal, float *transnormal); 

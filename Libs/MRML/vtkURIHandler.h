@@ -42,7 +42,6 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 
   /// need something that goes the other way too...
 
-  //BTX
   /// 
   /// Determine whether protocol is appropriate for this handler.
   /// NOTE: Subclasses should implement this method
@@ -60,7 +59,6 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   /// 
   /// This function gives us some feedback on how our download is going.
   int ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow);
-  //ETX
 
   vtkGetMacro ( RequiresPermission, int );
   vtkSetMacro ( RequiresPermission, int );
@@ -93,9 +91,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 
   /// 
   /// local file, it gets passed to C functions in libcurl 
-  //BTX
   //std::ofstream* LocalFile;
-  //ETX
   FILE *LocalFile;
   char *Prefix;
   char *Name;

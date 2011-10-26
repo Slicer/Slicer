@@ -60,17 +60,13 @@ public:
 
   vtkSystemInformation();
   virtual ~vtkSystemInformation();
-  //BTX
   vtkSystemInformation(const vtkSystemInformation&);
   void operator=(const vtkSystemInformation&);
-  //ETX
   
   //private:
 
-  //BTX
   vtksys::SystemInformation SystemInformation;
   vtksys_stl::string StringHolder;
-  //ETX
 
 };
 #endif

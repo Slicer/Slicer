@@ -329,11 +329,9 @@ public:
   /// Get PolyData models like glyphs etc.
   void GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *PolyDataCollection,
                                             vtkCollection *LookupTableCollection);
-//BTX                                            
   /// 
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
   std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
-//ETX
   /// Return the associated slicerlayer nodes
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLSliceNode* node);
 

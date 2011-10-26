@@ -161,9 +161,7 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
 
-//BTX
   static void GetSupportedColorModes(std::vector<int> &modes);
-//ETX
 //
  protected:
   vtkMRMLFiberBundleDisplayNode ( );

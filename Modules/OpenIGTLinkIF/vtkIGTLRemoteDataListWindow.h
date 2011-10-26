@@ -139,9 +139,7 @@ protected:
   
   vtkMRMLIGTLConnectorNode* Connector;
   vtkMRMLIGTLQueryNode* ImageMetaListQueryNode;
-  //BTX
   std::list<vtkMRMLIGTLQueryNode*> ImageQueryNodeList;
-  //ETX
 
  private:
   vtkIGTLRemoteDataListWindow(const vtkIGTLRemoteDataListWindow&);

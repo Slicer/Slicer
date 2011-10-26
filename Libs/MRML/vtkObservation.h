@@ -92,9 +92,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkGetMacro (TotalElapsedTime, double);
   vtkSetMacro (TotalElapsedTime, double);
 
-  //BTX
   std::deque<void *> *GetCallDataList() {return &(this->CallDataList);};
-  //ETX
 
 protected:
   vtkObservation();
@@ -135,9 +133,7 @@ protected:
 
   /// 
   /// data passed to the observation by the subject
-  //BTX
   std::deque<void *> CallDataList;
-  //ETX
 
   /// 
   /// Holder for script as an alternative to the callback command

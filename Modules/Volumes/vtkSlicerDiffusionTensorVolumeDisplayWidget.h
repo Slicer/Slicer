@@ -92,10 +92,8 @@ protected:
   int UpdatingMRML;
   int UpdatingWidget;
 
-  //BTX
   std::map <std::string, int> ScalarModeMap;
   std::map <std::string, int> GlyphModeMap;
-  //ETX
 private:
 
   vtkSlicerDiffusionTensorVolumeDisplayWidget(const vtkSlicerDiffusionTensorVolumeDisplayWidget&); // Not implemented

@@ -128,7 +128,6 @@ public:
   // the image.
   vtkGetMacro( ActualSampleDistance, float );
 
-//BTX
 
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
@@ -145,7 +144,6 @@ public:
     ATI_METHOD=2,
     NO_METHOD=3
   }; 
-//ETX
 
   // Description:
   // Set the preferred render method. If it is supported, this
@@ -222,9 +220,7 @@ protected:
 
   // Description:
   // Impemented in subclass - check is texture size is OK.
-  //BTX
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
-  //ETX
   
 private:
   vtkSlicerVolumeTextureMapper3D(const vtkSlicerVolumeTextureMapper3D&);  // Not implemented.

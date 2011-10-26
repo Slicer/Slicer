@@ -80,7 +80,6 @@ public:
 
   virtual void SetParentNodeID(const char* ref);
 
-//BTX
   /// 
   /// Given this hierarchy node returns all it's children recursively. 
   void GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes);
@@ -90,7 +89,6 @@ public:
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
   /// std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
-//ETX
 
   /// Returns the number of immediate children in the hierarchy
   int GetNumberOfChildrenNodes()
@@ -189,12 +187,10 @@ protected:
   void SetAssociatedNodeIDReference(const char*);
   vtkGetStringMacro(AssociatedNodeIDReference);
 
-  //BTX
   typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
 
   static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
   static std::map< vtkMRMLScene*, unsigned long> SceneHierarchyChildrenNodesMTime;
-  //ETX
   
   ////////////////////////////
   /// 
@@ -202,13 +198,11 @@ protected:
   /// return number of Associated hierarchy nodes
   static int UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene);
   
-  //BTX
   typedef std::map<std::string, vtkMRMLHierarchyNode *> AssociatedHierarchyNodesType;
 
   static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
 
   static std::map< vtkMRMLScene*, unsigned long> SceneAssociatedHierarchyNodesMTime;
-  //ETX
 
   double SortingValue;
 

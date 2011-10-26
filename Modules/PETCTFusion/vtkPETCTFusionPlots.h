@@ -38,9 +38,7 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionPlots : public vtkObject
  protected:
   vtkPETCTFusionPlots();
   virtual ~vtkPETCTFusionPlots();
-  //BTX
   typedef std::map<int, vtkMRMLDoubleArrayNode*> VOItoPlotDataMapType;
-  //ETX
 
  private:
   VOItoPlotDataMapType SUVPlotData;  

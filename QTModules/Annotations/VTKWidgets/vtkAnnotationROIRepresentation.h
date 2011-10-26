@@ -180,9 +180,7 @@ public:
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
   virtual int HasTranslucentPolygonalGeometry();
   
-//BTX - used to manage the state of the widget
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
-//ETX
 
   /// 
   /// The interaction state may be set from a widget (e.g., vtkSlicerBoxWidget2) or

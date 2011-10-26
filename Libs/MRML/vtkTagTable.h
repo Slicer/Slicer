@@ -87,12 +87,10 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   /// 
   virtual void Copy( vtkTagTable *t);
   
-  //BTX
   /// describes attribute value pairs
   std::map<std::string, std::string> TagTable;
   /// describes whether each attribute is selected or not.
   std::map<std::string, int > TagSelectionTable;
-  //ETX
 
  private:
   char *Name;

@@ -94,9 +94,7 @@ protected:
 private:
   vtkNRRDWriter(const vtkNRRDWriter&);  /// Not implemented.
   void operator=(const vtkNRRDWriter&);  /// Not implemented.
-  //BTX
   void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
-  //ETX
   int VTKToNrrdPixelType( const int vtkPixelType );
   int DiffusionWeigthedData;
 };

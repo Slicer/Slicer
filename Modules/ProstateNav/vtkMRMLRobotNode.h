@@ -38,7 +38,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
   // Constants Definitions
   //----------------------------------------------------------------
 
-  //BTX
   // Events
   enum {
     ChangeStatusEvent     = 200907,
@@ -58,7 +57,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
     std::string text;
     STATUS_ID indicator; // this determines the background color
   };
-  //ETX
 
 
 
@@ -128,9 +126,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
 
   virtual bool FindTargetingParams(vtkProstateNavTargetDescriptor *targetDesc) { return false; };
   virtual bool ShowRobotAtTarget(vtkProstateNavTargetDescriptor *targetDesc) { return false; };
-  //BTX
   virtual std::string GetTargetInfoText(vtkProstateNavTargetDescriptor *targetDesc) { return ""; };
-  //ETX
 
   // Description:
   // Sets the transform to a coordinate system that is aligned with the robot base.
@@ -160,9 +156,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
   
   // Description:
   // returns 0 if failed
-  //BTX
   int GetStatusDescriptor(unsigned int index, std::string &text, STATUS_ID &indicator);
-  //ETX
 
  protected:
   //----------------------------------------------------------------
@@ -178,9 +172,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
   char *TargetTransformNodeID;
   vtkMRMLTransformNode* TargetTransformNode;
 
-  //BTX
   std::vector<StatusDescriptor> StatusDescriptors;
-  //ETX
 
  protected:
   //

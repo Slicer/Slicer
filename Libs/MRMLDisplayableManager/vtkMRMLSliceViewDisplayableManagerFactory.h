@@ -62,9 +62,7 @@ protected:
   vtkMRMLSliceViewDisplayableManagerFactory();
   virtual ~vtkMRMLSliceViewDisplayableManagerFactory();
 
-  //BTX
   VTK_SINGLETON_DECLARE(vtkMRMLSliceViewDisplayableManagerFactory);
-  //ETX
 
 private:
 
@@ -73,10 +71,8 @@ private:
 
 };
 
-//BTX
 VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT,
                                   vtkMRMLSliceViewDisplayableManagerFactory);
-//ETX
 
 #endif
 

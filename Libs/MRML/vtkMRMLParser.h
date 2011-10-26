@@ -54,9 +54,7 @@ protected:
 private:
   vtkMRMLScene* MRMLScene;
   vtkCollection* NodeCollection;
-//BTX
   std::stack< vtkMRMLNode *> NodeStack;
-//ETX
 };
 
 #endif

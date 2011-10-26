@@ -89,9 +89,7 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   // Methods for building the module GUI (main BuildGUI method
   // and methods it calls for building each GUI sub-panel.
   virtual void BuildGUI ( );
-  //BTX
   using vtkSlicerComponentGUI::BuildGUI;
-  //ETX
   virtual void BuildDisplayFrame(vtkKWWidget *parent);
   virtual void BuildFusionFrame(vtkKWWidget *parent);
   virtual void BuildAnalysisFrame(vtkKWWidget *parent);
@@ -170,9 +168,7 @@ class VTK_PETCTFUSION_EXPORT vtkPETCTFusionGUI : public vtkSlicerModuleGUI
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
-  //BTX
   using vtkSlicerComponentGUI::Enter;
-  //ETX
   virtual void Exit ( );
   virtual void Init ( );
 

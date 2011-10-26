@@ -74,10 +74,8 @@ protected:
     ~vtkSlicerFont ( );
 
     // try this...
-    //BTX
     std::vector <std::string> FontFamilies;
     std::vector <std::string> FontSizes;
-    //ETX
     int NumberOfFontFamilies;
     int NumberOfFontSizes;
 

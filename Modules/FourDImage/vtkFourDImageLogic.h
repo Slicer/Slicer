@@ -46,7 +46,6 @@ class vtkIGTLConnector;
 class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic 
 {
  public:
-  //BTX
   enum {  // Events
     //LocatorUpdateEvent    = 50000,
     StatusUpdateEvent       = 50001,
@@ -86,7 +85,6 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   //typedef std::map<std::string, CurveDataSetType> CurveCacheType;
 
   typedef std::map<std::string, std::string> RegistrationParametersType;
-  //ETX
 
  public:
   
@@ -100,7 +98,6 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   // specified by 'path' argument.
   // Returns number of volumes in the series.
 
-  //BTX
   //const int SpaceDim = 3;
   typedef short PixelValueType;
   typedef itk::Image< PixelValueType, 3 > VolumeType;
@@ -122,7 +119,6 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
                              const char* order, const char* filter, int nFrames, int nSlices, int nChannels, int channel);
   vtkMRMLTimeSeriesBundleNode* LoadImagesByList(const char* bundleNodeName,
                                                 std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
-  //ETX
 
   vtkMRMLTimeSeriesBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName);
   vtkMRMLTimeSeriesBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName,
@@ -173,9 +169,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   //virtual void ProcessLogicEvents(vtkObject * caller,
   //                                unsigned long event,
   //                               void * callData);
-  //BTX
   using vtkSlicerLogic::ProcessLogicEvents;
-  //ETX
 
   static void DataCallback(vtkObject*, unsigned long, void *, void *);
   void UpdateAll();
@@ -185,14 +179,12 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
 
  private:
 
-  //BTX
   FrameNodeVectorType FrameNodeVector;
   FrameNodeVectorType RegisteredFrameNodeVector;
   std::string VolumeBundleID;
   std::string RegisteredVolumeBundleID;
 
   //CurveCacheType CurveCache;  // CurveCache[<4d bundle name>][<label number>].<member of CurveDataType>
-  //ETX
 
 };
 

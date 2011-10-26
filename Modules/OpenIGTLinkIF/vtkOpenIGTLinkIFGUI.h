@@ -59,7 +59,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Type defines
   //----------------------------------------------------------------
  public:
-  //BTX
   enum {
     SLICE_PLANE_RED    = 0,
     SLICE_PLANE_YELLOW = 1,
@@ -92,7 +91,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   } IOConfigNodeInfoType;
 
   typedef std::list<IOConfigNodeInfoType> IOConfigNodeInfoListType;
-  //ETX
 
   //----------------------------------------------------------------
   // Access functions
@@ -174,10 +172,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //virtual int  OnMrmlNodeListChanged(int row, int col, const char* item);
   void         ProcessTimerEvents();
   void         HandleMouseEvent(vtkSlicerInteractorStyle *style);
-  //BTX
   static void  DataCallback(vtkObject *caller, 
                            unsigned long eid, void *clientData, void *callData);
-  //ETX
   
  public:
   // Description:
@@ -207,10 +203,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
  private:
   void IOConfigTreeContextMenu(const char *callData);
-  //BTX
   //int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* devID, int* io);
   int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* io, std::string& nodeID);
-  //ETX
   void AddIOConfigContextMenuItem(int type, const char* conID, int io, const char* nodeID);
 
   // Description:
@@ -308,12 +302,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   //ConnectorIDListType ConnectorIDList;
-  //BTX
   // List of connector node
   std::vector<std::string> ConnectorNodeList;
-  //ETX
 
-  //BTX
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListAvailable;
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListSelected;
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType LocatorSourceList;
@@ -323,7 +314,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   IOConfigNodeInfoListType IOConfigTreeIOList;
   IOConfigNodeInfoListType IOConfigTreeNodeList;
 
-  //ETX
 
   //----------------------------------------------------------------
   // Locator Model

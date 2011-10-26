@@ -82,17 +82,14 @@ public:
     /// Given a scalar value val, return an rgba color value
     /// returns array of length 3, 0-255
     unsigned char *MapValue(double val);
-    //BTX - begin tcl exclude
     /// 
     /// passes val to MapValue
     void GetColor(double, double[3]);
-    //ETX - end tcl exclude
     /// 
     /// take input scalars and push them through the calculation to get colours
     /// to put int the output array
     void MapScalarsThroughTable2(void* input, unsigned char* outupt, int inputDataType, int numberOfValues, int inputIncrement, int outputIncrement);
 
-    //BTX
     /// 
     /// Type constant, can have different types of colour scales
     enum
@@ -104,7 +101,6 @@ public:
       FSLUTREDGREEN = 4,
       FSLUTGREENRED = 5,
     };
-    //ETX
 
     // Description:
     // Get the number of available colors for mapping to.

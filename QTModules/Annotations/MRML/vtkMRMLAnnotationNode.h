@@ -76,7 +76,6 @@ public:
 
   int GetNumberOfTexts(); 
 
-//BTX
   enum 
   {
     TEXT_SELECTED = 0,
@@ -84,7 +83,6 @@ public:
     NUM_TEXT_ATTRIBUTE_TYPES,
      LockModifiedEvent,
   };
-//ETX
   virtual const char *GetAttributeTypesEnumAsString(int val);
   vtkDataArray* GetAnnotationAttributes(int att); 
   int GetAnnotationAttribute(vtkIdType id, int att);

@@ -28,7 +28,6 @@ public:
   /// OWN methods
   //--------------------------------------------------------------------------
 
-  //BTX
 
   ///
   /// Get a string representation of all points in the piecewise function.
@@ -52,7 +51,6 @@ public:
   /// vtkColorTransferFunction, use together with getColorTransferFunctionString
   void GetColorTransferFunctionFromString(const std::string& str, vtkColorTransferFunction* result);
 
-  //ETX
 
   ///
   /// Create a new vtkMRMLVolumePropertyNode
@@ -135,10 +133,8 @@ protected:
   /// Use ->Delete() to delete object
   ~vtkMRMLVolumePropertyNode(void);
 
-  //BTX
   static int dataFromString(const std::string& dataString, double* &data);
   static std::string dataToString(double* data, int size);
-  //ETX
 
   ///
   /// Events observed on the transfer functions

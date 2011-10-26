@@ -47,7 +47,6 @@ public:
   vtkGetMacro(NumberOfVertices,int);
   vtkSetMacro(NumberOfVertices,int);
 
-  //BTX
   enum
   {
     /// error codes
@@ -61,7 +60,6 @@ public:
     /// file type magic numbers
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
   };
-  //ETX
   
 protected:
   vtkFSSurfaceWFileReader();

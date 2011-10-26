@@ -89,14 +89,12 @@ protected:
   int               ThreadID;
   int               ServerPort;
   int               ServerStopFlag;
-  //BTX
   // need a space between > and >; otherwise compiler will complains.
   std::vector< std::vector<double> *>  SimulatorTrackingData;   
   std::string       ServerHostname;
   igtl::ClientSocket::Pointer Socket;
   void GetRandomTestMatrix(igtl::Matrix4x4 &matrix);
   void GenerateTrackingMatrix(std::vector<double> *values, igtl::Matrix4x4 &matrix); 
-  //ETX
 
 private:
   vtkBrainlabModuleConnectionStep(const vtkBrainlabModuleConnectionStep&);

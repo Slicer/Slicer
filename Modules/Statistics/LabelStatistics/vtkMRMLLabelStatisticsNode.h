@@ -27,7 +27,6 @@ class vtkImageData;
 class VTK_LABELSTATISTICS_EXPORT vtkMRMLLabelStatisticsNode : public vtkMRMLNode
 {
   public:
- //BTX
   typedef struct LabelStatsEntry{
     int Label;
     int Count;
@@ -41,7 +40,6 @@ class VTK_LABELSTATISTICS_EXPORT vtkMRMLLabelStatisticsNode : public vtkMRMLNode
   //  LabelStatsEntry* LabelStats;
   std::list <LabelStatsEntry> LabelStats;
 
-  //ETX
  
   static vtkMRMLLabelStatisticsNode *New();
   vtkTypeMacro(vtkMRMLLabelStatisticsNode,vtkMRMLNode);

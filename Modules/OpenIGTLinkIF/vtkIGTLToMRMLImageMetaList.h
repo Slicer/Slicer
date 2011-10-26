@@ -39,9 +39,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLImageMetaList : public vtkIGTLToMRML
   virtual vtkIntArray* GetNodeEvents();
   virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name);
 
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node);
-  //ETX
   virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
 
 
@@ -52,11 +50,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLImageMetaList : public vtkIGTLToMRML
   void CenterImage(vtkMRMLVolumeNode *volumeNode);
 
  protected:
-  //BTX
   //igtl::TransformMessage::Pointer OutTransformMsg;
   igtl::ImageMetaMessage::Pointer OutImageMetaMsg;
   igtl::GetImageMetaMessage::Pointer GetImageMetaMessage;
-  //ETX
   
 };
 

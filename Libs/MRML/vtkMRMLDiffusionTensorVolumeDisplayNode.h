@@ -158,13 +158,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
 
 
-//BTX
   /// 
   /// get associated slice glyph display node or NULL if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
 
-//ETX
   /// 
   /// add slice glyph display nodes if not already present and return it
   virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );

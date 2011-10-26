@@ -162,7 +162,6 @@ public:
           }
         }
     }
-  //BTX
   void HandleProgressEvent ()
   {
     if ( this->m_Process )
@@ -238,7 +237,6 @@ public:
   vtkImageCast* vtkCast;
   vtkImageImport* vtkImporter;
   vtkImageExport* vtkExporter;  
-  //ETX
   
 private:
   vtkITKImageToImageFilter(const vtkITKImageToImageFilter&);  /// Not implemented.

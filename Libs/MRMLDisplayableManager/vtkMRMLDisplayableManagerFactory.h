@@ -93,14 +93,10 @@ protected:
   vtkMRMLDisplayableManagerFactory();
   virtual ~vtkMRMLDisplayableManagerFactory();
 
-  //BTX
   class vtkInternal;
   vtkInternal* Internal;
-  //ETX
 
-  //BTX
   typedef vtkMRMLDisplayableManagerFactory Self;
-  //ETX
 
 private:
   

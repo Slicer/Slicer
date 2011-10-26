@@ -27,7 +27,6 @@
 #include "vtkImageData.h"
 #include "vtkImageToImageFilter.h"
 #include "vtkChangeTracker.h"
-//BTX
 template<class T> class IslandMemory {
 public:
   // If you provide NewID, which means it is unequal to -1, then make sure that it is unique 
@@ -186,7 +185,6 @@ template<class T> class EMStack {
     bool Valid;
     EMStack* Next;
 };
-//ETX
 
 class VTK_CHANGETRACKER_EXPORT vtkImageIslandFilter : public vtkImageToImageFilter
 {

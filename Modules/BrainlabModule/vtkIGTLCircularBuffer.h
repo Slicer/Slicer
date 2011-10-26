@@ -39,15 +39,11 @@ class VTK_BRAINLABMODULE_EXPORT vtkIGTLCircularBuffer : public vtkObject
 
   int            StartPush();
   void           EndPush();
-  //BTX
   igtl::MessageBase::Pointer GetPushBuffer();
-  //ETX
 
   int            StartPull();
   void           EndPull();
-  //BTX
   igtl::MessageBase::Pointer GetPullBuffer();
-  //ETX
 
   int            IsUpdated() { return this->UpdateFlag; };
 
@@ -64,15 +60,11 @@ class VTK_BRAINLABMODULE_EXPORT vtkIGTLCircularBuffer : public vtkObject
 
   int                UpdateFlag;  // non-zero if updated since StartPull() has called
 
-  //BTX
   std::string        DeviceType[IGTLCB_CIRC_BUFFER_SIZE];
-  //ETX
   long long          Size[IGTLCB_CIRC_BUFFER_SIZE];
   unsigned char*     Data[IGTLCB_CIRC_BUFFER_SIZE];
 
-  //BTX
   igtl::MessageBase::Pointer Messages[IGTLCB_CIRC_BUFFER_SIZE];
-  //ETX
   
 };
 

@@ -59,9 +59,7 @@ private:
     //MRML scene passed from the Module instantiating this class
     vtkMRMLScene *MRMLScene;
     static int index;
-    //BTX
     std::string StreamID;
-    //ETX
 
 };
 

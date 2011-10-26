@@ -175,7 +175,6 @@ public:
                                             vtkRenderer *ren,
                                             vtkVolume *vol );
 
-//BTX
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
   // Initialize rendering for this volume.
@@ -210,7 +209,6 @@ public:
     unsigned char  color[4] );
   int CheckIfCropped( unsigned int pos[3] );
 
-//ETX
 
   vtkGetObjectMacro( RenderWindow, vtkRenderWindow );
   vtkGetObjectMacro( MIPHelper, vtkSlicerFixedPointVolumeRayCastMIPHelper );

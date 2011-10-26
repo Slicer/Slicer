@@ -49,7 +49,6 @@ public:
     }
 
 protected:
-  //BTX
   
   /// To/from ITK
   typedef short InputImagePixelType;
@@ -84,7 +83,6 @@ protected:
   ~vtkITKImageToImageFilterSS()
   {
   };
-  //ETX
   
 private:
   vtkITKImageToImageFilterSS(const vtkITKImageToImageFilterSS&);  /// Not implemented.

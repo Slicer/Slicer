@@ -30,7 +30,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotDisplayNode : public vtkMRMLNode
   // Constants Definitions
   //----------------------------------------------------------------
 
-  //BTX
   // Events
   enum {
     ConnectedEvent        = 118944,
@@ -40,7 +39,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLRobotDisplayNode : public vtkMRMLNode
     ReceiveEvent          = 118948,
     NewDeviceEvent        = 118949,
   };
-  //ETX
 
  public:
 

@@ -49,7 +49,6 @@ public:
   vtkPolyData *GetOutput(int idx);
   void SetOutput(vtkPolyData *output);
 
-  //BTX
   //Description:
   /// old previous versions constants
   enum
@@ -61,7 +60,6 @@ public:
       FS_NUM_VERTS_IN_TRI_FACE = 3, /// dealing with tris
       FS_MAX_NUM_FACES_PER_VERTEX = 10, /// kinda arbitrary
   };
-  //ETX
 
   int RequestData(
       vtkInformation *,

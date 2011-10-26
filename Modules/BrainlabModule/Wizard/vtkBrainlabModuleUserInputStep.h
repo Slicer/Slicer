@@ -68,7 +68,6 @@ protected:
   bool CheckInputErrors();
   void UpdateLabelmapSourceMenu();
 
-  //BTX
   typedef unsigned short LabelType;
   typedef itk::Image<LabelType,3> LabeledVolumeType;
   typedef itk::ImageFileReader<LabeledVolumeType> LabeledVolumeReaderType;
@@ -83,7 +82,6 @@ protected:
                                                double structuringElementRadius);
 
   void Customize(LabeledVolumeType::Pointer labeledVolume);
-  //ETX
 
 private:
   vtkBrainlabModuleUserInputStep(const vtkBrainlabModuleUserInputStep&);

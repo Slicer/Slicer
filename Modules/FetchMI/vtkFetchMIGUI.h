@@ -81,9 +81,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   // Create widgets
 
   virtual void BuildGUI ( );
-  //BTX
   using vtkSlicerComponentGUI::BuildGUI; 
-  //ETX
   virtual void TearDownGUI ( );
   void LoadTclPackage ( );
   virtual void SwallowGUIEvent();
@@ -125,9 +123,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
-  //BTX
   using vtkSlicerComponentGUI::Enter; 
-  //ETX
   virtual void Exit ( );
   virtual void Init ( );
 

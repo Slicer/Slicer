@@ -92,7 +92,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkMRMLFetchMINode : public vtkMRML
   char *SelectedServiceType;
   char *ErrorMessage;
 
-  //BTX
   enum
     {
       KnownServersModifiedEvent = 11000,
@@ -107,7 +106,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkMRMLFetchMINode : public vtkMRML
       RemoteIODirectoryErrorEvent,
       RemoteIOErrorChoiceEvent,
     };
-  //ETX
 
  protected:
   vtkMRMLFetchMINode();

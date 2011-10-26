@@ -138,7 +138,6 @@ public:
   // Description:
   // Set the material property button position to the top frame (default)
   // or to the scalar opacity user frame, or color user frame.
-  //BTX
   enum
   {
     MaterialPropertyPositionTop,
@@ -146,7 +145,6 @@ public:
     MaterialPropertyPositionScalarOpacityUserFrame,
     MaterialPropertyPositionScalarColorUserFrame
   };
-  //ETX
   virtual void SetMaterialPropertyPosition(int);
   vtkGetMacro(MaterialPropertyPosition, int);
   virtual void SetMaterialPropertyPositionToTop();
@@ -237,14 +235,12 @@ public:
   // function points already in the editor is used. If set to 
   // DataAndFunctionPointsthe the largest of the two ranges mentioned 
   // previously is used.
-  //BTX
   enum
   {
     WholeRangeComputationMethodData                  = 1,
     WholeRangeComputationMethodFunctionPoints        = 2,
     WholeRangeComputationMethodDataAndFunctionPoints = 3
   };
-  //ETX
   virtual void SetWholeRangeComputationMethod(int);
   vtkGetMacro(WholeRangeComputationMethod, int);
   virtual void SetWholeRangeComputationMethodToData();

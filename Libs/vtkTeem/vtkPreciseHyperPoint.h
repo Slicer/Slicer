@@ -16,7 +16,6 @@
 
 #include "vtkTeemConfigure.h"
 
-//BTX
 
 class VTK_Teem_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
 public:
@@ -35,6 +34,5 @@ public:
     vtkFloatingPointType   S;       /// scalar value 
     vtkFloatingPointType   D;       /// distance travelled so far 
 };
-//ETX
 
 #endif

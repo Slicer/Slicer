@@ -238,10 +238,8 @@ protected:
   // asynchronously)
   char* Scan2_RegisteredRef;
 
-  //BTX
   vtkstd::vector<int>  ROIMin; 
   vtkstd::vector<int>  ROIMax; 
-  //ETX 
   double SuperSampled_Spacing;
   double SuperSampled_VoxelVolume;
   double SuperSampled_RatioNewOldSpacing;

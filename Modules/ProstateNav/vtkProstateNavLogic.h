@@ -43,13 +43,11 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   
  public:
 
-   //BTX
    enum 
    {  // Events
      LocatorUpdateEvent      = 50000,
      StatusUpdateEvent       = 50001,
    };
-   //ETX
 
   
   static vtkProstateNavLogic *New();
@@ -76,7 +74,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   int  ScanPause();
   int  ScanStop();
   
-  //BTX
   //Image* ReadCalibrationImage(const char* filename, int* width, int* height,
   //                            std::vector<float>& position, std::vector<float>& orientation);
 
@@ -107,15 +104,12 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   // If the user clicks on the image in Place interaction mode, then fiducials will be added to the current fiducial list.
   int SetCurrentFiducialList(vtkMRMLFiducialListNode* fidNode);
 
-  //ETX
 
   void UpdateTargetListFromMRML();
   
  protected:
 
-  //BTX
   std::string GetFoRStrFromVolumeNodeID(const char* volNodeID);
-  //ETX
 
   // Description:
   // Helper method for loading a volume via the Volume module.

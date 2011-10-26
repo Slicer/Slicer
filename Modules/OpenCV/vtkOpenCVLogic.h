@@ -88,12 +88,10 @@ class vtkIGTLConnector;
 class VTK_OpenCV_EXPORT vtkOpenCVLogic : public vtkSlicerModuleLogic 
 {
  public:
-  //BTX
   enum {  // Events
     //LocatorUpdateEvent      = 50000,
     StatusUpdateEvent       = 50001,
   };
-  //ETX 
 
  public:
 

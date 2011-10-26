@@ -59,11 +59,9 @@ private:
   vtkMRMLSliceModelDisplayableManager(const vtkMRMLSliceModelDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLSliceModelDisplayableManager&);                     // Not Implemented
 
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
   friend class vtkInternal;
-  //ETX
 };
 
 #endif

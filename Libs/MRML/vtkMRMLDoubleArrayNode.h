@@ -145,7 +145,6 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   /// if fIncludeError=1 is specified, the range takes account of errors.
   void GetYRange(double* range, int fIncludeError=1);
 
-  //BTX
   // Description:
   //Set labels
   //void SetLabel(std::vector< std::string > labels);
@@ -155,7 +154,6 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   // Description:
   //Get labels
   const LabelsVectorType & GetLabels() const;
-  //ETX
 
   //----------------------------------------------------------------
   /// Constructor and destroctor
@@ -174,10 +172,8 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 
   vtkDoubleArray* Array;
   
-  //BTX
   std::vector< std::string > Unit;
   std::vector< std::string > Labels;
-  //ETX
   
 
 };

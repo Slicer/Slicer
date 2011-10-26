@@ -74,10 +74,8 @@ private:
   virtual void OnMRMLSceneRestoredEvent();
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 };
 
 #endif

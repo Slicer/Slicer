@@ -42,9 +42,7 @@ class  VTK_MIMXCOMMON_EXPORT vtkFiniteElementBuildingBlockList : public vtkObjec
 public:
   static vtkFiniteElementBuildingBlockList *New();
   vtkTypeMacro(vtkFiniteElementBuildingBlockList, vtkObject);
-//BTX
   vtkLinkedList<vtkMimxUnstructuredGridActor*> *InternalMimxObjectList;
-//ETX
 
   // save reference to the scene to be used for storage 
   void SetMRMLSceneForStorage(vtkMRMLScene* scene);

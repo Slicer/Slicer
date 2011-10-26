@@ -83,9 +83,7 @@ public:
     {return "vtkPichonFastMarchingPDF"; };
 
 
-  //BTX
   friend class vtkFastMarching;
-  //ETX
 
   double sigma2SmoothPDF;
 
@@ -103,10 +101,8 @@ public:
 
   double * coefGauss;  
 
-  //BTX
   std::deque<int> inBins;
   std::deque<int> toBeAdded;
-  //ETX
 
   /// first 2 moments (not centered, not divided by number of samples)  
   double m1;

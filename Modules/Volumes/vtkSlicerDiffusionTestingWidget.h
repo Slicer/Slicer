@@ -49,12 +49,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidge
     // Updates the widget if a new ActiveVolumeNode is loaded.
     void UpdateWidget(vtkMRMLVolumeNode *node);
 
-    //BTX
     // Description:
     // Sets the internal value ModifiedForNewTensor if a new tensor has to be estimated.
     // That means parameters (measurement frame or gradients) have changed.
     void SetModifiedForNewTensor(int modified);
-    //ETX
 
     // Description:
     // Sets the widget to its default status.

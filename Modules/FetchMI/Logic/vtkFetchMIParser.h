@@ -187,7 +187,6 @@ public:
   // the temporary this->MetadataInformation
   virtual void ClearValuesForAttribute ( const char *att);
 
-  //BTX
   // kinds of responses we expect.
   enum {
     IdentityQueryResponse=1,
@@ -204,7 +203,6 @@ public:
   //...
   // AttributeM --> {Value1, Value2, Value3...ValueN}
   std::map<std::string, std::vector< std::string> > MetadataInformation;
-  //ETX
   
  protected:
   vtkFetchMIParser();
@@ -217,9 +215,7 @@ public:
   int ResponseType;
   vtkMRMLFetchMINode *FetchMINode;
 
-  //BTX
   std::string ErrorString;
-  //ETX
 
   vtkFetchMIParser(const vtkFetchMIParser&); // Not implemented
   void operator=(const vtkFetchMIParser&); // Not Implemented

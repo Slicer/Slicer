@@ -100,11 +100,9 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       RefreshDisplayEvent
     };
 
-  //BTX
   /// function that gets called when a data transfer has been updated.
   static void TransferUpdateCallback ( vtkObject *__caller,
                                        unsigned long eid, void *__clientData, void *callData );
-  //ETX
 
   /// Holder for update callback
   vtkCallbackCommand *TransferUpdateCommand;

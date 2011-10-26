@@ -28,9 +28,7 @@
 
 #include "vtkMRMLCLIWin32Header.h"
 
-//BTX
 class ModuleDescriptionMap;
-//ETX
 
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
@@ -74,10 +72,8 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   /// Set the status of the node (Idle, Scheduled, Running,
   /// Completed).  The "modify" parameter indicates whether the object
   /// can be modified by the call.
-  //BTX
   void SetStatus(StatusType status, bool modify=true);
   StatusType GetStatus();
-  //ETX
   const char* GetStatusString() {
     switch (this->m_Status)
       {
@@ -94,9 +90,7 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   ///
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
-//BTX
   bool ReadParameterFile(const std::string& filename);
-//ETX
   bool ReadParameterFile(const char *filename);
 
   ///
@@ -105,14 +99,11 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   /// ModuleDescription. "withHandlesToBulkParameters" allows to
   /// control whether all parameters are written or just the
   /// parameters with simple IO mechanisms.
-//BTX
   bool WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters = true);
-//ETX
   bool WriteParameterFile(const char *filename, bool withHandlesToBulkParameters = true);
 
   /// 
   /// Get/Set a parameter for the module.
-//BTX
   void SetParameterAsString(const std::string& name, const std::string& value);
   void SetParameterAsInt(const std::string& name, int value);
   void SetParameterAsBool(const std::string& name, bool value);
@@ -120,7 +111,6 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   void SetParameterAsFloat(const std::string& name, float value);
 
   std::string GetParameterAsString(const std::string &name) const;
-//ETX
 
   /// Some functions to make CommandLineModuleNodes useful from Tcl and Python
   void SetParameterAsString(const char *name, const char *value)
@@ -174,7 +164,6 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 
   /// 
   /// Methods to manage the master list of module description prototypes
-//BTX
   static void RegisterModuleDescription(ModuleDescription md);
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
@@ -193,9 +182,7 @@ private:
 
   static ModuleDescriptionMap *RegisteredModules;
 
-  //BTX
   StatusType m_Status;
-  //ETX
 
 };
 

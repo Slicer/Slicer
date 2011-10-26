@@ -102,9 +102,7 @@ public:
   /// 
   /// Get the 0th based nth name of this colour, replacing the spaces with
   /// subst
-  //BTX
   std::string GetColorNameWithoutSpaces(int ind, const char *subst);
-  //ETX
   
   /// 
   /// Add a color name to the vector
@@ -172,11 +170,9 @@ protected:
   /// Valid values are in the enumerated list
   int Type;
 
-  //BTX
   /// 
   /// A vector of names for the color table elements
   std::vector<std::string> Names;
-  //ETX
 
   /// 
   /// A file name to read text attributes from

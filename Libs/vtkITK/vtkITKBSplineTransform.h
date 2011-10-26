@@ -20,9 +20,7 @@ class vtkITKBSplineTransformHelper;
 class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:
-  //BTX
   typedef itk::AffineTransform<double,3> BulkTransformType;
-  //ETX
   static vtkITKBSplineTransform *New();
   vtkTypeRevisionMacro( vtkITKBSplineTransform, vtkWarpTransform );
   virtual void PrintSelf( ostream& os, vtkIndent indent );
@@ -98,9 +96,7 @@ public:
   /// BulkTransform should be in the ITK coordinate system, which is LPS.
   void SetBulkTransform( const double linear[3][3], const double offset[3] );
   void GetBulkTransform( double linear[3][3], double offset[3] );
-  //BTX
   BulkTransformType const* GetBulkTransform() const;
-  //ETX
 
   /// Sets whether a LPS->RAS conversion should be done.
   //
@@ -117,9 +113,7 @@ public:
 
   bool GetSwitchCoordinateSystem() const;
 
-  //BTX
   itk::Transform<double,3,3>::Pointer GetITKTransform() const;
-  //ETX
 
 protected:
   vtkITKBSplineTransform();

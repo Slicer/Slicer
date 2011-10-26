@@ -57,7 +57,6 @@ vtkTractographyPoint& vtkTractographyPoint::operator=(const vtkTractographyPoint
 
   return *this;
 }
-//ETX
 
 vtkTractographyArray::vtkTractographyArray()
 {

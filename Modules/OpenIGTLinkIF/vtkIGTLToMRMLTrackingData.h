@@ -39,9 +39,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLTrackingData : public vtkIGTLToMRMLB
   virtual vtkIntArray* GetNodeEvents();
   virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name);
 
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node);
-  //ETX
   virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
 
 
@@ -52,12 +50,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLTrackingData : public vtkIGTLToMRMLB
   void CenterImage(vtkMRMLVolumeNode *volumeNode);
 
  protected:
-  //BTX
   //igtl::TransformMessage::Pointer OutTransformMsg;
   igtl::TrackingDataMessage::Pointer      OutTrackingMetaMsg;
   igtl::StartTrackingDataMessage::Pointer StartTrackingDataMessage;
   igtl::StopTrackingDataMessage::Pointer  StopTrackingDataMessage;
-  //ETX
   
 };
 

@@ -110,7 +110,6 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   virtual void UpdateImageDataPipeline();
 
-//BTX
   /// 
   /// get associated slice glyph display node 
   /// TODO: return empty list for now, later add glyphs
@@ -119,7 +118,6 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
     {
     return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
     }
-//ETX
 
   /// 
   /// Access to this class's internal filter elements

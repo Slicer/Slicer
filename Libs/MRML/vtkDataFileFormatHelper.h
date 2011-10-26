@@ -42,7 +42,6 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   virtual const char* GetITKSupportedExtensionGenericNameByIndex(int idx);
   virtual const char* GetITKSupportedExtensionClassNameByIndex(int idx);
 
-//BTX
  protected:
   vtkDataFileFormatHelper();
   virtual ~vtkDataFileFormatHelper();
@@ -61,7 +60,6 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
 private:
   vtkDataFileFormatHelper(const vtkDataFileFormatHelper&);
   void operator=(const vtkDataFileFormatHelper&);
-//ETX
 };
 
 #endif

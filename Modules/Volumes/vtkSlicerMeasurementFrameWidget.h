@@ -44,12 +44,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
 
     // Description:
     // Event is invoked when a matrix value changed.
-    //BTX
     enum
       {
       ChangedEvent = 1234,
       };
-    //ETX
 
     // Description:
     // Sets the Logic to the current vtkSlicerDiffusionEditorLogic of the editor.

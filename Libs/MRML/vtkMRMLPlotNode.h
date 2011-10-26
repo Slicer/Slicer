@@ -31,10 +31,8 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   /// 
   /// These clases are defined as a friend calls of vtkMRMLPlotNode
   /// to call protected the function: GetDrawObject();
-  //BTX
   friend class vtkSlicerXYPlotWidget;
   friend class vtkMRMLXYPlotManagerNode;
-  //ETX
 
  public:
   //----------------------------------------------------------------
@@ -152,9 +150,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   //----------------------------------------------------------------
   int Visible;
   double Color[3];
-  //BTX
   std::string Legend;
-  //ETX
 
 };
 

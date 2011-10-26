@@ -32,7 +32,6 @@
 #include <itkMultiThreader.h>
 #include <itkMutexLock.h>
 
-//BTX
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkSlicerTask;
@@ -42,7 +41,6 @@ class ReadDataQueue;
 class ReadDataRequest;
 class WriteDataQueue;
 class WriteDataRequest;
-//ETX
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   : public vtkMRMLApplicationLogic
@@ -107,13 +105,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// loaded back into the main scene.  Hierarchical nodes will be
   /// handled specially, in that only the top node needs to be listed
   /// in the sourceIds.
-//BTX
   int RequestReadScene(const std::string& filename,
                        std::vector<std::string> &targetIDs,
                        std::vector<std::string> &sourceIDs,
                        int displayData = false,
                        int deleteFile = false);
-//ETX
 
   /// Process a request on the Modified queue.  This method is called
   /// in the main thread of the application because calls to Modified()
@@ -175,25 +171,20 @@ protected:
   /// called by ProcessReadData() in the application main thread
   /// because calls to load data will cause a Modified() on a node
   /// which can force a render.
-  //BTX
   void ProcessReadNodeData( ReadDataRequest &req );
   void ProcessWriteNodeData( WriteDataRequest &req );
-  //EXT
 
   /// Process a request to read data into a scene.  This method is
   /// called by ProcessReadData() in the application main thread
   /// because calls to load data will cause a Modified() on a node
   /// which can force a render.
-  //BTX
   void ProcessReadSceneData( ReadDataRequest &req );
   void ProcessWriteSceneData( WriteDataRequest &req );
-  //EXT
 
 private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
-//BTX
   itk::MultiThreader::Pointer ProcessingThreader;
   itk::MutexLock::Pointer ProcessingThreadActiveLock;
   itk::MutexLock::Pointer ProcessingTaskQueueLock;
@@ -203,11 +194,8 @@ private:
   itk::MutexLock::Pointer ReadDataQueueLock;
   itk::MutexLock::Pointer WriteDataQueueActiveLock;
   itk::MutexLock::Pointer WriteDataQueueLock;
-//ETX
   int ProcessingThreadId;
-//BTX
   std::vector<int> NetworkingThreadIDs;
-//ETX
   int ProcessingThreadActive;
   int ModifiedQueueActive;
   int ReadDataQueueActive;

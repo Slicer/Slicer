@@ -44,7 +44,6 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   // Constants Definitions
   //----------------------------------------------------------------
 
-  //BTX
   // Events
   enum {
     ConnectedEvent        = 118944,
@@ -88,7 +87,6 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   typedef std::list<vtkIGTLToMRMLBase*>   MessageConverterListType;
   typedef std::vector<vtkMRMLNode*>       MRMLNodeListType;
   typedef std::map<std::string, vtkIGTLToMRMLBase*> MessageConverterMapType;
-  //ETX
 
  public:
 
@@ -151,15 +149,11 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   // host name
   void SetServerHostname(const char* str) { this->ServerHostname = str; }
   const char* GetServerHostname() { return this->ServerHostname.c_str(); }
-  //BTX
   void SetServerHostname(std::string str) { this->ServerHostname = str; }
-  //ETX
 
   int SetTypeServer(int port);
   int SetTypeClient(char* hostname, int port);
-  //BTX
   int SetTypeClient(std::string hostname, int port);
-  //ETX
 
   vtkGetMacro( CheckCRC, int );
   void SetCheckCRC(int c);
@@ -185,11 +179,9 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   // Circular Buffer
   //----------------------------------------------------------------
 
-  //BTX
   typedef std::vector<std::string> NameListType;
   unsigned int GetUpdatedBuffersList(NameListType& nameList); // TODO: this will be moved to private
   vtkIGTLCircularBuffer* GetCircularBuffer(std::string& key);     // TODO: Is it OK to use device name as a key?
-  //ETX
 
   //----------------------------------------------------------------
   // Device Lists
@@ -261,9 +253,7 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   //----------------------------------------------------------------
   // Connector configuration 
   //----------------------------------------------------------------
-  //BTX
   std::string Name;
-  //ETX
   int Type;
   int State;
 
@@ -273,38 +263,30 @@ class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
 
   vtkMultiThreader* Thread;
   vtkMutexLock*     Mutex;
-  //BTX
   igtl::ServerSocket::Pointer  ServerSocket;
   igtl::ClientSocket::Pointer  Socket;
-  //ETX
   int               ThreadID;
   int               ServerPort;
   int               ServerStopFlag;
 
-  //BTX
   std::string       ServerHostname;
-  //ETX
 
   //----------------------------------------------------------------
   // Data
   //----------------------------------------------------------------
 
 
-  //BTX
   typedef std::map<std::string, vtkIGTLCircularBuffer*> CircularBufferMap;
   CircularBufferMap Buffer;
-  //ETX
 
   vtkMutexLock* CircularBufferMutex;
   int           RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
 
-  //BTX
   // Event queueing mechanism is needed to send all event notifications from the main thread
   // Events can be pushed to the back of the EventQueue by calling RequestInvoke from any thread,
   // and they will be Invoked in the main thread.
   std::list<unsigned long> EventQueue;
   vtkMutexLock* EventQueueMutex;
-  //ETX
 
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
   DeviceIDSetType   IncomingDeviceIDSet;

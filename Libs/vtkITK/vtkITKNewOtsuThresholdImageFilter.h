@@ -78,12 +78,10 @@ class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToIma
   { DelegateITKOutputMacro ( GetThreshold ); };
 
 protected:
-  //BTX
   typedef itk::NewOtsuThresholdImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
   vtkITKNewOtsuThresholdImageFilter() : Superclass ( ImageFilterType::New() ){};
   ~vtkITKNewOtsuThresholdImageFilter() {};
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  //ETX
   
 private:
   vtkITKNewOtsuThresholdImageFilter(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.

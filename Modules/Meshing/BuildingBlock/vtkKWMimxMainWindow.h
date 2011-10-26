@@ -166,13 +166,9 @@ public:
   // Description:
   // Set/Get the Current Render Window Background Color
   void SetBackgroundColor(double color[3]);
-  //BTX
   using vtkKWFrame::SetBackgroundColor; 
-  //ETX
   double *GetBackgroundColor();
-  //BTX
   using vtkKWFrame::GetBackgroundColor; 
-  //ETX
 
   // Description:
   // Set/Get the default average edge length for building blocks when created

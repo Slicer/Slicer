@@ -62,10 +62,8 @@ private:
   vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLTestCustomDisplayableManager&);                     // Not Implemented
   
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

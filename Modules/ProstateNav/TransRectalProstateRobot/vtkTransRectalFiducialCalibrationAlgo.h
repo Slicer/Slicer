@@ -32,7 +32,6 @@ class vtkPoints;
 
 const unsigned int CALIB_MARKER_COUNT=4;
 
-//BTX
 struct TRProstateBiopsyCalibrationFromImageInput
 {
   double MarkerInitialPositions[CALIB_MARKER_COUNT][3]; // in RAS coordinates
@@ -64,7 +63,6 @@ struct TRProstateBiopsyCalibrationData
   std::string FoR; // frame of reference UID
 };
 
-//ETX
 
 class VTK_PROSTATENAV_EXPORT vtkTransRectalFiducialCalibrationAlgo :
   public vtkObject
@@ -75,13 +73,11 @@ public:
   vtkTypeRevisionMacro(vtkTransRectalFiducialCalibrationAlgo,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  //BTX
   typedef itk::Point<double, 3> PointType;
 
   // Description
   // ... TODO: to be completed
   bool CalibrateFromImage(const TRProstateBiopsyCalibrationFromImageInput &input, TRProstateBiopsyCalibrationFromImageOutput &output);  
-  //ETX
 
   bool FindTargetingParams(vtkProstateNavTargetDescriptor *target);
 
@@ -102,23 +98,17 @@ protected:
 
   bool RotatePoint(double H_before[3], double rotation_rad, double alpha_rad, double mainaxis[3], double I[3], /*out*/double H_after[3]);
 
-  //BTX
   void SegmentAxis(const double initPos1[3], const double initPos2[3], vtkMatrix4x4 *volumeIJKToRASMatrix, vtkImageData* calibVol,
     double thresh1, double thresh2, const double fidDimsMm[3], double radius, double initialAngle, 
     double P1[3], double v1[3], double finalPos1[3], double finalPos2[3], bool &found1, bool &found2, vtkImageData* img1, vtkImageData* img2, std::vector<PointType> *CoordinatesVectorAxis);
   // thresh: 0..100, binary threshold value (0 corresponds to min voxel value; 100 corresponds to max voxel value in the image)
   bool SegmentCircle(double markerCenterGuessRas[3],const double normalRas[3],  double thresh, const double fidDimsMm[3], double radius, vtkMatrix4x4 *ijkToRAS, vtkImageData *calibVol, std::vector<PointType> &CoordinatesVector, vtkImageData *preprocOutput=NULL);
-  //ETX
   bool CalculateCircleCenter(vtkImageData *inData, unsigned int *tempStorage, int tempStorageSize, double nThersholdVal, double nRadius, double &gx, double &gy, int nVotedNeeded, bool lDebug);  
   bool CalculateCircleCenterMean(vtkImageData *inData, double nRadius, double threshold, double &gx, double &gy);  
-  //BTX
   void RemoveOutliners(double P_[3], double v_[3], const double def1[3], const double def2[3], std::vector<PointType> &CoordinatesVector);
-  //ETX
   bool FindProbe(const double P1[3], const double P2[3], double v1[3], double v2[3], 
     double I1[3], double I2[3], double &axesAngleDegrees, double &axesDistance);
-  //BTX
   void Linefinder(double P_[3], double v_[3], std::vector<itk::Point<double,3> > CoordVector);
-  //ETX
 
   void CropWithCylinder(vtkImageData* output, vtkImageData* input, const double linePoint_RAS[3],const double normal_RAS[3], vtkMatrix4x4 *ijkToRAS, double radiusMm);
 
@@ -127,12 +117,10 @@ protected:
   vtkTransRectalFiducialCalibrationAlgo();
   virtual ~vtkTransRectalFiducialCalibrationAlgo();
 
-  //BTX
   std::vector<PointType> CoordinatesVectorAxis1;
   std::vector<PointType> CoordinatesVectorAxis2;
   std::vector<vtkImageData*> CalibMarkerPreProcOutput;
   vtkMatrix4x4* CalibMarkerPreProcOutputIJKToRAS;
-  //ETX
 
   TRProstateBiopsyCalibrationData CalibrationData;
 

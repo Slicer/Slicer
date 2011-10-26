@@ -74,9 +74,7 @@ public:
   virtual ~vtkFetchMIParserHID();
 
   vtkXMLDataParser *Parser;
-  //BTX
   std::string ErrorString;
-  //ETX
 
   vtkFetchMIParserHID(const vtkFetchMIParserHID&); // Not implemented
   void operator=(const vtkFetchMIParserHID&); // Not Implemented

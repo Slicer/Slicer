@@ -67,10 +67,8 @@ protected:
   vtkKWFrame       *ZFrameSettingFrame;
 
   //vtkMRMLModelNode* ZFrameModelNode;
-  //BTX
   std::string ZFrameModelNodeID;
   std::string ZFrameTransformNodeID;
-  //ETX
   
 
 private:

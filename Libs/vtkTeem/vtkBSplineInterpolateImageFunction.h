@@ -65,7 +65,6 @@ protected:
   vtkFloatingPointType * Spacing;
   int * Extent;
 private:
-  //BTX
   int Initialized;
   vtkBSplineInterpolateImageFunction(const vtkBSplineInterpolateImageFunction&);  /// Not implemented.
   void operator=(const vtkBSplineInterpolateImageFunction&);  /// Not implemented.
@@ -94,7 +93,6 @@ private:
 
   unsigned int             MaxNumberInterpolationPoints; /// number of neighborhood points used for interpolation
   std::vector<int>    PointsToIndex[ImageDimension];  /// Preallocation of interpolation neighborhood indicies
-  //ETX
 };
 
 

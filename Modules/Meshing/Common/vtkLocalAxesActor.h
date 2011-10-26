@@ -185,7 +185,6 @@ public:
   // vtkPoints to store the 3 end points of the axes
   void SetAxesPoints(vtkPoints* );
 
-//BTX
   enum
   {
     CYLINDER_SHAFT,
@@ -199,7 +198,6 @@ public:
     SPHERE_TIP,
     USER_DEFINED_TIP
   };  
-//ETX
 
 protected:
   vtkLocalAxesActor();

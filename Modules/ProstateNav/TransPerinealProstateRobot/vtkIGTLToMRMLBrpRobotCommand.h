@@ -43,9 +43,7 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLBrpRobotCommand : public vtkIGTLToMRML
   int                  GetNumberOfIGTLNames()   { return this->IGTLNames.size(); };
   const char*          GetIGTLName(int index)   { return this->IGTLNames[index].c_str(); };
 
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node);
-  //ETX
   virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
 
  
@@ -54,11 +52,9 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLBrpRobotCommand : public vtkIGTLToMRML
   ~vtkIGTLToMRMLBrpRobotCommand();
 
  protected:
-  //BTX
   igtl::HeaderMessage::Pointer OutgoingMsg;
   igtl::MoveToMessage::Pointer OutMoveToMsg;
   igtl::SetZFrameMessage::Pointer OutSetZFrameMsg;
-  //ETX
   
 };
 

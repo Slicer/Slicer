@@ -98,7 +98,6 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
   vtkFloatingPointType vec[9];
   vtkFloatingPointType *eigVec[3];
   vtkFloatingPointType eigVal[3];
-  //BTX
 
   vtkImplicitFunction* TensorComponent[6];
 
@@ -125,7 +124,6 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
     }
   ~vtkTensorImplicitFunctionToFunctionSet() {}
 
-  //ETX
   
 private:
   vtkTensorImplicitFunctionToFunctionSet(const vtkTensorImplicitFunctionToFunctionSet&);  /// Not implemented.

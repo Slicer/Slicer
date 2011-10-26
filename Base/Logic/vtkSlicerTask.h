@@ -13,9 +13,7 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTask,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  //BTX
   typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
-  //ETX
   
   /// 
   /// Set the function and object to call for the task.
@@ -28,14 +26,12 @@ public:
   /// 
   /// The type of task - this can be used, for example, to decide
   /// how many concurrent threads should be allowed
-  //BTX
   enum
     {
     Undefined = 0,
     Processing,
     Networking
     };
-  //ETX
  
   vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
   vtkGetMacro (Type, int);
@@ -59,11 +55,9 @@ protected:
   void operator=(const vtkSlicerTask&);
 
 private:
-  //BTX
   vtkSmartPointer<vtkMRMLAbstractLogic> TaskObject;
   vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunction;
   void *TaskClientData;
-  //ETX
   
   int Type;
   

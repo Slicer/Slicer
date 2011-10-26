@@ -37,7 +37,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLQueryNode : public vtkMRMLNode
   // Constants Definitions
   //----------------------------------------------------------------
 
-  //BTX
   // Events
   enum {
     ResponseEvent        = 128940,
@@ -59,7 +58,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLQueryNode : public vtkMRMLNode
     STATUS_ERROR,        // Server failed to accept query
     NUM_STATUS,
   };
-  //ETX
 
  public:
 
@@ -137,17 +135,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLQueryNode : public vtkMRMLNode
   // Data
   //----------------------------------------------------------------
 
-  //BTX
   std::string IGTLName;
-  //ETX
   
   int QueryStatus;
   int QueryType;
 
-  //BTX
   std::string ConnectorNodeID;
   std::string DataNodeID;
-  //ETX
 
   // Time when the querry issued. 
   double TimeStamp;

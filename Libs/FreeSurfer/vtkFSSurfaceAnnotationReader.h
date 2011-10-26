@@ -61,7 +61,6 @@ public:
   vtkSetMacro(UseExternalColorTableFile,int);
   vtkBooleanMacro(UseExternalColorTableFile,int);
 
-  //BTX
   /// 
   /// previously defined as constants
   enum
@@ -79,7 +78,6 @@ public:
     FS_WARNING_UNASSIGNED_LABELS = 5,
     FS_NO_COLOR_TABLE = 6,
   };
-    //ETX
 protected:
   vtkFSSurfaceAnnotationReader();
   ~vtkFSSurfaceAnnotationReader();

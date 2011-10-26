@@ -35,7 +35,6 @@ class vtkMRMLApplicationLogic;
 
 #include "vtkMRMLLogicWin32Header.h"
 
-//BTX
 
 //----------------------------------------------------------------------------
 // Convenient macros
@@ -104,16 +103,13 @@ class vtkMRMLApplicationLogic;
 };
 #endif
 
-//ETX
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 {
 public:
   /// Typedef for member functions of MRMLLogic that can be used as
   /// scheduled tasks.
-  //BTX
   typedef void (vtkMRMLAbstractLogic::*TaskFunctionPointer)(void *clientdata);
-  //ETX
 
   static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -221,7 +217,6 @@ protected:
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
   void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
 
-  //BTX
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes(){}
@@ -253,7 +248,6 @@ protected:
 
   /// LogicCallback is a static function to relay modified events from the Logic
   static void MRMLNodesCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
-  //ETX
 
   ///
   /// Start modifying the logic. Disable Modify events.
@@ -290,10 +284,8 @@ private:
   vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&); // Not implemented
   void operator=(const vtkMRMLAbstractLogic&);       // Not implemented
 
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

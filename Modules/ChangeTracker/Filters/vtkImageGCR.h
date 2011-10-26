@@ -114,15 +114,12 @@ private:
                   unsigned char* sptr,int* ext,int* inc,
                   float jh[256][256]);
   
-  //BTX
   void (vtkImageGCR::* InterpolationFunction)
     (float* point,unsigned char* tptr,
      unsigned char* sptr,int* ext,int* inc,
      float jh[256][256]);
-  //ETX
 
   // from NR
-  //BTX
   float brent(float ax,float bx,float cx,
           float (vtkImageGCR::*f)(float),
           float tol,float* xmin);
@@ -144,6 +141,5 @@ private:
   float* pcom;
   float* xicom;
   float (vtkImageGCR::*nrfunc)(float*);
-  //ETX      
 };
 #endif

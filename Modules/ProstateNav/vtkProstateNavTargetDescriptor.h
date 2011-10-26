@@ -36,12 +36,10 @@ public:
   vtkTypeRevisionMacro(vtkProstateNavTargetDescriptor,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-    //BTX
     // Description
     // Set/get validation info: Validation volume FoR string
     void SetName(std::string str){this->Name = str;}
     std::string GetName() const {return this->Name;};
-    //ETX
 
 
     // Desciption
@@ -75,7 +73,6 @@ public:
     vtkGetMacro(IsOutsideReach,bool);
     vtkSetMacro(IsOutsideReach,bool);
 
-    //BTX
     std::string GetReachableString() const
         { 
             if (this->IsOutsideReach) 
@@ -83,9 +80,7 @@ public:
             else
                 return "Yes";
         }
-    //ETX
 
-    //BTX
     // Description
     // Set/get Targeting parameter: needle type
     void SetNeedleType(std::string NeedleType, double Depth, double Overshoot) 
@@ -95,7 +90,6 @@ public:
         this->NeedleOvershoot = Overshoot;
     }
     std::string GetNeedleTypeString() const { return this->NeedleType;};
-    //ETX
     // Description
     // Set/get Targeting parameter: needle type depth
     vtkGetMacro(NeedleLength,double);
@@ -116,14 +110,12 @@ public:
     vtkSetVector4Macro(RASOrientation,double);
     vtkGetVectorMacro(RASOrientation,double,4);
 
-    //BTX
     std::string GetRASLocationString() const
     {
         char ras[50];
         sprintf(ras, "R %.1f, A %.1f, S %.1f", this->RASLocation[0], this->RASLocation[1], this->RASLocation[2]);
         return std::string(ras);
     }
-    //ETX
     
     // Description
     // Set/get targeting info is valid (they are computed using a valid calibration data)
@@ -165,7 +157,6 @@ public:
     vtkGetMacro(ISError,double);
     vtkSetMacro(ISError,double);
 
-    //BTX
     // Description
     // Set/get validation info: Validation volume FoR string
     void SetNeedleConfirmationVolumeFoRStr(std::string foRStr){this->ValidationVolumeFoR_STR = foRStr;}
@@ -186,12 +177,9 @@ public:
 
     void DeepCopy(vtkProstateNavTargetDescriptor& src);
 
-    //ETX
         
 private:
-    //BTX
     std::string Name;
-    //ETX
     double AxisRotation;    ///< Calculated value: Axis rotation in degree
     double NeedleAngle;     ///< Calculated value: Needle angle in degree
     double DepthCM;         ///< Calculated value: Insertion deepth in cm
@@ -201,13 +189,11 @@ private:
     double HingePosition[3];
     double RASLocation[3];
     double RASOrientation[4];
-    //BTX
     std::string TargetingFoR_STR;
     std::string CalibrationFoR_STR; /// string identifier for the calibration volume
     std::string ValidationVolumeFoR_STR; /// string identifier for the volume used for needle confirmation
     std::string NeedleType;
     std::string FiducialID; // ID of the fiducial in the FiducialListNode
-    //ETX
     bool TargetValidated;  ///< Indicates whether it was validated against needle insertion
     bool TargetingParametersValid;
     double NeedleTipValidationPosition[3];

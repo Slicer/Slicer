@@ -71,9 +71,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
 
   virtual bool FindTargetingParams(vtkProstateNavTargetDescriptor *targetDesc);
   virtual bool ShowRobotAtTarget(vtkProstateNavTargetDescriptor *targetDesc);
-  //BTX
   virtual std::string GetTargetInfoText(vtkProstateNavTargetDescriptor *targetDesc);
-  //ETX
 
   // Description:
   void GetCalibrationMarker(unsigned int markerNr, double &r, double &a, double &s, bool &valid);
@@ -84,9 +82,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
   const TRProstateBiopsyCalibrationData& GetCalibrationData() { return this->CalibrationData; }
   void SetCalibrationData(const TRProstateBiopsyCalibrationData& calibData);
 
-  //BTX
   bool SegmentRegisterMarkers(vtkMRMLScalarVolumeNode *calibVol, double thresh[4], double fidDimsMm[3], double radiusMm, bool bUseRadius, double initialAngle, std::string &resultDetails, bool enableAutomaticCenterpointAdjustment);
-  //ETX
  
  virtual const char* GetRobotModelId() {return GetRobotModelNodeID(); };
  virtual bool GetRobotBaseTransform(vtkMatrix4x4* transform);
@@ -121,9 +117,7 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLTransRectalProstateRobotNode : public vtkMRM
 
   TRProstateBiopsyCalibrationData CalibrationData;
 
-  //BTX
   vtkSmartPointer<vtkTransRectalFiducialCalibrationAlgo> CalibrationAlgo;  
-  //ETX
 
   double CalibrationMarkerPositions[CALIB_MARKER_COUNT][3];
   bool CalibrationMarkerValid[CALIB_MARKER_COUNT];

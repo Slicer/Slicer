@@ -24,14 +24,12 @@
 class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsLogic : public vtkSlicerModuleLogic
 {
   public:
-  //BTX
   enum VolumeLogicEventIDs {
     StartLabelStats= vtkCommand::UserEvent,
     EndLabelStats,
     LabelStatsOuterLoop,
     LabelStatsInnerLoop
   };
-  //ETX
   static vtkLabelStatisticsLogic *New();
   vtkTypeMacro(vtkLabelStatisticsLogic,vtkSlicerModuleLogic);
 

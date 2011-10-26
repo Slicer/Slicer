@@ -169,7 +169,6 @@ protected:
   vtkIdList *SelectedPointIds;
   vtkIdList *DeleteCellIds;
   vtkIdList *SelectedCellIds;
-  //BTX
   // Description:
   // Events invoked by this widget
   int WidgetEvent;
@@ -192,7 +191,6 @@ protected:
         RightMouseButtonDown,
         MouseMove
     };
-  //ETX
   enum CellSelectionType
   {
           SelectCellsThrough = 0,

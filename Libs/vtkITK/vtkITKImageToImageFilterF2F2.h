@@ -56,7 +56,6 @@ public:
   virtual vtkImageData *GetOutput() { return this->append->GetOutput(); };
 
 protected:
-  //BTX
   
   /// To/from ITK
   typedef itk::Vector<float,2> InputImagePixelType;
@@ -149,7 +148,6 @@ protected:
     this->vtkImporter1->Delete();
     this->append->Delete();
   };
-  //ETX
   
 private:
   vtkITKImageToImageFilterF2F2(const vtkITKImageToImageFilterF2F2&);  /// Not implemented.

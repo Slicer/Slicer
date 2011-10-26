@@ -39,7 +39,6 @@ public:
   };
 
 protected:
-  //BTX
   
   /// To/from ITK
   typedef itk::Image<unsigned short, 3> InputImageType;
@@ -71,7 +70,6 @@ protected:
   ~vtkITKImageToImageFilterUSUL()
   {
   };
-  //ETX
     
 private:
   vtkITKImageToImageFilterUSUL(const vtkITKImageToImageFilterUSUL&);  /// Not implemented.

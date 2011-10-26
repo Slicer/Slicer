@@ -74,10 +74,8 @@ protected:
   /// Get MRML Displayable Node
   vtkMRMLNode * GetMRMLDisplayableNode();
 
-  //BTX
   /// Access to SetRenderer, SetMRMLDisplayableNode and CreateIfPossible methods
   friend class vtkMRMLDisplayableManagerGroup;
-  //ETX
 
   virtual void SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup* group);
   virtual void SetRenderer(vtkRenderer* newRenderer);
@@ -116,11 +114,9 @@ protected:
                                     unsigned long event,
                                     void * callData);
 
-  //BTX
   /// WidgetsCallback is a static function to relay modified events from the vtk widgets
   static void WidgetsCallback(vtkObject *caller, unsigned long eid,
                               void *clientData, void *callData);
-  //ETX
 
   /// Get vtkWidget callbackCommand
   vtkCallbackCommand * GetWidgetsCallbackCommand();
@@ -214,11 +210,9 @@ private:
   vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented
   void operator=(const vtkMRMLAbstractDisplayableManager&);                    // Not implemented
 
-  //BTX
   class vtkInternal;
   vtkInternal* Internal;
   friend class vtkInternal; // For access from the callback function
-  //ETX
 };
 
 #endif

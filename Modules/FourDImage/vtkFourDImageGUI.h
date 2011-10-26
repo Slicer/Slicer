@@ -88,9 +88,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   static vtkFourDImageGUI* New ();
   void Init();
   virtual void Enter ( );
-  //BTX
   using vtkSlicerComponentGUI::Enter; 
-  //ETX
   virtual void Exit ( );
   void PrintSelf (ostream& os, vtkIndent indent );
 
@@ -123,9 +121,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   virtual void BuildGUI ( );
-  //BTX
   using vtkSlicerComponentGUI::BuildGUI; 
-  //ETX
   virtual void TearDownGUI ( );
   void BuildGUIForHelpFrame();
   void BuildGUIForLoadFrame(int show);
@@ -232,10 +228,8 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   // Logic Values
   //----------------------------------------------------------------
 
-  //BTX
   vtkFourDImageLogic::RegistrationParametersType DefaultAffineRegistrationParam;
   vtkFourDImageLogic::RegistrationParametersType DefaultRegistrationParam;
-  //ETX
   
   vtkFourDImageLogic *Logic;
   vtkCallbackCommand *DataCallbackCommand;
@@ -256,10 +250,8 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   int     AutoPlayInterval;        // interval = TimerInterval * AutoPlayInterval; 
   int     AutoPlayIntervalCounter;
 
-  //BTX
   typedef std::vector<int> WindowLevelUpdateStatusType;
   typedef std::vector<std::string> NodeIDListType;
-  //ETX
   
   WindowLevelUpdateStatusType WindowLevelUpdateStatus;
 

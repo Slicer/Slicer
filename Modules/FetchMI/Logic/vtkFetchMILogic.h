@@ -418,7 +418,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   vtkTagTable *SceneTags;
 
 
-  //BTX
   //---
   // These are names of the directory and files
   // that hold the xml responses we get back
@@ -472,7 +471,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   // the selected webservice, and are used to form query or to tag
   // individual storable nodes or the scene itself.
   std::map<std::string, std::vector< std::string> > CurrentWebServiceMetadata;
-  //ETX
 
   virtual unsigned int GetNumberOfURIsDeletedOnServer ( );
   virtual void ResetURIsDeletedOnServer ( );
@@ -543,7 +541,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   // Number of Metadata attributes a database currently supports.
   int NumberOfTagsOnServer;
 
-  //BTX
   // Description:
   // For internal use only; requires that this->OldAndNewFileNames
   // is populated properly, and if not, this could corrupt node filenames.
@@ -580,7 +577,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   // on the storagenode's urilist. If upload fails for some reason,
   // then the uri can be restored to the old value.
   void SaveNewURIOnSelectedResource ( const char *olduri, const char *newuri );
-  //ETX
   
   // Description:
   // Flag that turns off when we're just querying host for metadata

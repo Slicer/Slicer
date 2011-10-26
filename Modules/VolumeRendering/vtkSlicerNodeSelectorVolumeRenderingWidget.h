@@ -18,7 +18,6 @@ public:
     vtkTypeRevisionMacro(vtkSlicerNodeSelectorVolumeRenderingWidget,vtkSlicerNodeSelectorWidget);
     void PrintSelf(ostream& os, vtkIndent indent);
 
-    //BTX
     // Description:
     // Set condition under which the nodes from the additional mrml scene will be added or not.
     // con: id of the referenced node
@@ -37,7 +36,6 @@ public:
     {
         return this->Condition;
     }
-    //ETX
 
     // Description:
     // Set an additional MRML Scene which will also be shown in vtkSlicerNodeSelectorWidget.
@@ -56,11 +54,9 @@ protected:
     ~vtkSlicerNodeSelectorVolumeRenderingWidget();
 
 
-    //BTX
     // Description:
     // Referenced id of vtkMRMLVolumeRenderingNode that is to be checked.
     std::string Condition;
-    //ETX
 
     //Description:
     //if 1 use == for condition if 0 use != for condition

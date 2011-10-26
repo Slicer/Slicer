@@ -24,9 +24,7 @@
 
 
 class vtkSlicerNodeSelectorWidget;
-//BTX
 class ModuleWidgetMap;
-//ETX
 
 class VTK_COMMANDLINEMODULE_EXPORT vtkCommandLineModuleGUI : public vtkSlicerModuleGUI
 {

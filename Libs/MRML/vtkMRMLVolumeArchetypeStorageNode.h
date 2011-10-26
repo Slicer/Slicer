@@ -47,9 +47,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   /// If move is 1, return the directory that contains the written files and
   /// only the written files, for use in a move instead of a double
   /// write. Otherwise return an empty string.
-//BTX
   std::string UpdateFileList(vtkMRMLNode *refNode, int move = 0);
-//ETX
   
   /// 
   /// Write data from a  referenced node

@@ -233,7 +233,6 @@ protected:
   vtkUnstructuredGrid *UGrid;
   vtkIdList *EdgePoints;
   vtkIdList *EdgePointsCompleteGrid;
-//BTX - manage the state of the widget
   int State;
   enum WidgetState
   {
@@ -242,7 +241,6 @@ protected:
     //Scaling,
     Outside
   };
-//ETX
     
   // Handles the events
   static void ProcessEvents(vtkObject* object, 

@@ -112,7 +112,6 @@ protected:
           vtkMimxSelectCellsWidgetFEMesh *self, vtkIdList *PtIds);
   vtkIdList *SelectedCellIds;
   vtkIdList *SelectedPointIds;
-  //BTX
   // Description:
   // Events invoked by this widget
   int WidgetEvent;
@@ -127,7 +126,6 @@ protected:
         VTKMouseMove,
         LeftMouseButtonUp
     };
-  //ETX
   enum CellSelectionType
   {
           SelectCellsThrough = 0,

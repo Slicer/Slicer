@@ -40,7 +40,6 @@ public:
   };
 
 protected:
-  //BTX
   
   /// To/from ITK
   typedef unsigned short InputImagePixelType;
@@ -75,7 +74,6 @@ protected:
   ~vtkITKImageToImageFilterUSF()
   {
   };
-  //ETX
   
 private:
   vtkITKImageToImageFilterUSF(const vtkITKImageToImageFilterUSF&);  /// Not implemented.

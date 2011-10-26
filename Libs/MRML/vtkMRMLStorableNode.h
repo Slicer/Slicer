@@ -135,12 +135,10 @@ public:
     return this->GetNthStorageNode(0);
     };
 
-//BTX
   std::vector<vtkMRMLStorageNode*> GetStorageNodes()const
     {
     return this->StorageNodes;
     };
-//ETX
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
@@ -160,14 +158,12 @@ public:
 
   vtkTagTable *UserTagTable;
 
-//BTX
   std::vector<std::string> StorageNodeIDs;
   /// 
   /// SlicerDataType records the kind of storage node that
   /// holds the data. Set in each subclass.
   std::string SlicerDataType;
   std::vector<vtkMRMLStorageNode *> StorageNodes;
-//ETX
 
   //char *StorageNodeID;
 };

@@ -98,7 +98,6 @@ protected:
   static void RightButtonDownCallback                   (vtkAbstractWidget* );
   static void RightButtonUpCallback            (vtkAbstractWidget* );
 
-   //BTX
   // Description:
   // Events invoked by this widget
   int WidgetEvent;
@@ -113,7 +112,6 @@ protected:
         RightMouseButtonDown,
         RightMouseButtonUp
     };
-  //ETX
 
   vtkIdType PickX0;
   vtkIdType PickY0;

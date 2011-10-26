@@ -23,7 +23,6 @@
 
 //
 /// Special classes for manipulating data
-//BTX
 class VTK_Teem_EXPORT vtkTractographyPoint { //;prevent man page generation
 public:
     vtkTractographyPoint(); /// method sets up storage
@@ -45,9 +44,7 @@ public:
     vtkFloatingPointType   T1[3];
     vtkFloatingPointType   T2[3];
 };
-//ETX
 
-//BTX
 class VTK_Teem_EXPORT vtkTractographyArray { //;prevent man page generation
 public:
   vtkTractographyArray();
@@ -77,7 +74,6 @@ public:
   vtkIdType Extend;            /// grow array by this amount
   vtkFloatingPointType Direction;       /// integration direction
 };
-//ETX
 
 #define VTK_START_FROM_POSITION 0
 #define VTK_START_FROM_LOCATION 1

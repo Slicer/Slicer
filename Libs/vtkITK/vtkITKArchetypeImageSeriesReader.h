@@ -50,9 +50,7 @@ public:
   vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader,vtkImageSource);
   void PrintSelf(ostream& os, vtkIndent indent);   
 
-  //BTX
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
-  //ETX
 
   /// 
   /// Specify the archetype filename for the series.
@@ -252,14 +250,12 @@ public:
   void RegisterExtraBuiltInFactories();
   void UnRegisterDeprecatedBuiltInFactories();
 
-  //BTX
   /// 
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
   std::vector<std::string> Tags;
   std::vector<std::string> TagValues;
   void ParseDictionary();
-  //ETX
 
   unsigned int GetNumberOfItemsInDictionary(); 
   bool HasKey( char* tag );
@@ -824,18 +820,14 @@ protected:
 
   unsigned int IndexArchetype;
 
-  //BTX
   std::vector<std::string> FileNames;
   std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
-  //ETX
   virtual void ExecuteInformation();
   /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *data);
 
-  //BTX
   itk::MetaDataDictionary Dictionary;
-  //ETX
 
   /// The following variables provide support
   /// for reading a directory with multiple series/groups.
@@ -851,7 +843,6 @@ protected:
   /// ImageOrientationPatient        0020,0037
   /// ImagePositionPatient           0020,0032
 
-  //BTX
   std::vector<std::string> AllFileNames;
   bool AnalyzeHeader;
   bool IsOnlyFile;
@@ -874,7 +865,6 @@ protected:
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;
   std::vector<long int> IndexImagePositionPatient;
-  //ETX
 
 private:
   vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  /// Not implemented.

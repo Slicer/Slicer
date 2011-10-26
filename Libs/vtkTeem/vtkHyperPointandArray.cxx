@@ -42,7 +42,6 @@ vtkHyperPoint& vtkHyperPoint::operator=(const vtkHyperPoint& hp)
 
   return *this;
 }
-//ETX
 
 vtkHyperArray::vtkHyperArray()
 {

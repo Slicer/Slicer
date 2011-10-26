@@ -92,7 +92,6 @@ protected:
   vtkMimxViewMergePointsWidget();
   ~vtkMimxViewMergePointsWidget();
 
-  //BTX - manage the state of the widget
   int State;
   enum WidgetEventIds 
   {
@@ -120,7 +119,6 @@ protected:
           MovingEdge,
           PickMultipleFace
   };
-  //ETX
 
   static void CrtlMouseMoveCallback               (vtkAbstractWidget* );
   static void CrtlLeftButtonDownCallback                        (vtkAbstractWidget* );

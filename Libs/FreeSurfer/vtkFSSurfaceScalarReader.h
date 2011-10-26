@@ -47,12 +47,10 @@ public:
 
   /// file type magic numbers
   /// const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
-  //BTX
   enum 
     {
       FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
     };
-  //ETX
 protected:
   vtkFSSurfaceScalarReader();
   ~vtkFSSurfaceScalarReader();

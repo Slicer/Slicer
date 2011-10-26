@@ -90,11 +90,9 @@ public:
   virtual void Enter ( );
   virtual void Exit ( );
 
-  //BTX
   static void DataCallback(vtkObject *caller, 
                            unsigned long eid, void *clientData, void *callData);
 
-  //ETX
   void TransformChangedCallback(double);
   void TransformChangingCallback(double);
 

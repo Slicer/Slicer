@@ -85,7 +85,6 @@ protected:
         vtkMimxUnstructuredGridExtractWidget();
         ~vtkMimxUnstructuredGridExtractWidget();
 
-        //BTX - manage the state of the widget
         enum WidgetState
         {
                 Start=0,
@@ -97,7 +96,6 @@ protected:
                 MergeNodes = 6,
                 PickMultipleFaces = 7
         };
-        //ETX
 
         // Handles the events
         static void ProcessEvents(vtkObject* object, 
@@ -145,9 +143,7 @@ protected:
         void Initialize();
         void CreateDefaultProperties(){};
         void PlaceWidget(double vtkNotUsed(bounds)[6]){};
-        //BTX
         using vtk3DWidget::PlaceWidget; 
-        //ETX
         void ExtractEdge();
         void ExtractFace();
         vtkIdList *CellIdList;

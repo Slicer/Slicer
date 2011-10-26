@@ -161,9 +161,7 @@ protected:
 
   virtual void RemoveMRMLObservers();
 
-  //BTX
   friend class vtkThreeDViewInteractorStyle; // Access to RequestRender();
-  //ETX
 
   void RemoveModelProps();
   void RemoveModelObservers(int clearCache);
@@ -196,19 +194,15 @@ protected:
   /// set to false, return false, else, true. If no hierarchy, return true
   bool GetHierarchyVisibility(vtkMRMLDisplayableNode *model);
   
-  //BTX
   void RemoveDispalyedID(std::string &id);
-  //ETX
   
 private:
   
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); // Not implemented
   void operator=(const vtkMRMLModelDisplayableManager&);                 // Not Implemented
 
-  //BTX
   class vtkInternal;
   vtkInternal* Internal;
-  //ETX
 
 };
 

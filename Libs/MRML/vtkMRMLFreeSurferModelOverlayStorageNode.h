@@ -66,14 +66,12 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLM
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelOverlayStorage";};
   
-//BTX
   /// 
   /// Add a known overlay file extension
   void AddFileExtension(std::string ext);
   /// 
   /// returns true if on the list, false otherwise
   bool IsKnownFileExtension(std::string ext);
-//ETX
 
   /// 
   /// return the number of known file extensions
@@ -99,9 +97,7 @@ protected:
 
   /// 
   /// a list of valid overlay file extensions
-  //BTX
   std::vector< std::string > KnownFileExtensions; 
-  //ETX
 };
 
 #endif

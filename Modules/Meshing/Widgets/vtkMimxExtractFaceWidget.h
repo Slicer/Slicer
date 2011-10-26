@@ -81,9 +81,7 @@ class VTK_MIMXWIDGETS_EXPORT vtkMimxExtractFaceWidget : public vtkAbstractWidget
   ~vtkMimxExtractFaceWidget();
 
   vtkUnstructuredGrid *UGrid;
-  //BTX - manage the state of the widget
  
-  //BTX - manage the state of the widget
   int State;
   enum WidgetEventIds 
   {
@@ -102,7 +100,6 @@ class VTK_MIMXWIDGETS_EXPORT vtkMimxExtractFaceWidget : public vtkAbstractWidget
           StartWidget = 0,
           PickMultipleFace
   };
-  //ETX
 
   void ExtractFace();
   void Initialize();

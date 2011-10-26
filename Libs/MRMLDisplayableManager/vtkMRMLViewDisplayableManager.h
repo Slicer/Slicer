@@ -52,10 +52,8 @@ private:
   vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLViewDisplayableManager&);                     // Not Implemented
   
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

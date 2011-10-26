@@ -43,9 +43,7 @@ public:
   
   void SetFileName( const std::string & fieldStr)
     { this->vtkDataSetWriter::SetFileName( fieldStr.c_str() ); }
-  //BTX
   using vtkDataWriter::SetFileName;
-  //ETX
   void SetNodeElementFileName( const std::string & fieldStr ) {NodeElementFileName = fieldStr;} 
   void SetHeaderInformation( const std::string & fieldStr ) {HeaderInformation = fieldStr;} 
   void SetUserName( const std::string & fieldStr) {UserName = fieldStr;} 

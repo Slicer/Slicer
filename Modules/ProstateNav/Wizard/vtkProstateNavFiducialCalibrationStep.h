@@ -118,7 +118,6 @@ protected:
 
   vtkSlicerViewerWidget* GetMainViewerWidget();
 
-  //BTX
 
   vtkSmartPointer<vtkKWFrame> LoadVolumeDialogFrame;
   vtkSmartPointer<vtkKWPushButton> LoadCalibrationVolumeButton;
@@ -154,7 +153,6 @@ protected:
   // CalibrationListNode is used for displaying 4 fiducial points that defines the calibration marker initial positions
   vtkSmartPointer<vtkMRMLFiducialListNode> CalibrationPointListNode;
 
-  //ETX
 
   bool ProcessingCallback;
 

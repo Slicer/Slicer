@@ -77,7 +77,6 @@ protected:
   void AddGUIObservers();
   void RemoveGUIObservers();  
   
-  //BTX
   // Description:
   // The column orders in the list box
   enum
@@ -92,7 +91,6 @@ protected:
     NumberOfColumns = 7,
     };
     
-  //ETX
 
   bool ProcessingCallback;
 

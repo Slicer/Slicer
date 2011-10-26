@@ -94,7 +94,6 @@ protected:
   vtkActor *PreviousSelectedSubsetActor;*/
  
   //vtkInteractorStyleSwitch *CurrentStyle;
-//BTX - manage the WidgetEvent of the widget
   int WidgetEvent;
   enum WidgetEventIds 
   {
@@ -104,7 +103,6 @@ protected:
           LeftMouseButtonUp,
           MouseMove
   };
-//ETX
 
   static void LeftButtonUpCallback            (vtkAbstractWidget* );
   static void LeftButtonDownCallback            (vtkAbstractWidget* );

@@ -90,7 +90,6 @@ public:
   int SetActiveCellScalars(const char *scalarName, int attributeType);
   
 
-//ETX
 
   /// 
   /// Take scalar fields and composite them into a new one.

@@ -48,12 +48,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkMRML
     return (int)this->ModelHierarchyNodes.size();
     };
 
-//BTX
   /// 
   /// Given model hierarchy node returns all it's children recursively. 
   void GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
                                  std::vector< vtkMRMLModelHierarchyNode *> &childrenNodes);
-//ETX
 
   /// 
   /// Call this to update the cache when hierarchy is modified. 
@@ -76,10 +74,8 @@ protected:
   
   void UpdateHierarchyChildrenMap();
 
-  //BTX
   std::map<std::string, vtkMRMLModelHierarchyNode *> ModelHierarchyNodes;
   std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > HierarchyChildrenNodes;
-  //ETX
   
   unsigned long ModelHierarchyNodesMTime;
   unsigned long HierarchyChildrenNodesMTime;

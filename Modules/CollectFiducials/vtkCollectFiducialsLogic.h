@@ -37,12 +37,10 @@ class vtkIGTLConnector;
 class VTK_CollectFiducials_EXPORT vtkCollectFiducialsLogic : public vtkSlicerModuleLogic 
 {
  public:
-  //BTX
   enum {  // Events
     //LocatorUpdateEvent      = 50000,
     StatusUpdateEvent       = 50001,
   };
-  //ETX
 
  public:
   

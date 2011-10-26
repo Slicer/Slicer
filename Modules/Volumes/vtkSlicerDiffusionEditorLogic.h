@@ -38,11 +38,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     int ParseGradientsBvaluesToArray(const char  *gradients, unsigned int numberOfGradients, vtkDoubleArray *newBValues, 
       vtkDoubleArray *newGradients);
 
-    //BTX
     // Description:
     // Parses given gradients and bValues back into a string and returns it.
     std::string ParseGradientsBvaluesToString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients);
-    //ETX
 
     // Description:
     // Pushes the current ActiveVolumeNode into the UndoRedoStack, makes a backup 
@@ -85,7 +83,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     // Clears stack from all saved nodes.
     void ClearStack();
 
-    //BTX
     // Description:
     // Stack holds all references of created nodes.
     vtkstd::vector<vtkMRMLVolumeNode*> UndoRedoStack;
@@ -94,7 +91,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     // Parses a string into a double value.
     // Return value is 0 if parsing was not successful; otherwise 1.
     int StringToDouble(const std::string &s, double &result);
-    //ETX
 
     // Description:
     // Points to the current node in the UndoRedoStack (node that is displayed in the GUI).

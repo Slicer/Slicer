@@ -37,12 +37,10 @@ public:
   /// where possible.
   vtkTagTable *GetNextItem() { return this->GetNextTable(); };
 
-   //BTX
   ///  
   /// Reentrant safe way to get an object in a collection. 
   /// Just pass the same cookie back and forth. 
   vtkTagTable *GetNextTable(vtkCollectionSimpleIterator &cookie);
-  //ETX
 
  protected:
   vtkTagTableCollection();

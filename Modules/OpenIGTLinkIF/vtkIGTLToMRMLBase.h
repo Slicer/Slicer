@@ -34,12 +34,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   // NOTE: if you want to define a child class that can handle multiple types
   // of OpenIGTLink messages, override GetConverterType() method to return
   // TYPE_MULTI_IGTL_NAME.
-  //BTX
   enum {
     TYPE_NORMAL,            // supports only single IGTL message type (default)
     TYPE_MULTI_IGTL_NAMES,  // supports multiple IGTL message names (device types)
   };
-  //ETX
 
  public:
 
@@ -74,10 +72,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   // Description:
   // Functions to convert OpenIGTLink message to MRML node.
   // If mrmlNode is QueryNode, the function will generate query node. (event is not used.)
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer vtkNotUsed(buffer),
                                   vtkMRMLNode* vtkNotUsed(node)) { return 0; };
-  //ETX
 
   // Description:
   // Functions to generate an OpenIGTLink message
@@ -98,10 +94,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
 
  protected:
 
-  //BTX
   // list of IGTL names (used only when the class supports multiple IGTL names)
   std::vector<std::string>  IGTLNames;
-  //ETX
 
   int CheckCRC;
   

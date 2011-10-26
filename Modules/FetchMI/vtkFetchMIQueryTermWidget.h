@@ -39,16 +39,12 @@ public:
   // Description:
   // not used. New method AddNewTagForQuery is used instead.
   virtual void AddNewItem ( const char *keyword, const char *value);
-  //BTX
   using vtkFetchMIMulticolumnWidget::AddNewItem; 
-  //ETX
   
-  //BTX
   // Description:
   // Method to add a new keyword and list of possible values to the tag list
   virtual void AddNewTagForQuery ( const char *keyword,
                             std::vector<std::string> values );
-  //ETX
 
   // Description:
   // Method to add all metadata known by the selected webservice in one shot.
@@ -99,13 +95,11 @@ public:
   virtual const char *GetNthSelectedValue(int n);
   virtual void SelectValueOfItem(int i, const char *val );
 
-  //BTX
   enum
     {
       TagChangedEvent = 11000,
       QuerySubmittedEvent,
     };
-  //ETX
 
   // Description:
   // editing callback for the multicolumn list

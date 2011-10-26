@@ -100,21 +100,17 @@ public:
   /// Remove all observations that match
   /// - various signatures provided as helpers
   /// - when specifying the tag, a 0 matches all tags
-  //BTX
   void RemoveObservations (std::vector< vtkObservation *>observations);
-  //ETX
   void RemoveObservations (vtkObject *observer);
   void RemoveObservations (vtkObject *subject, vtkObject *observer);
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
   void RemoveObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
-  //BTX
   std::vector< vtkObservation *> GetObservations (vtkObject *observer);
   std::vector< vtkObservation *> GetObservations (vtkObject *subject, vtkObject *observer);
   std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
   std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
   std::vector< vtkObservation *> GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
-  //ETX
 
   /// Description
   /// Accessors for intropsection
@@ -230,13 +226,11 @@ public:
 
   /// 
   /// Sets the method pointer to be used for processing script observations
-  //BTX
   void SetScriptHandler ( void (*scriptHandler) (const char* script, void *clientData), void *clientData )
     {
     this->ScriptHandler = scriptHandler;
     this->ScriptHandlerClientData = clientData;
     }
-  //ETX
 
 protected:
   vtkEventBroker();
@@ -249,13 +243,10 @@ protected:
   static void classInitialize();
   static void classFinalize();
   
-  //BTX
   friend class vtkEventBrokerInitialize;
   typedef vtkEventBroker Self;
-  //ETX
   
 
-  //BTX
   /// 
   typedef char *KeyType;
   typedef std::vector< vtkObservation * > ObservationVector;
@@ -265,17 +256,12 @@ protected:
   ObjectToObservationVectorMap SubjectMap;
   ObjectToObservationVectorMap ObserverMap;
 
-  //ETX
 
-  //BTX
   /// The event queue of triggered but not-yet-invoked observations
   std::deque< vtkObservation * > EventQueue;
-  //ETX
   
-  //BTX
   void (*ScriptHandler) (const char* script, void* clientData);
   void *ScriptHandlerClientData;
-  //ETX
 
   int EventLogging;
   int EventNestingLevel;
@@ -285,18 +271,13 @@ protected:
   int EventMode;
   int CompressCallData;
 
-  //BTX
   std::ofstream LogFile;
-  //ETX
 private:
-  //BTX
   void DetachObservations(); 
   /// vtkObservation can call these methods
   friend class vtkObservation; 
-  //ETX
 };
 
-//BTX
 /// Utility class to make sure qSlicerModuleManager is initialized before it is used.
 class VTK_MRML_EXPORT vtkEventBrokerInitialize
 {
@@ -313,6 +294,5 @@ private:
 /// vtkEventBroker.  It will make sure vtkEventBroker is initialized
 /// before it is used.
 static vtkEventBrokerInitialize vtkEventBrokerInitializer;
-//ETX
 
 #endif

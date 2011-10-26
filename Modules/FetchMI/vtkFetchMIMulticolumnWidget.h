@@ -42,9 +42,7 @@ public:
   return useTerms[ind].c_str();
   }
   
-  //BTX
   std::vector<std::string> useTerms;
-  //ETX
 
  protected:
   vtkFetchMIMulticolumnWidget();
@@ -57,14 +55,12 @@ public:
   // Create the widget.
   virtual void CreateWidget();
   
-  //BTX
   // Description:
   // The column orders in the list box
   enum
     {
       MulticolumnColumn = 0,
     };
-  //ETX
 
   int NumberOfColumns;
 

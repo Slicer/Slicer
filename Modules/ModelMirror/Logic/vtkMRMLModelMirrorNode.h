@@ -54,7 +54,6 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
   vtkGetStringMacro ( NewModelName );
   vtkSetStringMacro ( NewModelName );
   
-  //BTX
   enum
     {
       ModelAddedEvent = 11000,
@@ -65,7 +64,6 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
       SaggitalMirror,
       CoronalMirror,
     };
-  //ETX
   vtkMRMLModelNode *InputModel;
   vtkMRMLModelNode *OutputModel;
   char *NewModelName;

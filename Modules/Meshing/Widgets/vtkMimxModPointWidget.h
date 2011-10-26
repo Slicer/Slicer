@@ -258,7 +258,6 @@ protected:
 
 
 
-        //BTX - manage the state of the widget
         friend class vtkLineWidget;
         friend class vtkPolyDataWidget;
         friend class vtkUnstructuredGridWidget;
@@ -272,7 +271,6 @@ protected:
                 Outside
         };
 
-        //ETX
         // Handles the events
 //      static void ProcessEvents(vtkObject* object, 
 //              unsigned long event,

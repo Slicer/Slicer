@@ -14,7 +14,6 @@
 #ifndef __vtkPreciseHyperArray_h
 #define __vtkPreciseHyperArray_h 
 
-//BTX
 #include "vtkPreciseHyperPoint.h"
 class VTK_Teem_EXPORT vtkPreciseHyperArray { //;prevent man page generation
 public:
@@ -54,6 +53,5 @@ public:
   }
   vtkFloatingPointType CosineOfAngle(void);
 };
-//ETX
 
 #endif

@@ -78,10 +78,8 @@ private:
   vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLCameraDisplayableManager&);                     // Not Implemented
   
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

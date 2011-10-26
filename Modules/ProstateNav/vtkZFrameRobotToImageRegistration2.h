@@ -51,7 +51,6 @@ class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration2 : public vtkRobo
   vtkZFrameRobotToImageRegistration2();
   ~vtkZFrameRobotToImageRegistration2();
 
-  //BTX
   typedef float  Matrix4x4[4][4];
 
   // Methods related to finding the fiducial artifacts in the MR images.
@@ -84,15 +83,12 @@ class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration2 : public vtkRobo
   Real RealMax(Matrix &realmat);
   Real FindMax(Matrix &inmatrix, int &row, int &col);
   float CoordDistance(float *p1, float *p2);
-  //ETX
 
-  //BTX
   void PrintMatrix(Matrix4x4 &matrix);
   void QuaternionToMatrix(float* q, Matrix4x4& m);
   void MatrixToQuaternion(Matrix4x4& m, float* q);
   void Cross(float *a, float *b, float *c);
   void IdentityMatrix(Matrix4x4 &matrix);
-  //ETX
   
  protected:
 
@@ -100,12 +96,10 @@ class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration2 : public vtkRobo
   int    imgxsize;
   int    imgysize;
 
-  //BTX
   Matrix SourceImage, MaskImage;
   Matrix IFreal, IFimag, MFreal, MFimag, zeroimag;
   Matrix PFreal, PFimag;
   Matrix PIreal, PIimag;
-  //ETX
 
   int SliceRangeLow;
   int SliceRangeHigh;

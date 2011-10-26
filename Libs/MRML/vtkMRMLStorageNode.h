@@ -144,10 +144,8 @@ public:
   /// 
   /// Get the file's absolute path from the file name and the mrml scene root
   /// dir. GetFullnameFromFileName calls GetFullNameFromNthFileName with -1.
-  //BTX
   std::string GetFullNameFromFileName();
   std::string GetFullNameFromNthFileName(int n);
-  //ETX
 
   /// 
   /// Check to see if this storage node can handle the file type in the input
@@ -257,14 +255,12 @@ protected:
   int ReadState;
   int WriteState;
 
-  //BTX
   /// 
   /// An array of file names, should contain the FileName but may not
   std::vector<std::string> FileNameList;
   /// 
   /// An array of URI's, should contain the URI but may not
   std::vector<std::string> URIList;
-  //ETX
   vtkStringArray* SupportedWriteFileTypes;
   char* WriteFileFormat;
 

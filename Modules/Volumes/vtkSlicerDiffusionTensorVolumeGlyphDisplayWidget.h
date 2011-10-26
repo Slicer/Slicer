@@ -116,10 +116,8 @@ protected:
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode* GetCurrentDiffusionTensorDisplayPropertyNode();
 
-//BTX
   std::map <std::string, int> GeometryColorMap;
   std::vector< vtkSmartPointer< vtkMRMLDiffusionTensorVolumeSliceDisplayNode > > GlyphDisplayNodes;
-//ETX
   
 private:
 

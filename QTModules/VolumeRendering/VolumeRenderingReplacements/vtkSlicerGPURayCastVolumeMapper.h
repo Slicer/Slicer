@@ -84,7 +84,6 @@ public:
   // not support the required extensions
   int IsRenderSupported(vtkRenderWindow* window, vtkVolumeProperty *);
 
-//BTX
 
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
@@ -92,7 +91,6 @@ public:
   // Render the volume
   virtual void Render(vtkRenderer *ren, vtkVolume *vol);
 
-//ETX
 
   // Desciption:
   // Initialize when we go to render, or go to answer the
@@ -110,7 +108,6 @@ protected:
   vtkSlicerGPURayCastVolumeMapper();
   ~vtkSlicerGPURayCastVolumeMapper();
 
-//ETX
 
   int              Initialized;
   int              RayCastInitialized;

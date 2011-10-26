@@ -96,10 +96,8 @@ private:
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
   void operator=(const vtkMRMLApplicationLogic&);
   
-  //BTX
   class vtkInternal;
   vtkInternal* Internal;
-  //ETX
 
 };
 

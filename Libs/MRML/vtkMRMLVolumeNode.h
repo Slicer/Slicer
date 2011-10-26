@@ -148,12 +148,10 @@ public:
       ImageDataModifiedEvent = 18001
     };
 
-//BTX
   /// 
   /// Set/Get the ITK MetaDataDictionary
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
-//ETX
 
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
@@ -175,9 +173,7 @@ protected:
 
   vtkImageData               *ImageData;
 
-//BTX
   itk::MetaDataDictionary Dictionary;
-//ETX  
 };
 
 #endif

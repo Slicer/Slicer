@@ -36,9 +36,7 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLCoordinate : public vtkIGTLToMRMLBase
   virtual vtkIntArray* GetNodeEvents();
   virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name);
 
-  //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node);
-  //ETX
   virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
 
 
@@ -47,9 +45,7 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLCoordinate : public vtkIGTLToMRMLBase
   ~vtkIGTLToMRMLCoordinate();
 
  protected:
-  //BTX
   igtl::CoordinateMessage::Pointer OutPositionMsg;
-  //ETX
   
 };
 

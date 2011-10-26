@@ -95,9 +95,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   /// 
   /// String ID of the color MRML node
   void SetAndObserveGlyphColorNodeID(const char *GlyphColorNodeID);
-  //BTX
   void SetAndObserveGlyphColorNodeID(std::string GlyphColorNodeID);
-  //ETX
   vtkGetStringMacro(GlyphColorNodeID);
 
   /// 
@@ -113,7 +111,6 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   /// set gray colormap
   void SetDefaultColorMap(/*int isLabelMap*/);
 
-//BTX
   /// 
   /// get associated slice glyph display node or NULL if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
@@ -124,7 +121,6 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
     }
 
 
-//ETX
   /// 
   /// add slice glyph display nodes if not already present and return it
   virtual void AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) )

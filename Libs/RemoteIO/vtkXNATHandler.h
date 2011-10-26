@@ -36,9 +36,7 @@ class VTK_RemoteIO_EXPORT vtkXNATHandler : public vtkURIHandler
                                    const char *username,
                                    const char *password,
                                    const char *hostname);
-  //BTX
   using vtkURIHandler::StageFileRead;
-  //ETX
 
   /// 
   /// This function wraps ArcPut Command functionality to download a specified URI to
@@ -48,9 +46,7 @@ class VTK_RemoteIO_EXPORT vtkXNATHandler : public vtkURIHandler
                       const char *password,
                       const char *hostname,
                       const char *sessionID );
-  //BTX
   using vtkURIHandler::StageFileWrite;
-  //ETX
 
  private:
 

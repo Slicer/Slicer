@@ -40,7 +40,6 @@ public:
   };
 
 protected:
-  //BTX
   
   /// To/from ITK
   typedef float InputImagePixelType;
@@ -75,7 +74,6 @@ protected:
   ~vtkITKImageToImageFilter2DFF()
   {
   };
-  //ETX
   
 private:
   vtkITKImageToImageFilter2DFF(const vtkITKImageToImageFilter2DFF&);  /// Not implemented.

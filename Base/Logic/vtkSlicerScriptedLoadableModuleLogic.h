@@ -52,10 +52,8 @@ private:
   vtkSlicerScriptedLoadableModuleLogic(const vtkSlicerScriptedLoadableModuleLogic&); // Not implemented
   void operator=(const vtkSlicerScriptedLoadableModuleLogic&);       // Not implemented
 
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 };
 
 #endif

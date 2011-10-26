@@ -126,9 +126,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   /// string to bring each line down below the MaxCharactersPerLine. Tries to
   /// insert breaks between words, but will force breaks where there are no
   /// spaces if necessary
-//BTX
   std::string GetLineWrappedText(std::string inputText);
-//ETX
 protected:
   vtkMRMLAnnotationTextDisplayNode();
   ~vtkMRMLAnnotationTextDisplayNode() { }

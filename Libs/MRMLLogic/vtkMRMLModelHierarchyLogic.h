@@ -30,9 +30,7 @@ class vtkMRMLModelHierarchyNode;
 // STD includes
 #include <cstdlib>
 
-//BTX
 typedef std::vector< vtkMRMLModelHierarchyNode *> vtkMRMLModelHierarchyNodeList;
-//ETX
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractLogic 
 {
@@ -55,7 +53,6 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
     return (int)this->ModelHierarchyNodes.size();
     };
 
-//BTX
   /// 
   /// Given model hierarchy node returns all it's children recursively. 
   void GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
@@ -65,7 +62,6 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
   /// std::vector< vtkMRMLModelHierarchyNode > children = logic->GetHierarchyChildrenNodes(parent);
   vtkMRMLModelHierarchyNodeList GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode);
-//ETX
 
   /// 
   /// Call this to update the cache when hierarchy is modified. 
@@ -88,11 +84,9 @@ protected:
   
   void UpdateHierarchyChildrenMap();
 
-  //BTX
   std::map<std::string, vtkMRMLModelHierarchyNode *> ModelHierarchyNodes;
   typedef std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > HierarchyChildrenNodesType;
   HierarchyChildrenNodesType HierarchyChildrenNodes;
-  //ETX
   
   unsigned long ModelHierarchyNodesMTime;
   unsigned long HierarchyChildrenNodesMTime;

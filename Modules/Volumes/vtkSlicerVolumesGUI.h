@@ -86,9 +86,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // Description:
     // This method builds the Volumes module GUI
     virtual void BuildGUI ( );
-    //BTX
     using vtkSlicerComponentGUI::BuildGUI; 
-    //ETX
 
        // Description:
     // This method releases references and key-bindings,
@@ -126,14 +124,12 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void CreateDWIDisplayWidget ( );
     void CreateDTIDisplayWidget ( );
 
-    //BTX
     // Description:
     // Return the MetaDataDictionary from the ITK layer
     std::vector<std::string> Tags;
     std::vector<std::string> TagValues;
     void CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader );
     void CheckLoadingOptions( int &LoadingOptions, bool &KeepAll );
-    //ETX
 
     unsigned int GetNumberOfItemsInDictionary(); 
     bool HasKey( char* tag );
@@ -200,10 +196,8 @@ protected:
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
 
-    //BTX
     std::vector<std::string> AllFileNames;
     int IndexCurrentFile;
-    //ETX
 
  private:
     vtkSlicerVolumesGUI ( const vtkSlicerVolumesGUI& ); // Not implemented.

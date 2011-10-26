@@ -49,12 +49,10 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkMRMLAtlasCreatorNode : publ
   virtual const char* GetNodeTagName()
     {return "AtlasCreator";};
 
-  //BTX
   enum
   {
     LaunchComputationEvent = 31337
   };
-  //ETX
 
   // Description: Initialize the configuration with default values
   //   The default values are:

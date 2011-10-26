@@ -130,12 +130,10 @@ private:
   bool IsAVolumeNode(const char*);
   vtkMRMLVolumeNode* FileNameToVolumeNodePtr(const char*);
 
-  //BTX
   std::string Scheme;
   std::string Authority;
   std::string SceneID;
   std::string NodeID;
-  //ETX
   
 };
 

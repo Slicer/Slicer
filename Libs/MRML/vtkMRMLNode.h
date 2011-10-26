@@ -58,7 +58,6 @@ class vtkCallbackCommand;
 #define vtkUnObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->RemoveObjectEvents ( (node) );};
 #endif
 
-//BTX
 #ifndef vtkSetReferenceStringBodyMacro
 #define vtkSetReferenceStringBodyMacro(name) \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
@@ -113,16 +112,13 @@ void class::Set##name (const char* _arg)            \
     return newClass::New(); \
   }
 #endif
-//ETX
 
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
-  //BTX
   /// 
   /// make the vtkMRMLScene a friend so that AddNodeNoNotify can call
   /// SetID, but that's the only class that is allowed to do so
     friend class vtkMRMLScene;
-  //ETX
 public:
   vtkTypeMacro(vtkMRMLNode,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -439,7 +435,6 @@ protected:
   
   vtkSetMacro(Indent, int);
 
-  //BTX
   /// a shared set of functions that call the
   /// virtual ProcessMRMLEvents
   static void MRMLCallback( vtkObject *caller,
@@ -468,10 +463,8 @@ protected:
 
   vtkMRMLScene *Scene;
 
-  //BTX
   typedef std::map< std::string, std::string > AttributesType;
   AttributesType Attributes;
-  //ETX
 
   vtkObserverManager *MRMLObserverManager;
 
@@ -494,11 +487,9 @@ private:
   /// Set the ID from a string and an index, calls ConstructID
   void ConstructAndSetID(const char * str, int index);
 
-  //BTX
   /// 
   /// Variable used to manage constructed ids
   std::string TempID;
-  //ETX
 
   /// 
   /// Variable used to manage encoded/decoded URL strings

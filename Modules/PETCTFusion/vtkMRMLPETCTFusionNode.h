@@ -18,7 +18,6 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   vtkTypeMacro(vtkMRMLPETCTFusionNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-//BTX
   typedef struct SUVEntry {
     int Label;
     double Max;
@@ -26,7 +25,6 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   } SUVEntry;
 
   std::list <SUVEntry> LabelResults;
-//ETX
 
 
   // Description:
@@ -193,7 +191,6 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
   virtual void SetColorRange ( double min, double max );
   virtual void SetCTRange ( double min, double max );
 
-//BTX
   enum {
       ErrorEvent = 11000,
       ComputeDoneEvent,
@@ -206,7 +203,6 @@ class VTK_PETCTFUSION_EXPORT vtkMRMLPETCTFusionNode : public vtkMRMLNode
       StatusEvent,
       PlotReadyEvent,
   };
-//ETX
 
  protected:
 

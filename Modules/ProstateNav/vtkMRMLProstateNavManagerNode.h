@@ -48,7 +48,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Constants Definitions
   //----------------------------------------------------------------
 
-  //BTX
 
   struct NeedleDescriptorStruct
     {
@@ -70,7 +69,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
     CurrentTargetChangedEvent = 200900,
   };
 
-  //ETX
 
 
  public:
@@ -171,36 +169,28 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Needle Management
   //----------------------------------------------------------------
 
-  //BTX
   // Description:
   // Set/Get the number of needle types and TargetingFiducialsLists, because there could be more than one lists, depending on needle type
   int GetNumberOfNeedles(){ return this->NeedlesVector.size();};
-  //ETX
 
   // Description:
   // Set/Get the current needle index (if <0 then there is no active needle)
   vtkGetMacro(CurrentNeedleIndex,int);
   vtkSetMacro(CurrentNeedleIndex,int);
 
-  //BTX
   bool SetNeedle(unsigned int needleIndex, NeedleDescriptorStruct needleDesc);
   // returns false if needle info was not found
   bool GetNeedle(unsigned int needleIndex, NeedleDescriptorStruct &needleDesc);
-  //ETX
 
-  //BTX
   // Description:
   // get/set methods for storing needle information
   void SetNeedleType(unsigned int needleIndex, std::string type);
   std::string GetNeedleType(unsigned int needleIndex);
-  //ETX
 
-  //BTX
   // Description:
   // get/set methods for storing needle information
   void SetNeedleDescription(unsigned int needleIndex, std::string desc);
   std::string GetNeedleDescription(unsigned int needleIndex);
-  //ETX
 
   // Description:
   // get/set methods for storing needle information
@@ -220,7 +210,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   bool GetTargetFromFiducialList(int fiducialListIndex, int fiducialIndex, double &r, double &a, double &s);  
   void SetFiducialColor(int fiducialIndex, bool selected); // :TODO: rename it to SetFiducialSelected
 
-  //BTX
   // Description:
   // Get Targeting Fiducials Lists names(used in the wizard steps)
   std::string GetTargetingFiducialsListName(unsigned int index)
@@ -230,7 +219,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
     else
       return NULL;
     }; 
-  //ETX
   
   unsigned int AddTargetDescriptor(vtkProstateNavTargetDescriptor *target);
   int RemoveTargetDescriptorAtIndex(unsigned int index); // return with 0 if failed
@@ -275,14 +263,12 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   int CurrentStep;
   int PreviousStep;
 
-  //BTX
   std::vector<NeedleDescriptorStruct> NeedlesVector;
   int CurrentNeedleIndex;
 
   std::vector<vtkProstateNavTargetDescriptor*> TargetDescriptorsVector;
   int CurrentTargetIndex; // if <0 then no current target is selected
 
-  //ETX
 
   vtkSetReferenceStringMacro(TargetPlanListNodeID);
   char *TargetPlanListNodeID;

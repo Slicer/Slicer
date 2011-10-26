@@ -185,9 +185,7 @@ public:
   /// 
   /// Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
-  //BTX
   vtkMRMLNode *GetNodeByID(std::string name);
-  //ETX
   
   /// 
   /// Get nodes of a specified class having the specified name
@@ -211,14 +209,10 @@ public:
   
   /// 
   /// Get vector of nodes of a specified class in the scene
-  //BTX
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
-  //ETX
   vtkCollection* GetNodesByClass(const char *className);
   
-  //BTX
   std::list<std::string> GetNodeClassesList();
-  //ETX
   
   /// 
   /// returns list of names
@@ -295,9 +289,7 @@ public:
   ///  
   /// Save current state of the nodes in the undo buffer
   void SaveStateForUndo(vtkCollection *nodes);
-  //BTX
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
-  //ETX
 
   void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
 
@@ -344,12 +336,10 @@ public:
   /// the input node
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
-//BTX
   /// 
   /// Get/Set the active Scene 
   static void SetActiveScene(vtkMRMLScene *);
   static vtkMRMLScene *GetActiveScene();
-//ETX
 
   enum
     {
@@ -384,7 +374,6 @@ public:
   vtkSetMacro(ReadDataOnLoad,int);
   vtkGetMacro(ReadDataOnLoad,int);
 
-//BTX
   void SetErrorMessage(const std::string &error) {
     this->ErrorMessage = error;
   };
@@ -392,7 +381,6 @@ public:
   std::string GetErrorMessage() {
     return this->ErrorMessage;
   };
-//ETX
 
   void SetSceneXMLString(const std::string &xmlString) {
     this->SceneXMLString = xmlString;
@@ -535,13 +523,10 @@ protected:
   bool UndoFlag;
   bool InUndo;
 
-  //BTX
   std::list< vtkCollection* >  UndoStack;
   std::list< vtkCollection* >  RedoStack;
-  //ETX
   
 
-  //BTX
   std::string                 URL;
   std::string                 RootDirectory;
 
@@ -559,7 +544,6 @@ protected:
   std::string ErrorMessage;
 
   std::string SceneXMLString;
-  //ETX
   
   int LoadFromXMLString;
 
@@ -592,9 +576,7 @@ private:
   void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
 
-  //BTX
   friend class vtkMRMLSceneViewNode; // For IsRestoring
-  //ETX
   
   int LoadIntoScene(vtkCollection* scene);
 

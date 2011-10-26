@@ -196,7 +196,6 @@ protected:
   /// To hold preset values for window and level, so can restore this display
   /// node's window and level to ones read from DICOM files, or defined by
   /// users
-  //BTX
   class WindowLevelPreset
   {
   public:
@@ -204,7 +203,6 @@ protected:
     double Level;
     WindowLevelPreset() { this->Window = 0.0; this->Level = 0.0; };
   };
-  //ETX
   //double Window;
   //double Level;
   //double UpperThreshold;
@@ -226,9 +224,7 @@ protected:
 
   /// 
   /// window level presets
-  //BTX
   std::vector<WindowLevelPreset> WindowLevelPresets;
-  //ETX
 
   /// 
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels

@@ -72,7 +72,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
   int SwitchStep(const char* step);
 
  protected:
-  //BTX
   std::string ZFrameTransformNodeID;
   std::string TargetTransformNodeID;
 
@@ -83,7 +82,6 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
 
   std::map<std::string,std::string> StepToCommandMap;
 
-  //ETX
 
 };
 

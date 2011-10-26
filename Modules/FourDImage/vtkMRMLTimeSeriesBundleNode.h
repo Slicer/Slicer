@@ -33,12 +33,10 @@ class vtkMRMLStorageNode;
 class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTransformNode
 {
   public:
-//BTX
   typedef struct {
     unsigned int second;
     unsigned int nanosecond;
   } TimeStamp;
-//ETX
 
   static vtkMRMLTimeSeriesBundleNode *New();
   vtkTypeMacro(vtkMRMLTimeSeriesBundleNode,vtkMRMLLinearTransformNode);
@@ -105,7 +103,6 @@ protected:
   vtkMRMLTimeSeriesBundleNode(const vtkMRMLTimeSeriesBundleNode&);
   void operator=(const vtkMRMLTimeSeriesBundleNode&);
 
-  //BTX
   typedef std::vector<std::string> NodeIDListType;
   typedef std::vector<TimeStamp> TimeStampListType;
 
@@ -113,7 +110,6 @@ protected:
   //NodeIDListType    TransformNodeIDList;
   NodeIDListType    DisplayBufferNodeIDList;
   TimeStampListType TimeStampList;
-  //ETX
 
 };
 

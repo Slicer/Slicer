@@ -59,9 +59,7 @@ class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorGUI : public vtkSlicerModuleGUI
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
-  //BTX
   using vtkSlicerComponentGUI::BuildGUI; 
-  //ETX
 
   // Description:
   // Add obsereves to GUI widgets
@@ -83,9 +81,7 @@ class VTK_ATLASCREATOR_EXPORT vtkAtlasCreatorGUI : public vtkSlicerModuleGUI
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( ){};
-  //BTX
   using vtkSlicerComponentGUI::Enter; 
-  //ETX
   virtual void Exit ( ){};
 
   // Description:

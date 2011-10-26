@@ -60,10 +60,8 @@ private:
   vtkMRMLTestSliceViewDisplayableManager(const vtkMRMLTestSliceViewDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLTestSliceViewDisplayableManager&);                     // Not Implemented
   
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

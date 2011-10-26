@@ -276,12 +276,10 @@ class VTK_MRML_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
   /// Data
   //----------------------------------------------------------------
 
-  //BTX
   std::string Title;             /// Plotting graph title
   std::string XLabel;            /// Label for x-axis
   std::string YLabel;            /// Label for y-axis
   std::map< int, vtkMRMLPlotNode* > Data;  /// map for plotting data
-  //ETX
 
   int LastArrayID;
 

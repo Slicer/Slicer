@@ -138,7 +138,6 @@ class VTK_MIMXWIDGETS_EXPORT vtkMimxSelectPointsWidget : public vtkAbstractWidge
           vtkMimxSelectPointsWidget *Self);
   static void UpdateSelectedGlyphDisplay        (vtkMimxSelectPointsWidget *Self);
   //void ComputeExtratedPointSet(vtkPoints *points);
-  //BTX
   // Description:
   // Events invoked by this widget
   int WidgetEvent;
@@ -158,7 +157,6 @@ class VTK_MIMXWIDGETS_EXPORT vtkMimxSelectPointsWidget : public vtkAbstractWidge
         RightMouseButtonDown,
         RightMouseButtonUp
     };
-  //ETX
   int PointSelectionState;
   enum PointSelectionType
   {

@@ -62,9 +62,7 @@ protected:
   vtkMRMLThreeDViewDisplayableManagerFactory();
   virtual ~vtkMRMLThreeDViewDisplayableManagerFactory();
 
-  //BTX
   VTK_SINGLETON_DECLARE(vtkMRMLThreeDViewDisplayableManagerFactory);
-  //ETX
 
 private:
 
@@ -73,10 +71,8 @@ private:
 
 };
 
-//BTX
 VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT,
                                   vtkMRMLThreeDViewDisplayableManagerFactory);
-//ETX
 
 #endif
 

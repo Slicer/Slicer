@@ -58,7 +58,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   virtual void Register(vtkObject *o) { Superclass::Register(o); };
   virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
 
-  //BTX
   enum {
     SLICE_PLANE_RED    = 0,
     SLICE_PLANE_YELLOW = 1,
@@ -75,7 +74,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
     BRING_MARKERS_TO_VIEW_ALIGN_TO_NEEDLE           // show needle aligned slices (parallel and perpendicular to the needle and robot main axis)
   };
   
-  //ETX
   
  public:
   // Description:    
@@ -142,11 +140,9 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   
   void Init();
 
-  //BTX
   static void DataCallback(vtkObject *caller, 
                            unsigned long eid, void *clientData, void *callData);
   
-  //ETX
   
   // Description:
   // Bring a marker to view in all three slice views along its principal axes

@@ -136,9 +136,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       }
   void MapFileToURI ( const char *uri, const char *fname );
 
-  //BTX
   void MarkNode ( std::string );
-  //ETX
   /// in case we need these.
   enum
     {
@@ -158,10 +156,8 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       SettingsUpdateEvent,
     };
 
-  //BTX
   std::map<std::string, std::string> uriMap;
   const char *GetFileFromURIMap (const char *uri );
-  //ETX
   
  private:
   int InsufficientFreeBufferNotificationFlag;
@@ -172,7 +168,6 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   //int EnableRemoteCacheOverwriting;
   vtkMRMLScene *MRMLScene;
 
-  //BTX
   std::string RemoteCacheDirectory;
   std::vector< std::string > GetAllCachedFiles();
   /// This array contains a list of cached file names (without paths)
@@ -180,7 +175,6 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   /// snuffle thru a large cache dir. Must keep current
   /// with every download, remove from cache, and clearcache call.
   std::vector< std::string > CachedFileList;
-  //ETX
 
  protected:
   vtkCacheManager();

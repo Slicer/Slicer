@@ -64,7 +64,6 @@ public:
 
 private:
 
-    //BTX
     igstk::AuroraTracker::Pointer        AuroraTracker;
     igstk::PolarisTracker::Pointer       PolarisTracker;
 
@@ -83,7 +82,6 @@ private:
     /** Hardware handshaking */
     HandshakeT  HandShake;
 
-    //ETX
 
     short TrackerType;  /// 0 - Polaris; 1 - Aurora 
 

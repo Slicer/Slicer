@@ -112,9 +112,7 @@ public:
         virtual void SetEnabled(int);
         virtual void PlaceWidget(double bounds[6]);
         virtual void SetInput(vtkPolyData* polydata);
-        //BTX
         using vtk3DWidget::SetInput;
-        //ETX
 
         void PlaceWidget()
         {this->Superclass::PlaceWidget();}
@@ -201,7 +199,6 @@ protected:
         vtkMimxPolyDataWidget();
         ~vtkMimxPolyDataWidget();
 
-        //BTX - manage the state of the widget
         int State;
         enum WidgetState
         {
@@ -210,7 +207,6 @@ protected:
                 Scaling,
                 Outside
         };
-        //ETX
 
         // Handles the events
         static void ProcessEvents(vtkObject* object, 

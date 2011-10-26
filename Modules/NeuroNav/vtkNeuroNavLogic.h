@@ -39,7 +39,6 @@ Version:   $Revision: $
 class VTK_NEURONAV_EXPORT vtkNeuroNavLogic : public vtkSlicerModuleLogic 
 {
 public:
-  //BTX
   enum WorkPhase {
     StartUp = 0,
     Planning,
@@ -67,7 +66,6 @@ public:
     //SliceUpdateEvent        = 50002,
   };
 
-  //ETX
 
   // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
 

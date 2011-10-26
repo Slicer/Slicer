@@ -45,7 +45,6 @@ public:
 
 
   /// Operation options.
-  //BTX
   enum
   {
     VTK_TENS_TRACE,
@@ -73,7 +72,6 @@ public:
     VTK_TENS_PARALLEL_DIFFUSIVITY,
     VTK_TENS_PERPENDICULAR_DIFFUSIVITY,
   };
-  //ETX
 
 
   /// 

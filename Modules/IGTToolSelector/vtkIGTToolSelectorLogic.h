@@ -36,12 +36,10 @@ class vtkAppendPolyData;
 class VTK_IGTToolSelector_EXPORT vtkIGTToolSelectorLogic : public vtkSlicerModuleLogic 
 {
  public:
-  //BTX
   enum {  // Events
     //LocatorUpdateEvent      = 50000,
     StatusUpdateEvent       = 50001,
   };
-  //ETX
 
  public:
   
@@ -92,7 +90,6 @@ class VTK_IGTToolSelector_EXPORT vtkIGTToolSelectorLogic : public vtkSlicerModul
   //-----------------------------------------------------------------------------
   // Local Variables.
   //-----------------------------------------------------------------------------
-  //BTX
   std::string ToolTransformNodeID; // this is the real-time updated transform node.
   vtkSmartPointer<vtkAppendPolyData> ToolPolyData;
   vtkSmartPointer<vtkAppendPolyData> ToolTipPolyData;
@@ -120,7 +117,6 @@ class VTK_IGTToolSelector_EXPORT vtkIGTToolSelectorLogic : public vtkSlicerModul
     NEEDLE,
     POINTER
   };
-  //ETX
 };
 
 #endif

@@ -123,13 +123,11 @@ public:
   vtkGetMacro(SelectWithAnnotationNode, int);
   vtkBooleanMacro(SelectWithAnnotationNode, int);
 
-  //BTX
   enum
   {
     PositiveAnnotationNodeSelection,
     NegativeAnnotationNodeSelection
   };
-  //ETX
 
   vtkGetMacro(SelectionWithAnnotationNodeMode, int);
   virtual void SetSelectionWithAnnotationNodeMode(int);

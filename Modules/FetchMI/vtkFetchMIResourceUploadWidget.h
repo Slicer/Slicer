@@ -62,9 +62,7 @@ public:
   void RaiseTaggingHelpWindow();
   
   virtual void AddNewItem ( const char *dataset, const char *dtype);
-  //BTX
   using vtkFetchMIMulticolumnWidget::AddNewItem; 
-  //ETX
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -146,7 +144,6 @@ public:
   void ShowTagsForSelection();
   void SetStatusText(const char *txt);
 
-  //BTX
   enum
     {
       TagSelectedDataEvent = 11000,
@@ -158,7 +155,6 @@ public:
 
   std::string CurrentTagAttribute;
   std::string CurrentTagValue;
-  //ETX
 
   // Description:
   // editing callback for the multicolumn list

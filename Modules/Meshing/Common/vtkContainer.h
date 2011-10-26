@@ -63,7 +63,6 @@ private:
   void operator=(const vtkContainer&); // Not implemented
 };
 
-//BTX
 // Description:
 // The following methods provide all the necessary operations that are
 // done.
@@ -193,7 +192,6 @@ static inline void vtkContainerDeleteMethod(const char* d1)
 { char *ch = const_cast<char*>(d1); delete [] ch; } 
 static inline void vtkContainerDeleteMethod(char* d1) { delete [] d1; }
 static inline void vtkContainerDeleteMethod(void*) {}
-//ETX
 
 #endif 
 

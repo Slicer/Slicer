@@ -73,12 +73,10 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   
   /// 
   /// Add a known file extension
-//BTX
   void AddFileExtension(std::string ext);
   /// 
   /// returns true if on the list, false otherwise
   bool IsKnownFileExtension(std::string ext);
-//ETX
   virtual int SupportedFileType(const char *fileName);
 
   /// 
@@ -93,9 +91,7 @@ protected:
 
   /// 
   /// a list of valid file extensions
-  //BTX
   std::vector< std::string > KnownFileExtensions;
-  //ETX
 
   int UseStripper;
 };

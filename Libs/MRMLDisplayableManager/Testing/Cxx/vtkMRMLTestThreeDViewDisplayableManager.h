@@ -60,10 +60,8 @@ private:
   vtkMRMLTestThreeDViewDisplayableManager(const vtkMRMLTestThreeDViewDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLTestThreeDViewDisplayableManager&);                     // Not Implemented
   
-  //BTX
   class vtkInternal;
   vtkInternal * Internal;
-  //ETX
 
 };
 

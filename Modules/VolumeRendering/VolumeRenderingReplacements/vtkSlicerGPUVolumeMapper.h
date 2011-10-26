@@ -101,7 +101,6 @@ public:
   // necessary to support the specific properties are available.
   virtual int IsRenderSupported( vtkVolumeProperty * ) {return 0;};
 
-//BTX
 
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
@@ -157,9 +156,7 @@ protected:
   
   // Description:
   // Impemented in subclass - check is texture size is OK.
-  //BTX
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
-  //ETX
   
   friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg );
   

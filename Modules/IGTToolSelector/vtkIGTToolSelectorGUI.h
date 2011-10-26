@@ -123,7 +123,6 @@ class VTK_IGTToolSelector_EXPORT vtkIGTToolSelectorGUI : public vtkSlicerModuleG
   // GUI widgets
   //----------------------------------------------------------------
 
-  //BTX
   // transform selector.
   vtkSmartPointer<vtkSlicerNodeSelectorWidget> ProbeTransformSelector;
 
@@ -145,7 +144,6 @@ class VTK_IGTToolSelector_EXPORT vtkIGTToolSelectorGUI : public vtkSlicerModuleG
   vtkSmartPointer<vtkKWScaleWithEntry> ProjectionDiameterScale;
   vtkSmartPointer<vtkKWScaleWithEntry> ToolTipDiameterScale;
   vtkSmartPointer<vtkKWCheckButton> ShowToolTipCheckButton;
- //ETX
 
   //----------------------------------------------------------------
   // Logic Values

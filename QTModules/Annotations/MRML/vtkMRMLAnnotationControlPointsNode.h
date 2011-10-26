@@ -116,14 +116,12 @@ public:
 
   int GetNumberOfControlPoints();
 
-  //BTX
   enum 
   {
     CP_SELECTED =  vtkMRMLAnnotationNode::NUM_TEXT_ATTRIBUTE_TYPES,
     CP_VISIBLE,
     NUM_CP_ATTRIBUTE_TYPES
   };
-  //ETX
 
   const char *GetAttributeTypesEnumAsString(int val);
 
@@ -137,7 +135,6 @@ public:
   void CreateAnnotationPointDisplayNode();
 
   /// flags to determine how the next fiducial added to the list is labelled
-  //BTX
   enum NumberingSchemes
   {
       SchemeMin = 0,
@@ -146,7 +143,6 @@ public:
       UsePrevious,
       SchemeMax = UsePrevious,
   };
-  //ETX
 
 
   /// Flag determining how to number the next added fiducial

@@ -11,7 +11,6 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRMenuButtonColorMode :public vt
 public:
     static vtkSlicerVRMenuButtonColorMode *New();
     vtkTypeRevisionMacro(vtkSlicerVRMenuButtonColorMode,vtkKWMenuButtonWithLabel);
-    //BTX
     struct ColorEntry
     {
         ColorEntry(const char* name, double red,double green,double blue) : Name(name), Red(red), Green(green),Blue(blue) {};
@@ -24,7 +23,6 @@ public:
     {
         ColorModeChangedEvent=1000001
     };
-    //ETX
 
     virtual void CreateWidget(void);
 
@@ -32,11 +30,9 @@ public:
     vtkSetVector2Macro(Range,double);
     double Range[2];
     vtkColorTransferFunction *ColorTransferFunction;
-    //BTX
     typedef std::vector<ColorEntry> ColorModeList;
     static const ColorModeList Values;
     static ColorModeList CreateValues();
-    //ETX
     void ProcessColorModeEvents(int index);
 protected:
     vtkSlicerVRMenuButtonColorMode(void);

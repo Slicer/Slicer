@@ -101,9 +101,7 @@ public:
 
   ///
   /// Add a file to the input list list, checking first for null, duplicates
-//BTX
   void AddColorFile(const char *fileName, std::vector<std::string> *Files);
-//ETX
   ///
   /// load in a color file, creating a storage node. Returns a pointer to the
   /// created node on success, 0 on failure.
@@ -172,12 +170,10 @@ protected:
   /// Resources/ColorFiles directory, white space separated with:
   /// int name r g b a
   /// with rgba in the range 0-255
-  //BTX
   std::vector<std::string> ColorFiles;
   /// a vector holding discovered user defined colour files, found in the
   /// UserColorFilesPath directories.
   std::vector<std::string> UserColorFiles;
-  //ETX
   ///
   /// a string holding delimiter separated (; on win32, : else) paths where to
   /// look for extra colour files, set from the return value of

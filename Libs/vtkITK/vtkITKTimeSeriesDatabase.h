@@ -79,7 +79,6 @@ protected:
     {
     this->vtkImporter->Delete();
     }
-//BTX
   typedef short InputImagePixelType;
   typedef short OutputImagePixelType;
   typedef itk::Image<OutputImagePixelType, 3> OutputImageType;
@@ -91,7 +90,6 @@ protected:
   ImageExportType::Pointer itkExporter;
   vtkImageImport* vtkImporter;  
   
-//ETX
   virtual void ExecuteInformation();
   /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *output);

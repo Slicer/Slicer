@@ -138,9 +138,7 @@ protected:
   vtkMRMLIGTLConnectorNode* Connector;
   
   vtkMRMLIGTLQueryNode* TrackingDataQueryNode;
-  //BTX
   std::list<vtkMRMLIGTLQueryNode*> ImageQueryNodeList;
-  //ETX
 
  private:
   vtkIGTLTrackingDataControllerWindow(const vtkIGTLTrackingDataControllerWindow&);

@@ -33,9 +33,7 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   virtual void StageFileRead(const char * source,
                              const char * destination);
 
-  //BTX
   using vtkURIHandler::StageFileRead; 
-  //ETX
   
   /// 
   /// This function uploads the specified file (source) to
@@ -43,9 +41,7 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   virtual void StageFileWrite(const char * source,
                               const char *destination);
 
-  //BTX
   using vtkURIHandler::StageFileWrite; 
-  //ETX
   
   virtual const char *QueryServer ( const char *uri, const char *destination);
 

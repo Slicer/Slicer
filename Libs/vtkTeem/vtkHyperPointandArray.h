@@ -25,7 +25,6 @@
 
 //
 /// Special classes for manipulating data
-//BTX
 class VTK_Teem_EXPORT vtkHyperPoint { //;prevent man page generation
 public:
     vtkHyperPoint(); /// method sets up storage
@@ -43,9 +42,7 @@ public:
     vtkFloatingPointType   S;       /// scalar value 
     vtkFloatingPointType   D;       /// distance travelled so far 
 };
-//ETX
 
-//BTX
 class VTK_Teem_EXPORT vtkHyperArray { //;prevent man page generation
 public:
   vtkHyperArray();
@@ -75,7 +72,6 @@ public:
   vtkIdType Extend;            /// grow array by this amount
   vtkFloatingPointType Direction;       /// integration direction
 };
-//ETX
 
 #define VTK_START_FROM_POSITION 0
 #define VTK_START_FROM_LOCATION 1

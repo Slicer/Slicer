@@ -57,14 +57,11 @@ public:
   const char *GetTemporaryDirectory() const
     { return this->TemporaryDirectory.c_str(); }
 
-//BTX
   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
-//ETX
   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node) 
     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
 protected:
-  //BTX
   std::string ConstructTemporaryFileName(const std::string& tag,
                                          const std::string& type,
                                          const std::string& name,
@@ -73,7 +70,6 @@ protected:
   std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
   std::string FindHiddenNodeID(const ModuleDescription& d,
                                const ModuleParameter& p);
-  //ETX
 
   // The method that runs the command line module
   void ApplyTask(void *clientdata);
@@ -92,9 +88,7 @@ private:
   int RedirectModuleStreams;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
-//BTX
   std::string TemporaryDirectory;
-//ETX
 };
 
 #endif

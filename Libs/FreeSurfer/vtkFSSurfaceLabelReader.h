@@ -67,7 +67,6 @@ public:
   vtkGetMacro(LabelOff, float);
   vtkSetMacro(LabelOff, float);
   
-  //BTX
   enum
   {
     /// error codes
@@ -81,7 +80,6 @@ public:
     /// file type magic numbers
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
   };
-  //ETX
   
 protected:
   vtkFSSurfaceLabelReader();

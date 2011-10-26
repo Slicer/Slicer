@@ -241,9 +241,7 @@ protected:
   int NumberOfComponents;
   bool UseNativeOrigin;
 
-  //BTX
   std::map <std::string, std::string> HeaderKeyValue;
-  //ETX
 
   virtual void ExecuteInformation();
   virtual void ExecuteData(vtkDataObject *out);

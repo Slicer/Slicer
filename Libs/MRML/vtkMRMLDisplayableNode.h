@@ -170,11 +170,9 @@ public:
   /// Data
   vtkPolyData *PolyData;
 
-//BTX
   std::vector<std::string> DisplayNodeIDs;
  
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;
-//ETX
 };
 
 #endif

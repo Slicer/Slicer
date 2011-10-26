@@ -37,9 +37,7 @@ public:
   // Description:
   // Method to add a new resource to the resource list.
   virtual void AddNewItem ( const char *uri, const char *dtype);
-  //BTX
   using vtkFetchMIMulticolumnWidget::AddNewItem; 
-  //ETX
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -95,12 +93,10 @@ public:
   // editing callback for the multicolumn list
   void RightClickListCallback(int row, int col, int x, int y);
 
-  //BTX
   enum
     {
       DeleteResourceEvent = 11000,
     };
-  //ETX
   
  protected:
   vtkFetchMIFlatResourceWidget();

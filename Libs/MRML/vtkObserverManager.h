@@ -88,9 +88,7 @@ protected:
   /// Holder for callback
   vtkCallbackCommand *CallbackCommand;
 
-  //BTX
   std::map< vtkObject*, vtkUnsignedLongArray* > ObserverTags;
-  //ETX
 
 };
 

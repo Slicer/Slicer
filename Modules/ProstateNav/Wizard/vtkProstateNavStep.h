@@ -144,9 +144,7 @@ protected:
 
   vtkMRMLProstateNavManagerNode* ProstateNavManager;
 
-  //BTX
   std::string Title;
-  //ETX
   
   int TotalSteps;     // Total number of steps in the wizard
   int StepNumber;     // Step number for this step.

@@ -54,7 +54,6 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  //BTX
   /// Which kind of glyph should be used to display this fiducial?
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
@@ -76,7 +75,6 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
     Diamond3D,
     GlyphMax = Sphere3D,
   };
-  //ETX
   /// Return the min/max glyph types, for iterating over them in tcl
   int GetMinimumGlyphType() { return vtkMRMLAnnotationPointDisplayNode::GlyphMin; };
   int GetMaximumGlyphType() { return vtkMRMLAnnotationPointDisplayNode::GlyphMax; };

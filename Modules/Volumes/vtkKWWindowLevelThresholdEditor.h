@@ -126,7 +126,6 @@ public:
   // deal with changes from the window level preset menu
   void ProcessWindowLevelPresetsMenuCommand(char *winLevel);
 
-//BTX
    enum
     {
       ThresholdOff = 0,
@@ -140,7 +139,6 @@ public:
       ValueStartChangingEvent
     };
 
-//ETX
 
   vtkGetMacro(PresetSize, int);
   virtual void SetPresetSize(int);
@@ -186,7 +184,6 @@ protected:
   unsigned long ImageModifiedTime;
 
   // Presets for Window/Level
-  //BTX
   class Preset
   {
   public:
@@ -204,7 +201,6 @@ protected:
   vtkKWWindowLevelThresholdEditorInternals *Internals;
   friend class vtkKWWindowLevelThresholdEditorInternals;
 
-  //ETX
 
   // Description:
   // Add default presets

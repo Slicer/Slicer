@@ -84,14 +84,12 @@ public:
   // add line display node if not already present
   void CreateAnnotationLineDisplayNode();
 
-//BTX
   enum 
   {
     LINE_SELECTED = vtkMRMLAnnotationControlPointsNode::NUM_CP_ATTRIBUTE_TYPES,
     LINE_VISIBLE,
     NUM_LINE_ATTRIBUTE_TYPES
   };
-//ETX
   
   const char *GetAttributeTypesEnumAsString(int val);
 
