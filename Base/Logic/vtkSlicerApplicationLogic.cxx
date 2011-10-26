@@ -306,66 +306,6 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::Connect (const char *URL)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Connect is deprecated");
-
-  if (this->GetMRMLScene())
-    {
-    this->GetMRMLScene()->SetURL(URL);
-    this->GetMRMLScene()->Connect();
-    }
-}
-
-//----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::Commit()
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
-  if (this->GetMRMLScene())
-    {
-    return (this->GetMRMLScene()->Commit());
-    }
-  return 0;
-};
-
-//----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::Commit(const char *URL)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
-  if (this->GetMRMLScene())
-    {
-    return (this->GetMRMLScene()->Commit(URL));
-    }
-  return (0);
-}
-
-/*
-//----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, SelectionNode, vtkMRMLSelectionNode);
-
-//----------------------------------------------------------------------------
-vtkMRMLSelectionNode* vtkSlicerApplicationLogic::GetSelectionNode()
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetSelectionNode is deprecated");
-  vtkDebugMacro(<< this->GetClassName() << " (" << this
-                << "): returning SelectionNode address " << this->SelectionNode );
-  return this->SelectionNode;
-}
-
-//----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, InteractionNode, vtkMRMLInteractionNode);
-
-//----------------------------------------------------------------------------
-vtkMRMLInteractionNode* vtkSlicerApplicationLogic::GetInteractionNode()
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetInteractionNode is deprecated");
-  vtkDebugMacro(<< this->GetClassName() << " (" << this
-                << "): returning InteractionNode address " << this->InteractionNode );
-  return this->InteractionNode;
-}
-*/
-
-//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()
 {
   if (this->ProcessingThreadId == -1)

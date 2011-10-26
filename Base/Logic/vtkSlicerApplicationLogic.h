@@ -54,21 +54,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   vtkTypeRevisionMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Connect to the given URL.  Disconnect any currently active
-  /// connection to switch to a new connection.  A NULL pointer means
-  /// to disconnect current and not have a current connection
-  /// (creates a blank scene for manipulation).
-  /// Return code tells if connection was completed successfully.
-  void Connect (const char *URL);
-
-  /// Commit your current scene modifications to the connected URL
-  /// Return code tells result of commit.
-  int Commit ();
-
-  /// Commit your current scene modifications to specified URL
-  /// Return code tells result of commit.
-  int Commit (const char *URL);
-
   /// Perform the default behaviour related to selecting a fiducial list
   /// (display it in the Fiducials GUI)
   void PropagateFiducialListSelection();
@@ -148,8 +133,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// These routings act as place holders so that test scripts can
   /// turn on and off tracing.  These are just hooks
   /// for use with external tracing tool (such as AQTime)
-  void SetTracingOn () { this->Tracing = 1; };
-  void SetTracingOff () { this->Tracing = 0; };
+  void SetTracingOn () { this->Tracing = 1; }
+  void SetTracingOff () { this->Tracing = 0; }
 
   /// Return True if \a filePath isn't contained in \a applicationHomeDir.
   static bool IsExtension(const std::string& filePath, const std::string& applicationHomeDir);
@@ -238,4 +223,3 @@ private:
 };
 
 #endif
-
