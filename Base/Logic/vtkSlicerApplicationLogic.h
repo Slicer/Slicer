@@ -33,7 +33,6 @@
 #include <itkMutexLock.h>
 
 //BTX
-class vtkMRMLSliceLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkSlicerTask;
@@ -41,7 +40,6 @@ class ModifiedQueue;
 class ProcessingTaskQueue;
 class ReadDataQueue;
 class ReadDataRequest;
-class SliceLogicMap;
 class WriteDataQueue;
 class WriteDataRequest;
 //ETX
@@ -86,10 +84,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// SlicerLogic maintains the list of currently active views
   vtkCollection* GetViews();
 
-  /// the ActiveSlice is the default destination of UI events
-  void SetActiveSlice(vtkMRMLSliceLogic * newSliceLogic);
-  vtkMRMLSliceLogic* GetActiveSlice();
-
   /// Perform the default behaviour related to selecting a fiducial list
   /// (display it in the Fiducials GUI)
   void PropagateFiducialListSelection();
@@ -102,10 +96,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 
   /// Create a thread for processing
   void CreateProcessingThread();
-
-  /// Create the default number (three for red, yellow, and green slice viewers) of vtkMRMLAbstractLogic objects
-  void CreateSliceLogics();
-  void DeleteSliceLogics();
 
   /// Shutdown the processing thread
   void TerminateProcessingThread();
@@ -175,20 +165,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 
   /// Process a request to write data from a referenced node.
   void ProcessWriteData();
-
-  /// Add slice logic to the STL::MAP
-  void AddSliceLogic(const char *layoutName, vtkMRMLSliceLogic *sliceLogic);
-
-  /// Add slice logic to the STL::MAP using the slice logic's name for
-  /// the key.
-  void AddSliceLogic(vtkMRMLSliceLogic *sliceLogic);
-
-  /// Get the slice logic for a particular layout "Red", "Green", "Yellow"
-  vtkMRMLSliceLogic* GetSliceLogic(const char *layoutName);
-
-  /// Remove a slice logic from the managed set
-  void RemoveSliceLogic(vtkMRMLSliceLogic *sliceLogic);
-  void RemoveSliceLogic(char *layoutName);
 
   /// Transient Application State
   /// -- these are elements that are inherently part of the
@@ -262,20 +238,10 @@ private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
 
-  /// STL::MAP to hold Logics for main slice viewers.
-  /// pointers to these so that they may be reassigned
-  /// if three viewers are deleted and recreated, as
-  /// they are during view reconfiguration for instance.
-  //BTX
-  SliceLogicMap *InternalSliceLogicMap;
-  //ETX
-
   /// for now, make these generic collections
   /// - maybe they should be subclassed to be type-specific?
   vtkSmartPointer<vtkCollection> Views;
   vtkSmartPointer<vtkCollection> Modules;
-
-  vtkMRMLSliceLogic *     ActiveSlice;
 
 //BTX
   itk::MultiThreader::Pointer ProcessingThreader;

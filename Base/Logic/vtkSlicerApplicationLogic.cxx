@@ -19,7 +19,6 @@
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorTableStorageNode.h>
 #include <vtkMRMLCommandLineModuleNode.h>
-#include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
@@ -43,9 +42,6 @@
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
-// MRMLLogic includes
-#include <vtkMRMLSliceLogic.h>
-
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
 
@@ -55,10 +51,6 @@
 # include <unistd.h>
 #endif
 #include <queue>
-
-//----------------------------------------------------------------------------
-// Private implementaton of an std::map
-class SliceLogicMap : public std::map<std::string, vtkSmartPointer<vtkMRMLSliceLogic> > {};
 
 //----------------------------------------------------------------------------
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
@@ -128,7 +120,7 @@ public:
   const std::string& GetFilename() const { return m_Filename; }
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
-  int GetIsScene() const { return m_IsScene; };
+  int GetIsScene() const { return m_IsScene; }
 
 protected:
   std::vector<std::string> m_TargetNodes;
@@ -207,7 +199,7 @@ public:
   const std::string& GetFilename() const { return m_Filename; }
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
-  int GetIsScene() const { return m_IsScene; };
+  int GetIsScene() const { return m_IsScene; }
 
 protected:
   std::vector<std::string> m_TargetNodes;
@@ -229,7 +221,6 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
   this->Views = vtkSmartPointer<vtkCollection>::New();
   this->Modules = vtkSmartPointer<vtkCollection>::New();
-  this->ActiveSlice = 0;
 
   this->ProcessingThreader = itk::MultiThreader::New();
   this->ProcessingThreadId = -1;
@@ -252,8 +243,6 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
   this->InternalTaskQueue = new ProcessingTaskQueue;
   this->InternalModifiedQueue = new ModifiedQueue;
 
-  this->InternalSliceLogicMap = new SliceLogicMap;
-
   this->InternalReadDataQueue = new ReadDataQueue;
   this->InternalWriteDataQueue = new WriteDataQueue;
 }
@@ -261,8 +250,6 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
-  this->SetActiveSlice(0);
-
   // Note that TerminateThread does not kill a thread, it only waits
   // for the thread to finish.  We need to signal the thread that we
   // want to terminate
@@ -291,7 +278,6 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   this->ModifiedQueueLock->Unlock();
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
-  delete this->InternalSliceLogicMap;
   delete this->InternalWriteDataQueue;
 
   this->ClearCollections();
@@ -377,16 +363,6 @@ vtkCollection* vtkSlicerApplicationLogic::GetModules()
   return this->Modules;
 }
 
-//----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, ActiveSlice, vtkMRMLSliceLogic);
-
-//----------------------------------------------------------------------------
-vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetActiveSlice()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this
-                << "): returning ActiveSlice address " << this->ActiveSlice );
-  return this->ActiveSlice;
-}
 /*
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSlicerApplicationLogic, SelectionNode, vtkMRMLSelectionNode);
@@ -412,123 +388,6 @@ vtkMRMLInteractionNode* vtkSlicerApplicationLogic::GetInteractionNode()
   return this->InteractionNode;
 }
 */
-//----------------------------------------------------------------------------
-vtkMRMLSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutName)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::GetSliceLogic is deprecated");
-  if (this->InternalSliceLogicMap)
-    {
-    SliceLogicMap::const_iterator lend = (*this->InternalSliceLogicMap).end();
-    SliceLogicMap::const_iterator lit =     (*this->InternalSliceLogicMap).find(layoutName);
-
-    if ( lit != lend)
-      return (vtkMRMLSliceLogic::SafeDownCast((*lit).second));
-    else
-      return NULL;
-    }
-  else
-    return NULL;
-}
-
-//----------------------------------------------------------------------------
-// this function can be further improved to check if this is a duplicate.
-void vtkSlicerApplicationLogic::AddSliceLogic(const char *layoutName, vtkMRMLSliceLogic *sliceLogic)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::AddSliceLogic is deprecated");
-  if (this->InternalSliceLogicMap)
-    {
-    (*this->InternalSliceLogicMap)[layoutName] = sliceLogic;
-    }
-}
-
-void vtkSlicerApplicationLogic::AddSliceLogic(vtkMRMLSliceLogic *sliceLogic)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::AddSliceLogic is deprecated");
-  if (this->InternalSliceLogicMap)
-    {
-    (*this->InternalSliceLogicMap)[sliceLogic->GetName()] = sliceLogic;
-    }
-}
-
-void vtkSlicerApplicationLogic::RemoveSliceLogic(vtkMRMLSliceLogic *sliceLogic)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::RemoveSliceLogic is deprecated");
-  SliceLogicMap::iterator mit;
-  for (mit = (*this->InternalSliceLogicMap).begin();
-       mit != (*this->InternalSliceLogicMap).end(); ++mit)
-    {
-    if ((*mit).second == sliceLogic)
-      {
-      // remove from the map
-      (*mit).second = 0;
-      (*this->InternalSliceLogicMap).erase(mit);
-      break;
-      }
-    }
-}
-
-void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::RemoveSliceLogic is deprecated");
-  SliceLogicMap::iterator mit;
-  mit = (*this->InternalSliceLogicMap).find(layoutName);
-  if (mit != (*this->InternalSliceLogicMap).end())
-    {
-    // remove from the map
-    (*mit).second = 0;
-    (*this->InternalSliceLogicMap).erase(mit);
-    }
-}
-
-
-void vtkSlicerApplicationLogic::CreateSliceLogics()
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::CreateSliceLogics is deprecated");
-  // make sure there is a CrossHair in the scene
-  vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
-  crosshair->SetCrosshairName("default");
-  this->GetMRMLScene()->AddNode( crosshair );
-  crosshair->Delete();
-
-  // insert slicelogic pointers to a map InternalMRMLSliceLogicMap
-  vtkMRMLSliceLogic *sliceLogic = vtkMRMLSliceLogic::New ( );
-  sliceLogic->SetName("Red");
-  this->AddSliceLogic("Red", sliceLogic);
-  sliceLogic = vtkMRMLSliceLogic::New();
-  sliceLogic->SetName("Yellow");
-  this->AddSliceLogic("Yellow", sliceLogic);
-  sliceLogic = vtkMRMLSliceLogic::New();
-  sliceLogic->SetName("Green");
-  this->AddSliceLogic("Green", sliceLogic);
-
-
-  SliceLogicMap::iterator lit;
-  for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
-    {
-    sliceLogic = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-    sliceLogic->SetMRMLScene(this->GetMRMLScene());
-    //if (this->Slices)
-    //      this->Slices->AddItem(sliceLogic);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::DeleteSliceLogics()
-{
-  vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::DeleteSliceLogics is deprecated");
-  if (this->InternalSliceLogicMap)
-    {
-    vtkMRMLSliceLogic *sliceLogic;
-    SliceLogicMap::iterator lit;
-    for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
-      {
-      sliceLogic = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
-      sliceLogic->SetMRMLScene( NULL );
-      sliceLogic->Delete();
-      }
-    (*this->InternalSliceLogicMap).clear();
-    }
-}
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()
