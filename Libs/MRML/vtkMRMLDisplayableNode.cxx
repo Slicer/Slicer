@@ -48,14 +48,14 @@ vtkMRMLDisplayableNode::~vtkMRMLDisplayableNode()
 void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
   std::stringstream ss;
   unsigned int n;
-  for (n=0; n < this->DisplayNodeIDs.size(); n++) 
+  for (n=0; n < this->DisplayNodeIDs.size(); n++)
     {
     ss << this->DisplayNodeIDs[n];
     if (n < DisplayNodeIDs.size()-1)
@@ -63,7 +63,7 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
       ss << " ";
       }
     }
-  if (this->DisplayNodeIDs.size() > 0) 
+  if (this->DisplayNodeIDs.size() > 0)
     {
     of << indent << " displayNodeRef=\"" << ss.str().c_str() << "\"";
     }
@@ -78,11 +78,11 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "displayNodeRef")) 
+    if (!strcmp(attName, "displayNodeRef"))
       {
       std::stringstream ss(attValue);
       while (!ss.eof())
@@ -93,15 +93,15 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
         }
 
       //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
-      }    
-    }  
+      }
+    }
 
   this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *newID)
-{ 
+{
   Superclass::UpdateReferenceID(oldID, newID);
   bool modified = false;
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
@@ -146,7 +146,7 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
@@ -154,17 +154,17 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
       this->DisplayNodeIDs[i] << "\n";
     }
   os << indent << "\nPoly Data:\n";
-  if (this->PolyData) 
+  if (this->PolyData)
     {
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
-    }  
+    }
 }
 
 //-----------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
-  
+
   // TBD: why do we remove the node ids ?
   for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
     {
@@ -182,7 +182,7 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLDisplayNode *pnode = 0;
     this->DisplayNodes.push_back(pnode);
     this->SetAndObserveNthDisplayNodeID(i, this->DisplayNodeIDs[i].c_str());
-    vtkMRMLNode* displayNode = scene->GetNodeByID(this->DisplayNodeIDs[i].c_str());
+    //vtkMRMLNode* displayNode = scene->GetNodeByID(this->DisplayNodeIDs[i].c_str());
     std::vector<vtkMRMLNode*> slices;
     scene->GetNodesByClass("vtkMRMLDiffusionTensorVolumeSliceDisplayNode", slices);
     // When calling UpdateScene, the scene is up-to-date (it is done to be
@@ -240,10 +240,10 @@ void vtkMRMLDisplayableNode::SetDisplayNodeID(const char *displayNodeID)
     {
     this->DisplayNodeIDs.push_back(std::string(displayNodeID));
     }
-  if (displayNodeID) 
-    { 
-    this->Scene->AddReferencedNodeID(displayNodeID, this); 
-    } 
+  if (displayNodeID)
+    {
+    this->Scene->AddReferencedNodeID(displayNodeID, this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -265,10 +265,10 @@ void vtkMRMLDisplayableNode::SetNthDisplayNodeID(int n, const char *displayNodeI
     {
     this->DisplayNodeIDs[n] = std::string(displayNodeID);
     }
-  if (displayNodeID) 
-    { 
-    this->Scene->AddReferencedNodeID(displayNodeID, this); 
-    } 
+  if (displayNodeID)
+    {
+    this->Scene->AddReferencedNodeID(displayNodeID, this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -280,7 +280,7 @@ void vtkMRMLDisplayableNode::AddDisplayNodeID(const char *displayNodeID)
     }
 
   this->DisplayNodeIDs.push_back(std::string(displayNodeID));
-  this->Scene->AddReferencedNodeID(displayNodeID, this); 
+  this->Scene->AddReferencedNodeID(displayNodeID, this);
 }
 
 //----------------------------------------------------------------------------
@@ -312,15 +312,15 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     return;
     }
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNodes[n], NULL);
-    
+
   this->SetNthDisplayNodeID(n, displayNodeID);
 
   vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(n);
-  if (dnode) 
+  if (dnode)
     {
     vtkSetAndObserveMRMLObjectMacro(this->DisplayNodes[n], dnode);
     }
-  this->Modified(); 
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -331,13 +331,13 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeI
   vtkMRMLDisplayNode *dnode = vtkMRMLDisplayNode::SafeDownCast(
     this->GetScene() != 0 ? this->GetScene()->GetNodeByID(displayNodeID) : 0);
   this->AddAndObserveDisplayNode(dnode);
-  this->Modified(); 
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
 {
-  if (dnode) 
+  if (dnode)
     {
     vtkMRMLDisplayNode *pnode = 0;
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
@@ -370,7 +370,7 @@ void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
   if (this->PolyData != NULL)
     {
-    vtkEventBroker::GetInstance()->RemoveObservations ( 
+    vtkEventBroker::GetInstance()->RemoveObservations (
       this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
@@ -381,7 +381,7 @@ void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
 
   if (this->PolyData != NULL)
     {
-    vtkEventBroker::GetInstance()->AddObservation( 
+    vtkEventBroker::GetInstance()->AddObservation(
       this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
@@ -393,7 +393,7 @@ void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
 
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
