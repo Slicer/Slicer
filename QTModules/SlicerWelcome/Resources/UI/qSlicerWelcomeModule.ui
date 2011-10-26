@@ -84,7 +84,7 @@
             <item row="1" column="1">
               <widget class="QPushButton" name="LoadSampleDataButton">
                 <property name="text">
-                  <string>Load Sample Data</string>
+                  <string>Download Sample Data</string>
                 </property>
                 <property name="icon">
                   <iconset resource="../qSlicerWelcomeModule.qrc">
