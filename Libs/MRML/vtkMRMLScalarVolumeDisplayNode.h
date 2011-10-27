@@ -84,8 +84,13 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// Sets the window and level at once, generates only 1 modified event if
   /// needed.
   virtual void SetWindowLevel(double window, double level);
+  /// Utility function that sets the window/level by passing the min and max
+  /// of the window.
+  void SetWindowLevelMinMax(double min, double max);
 
+  /// Utility function that returns the minimum value of the window level
   double GetWindowLevelMin();
+  /// Utility function that returns the maximum value of the window level
   double GetWindowLevelMax();
 
   /// 
