@@ -287,6 +287,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   if (this->MRMLScene)
     {
+    // Watch the crosshairs
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
     vtkCollection *crosshairs = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
@@ -296,12 +297,33 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
       if (crosshairNode)
         {
-        crosshairs->Delete();
-        
         this->qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent,
                           this, SLOT(onCrosshairNodeModeChangedEvent()));
         }
       }
+    crosshairs->Delete();
+        
+
+    // Watch the Red SliceCompositeNodes for a change in the
+    // SliceIntersectionVisibility state. There are potentially many
+    // SliceCompositeNodes but only one menu option in the toolbar for
+    // the state. So we just watch the Red viewer.
+    qSlicerApplication *app = qSlicerApplication::application();
+    qSlicerLayoutManager *layoutManager = app->layoutManager();
+    if (layoutManager)
+      {
+      qMRMLSliceWidget *red = layoutManager->sliceWidget("Red");
+      if (red)
+        {
+        vtkMRMLSliceCompositeNode *node = red->mrmlSliceCompositeNode();
+        if (node)
+          {
+          this->qvtkReconnect(node, vtkCommand::ModifiedEvent,
+                              this, SLOT(onSliceCompositeNodeChangedEvent()));
+          }
+        }
+      }
+
     }
 
   // Update UI
@@ -363,6 +385,25 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
       }
     
     }
+
+  // toggle the slice intersections. this is harder to manage as there
+  // are many SliceCompositeNodes but only one action. For now, let's
+  // let changes in the Red Viewer control the state of this action
+  qSlicerApplication *app = qSlicerApplication::application();
+  qSlicerLayoutManager *layoutManager = app->layoutManager();
+  if (layoutManager)
+    {
+    qMRMLSliceWidget *red = layoutManager->sliceWidget("Red");
+    if (red)
+      {
+      vtkMRMLSliceCompositeNode *node = red->mrmlSliceCompositeNode();
+      if (node)
+        {
+        this->CrosshairSliceIntersectionsAction->setChecked(node->GetSliceIntersectionVisibility());
+        }
+      }
+    }
+  
 }
 
 
@@ -401,6 +442,12 @@ void qSlicerViewersToolBarPrivate::onMRMLSceneClosedEvent()
 
 //---------------------------------------------------------------------------
 void qSlicerViewersToolBarPrivate::onCrosshairNodeModeChangedEvent()
+{
+  this->updateWidgetFromMRML();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerViewersToolBarPrivate::onSliceCompositeNodeChangedEvent()
 {
   this->updateWidgetFromMRML();
 }
