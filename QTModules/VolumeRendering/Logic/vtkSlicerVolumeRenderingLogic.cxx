@@ -41,6 +41,7 @@
 
 // STD includes
 #include <algorithm>
+#include <cassert>
 
 double higherAndUnique(double value, double &previousValue)
 {
