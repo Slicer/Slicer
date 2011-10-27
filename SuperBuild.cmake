@@ -73,6 +73,15 @@ endif()
 
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
 
+if(Slicer_BUILD_WITH_ITKv4)
+  option(Slicer_BUILD_SimpleITK "Build SimpleITK for Slicer" OFF)
+  mark_as_advanced(Slicer_BUILD_SimpleITK)
+
+  if(Slicer_BUILD_SimpleITK)
+    list(APPEND SimpleITK_DEPENDENCIES Swig)
+    list(APPEND Slicer_DEPENDENCIES SimpleITK Swig)
+  endif()
+endif()
 if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES BRAINSTools)
 endif()
