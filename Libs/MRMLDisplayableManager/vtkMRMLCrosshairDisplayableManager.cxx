@@ -343,11 +343,6 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 {
-  if (!this->CrosshairNode.GetPointer())
-    {
-    return;
-    }
-
   // Remove the old actor is any
   if (this->Actor.GetPointer())
     {
@@ -364,6 +359,11 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
       this->LightBoxRenderer->RemoveActor(this->HighlightActor);
       }
     this->HighlightActor = 0;
+    }
+
+  if (!this->CrosshairNode.GetPointer())
+    {
+    return;
     }
   
   // Get the size of the window
@@ -559,6 +559,17 @@ void vtkMRMLCrosshairDisplayableManager::PrintSelf(ostream& os, vtkIndent indent
 {
   this->Superclass::PrintSelf(os, indent);
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneClosedEvent()
+{
+  if (this->GetMRMLScene()->GetIsUpdating())
+    {
+    return;
+    }
+  this->Internal->BuildCrosshair();
+}
+
 
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneRestoredEvent()

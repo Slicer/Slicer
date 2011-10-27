@@ -201,10 +201,6 @@ public slots:
   void setForegroundInterpolation(bool nearestNeighbor);
   void setBackgroundInterpolation(bool nearestNeighbor);
   
-  void setNavigatorEnabled(bool enable);
-  void setCrosshairMode(int mode);
-  void setCrosshairThickness(int thickness);
-  void setSliceIntersectionVisible(bool show);
 signals:
 
   /// This signal is emitted when the given \a imageData is modified.

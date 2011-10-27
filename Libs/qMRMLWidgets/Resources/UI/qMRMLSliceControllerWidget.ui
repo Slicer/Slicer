@@ -105,9 +105,6 @@
           <property name="sizeAdjustPolicy">
            <enum>QComboBox::AdjustToContents</enum>
           </property>
-          <property name="elideMode">
-           <enum>Qt::ElideMiddle</enum>
-          </property>
           <item>
            <property name="text">
             <string>Axial</string>
@@ -225,50 +222,6 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QToolButton" name="GlobalSliceLinkButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="toolTip">
-           <string>Link/Unlink the slice controls (except scales) across all Slice Viewers.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/LinkOn.png</normaloff>
-            <disabledoff>:/Icons/LinkOn.png</disabledoff>:/Icons/LinkOn.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="CrosshairButton">
-          <property name="toolTip">
-           <string>Navigation</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/SlicesCrosshair.png</normaloff>:/Icons/SlicesCrosshair.png</iconset>
-          </property>
-          <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </item>
@@ -302,7 +255,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -312,16 +265,16 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -403,7 +356,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -413,19 +366,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -507,7 +460,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -517,19 +470,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -894,105 +847,6 @@
    </property>
    <property name="toolTip">
     <string>Toggle slice visibility in 3D view</string>
-   </property>
-  </action>
-  <action name="actionCrosshairNavigator">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Navigator</string>
-   </property>
-  </action>
-  <action name="actionCrosshairNo_crosshair">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>No crosshair</string>
-   </property>
-  </action>
-  <action name="actionCrosshairBasic_crosshair">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Basic crosshair</string>
-   </property>
-  </action>
-  <action name="actionCrosshairBasic_intersection">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Basic + intersection</string>
-   </property>
-  </action>
-  <action name="actionCrosshairBasic_hashmarks">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Basic + hashmarks</string>
-   </property>
-  </action>
-  <action name="actionCrosshairBasic_hashmarks_intersection">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Basic + hashmarks + intersection</string>
-   </property>
-  </action>
-  <action name="actionCrosshairSmall_basic">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Small basic</string>
-   </property>
-  </action>
-  <action name="actionCrosshairSmall_basic_intersection">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Small basic + intersection</string>
-   </property>
-  </action>
-  <action name="actionCrosshairFine">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Fine</string>
-   </property>
-  </action>
-  <action name="actionCrosshairMedium">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Medium</string>
-   </property>
-  </action>
-  <action name="actionCrosshairThick">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Thick</string>
-   </property>
-  </action>
-  <action name="actionCrosshairSlice_intersections">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Slice intersections</string>
-   </property>
-   <property name="toolTip">
-    <string>Slice intersections</string>
    </property>
   </action>
   <action name="actionLockNormalToCamera">

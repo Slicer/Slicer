@@ -75,7 +75,6 @@ public:
   void setupReformatOptionsMenu();
   void setupLightboxMenu();
   void setupCompositingMenu();
-  void setupCrosshairMenu();
   void setupSliceSpacingMenu();
   void setupMoreOptionsMenu();
 
@@ -98,9 +97,6 @@ public slots:
 
   /// Update widget state using the associated MRML slice composite node
   void updateWidgetFromMRMLSliceCompositeNode();
-
-  /// Update widget state using the crosshair node
-  void updateWidgetFromCrosshairNode(vtkObject* node);
 
   /// Called after a foregound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
@@ -139,8 +135,6 @@ public:
   QString                             SliceViewLabel;
   QString                             SliceViewColor;
   QButtonGroup*                       ControllerButtonGroup;
-  ctkSignalMapper*                    CrosshairMapper;
-  ctkSignalMapper*                    CrosshairThicknessMapper;
 
   ctkSliderWidget*                    SliceOffsetSlider;
   double                              LastLabelMapOpacity;
@@ -149,7 +143,6 @@ public:
 
   QMenu*                              LightboxMenu;
   QMenu*                              CompositingMenu;
-  QMenu*                              CrosshairMenu;
   QMenu*                              SliceSpacingMenu;
 
   QDoubleSpinBox*                     SliceSpacingSpinBox;

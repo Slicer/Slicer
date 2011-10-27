@@ -72,6 +72,7 @@ private:
 
   virtual void OnMRMLSceneImportedEvent();
   virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneClosedEvent();
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   class vtkInternal;

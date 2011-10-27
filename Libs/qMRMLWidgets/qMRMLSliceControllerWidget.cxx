@@ -44,7 +44,6 @@
 #include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
-#include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -80,9 +79,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->SliceOrientationToDescription["Coronal"] = coronalOrientation;
   this->SliceOrientationToDescription["Reformat"] = obliqueOrientation;
 
-  this->CrosshairMapper = 0;
-  this->CrosshairThicknessMapper = 0;
-
   this->LastLabelMapOpacity = 1.;
   this->LastForegroundOpacity = 1.;
   this->LastBackgroundOpacity = 1.;
@@ -91,7 +87,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
 
   this->LightboxMenu = 0;
   this->CompositingMenu = 0;
-  this->CrosshairMenu = 0;
   this->SliceSpacingMenu = 0;
   
   this->SliceSpacingSpinBox = 0;
@@ -209,7 +204,6 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->setupLightboxMenu();
   this->setupCompositingMenu();
   this->setupSliceSpacingMenu();
-  this->setupCrosshairMenu();
 
   // Visibility column
   this->connect(this->actionLabelMapVisibility, SIGNAL(triggered(bool)),
@@ -293,7 +287,6 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->ForegroundInterpolationButton->setDefaultAction(this->actionForegroundInterpolation);
   this->BackgroundInterpolationButton->setDefaultAction(this->actionBackgroundInterpolation);
   
-  this->CrosshairButton->setMenu(this->CrosshairMenu);
 }
 
 //---------------------------------------------------------------------------
@@ -433,69 +426,6 @@ void qMRMLSliceControllerWidgetPrivate::setupCompositingMenu()
   compositingGroup->addAction(this->actionCompositingSubtract);
 }
 
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setupCrosshairMenu()
-{
-  Q_Q(qMRMLSliceControllerWidget);
-
-  // Crosshair
-  QObject::connect(this->actionCrosshairNavigator, SIGNAL(triggered(bool)),
-                   q, SLOT(setNavigatorEnabled(bool)));
-  QActionGroup* crosshairActions = new QActionGroup(q);
-  crosshairActions->setExclusive(true);
-  crosshairActions->addAction(this->actionCrosshairNo_crosshair);
-  crosshairActions->addAction(this->actionCrosshairBasic_crosshair);
-  crosshairActions->addAction(this->actionCrosshairBasic_intersection);
-  crosshairActions->addAction(this->actionCrosshairBasic_hashmarks);
-  crosshairActions->addAction(this->actionCrosshairBasic_hashmarks_intersection);
-  crosshairActions->addAction(this->actionCrosshairSmall_basic);
-  crosshairActions->addAction(this->actionCrosshairSmall_basic_intersection);
-  this->CrosshairMapper = new ctkSignalMapper(q);
-  this->CrosshairMapper->setMapping(actionCrosshairNo_crosshair,
-                                    vtkMRMLCrosshairNode::NoCrosshair);
-  this->CrosshairMapper->setMapping(actionCrosshairBasic_crosshair,
-                                    vtkMRMLCrosshairNode::ShowBasic);
-  this->CrosshairMapper->setMapping(actionCrosshairBasic_intersection,
-                                    vtkMRMLCrosshairNode::ShowIntersection);
-  this->CrosshairMapper->setMapping(actionCrosshairBasic_hashmarks,
-                                    vtkMRMLCrosshairNode::ShowHashmarks);
-  this->CrosshairMapper->setMapping(actionCrosshairBasic_hashmarks_intersection,
-                                    vtkMRMLCrosshairNode::ShowAll);
-  this->CrosshairMapper->setMapping(actionCrosshairSmall_basic,
-                                    vtkMRMLCrosshairNode::ShowSmallBasic);
-  this->CrosshairMapper->setMapping(actionCrosshairSmall_basic_intersection,
-                                    vtkMRMLCrosshairNode::ShowSmallIntersection);
-  QObject::connect(crosshairActions, SIGNAL(triggered(QAction*)),
-                   this->CrosshairMapper, SLOT(map(QAction*)));
-  QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)),
-                   q, SLOT(setCrosshairMode(int)));
-  QActionGroup* crosshairThicknessActions = new QActionGroup(q);
-  crosshairThicknessActions->setExclusive(true);
-  crosshairThicknessActions->addAction(this->actionCrosshairFine);
-  crosshairThicknessActions->addAction(this->actionCrosshairMedium);
-  crosshairThicknessActions->addAction(this->actionCrosshairThick);
-  this->CrosshairThicknessMapper = new ctkSignalMapper(q);
-  this->CrosshairThicknessMapper->setMapping(actionCrosshairFine,
-                                             vtkMRMLCrosshairNode::Fine);
-  this->CrosshairThicknessMapper->setMapping(actionCrosshairMedium,
-                                             vtkMRMLCrosshairNode::Medium);
-  this->CrosshairThicknessMapper->setMapping(actionCrosshairThick,
-                                             vtkMRMLCrosshairNode::Thick);
-  QObject::connect(crosshairThicknessActions, SIGNAL(triggered(QAction*)),
-                   this->CrosshairThicknessMapper, SLOT(map(QAction*)));
-  QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)),
-                   q, SLOT(setCrosshairThickness(int)));
-  QObject::connect(this->actionCrosshairSlice_intersections, SIGNAL(triggered(bool)),
-                   q, SLOT(setSliceIntersectionVisible(bool)));
-  this->CrosshairMenu = new QMenu("Crosshair", q);
-  this->CrosshairMenu->addAction(this->actionCrosshairNavigator);
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addActions(crosshairActions->actions());
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
-  this->CrosshairMenu->addSeparator();
-  this->CrosshairMenu->addAction(this->actionCrosshairSlice_intersections);
-}
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
@@ -648,26 +578,10 @@ void qMRMLSliceControllerWidgetPrivate::onMRMLSceneChanged(
     {
     return;
     }
-  if (event == vtkMRMLScene::NodeAddedEvent)
-    {
-    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(
-      reinterpret_cast<vtkMRMLNode*>(calldata));
-    if (crosshairNode)
-      {
-      qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent,
-                  this, SLOT(updateWidgetFromCrosshairNode(vtkObject*)));
-      this->updateWidgetFromCrosshairNode(crosshairNode);
-      }
-    }
-  else if (event == vtkMRMLScene::SceneImportedEvent ||
+  if (event == vtkMRMLScene::SceneImportedEvent ||
            event == vtkMRMLScene::SceneRestoredEvent)
     {
     this->updateWidgetFromMRMLSliceCompositeNode();
-    vtkMRMLNode* crosshairNode = q->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLCrosshairNode");
-    if (crosshairNode)
-      {
-      this->onMRMLSceneChanged(q->mrmlScene(), crosshairNode, vtkMRMLScene::NodeAddedEvent, 0);
-      }
     }
 }
 
@@ -802,29 +716,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       break;
     }
 
-  this->actionCrosshairSlice_intersections->setChecked(
-    this->MRMLSliceCompositeNode->GetSliceIntersectionVisibility());
 }
 
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::updateWidgetFromCrosshairNode(vtkObject* node)
-{
-  vtkMRMLCrosshairNode* xnode = vtkMRMLCrosshairNode::SafeDownCast(node);
-  if (!xnode)
-    {
-    return;
-    }
-  // Crosshair
-  this->actionCrosshairNavigator->setChecked(xnode->GetNavigation());
-  // Crosshair Mode
-  QAction* crosshairAction =
-    qobject_cast<QAction*>(this->CrosshairMapper->mapping(xnode->GetCrosshairMode()));
-  crosshairAction->setChecked(true);
-  // Crosshair Thickness
-  QAction* crosshairThicknessAction =
-    qobject_cast<QAction*>(this->CrosshairThicknessMapper->mapping(xnode->GetCrosshairThickness()));
-  crosshairThicknessAction->setChecked(true);
-}
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
@@ -2010,74 +1903,3 @@ void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool linear)
     }
 }
 
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setNavigatorEnabled(bool enable)
-{
-  Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
-  if (!nodes.GetPointer())
-    {
-    return;
-    }
-  vtkMRMLCrosshairNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    node->SetNavigation(enable);
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setCrosshairMode(int mode)
-{
-  Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
-  if (!nodes.GetPointer())
-    {
-    return;
-    }
-  vtkMRMLCrosshairNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    node->SetCrosshairMode(mode);
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setCrosshairThickness(int thicknessMode)
-{
-  Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLCrosshairNode");
-  if (!nodes.GetPointer())
-    {
-    return;
-    }
-  vtkMRMLCrosshairNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    node->SetCrosshairThickness(thicknessMode);
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setSliceIntersectionVisible(bool visible)
-{
-  Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
-  if (!nodes.GetPointer())
-    {
-    return;
-    }
-  vtkMRMLSliceCompositeNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    node->SetSliceIntersectionVisibility(visible);
-    }
-}
