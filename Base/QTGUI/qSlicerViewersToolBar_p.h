@@ -75,6 +75,7 @@ public slots:
   void setCrosshairMode(int);
   void setCrosshairMode(bool); // used to toggle between last style and off
   void setNavigation(bool);
+  void setSliceIntersectionVisible(bool);
 
 public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
@@ -91,6 +92,7 @@ public:
   QAction*      CrosshairBasicIntersectionAction;
   QAction*      CrosshairSmallBasicAction;
   QAction*      CrosshairSmallBasicIntersectionAction;
+  QAction*      CrosshairSliceIntersectionsAction;
 
   QAction*      CrosshairToggleAction;
 

@@ -35,6 +35,7 @@
 
 // MRML includes
 #include <vtkMRMLCrosshairNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerViewersToolBar");
@@ -60,6 +61,8 @@ qSlicerViewersToolBarPrivate::qSlicerViewersToolBarPrivate(qSlicerViewersToolBar
   this->CrosshairBasicIntersectionAction = 0;
   this->CrosshairSmallBasicAction = 0;
   this->CrosshairSmallBasicIntersectionAction = 0;
+
+  this->CrosshairSliceIntersectionsAction = 0;
 
   this->CrosshairToggleAction = 0;
 
@@ -133,10 +136,22 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)),
                    this, SLOT(setCrosshairMode(int)));
 
+  
+  this->CrosshairSliceIntersectionsAction = new QAction(q);
+  this->CrosshairSliceIntersectionsAction->setText(tr("Slice intersections"));
+  this->CrosshairSliceIntersectionsAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
+  this->CrosshairSliceIntersectionsAction->setCheckable(true);
+  QObject::connect(this->CrosshairSliceIntersectionsAction, SIGNAL(triggered(bool)),
+                   this, SLOT(setSliceIntersectionVisible(bool)));
+  
+  
   this->CrosshairMenu = new QMenu(QObject::tr("Crosshair"), q);
   this->CrosshairMenu->addAction(this->CrosshairNavigationAction);
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addAction(this->CrosshairSliceIntersectionsAction);
+  
 
   this->CrosshairToolButton = new QToolButton();
 //  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -228,6 +243,24 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
       {
       this->CrosshairLastMode = mode;
       }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)
+{
+  // Q_Q(qSlicerViewersToolBar);
+  vtkSmartPointer<vtkCollection> nodes = this->MRMLScene->GetNodesByClass("vtkMRMLSliceCompositeNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetSliceIntersectionVisibility(visible);
     }
 }
 
