@@ -52,11 +52,11 @@ protected:
   virtual void OnMRMLSceneImportedEvent();
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
-
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+
 private:
   vtkMRMLThreeDReformatDisplayableManager(const vtkMRMLThreeDReformatDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLThreeDReformatDisplayableManager&);                     // Not Implemented
+  void operator=(const vtkMRMLThreeDReformatDisplayableManager&);                         // Not Implemented
 
   class vtkInternal;
   vtkInternal* Internal;

@@ -22,11 +22,11 @@
 #include "vtkMRMLThreeDReformatDisplayableManager.h"
 
 // MRML includes
+#include "vtkMRMLApplicationLogic.h"
 #include <vtkMRMLColors.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceLogic.h>
-#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
@@ -43,6 +43,7 @@
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkTransform.h>
 
 // STD includes
@@ -274,17 +275,17 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
     planeWidget->GetImplicitPlaneRepresentation();
   vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
 
-    // Color the Edge of the plane representation depending on the Slice
+  // Color the Edge of the plane representation depending on the Slice
   double color[3];
-  if (std::string(sliceNode->GetLayoutName()) == "Red")
+  if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Red")
     {
     vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceRed(),color);
     }
-  else if (std::string(sliceNode->GetLayoutName()) == "Yellow")
+  else if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Yellow")
     {
     vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceYellow(),color);
     }
-  else if (std::string(sliceNode->GetLayoutName()) == "Green")
+  else if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Green")
     {
     vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceGreen(),color);
     }
@@ -294,7 +295,7 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
     }
   rep->SetEdgeColor(color);
 
-    // Update Bound size
+  // Update Bound size
   vtkMRMLSliceCompositeNode* sliceCompositeNode =
     vtkMRMLSliceLogic::GetSliceCompositeNode(sliceNode);
   const char* backgroundVolumeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
@@ -314,11 +315,11 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
     rep->PlaceWidget(bounds);
     }
 
-    // Update normal
+  // Update normal
   rep->SetNormal(sliceToRAS->GetElement(0,2),
                  sliceToRAS->GetElement(1,2),
                  sliceToRAS->GetElement(2,2));
-    // Update origin position
+  // Update origin position
   rep->SetOrigin(sliceToRAS->GetElement(0,3),
                  sliceToRAS->GetElement(1,3),
                  sliceToRAS->GetElement(2,3));
@@ -326,11 +327,11 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
   // Update the widget itself if necessary
   if ((!planeWidget->GetEnabled() && sliceNode->GetWidgetVisible()) ||
      (planeWidget->GetEnabled() && !sliceNode->GetWidgetVisible()) ||
-     (!rep->GetLockNormalToCamera() && sliceNode->GetPlaneLockedToCamera()) ||
-     (rep->GetLockNormalToCamera() && !sliceNode->GetPlaneLockedToCamera()))
+     (!rep->GetLockNormalToCamera() && sliceNode->GetWidgetNormalLockedToCamera()) ||
+     (rep->GetLockNormalToCamera() && !sliceNode->GetWidgetNormalLockedToCamera()))
     {
     planeWidget->SetEnabled(sliceNode->GetWidgetVisible());
-    planeWidget->SetLockNormalToCamera(sliceNode->GetPlaneLockedToCamera());
+    planeWidget->SetLockNormalToCamera(sliceNode->GetWidgetNormalLockedToCamera());
     }
 }
 
@@ -372,8 +373,7 @@ OnMRMLSceneNodeAddedEvent(vtkMRMLNode* nodeAdded)
 void vtkMRMLThreeDReformatDisplayableManager::
 OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* nodeRemoved)
 {
-  if (this->GetMRMLScene()->GetIsUpdating() ||
-      !nodeRemoved->IsA("vtkMRMLSliceNode"))
+  if (!nodeRemoved->IsA("vtkMRMLSliceNode"))
     {
     return;
     }
@@ -395,7 +395,7 @@ OnMRMLNodeModified(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::
 ProcessWidgetsEvents(vtkObject *caller,
-                    unsigned long vtkNotUsed(event),
+                    unsigned long event,
                     void *vtkNotUsed(callData))
 {
   vtkImplicitPlaneWidget2* planeWidget =
@@ -409,9 +409,26 @@ ProcessWidgetsEvents(vtkObject *caller,
     return;
     }
 
-  double cross[3], dot, rotation;
-  vtkTransform* transform = vtkTransform::New();
+  // Broadcast widget transformation
+  vtkMRMLSliceLogic* sliceLogic = this->GetMRMLApplicationLogic()->GetSliceLogic(sliceNode);
+  if (event == vtkCommand::StartInteractionEvent && sliceLogic )
+    {
+    sliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
+    return;
+    }
+  else if (event == vtkCommand::EndInteractionEvent && sliceLogic)
+    {
+    sliceLogic->EndSliceNodeInteraction();
+    return;
+    }
+  // We should listen to the interactorStyle instead when LockNormalToCamera on.
+  else if (planeWidget->GetImplicitPlaneRepresentation()->GetLockNormalToCamera() && sliceLogic)
+    {
+    sliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
+    }
 
+  double cross[3], dot, rotation;
+  vtkNew<vtkTransform> transform;
   vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
   double sliceNormal[3] = {sliceToRAS->GetElement(0,2),
                            sliceToRAS->GetElement(1,2),
@@ -425,16 +442,15 @@ ProcessWidgetsEvents(vtkObject *caller,
   // Rotate the sliceNode to match the planeWidget normal
   vtkMath::Cross(sliceNormal, rep->GetNormal(), cross);
   dot = vtkMath::Dot(sliceNormal, rep->GetNormal());
-   // Clamp the dot product
+  // Clamp the dot product
   dot = (dot < -1.0) ? -1.0 : (dot > 1.0 ? 1.0 : dot);
   rotation = vtkMath::DegreesFromRadians(acos(dot));
 
-    // Apply the rotation
+  // Apply the rotation
   transform->PostMultiply();
   transform->SetMatrix(sliceToRAS);
   transform->RotateWXYZ(rotation,cross);
-  transform->GetMatrix(sliceToRAS); // Update the changes
-  transform->Delete();
+  transform->GetMatrix(sliceToRAS); // Update the changes within sliceToRAS
 
   // Insert the widget translation
   double* planeWidgetOrigin = rep->GetOrigin();

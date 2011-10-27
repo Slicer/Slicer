@@ -74,7 +74,21 @@ private:
   vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&);
   void operator=(const vtkMRMLSliceLinkLogic&);
 
+  vtkMRMLSliceCompositeNode* GetCompositeNode(vtkMRMLSliceNode*);
+  void BroadcastLastRotation(vtkMRMLSliceNode*, vtkMRMLSliceNode*);
+  void UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode*);
+
   int BroadcastingEvents;
+  struct SliceNodeInfos
+    {
+    SliceNodeInfos(int interacting) : Interacting(interacting) {}
+    double LastNormal[3];
+    int Interacting;
+    };
+
+  typedef std::map<std::string, SliceNodeInfos> SliceNodeStatusMap;
+  SliceNodeStatusMap SliceNodeInteractionStatus;
+
 };
 
 #endif

@@ -23,8 +23,11 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 // STD includes
 #include <cassert>
@@ -43,9 +46,7 @@ vtkMRMLSliceLinkLogic::vtkMRMLSliceLinkLogic()
 //----------------------------------------------------------------------------
 vtkMRMLSliceLinkLogic::~vtkMRMLSliceLinkLogic()
 {
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
@@ -72,6 +73,15 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
+
+    // If sliceNode we insert in our map the current status of the node
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
+    if (sliceNode && it == this->SliceNodeInteractionStatus.end())
+      {
+      this->SliceNodeInteractionStatus.insert(std::pair<std::string, SliceNodeInfos>
+        (sliceNode->GetID(), SliceNodeInfos(sliceNode->GetInteracting())));
+      }
     }
 }
 
@@ -83,7 +93,18 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
       node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
-    }
+
+    // Update the map
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    if (sliceNode)
+      {
+      SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
+      if(it != this->SliceNodeInteractionStatus.end())
+        {
+        this->SliceNodeInteractionStatus.erase(it);
+        }
+      }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -93,41 +114,48 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode && !this->GetMRMLScene()->GetIsUpdating())
     {
+
+    SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
     // if this is not the node that we are interacting with, short circuit
+
     if (!sliceNode->GetInteracting() || !sliceNode->GetInteractionFlags())
       {
+      // We end up an interaction on the sliceNode
+      if (it != this->SliceNodeInteractionStatus.end() && it->second.Interacting)
+        {
+        vtkMRMLSliceCompositeNode* compositeNode = this->GetCompositeNode(sliceNode);
+        if (!compositeNode->GetHotLinkedControl() &&
+            sliceNode->GetInteractionFlags() == vtkMRMLSliceNode::MultiplanarReformatFlag)
+          {
+          this->BroadcastSliceNodeEvent(sliceNode);
+          }
+        this->SliceNodeInteractionStatus.find(sliceNode->GetID())->second.Interacting =
+          sliceNode->GetInteracting();
+        }
       return;
       }
 
     // SliceNode was modified. Need to find the corresponding
     // SliceCompositeNode to check whether operations are linked
-    vtkMRMLSliceCompositeNode *compositeNode = 0;
-    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-    for (int n=0; n<nnodes; n++)
-      {
-      // should we cache this list of composite nodes?
-      // or should we have special query methods in MRMLScene that
-      // will be fast?????
-
-      compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast (
-        this->GetMRMLScene()->GetNthNodeByClass(n,"vtkMRMLSliceCompositeNode"));
-
-      // Is the the composite node that goes with this slice node?
-      if (compositeNode->GetLayoutName() 
-          && !strcmp(compositeNode->GetLayoutName(), sliceNode->GetName()))
-        {
-        // Matching layout
-        break;
-        }
-
-      compositeNode = 0;
-      }
+    vtkMRMLSliceCompositeNode* compositeNode = this->GetCompositeNode(sliceNode);
 
     if (compositeNode && compositeNode->GetLinkedControl())
       {
       // Slice node changed and slices are linked. Broadcast.
       //std::cout << "Slice node changed and slices are linked!" << std::endl;
-      this->BroadcastSliceNodeEvent(sliceNode);
+
+      if (it != this->SliceNodeInteractionStatus.end() && !it->second.Interacting )
+        {
+        it->second.Interacting = sliceNode->GetInteracting();
+        // Start Interaction event : we update the current sliceNodeNormal
+        this->UpdateSliceNodeInteractionStatus(sliceNode);
+        }
+
+      if (compositeNode->GetHotLinkedControl() ||
+          sliceNode->GetInteractionFlags() != vtkMRMLSliceNode::MultiplanarReformatFlag)
+        {
+        this->BroadcastSliceNodeEvent(sliceNode);
+        }
       }
     else
       {
@@ -181,29 +209,28 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
   // std::cout << "BroadcastingEvents: " << this->GetBroadcastingEvents()
   //           << ", Interacting: " << sliceNode->GetInteracting()
   //           << std::endl;
-  if (!this->GetBroadcastingEvents() && sliceNode->GetInteracting())
+  if (!this->GetBroadcastingEvents())
     {
     this->BroadcastingEventsOn();
 
-    vtkMRMLSliceNode *sNode = 0;
-    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-    for (int n=0; n<nnodes; n++)
+    vtkMRMLSliceNode* sNode;
+    vtkCollectionSimpleIterator it;
+    vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode");
+    for (nodes->InitTraversal(it);
+        (sNode=vtkMRMLSliceNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
       {
-      sNode = vtkMRMLSliceNode::SafeDownCast (
-        this->GetMRMLScene()->GetNthNodeByClass(n,"vtkMRMLSliceNode"));
-      
       if (sNode != sliceNode)
         {
         // Link slice parameters whenever the reformation is consistent
-        if (!strcmp(sNode->GetOrientationString(), 
+        if (!strcmp(sNode->GetOrientationString(),
                     sliceNode->GetOrientationString()))
-        // if (sliceNode->Matrix4x4AreEqual(sliceNode->GetSliceToRAS(), 
+        // if (sliceNode->Matrix4x4AreEqual(sliceNode->GetSliceToRAS(),
         //                                  sNode->GetSliceToRAS()))
           {
           //std::cout << "Orientation match, flags = " << sliceNode->GetInteractionFlags() << std::endl;
           // std::cout << "Broadcasting SliceToRAS and FieldOfView to "
           //           << sNode->GetName() << std::endl;
-          // 
+          //
 
           // Copy the slice to RAS information
           if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::SliceToRASFlag)
@@ -218,10 +245,10 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           // constant
           if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::FieldOfViewFlag)
             {
-            sNode->SetFieldOfView( sliceNode->GetFieldOfView()[0], 
-                                   sliceNode->GetFieldOfView()[0] 
-                                   * sNode->GetFieldOfView()[1] 
-                                   / sNode->GetFieldOfView()[0], 
+            sNode->SetFieldOfView( sliceNode->GetFieldOfView()[0],
+                                   sliceNode->GetFieldOfView()[0]
+                                   * sNode->GetFieldOfView()[1]
+                                   / sNode->GetFieldOfView()[0],
                                    sNode->GetFieldOfView()[2] );
             }
 
@@ -243,25 +270,26 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           {
           // We could copy the orientation strings, but we really
           // want the slice to ras to match, so copy that
-          
+
           // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
           // does a shallow copy. So we have to explictly call DeepCopy()
           sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
-          
+
           // Forces the internal matrices to be updated which results
           // in this being modified so a Render can occur
           sNode->UpdateMatrices();
           }
-        
+
         // Reseting the field of view does not require the
         // orientations to match
-        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::ResetFieldOfViewFlag)
+        if ((sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::ResetFieldOfViewFlag)
+            && this->GetMRMLApplicationLogic()->GetSliceLogics())
           {
           // need the logic for this slice (sNode)
           vtkMRMLSliceLogic* logic;
           vtkCollectionSimpleIterator it;
           vtkCollection* logics = this->GetMRMLApplicationLogic()->GetSliceLogics();
-          for (logics->InitTraversal(it); 
+          for (logics->InitTraversal(it);
                (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
             {
             if (logic->GetSliceNode() == sNode)
@@ -273,19 +301,24 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
             }
           }
 
+        // Broadcasting the rotation from a ReformatWidget
+        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::MultiplanarReformatFlag)
+          {
+          this->BroadcastLastRotation(sliceNode,sNode);
+          }
+
         //
         // End of the block for broadcasting parametes and command
         // that do not require the orientation to match
         //
-
         }
       }
 
+    // Update SliceNodeInteractionStatus after MultiplanarReformat interaction
+    this->UpdateSliceNodeInteractionStatus(sliceNode);
     this->BroadcastingEventsOff();
     }
-  //std::cout << "End Broadcast" << std::endl;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode *sliceCompositeNode)
@@ -299,13 +332,13 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
     {
     this->BroadcastingEventsOn();
 
-    vtkMRMLSliceCompositeNode *cNode = 0;
-    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-    for (int n=0; n<nnodes; n++)
+    vtkMRMLSliceCompositeNode* cNode;
+    vtkCollectionSimpleIterator it;
+    vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
+
+    for (nodes->InitTraversal(it);
+        (cNode=vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
       {
-      cNode = vtkMRMLSliceCompositeNode::SafeDownCast (
-        this->GetMRMLScene()->GetNthNodeByClass(n,"vtkMRMLSliceCompositeNode"));
-      
       if (cNode != sliceCompositeNode)
         {
         if (sliceCompositeNode->GetInteractionFlags() 
@@ -325,10 +358,79 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
           {
           cNode->SetLabelVolumeID(sliceCompositeNode->GetLabelVolumeID());
           }
-
         }
       }
 
     this->BroadcastingEventsOff();
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceNode* sliceNode)
+{
+  vtkMRMLSliceCompositeNode* compositeNode = 0;
+
+  vtkCollectionSimpleIterator it;
+  vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
+
+  for (nodes->InitTraversal(it);
+      (compositeNode=vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+    {
+    if (compositeNode->GetLayoutName()
+        && !strcmp(compositeNode->GetLayoutName(), sliceNode->GetName()))
+      {
+      break;
+      }
+
+    compositeNode = 0;
+    }
+
+  return compositeNode;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::BroadcastLastRotation(vtkMRMLSliceNode* sliceNode,
+                                                  vtkMRMLSliceNode* sNode)
+{
+  SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
+  if (it == this->SliceNodeInteractionStatus.end())
+    {
+    return;
+    }
+
+  // Calculate the rotation applied to the sliceNode
+  double cross[3], dot, rotation;
+  vtkNew<vtkTransform> transform;
+  vtkMatrix4x4* sNodeToRAS = sNode->GetSliceToRAS();
+  double sliceNormal[3] = {sliceNode->GetSliceToRAS()->GetElement(0,2),
+                           sliceNode->GetSliceToRAS()->GetElement(1,2),
+                           sliceNode->GetSliceToRAS()->GetElement(2,2)};
+
+  // Rotate the sliceNode to match the planeWidget normal
+  vtkMath::Cross(it->second.LastNormal,sliceNormal, cross);
+  dot = vtkMath::Dot(it->second.LastNormal, sliceNormal);
+  // Clamp the dot product
+  dot = (dot < -1.0) ? -1.0 : (dot > 1.0 ? 1.0 : dot);
+  rotation = vtkMath::DegreesFromRadians(acos(dot));
+
+  // Apply the rotation
+  transform->PostMultiply();
+  transform->SetMatrix(sNodeToRAS);
+  transform->RotateWXYZ(rotation,cross);
+  transform->GetMatrix(sNodeToRAS); // Update the changes
+
+  sNode->UpdateMatrices();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode* sliceNode)
+{
+  SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
+
+  if (it != SliceNodeInteractionStatus.end())
+    {
+    it->second.LastNormal[0] = sliceNode->GetSliceToRAS()->GetElement(0,2);
+    it->second.LastNormal[1] = sliceNode->GetSliceToRAS()->GetElement(1,2);
+    it->second.LastNormal[2] = sliceNode->GetSliceToRAS()->GetElement(2,2);
     }
 }

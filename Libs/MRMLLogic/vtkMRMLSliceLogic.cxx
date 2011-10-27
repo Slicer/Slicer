@@ -1867,7 +1867,7 @@ void vtkMRMLSliceLogic::EndSliceCompositeNodeInteraction()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::StartSliceNodeInteraction(unsigned int parameters)
 {
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
 
   // Cache the flags on what parameters are going to be modified. Need
@@ -1875,8 +1875,9 @@ void vtkMRMLSliceLogic::StartSliceNodeInteraction(unsigned int parameters)
   sliceNode->SetInteractionFlags(parameters);
 
   // If we have hot linked controls, then we want to broadcast changes
-  if (compositeNode &&
-      compositeNode->GetHotLinkedControl() && compositeNode->GetLinkedControl())
+  if (compositeNode && 
+      (compositeNode->GetHotLinkedControl() || parameters == vtkMRMLSliceNode::MultiplanarReformatFlag)
+      && compositeNode->GetLinkedControl())
     {
     if (sliceNode)
       {

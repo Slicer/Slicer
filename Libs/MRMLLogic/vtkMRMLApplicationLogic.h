@@ -26,6 +26,8 @@
 
 #include "vtkMRMLLogicWin32Header.h"
 
+class vtkMRMLSliceNode;
+class vtkMRMLSliceLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkImageData;
@@ -48,6 +50,7 @@ public:
   /// All the slice logics in the application
   void SetSliceLogics(vtkCollection* sliceLogics);
   vtkCollection* GetSliceLogics()const;
+  vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
 
   /// 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes

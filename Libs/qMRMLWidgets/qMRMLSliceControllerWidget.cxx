@@ -685,7 +685,11 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   int index = this->SliceOrientationSelector->findText(
       QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
   Q_ASSERT(index>=0 && index <=4);
+
+  // We block the signal to avoid calling setSliceOrientation from the MRMLNode
+  this->SliceOrientationSelector->blockSignals(true);
   this->SliceOrientationSelector->setCurrentIndex(index);
+  this->SliceOrientationSelector->blockSignals(false);
 
   // Update slice offset slider tooltip
   qMRMLOrientation orientation = this->SliceOrientationToDescription[
@@ -1456,7 +1460,7 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
     return;
     }
 
-  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::OrientationFlag); 
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::OrientationFlag);
   d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
   d->SliceLogic->EndSliceNodeInteraction();
 }
@@ -1741,9 +1745,9 @@ void qMRMLSliceControllerWidget::lockReformatWidgetToCamera(bool lock)
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
                                    nodes->GetNextItemAsObject(it)));)
     {
-    if (node == d->MRMLSliceNode) //|| this->isLinked())
+    if (node == d->MRMLSliceNode)
       {
-      node->SetPlaneLockedToCamera(lock); //&& node == d->MRMLSliceNode);
+      node->SetWidgetNormalLockedToCamera(lock);
       }
     }
 }

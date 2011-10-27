@@ -134,6 +134,33 @@ void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
+GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
+{
+  if(!sliceNode || !this->Internal->SliceLogics)
+    {
+    return 0;
+    }
+
+  vtkMRMLSliceLogic* logic = 0;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* logics = this->Internal->SliceLogics;
+
+  for (logics->InitTraversal(it);
+      (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+    {
+    if (logic->GetSliceNode() == sliceNode)
+      {
+      break;
+      }
+
+    logic = 0;
+    }
+
+  return logic;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 {
   vtkMRMLNode * selectionNode = 0;

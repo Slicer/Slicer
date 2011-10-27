@@ -75,8 +75,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   ///
   /// The ImpplicitePlane widget mode
   /// this lock the normal of the plane to the camera's one
-  vtkGetMacro ( PlaneLockedToCamera, int );
-  vtkSetMacro ( PlaneLockedToCamera, int );
+  vtkGetMacro ( WidgetNormalLockedToCamera, int );
+  vtkSetMacro ( WidgetNormalLockedToCamera, int );
 
   /// 
   /// Use the label outline filter on this slice?
@@ -278,8 +278,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     SliceToRASFlag = 1,
     FieldOfViewFlag = 2, // broadcast a specific field of view setting
     OrientationFlag = 4,
-    ResetFieldOfViewFlag = 8 // broadcast a reset to all viewers
-    // Next one needs to be 16
+    ResetFieldOfViewFlag = 8, // broadcast a reset to all viewers
+    MultiplanarReformatFlag = 16 // broadcast reformat widget transformation
+    // Next one needs to be 32
   };
 
   ///
@@ -307,7 +308,7 @@ protected:
   
   int SliceVisible;
   int WidgetVisible;
-  int PlaneLockedToCamera;
+  int WidgetNormalLockedToCamera;
   int UseLabelOutline;
   double FieldOfView[3];
   int Dimensions[3];
