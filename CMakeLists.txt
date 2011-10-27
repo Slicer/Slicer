@@ -327,6 +327,25 @@ if(BUILD_TESTING)
 endif()
 
 #-----------------------------------------------------------------------------
+# Testing
+#-----------------------------------------------------------------------------
+if(BUILD_TESTING)
+  # NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
+  #       See http://www.kitware.com/blog/home/post/11
+  
+  set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
+  include(CTest)
+
+  # Add Experimental target - Adapted from CTestTargets.cmake
+  set(__conf_types "")
+  if(CMAKE_CONFIGURATION_TYPES)
+    # We need to pass the configuration type on the test command line.
+    set(__conf_types -C "${CMAKE_CFG_INTDIR}")
+  endif()
+  add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
+endif()
+
+#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(Slicer_SUPERBUILD)
@@ -393,19 +412,9 @@ if(BUILD_TESTING)
   set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
   set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
-  set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
-  include(CTest)
   include(SlicerMacroPythonTesting)
   include(SlicerMacroConfigureGenericCxxModuleTests)
   include(SlicerMacroConfigureGenericPythonModuleTests)
-
-  # Add Experimental target - Adapted from CTestTargets.cmake
-  set(__conf_types "")
-  if(CMAKE_CONFIGURATION_TYPES)
-    # We need to pass the configuration type on the test command line.
-    set(__conf_types -C "${CMAKE_CFG_INTDIR}")
-  endif()
-  add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
   include(MIDAS)
   set(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
@@ -413,7 +422,6 @@ if(BUILD_TESTING)
   set(MIDAS_DATA_DIR "${Slicer_BINARY_DIR}/MIDAS_Data")
 
   set(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-  mark_as_advanced(TCL_TCLSH DART_ROOT)
 
   configure_file(
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
