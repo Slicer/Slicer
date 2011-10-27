@@ -143,6 +143,14 @@ set(ep_cmake_boolean_args
   #Slicer_USE_WEAVE
   )
 
+# Add CTEST_USE_LAUNCHER only if already defined and enabled.
+# It avoids extra overhead for manual builds and still allow the option
+# to be propagated to the external project.
+# See http://www.kitware.com/blog/home/post/11
+if(DEFINED CTEST_USE_LAUNCHER AND "${CTEST_USE_LAUNCHER}")
+  list(APPEND ep_cmake_boolean_args CTEST_USE_LAUNCHER)
+endif()
+
 set(ep_superbuild_boolean_args)
 foreach(ep_cmake_arg ${ep_cmake_boolean_args})
   list(APPEND ep_superbuild_boolean_args -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
