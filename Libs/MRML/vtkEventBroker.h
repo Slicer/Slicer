@@ -106,10 +106,15 @@ public:
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
   void RemoveObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
-  std::vector< vtkObservation *> GetObservations (vtkObject *observer);
-  std::vector< vtkObservation *> GetObservations (vtkObject *subject, vtkObject *observer);
-  std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
-  std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
+  /// Fast retrieve of all observations of a given subject
+  std::vector< vtkObservation *> GetSubjectObservations(vtkObject *subject);
+  /// If event is != 0 , only observations matching the events are returned
+  /// If observer is != 0 , only observations matching the observer are returned
+  /// If notify is != 0, only observations matching the callback are are returned
+  std::vector< vtkObservation *> GetObservations (vtkObject *subject,
+                                                  unsigned long event = 0,
+                                                  vtkObject *observer = 0,
+                                                  vtkCallbackCommand *notify = 0);
   std::vector< vtkObservation *> GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
 
   /// Description

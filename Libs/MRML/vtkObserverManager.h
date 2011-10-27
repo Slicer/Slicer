@@ -71,9 +71,14 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   ///   ObserverManager in the destructor (this is the standard use case)
   vtkGetObjectMacro (Owner, vtkObject);
   void AssignOwner (vtkObject *owner) { this->Owner = owner; };
+  /// Returns the owner if any, otherwise returns the manager itself
+  vtkObject* GetObserver();
 
   vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
 
+  /// Return the number of observations by the manager on the node.
+  /// If event is != 0 , only observations matching the events are counted
+  int GetObservationsCount(vtkObject* nodePtr, unsigned long event = 0);
 protected:
   vtkObserverManager();
   virtual ~vtkObserverManager();

@@ -65,6 +65,12 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+vtkObject* vtkObserverManager::GetObserver()
+{
+  return this->GetOwner() ? this->GetOwner() : this;
+}
+
+//----------------------------------------------------------------------------
 void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 {
   vtkDebugMacro (<< "SetObject of " << node);
@@ -165,11 +171,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
       }
 
     vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    vtkObject *observer = this->GetOwner();
-    if ( observer == NULL ) 
-      {
-      observer = this;
-      }
+    vtkObject *observer = this->GetObserver();
     if (events)
       {
       for (int i=0; i<events->GetNumberOfTuples(); i++)
@@ -177,9 +179,10 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
 #ifndef NDEBUG
         // Make sure we are not adding an already existing connection. It's
         // not a big issue but it just shows poor design.
-        if (broker->GetObservations(nodePtr, events->GetValue(i), observer, this->CallbackCommand).size() != 0)
+        if (this->GetObservationsCount(nodePtr, events->GetValue(i)) > 0)
           {
-          vtkWarningMacro(<< "Observation between " << nodePtr->GetClassName()
+          vtkWarningMacro(<< "Observation " << events->GetValue(i)
+                          << " between " << nodePtr->GetClassName()
                           << " and " << observer->GetClassName()
                           << " already exists.");
           }
@@ -194,3 +197,12 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
 
 }
 
+//----------------------------------------------------------------------------
+int vtkObserverManager::GetObservationsCount(vtkObject *nodePtr, unsigned long event)
+{
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  vtkObject *observer = this->GetObserver();
+  std::vector<vtkObservation*> observations =
+    broker->GetObservations(nodePtr, event, observer, this->CallbackCommand);
+  return static_cast<int>(observations.size());
+}

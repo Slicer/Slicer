@@ -371,7 +371,7 @@ void vtkEventBroker::RemoveObservations (vtkObject *observer)
 //----------------------------------------------------------------------------
 void vtkEventBroker::RemoveObservations (vtkObject *subject, vtkObject *observer)
 {
-  this->RemoveObservations( this->GetObservations( subject, observer ) );
+  this->RemoveObservations( this->GetObservations( subject, 0, observer ) );
 }
 
 //----------------------------------------------------------------------------
@@ -393,7 +393,8 @@ void vtkEventBroker::RemoveObservationsForSubjectByTag (vtkObject *subject, unsi
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *observer)
+std::vector< vtkObservation *> vtkEventBroker
+::GetSubjectObservations (vtkObject *observer)
 {
   // find matching observations to remove
   std::vector< vtkObservation *> observationList;
@@ -404,60 +405,32 @@ std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *obser
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *subject, vtkObject *observer)
+std::vector< vtkObservation *> vtkEventBroker::GetObservations (
+  vtkObject *subject, unsigned long event,
+  vtkObject *observer, vtkCallbackCommand *notify)
 {
+  // Special case for fast return
+  if (event == 0 && observer == 0 && notify == 0)
+    {
+    return this->GetSubjectObservations(subject);
+    }
   // find matching observations to remove
   std::vector< vtkObservation *> observationList;
   std::vector< vtkObservation *>::iterator obsIter; 
   KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  for(obsIter=this->SubjectMap[subjectKey].begin(); obsIter != this->SubjectMap[subjectKey].end(); obsIter++)  
+  for(obsIter=this->SubjectMap[subjectKey].begin();
+      obsIter != this->SubjectMap[subjectKey].end();
+      ++obsIter)
     {
-    if ( (*obsIter)->GetObserver() == observer && 
-         (*obsIter)->GetSubject() == subject )
+    if ( ((*obsIter)->GetObserver() == observer || observer == 0) &&
+         //((*obsIter)->GetSubject() == subject || subject == 0) &&
+         ((*obsIter)->GetEvent() == event || event == 0) && 
+         ((*obsIter)->GetCallbackCommand() == notify || notify == 0))
       {
       observationList.push_back( *obsIter );
       }
     }
-  return( observationList );
-}
-
-//----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer)
-{
-  // find matching observations to remove
-  std::vector< vtkObservation *> observationList;
-  std::vector< vtkObservation *>::iterator obsIter; 
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  for(obsIter=this->SubjectMap[subjectKey].begin(); obsIter != this->SubjectMap[subjectKey].end(); obsIter++)  
-    {
-    if ( (*obsIter)->GetObserver() == observer && 
-         (*obsIter)->GetSubject() == subject &&
-         (*obsIter)->GetEvent() == event )
-      {
-      observationList.push_back( *obsIter );
-      }
-    }
-  return( observationList );
-}
-
-//----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify)
-{
-  // find matching observations to remove
-  std::vector< vtkObservation *> observationList;
-  std::vector< vtkObservation *>::iterator obsIter; 
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  for(obsIter=this->SubjectMap[subjectKey].begin(); obsIter != this->SubjectMap[subjectKey].end(); obsIter++)  
-    {
-    if ( (*obsIter)->GetObserver() == observer && 
-         (*obsIter)->GetSubject() == subject &&
-         (*obsIter)->GetEvent() == event && 
-         (*obsIter)->GetCallbackCommand() == notify )
-      {
-      observationList.push_back( *obsIter );
-      }
-    }
-  return( observationList );
+  return observationList;
 }
 
 //----------------------------------------------------------------------------
