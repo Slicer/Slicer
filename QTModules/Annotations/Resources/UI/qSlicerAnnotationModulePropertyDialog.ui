@@ -197,7 +197,7 @@
        <item>
         <widget class="QPushButton" name="sizeSmallPushButton">
          <property name="toolTip">
-          <string>Change the annotation size to small by setting the scale on all components of the annotation (text, point, line) to half of the medium scale</string>
+          <string>Change the annotation size to small by setting the scale on all components of the annotation (text, point, line) to half of the large scale</string>
          </property>
          <property name="text">
           <string>small</string>
@@ -207,7 +207,7 @@
        <item>
         <widget class="QPushButton" name="sizeMediumPushButton">
          <property name="toolTip">
-          <string>Change the annotation size to medium (default) by setting the scale on all components of the annotation (text, point, line)</string>
+          <string>Change the annotation size to medium by setting the scale on all components of the annotation (text, point, line) to three quarters of the large scale</string>
          </property>
          <property name="text">
           <string>Medium</string>
@@ -217,7 +217,7 @@
        <item>
         <widget class="QPushButton" name="sizeLargePushButton">
          <property name="toolTip">
-          <string>Change the annotation size to large by setting the scale on all components of the annotation (text, point, line) to double the medium scale</string>
+          <string>Change the annotation size to large (default) by setting the scale on all components of the annotation (text, point, line)</string>
          </property>
          <property name="text">
           <string>LARGE</string>
