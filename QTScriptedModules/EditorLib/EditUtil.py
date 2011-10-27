@@ -44,7 +44,8 @@ class EditUtil(object):
     compNode = self.getCompositeNode()
     if compNode:
       labelID = compNode.GetLabelVolumeID()
-      return slicer.mrmlScene.GetNodeByID(labelID)
+      if labelID:
+        return slicer.mrmlScene.GetNodeByID(labelID)
 
   def getColorNode(self):
     labelNode = self.getLabelVolume()

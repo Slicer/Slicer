@@ -77,8 +77,13 @@ class EditorWidget:
       # get the slice composite node for the Red slice view (we'll assume it exists 
       # since we are in the editor) to get the current background and label
       compositeNode = self.editUtil.getCompositeNode()
-      masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
-      mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
+      bgID = lbID = ""
+      if compositeNode.GetBackgroundVolumeID():
+        bgID = compositeNode.GetBackgroundVolumeID()
+      if compositeNode.GetLabelVolumeID():
+        lbID = compositeNode.GetBackgroundVolumeID()
+      masterNode = slicer.mrmlScene.GetNodeByID( bgID )
+      mergeNode = slicer.mrmlScene.GetNodeByID( lbID )
       self.setMasterNode(masterNode)
       self.setMergeNode(mergeNode)
     # if not showing volumes, the caller is responsible for setting the master and
