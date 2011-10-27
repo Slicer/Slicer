@@ -84,6 +84,9 @@ protected slots:
   void updatePresetSliderRange();
   void updateFromMRMLDisplayNode();
 
+  void synchronizeScalarDisplayNode();
+  void setFollowVolumeDisplayNode(bool);
+
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
 

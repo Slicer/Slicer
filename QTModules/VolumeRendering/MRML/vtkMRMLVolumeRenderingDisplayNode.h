@@ -123,9 +123,9 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkGetMacro(CroppingEnabled,int);
   vtkBooleanMacro(CroppingEnabled,int);
 
-  vtkSetMacro(UseThreshold,int);
-  vtkGetMacro(UseThreshold,int);
-  vtkBooleanMacro(UseThreshold,int);
+  //vtkSetMacro(UseThreshold,int);
+  //vtkGetMacro(UseThreshold,int);
+  //vtkBooleanMacro(UseThreshold,int);
 
   vtkSetMacro(UseFgThreshold,int);
   vtkGetMacro(UseFgThreshold,int);

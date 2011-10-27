@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>333</width>
-    <height>254</height>
+    <width>344</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,39 +20,6 @@
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="ctkCheckBox" name="VisibilityCheckBox">
-     <property name="text">
-      <string>Volume:</string>
-     </property>
-     <property name="indicatorIcon">
-      <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
-       <normaloff>:/Icons/VisibleOn.png</normaloff>
-       <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox">
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLScalarVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="hideChildNodeTypes">
-      <stringlist>
-       <string>vtkMRMLDiffusionWeightedVolumeNode</string>
-       <string>vtkMRMLDiffusionTensorVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
      <property name="enabled">
@@ -215,6 +182,12 @@
            <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOn.png</normaloff>
             <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+          </property>
+          <property name="indicatorIconSize">
+           <size>
+            <width>21</width>
+            <height>21</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -642,6 +615,19 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="ctkCheckablePushButton" name="SynchronizeScalarDisplayNodeButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Synchronize with Volumes module</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
         <widget class="QWidget" name="ROITab">
@@ -665,6 +651,55 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="leftMargin">
+      <number>6</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="ctkCheckBox" name="VisibilityCheckBox">
+       <property name="text">
+        <string>Volume:</string>
+       </property>
+       <property name="indicatorIcon">
+        <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+         <normaloff>:/Icons/VisibleOn.png</normaloff>
+         <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+       </property>
+       <property name="indicatorIconSize">
+        <size>
+         <width>21</width>
+         <height>21</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1">
+    <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox">
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLScalarVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="hideChildNodeTypes">
+      <stringlist>
+       <string>vtkMRMLDiffusionWeightedVolumeNode</string>
+       <string>vtkMRMLDiffusionTensorVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
@@ -701,6 +736,11 @@
    <extends>qMRMLNodeComboBox</extends>
    <header>qSlicerPresetComboBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckBox</class>
@@ -743,11 +783,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>64</y>
+     <y>116</y>
     </hint>
     <hint type="destinationlabel">
-     <x>158</x>
-     <y>278</y>
+     <x>86</x>
+     <y>471</y>
     </hint>
    </hints>
   </connection>
@@ -759,11 +799,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>62</y>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
-     <x>257</x>
-     <y>489</y>
+     <x>20</x>
+     <y>464</y>
     </hint>
    </hints>
   </connection>
@@ -791,11 +831,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>60</y>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>62</y>
+     <y>90</y>
     </hint>
    </hints>
   </connection>
@@ -807,11 +847,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>60</y>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>64</y>
+     <y>116</y>
     </hint>
    </hints>
   </connection>
@@ -823,11 +863,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>60</y>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>67</y>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -843,7 +883,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>67</y>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -859,7 +899,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>62</y>
+     <y>90</y>
     </hint>
    </hints>
   </connection>
@@ -875,7 +915,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>64</y>
+     <y>116</y>
     </hint>
    </hints>
   </connection>
@@ -891,7 +931,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>323</x>
-     <y>60</y>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -919,11 +959,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>323</x>
-     <y>205</y>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
-     <x>119</x>
-     <y>330</y>
+     <x>120</x>
+     <y>494</y>
     </hint>
    </hints>
   </connection>
@@ -939,7 +979,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>240</x>
-     <y>253</y>
+     <y>359</y>
     </hint>
    </hints>
   </connection>
@@ -950,12 +990,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>215</x>
-     <y>62</y>
+     <x>323</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>123</x>
-     <y>174</y>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -966,12 +1006,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>260</x>
-     <y>64</y>
+     <x>323</x>
+     <y>116</y>
     </hint>
     <hint type="destinationlabel">
-     <x>122</x>
-     <y>278</y>
+     <x>50</x>
+     <y>471</y>
     </hint>
    </hints>
   </connection>
@@ -983,11 +1023,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>227</x>
-     <y>176</y>
+     <y>280</y>
     </hint>
     <hint type="destinationlabel">
-     <x>182</x>
-     <y>594</y>
+     <x>20</x>
+     <y>464</y>
     </hint>
    </hints>
   </connection>
@@ -998,12 +1038,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>253</x>
-     <y>62</y>
+     <x>323</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>227</x>
-     <y>176</y>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -1014,12 +1054,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>192</x>
-     <y>64</y>
+     <x>314</x>
+     <y>116</y>
     </hint>
     <hint type="destinationlabel">
      <x>195</x>
-     <y>138</y>
+     <y>244</y>
     </hint>
    </hints>
   </connection>
@@ -1030,12 +1070,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>192</x>
-     <y>62</y>
+     <x>314</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>278</x>
-     <y>166</y>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -1052,6 +1092,38 @@
     <hint type="destinationlabel">
      <x>31</x>
      <y>8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SynchronizeScalarDisplayNodeButton</sender>
+   <signal>checkBoxToggled(bool)</signal>
+   <receiver>SynchronizeScalarDisplayNodeButton</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>393</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>128</x>
+     <y>390</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>DisplayNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>SynchronizeScalarDisplayNodeButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>114</x>
+     <y>393</y>
     </hint>
    </hints>
   </connection>

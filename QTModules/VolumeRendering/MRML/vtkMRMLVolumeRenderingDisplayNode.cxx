@@ -479,9 +479,9 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetGPURaycastTechnique3(node->GetGPURaycastTechnique3());
 */
   this->SetThreshold(node->GetThreshold());
-  this->SetUseThreshold(node->GetUseThreshold());
+  //this->SetUseThreshold(node->GetUseThreshold());
   this->SetThresholdFg(node->GetThresholdFg());
-  this->SetUseFgThreshold(node->GetUseFgThreshold());
+  //this->SetUseFgThreshold(node->GetUseFgThreshold());
   this->SetBgFgRatio(node->GetBgFgRatio());
   this->SetMultiVolumeFusionMethod(node->GetMultiVolumeFusionMethod());
   this->SetWindowLevel(node->GetWindowLevel());

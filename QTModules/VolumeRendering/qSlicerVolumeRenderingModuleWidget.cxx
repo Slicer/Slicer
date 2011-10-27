@@ -10,11 +10,14 @@
 // qSlicerVolumeRendering includes
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "ui_qSlicerVolumeRenderingModule.h"
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 // MRML includes
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
 
 // VTK includes
 #include <vtkImageData.h>
@@ -177,6 +180,11 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(resetOffset()));
   QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(resetOffset()));
+
+  QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(clicked()),
+                   q, SLOT(synchronizeScalarDisplayNode()));
+  QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(checkBoxToggled(bool)),
+                   q, SLOT(setFollowVolumeDisplayNode(bool)));
 
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
@@ -494,6 +502,11 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     vtkMRMLVolumeRenderingDisplayNode::AlphaBlendingOR);
   d->BgFgRatioSliderWidget->setValue(
     d->DisplayNode ? d->DisplayNode->GetBgFgRatio() : 0.);
+
+  // Opacity/color
+  bool follow = d->DisplayNode ? d->DisplayNode->GetFollowVolumeDisplayNode() != 0 : false;
+  d->SynchronizeScalarDisplayNodeButton->setCheckState(
+    follow ? Qt::Checked : Qt::Unchecked);
 }
 
 // --------------------------------------------------------------------------
@@ -890,4 +903,22 @@ void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
   d->PresetOffsetSlider->setPageStep(d->PresetOffsetSlider->singleStep());
   d->PresetOffsetSlider->setRange(-width, width);
   d->PresetOffsetSlider->blockSignals(wasBlocking);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::synchronizeScalarDisplayNode()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  volumeRenderingLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(
+    d->DisplayNode);
+}
+
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setFollowVolumeDisplayNode(bool follow)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  d->DisplayNode->SetFollowVolumeDisplayNode(follow ? 1 : 0);
 }

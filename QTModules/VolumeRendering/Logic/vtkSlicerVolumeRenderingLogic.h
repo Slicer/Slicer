@@ -21,24 +21,36 @@
 #ifndef __vtkSlicerVolumeRenderingLogic_h
 #define __vtkSlicerVolumeRenderingLogic_h
 
+// VolumeRendering includes
+#include "vtkSlicerVolumeRenderingModuleLogicExport.h"
+class vtkMRMLVolumeRenderingDisplayNode;
+class vtkMRMLVolumeRenderingScenarioNode;
+
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-#include <vtkMRML.h>
-#include <vtkMRMLVolumeNode.h>
-#include <vtkMRMLVolumePropertyNode.h>
-#include <vtkMRMLAnnotationROINode.h>
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
-#include "vtkMRMLVolumeRenderingScenarioNode.h"
-
-// STD includes
-#include <cstdlib>
-
-#include "vtkSlicerVolumeRenderingModuleLogicExport.h"
-
+//#include <vtkMRMLVolumeNode.h>
+//#include <vtkMRMLVolumePropertyNode.h>
+//#include <vtkMRMLAnnotationROINode.h>
+//#include "vtkMRMLVolumeRenderingDisplayNode.h"
+//#include "vtkMRMLVolumeRenderingScenarioNode.h"
+class vtkMRMLAnnotationROINode;
+class vtkMRMLNode;
+class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLViewNode;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumePropertyNode;
+
+// VTK includes
+class vtkColorTransferFunction;
+class vtkPiecewiseFunction;
+class vtkVolumeProperty;
+
+// STD includes
+#include <vector>
+
 class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
@@ -51,6 +63,23 @@ public:
   vtkTypeRevisionMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  void AddVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+  void RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+  void AddAllVolumeRenderingDisplayNodes();
+  void RemoveAllVolumeRenderingDisplayNodes();
+
+  // Applies the properties (window level, threshold and color function) of
+  // the scalar display node to the volume rendering displaynode.
+  void CopyScalarDisplayToVolumeRenderingDisplayNode(
+    vtkMRMLVolumeRenderingDisplayNode* volumeRenderingDisplayNode,
+    vtkMRMLScalarVolumeDisplayNode* scalarDisplayNode);
+  /// Utility function that tries to guess what scalar volume display node
+  void CopyScalarDisplayToVolumeRenderingDisplayNode(
+    vtkMRMLVolumeRenderingDisplayNode* node);
+
+  void SetWindowLevelAndThresholdToVolumeProp(
+    double scalarRange[2], double windowLevel[2], double threshold[2],
+    vtkLookupTable* lut, vtkVolumeProperty* node);
 
   // Description:
   // Create DisplayNode
@@ -105,13 +134,11 @@ public:
 
   void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  //void UpdateFgTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void UpdateVolumePropertyFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  //void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  void UpdateVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-  void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  //void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
@@ -119,12 +146,28 @@ public:
 
   vtkMRMLScene* GetPresetsScene();
 
+  bool IsDifferentFunction(vtkPiecewiseFunction* function1,
+                           vtkPiecewiseFunction* function2) const;
+  bool IsDifferentFunction(vtkColorTransferFunction* function1,
+                           vtkColorTransferFunction* function2) const;
+
 protected:
   vtkSlicerVolumeRenderingLogic();
   virtual ~vtkSlicerVolumeRenderingLogic();
 
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene);
   // Register local MRML nodes
   virtual void RegisterNodes();
+
+  void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  void OnMRMLNodeModified(vtkMRMLNode* node);
+
+  // Update from 
+  void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+
+  typedef std::vector<vtkMRMLNode*> DisplayNodesType;
+  DisplayNodesType DisplayNodes;
 
   bool LoadPresets(vtkMRMLScene* scene);
   vtkMRMLScene* PresetsScene;

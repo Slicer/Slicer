@@ -111,7 +111,7 @@ protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
   void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
 
-
+  virtual int ActiveInteractionModes();
   // Description:
   // Don't support nested event processing
   // TODO: Probably a bad idea to not support nested calls

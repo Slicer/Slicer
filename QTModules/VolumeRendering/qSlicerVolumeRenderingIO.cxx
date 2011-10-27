@@ -36,6 +36,7 @@
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include "vtkMRMLVolumePropertyNode.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
