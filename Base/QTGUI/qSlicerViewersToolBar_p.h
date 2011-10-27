@@ -75,6 +75,7 @@ public slots:
   
   void setCrosshairMode(int);
   void setCrosshairMode(bool); // used to toggle between last style and off
+  void setCrosshairThickness(int);
   void setNavigation(bool);
   void setSliceIntersectionVisible(bool);
 
@@ -94,6 +95,11 @@ public:
   QAction*      CrosshairSmallBasicAction;
   QAction*      CrosshairSmallBasicIntersectionAction;
   QAction*      CrosshairSliceIntersectionsAction;
+
+  ctkSignalMapper* CrosshairThicknessMapper;
+  QAction*      CrosshairFineAction;
+  QAction*      CrosshairMediumAction;
+  QAction*      CrosshairThickAction;
 
   QAction*      CrosshairToggleAction;
 

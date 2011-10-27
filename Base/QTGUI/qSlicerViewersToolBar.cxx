@@ -62,6 +62,11 @@ qSlicerViewersToolBarPrivate::qSlicerViewersToolBarPrivate(qSlicerViewersToolBar
   this->CrosshairSmallBasicAction = 0;
   this->CrosshairSmallBasicIntersectionAction = 0;
 
+  this->CrosshairThicknessMapper = 0;
+  this->CrosshairFineAction = 0;
+  this->CrosshairMediumAction = 0;
+  this->CrosshairThickAction = 0;
+
   this->CrosshairSliceIntersectionsAction = 0;
 
   this->CrosshairToggleAction = 0;
@@ -136,19 +141,55 @@ void qSlicerViewersToolBarPrivate::init()
   QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)),
                    this, SLOT(setCrosshairMode(int)));
 
-  
+  // Thickness
+  QActionGroup* crosshairThicknessActions = new QActionGroup(q);
+  crosshairThicknessActions->setExclusive(true);
+
+  this->CrosshairFineAction = new QAction(q);
+  this->CrosshairFineAction->setText(tr("Fine crosshair"));
+  this->CrosshairFineAction->setToolTip(tr("Fine crosshair."));
+  this->CrosshairFineAction->setCheckable(true);
+
+  this->CrosshairMediumAction = new QAction(q);
+  this->CrosshairMediumAction->setText(tr("Medium crosshair"));
+  this->CrosshairMediumAction->setToolTip(tr("Medium crosshair."));
+  this->CrosshairMediumAction->setCheckable(true);
+
+  this->CrosshairThickAction = new QAction(q);
+  this->CrosshairThickAction->setText(tr("Thick crosshair"));
+  this->CrosshairThickAction->setToolTip(tr("Thick crosshair."));
+  this->CrosshairThickAction->setCheckable(true);
+
+  crosshairThicknessActions->addAction(this->CrosshairFineAction);
+  crosshairThicknessActions->addAction(this->CrosshairMediumAction);
+  crosshairThicknessActions->addAction(this->CrosshairThickAction);
+  this->CrosshairThicknessMapper = new ctkSignalMapper(q);
+  this->CrosshairThicknessMapper->setMapping(this->CrosshairFineAction,
+                                             vtkMRMLCrosshairNode::Fine);
+  this->CrosshairThicknessMapper->setMapping(this->CrosshairMediumAction,
+                                             vtkMRMLCrosshairNode::Medium);
+  this->CrosshairThicknessMapper->setMapping(this->CrosshairThickAction,
+                                             vtkMRMLCrosshairNode::Thick);
+  QObject::connect(crosshairThicknessActions, SIGNAL(triggered(QAction*)),
+                   this->CrosshairThicknessMapper, SLOT(map(QAction*)));
+  QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)),
+                   this, SLOT(setCrosshairThickness(int)));
+
+  // Slice intersections
   this->CrosshairSliceIntersectionsAction = new QAction(q);
   this->CrosshairSliceIntersectionsAction->setText(tr("Slice intersections"));
   this->CrosshairSliceIntersectionsAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
   this->CrosshairSliceIntersectionsAction->setCheckable(true);
   QObject::connect(this->CrosshairSliceIntersectionsAction, SIGNAL(triggered(bool)),
                    this, SLOT(setSliceIntersectionVisible(bool)));
-  
-  
+
+  // Menu
   this->CrosshairMenu = new QMenu(QObject::tr("Crosshair"), q);
   this->CrosshairMenu->addAction(this->CrosshairNavigationAction);
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairActions->actions());
+  this->CrosshairMenu->addSeparator();
+  this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addAction(this->CrosshairSliceIntersectionsAction);
   
@@ -243,6 +284,25 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
       {
       this->CrosshairLastMode = mode;
       }
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerViewersToolBarPrivate::setCrosshairThickness(int thickness)
+{
+//  Q_Q(qSlicerViewersToolBar);
+
+  vtkSmartPointer<vtkCollection> nodes = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLCrosshairNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetCrosshairThickness(thickness);
     }
 }
 
@@ -369,6 +429,16 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != NULL)
       {
       QAction* action = (QAction *)(this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()));
+      if (action)
+        {
+        action->setChecked(true);
+        }
+      }
+
+    // thickness
+    if (this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()) != NULL)
+      {
+      QAction* action = (QAction *)(this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()));
       if (action)
         {
         action->setChecked(true);
