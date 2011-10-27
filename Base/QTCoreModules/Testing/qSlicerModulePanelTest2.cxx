@@ -54,14 +54,14 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
 
   modulePanel->setModuleManager(app.moduleManager());
 
-  modulePanel->setModule("Colors");
-  if (modulePanel->currentModuleName() != "Colors")
+  modulePanel->setModule("Cameras");
+  if (modulePanel->currentModuleName() != "Cameras")
     {
     std::cerr<< "qSlicerModulePanel::setModule() failed "
              << qPrintable(modulePanel->currentModuleName()) << std::endl;
     return EXIT_FAILURE;
     }
-  modulePanel->setModule("Transforms");
+  modulePanel->setModule("EventBroker");
 
   dockWidget.show();
 
