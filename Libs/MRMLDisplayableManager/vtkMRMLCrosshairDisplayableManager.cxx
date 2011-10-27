@@ -614,12 +614,10 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
       double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
       this->ConvertRASToXYZ(ras, xyz);
       
-      // This is not the place to do this. We really need to
-      // use JumpSliceByOffsetting(k, r, a, s) with k defined by the
-      // viewer that received the mouse event. 
       if (this->Internal->CrosshairNode->GetNavigation())
         {
-        this->Internal->GetSliceNode()->JumpSliceByOffsetting(ras[0], ras[1], ras[2]);
+        int id = this->Internal->CrosshairNode->GetLightBoxPane();
+        this->Internal->GetSliceNode()->JumpSliceByOffsetting(id, ras[0], ras[1], ras[2]);
         this->ConvertRASToXYZ(ras, xyz); // recompute since matrices changed
         }
 
@@ -816,8 +814,10 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
               break;
             }
             case vtkInternal::Dragging:
-              // Set the new position on the crosshair
-              this->Internal->CrosshairNode->SetCrosshairRAS(ras);
+              // Set the new position on the crosshair and a suggested
+              // lightbox pane
+              int id = (int) (xyz[2] + 0.5); // round to find the lightbox
+              this->Internal->CrosshairNode->SetCrosshairRAS(ras, id);
               break;
             }
           }

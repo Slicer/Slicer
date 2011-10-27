@@ -64,6 +64,16 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   vtkSetVector3Macro(CrosshairRAS, double);
   vtkGetVector3Macro(CrosshairRAS, double);
   
+  ///
+  /// Set the crosshair position and cache which pane of lightbox that
+  /// position was in
+  void SetCrosshairRAS(double ras[3], int id);
+  
+  ///
+  /// Get the pane of the lightbox that was last cached
+  vtkGetMacro(LightBoxPane, int);
+
+
   /// 
   /// Is the crosshair to be used for navigation or as just a cursor
   vtkSetMacro(Navigation, int);
@@ -115,7 +125,7 @@ protected:
   int Navigation;
 
   double CrosshairRAS[3];
-
+  int LightBoxPane;
 };
 
 #endif
