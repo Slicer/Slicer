@@ -191,8 +191,9 @@ mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
 set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "3" "4")
-if(NOT ${ITK_VERSION_MAJOR} STREQUAL "3" AND NOT ${ITK_VERSION_MAJOR} STREQUAL "4")
-  message(FATAL_ERROR "ITK_VERSION_MAJOR should be either 3 or 4")
+if(NOT "${ITK_VERSION_MAJOR}" STREQUAL "3" AND NOT "${ITK_VERSION_MAJOR}" STREQUAL "4")
+  set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4)." FORCE)
+  message(WARNING "Setting ITK_VERSION_MAJOR to '3' as an valid value was specified.")
 endif()
 
 set(USE_ITKv3 OFF)
