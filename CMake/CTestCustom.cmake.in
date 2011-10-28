@@ -36,8 +36,8 @@ set(CTEST_CUSTOM_WARNING_MATCH
   "CMake Warning[ :]"
   )
 
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   10000)
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 10000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   1000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
@@ -150,7 +150,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
   "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
   "ld.*has different visibility.*libLog4Qt.a"
-  
+
   # CTK - dcmtk
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
