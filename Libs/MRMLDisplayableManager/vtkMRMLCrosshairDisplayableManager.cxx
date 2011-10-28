@@ -255,7 +255,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkCollection* scene = this->External->GetMRMLScene()->GetCurrentScene();
+  vtkSmartPointer<vtkCollection> scene = this->External->GetMRMLScene()->GetCurrentScene();
   for (scene->InitTraversal(it);
        (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
     {
@@ -321,7 +321,7 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkCollection* crosshairs = this->External->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode");
+  vtkSmartPointer<vtkCollection> crosshairs = this->External->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode");
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
     {
@@ -330,13 +330,11 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
     if (crosshairNode 
         && crosshairNode->GetCrosshairName() == std::string("default"))
       {
-      crosshairs->Delete();
       return crosshairNode;
       }
     }
   // no matching crosshair node is found
   //assert(0);
-  crosshairs->Delete();
   return 0;
 }
 
