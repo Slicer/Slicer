@@ -350,7 +350,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     // Watch the crosshairs
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
-    vtkCollection *crosshairs = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
+    vtkSmartPointer<vtkCollection> crosshairs = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
     for (crosshairs->InitTraversal(it);
          (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
       {
@@ -361,7 +361,6 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
                           this, SLOT(onCrosshairNodeModeChangedEvent()));
         }
       }
-    crosshairs->Delete();
         
 
     // Watch the Red SliceCompositeNodes for a change in the
@@ -404,7 +403,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
   vtkMRMLCrosshairNode* crosshairNode = 0;
-  vtkCollection *crosshairs = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
+  vtkSmartPointer<vtkCollection> crosshairs = this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode");
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
     {
