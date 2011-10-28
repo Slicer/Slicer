@@ -204,6 +204,8 @@ protected:
   
   vtkMRMLAnnotationDisplayableManagerHelper * Helper;
 
+  double LastClickWorldCoordinates[4];
+
 private:
 
   vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented

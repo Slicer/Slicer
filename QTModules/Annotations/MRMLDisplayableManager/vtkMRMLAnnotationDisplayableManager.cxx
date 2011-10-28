@@ -70,6 +70,11 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 
   // by default, multiply the display node scale by this when setting scale on elements in 2d windows
   this->ScaleFactor2D = 0.00333;
+
+  this->LastClickWorldCoordinates[0]=0;
+  this->LastClickWorldCoordinates[1]=0;
+  this->LastClickWorldCoordinates[2]=0;
+  this->LastClickWorldCoordinates[3]=1;
 }
 
 //---------------------------------------------------------------------------

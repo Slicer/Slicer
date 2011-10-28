@@ -160,10 +160,6 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
     {
     this->DefaultFaceProperty2D->Delete();
     }
-  if (this->LastPicker2D)
-    {
-    this->LastPicker2D->Delete();
-    }
 }
 
 //----------------------------------------------------------------------

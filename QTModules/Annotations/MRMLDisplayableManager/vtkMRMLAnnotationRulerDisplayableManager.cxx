@@ -766,9 +766,12 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
   // place the seed where the user clicked
   this->PlaceSeed(x,y);
 
-  if (this->m_ClickCounter->HasEnoughClicks(2))
+  if (!this->m_ClickCounter->HasEnoughClicks(2))
     {
-
+    this->GetDisplayToWorldCoordinates(x, y, this->LastClickWorldCoordinates);
+    }
+  else
+   {
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
@@ -780,10 +783,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
-    double worldCoordinates1[4] = {0,0,0,1};
+    double worldCoordinates1[4] = {this->LastClickWorldCoordinates[0],
+                                  this->LastClickWorldCoordinates[1],
+                                  this->LastClickWorldCoordinates[2],
+                                  1};
     double worldCoordinates2[4] = {0,0,0,1};
 
-    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
+    //this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
     this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
 
     double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));

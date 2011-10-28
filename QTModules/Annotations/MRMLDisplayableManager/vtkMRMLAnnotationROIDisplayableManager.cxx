@@ -641,9 +641,13 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
   // place the seed where the user clicked
   this->PlaceSeed(x,y);
 
-  if (this->m_ClickCounter->HasEnoughClicks(2))
-    {
 
+  if (!this->m_ClickCounter->HasEnoughClicks(2))
+    {
+    this->GetDisplayToWorldCoordinates(x, y, this->LastClickWorldCoordinates);
+    }
+  else
+    {
     // switch to updating state to avoid events mess
     //this->m_Updating = 1;
 
@@ -654,10 +658,13 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
-    double origin[4] = {0,0,0,0};
+    double origin[4] = {this->LastClickWorldCoordinates[0],
+                        this->LastClickWorldCoordinates[1],
+                        this->LastClickWorldCoordinates[2],
+                        1};
     double radius[4] = {0,0,0,0};
 
-    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],origin);
+    //this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],origin);
     this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],radius);
 
     double rx = sqrt((origin[0]-radius[0])*(origin[0]-radius[0]));
