@@ -188,6 +188,22 @@ option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 
+set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
+# Set the possible values of ITK major version for cmake-gui
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "3" "4")
+if(NOT ${ITK_VERSION_MAJOR} STREQUAL "3" AND NOT ${ITK_VERSION_MAJOR} STREQUAL "4")
+  message(FATAL_ERROR "ITK_VERSION_MAJOR should be either 3 or 4")
+endif()
+
+set(USE_ITKv3 OFF)
+set(USE_ITKv4 ON)
+if(${ITK_VERSION_MAJOR} STREQUAL "3")
+  set(USE_ITKv3 ON)
+  set(USE_ITKv4 OFF)
+endif()
+
+CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF "USE_ITKv4" OFF)
+
 #-----------------------------------------------------------------------------
 # TODO: Option allowing to enable/disable specific module should be automatically added
 # The following option has been added for conveniency so that BRAINSTOOL module can be
@@ -332,7 +348,7 @@ endif()
 if(BUILD_TESTING)
   # NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
   #       See http://www.kitware.com/blog/home/post/11
-  
+
   set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
   include(CTest)
 
@@ -433,7 +449,17 @@ endif()
 #-----------------------------------------------------------------------------
 # ITK
 #-----------------------------------------------------------------------------
+set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
 find_package(ITK REQUIRED)
+if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
+  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
+  #       explicitly instead of passing the version as an argument to find_package() command.
+  message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
+                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
+                      "The following configuration files were considered but not accepted:\n"
+                      "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
+endif()
+
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------

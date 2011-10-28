@@ -62,20 +62,12 @@ endif()
 #------------------------------------------------------------------------------
 # Slicer dependency list
 #------------------------------------------------------------------------------
-option(Slicer_BUILD_WITH_ITKv4 "Build Slicer against ITKv4" OFF)
-mark_as_advanced(Slicer_BUILD_WITH_ITKv4)
-CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF
-  "Slicer_BUILD_WITH_ITKv4" OFF)
 
-if(Slicer_BUILD_WITH_ITKv4)
-  set(ITK_EXTERNAL_NAME "ITKv4")
-else()
-  set(ITK_EXTERNAL_NAME "ITKv3")
-endif()
+set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
 
-if(Slicer_BUILD_WITH_ITKv4)
+if(ITK_VERSION_MAJOR GREATER 3)
   if(Slicer_USE_SimpleITK)
     list(APPEND Slicer_DEPENDENCIES SimpleITK)
   endif()
@@ -248,6 +240,7 @@ ExternalProject_Add(${proj}
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
     # ITK
+    -DITK_VERSION_MAJOR:STRING=${STRING}
     -DITK_DIR:PATH=${ITK_DIR}
     # SlicerExecutionModel
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
