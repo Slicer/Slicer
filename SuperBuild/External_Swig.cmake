@@ -11,6 +11,10 @@ if(DEFINED Swig_DIR AND NOT EXISTS ${Swig_DIR})
   message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
+if(WIN32 AND NOT EXISTS ${Swig_DIR})
+  message(FATAL_ERROR "Swig_DIR variable is expected to be set on Windows.")
+endif()
+
 # Set dependency list
 set(Swig_DEPENDENCIES "PCRE")
 

@@ -12,7 +12,7 @@ if(DEFINED SimpleITK_DIR AND NOT EXISTS ${SimpleITK_DIR})
 endif()
 
 # Set dependency list
-set(SimpleITK_DEPENDENCIES "ITKv4;Swig;python")
+set(SimpleITK_DEPENDENCIES ITKv4 Swig python)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(SimpleITK)
@@ -23,18 +23,18 @@ SlicerMacroCheckExternalProjectDependency(SimpleITK)
 include(ExternalProject)
 
 if(APPLE)
-    set(SIMPLEITK_PYTHON_ARGS
-      -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
-      -DPYTHON_FRAMEWORKS:PATH=${slicer_PYTHON_FRAMEWORK}
-      -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
-      -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
-      )
+  set(SIMPLEITK_PYTHON_ARGS
+    -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
+    -DPYTHON_FRAMEWORKS:PATH=${slicer_PYTHON_FRAMEWORK}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
+    )
 else()
-    set(SIMPLEITK_PYTHON_ARGS
-      -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
-      -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
-      -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
-      )
+  set(SIMPLEITK_PYTHON_ARGS
+    -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
+    -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
+    -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
+    )
 endif()
 
 configure_file(SuperBuild/SimpleITK_install_step.cmake.in

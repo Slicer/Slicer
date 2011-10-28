@@ -64,6 +64,8 @@ endif()
 #------------------------------------------------------------------------------
 option(Slicer_BUILD_WITH_ITKv4 "Build Slicer against ITKv4" OFF)
 mark_as_advanced(Slicer_BUILD_WITH_ITKv4)
+CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF
+  "Slicer_BUILD_WITH_ITKv4" OFF)
 
 if(Slicer_BUILD_WITH_ITKv4)
   set(ITK_EXTERNAL_NAME "ITKv4")
@@ -74,12 +76,8 @@ endif()
 set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
 
 if(Slicer_BUILD_WITH_ITKv4)
-  option(Slicer_BUILD_SimpleITK "Build SimpleITK for Slicer" OFF)
-  mark_as_advanced(Slicer_BUILD_SimpleITK)
-
-  if(Slicer_BUILD_SimpleITK)
-    list(APPEND SimpleITK_DEPENDENCIES Swig)
-    list(APPEND Slicer_DEPENDENCIES SimpleITK Swig)
+  if(Slicer_USE_SimpleITK)
+    list(APPEND Slicer_DEPENDENCIES SimpleITK)
   endif()
 endif()
 if(Slicer_BUILD_BRAINSTOOLS)
