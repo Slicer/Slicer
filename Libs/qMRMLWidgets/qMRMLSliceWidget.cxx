@@ -81,17 +81,24 @@ private:
 
 //--------------------------------------------------------------------------
 // vtkInternalLightBoxRendereManagerProxy methods
-
-//vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy );
+//vtkStandardNewMacro(qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy );
 vtkCxxRevisionMacro(qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
-// Using the vtkStandardNewMacro results in a link error about
-// qMRMLSLiceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::NewInstanceInternal(). 
-// So using an implementation that does not support factories.
+// Using the vtkStandardNewMacro results in a compiler error about
+// vtkInstantiatorqMRMLSliceWidgetPrivate has not been declared. This
+// seems to be due to how the macro uses the type passed into the
+// vtkStandardNewMacro as both a type and a classname string. Below,
+// we do the equivalent to the vtkStandardNewMacro but use the full
+// path to the type where needed and the scoped name elsewhere.
 qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy *
 qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::New()
 {
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkInternalLightBoxRendererManagerProxy");
+  if (ret)
+    {
+    return static_cast<qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy*>(ret);
+    }
   return new qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy;
 }
 
