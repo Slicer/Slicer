@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -54,6 +54,7 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="actionEditApplicationSettings"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -100,7 +101,6 @@
      <addaction name="separator"/>
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
-    <addaction name="actionViewApplicationSettings"/>
     <addaction name="actionWindowPythonInteractor"/>
     <addaction name="actionViewExtensionManager"/>
     <addaction name="separator"/>
@@ -169,17 +169,17 @@
       </widget>
      </item>
      <item>
-      <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
+      <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="DataProbeCollapsibleWidget" native="true">
+      <widget class="ctkCollapsibleButton" name="DataProbeCollapsibleWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" stdset="0">
+       <property name="text">
         <string>Data Probe</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout"/>
@@ -514,7 +514,7 @@
     <string>The Cache and Remote Data Handling interface provides status and information about all remote data transfers, and allows some control over the local cache.</string>
    </property>
   </action>
-  <action name="actionViewApplicationSettings">
+  <action name="actionEditApplicationSettings">
    <property name="text">
     <string>Application Settings</string>
    </property>
@@ -1157,15 +1157,15 @@
    <header>qSlicerMouseModeToolBar.h</header>
   </customwidget>
   <customwidget>
-   <class>qSlicerViewersToolBar</class>
-   <extends>QToolBar</extends>
-   <header>qSlicerViewersToolBar.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerViewersToolBar</class>
+   <extends>QToolBar</extends>
+   <header>qSlicerViewersToolBar.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLCaptureToolBar</class>
@@ -1174,7 +1174,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
   <include location="../SlicerQT.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>

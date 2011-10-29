@@ -486,8 +486,9 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(EditUndo);
   qSlicerMainWindowCore_connect(EditRedo);
 
+  qSlicerMainWindow_connect(EditApplicationSettings);
+
   qSlicerMainWindow_connect(ViewExtensionManager);
-  qSlicerMainWindow_connect(ViewApplicationSettings);
 
   d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   d->actionViewLayoutConventionalWidescreen->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView);
@@ -553,16 +554,16 @@ void qSlicerMainWindow::setupMenuActions()
 #undef qSlicerMainWindowCore_connect
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
+{
+  qSlicerApplication::application()->settingsDialog()->exec();
+}
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 {
   qSlicerExtensionsWizard extensionsManager(this);
   extensionsManager.exec();
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMainWindow::onViewApplicationSettingsActionTriggered()
-{
-  qSlicerApplication::application()->settingsDialog()->exec();
 }
 
 //---------------------------------------------------------------------------

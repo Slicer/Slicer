@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 #ifndef __qSlicerMainWindow_h
-#define __qSlicerMainWindow_h 
+#define __qSlicerMainWindow_h
 
 // Qt includes
 #include <QMainWindow>
@@ -59,8 +59,8 @@ public slots:
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
+  void onEditApplicationSettingsActionTriggered();
   void onViewExtensionManagerActionTriggered();
-  void onViewApplicationSettingsActionTriggered();
 
   void onMRMLSceneModified(vtkObject*);
   void onLayoutActionTriggered(QAction* action);
