@@ -38,6 +38,7 @@
 #include <vtkNew.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataCollection.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // STD includes
@@ -424,14 +425,17 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   // On a new scene or restore, create the singleton for the default crosshair
   // for navigation or cursor if it doesn't already exist in scene
   //
-  vtkMRMLScene *scene =  this->GetMRMLScene();
-  int numberOfCrosshairs = scene->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
   bool foundDefault = false;
-  for (int n = 0; n < numberOfCrosshairs; n++)
+  vtkMRMLNode* node;
+  vtkCollectionSimpleIterator it;
+  vtkSmartPointer<vtkCollection> crosshairs = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode");
+  for (crosshairs->InitTraversal(it);
+       (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLCrosshairNode * crosshair = vtkMRMLCrosshairNode::SafeDownCast(
-        scene->GetNthNodeByClass(n, "vtkMRMLCrosshairNode"));
-    if (crosshair && !strcmp( "default", crosshair->GetCrosshairName()))
+    vtkMRMLCrosshairNode* crosshairNode = 
+      vtkMRMLCrosshairNode::SafeDownCast(node);
+    if (crosshairNode 
+        && crosshairNode->GetCrosshairName() == std::string("default"))
       {
       foundDefault = true;
       break;
@@ -441,9 +445,7 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   if (!foundDefault)
     {
     vtkNew<vtkMRMLCrosshairNode> crosshair;
-    crosshair->SetCrosshairName("default");
-    crosshair->NavigationOn();
-    scene->AddNode(crosshair.GetPointer());
+    this->GetMRMLScene()->AddNode(crosshair.GetPointer());
     }
 }
 
