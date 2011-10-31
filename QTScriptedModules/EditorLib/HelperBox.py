@@ -94,6 +94,7 @@ class HelperBox(object):
 
     if not merge:
       merge = self.volumesLogic.CreateLabelVolume( slicer.mrmlScene, self.master, mergeName )
+      merge.SetName( mergeName )
       merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorSelector.currentNodeId )
       self.setMergeVolume( merge )
     self.select()
@@ -231,6 +232,7 @@ class HelperBox(object):
     structureName = self.master.GetName()+"-%s-label"%labelName
 
     struct = self.volumesLogic.CreateLabelVolume( slicer.mrmlScene, self.master, structureName )
+    struct.SetName(structureName)
     struct.GetDisplayNode().SetAndObserveColorNodeID( colorNode.GetID() )
 
     self.updateStructures()
