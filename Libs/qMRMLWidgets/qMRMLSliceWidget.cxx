@@ -33,13 +33,14 @@
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
-//#include <vtkSliceViewInteractorStyle.h>
+#include <vtkSliceViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
@@ -153,6 +154,10 @@ void qMRMLSliceWidgetPrivate::init()
   // Highligh first RenderWindowItem
   this->VTKSliceView->setHighlightedBoxColor(this->InactiveBoxColor);
   //this->VTKSliceView->findChild<QVTKWidget*>()->installEventFilter(q);
+ 
+  vtkNew<vtkSliceViewInteractorStyle> interactorStyle;
+  interactorStyle->SetSliceLogic(this->SliceController->sliceLogic());
+  this->VTKSliceView->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   connect(this->VTKSliceView, SIGNAL(resized(QSize)),
           this->SliceController, SLOT(setSliceViewSize(QSize)));
