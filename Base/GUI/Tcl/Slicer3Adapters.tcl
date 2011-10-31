@@ -192,6 +192,9 @@ namespace eval Slicer3Adapters {
       #TODO: will scripted modules be able to access other modules in slicer4
       return ""
     }
+    method ProcessPendingEvents {args} {
+      py_eval "slicer.app.processEvents()"
+    }
   }
 
   itcl::class ApplicationGUI {
