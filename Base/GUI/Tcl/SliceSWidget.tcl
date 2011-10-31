@@ -824,9 +824,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           "f" {
             $this incrementSlice
           }
-          "c" {
-            ::Box::ShowDialog ColorBox
-          }
           "e" {
             EditorToggleErasePaintLabel
           }
