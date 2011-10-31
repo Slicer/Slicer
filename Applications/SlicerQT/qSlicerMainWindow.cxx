@@ -393,6 +393,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   d->actionWindowToolbarsModules->setChecked(d->ModuleToolBar->isVisibleTo(this));
   d->actionWindowToolbarsMouseMode->setChecked(d->MouseModeToolBar->isVisibleTo(this));
   d->actionWindowToolbarsCapture->setChecked(d->CaptureToolBar->isVisibleTo(this));
+  d->actionWindowToolbarsViewers->setChecked(d->ViewersToolBar->isVisibleTo(this));
 }
 
 //-----------------------------------------------------------------------------
