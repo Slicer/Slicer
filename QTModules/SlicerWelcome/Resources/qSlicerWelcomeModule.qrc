@@ -35,6 +35,13 @@
     <file>Images/SlicerLoadVolume-Original.png</file>    
     <file>Images/SlicerWWW-Original.png</file>    
     <file>Images/SlicerViewTutorials-Original.png</file>    
+    <file>Images/WelcomeVolumeRendering.png</file>
+    <file>Images/WelcomeCrossReference.png</file>
+    <file>Images/WelcomeChooseLayout.png</file>
+    <file>Images/WelcomeDataProbe.png</file>
+    <file>Images/WelcomeScreenCapture.png</file>
+    <file>Images/WelcomeCrosshair.png</file>
+    <file>Images/WelcomeLayers.png</file>
     <file>HTML/Acknowledgment.html</file>
   </qresource>
   <qresource prefix="newPrefix"/>
