@@ -52,11 +52,11 @@ int qMRMLSceneTransformModel::nodeIndex(vtkMRMLNode* node)const
   const char* nId = 0;
   int index = -1;
   vtkMRMLNode* parent = qMRMLSceneTransformModel::parentNode(node);
-  vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
+  vtkCollection* nodes = node->GetScene()->GetNodes();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
-  for (sceneCollection->InitTraversal(it);
-       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
+  for (nodes->InitTraversal(it);
+       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
     if (parent == qMRMLSceneTransformModel::parentNode(n))

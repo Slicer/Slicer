@@ -526,7 +526,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   //---------------------------------------------------------------------------
   // Print content
   //---------------------------------------------------------------------------
-  vtkCollection * collection = scene->GetCurrentScene();
+  vtkCollection * collection = scene->GetNodes();
   std::cout << "Collection GetNumberOfItems() = ";
   std::cout << collection->GetNumberOfItems() << std::endl;
 

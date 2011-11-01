@@ -255,7 +255,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> scene = this->External->GetMRMLScene()->GetCurrentScene();
+  vtkSmartPointer<vtkCollection> scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
     {

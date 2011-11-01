@@ -173,7 +173,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceModelDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkCollection* scene = this->External->GetMRMLScene()->GetCurrentScene();
+  vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
     {

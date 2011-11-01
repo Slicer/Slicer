@@ -80,11 +80,11 @@ vtkMRMLNode* qMRMLSceneHierarchyModel::childNode(vtkMRMLNode* node, int childInd
     }
   // MRML Transformable nodes
   QString nodeId = QString(node->GetID());
-  vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
+  vtkCollection* nodes = node->GetScene()->GetNodes();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
-  for (sceneCollection->InitTraversal(it);
-       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
+  for (nodes->InitTraversal(it);
+       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
     vtkMRMLNode* parent = qMRMLSceneHierarchyModel::parentNode(n);
     if (parent == 0)
@@ -167,12 +167,12 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
     }
 
   // otherwise, iterate through the scene
-  vtkCollection* sceneCollection = d->MRMLScene->GetCurrentScene();
+  vtkCollection* nodes = d->MRMLScene->GetNodes();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
 
-  for (sceneCollection->InitTraversal(it);
-       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
+  for (nodes->InitTraversal(it);
+       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
     if (parent == this->parentNode(n))

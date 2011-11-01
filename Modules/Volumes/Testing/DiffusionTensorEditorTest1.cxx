@@ -34,10 +34,10 @@ int DiffusionTensorEditorTest1(int argc, char * argv [] )
   scene->SetURL( argv[1] );
   scene->Connect();
 
-  vtkCollection * collection = scene->GetCurrentScene();
+  vtkCollection * nodes = scene->GetNodes();
 
-  std::cout << "Collection GetNumberOfItems() = ";
-  std::cout << collection->GetNumberOfItems() << std::endl;
+  std::cout << "Nodes GetNumberOfItems() = ";
+  std::cout << nodes->GetNumberOfItems() << std::endl;
 
   std::cout << "List of Node Names in this Scene" << std::endl;
   vtkMRMLNode * nodePtr = scene->GetNextNode();

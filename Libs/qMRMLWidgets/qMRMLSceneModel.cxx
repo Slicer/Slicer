@@ -72,10 +72,10 @@ void qMRMLSceneModelPrivate::init()
   Q_Q(qMRMLSceneModel);
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLSceneModel::onMRMLSceneEvent);
-  
+
   this->NameColumn = qMRMLSceneModel::NameColumn;
   this->IDColumn = qMRMLSceneModel::IDColumn;
-  
+
   q->setColumnCount(2);
   q->setHorizontalHeaderLabels(QStringList() << "Nodes" << "Ids");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
@@ -474,11 +474,11 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
   vtkMRMLNode* parent = this->parentNode(node);
 
   // otherwise, iterate through the scene
-  vtkCollection* sceneCollection = d->MRMLScene->GetCurrentScene();
+  vtkCollection* nodes = d->MRMLScene->GetNodes();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
-  for (sceneCollection->InitTraversal(it);
-       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
+  for (nodes->InitTraversal(it);
+       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
     if (parent == this->parentNode(n))
@@ -665,8 +665,8 @@ void qMRMLSceneModel::populateScene()
   vtkMRMLNode *node = 0;
   vtkCollectionSimpleIterator it;
   d->MisplacedNodes.clear();
-  for (d->MRMLScene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
+  for (d->MRMLScene->GetNodes()->InitTraversal(it);
+       (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
     this->insertNode(node);
     }
@@ -759,10 +759,10 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(blocked);
   this->updateItemDataFromNode(item, node, column);
-  
+
   bool itemChanged = (d->PendingItemModified > 0);
   d->PendingItemModified = -1;
-  
+
   if (this->canBeAChild(node))
     {
     QStandardItem* parentItem = item->parent();
@@ -898,17 +898,17 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
   int wasModifying = node->StartModify();
   this->updateNodeFromItemData(node, item);
   node->EndModify(wasModifying);
-  
+
   // the following only applies to tree hierarchies
   if (!this->canBeAChild(node))
     {
     return;
     }
-    
+
  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
-  
+
   QStandardItem* parentItem = item->parent();
-  
+
   // Don't do the following if the row is not complete (reparenting an
   // incomplete row might lead to errors). (if there is no child yet for a given
   // column, it will get there next time updateNodeFromItem is called).
@@ -1104,7 +1104,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     // The children may be lost if not reparented, we ensure they got reparented.
     while (item->rowCount())
       {
-      // we need to remove the children from the node to remove because they 
+      // we need to remove the children from the node to remove because they
       // would be automatically deleted in QStandardItemModel::removeRow()
       d->Orphans.push_back(item->takeRow(0));
       }

@@ -2170,8 +2170,8 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic::GetSliceCompositeNode(vtkMRMLSlice
     }
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  for (scene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)scene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
+  for (scene->GetNodes()->InitTraversal(it);
+       (node = (vtkMRMLNode*)scene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
     sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
     if (sliceCompositeNode &&

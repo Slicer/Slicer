@@ -264,7 +264,7 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
     return;
     }
 
-  vtkCollection* scene = this->GetMRMLScene()->GetCurrentScene();
+  vtkCollection* scene = this->GetMRMLScene()->GetNodes();
   vtkCollectionSimpleIterator it;
   vtkMRMLNode* node = 0;
   for (scene->InitTraversal(it);

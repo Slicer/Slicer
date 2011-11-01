@@ -173,7 +173,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateSliceNodes()
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkCollection* scene = this->External->GetMRMLScene()->GetCurrentScene();
+  vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it))) ;)
     {

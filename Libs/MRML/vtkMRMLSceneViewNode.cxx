@@ -47,7 +47,7 @@ vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
 {
   if (this->Nodes) 
     {
-    this->Nodes->GetCurrentScene()->RemoveAllItems();
+    this->Nodes->GetNodes()->RemoveAllItems();
     this->Nodes->Delete();
     }
   if (this->ScreenShot)
@@ -79,9 +79,9 @@ void vtkMRMLSceneViewNode::WriteNodeBodyXML(ostream& of, int nIndent)
 
   vtkMRMLNode * node = NULL;
   int n;
-  for (n=0; n < this->Nodes->GetCurrentScene()->GetNumberOfItems(); n++) 
+  for (n=0; n < this->Nodes->GetNodes()->GetNumberOfItems(); n++) 
     {
-    node = (vtkMRMLNode*)this->Nodes->GetCurrentScene()->GetItemAsObject(n);
+    node = (vtkMRMLNode*)this->Nodes->GetNodes()->GetItemAsObject(n);
     if (node && !node->IsA("vtkMRMLSceneViewNode") && node->GetSaveWithScene())
       {
       vtkIndent vindent(nIndent+1);
@@ -204,7 +204,7 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
     this->Nodes = vtkMRMLScene::New();
     }  
   node->SetScene(this->Nodes);
-  this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)node);
+  this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
 }
 
 //----------------------------------------------------------------------------
@@ -225,19 +225,19 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode *anode)
     }
   else
     {
-    this->Nodes->GetCurrentScene()->RemoveAllItems();
+    this->Nodes->GetNodes()->RemoveAllItems();
     }
   vtkMRMLNode *node = NULL;
   if ( snode->Nodes != NULL )
     {
     int n;
-    for (n=0; n < snode->Nodes->GetCurrentScene()->GetNumberOfItems(); n++) 
+    for (n=0; n < snode->Nodes->GetNodes()->GetNumberOfItems(); n++) 
       {
-      node = (vtkMRMLNode*)snode->Nodes->GetCurrentScene()->GetItemAsObject(n);
+      node = (vtkMRMLNode*)snode->Nodes->GetNodes()->GetItemAsObject(n);
       if (node)
         {
         node->SetScene(this->Nodes);
-        this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)node);
+        this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
         }
       }
     }
@@ -281,14 +281,14 @@ void vtkMRMLSceneViewNode::UpdateSnapshotScene(vtkMRMLScene *)
     return;
     }
 
-  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
+  unsigned int nnodesSanpshot = this->Nodes->GetNodes()->GetNumberOfItems();
   unsigned int n;
   vtkMRMLNode *node = NULL;
 
   // prevent data read in UpdateScene
   for (n=0; n<nnodesSanpshot; n++) 
     {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetNodes()->GetItemAsObject(n));
     if (node) 
       {
       node->SetAddToSceneNoModify(0);
@@ -298,7 +298,7 @@ void vtkMRMLSceneViewNode::UpdateSnapshotScene(vtkMRMLScene *)
   // update nodes in the snapshot
   for (n=0; n<nnodesSanpshot; n++) 
     {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetNodes()->GetItemAsObject(n));
     if (node) 
       {
       node->UpdateScene(this->Nodes);
@@ -309,8 +309,8 @@ void vtkMRMLSceneViewNode::UpdateSnapshotScene(vtkMRMLScene *)
   // update nodes in the snapshot
   for (n=0; n<nnodesSanpshot; n++) 
     {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
-    if (node) 
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetNodes()->GetItemAsObject(n));
+    if (node)
       {
       node->SetAddToSceneNoModify(1);
       }
@@ -332,7 +332,7 @@ void vtkMRMLSceneViewNode::StoreScene()
     }
   else
     {
-    this->Nodes->GetCurrentScene()->RemoveAllItems();
+    this->Nodes->GetNodes()->RemoveAllItems();
     }
 
   if (this->GetScene())
@@ -353,7 +353,7 @@ void vtkMRMLSceneViewNode::StoreScene()
       newNode->SetAddToSceneNoModify(0);
       newNode->CopyID(node);
 
-      this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)newNode);
+      this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)newNode);
       //--- Try deleting copy after collection has a reference to it,
       //--- in order to eliminate debug leaks..
       newNode->Delete();
@@ -377,7 +377,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
     return;
     }
 
-  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
+  unsigned int nnodesSanpshot = this->Nodes->GetNodes()->GetNumberOfItems();
   unsigned int n;
   vtkMRMLNode *node = NULL;
 
@@ -389,7 +389,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   std::map<std::string, vtkMRMLNode*> snapshotMap;
   for (n=0; n<nnodesSanpshot; n++) 
     {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetNodes()->GetItemAsObject(n));
     if (node) 
       {
       /***
@@ -431,7 +431,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   std::vector<vtkMRMLNode *> addedNodes;
   for (n=0; n < nnodesSanpshot; n++) 
     {
-    node = (vtkMRMLNode*)this->Nodes->GetCurrentScene()->GetItemAsObject(n);
+    node = (vtkMRMLNode*)this->Nodes->GetNodes()->GetItemAsObject(n);
     if (node)
       {
       /***
@@ -482,7 +482,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   // reset AddToScene
   for (n=0; n < nnodesSanpshot; n++) 
     {
-    node = (vtkMRMLNode*)this->Nodes->GetCurrentScene()->GetItemAsObject(n);
+    node = (vtkMRMLNode*)this->Nodes->GetNodes()->GetItemAsObject(n);
     if (node)
       {
       node->SetAddToSceneNoModify(1);
@@ -524,13 +524,13 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
     return;
     }
 
-  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
+  unsigned int nnodesSanpshot = this->Nodes->GetNodes()->GetNumberOfItems();
   unsigned int n;
   vtkMRMLNode *node = NULL;
 
   for (n=0; n<nnodesSanpshot; n++) 
     {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetNodes()->GetItemAsObject(n));
     if (node) 
       {
       // for storage nodes replace full path with relative
