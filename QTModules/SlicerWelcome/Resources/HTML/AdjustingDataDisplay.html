@@ -9,31 +9,101 @@
       <tr>
         <td align="center"><img src="qrc:Images/WelcomeVolumes.png"/></td>
         <td align="justify"><dl>
-          <dt>Volumetric Image Data:</dt>
+          <dt>Display of Volumetric Image Data:</dt>
           <dd>The interface for adjusting  Window, Level, Threshold, Color LUT and other parameters that control the display of volume image data in the scene is found in the &quot;Volumes Module&quot;. To access this interface, either select the <b>Volumes</b> icon (shown at the left) from Slicer's Toolbar, or choose the module from the Toolbar's <b>Modules Menu</b>; then open the module's &quot;Display&quot; panel.</dd>
         </dl></td>
       </tr>
       <tr>
         <td align="center"><img src="qrc:Images/WelcomeModels.png"/></td>
         <td align="justify"><dl>
-          <dt>Models:</dt>
+          <dt>Model Display:</dt>
           <dd>Display options for geometric data like VTK models and FreeSurfer surfaces are found in the &quot;Models module&quot;. To adjust parameters such as Color, Transparency, and Clipping, select the <b>Models</b> icon (shown at the left) from Slicer's Toolbar, or select the module from the Toolbar's <b>Modules Menu</b>; then open the module's &quot;Display&quot; panel.</dd>
         </dl></td>
       </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeLayers.png"/></td>
+        <td align="justify"><dl>
+          <dt>Multiple Layers in each Slice Viewer:</dt>
+          <dd>Each Slice Viewer supports three <b>layers:</b> (Foreground or <b>FG</b>, Background or <b>BG</b>, and Label or<b> L</b>)
+            that can be viewed separately, or blended together in a customizable fashion. When a new scalar volume is loaded, it is automatically displayed
+            in the BG layer. When a new label map is loaded, it is automatically loaded into the L layer. The contents of these layers can be selectively changed
+            in any Slice Viewer's control panel.</dd>
+        </dl></td>
+      </tr>
+
       <tr>
         <td align="center"><img src="qrc:Images/WelcomeFiducials.png"/></td>
         <td align="justify"><dl>
-          <dt>Fiducial Points:</dt>
-          <dd>Fiducials are useful tools employed in many Slicer analysis modules. Their visual representation and display can be adjusted in the &quot;Fiducials module&quot;. Select the <b>Fiducials</b> icon (shown at the left) from Slicer's Toolbar, or select the module from the Toolbar's <b>Modules Menu</b>; then open the module's &quot;Display&quot; panel.</dd>
+          <dt>Fiducial Point Display:</dt>
+          <dd>Fiducials are useful tools employed in many Slicer analysis modules. Their visual representation and display can be adjusted in the &quot;Annotations module&quot;. Interactive placing of fiducial points can be accomplished by selecting the <b>Place Fiducials</b> tool from Slicer's Toolbar.</dd>
         </dl></td>
       </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeVolumeRendering.png"/></td>
+        <td align="justify"><dl>
+          <dt>Volume Rendering:</dt>
+          <dd>Slicer's <b>Volume Rendering</b> Module provides advanced tools for toggling volume rendering of datasets. Hardware accelerated
+          volume rendering with nVidia drivers is available on Linux and Windows platforms. The module permits selection of preset
+          transfer functions to colorize and set opacity of data in a task-appropriate way, and tools to customize the transfer functions that specify these
+          parameters.</dd>
+        </dl></td>
+      </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeChooseLayout.png"/></td>
+        <td align="justify"><dl>
+          <dt>Layouts:</dt>
+          <dd>Slicer provides a variety of layout options. These may be selected from the <b>Choose Layout</b> menubutton
+          in Slicer's main Toolbar (shown at the left). Icons and names of available options are shown below. </dd>
+          <dd><img src="qrc:Images/WelcomeLayout.png"/> </dd>
+        </dl></td>
+      </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeCrosshair.png"/></td>
+        <td align="justify"><dl>
+          <dt>Crosshair Options:</dt>
+          <dd>Crosshairs can be customized by selecting among options available from the Crosshairs menubutton (shown at the left) in Slicer's Toolbar.
+          Here, <b>Navigation</b> and <b>Slice Intersection</b> modes can be toggled, and different crosshair styles can be selected.</dd>
+        </dl></td>
+      </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeCrossReference.png"/></td>
+        <td align="justify"><dl>
+          <dt>Cross-referencing Across Viewers:</dt>
+          <dd>It is often useful to index the same RAS position in multiple slice viewers. This cross-referencing interaction mode can be
+          accomplished by holding down the "Shift-Key" while positioning the mouse inside any Slice Viewer.</dd>
+        </dl></td>
+      </tr>
+
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeDataProbe.png"/></td>
+        <td align="justify"><dl>
+          <dt>Data Probe:</dt>
+          <dd>The Data Probe is an interactive tool that returns information available at the RAS position addressed by the mouse pointer.
+          Data Probe output is visible in the bottom of the main GUI panel.</dd>
+        </dl></td>
+      </tr>
+
       <tr>
         <td align="center"><img src="qrc:Images/WelcomeSceneSnapshots.png"/></td>
         <td align="justify"><dl>
-          <dt>Scene Snapshots:</dt>
-          <dd>The icons shown at the left are found in the 3D View Controls panel. The top-most icon is used to capture a &quot;snapshot&quot; of the scene configuration and save it with a unique name. That &quot;snapshot&quot; can be restored at a later time by selecting the <b>Scene Snapshot Menubutton</b>, shown at the lower left. Scene Snapshots will be saved with your scene.</dd>
+          <dt>Capturing &amp; Restoring Scene Views:</dt>
+          <dd><b>Scene Views</b> are particular "states" of the MRML scene (including datasets, display parameters, annotations, layout, camera configurations etc.). Scene views provide a useful mechanism to capture or communicate interesting visual presentations of complicated data. The icons shown at the left are found in Slicer's Toolbar. The top-most icon is used to capture a &quot;view&quot; of the scene configuration and save it with a unique name. That &quot;view&quot; can be restored at a later time by selecting the <b>Scene View Menubutton</b>, shown at the lower left. Slicer's <b>Scene Views Module</b> offers an advanced interface for capturing, browsing and restoring Scene Views. Scene Views will be saved with your scene.</dd>
         </dl></td>
       </tr>
+      
+      <tr>
+        <td align="center"><img src="qrc:Images/WelcomeScreenCapture.png"/></td>
+        <td align="justify"><dl>
+          <dt>Screen Captures:</dt>
+          <dd>TheScreen Capture  icon shown at the left is found in Slicer's "Capture" Toolbar. Use this tool select which Viewers you wish to capture, and to save them to an image file.</dd>
+        </dl></td>
+      </tr>
+
     </table>
   </body>
 </html>
