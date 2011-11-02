@@ -255,7 +255,10 @@ vtkMRMLSliceCompositeNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> scene = this->External->GetMRMLScene()->GetNodes();
+  vtkSmartPointer<vtkCollection> scene;
+  //scene.TakeReference(this->External->GetMRMLScene()->GetNodes());
+  //scene =  vtkSmartPointer<vtkCollection>::Take(this->External->GetMRMLScene()->GetNodes());
+  scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
     {
@@ -321,7 +324,8 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> crosshairs = this->External->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode");
+  vtkSmartPointer<vtkCollection> crosshairs;
+  crosshairs.TakeReference(this->External->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode"));
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
     {
