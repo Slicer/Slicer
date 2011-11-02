@@ -105,8 +105,7 @@ public:
   vtkSetVector3Macro(ActionStartFOV, double);
   vtkGetVector2Macro(ActionStartWindow, int);
   vtkSetVector2Macro(ActionStartWindow, int);
-  vtkGetVector3Macro(ActionStartXYZ, int);
-  vtkSetVector3Macro(ActionStartXYZ, int);
+
   ///
   /// what was the state of the slice node when the action started
   vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
@@ -127,14 +126,6 @@ public:
   /// Helper routines
 
   ///
-  /// Makes sure the size used by the slice node matches the size of
-  /// the render widget - should only be needed by OnConfigure, but in
-  /// earlier versions of slicer (kwwidgets) there were not configure events
-  /// on every resize so things could get out of sync, so this was called
-  /// more often.
-  void ResizeSliceNode();
-
-  ///
   /// check for prescribed spacing, otherwise return best spacing amount
   /// for current layer setup (use logic to look for spacing of first non-null
   /// layer)
@@ -147,8 +138,15 @@ public:
   ///
   /// Collect some boilerplate management steps so they can be used
   /// in more than one place
-  void StartTranslate(int x, int y, int windowx, int windowy, double ras[3]);
+  void StartTranslate();
   void EndTranslate();
+
+  ///
+  /// Get the RAS coordinates of the interactor's EventPosition
+  /// with respect to the current poked renderer (taking into
+  /// account the lightbox)
+  void GetEventRAS(double ras[4]);
+  void GetEventRASWithRespectToEventStart(double ras[4]);
 
   /// 
   /// Get/Set the SliceLogic
@@ -165,7 +163,6 @@ protected:
   double ActionStartRAS[3];
   double ActionStartFOV[3];
   int ActionStartWindow[2];
-  int ActionStartXYZ[2];
 
   vtkMatrix4x4 *ActionStartSliceToRAS;
   vtkMatrix4x4 *ActionStartXYToRAS;

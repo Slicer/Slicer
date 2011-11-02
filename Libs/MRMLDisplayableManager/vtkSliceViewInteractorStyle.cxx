@@ -19,6 +19,7 @@
 // VTK includes
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderWindow.h"
+#include "vtkRenderer.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkNew.h"
@@ -191,12 +192,12 @@ void vtkSliceViewInteractorStyle::OnRightButtonUp()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMiddleButtonDown() 
 {
-  this->Superclass::OnMiddleButtonDown();
+  this->StartTranslate();
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMiddleButtonUp() 
 {
-  this->Superclass::OnMiddleButtonUp();
+  this->EndTranslate();
 }
 
 //----------------------------------------------------------------------------
@@ -222,6 +223,21 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
 
   switch (this->GetActionState())
     {
+    case vtkSliceViewInteractorStyle::Translate:
+      {
+      double eventRAS[4];
+      this->GetEventRASWithRespectToEventStart(eventRAS);
+      this->ScratchMatrix->DeepCopy(this->ActionStartSliceToRAS);
+      for (int i = 0; i < 3; i++)
+        {
+        double delta = eventRAS[i] - this->ActionStartRAS[i];
+        double ele = this->ScratchMatrix->GetElement(i, 3);
+        this->ScratchMatrix->SetElement(i, 3, ele - delta);
+        }
+      sliceNode->GetSliceToRAS()->DeepCopy(this->ScratchMatrix);
+      sliceNode->UpdateMatrices();
+      }
+      break;
     case vtkSliceViewInteractorStyle::Zoom:
       {
       int deltaY = windowY - this->GetActionStartWindow()[1];
@@ -248,12 +264,14 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseWheelForward() 
 {
+  this->IncrementSlice();
   this->Superclass::OnMouseWheelForward();
 }
 
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseWheelBackward() 
 {
+  this->DecrementSlice();
   this->Superclass::OnMouseWheelBackward();
 }
 
@@ -279,107 +297,6 @@ void vtkSliceViewInteractorStyle::OnEnter()
 void vtkSliceViewInteractorStyle::OnLeave()
 {
   this->Superclass::OnLeave();
-}
-
-//----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::ResizeSliceNode()
-{
-  // TODO
-/*
-#
-# make sure the size of the slice matches the window size of the widget
-#
-itcl::body SliceSWidget::resizeSliceNode {} {
-  set epsilon 1.0e-6
-
-  if { $_layers(background,node) != "" } {
-    set logic [$sliceGUI GetLogic]
-    set sliceSpacing [lindex [$logic GetLowestVolumeSliceSpacing] 2]
-    if { [catch "expr $sliceSpacing"] } {
-      set sliceSpacing 1.0
-    }
-    $this configure -sliceStep $sliceSpacing
-  }
-
-  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
-  foreach {windowx windowy} [$_interactor GetEventPosition] {}
-  # We should really use the pokedrenderer's size for these calculations.
-  # However, viewerports in the LightBox can differ in size by a pixel.  So 
-  # set the image size based on the size of renderer zero.
-  #
-  ###set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
-  #set pokedRenderer [$_renderWidget GetRenderer]
-  # Get the last renderer since the first corresponds to the overlay
-  set nr [$_renderWidget GetNumberOfRenderers]
-  set renderedid [expr $nr - 1]
-  set pokedRenderer [$_renderWidget GetNthRenderer $renderedid]
-  foreach {w h} [$pokedRenderer GetSize] {}
-
-
-  foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
-  foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
-  if { [catch "expr $nodefovx"] } {
-    set nodefovx 1.0
-  }
-  if { [catch "expr $nodefovy"] } {
-    set nodefovy 1.0
-  }
-  if { [catch "expr $nodefovz"] } {
-    set nodefovz 1.0
-  }
-
-  if { $windoww < 1 || $windowh < 1 ||
-       $w < 1 || $h < 1 || $nodeW < 1 || $nodeH < 1 ||
-       $nodefovx == 0. || $nodefovx == 0.} {
-    #puts "ignoring bogus resize"
-  } else {
-    set scaling0 [expr $w / (1. * $nodeW)]
-    set scaling1 [expr $h / (1. * $nodeH)]
-
-    set sMagnitude0 $scaling0
-    if { $sMagnitude0 < 1.0 } {
-       set sMagnitude0 [expr 1. / $sMagnitude0]
-    }
-
-    set sMagnitude1 $scaling1
-    if { $sMagnitude1 < 1.0 } {
-       set sMagnitude1 [expr 1. / $sMagnitude1]
-    }
-
-    if {$sMagnitude0 < $sMagnitude1} {
-       # keep x fov the same, adjust y
-       set fovx $nodefovx
-       set fovy [expr $nodefovy * $scaling1 / $scaling0]
-       set fovz [expr $sliceStep * $nodeD]
-    } else {
-       # keep y fov the same, adjust x
-       set fovx [expr $nodefovx * $scaling0 / $scaling1]
-       set fovy $nodefovy
-       set fovz [expr $sliceStep * $nodeD]
-    }
-
-    set windowAspect [expr $h / (1. * $w)]
-    set planeAspect [expr $fovy / (1. * $fovx)]
-    if { [expr $windowAspect != $planeAspect] } {
-      set fovx [expr $fovy / $windowAspect]
-    }
-
-    if { $fovx == $nodefovx && $fovy == $nodefovy && $fovz == $nodefovz &&
-          $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
-      return
-    }
-    set disabled [$_sliceNode GetDisableModifiedEvent]
-    $_sliceNode DisableModifiedEventOn
-    $_sliceNode SetDimensions $w $h $nodeD
-    $_sliceNode SetFieldOfView $fovx $fovy $fovz
-    $_sliceNode SetDisableModifiedEvent $disabled
-    if { $disabled == 0 } {
-        $_sliceNode InvokePendingModifiedEvent
-        $_sliceNode DisableModifiedEventOff
-    }
-  }
-}
-*/
 }
 
 //----------------------------------------------------------------------------
@@ -420,22 +337,57 @@ void vtkSliceViewInteractorStyle::MoveSlice(double delta)
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::StartTranslate(int x, int y, int windowX, int windowY, double ras[3])
+void vtkSliceViewInteractorStyle::StartTranslate()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
-
   this->SliceLogic->GetMRMLScene()->SaveStateForUndo(sliceNode);
   this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
 
   this->SetActionState(this->Translate);
   this->GetActionStartSliceToRAS()->DeepCopy(sliceNode->GetSliceToRAS());
   this->GetActionStartXYToRAS()->DeepCopy(sliceNode->GetXYToRAS());
-  this->SetActionStartRAS(ras);
-  this->SetActionStartWindow(windowX, windowY);
-  this->SetActionStartXYZ(x, y, 0);
+  double eventRAS[4];
+  this->GetEventRAS(eventRAS);
+  this->SetActionStartRAS(eventRAS);
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::EndTranslate()
 {
+  this->SetActionState(this->None);
   this->SliceLogic->EndSliceNodeInteraction();
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::GetEventRAS(double ras[4])
+{
+  int windowX, windowY;
+
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  this->GetInteractor()->GetEventPosition(windowX, windowY);
+  vtkRenderer *pokedRenderer = this->GetInteractor()->FindPokedRenderer(windowX, windowY);
+
+  double localXY[4];
+  localXY[0] = windowX - pokedRenderer->GetOrigin()[0];
+  localXY[1] = windowY - pokedRenderer->GetOrigin()[1];
+  localXY[2] = 0.;
+  localXY[3] = 1.;
+  // map the current point from XY to RAS space
+  sliceNode->GetXYToRAS()->MultiplyPoint(localXY, ras);
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::GetEventRASWithRespectToEventStart(double ras[4])
+{
+  int windowX, windowY;
+
+  this->GetInteractor()->GetEventPosition(windowX, windowY);
+  vtkRenderer *pokedRenderer = this->GetInteractor()->FindPokedRenderer(windowX, windowY);
+
+  double localXY[4];
+  localXY[0] = windowX - pokedRenderer->GetOrigin()[0];
+  localXY[1] = windowY - pokedRenderer->GetOrigin()[1];
+  localXY[2] = 0.;
+  localXY[3] = 1.;
+  // map the current point from XY to RAS space
+  this->GetActionStartXYToRAS()->MultiplyPoint(localXY, ras);
 }
