@@ -203,11 +203,19 @@ void vtkSliceViewInteractorStyle::OnMiddleButtonUp()
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeftButtonDown() 
 {
+  if (this->Interactor->GetShiftKey())
+    {
+    this->StartTranslate();
+    }
   this->Superclass::OnLeftButtonDown();
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeftButtonUp() 
 {
+  if (this->ActionState == this->Translate)
+    {
+    this->EndTranslate();
+    }
   this->Superclass::OnLeftButtonUp();
 }
 
