@@ -148,6 +148,14 @@ public:
   void GetEventRAS(double ras[4]);
   void GetEventRASWithRespectToEventStart(double ras[4]);
 
+  ///
+  /// Convert event coordinates (with respect to viewport) into
+  /// xyz coordinates, where z is the slice number of the lightbox
+  /// and xy is the offset within the lightbox view.  The xyz coordinates
+  /// can be used to map to RAS with the slice node's XYToRAS matrix.
+  /// The 4th component is 1 so it can be used with a homogenous transform.
+  void GetEventXYZ(double xyz[4]);
+
   /// 
   /// Get/Set the SliceLogic
   void SetSliceLogic(vtkMRMLSliceLogic* SliceLogic);

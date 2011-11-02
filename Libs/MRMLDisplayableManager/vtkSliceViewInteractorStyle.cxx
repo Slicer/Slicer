@@ -160,7 +160,13 @@ void vtkSliceViewInteractorStyle::OnChar()
     }
   else if ( !strcmp(key, "s") )
     {
-    vtkErrorMacro("TODO: set active lightbox/compare view slice");
+    double xyz[4];
+    this->GetEventXYZ(xyz);
+    int k = static_cast<int>(xyz[2] + 0.5);
+    if ( k >= 0 && k < sliceNode->GetDimensions()[2] )
+      {
+      sliceNode->SetActiveSlice(k);
+      }
     }
   else if ( !strcmp(key, "S") )
     {
@@ -398,4 +404,39 @@ void vtkSliceViewInteractorStyle::GetEventRASWithRespectToEventStart(double ras[
   localXY[3] = 1.;
   // map the current point from XY to RAS space
   this->GetActionStartXYToRAS()->MultiplyPoint(localXY, ras);
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::GetEventXYZ(double xyz[4])
+{
+  int windowX, windowY;
+  int windowW, windowH;
+  this->GetInteractor()->GetEventPosition(windowX, windowY);
+
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+
+  int *size = this->GetInteractor()->GetRenderWindow()->GetSize();
+  windowW = size[0];
+  windowH = size[1];
+  int numRows = sliceNode->GetLayoutGridRows();
+  int numCols = sliceNode->GetLayoutGridColumns();
+
+  if ( windowW == 0 || windowH == 0 )
+    {
+    // degenerate case, return gracefully
+    xyz[0] = xyz[1] = xyz[2] = 0.;
+    xyz[3] = 1.;
+    return;
+    }
+
+  vtkRenderer *pokedRenderer = this->GetInteractor()->FindPokedRenderer(windowX, windowY);
+  int *origin = pokedRenderer->GetOrigin();
+  xyz[0] = windowX - origin[0];
+  xyz[1] = windowY - origin[1];
+
+  double tx = windowX / (1. * windowW);
+  double ty = (windowH - windowY) / (1. * windowH);
+  xyz[2] = (floor(ty*numRows)*numCols + floor(tx*numCols));
+  
+  xyz[3] = 1.;
 }
