@@ -5,17 +5,135 @@
   </head>
 
   <body>
+    <center><img src="qrc:Images/WelcomeMouse.png"/></center>
+
+    <p align="justify">Below is basic information about how to use the three-, two-, and one-button mouse (or trackpad) on
+      Windows, Mac, and Linux platforms to perform basic interaction operations in Slicer:    </p>
+    <p><br>
+      <b>Adjusting Window &amp; Level on All Platforms:</b> Left-clicking and dragging the mouse in any Slice viewer is a quick way to adjust Window and Level. Adjust the middle value (level) of the greyscale window by moving the mouse up (increase level) or down (decrease level), and adjust  the greyscale window size by moving the mouse to the left (decrease window size) or right (increase window size). Slicer's <b>Volumes Module</b> provides a "Display" interface for more precise adjustments.
+    </p>
+    <p><br>
+      <b>Selecting &amp; Manipulating on All Platforms:</b> Mousing over any "pickable" object in any of Slicer's viewers will cause the cursor to change from a "pointer" into a "picking hand". When the cursor shows a picking hand, left-clicking and dragging the mouse will pick and manipulate the object. Releasing the mouse button will de-select the object.
+    </p>
+    <p>
+      <br>
+      <b>Viewer Cross reference on All Platforms:</b> Holding down the <b>Shift-Key</b> while moving the mouse in any Slice Viewer
+      will cause other Slice Viewers to interactively scroll to the same RAS position indexed by the mouse. This feature is useful when inspecting
+      corresponding voxels across different time-points in a longitudinal study, across multi-modality studies, or across co-registered studies of different subjects.
+    </p>
+    <br>
+
+    <table class="subsection" border="1" bordercolor=#aaaaaa cellpadding="10" cellspacing="0">
+      <tr>
+        <td width="25%"> </td>
+        <td width="25%"><b>3-Button Mouse </b></td>
+        <td width="25%"><b>2-Button Mouse</b></td>
+        <td width="25%"><b>1-Button Mouse</b></td>
+      </tr>
+
+      <tr>
+        <td width="25%"><b>Zoom In &amp; Out:</b></td>
+        <td width="25%">
+        <dl>
+          <dt> <b>Win:</b> </dt>
+          <dd>Right-Click &amp; drag down &amp; up</dd>
+          <dt> <b>Mac:</b></dt>
+          <dd> Right-Click &amp; drag down &amp; up</dd>
+          <dt> <b>Linux:</b></dt>
+          <dd> Right-Click &amp; drag down &amp; up</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Right-Click &amp; drag down &amp; up</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Right-Click &amp; drag down &amp; up</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Right-Click &amp; drag down &amp; up</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Ctrl+Left-Click &amp; drag down &amp; up</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Ctrl+Left-Click &amp; drag down &amp; up (or two-finger click & drag in the trackpad)</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Ctrl+Left-Click &amp; drag down &amp; up</dd>
+        </dl></td>
+      </tr>
+
+      <tr>
+        <td width="25%"><b>Pan (Translate):</b></td>
+        <td width="25%">
+        <dl>
+          <dt> <b>Win:</b> </dt>
+          <dd>Middle-Click &amp; drag</dd>
+          <dt> <b>Mac:</b> </dt>
+          <dd>Middle-Click &amp; drag</dd>
+          <dt> <b>Linux:</b> </dt>
+          <dd>Middle-Click &amp; drag</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Shift+Left-Click &amp; drag</dd>
+        </dl></td>
+      </tr>
+
+        <td width="25%"><b>Rotate in 3D:</b></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+        </dl></td>
+        <td width="25%">
+          <dl>
+            <dt> <b>Win:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Mac:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+            <dt> <b>Linux:</b> </dt>
+            <dd>Left-click &amp; drag</dd>
+        </dl></td>
+        </tr>
+    </table>
 
     <center><img src="qrc:Images/WelcomeMouseModes.png"/></center>
     
     <table class="subsection" border="1" cellpadding="10" cellspacing="0">
       <tr><td align="justify">
-      <b>Mouse Modes:</b> Slicer has three main mouse modes that apply to the 3D viewer:  <b>Pick</b> (which allows &quot;pickable&quot; objects to be selected), <b>Place</b> (which permits objects to be interactively placed and positioned), and <b>Transform</b> (rotate, pan and zoom). The toolbar icons that switch between these mouse modes are shown from left to right above, respectively.
+      <b>Mouse Modes:</b> Slicer has two mouse modes: <b>Transform</b> (which allows interactive rotate, translate and zoom operations), and <b>Place</b> (which permits objects to be interactively placed).  The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. "Place Fiducial" is the default place option; currently options to place both Ruler and Region Of Interest (ROI) Widgets are available from the drop-down Place Mode menu as well.
       </td></tr>
     </table>
 
     <p align="justify">
-      <b>Hint:</b> These modes are persistent when selected; when you are done &quot;picking&quot; or &quot;placing&quot;, make sure to select the <b>Transform</b> mode again.
+      <b>Hint:</b> <b>Transform</b> mode is the default interaction mode. By default, <b>Place</b> mode persists for one "place" operation after the Place Mode icon  is selected, and then the mode switches modes back to Transform. Place mode can be made persistent (useful for creating multiple fiducial points, rulers, etc.) by checking the "Persistent" checkbox.
     </p>
 
 
