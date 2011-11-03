@@ -39,9 +39,6 @@
 
 class vtkMRMLSliceLogic;
 
-/// new motion flag
-#define VTKIS_USERINTERACTION 8 
-
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle : public vtkInteractorStyleUser
 {
 public:
