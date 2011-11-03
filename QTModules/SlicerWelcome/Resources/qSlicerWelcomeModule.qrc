@@ -43,6 +43,9 @@
     <file>Images/WelcomeCrosshair.png</file>
     <file>Images/WelcomeLayers.png</file>
     <file>Images/WelcomeMouse.png</file>
+    <file>Images/WelcomeROIWidgetWithArrow-Original.png </file>
+    <file>Images/WelcomeDistanceWidgetWithArrow-Original.png </file>
+    <file>Images/WelcomeFiducialWithArrow-Original.png </file>
     <file>HTML/Acknowledgment.html</file>
   </qresource>
   <qresource prefix="newPrefix"/>
