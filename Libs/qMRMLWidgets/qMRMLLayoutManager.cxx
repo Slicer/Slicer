@@ -206,7 +206,9 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
   QString sliceLayoutLabel(sliceNode->GetLayoutLabel());
-  QString sliceLayoutColor(sliceNode->GetLayoutColor());
+  QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0],
+                                             sliceNode->GetLayoutColor()[1],
+                                             sliceNode->GetLayoutColor()[2]);
   sliceWidget->setSliceViewName(sliceLayoutName);
   sliceWidget->setSliceViewLabel(sliceLayoutLabel);
   sliceWidget->setSliceViewColor(sliceLayoutColor);
@@ -320,17 +322,6 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     {
     QString layoutName = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
-#ifndef QT_NO_DEBUG
-    // Check whether a valid viewer color is assigned
-    bool validColor = false;
-    if (sliceNode->GetLayoutColor())
-      {
-      QColor c;
-      c.setNamedColor(sliceNode->GetLayoutColor());
-      validColor = c.isValid();
-      }
-    Q_ASSERT(validColor);
-#endif
     if (!this->sliceWidget(sliceNode))
       {
       this->createSliceWidget(sliceNode);

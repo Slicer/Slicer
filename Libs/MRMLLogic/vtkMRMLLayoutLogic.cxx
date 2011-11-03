@@ -22,6 +22,7 @@
 #include "vtkMRMLLayoutLogic.h"
 
 // MRML includes
+#include "vtkMRMLColors.h"
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
@@ -933,7 +934,9 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
       vtkWarningMacro("Invalid view color property.");
       return;
       }
-    sliceNode->SetLayoutColor(value.c_str());
+    double color[3];
+    vtkMRMLColors::toRGBColor(value.c_str(), color);
+    sliceNode->SetLayoutColor(color);
     }
   // Lightbox
   if (name == std::string("lightboxrows"))

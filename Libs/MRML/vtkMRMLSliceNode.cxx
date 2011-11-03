@@ -80,8 +80,9 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->LayoutLabel = new char[1];
   strcpy(this->LayoutLabel, "");
-  this->LayoutColor = new char[8];
-  strcpy(this->LayoutColor, "#8C8C8C");
+  this->LayoutColor[0] = vtkMRMLSliceNode::grayColor()[0];
+  this->LayoutColor[1] = vtkMRMLSliceNode::grayColor()[1];
+  this->LayoutColor[2] = vtkMRMLSliceNode::grayColor()[2];
 }
 
 //----------------------------------------------------------------------------
@@ -111,11 +112,57 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
     {
     delete [] this->LayoutLabel;
     }
-  if ( this->LayoutColor )
-    {
-    delete [] this->LayoutColor;
-    }
   this->SetLayoutName(NULL);
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLSliceNode::redColor()
+{
+  // #F34A33
+  static double redColor[3] = {243. / 255.,
+                                74. / 255.,
+                                51. / 255.};
+  return redColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLSliceNode::yellowColor()
+{
+  // #EDD54C
+  static double yellowColor[3] = {237. / 255.,
+                                  213. / 255.,
+                                   76. / 255.};
+  return yellowColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLSliceNode::greenColor()
+{
+  // #6EB04B
+  static double greenColor[3] = {110. / 255.,
+                                 176. / 255.,
+                                  75. / 255.};
+  return greenColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLSliceNode::compareColor()
+{
+  // #E17012
+  static double compareColor[3] = {225. / 255.,
+                                   112. / 255.,
+                                    18. / 255.};
+  return compareColor;
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLSliceNode::grayColor()
+{
+  // #8C8C8C
+  static double grayColor[3] = {140. / 255.,
+                                140. / 255.,
+                                140. / 255.};
+  return grayColor;
 }
 
 //----------------------------------------------------------------------------
@@ -494,10 +541,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
     }
-  if (this->GetLayoutColor())
-    {
-    of << indent << " layoutColor=\"" << this->GetLayoutColor() << "\"";
-    }
+  of << indent << " layoutColor=\"" << this->LayoutColor[0] << " "
+     << this->LayoutColor[1] << " " << this->LayoutColor[2] << "\"";
   if (this->OrientationString)
     {
     of << indent << " orientation=\"" << this->OrientationString << "\"";
@@ -541,7 +586,17 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "layoutColor")) 
       {
-      this->SetLayoutColor( attValue );
+      std::stringstream ss;
+      ss << attValue;
+      double val;
+      ss >> val;
+      this->LayoutColor[0] = val;
+      ss << attValue;
+      ss >> val;
+      this->LayoutColor[1] = val;
+      ss << attValue;
+      ss >> val;
+      this->LayoutColor[2] = val;
       layoutColorFound = true;
       }
     else if (!strcmp(attName, "fieldOfView")) 
@@ -733,19 +788,23 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     // Slicer3 scene file. Grok a color
     if (std::string(this->GetLayoutName()).find("Compare") == 0)
       {
-      this->SetLayoutColor("#E17012");
+      this->SetLayoutColor(vtkMRMLSliceNode::compareColor());
       }
     else if (strcmp(this->GetLayoutName(), "Red") == 0)
       {
-      this->SetLayoutColor("#F34A33");
+      this->SetLayoutColor(vtkMRMLSliceNode::redColor());
       }
     else if (strcmp(this->GetLayoutName(), "Yellow") == 0)
       {
-      this->SetLayoutColor("#EDD54C");
+      this->SetLayoutColor(vtkMRMLSliceNode::yellowColor());
       }
     else if (strcmp(this->GetLayoutName(), "Green") == 0)
       {
-      this->SetLayoutColor("#6EB04B");
+      this->SetLayoutColor(vtkMRMLSliceNode::greenColor());
+      }
+    else
+      {
+      this->SetLayoutColor(vtkMRMLSliceNode::grayColor());
       }
     }
 
@@ -844,7 +903,9 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
   os << indent << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
-  os << indent << "LayoutColor: " << (this->LayoutColor ? this->LayoutColor : "(null)") << std::endl;
+  os << indent << "LayoutColor: " << this->LayoutColor[0] << " "
+                                  << this->LayoutColor[1] << " "
+                                  << this->LayoutColor[2] << std::endl;
 
   os << indent << "FieldOfView:\n ";
   for (idx = 0; idx < 3; ++idx) {

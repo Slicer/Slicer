@@ -1233,7 +1233,7 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
 CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewLabel, SliceViewLabel);
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setSliceViewColor(const QString& newSliceViewColor)
+void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewColor)
 {
   Q_D(qMRMLSliceControllerWidget);
 
@@ -1243,14 +1243,15 @@ void qMRMLSliceControllerWidget::setSliceViewColor(const QString& newSliceViewCo
     return;
     }
 
-  d->SliceViewColor = newSliceViewColor;
-
-  QColor barColor(d->SliceViewColor);
-  d->setColor(barColor);
+  d->setColor(newSliceViewColor);
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewColor, SliceViewColor);
+QColor qMRMLSliceControllerWidget::sliceViewColor()const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->color();
+}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)

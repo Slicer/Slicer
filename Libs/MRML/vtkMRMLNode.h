@@ -395,7 +395,7 @@ public:
     this->SetDisableModifiedEvent(oldMode);
     }
   
-  vtkMRMLScene* GetScene() {return this->Scene;};
+  vtkGetObjectMacro(Scene, vtkMRMLScene);
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
 
   /// 

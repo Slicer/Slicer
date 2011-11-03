@@ -277,23 +277,7 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
 
   // Color the Edge of the plane representation depending on the Slice
   double color[3];
-  if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Red")
-    {
-    vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceRed(),color);
-    }
-  else if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Yellow")
-    {
-    vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceYellow(),color);
-    }
-  else if (sliceNode->GetLayoutName() && std::string(sliceNode->GetLayoutName()) == "Green")
-    {
-    vtkMRMLColors::toRGBColor(vtkMRMLColors::sliceGreen(),color);
-    }
-  else
-    {
-    vtkMRMLColors::toRGBColor(vtkMRMLColors::threeDViewBlue(),color);
-    }
-  rep->SetEdgeColor(color);
+  rep->SetEdgeColor(sliceNode->GetLayoutColor());
 
   // Update Bound size
   vtkMRMLSliceCompositeNode* sliceCompositeNode =

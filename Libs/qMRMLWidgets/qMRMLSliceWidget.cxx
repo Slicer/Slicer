@@ -398,14 +398,14 @@ QString qMRMLSliceWidget::sliceViewLabel()const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceWidget::setSliceViewColor(const QString& newSliceViewColor)
+void qMRMLSliceWidget::setSliceViewColor(const QColor& newSliceViewColor)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceViewColor(newSliceViewColor);
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceWidget::sliceViewColor()const
+QColor qMRMLSliceWidget::sliceViewColor()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceViewColor();

@@ -154,6 +154,7 @@ bool qMRMLViewControllerBarPrivate::eventFilter(QObject* object, QEvent* event)
 void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
 {
   //Q_Q(qMRMLViewControllerBar);
+  this->BarColor = barColor;
 
   QPalette palette = this->BarWidget->palette();
   QLinearGradient gradient(QPointF(0.,0.), QPointF(0.,1.));
@@ -184,6 +185,12 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
 
   QPalette labelPalette( barColor.lighter(130));
   this->ViewLabel->setPalette(labelPalette);
+}
+
+//---------------------------------------------------------------------------
+QColor qMRMLViewControllerBarPrivate::color()const
+{
+  return this->BarColor;
 }
 
 // --------------------------------------------------------------------------

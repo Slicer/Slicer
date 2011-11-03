@@ -153,7 +153,9 @@ class DataProbeInfoWidget(object):
       xyz = sliceWidget.convertDeviceToXYZ(xy);
       # populate the widgets
       self.viewerColor.setText( " " )
-      self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % sliceNode.GetLayoutColor())
+      rgbColor = sliceNode.GetLayoutColor();
+      color = qt.QColor.fromRgbF(rgbColor[0], rgbColor[1], rgbColor[2])
+      self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % color.name())
       self.viewerName.setText( "  " + sliceNode.GetLayoutName() + "  " )
       # TODO: get z value from lightbox
       ras = sliceWidget.convertXYZToRAS(xyz)

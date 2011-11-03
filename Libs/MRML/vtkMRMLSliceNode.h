@@ -159,9 +159,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkSetStringMacro(LayoutLabel);
   vtkGetStringMacro(LayoutLabel);
 
-  /// Color for layout. Hex string of the form #RRGGBB or an SVG named color
-  vtkSetStringMacro(LayoutColor);
-  vtkGetStringMacro(LayoutColor);
+  /// Color for layout as rgb
+  vtkSetVector3Macro(LayoutColor, double);
+  vtkGetVector3Macro(LayoutColor, double);
+
+  static double* redColor();
+  static double* yellowColor();
+  static double* greenColor();
+  static double* compareColor();
+  static double* grayColor();
 
   /// 
   /// Set the number of rows and columns to use in a LightBox display
@@ -305,7 +311,7 @@ protected:
   char *OrientationReference;
 
   char * LayoutLabel;
-  char * LayoutColor;
+  double LayoutColor[3];
 
   int LayoutGridRows;
   int LayoutGridColumns;

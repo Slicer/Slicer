@@ -39,7 +39,8 @@ public:
 
   // Description
   // Utility function to convert vtkColor into double[3]
-  static void toRGBColor(const vtkColor3d&, double[3]);
+  static bool toRGBColor(const vtkColor3d& from, double to[3]);
+  static bool toRGBColor(const char* fromHexadecimal, double to[3]);
 };
 
 #endif

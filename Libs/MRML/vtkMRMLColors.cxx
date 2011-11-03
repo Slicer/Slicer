@@ -24,6 +24,9 @@
 // VTK includes
 #include <vtkColor.h>
 
+// STD includes
+#include <sstream>
+
 //------------------------------------------------------------------------------
 vtkColor3d vtkMRMLColors::sliceRed()
 {
@@ -73,9 +76,31 @@ vtkColor3d vtkMRMLColors::sliceGray()
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLColors::toRGBColor(const vtkColor3d& vtkColor, double rgbColor[3])
+bool vtkMRMLColors::toRGBColor(const vtkColor3d& from, double to[3])
 {
-  rgbColor[0] = vtkColor.Red();
-  rgbColor[1] = vtkColor.Green();
-  rgbColor[2] = vtkColor.Blue();
+  to[0] = from.Red();
+  to[1] = from.Green();
+  to[2] = from.Blue();
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLColors
+::toRGBColor(const char* hexadecimalColor, double rgbColor[3])
+{
+  if (!hexadecimalColor || hexadecimalColor[0] != '#')
+    {
+    return false;
+    }
+  // skip the pound char
+  hexadecimalColor = &(hexadecimalColor[1]);
+
+  for (int i = 0; i < 3; ++i)
+    {
+    unsigned int colorComponent;
+    std::stringstream ss;
+    ss << std::hex << hexadecimalColor[2*i] << hexadecimalColor[2*i + 1];
+    ss >> colorComponent;
+    rgbColor[i] = static_cast<double>(colorComponent) / 255.;
+    }
 }

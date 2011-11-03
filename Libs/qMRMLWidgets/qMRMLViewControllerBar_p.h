@@ -50,6 +50,7 @@ public:
 
   virtual void init();
   virtual void setColor(QColor color);
+  virtual QColor color()const;
 
   QToolButton*                     PinButton;
   QLabel*                          ViewLabel;
@@ -58,6 +59,7 @@ public:
   QHBoxLayout*                     BarLayout;
   QVBoxLayout*                     ControllerLayout;
   qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior;
+  QColor                           BarColor;
 
   virtual bool eventFilter(QObject* object, QEvent* event);
 

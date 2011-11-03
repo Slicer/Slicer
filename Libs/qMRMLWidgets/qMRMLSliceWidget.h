@@ -107,11 +107,11 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::sliceViewColor()
   /// \sa setSliceViewColor()
-  QString sliceViewColor()const;
+  QColor sliceViewColor()const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewColor()
   /// \sa sliceViewColor()
-  void setSliceViewColor(const QString& newSliceViewColor);
+  void setSliceViewColor(const QColor& newSliceViewColor);
 
   /// Returns the interactor style of the view
   /// A const vtkInteractorObserver pointer is returned as you shouldn't

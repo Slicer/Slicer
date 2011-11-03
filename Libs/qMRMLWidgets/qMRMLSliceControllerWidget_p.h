@@ -133,7 +133,6 @@ public:
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
   QString                             SliceViewLabel;
-  QString                             SliceViewColor;
   QButtonGroup*                       ControllerButtonGroup;
 
   ctkSliderWidget*                    SliceOffsetSlider;
