@@ -328,7 +328,7 @@ if(APPLE)
   #
   # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
   #       the following variable is changed.
-  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/cli-executables")
+  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_CLIMODULES_SUBDIR}")
 endif()
 set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
 set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")

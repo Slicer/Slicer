@@ -102,7 +102,7 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
   // HACK - See CMakeLists.txt for additional details
   if (qSlicerCoreApplication::application()->isInstalled())
     {
-    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/cli-executables");
+    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/" Slicer_CLIMODULES_SUBDIR);
     }
 #endif
   this->registerAllFileItems(modulePaths);
