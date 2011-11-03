@@ -81,7 +81,7 @@ class EditorWidget:
       if compositeNode.GetBackgroundVolumeID():
         bgID = compositeNode.GetBackgroundVolumeID()
       if compositeNode.GetLabelVolumeID():
-        lbID = compositeNode.GetBackgroundVolumeID()
+        lbID = compositeNode.GetLabelVolumeID()
       masterNode = slicer.mrmlScene.GetNodeByID( bgID )
       mergeNode = slicer.mrmlScene.GetNodeByID( lbID )
       self.setMasterNode(masterNode)

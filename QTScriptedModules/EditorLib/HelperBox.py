@@ -153,27 +153,26 @@ class HelperBox(object):
 
   def setMergeVolume(self,mergeVolume=None):
     """select merge volume"""
-    if not self.master:
-      return None
-    if mergeVolume:
-      self.merge = mergeVolume
-      if self.labelSelector:
-        self.labelSelector.setCurrentNode( self.merge )
-    else:
-      if self.labelSelector:
-        self.merge = self.labelSelector.currentNode()
-    self.masterWhenMergeWasSet = self.master
-    self.select()
+    if self.master:
+      if mergeVolume:
+        self.merge = mergeVolume
+        if self.labelSelector:
+          self.labelSelector.setCurrentNode( self.merge )
+      else:
+        if self.labelSelector:
+          self.merge = self.labelSelector.currentNode()
+      self.masterWhenMergeWasSet = self.master
+      self.select()
 
   def mergeVolume(self):
     """select merge volume"""
     if not self.master:
       return None
-    # TODO: is it possible for volume to have been deleted?  ||  [info command self.master] == "" } {
 
     # if we already have a merge and the master hasn't changed, use it
     if self.merge and self.master == self.masterWhenMergeWasSet:
-      if slicer.mrmlScene.GetNodeByID( self.merge.GetID() ) != "":
+      mergeNode = slicer.mrmlScene.GetNodeByID( self.merge.GetID() )
+      if mergeNode and mergeNode != "":
         return self.merge
 
     self.merge = None
