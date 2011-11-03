@@ -207,8 +207,10 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
   vtkMRMLVolumePropertyNode *propNode = NULL;
   vtkMRMLAnnotationROINode  *roiNode = NULL;
 
+  int wasModifying = displayNode->StartModify();
   logic->UpdateDisplayNodeFromVolumeNode(displayNode, q->mrmlVolumeNode(),
                                          &propNode, &roiNode);
+  displayNode->EndModify(wasModifying);
 
   return displayNode;
 }

@@ -535,11 +535,15 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetFgVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumePropertyNodeID(const char *VolumePropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode
+::SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID)
 {
-  this->SetVolumePropertyNodeID(VolumePropertyNodeID);
+  this->SetVolumePropertyNodeID(volumePropertyNodeID);
   vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
-  vtkSetAndObserveMRMLObjectEventsMacro(this->VolumePropertyNode, node, this->ObservedEvents);
+  if (node != this->VolumePropertyNode)
+    {
+    vtkSetAndObserveMRMLObjectEventsMacro(this->VolumePropertyNode, node, this->ObservedEvents);
+    }
 }
 
 //----------------------------------------------------------------------------
