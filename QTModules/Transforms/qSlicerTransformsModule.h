@@ -42,19 +42,15 @@ public:
   qSlicerTransformsModule(QObject *parent=0);
   virtual ~qSlicerTransformsModule();
 
-  ///
   /// Icon of the transform module
   virtual QIcon icon()const;
 
-  ///
   /// Display name for the module
   qSlicerGetTitleMacro("Transforms");
 
-  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  ///
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
@@ -62,11 +58,9 @@ protected:
   /// Reimplemented to initialize the transforms IO
   virtual void setup();
 
-  ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 

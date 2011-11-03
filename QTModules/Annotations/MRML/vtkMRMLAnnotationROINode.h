@@ -130,7 +130,6 @@ public:
     return this->SetXYZ(newControl) ;
   }
 
-  ///
   /// Get/Set for radius of the ROI in RAS cooridnates
   /// Old API:
   /// void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
@@ -150,7 +149,6 @@ public:
   }
 
 
-  ///
   /// Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);

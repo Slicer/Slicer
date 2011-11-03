@@ -81,26 +81,21 @@ public:
 
   virtual void printAdditionalInfo();
 
-  ///
   /// Convenient method to return slicer wiki URL
   QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
 
-  ///
   /// Initialize the module, an appLogic must be given to
   /// initialize the module
   void initialize(vtkSlicerApplicationLogic* appLogic);
   inline bool initialized() { return this->Initialized; }
 
-  ///
   /// Set/Get the name of the module. The name is used to uniquely describe
   /// a module: Name must be unique.
   virtual QString name()const;
   virtual void setName(const QString& name);
 
-  ///
   /// Title of the module, (displayed to the user)
   virtual QString title()const = 0;
-  ///
   /// Category the module belongs to. Categories support subcategories. Use the
   /// '.' separator to specify a subcategory (no depth limit), e.g.:
   /// "Filtering.Arithmetic".
@@ -109,7 +104,6 @@ public:
   virtual QString category()const;
   virtual QString contributor()const;
 
-  ///
   /// Index used to sort modules in the module selector's menu in the
   /// module's category. An index of 0 significates that the module should
   /// be first, a value of 1 if the module should be second and so on.
@@ -117,40 +111,33 @@ public:
   /// indexes have the same index, the alphabetical order will be used.
   virtual int index()const;
 
-  ///
   /// Return help/acknowledgement text
   /// These functions must be reimplemented in the derived classes
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
 
-  ///
   /// This method allows to get a pointer to the WidgetRepresentation.
   /// If no WidgetRepresentation already exists, one will be created calling
   /// 'createWidgetRepresentation' method.
   qSlicerAbstractModuleRepresentation* widgetRepresentation();
 
-  ///
   /// Get/Set the application logic.
   /// It must be set.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;
 
-  ///
   /// This method allows to get a pointer to the ModuleLogic.
   /// If no moduleLogic already exists, one will be created calling
   /// 'createLogic' method.
   Q_INVOKABLE vtkMRMLAbstractLogic* logic();
 
-  ///
   /// Return a pointer on the MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  ///
   /// Returns true if the module is enabled.
   /// By default, a module is disabled
   bool isEnabled()const;
 
-  ///
   /// Returns true if the module should be hidden to the user.
   /// By default, modules are not hidden.
   virtual bool isHidden()const;
@@ -167,25 +154,20 @@ public:
 
 public slots:
 
-  ///
   /// Enable/Disable the module
   virtual void setEnabled(bool enabled);
 
-  ///
   /// Set the current MRML scene to the module, it is propagated to the logic
   /// and representations if any
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected:
-  ///
   /// All initialization code should be done in the setup
   virtual void setup() = 0;
 
-  ///
   /// Create and return a widget representation for the module.
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation() = 0;
 
-  ///
   /// Create and return the module logic
   /// Note: Only one instance of the logic will exist per module
   virtual vtkMRMLAbstractLogic* createLogic() = 0;
@@ -198,7 +180,6 @@ private:
   Q_DISABLE_COPY(qSlicerAbstractCoreModule);
   friend class qSlicerAbstractModuleRepresentation;
   void representationDeleted();
-  ///
   /// Indicate if the module has already been initialized
   bool Initialized;
 };

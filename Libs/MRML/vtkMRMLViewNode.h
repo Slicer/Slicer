@@ -50,7 +50,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
-  ///
   /// Return the color the view nodes have for the background by default.
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
@@ -152,7 +151,6 @@ public:
   vtkGetMacro (RenderMode, int );
   vtkSetMacro (RenderMode, int );
 
-  ///
   /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
   vtkSetStringMacro(ViewLabel);
   vtkGetStringMacro(ViewLabel);
@@ -260,7 +258,6 @@ protected:
   /// Indicates whether or not the View is visible
   int Visibility;
 
-  ///
   /// Label to show for the view (shortcut for the name)
   char * ViewLabel;
   

@@ -118,11 +118,9 @@ public:
   /// Update \a commandLineModuleNode properties using value entered from the UI
   void updateMRMLCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
 
-  ///
   /// Update user interface using the given \a commandLineModuleNode parameters
   void updateUi(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
 
-  ///
   /// Set parameter to the command line module node
   void setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* node,
                                      const QString& name,

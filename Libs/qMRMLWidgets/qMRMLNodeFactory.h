@@ -50,7 +50,6 @@ public:
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory();
   
-  ///
   /// Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
 
@@ -79,7 +78,6 @@ public:
   void addAttribute(const QString& name, const QString& value);
   void removeAttribute(const QString& name);
 
-  ///
   /// Base name used to generate a name for create node.
   void setBaseName(const QString& className, const QString& baseName);
   QString baseName(const QString& className)const;

@@ -39,17 +39,14 @@ public:
   void WriteXML(ostream& of, int nIndent);
   void ReadXMLAttributes(const char** atts);
 
-  ///
   /// The attached screenshot
   virtual void SetScreenShot(vtkImageData* );
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
-  ///
   /// The ScaleFactor of the Screenshot
   vtkGetMacro(ScaleFactor, double);
   vtkSetMacro(ScaleFactor, double);
 
-  ///
   /// The screenshot type
   /// 0: 3D View
   /// 1: Red Slice View
@@ -60,7 +57,6 @@ public:
   void SetScreenShotType(int type) {this->ScreenShotType = type;}
   int GetScreenShotType() {return this->ScreenShotType;}
 
-  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

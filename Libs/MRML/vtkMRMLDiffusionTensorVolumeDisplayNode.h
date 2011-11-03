@@ -143,11 +143,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
     return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
     };
 
-  ///
   /// Get the input of the pipeline
   virtual vtkImageData* GetInputImageData();
 
-  ///
   /// Get the output of the pipeline
   virtual vtkImageData* GetOutputImageData();
 
@@ -179,7 +177,6 @@ protected:
   vtkMRMLDiffusionTensorVolumeDisplayNode(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
 
-  ///
   /// Set the input of the pipeline
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 

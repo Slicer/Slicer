@@ -60,14 +60,11 @@ public:
   /// to a specific reader qSlicerIO.
   /// A map of qvariant allows to specify which \a parameters should be passed to the reader.
   /// The function return 0 if it fails.
-  ///
   /// The map associated with most of the \a fileType should contains either
   /// fileName (QString or QStringList) or fileNames (QStringList).
   /// More specific parameters could also be set. For example, the volume reader qSlicerVolumesIO
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
-  ///
   /// \note Make also sure the case of parameter name is respected
-  ///
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,

@@ -45,7 +45,6 @@ public:
   qSlicerCLIModuleWidget(ModuleDescription* desc, QWidget *parent=0);
   virtual ~qSlicerCLIModuleWidget();
 
-  ///
   /// Set the \a entryPoint associated with the module
   void setModuleEntryPoint(const QString& entryPoint);
 
@@ -53,7 +52,6 @@ public:
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * currentCommandLineModuleNode()const;
 
 public slots:
-  ///
   /// Set the current \a commandLineModuleNode
   void setCurrentCommandLineModuleNode(vtkMRMLNode* commandLineModuleNode);
 

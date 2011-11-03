@@ -46,20 +46,16 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  ///
   /// Help to use the module
   virtual QString helpText()const;
 
-  ///
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
 protected:
 
-  ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 

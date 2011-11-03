@@ -82,7 +82,6 @@ public:
   /// Get the intersecting plane;
   vtkGetObjectMacro(IntersectionPlane,vtkPlane);
 
-  ///
   /// Get Intersection transform to 2D coordinate system
   vtkGetObjectMacro(IntersectionPlaneTransform,vtkTransform);
 

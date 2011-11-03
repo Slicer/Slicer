@@ -189,7 +189,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       Subtract
     };
 
-  ///
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by
   /// logic classes to determine whether state changes should be
@@ -198,12 +197,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
 
-  ///
   /// Enum identifying the parameters being manipulated with calls to 
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
-  ///
   /// The meanings for the flags are:
   ///    ForegroundVolumeFlag - broadcast the foreground volume selection
   ///    BackgroundVolumeFlag - broadcast the background volume selection
@@ -217,7 +214,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     // Next one needs to be 8
   };
 
-  ///
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a

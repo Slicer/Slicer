@@ -24,12 +24,10 @@ public:
   qSlicerAnnotationsModule(QObject *parent=0);
   virtual ~qSlicerAnnotationsModule();
 
-  ///
   /// Return the help and acknowledgement text for the Annotation module.
   virtual QString helpText()const ;
   virtual QString acknowledgementText()const;
 
-  ///
   /// Return the icon of the Annotation module.
   virtual QIcon icon()const;
 
@@ -37,7 +35,6 @@ public:
 
 protected:
 
-  ///
   /// All initialization code should be done in the setup
   virtual void setup();
 

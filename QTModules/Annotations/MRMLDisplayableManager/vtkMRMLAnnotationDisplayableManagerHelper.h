@@ -101,7 +101,6 @@ public:
   //----------------------------------------------------------------------------------
 
 
-  ///
   /// Placement of seeds for widget placement
   void PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer);
 
@@ -122,13 +121,10 @@ private:
   vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not implemented
   void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not Implemented
 
-  ///
   /// SeedWidget for point placement
   vtkSmartPointer<vtkSeedWidget> SeedWidget;
-  ///
   /// List of Handles for the SeedWidget
   std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
-  ///
   /// .. and its associated convenient typedef
   typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
 

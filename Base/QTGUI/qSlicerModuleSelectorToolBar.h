@@ -55,11 +55,9 @@ public:
   /// Returns a pointer to the modules menu used to populate the list of modules
   qSlicerModulesMenu* modulesMenu()const;
 
-  ///
   /// Module manager contains all the loaded modules
   void setModuleManager(qSlicerModuleManager* moduleManager);
 public slots:
-  ///
   /// Select a module by name. It looks for the module action and triggers it
   void selectModule(const QString& moduleName);
 
@@ -67,7 +65,6 @@ public slots:
   void selectPreviousModule();
 
 signals:
-  ///
   /// The signal is fired every time a module is selected. The QAction of the
   /// module is triggered.
   /// TODO: directly connection modules QActions with the module manager

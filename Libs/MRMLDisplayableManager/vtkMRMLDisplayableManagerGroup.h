@@ -52,19 +52,15 @@ public:
   /// \sa AddDisplayableManager InstantiateDisplayableManager
   void Initialize(vtkMRMLDisplayableManagerFactory * factory, vtkRenderer * renderer);
 
-  ///
   /// Set and observe DisplayableManager factory
   void SetAndObserveDisplayableManagerFactory(vtkMRMLDisplayableManagerFactory * factory);
 
-  ///
   /// Add a DisplayableManager and initialize it if required
   void AddDisplayableManager(vtkMRMLAbstractDisplayableManager * displayableManager);
 
-  ///
   /// Return the number of DisplayableManager already added to the group
   int GetDisplayableManagerCount();
 
-  ///
   /// Return a DisplayableManager given its class name
   vtkMRMLAbstractDisplayableManager*
       GetDisplayableManagerByClassName(const char* className);
@@ -74,7 +70,6 @@ public:
   /// \sa IsInitialized
   void SetRenderer(vtkRenderer* newRenderer);
 
-  ///
   /// Convenient method to get the WindowInteractor associated with the Renderer
   vtkRenderWindowInteractor* GetInteractor();
 
@@ -84,7 +79,6 @@ public:
   /// \sa vtkMRMLAbstractDisplayableManager::RequestRender()
   void RequestRender();
 
-  ///
   /// Get Renderer
   vtkRenderer* GetRenderer();
 

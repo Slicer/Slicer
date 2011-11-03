@@ -26,7 +26,6 @@ public:
   virtual ~qSlicerVolumeDisplayWidget();
 
 public slots:
-  ///
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
 

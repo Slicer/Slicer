@@ -21,15 +21,12 @@ public:
   /// MRML methods
   //--------------------------------------------------------------------------
 
-  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
@@ -47,26 +44,22 @@ public:
   vtkGetMacro (GUIPanelLR, int );
   vtkSetMacro (GUIPanelLR, int );
 
-  ///
   /// Control the collapse state of the SliceControllers
   vtkGetMacro (CollapseSliceControllers, int);
   vtkSetMacro (CollapseSliceControllers, int);
 
-  ///
   /// CompareView configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewRows, int );
   vtkSetClampMacro ( NumberOfCompareViewRows, int, 1, 50);
   vtkGetMacro ( NumberOfCompareViewColumns, int );
   vtkSetClampMacro ( NumberOfCompareViewColumns, int, 1, 50 );
 
-  ///
   /// CompareView lightbox configuration Get/Set methods
   vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
   vtkSetClampMacro ( NumberOfCompareViewLightboxRows, int, 1, 50 );
   vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
   vtkSetClampMacro ( NumberOfCompareViewLightboxColumns, int, 1, 50 );
 
-  ///
   /// Set/Get the size of the main and secondary panels (size of Frame1
   /// in each panel)
   vtkGetMacro( MainPanelSize, int);

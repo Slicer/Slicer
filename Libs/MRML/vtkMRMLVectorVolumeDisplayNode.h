@@ -96,11 +96,9 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  ///
   /// Get the input of the pipeline
   virtual vtkImageData* GetInputImageData();
 
-  ///
   /// Get the output of the pipeline
   virtual vtkImageData* GetOutputImageData();
 
@@ -135,7 +133,6 @@ protected:
 
   vtkImageData* GetScalarImageData();
 
-  ///
   /// Set the input of the pipeline
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 

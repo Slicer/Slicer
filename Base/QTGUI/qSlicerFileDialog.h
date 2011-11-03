@@ -52,13 +52,11 @@ public:
     Write
   };
   virtual qSlicerFileDialog::IOAction action()const = 0;
-  ///
   /// run the dialog to select the file/files/directory
   /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
   virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties()) = 0;
 
-  ///
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
   /// Return the namefilters of all the readers in IOManager corresponding to
   /// fileType

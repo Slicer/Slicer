@@ -46,10 +46,8 @@ public:
 
 public:
   ///
-  ///
   FileWatcherWin32();
 
-  ///
   ///
   virtual ~FileWatcherWin32();
 

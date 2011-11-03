@@ -56,7 +56,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkMRMLAbstract
   /// Read in a scalar overlay and add it to the model node
   vtkMRMLStorageNode* AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
-  ///
   /// Transfor models's polydata
   static void TransformModel(vtkMRMLTransformNode *tnode, 
                               vtkMRMLModelNode *modelNode, 

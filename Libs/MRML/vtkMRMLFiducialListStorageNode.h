@@ -78,7 +78,6 @@ class VTK_MRML_EXPORT vtkMRMLFiducialListStorageNode : public vtkMRMLStorageNode
     return "fcsv";
     };
 
-  ///
   /// Get/Set the storage node version
   vtkGetMacro(Version, int);
   vtkSetMacro(Version, int);
@@ -91,7 +90,6 @@ protected:
   vtkMRMLFiducialListStorageNode(const vtkMRMLFiducialListStorageNode&);
   void operator=(const vtkMRMLFiducialListStorageNode&);
 
-  ///
   /// the storage node version
   // version 1 has the old glyph numbering (pre svn 12553), starting at 0
   // version 2 has the new glyph numbering, starting at 1

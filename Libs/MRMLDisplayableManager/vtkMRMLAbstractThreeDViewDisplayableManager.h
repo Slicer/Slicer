@@ -45,7 +45,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
-  ///
   /// Get MRML ViewNode
   vtkMRMLViewNode * GetMRMLViewNode();
 

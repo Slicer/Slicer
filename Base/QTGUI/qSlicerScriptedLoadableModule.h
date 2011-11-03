@@ -74,7 +74,6 @@ public:
   virtual QIcon icon()const;
   void setIcon(const QIcon& newIcon);
 
-  ///
   /// Enable/Disable hide state of the module
   /// Needs to be hidden before the module menu is created.
   virtual bool isHidden()const;

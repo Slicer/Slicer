@@ -67,41 +67,34 @@ public:
   /// Customize the model
   void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);
   
-  ///
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
 
-  ///
   /// Show/Hide the "Edit properties..." menu item on right context menu
   bool isEditMenuActionVisible()const;
   void setEditMenuActionVisible(bool show);
   
-  ///
   /// Add a custom QAction to add into the context menu on a right click
   void prependNodeMenuAction(QAction* action);
   void prependSceneMenuAction(QAction* action);
   
-  ///
   /// Remove action from the "NodeMenu"
   void removeNodeMenuAction(QAction* action);
 
-  ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   inline void setShowHidden(bool);
   inline bool showHidden()const;
   
-  ///
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// The returned value can't be null.
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
   qMRMLSceneModel* sceneModel()const;
 
-  ///
   /// When true, the tree widget resize itself so that
   /// it's sizeHint is right for the visible indexes
   bool fitSizeToVisibleIndexes()const;

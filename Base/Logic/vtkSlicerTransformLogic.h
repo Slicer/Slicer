@@ -35,7 +35,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 
-  ///
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
   static bool hardenTransform(vtkMRMLTransformableNode* node);

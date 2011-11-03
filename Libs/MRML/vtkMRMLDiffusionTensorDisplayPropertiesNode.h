@@ -450,7 +450,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
  //Helper function to get the string of Scalar enums
   static const char *GetScalarEnumAsString(int val);
-  ///
   /// Return the lowest and highest integers, for use in looping
   static int GetFirstScalarInvariant();
   static int GetLastScalarInvariant();

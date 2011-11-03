@@ -175,7 +175,6 @@ public:
   QWidget* createFileTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createEnumerationTagWidget(const ModuleParameter& moduleParameter);
 
-  ///
   /// Return true if the None option of the widget associated with the parameter should
   /// be enabled
   static bool shouldEnableNone(const ModuleParameter& moduleParameter);

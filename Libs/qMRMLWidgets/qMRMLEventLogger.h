@@ -89,7 +89,6 @@ public slots:
   virtual void onSceneImportedEvent();
   virtual void onSceneRestoredEvent();
 
-  ///
   /// Enable / Disable console output
   void setConsoleOutputEnabled(bool enabled);
 

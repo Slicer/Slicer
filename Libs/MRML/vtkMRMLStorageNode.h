@@ -229,7 +229,6 @@ public:
   /// returns 0 if it's not relative or the input is null, 1 if it is relative
   int IsFilePathRelative(const char * filepath);
 
-  ///
   /// Calcualtes and the absolute path to the input file if the input path is
   /// relative and the scene is defined with a root directory. Sets and then
   /// return TempFileName. Returns null if the input path is null or the path

@@ -71,7 +71,6 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 class qSlicerScriptedLoadableModuleFactoryPrivate
 {
 public:
-  ///
   /// Return a list of module paths
   QStringList modulePaths() const;
 };

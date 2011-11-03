@@ -50,7 +50,6 @@ public:
     DisplayableManagerFactoryUnRegisteredEvent   = 30101
   };
 
-  ///
   /// Return True if Displayable Manager identified by \a vtkClassName
   /// is already registered.
   bool IsDisplayableManagerRegistered(const char* vtkClassName);
@@ -70,7 +69,6 @@ public:
   /// CMake macro VTK_MAKE_INSTANTIATOR3 or a python script name.
   bool UnRegisterDisplayableManager(const char* vtkClassOrScriptName);
 
-  ///
   /// Return number of registered displayable managers
   int GetRegisteredDisplayableManagerCount();
 

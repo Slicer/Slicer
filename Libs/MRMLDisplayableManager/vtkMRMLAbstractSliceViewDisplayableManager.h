@@ -45,7 +45,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAbstractSliceViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
-  ///
   /// Get MRML SliceNode
   vtkMRMLSliceNode * GetMRMLSliceNode();
 

@@ -46,10 +46,8 @@ public:
 
 public:
   ///
-  ///
   FileWatcherLinux();
 
-  ///
   ///
   virtual ~FileWatcherLinux();
 

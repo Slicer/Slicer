@@ -52,7 +52,6 @@ public:
   vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode()const;
 public slots:
 
-  ///
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);

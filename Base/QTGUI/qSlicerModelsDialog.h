@@ -42,7 +42,6 @@ public:
   virtual qSlicerIO::IOFileType fileType()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
-  ///
   /// run the dialog to select the file/files/directory
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());

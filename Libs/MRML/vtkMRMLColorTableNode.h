@@ -213,7 +213,6 @@ public:
   /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
   int SetColor(int entry, const char* name, double r, double g, double b, double a = 1.0);
 
-  ///
   /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
   int SetColor(int entry, double r, double g, double b, double a);
   int SetColor(int entry, double r, double g, double b);

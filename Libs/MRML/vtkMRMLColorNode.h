@@ -118,7 +118,6 @@ public:
   /// Get the number of colours in the table
   virtual int GetNumberOfColors();
   
-  ///
   /// Retrieve the color associated to the index
   /// Must be reimplemented in the derived classes
   /// Return 1 if the color exists, 0 otherwise
@@ -134,7 +133,6 @@ public:
   /// get method
   virtual vtkLookupTable * GetLookupTable();
 
-  ///
   /// Utility function that either returns a vtkLookupTable or a
   /// vtkColorTransferFunction whichever makes more sense.
   /// Returns vtkMRMLColorNode::GetLookupTable() by default. You should

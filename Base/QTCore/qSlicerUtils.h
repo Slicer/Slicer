@@ -31,7 +31,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerUtils
 public:
   typedef qSlicerUtils Self;
 
-  ///
   /// Return true if the string name ends with one of these executable extension:
   /// ".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".py", ".tcl", ".m", ".exe"
   /// \note The comparison is case insensitive
@@ -50,7 +49,6 @@ public:
   /// regular expression: "(lib)?qSlicer.+Module\\.(so, dll, dylib)"
   static bool isLoadableModule(const QString& filePath);
 
-  ///
   /// Look for target file in build intermediate directory.
   /// On windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel
   /// And it return the first matched directory

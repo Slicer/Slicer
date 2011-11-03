@@ -67,7 +67,6 @@ public:
   ///
   QAction* moduleAction(const QString& moduleName)const;
 
-  ///
   /// Add a module by name into the menu.
   /// The category property of the module is used to assign a submenu to the
   /// module action. If a module is hidden and showHiddenModules is false
@@ -77,23 +76,18 @@ public:
   /// \sa qSlicerAbstractCoreModule::isHidden()
   void addModule(const QString& moduleName);
 
-  ///
   /// Add a list of module available for selection
   inline void addModules(const QStringList& moduleNames);
 
-  ///
   /// Remove the module from the list of available module
   void removeModule(const QString& moduleName);
 
-  ///
   /// Add a list of module available for selection
   inline void removeModules(const QStringList& moduleNames);
 
-  ///
   /// Return the last selected module name
   QString currentModule()const;
 
-  ///
   /// Set the module manager to retrieve the modules from
   void setModuleManager(qSlicerModuleManager* moduleManager);
   qSlicerModuleManager* moduleManager()const;
@@ -101,7 +95,6 @@ public:
   void setDuplicateActions(bool duplicate);
   bool duplicateActions()const;
 
-  ///
   /// If true, modules with the hidden property set to true are still visible
   /// in the module.
   void setShowHiddenModules(bool show);
@@ -111,16 +104,13 @@ public slots:
   void addModule(qSlicerAbstractCoreModule*);
   void removeModule(qSlicerAbstractCoreModule*);
 
-  ///
   /// Select a module by title. It looks for the module action and triggers it
   void setCurrentModuleByTitle(const QString& title);
 
-  ///
   /// Select a module by name. It looks for the module action and triggers it
   void setCurrentModule(const QString& moduleName);
 
 signals:
-  ///
   /// The signal is fired every time a module is selected. The QAction of the
   /// module is triggered.
   void currentModuleChanged(const QString& name);

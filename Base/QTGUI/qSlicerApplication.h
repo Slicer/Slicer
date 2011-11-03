@@ -56,7 +56,6 @@ public:
   qSlicerApplication(int &argc, char **argv);
   virtual ~qSlicerApplication();
 
-  ///
   /// Return a reference to the application singleton
   static qSlicerApplication* application();
 
@@ -75,17 +74,14 @@ public:
   Q_INVOKABLE qSlicerLayoutManager* layoutManager()const;
   void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
-  ///
   /// Return a pointer on the main window of the application if any.
   QMainWindow* mainWindow()const;
 
-  ///
   /// TODO
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
   //virtual void commitData(QSessionManager & manager);
   
-  ///
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
 

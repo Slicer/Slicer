@@ -61,20 +61,16 @@ public:
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData)) {};
 
-  ///
   /// Returns the output of the pipeline if there is a not a null input.
   virtual vtkImageData* GetImageData();
 
-  ///
   /// Set the pipeline input. Internally calls ConnectInputImageDataToPipeline to be
   /// reimplemented.
   virtual void SetInputImageData(vtkImageData *imageData);
 
-  ///
   /// Gets the pipeline input. To be reimplemented in subclasses.
   virtual vtkImageData* GetInputImageData();
 
-  ///
   /// Gets the pipeline output. To be reimplemented in subclasses.
   virtual vtkImageData* GetOutputImageData();
 
@@ -91,7 +87,6 @@ public:
   /// set gray colormap or override in subclass
   virtual void SetDefaultColorMap();
 
-  ///
   /// Search in the scene the volume node vtkMRMLVolumeDisplayNode is associated
   /// to
   vtkMRMLVolumeNode* GetVolumeNode();

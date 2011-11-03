@@ -50,10 +50,8 @@ class FileWatcher_EXPORT FileWatcherImpl
 {
 public:
   ///
-  ///
   FileWatcherImpl() {}
 
-  ///
   ///
   virtual ~FileWatcherImpl() {}
 

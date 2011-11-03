@@ -150,12 +150,10 @@ protected:
 
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  ///
   /// Returns true if something visible in modelNode has changed and would
   /// require a refresh.
   bool OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
 
-  ///
   /// Updates Actors based on models in the scene
   void UpdateFromMRML();
 

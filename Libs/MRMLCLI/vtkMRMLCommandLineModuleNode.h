@@ -87,13 +87,11 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
     return "Unknown";
   }
 
-  ///
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
   bool ReadParameterFile(const std::string& filename);
   bool ReadParameterFile(const char *filename);
 
-  ///
   /// Write a parameter file. This will output any parameters that
   /// parameters in this
   /// ModuleDescription. "withHandlesToBulkParameters" allows to

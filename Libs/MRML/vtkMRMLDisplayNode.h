@@ -50,7 +50,6 @@ public:
   /// \sa GetUpToDateImageData()
   virtual vtkImageData* GetImageData() {return NULL;}
 
-  ///
   /// Gets ImageData and ensure it's up-to-date by calling Update() on the
   /// pipeline.
   /// Please note that it can be slow, depending on the filters in

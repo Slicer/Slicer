@@ -42,29 +42,24 @@ public:
 
   qSlicerTractographyDisplayModule(QObject *_parent = 0);
 
-  ///
   /// Category of the module
   virtual QString category() const;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  ///
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
 protected:
-  ///
   /// Initialize the module. Register the volumes reader/writer
   virtual void setup();
 
   /// Create and return a widget representation of the object
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
-  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 };

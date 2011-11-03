@@ -78,18 +78,15 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   void SetAbsentStorageFileNames();
 
-  ///
   /// A description of this sceneView
   void SetSceneViewDescription(vtkStdString newDescription) {this->Description = newDescription;}
   vtkStdString GetSceneViewDescription() {return this->Description;}
 
-  ///
   /// The attached screenshot of this sceneView
   virtual void SetScreenShot(vtkImageData*);
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
 
-  ///
   /// The screenshot type of this sceneView
   /// 0: 3D View
   /// 1: Red Slice View

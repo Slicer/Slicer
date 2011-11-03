@@ -51,11 +51,9 @@ public:
 
 protected:
 
-  ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 

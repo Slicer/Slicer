@@ -48,7 +48,6 @@ public:
   /// Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const QString& xmlModuleDescription);
 
-  ///
   /// Optionally set in the module XML description
   virtual int index() const;
 
@@ -57,24 +56,20 @@ public:
   virtual QString helpText() const;
   virtual QString acknowledgementText() const;
 
-  ///
   /// Set temporary directory associated with the module
   void setTempDirectory(const QString& tempDirectory);
   QString tempDirectory() const;
 
-  ///
   /// Set module entry point. Typically "slicer:0x012345" for loadable CLI
   /// or "/home/user/work/Slicer-Superbuild/../mycliexec" for executable CLI
   void setEntryPoint(const QString& entryPoint);
   QString entryPoint() const;
 
-  ///
   /// SharedObjectModule for loadable modules or CommandLineModule for
   /// executable modules.
   void setModuleType(const QString& type);
   QString moduleType() const;
 
-  ///
   /// This method allows to get a pointer to the ModuleLogic.
   /// If no moduleLogic already exists, one will be created calling
   /// 'createLogic' method.

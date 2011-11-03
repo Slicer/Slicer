@@ -28,7 +28,6 @@ class qMRMLSceneDisplayableModelPrivate;
 class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarchyModel
 {
   Q_OBJECT
-  ///
   /// Control in which column vtkMRMLModelDisplayNode::Color are displayed
   /// (Qt::DecorationRole). Even if a vtkMRMLModelNode doesn't have a color
   /// proper, the color of its display node is used. If the model node has

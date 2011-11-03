@@ -46,10 +46,8 @@ public:
 
 public:
   ///
-  ///
   FileWatcherOSX();
 
-  ///
   ///
   virtual ~FileWatcherOSX();
 

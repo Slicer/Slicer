@@ -42,7 +42,6 @@ public:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  ///
   /// Write this node's information to a string for passing to a CLI, write
   /// out the prefix before each datum
   virtual void WriteCLI(std::ostringstream& ss, std::string prefix);

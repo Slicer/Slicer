@@ -40,7 +40,6 @@ protected:
 public:
   qSlicerCoreModuleFactoryPrivate(qSlicerCoreModuleFactory& object);
 
-  ///
   /// Add a module class to the core module factory
   template<typename ClassType>
   void registerCoreModule();

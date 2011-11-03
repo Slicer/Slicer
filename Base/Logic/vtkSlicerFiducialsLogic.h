@@ -35,7 +35,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   vtkTypeRevisionMacro(vtkSlicerFiducialsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  ///
   /// Get the currently selected list from the scene. Returns NULL if no
   /// selection node or no active fiducial list id is set on the selection
   /// node.
@@ -59,7 +58,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
   int AddFiducial(float x, float y, float z);
   int AddFiducialSelected (float x, float y, float z, int selected);
 
-  ///
   /// Add a fiducial, but transform it first by the inverse of any
   /// transformation node on the list. Called by Pick methods. Calls
   /// AddFiducialSelected with the transformed x,y,z and same selected flag

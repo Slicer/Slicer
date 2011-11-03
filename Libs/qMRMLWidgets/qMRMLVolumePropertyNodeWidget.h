@@ -56,7 +56,6 @@ public:
   vtkVolumeProperty* volumeProperty()const;
 
 public slots:
-  ///
   /// Convenient function to connect with signal/slots
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
   void setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode* volumePropertyNode);

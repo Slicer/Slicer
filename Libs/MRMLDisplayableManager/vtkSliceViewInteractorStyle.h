@@ -75,10 +75,8 @@ public:
   virtual void OnEnter();
   virtual void OnLeave();
 
-  ///
   /// Internal state management for multi-event sequences (like click-drag-release)
 
-  ///
   /// Action State values and management
   enum
     {
@@ -90,7 +88,6 @@ public:
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
 
-  ///
   /// state of things when the current action started
   /// - ras is mouse pointer in patient space 
   /// - fov is the slice node field of view
@@ -103,26 +100,21 @@ public:
   vtkGetVector2Macro(ActionStartWindow, int);
   vtkSetVector2Macro(ActionStartWindow, int);
 
-  ///
   /// what was the state of the slice node when the action started
   vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
   vtkGetObjectMacro(ActionStartXYToRAS, vtkMatrix4x4);
-  ///
   /// an internal scratch matrix for calculations without
   /// the overhead of re-allocating the object
   vtkGetObjectMacro(ScratchMatrix, vtkMatrix4x4);
 
-  ///
   /// State for label/foreground opacity toggles
   vtkSetMacro(LastLabelOpacity, double);
   vtkGetMacro(LastLabelOpacity, double);
   vtkSetMacro(LastForegroundOpacity, double);
   vtkGetMacro(LastForegroundOpacity, double);
 
-  ///
   /// Helper routines
 
-  ///
   /// check for prescribed spacing, otherwise return best spacing amount
   /// for current layer setup (use logic to look for spacing of first non-null
   /// layer)
@@ -132,20 +124,17 @@ public:
   void DecrementSlice(); 
   void MoveSlice(double delta); 
 
-  ///
   /// Collect some boilerplate management steps so they can be used
   /// in more than one place
   void StartTranslate();
   void EndTranslate();
 
-  ///
   /// Get the RAS coordinates of the interactor's EventPosition
   /// with respect to the current poked renderer (taking into
   /// account the lightbox)
   void GetEventRAS(double ras[4]);
   void GetEventRASWithRespectToEventStart(double ras[4]);
 
-  ///
   /// Convert event coordinates (with respect to viewport) into
   /// xyz coordinates, where z is the slice number of the lightbox
   /// and xy is the offset within the lightbox view.  The xyz coordinates

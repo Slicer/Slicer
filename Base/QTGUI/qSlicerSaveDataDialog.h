@@ -40,7 +40,6 @@ public:
   virtual qSlicerIO::IOFileType fileType()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
-  ///
   /// Open the data dialog and save the nodes/scene
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());

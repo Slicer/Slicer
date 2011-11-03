@@ -44,15 +44,12 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   /// set gray colormap
   virtual void SetDefaultColorMap();
 
-  ///
   /// Set the pipeline input
   virtual void SetInputImageData(vtkImageData *imageData);
 
-  ///
   /// Get the pipeline input
   virtual vtkImageData* GetInputImageData();
 
-  ///
   /// Gets the pipeline output
   virtual vtkImageData* GetOutputImageData();
 

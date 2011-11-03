@@ -86,7 +86,6 @@ public:
   Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
 public slots:
 
-  ///
   /// Set the MRML \a scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 

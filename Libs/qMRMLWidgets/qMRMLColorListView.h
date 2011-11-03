@@ -55,7 +55,6 @@ public slots:
   void setShowOnlyNamedColors(bool);
 
 signals:
-  ///
   /// Colors are selected when there is a new current item
   /// (not fired on the activated signal).
   void colorSelected(int index);

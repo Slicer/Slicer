@@ -33,14 +33,12 @@ class qSlicerModuleManagerPrivate
 {
 public:
 
-  ///
   /// Handle post-load initialization
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
 
   typedef QHash<QString, qSlicerAbstractCoreModule*>::const_iterator ModuleListConstIterator;
   typedef QHash<QString, qSlicerAbstractCoreModule*>::iterator       ModuleListIterator;
 
-  ///
   /// Store Pair<ModuleName, ModuleObject>
   QHash<QString, qSlicerAbstractCoreModule*> ModuleList;
   qSlicerModuleFactoryManager            ModuleFactoryManager;

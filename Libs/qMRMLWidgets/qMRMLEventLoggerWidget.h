@@ -47,7 +47,6 @@ public slots:
   /// Set the MRML scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
-  ///
   /// Enable / Disable console output
   void setConsoleOutputEnabled(bool enabled);
 

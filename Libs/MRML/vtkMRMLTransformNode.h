@@ -96,10 +96,8 @@ public:
   /// Returns 1 if the node is one of the this node's descendents
   int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
-  ///
   /// Reimplemented from vtkMRMLTransformableNode
   virtual bool CanApplyNonLinearTransforms()const;
-  ///
   /// Reimplemented from vtkMRMLTransformableNode
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 

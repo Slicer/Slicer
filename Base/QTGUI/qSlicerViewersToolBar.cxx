@@ -81,7 +81,6 @@ void qSlicerViewersToolBarPrivate::init()
 
   /// Crosshair
   ///
-  ///
   
   // Navigation/Cross-referencing
   this->CrosshairNavigationAction = new QAction(q);

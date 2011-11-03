@@ -143,7 +143,6 @@ protected:
   /// Holder for comment string
   char *Comment;
   
-  ///
   /// Priority of the observer
   float Priority;
 

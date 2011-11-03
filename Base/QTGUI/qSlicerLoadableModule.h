@@ -41,7 +41,6 @@ public:
   qSlicerLoadableModule(QObject *parent=0);
   virtual ~qSlicerLoadableModule();
 
-  ///
   /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;

@@ -66,20 +66,17 @@ public:
   /// Retrieve an index for a given vtkMRMLNode
   QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
 
-  ///
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
 
-  ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   /// \sa setShowHiddenForTypes, showHiddenForTypes
   bool showHidden()const;
 
-  ///
   /// Give more control over the types of mrml node you want to force
   /// the display even if their HideFromEditors property is true.
   /// Don't do anything if the list is empty.
@@ -87,21 +84,18 @@ public:
   QStringList showHiddenForTypes()const;
   void setShowHiddenForTypes(const QStringList& nodeTypes);
 
-  ///
   /// Add node type attribute that filter the nodes to
   /// display
   void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue);
 
-  ///
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.
   /// true by default.
   void setShowChildNodeTypes(bool show);
   bool showChildNodeTypes()const;
 
-  ///
   /// If a node is a nodeType, hide the node if it is also
   /// a ExcludedChildNodeType. (this can happen if nodeType is a
   /// mother class of ExcludedChildNodeType)

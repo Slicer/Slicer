@@ -52,7 +52,6 @@ public:
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  ///
   /// Write this node's information to a string for passing to a CLI, precede
   /// each datum with the prefix if not an empty string
   virtual void WriteCLI(std::ostringstream& vtkNotUsed(ss), std::string vtkNotUsed(prefix)) {};
@@ -130,7 +129,6 @@ public:
       PolyDataModifiedEvent = 17001
     };
 
-  ///
   /// Create and observe default display node(s)
   ///
   virtual void CreateDefaultDisplayNodes()
@@ -144,7 +142,6 @@ public:
     return Superclass::CreateDefaultStorageNode();
     };
 
-  ///
   /// TODO: Change it to Get/SetVisibility() for consistency with
   /// vtkMRMLDisplayNode.
   /// Utility to return the visibility of all the display nodes.

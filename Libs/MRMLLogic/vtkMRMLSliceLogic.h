@@ -64,7 +64,6 @@ public:
   void Initialize(vtkMRMLSliceNode* newSliceNode);
   bool IsInitialized();
 
-  ///
   /// Set / Get SliceLogic name
   vtkSetStringMacro(Name);
   vtkGetStringMacro(Name);
@@ -154,7 +153,6 @@ public:
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
 
-  ///
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
@@ -232,12 +230,10 @@ public:
   ///  (fits to first non-null layer)
   void FitSliceToAll(int width = -1, int height = -1);
 
-  ///
   /// adjust the node's field of view to match the FOV
   /// the value fov will be applied to the smallest slice window dimension
   void FitFOVToBackground(double fov);
 
-  ///
   /// Adjust dimensions and fov based on the new viewport size.
   /// The size should be the viewport size (typically vtkRenderWindow), not the
   /// size of the renderers (important if it's in a lightbox mode).
@@ -264,31 +260,25 @@ public:
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
-  ///
   /// Indicate an interaction with the slice node is beginning. The
   /// parameters of the slice node being manipulated are passed as a
   /// bitmask. See vtkMRMLSliceNode::InteractionFlagType.
   void StartSliceNodeInteraction(unsigned int parameters);
 
-  ///
   /// Indicate an interaction with the slice node has been completed
   void EndSliceNodeInteraction();
 
-  ///
   /// Indicate an interaction with the slice composite node is
   /// beginning. The parameters of the slice node being manipulated
   /// are passed as a bitmask. See vtkMRMLSliceNode::InteractionFlagType.
   void StartSliceCompositeNodeInteraction(unsigned int parameters);
 
-  ///
   /// Indicate an interaction with the slice composite node has been completed
   void EndSliceCompositeNodeInteraction();
 
-  ///
   /// Indicate the slice offset value is starting to change
   void StartSliceOffsetInteraction();
 
-  ///
   /// Indicate the slice offset value has completed its change
   void EndSliceOffsetInteraction();
 
@@ -301,7 +291,6 @@ public:
   static const int SLICE_INDEX_OUT_OF_VOLUME;
   static const int SLICE_INDEX_NO_VOLUME;
 
-  ///
   /// Get the DICOM slice index (1-based) from slice offset (distance from the origin to the slice plane).
   /// If the return value is negative then then no slice index can be determined:
   /// SLICE_INDEX_ROTATED=the slice is rotated compared to the volume planes,
@@ -309,7 +298,6 @@ public:
   /// SLICE_INDEX_NO_VOLUME=the specified volume is not available
   int GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode);
 
-  ///
   /// Get the DICOM slice index (1-based) from slice offset (distance from the origin to the slice plane).
   /// Slice index is computed for the first available volume (the search order is
   /// background, foreground, label volume).

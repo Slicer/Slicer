@@ -55,7 +55,6 @@ public:
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes()const;
 public slots:
 
-  ///
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLDiffusionWeightedVolumeNode* volumeNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);

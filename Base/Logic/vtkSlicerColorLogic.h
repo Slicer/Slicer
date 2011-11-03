@@ -32,15 +32,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic
   vtkTypeRevisionMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  ///
   /// Return a default color node id for a label map
   virtual const char * GetDefaultLabelMapColorNodeID();
 
-  ///
   /// Return a default color node id for the editor
   virtual const char * GetDefaultEditorColorNodeID();
 
-  ///
   /// look for color files in the Base/Logic/Resources/ColorFiles directory and
   /// put their names in the ColorFiles list. Look in any user defined color
   /// files paths and put them in the UserColorFiles list.

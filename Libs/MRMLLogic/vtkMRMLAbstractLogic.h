@@ -115,16 +115,13 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
 
-  ///
   /// Get access to overall application state
   virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
 
-  ///
   /// Return a reference to the current MRML scene
   vtkMRMLScene * GetMRMLScene()const;
 
-  ///
   /// Set and observe the MRMLScene
   void SetMRMLScene(vtkMRMLScene * newScene);
 
@@ -249,13 +246,11 @@ protected:
   /// LogicCallback is a static function to relay modified events from the Logic
   static void MRMLNodesCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
-  ///
   /// Start modifying the logic. Disable Modify events.
   /// Returns the previous state of DisableModifiedEvent flag
   /// that should be passed to EndModify() method
   inline bool StartModify() ;
 
-  ///
   /// End modifying the node. Enable Modify events if the
   /// previous state of DisableModifiedEvent flag is 0.
   /// Return the number of pending ModifiedEvent;
@@ -264,7 +259,6 @@ protected:
   bool GetDisableModifiedEvent()const;
   void SetDisableModifiedEvent(bool onOff);
 
-  ///
   /// overrides the vtkObject method so that all changes to the node which would normally
   /// generate a ModifiedEvent can be grouped into an 'atomic' operation.  Typical usage
   /// would be to disable modified events, call a series of Set* operations, and then re-enable
@@ -272,7 +266,6 @@ protected:
   /// calls actually changed the values of the instance variables).
   virtual void Modified();
 
-  ///
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   int InvokePendingModifiedEvent();

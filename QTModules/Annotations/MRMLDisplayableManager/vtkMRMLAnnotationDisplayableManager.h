@@ -184,15 +184,12 @@ protected:
   /// Get the widget of a node.
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
-  ///
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();
 
-  ///
   /// Focus of this displayableManager is set to a specific annotation type when inherited
   const char* m_Focus;
 
-  ///
   /// Disable processing when updating is in progress.
   int m_Updating;
 

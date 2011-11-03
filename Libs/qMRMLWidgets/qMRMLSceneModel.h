@@ -43,36 +43,29 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
 
-  ///
   /// Observe (or not) the modified event of the node and update the node item
   /// data accordingly. It can be useful when the modified property is displayed
   /// (name, id, visibility...)
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 
-  ///
   /// Control wether the model actively listens to the scene.
   /// If LazyUpdate is true, the model ignores added node events when the
   /// scene is importing/restoring, but synchronize with the scene once its
   /// imported/restored.
   Q_PROPERTY (bool lazyUpdate READ lazyUpdate WRITE setLazyUpdate)
 
-  ///
   /// Control in which column vtkMRMLNode names are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. First column (0) by default.
   Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
-  ///
   /// Control in which column vtkMRMLNode IDs are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. Second column (1) by default.
   Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
-  ///
   /// Control in which column vtkMRMLNode::Selected are displayed (Qt::CheckStateRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int checkableColumn READ checkableColumn WRITE setCheckableColumn)
-  ///
   /// Control in which column vtkMRMLNode::Visibility are displayed (Qt::DecorationRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
-  ///
   /// Control in which column tooltips are displayed (Qt::ToolTipRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int toolTipNameColumn READ toolTipNameColumn WRITE setToolTipNameColumn)
@@ -135,13 +128,11 @@ public:
   int toolTipNameColumn()const;
   void setToolTipNameColumn(int column);
 
-  ///
   /// Extra items that are prepended to the node list
   /// Warning, setPreItems() resets the model, the currently selected item is lost
   void setPreItems(const QStringList& extraItems, QStandardItem* parent);
   QStringList preItems(QStandardItem* parent)const;
 
-  ///
   /// Extra items that are appended to the node list
   /// Warning, setPostItems() resets the model, the currently selected item is lost
   void setPostItems(const QStringList& extraItems, QStandardItem* parent);

@@ -121,7 +121,6 @@ signals:
   /// Signal sent if at least one of the slider's value is updated
   void valuesChanged();
 
-  ///
   /// Signal sent if the minimum or maximum slider's value is updated
   void rangeChanged(double newMinimum, double newMaximum);
 

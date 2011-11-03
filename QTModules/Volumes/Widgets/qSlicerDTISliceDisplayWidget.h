@@ -56,7 +56,6 @@ public:
   void setVisibilityHidden(bool hide);
 
 public slots:
-  ///
   /// Set the MRML node of interest
   void setMRMLDTISliceDisplayNode(vtkMRMLDiffusionTensorVolumeSliceDisplayNode* displayNode);
   /// Utility function to easily connect signals/slots

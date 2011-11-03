@@ -93,10 +93,8 @@ class FileWatcher_EXPORT FileWatcher
 {
 public:
   ///
-  ///
   FileWatcher();
 
-  ///
   ///
   virtual ~FileWatcher();
 

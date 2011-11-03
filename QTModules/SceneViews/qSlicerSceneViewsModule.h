@@ -24,12 +24,10 @@ public:
   qSlicerSceneViewsModule(QObject *parent=0);
   virtual ~qSlicerSceneViewsModule();
 
-  ///
   /// Return the help and acknowledgement text for the SceneViews module.
   virtual QString helpText()const ;
   virtual QString acknowledgementText()const;
 
-  ///
   /// Return the icon of the SceneViews module.
   virtual QIcon icon()const;
 
@@ -44,7 +42,6 @@ public slots:
 
 protected:
 
-  ///
   /// All initialization code should be done in the setup
   virtual void setup();
 

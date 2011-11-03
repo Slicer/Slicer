@@ -59,7 +59,6 @@ signals:
   void autoThresholdValueChanged(int value);
 
 public slots:
-  ///
   /// Set Auto/Manual mode
   void setAutoThreshold(int autoThreshold);
 

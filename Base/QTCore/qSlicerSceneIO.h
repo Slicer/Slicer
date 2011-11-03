@@ -35,15 +35,12 @@ public:
   qSlicerSceneIO(QObject* _parent = 0);
   
   virtual QString description()const;
-  ///
   /// Support qSlicerIO::SceneFile
   virtual qSlicerIO::IOFileType fileType()const;
 
-  ///
   /// Support only .mrml files
   virtual QStringList extensions()const;
 
-  ///
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: wether the current should be cleared or not

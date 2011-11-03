@@ -35,7 +35,6 @@ public slots:
   void selectModifiedSceneData();
   void selectModifiedData();
   bool save();
-  ///
   /// Reimplemented from QDialog::accept(), only accept the dialog if
   /// save() is successful.
   virtual void accept();

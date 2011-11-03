@@ -53,7 +53,6 @@ public:
   int layout()const;
 
 public slots:
-  ///
   /// Set the MRML \a scene to the layout manager
   void setMRMLScene(vtkMRMLScene* scene);
 

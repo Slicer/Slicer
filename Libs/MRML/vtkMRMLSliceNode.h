@@ -48,7 +48,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  ///
   /// Reimplemented to preserve orientation when reset
   virtual void Reset();
 
@@ -72,7 +71,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetMacro ( WidgetVisible, int );
   vtkSetMacro ( WidgetVisible, int );
 
-  ///
   /// The ImpplicitePlane widget mode
   /// this lock the normal of the plane to the camera's one
   vtkGetMacro ( WidgetNormalLockedToCamera, int );
@@ -96,7 +94,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// General 'reformat' view that allows for multiplanar reformat
   void SetOrientationToReformat();
 
-  ///
   /// Convenient function that calls SetOrientationToAxial(),
   /// SetOrientationToSagittal(), SetOrientationToCoronal() or
   /// SetOrientationToReformat() depending on the value of the string
@@ -158,12 +155,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  ///
   /// Label for layout. Usually a 1 character label, e.g. R, 1, 2, etc.
   vtkSetStringMacro(LayoutLabel);
   vtkGetStringMacro(LayoutLabel);
 
-  ///
   /// Color for layout. Hex string of the form #RRGGBB or an SVG named color
   vtkSetStringMacro(LayoutColor);
   vtkGetStringMacro(LayoutColor);
@@ -239,20 +234,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
-  ///
   /// Set/get the active slice in the lightbox. The active slice is
   /// shown in the 3D scene
   vtkSetMacro(ActiveSlice, int);
   vtkGetMacro(ActiveSlice, int);
 
-  ///
   /// adjusts the slice node to align with the 
   /// native space of the image data so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
   /// and for obluique volumes with few slices).
   void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode);
 
-  ///
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by
   /// logic classes to determine whether state changes should be
@@ -261,12 +253,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
 
-  ///
   /// Enum identifying the parameters being manipulated with calls to 
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
-  ///
   /// The meanings for the flags are:
   ///    SliceToRASFlag - broadcast the SliceToRAS matrix to all linked viewers
   ///    FieldOfViewFlag - broadcast a specific field of view setting
@@ -283,7 +273,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     // Next one needs to be 32
   };
 
-  ///
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a

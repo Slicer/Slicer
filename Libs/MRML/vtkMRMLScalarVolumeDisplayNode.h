@@ -133,15 +133,12 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  ///
   /// Set the pipeline input
   virtual void SetInputImageData(vtkImageData *imageData);
 
-  ///
   /// Gets the pipeline input
   virtual vtkImageData* GetInputImageData();
 
-  ///
   /// Gets the pipeline output
   virtual vtkImageData* GetOutputImageData();
 
@@ -190,7 +187,6 @@ protected:
   void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
   void CalculateAutoLevels();
 
-  ///
   /// Return the image data with scalar type, it can be in the middle of the
   /// pipeline, it's typically the input of the threshold/windowlevel filters
   virtual vtkImageData* GetScalarImageData();

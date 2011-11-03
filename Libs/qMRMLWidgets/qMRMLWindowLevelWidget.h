@@ -39,7 +39,6 @@ public:
     ManualMinMax =2
   };
 
-  ///
   /// Set Auto/Manual mode
   void setAutoWindowLevel(ControlMode autoWindowLevel);
   ControlMode autoWindowLevel() const;
@@ -74,7 +73,6 @@ signals:
   void autoWindowLevelValueChanged(ControlMode value);
 
 public slots:
-  ///
   /// Set Auto/Manual mode
   void setAutoWindowLevel(int autoWindowLevel);
 

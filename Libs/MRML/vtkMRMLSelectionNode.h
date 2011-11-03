@@ -94,7 +94,6 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   void SetActiveAnnotationID(const char* id);
   void SetReferenceActiveAnnotationID (const char *id) { this->SetActiveAnnotationID(id); };
 
-  ///
   /// the ID of a MRMLROIList
   vtkGetStringMacro (ActiveROIListID);
   void SetActiveROIListID(const char* id);

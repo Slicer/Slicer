@@ -111,7 +111,6 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-  ///
   /// This is the transform that was last applied
   /// to the position, focal point, and up vector
   /// (for any new transforms, the incremental difference

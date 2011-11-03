@@ -39,7 +39,6 @@ public:
   qSlicerObject();
   virtual ~qSlicerObject();
 
-  ///
   /// Return a pointer on the MRML scene
   vtkMRMLScene* mrmlScene() const;
 
