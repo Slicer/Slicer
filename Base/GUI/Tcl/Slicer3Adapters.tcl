@@ -66,6 +66,13 @@ namespace eval Slicer3Adapters {
     }
     set ::slicer3::ApplicationLogic ::slicer3::ApplicationLogicProc
 
+    # expose the volumes logic as a tcl proc
+    # and set the variable to point to that proc
+    proc ::slicer3::VolumesLogicProc {args} {
+      ::tpycl::methodCaller ::slicer3::VolumesLogicProc slicer.modules.volumes.logic() $args
+    }
+    set ::slicer3::VolumesLogic ::slicer3::VolumesLogicProc
+
     # create instances of the application level adapter classes
     set ::slicer3::Application [namespace current]::[::Slicer3Adapters::Application #auto]
     set ::slicer3::ApplicationGUI [namespace current]::[::Slicer3Adapters::ApplicationGUI #auto]
