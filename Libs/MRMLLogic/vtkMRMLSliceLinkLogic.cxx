@@ -215,7 +215,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 
     vtkMRMLSliceNode* sNode;
     vtkCollectionSimpleIterator it;
-    vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode");
+    vtkSmartPointer<vtkCollection> nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode");
     for (nodes->InitTraversal(it);
         (sNode=vtkMRMLSliceNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
       {
@@ -334,7 +334,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
 
     vtkMRMLSliceCompositeNode* cNode;
     vtkCollectionSimpleIterator it;
-    vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkSmartPointer<vtkCollection> nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
 
     for (nodes->InitTraversal(it);
         (cNode=vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
@@ -371,7 +371,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceN
   vtkMRMLSliceCompositeNode* compositeNode = 0;
 
   vtkCollectionSimpleIterator it;
-  vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
+  vtkSmartPointer<vtkCollection> nodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode");
 
   for (nodes->InitTraversal(it);
       (compositeNode=vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
@@ -434,3 +434,4 @@ void vtkMRMLSliceLinkLogic::UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode* s
     it->second.LastNormal[2] = sliceNode->GetSliceToRAS()->GetElement(2,2);
     }
 }
+
