@@ -85,5 +85,5 @@ endfunction()
 
 macro(_SlicerEscapeForUrl var str)
   # Escape spaces in the url
-  string(REPLACE " " "%20" ${var} ${str})
+  string(REPLACE " " "%20" ${var} "${str}")
 endmacro()
