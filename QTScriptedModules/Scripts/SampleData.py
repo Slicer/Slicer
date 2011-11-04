@@ -91,12 +91,17 @@ class SampleDataWidget:
     self.log = qt.QTextEdit()
     self.log.readOnly = True
     self.layout.addWidget(self.log)
-    self.log.insertHtml('<p>Status: <i>Idle</i>\n')
-    self.log.insertPlainText('\n')
-    self.log.ensureCursorVisible()
+    self.logMessage('<p>Status: <i>Idle</i>\n')
 
     # Add spacer to layout
     self.layout.addStretch(1)
+
+  def logMessage(self,message):
+    self.log.insertHtml(message)
+    self.log.insertPlainText('\n')
+    self.log.ensureCursorVisible()
+    self.log.repaint()
+    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
   def downloadMRHead(self):
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
@@ -117,46 +122,30 @@ class SampleDataWidget:
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
 
   def downloadVolume(self, uri, name):
-    self.log.insertHtml('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
-    self.log.repaint()
-    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
+    self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeVolume(uri, name, 0)
     if volumeNode:
       storageNode = volumeNode.GetStorageNode()
-      storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
-      # Automatically select the volume to display
-      self.log.insertHtml('<i>Displaying...</i>')
-      self.log.insertPlainText('\n')
-      self.log.ensureCursorVisible()
-      self.log.repaint()
-      appLogic = slicer.app.applicationLogic()
-      selNode = appLogic.GetSelectionNode()
-      selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
-      appLogic.PropagateVolumeSelection(1)
-      self.log.insertHtml('<i>finished.</i>\n')
-      self.log.insertPlainText('\n')
-      self.log.ensureCursorVisible()
-      self.log.repaint()
+      if storageNode:
+        storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
+        # Automatically select the volume to display
+        self.logMessage('<i>Displaying...</i>')
+        appLogic = slicer.app.applicationLogic()
+        selNode = appLogic.GetSelectionNode()
+        selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
+        appLogic.PropagateVolumeSelection(1)
+        self.logMessage('<i>finished.</i>\n')
+      else:
+        self.logMessage('<b>Download failed!</b>\n')
     else:
-      self.log.insertHtml('<b>Download failed!</b>\n')
-      self.log.insertPlainText('\n')
-      self.log.ensureCursorVisible()
-      self.log.repaint()
+      self.logMessage('<b>Download failed!</b>\n')
     self.processStorageEvents(storageNode, 'ModifiedEvent')
 
   def processStorageEvents(self, node, event):
     state = node.GetReadStateAsString()
     if state == 'TransferDone':
-      self.log.insertHtml('<i>Transfer Done</i>\n')
-      self.log.insertPlainText('\n\n')
-      self.log.insertHtml('Status: <b>Idle</b>\n')
-      self.log.insertPlainText('\n')
+      self.logMessage('<i>Transfer Done</i>\n')
       node.RemoveObserver('ModifiedEvent', self.processStorageEvents)
     else:
-      self.log.insertHtml('Status: <i>%s</i>\n' % state)
-      self.log.insertPlainText('\n')
-    self.log.ensureCursorVisible()
-    self.log.repaint()
-    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
-
+      self.logMessage('Status: <i>%s</i>\n' % state)
