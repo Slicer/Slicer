@@ -48,10 +48,10 @@ function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
   _SlicerEscapeForUrl(apikey ${MIDAS_PACKAGE_API_KEY})
 
   file(DOWNLOAD "${MIDAS_PACKAGE_URL}/api/json?method=midas.login&appname=Default&email=${email}&apikey=${apikey}"
-       "${Slicer_BINARY_DIR}/MIDAStoken.txt"
+       "${CTEST_BINARY_DIR}/MIDAStoken.txt"
        INACTIVITY_TIMEOUT 120)
-  file(READ "${Slicer_BINARY_DIR}/MIDAStoken.txt" resp)
-  file(REMOVE "${Slicer_BINARY_DIR}/MIDAStoken.txt")
+  file(READ "${CTEST_BINARY_DIR}/MIDAStoken.txt" resp)
+  file(REMOVE "${CTEST_BINARY_DIR}/MIDAStoken.txt")
   string(REGEX REPLACE ".*token\":\"(.*)\".*" "\\1" token ${resp})
   string(LENGTH ${token} tokenlength)
 
