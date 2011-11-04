@@ -626,11 +626,7 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 
-  if (this->GetMRMLScene())
-    {
-    // Give a chance to initialize from the new scene
-    this->OnMRMLSceneImportedEvent();
-    }
+  this->OnMRMLSceneImportedEvent();
 }
 
 //---------------------------------------------------------------------------

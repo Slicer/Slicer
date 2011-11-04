@@ -548,6 +548,11 @@ void vtkMRMLSliceModelDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 void vtkMRMLSliceModelDisplayableManager
 ::OnMRMLSceneImportedEvent()
 {
+  if (!this->GetMRMLScene())
+    {
+    this->Internal->SetSliceCompositeNode(0);
+    return;
+    }
   if (this->GetMRMLScene()->GetIsUpdating())
     {
     return;

@@ -339,7 +339,7 @@ bool vtkMRMLAbstractLogic::EnterMRMLNodesCallback()const
 void vtkMRMLAbstractLogic
 ::ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData)
 {
-  assert(vtkMRMLScene::SafeDownCast(caller));
+  assert(!caller || vtkMRMLScene::SafeDownCast(caller));
   assert(caller == this->GetMRMLScene());
 #ifndef _NDEBUG
   (void)caller;

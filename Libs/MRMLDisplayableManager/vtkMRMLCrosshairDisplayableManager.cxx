@@ -586,6 +586,12 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneRestoredEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneImportedEvent()
 {
+  if (!this->GetMRMLScene())
+    {
+    this->Internal->SetSliceCompositeNode(0);
+    this->Internal->SetCrosshairNode(0);
+    return;
+    }
   if (this->GetMRMLScene()->GetIsUpdating())
     {
     return;

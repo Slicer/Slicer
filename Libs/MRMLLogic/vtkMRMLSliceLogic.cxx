@@ -201,6 +201,11 @@ void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateSliceNode()
 {
+  if (!this->GetMRMLScene())
+    {
+    this->SetSliceNode(0);
+    return;
+    }
   // find SliceNode in the scene
   vtkMRMLSliceNode *node= 0;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
@@ -281,6 +286,11 @@ void vtkMRMLSliceLogic::UpdateSliceNodeFromLayout()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
 {
+  if (!this->GetMRMLScene())
+    {
+    this->SetSliceCompositeNode(0);
+    return;
+    }
   // find SliceCompositeNode in the scene
   vtkMRMLSliceCompositeNode *node= 0;
   int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
@@ -403,7 +413,8 @@ void vtkMRMLSliceLogic::OnMRMLSceneNewEvent()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateSliceNodes()
 {
-  if (this->GetMRMLScene()->GetIsClosing())
+  if (this->GetMRMLScene()
+      && this->GetMRMLScene()->GetIsClosing())
     {
     return;
     }
@@ -1114,7 +1125,6 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::CreateSliceModel()
 {
-  assert(this->GetMRMLScene());
   if(!this->GetMRMLScene())
     {
     return;

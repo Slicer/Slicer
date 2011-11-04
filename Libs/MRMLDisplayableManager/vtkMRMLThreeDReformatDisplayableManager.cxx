@@ -70,6 +70,7 @@ public:
   void AddSliceNode(vtkMRMLSliceNode*);
   void RemoveSliceNode(vtkMRMLSliceNode*);
   void RemoveSliceNode(SliceNodesLink::iterator);
+  void RemoveAllSliceNodes();
   void UpdateSliceNodes();
   vtkMRMLSliceNode* GetSliceNode(vtkImplicitPlaneWidget2*);
 
@@ -95,12 +96,7 @@ vtkMRMLThreeDReformatDisplayableManager::vtkInternal::vtkInternal(
 //---------------------------------------------------------------------------
 vtkMRMLThreeDReformatDisplayableManager::vtkInternal::~vtkInternal()
 {
-  // The manager has the responsabilty to delete the widgets.
-  while (this->SliceNodes.size() > 0)
-    {
-    this->RemoveSliceNode(this->SliceNodes.begin());
-    }
-  this->SliceNodes.clear();
+  this->RemoveAllSliceNodes();
 }
 
 //---------------------------------------------------------------------------
@@ -164,10 +160,23 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
+::RemoveAllSliceNodes()
+{
+  // The manager has the responsabilty to delete the widgets.
+  while (this->SliceNodes.size() > 0)
+    {
+    this->RemoveSliceNode(this->SliceNodes.begin());
+    }
+  this->SliceNodes.clear();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateSliceNodes()
 {
   if (this->External->GetMRMLScene() == 0)
     {
+    this->RemoveAllSliceNodes();
     return;
     }
 
@@ -335,6 +344,12 @@ vtkMRMLThreeDReformatDisplayableManager::~vtkMRMLThreeDReformatDisplayableManage
 
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::OnMRMLSceneImportedEvent()
+{
+  this->Internal->UpdateSliceNodes();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLThreeDReformatDisplayableManager::OnMRMLSceneClosedEvent()
 {
   this->Internal->UpdateSliceNodes();
 }
