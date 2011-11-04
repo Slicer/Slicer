@@ -83,4 +83,7 @@
   <VolumeProperty
     id="vtkMRMLVolumePropertyNode23"  name="MR-MIP"  hideFromEditors="false"  selectable="true"  selected="false"  userTags="" interpolation="1" shade="0" diffuse="1" ambient="0.2" specular="0" specularPower="1" scalarOpacity="8 0 0 98.3725 0 416.637 1 2800 1" gradientOpacity="4 0 1 255 1" colorTransfer="16 0 1 1 1 98.3725 1 1 1 416.637 1 1 1 2800 1 1 1"></VolumeProperty>
 
+  <VolumeProperty
+    id="vtkMRMLVolumePropertyNode24"  name="MR-T2-Brain"  hideFromEditors="false"  selectable="true"  selected="false"  userTags="" interpolation="1" shade="1" diffuse="0.6" ambient="0.3" specular="0.5" specularPower="40" scalarOpacity="10 0 0 36.05 0 218.302 0.171429 412.406 1 641 1" gradientOpacity="4 0 1 160.25 1" colorTransfer="16 0 0 0 0 98.7223 0.956863 0.839216 0.192157 412.406 0 0.592157 0.807843 641 1 1 1"></VolumeProperty>
+
 </MRML>
