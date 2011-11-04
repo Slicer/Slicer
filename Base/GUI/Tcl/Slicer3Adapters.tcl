@@ -59,6 +59,13 @@ namespace eval Slicer3Adapters {
     }
     set ::slicer3::Broker ::slicer3::BrokerProc
 
+    # expose the application logic singleton as a tcl proc
+    # and set the variable to point to that proc
+    proc ::slicer3::ApplicationLogicProc {args} {
+      ::tpycl::methodCaller ::slicer3::ApplicationLogicProc slicer.app.applicationLogic() $args
+    }
+    set ::slicer3::ApplicationLogic ::slicer3::ApplicationLogicProc
+
     # create instances of the application level adapter classes
     set ::slicer3::Application [namespace current]::[::Slicer3Adapters::Application #auto]
     set ::slicer3::ApplicationGUI [namespace current]::[::Slicer3Adapters::ApplicationGUI #auto]
