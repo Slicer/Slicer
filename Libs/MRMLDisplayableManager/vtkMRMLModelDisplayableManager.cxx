@@ -1388,7 +1388,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
 
-      bool visibility = modelDisplayNode->GetVisibility();
+      bool visibility = modelDisplayNode->GetVisibility() != 0;
       // but if the hierarchy visibility is false, turn it off anyway
       if (!hierarchyVisibility)
         {

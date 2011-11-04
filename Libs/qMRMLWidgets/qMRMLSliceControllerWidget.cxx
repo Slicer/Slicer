@@ -570,16 +570,17 @@ void qMRMLSliceControllerWidgetPrivate::onMRMLSceneChanged(
   vtkObject* sender, void* calldata, unsigned long event, void* receiver)
 {
   Q_Q(qMRMLSliceControllerWidget);
-  Q_UNUSED(receiver);
   Q_UNUSED(sender);
+  Q_UNUSED(calldata);
+  Q_UNUSED(receiver);
   if (q->mrmlScene() != sender ||
-      !q->mrmlScene() || 
+      !q->mrmlScene() ||
       q->mrmlScene()->GetIsUpdating())
     {
     return;
     }
   if (event == vtkMRMLScene::SceneImportedEvent ||
-           event == vtkMRMLScene::SceneRestoredEvent)
+      event == vtkMRMLScene::SceneRestoredEvent)
     {
     this->updateWidgetFromMRMLSliceCompositeNode();
     }

@@ -276,7 +276,6 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
   vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
 
   // Color the Edge of the plane representation depending on the Slice
-  double color[3];
   rep->SetEdgeColor(sliceNode->GetLayoutColor());
 
   // Update Bound size

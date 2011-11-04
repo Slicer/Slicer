@@ -655,7 +655,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     vtkHandleWidget *h2 = this->GetSeed(1);
 
     // convert the coordinates
-    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    //double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
     double origin[4] = {this->LastClickWorldCoordinates[0],
