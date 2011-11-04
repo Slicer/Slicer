@@ -80,7 +80,7 @@ class _Internal():
   def setSlicerModuleNames( self ):
     """Add module names as attributes of module slicer.moduleNames"""
     for name in moduleNames():
-      setattr( slicer.moduleNames, name.lower(), name )
+      setattr( slicer.moduleNames, name, name )
 
   def setSlicerModules( self, module ):
     """Add modules as attributes of module slicer.modules"""
