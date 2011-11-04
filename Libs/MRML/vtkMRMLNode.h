@@ -488,10 +488,6 @@ private:
   void ConstructAndSetID(const char * str, int index);
 
   /// 
-  /// Variable used to manage constructed ids
-  std::string TempID;
-
-  /// 
   /// Variable used to manage encoded/decoded URL strings
   char * TempURLString;
 

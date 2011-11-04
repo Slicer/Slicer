@@ -23,6 +23,8 @@ Version:   $Revision: 1.11 $
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <cassert>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -414,17 +416,20 @@ void vtkMRMLNode::SetAddToSceneNoModify(int value)
 //----------------------------------------------------------------------------
 const char*  vtkMRMLNode::ConstructID(const char * str, int index)
 {
-    std::stringstream ss;
-    ss << str;
-    ss << index;
-    ss >> this->TempID;
-    return this->TempID.c_str();
+  static std::string tempID;
+
+  std::stringstream ss;
+  ss << str;
+  ss << index;
+  ss >> tempID;
+  return tempID.c_str();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ConstructAndSetID(const char * str, int index)
 {
-    this->SetID(this->ConstructID(str, index));
+  this->SetID(this->ConstructID(str, index));
+  assert(this->ID);
 }
 
 //----------------------------------------------------------------------------
