@@ -785,20 +785,21 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   
   if (!layoutColorFound)
     {
+    std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
     // Slicer3 scene file. Grok a color
-    if (std::string(this->GetLayoutName()).find("Compare") == 0)
+    if (layoutName.find("Compare") == 0)
       {
       this->SetLayoutColor(vtkMRMLSliceNode::compareColor());
       }
-    else if (strcmp(this->GetLayoutName(), "Red") == 0)
+    else if (layoutName == "Red")
       {
       this->SetLayoutColor(vtkMRMLSliceNode::redColor());
       }
-    else if (strcmp(this->GetLayoutName(), "Yellow") == 0)
+    else if (layoutName == "Yellow")
       {
       this->SetLayoutColor(vtkMRMLSliceNode::yellowColor());
       }
-    else if (strcmp(this->GetLayoutName(), "Green") == 0)
+    else if (layoutName == "Green")
       {
       this->SetLayoutColor(vtkMRMLSliceNode::greenColor());
       }
@@ -810,22 +811,23 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
   if (!layoutLabelFound)
     {
+    std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
     // Slicer3 scene file. Grok a label
-    if (std::string(this->GetLayoutName()).find("Compare") == 0)
+    if (layoutName.find("Compare") == 0)
       {
       std::string name(this->GetLayoutName());
       std::string number(name.substr(7, name.size()-7));
       this->SetLayoutLabel(number.c_str());
       }
-    else if (strcmp(this->GetLayoutName(), "Red") == 0)
+    else if (layoutName == "Red")
       {
       this->SetLayoutLabel("R");
       }
-    else if (strcmp(this->GetLayoutName(), "Yellow") == 0)
+    else if (layoutName == "Yellow")
       {
       this->SetLayoutLabel("Y");
       }
-    else if (strcmp(this->GetLayoutName(), "Green") == 0)
+    else if (layoutName == "Green")
       {
       this->SetLayoutLabel("G");
       }
