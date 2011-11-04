@@ -5,7 +5,7 @@ from slicer.util import *
 import slicer.cli
 
 #
-# loadSlicerRCFile - Let's not add this function to 'slicer.util' so that 
+# loadSlicerRCFile - Let's not add this function to 'slicer.util' so that
 # the global dictionary of the main context is passed to execfile().
 #
 
@@ -37,10 +37,11 @@ class _Internal():
     # Listen factory and module manager to update slicer.{modules, moduleNames} when appropriate
     moduleManager = slicer.app.moduleManager()
 
-    # if the qSlicerApplication is only minimally initialized, the factoryManager does not exist.
-    # this would be the case if f.e. a commandline module wants to use qSlicerApplication for tcl
-    # access but without all the managers.
-    # this is not the default behavior.
+    # If the qSlicerApplication is only minimally initialized, the factoryManager
+    # does *NOT* exist.
+    # This would be the case if, for example, a commandline module wants to
+    # use qSlicerApplication for tcl access but without all the managers.
+    # Note: This is not the default behavior.
     if hasattr( moduleManager, 'factoryManager' ):
       factoryManager = moduleManager.factoryManager()
       factoryManager.connect( 'allModulesRegistered()', self.setSlicerModuleNames )
