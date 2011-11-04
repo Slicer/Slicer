@@ -103,4 +103,5 @@ bool vtkMRMLColors
     ss >> colorComponent;
     rgbColor[i] = static_cast<double>(colorComponent) / 255.;
     }
+  return true;
 }
