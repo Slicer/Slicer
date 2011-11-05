@@ -1,22 +1,18 @@
+
+
 #-----------------------------------------------------------------------------
 # WARNING: CLI modules should be topologically ordered.
 #-----------------------------------------------------------------------------
 set(cli_modules
   Add
-  AffineRegistration
-  BSplineDeformableRegistration
-  BSplineToDeformationField
   Cast
   CheckerBoard
   ComputeSUVBodyWeight
   ConfidenceConnected
   CurvatureAnisotropicDiffusion
-  DiffusionApplications
   DiffusionTensorEstimation
   DiffusionTensorMathematics
-  DiffusionTensorTest
   DiffusionWeightedMasking
-  DiffusionWeightedTest
   ExecutionModelTour
   ExtractSkeleton
   FreesurferSurfaceSectionExtraction
@@ -30,34 +26,46 @@ set(cli_modules
   ImageReadDicomWrite
   Java
   LabelMapSmoothing
-  LinearRegistration
   Mask
   MedianImageFilter
   MergeModels
   ModelMaker
-  MRIBiasFieldCorrection
   MultipleModelsExample
   Multiply
   N4ITKBiasFieldCorrection
   OrientImage
-  OtsuThresholdImageFilter
-  OtsuThresholdSegmentation
   PolyDataToLabelmap
   ProbeVolumeWithModel
   Realign
-  RegisterImagesModule
   ResampleVolume2
-  ResampleVolume
-  RigidRegistration
   RobustStatisticsSegmenter
   Seeding
   SparseFieldLevelSetContour
   Subtract
-  TestGridTransformRegistration
   Threshold
   VotingBinaryHoleFillingImageFilter
   ZeroCrossingBasedEdgeDetectionImageFilter
   )
+
+if(Slicer_BUILD_LEGACY_CLI)
+  set(legacy_cli_modules
+    AffineRegistration
+    BSplineDeformableRegistration
+    BSplineToDeformationField
+    DiffusionApplications
+    DiffusionTensorTest
+    DiffusionWeightedTest
+    LinearRegistration
+    MRIBiasFieldCorrection
+    OtsuThresholdImageFilter
+    OtsuThresholdSegmentation
+    RegisterImagesModule
+    ResampleVolume
+    RigidRegistration
+    TestGridTransformRegistration
+    )
+  list(APPEND cli_modules ${legacy_cli_modules})
+endif()
 
 if("${ITK_VERSION_MAJOR}" LESS 4)
   list(APPEND cli_modules DicomToNrrdConverter)

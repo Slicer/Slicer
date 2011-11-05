@@ -89,7 +89,10 @@ void qSlicerModulesMenuPrivate::addDefaultCategories()
   q->addMenu("Surface Models");
   q->addMenu("Converters");
   q->addMenu("Endoscopy");
+  q->addMenu("Utilities");
   q->addMenu("Developer Tools");
+  q->addMenu("Legacy");
+  q->addMenu("Testing");
   q->addSeparator();
   // after the separator goes custom modules
 }
