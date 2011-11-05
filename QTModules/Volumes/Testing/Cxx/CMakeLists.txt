@@ -8,6 +8,7 @@ SlicerMacroConfigureGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KI
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
+  qSlicerVolumesIOOptionsWidgetTest1.cxx
   qSlicerVolumesModuleWidgetTest1.cxx
   vtkSlicerVolumesLogicTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
@@ -29,5 +30,6 @@ endmacro()
 
 set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
+SIMPLE_TEST( qSlicerVolumesIOOptionsWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
 SIMPLE_TEST( vtkSlicerVolumesTest1 ${VOLUME_FILE} )

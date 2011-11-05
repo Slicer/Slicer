@@ -122,12 +122,12 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
   QStringList names;
   bool onlyNumberInName = false;
   bool onlyNumberInExtension = false;
+  bool hasLabelMapName = false;
   foreach(const QString& fileName, fileNames)
     {
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
       {
-      // Name
       names << fileInfo.baseName();
       // Single file
       // If the name (or the extension) is just a number, then it must be a 2D
@@ -135,8 +135,16 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
       fileInfo.baseName().toInt(&onlyNumberInName);
       fileInfo.suffix().toInt(&onlyNumberInExtension);
       }
+    // Because '_' is considered as a word character (\w), \b
+    // doesn't consider '_' as a word boundary.
+    QRegExp labelMapName("(\\b|_)(seg)(\\b|_)");
+    if (fileInfo.baseName().contains(labelMapName))
+      {
+      hasLabelMapName = true;
+      }
     }
   d->NameLineEdit->setText( names.join("; ") );
   d->SingleFileCheckBox->setChecked(!onlyNumberInName && !onlyNumberInExtension);
+  d->LabelMapCheckBox->setChecked(hasLabelMapName);
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }
