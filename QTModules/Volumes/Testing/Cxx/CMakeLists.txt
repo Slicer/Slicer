@@ -32,4 +32,4 @@ set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
 SIMPLE_TEST( qSlicerVolumesIOOptionsWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
-SIMPLE_TEST( vtkSlicerVolumesTest1 ${VOLUME_FILE} )
+SIMPLE_TEST( vtkSlicerVolumesLogicTest1 ${VOLUME_FILE} )
