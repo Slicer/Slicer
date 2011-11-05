@@ -792,14 +792,16 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         {
 
         // show the widget immediately
-        this->UpdatePosition(widget, annotationNode);
+        //this->UpdatePosition(widget, annotationNode);
         widget->SetEnabled(1);
+        this->PropagateMRMLToWidget(annotationNode, widget);
         vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
         if (seedWidget)
           {
           seedWidget->CompleteInteraction();
           vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: complete interaction");
           }
+        this->RequestRender();
         }
 
       }

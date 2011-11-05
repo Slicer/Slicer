@@ -2414,10 +2414,14 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
     this->GetMRMLScene()->SaveStateForUndo();
     // TODO for now only consider the first control point
     double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
-    sliceNode->JumpAllSlices(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
+    double r = rasCoordinates[0];
+    double a = rasCoordinates[1];
+    double s = rasCoordinates[2];
+
+    sliceNode->JumpAllSlices(r,a,s);
     // JumpAllSlices jumps all the other slices, not self, so JumpSlice on
     // this node as well
-    sliceNode->JumpSlice(rasCoordinates[0], rasCoordinates[1], rasCoordinates[2]);
+    sliceNode->JumpSlice(r,a,s);
     }
   
 //    annotationNode->RestoreView();
