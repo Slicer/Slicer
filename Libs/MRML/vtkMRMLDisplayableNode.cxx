@@ -182,13 +182,12 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
     vtkMRMLDisplayNode *pnode = 0;
     this->DisplayNodes.push_back(pnode);
     this->SetAndObserveNthDisplayNodeID(i, this->DisplayNodeIDs[i].c_str());
-    //vtkMRMLNode* displayNode = scene->GetNodeByID(this->DisplayNodeIDs[i].c_str());
-    std::vector<vtkMRMLNode*> slices;
-    scene->GetNodesByClass("vtkMRMLDiffusionTensorVolumeSliceDisplayNode", slices);
     // When calling UpdateScene, the scene is up-to-date (it is done to be
     // imported/restored). All the nodes are in it.
     // Therefor, there is no reason why there wouldn't be a node
     // for each node id.
+    // If you have an assert here, check in the scene xml if
+    // DisplayNodeIDs[i] really exists.
     assert(this->DisplayNodes[i]);
     }
 }
