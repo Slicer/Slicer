@@ -182,6 +182,7 @@ protected:
   vtkIntArray* DisplayObservedEvents;
   // When interaction is >0, we are in interactive mode (low LOD)
   int Interaction;
+  double OriginalDesiredUpdateRate;
 
 protected:
   void OnScenarioNodeModified();
@@ -196,7 +197,9 @@ protected:
   bool AddVolumeToView();
   void RemoveVolumeFromView();
   void RemoveVolumeFromView(vtkVolume* volume);
-  void InitializePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  bool IsVolumeInView();
+  bool IsVolumeInView(vtkVolume* volume);
+  void UpdatePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   int ValidateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 };

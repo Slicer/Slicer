@@ -186,11 +186,23 @@ void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // ModifiedEvent is fired anytime vtkCamera is modified (when there is a
   // pan, zoom, rotation...)
-  // The observation is done here: vtkSetAndObserveMRMLNodeMacro(
+  // The observation is setup here: vtkSetAndObserveMRMLNodeMacro(
   // this->Internal->CameraNode, newCameraNode);
-  // TBD: maybe we could have better results if we listen to vtkCamera
-  // directly instead of vtkCameraNode
   assert(vtkMRMLCameraNode::SafeDownCast(node));
+  vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(
+    this->GetInteractor()->GetInteractorStyle());
+  if (interactorStyle &&
+      interactorStyle->GetState() != VTKIS_NONE)
+    {
+    // The interactor style is in a "state" mode (rotate, dolly...), that
+    // means it is doing multiple actions on the camera at once (azimuth,
+    // elevation...). When the interactor style is done with updating the
+    // camera, it will call Render() on the interactor which will trigger a
+    // rendering. We don't need to do it here then, there is even a risk to
+    // trigger a rendering before the camera is done being updated (between
+    // azimuth and elevation for example).
+    return;
+    }
   this->RequestRender();
 }
 

@@ -38,6 +38,7 @@ class vtkMRMLSelectionNode;
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLNode;
 class vtkMRMLScene;
+
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 

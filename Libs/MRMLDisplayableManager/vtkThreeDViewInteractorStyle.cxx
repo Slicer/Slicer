@@ -398,7 +398,7 @@ void vtkThreeDViewInteractorStyle::Rotate()
 
   // release the camera
   camera = 0;
-  //rwi->Render();
+  rwi->Render();
 }
 
 //----------------------------------------------------------------------------
@@ -601,3 +601,14 @@ void vtkThreeDViewInteractorStyle::SetModelDisplayableManager(
   this->ModelDisplayableManager = modelDisplayableManager;
 }
 
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
+{
+  if (interactor)
+    {
+    // A default FPS of 30. seems good enough, but feel free to increase if needed
+    // Please note that the VolumeRendering module changes it.
+    interactor->SetDesiredUpdateRate( 30.);
+    }
+  this->Superclass::SetInteractor(interactor);
+}

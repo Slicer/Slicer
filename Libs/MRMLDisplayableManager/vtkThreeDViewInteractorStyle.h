@@ -84,6 +84,10 @@ public:
   vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
 
+  ///
+  /// Reimplemented to set the default interactive update rate
+  virtual void SetInteractor(vtkRenderWindowInteractor *interactor);
+
   /// 
   /// Get/Set the ModelDisplayableManager, for picking
   vtkGetObjectMacro(ModelDisplayableManager, vtkMRMLModelDisplayableManager);

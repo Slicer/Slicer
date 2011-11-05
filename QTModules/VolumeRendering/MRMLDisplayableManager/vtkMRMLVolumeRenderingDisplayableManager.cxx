@@ -97,6 +97,8 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
   this->DisplayObservedEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
 
   this->Interaction = 0;
+  // 0fps is a special value that means it hasn't been set.
+  this->OriginalDesiredUpdateRate = 0.;
 
   this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonPressEvent);
   this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonReleaseEvent);
@@ -775,8 +777,25 @@ int vtkMRMLVolumeRenderingDisplayableManager
     renderWindow ? renderWindow->GetInteractor() : 0;
   if (renderWindowInteractor)
     {
-    renderWindowInteractor->SetDesiredUpdateRate(fps);
-    renderWindowInteractor->SetStillUpdateRate(0.0001);
+    if (vspNode->GetVisibility())
+      {
+      if (this->OriginalDesiredUpdateRate == 0.)
+        {
+        // Save the DesiredUpdateRate before it is changed.
+        // It will then be restored when the volume rendering is hidden
+        this->OriginalDesiredUpdateRate =
+          renderWindowInteractor->GetDesiredUpdateRate();
+        }
+      renderWindowInteractor->SetDesiredUpdateRate(fps);
+      }
+    else if (this->OriginalDesiredUpdateRate != 0.)
+      {
+      // Restore the DesiredUpdateRate to its original value.
+      renderWindowInteractor->SetDesiredUpdateRate(
+        this->OriginalDesiredUpdateRate);
+      this->OriginalDesiredUpdateRate = 0;
+      }
+    //renderWindowInteractor->SetStillUpdateRate(0.0001);
     }
   this->SetExpectedFPS(fps);
 
@@ -1029,7 +1048,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnScenarioNodeModified()
   if (viewNode)
     {
     this->UpdateDisplayNodeList();
-    this->InitializePipelineFromDisplayNode();
+    this->UpdatePipelineFromDisplayNode();
     }
   */
 }
@@ -1052,9 +1071,16 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnVolumeRenderingDisplayNodeModif
       }
     return;
     }
-  this->InitializePipelineFromDisplayNode(dnode);
-  //this->GetInteractor()->Enable();
-  this->RequestRender();
+  bool wasVolumeVisible = this->IsVolumeInView();
+
+  this->UpdatePipelineFromDisplayNode(dnode);
+
+  bool hasVolumeBeenRemoved = !this->IsVolumeInView() && wasVolumeVisible;
+  if (dnode->GetVisibility() ||
+      hasVolumeBeenRemoved)
+    {
+    this->RequestRender();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -1229,7 +1255,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
 //initialize pipeline from a loaded or user selected parameters node
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager
-::InitializePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+::UpdatePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   if (!vspNode ||
       !this->ValidateDisplayNode(vspNode))
@@ -1254,7 +1280,6 @@ void vtkMRMLVolumeRenderingDisplayableManager
       }
     }
   this->SetROI(vspNode);
-
 
   //prepare rendering frame
   //this->DeleteRenderingFrame();
@@ -1289,12 +1314,18 @@ void vtkMRMLVolumeRenderingDisplayableManager
       }
     }
 
-
   this->SetupMapperFromParametersNode(vspNode);
 
   this->DisplayedNode = vspNode;
 
-  this->AddVolumeToView();
+  if (vspNode->GetVisibility())
+    {
+    this->AddVolumeToView();
+    }
+  else
+    {
+    this->RemoveVolumeFromView();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -1354,10 +1385,6 @@ int vtkMRMLVolumeRenderingDisplayableManager::ValidateDisplayNode(vtkMRMLVolumeR
     {
     return 0;
     }
-  if (!vspNode->GetVisibility())
-    {
-    return 0;
-    }
   return 1;
 }
 
@@ -1396,6 +1423,18 @@ void vtkMRMLVolumeRenderingDisplayableManager::RemoveVolumeFromView()
 void vtkMRMLVolumeRenderingDisplayableManager::RemoveVolumeFromView(vtkVolume* volume)
 {
   this->GetRenderer()->RemoveVolume( volume );
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayableManager::IsVolumeInView()
+{
+  return this->GetRenderer()->HasViewProp(this->GetVolumeActor());
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayableManager::IsVolumeInView(vtkVolume* volume)
+{
+  return this->GetRenderer()->HasViewProp(volume);
 }
 
 //---------------------------------------------------------------------------
