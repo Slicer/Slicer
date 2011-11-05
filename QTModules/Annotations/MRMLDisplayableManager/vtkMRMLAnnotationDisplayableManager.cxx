@@ -198,9 +198,9 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 {
 
   // hack to force initialization of the renderview
-  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
-  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
-
+  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  //this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+  this->UpdateFromMRML();
   //this->DebugOn();
 }
 
