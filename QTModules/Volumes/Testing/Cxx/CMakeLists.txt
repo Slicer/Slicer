@@ -9,6 +9,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qSlicerVolumesModuleWidgetTest1.cxx
+  vtkSlicerVolumesLogicTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
@@ -29,3 +30,4 @@ endmacro()
 set(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
 SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
+SIMPLE_TEST( vtkSlicerVolumesTest1 ${VOLUME_FILE} )

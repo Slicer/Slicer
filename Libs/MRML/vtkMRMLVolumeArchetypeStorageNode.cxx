@@ -371,8 +371,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   else
     {
-    volNode->SetAndObserveImageData (ici->GetOutput());
-    ici->GetOutput()->SetSource(0);
+    vtkSmartPointer<vtkImageData> iciOutputCopy =
+      vtkSmartPointer<vtkImageData>::New();
+    iciOutputCopy->ShallowCopy(ici->GetOutput());
+    volNode->SetAndObserveImageData(iciOutputCopy.GetPointer());
     volNode->ModifiedSinceReadOff();
     }
 
@@ -386,7 +388,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 
   this->SetReadStateIdle();
-  
+
   return result;
 }
 
