@@ -36,10 +36,12 @@ class vtkMRMLVolumeRenderingScenarioNode;
 //#include "vtkMRMLVolumeRenderingDisplayNode.h"
 //#include "vtkMRMLVolumeRenderingScenarioNode.h"
 class vtkMRMLAnnotationROINode;
+class vtkMRMLLabelMapVolumeDisplayNode;
 class vtkMRMLNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLViewNode;
+class vtkMRMLVolumeDisplayNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
 
@@ -68,18 +70,30 @@ public:
   void AddAllVolumeRenderingDisplayNodes();
   void RemoveAllVolumeRenderingDisplayNodes();
 
+  void CopyDisplayToVolumeRenderingDisplayNode(
+    vtkMRMLVolumeRenderingDisplayNode* node,
+    vtkMRMLVolumeDisplayNode* displayNode = 0);
   // Applies the properties (window level, threshold and color function) of
   // the scalar display node to the volume rendering displaynode.
+  // If scalarDisplayNode is 0, it uses the first display node.
   void CopyScalarDisplayToVolumeRenderingDisplayNode(
     vtkMRMLVolumeRenderingDisplayNode* volumeRenderingDisplayNode,
-    vtkMRMLScalarVolumeDisplayNode* scalarDisplayNode);
-  /// Utility function that tries to guess what scalar volume display node
-  void CopyScalarDisplayToVolumeRenderingDisplayNode(
-    vtkMRMLVolumeRenderingDisplayNode* node);
+    vtkMRMLScalarVolumeDisplayNode* scalarDisplayNode = 0);
 
-  void SetWindowLevelAndThresholdToVolumeProp(
-    double scalarRange[2], double windowLevel[2], double threshold[2],
+  /// Applies the properties (threshold ) of
+  /// the labelmap display node to the volume rendering displaynode.
+  /// If labelMapDisplayNode is 0, it uses the first displaynode.
+  void CopyLabelMapDisplayToVolumeRenderingDisplayNode(
+    vtkMRMLVolumeRenderingDisplayNode* volumeRenderingDisplayNode,
+    vtkMRMLLabelMapVolumeDisplayNode* labelMapDisplayNode = 0);
+
+  void SetThresholdToVolumeProp(
+    double scalarRange[2], double threshold[2], vtkVolumeProperty* node);
+
+  void SetWindowLevelToVolumeProp(
+    double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
+  void SetLabelMapToVolumeProp(vtkLookupTable* lut, vtkVolumeProperty* node);
 
   // Description:
   // Create DisplayNode

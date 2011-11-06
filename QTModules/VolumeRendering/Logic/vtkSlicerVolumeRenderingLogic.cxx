@@ -173,8 +173,8 @@ void vtkSlicerVolumeRenderingLogic
     {
     return;
     }
-  vtkMRMLScalarVolumeDisplayNode* displayNode =
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  vtkMRMLVolumeDisplayNode* displayNode =
+    vtkMRMLVolumeDisplayNode::SafeDownCast(
       node->GetVolumeNode()->GetDisplayNode());
   assert(displayNode);
   if (node->GetFollowVolumeDisplayNode())
@@ -184,7 +184,7 @@ void vtkSlicerVolumeRenderingLogic
       {
       vtkObserveMRMLNodeMacro(displayNode);
       }
-    this->CopyScalarDisplayToVolumeRenderingDisplayNode(node);
+    this->CopyDisplayToVolumeRenderingDisplayNode(node);
     }
   else
     {
@@ -240,20 +240,20 @@ void vtkSlicerVolumeRenderingLogic
     {
     this->UpdateVolumeRenderingDisplayNode(vrDisplayNode);
     }
-  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node);
-  if (scalarVolumeDisplayNode)
+  vtkMRMLVolumeDisplayNode* volumeDisplayNode =
+    vtkMRMLVolumeDisplayNode::SafeDownCast(node);
+  if (volumeDisplayNode)
     {
     for (unsigned int i = 0; i < this->DisplayNodes.size(); ++i)
       {
       vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
         this->DisplayNodes[i]);
       if (vrDisplayNode->GetVolumeNode()->GetDisplayNode() ==
-          scalarVolumeDisplayNode &&
+          volumeDisplayNode &&
           vrDisplayNode->GetFollowVolumeDisplayNode())
         {
-        this->CopyScalarDisplayToVolumeRenderingDisplayNode(
-          vrDisplayNode, scalarVolumeDisplayNode);
+        this->CopyDisplayToVolumeRenderingDisplayNode(
+          vrDisplayNode, volumeDisplayNode);
         }
       }
     }
@@ -297,25 +297,16 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   functionOpacity->AdjustRange(rangeNew);
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
-::SetWindowLevelAndThresholdToVolumeProp(double scalarRange[2],
-                                         double threshold[2],
-                                         double windowLevel[2],
-                                         vtkLookupTable* lut,
-                                         vtkVolumeProperty* volumeProp)
+::SetThresholdToVolumeProp(double scalarRange[2],
+                           double threshold[2],
+                           vtkVolumeProperty* volumeProp)
 {
-  assert(scalarRange && threshold && windowLevel && volumeProp);
+  assert(scalarRange && threshold && volumeProp);
   // Sanity check
   threshold[0] = std::max(std::min(threshold[0], scalarRange[1]), scalarRange[0]);
   threshold[1] = std::min(std::max(threshold[1], scalarRange[0]), scalarRange[1]);
-
-  double windowLevelMinMax[2];
-  windowLevelMinMax[0] = windowLevel[1] - 0.5 * windowLevel[0];
-  windowLevelMinMax[1] = windowLevel[1] + 0.5 * windowLevel[0];
-
-  volumeProp->SetInterpolationTypeToLinear();
 
   double previous = VTK_DOUBLE_MIN;
 
@@ -327,6 +318,28 @@ void vtkSlicerVolumeRenderingLogic
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 1.0);
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 0.0);
   opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 0.0);
+
+  vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
+  if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
+    {
+    volumePropOpacity->DeepCopy(opacity.GetPointer());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::SetWindowLevelToVolumeProp(double scalarRange[2],
+                             double windowLevel[2],
+                             vtkLookupTable* lut,
+                             vtkVolumeProperty* volumeProp)
+{
+  assert(scalarRange && windowLevel && volumeProp);
+
+  double windowLevelMinMax[2];
+  windowLevelMinMax[0] = windowLevel[1] - 0.5 * windowLevel[0];
+  windowLevelMinMax[1] = windowLevel[1] + 0.5 * windowLevel[0];
+
+  double previous = VTK_DOUBLE_MIN;
 
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
@@ -383,17 +396,13 @@ void vtkSlicerVolumeRenderingLogic
                                color[0], color[1], color[2]);
     }
 
-  vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
-  if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
-    {
-    volumePropOpacity->DeepCopy(opacity.GetPointer());
-    }
   vtkColorTransferFunction *volumePropColorTransfer = volumeProp->GetRGBTransferFunction();
   if (this->IsDifferentFunction(colorTransfer.GetPointer(), volumePropColorTransfer))
     {
     volumePropColorTransfer->DeepCopy(colorTransfer.GetPointer());
     }
 
+  volumeProp->SetInterpolationTypeToLinear();
   volumeProp->ShadeOn();
   volumeProp->SetAmbient(0.30);
   volumeProp->SetDiffuse(0.60);
@@ -403,14 +412,67 @@ void vtkSlicerVolumeRenderingLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
-::CopyScalarDisplayToVolumeRenderingDisplayNode(
-  vtkMRMLVolumeRenderingDisplayNode* vspNode)
+::SetLabelMapToVolumeProp(vtkLookupTable* lut,
+                          vtkVolumeProperty* volumeProp)
+{
+  assert(lut && volumeProp);
+
+  vtkNew<vtkPiecewiseFunction> opacity;
+  vtkNew<vtkColorTransferFunction> colorTransfer;
+
+  double value = lut->GetTableRange()[0];
+  double step = (lut->GetTableRange()[1] - lut->GetTableRange()[0]) /
+                lut->GetNumberOfTableValues();
+  for (int i = 0; i < lut->GetNumberOfTableValues(); ++i, value += step)
+    {
+    double color[4];
+    lut->GetTableValue(i, color);
+    opacity->AddPoint(value, color[3]);
+    colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
+    }
+
+  vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
+  if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
+    {
+    volumePropOpacity->DeepCopy(opacity.GetPointer());
+    }
+
+  vtkColorTransferFunction *volumePropColorTransfer = volumeProp->GetRGBTransferFunction();
+  if (this->IsDifferentFunction(colorTransfer.GetPointer(), volumePropColorTransfer))
+    {
+    volumePropColorTransfer->DeepCopy(colorTransfer.GetPointer());
+    }
+
+  volumeProp->SetInterpolationTypeToNearest();
+  volumeProp->ShadeOff();
+  volumeProp->SetAmbient(0.40);
+  volumeProp->SetDiffuse(0.60);
+  volumeProp->SetSpecular(0.);
+  volumeProp->SetSpecularPower(1);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::CopyDisplayToVolumeRenderingDisplayNode(
+  vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLVolumeDisplayNode* displayNode)
 {
   assert(vspNode);
-  this->CopyScalarDisplayToVolumeRenderingDisplayNode(
-    vspNode,
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      vspNode->GetVolumeNode()->GetDisplayNode()));
+  if (!displayNode)
+    {
+    displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(
+      vspNode->GetVolumeNode()->GetDisplayNode());
+    }
+  assert(displayNode);
+  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
+    {
+    this->CopyScalarDisplayToVolumeRenderingDisplayNode(vspNode,
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode));
+    }
+  else if (vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(displayNode))
+    {
+    this->CopyLabelMapDisplayToVolumeRenderingDisplayNode(vspNode,
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(displayNode));
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -421,10 +483,16 @@ void vtkSlicerVolumeRenderingLogic
 {
   assert(vspNode);
   assert(vspNode->GetVolumePropertyNode());
+
+  if (!vpNode)
+    {
+    vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      vspNode->GetVolumeNode()->GetDisplayNode());
+    }
   assert(vpNode);
 
   double scalarRange[2];
-  vpNode->GetScalarRange(scalarRange);
+  vpNode->GetDisplayScalarRange(scalarRange);
 
   double windowLevel[2];
   windowLevel[0] = vpNode->GetWindow();
@@ -440,8 +508,37 @@ void vtkSlicerVolumeRenderingLogic
     vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
   int disabledModify = vspNode->StartModify();
-  this->SetWindowLevelAndThresholdToVolumeProp(
-    scalarRange, threshold, windowLevel, lut, prop);
+  this->SetThresholdToVolumeProp(
+    scalarRange, threshold, prop);
+  this->SetWindowLevelToVolumeProp(
+    scalarRange, windowLevel, lut, prop);
+  vspNode->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::CopyLabelMapDisplayToVolumeRenderingDisplayNode(
+  vtkMRMLVolumeRenderingDisplayNode* vspNode,
+  vtkMRMLLabelMapVolumeDisplayNode* vpNode)
+{
+  assert(vspNode);
+  assert(vspNode->GetVolumePropertyNode());
+
+  if (!vpNode)
+    {
+    vpNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
+      vspNode->GetVolumeNode()->GetDisplayNode());
+    }
+  assert(vpNode);
+
+  vtkLookupTable* lut = vpNode->GetColorNode() ?
+    vpNode->GetColorNode()->GetLookupTable() : 0;
+
+  vtkVolumeProperty *prop =
+    vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+
+  int disabledModify = vspNode->StartModify();
+  this->SetLabelMapToVolumeProp(lut, prop);
   vspNode->EndModify(disabledModify);
 }
 
@@ -699,7 +796,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
   displayNode->SetAndObserveROINodeID((*roiNode)->GetID());
 
   //this->UpdateVolumePropertyFromImageData(displayNode);
-  this->CopyScalarDisplayToVolumeRenderingDisplayNode(displayNode);
+  this->CopyDisplayToVolumeRenderingDisplayNode(displayNode);
 
   this->FitROIToVolume(displayNode);
 }
