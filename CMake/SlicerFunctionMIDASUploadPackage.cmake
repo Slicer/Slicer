@@ -30,7 +30,7 @@
 function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
   include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroExtractRepositoryInfo.cmake")
   include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroGetPlatformArchitectureBitness.cmake")
-  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
+  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR "${CTEST_SOURCE_DIRECTORY}")
   SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX Slicer)
 
   if(NOT DEFINED MIDAS_PACKAGE_EMAIL)
