@@ -651,7 +651,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
     // switch to updating state to avoid events mess
     //this->m_Updating = 1;
 
-    vtkHandleWidget *h1 = this->GetSeed(0);
+    //vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);
 
     // convert the coordinates
@@ -682,7 +682,6 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
       {
       rz = rx;
       }
-
 
     // done calculating the bounds
 

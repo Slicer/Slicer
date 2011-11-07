@@ -776,7 +776,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     this->m_Updating = 1;
 
 
-    vtkHandleWidget *h1 = this->GetSeed(0);
+    //vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);
 
     // convert the coordinates
