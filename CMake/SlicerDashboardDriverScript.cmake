@@ -280,7 +280,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         message("Uploading ...")
         foreach(p ${packages})
           SlicerFunctionMIDASUploadPackage(${p} "installer" slicer_midas_upload_status)
-          if(slicer_midas_upload_status STREQUAL "fail")
+          if(NOT slicer_midas_upload_status STREQUAL "ok")
             ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
             if(run_ctest_submit)
               ctest_submit(PARTS Upload)
