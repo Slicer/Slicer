@@ -148,7 +148,7 @@ void qSlicerCoreApplicationPrivate::init()
   // Instantiate ErrorLogModel
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
   this->ErrorLogModel->setLogEntryGrouping(true);
-  this->ErrorLogModel->setTerminalOutputEnabled(true);
+  this->ErrorLogModel->setTerminalOutputs(ctkErrorLogModel::All);
 
 #ifndef Q_WS_MAC
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
