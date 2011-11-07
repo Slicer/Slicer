@@ -163,7 +163,7 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)
 option(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
-option(Slicer_BUILD_LEGACY_CLI       "Build Slicer LEGACY_CLI Plugins" OFF)
+option(Slicer_BUILD_LEGACY_CLI       "Build Slicer LEGACY_CLI Plugins" ON)
 option(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
 CMAKE_DEPENDENT_OPTION(
   Slicer_UPLOAD_EXTENSIONS "Build, test, package and upload extensions" OFF
