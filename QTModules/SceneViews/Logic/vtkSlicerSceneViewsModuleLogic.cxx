@@ -25,7 +25,6 @@ vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)
 //-----------------------------------------------------------------------------
 vtkSlicerSceneViewsModuleLogic::vtkSlicerSceneViewsModuleLogic()
 {
-  this->m_Widget = 0;
   this->m_LastAddedSceneViewNode = 0;
   this->ActiveHierarchyNodeID = NULL;
 }
@@ -33,11 +32,6 @@ vtkSlicerSceneViewsModuleLogic::vtkSlicerSceneViewsModuleLogic()
 //-----------------------------------------------------------------------------
 vtkSlicerSceneViewsModuleLogic::~vtkSlicerSceneViewsModuleLogic()
 {
-  if (this->m_Widget)
-    {
-    this->m_Widget = 0;
-    }
-
   // let go of pointer to the last added node
   if (this->m_LastAddedSceneViewNode)
     {
@@ -57,36 +51,59 @@ void vtkSlicerSceneViewsModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 
-//-----------------------------------------------------------------------------
-/// Set and observe the GUI widget
-//-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::SetAndObserveWidget(qSlicerSceneViewsModuleWidget* widget)
-{
-  if (!widget)
-    {
-    return;
-    }
-
-  this->m_Widget = widget;
-
-}
-
 //---------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
-  vtkDebugMacro("InitializeEventListeners");
-  // a good time to add the observed events!
+  vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
+  
   vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  // TBD: not needed, one should listen to the nodes directy
-  // events->InsertNextValue(vtkCommand::ModifiedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
+//  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::AddMissingHierarchyNodes()
+{
+  vtkDebugMacro("AddMissingHierarchyNodes");
+
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  
+  // don't do anything if the scene is still updating
+  if (this->GetMRMLScene() &&
+      this->GetMRMLScene()->GetIsUpdating())
+    {
+    vtkDebugMacro("AddMissingHierarchyNodes: updating, returning");
+    return;
+    }
+
+  vtkSmartPointer<vtkCollection> sceneViewNodes;
+  sceneViewNodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSceneViewNode"));
+  unsigned int numNodes = sceneViewNodes->GetNumberOfItems();
+  vtkDebugMacro("AddMissingHierarchyNodes: have " << numNodes << " scene view nodes");
+  for (unsigned int n = 0; n < numNodes; n++)
+    {
+    vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(sceneViewNodes->GetItemAsObject(n));
+    vtkMRMLHierarchyNode *hierarchyNode =  NULL;
+    hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(sceneViewNode->GetScene(), sceneViewNode->GetID());
+    if (!hierarchyNode)
+      {
+      vtkDebugMacro("AddMissingHierarchyNodes: missing a hierarchy node for scene view node " << sceneViewNode->GetID() << ", adding one");
+      int retval = this->AddHierarchyNodeForNode(sceneViewNode);
+      if (!retval)
+        {
+        vtkErrorMacro("AddMissingHierarchyNodes: failed to add a missing a hierarchy node for scene view node " << sceneViewNode->GetID());
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -132,32 +149,29 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
 void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneImportedEvent()
 {
   vtkDebugMacro("OnMRMLSceneImportedEvent");
-  // update from the updated scene
-  if (this->m_Widget)
-    {
-    this->m_Widget->refreshTree();
-    }
+
+  // this may have been an imported scene with old style snapshot nodes and no
+  // hierarchies, so fill in some hierarchies
+  this->AddMissingHierarchyNodes();
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneRestoredEvent()
 {
   vtkDebugMacro("OnMRMLSceneRestoredEvent");
-  // update from the updated scene
-  if (this->m_Widget)
-    {
-    this->m_Widget->refreshTree();
-    }
+  // if have a scene view to restore that goes back to a state with scene
+  // views without hierarchy nodes, add them back in
+  this->AddMissingHierarchyNodes();
 }
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  vtkDebugMacro("OnMRMLSceneViewNodeModifiedEvent " << node->GetID());
+  vtkDebugMacro("OnMRMLNodeModifiedEvent " << node->GetID());
 
   if (this->GetMRMLScene() &&
       this->GetMRMLScene()->GetIsUpdating())
     {
-    vtkDebugMacro("OnMRMLSceneViewNodeModifiedEvent: updating, returning");
+    vtkDebugMacro("OnMRMLNodeModifiedEvent: updating, returning");
     return;
     }
   
@@ -165,12 +179,6 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   if (!sceneViewNode)
     {
     return;
-    }
-
-  // refresh the hierarchy tree
-  if (this->m_Widget)
-    {
-    this->m_Widget->refreshTree();
     }
 }
 
@@ -184,11 +192,9 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneClosedEvent()
 
   if (this->GetActiveHierarchyNodeID())
     {
+    // this is important: otherwise adding a new scene view node might end up
+    // setting it's parent to itself
     this->SetActiveHierarchyNodeID(NULL);
-    }
-  if (this->m_Widget)
-    {
-    this->m_Widget->refreshTree();
     }
 }
 
@@ -545,7 +551,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
     vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(node->GetScene(), node->GetID());
     if (hnode != NULL)
       {
-      vtkDebugMacro("AddHierarchyNodeForNode: scene view node " << node->GetID() << " already has a hierarchy node, returning.");
+      vtkWarningMacro("AddHierarchyNodeForNode: scene view node " << node->GetID() << " already has a hierarchy node, returning.");
       return true;
       }
     }
@@ -578,7 +584,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
   vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::New();
   if (hierarchyNode == NULL)
     {
-    vtkErrorMacro("AddHierarchyNodeForNode: can't create a new hierarhcy node to associate with scene view " << node->GetID());
+    vtkErrorMacro("AddHierarchyNodeForNode: can't create a new hierarchy node to associate with scene view " << node->GetID());
     return 0;
     }
 
@@ -610,7 +616,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
 
     this->GetMRMLScene()->InsertBeforeNode(node,hierarchyNode);
     hierarchyNode->SetAssociatedNodeID(node->GetID());
-    vtkDebugMacro("AddHierarchyNodeForNode: added hierarchy node, id = " << (hierarchyNode->GetID() ? hierarchyNode->GetID() : "null") << ", set associated node id on the hierarhcy node of " << (hierarchyNode->GetAssociatedNodeID() ? hierarchyNode->GetAssociatedNodeID() : "null"));
+    vtkDebugMacro("AddHierarchyNodeForNode: added hierarchy node, id = " << (hierarchyNode->GetID() ? hierarchyNode->GetID() : "null") << ", set associated node id on the hierarchy node of " << (hierarchyNode->GetAssociatedNodeID() ? hierarchyNode->GetAssociatedNodeID() : "null"));
     }
   
   hierarchyNode->Delete();
@@ -634,7 +640,8 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
   const char *toplevelName = "SceneViewToplevelHierarchyNode";
   char *toplevelNodeID = NULL;
   //vtkMRMLHierarchyNode* toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode"));
-  vtkCollection *col = this->GetMRMLScene()->GetNodesByClass("vtkMRMLHierarchyNode");
+  vtkSmartPointer<vtkCollection> col;
+  col.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLHierarchyNode"));
   vtkMRMLHierarchyNode* toplevelNode = NULL;
   unsigned int numNodes = col->GetNumberOfItems();
   if (numNodes != 0)
@@ -678,8 +685,6 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     {
     toplevelNodeID = toplevelNode->GetID();
     }
-  col->RemoveAllItems();
-  col->Delete();
   return toplevelNodeID;
 }
 
@@ -716,23 +721,12 @@ void vtkSlicerSceneViewsModuleLogic::AddNodeCompleted(vtkMRMLHierarchyNode* hier
     return;
     }
 
-  if (!this->m_Widget)
-    {
-    return;
-    }
-
   vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(hierarchyNode->GetAssociatedNode());
 
   if (!sceneViewNode)
     {
     vtkErrorMacro("AddNodeCompleted: Could not get scene view node.")
     return;
-    }
-
-  // refresh the hierarchy tree
-  if (this->m_Widget)
-    {
-    this->m_Widget->refreshTree();
     }
 
   this->m_LastAddedSceneViewNode = sceneViewNode;

@@ -81,6 +81,12 @@ void qMRMLSceneViewsTreeViewPrivate::init()
   this->SortFilterModel = q->sortFilterProxyModel();
   //this->SortFilterModel->setShowHidden(true);
 
+  // don't show displayable and model hierarchies
+  QStringList hideChildrenNodeTypes = QStringList();
+  hideChildrenNodeTypes.append("vtkMRMLDisplayableHierarchyNode");
+  hideChildrenNodeTypes.append("vtkMRMLModelHierarchyNode");
+  this->SortFilterModel->setHideChildNodeTypes(hideChildrenNodeTypes);
+
   // Useful views to debug
   //QTreeView* treeView = new QTreeView(0);
   //treeView->setModel(this->SceneModel);

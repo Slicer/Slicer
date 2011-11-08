@@ -7,6 +7,7 @@
 // SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
 
+#include <qSlicerSceneViewsModuleWidget.h>
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
 //-----------------------------------------------------------------------------

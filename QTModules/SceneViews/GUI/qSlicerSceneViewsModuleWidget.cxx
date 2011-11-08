@@ -93,7 +93,6 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // setup the hierarchy treeWidget
   this->hierarchyTreeView->setLogic(this->logic());
   this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
-  this->logic()->SetAndObserveWidget(q);
   this->hierarchyTreeView->hideScene();
 
   q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
@@ -108,6 +107,15 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(showSceneViewDialog()));
 
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
+
+  // listen to some mrml events
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneImportedEvent,
+                 q, SLOT(onMRMLSceneImportedEvent()));
+
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneClosedEvent,
+                 q, SLOT(onMRMLSceneClosedEvent()));
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneRestoredEvent,
+                 q, SLOT(onMRMLSceneRestoredEvent()));
 
   // update from the mrml scene
   q->refreshTree();
@@ -184,6 +192,29 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onMRMLSceneImportedEvent()
+{
+  //qDebug("onMRMLSceneImportedEvent");
+
+  // logic will be listening for this event as well and filling in missing
+  // hierarchy nodes, so just refresh the tree
+  this->refreshTree();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onMRMLSceneRestoredEvent()
+{
+  //qDebug("onMRMLSceneImportedEvent");
+  this->refreshTree();
+}
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onMRMLSceneClosedEvent()
+{
+  //qDebug("onMRMLSceneClosedEvent");
+  this->refreshTree();
+}
+
+//-----------------------------------------------------------------------------
 // Refresh the hierarchy tree after an sceneView was added or modified.
 // Just do some layout changes - nothing special!
 //-----------------------------------------------------------------------------
@@ -197,7 +228,7 @@ void qSlicerSceneViewsModuleWidget::refreshTree()
     // scene is updating, return
     return;
     }
-
+  //qDebug("refreshTree");
   d->hierarchyTreeView->setMRMLScene(d->logic()->GetMRMLScene());
   d->hierarchyTreeView->hideScene();
 }

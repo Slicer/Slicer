@@ -27,9 +27,11 @@
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 
-#include "qSlicerSceneViewsModuleExport.h"
+#include "vtkSlicerSceneViewsModuleLogicExport.h"
+//#include "qSlicerSceneViewsModuleExport.h"
 
-#include "GUI/qSlicerSceneViewsModuleWidget.h"
+#include "vtkSlicerModuleLogic.h"
+
 
 // VTK includes
 class vtkImageData;
@@ -38,20 +40,20 @@ class vtkMRMLHierarchyNode;
 #include <string>
 
 /// \ingroup Slicer_QtModules_SceneViews
-class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT vtkSlicerSceneViewsModuleLogic :
-  public vtkMRMLAbstractLogic
+class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
+  public vtkSlicerModuleLogic
 {
 public:
 
   static vtkSlicerSceneViewsModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSceneViewsModuleLogic,vtkMRMLAbstractLogic);
+  vtkTypeRevisionMacro(vtkSlicerSceneViewsModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  // After a node was added, propagate to widget
-  void AddNodeCompleted(vtkMRMLHierarchyNode* hierarchyNode);
+  /// Initialize listening to MRML events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  // Register the widget
-  void SetAndObserveWidget(qSlicerSceneViewsModuleWidget* widget);
+  /// After a node was added, save it as the last added one
+  void AddNodeCompleted(vtkMRMLHierarchyNode* hierarchyNode);
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
@@ -109,15 +111,16 @@ public:
   /// get/set the id of the currently active hierarchy node
   vtkGetStringMacro(ActiveHierarchyNodeID);
   vtkSetStringMacro(ActiveHierarchyNodeID);
-  
+
+  /// Scan through the current mrml scene and make sure all scene view nodes
+  /// have hierarchy nodes, adding them if missing
+  void AddMissingHierarchyNodes();
+
 protected:
 
   vtkSlicerSceneViewsModuleLogic();
 
   virtual ~vtkSlicerSceneViewsModuleLogic();
-
-  // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneImportedEvent();
@@ -130,7 +133,6 @@ private:
 
   std::string m_StringHolder;
 
-  qSlicerSceneViewsModuleWidget* m_Widget;
 
   vtkMRMLSceneViewNode* m_LastAddedSceneViewNode;
 
