@@ -51,6 +51,7 @@ public:
   void SetSliceLogics(vtkCollection* sliceLogics);
   vtkCollection* GetSliceLogics()const;
   vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
+  vtkMRMLSliceLogic* GetSliceLogicByLayoutLabel(const char* layoutLabel) const;
 
   /// 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
