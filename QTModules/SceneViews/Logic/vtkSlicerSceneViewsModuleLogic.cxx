@@ -159,9 +159,6 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneImportedEvent()
 void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneRestoredEvent()
 {
   vtkDebugMacro("OnMRMLSceneRestoredEvent");
-  // if have a scene view to restore that goes back to a state with scene
-  // views without hierarchy nodes, add them back in
-  this->AddMissingHierarchyNodes();
 }
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)

@@ -13,6 +13,7 @@ Version:   $Revision: 1.14 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLSceneViewStorageNode.h"
@@ -23,6 +24,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cassert>
@@ -417,7 +419,15 @@ void vtkMRMLSceneViewNode::RestoreScene()
     if (node)
       {
       std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
-      if (iter == snapshotMap.end() && !node->IsA("vtkMRMLSceneViewNode") && !node->IsA("vtkMRMLSnapshotClipNode") && node->GetSaveWithScene())
+      vtkSmartPointer<vtkMRMLHierarchyNode> hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
+      // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
+      // sceneview nodes nor top level scene view hierarchy nodes
+      if (iter == snapshotMap.end() &&
+          !node->IsA("vtkMRMLSceneViewNode") &&
+          !(hnode && hnode->GetAssociatedNode() && hnode->GetAssociatedNode()->IsA("vtkMRMLSceneViewNode")) &&
+          !(hnode && hnode->GetName() && !strncmp(hnode->GetName(), "SceneViewToplevel", 17)) &&
+          !node->IsA("vtkMRMLSnapshotClipNode") &&
+          node->GetSaveWithScene())
         {
         removedNodes.push_back(node);
         }
