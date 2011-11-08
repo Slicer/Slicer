@@ -55,7 +55,7 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   sprintf(this->m_MeasurementFormat, "%s", "%.1f");
 
   this->m_CoordinateFormat = new char[8];
-  sprintf(this->m_CoordinateFormat, "%s", "%.0f");
+  sprintf(this->m_CoordinateFormat, "%s", "%.1f");
 
 }
 
