@@ -1444,7 +1444,9 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 
   double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
 
-  if (distance > 1.0) // TODO find a better value?
+  // TODO find a better value?
+  // - use a smaller number to make fiducial seeding more smooth
+  if (distance > VTK_DBL_EPSILON) 
     {
     changed = true;
     }
