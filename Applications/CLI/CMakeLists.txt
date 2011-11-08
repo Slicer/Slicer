@@ -10,6 +10,7 @@ set(cli_modules
   ComputeSUVBodyWeight
   ConfidenceConnected
   CurvatureAnisotropicDiffusion
+  DiffusionApplications
   DiffusionTensorEstimation
   DiffusionTensorMathematics
   DiffusionWeightedMasking
@@ -37,7 +38,7 @@ set(cli_modules
   PolyDataToLabelmap
   ProbeVolumeWithModel
   Realign
-  ResampleVolume2
+  ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
   RobustStatisticsSegmenter
   Seeding
   SparseFieldLevelSetContour
@@ -52,7 +53,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     AffineRegistration
     BSplineDeformableRegistration
     BSplineToDeformationField
-    DiffusionApplications
     DiffusionTensorTest
     DiffusionWeightedTest
     LinearRegistration
