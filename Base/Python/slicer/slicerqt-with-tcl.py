@@ -77,7 +77,8 @@ def registerScriptedDisplayableManagers(sliceWidget):
       $sw configure -enabled false
     }
     # enable the specific instances that are working well currently (low overhead)
-    set enabledSWidget {ModelSWidget SliceSWidget VolumeDisplaySWidget}
+    # set enabledSWidget {ModelSWidget SliceSWidget VolumeDisplaySWidget}
+    set enabledSWidget {VolumeDisplaySWidget}
     foreach esw $enabledSWidget {
       foreach sw [itcl::find objects -isa $esw] {
         $sw configure -enabled true
