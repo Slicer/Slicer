@@ -56,6 +56,12 @@ qSlicerColorsModule::~qSlicerColorsModule()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerColorsModule::category()const
+{
+  return "Informatics";
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerColorsModule::icon()const
 {
   return QIcon(":/Icons/Colors.png");
