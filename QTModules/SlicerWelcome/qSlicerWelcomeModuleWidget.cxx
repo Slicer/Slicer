@@ -26,14 +26,13 @@
 // SlicerQt includes
 #include "qSlicerWelcomeModuleWidget.h"
 #include "ui_qSlicerWelcomeModule.h"
-#include "qSlicerCoreApplication.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIO.h"
 #include "qSlicerIOManager.h"
+#include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModulePanel.h"
-#include "qSlicerCorePythonManager.h"
 
 // CTK includes
 #include "ctkButtonGroup.h"
@@ -44,14 +43,75 @@ class qSlicerMainWindow;
 /// \ingroup Slicer_QtModules_SlicerWelcome
 class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModule
 {
+  Q_DECLARE_PUBLIC(qSlicerWelcomeModuleWidget);
+protected:
+  qSlicerWelcomeModuleWidget* const q_ptr;
 public:
+  qSlicerWelcomeModuleWidgetPrivate(qSlicerWelcomeModuleWidget& object);
   void setupUi(qSlicerWidget* widget);
+
+  bool selectModule(const QString& moduleName);
 };
+
+//-----------------------------------------------------------------------------
+// qSlicerWelcomeModuleWidgetPrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerWelcomeModuleWidgetPrivate::qSlicerWelcomeModuleWidgetPrivate(qSlicerWelcomeModuleWidget& object)
+  : q_ptr(&object)
+{
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
+{
+  this->Ui_qSlicerWelcomeModule::setupUi(widget);
+
+  // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
+  ctkButtonGroup * group = new ctkButtonGroup(widget);
+
+  // Add all collabsibleWidgetButton to a button group
+  QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
+  foreach(ctkCollapsibleButton* collapsible, collapsibles)
+    {
+    group->addButton(collapsible);
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
+{
+  Q_Q(qSlicerWelcomeModuleWidget);
+  qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
+  if (!moduleManager)
+    {
+    return false;
+    }
+  qSlicerAbstractCoreModule * module = moduleManager->module(moduleName);
+  if(!module)
+    {
+    QMessageBox::warning(
+          q, q->tr("Raising %1 Module:").arg(moduleName),
+          q->tr("Unfortunately, this requested module is not available in this Slicer session."),
+          QMessageBox::Ok);
+    return false;
+    }
+  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return false;
+    }
+  layoutManager->setCurrentModule(moduleName);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerWelcomeModuleWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerWelcomeModuleWidget::qSlicerWelcomeModuleWidget(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerWelcomeModuleWidgetPrivate)
+  , d_ptr(new qSlicerWelcomeModuleWidgetPrivate(*this))
 {
 }
 
@@ -72,7 +132,8 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (loadNonDicomData()));
   connect(d->LoadSampleDataButton, SIGNAL(clicked()),
           this, SLOT (loadRemoteSampleData()));
-  connect(d->LoadVolumeButton, SIGNAL(clicked()), this, SLOT (loadVolume()));
+  connect(d->LoadVolumeButton, SIGNAL(clicked()),
+          this, SLOT (loadVolume()));
 
   this->Superclass::setup();
 }
@@ -91,37 +152,8 @@ bool qSlicerWelcomeModuleWidget::loadVolume()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadDicomData()
 {
-  // Open the DICOM module.
-  qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
-  if (!moduleManager)
-    {
-    return false;
-    }
-  qSlicerAbstractCoreModule * dicomDataModule = moduleManager->module("DICOM");
-  if(!dicomDataModule)
-    {
-    QMessageBox::warning (
-          this, tr("Raising DICOM Module:"),
-          tr("Unfortunately, this module is not available in this Slicer session."),
-          QMessageBox::Ok);
-    return false;
-    }
-
-  // TODO Provide an easy mechanism to change the selected the module
-  qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-  if (!pythonManager)
-    {
-    QMessageBox::warning (
-          this, tr("Raising DICOM Module:"),
-          tr("Unfortunately, the python script for displaying the sample "
-             "data module is not present in this Slicer session."),
-          QMessageBox::Ok);
-    return false;
-    }
-
-  pythonManager->executeString(
-        QString("slicer.util.mainWindow().moduleSelector().selectModule('DICOM');"));
-  return true;
+  Q_D(qSlicerWelcomeModuleWidget);
+  return d->selectModule("DICOM");
 }
 
 
@@ -140,36 +172,8 @@ bool qSlicerWelcomeModuleWidget::loadNonDicomData()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
 {
-  qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
-  if (!moduleManager)
-    {
-    return false;
-    }
-  qSlicerAbstractCoreModule * sampleDataModule = moduleManager->module("SampleData");
-  if(!sampleDataModule)
-    {
-    QMessageBox::warning (
-          this, tr("Raising SampleData Module:"),
-          tr("Unfortunately, this module is not available in this Slicer session."),
-          QMessageBox::Ok);
-    return false;
-    }
-
-  // TODO Provide an easy mechanism to change the selected the module
-  qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-  if (!pythonManager)
-    {
-    QMessageBox::warning (
-          this, tr("Raising SampleData Module:"),
-          tr("Unfortunately, the python script for displaying the sample "
-             "data module is not present in this Slicer session."),
-          QMessageBox::Ok);
-    return false;
-    }
-
-  pythonManager->executeString(
-        QString("slicer.util.mainWindow().moduleSelector().selectModule('SampleData');"));
-  return true;
+  Q_D(qSlicerWelcomeModuleWidget);
+  return d->selectModule("SampleData");
 }
 
 //-----------------------------------------------------------------------------
@@ -178,23 +182,4 @@ bool qSlicerWelcomeModuleWidget::presentTutorials()
   // TODO Use appropriate URL - Wiki URL could be a setting ?
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
   return true;
-}
-
-//-----------------------------------------------------------------------------
-// qSlicerWelcomeModuleWidgetPrivate methods
-
-//-----------------------------------------------------------------------------
-void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
-{
-  this->Ui_qSlicerWelcomeModule::setupUi(widget);
-
-  // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
-  ctkButtonGroup * group = new ctkButtonGroup(widget);
-
-  // Add all collabsibleWidgetButton to a button group
-  QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
-  foreach(ctkCollapsibleButton* collapsible, collapsibles)
-    {
-    group->addButton(collapsible);
-    }
 }
