@@ -164,7 +164,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(applyPreset(vtkMRMLNode*)));
 
-  QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(volumePropertyChanged()),
+  QObject::connect(this->VolumePropertyNodeWidget,  SIGNAL(chartsExtentChanged()),
                    q, SLOT(updatePresetSliderRange()));
 
   QObject::connect(this->PresetOffsetSlider, SIGNAL(valueChanged(double)),
@@ -894,11 +894,9 @@ void qSlicerVolumeRenderingModuleWidget::updatePresetSliderRange()
     {
     return;
     }
-  vtkPiecewiseFunction* function =
-    d->VolumePropertyNodeWidget->volumeProperty()->GetScalarOpacity();
-  double range[2];
-  function->GetRange(range);
-  double width = range[1] - range[0];
+  double extent[4];
+  d->VolumePropertyNodeWidget->chartsExtent(extent);
+  double width = extent[1] - extent[0];
   bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
   d->PresetOffsetSlider->setSingleStep(
     width ? ctk::closestPowerOfTen(width) / 100. : 0.1);

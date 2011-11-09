@@ -41,7 +41,7 @@ protected:
 
 public:
   qMRMLVolumePropertyNodeWidgetPrivate(qMRMLVolumePropertyNodeWidget& object);
-  void init();
+  virtual void setupUi();
 
   vtkMRMLVolumePropertyNode*                   VolumePropertyNode;
 };
@@ -55,10 +55,12 @@ qMRMLVolumePropertyNodeWidgetPrivate::qMRMLVolumePropertyNodeWidgetPrivate(
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidgetPrivate::init()
+void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
 {
   Q_Q(qMRMLVolumePropertyNodeWidget);
   this->Ui_qMRMLVolumePropertyNodeWidget::setupUi(q);
+  QObject::connect(this->VolumeProperty, SIGNAL(chartsExtentChanged()),
+                   q, SIGNAL(chartsExtentChanged()));
 }
 
 // --------------------------------------------------------------------------
@@ -69,7 +71,7 @@ qMRMLVolumePropertyNodeWidget::qMRMLVolumePropertyNodeWidget(QWidget* parentWidg
   , d_ptr(new qMRMLVolumePropertyNodeWidgetPrivate(*this))
 {
   Q_D(qMRMLVolumePropertyNodeWidget);
-  d->init();
+  d->setupUi();
 }
 
 // --------------------------------------------------------------------------
@@ -113,6 +115,20 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   qvtkReconnect(d->VolumeProperty->volumeProperty(), newVolumeProperty,
                 vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
   d->VolumeProperty->setVolumeProperty(newVolumeProperty);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4])const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  d->VolumeProperty->chartsBounds(bounds);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  d->VolumeProperty->chartsExtent(extent);
 }
 
 // --------------------------------------------------------------------------

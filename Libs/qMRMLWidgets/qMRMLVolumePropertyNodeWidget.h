@@ -55,6 +55,12 @@ public:
   /// node.
   vtkVolumeProperty* volumeProperty()const;
 
+  ///
+  /// Return the outer bounds of the opacity and color transfer function
+  /// views.
+  void chartsBounds(double bounds[4])const;
+  void chartsExtent(double extent[4])const;
+
 public slots:
   /// Convenient function to connect with signal/slots
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
@@ -65,6 +71,7 @@ public slots:
 
 signals:
   void volumePropertyChanged();
+  void chartsExtentChanged();
 
 protected slots:
   void updateFromVolumePropertyNode();
