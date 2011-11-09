@@ -57,7 +57,7 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
   
   vtkIntArray *events = vtkIntArray::New();
-//  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
 //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
@@ -124,6 +124,17 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
     {
     return;
     }
+
+  // only deal with this special case: the master scene view that's created
+  // when the scene is saved needs a hierarchy added for it
+  if (!sceneViewNode->GetName() ||
+      (sceneViewNode->GetName() &&
+       strncmp(sceneViewNode->GetName(),"Master Scene View", 17) != 0))
+    {
+    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not a master scene view node, node added is named " << sceneViewNode->GetName());
+    return;
+    }
+  vtkDebugMacro("OnMRMLSceneNodeAddedEvent: master scene view added");
   
   int retval = this->AddHierarchyNodeForNode(sceneViewNode);
   vtkMRMLHierarchyNode* hierarchyNode = NULL;
