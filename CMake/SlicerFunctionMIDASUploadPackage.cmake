@@ -63,7 +63,7 @@ function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
 
   get_filename_component(basename "${package}" NAME)
   _SlicerEscapeForUrl(basename "${basename}")
-  _SlicerEscapeForUrl(rev "${Slicer_WC_VERSION}")
+  _SlicerEscapeForUrl(rev "${Slicer_WC_REVISION}")
   _SlicerEscapeForUrl(os "${Slicer_PLATFORM}")
   _SlicerEscapeForUrl(arch "${Slicer_ARCHITECTURE}")
   _SlicerEscapeForUrl(packagetype "${packagetype}")
