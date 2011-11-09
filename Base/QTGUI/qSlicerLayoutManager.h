@@ -40,6 +40,11 @@ public:
   /// displayableManagers should be sourced from.
   void setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory);
 
+  void setCurrentModule(const QString& moduleName);
+
+signals:
+  void selectModule(const QString& moduleName);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerLayoutManager);
   Q_DISABLE_COPY(qSlicerLayoutManager);

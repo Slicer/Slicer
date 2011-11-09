@@ -223,6 +223,11 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
                    q, SLOT(onLayoutChanged(int)));
 
+  // TODO: When module will be managed by the layoutManager, this should be
+  //       revisited.
+  QObject::connect(this->LayoutManager, SIGNAL(selectModule(QString)),
+                   this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
+
   // Add menus for configuring compare view
   QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."));
   compareMenu->addAction(this->actionViewLayoutCompare_2_viewers);

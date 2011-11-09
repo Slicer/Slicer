@@ -159,3 +159,9 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
   Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif
 }
+
+//------------------------------------------------------------------------------
+void qSlicerLayoutManager::setCurrentModule(const QString& moduleName)
+{
+  emit this->selectModule(moduleName);
+}
