@@ -275,6 +275,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
   vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
   if (storageNode == 0)
     {
+    qDebug() << "nodeFileInfo: unable to create a new default storage node for node " << node->GetID();
     return QFileInfo();
     }
   
@@ -662,13 +663,14 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   const char *defaultSceneName = "Master Scene View";
   vtkMRMLSceneViewNode * newSceneViewNode = NULL;
   vtkMRMLSceneViewNode *sceneViewNode = NULL;
-  vtkCollection *oldSceneViewNodes = this->MRMLScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName);
+  vtkSmartPointer<vtkCollection> oldSceneViewNodes;
+  oldSceneViewNodes.TakeReference(this->MRMLScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));
   if (oldSceneViewNodes->GetNumberOfItems() == 0)
     {
     // make a new one
     newSceneViewNode = vtkMRMLSceneViewNode::New();
     newSceneViewNode->SetScene(this->MRMLScene);
-    newSceneViewNode->SetName(this->MRMLScene->GetUniqueNameByString(defaultSceneName));
+    newSceneViewNode->SetName(defaultSceneName);
     newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
     this->MRMLScene->AddNode(newSceneViewNode);
 
@@ -711,11 +713,6 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   if (newSceneViewNode)
     {
     newSceneViewNode->Delete();
-    }
-  if (oldSceneViewNodes->GetNumberOfItems() > 0)
-    {
-    oldSceneViewNodes->RemoveAllItems();
-    oldSceneViewNodes->Delete();
     }
   
   // remove unreferenced nodes
