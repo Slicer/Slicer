@@ -279,8 +279,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
           CONFIG ${CTEST_BUILD_CONFIGURATION}
           RETURN_VAR packages)
         message("Uploading ...")
-        # Needed to find bitness
-        include(CMakeBackwardsCompatibilityC)
         foreach(p ${packages})
           SlicerFunctionMIDASUploadPackage(${p} "installer" slicer_midas_upload_status)
           if(NOT slicer_midas_upload_status STREQUAL "ok")
