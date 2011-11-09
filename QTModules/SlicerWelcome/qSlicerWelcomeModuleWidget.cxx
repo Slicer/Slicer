@@ -66,16 +66,14 @@ void qSlicerWelcomeModuleWidget::setup()
   Q_D(qSlicerWelcomeModuleWidget);
   d->setupUi(this);
 
-  //--- connections.
-  connect (d->LoadDicomDataButton, SIGNAL (clicked() ),
-          this, SLOT (loadDicomData()) );
-  connect (d->LoadNonDicomDataButton, SIGNAL(clicked()),
-           this, SLOT (loadNonDicomData()) );
- connect (d->LoadSampleDataButton, SIGNAL(clicked()),
-           this, SLOT (loadRemoteSampleData()) );
-  connect (d->LoadVolumeButton, SIGNAL(clicked()),
-           this, SLOT (loadVolume()) );
-  
+  connect(d->LoadDicomDataButton, SIGNAL(clicked()),
+          this, SLOT (loadDicomData()));
+  connect(d->LoadNonDicomDataButton, SIGNAL(clicked()),
+          this, SLOT (loadNonDicomData()));
+  connect(d->LoadSampleDataButton, SIGNAL(clicked()),
+          this, SLOT (loadRemoteSampleData()));
+  connect(d->LoadVolumeButton, SIGNAL(clicked()), this, SLOT (loadVolume()));
+
   this->Superclass::setup();
 }
 
@@ -93,7 +91,7 @@ bool qSlicerWelcomeModuleWidget::loadVolume()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadDicomData()
 {
-  //--- open the DICOM module.
+  // Open the DICOM module.
   qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
   if (!moduleManager)
     {
