@@ -149,15 +149,11 @@ void qSlicerCoreApplicationPrivate::init()
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
   this->ErrorLogModel->setLogEntryGrouping(true);
   this->ErrorLogModel->setTerminalOutputs(ctkErrorLogModel::All);
-
-#ifndef Q_WS_MAC
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
-#endif
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
-
   this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   // Create the application Logic object,
