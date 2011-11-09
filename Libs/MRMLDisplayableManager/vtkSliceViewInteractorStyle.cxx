@@ -270,7 +270,16 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       break;
     default:
       {
-      this->Superclass::OnMouseMove();
+      if (this->Interactor->GetShiftKey())
+        {
+        double eventRAS[4];
+        this->GetEventRAS(eventRAS);
+        sliceNode->JumpAllSlices(eventRAS[0],eventRAS[1],eventRAS[2]);
+        }
+      else
+        {
+        this->Superclass::OnMouseMove();
+        }
       }
     }
 }
