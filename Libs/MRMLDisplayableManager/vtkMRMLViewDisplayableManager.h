@@ -43,7 +43,7 @@ protected:
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
   virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  virtual void AdditionnalInitializeStep();
+  virtual void AdditionalInitializeStep();
 
   virtual void Create();
   

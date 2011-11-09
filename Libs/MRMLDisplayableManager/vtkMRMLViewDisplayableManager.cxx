@@ -421,7 +421,7 @@ void vtkMRMLViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
+void vtkMRMLViewDisplayableManager::AdditionalInitializeStep()
 {
   // TODO: Listen to ModifiedEvent and update the box coords if needed
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
