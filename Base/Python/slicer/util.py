@@ -97,6 +97,8 @@ def findChildren(widget=None,name="",text="",title=""):
   import slicer, fnmatch
   if not widget:
     widget = mainWindow()
+  if not widget:
+    return []
   children = []
   parents = [widget]
   while parents != []:
