@@ -22,6 +22,7 @@
 #include <QDesktopServices>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QSettings>
 
 // SlicerQt includes
 #include "qSlicerWelcomeModuleWidget.h"
@@ -179,7 +180,7 @@ bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::presentTutorials()
 {
-  // TODO Use appropriate URL - Wiki URL could be a setting ?
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
+  QDesktopServices::openUrl(
+        QUrl(QSettings().value("SlicerWikiURL").toString() + "/Slicer3.6:Training"));
   return true;
 }

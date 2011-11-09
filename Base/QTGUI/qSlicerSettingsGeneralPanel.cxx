@@ -69,6 +69,9 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowToolButtonTextToggled(bool)));
 
+  // Default values
+  this->SlicerWikiURLLineEdit->setText("http://www.slicer.org/slicerWiki/index.php");
+
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
                       SIGNAL(toggled(bool)));
   q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, "checked",
@@ -83,6 +86,8 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/ConfirmExit", this->ConfirmExitCheckBox, "checked",
                       SIGNAL(toggled(bool)));
+  q->registerProperty("SlicerWikiURL", this->SlicerWikiURLLineEdit, "text",
+                      SIGNAL(textChanged(QString)));
 }
 
 // --------------------------------------------------------------------------
