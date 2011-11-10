@@ -36,7 +36,6 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
 // std includes
@@ -490,7 +489,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   XYToWorld->Identity();
   XYToWorld->Multiply4x4(rasToXY, transformToWorld, XYToWorld);
 
-  vtkTransform *transform = rep->GetIntersectionPlaneTransform();
+  vtkSmartPointer<vtkTransform> transform = rep->GetIntersectionPlaneTransform();
 
   transform->SetMatrix(XYToWorld);
 
