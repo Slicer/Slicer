@@ -31,7 +31,7 @@ if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSStandAlone.git"
-    GIT_TAG "c57137a4f20ed3ae6f97613d7bd62ecf0ede4271"
+    GIT_TAG "861fa210a6d3164c5af1581321ae7b03cb222ad8"
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
