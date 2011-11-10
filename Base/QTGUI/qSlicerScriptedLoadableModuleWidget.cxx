@@ -115,6 +115,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   FILE* pyfile = fopen(newPythonSource.toLatin1(), "r");
   if (!pyfile)
     {
+    PyErr_Print();
     qCritical() << "setPythonSource - File" << newPythonSource << "doesn't exist !";
     return false;
     }
@@ -155,6 +156,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)
     {
+    PyErr_Print();
     qCritical() << "setPythonSource" << newPythonSource
         << "- Failed to wrap" << this->metaObject()->className();
     return false;
@@ -168,6 +170,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   Py_DECREF(arguments);
   if (!self)
     {
+    PyErr_Print();
     qCritical() << "setPythonSource" << newPythonSource
         << " - Failed to instantiate scripted pythonqt class"
         << classNameToLoad << classToInstantiate;
