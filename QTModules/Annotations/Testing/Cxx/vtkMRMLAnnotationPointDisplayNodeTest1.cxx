@@ -73,9 +73,9 @@ int vtkMRMLAnnotationPointDisplayNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  if (node1->GetMaximumGlyphType() != vtkMRMLAnnotationPointDisplayNode::Diamond3D)
+  if (node1->GetMaximumGlyphType() != vtkMRMLAnnotationPointDisplayNode::Sphere3D)
     {
-    std::cerr << "Error: maximum glyph type " << node1->GetMaximumGlyphType() << " != Diamond3D: " << vtkMRMLAnnotationPointDisplayNode::Diamond3D << std::endl;
+    std::cerr << "Error: maximum glyph type " << node1->GetMaximumGlyphType() << " != Sphere3D: " << vtkMRMLAnnotationPointDisplayNode::Sphere3D << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -94,7 +94,7 @@ int vtkMRMLAnnotationPointDisplayNodeTest1(int , char * [] )
     std::cerr << "ERROR: triangle 2d not recognised as a 2d glyph" << std::endl;
     return EXIT_FAILURE;
     }
-  node1->SetGlyphTypeFromString("Diamond3D");
+  node1->SetGlyphTypeFromString("Sphere3D");
   if (node1->GlyphTypeIs3D() != 1)
     {
     std::cerr << "ERROR: sphere 3d not recognised as a 3d glyph" << std::endl;
