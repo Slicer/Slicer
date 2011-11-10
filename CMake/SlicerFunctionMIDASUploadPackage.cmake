@@ -29,10 +29,7 @@
 # Will output warning messages in the fail condition
 function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
   include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroExtractRepositoryInfo.cmake")
-  #We can't use SIZEOF_VOID_P from a ctest driver script... we don't have try_compile available
-  #include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroGetPlatformArchitectureBitness.cmake")
   SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR "${CTEST_SOURCE_DIRECTORY}")
-  #SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX Slicer)
 
   if(NOT DEFINED MIDAS_PACKAGE_EMAIL)
     message(WARNING "Skipped uploading package to MIDAS: MIDAS_PACKAGE_EMAIL is not set")
@@ -72,10 +69,18 @@ function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
     set(arch "unknown")
   endif()
 
+  if(WIN32)
+    set(os "win")
+  elseif(APPLE)
+    set(os "macosx")
+  elseif(UNIX)
+    set(os "linux")
+  endif()
+
   get_filename_component(basename "${package}" NAME)
   _SlicerEscapeForUrl(basename "${basename}")
   _SlicerEscapeForUrl(rev "${Slicer_WC_REVISION}")
-  _SlicerEscapeForUrl(os "${Slicer_PLATFORM}")
+  _SlicerEscapeForUrl(os "${os}")
   _SlicerEscapeForUrl(arch "${arch}")
   _SlicerEscapeForUrl(packagetype "${packagetype}")
   _SlicerEscapeForUrl(package "${package}")
