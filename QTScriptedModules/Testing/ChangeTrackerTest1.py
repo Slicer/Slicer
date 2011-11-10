@@ -8,8 +8,16 @@ tfm = slicer.mrmlScene.CreateNodeByClass('vtkMRMLLinearTransformNode')
 slicer.mrmlScene.AddNode(tfm)
 
 vl = slicer.modules.volumes.logic()
-vol1 = vl.AddArchetypeVolume(sys.argv[1], 'fixed', 0)
-vol2 = vl.AddArchetypeVolume(sys.argv[2], 'moving', 1)
+if len(sys.argv) > 1:
+  path1 = sys.argv[1]
+  path2 = sys.argv[2]
+else:
+  path1 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Testing/TestData/fixed.nrrd"
+  path2 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Testing/TestData/moving.nrrd"
+
+
+vol1 = vl.AddArchetypeVolume(path1, 'fixed', 0)
+vol2 = vl.AddArchetypeVolume(path2, 'moving', 1)
 
 parameters = {}
 parameters['fixedVolume'] = vol1.GetID()
