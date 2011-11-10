@@ -1823,19 +1823,21 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
         * tmpPtr =
             vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode)->GetControlPointCoordinates(
                 0);
-    double coordinates[3] =
-    { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
+    if (tmpPtr)
+      {
+      double coordinates[3] = { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
 
-    char string[512];
-    sprintf(string, this->m_CoordinateFormat, coordinates[0]);
-    char string2[512];
-    sprintf(string2, this->m_CoordinateFormat, coordinates[1]);
-    char string3[512];
-    sprintf(string3, this->m_CoordinateFormat, coordinates[2]);
+      char string[512];
+      sprintf(string, this->m_CoordinateFormat, coordinates[0]);
+      char string2[512];
+      sprintf(string2, this->m_CoordinateFormat, coordinates[1]);
+      char string3[512];
+      sprintf(string3, this->m_CoordinateFormat, coordinates[2]);
 
-    ss << string << ", " << string2 << ", " << string3;
+      ss << string << ", " << string2 << ", " << string3;
 
-    this->m_StringHolder = ss.str();
+      this->m_StringHolder = ss.str();
+      }
     }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
     {
