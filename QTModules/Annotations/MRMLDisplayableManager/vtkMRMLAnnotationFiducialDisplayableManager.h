@@ -66,7 +66,10 @@ protected:
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
 
   std::map<vtkMRMLNode*, int> NodeGlyphTypes;
-  
+
+  // clean up when scene closes
+  virtual void OnMRMLSceneClosedEvent();
+
 private:
 
   vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented

@@ -775,3 +775,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
   //this->m_Updating = 0;
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationFiducialDisplayableManager::OnMRMLSceneClosedEvent()
+{
+  // clear out the map of glyph types
+  this->NodeGlyphTypes.clear();
+}
