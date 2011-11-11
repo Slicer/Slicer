@@ -966,6 +966,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     }
 
   bool showWidget = true;
+  bool inViewport = false;
 
   // down cast the node as a controlpoints node to get the coordinates
   vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
@@ -1081,23 +1082,16 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     pokedRenderer->NormalizedDisplayToViewport(coords[0],coords[1]);
     pokedRenderer->ViewportToNormalizedViewport(coords[0],coords[1]);
 
-    if ((coords[0]<0.001) || (coords[0]>0.999) || (coords[1]<0.001) || (coords[1]>0.999))
-      {
-      // current point is outside of view
-      showWidget = false;
-      }
-    else
+    if ((coords[0]>0.0) && (coords[1]<1.0) && (coords[1]>0.0) && (coords[1]<1.0))
       {
       // current point is inside of view
-      // stop parsing the control points since the widget needs to be shown
-      showWidget = true;
-      break;
+      inViewport = true;
       }
 
     } // end of for loop through control points
 
 
-  return showWidget;
+  return showWidget && inViewport;
 
 }
 
