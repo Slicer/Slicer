@@ -929,7 +929,8 @@ const char *vtkMRMLStorageNode::GetAbsoluteFilePath(const char *inputPath)
     }
 
   std::string path = this->GetScene()->GetRootDirectory();
-  if (path[path.size()-1] != '/')
+  if (path.size() > 0 &&
+      path[path.size()-1] != '/')
     {
     path = path + std::string("/");
     }
