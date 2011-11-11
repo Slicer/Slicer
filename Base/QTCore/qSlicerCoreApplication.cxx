@@ -37,6 +37,7 @@
 //  - Slicer_SHARE_DIR
 //  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
+//  - Slicer_BUILD_WIN32_CONSOLE
 #include "vtkSlicerConfigure.h"
 
 #ifdef Slicer_USE_PYTHONQT
@@ -148,8 +149,12 @@ void qSlicerCoreApplicationPrivate::init()
   // Instantiate ErrorLogModel
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
   this->ErrorLogModel->setLogEntryGrouping(true);
+#if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+  this->ErrorLogModel->setTerminalOutputs(ctkErrorLogModel::None);
+#else
   this->ErrorLogModel->setTerminalOutputs(ctkErrorLogModel::All);
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+#endif
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
   this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);

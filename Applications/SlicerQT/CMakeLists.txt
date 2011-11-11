@@ -142,7 +142,20 @@ if(NOT APPLE)
   set(SlicerQT_EXE_SUFFIX -real)
 endif()
 
-add_executable(SlicerQT${SlicerQT_EXE_SUFFIX} MACOSX_BUNDLE
+
+set(SlicerQT_EXE_OPTIONS)
+if (WIN32)
+  if(NOT Slicer_BUILD_WIN32_CONSOLE)
+    set(SlicerQT_EXE_OPTIONS WIN32)
+  endif()
+endif()
+
+if(APPLE)
+  set(SlicerQT_EXE_OPTIONS MACOSX_BUNDLE)
+endif()
+
+add_executable(SlicerQT${SlicerQT_EXE_SUFFIX}
+  ${SlicerQT_EXE_OPTIONS}
   Main.cxx
   ${apple_bundle_sources}
   ${qt_menu_nib_sources}

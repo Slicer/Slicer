@@ -63,7 +63,11 @@
 # include "qSlicerPythonManager.h"
 # include "qSlicerSettingsPythonPanel.h"
 # include <dPython.h>
+#endif
 
+#if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+# include <windows.h>
+# include <vtksys/SystemTools.hxx>
 #endif
 
 namespace
@@ -230,7 +234,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-int main(int argc, char* argv[])
+int slicerQtmain(int argc, char* argv[])
 {
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
@@ -365,3 +369,34 @@ int main(int argc, char* argv[])
   // clean up code to the aboutToQuit() signal
   return app.exec();
 }
+
+#if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+int __stdcall WinMain(HINSTANCE hInstance,
+                      HINSTANCE hPrevInstance,
+                      LPSTR lpCmdLine, int nShowCmd)
+{
+  Q_UNUSED(hInstance);
+  Q_UNUSED(hPrevInstance);
+  Q_UNUSED(nShowCmd);
+
+  int argc;
+  char **argv;
+  vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
+    lpCmdLine, &argc, &argv);
+
+  int ret = slicerQtmain(argc, argv);
+
+  for (int i = 0; i < argc; i++)
+    {
+    delete [] argv[i];
+    }
+  delete [] argv;
+
+  return ret;
+}
+#else
+int main(int argc, char *argv[])
+{
+  return slicerQtMain(argc, argv);
+}
+#endif

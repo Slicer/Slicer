@@ -32,6 +32,7 @@
 #cmakedefine Slicer_USE_OPENTRACKER
 
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
+#cmakedefine Slicer_BUILD_WIN32_CONSOLE
 
 #define Slicer_BIN_DIR "@Slicer_BIN_DIR@"
 #define Slicer_LIB_DIR "@Slicer_LIB_DIR@"
