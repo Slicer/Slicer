@@ -66,8 +66,10 @@ public slots:
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
   void setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode* volumePropertyNode);
 
-  void moveAllPoints(double x, double y = 0.);
-  void spreadAllPoints(double factor);
+  void moveAllPoints(double x, double y = 0.,
+                     bool dontMoveFirstAndLast = false);
+  void spreadAllPoints(double factor,
+                       bool dontSpreadFirstAndLast = false);
 
 signals:
   void volumePropertyChanged();

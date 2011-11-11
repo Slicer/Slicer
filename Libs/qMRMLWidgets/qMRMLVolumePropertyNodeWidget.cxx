@@ -132,15 +132,17 @@ void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::moveAllPoints(double x, double y)
+void qMRMLVolumePropertyNodeWidget
+::moveAllPoints(double x, double y, bool dontMoveFirstAndLast)
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->moveAllPoints(x, y);
+  return d->VolumeProperty->moveAllPoints(x, y, dontMoveFirstAndLast);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor)
+void qMRMLVolumePropertyNodeWidget
+::spreadAllPoints(double factor, bool dontSpreadFirstAndLast)
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
-  return d->VolumeProperty->spreadAllPoints(factor);
+  return d->VolumeProperty->spreadAllPoints(factor, dontSpreadFirstAndLast);
 }

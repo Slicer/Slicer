@@ -872,7 +872,8 @@ void qSlicerVolumeRenderingModuleWidget::interaction()
 void qSlicerVolumeRenderingModuleWidget::offsetPreset(double newPosition)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->VolumePropertyNodeWidget->moveAllPoints(newPosition - d->OldPresetPosition, 0.);
+  d->VolumePropertyNodeWidget->moveAllPoints(
+    newPosition - d->OldPresetPosition, 0., true);
   d->OldPresetPosition = newPosition;
 }
 
