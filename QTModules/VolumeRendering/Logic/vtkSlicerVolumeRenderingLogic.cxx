@@ -43,13 +43,29 @@
 #include <algorithm>
 #include <cassert>
 
+//----------------------------------------------------------------------------
+double nextHigher(double value)
+{
+  // Increment the value by the smallest offset possible
+  typedef union {
+      long long i64;
+      double d64;
+    } dbl_64;
+  dbl_64 d;
+  d.d64 = value;
+  d.i64 += (value >= 0) ? 1 : -1;
+  return d.d64;
+}
+
+//----------------------------------------------------------------------------
 double higherAndUnique(double value, double &previousValue)
 {
   value = std::max(value, previousValue);
   if (value == previousValue)
     {
-    value += 0.00000000000001;
+    value = nextHigher(value);
     }
+  assert (value != previousValue);
   previousValue = value;
   return value;
 }
@@ -318,6 +334,7 @@ void vtkSlicerVolumeRenderingLogic
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 1.0);
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 0.0);
   opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 0.0);
+  assert(opacity->GetSize() == 6);
 
   vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
@@ -444,11 +461,11 @@ void vtkSlicerVolumeRenderingLogic
     }
 
   volumeProp->SetInterpolationTypeToNearest();
-  volumeProp->ShadeOff();
-  volumeProp->SetAmbient(0.40);
+  volumeProp->ShadeOn();
+  volumeProp->SetAmbient(0.30);
   volumeProp->SetDiffuse(0.60);
-  volumeProp->SetSpecular(0.);
-  volumeProp->SetSpecularPower(1);
+  volumeProp->SetSpecular(0.50);
+  volumeProp->SetSpecularPower(40);
 }
 
 //----------------------------------------------------------------------------
