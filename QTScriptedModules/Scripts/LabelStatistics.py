@@ -182,8 +182,9 @@ class LabelStatisticsLogic:
   def __init__(self, grayscaleNode, labelNode, fileName=None):
     import numpy
 
-    self.keys = ("Index", "Count", "Volume", "Min", "Max", "Mean", "StdDev")
+    self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
+    ccPerCubicMM = 0.001
     
     # TODO: progress and status updates
     # this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats")
@@ -237,7 +238,8 @@ class LabelStatisticsLogic:
         self.labelStats["Labels"].append(i)
         self.labelStats[i,"Index"] = i
         self.labelStats[i,"Count"] = stat1.GetVoxelCount()
-        self.labelStats[i,"Volume"] = self.labelStats[i,"Count"] * cubicMMPerVoxel
+        self.labelStats[i,"Volume mm^3"] = self.labelStats[i,"Count"] * cubicMMPerVoxel
+        self.labelStats[i,"Volume cc"] = self.labelStats[i,"Volume mm^3"] * ccPerCubicMM
         self.labelStats[i,"Min"] = stat1.GetMin()[0]
         self.labelStats[i,"Max"] = stat1.GetMax()[0]
         self.labelStats[i,"Mean"] = stat1.GetMean()[0]
@@ -248,11 +250,14 @@ class LabelStatisticsLogic:
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
 
   def statsAsCSV(self):
+    """
+    print comma separated value file with header keys in quotes
+    """
     csv = ""
     header = ""
     for k in self.keys[:-1]:
-      header += k + ","
-    header += self.keys[-1] + "\n"
+      header += "\"%s\"" % k + ","
+    header += "\"%s\"" % self.keys[-1] + "\n"
     csv = header
     for i in self.labelStats["Labels"]:
       line = ""
