@@ -43,7 +43,7 @@ function(SlicerFunctionMIDASCTestUploadURL filepath)
   
   set(url ${MIDAS_PACKAGE_URL}/api/rest?method=midas.bitstream.download&name=${filename}&checksum=${computedChecksum})
   
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/slicerFunctionCTestUploadURL.url "${url}")
-  ctest_upload(FILES ${CMAKE_CURRENT_BINARY_DIR}/slicerFunctionCTestUploadURL.url)
+  file(WRITE "${CTEST_BINARY_DIRECTORY}/slicerFunctionCTestUploadURL.url" "${url}")
+  ctest_upload(FILES "${CTEST_BINARY_DIRECTORY}/slicerFunctionCTestUploadURL.url")
 endfunction()
 
