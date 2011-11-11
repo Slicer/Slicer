@@ -415,7 +415,8 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
 
   if (!roiWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    // commented out by Fedorov: fails too often in ChangeTracker workflow
+    //vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
     return;
     }
 
