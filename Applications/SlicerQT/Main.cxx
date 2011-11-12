@@ -234,7 +234,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-int slicerQtmain(int argc, char* argv[])
+int slicerQtMain(int argc, char* argv[])
 {
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
@@ -384,7 +384,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
   vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
     lpCmdLine, &argc, &argv);
 
-  int ret = slicerQtmain(argc, argv);
+  int ret = slicerQtMain(argc, argv);
 
   for (int i = 0; i < argc; i++)
     {
