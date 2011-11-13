@@ -527,6 +527,9 @@ void vtkSlicerVolumeRenderingLogic
   int disabledModify = vspNode->StartModify();
   this->SetThresholdToVolumeProp(
     scalarRange, threshold, prop);
+  // NCI raycast mapper applies a second threshold in addition to the opacity
+  // transfer function
+  vspNode->SetDepthPeelingThreshold(scalarRange[0]);
   this->SetWindowLevelToVolumeProp(
     scalarRange, windowLevel, lut, prop);
   vspNode->EndModify(disabledModify);
@@ -562,7 +565,6 @@ void vtkSlicerVolumeRenderingLogic
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-
   // resize the ROI to fit the volume
   vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(vspNode->GetROINode());
   vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
@@ -586,8 +588,6 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 
     roiNode->EndModify(disabledModify);
   }
-
-
 }
 
 //----------------------------------------------------------------------------
