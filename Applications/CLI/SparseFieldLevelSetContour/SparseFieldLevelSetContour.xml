@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
 <title>Mesh Contour Segmentation</title>
-  <category>Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <version>0.2 (alpha)</version>
   <contributor>Peter Karasev, pkarasev@gatech.edu, Allen Tannenbaum, tannenba@ece.gatech.edu</contributor>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:MeshContourSegmentation-Documentation-3.6</documentation-url>
