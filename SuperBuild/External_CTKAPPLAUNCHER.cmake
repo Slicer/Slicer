@@ -21,11 +21,14 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   if(NOT DEFINED CTKAPPLAUNCHER_DIR)
     SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
+    set(launcher_version "0.1.4")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_PLATFORM}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
+      if(NOT "${Slicer_BUILD_WIN32_CONSOLE}")
+        set(launcher_version "${launcher_version}-gaaae") # Version with "no-win32-console" support
+      endif()
     endif()
-    set(launcher_version "0.1.4")
     #message(STATUS "${__indent}Adding project ${proj}")
     ExternalProject_Add(${proj}
       URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_PLATFORM}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
