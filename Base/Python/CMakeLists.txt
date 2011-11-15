@@ -1,5 +1,4 @@
 
-
 set(Slicer_PYTHON_SCRIPTS
   slicer/__init__
   slicer/cli
@@ -21,6 +20,12 @@ set(Slicer_PYTHON_SCRIPTS
 
 set(Slicer_PYTHON_RESOURCES
   )
+
+if(Slicer_USE_SimpleITK)
+  list(APPEND Slicer_PYTHON_SCRIPTS
+    sitkUtils
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   list(APPEND Slicer_PYTHON_SCRIPTS

@@ -243,6 +243,8 @@ ExternalProject_Add(${proj}
     # ITK
     -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
     -DITK_DIR:PATH=${ITK_DIR}
+    # SimpleITK reference
+    -DSlicer_USE_SimpleITK:BOOL=${Slicer_USE_SimpleITK}
     # SlicerExecutionModel
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     # Teem
