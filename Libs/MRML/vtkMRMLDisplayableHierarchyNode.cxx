@@ -246,7 +246,7 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetUnExpandedP
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection *children)
 {
-  this->GetAssociateChildrendNodes(children, "vtkMRMLDisplayableNode");
+  this->GetAssociatedChildrendNodes(children, "vtkMRMLDisplayableNode");
 }
 
 //----------------------------------------------------------------------------

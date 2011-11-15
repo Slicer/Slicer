@@ -210,7 +210,7 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisbility(vtkMRMLDisplayableHierarch
 
   // process immediate children
   vtkCollection *children = vtkCollection::New();
-  displayableHierarchyNode->GetAssociateChildrendNodes(children, "vtkMRMLModelNode");
+  displayableHierarchyNode->GetAssociatedChildrendNodes(children, "vtkMRMLModelNode");
   vtkMRMLDisplayNode* displayNode = NULL;
   for (i=0; i<children->GetNumberOfItems(); i++)
     {

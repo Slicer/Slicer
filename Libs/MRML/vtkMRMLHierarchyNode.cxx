@@ -555,7 +555,7 @@ void vtkMRMLHierarchyNode::HierarchyIsModified(vtkMRMLScene *scene)
 }
 
 
-void vtkMRMLHierarchyNode::GetAssociateChildrendNodes(vtkCollection *children, 
+void vtkMRMLHierarchyNode::GetAssociatedChildrendNodes(vtkCollection *children, 
                                                       const char* childClass)
 {
   if (children == NULL)
