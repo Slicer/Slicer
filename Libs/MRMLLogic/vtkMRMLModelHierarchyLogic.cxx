@@ -18,6 +18,7 @@
 // MRML includes
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLDisplayNode.h"
 
 // VTK includes
 
@@ -192,5 +193,43 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
         }
       }
     this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelHierarchyLogic::SetChildrenVisbility(vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode,
+                                                      int visibility)
+{
+  int i=0;
+  vtkMRMLDisplayNode *hierDisplayNode = displayableHierarchyNode->GetDisplayNode();
+  if (hierDisplayNode)
+    {
+    hierDisplayNode->SetVisibility(visibility);
+    }
+
+  // process immediate children
+  vtkCollection *children = vtkCollection::New();
+  displayableHierarchyNode->GetAssociateChildrendNodes(children, "vtkMRMLModelNode");
+  vtkMRMLDisplayNode* displayNode = NULL;
+  for (i=0; i<children->GetNumberOfItems(); i++)
+    {
+    vtkMRMLModelNode *child = vtkMRMLModelNode::SafeDownCast(children->GetItemAsObject(i));
+    displayNode = child->GetDisplayNode();
+    if (displayNode)
+      {
+      displayNode->SetVisibility(visibility);
+      }
+    }
+
+  // process hierarchy of children
+  std::vector< vtkMRMLHierarchyNode *> hchildren = displayableHierarchyNode->GetChildrenNodes();
+  for (i=0; i<(int)hchildren.size(); i++)
+    {
+    vtkMRMLDisplayableHierarchyNode *node = vtkMRMLDisplayableHierarchyNode::SafeDownCast(hchildren[i]);
+    if (node)
+      {
+      vtkMRMLModelHierarchyLogic::SetChildrenVisbility(node, visibility);
+      }
     }
 }

@@ -25,6 +25,7 @@
 //#include <vtkMRML.h>
 //#include <vtkMRMLModelNode.h>
 class vtkMRMLModelHierarchyNode;
+class vtkMRMLDisplayableHierarchyNode;
 //#include <vtkMRMLModelHierarchyNode.h>
 
 // STD includes
@@ -70,6 +71,10 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
     ModelHierarchyNodesMTime = 0;
     HierarchyChildrenNodesMTime = 0;
     }
+
+  ///
+  /// Set visibility on all children of the node recursively
+  static void SetChildrenVisbility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibilty);
 
 protected:
   vtkMRMLModelHierarchyLogic();

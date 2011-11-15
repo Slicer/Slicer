@@ -187,7 +187,7 @@ void qMRMLModelDisplayNodeWidget::setScalarsColorTable(vtkMRMLColorTableNode* co
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : "");
+  d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : NULL);
 }
 
 //------------------------------------------------------------------------------

@@ -39,6 +39,8 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLScene.h>
 
+#include <vtkMRMLModelHierarchyLogic.h>
+
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   : q_ptr(&object)
@@ -539,9 +541,17 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
       vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
   if (displayableHierarchyNode)
     {
-    displayNode = displayableHierarchyNode->GetDisplayNode();
+    vtkMRMLDisplayNode *hierDisplayNode = displayableHierarchyNode->GetDisplayNode();
+    int visibility = 1;
+    if (hierDisplayNode)
+      {
+      visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
+      }
+    this->mrmlScene()->SetIsImporting(true);
+    vtkMRMLModelHierarchyLogic::SetChildrenVisbility(displayableHierarchyNode,visibility);
+    this->mrmlScene()->SetIsImporting(false);
     }
-  if (displayNode)
+  else if (displayNode)
     {
     displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
     }

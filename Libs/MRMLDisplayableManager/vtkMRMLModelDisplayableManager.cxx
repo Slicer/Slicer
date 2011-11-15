@@ -22,7 +22,6 @@
 #include <vtkEventBroker.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
@@ -92,6 +91,7 @@ public:
   bool                    ClippingOn;
 
   bool                         ModelHierarchiesPresent;
+  bool                         UpdateHierachyRequested;
   vtkMRMLModelHierarchyLogic * ModelHierarchyLogic;
 
   vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
@@ -118,6 +118,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->YellowSliceNode = 0;
 
   this->ModelHierarchiesPresent = false;
+  this->UpdateHierachyRequested = false;
   this->ModelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
 
   // Instantiate and initialize Pickers
@@ -496,29 +497,16 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
     }
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller))
     {
-    if (event == vtkCommand::ModifiedEvent ||
-        event == vtkMRMLNode::HierarchyModifiedEvent)
-
+    if (event == vtkMRMLNode::HierarchyModifiedEvent)
       {
-      this->UpdateModelHierarchies();
-      this->SetUpdateFromMRMLRequested(1);
-      if (!isUpdating)
-        {
-        this->RequestRender();
-        }
+      this->Internal->UpdateHierachyRequested = true;
       }
-    }
-  else if (vtkMRMLModelDisplayNode::SafeDownCast(caller))
-    {
-    if (event == vtkCommand::ModifiedEvent)
+
+    this->SetUpdateFromMRMLRequested(1);
+
+    if (!isUpdating)
       {
-      vtkDebugMacro("ProcesMRMLEvents: caller is a model display node that's been modified...");
-      this->UpdateModelHierarchies();
-      this->SetUpdateFromMRMLRequested(1);
-      if (!isUpdating)
-        {
-        this->RequestRender();
-        }
+      this->RequestRender();
       }
     }
   else
@@ -587,12 +575,8 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
   // Node specific processing
   if (node->IsA("vtkMRMLModelHierarchyNode"))
     {
-    this->UpdateModelHierarchies();
-    }
-  else if (node->IsA("vtkMRMLModelDisplayNode"))
-    {
-    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: got a vtkMRMLModelDisplayNode added: " << node->GetID());
-    this->UpdateModelHierarchies();
+    //this->UpdateModelHierarchies();
+    this->Internal->UpdateHierachyRequested = true;
     }
   else if (node->IsA("vtkMRMLClipModelsNode"))
     {
@@ -625,7 +609,8 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* no
     }
   else if (node->IsA("vtkMRMLModelHierarchyNode"))
     {
-    this->UpdateModelHierarchies();
+    this->Internal->UpdateHierachyRequested = true;
+    //this->UpdateModelHierarchies();
     }
   else if (node->IsA("vtkMRMLClipModelsNode"))
     {
@@ -706,6 +691,8 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRML()
   this->UpdateClipSlicesFromMRML();
 
   this->RemoveModelProps();
+
+  this->UpdateModelHierarchies();
 
   this->UpdateModelsFromMRML();
 
@@ -993,6 +980,10 @@ void vtkMRMLModelDisplayableManager::CheckModelHierarchies()
   this->Internal->ModelHierarchyLogic->SetMRMLScene(this->GetMRMLScene());
   int nnodes = this->Internal->ModelHierarchyLogic->GetNumberOfModelsInHierarchy();
   this->Internal->ModelHierarchiesPresent = nnodes > 0 ? true:false;
+  if (this->Internal->ModelHierarchiesPresent && this->Internal->RegisteredModelHierarchies.size() == 0)
+    {
+    this->Internal->UpdateHierachyRequested = true;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1026,18 +1017,6 @@ void vtkMRMLModelDisplayableManager::AddHierarchyObservers()
     if (!found)
       {
       broker->AddObservation( node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
-      broker->AddObservation( node, vtkMRMLNode::HierarchyModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
-      // also observe it's display node
-      if (node->GetDisplayNode())
-        {
-        vtkMRMLDisplayNode *dnode = node->GetDisplayNode();
-        vtkDebugMacro("AddHierarchyObservers: adding observervation on hierarchy display node " << dnode->GetID());
-        broker->AddObservation( dnode, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
-        }
-      else
-        {
-        vtkDebugMacro("AddHierarchyObservers: hierarchy " << node->GetID() << " doesn't have a display node yet");
-        }
       this->Internal->RegisteredModelHierarchies[node->GetID()] = 0;
       }
     }
@@ -1047,7 +1026,11 @@ void vtkMRMLModelDisplayableManager::AddHierarchyObservers()
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchies()
 {
   this->CheckModelHierarchies();
-  this->AddHierarchyObservers();
+  if (this->Internal->UpdateHierachyRequested)
+    {
+    this->AddHierarchyObservers();
+    }
+  this->Internal->UpdateHierachyRequested = false;
 }
 
 //---------------------------------------------------------------------------
@@ -1132,43 +1115,6 @@ vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtk
   return dnode;
 }
 
-//---------------------------------------------------------------------------
-bool vtkMRMLModelDisplayableManager::GetHierarchyVisibility(vtkMRMLDisplayableNode *model)
-{
-  if (!model)
-    {
-    return false;
-    }
-  // is it in a hierarchy?
-  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
-    vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(model->GetScene(), model->GetID());
-  if (displayableHierarchyNode)
-    {
-    if (displayableHierarchyNode && displayableHierarchyNode->GetDisplayNode())
-      {
-      if (!displayableHierarchyNode->GetDisplayNode()->GetVisibility())
-        {
-        return false;
-        }
-      // now go back up the tree
-      vtkMRMLHierarchyNode *parent = displayableHierarchyNode->GetParentNode();
-      while (parent)
-        {
-        if (vtkMRMLDisplayableHierarchyNode::SafeDownCast(parent) &&
-            vtkMRMLDisplayableHierarchyNode::SafeDownCast(parent)->GetDisplayNode() &&
-            !(vtkMRMLDisplayableHierarchyNode::SafeDownCast(parent)->GetDisplayNode()->GetVisibility()))
-          {
-          return false;
-          }
-        parent = parent->GetParentNode();
-        }
-      }
-    }
-
-  // if it's not in a hierarchy, or has no invisible hierarchy dipslay nodes
-  // above it, return true
-  return true;
-}
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::RemoveModelProps()
 {
@@ -1364,8 +1310,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
   std::vector<vtkMRMLDisplayNode *> displayNodes = model->GetDisplayNodes();
   vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
-  bool hierarchyVisibility = this->GetHierarchyVisibility(model);
-  
+
   for (unsigned int i=0; i<displayNodes.size(); i++)
     {
     vtkMRMLDisplayNode *thisDisplayNode = displayNodes[i];
@@ -1388,14 +1333,8 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
 
-      bool visibility = modelDisplayNode->GetVisibility() != 0;
-      // but if the hierarchy visibility is false, turn it off anyway
-      if (!hierarchyVisibility)
-        {
-        visibility = false;
-        }
-      prop->SetVisibility(visibility);
-      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
+      prop->SetVisibility(modelDisplayNode->GetVisibility());
+      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
 
       if (actor)
         {

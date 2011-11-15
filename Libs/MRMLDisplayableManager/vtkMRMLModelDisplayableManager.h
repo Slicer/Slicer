@@ -187,10 +187,6 @@ protected:
   void UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model);
 
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
-
-  /// if any of the parent nodes have display nodes with the visibility flag
-  /// set to false, return false, else, true. If no hierarchy, return true
-  bool GetHierarchyVisibility(vtkMRMLDisplayableNode *model);
   
   void RemoveDispalyedID(std::string &id);
   
