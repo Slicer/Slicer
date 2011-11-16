@@ -103,6 +103,9 @@ def findChildren(widget=None,name="",text="",title=""):
   parents = [widget]
   while parents != []:
     p = parents.pop()
+    # sometimes, p is null, f.e. when using --python-script or --python-code
+    if not p:
+      break
     parents += p.children()
     if name and fnmatch.fnmatch(p.name, name):
       children.append(p)
