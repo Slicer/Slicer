@@ -202,34 +202,36 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisbility(vtkMRMLDisplayableHierarch
                                                       int visibility)
 {
   int i=0;
-  vtkMRMLDisplayNode *hierDisplayNode = displayableHierarchyNode->GetDisplayNode();
-  if (hierDisplayNode)
+  vtkMRMLDisplayNode *displayNode = displayableHierarchyNode->GetDisplayNode();
+  if (displayNode)
     {
-    hierDisplayNode->SetVisibility(visibility);
+    displayNode->SetVisibility(visibility);
     }
 
-  // process immediate children
-  vtkCollection *children = vtkCollection::New();
-  displayableHierarchyNode->GetAssociatedChildrendNodes(children, "vtkMRMLModelNode");
-  vtkMRMLDisplayNode* displayNode = NULL;
-  for (i=0; i<children->GetNumberOfItems(); i++)
+  std::vector< vtkMRMLHierarchyNode *> children;
+  displayableHierarchyNode->GetAllChildrenNodes(children);
+  vtkMRMLModelNode *model = NULL;
+  vtkMRMLNode      *node = NULL;
+  for (unsigned int i=0; i<children.size(); i++)
     {
-    vtkMRMLModelNode *child = vtkMRMLModelNode::SafeDownCast(children->GetItemAsObject(i));
-    displayNode = child->GetDisplayNode();
+    node = children[i]->GetAssociatedNode();
+    if (node)
+      {
+      model = vtkMRMLModelNode::SafeDownCast(node);
+      if (model)
+        {
+        displayNode = model->GetDisplayNode();
+        if (displayNode)
+          {
+          displayNode->SetVisibility(visibility);
+          }
+        }
+      }
+    vtkMRMLDisplayableHierarchyNode *dhnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
+    displayNode = dhnode->GetDisplayNode();
     if (displayNode)
       {
       displayNode->SetVisibility(visibility);
-      }
-    }
-
-  // process hierarchy of children
-  std::vector< vtkMRMLHierarchyNode *> hchildren = displayableHierarchyNode->GetChildrenNodes();
-  for (i=0; i<(int)hchildren.size(); i++)
-    {
-    vtkMRMLDisplayableHierarchyNode *node = vtkMRMLDisplayableHierarchyNode::SafeDownCast(hchildren[i]);
-    if (node)
-      {
-      vtkMRMLModelHierarchyLogic::SetChildrenVisbility(node, visibility);
       }
     }
 }
