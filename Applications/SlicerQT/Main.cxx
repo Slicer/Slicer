@@ -231,8 +231,6 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
   //splashScreen->repaint();
 }
 
-} // end of anonymous namespace
-
 //----------------------------------------------------------------------------
 int slicerQtMain(int argc, char* argv[])
 {
@@ -369,6 +367,8 @@ int slicerQtMain(int argc, char* argv[])
   // clean up code to the aboutToQuit() signal
   return app.exec();
 }
+
+} // end of anonymous namespace
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 int __stdcall WinMain(HINSTANCE hInstance,
