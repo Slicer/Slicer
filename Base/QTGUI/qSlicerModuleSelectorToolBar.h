@@ -55,9 +55,10 @@ public:
   /// Returns a pointer to the modules menu used to populate the list of modules
   qSlicerModulesMenu* modulesMenu()const;
 
+public slots:
   /// Module manager contains all the loaded modules
   void setModuleManager(qSlicerModuleManager* moduleManager);
-public slots:
+
   /// Select a module by name. It looks for the module action and triggers it
   void selectModule(const QString& moduleName);
 
