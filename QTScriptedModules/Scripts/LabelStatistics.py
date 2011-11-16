@@ -180,7 +180,7 @@ class LabelStatisticsLogic:
   """
   
   def __init__(self, grayscaleNode, labelNode, fileName=None):
-    import numpy
+    #import numpy
 
     self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
