@@ -120,10 +120,24 @@ if(Slicer_BUILD_BRAINSTOOLS)
   if(BUILD_TESTING)
     set(LAUNCH_EXE ${Slicer_LAUNCH_COMMAND})
   endif()
-  
-  set(USE_GTRACT OFF CACHE BOOL "" FORCE)
+
+  set(USE_BRAINSFit                       ON CACHE BOOL "Build BRAINSFit"       )
+  set(USE_BRAINSROIAuto                   ON CACHE BOOL "Build BRAINSROIAuto"   )
+  set(USE_BRAINSResample                  ON CACHE BOOL "Build BRAINSResample"  )
+  set(USE_BRAINSDemonWarp                 ON CACHE BOOL "Build BRAINSDemonWarp ")
+  ## BRAINSTools comes with some extra tool
+  ## options that should not be compiled by default.
+  set(USE_GTRACT                         OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSABC                      OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSConstellationDetector    OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSMush                     OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSInitializedControlPoints OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSMultiModeSegment         OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSCut                      OFF CACHE BOOL "" FORCE)
+  set(USE_ImageCalculator                OFF CACHE BOOL "" FORCE)
+
   set(ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR} CACHE STRING "")
-  set(BRAINSTools_SUPERBUILD OFF CACHE BOOL "" FORCE)
+  set(BRAINSTools_SUPERBUILD             OFF CACHE BOOL "" FORCE)
   add_subdirectory(
     ${BRAINSTools_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/BRAINSTools
