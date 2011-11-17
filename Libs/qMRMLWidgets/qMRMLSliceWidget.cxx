@@ -178,7 +178,7 @@ void qMRMLSliceWidgetPrivate::initDisplayableManagers()
     = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
 
   QStringList displayableManagers;
-  displayableManagers << "vtkMRMLSliceModelDisplayableManager";
+  displayableManagers << "vtkMRMLVolumeGlyphSliceDisplayableManager";
   displayableManagers << "vtkMRMLCrosshairDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {

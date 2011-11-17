@@ -69,7 +69,7 @@ set(DisplayableManager_SRCS
 
   # DisplayableManager associated with SliceView
   vtkMRMLCrosshairDisplayableManager.cxx
-  vtkMRMLSliceModelDisplayableManager.cxx
+  vtkMRMLVolumeGlyphSliceDisplayableManager.cxx
  )
 
 set(KIT_SRCS

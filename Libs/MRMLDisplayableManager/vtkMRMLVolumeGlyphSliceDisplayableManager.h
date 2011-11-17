@@ -23,28 +23,28 @@
 /// Responsible for any display on Slice views that is not the slice themselves
 /// nor the annotations
 
-#ifndef __vtkMRMLSliceModelDisplayableManager_h
-#define __vtkMRMLSliceModelDisplayableManager_h
+#ifndef __vtkMRMLVolumeGlyphSliceDisplayableManager_h
+#define __vtkMRMLVolumeGlyphSliceDisplayableManager_h
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 /// Currently support only glyph display for Diffusion Tensor volumes.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceModelDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManager
   : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
-  static vtkMRMLSliceModelDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLSliceModelDisplayableManager,
+  static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
+  vtkTypeRevisionMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLSliceModelDisplayableManager();
-  virtual ~vtkMRMLSliceModelDisplayableManager();
+  vtkMRMLVolumeGlyphSliceDisplayableManager();
+  virtual ~vtkMRMLVolumeGlyphSliceDisplayableManager();
 
   virtual void OnMRMLSceneImportedEvent();
   virtual void OnMRMLSceneRestoredEvent();
@@ -56,8 +56,8 @@ protected:
 
 private:
 
-  vtkMRMLSliceModelDisplayableManager(const vtkMRMLSliceModelDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLSliceModelDisplayableManager&);                     // Not Implemented
+  vtkMRMLVolumeGlyphSliceDisplayableManager(const vtkMRMLVolumeGlyphSliceDisplayableManager&);// Not implemented
+  void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&);                     // Not Implemented
 
   class vtkInternal;
   vtkInternal * Internal;
