@@ -27,7 +27,6 @@
 
 // CTK includes
 #include <ctkButtonGroup.h>
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
 
@@ -42,10 +41,6 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSceneViewNode.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDViewControllerWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewControllerWidgetPrivate methods
@@ -206,7 +201,7 @@ void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 
   if (d->ViewNode)
     {
-    logger.error("setViewLabel should be called before setViewNode !");
+    qCritical() << "qMRMLThreeDViewControllerWidget::setViewLabel should be called before setViewNode !";
     return;
     }
 

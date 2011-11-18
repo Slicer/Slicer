@@ -31,7 +31,6 @@
 
 // CTK includes
 #include <ctkDoubleSlider.h>
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
 #include <ctkSliderWidget.h>
@@ -47,12 +46,6 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
-
-// VTK includes
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceControllerWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -88,7 +81,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->LightboxMenu = 0;
   this->CompositingMenu = 0;
   this->SliceSpacingMenu = 0;
-  
+
   this->SliceSpacingSpinBox = 0;
   this->SliceFOVSpinBox = 0;
   this->LightBoxRowsSpinBox = 0;
@@ -286,7 +279,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->LabelMapOutlineButton->setDefaultAction(this->actionLabelMapOutline);
   this->ForegroundInterpolationButton->setDefaultAction(this->actionForegroundInterpolation);
   this->BackgroundInterpolationButton->setDefaultAction(this->actionBackgroundInterpolation);
-  
+
 }
 
 //---------------------------------------------------------------------------
@@ -295,7 +288,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   Q_Q(qMRMLSliceControllerWidget);
 
   this->Superclass::init();
-  
+
   this->SliceOffsetSlider = new ctkSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
@@ -307,14 +300,14 @@ void qMRMLSliceControllerWidgetPrivate::init()
   spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
   int targetHeight = spinBox->parentWidget()->layout()->sizeHint().height();//setSizeConstraint(QLayout::SetMinimumSize);
   int fontHeight = spinBox->fontMetrics().height();
-  qreal heightRatio = static_cast<qreal>(targetHeight - 2) / fontHeight; 
+  qreal heightRatio = static_cast<qreal>(targetHeight - 2) / fontHeight;
   if (heightRatio  < 1.)
     {
     QFont stretchedFont(spinBox->font());
     stretchedFont.setPointSizeF(stretchedFont.pointSizeF() * heightRatio);
     spinBox->setFont(stretchedFont);
     }
-  
+
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
                 q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
@@ -594,7 +587,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
     return;
     }
 
-  logger.trace("updateWidgetFromMRMLSliceNode");
+  //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
   // Update orientation selector state
   int index = this->SliceOrientationSelector->findText(
@@ -656,7 +649,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     }
   Q_ASSERT(this->MRMLSliceCompositeNode);
 
-  logger.trace("updateWidgetFromMRMLSliceCompositeNode");
+  //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode";
 
   // Update slice link toggle. Must be done first as its state controls
   // different behaviors when properties are set.
@@ -677,7 +670,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     {
       this->SliceLinkButton->setIcon(QIcon(":Icons/LinkOff.png"));
     }
-  
+
   // Update "foreground layer" node selector
   this->ForegroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
@@ -724,7 +717,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
 {
   Q_Q(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - ForegroundLayerNodeSelected").arg(q->sliceOrientation()));
+  //qDebug() << "qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected - sliceView:"
+  //         << q->sliceOrientation();
 
   if (!this->MRMLSliceCompositeNode)
     {
@@ -750,7 +744,9 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
 void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode * node)
 {
   Q_Q(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - BackgroundLayerNodeSelected").arg(q->sliceOrientation()));
+
+  //qDebug() << "qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected - sliceView:"
+  //         << q->sliceOrientation();
 
   if (!this->MRMLSliceCompositeNode)
     {
@@ -776,7 +772,8 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
 void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * node)
 {
   Q_Q(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - LabelMapNodeSelected").arg(q->sliceOrientation()));
+  //qDebug() << "qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected - sliceView:"
+  //         << q->sliceOrientation();
   if (!this->MRMLSliceCompositeNode)
     {
     return;
@@ -1089,8 +1086,8 @@ void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButto
     {
     if (newButtonGroup->exclusive())
       {
-      logger.error("setControllerButtonGroup - newButtonGroup shouldn't be exclusive - "
-                   "See QButtonGroup::setExclusive()");
+      qCritical() << "qMRMLSliceControllerWidget::setControllerButtonGroup - "
+                     "newButtonGroup shouldn't be exclusive - See QButtonGroup::setExclusive()";
       }
 
     // Disconnect sliceCollapsibleButton and  ControllerWidgetGroup
@@ -1121,8 +1118,8 @@ CTK_GET_CPP(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
 void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
 {
   Q_D(qMRMLSliceControllerWidget);
-  logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
-               arg(newSize.width()).arg(newSize.height()));
+  //qDebug() << QString("qMRMLSliceControllerWidget::setSliceViewSize - newSize(%1, %2)").
+  //            arg(newSize.width()).arg(newSize.height());
   d->ViewSize = newSize;
   if (!d->SliceLogic)
     {
@@ -1138,7 +1135,7 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 
   if (d->MRMLSliceNode)
     {
-    logger.error("setSliceViewName should be called before setMRMLSliceNode !");
+    qCritical() << "qMRMLSliceControllerWidget::setSliceViewName should be called before setMRMLSliceNode !";
     return;
     }
 
@@ -1181,7 +1178,7 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
   // searching for the color in the list of colorNames(). Note that
   // this is slightly different that isValidColor() as isValidColor()
   // would also check RGB dynamic range in the #RRGGBBB style
-  // formats. 
+  // formats.
   QColor color;
   if (sliceViewName == "Red")
     {
@@ -1222,7 +1219,7 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
 
   if (d->MRMLSliceNode)
     {
-    logger.error("setSliceViewLabel should be called before setMRMLSliceNode !");
+    qCritical() << "qMRMLSliceControllerWidget::setSliceViewLabel should be called before setMRMLSliceNode !";
     return;
     }
 
@@ -1240,7 +1237,7 @@ void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewCol
 
   if (d->MRMLSliceNode)
     {
-    logger.error("setSliceViewColor should be called before setMRMLSliceNode !");
+    qCritical() << "qMRMLSliceControllerWidget::setSliceViewColor should be called before setMRMLSliceNode !";
     return;
     }
 
@@ -1295,7 +1292,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
     {
     return;
     }
-  logger.trace(QString("setSliceOffsetValue: %1").arg(offset));
+  //qDebug() << "qMRMLSliceControllerWidget::setSliceOffsetValue:" << offset;
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
   d->SliceLogic->EndSliceOffsetInteraction();
@@ -1309,7 +1306,7 @@ void qMRMLSliceControllerWidget::trackSliceOffsetValue(double offset)
     {
     return;
     }
-  logger.trace(QString("trackSliceOffsetValue"));
+  //qDebug() << "qMRMLSliceControllerWidget::trackSliceOffsetValue";
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
 }
@@ -1318,14 +1315,14 @@ void qMRMLSliceControllerWidget::trackSliceOffsetValue(double offset)
 void qMRMLSliceControllerWidget::fitSliceToBackground()
 {
   Q_D(qMRMLSliceControllerWidget);
-  logger.trace(QString("fitSliceToBackground"));
+  //qDebug() << "qMRMLSliceControllerWidget::fitSliceToBackground";
 
   // This is implemented as sending a "reset field of view" command to
   // all the slice viewers. An alternative implementation is call
   // reset the field of view for the current slice and broadcast that
   // set of field of view parameters settings to the other viewers.
   // This can be done by changing the interaction flag to
-  // vtkMRMLSliceNode::FieldOfViewFlag 
+  // vtkMRMLSliceNode::FieldOfViewFlag
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
   d->SliceLogic->FitSliceToAll();
   d->MRMLSliceNode->UpdateMatrices();

@@ -21,9 +21,6 @@
 // Qt includes
 #include <QToolButton>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
@@ -37,10 +34,6 @@
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qSlicerViewersToolBar");
-//--------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------
 // qSlicerViewersToolBarPrivate methods
 
@@ -48,9 +41,6 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerViewersToolBar");
 qSlicerViewersToolBarPrivate::qSlicerViewersToolBarPrivate(qSlicerViewersToolBar& object)
   : q_ptr(&object)
 {
-  //logger.setTrace();
-  logger.setOff();
-
   this->CrosshairToolButton = 0;
   this->CrosshairMenu = 0;
   this->CrosshairNavigationAction = 0;

@@ -70,7 +70,7 @@ qSlicerCLIModule * qSlicerCLIModuleWidgetPrivate::module()const
 void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   Q_Q(qSlicerCLIModuleWidget);
-  
+
   this->Ui_qSlicerCLIModuleWidget::setupUi(widget);
 
   this->ModuleCollapsibleButton->setText(this->Title);
@@ -208,7 +208,7 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* _layout,
   //vbox->addStretch(1);
   vbox->setVerticalSpacing(1);
   collapsibleWidget->setLayout(vbox);
-  
+
   _layout->addWidget(collapsibleWidget);
 }
 
@@ -240,9 +240,9 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString description = QString::fromStdString(moduleParameter.GetDescription());
-  
+
   // TODO Parameters with flags can support the None node because they are optional
-  int noneEnabled = 0; 
+  int noneEnabled = 0;
   if (moduleParameter.GetLongFlag() != "" || moduleParameter.GetFlag() != "")
     {
     noneEnabled = 1;
@@ -257,7 +257,7 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
     }
   else
     {
-    QLabel * labelWidget = new QLabel(_label); 
+    QLabel * labelWidget = new QLabel(_label);
     labelWidget->setToolTip(description);
     _layout->addWidget(labelWidget);
     }
@@ -393,7 +393,7 @@ void qSlicerCLIModuleWidget::cancel()
 void qSlicerCLIModuleWidget::reset()
 {
   Q_D(qSlicerCLIModuleWidget);
-  qDebug() << "qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed";
+  //qDebug() << "qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed";
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->setDefaultNodeValue(node);

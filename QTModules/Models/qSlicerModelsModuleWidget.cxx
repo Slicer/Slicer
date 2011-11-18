@@ -19,10 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QModelIndex>
-
-// CTK includes
-#include <ctkLogger.h>
 
 // qMRMLWidgets
 #include "qMRMLSceneModelHierarchyModel.h"
@@ -35,10 +33,6 @@
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
-
-
-
-static ctkLogger logger("org.slicer.qtmodules.models.qSlicerModelsModule");
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
@@ -66,7 +60,6 @@ qSlicerModelsModuleWidget::qSlicerModelsModuleWidget(QWidget* _parent)
   : Superclass( _parent )
   , d_ptr( new qSlicerModelsModuleWidgetPrivate )
 {
-  logger.setOff();
 }
 
 //-----------------------------------------------------------------------------
@@ -78,8 +71,6 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 void qSlicerModelsModuleWidget::setup()
 {
   Q_D(qSlicerModelsModuleWidget);
-
-  logger.trace("setup");
   
   d->setupUi(this);
   d->ClipModelsNodeComboBox->setVisible(false);
@@ -112,11 +103,11 @@ void qSlicerModelsModuleWidget::setup()
           this, SLOT(onCollapsed(QModelIndex)));
   if (!expRet)
     {
-    logger.trace("Connecting expanded failed");
+    qDebug() << "Connecting expanded failed";
     }
   if (!colRet)
     {
-    logger.trace("Connecting collapsed failed");
+    qDebug() << "Connecting collapsed failed";
     }
 
   d->InsertHierarchyAction = new QAction(tr("Insert hierarchy"), this);
@@ -177,49 +168,48 @@ void qSlicerModelsModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode
 void qSlicerModelsModuleWidget::onCollapsed(const QModelIndex & index)
 {
   Q_D(qSlicerModelsModuleWidget);
-  logger.trace("onCollapsed");
+  qDebug() << "qSlicerModelsModuleWidget::onCollapsed";
   
   vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   if (!node)
     {
-    logger.trace("onCollapsed: node not found for this index");
+    qDebug() << "qSlicerModelsModuleWidget::onCollapsed: node not found for this index";
     return;
     }
   vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
   if (!hnode)
     {
-    logger.warn("onCollapsed: node is not a displayable hierarchy node");
+    qWarning() << "qSlicerModelsModuleWidget::onCollapsed: node is not a displayable hierarchy node";
     return;
     }
-  logger.trace(QString("onCollapsed: found displayable hierarchy node ") + QString(hnode->GetID()));
+  qDebug() << "qSlicerModelsModuleWidget::onCollapsed: found displayable hierarchy node "<< hnode->GetID();
 
   hnode->SetExpanded(0);
-  logger.trace("onCollapsed: set hierarchy node to collapsed");
-
+  qDebug() << "qSlicerModelsModuleWidget::onCollapsed: set hierarchy node to collapsed";
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
 {
   Q_D(qSlicerModelsModuleWidget);
-  logger.trace("onExpanded");
+  qDebug() << "qSlicerModelsModuleWidget::onExpanded";
   
   vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   if (!node)
     {
-    logger.trace("onExpanded: node not found for this index");
+    qWarning() << "qSlicerModelsModuleWidget::onExpanded: node not found for this index";
     return;
     }
   vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
   if (!hnode)
     {
-    logger.warn("onExpanded: node is not a displayable hierarchy node");
+    qWarning() << "qSlicerModelsModuleWidget::onExpanded: node is not a displayable hierarchy node";
     return;
     }
-  logger.trace(QString("onExpanded: found displayable hierarchy node ") + QString(hnode->GetID()));
+  qDebug() << "qSlicerModelsModuleWidget::onExpanded: found displayable hierarchy node " << hnode->GetID();
 
   hnode->SetExpanded(1);
-  logger.trace("onExpanded: set hierarchy node to expanded");
+  qDebug() << "qSlicerModelsModuleWidget::onExpanded: set hierarchy node to expanded";
 }
 /*
 //-----------------------------------------------------------------------------

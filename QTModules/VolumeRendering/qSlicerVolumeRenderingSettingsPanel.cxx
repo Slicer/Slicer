@@ -21,9 +21,6 @@
 // Qt includes
 #include <QLineEdit>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
@@ -36,8 +33,6 @@
 #include <vtkGPUInfo.h>
 #include <vtkGPUInfoList.h>
 #include <vtkNew.h>
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerVolumeRenderingSettingsPanel");
 
 // --------------------------------------------------------------------------
 // qSlicerVolumeRenderingSettingsPanelPrivate

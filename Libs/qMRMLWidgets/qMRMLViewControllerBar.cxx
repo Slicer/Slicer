@@ -27,15 +27,10 @@
 #include <QToolButton>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
 #include "qMRMLViewControllerBar_p.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLViewControllerBar");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLViewControllerBarPrivate methods

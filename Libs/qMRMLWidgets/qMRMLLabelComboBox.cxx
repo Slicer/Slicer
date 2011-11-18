@@ -1,10 +1,10 @@
+
 // Qt includes
 #include <QVBoxLayout>
 #include <QDebug>
 
 // CTK includes
 #include <ctkComboBox.h>
-#include <ctkLogger.h>
 
 // qMRML includes
 #include "qMRMLLabelComboBox.h"
@@ -15,10 +15,6 @@
 
 // VTK includes
 #include <vtkLookupTable.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLLabelComboBox");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qMRMLLabelComboBoxPrivate
@@ -81,7 +77,7 @@ void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColor
 // ------------------------------------------------------------------------------
 QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
 {
-  //logger.debug(QString("colorFromIndex - index: %1").arg(index));
+  //qDebug() << "qMRMLLabelComboBox::colorFromIndex - index:" << index;
   if (index < 0)
     {
     return QColor::Invalid;
@@ -152,7 +148,7 @@ CTK_GET_CPP(qMRMLLabelComboBox, int, currentColor, CurrentColor);
 void qMRMLLabelComboBox::setCurrentColor(int index)
 {
   Q_D(qMRMLLabelComboBox);
-  //logger.debug(QString("setCurrentColor - index: %1").arg(index));
+  //qDebug() << "qMRMLLabelComboBox::setCurrentColor - index:" << index;
 
   if (index == d->CurrentColor)
     {
@@ -256,7 +252,7 @@ void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode *newMRMLColorNode)
 void qMRMLLabelComboBox::onCurrentIndexChanged(int index)
 {
   Q_D(qMRMLLabelComboBox);
-  //logger.debug(QString("onCurrentIndexChanged - index: %1").arg(index));
+  //qDebug() << "qMRMLLabelComboBox::onCurrentIndexChanged - index:" << index;
   if (d->NoneEnabled)
     {
     index--;
@@ -275,13 +271,13 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
   Q_D(qMRMLLabelComboBox);
   Q_ASSERT(d->ColorNode);
   
-  //logger.debug("updateWidgetFromMRML");
+  //qDebug() << "qMRMLLabelComboBox::updateWidgetFromMRML";
 
   d->ComboBox->clear();
   
   if (!d->ColorNode->GetNamesInitialised())
     {
-    logger.error("updateWidgetFromMRML - ColorNode names are NOT initialized !");
+    qCritical() << "qMRMLLabelComboBox::updateWidgetFromMRML - ColorNode names are NOT initialized !";
     return;
     }
 
@@ -295,13 +291,13 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
   Q_ASSERT(lookupTable);
 
   const int numberOfColors = lookupTable->GetNumberOfColors();
-  //logger.debug(QString("updateWidgetFromMRML - NumberOfColors: %1").arg(numberOfColors));
+  //qDebug() << "updateWidgetFromMRML - NumberOfColors:" << numberOfColors;
 
   int actualMax = d->MaximumColorCount > 0 ? d->MaximumColorCount : numberOfColors;
   for (int i = 0 ; i < actualMax ; ++i)
     {
     QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
-    //logger.debug(QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName));
+    //qDebug() << QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName);
     
     QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
     

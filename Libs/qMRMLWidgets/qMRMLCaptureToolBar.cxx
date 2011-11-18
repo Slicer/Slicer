@@ -23,9 +23,6 @@
 #include <QInputDialog>
 #include <QToolButton>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLCaptureToolBar.h"
 #include "qMRMLSceneViewMenu.h"
@@ -39,10 +36,6 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLCaptureToolBar");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qMRMLCaptureToolBarPrivate

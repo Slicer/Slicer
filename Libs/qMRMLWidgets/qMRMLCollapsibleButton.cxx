@@ -22,13 +22,9 @@
 #include <QEvent>
 #include <QStyle>
 
-// CTK includes
-#include <ctkLogger.h>
+// qMRML includes
 #include "qMRMLCollapsibleButton.h"
 
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLCollapsibleButton");
-//--------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // qMRMLCollapsibleButton methods
 

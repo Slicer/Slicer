@@ -18,18 +18,11 @@
 
 ==============================================================================*/
 
-// Qt includes
-
-// CTK includes
-#include "ctkLogger.h"
-
 // QtGUI includes
 #include "qSlicerExtensionsWizard.h"
 #include "qSlicerExtensionsWizardWelcomePage.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"
 #include "qSlicerExtensionsWizardRestartPage.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizard");
 
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsWizardPrivate

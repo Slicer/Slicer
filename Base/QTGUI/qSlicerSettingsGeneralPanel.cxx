@@ -21,15 +21,10 @@
 // Qt includes
 #include <QMainWindow>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsGeneralPanel");
 
 // --------------------------------------------------------------------------
 // qSlicerSettingsGeneralPanelPrivate

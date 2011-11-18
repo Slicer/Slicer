@@ -1,9 +1,6 @@
 // Qt includes
 #include <QObject>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRMLWidget includes
 #include <qMRMLNodeComboBox.h>
 
@@ -11,11 +8,6 @@
 #include "qMRMLAnnotationDisplayNodePointPropertyWidget_p.h"
 
 #include "ui_qMRMLAnnotationDisplayNodePointPropertyWidget.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger(
-    "org.slicer.qtmodules.annotations.widgets.qMRMLAnnotationDisplayNodePointPropertyWidget");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_annotations

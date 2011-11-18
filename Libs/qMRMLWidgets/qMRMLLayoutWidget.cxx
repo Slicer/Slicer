@@ -18,16 +18,9 @@
 
 ==============================================================================*/
 
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutWidget.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qMRMLLayoutWidget");
-//--------------------------------------------------------------------------
 
 class qMRMLLayoutWidgetPrivate
 {

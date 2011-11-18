@@ -27,7 +27,6 @@
 
 // CTK includes
 #include <ctkAxesWidget.h>
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -47,10 +46,6 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDView");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewPrivate methods
@@ -200,7 +195,7 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onSceneStartProcessing()
 {
-  logger.trace("onSceneStartProcessing");
+  //qDebug() << "qMRMLThreeDViewPrivate::onSceneStartProcessing";
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(false);
 }
@@ -209,7 +204,7 @@ void qMRMLThreeDViewPrivate::onSceneStartProcessing()
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onSceneEndProcessing()
 {
-  logger.trace("onSceneImportedEvent");
+  //qDebug() << "qMRMLThreeDViewPrivate::onSceneImportedEvent";
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(true);
 }

@@ -19,9 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-
-// CTK includes
-#include <ctkLogger.h>
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLSceneHierarchyModel_p.h"
@@ -32,8 +30,6 @@
 
 // VTK includes
 #include <vtkNew.h>
-
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSceneHierarchyModel");
 
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModelPrivate
@@ -293,7 +289,7 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
         //newHierarchyNode->AllowMultipleChildrenOff();
         newHierarchyNode->SetAssociatedNodeID(mrmlNode->GetID());
         mrmlNode->GetScene()->AddNode(newHierarchyNode);
-        logger.warn(QString("reparent: Added a new hierarchy node ") + QString(newHierarchyNode->GetID()));
+        qWarning() << "qMRMLSceneHierarchyModel::reparent: Added a new hierarchy node " << newHierarchyNode->GetID();
         newHierarchyNode->Delete();
         // try again
         hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());

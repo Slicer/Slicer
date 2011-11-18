@@ -18,8 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-
 // qMRML includes
 #include "qMRMLSceneDisplayableModel_p.h"
 
@@ -29,19 +27,11 @@
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayNode.h>
 
-// VTK includes
-
-// CTK includes
-#include <ctkLogger.h>
-
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSceneDisplayModel");
-
 //------------------------------------------------------------------------------
 qMRMLSceneDisplayableModelPrivate
 ::qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object)
   : qMRMLSceneHierarchyModelPrivate(object)
 {
-
 }
 
 //------------------------------------------------------------------------------

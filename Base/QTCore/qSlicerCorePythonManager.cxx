@@ -17,15 +17,9 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
-// Qt includes
 
 // PythonQt includes
 #include <PythonQt.h>
-
-// CTK includes
-#include <ctkLogger.h>
-
-// PythonQt includes
 
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
@@ -35,10 +29,6 @@
 
 // VTK includes
 #include <vtkPythonUtil.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtcore.qSlicerCorePythonManager");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
@@ -161,7 +151,8 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
   Q_ASSERT(ret == 0);
   if (ret != 0)
     {
-    logger.error(QString("Failed to add VTK object: %1").arg(name));
+    qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "
+                   "Failed to add VTK object:" << name;
     }
 }
 

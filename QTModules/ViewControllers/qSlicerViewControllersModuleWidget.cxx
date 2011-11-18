@@ -19,12 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-
-// CTK includes
-#include <ctkLogger.h>
-
-// VTK includes
-#include <vtkSmartPointer.h>
+#include <QDebug>
 
 // qMRMLWidgets includes
 #include <qMRMLSliceWidget.h>
@@ -45,11 +40,8 @@
 // MRMLLogic includes
 #include "vtkMRMLLayoutLogic.h"
 
-// STL include
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtcoremodules.qSlicerViewControllersModuleWidget");
-//--------------------------------------------------------------------------
+// VTK includes
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerViewControllersModuleWidgetPrivate:
@@ -92,7 +84,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
 {
   if (this->ControllerMap.find(n) != this->ControllerMap.end())
     {
-    logger.trace(QString("createController - Node already added to module"));
+    qDebug() << "qSlicerViewControllersModuleWidgetPrivate::createController - Node already added to module";
     return;
     }
 
@@ -157,7 +149,7 @@ qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode *n)
   ControllerMapType::iterator cit = this->ControllerMap.find(n);
   if (cit == this->ControllerMap.end())
     {
-    logger.trace(QString("removeController - Node has no Controller managed by this module."));
+    qDebug() << "qSlicerViewControllersModuleWidgetPrivate::removeController - Node has no Controller managed by this module.";
     return;
     }
 
@@ -284,7 +276,7 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   if (sliceNode)
     {
     QString layoutName = sliceNode->GetLayoutName();
-    logger.trace(QString("onNodeAddedEvent - layoutName: %1").arg(layoutName));
+    qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the slice controller
     d->createController(sliceNode, layoutManager);
@@ -294,7 +286,7 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   if (viewNode)
     {
     QString layoutName = viewNode->GetName();
-    logger.trace(QString("onNodeAddedEvent - layoutName: %1").arg(layoutName));
+    qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the view controller
     d->createController(viewNode, layoutManager);
@@ -315,7 +307,7 @@ void qSlicerViewControllersModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
   if (sliceNode)
     {
     QString layoutName = sliceNode->GetLayoutName();
-    logger.trace(QString("onNodeRemovedEvent - layoutName: %1").arg(layoutName));
+    qDebug() << "qSlicerViewControllersModuleWidget::onNodeRemovedEvent - layoutName:" << layoutName;
                                              
     // destroy the slice controller
     d->removeController(sliceNode);
@@ -325,13 +317,14 @@ void qSlicerViewControllersModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
   if (sliceNode)
     {
     QString layoutName = viewNode->GetName();
-    logger.trace(QString("onNodeRemovedEvent - layoutName: %1").arg(layoutName));
+    qDebug() << "qSlicerViewControllersModuleWidget::onNodeRemovedEvent - layoutName:" << layoutName;
                                              
     // destroy the view controller
     d->removeController(viewNode);
     }
 }
 
+// --------------------------------------------------------------------------
 void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 {
   Q_D(qSlicerViewControllersModuleWidget);
@@ -341,7 +334,7 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
     return;
     }
 
-  logger.trace(QString("onLayoutChanged"));
+  qDebug() << "qSlicerViewControllersModuleWidget::onLayoutChanged";
 
   // add the controllers for any newly visible SliceNodes and remove
   // the controllers for any SliceNodes no longer visible

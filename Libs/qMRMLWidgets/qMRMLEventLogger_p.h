@@ -31,13 +31,15 @@ public:
 
   void init();
 
-  void setMRMLScene(vtkMRMLScene* scene); 
+  void setMRMLScene(vtkMRMLScene* scene);
 
 private:
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
 
   QList<QString>          EventToListen;
   QHash<QString, QString> EventNameToConnectionIdMap;
+
+  bool ConsoleOutputEnabled;
 };
 
 #endif

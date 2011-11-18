@@ -24,15 +24,8 @@
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 
-// CTK includes
-#include <ctkLogger.h>
-
 // VTK includes
 #include <vtkMRMLNode.h>
-
-// STD includes
-
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSortFilterProxyModel");
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterProxyModelPrivate

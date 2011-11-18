@@ -22,18 +22,12 @@
 #include <QMainWindow>
 #include <QSettings>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerModulesMenu.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "ui_qSlicerSettingsModulesPanel.h"
-
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsModulesPanel");
 
 // --------------------------------------------------------------------------
 // qSlicerSettingsModulesPanelPrivate

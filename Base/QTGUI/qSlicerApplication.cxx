@@ -27,7 +27,6 @@
 #include <ctkColorDialog.h>
 #include <ctkConfirmExitDialog.h>
 #include <ctkErrorLogModel.h>
-#include <ctkLogger.h>
 #include <ctkSettings.h>
 #include <ctkToolTipTrapper.h>
 
@@ -54,10 +53,6 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate

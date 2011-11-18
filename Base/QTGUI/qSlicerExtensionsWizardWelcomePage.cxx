@@ -25,16 +25,12 @@
 // qCDashAPI includes
 #include <qCDashAPI.h>
 
-// CTK includes
-#include "ctkLogger.h"
-
 // QtGUI includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerExtensionsWizardWelcomePage.h"
 #include "ui_qSlicerExtensionsWizardWelcomePage.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardWelcomePage");
-
+//-----------------------------------------------------------------------------
 // qSlicerExtensionsWizardWelcomePagePrivate
 
 //-----------------------------------------------------------------------------

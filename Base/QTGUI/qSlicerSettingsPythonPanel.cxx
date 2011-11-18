@@ -23,14 +23,11 @@
 #include <QPointer>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPythonConsole.h>
 
 // QtGUI includes
 #include "qSlicerSettingsPythonPanel.h"
 #include "ui_qSlicerSettingsPythonPanel.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsPythonPanel");
 
 // --------------------------------------------------------------------------
 // qSlicerSettingsPythonPanelPrivate

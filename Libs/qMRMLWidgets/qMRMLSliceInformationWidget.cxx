@@ -19,21 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
-
-// CTK includes
-#include <ctkLogger.h>
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLSliceInformationWidget_p.h"
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
-
-// VTK includes
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceInformationWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -98,7 +90,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   Q_ASSERT(this->MRMLSliceNode);
 
-  logger.trace("updateWidgetFromMRMLSliceNode");
+  //qDebug() << "qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
   // Update layout name
   this->LayoutNameLineEdit->setText(QLatin1String(this->MRMLSliceNode->GetLayoutName()));
@@ -285,10 +277,10 @@ void qMRMLSliceInformationWidget::setSliceSpacingMode(int spacingMode)
 
   if (spacingMode != vtkMRMLSliceNode::AutomaticSliceSpacingMode &&
       spacingMode != vtkMRMLSliceNode::PrescribedSliceSpacingMode)
-  {
-    logger.warn(QString("setSliceSpacingMode - Invalid spacingMode: %1").arg(spacingMode));
+    {
+    qWarning() << "setSliceSpacingMode - Invalid spacingMode:" << spacingMode;
     return;
-  }
+    }
 
   if (!d->MRMLSliceNode)
     {

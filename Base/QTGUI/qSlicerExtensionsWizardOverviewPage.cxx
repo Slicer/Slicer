@@ -26,9 +26,6 @@
 #include <QProgressBar>
 #include <QProgressDialog>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"
@@ -40,10 +37,6 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-
-// STD includes
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardOverviewPage");
 
 namespace
 {

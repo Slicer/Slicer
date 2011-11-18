@@ -28,7 +28,6 @@
 
 // CTK includes
 #include <ctkCallback.h>
-#include <ctkLogger.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
 #endif
@@ -239,7 +238,6 @@ int slicerQtMain(int argc, char* argv[])
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
-  ctkLogger::configure();
 
 #ifdef Slicer_USE_PYTHONQT
   // Since the attribute AA_DisablePython has to be set before the application

@@ -21,15 +21,10 @@
 // Qt includes
 #include <QSettings>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerExtensionsWizardRestartPage.h"
 #include "ui_qSlicerExtensionsWizardRestartPage.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardRestartPage");
 
 // --------------------------------------------------------------------------
 // qSlicerExtensionsWizardRestartPagePrivate

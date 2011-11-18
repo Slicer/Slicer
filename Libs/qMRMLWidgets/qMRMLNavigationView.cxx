@@ -18,11 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLNavigationView.h"
@@ -33,10 +28,6 @@
 
 // VTK includes
 #include <vtkWeakPointer.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLNavigationView");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qMRMLNavigationViewPrivate

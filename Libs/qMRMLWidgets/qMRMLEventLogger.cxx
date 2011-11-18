@@ -18,22 +18,11 @@
 
 ==============================================================================*/
 
-// Qt includes
-
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLEventLogger_p.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
-
-// VTK includes
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLEventLogger");
-//--------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // qMRMLEventLoggerPrivate methods
@@ -61,6 +50,7 @@ qMRMLEventLoggerPrivate::qMRMLEventLoggerPrivate(qMRMLEventLogger& object)
   : q_ptr(&object)
 {
   this->MRMLScene = 0;
+  this->ConsoleOutputEnabled = true;
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +130,6 @@ qMRMLEventLogger::qMRMLEventLogger(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLEventLoggerPrivate(*this))
 {
-  logger.setInfo();
   Q_D(qMRMLEventLogger);
   d->init();
 }
@@ -230,14 +219,22 @@ QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneRestored);
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::onNodeAddedEvent(vtkObject* caller, vtkObject* call_data)
 {
-  logger.info(QString("onNodeAddedEvent: %1").arg(call_data->GetClassName()));
+  Q_D(qMRMLEventLogger);
+  if (d->ConsoleOutputEnabled)
+    {
+    std::cout << qPrintable(QString("onNodeAddedEvent: %1").arg(call_data->GetClassName())) << std::endl;
+    }
   emit this->signalNodeAddedEvent(caller, call_data);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_data)
 {
-  logger.info(QString("onNodeRemovedEvent: %1").arg(call_data->GetClassName()));
+  Q_D(qMRMLEventLogger);
+  if (d->ConsoleOutputEnabled)
+    {
+    std::cout << qPrintable(QString("onNodeRemovedEvent: %1").arg(call_data->GetClassName())) << std::endl;
+    }
   emit this->signalNodeRemovedEvent(caller, call_data);
 }
 
@@ -245,11 +242,17 @@ void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_dat
 // Helper macro allowing to define function of the
 // form void onEVENT_NAMEEvent()'
 //
-#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)  \
-void qMRMLEventLogger::on##_EVENT_NAME##Event()           \
-{                                                         \
-  logger.info(QString("on%1Event").arg(#_EVENT_NAME));    \
-  emit signal##_EVENT_NAME##Event();                      \
+#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)    \
+void qMRMLEventLogger::on##_EVENT_NAME##Event()             \
+{                                                           \
+  Q_D(qMRMLEventLogger);                                    \
+  if (d->ConsoleOutputEnabled)                              \
+    {                                                       \
+    std::cout << qPrintable(                                \
+      QString("qMRMLEventLogger::on%1Event").               \
+        arg(#_EVENT_NAME)) << std::endl;                    \
+    }                                                       \
+  emit signal##_EVENT_NAME##Event();                        \
 }
 
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
@@ -270,13 +273,7 @@ QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneRestored);
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::setConsoleOutputEnabled(bool enabled)
 {
-  if (enabled)
-    {
-    logger.setInfo();
-    }
-  else
-    {
-    logger.setOff();
-    }
+  Q_D(qMRMLEventLogger);
+  d->ConsoleOutputEnabled = enabled;
 }
 

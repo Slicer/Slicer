@@ -27,17 +27,12 @@
 #include <QToolButton>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
 #include "qMRMLThreeDViewControllerWidget.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDWidget.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDWidget");
-//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate

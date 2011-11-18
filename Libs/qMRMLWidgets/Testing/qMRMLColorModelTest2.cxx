@@ -23,9 +23,6 @@
 #include <QComboBox>
 #include <QTimer>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // qMRML includes
 #include "qMRMLColorModel.h"
 
@@ -40,8 +37,6 @@
 // --------------------------------------------------------------------------
 int qMRMLColorModelTest2( int argc, char * argv [] )
 {
-  ctkLogger::configure();
-
   QApplication app(argc, argv);
 
   vtkSmartPointer<vtkMRMLColorTableNode> colorTableNode =

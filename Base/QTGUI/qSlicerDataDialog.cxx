@@ -26,17 +26,12 @@
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
-#include <ctkLogger.h>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerDataDialog_p.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qSlicerDataDialog");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
@@ -207,7 +202,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
-    logger.trace(QString("selectedFiles - row: %1").arg(row));
+    qDebug() << "qSlicerDataDialogPrivate::selectedFiles - row: " << row;
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
     QComboBox* descriptionComboBox = 
@@ -216,7 +211,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     Q_ASSERT(descriptionComboBox);
     if (fileItem->checkState() != Qt::Checked)
       {
-      logger.trace(QString("selectedFiles - row: %1 - UnChecked").arg(row));
+      qDebug() << QString("qSlicerDataDialogPrivate::selectedFiles - row: %1 - UnChecked").arg(row);
       continue;
       }
     // TBD: fileType is not good enough to describe what reader to use

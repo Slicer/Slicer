@@ -715,11 +715,6 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
   Q_D(qMRMLSceneModel);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
-  if (node->GetName() && QString(node->GetName()) == "Fat")
-    {
-    qDebug() << "Row: " << row;
-    }
-
   QList<QStandardItem*> items;
   for (int i= 0; i < this->columnCount(); ++i)
     {

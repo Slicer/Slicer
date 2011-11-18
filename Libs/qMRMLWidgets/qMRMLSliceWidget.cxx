@@ -19,9 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 
 // CTK includes
-#include <ctkLogger.h>
 #include <vtkLightBoxRendererManager.h>
 
 // qMRML includes
@@ -45,19 +45,15 @@
 #include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
 // qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy class
 
 //---------------------------------------------------------------------------
-class qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy : 
+class qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy :
   public vtkMRMLLightBoxRendererManagerProxy
 {
 public:
   static vtkInternalLightBoxRendererManagerProxy* New();
-  vtkTypeRevisionMacro(vtkInternalLightBoxRendererManagerProxy, 
+  vtkTypeRevisionMacro(vtkInternalLightBoxRendererManagerProxy,
                        vtkMRMLLightBoxRendererManagerProxy);
 
 
@@ -128,7 +124,7 @@ vtkRenderer* qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::G
 //---------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBoxRendererManager(vtkLightBoxRendererManager *mgr)
 {
-  this->LightBoxRendererManager = mgr; 
+  this->LightBoxRendererManager = mgr;
 }
 
 
@@ -154,7 +150,7 @@ void qMRMLSliceWidgetPrivate::init()
   // Highligh first RenderWindowItem
   this->VTKSliceView->setHighlightedBoxColor(this->InactiveBoxColor);
   //this->VTKSliceView->findChild<QVTKWidget*>()->installEventFilter(q);
- 
+
   vtkNew<vtkSliceViewInteractorStyle> interactorStyle;
   interactorStyle->SetSliceLogic(this->SliceController->sliceLogic());
   this->VTKSliceView->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
@@ -254,7 +250,7 @@ void qMRMLSliceWidgetPrivate::onSceneRestoredEvent()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setImageData(vtkImageData * imageData)
 {
-  logger.trace("setImageData");
+  //qDebug() << "qMRMLSliceWidgetPrivate::setImageData";
   this->VTKSliceView->setImageData(imageData);
 }
 

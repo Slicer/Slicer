@@ -19,12 +19,10 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QVariant>
-
-// CTK includes
-#include <ctkLogger.h>
 
 // qMRMLWidgets includes
 #include <qMRMLSliceWidget.h>
@@ -51,10 +49,6 @@
 // VTK includes
 #include <vtkInteractorObserver.h>
 #include <vtkCornerAnnotation.h>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
@@ -110,8 +104,8 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 
       py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceLayoutName));
 
-      logger.trace(
-          QString("createSliceWidget - %1 registered with python").arg(sliceLayoutName));
+      //qDebug() << QString("qSlicerLayoutManagerPrivate::createSliceWidget - "
+      //                    "%1 registered with python").arg(sliceLayoutName);
       }
 #endif
     }

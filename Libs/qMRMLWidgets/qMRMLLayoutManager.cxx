@@ -20,9 +20,7 @@
 
 // Qt includes
 #include <QButtonGroup>
-
-// CTK includes
-#include <ctkLogger.h>
+#include <QDebug>
 
 // qMRMLWidgets includes
 #include "qMRMLLayoutManager_p.h"
@@ -38,12 +36,6 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSliceNode.h>
-
-// VTK includes
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtgui.qMRMLLayoutManager");
-//--------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // qMRMLLayoutManagerPrivate methods
@@ -202,7 +194,7 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   // there is a unique slice widget per node
   Q_ASSERT(!this->sliceWidget(sliceNode));
 
-  qMRMLSliceWidget * sliceWidget =  new qMRMLSliceWidget(q->viewport());
+  qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(q->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
   QString sliceLayoutLabel(sliceNode->GetLayoutLabel());
@@ -218,10 +210,8 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
 
   this->SliceWidgetList.push_back(sliceWidget);
   this->MRMLSliceLogics->AddItem(sliceWidget->sliceLogic());
-  logger.trace(QString("createSliceWidget - instantiated new qMRMLSliceWidget: %1")
-               .arg(sliceLayoutName));
-
-  logger.trace(QString("created %1").arg(sliceLayoutName));
+  //qDebug() << "qMRMLLayoutManagerPrivate::createSliceWidget - Instantiated qMRMLSliceWidget"
+  //         << sliceLayoutName;
   return sliceWidget;
 }
 
@@ -239,16 +229,13 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode
   // There must be a unique ThreeDWidget per node
   Q_ASSERT(!this->threeDWidget(viewNode));
 
-  qMRMLThreeDWidget* threeDWidget = 0;
-
-  logger.trace("createThreeDWidget - instantiated new qMRMLThreeDWidget");
-  threeDWidget = new qMRMLThreeDWidget(q->viewport());
+  qMRMLThreeDWidget* threeDWidget = new qMRMLThreeDWidget(q->viewport());
   threeDWidget->setViewLabel(viewNode->GetViewLabel());
   threeDWidget->setMRMLScene(this->MRMLScene);
   threeDWidget->setMRMLViewNode(viewNode);
 
   this->ThreeDWidgetList.push_back(threeDWidget);
-
+  //qDebug() << "qMRMLLayoutManagerPrivate::createThreeDWidget - Instantiated qMRMLThreeDWidget";
   return threeDWidget;
 }
 
@@ -263,7 +250,6 @@ void qMRMLLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
   // Remove slice widget
   this->SliceWidgetList.removeAll(sliceWidgetToDelete);
   delete sliceWidgetToDelete;
-
 }
 
 // --------------------------------------------------------------------------
@@ -295,7 +281,7 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   vtkMRMLLayoutNode * layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
     {
-    logger.trace("onLayoutNodeAddedEvent");
+    //qDebug() << "qMRMLLayoutManagerPrivate::onLayoutNodeAddedEvent";
     // Only one Layout node is expected
     Q_ASSERT(this->MRMLLayoutNode == 0);
     if (this->MRMLLayoutNode != 0)
@@ -309,7 +295,7 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
   if (viewNode)
     {
-    logger.trace(QString("onViewNodeAddedEvent - id: %1").arg(viewNode->GetID()));
+    //qDebug() << "qMRMLLayoutManagerPrivate::onViewNodeAddedEvent - id:" << viewNode->GetID();
     if (!this->threeDWidget(viewNode))
       {
       this->createThreeDWidget(viewNode);
@@ -320,8 +306,8 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode)
     {
-    QString layoutName = sliceNode->GetLayoutName();
-    logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
+    //QString layoutName = sliceNode->GetLayoutName();
+    //qDebug() << "qMRMLLayoutManagerPrivate::onSliceNodeAddedEvent - layoutName:" << layoutName;
     if (!this->sliceWidget(sliceNode))
       {
       this->createSliceWidget(sliceNode);
@@ -366,7 +352,7 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onSceneRestoredEvent()
 {
-  logger.trace("onSceneRestoredEvent");
+  //qDebug() << "qMRMLLayoutManagerPrivate::onSceneRestoredEvent";
 
   if (this->MRMLLayoutNode)
     {
@@ -379,7 +365,7 @@ void qMRMLLayoutManagerPrivate::onSceneRestoredEvent()
 void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 {
   Q_Q(qMRMLLayoutManager);
-  logger.trace("onSceneAboutToBeClosedEvent");
+  //qDebug() << "qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent";
   // remove the layout during closing.
   q->clearLayout();
 }
@@ -387,7 +373,7 @@ void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 {
-  logger.trace("onSceneClosedEvent");
+  //qDebug() << "qMRMLLayoutManagerPrivate::onSceneClosedEvent";
   if (this->MRMLScene->GetIsConnecting())
     {
     // some more processing on the scene is happeninng, let's just wait until it

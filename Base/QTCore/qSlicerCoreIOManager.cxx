@@ -21,9 +21,6 @@
 // Qt includes
 #include <QDebug>
 
-// CTK includes
-#include <ctkLogger.h>
-
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -38,10 +35,6 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.base.qtcore.qSlicerCoreIOManager");
-//--------------------------------------------------------------------------
-
 //-----------------------------------------------------------------------------
 class qSlicerCoreIOManagerPrivate
 {
@@ -49,7 +42,7 @@ public:
   qSlicerCoreIOManagerPrivate();
   ~qSlicerCoreIOManagerPrivate();
   vtkMRMLScene* currentScene()const;
-  
+
   qSlicerIO* reader(const QString& fileName)const;
   QList<qSlicerIO*> readers(const QString& fileName)const;
 
@@ -60,7 +53,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate()
 {
-  logger.setTrace();
 }
 
 //-----------------------------------------------------------------------------
@@ -212,7 +204,7 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
 bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
                                      vtkCollection* loadedNodes)
-{ 
+{
   Q_D(qSlicerCoreIOManager);
 
   Q_ASSERT(parameters.contains("fileName"));
@@ -230,7 +222,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
         {
         fileParameters["name"] = nameId < names.size() ? names[nameId] : names.last();
         ++nameId;
-        } 
+        }
       res &= this->loadNodes(fileType, fileParameters, loadedNodes);
       }
     return res;
@@ -241,7 +233,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 
   // If no readers were able to read and load the file(s), success will remain false
   bool success = false;
-  
+
   QStringList nodes;
   foreach (qSlicerIO* reader, readers)
     {
@@ -269,7 +261,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
         d->currentScene()->GetNodeByID(node.toLatin1().data()));
       }
     }
-    
+
   return success;
 }
 
@@ -292,20 +284,20 @@ bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files
 vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
   qSlicerIO::IOFileType fileType,
   const qSlicerIO::IOProperties& parameters)
-{ 
+{
   vtkSmartPointer<vtkCollection> loadedNodes = vtkSmartPointer<vtkCollection>::New();
   this->loadNodes(fileType, parameters, loadedNodes);
-  
+
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(0));
   Q_ASSERT(node);
-  
+
   return node;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
                                      const qSlicerIO::IOProperties& parameters)
-{ 
+{
   Q_D(qSlicerCoreIOManager);
 
   Q_ASSERT(parameters.contains("fileName"));
@@ -329,7 +321,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     {
     return false;
     }
-  
+
   //if (savedNodes)
   //{
   //foreach(const QString& node, nodes)
@@ -384,7 +376,7 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
 {
   Q_ASSERT(io);
   Q_D(qSlicerCoreIOManager);
-  logger.trace(QString("registerIO %1").arg(io->metaObject()->className()));
+  qDebug() << "RegisterIO" << QLatin1String(io->metaObject()->className());
   d->Readers << io;
 
   // Reparent - this will make sure the object is destroyed properly
