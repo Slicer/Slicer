@@ -340,10 +340,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UpdateActor(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
 {
   bool visible = this->IsVisible(displayNode);
-  if (pipeline->actor) 
-    {
-    pipeline->actor->SetVisibility(visible);
-    }
+  pipeline->actor->SetVisibility(visible);
   
   if (visible && displayNode->IsA("vtkMRMLModelDisplayNode"))
     {
@@ -363,6 +360,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     vtkActor2D* actor2D = vtkActor2D::SafeDownCast(pipeline->actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
       actor2D->GetMapper());
+      
+    actor2D->SetPosition(0,0);  
 
     vtkProperty2D* actorProperties = actor2D->GetProperty();
     actorProperties->SetColor(displayNode->GetColor() );
@@ -457,8 +456,8 @@ void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
   if ( !node->IsA("vtkMRMLModelDisplayNode") 
-      || node->IsA("vtkMRMLLineDisplayNode")
-      || node->IsA("vtkMRMLGlyphDisplayNode") )
+      || node->IsA("vtkMRMLFiberBundleLineDisplayNode")
+      || node->IsA("vtkMRMLFiberBundleGlyphDisplayNode") )
     {
     return;
     }
