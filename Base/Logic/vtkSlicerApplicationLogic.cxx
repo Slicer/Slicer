@@ -1453,6 +1453,11 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   if (sdnd2)
                     {
                     vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd2);
+                    vtkMRMLModelDisplayNode *mdnd = vtkMRMLModelDisplayNode::SafeDownCast(tdnd);
+                    if (mdnd)
+                      {
+                      mdnd->SetPolyData(mnd->GetPolyData());
+                      }
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }
