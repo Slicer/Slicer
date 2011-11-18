@@ -169,8 +169,6 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairSliceIntersectionsAction->setText(tr("Slice intersections"));
   this->CrosshairSliceIntersectionsAction->setToolTip(tr("Show how the other slice planes intersect each slice plane."));
   this->CrosshairSliceIntersectionsAction->setCheckable(true);
-  // TODO: this is disabled until ModelSWidget is replaced by new displayable manager
-  this->CrosshairSliceIntersectionsAction->setEnabled(false);
   QObject::connect(this->CrosshairSliceIntersectionsAction, SIGNAL(triggered(bool)),
                    this, SLOT(setSliceIntersectionVisible(bool)));
 

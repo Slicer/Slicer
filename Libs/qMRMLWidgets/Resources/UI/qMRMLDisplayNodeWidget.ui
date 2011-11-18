@@ -73,9 +73,6 @@
      <property name="text">
       <string>Slice &amp;Intersections Visible:</string>
      </property>
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="buddy">
       <cstring>SliceIntersectionVisibilityCheckBox</cstring>
      </property>
