@@ -53,7 +53,7 @@ class EditorWidget:
     self.embedded = embedded
     self.suppliedEffects = suppliedEffects
     self.showVolumesFrame = showVolumesFrame
-    self.editUtil = EditorLib.EditUtil()
+    self.editUtil = EditorLib.EditUtil.EditUtil()
 
     #->> check to make sure it works with a supplied parent
     if not parent:
@@ -71,6 +71,23 @@ class EditorWidget:
         self.setup()
 
   def enter(self):
+    """
+    When entering the module, check that the lightbox modes are off
+    and that we have the volumes loaded
+    """
+    warned = False
+    sliceLogics = slicer.app.layoutManager().mrmlSliceLogics()
+    for i in xrange(sliceLogics.GetNumberOfItems()):
+      sliceLogic = sliceLogics.GetItemAsObject(i)
+      if sliceLogic:
+        sliceNode = sliceLogic.GetSliceNode()
+        print("checking %s", sliceNode.GetName())
+        if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
+          if not warned:
+            qt.QMessageBox.warning(slicer.util.mainWindow(), 'Editor', 'The Editor Module is not compatible with slice viewers in light box mode.\nViews are being reset.')
+            warned = True
+          sliceNode.SetLayoutGrid(1,1)
+
     # get the master and merge nodes from the composite node associated
     # with the red slice, but only if showing volumes
     if self.showVolumesFrame:
@@ -98,6 +115,7 @@ class EditorWidget:
     # resume the current effect, if we left the editor and re-entered or pick default
     # TODO: not fully implemented
     #self.activateEffect()
+
     
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
