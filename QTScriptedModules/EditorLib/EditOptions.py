@@ -1010,6 +1010,7 @@ class ThresholdOptions(EditOptions):
     min = self.parameterNode.GetParameter("Threshold,min")
     max = self.parameterNode.GetParameter("Threshold,max")
     tcl('set effect [lindex [itcl::find objects -class ThresholdEffect] 0]; if { $effect != "" } { $effect configure -range "%s %s"; $effect apply }' % (min, max))
+    self.destroy()
 
   def onMinSizeValueChanged(self,value):
     self.updateMRMLFromGUI()
