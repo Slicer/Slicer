@@ -180,7 +180,10 @@ class DataProbeInfoWidget(object):
           ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
           ijk = []
           for element in ijkFloat:
-            index = int(round(element))
+            try:
+              index = int(round(element))
+            except ValueError:
+              index = 0
             ijk.append(index)
             ijkLabel += "%d, " % index
           ijkLabel = ijkLabel[:-2]
