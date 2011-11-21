@@ -1251,14 +1251,13 @@ class ChangeLabelOptions(EditOptions):
   def create(self):
     super(ChangeLabelOptions,self).create()
 
+    import EditColor
     self.inputColor = EditColor.EditColor(self.frame,'ChangeLabel,inputColor')
     self.inputColor.label.setText("Input Color:")
-    self.inputColor.colorSpin.setValue(0)
     self.inputColor.colorSpin.setToolTip("Set the color to replace.")
 
     self.outputColor = EditColor.EditColor(self.frame,'ChangeLabel,outputColor')
-    self.outputColor.label.setText("Input Color:")
-    self.outputColor.colorSpin.setValue(1)
+    self.outputColor.label.setText("Output Color:")
     self.outputColor.colorSpin.setToolTip("Set the new label value")
 
     self.apply = qt.QPushButton("Apply", self.frame)
