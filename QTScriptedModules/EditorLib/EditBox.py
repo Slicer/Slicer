@@ -330,7 +330,7 @@ itcl::body EditBox::setButtonState {effect state} {
     from slicer import app
     
     #
-    # if an model effect was selected, build an options GUI
+    # if a modal effect was selected, build an options GUI
     # - check to see if it is an extension effect,
     # if not, try to create it, else ignore it
     #
