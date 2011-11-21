@@ -16,6 +16,29 @@ comment = """
 #########################################################
 
 class EditUtil(object):
+
+  def getParameterNode(self):
+    """Get the Editor parameter node - a singleton in the scene"""
+    node = None
+    size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+    for i in xrange(size):
+      n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
+      if n.GetModuleName() == "Editor":
+        node = n
+    if not node:
+      node = self.createParameterNode()
+    return node
+
+  def createParameterNode(self):
+    """create the Editor parameter node - a singleton in the scene
+    This is used internally by getParameterNode - shouldn't really
+    be called for any other reason.
+    """
+    node = slicer.vtkMRMLScriptedModuleNode()
+    node.SetModuleName( "Editor" )
+    slicer.mrmlScene.AddNode(node)
+    return node
+
   def getCompositeNode(self,layoutName='Red'):
     """ use the Red slice composite node to define the active volumes """
     count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
@@ -54,4 +77,5 @@ class EditUtil(object):
       if dispNode:
         return ( dispNode.GetColorNode() )
 
-          
+  def getLabel(self):
+    return self.getParameterNode().GetParameter('label')
