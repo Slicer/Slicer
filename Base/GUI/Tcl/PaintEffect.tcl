@@ -231,6 +231,10 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
     return 
   }
 
+  if {$caller == $_sliceNode || $caller == [EditorGetParameterNode] } {
+    $this createGlyph $o(brush)
+  }
+
   if { $caller == $sliceGUI } {
     switch $event {
       "LeftButtonPressEvent" {
