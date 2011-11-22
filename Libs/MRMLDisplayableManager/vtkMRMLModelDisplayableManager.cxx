@@ -796,6 +796,10 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
   for (unsigned int i=0; i<displayNodes.size(); i++)
     {
     vtkMRMLDisplayNode *modelDisplayNode = displayNodes[i];
+    if (modelDisplayNode == NULL)
+      {
+      continue;
+      }
     vtkProp3D* prop = 0;
     bool hasPolyData = true;
 
