@@ -350,7 +350,7 @@
       <item>
         <widget class="ctkCollapsibleButton" name="OtherUsefulHintsCollapsibleWidget">
           <property name="text">
-            <string>Tutorials &amp;&amp; Information</string>
+            <string>Documentation &amp;&amp; Tutorials</string>
           </property>
           <property name="collapsed">
             <bool>true</bool>
