@@ -25,13 +25,14 @@ public:
   virtual ~qSlicerVolumeRenderingModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
-  /// Help to use the module
-  virtual QString helpText()const;
 
-  /// Return acknowledgements
+  /// Help of the module
+  virtual QString helpText()const;
+  /// Acknowledgement for the module
   virtual QString acknowledgementText()const;
-  
+  /// Contributors of the module.
+  virtual QString contributor()const;
+
   /// Return a custom icon for the module
   virtual QIcon icon()const;
 
