@@ -13,14 +13,14 @@ This module lists the objects of the current scene and permits general operation
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
  </acknowledgements>
  <parameters>
-  <label>Display & Modify scene</label>
+  <label>Display &amp; Modify scene</label>
   <description>Display all the nodes of the scene. By default, only the main nodes are shown. Node type independant operations can be done on the nodes in the tree view. Advanced controls are available to customize the content of the listing</description>
   <parameter>
    <label>Nodes</label>
    <description>The view lists all the nodes of the scene as a hierarchical tree that describes the relationships between nodes. 
    Nodes are graphical objects such as volumes or models that control the displays in the different views (2D, 3D). 
    To rename an item, double click with the left button on any item (but the scene) in the list. 
-   A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&&drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.
+   A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&amp;drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.
    Tooltips show the type of the moused over node (e.g. "View", "Camera", "Volume". "Model"...)
    </description>
   </parameter>
@@ -46,7 +46,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   </parameter>
  </parameters>
  <parameters>
-  <label>Load && Add Scenes Or Individual datasets</label>
+  <label>Load &amp; Add Scenes Or Individual datasets</label>
   <description>Shortcuts to load data into the scene.</description>
   <parameter>
    <label>Load new scene (close current)</label>
