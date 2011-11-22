@@ -159,8 +159,8 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
 
   QString help =
     "%1<br>"
-    "For more detailed documentation see:<br>"
-    "%2";
+    "For more detailed documentation see the "
+    "<a href=\"%2\">online documentation</a>";
 
   d->Help = help.arg(
     QString::fromStdString(desc.GetDescription())).arg(
