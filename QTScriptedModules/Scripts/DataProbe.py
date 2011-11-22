@@ -1,6 +1,5 @@
-import os
 from __main__ import slicer
-import qt, ctk
+import qt, vtk
 
 #
 # DataProbe
@@ -26,7 +25,8 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
 
     # Trigger the menu to be added when application has started up
     qt.QTimer.singleShot(0, self.addView);
-    
+
+
   def __del__(self):
     self.infoWidget.removeObservers()
 
@@ -64,6 +64,10 @@ class DataProbeInfoWidget(object):
     if type == 'small':
       self.createSmall()
 
+    #Helper class to calculate and display tensor scalars
+    self.calculateTensorScalars = CalculateTensorScalars()
+
+
   def __del__(self):
     self.removeObservers()
 
@@ -76,7 +80,7 @@ class DataProbeInfoWidget(object):
 
   def refreshObservers(self):
     """ When the layout changes, drop the observers from
-    all the old widgets and create new observers for the 
+    all the old widgets and create new observers for the
     newly created widgets"""
     self.removeObservers()
     # get new slice nodes
@@ -99,7 +103,7 @@ class DataProbeInfoWidget(object):
   def getPixelString(self,volumeNode,ijk):
     """Given a volume node, create a human readable
     string describing the contents"""
-    # TODO: the volume nodes should have a way to generate 
+    # TODO: the volume nodes should have a way to generate
     # these strings in a generic way
     if not volumeNode:
       return "No volume"
@@ -112,12 +116,39 @@ class DataProbeInfoWidget(object):
         return "Out of Frame"
     pixel = ""
     if volumeNode.GetLabelMap():
-      labelIndex = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],0)
+      labelIndex = imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0)
       labelValue = "Unknown"
       colorNode = volumeNode.GetDisplayNode().GetColorNode()
       if colorNode:
         labelValue = colorNode.GetColorName(labelIndex)
       return "%s (%d)" % (labelValue, labelIndex)
+
+    if volumeNode.IsA("vtkMRMLDiffusionTensorVolumeNode"):
+        point_idx = imageData.FindPoint(ijk[0], ijk[1], ijk[2])
+        if point_idx == -1:
+            return "Out of bounds"
+
+        if not imageData.GetPointData():
+            return "No Point Data"
+
+        tensors = imageData.GetPointData().GetTensors()
+        if not tensors:
+            return "No Tensor Data"
+
+        tensor = imageData.GetPointData().GetTensors().GetTuple9(point_idx)
+        scalarVolumeDisplayNode = volumeNode.GetScalarVolumeDisplayNode()
+
+        if scalarVolumeDisplayNode:
+            operation = scalarVolumeDisplayNode.GetScalarInvariant()
+        else:
+            operation = None
+
+        value = self.calculateTensorScalars(tensor, operation=operation)
+        if value is not None:
+            return "%s %0.4g"%(scalarVolumeDisplayNode.GetScalarInvariantAsString(), value)
+        else:
+            return scalarVolumeDisplayNode.GetScalarInvariantAsString()
+
     numberOfComponents = imageData.GetNumberOfScalarComponents()
     if numberOfComponents > 3:
       return "%d components" % numberOfComponents
@@ -125,8 +156,8 @@ class DataProbeInfoWidget(object):
       component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
       if component == int(component):
         component = int(component)
-      pixel += "%d, " % component
-    return pixel[:-2] 
+      pixel += "%0.4g, " % component
+    return pixel[:-2]
 
 
   def processEvent(self,observee,event):
@@ -165,8 +196,8 @@ class DataProbeInfoWidget(object):
       if sliceNode.GetSliceSpacingMode() == 1:
         self.viewerSpacing.setText( "(" + self.viewerSpacing.text + ")" )
       self.viewerSpacing.setText( " Sp: " + self.viewerSpacing.text )
-      layerLogicCalls = (('L', sliceLogic.GetLabelLayer), 
-                         ('F', sliceLogic.GetForegroundLayer), 
+      layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
+                         ('F', sliceLogic.GetForegroundLayer),
                          ('B', sliceLogic.GetBackgroundLayer))
       for layer,logicCall in layerLogicCalls:
         layerLogic = logicCall()
@@ -316,7 +347,7 @@ class DataProbeWidget:
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 
@@ -326,3 +357,41 @@ class DataProbeWidget:
   def setup(self):
     self.parent.layout().addWidget(qt.QLabel("Nothing here..."))
     self.parent.layout().addStretch(1)
+
+
+class CalculateTensorScalars:
+    def __init__(self):
+        self.dti_math = slicer.vtkDiffusionTensorMathematics()
+
+        self.single_pixel_image = vtk.vtkImageData()
+        self.single_pixel_image.SetExtent(0, 0, 0, 0, 0, 0)
+        self.single_pixel_image.AllocateScalars()
+
+        self.tensor_data = vtk.vtkFloatArray()
+        self.tensor_data.SetNumberOfComponents(9)
+        self.tensor_data.SetNumberOfTuples(self.single_pixel_image.GetNumberOfPoints())
+        self.single_pixel_image.GetPointData().SetTensors(self.tensor_data)
+
+        self.dti_math.SetInput(self.single_pixel_image)
+
+    def __call__(self, tensor, operation=None):
+        if len(tensor) != 9:
+            raise ValueError("Invalid tensor a 9-array is required")
+
+        self.tensor_data.SetTupleValue(0, tensor)
+        self.tensor_data.Modified()
+        self.single_pixel_image.Modified()
+
+        if operation is not None:
+            self.dti_math.SetOperation(operation)
+        else:
+            self.dti_math.SetOperationToFractionalAnisotropy()
+
+        self.dti_math.Update()
+        output = self.dti_math.GetOutput()
+
+        if output and output.GetNumberOfScalarComponents() > 0:
+            value = output.GetScalarComponentAsDouble(0, 0, 0, 0)
+            return value
+        else:
+            return None
