@@ -17,19 +17,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <description>Display all the nodes of the scene. By default, only the main nodes are shown. Node type independant operations can be done on the nodes in the tree view. Advanced controls are available to customize the content of the listing</description>
   <parameter>
    <label>Nodes</label>
-   <description>The view lists all the nodes of the scene as a hierarchical tree that describes the relationships between nodes. 
-   Nodes are graphical objects such as volumes or models that control the displays in the different views (2D, 3D). 
-   To rename an item, double click with the left button on any item (but the scene) in the list. 
-   A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&amp;drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.
-   Tooltips show the type of the moused over node (e.g. "View", "Camera", "Volume". "Model"...)
+   <description>The view lists all the nodes of the scene as a hierarchical tree that describes the relationships between nodes. Nodes are graphical objects such as volumes or models that control the displays in the different views (2D, 3D).
+***To rename an item, double click with the left button on any item (but the scene) in the list. 
+***A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&amp;drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.
+***Tooltips show the type of the moused over node (e.g. "View", "Camera", "Volume". "Model"...)
    </description>
   </parameter>
   <parameter>
    <label>Scene Model</label>
-   <description>The model controls the meaning of the hiearchy in the tree view. 
-   "Transforms" (by default) shows the transform/transformed relationship between nodes. The parent being the transform , the children being the nodes for which the transform is applied. A transform can have another transform as a child.
-   "Displayable" shows the displayable/display relationship between nodes. A displayable node (parent) contains non-view-specific information (data), while a display node (child) contains graphical properties such as color or opacity used to render the displayable node in views.
-   "ModelHierarchy" shows the group hierarchy between nodes. Models (child) can be grouped within a hierarchy node (parent), the later controls the display properties of multiple children at once (see Models module).
+   <description>The model controls the meaning of the hiearchy in the tree view.
+***"Transforms" (by default) shows the transform/transformed relationship between nodes. The parent being the transform , the children being the nodes for which the transform is applied. A transform can have another transform as a child.
+***"Displayable" shows the displayable/display relationship between nodes. A displayable node (parent) contains non-view-specific information (data), while a display node (child) contains graphical properties such as color or opacity used to render the displayable node in views.
+***"ModelHierarchy" shows the group hierarchy between nodes. Models (child) can be grouped within a hierarchy node (parent), the later controls the display properties of multiple children at once (see Models module).
    </description>
   </parameter>
   <parameter>
