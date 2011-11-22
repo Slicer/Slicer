@@ -1,4 +1,21 @@
 
+#include "itkImageSeriesReader.h"
+#include "itkOrientedImage.h"
+#include "itkMetaDataDictionary.h"
+#include "itkGDCMImageIO.h"
+#include "itkGDCMSeriesFileNames.h"
+#include "itkNumericSeriesFileNames.h"
+#include "itkImageSeriesReader.h"
+#include "vtkGlobFileNames.h"
+
+#include "gdcmFile.h"
+#include "gdcmGlobal.h"
+#include "gdcmUtil.h"
+#include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
+#include "gdcmSeqEntry.h"
+#include "gdcmSQItem.h"
+
 #include "itkImageFileWriter.h"
 
 #include "ComputeSUVBodyWeightCLP.h"
@@ -8,7 +25,10 @@
 #include "vtkImageAccumulate.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageToImageStencil.h"
+#include "vtkSmartPointer.h"
 
+#include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 // ...
 // ...............................................................................................
 // ...
@@ -67,26 +87,30 @@ namespace
 
 struct parameters
   {
-  std::string PETVolumeName;
-  std::string VOIVolumeName;
-  std::string parameterFile;
-  std::string SUVOutputTable;
-  std::string patientName;
-  std::string studyDate;
-  std::string radioactivityUnits;
-  std::string weightUnits;
-  std::string volumeUnits;
-  double injectedDose;
-  double calibrationFactor;
-  double patientWeight;
-  std::string seriesReferenceTime;
-  std::string injectionTime;
-  std::string decayCorrection;
-  std::string decayFactor;
-  std::string radionuclideHalfLife;
-  std::string frameReferenceTime;
-  };
-
+    std::string PETDICOMPath;
+    std::string PETVolumeName;
+    std::string VOIVolumeName;
+    std::string VOIVolumeColorTableFile;
+    std::string parameterFile;
+    std::string SUVOutputTable;
+    std::string SUVOutputStringFile;
+    std::string patientName;
+    std::string studyDate;
+    std::string radioactivityUnits;
+    std::string tissueRadioactivityUnits;
+    std::string weightUnits;
+    std::string volumeUnits;
+    double injectedDose;
+    double calibrationFactor;
+    double patientWeight;
+    std::string seriesReferenceTime;
+    std::string injectionTime;
+    std::string decayCorrection;
+    std::string decayFactor;
+    std::string radionuclideHalfLife;
+    std::string frameReferenceTime;
+};
+  
 // ...
 // ...............................................................................................
 // ...
@@ -709,81 +733,25 @@ double DecayCorrection(parameters & list, double inVal )
 // ...
 // ...............................................................................................
 // ...
-const char * MapLabelIDtoColorName( int id )
+const char * MapLabelIDtoColorName( int id, std::string colorFile )
 {
+  // use the colour table that was passed in with the VOI volume
+  
+  const char *colorName = "";
 
-  // This method is used with a hardcoded colormap for now
-  // for Horky PETCT project.
-  // TODO: finalize atlas to be used and take that from command line.
-  const char *name;
+  vtkSmartPointer<vtkMRMLColorTableNode>        colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
+  colorStorageNode->SetFileName(colorFile.c_str() );
 
-  switch( id )
+  if( !colorStorageNode->ReadData(colorNode) )
     {
-    case 0:
-      name = "Background";
-      break;
-    case 1:
-      name = "R_caudate_head";
-      break;
-    case 2:
-      name = "L_caudate_head";
-      break;
-    case 3:
-      name = "R_thalamus";
-      break;
-    case 4:
-      name = "L_thalamus";
-      break;
-    case 5:
-      name = "R_frontal_cortex";
-      break;
-    case 6:
-      name = "L_frontal_cortex";
-      break;
-    case 7:
-      name = "R_parietal_cortex";
-      break;
-    case 8:
-      name = "L_parietal_cortex";
-      break;
-    case 9:
-      name = "R_cerebellum";
-      break;
-    case 10:
-      name = "L_cerebellum";
-      break;
-    case 11:
-      name = "R_hippo";
-      break;
-    case 12:
-      name = "L_hippo";
-      break;
-    case 13:
-      name = "R_paraventric_WM";
-      break;
-    case 14:
-      name = "L_paraventric_WM";
-      break;
-    case 15:
-      name = "CC";
-      break;
-    case 16:
-      name = "R_olfactory_gyrus";
-      break;
-    case 17:
-      name = "L_olfactory_gyrus";
-      break;
-    case 18:
-      name = "All_CSF_space";
-      break;
-    case 19:
-      name = "All_white_matter";
-      break;
-    default:
-      name = "";
-      break;
+    std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
     }
-  return name;
+  else
+    {
+    colorName = colorNode->GetColorName(id);
+    }
+  return colorName;
 }
 
 // ...
@@ -792,6 +760,7 @@ const char * MapLabelIDtoColorName( int id )
 template <class T>
 int LoadImagesAndComputeSUV( parameters & list, T )
 {
+
 
   typedef    T                           InputPixelType;
   typedef itk::Image<InputPixelType,  3> InputImageType;
@@ -810,7 +779,8 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   //
   std::string   outputFile = list.SUVOutputTable;
   std::ofstream ofile;
-
+  std::string  outputStringFile = list.SUVOutputStringFile;
+  std::ofstream stringFile;
   vtkImageData *                    petVolume;
   vtkImageData *                    voiVolume;
   vtkITKArchetypeImageSeriesReader *reader1 = NULL;
@@ -821,7 +791,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   petfile = fopen(list.PETVolumeName.c_str(), "r");
   if( petfile == NULL )
     {
-    std::cerr << "ERROR: cannot open input volume file " << list.PETVolumeName.c_str() << endl;
+    std::cerr << "ERROR: cannot open input volume file '" << list.PETVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
     }
   fclose(petfile);
@@ -830,12 +800,13 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   voifile = fopen(list.VOIVolumeName.c_str(), "r");
   if( voifile == NULL )
     {
-    std::cerr << "ERROR: cannot open input volume file " << list.VOIVolumeName.c_str() << endl;
+    std::cerr << "ERROR: cannot open input volume file '" << list.VOIVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
     }
   fclose(voifile);
 
-  // Read the file
+  // Read the PET file
+  
   reader1 = vtkITKArchetypeImageSeriesScalarReader::New();
 //    vtkPluginFilterWatcher watchReader1 ( reader1, "Reading PET Volume", CLPProcessInformation );
   reader1->SetArchetype(list.PETVolumeName.c_str() );
@@ -844,8 +815,9 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   reader1->SetUseNativeOriginOn();
   reader1->Update();
   std::cout << "Done reading the file " << list.PETVolumeName.c_str() << endl;
+  
 
-  // Read the file
+  // Read the VOI file
   reader2 = vtkITKArchetypeImageSeriesScalarReader::New();
 //    vtkPluginFilterWatcher watchReader2 ( reader2, "Reading VOI Volume", CLPProcessInformation );
   reader2->SetArchetype(list.VOIVolumeName.c_str() );
@@ -856,28 +828,550 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::cout << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
 
   // stuff the images.
-  reader1->Update();
-  reader2->Update();
+//  reader1->Update();
+//  reader2->Update();
   petVolume = reader1->GetOutput();
   petVolume->Update();
   voiVolume = reader2->GetOutput();
   voiVolume->Update();
 
+  
   //
-  // COMPUTE SUV
+  // COMPUTE SUV ///////////////////////////////////////////////////////////////////////////////RSNA CHANGE//////////////////////////
   //
+
   if( petVolume == NULL )
     {
-    std::cerr << "No input volume found." << std::endl;
+    std::cerr << "No input PET volume found." << std::endl;
     return EXIT_FAILURE;
     }
 
   // find input labelmap volume
   if( voiVolume == NULL )
     {
-    std::cerr <<  "No input volume found" << std::endl;
+    std::cerr <<  "No input VOI volume found" << std::endl;
     return EXIT_FAILURE;
     }
+
+  // read the DICOM dir to get the radiological data
+
+  typedef short PixelValueType;
+  typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
+  typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
+  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
+  typedef itk::ImageFileReader< SliceType > SliceReaderType;
+  typedef itk::GDCMImageIO ImageIOType;
+  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
+  typedef itk::VectorImage< PixelValueType, 3 > NRRDImageType;
+    
+  if ( !list.PETDICOMPath.compare(""))
+    {
+    std::cerr << "GetParametersFromDicomHeader:Got empty list.PETDICOMPath." << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+
+  //--- catch non-dicom data
+  vtkGlobFileNames* gfn = vtkGlobFileNames::New();
+  gfn->SetDirectory(list.PETDICOMPath.c_str());
+  gfn->AddFileNames("*.nhdr");
+  gfn->AddFileNames("*.nrrd");
+  gfn->AddFileNames("*.hdr");
+  gfn->AddFileNames("*.mha");
+  gfn->AddFileNames("*.img");
+  gfn->AddFileNames("*.nii");
+  gfn->AddFileNames("*.nia");
+
+  int notDICOM = 0;
+  int nFiles = gfn->GetNumberOfFileNames();
+  if (nFiles > 0)
+    {
+    notDICOM = 1;
+    }
+  gfn->Delete();
+  if ( notDICOM )
+    {
+    std::cerr << "PET Dicom parameter doesn't point to a dicom directory!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  
+  InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
+  inputNames->SetUseSeriesDetails(true);
+  inputNames->SetDirectory(list.PETDICOMPath);
+  itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
+
+  const VolumeReaderType::FileNamesContainer & filenames = inputNames->GetFileNames(seriesUIDs[0]);
+      
+  std::string tag;
+  std::string yearstr;
+  std::string monthstr;
+  std::string daystr;
+  std::string hourstr;
+  std::string minutestr;
+  std::string secondstr;
+  int len;
+    
+// Nuclear Medicine DICOM info:
+/*
+    0054,0016  Radiopharmaceutical Information Sequence:
+    0018,1072  Radionuclide Start Time: 090748.000000
+    0018,1074  Radionuclide Total Dose: 370500000
+    0018,1075  Radionuclide Half Life: 6586.2
+    0018,1076  Radionuclide Positron Fraction: 0
+*/
+    int parsingDICOM = 0;
+    gdcm::File *f = new gdcm::File();
+    if ( f != NULL )
+      {
+      const char *fn = filenames[0].c_str();
+      f->SetFileName( fn );
+      //bool res = f->Load();   // FIXME: commented out for now to avoid compile warnings
+      f->Load();   // FIXME: handle res
+
+      gdcm::SeqEntry *seq = f->GetSeqEntry(0x0054,0x0016);
+      if ( seq != NULL )
+        {
+        parsingDICOM = 1;
+        gdcm::SQItem *sqItem = seq->GetFirstSQItem();
+        while ( sqItem )
+          {
+          //---
+          //--- Radiopharmaceutical Start Time
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1072);
+          //--- expect A string of characters of the format hhmmss.frac;
+          //---where hh contains hours (range "00" - "23"), mm contains minutes
+          //---(range "00" - "59"), ss contains seconds (range "00" - "59"), and frac
+          //---contains a fractional part of a second as small as 1 millionth of a
+          //---second (range "000000" - "999999"). A 24 hour clock is assumed.
+          //---Midnight can be represented by only "0000" since "2400" would
+          //---violate the hour range. The string may be padded with trailing
+          //---spaces. Leading and embedded spaces are not allowed. One
+          //---or more of the components mm, ss, or frac may be unspecified
+          //---as long as every component to the right of an unspecified
+          //---component is also unspecified. If frac is unspecified the preceding "."
+          //---may not be included. Frac shall be held to six decimal places or
+          //---less to ensure its format conforms to the ANSI 
+          //---Examples -
+          //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
+          //---2. "1010" represents a time of 10 hours, and 10 minutes.
+          //---3. "021" is an invalid value. 
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            list.injectionTime  = "MODULE_INIT_NO_VALUE" ;
+            }
+          else
+            {
+            len = tag.length();
+            hourstr.clear();
+            minutestr.clear();
+            secondstr.clear();
+            if ( len >= 2 )
+              {
+              hourstr = tag.substr(0, 2);
+              }
+            else
+              {
+              hourstr = "00";
+              }
+            if ( len >= 4 )
+              {
+              minutestr = tag.substr(2, 2);
+              }
+            else
+              {
+              minutestr = "00";
+              }
+            if ( len >= 6 )
+              {
+              secondstr = tag.substr(4);
+              }
+            else
+              {
+              secondstr = "00";
+              }
+            tag.clear();
+            tag = hourstr.c_str();
+            tag += ":";
+            tag += minutestr.c_str();
+            tag += ":";
+            tag += secondstr.c_str();
+            list.injectionTime = tag.c_str();
+            }
+
+          //---
+          //--- Radionuclide Total Dose 
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1074);
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            list.injectedDose = 0.0;
+            }
+          else
+            {
+            list.injectedDose = atof ( tag.c_str() ) ;
+            }
+
+
+          //---
+          //--- RadionuclideHalfLife
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1075);
+          //--- Expect a Decimal String
+          //--- A string of characters representing either
+          //--- a fixed point number or a floating point number.
+          //--- A fixed point number shall contain only the characters 0-9
+          //--- with an optional leading "+" or "-" and an optional "." to mark
+          //--- the decimal point. A floating point number shall be conveyed
+          //--- as defined in ANSI X3.9, with an "E" or "e" to indicate the start
+          //--- of the exponent. Decimal Strings may be padded with leading
+          //--- or trailing spaces. Embedded spaces are not allowed. 
+          if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
+            {
+            list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE" ;
+            }
+          else
+            {
+            list.radionuclideHalfLife =  tag.c_str() ;
+            }
+
+          //---
+          //---Radionuclide Positron Fraction
+          tag.clear();
+          tag = sqItem->GetEntryValue(0x0018,0x1076);
+          //--- not currently using this one?
+
+          sqItem = seq->GetNextSQItem();
+          }
+
+        //--
+        //--- UNITS: something like BQML:
+        //--- CNTS, NONE, CM2, PCNT, CPS, BQML,
+        //--- MGMINML, UMOLMINML, MLMING, MLG,
+        //--- 1CM, UMOLML, PROPCNTS, PROPCPS,
+        //--- MLMINML, MLML, GML, STDDEV      
+        //---
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1001);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- I think these are piled together. MBq ml... search for all.
+          std::string units = tag.c_str();
+          if ( ( units.find ("BQML") != std::string::npos) ||
+               ( units.find ("BQML") != std::string::npos) )
+            {
+            list.radioactivityUnits= "Bq";        
+            list.tissueRadioactivityUnits = "Bq";
+            }
+          else if ( ( units.find ("MBq") != std::string::npos) ||
+                    ( units.find ("MBQ") != std::string::npos) )
+            {
+            list.radioactivityUnits = "MBq";
+            list.tissueRadioactivityUnits = "MBq";
+            }
+          else if ( (units.find ("kBq") != std::string::npos) ||
+                    (units.find ("kBQ") != std::string::npos) ||
+                    (units.find ("KBQ") != std::string::npos) )
+            {
+            list.radioactivityUnits = "kBq";
+            list.tissueRadioactivityUnits = "kBq";
+            }
+          else if ( (units.find ("mBq") != std::string::npos) ||
+                    (units.find ("mBQ") != std::string::npos) )
+            {
+            list.radioactivityUnits = "mBq";
+            list.tissueRadioactivityUnits = "mBq";
+            }
+          else if ( (units.find ("uBq") != std::string::npos) ||
+                    (units.find ("uBQ") != std::string::npos) )
+            {
+            list.radioactivityUnits = "uBq";
+            list.tissueRadioactivityUnits = "uBq";
+            }
+          else if ( (units.find ("Bq") != std::string::npos) ||
+                    (units.find ("BQ") != std::string::npos) )
+            {
+            list.radioactivityUnits = "Bq";
+            list.tissueRadioactivityUnits = "Bq";
+            }
+          else if ( (units.find ("MCi") != std::string::npos) ||
+                    ( units.find ("MCI") != std::string::npos) )
+            {
+            list.radioactivityUnits = "MCi";
+            list.tissueRadioactivityUnits = "MCi";
+            }
+          else if ( (units.find ("kCi") != std::string::npos) ||
+                    (units.find ("kCI") != std::string::npos)  ||
+                    (units.find ("KCI") != std::string::npos) )                
+            {
+            list.radioactivityUnits = "kCi";
+            list.tissueRadioactivityUnits = "kCi";
+            }
+          else if ( (units.find ("mCi") != std::string::npos) ||
+                    (units.find ("mCI") != std::string::npos) )                
+            {
+            list.radioactivityUnits = "mCi";
+            list.tissueRadioactivityUnits = "mCi";
+            }
+          else if ( (units.find ("uCi") != std::string::npos) ||
+                    (units.find ("uCI") != std::string::npos) )                
+            {
+            list.radioactivityUnits = "uCi";
+            list.tissueRadioactivityUnits = "uCi";
+            }
+          else if ( (units.find ("Ci") != std::string::npos) ||
+                    (units.find ("CI") != std::string::npos) )                
+            {
+            list.radioactivityUnits = "Ci";
+            list.tissueRadioactivityUnits = "Ci";
+            }
+          list.volumeUnits = "ml";
+          }
+        else
+          {
+          //--- default values.
+          list.radioactivityUnits = "MBq";
+          list.tissueRadioactivityUnits = "MBq";
+          list.volumeUnits = "ml";   
+          }
+
+    
+        //---
+        //--- DecayCorrection
+        //--- Possible values are:
+        //--- NONE = no decay correction
+        //--- START= acquisition start time
+        //--- ADMIN = radiopharmaceutical administration time
+        //--- Frame Reference Time  is the time that the pixel values in the Image occurred. 
+        //--- It's defined as the time offset, in msec, from the Series Reference Time.
+        //--- Series Reference Time is defined by the combination of:
+        //--- Series Date (0008,0021) and
+        //--- Series Time (0008,0031).      
+        //--- We don't pull these out now, but can if we have to.
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1102);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //---A string of characters with leading or trailing spaces (20H) being non-significant. 
+          list.decayCorrection = tag.c_str();
+          }
+        else
+          {
+          list.decayCorrection = "MODULE_INIT_NO_VALUE";
+          }
+
+        //---
+        //--- StudyDate
+//        this->ClearStudyDate();
+        tag.clear();
+        tag = f->GetEntryValue (0x0008,0x0021);
+        if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
+          {
+          //--- YYYYMMDD
+          yearstr.clear();
+          daystr.clear();
+          monthstr.clear();
+          len = tag.length();
+          if ( len >= 4 )
+            {
+            yearstr = tag.substr(0, 4);
+            // this->Year = atoi(yearstr.c_str() );
+            }
+          else
+            {
+            yearstr = "????";
+            // this->Year = 0;
+            }
+          if ( len >= 6 )
+            {
+            monthstr = tag.substr(4, 2);
+            // this->Month = atoi ( monthstr.c_str() );
+            }
+          else
+            {
+            monthstr = "??";
+            // this->Month = 0;
+            }
+          if ( len >= 8 )
+            {
+            daystr = tag.substr (6, 2);
+//            this->Day = atoi ( daystr.c_str() );
+            }
+          else
+            {
+            daystr = "??";
+//            this->Day = 0;
+            }
+          tag.clear();
+          tag = yearstr.c_str();
+          tag += "/";
+          tag += monthstr.c_str();
+          tag += "/";
+          tag += daystr.c_str();
+          list.studyDate = tag.c_str();
+          }
+        else
+          {
+          list.studyDate = "MODULE_INIT_NO_VALUE";
+          }
+
+        //---
+        //--- PatientName
+        tag.clear();
+        tag = f->GetEntryValue (0x0010,0x0010);
+        if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ) )
+          {
+          list.patientName = tag.c_str();
+          }
+        else
+          {
+          list.patientName = "MODULE_INIT_NO_VALUE";
+          }
+
+        //---
+        //--- DecayFactor
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1321);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- have to parse this out. what we have is
+          //---A string of characters representing either a fixed point number or a
+          //--- floating point number. A fixed point number shall contain only the
+          //---characters 0-9 with an optional leading "+" or "-" and an optional "."
+          //---to mark the decimal point. A floating point number shall be conveyed
+          //---as defined in ANSI X3.9, with an "E" or "e" to indicate the start of the
+          //---exponent. Decimal Strings may be padded with leading or trailing spaces.
+          //---Embedded spaces are not allowed. or maybe atof does it already...
+          list.decayFactor =  tag.c_str() ;
+          }
+        else
+          {
+          list.decayFactor =  "MODULE_INIT_NO_VALUE" ;
+          }
+
+    
+        //---
+        //--- FrameReferenceTime
+        tag.clear();
+        tag = f->GetEntryValue (0x0054,0x1300);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- The time that the pixel values in the image
+          //--- occurred. Frame Reference Time is the
+          //--- offset, in msec, from the Series reference
+          //--- time.
+          list.frameReferenceTime = tag.c_str();
+          }
+        else
+          {
+          list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
+          }
+
+  
+        //---
+        //--- SeriesTime
+        tag.clear();
+        tag = f->GetEntryValue (0x0008,0x0031);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          hourstr.clear();
+          minutestr.clear();
+          secondstr.clear();
+          len = tag.length();
+          if ( len >= 2 )
+            {
+            hourstr = tag.substr(0, 2);
+            }
+          else
+            {
+            hourstr = "00";
+            }
+          if ( len >= 4 )
+            {
+            minutestr = tag.substr(2, 2);
+            }
+          else
+            {
+            minutestr = "00";
+            }
+          if ( len >= 6 )
+            {
+            secondstr = tag.substr(4);
+            }
+          else
+            {
+            secondstr = "00";
+            }
+          tag.clear();
+          tag = hourstr.c_str();
+          tag += ":";
+          tag += minutestr.c_str();
+          tag += ":";
+          tag += secondstr.c_str();
+          list.seriesReferenceTime = tag.c_str();
+          }
+        else
+          {
+          list.seriesReferenceTime = "MODULE_INIT_NO_VALUE";
+          }
+
+
+        //---
+        //--- PatientWeight
+        tag.clear();
+        tag = f->GetEntryValue (0x0010,0x1030);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- Expect same format as RadionuclideHalfLife
+          list.patientWeight = atof ( tag.c_str() );
+          list.weightUnits = "kg";
+          }
+        else
+          {
+          list.patientWeight = 0.0;
+          list.weightUnits = "";
+          
+          }
+
+
+        //---
+        //--- CalibrationFactor
+        tag.clear();
+        tag = f->GetEntryValue (0x7053,0x1009);
+        if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
+          {
+          //--- converts counts to Bq/cc. If Units = BQML then CalibrationFactor =1 
+          //--- I think we expect the same format as RadiopharmaceuticalStartTime
+          list.calibrationFactor =  atof(tag.c_str());
+          }
+        else
+          {
+          list.calibrationFactor =  0.0 ;
+          }
+        }
+      }
+    delete f;
+
+
+    // check.... did we get all params we need for computation?
+    if ( (parsingDICOM) &&
+         (list.injectedDose != 0.0) &&
+         (list.patientWeight != 0.0) &&
+         (list.seriesReferenceTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
+         (list.injectionTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
+         (list.radionuclideHalfLife.compare("MODULE_INIT_NO_VALUE") != 0) )
+      {
+      std::cout << "Input parameters okay..." << std::endl;
+      }
+    else
+      {
+      std::cerr << "Missing some parameters..." << std::endl;
+      return EXIT_FAILURE;
+      }
+
+
+    
 
   // convert from input units.
   if( list.radioactivityUnits.c_str() == NULL )
@@ -893,6 +1387,13 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   double suvmax, suvmin, suvmean;
 
+  // make up a string with output to return
+  std::string outputLabelString = "OutputLabel = ";
+  std::string outputLabelValueString = "OutputLabelValue = ";
+  std::string outputSUVMaxString = "SUVMax = ";
+  std::string outputSUVMeanString = "SUVMean = ";
+  std::string outputSUVMinString = "SUVMin = ";
+  
   // --- find the max and min label in mask
   vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
   stataccum->SetInput( voiVolume );
@@ -913,7 +1414,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       }
 
     labelName.clear();
-    labelName = MapLabelIDtoColorName(i);
+    labelName = MapLabelIDtoColorName(i, list.VOIVolumeColorTableFile);
     if( labelName.empty() )
       {
       labelName.clear();
@@ -1004,33 +1505,87 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         suvmin = (CPETmin * tissueConversionFactor ) * weightByDose;
         suvmean = (CPETmean * tissueConversionFactor) * weightByDose;
         }
-      // --- write output file
+      // --- append to output return string file
+      std::stringstream outputStringStream;
+//      outputStringStream << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << labelName.c_str() << ", " << ", " << ", " << ", " << std::endl;
+      std::string postfixStr = ", ";
+      if (i == hi)
+        {
+        postfixStr = "";
+        }
+      outputStringStream.str("");
+      outputStringStream << labelName.c_str() << postfixStr;
+      outputLabelString += outputStringStream.str();
+      outputStringStream.str("");
+      outputStringStream  << i << postfixStr;
+      outputLabelValueString += outputStringStream.str();
+      outputStringStream.str("");
+      outputStringStream  << suvmax << postfixStr;
+      outputSUVMaxString += outputStringStream.str();
+      outputStringStream.str("");
+      outputStringStream  << suvmean << postfixStr;
+      outputSUVMeanString += outputStringStream.str();
+      outputStringStream.str("");
+      outputStringStream << suvmin << postfixStr;
+      outputSUVMinString += outputStringStream.str();
+      
+      // --- write output CSV file
+      
       // open file containing suvs and append to it.
       ofile.open( outputFile.c_str(), ios::out | ios::app );
       if( !ofile.is_open() )
         {
         // report error, clean up, and get out.
-        std::cerr << "ERROR: cannot open nuclear medicine parameter file " << outputFile.c_str() << std::endl;
-        ofile.close();
-        return EXIT_FAILURE;
+        std::cerr << "ERROR: cannot open nuclear medicine output csv parameter file '" << outputFile.c_str() << "', see return strings for values" << std::endl;
         }
-      // --- for each value..
-      // --- format looks like:
-      // patientID, studyDate, dose, blood glucose, labelID, suvmax, suvmean, chemoStartDate, chemoEndDate, labelName
-      // ...
-      ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax
-         << ", " << suvmean << ", " << labelName.c_str() << ", " << ", " << ", " << ", " << std::endl;
-      ofile << ss.str();
-      ofile.close();
-      ss.str("");
+      else
+        {
+        // --- for each value..
+        // --- format looks like:
+        // patientID, studyDate, dose, labelID, suvmax, suvmean, labelName
+        // ...
+        ss.str("");
+        ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmin << ", " << suvmax
+           << ", " << suvmean << ", " << labelName.c_str() << std::endl;
+        ofile << ss.str();
+        ofile.close();
+        std::cout << "Wrote output for label " << labelName.c_str() << " to " << outputFile.c_str() << std::endl;
+        }
       }
+  
 
     thresholder->Delete();
     labelstat->Delete();
     }
+  // --- write output return string file
+  std::stringstream ss;
+  ss << outputLabelString << std::endl;
+  ss << outputLabelValueString << std::endl;
+  ss << outputSUVMaxString << std::endl;
+  ss << outputSUVMeanString << std::endl;
+  ss << outputSUVMinString << std::endl;
+  std::string stringOutput = ss.str();
+  stringFile.open(list.SUVOutputStringFile.c_str());
+  if (!stringFile.is_open() )
+    {
+    // report error, clean up
+    std::cerr << "ERROR: cannot open nuclear medicine output string parameter file '" << list.SUVOutputStringFile.c_str() << "', output string was:\n" << stringOutput.c_str() << std::endl;
+    return EXIT_FAILURE;
+    }
+  stringFile << stringOutput;
+  stringFile.close();
+  std::cout << "Wrote return string to " << list.SUVOutputStringFile.c_str() << ": " << std::endl << stringOutput.c_str() << std::endl;
+
+  reader1->Delete();
+  reader2->Delete();
+  
   return EXIT_SUCCESS;
 
 }
+
+
+
+
 
 } // end of anonymous namespace
 
@@ -1054,453 +1609,35 @@ int main( int argc, char * argv[] )
   std::string secondstr;
   std::string tag;
 
-  // ... parse command line
-
-  if( argc != 9 )
-    {
-
-    std::cerr << argv[0] << ": Bad command line: try " << argv[0]
-              << " -petVolume FileName -labelMap FileName -parameterFile FileName(.dat) -csvFile FileName(.csv)"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-
+  // convert dicom head to radiopharm data vars
+  list.patientName = "MODULE_INIT_NO_VALUE";
+  list.studyDate = "MODULE_INIT_NO_VALUE";
+  list.radioactivityUnits = "MODULE_INIT_NO_VALUE";
+  list.volumeUnits = "MODULE_INIT_NO_VALUE";
+  list.calibrationFactor = 0.0;
+  list.injectedDose = 0.0;
+  list.patientWeight  = 0.0;
+  list.seriesReferenceTime = "MODULE_INIT_NO_VALUE";
+  list.injectionTime = "MODULE_INIT_NO_VALUE";
+  list.decayCorrection = "MODULE_INIT_NO_VALUE";
+  list.decayFactor = "MODULE_INIT_EMPTY_ID";
+  list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE";
+  list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
+  list.weightUnits = "kg";
+  
   try
     {
-    // ...
-    // open file containing radiopharmaceutical data.
-    // ...
-    list.PETVolumeName = argv[2];
-    list.VOIVolumeName = argv[4];
-    list.parameterFile = argv[6];
-    list.SUVOutputTable = argv[8];
-
-    std::ifstream pfile;
-    pfile.open( list.parameterFile.c_str(), ios::in );
-    if( !pfile.is_open() )
-      {
-      // report error, clean up, and get out.
-      std::cerr << "ERROR: cannot open nuclear medicine parameter file " << list.parameterFile.c_str() << std::endl;
-      pfile.close();
-      return EXIT_FAILURE;
-      }
-
-    // ...
-    // read the metadata text file and grab all parameters.
-    // ...
-    size_t      colonPos;
-    int         numchars;
-    std::string line;
-    while( !pfile.eof() )
-      {
-      line.clear();
-      // grab a line
-      getline(pfile, line);
-
-      // process a line.
-      //
-      // we want to find all of the following parameters.
-      //
-      std::string sep = ": ";
-      size_t      len = sep.size();
-
-      // ...
-      // PATIENT ID
-      // ...
-      if( line.find("Patient_Name: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.patientName = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep );
-        if( colonPos != std::string::npos )
-          {
-          list.patientName = line.substr( colonPos + len );
-          std::cout << "patientName = " << list.patientName.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.patientName.find( "MODULE_INIT_NO_VALUE") != std::string::npos )
-          {
-          std::cerr << "Unable to extract patient ID." << std::endl;
-          }
-        }
-      // ...
-      // STUDY DATE
-      // ...
-      else if( line.find("Study_Date: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.studyDate = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          list.studyDate = line.substr( colonPos + len );
-          std::cout << "studyDate = " << list.studyDate.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.studyDate.find( "MODULE_INIT_EMPTY_ID") != std::string::npos )
-          {
-          std::cerr << "Unable to extract study date." << std::endl;
-          }
-        else
-          {
-          // --- YYYYMMDD
-          tag = list.studyDate;
-          list.studyDate.clear();
-          yearstr.clear();
-          daystr.clear();
-          monthstr.clear();
-          len = tag.length();
-          if( len >= 4 )
-            {
-            yearstr = tag.substr(0, 4);
-            }
-          else
-            {
-            yearstr = "????";
-            }
-          if( len >= 6 )
-            {
-            monthstr = tag.substr(4, 2);
-            }
-          else
-            {
-            monthstr = "??";
-            }
-          if( len >= 8 )
-            {
-            daystr = tag.substr(6, 2);
-            }
-          else
-            {
-            daystr = "??";
-            }
-          tag.clear();
-          tag = yearstr.c_str();
-          tag += "/";
-          tag += monthstr.c_str();
-          tag += "/";
-          tag += daystr.c_str();
-          list.studyDate = tag.c_str();
-          }
-        }
-      // ...
-      // UNITS (volume and radioactivity and weight)
-      // ...
-      else if( line.find("Units: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        std::string units = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          units.clear();
-          units = line.substr( colonPos + len );
-          std::cout << "units = " << units.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( units.find( "MODULE_INIT_EMPTY_ID") != std::string::npos )
-          {
-          std::cerr << "Unable to extract units." << std::endl;
-          }
-        // --- hopefully...
-        if( units.find( "BQML") != std::string::npos )
-          {
-          list.radioactivityUnits = "Bq";
-          list.volumeUnits = "ml";
-          list.calibrationFactor = 1.0;
-          }
-        else
-          {
-          list.radioactivityUnits = "MODULE_INIT_NO_VALUE";
-          list.volumeUnits = "MODULE_INIT_NO_VALUE";
-          list.calibrationFactor = 0.0;
-          }
-        }
-      // ...
-      // INJECTED DOSE
-      // ...
-      else if( line.find("Radionuclide_Total_Dose: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.injectedDose = 0.0;
-        std::string tmp;
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          tmp = line.substr( colonPos + len );
-          list.injectedDose = atof( tmp.c_str() );
-          std::cout << "injectedDose = " << list.injectedDose << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.injectedDose <= 0.0 )
-          {
-          std::cerr << "Unable to extract injected dose." << std::endl;
-          }
-        }
-      // ...
-      // PATIENT WEIGHT
-      // ...
-      else if( line.find("Patients_Weight: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.patientWeight  = 0.0;
-        std::string tmp;
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          tmp.clear();
-          tmp = line.substr( colonPos + len );
-          list.patientWeight = atof( tmp.c_str() );
-          std::cout << "patientWeight = " << list.patientWeight << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.patientWeight == 0.0 )
-          {
-          std::cerr << "Unable to extract patient weight." << std::endl;
-          }
-        }
-      // ...
-      // SERIES TIME
-      // ...
-      else if( line.find("Series_Time: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.seriesReferenceTime = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          std::string tag = line.substr( colonPos + len );
-          hourstr.clear();
-          minutestr.clear();
-          secondstr.clear();
-          len = tag.length();
-          if( len >= 2 )
-            {
-            hourstr = tag.substr(0, 2);
-            }
-          else
-            {
-            hourstr = "00";
-            }
-          if( len >= 4 )
-            {
-            minutestr = tag.substr(2, 2);
-            }
-          else
-            {
-            minutestr = "00";
-            }
-          if( len >= 6 )
-            {
-            secondstr = tag.substr(4);
-            }
-          else
-            {
-            secondstr = "00";
-            }
-          tag.clear();
-          tag = hourstr.c_str();
-          tag += ":";
-          tag += minutestr.c_str();
-          tag += ":";
-          tag += secondstr.c_str();
-          list.seriesReferenceTime = tag.c_str();
-          std::cout << "seriesReferenceTime = " << list.seriesReferenceTime.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.seriesReferenceTime.find( "MODULE_INIT_EMPTY_ID") != std::string::npos )
-          {
-          std::cerr << "Unable to extract series reference time." << std::endl;
-          }
-        }
-      // ...
-      // RADIOPHARMACEUTICAL START TIME
-      // ...
-      else if( line.find("Radionuclide_Start_Time: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.injectionTime = "MODULE_INIT_NO_VALUE";
-        std::string hourstr;
-        std::string minutestr;
-        std::string secondstr;
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          std::string tag = line.substr( colonPos + len );
-          hourstr.clear();
-          minutestr.clear();
-          secondstr.clear();
-          len = tag.length();
-          if( len >= 2 )
-            {
-            hourstr = tag.substr(0, 2);
-            }
-          else
-            {
-            hourstr = "00";
-            }
-          if( len >= 4 )
-            {
-            minutestr = tag.substr(2, 2);
-            }
-          else
-            {
-            minutestr = "00";
-            }
-          if( len >= 6 )
-            {
-            secondstr = tag.substr(4);
-            }
-          else
-            {
-            secondstr = "00";
-            }
-          tag.clear();
-          tag = hourstr.c_str();
-          tag += ":";
-          tag += minutestr.c_str();
-          tag += ":";
-          tag += secondstr.c_str();
-          list.injectionTime = tag.c_str();
-          std::cout << "radiopharmaceuticalStartTime = " << list.injectionTime.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.injectionTime.find( "MODULE_INIT_EMPTY_ID") != std::string::npos )
-          {
-          std::cerr << "Unable to extract radiopharmaceutical start time." << std::endl;
-          }
-        }
-      // ...
-      // DECAY CORRECTION
-      // ...
-      else if( line.find("Decay_Correction:") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.decayCorrection = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          list.decayCorrection = line.substr( colonPos + len );
-          std::cout << "decayCorrection = " << list.decayCorrection.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.decayCorrection.find( "MODULE_INIT_EMPTY_ID") != std::string::npos )
-          {
-          std::cerr << "Unable to extract decay correction." << std::endl;
-          }
-        }
-      // ...
-      // DECAY FACTOR
-      // ...
-      else if( line.find("DecayFactor:") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.decayFactor = "MODULE_INIT_EMPTY_ID";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          list.decayFactor = line.substr( colonPos + len );
-          std::cout << "decayFactor = " << list.decayFactor.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.decayFactor.find( "MODULE_INIT_EMPTY_ID" ) != std::string::npos )
-          {
-          std::cerr << "Unable to extract decay factor." << std::endl;
-          }
-        }
-      // ...
-      // RADIONUCLIDE HALF LIFE
-      // ...
-      else if( line.find("Radionuclide_Half_Life:") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          list.radionuclideHalfLife = line.substr( colonPos + len );
-          std::cout << "radionuclideHalfLife = " << list.radionuclideHalfLife.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.radionuclideHalfLife.find("MODULE_INIT_NO_VALUE") != std::string::npos )
-          {
-          std::cerr << "Unable to extract radionuclide half life." << std::endl;
-          }
-        }
-      // ...
-      // FRAME REFERENCE TIME
-      // ...
-      // --- The time that the pixel values in the image
-      // --- occurred. Frame Reference Time is the
-      // --- offset, in msec, from the Series reference
-      // --- time.
-      else if( line.find("Frame_Reference_Time: ") != std::string::npos )
-        {
-        // initialize
-        numchars = 0;
-        list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
-
-        // find start of target string
-        colonPos = line.find( sep);
-        if( colonPos != std::string::npos )
-          {
-          // find end of target string
-          list.frameReferenceTime = line.substr( colonPos + len );
-          std::cout << "frameReferenceTime = " << list.frameReferenceTime.c_str() << std::endl;
-          }
-        // catch any failure to extract parameter value
-        if( list.frameReferenceTime.find( "MODULE_INIT_NO_VALUE") != std::string::npos )
-          {
-          std::cerr << "Unable to extract frame reference time." << std::endl;
-          }
-        }
-      }
-
-    pfile.close();
-
-    //
-    // hardcode this for now.
-    //
-    list.weightUnits = "kg";
+    // pass the input parameters to the helper method
+    list.PETDICOMPath = PETDICOMPath;
+    // keep the PET volume as the node selector PET volume
+    list.PETVolumeName = PETVolume; 
+    list.VOIVolumeName = VOIVolume;
+    list.VOIVolumeColorTableFile = ColorTable;
+    list.SUVOutputTable = OutputCSV;
+    // GenerateCLP makes a temporary file with the path saved to
+    // returnParameterFile, write the output strings in there as key = value pairs
+    list.SUVOutputStringFile = returnParameterFile;
+    std::cout << "list.SUVOutputStringFile = " << list.SUVOutputStringFile << std::endl;
     LoadImagesAndComputeSUV( list, static_cast<double>(0) );
     }
 
@@ -1512,3 +1649,4 @@ int main( int argc, char * argv[] )
     }
   return EXIT_SUCCESS;
 }
+

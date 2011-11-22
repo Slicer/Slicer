@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Quantification</category>
-  <title>SUVComputation </title>
+  <title>SUVComputation</title>
   <description>
-Computes the standardized uptake value based on body weight. Takes an input PET image in either DICOM or NRRD format (NRRD header must contain Radiopharmaceutical parameters).Produces a vector that contains SUVmin, SUVmean, SUVmax. This vector can be written to or appended to a cvs file. </description>
+Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.</description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:SUVComputation-Documentation-3.6</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SUVComputation</documentation-url>
   <license></license>
-  <contributor>Wendy Plesniak, BWH (Ron Kikinis, BWH)</contributor>
+  <contributor>Wendy Plesniak, BWH (Nicole Aucoin, BWH, Ron Kikinis, BWH)</contributor>
 <acknowledgements>
 This work is funded by the Harvard Catalyst, and the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
 
   <parameters>
-    <label>Image and Information I/O </label>
+    <label>Image and Information </label>
     <description>Input parameters</description>
+
+    <directory>
+     <name>PETDICOMPath</name>
+     <label>PET DICOM volume path</label>
+     <channel>input</channel>
+     <flag>-p</flag>
+     <longflag>--petDICOMPath</longflag>
+     <description>Input path to a directory containing a PET volume containing DICOM header information for SUV computation</description>
+   </directory>
 
     <image>
       <name>PETVolume</name>
       <label>Input PET Volume</label>
       <channel>input</channel>
       <flag>-v</flag>
-      <longflag>-petVolume</longflag>
-      <description>Input PET volume for SUVbw computation.</description>
+      <longflag>--petVolume</longflag>
+      <description>Input PET volume for SUVbw computation (must be the same volume as pointed to by the DICOM path!).</description>
     </image>
 
     <image type="label">
@@ -30,26 +39,58 @@ This work is funded by the Harvard Catalyst, and the National Alliance for Medic
       <label>Input VOI Volume</label>
       <channel>input</channel>
       <flag>-l</flag>
-      <longflag>-labelMap</longflag>
+      <longflag>--labelMap</longflag>
       <description>Input label volume containing the volumes of interest</description>
     </image>
+     <table type="color" reference="VOIVolume" hidden="true">
+      <name>ColorTable</name>
+      <channel>input</channel>
+      <longflag>--color</longflag>
+      <description>Color table to to map labels to colors and names</description>
+    </table>   
 
-    <file fileExtensions=".dat">
-     <label>Nuclear Medicine Metadata file (.dat)</label>
-     <channel>input</channel>
-     <flag>-p</flag>
-     <longflag>-parameterFile</longflag>
-     <description>File containing DICOM header information for SUV computation</description>
-   </file>
-
+  </parameters>
+ <parameters>
+    <label>Output </label>
+    <description>The Ouptut file collects the information on disk from the output label, suv max/mean/min output stringsin the gui, plus some extra information from the DICOM header.</description>
    <file fileExtensions=".csv">
-     <description>An output file</description>
+     <name>OutputCSV</name>
+     <description>A file holding the output SUV values in comma separated lines, one per label. Optional.</description>
      <label>Output (csv) file</label>
      <flag>-o</flag>
-     <longflag>-csvFile</longflag>
+     <longflag>--csvFile</longflag>
      <channel>output</channel>
    </file>
-
+   <string>
+     <name>OutputLabel</name>
+     <label>Output Label</label>
+     <channel>output</channel>
+     <description>List of labels for which SUV values were computed</description>
+   </string>
+   <string>
+     <name>OutputLabelValue</name>
+     <label>Output Label Value</label>
+     <channel>output</channel>
+     <description>List of label values for which SUV values were computed</description>
+   </string>
+   <string>
+     <name>SUVMax</name>
+     <label>SUV Max</label>
+     <channel>output</channel>
+     <description>SUV max for each label</description>
+   </string>
+   <string>
+     <name>SUVMean</name>
+     <label>SUV Mean</label>
+     <channel>output</channel>
+     <description>SUV mean for each label</description>
+   </string>
+   <string>
+     <name>SUVMin</name>
+     <label>SUV Minimum</label>
+     <channel>output</channel>
+     <description>SUV minimum for each label</description>
+   </string>
 
 
   </parameters>
