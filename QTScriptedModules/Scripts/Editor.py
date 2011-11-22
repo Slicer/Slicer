@@ -53,7 +53,14 @@ class EditorWidget:
     self.embedded = embedded
     self.suppliedEffects = suppliedEffects
     self.showVolumesFrame = showVolumesFrame
-    self.editUtil = EditorLib.EditUtil.EditUtil()
+    # TODO: figure out why module/class hierarchy is different
+    # between developer builds ans packages
+    try:
+      # for developer build...
+      self.editUtil = EditorLib.EditUtil.EditUtil()
+    except AttributeError:
+      # for release package...
+      self.editUtil = EditorLib.EditUtil()
 
     #->> check to make sure it works with a supplied parent
     if not parent:
