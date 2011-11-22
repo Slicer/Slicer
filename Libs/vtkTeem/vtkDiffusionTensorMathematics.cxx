@@ -390,6 +390,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   double *m[3], w[3], *v[3];
   double m0[3], m1[3], m2[3];
   double v0[3], v1[3], v2[3];
+  double v_maj[3];
   m[0] = m0; m[1] = m1; m[2] = m2; 
   v[0] = v0; v[1] = v1; v[2] = v2;
   int i, j;
@@ -644,7 +645,6 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             // then transform the eigensystem first
             // This is used to rotate the vector into RAS space
             // for consistent anatomical coloring.
-            double v_maj[3];
             v_maj[0]=v[0][0];
             v_maj[1]=v[1][0];
             v_maj[2]=v[2][0];
@@ -667,6 +667,63 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             *outPtr = (T)VTK_UNSIGNED_CHAR_MAX; //alpha
 
             break;
+
+          case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION_MIDDLE_EIGENVECTOR:
+            // If the user has set the rotation matrix
+            // then transform the eigensystem first
+            // This is used to rotate the vector into RAS space
+            // for consistent anatomical coloring.
+            v_maj[0]=v[0][1];
+            v_maj[1]=v[1][1];
+            v_maj[2]=v[2][1];
+            if (useTransform)
+              {
+              trans->TransformPoint(v_maj,v_maj);
+              }
+            // Color R, G, B depending on max eigenvector
+            // scale maps 0..1 values into the range a char takes on
+            cl = vtkDiffusionTensorMathematics::LinearMeasure(w);
+            rgb_temp = (rgb_scale*fabs(v_maj[0])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            rgb_temp = (rgb_scale*fabs(v_maj[1])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            rgb_temp = (rgb_scale*fabs(v_maj[2])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            *outPtr = (T)VTK_UNSIGNED_CHAR_MAX; //alpha
+
+            break;
+
+          case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION_MIN_EIGENVECTOR:
+            // If the user has set the rotation matrix
+            // then transform the eigensystem first
+            // This is used to rotate the vector into RAS space
+            // for consistent anatomical coloring.
+            v_maj[0]=v[0][2];
+            v_maj[1]=v[1][2];
+            v_maj[2]=v[2][2];
+            if (useTransform)
+              {
+              trans->TransformPoint(v_maj,v_maj);
+              }
+            // Color R, G, B depending on max eigenvector
+            // scale maps 0..1 values into the range a char takes on
+            cl = vtkDiffusionTensorMathematics::LinearMeasure(w);
+            rgb_temp = (rgb_scale*fabs(v_maj[0])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            rgb_temp = (rgb_scale*fabs(v_maj[1])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            rgb_temp = (rgb_scale*fabs(v_maj[2])*cl);
+            *outPtr = (T)tensor_math_clamp(rgb_temp, (double)VTK_UNSIGNED_CHAR_MIN, (double)VTK_UNSIGNED_CHAR_MAX);
+            outPtr++;
+            *outPtr = (T)VTK_UNSIGNED_CHAR_MAX; //alpha
+
+            break;
+
 
             }
 
@@ -738,11 +795,12 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
       vtkErrorMacro(<< "Input " << 0 << " must be specified.");
       return;
     }
-  if (inData[0][0]->GetScalarType() != VTK_FLOAT)
+  if (inData[0][0]->GetPointData() == NULL || inData[0][0]->GetPointData()->GetTensors() == NULL)
     {
-      vtkErrorMacro(<< "Input tensors must be of type float");
+      vtkErrorMacro(<< "Input " << 0 << " must have tensors.");
       return;
     }
+
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);
 
   // single input only for now
