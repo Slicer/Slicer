@@ -78,7 +78,7 @@ public:
   
   // Display Node
   void UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
-  void RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
+  void RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, bool erase=true);
   bool IsVisible(vtkMRMLDisplayNode* displayNode);
   bool IsDisplayable(vtkMRMLDisplayNode* displayNode);
   vtkPolyData* GetDisplayNodePolyData(vtkMRMLDisplayNode* displayNode);
@@ -125,8 +125,9 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
   for (pipelinesIt = this->DisplayPipelines.begin(); pipelinesIt != this->DisplayPipelines.end(); ++pipelinesIt)
     {
     pipelinesIt->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
-    this->RemoveDisplayNodePipeline(pipelinesIt->first);
+    this->RemoveDisplayNodePipeline(pipelinesIt->first, false);
     }
+  this->DisplayPipelines.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -141,7 +142,7 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::IsVisible(vtkMRMLDisplayNode* displayNode)
 {
   // TBD: hide when !visible or !scalarsvisible?
-  return displayNode->GetSliceIntersectionVisibility();
+  return (displayNode->GetSliceIntersectionVisibility() != 0);
 }
 
 //---------------------------------------------------------------------------
@@ -283,7 +284,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode)
+::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, bool erase)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
   if(actorsIt == this->DisplayPipelines.end())
@@ -298,7 +299,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   pipeline->transformer->Delete();
   pipeline->plane->Delete();
   delete pipeline;
-  this->DisplayPipelines.erase(actorsIt);
+  if (erase)
+    {
+    this->DisplayPipelines.erase(actorsIt);
+    }
   this->External->RequestRender();
 }
 
@@ -448,7 +452,7 @@ void vtkMRMLModelSliceDisplayableManager
 ::RemoveDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   displayNode->RemoveObserver(this->GetMRMLNodesCallbackCommand());
-  this->Internal->RemoveDisplayNodePipeline(displayNode);
+  this->Internal->RemoveDisplayNodePipeline(displayNode, true);
 }
 
 //---------------------------------------------------------------------------
