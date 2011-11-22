@@ -341,6 +341,16 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     bool wasLastVolumeVisible = d->VisibilityCheckBox->isChecked();
     dnode = d->createVolumeRenderingDisplayNode();
     dnode->SetVisibility(wasLastVolumeVisible);
+    foreach (vtkMRMLViewNode* viewNode, this->mrmlViewNodes())
+      {
+      dnode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+      }
+    if (this->mrmlViewNodes().size() == 0)
+      {
+      // find the fist view node in the scene
+      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLViewNode"));
+      dnode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
+      }
     if (volumeNode)
       {
       volumeNode->AddAndObserveDisplayNodeID(dnode->GetID());

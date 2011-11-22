@@ -461,7 +461,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::CalculateMatrix(vtkMRMLVolumeRend
 {
   //Update matrix
   //Check for NUll Pointer
-
+  if (vspNode == NULL)
+    {
+    return;
+    }
   vtkMRMLTransformNode *tmp = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetParentTransformNode();
   //check if we have a TransformNode
   if(tmp == NULL)
@@ -880,6 +883,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetROI(vtkMRMLVolumeRenderingDisp
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::TransformModified(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  if (vspNode == NULL)
+    {
+    return;
+    }
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
   this->CalculateMatrix(vspNode, matrix);
   this->Volume->PokeMatrix(matrix);
