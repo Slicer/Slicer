@@ -106,8 +106,8 @@ QString qSlicerDataModule::helpText()const
     "creates and edits transformation hierarchies.<br>"
     "The Load panels exposes options for loading data. Helpful comments can be "
     "opened by clicking on the \"information\" icons in each load panel.<br>"
-    "<a href=\"%1/Modules:Data-Documentation-3.6\">%1/Modules:Data-Documentation"
-    "-3.6</a>";
+    "<a href=\"%1/Documentation/4.0/Modules/Data\">"
+    "%1/Documentation/4.0/Modules/Data</a>";
   return help.arg(this->slicerWikiUrl());
 }
 
@@ -115,10 +115,25 @@ QString qSlicerDataModule::helpText()const
 QString qSlicerDataModule::acknowledgementText()const
 {
   QString about =
+    "<center><table border=\"0\"><tr>"
+    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+    "</tr><tr>"
+    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+    "</tr></table></center>"
     "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer "
     "Community.<br>"
-    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
-    "The Data module was contributed by Alex Yarmarkovich, Isomics Inc. with "
-    "help from others at SPL, BWH (Ron Kikinis, Wendy Plesniak)";
+    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>";
   return about;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerDataModule::contributor()const
+{
+  QString contributors =
+    "Julien Finet, Kitware Inc., "
+    "Alex Yarmarkovich, Isomics Inc., SPL, "
+    "Nicole Aucoin, BWH";
+  return contributors;
 }

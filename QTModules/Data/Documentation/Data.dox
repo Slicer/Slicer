@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Data Data
+\ingroup Slicer_QtModules
+This module lists the objects of the current scene and permits general operations (such as search, rename, delete, move) on the MRML tree.
+
+*/

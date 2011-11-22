@@ -48,7 +48,7 @@ public:
   /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
-
+  virtual QString contributor()const;
 protected:
 
   /// Create and return the widget representation associated to this module
