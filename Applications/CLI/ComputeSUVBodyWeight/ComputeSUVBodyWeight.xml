@@ -5,7 +5,7 @@
   <description>
 Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.</description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SUVComputation</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ComputeSUVBodyWeight</documentation-url>
   <license></license>
   <contributor>Wendy Plesniak, BWH (Nicole Aucoin, BWH, Ron Kikinis, BWH)</contributor>
 <acknowledgements>
