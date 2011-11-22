@@ -1542,7 +1542,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         {
         // --- for each value..
         // --- format looks like:
-        // patientID, studyDate, dose, labelID, suvmax, suvmean, labelName
+        // patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName
         // ...
         ss.str("");
         ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmin << ", " << suvmax
