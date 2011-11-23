@@ -44,6 +44,7 @@ public:
 
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
   virtual QIcon icon()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 

@@ -60,8 +60,8 @@ QString qSlicerVolumesModule::helpText()const
 {
   QString help = QString(
     "The Volumes Module loads and adjusts display parameters of volume data.<br>"
-    "<a href=\"%1/Modules:Volumes-Documentation-3.6\">"
-    "%1/Modules:Volumes-Documentation-4.0</a><br>"
+    "<a href=\"%1/Documentation/4.0/Volumes>"
+    "%1/Documentation/4.0/Volumes</a><br>"
     "The Diffusion Editor allows modifying "
     "parameters (gradients, bValues, measurement frame) of DWI data and "
     "provides a quick way to interpret them. "
@@ -92,6 +92,15 @@ QString qSlicerVolumesModule::acknowledgementText()const
     "SPL, BWH (Ron Kikinis).<br><br>"
     "The Diffusion Editor was developed by Kerstin Kessel.");
   return acknowledgement;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerVolumesModule::contributor()const
+{
+  QString contributors =
+    "Julien Finet, Kitware Inc., "
+    "Alex Yarmarkovich, Isomics Inc., SPL";
+  return contributors;
 }
 
 //-----------------------------------------------------------------------------
