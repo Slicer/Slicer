@@ -13,17 +13,14 @@ This module provides interactive visualization of 3D image data.
  </acknowledgements>
  <parameters>
   <label>Inputs</label>
-  <description>Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.
-  </description>
+  <description>Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.</description>
   <parameter>
    <label>Volume</label>
-   <description>Select the current volume to render. Note that only 1 volume can be rendered at a time.
-   </description>
+   <description>Select the current volume to render. Note that only 1 volume can be rendered at a time.</description>
   </parameter>
   <parameter>
    <label>Display</label>
-   <description>Select the current volume rendering display properties. Volume rendering display nodes contains all the informations relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.
-   </description>
+   <description>Select the current volume rendering display properties. Volume rendering display nodes contains all the informations relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.</description>
   </parameter>
   <parameter>
    <label>ROI</label>
@@ -43,8 +40,7 @@ This module provides interactive visualization of 3D image data.
   <description>Main properties for the volume rendering.</description>
   <parameter>
    <label>Preset</label>
-   <description>Apply a pre-defined set of functions for the opacity, color and gradient transfer functions. The generic presets have been tuned for a combination of modalities and organs. They may need some manual tuning to fit your data.
-   </description>
+   <description>Apply a pre-defined set of functions for the opacity, color and gradient transfer functions. The generic presets have been tuned for a combination of modalities and organs. They may need some manual tuning to fit your data.</description>
   </parameter>
   <parameter>
    <label>Shift</label>
@@ -60,8 +56,7 @@ This module provides interactive visualization of 3D image data.
 ***"VTK CPU Ray Casting": Available on all platforms, the volume rendering is enterily realized on the CPU
 ***"VTK GPU Ray Casting": Available on Windows and Linux, fastest method to volume render
 ***"VTK OpenGL 3D Texture Mapping": Available on all platforms, use the GPU but it is not ray casting
-***"NCI GPU Ray Casting": Available on all platforms, ray caster on the GPU, doesn't support compositing.
-   </description>
+***"NCI GPU Ray Casting": Available on all platforms, ray caster on the GPU, doesn't support compositing.</description>
   </parameter>
  </parameters>
  <parameters>
@@ -69,11 +64,9 @@ This module provides interactive visualization of 3D image data.
   <description>More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"</description>
   <parameter>
    <label>Technique</label>
-   <description>Advanced properties of the current volume rendering method.
-   </description>
+   <description>Advanced properties of the current volume rendering method.</description>
    <label>GPU Memory Size</label>
-   <description>Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the Application Settings dialog.
-   </description>
+   <description>Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the Application Settings dialog.</description>
   </parameter>
   <parameter>
     <label>Quality Control</label>
@@ -81,8 +74,7 @@ This module provides interactive visualization of 3D image data.
   </parameter>
   <parameter>
     <label>Interactive speed</label>
-    <description>Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering
-    </description>
+    <description>Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering</description>
   </parameter>
   <parameter>
     <label>Volume Properties</label>
@@ -96,8 +88,7 @@ This module provides interactive visualization of 3D image data.
 ***Delete key: delete the current point and set the next point as current
 ***Backspace key: delete the current point and set the previous point as current
 ***ESC key: unselect all points.
-***Unsupported: "ALT to move selected points", "CTRL-A to select all points"
-    </description>
+***Unsupported: "ALT to move selected points", "CTRL-A to select all points"</description>
   </parameter>
   <parameter>
     <label>Synchronize with Volumes module</label>
@@ -107,33 +98,27 @@ This module provides interactive visualization of 3D image data.
   </parameter>
   <parameter>
     <label>Scalar Opacity Mapping</label>
-    <description>Opacity transfer function. Threshold mode: enabling threshold controls the transfer function using range sliders in addition to control points.
-    </description>
+    <description>Opacity transfer function. Threshold mode: enabling threshold controls the transfer function using range sliders in addition to control points.</description>
   </parameter>
   <parameter>
     <label>Scalar Color Mapping</label>
-    <description>Color transfer function.
-    </description>
+    <description>Color transfer function.</description>
   </parameter>
   <parameter>
     <label>Gradient Opacity</label>
-    <description>Gradient opacity transfer function.
-    </description>
+    <description>Gradient opacity transfer function.</description>
   </parameter>
   <parameter>
     <label>Interpolation</label>
-    <description>Linear (default for scalar volumes) or nearest neighboor (default for labelmaps) interpolation.
-    </description>
+    <description>Linear (default for scalar volumes) or nearest neighboor (default for labelmaps) interpolation.</description>
   </parameter>
   <parameter>
     <label>Shade</label>
-    <description>Enable/Disable shading. Shading uses light and material properties.
-    </description>
+    <description>Enable/Disable shading. Shading uses light and material properties.</description>
   </parameter>
   <parameter>
     <label>Material</label>
-    <description>Material properties of the volume to compute shading effect.
-    </description>
+    <description>Material properties of the volume to compute shading effect.</description>
   </parameter>
   <parameter>
     <label>ROI</label>
