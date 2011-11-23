@@ -192,6 +192,7 @@ void qMRMLAnnotationROIWidget::setDisplayClippingBox(bool visible)
 {
   Q_D(qMRMLAnnotationROIWidget);
   d->ROINode->SetVisibility(visible);
+  emit displayClippingBoxChanged(visible);
 }
 
 // --------------------------------------------------------------------------

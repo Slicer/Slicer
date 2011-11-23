@@ -67,6 +67,8 @@ public slots:
   /// Turn on/off the tracking mode of the sliders.
   /// The ROI node will be updated only when the slider handles are released.
   void setInteractiveMode(bool interactive);
+signals:
+  void displayClippingBoxChanged(bool);
 
 protected slots:
   /// Internal function to update the widgets based on the ROI node

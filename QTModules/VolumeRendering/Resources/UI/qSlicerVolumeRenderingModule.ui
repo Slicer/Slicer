@@ -1032,6 +1032,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>ROIWidget</sender>
+   <signal>displayClippingBoxChanged(bool)</signal>
+   <receiver>ROICropDisplayCheckBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>ROINodeComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
    <receiver>ROICropDisplayCheckBox</receiver>
