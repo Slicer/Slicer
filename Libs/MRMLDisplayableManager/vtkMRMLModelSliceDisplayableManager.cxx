@@ -78,7 +78,7 @@ public:
   
   // Display Node
   void UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
-  void RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, bool erase=true);
+  void RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
   bool IsVisible(vtkMRMLDisplayNode* displayNode);
   bool IsDisplayable(vtkMRMLDisplayNode* displayNode);
   vtkPolyData* GetDisplayNodePolyData(vtkMRMLDisplayNode* displayNode);
@@ -125,7 +125,8 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
   for (pipelinesIt = this->DisplayPipelines.begin(); pipelinesIt != this->DisplayPipelines.end(); ++pipelinesIt)
     {
     pipelinesIt->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
-    this->RemoveDisplayNodePipeline(pipelinesIt->first, false);
+    this->RemoveDisplayNodePipeline(pipelinesIt->first);
+    pipelinesIt = this->DisplayPipelines.begin();
     }
   this->DisplayPipelines.clear();
 }
@@ -284,7 +285,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, bool erase)
+::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
   if(actorsIt == this->DisplayPipelines.end())
@@ -299,10 +300,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   pipeline->transformer->Delete();
   pipeline->plane->Delete();
   delete pipeline;
-  if (erase)
-    {
-    this->DisplayPipelines.erase(actorsIt);
-    }
+  this->DisplayPipelines.erase(actorsIt);
   this->External->RequestRender();
 }
 
@@ -452,7 +450,7 @@ void vtkMRMLModelSliceDisplayableManager
 ::RemoveDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   displayNode->RemoveObserver(this->GetMRMLNodesCallbackCommand());
-  this->Internal->RemoveDisplayNodePipeline(displayNode, true);
+  this->Internal->RemoveDisplayNodePipeline(displayNode);
 }
 
 //---------------------------------------------------------------------------
