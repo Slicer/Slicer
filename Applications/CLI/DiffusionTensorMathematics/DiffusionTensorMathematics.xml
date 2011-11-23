@@ -10,7 +10,7 @@
   Compute a set of different scalar measurements from a tensor field, specially oriented for Diffusion Tensors where some rotationally invariant measurements, like Fractional Anisotropy, are highly used to describe the anistropic behaviour of the tensor.
   </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DiffusionTensorScalarMeasurements-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionTensorMathematics</documentation-url>
   <license></license>
   <contributor>Raul San Jose</contributor>
   <acknowledgements>LMI</acknowledgements>

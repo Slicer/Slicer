@@ -10,7 +10,7 @@
 This filter creates a labeled image from a grayscale image. First, it calculates an optimal threshold that separates the image into foreground and background. This threshold separates those two classes so that their intra-class variance is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a connected component algorithm to generate unique labels for each connected region of the foreground. Finally, the resulting image is relabeled to provide consecutive numbering.
   </description>
   <version>1.0</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:OtsuThresholdSegmentation-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/OtsuThresholdSegmentation</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>

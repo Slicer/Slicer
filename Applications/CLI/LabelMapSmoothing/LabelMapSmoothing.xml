@@ -10,7 +10,7 @@
 This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.  
   </description>
   <version>1.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelMapSmoothing</documentation-url>
   <license></license>
   <contributor>Dirk Padfield, Josh Cates, Ross Whitaker</contributor>
 <acknowledgements>

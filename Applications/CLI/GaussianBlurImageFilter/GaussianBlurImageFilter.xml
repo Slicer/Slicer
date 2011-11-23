@@ -7,7 +7,7 @@
 	  Apply a gaussian blurr to an image
 </description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GaussianBlur-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GaussianBlurImageFilter</documentation-url>
   <license></license>
   <contributor>Julien Jomier and Stephen Aylward</contributor>
 <acknowledgements>

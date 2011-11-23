@@ -6,7 +6,7 @@
 Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.
     </description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExtractSkeleton</documentation-url>
   <license></license>
   <contributor>Pierre Seroul, Martin Styner, Guido Gerig, and Stephen Aylward 
     </contributor>

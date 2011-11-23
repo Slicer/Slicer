@@ -5,7 +5,7 @@
   <description>
 Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:CastImage-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Cast</documentation-url>
   <license></license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
 <acknowledgements>

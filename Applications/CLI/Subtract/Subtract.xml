@@ -6,7 +6,7 @@
 Subtracts two images. Although all image types are supported on input, only sugned types are produced. The two images do not have to have the same dimensions.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:SubtractImages-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Subtract</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>

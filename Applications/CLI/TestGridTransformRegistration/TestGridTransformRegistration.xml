@@ -5,7 +5,7 @@
   <index>9</index>
   <description>Generates a GridTransform to test the communication facilities</description>
   <version>0.1.0.$Revision: 6760 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/TestGridTransformRegistration</documentation-url>
   <license></license>
   <contributor>Yinglin Lee</contributor>
 <acknowledgements>

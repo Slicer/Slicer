@@ -5,7 +5,7 @@
   <index>1</index>
   <description>Calculate a transformation from two lists of fiducial points.\n\nACPC line is two fiducial points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting them to horizontal to the AP axis.\n\nThe midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will put the output volume with the mid sagittal plane lined up with the AS plane.\n\nUse the Filtering module **Resample Scalar/Vector/DWI Volume** to apply the transformation to a volume.</description>
 <version>1.0</version>
-<documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ACPCTransform-Documentation-3.6</documentation-url>
+<documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ACPCTransform</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
 <acknowledgements>

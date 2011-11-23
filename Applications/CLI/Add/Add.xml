@@ -6,7 +6,7 @@
 Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:AddImages-Documentation-3.6</documentation-url>
+  <documentation-url>http://slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Add</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>

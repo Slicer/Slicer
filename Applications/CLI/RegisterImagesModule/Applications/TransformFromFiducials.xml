@@ -4,7 +4,7 @@
   <title>Fiducial Registration</title>
   <description>Computes a rigid, similarity or affine transform from a matched list of fiducials</description>
   <version>0.1.0.$Revision$</version>
-    <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:TransformFromFiducials-Documentation-3.6</documentation-url>
+    <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/TransformFromFiducials</documentation-url>
   <license></license>
   <contributor>Casey B Goodlett</contributor>
 <acknowledgements>

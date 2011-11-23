@@ -6,7 +6,7 @@
 Threshold an image.\n\nSet image values to a user-specified outside value if they are below, above, or between simple threshold values.\n\nThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.\n\nThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.\n\nThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.\n\nAlthough all image types are supported on input, only signed types are produced.\n\n
 </description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ThresholdImage-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Threshold</documentation-url>
   <license></license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
 <acknowledgements>

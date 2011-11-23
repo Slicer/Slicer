@@ -10,7 +10,7 @@
 Applies a voting operation in order to fill-in cavities. This can be used for smoothing contours and for filling holes in binary images. This technique is used frequently when segmenting complete organs that may have ducts or vasculature that may not have been included in the initial segmentation, e.g. lungs, kidneys, liver.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:VotingBinaryHoleFilling-Documentation-3.6</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/VotingBinaryHoleFillingImageFilter</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples/Filtering/VotingBinaryHoleFillingImageFilter (copyright) Insight Software Consortium</acknowledgements>
