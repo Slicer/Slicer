@@ -191,6 +191,7 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
     {
     this->DisplayObservedEvents->Delete();
     }
+
 }
 
 //---------------------------------------------------------------------------
@@ -1295,7 +1296,9 @@ void vtkMRMLVolumeRenderingDisplayableManager
     vspNode->GetROINode()->InsideOutOn();
     if (!vspNode->GetROINode()->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand()))
       {
-      vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand());
+      // TODO: this observer is not removed when the displayable manager is deleted
+      // and can cause a crash when swapping scene views
+      //vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand());
       }
     }
   this->SetROI(vspNode);
