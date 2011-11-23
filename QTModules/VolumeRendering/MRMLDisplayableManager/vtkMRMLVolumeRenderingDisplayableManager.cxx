@@ -713,6 +713,11 @@ int vtkMRMLVolumeRenderingDisplayableManager
             this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
             }
           }
+        else
+          {
+          this->Volume->SetMapper(0);
+          this->Volume->SetProperty(0);
+          }
         }
       else
         {
@@ -734,7 +739,8 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       else
         {
-        return -1;
+        this->Volume->SetMapper(0);
+        this->Volume->SetProperty(0);
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
@@ -750,7 +756,8 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       else
         {
-        return -1;
+        this->Volume->SetMapper(0);
+        this->Volume->SetProperty(0);
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
@@ -765,12 +772,17 @@ int vtkMRMLVolumeRenderingDisplayableManager
           this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
           }
         }
+      else
+        {
+        this->Volume->SetMapper(0);
+        this->Volume->SetProperty(0);
+        }
       //else
       //  return -1;
       break;
     default:
-      this->Volume->SetMapper(NULL);
-      this->Volume->SetProperty(NULL);
+      this->Volume->SetMapper(0);
+      this->Volume->SetProperty(0);
       break;
     }
 
