@@ -92,7 +92,6 @@
      <addaction name="actionWindowToolbarsLoadSave"/>
      <addaction name="actionWindowToolbarsModuleSelector"/>
      <addaction name="actionWindowToolbarsModules"/>
-     <addaction name="actionWindowToolbarsUndoRedo"/>
      <addaction name="actionWindowToolbarsView"/>
      <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
