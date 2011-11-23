@@ -168,7 +168,7 @@
       <description>Tractography will stop when the stopping measurement drops below this value</description>
       <flag>-v</flag>
       <longflag>--stoppingvalue</longflag>
-      <default>0.1</default>
+      <default>0.15</default>
       <constraints>
         <minimum>0</minimum>
 	<maximum>1</maximum>
