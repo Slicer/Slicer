@@ -513,7 +513,8 @@ void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveFgVolumeNodeID(const char *
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 {
-  if (((this->VolumeNode != NULL && strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
+  if (((this->VolumeNode != NULL && this->VolumeNodeID &&
+        strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
       (this->VolumeNode == NULL)) )
     {
     this->VolumeNode = vtkMRMLVolumeNode::SafeDownCast(
