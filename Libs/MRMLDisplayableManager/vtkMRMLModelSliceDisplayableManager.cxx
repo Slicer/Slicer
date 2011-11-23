@@ -122,13 +122,14 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::~vtkInternal()
 {
   PipelinesCacheType::iterator pipelinesIt;
-  for (pipelinesIt = this->DisplayPipelines.begin(); pipelinesIt != this->DisplayPipelines.end(); ++pipelinesIt)
+  for (pipelinesIt = this->DisplayPipelines.begin();
+       pipelinesIt != this->DisplayPipelines.end();
+       pipelinesIt = this->DisplayPipelines.begin())
     {
     pipelinesIt->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
     this->RemoveDisplayNodePipeline(pipelinesIt->first);
-    pipelinesIt = this->DisplayPipelines.begin();
     }
-  this->DisplayPipelines.clear();
+  assert(this->DisplayPipelines.size() == 0);
 }
 
 //---------------------------------------------------------------------------
