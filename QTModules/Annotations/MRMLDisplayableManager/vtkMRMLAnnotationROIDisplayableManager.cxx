@@ -228,15 +228,18 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRML
   if (this->Is2DDisplayableManager())
     {
     vtkAnnotationROIWidget2D* roiWidget = vtkAnnotationROIWidget2D::SafeDownCast(this->Helper->GetWidget(annotationNode));
-    vtkAnnotationROIRepresentation2D* rep = vtkAnnotationROIRepresentation2D::SafeDownCast(roiWidget->GetRepresentation());
+    vtkAnnotationROIRepresentation2D* rep = vtkAnnotationROIRepresentation2D::SafeDownCast(
+      roiWidget ? roiWidget->GetRepresentation() : 0);
 
-
-    // update actor's visbility from mrml
-    vtkPropCollection *actors = vtkPropCollection::New();
-    rep->GetActors2D(actors);
-    for (int i=0; i<actors->GetNumberOfItems(); i++)
+    if (rep)
       {
-      this->GetRenderer()->RemoveActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
+      // update actor's visbility from mrml
+      vtkPropCollection *actors = vtkPropCollection::New();
+      rep->GetActors2D(actors);
+      for (int i=0; i<actors->GetNumberOfItems(); i++)
+        {
+        this->GetRenderer()->RemoveActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
+        }
       }
     }
 
