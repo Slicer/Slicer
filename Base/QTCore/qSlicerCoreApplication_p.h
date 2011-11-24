@@ -73,6 +73,10 @@ public:
   void setPythonOsEnviron(const QString& key, const QString& value);
 #endif
 
+#ifdef Q_WS_WIN
+  void updatePythonOsEnviron();
+#endif
+
   /// Prepend or append value to environment variable using \a separator
   void updateEnvironmentVariable(
     const QString& key, const QString& value, QChar separator, bool prepend = false);

@@ -196,6 +196,18 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Instantiate moduleManager
   this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
+
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    q->corePythonManager()->mainContext(); // Initialize python
+# ifdef Q_WS_WIN
+    // HACK - Since on windows setting an environment variable using putenv doesn't propagate
+    // to the environment initialized in python, let's make sure 'os.environ' is updated.
+    this->updatePythonOsEnviron();
+# endif
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -414,6 +426,17 @@ void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
     }
 #endif
 }
+
+//-----------------------------------------------------------------------------
+#ifdef Q_WS_WIN
+void qSlicerCoreApplicationPrivate::updatePythonOsEnviron()
+{
+  foreach(const QString& key, this->EnvironmentVariablesCache.keys())
+    {
+    this->setPythonOsEnviron(key, this->EnvironmentVariablesCache.value(key));
+    }
+}
+#endif
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
@@ -922,18 +945,6 @@ qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager()const
   Q_D(const qSlicerCoreApplication);
   return d->CorePythonManager.data();
 }
-
-//-----------------------------------------------------------------------------
-#ifdef Q_WS_WIN
-void qSlicerCoreApplication::updatePythonOsEnviron()
-{
-  Q_D(qSlicerCoreApplication);
-  foreach(const QString& key, d->EnvironmentVariablesCache.keys())
-    {
-    d->setPythonOsEnviron(key, d->EnvironmentVariablesCache.value(key));
-    }
-}
-#endif
 
 #endif
 

@@ -105,12 +105,6 @@ void setApplicationDisablePythonAttribute(int argc, char* argv[])
 void initializePython()
 {
   qSlicerApplication * app = qSlicerApplication::application();
-  app->corePythonManager()->mainContext(); // Initialize python
-#ifdef Q_WS_WIN
-  // HACK - Since on windows setting an environment variable using putenv doesn't propagate
-  // to the environment initialized in python, let's make sure 'os.environ' is updated.
-  app->updatePythonOsEnviron();
-#endif
 
   // If first unparsed argument is python script, enable 'shebang' mode
   QStringList unparsedArguments = app->commandOptions()->unparsedArguments();

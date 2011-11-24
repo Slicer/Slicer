@@ -112,10 +112,6 @@ void qSlicerApplicationPrivate::init()
                                 "Labels", SIGNAL(colorSelected(QColor)));
   ctkColorDialog::setDefaultTab(1);
 
-  this->Superclass::init();
-
-  this->initStyle();
-
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
@@ -124,6 +120,10 @@ void qSlicerApplicationPrivate::init()
     q->setCorePythonManager(new qSlicerPythonManager());
     }
 #endif
+
+  this->Superclass::init();
+
+  this->initStyle();
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setEnabled(false);

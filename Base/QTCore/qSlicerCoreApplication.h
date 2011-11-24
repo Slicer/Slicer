@@ -120,7 +120,7 @@ public:
 
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
-  
+
   /// Get slicer default extensions path
   QString defaultExtensionsPath() const;
 
@@ -140,15 +140,10 @@ public:
 #ifdef Slicer_USE_PYTHONQT
   /// Get python manager
   qSlicerCorePythonManager* corePythonManager()const;
-  
+
   /// Set the IO manager
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
-
-#ifdef Q_WS_WIN
-  void updatePythonOsEnviron();
-#endif
-
 #endif
 
   /// Get the module manager
