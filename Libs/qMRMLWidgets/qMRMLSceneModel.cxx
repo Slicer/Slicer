@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QTimer>
 
 // qMRML includes
 #include "qMRMLSceneModel_p.h"
@@ -53,6 +54,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->PartiallyVisibleIcon = QIcon(":Icons/VisiblePartially.png");
 
   this->MRMLScene = 0;
+  this->DraggedItem = 0;
 
   qRegisterMetaType<QStandardItem* >("QStandardItem*");
 }
@@ -1234,7 +1236,7 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
     }
   // when a dnd occurs, the order of the items called with onItemChanged is
   // random, it could be the item in column 1 then the item in column 0
-  //qDebug() << "onItemChanged: " << item << item->row() << item->column();
+  //qDebug() << "onItemChanged: " << item << item->row() << item->column() << d->DraggedNodes.count();
   //printStandardItem(this->mrmlSceneItem(), "");
   //return;
   // check on the column is optional(no strong feeling), it is just there to be
@@ -1246,8 +1248,13 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
 
   if (d->DraggedNodes.count())
     {
-    this->metaObject()->invokeMethod(
-      this, "onItemChanged", Qt::QueuedConnection, Q_ARG(QStandardItem*, item));
+    if (item->column() == 0)
+      {
+      //this->metaObject()->invokeMethod(
+      //  this, "onItemChanged", Qt::QueuedConnection, Q_ARG(QStandardItem*, item));
+      d->DraggedItem = item;
+      QTimer::singleShot(100, this, SLOT(delayedItemChanged()));
+      }
     return;
     }
 
@@ -1255,6 +1262,14 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
   Q_ASSERT(mrmlNode);
   this->updateNodeFromItem(mrmlNode, item);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::delayedItemChanged()
+{
+  Q_D(qMRMLSceneModel);
+  this->onItemChanged(d->DraggedItem);
+  d->DraggedItem = 0;
 }
 
 //------------------------------------------------------------------------------

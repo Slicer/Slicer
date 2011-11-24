@@ -72,6 +72,7 @@ public:
   QIcon PartiallyVisibleIcon;
   
   vtkMRMLScene* MRMLScene;
+  QStandardItem* DraggedItem;
   mutable QList<vtkMRMLNode*>  DraggedNodes;
   QList<vtkMRMLNode*> MisplacedNodes;
   // We keep a list of QStandardItem instead of vtkMRMLNode* because they are

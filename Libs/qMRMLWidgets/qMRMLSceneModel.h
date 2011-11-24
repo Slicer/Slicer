@@ -173,6 +173,7 @@ protected slots:
 
   void onMRMLNodeModified(vtkObject* node);
   void onItemChanged(QStandardItem * item);
+  void delayedItemChanged();
 
 protected:
 
