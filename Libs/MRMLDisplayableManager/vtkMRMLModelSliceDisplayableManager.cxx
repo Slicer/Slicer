@@ -85,6 +85,7 @@ public:
 
   // Displayable Node caching (for transform events)
   void AddUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode);
+  void RemoveUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode);
   void UpdateDisplayableNodeRefs();
   void UpdateDisplayableNodePipeline(vtkMRMLDisplayableNode* node);
   
@@ -152,6 +153,21 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::AddUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode)
 {
   this->DisplayNodesToUpdateDisplayable.push_back(displayNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::RemoveUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode)
+{
+  std::vector<vtkMRMLDisplayNode*>::iterator it =
+    std::find( this->DisplayNodesToUpdateDisplayable.begin(),
+               this->DisplayNodesToUpdateDisplayable.end(),
+               displayNode);
+  if (it == this->DisplayNodesToUpdateDisplayable .end())
+    {
+    return;
+    }
+  this->DisplayNodesToUpdateDisplayable.erase(it);
 }
 
 //---------------------------------------------------------------------------
@@ -471,13 +487,15 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLModelDisplayNode") )
+  vtkMRMLModelDisplayNode* displayNode =
+    vtkMRMLModelDisplayNode::SafeDownCast(node);
+  if ( !displayNode )
     {
     return;
     }
-  this->RemoveDisplayNode(vtkMRMLModelDisplayNode::SafeDownCast(node));
+  this->Internal->RemoveUpdateDisplayableNodeRef(displayNode);
+  this->RemoveDisplayNode(displayNode);
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
