@@ -1570,10 +1570,27 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateDisplayNodeList()
       "vtkMRMLVolumeRenderingDisplayNode", nodes);
     }
 
+  // Add display nodes in the scene
   for (unsigned int i = 0; i < nodes.size(); ++i)
     {
     this->AddDisplayNode(
       vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]));
+    }
+  // Remove display nodes that don't belong to the scene anymore
+  for (DisplayNodesType::iterator it = this->DisplayNodes.begin();
+       it != this->DisplayNodes.end(); )
+    {
+    std::vector<vtkMRMLNode *>::iterator isInScene =
+      std::find(nodes.begin(), nodes.end(), it->second);
+    if (isInScene == nodes.end())
+      {
+      this->RemoveDisplayNode(it->second);
+      it = this->DisplayNodes.begin();
+      }
+    else
+      {
+      ++it;
+      }
     }
 }
 
