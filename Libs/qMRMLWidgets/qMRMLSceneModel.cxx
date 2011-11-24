@@ -48,6 +48,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->IDColumn = -1;
   this->CheckableColumn = -1;
   this->VisibilityColumn = -1;
+  this->ToolTipNameColumn = -1;
 
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
