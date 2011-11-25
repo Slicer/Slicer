@@ -7,12 +7,13 @@
   Mask from Diffusion Weighted Images
   </title>
   <description>
-  Performs a mask calculation from diffusion weighted images.
+    Performs a mask calculation from a diffusion weighted (DW) image. 
+    Starting from a DW image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the Otsu segmentation algorithm in order to produce a mask. This mask can then be used when estimating the diffusion tensor (DT) image, not to estimate tensors all over the volume.
   </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionWeightedMasking</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:DiffusionWeightedMasking-Documentation-4.0</documentation-url>
   <license>slicer3</license>
-  <contributor>Raul San Jose</contributor>
+  <contributor>Demian Wassermann</contributor>
   <acknowledgements></acknowledgements>
 
   <parameters>
