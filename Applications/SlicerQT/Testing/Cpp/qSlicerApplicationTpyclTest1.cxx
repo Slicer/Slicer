@@ -54,16 +54,6 @@ QString evaluateTcl(qSlicerPythonManager * pythonManager, const QString& tclCode
 int qSlicerApplicationTpyclTest1(int argc, char * argv[])
 {
   qSlicerApplication app(argc, argv);
-
-  bool disablePython = qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython);
-  if(!disablePython)
-    {
-    // HACK - Copied from Slicer/Applications/SlicerQT/Main.cxx
-    //        Ideally, it should possible possible to initialize both python environment
-    //        and python manager without having to instantiate qSlicerApplication.
-    app.corePythonManager()->mainContext(); // Initialize python
-    }
-
   qSlicerPythonManager * pythonManager = app.pythonManager();
 
   QTemporaryFile tclFile("qSlicerApplicationTpyclTest1-XXXXXX.tcl");
