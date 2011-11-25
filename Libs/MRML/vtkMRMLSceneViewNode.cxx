@@ -42,6 +42,7 @@ vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
 
   this->Nodes = NULL;
   this->ScreenShot = NULL;
+  this->ScreenShotType = 0;
 }
 
 //----------------------------------------------------------------------------
