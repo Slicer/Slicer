@@ -710,7 +710,8 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
     vtkMRMLVolumeRenderingDisplayNode *dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
       volumeNode->GetNthDisplayNode(i));
         
-    if (dnode && dnode->IsViewNodeIDPresent(viewNode->GetID()))
+    if (dnode // display node is not necessarily volume rendering display node.
+        && dnode->IsDisplayableInView(viewNode->GetID()))
       {
       return dnode;
       }
