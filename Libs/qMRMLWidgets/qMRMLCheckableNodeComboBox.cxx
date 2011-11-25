@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QPlastiqueStyle>
 
 // CTK includes
 #include <ctkCheckableComboBox.h>
@@ -55,7 +56,9 @@ qMRMLCheckableNodeComboBoxPrivate
 void qMRMLCheckableNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   Q_Q(qMRMLCheckableNodeComboBox);
+
   this->ComboBox = new ctkCheckableComboBox;
+  this->ComboBox->setStyle(new QPlastiqueStyle);
 
   this->qMRMLNodeComboBoxPrivate::init(model);
 
@@ -63,6 +66,7 @@ void qMRMLCheckableNodeComboBoxPrivate::init(QAbstractItemModel* model)
   q->setRemoveEnabled(false);
   q->setEditEnabled(false);
   q->setRenameEnabled(false);
+
 }
 
 // --------------------------------------------------------------------------
@@ -87,6 +91,7 @@ qMRMLCheckableNodeComboBox::qMRMLCheckableNodeComboBox(QWidget* parentWidget)
   // time.
   this->connect(d->ComboBox, SIGNAL(checkedIndexesChanged()),
                 this, SIGNAL(checkedNodesChanged()));
+
 }
 
 // --------------------------------------------------------------------------
