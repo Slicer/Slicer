@@ -192,7 +192,10 @@ void vtkSlicerVolumeRenderingLogic
   vtkMRMLVolumeDisplayNode* displayNode =
     vtkMRMLVolumeDisplayNode::SafeDownCast(
       node->GetVolumeNode()->GetDisplayNode());
-  assert(displayNode);
+  if (!displayNode)
+    {
+    return;
+    }
   if (node->GetFollowVolumeDisplayNode())
     {
     // observe display node if not already observing it
