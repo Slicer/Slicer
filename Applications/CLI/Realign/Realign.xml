@@ -3,7 +3,7 @@
   <category>Registration.Specialized</category>
   <title>ACPC Transform</title>
   <index>1</index>
-  <description>Calculate a transformation from two lists of fiducial points.\n\nACPC line is two fiducial points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting them to horizontal to the AP axis.\n\nThe midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will put the output volume with the mid sagittal plane lined up with the AS plane.\n\nUse the Filtering module **Resample Scalar/Vector/DWI Volume** to apply the transformation to a volume.</description>
+  <description><![CDATA[Calculate a transformation from two lists of fiducial points.<p>ACPC line is two fiducial points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting them to horizontal to the AP axis.<p>The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will put the output volume with the mid sagittal plane lined up with the AS plane.<p>Use the Filtering module <b>Resample Scalar/Vector/DWI Volume</b> to apply the transformation to a volume.]]></description>
 <version>1.0</version>
 <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ACPCTransform</documentation-url>
   <license>slicer3</license>
@@ -18,14 +18,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>ACPC</name>
       <label>ACPC Line</label>
       <longflag>--acpc</longflag>
-      <description>ACPC line</description>
+      <description>ACPC line, two fiducial points, one at the anterior commissure and one at the posterior commissure.</description>
       <default>0,0,0</default>
    </point>
    <point coordinateSystem="ras" multiple="true">
       <name>Midline</name>
       <label>Midline</label>
       <longflag>--midline</longflag>
-      <description>Mid line</description>
+      <description>The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane).</description>
       <default>0,0,0</default>
    </point>
    <transform type="linear">
