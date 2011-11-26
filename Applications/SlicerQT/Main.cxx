@@ -76,10 +76,7 @@ void popupDisclaimerDialog(void * data)
 {
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting))
     {
-    QString message = QString("Thank you for trying %1!\n\n"
-                              "Please be aware that this software is under active "
-                              "development and has not been tested for accuracy. "
-                              "Many important features are still missing.\n\n"
+    QString message = QString("Thank you for using %1!\n\n"
                               "This software is not intended for clinical use.")
       .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
     QMessageBox::information(reinterpret_cast<qSlicerMainWindow*>(data), "3D Slicer", message);
