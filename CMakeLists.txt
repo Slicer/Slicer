@@ -280,7 +280,7 @@ set(Slicer_MAJOR_VERSION "4")
 set(Slicer_MINOR_VERSION "0")
 
 if(NOT Slicer_PATCH_VERSION)
-  set(Slicer_PATCH_VERSION "gamma-${Slicer_BUILDDATE}")
+  set(Slicer_PATCH_VERSION "1-${Slicer_BUILDDATE}")
 endif()
 
 set(Slicer_VERSION      "${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
