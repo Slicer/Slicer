@@ -300,7 +300,7 @@ proc EditorToggleErasePaintLabel {} {
 proc EditorGetPaintColor { {this ""} } {
 
   if { [info exists ::slicer3::ApplicationLogic] } {
-    set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
+    set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogicByLayoutLabel "Red"]
     if { $sliceLogic != "" } {
       set logic [$sliceLogic GetLabelLayer]
       if { $logic != "" } {
