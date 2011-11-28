@@ -107,14 +107,19 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     qWarning() << "CropVolume: ERROR: Diffusion tensor volumes are not supported by this module!";
     return -2;
   }
-  if(dwvnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_dwv");
+ 
+  std::ostringstream outSS;
+  double outputSpacing[3], spacingScaleConst = pnode->GetSpacingScalingConst();
+  outSS << inputVolume->GetName() << "-subvolume-scale_" << spacingScaleConst;
+
+ if(dwvnode){
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
   }
   if(vvnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_vv");
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
   }
   if(svnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, "output_sv");
+    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
   }
   refVolume = volumesLogic->CreateLabelVolume(this->GetMRMLScene(), inputVolume, "CropVolume_ref_volume");
   refVolume->HideFromEditorsOn();
@@ -136,9 +141,10 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   double roiRadius[3], roiXYZ[3];
   inputROI->GetRadiusXYZ(roiRadius);
   inputROI->GetXYZ(roiXYZ);
+  std::cerr << "ROI radius: " << roiRadius[0] << "," << roiRadius[1] << "," << roiRadius[2] << std::endl;
+  std::cerr << "ROI center: " << roiXYZ[0] << "," << roiXYZ[1] << "," << roiXYZ[2] << std::endl;
 
   double* inputSpacing = inputVolume->GetSpacing();
-  double outputSpacing[3], spacingScaleConst = pnode->GetSpacingScalingConst();
   double minSpacing = inputSpacing[0];
   if (minSpacing > inputSpacing[1])
     {
@@ -238,10 +244,6 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   cliModule->run(cmdNode, true);
 
   this->GetMRMLScene()->RemoveNode(refVolume);
-
-  std::ostringstream outSS;
-  outSS << inputVolume->GetName() << "-subvolume-scale_" << spacingScaleConst;
-  outputVolume->SetName(outSS.str().c_str());
 
   outputVolume->ModifiedSinceReadOn();
   pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
