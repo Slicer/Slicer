@@ -28,6 +28,7 @@ protected:
   QScopedPointer<qSlicerCropVolumeModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
+  virtual void enter();
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected slots:
