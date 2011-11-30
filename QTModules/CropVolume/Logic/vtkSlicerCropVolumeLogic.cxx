@@ -113,13 +113,13 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outSS << inputVolume->GetName() << "-subvolume-scale_" << spacingScaleConst;
 
  if(dwvnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
+    outputVolume = vtkMRMLVolumeNode::SafeDownCast(volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str()));
   }
   if(vvnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
+    outputVolume = vtkMRMLVolumeNode::SafeDownCast(volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str()));
   }
   if(svnode){
-    outputVolume = (vtkMRMLVolumeNode*) volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
+    outputVolume = vtkMRMLVolumeNode::SafeDownCast(volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str()));
   }
   refVolume = volumesLogic->CreateLabelVolume(this->GetMRMLScene(), inputVolume, "CropVolume_ref_volume");
   refVolume->HideFromEditorsOn();
