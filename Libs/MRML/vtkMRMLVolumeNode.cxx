@@ -328,6 +328,36 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 }
 
 //----------------------------------------------------------------------------
+double vtkMRMLVolumeNode::GetMinSpacing()
+{
+  if (this->GetSpacing() == NULL)
+    {
+    return 0;
+    }
+  double minSpace = this->GetSpacing()[0];
+  for(int i = 1; i < 3; ++i)
+    {
+    minSpace = std::min(this->GetSpacing()[i], minSpace);
+    }
+  return minSpace;
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLVolumeNode::GetMaxSpacing()
+{
+  if (this->GetSpacing() == NULL)
+    {
+    return 0;
+    }
+  double maxSpace = this->GetSpacing()[0];
+  for(int i = 1; i < 3; ++i)
+    {
+    maxSpace = std::max(this->GetSpacing()[i], maxSpace);
+    }
+  return maxSpace;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
 {
   if (argMat == NULL) 

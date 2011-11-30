@@ -66,7 +66,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->ROINode = NULL;
 
   this->ExpectedFPS = 8.;
-  this->EstimatedSampleDistance = 1.0;
+  this->EstimatedSampleDistance = 2.0;
 
   this->CurrentVolumeMapper = -1;
   this->GPUMemorySize = 0; // means application default

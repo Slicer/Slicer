@@ -107,6 +107,14 @@ public:
   vtkGetVector3Macro (Origin, double);
   vtkSetVector3Macro (Origin, double);
 
+  ///
+  /// Utility function that returns the min spacing between the 3 orientations
+  double GetMinSpacing();
+
+  ///
+  /// Utility function that returns the max spacing between the 3 orientations
+  double GetMaxSpacing();
+
   /// 
   /// Get the IJKToRAS Matrix that includes the spacing and origin
   /// information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1)
