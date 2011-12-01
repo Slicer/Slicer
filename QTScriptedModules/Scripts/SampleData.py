@@ -136,11 +136,11 @@ class SampleDataWidget:
         selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
         appLogic.PropagateVolumeSelection(1)
         self.logMessage('<i>finished.</i>\n')
+        self.processStorageEvents(storageNode, 'ModifiedEvent')
       else:
         self.logMessage('<b>Download failed!</b>\n')
     else:
       self.logMessage('<b>Download failed!</b>\n')
-    self.processStorageEvents(storageNode, 'ModifiedEvent')
 
   def processStorageEvents(self, node, event):
     state = node.GetReadStateAsString()
