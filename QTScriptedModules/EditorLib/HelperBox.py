@@ -114,7 +114,7 @@ class HelperBox(object):
         selectionNode = self.applicationLogic.GetSelectionNode()
         selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
         selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-        self.applicationLogic.PropagateVolumeSelection()
+        self.applicationLogic.PropagateVolumeSelection(0)
         mergeText = merge.GetName()
         self.merge = merge
     else:
@@ -335,7 +335,7 @@ class HelperBox(object):
     selectionNode = self.applicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-    self.applicationLogic.PropagateVolumeSelection()
+    self.applicationLogic.PropagateVolumeSelection(0)
 
     self.statusText( "Finished merging." )
 
@@ -475,7 +475,7 @@ class HelperBox(object):
     selectionNode.SetReferenceActiveVolumeID(self.master.GetID())
     if structureVolume:
       selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
-    self.applicationLogic.PropagateVolumeSelection()
+    self.applicationLogic.PropagateVolumeSelection(0)
 
     tcl('EditorSetPaintLabel %s' % label)
 
