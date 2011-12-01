@@ -445,16 +445,19 @@ class HelperBox(object):
 
     parameters["ModelSceneFile"] = outHierarchy
 
-    modelMaker = slicer.modules.modelmaker
+    try:
+      modelMaker = slicer.modules.modelmaker
+      # 
+      # run the task (in the background)
+      # - use the GUI to provide progress feedback
+      # - use the GUI's Logic to invoke the task
+      # - model will show up when the processing is finished
+      #
+      self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
+      self.statusText( "Model Making Started..." )
+    except AttributeError:
+      qt.QMessageBox.critical(slicer.util.mainWindow(), 'Editor', 'The ModelMaker module is not available<p>Perhaps it was disabled in the application settings or did not load correctly.')
 
-    # 
-    # run the task (in the background)
-    # - use the GUI to provide progress feedback
-    # - use the GUI's Logic to invoke the task
-    # - model will show up when the processing is finished
-    #
-    self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
-    self.statusText( "Model Making Started..." )
 
   def edit(self,label):
     """select the picked label for editing"""
