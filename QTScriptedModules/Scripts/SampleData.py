@@ -80,8 +80,8 @@ class SampleDataWidget:
         ( 'CTChest', self.downloadCTChest ),
         ( 'CTACardio', self.downloadCTACardio ),
         ( 'DTIBrain', self.downloadDTIBrain ),
-        ( 'MRBrainTumor1', self.downloadMRBrainTumor1 ),
-        ( 'MRBrainTumor2', self.downloadMRBrainTumor2 ),
+        ( 'MRBrainTumor Time Point 1', self.downloadMRBrainTumor1 ),
+        ( 'MRBrainTumor Time Point 2', self.downloadMRBrainTumor2 ),
       )
     for sample in samples:
       b = qt.QPushButton('Download %s' % sample[0] )
