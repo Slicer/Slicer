@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy)
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy SkullStripper)
 
 if(ITK_VERSION_MAJOR GREATER 3)
   if(Slicer_USE_SimpleITK)
@@ -266,6 +266,8 @@ ExternalProject_Add(${proj}
     -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR}
     # ChangeTrackerPy
     -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR}
+    # SkullStripper
+    -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR}
   INSTALL_COMMAND ""
   )
 
