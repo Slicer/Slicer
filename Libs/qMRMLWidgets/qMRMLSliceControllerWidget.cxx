@@ -716,10 +716,9 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
 {
-  Q_Q(qMRMLSliceControllerWidget);
+  //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected - sliceView:"
   //         << q->sliceOrientation();
-
   if (!this->MRMLSliceCompositeNode)
     {
     return;
@@ -743,11 +742,9 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode * node)
 {
-  Q_Q(qMRMLSliceControllerWidget);
-
+  //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected - sliceView:"
   //         << q->sliceOrientation();
-
   if (!this->MRMLSliceCompositeNode)
     {
     return;
@@ -771,7 +768,7 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * node)
 {
-  Q_Q(qMRMLSliceControllerWidget);
+  //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected - sliceView:"
   //         << q->sliceOrientation();
   if (!this->MRMLSliceCompositeNode)
