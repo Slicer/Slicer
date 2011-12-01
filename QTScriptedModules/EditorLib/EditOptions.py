@@ -607,6 +607,8 @@ class IdentifyIslandsOptions(EditOptions):
     self.frame.layout().addWidget(self.minSizeLabel)
     self.widgets.append(self.minSizeLabel)
     self.minSize = qt.QSpinBox(self.frame)
+    volumeNode = self.editUtil.getLabelVolume()
+    self.minSize.maximum = reduce( lambda x,y: x*y, volumeNode.GetImageData().GetDimensions())
     self.frame.layout().addWidget(self.minSize)
     self.widgets.append(self.minSize)
 
@@ -623,7 +625,7 @@ class IdentifyIslandsOptions(EditOptions):
     HelpButton(self.frame, "Use this tool to create a unique label value for each connected region in the current label map.  Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.  If FullyConnected is selected, then only voxels that share a face are counted as connected; if unselected, then voxels that touch at an edge or a corner are considered connected.\n\n Note: be aware that all non-zero label values labels values are considered equal by this filter and that the result will renumber the resulting islands in order of size.")
 
     self.fullyConnected.connect('clicked()', self.updateMRMLFromGUI)
-    self.minSize.connect('valueChanged()', self.onMinSizeValueChanged)
+    self.minSize.connect('valueChanged(int)', self.onMinSizeValueChanged)
     self.apply.connect('clicked()', self.onApply)
 
     # Add vertical spacer
