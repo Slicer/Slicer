@@ -201,7 +201,6 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
 void vtkMRMLModelHierarchyLogic::SetChildrenVisbility(vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode,
                                                       int visibility)
 {
-  int i=0;
   vtkMRMLDisplayNode *displayNode = displayableHierarchyNode->GetDisplayNode();
   if (displayNode)
     {
@@ -235,3 +234,4 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisbility(vtkMRMLDisplayableHierarch
       }
     }
 }
+
