@@ -11,22 +11,24 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkAbstractTransform.h"
-#include "vtkMath.h"
+// VTK includes
+#include <vtkAbstractTransform.h>
+#include <vtkCollection.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
-#include "vtkMRMLLinearTransformNode.h"
-
-#include "vtkSmartPointer.h"
+// STD includes
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiducialListNode);

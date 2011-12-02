@@ -17,6 +17,7 @@
 // MRML includes
 
 // VTK sys includes
+#include <vtkCollection.h>
 
 // RemoteIO includes
 #include "vtkDataIOManager.h"

@@ -37,6 +37,9 @@
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSliceNode.h>
 
+// VTK includes
+#include <vtkCollection.h>
+
 //------------------------------------------------------------------------------
 // qMRMLLayoutManagerPrivate methods
 

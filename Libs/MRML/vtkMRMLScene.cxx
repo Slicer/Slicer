@@ -70,8 +70,9 @@ Version:   $Revision: 1.18 $
 #endif
 
 // VTK includes
-#include <vtkDebugLeaks.h>
 #include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
+#include <vtkDebugLeaks.h>
 #include <vtkErrorCode.h>
 #include <vtkObjectFactory.h>
 
@@ -86,6 +87,7 @@ Version:   $Revision: 1.18 $
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable)
+vtkCxxSetObjectMacro(vtkMRMLScene, URIHandlerCollection, vtkCollection)
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene()
@@ -1580,6 +1582,31 @@ void vtkMRMLScene::RemoveReferencesToNode(vtkMRMLNode *n)
   this->ReferencedIDs = referencedIDs;
   this->ReferencingNodes = referencingNodes;
 
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::IsNodePresent(vtkMRMLNode *n)
+{
+  return this->Nodes->vtkCollection::IsItemPresent((vtkObject *)n);
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::InitTraversal()
+{
+  assert(this);
+  this->Nodes->InitTraversal();
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetNextNode()
+{
+  return vtkMRMLNode::SafeDownCast(this->Nodes->GetNextItemAsObject());
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetNumberOfNodes ()
+{
+  return this->Nodes->GetNumberOfItems();
 }
 
 //------------------------------------------------------------------------------
@@ -3095,4 +3122,14 @@ GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
 
   // clean up
   nodes->Delete();
+}
+
+//-----------------------------------------------------------------------------
+unsigned long vtkMRMLScene::GetSceneModifiedTime()
+{
+  if (this->Nodes->GetMTime() > this->SceneModifiedTime)
+    {
+    this->SceneModifiedTime = this->Nodes->GetMTime();
+    }
+  return this->SceneModifiedTime;
 }

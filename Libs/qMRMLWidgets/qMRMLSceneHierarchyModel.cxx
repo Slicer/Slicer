@@ -29,6 +29,7 @@
 #include <vtkMRMLHierarchyNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 
 //------------------------------------------------------------------------------

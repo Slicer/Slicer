@@ -24,29 +24,34 @@ Version:   $Revision: 1.18 $
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
 
+// MRML includes
+#include "vtkMRML.h"
+
+// VTK includes
+#include <vtkObject.h>
+
+// STD includes
 #include <list>
 #include <map>
 #include <vector>
 #include <string>
 
-#include <vtkCollection.h>
-
-#include "vtkMRML.h"
 class vtkCacheManager;
 class vtkDataIOManager;
 class vtkTagTable;
 
 class vtkCallbackCommand;
+class vtkCollection;
 class vtkGeneralTransform;
 class vtkURIHandler;
 class vtkMRMLNode;
 class vtkMRMLSceneViewNode;
 
-class VTK_MRML_EXPORT vtkMRMLScene : public vtkCollection
+class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
 public:
   static vtkMRMLScene *New();
-  vtkTypeMacro(vtkMRMLScene,vtkCollection);
+  vtkTypeMacro(vtkMRMLScene, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Set URL (file name) of the scene
@@ -135,20 +140,13 @@ public:
 
   /// Determine whether a particular node is present. Returns its position
   /// in the list.
-  int IsNodePresent(vtkMRMLNode *n) {
-    return this->Nodes->vtkCollection::IsItemPresent((vtkObject *)n);};
+  int IsNodePresent(vtkMRMLNode *n);
 
   /// Initialize a traversal (not reentrant!)
-  void InitTraversal() {
-    if (this && this->Nodes)
-      {
-      this->Nodes->InitTraversal();
-      }
-  };
+  void InitTraversal();
 
   /// Get next node in the scene.
-  vtkMRMLNode *GetNextNode() {
-    return (vtkMRMLNode *)(this->Nodes->GetNextItemAsObject());};
+  vtkMRMLNode *GetNextNode();
 
   /// Get next node of the class in the scene.
   vtkMRMLNode *GetNextNodeByClass(const char* className);
@@ -164,7 +162,7 @@ public:
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
 
   /// Get number of nodes in the scene
-  int GetNumberOfNodes () { return this->Nodes->GetNumberOfItems(); };
+  int GetNumberOfNodes();
 
   /// Get n-th node in the scene
   vtkMRMLNode* GetNthNode(int n);
@@ -345,14 +343,7 @@ public:
     return (this->GetErrorMessage().c_str());
     }
 
-  unsigned long GetSceneModifiedTime()
-    {
-    if (this->Nodes && this->Nodes->GetMTime() > this->SceneModifiedTime)
-      {
-      this->SceneModifiedTime = this->Nodes->GetMTime();
-      }
-    return this->SceneModifiedTime;
-    };
+  unsigned long GetSceneModifiedTime();
 
   void IncrementSceneModifiedTime()
     {
@@ -370,7 +361,7 @@ public:
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
   virtual void SetDataIOManager(vtkDataIOManager* );
   vtkGetObjectMacro ( URIHandlerCollection, vtkCollection );
-  vtkSetObjectMacro ( URIHandlerCollection, vtkCollection );
+  virtual void SetURIHandlerCollection(vtkCollection* );
   vtkGetObjectMacro ( UserTagTable, vtkTagTable);
   virtual void SetUserTagTable(vtkTagTable* );
 
@@ -501,12 +492,6 @@ private:
 
   vtkMRMLScene(const vtkMRMLScene&);   // Not implemented
   void operator=(const vtkMRMLScene&); // Not implemented
-
-  /// Hide the standard AddItem from the user and the compiler.
-  void AddItem(vtkObject *o) { this->Nodes->vtkCollection::AddItem(o); this->Modified();};
-  void RemoveItem(vtkObject *o) { this->Nodes->vtkCollection::RemoveItem(o); this->Modified();};
-  void RemoveItem(int i) { this->Nodes->vtkCollection::RemoveItem(i); this->Modified();};
-  int  IsItemPresent(vtkObject *o) { return this->Nodes->vtkCollection::IsItemPresent(o);};
 
   friend class vtkMRMLSceneViewNode; // For IsRestoring
 

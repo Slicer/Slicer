@@ -30,6 +30,7 @@ Version:   $Revision: 1.2 $
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>

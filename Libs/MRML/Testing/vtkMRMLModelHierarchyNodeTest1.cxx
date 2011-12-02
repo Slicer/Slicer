@@ -10,13 +10,16 @@
 
 =========================================================================auto=*/
 
+// MRML includes
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
-
 #include "TestingMacros.h"
+
+// VTK includes
+#include <vtkCollection.h>
 
 int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
 {

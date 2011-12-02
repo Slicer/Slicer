@@ -11,6 +11,7 @@ Date:      $Date: 2006/03/11 19:51:14 $
 Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
+
 // MRML includes
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
@@ -18,6 +19,7 @@ Version:   $Revision: 1.8 $
 #include "vtkTagTable.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 #include <vtkStdString.h>
 

@@ -39,6 +39,7 @@
 
 /// MRML includes
 #include <vtkCacheManager.h>
+#include <vtkCollection.h>
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>

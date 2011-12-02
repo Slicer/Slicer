@@ -62,6 +62,7 @@
 #include <vtkMRMLLayoutNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public Ui_qSlicerMainWindow

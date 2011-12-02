@@ -33,6 +33,7 @@
 #include <vtkMRMLSceneViewNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>

@@ -12,14 +12,17 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLSnapshotClipNode.h"
 #include "vtkMRMLSceneViewNode.h"
-
 #include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSnapshotClipNode);

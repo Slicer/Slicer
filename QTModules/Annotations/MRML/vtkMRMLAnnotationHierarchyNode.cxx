@@ -1,8 +1,10 @@
-
+// MRML includes
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------

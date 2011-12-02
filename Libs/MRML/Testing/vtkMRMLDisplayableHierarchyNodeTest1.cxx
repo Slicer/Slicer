@@ -18,6 +18,9 @@
 
 #include "TestingMacros.h"
 
+// VTK includes
+#include <vtkCollection.h>
+
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {

@@ -23,6 +23,7 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>

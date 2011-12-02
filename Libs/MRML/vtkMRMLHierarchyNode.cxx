@@ -12,14 +12,17 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-#include <algorithm>
-
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLHierarchyNode.h"
-
 #include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <algorithm>
+#include <sstream>
 
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, AssociatedNodeIDReference);

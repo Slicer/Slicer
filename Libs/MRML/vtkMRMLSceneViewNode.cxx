@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>

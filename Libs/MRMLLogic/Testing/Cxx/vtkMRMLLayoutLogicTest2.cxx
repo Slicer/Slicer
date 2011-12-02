@@ -7,6 +7,7 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 
 // STD includes
 

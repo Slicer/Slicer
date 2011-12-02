@@ -12,13 +12,16 @@ Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelHierarchyNode);

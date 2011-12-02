@@ -1,8 +1,11 @@
+// MRML includes
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
+// VTK includes
+#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>

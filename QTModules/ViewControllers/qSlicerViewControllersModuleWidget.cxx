@@ -41,6 +41,7 @@
 #include "vtkMRMLLayoutLogic.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
