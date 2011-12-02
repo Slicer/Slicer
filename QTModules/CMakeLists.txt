@@ -44,9 +44,11 @@ foreach(module ${qtmodules})
   add_subdirectory(${module})
 endforeach(module)
 
-# NOTE: EMSegment source code is checkout from Slicer3 repository using
-#       "External_EMSegment.cmake".
-add_subdirectory(
-  ${EMSegment_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/EMSegment
-  )
+if(Slicer_BUILD_EMSegment)
+  # NOTE: EMSegment source code is checkout from Slicer3 repository using
+  #       "External_EMSegment.cmake".
+  add_subdirectory(
+    ${EMSegment_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/EMSegment
+    )
+endif()

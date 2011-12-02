@@ -210,13 +210,27 @@ endif()
 CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF "USE_ITKv4" OFF)
 
 #-----------------------------------------------------------------------------
-# TODO: Option allowing to enable/disable specific module should be automatically added
-# The following option has been added for conveniency so that BRAINSTOOL module can be
-# enabled/disabled at the superbuild level.
+# The following option has been added for conveniency so that "extension-like"
+# module can be enabled/disabled at the superbuild level.
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
   "Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
+
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_ChangeTrackerPy "Build ChangeTrackerPy." ON
+  "Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
+mark_as_advanced(Slicer_BUILD_ChangeTrackerPy)
+
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_EMSegment "Build EMSegment." ON
+  "Slicer_BUILD_QTLOADABLEMODULES" OFF)
+mark_as_advanced(Slicer_BUILD_EMSegment)
+
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_SkullStripper "Build SkullStripper." ON
+  "Slicer_BUILD_CLI" OFF)
+mark_as_advanced(Slicer_BUILD_SkullStripper)
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get

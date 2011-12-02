@@ -108,12 +108,6 @@ foreach(cli_module ${cli_modules})
   add_subdirectory(${cli_module})
 endforeach()
 
-# NOTE: SkullStripper source code is checkout using "External_SkullStripper.cmake".
-add_subdirectory(
-  ${SkullStripper_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/SkullStripper
-  )
-
 if(Slicer_BUILD_BRAINSTOOLS)
   # NOTE: BRAINSTools source code is checkout using "External_BRAINSTools.cmake".
   set(BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)
@@ -149,3 +143,12 @@ if(Slicer_BUILD_BRAINSTOOLS)
     ${CMAKE_CURRENT_BINARY_DIR}/BRAINSTools
     )
 endif()
+
+if(Slicer_BUILD_SkullStripper)
+  # NOTE: SkullStripper source code is checkout using "External_SkullStripper.cmake".
+  add_subdirectory(
+    ${SkullStripper_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/SkullStripper
+    )
+endif()
+

@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel EMSegment ChangeTrackerPy SkullStripper)
+set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
 
 if(ITK_VERSION_MAJOR GREATER 3)
   if(Slicer_USE_SimpleITK)
@@ -74,6 +74,15 @@ if(ITK_VERSION_MAJOR GREATER 3)
 endif()
 if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES BRAINSTools)
+endif()
+if(Slicer_BUILD_ChangeTrackerPy)
+  list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
+endif()
+if(Slicer_BUILD_EMSegment)
+  list(APPEND Slicer_DEPENDENCIES EMSegment)
+endif()
+if(Slicer_BUILD_SkullStripper)
+  list(APPEND Slicer_DEPENDENCIES SkullStripper)
 endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
@@ -202,6 +211,18 @@ if(Slicer_BUILD_BRAINSTOOLS)
   list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
 endif()
 
+if(Slicer_BUILD_ChangeTrackerPy)
+  list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
+endif()
+
+if(Slicer_BUILD_EMSegment)
+  list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
+endif()
+
+if(Slicer_BUILD_SkullStripper)
+  list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
+endif()
+
 # Set CMake OSX variable to pass down the external project
 set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
 if(APPLE)
@@ -262,12 +283,6 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # qCDashAPI
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
-    # EMSegment
-    -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR}
-    # ChangeTrackerPy
-    -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR}
-    # SkullStripper
-    -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR}
   INSTALL_COMMAND ""
   )
 
