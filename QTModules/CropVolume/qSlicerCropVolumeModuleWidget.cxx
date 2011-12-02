@@ -110,13 +110,14 @@ void qSlicerCropVolumeModuleWidget::setup()
 
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::enter()
 {
-  Q_D(qSlicerCropVolumeModuleWidget);
   this->onInputVolumeChanged();
   this->onInputROIChanged();
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
 
   this->Superclass::setMRMLScene(scene);
