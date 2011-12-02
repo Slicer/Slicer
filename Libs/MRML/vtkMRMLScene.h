@@ -177,6 +177,10 @@ public:
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
   vtkCollection* GetNodesByClass(const char *className);
 
+  /// Search and return the singleton of type className with a singletonTag
+  /// tag. Return 0 if such node can't be found in the scene.
+  vtkMRMLNode* GetSingletonNode(const char* singletonTag, const char* className);
+
   std::list<std::string> GetNodeClassesList();
 
   /// returns list of names

@@ -1252,25 +1252,20 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     {
     // check if there is a singletone of this class in the scene
     // and if found copy this node into it
-    int numNodes = GetNumberOfNodesByClass(n->GetClassName());
-    for (int i=0; i<numNodes; i++)
+    vtkMRMLNode *sn = this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName());
+    if (sn != NULL)
       {
-      vtkMRMLNode *sn = this->GetNthNodeByClass(i, n->GetClassName());
-      if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
-                                                  n->GetSingletonTag()) == 0)
-        {
-        std::string oldId(sn->GetID());
-        sn->CopyWithSceneWithSingleModifiedEvent(n);
+      std::string oldId(sn->GetID());
+      sn->CopyWithSceneWithSingleModifiedEvent(n);
 
-        this->RemoveNodeReferences(n);
-        // cache the node so the whole scene cache stays up-todate
-        this->NodeIDs.erase(oldId);
-        this->NodeIDs[std::string(sn->GetID())] = sn;
-        this->NodeIDsMTime = this->Nodes->GetMTime();
+      this->RemoveNodeReferences(n);
+      // cache the node so the whole scene cache stays up-todate
+      this->NodeIDs.erase(oldId);
+      this->NodeIDs[std::string(sn->GetID())] = sn;
+      this->NodeIDsMTime = this->Nodes->GetMTime();
 
-        n->EndModify(wasModifying);
-        return sn;
-        }
+      n->EndModify(wasModifying);
+      return sn;
       }
     }
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL)
@@ -1319,18 +1314,15 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     {
     return NULL;
     }
+  // We need to know if the node will be actually added to the scene before
+  // it is effectively added to know if NodeAboutToBeAddedEvent needs to be
+  // fired.
   bool add = true;
-  if (n->GetSingletonTag() != NULL)
+  if (n->GetSingletonTag() != NULL &&
+      this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName()) != NULL)
     {
-    this->InitTraversal();
-    for (vtkMRMLNode *sn = NULL; (sn = this->GetNextNodeByClass(n->GetClassName()));)
-      {
-      if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
-                                                  n->GetSingletonTag()) == 0)
-        {
-        add = false;
-        }
-      }
+    // if the node is a singleton, then it won't be added, just replaced
+    add = false;
     }
 #ifdef MRMLSCENE_VERBOSE
   vtkTimerLog* timer = vtkTimerLog::New();
@@ -1341,6 +1333,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
     }
   vtkMRMLNode* node = this->AddNodeNoNotify(n);
+  // If the node is a singleton, the returned node is the existing singleton
+  assert( add || node != n);
   if (add)
     {
     this->InvokeEvent(this->NodeAddedEvent, n);
@@ -1743,6 +1737,26 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
     }
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetSingletonNode(const char* singletonTag, const char* className)
+{
+  assert(singletonTag);
+  assert(className);
+
+  vtkCollectionSimpleIterator it;
+  vtkMRMLNode* node = NULL;
+  for (this->Nodes->InitTraversal(it);
+       (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
+    {
+    if (node->IsA(className) &&
+        node->GetSingletonTag() != NULL &&
+        strcmp(node->GetSingletonTag(), singletonTag) == 0)
+      {
+      return node;
+      }
+    }
+  return NULL;
+}
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNthNode(int n)
