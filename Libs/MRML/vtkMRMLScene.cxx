@@ -82,6 +82,8 @@ Version:   $Revision: 1.18 $
 // STD includes
 #include <algorithm>
 
+#include <assert.h>
+
 //#define MRMLSCENE_VERBOSE 1
 
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
