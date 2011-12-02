@@ -195,6 +195,11 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   endif()
 endif()
 
+if(Slicer_BUILD_QTLOADABLEMODULES)
+  # Provide a mechanism to disable one or more loadable modules.
+  list(APPEND ep_superbuild_extra_args -DSlicer_QTLOADABLEMODULES_DISABLED:STRING=${Slicer_QTLOADABLEMODULES_DISABLED})
+endif()
+
 if(Slicer_USE_BatchMake)
   list(APPEND ep_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()

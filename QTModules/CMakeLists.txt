@@ -41,7 +41,10 @@ if(BUILD_TESTING)
 endif()
 
 foreach(module ${qtmodules})
-  add_subdirectory(${module})
+  list(FIND Slicer_QTLOADABLEMODULES_DISABLED ${module} _module_disabled)
+  if(${_module_disabled} STREQUAL "-1")
+    add_subdirectory(${module})
+  endif()
 endforeach(module)
 
 if(Slicer_BUILD_EMSegment)
