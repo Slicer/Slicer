@@ -30,7 +30,7 @@
 
 #-----------------------------------------------------------------------------
 configure_file(
-  ${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
+  ${Slicer_SOURCE_DIR}/CMake/UseSlicer.cmake.in
   ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY)
 
 #-----------------------------------------------------------------------------
