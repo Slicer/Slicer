@@ -680,7 +680,7 @@ set(slicer_version_file ${Slicer_HOME}/${Slicer_SHARE_DIR}/SlicerVersion.txt)
 
 # Note that Slicer_BUILD is set above
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerVersion.txt.in
   ${slicer_version_file}
   )
 
