@@ -428,7 +428,7 @@ void qSlicerCoreApplicationPrivate::setPythonEnvironmentVariables()
 }
 
 //-----------------------------------------------------------------------------
-#ifdef Q_WS_WIN
+#if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
 void qSlicerCoreApplicationPrivate::updatePythonOsEnviron()
 {
   foreach(const QString& key, this->EnvironmentVariablesCache.keys())
