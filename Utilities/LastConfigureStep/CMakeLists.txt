@@ -40,7 +40,7 @@ export(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.
 #-----------------------------------------------------------------------------
 # Create the SlicerConfig.cmake file containing the Slicer configuration.
 # Since it might generate configuration file depending
-include(${Slicer_SOURCE_DIR}/SlicerGenerateSlicerConfig.cmake)
+include(${Slicer_SOURCE_DIR}/CMake/SlicerGenerateSlicerConfig.cmake)
 
 #-----------------------------------------------------------------------------
 include(${Slicer_SOURCE_DIR}/CMake/SlicerCPack.cmake)
