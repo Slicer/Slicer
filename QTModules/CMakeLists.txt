@@ -27,6 +27,7 @@ set(qtmodules
   FetchMI
   #Measurements
   Models
+  ModelTransform
   #FiberBundles
   SceneViews
   SlicerWelcome
