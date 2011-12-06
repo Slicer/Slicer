@@ -32,7 +32,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 {
   qSlicerCoreApplication app(argc, argv);
   Q_UNUSED(app);
-  
+
   qSlicerModuleFactoryManager moduleFactoryManager;
 
   // Register factories
@@ -41,8 +41,8 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   // Register core modules
   moduleFactoryManager.registerModules("qSlicerCoreModuleFactory");
 
-  QString moduleName = "Transforms";
-  
+  QString moduleName = "Cameras";
+
   if (!moduleFactoryManager.moduleTitle( moduleName ).isEmpty())
     {
     moduleFactoryManager.printAdditionalInfo();
@@ -63,7 +63,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 
   QString moduleTitle = moduleFactoryManager.moduleTitle( moduleName );
   QString moduleName1 = moduleFactoryManager.moduleName( moduleTitle );
-  
+
   if( moduleName1 != moduleName )
     {
     moduleFactoryManager.printAdditionalInfo();
@@ -85,8 +85,8 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  QString moduleTitle2 = abstractModule->title(); 
-  
+  QString moduleTitle2 = abstractModule->title();
+
   if( moduleTitle2 != moduleTitle )
     {
     moduleFactoryManager.printAdditionalInfo();
