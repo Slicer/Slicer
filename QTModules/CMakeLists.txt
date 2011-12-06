@@ -19,6 +19,7 @@ project(QTModules)
 include(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 set(qtmodules
+  AtlasCreator
   Colors
   Transforms
   Annotations
