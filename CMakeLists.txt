@@ -730,7 +730,7 @@ endif()
 # CLI wrapper
 #-----------------------------------------------------------------------------
 set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX
-  ${CMAKE_CURRENT_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+  ${CMAKE_CURRENT_SOURCE_DIR}/Modules/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
 
 #-----------------------------------------------------------------------------
 # Includes
@@ -766,20 +766,9 @@ set(Slicer_CORE_LIBRARY qSlicerBaseQTCore)
 set(Slicer_GUI_LIBRARY qSlicerBaseQTGUI)
 
 #-----------------------------------------------------------------------------
-# Qt Loadable Modules
+# Applications
 #-----------------------------------------------------------------------------
-
-if(Slicer_BUILD_QTLOADABLEMODULES)
-  add_subdirectory(QTModules)
-endif()
-
-if(Slicer_BUILD_QTSCRIPTEDMODULES)
-  add_subdirectory(QTScriptedModules)
-endif()
-
-#-----------------------------------------------------------------------------
-# Applications - Added after Modules to capture the TractTracing in the correct ordering.
-#-----------------------------------------------------------------------------
+add_subdirectory(Modules)
 add_subdirectory(Applications)
 
 #-----------------------------------------------------------------------------

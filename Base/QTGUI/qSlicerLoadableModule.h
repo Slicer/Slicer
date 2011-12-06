@@ -57,6 +57,6 @@ private:
 };
 
 Q_DECLARE_INTERFACE(qSlicerLoadableModule,
-                     "org.slicer.QTModules.qSlicerLoadableModule/1.0");
+                     "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
 
 #endif

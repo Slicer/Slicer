@@ -43,9 +43,9 @@ def usage():
   print ""
   print "Usage:"
   print "ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>"
-  print "  --template default ./QTModules/ModuleTemplate"
+  print "  --template default ./Modules/Loadable/ModuleTemplate"
   print "  --templateKey default is dirname of template"
-  print "  --target default ./QTModules/<moduleName>"
+  print "  --target default ./Modules/Loadable/<moduleName>"
   print "Examples (from Slicer4 source directory):"
   print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
   print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
@@ -81,7 +81,7 @@ def main(argv):
     exit()
 
   if template == "":
-    template = "QTModules/ModuleTemplate/"
+    template = "Modules/Loadable/ModuleTemplate/"
   if template[-1] != '/':
     template += '/'
 
@@ -89,7 +89,7 @@ def main(argv):
     templateKey = os.path.split(template[:-1])[-1]
   
   if target == "":
-    target = "QTModules/" + moduleName
+    target = "Modules/Loadable/" + moduleName
 
   if os.path.exists(target):
     print target, "exists - delete it first"

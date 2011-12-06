@@ -681,17 +681,13 @@ RECURSIVE              = YES
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = "@Slicer_BINARY_DIR@" \
-                         "@Slicer_SOURCE_DIR@/Attic" \
                          "@Slicer_SOURCE_DIR@/Base/GUI" \
                          "@Slicer_SOURCE_DIR@/CMake" \
                          "@Slicer_SOURCE_DIR@/Extensions" \
-                         "@Slicer_SOURCE_DIR@/Modules" \
-                         "@Slicer_SOURCE_DIR@/QTModules/ModuleTemplate" \
+                         "@Slicer_SOURCE_DIR@/Modules/Loadable/ModuleTemplate" \
                          "@Slicer_SOURCE_DIR@/Resources" \
                          "@Slicer_SOURCE_DIR@/SuperBuild" \
-                         "@Slicer_SOURCE_DIR@/Utilities/Callgrind" \
-                         "@Slicer_SOURCE_DIR@/Utilities/Launcher" \
-                         "@Slicer_SOURCE_DIR@/Utilities/Package"
+                         "@Slicer_SOURCE_DIR@/Utilities/Scripts"
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
