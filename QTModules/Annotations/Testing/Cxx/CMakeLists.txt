@@ -30,6 +30,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationFiducialsStorageNodeTest1.cxx
   vtkMRMLAnnotationROINodeTest1.cxx
   vtkMRMLAnnotationDisplayableManagerTest1.cxx
+  vtkMRMLAnnotationDisplayableManagerTest2.cxx
   #TestAnnotationWidgetsStandalone.cxx
   #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
   #vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
