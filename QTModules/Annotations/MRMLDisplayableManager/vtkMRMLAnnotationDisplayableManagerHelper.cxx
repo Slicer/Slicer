@@ -49,6 +49,7 @@ vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerH
     {
     this->RemoveSeeds();
     }
+  this->RemoveAllWidgetsAndNodes();
 }
 
 //---------------------------------------------------------------------------
