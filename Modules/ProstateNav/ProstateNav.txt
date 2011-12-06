@@ -1,3 +1,0 @@
-Name: ProstateNav
-GUIName: ProstateNav
-Dependency: OpenIGTLinkIF
