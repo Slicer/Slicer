@@ -728,6 +728,7 @@ set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX
 # Includes
 #-----------------------------------------------------------------------------
 include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
