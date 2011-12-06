@@ -7,6 +7,15 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialNode);
 
+//----------------------------------------------------------------------------
+vtkMRMLAnnotationFiducialNode::vtkMRMLAnnotationFiducialNode()
+{
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAnnotationFiducialNode::~vtkMRMLAnnotationFiducialNode()
+{
+}
 
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationFiducialNode::SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag)

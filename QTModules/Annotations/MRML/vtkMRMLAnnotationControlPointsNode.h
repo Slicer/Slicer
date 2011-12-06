@@ -153,7 +153,7 @@ public:
   const char* GetNumberingSchemeAsString(int g);
   void SetNumberingSchemeFromString(const char *schemeString);
 
-  void Initialize(vtkMRMLScene* mrmlScene);
+  virtual void Initialize(vtkMRMLScene* mrmlScene);
 
 protected:
   vtkMRMLAnnotationControlPointsNode(); 

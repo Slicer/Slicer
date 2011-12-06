@@ -97,8 +97,8 @@ public:
   };
 
 protected:
-  vtkMRMLAnnotationFiducialNode() { }; 
-  ~vtkMRMLAnnotationFiducialNode() { };
+  vtkMRMLAnnotationFiducialNode();
+  virtual ~vtkMRMLAnnotationFiducialNode();
   vtkMRMLAnnotationFiducialNode(const vtkMRMLAnnotationFiducialNode&);
   void operator=(const vtkMRMLAnnotationFiducialNode&);
 

@@ -123,7 +123,7 @@ public:
   vtkGetMacro(Locked, int);
   void SetLocked(int init);
 
-  void Initialize(vtkMRMLScene* mrmlScene);
+  virtual void Initialize(vtkMRMLScene* mrmlScene);
 
   // Functionality for backups of this node
   /// Creates a backup of the current MRML state of this node and keeps a reference
