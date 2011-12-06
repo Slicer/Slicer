@@ -27,6 +27,7 @@ set(qtmodules
   FetchMI
   #Measurements
   Models
+  ModelMirror
   ModelTransform
   #FiberBundles
   SceneViews

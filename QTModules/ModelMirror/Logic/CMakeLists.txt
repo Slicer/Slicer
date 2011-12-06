@@ -1,4 +1,4 @@
-project(vtkSlicerModelMirrorModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -6,7 +6,7 @@ project(vtkSlicerModelMirrorModuleLogic)
 
 set(module_logic_name "${PROJECT_NAME}")
 
-# The header '${PROJECT_NAME}Export.h' will be automatically configured.
+# The header '${qt_module_name}Export.h' will be automatically configured.
 set(module_logic_export_directive "VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
