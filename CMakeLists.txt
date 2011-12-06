@@ -76,7 +76,7 @@ endif()
 # Set the header template which defines custom export/import macros
 # for shared libraries
 #-----------------------------------------------------------------------------
-set(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/qSlicerExport.h.in")
+set(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/CMake/qSlicerExport.h.in")
 set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
 
 #-----------------------------------------------------------------------------

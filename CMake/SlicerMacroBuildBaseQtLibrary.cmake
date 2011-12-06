@@ -108,7 +108,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
   set(MY_LIBNAME ${lib_name})
 
   configure_file(
-    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_SOURCE_DIR}/CMake/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   set(dynamicHeaders
