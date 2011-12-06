@@ -10,10 +10,6 @@ set(GENERATECLP_USE_MD5 ON)
 # --------------------------------------------------------------------------
 
 set(dirs
-# FileWatcher
-  )
-
-list(APPEND dirs
   vtkTeem
   vtkITK
   FreeSurfer
@@ -25,24 +21,8 @@ list(APPEND dirs
   MRML/IDImageIO
   MGHImageIO
   IGT
-  #SIGN
   MRML/Widgets
   )
-
-#-----------------------------------------------------------------------------
-# CUDA
-#-----------------------------------------------------------------------------
-#include(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
-
-#if(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
-#   option(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
-#else()
-#   option(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
-#endif()
-
-#if(CUDA_SUPPORT_ENABLED)
-#  list(APPEND dirs CudaSupport)
-#endif()
 
 #-----------------------------------------------------------------------------
 # Set library properties
