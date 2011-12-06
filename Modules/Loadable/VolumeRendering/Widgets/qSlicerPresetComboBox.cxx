@@ -27,7 +27,7 @@
 #include <ctkVTKScalarsToColorsUtils.h>
 #include <ctkWidgetsUtils.h>
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLSceneModel.h>
 
 // VolumeRenderingWidgets includes

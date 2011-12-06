@@ -204,7 +204,7 @@ endif()
 # Resources
 set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
-  ${qMRMLWidgets_SOURCE_DIR}/Resources/qMRMLWidgets.qrc
+  ${MRMLWidgets_SOURCE_DIR}/Resources/qMRMLWidgets.qrc
 )
 
 # Python wrap

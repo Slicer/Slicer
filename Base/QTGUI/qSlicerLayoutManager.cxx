@@ -24,7 +24,7 @@
 #include <QFileInfo>
 #include <QVariant>
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 

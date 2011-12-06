@@ -1,0 +1,5 @@
+# Color table file /projects/birn/nicole/Slicer3FC10/Slicer3/Libs/MRML/Core/Testing/TestData/ColorTest.ctbl
+# 3 values
+0 zero 0 0 0 255
+1 one 255 59 21 255
+2 two 41 84 255 255

@@ -4,7 +4,7 @@ slicerMacroBuildCLI(
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES vtkIO vtkGraphics
   INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
+    ${vtkITK_INCLUDE_DIRS}
   )
 
 if(BUILD_TESTING)

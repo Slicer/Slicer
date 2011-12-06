@@ -43,7 +43,7 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 
@@ -92,7 +92,7 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   ${SLICERLIBCURL_LIBRARIES}
-  MRML
+  MRMLCore
   )
 target_link_libraries(${lib_name} ${libs})
 
@@ -132,7 +132,7 @@ if(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${RemoteIO_SRCS}
-    KIT_PYTHON_LIBRARIES MRMLPythonD
+    KIT_PYTHON_LIBRARIES MRMLCorePythonD
     KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )

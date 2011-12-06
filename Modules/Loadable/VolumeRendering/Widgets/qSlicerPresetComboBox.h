@@ -21,7 +21,7 @@
 #ifndef __qSlicerPresetComboBox_h
 #define __qSlicerPresetComboBox_h
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLNodeComboBox.h>
 
 // SlicerQt includes

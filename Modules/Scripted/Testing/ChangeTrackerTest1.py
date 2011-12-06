@@ -12,8 +12,8 @@ if len(sys.argv) > 1:
   path1 = sys.argv[1]
   path2 = sys.argv[2]
 else:
-  path1 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Testing/TestData/fixed.nrrd"
-  path2 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Testing/TestData/moving.nrrd"
+  path1 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Core/Testing/TestData/fixed.nrrd"
+  path2 = slicer.app.slicerHome + "/../../Slicer/Libs/MRML/Core/Testing/TestData/moving.nrrd"
 
 
 vol1 = vl.AddArchetypeVolume(path1, 'fixed', 0)

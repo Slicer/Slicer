@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qMRMLWindowLevelWidget</class>
+ <widget class="QWidget" name="qMRMLWindowLevelWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>517</width>
+    <height>55</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0,0">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0" colspan="6">
+    <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QDoubleSpinBox" name="WindowSpinBox">
+     <property name="prefix">
+      <string>W: </string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QDoubleSpinBox" name="LevelSpinBox">
+     <property name="prefix">
+      <string>L: </string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="AutoManualComboBox">
+     <item>
+      <property name="text">
+       <string>Auto W/L</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Manual W/L</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Manual Min/Max</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QDoubleSpinBox" name="MinSpinBox">
+     <property name="prefix">
+      <string>Min:</string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QDoubleSpinBox" name="MaxSpinBox">
+     <property name="prefix">
+      <string>Max:</string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDoubleRangeSlider</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleRangeSlider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qMRMLWidgets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

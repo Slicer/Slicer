@@ -32,7 +32,7 @@
 # include <ctkPythonConsole.h>
 #endif
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLEventLoggerWidget.h>
 
 // SlicerQt includes

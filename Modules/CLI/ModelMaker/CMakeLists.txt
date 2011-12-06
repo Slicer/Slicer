@@ -3,10 +3,10 @@
 slicerMacroBuildCLI(
   NAME ModelMaker
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
+  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRMLCore SlicerBaseLogic SlicerBaseCLI
   INCLUDE_DIRECTORIES
-    ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
-    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR}
+    ${vtkITK_INCLUDE_DIRS}
+    ${MRMLCore_INCLUDE_DIRS}
     ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
   )
 

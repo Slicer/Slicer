@@ -65,7 +65,7 @@
       <string>Layout</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+      <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
      </property>
      <addaction name="actionViewLayoutConventional"/>
@@ -748,7 +748,7 @@
   </action>
   <action name="actionViewLayoutConventional">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
    </property>
    <property name="text">
@@ -760,7 +760,7 @@
   </action>
   <action name="actionViewLayoutFourUp">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
    </property>
    <property name="text">
@@ -772,7 +772,7 @@
   </action>
   <action name="actionViewLayoutDual3D">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutDual3DView.png</normaloff>:/Icons/LayoutDual3DView.png</iconset>
    </property>
    <property name="text">
@@ -784,7 +784,7 @@
   </action>
   <action name="actionViewLayoutOneUp3D">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
    </property>
    <property name="text">
@@ -796,7 +796,7 @@
   </action>
   <action name="actionViewLayoutOneUpRedSlice">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
    </property>
    <property name="text">
@@ -808,7 +808,7 @@
   </action>
   <action name="actionViewLayoutOneUpYellowSlice">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
    </property>
    <property name="text">
@@ -820,7 +820,7 @@
   </action>
   <action name="actionViewLayoutOneUpGreenSlice">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
    </property>
    <property name="text">
@@ -832,7 +832,7 @@
   </action>
   <action name="actionViewLayoutTabbed3D">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTabbed3DView.png</normaloff>:/Icons/LayoutTabbed3DView.png</iconset>
    </property>
    <property name="text">
@@ -844,7 +844,7 @@
   </action>
   <action name="actionViewLayoutTabbedSlice">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTabbedSliceView.png</normaloff>:/Icons/LayoutTabbedSliceView.png</iconset>
    </property>
    <property name="text">
@@ -856,7 +856,7 @@
   </action>
   <action name="actionViewLayoutCompare">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -868,7 +868,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -929,7 +929,7 @@
   </action>
   <action name="actionViewLayoutConventionalWidescreen">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalWidescreenView.png</normaloff>:/Icons/LayoutConventionalWidescreenView.png</iconset>
    </property>
    <property name="text">
@@ -938,7 +938,7 @@
   </action>
   <action name="actionViewLayoutTriple3D">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTriple3DView.png</normaloff>:/Icons/LayoutTriple3DView.png</iconset>
    </property>
    <property name="text">
@@ -947,7 +947,7 @@
   </action>
   <action name="actionViewLayoutThreeOverThree">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
    </property>
    <property name="text">
@@ -956,7 +956,7 @@
   </action>
   <action name="actionViewLayoutFourOverFour">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourOverFourView.png</normaloff>:/Icons/LayoutFourOverFourView.png</iconset>
    </property>
    <property name="text">
@@ -965,7 +965,7 @@
   </action>
   <action name="actionViewLayoutCompare_2_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -974,7 +974,7 @@
   </action>
   <action name="actionViewLayoutCompare_3_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -983,7 +983,7 @@
   </action>
   <action name="actionViewLayoutCompare_4_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -992,7 +992,7 @@
   </action>
   <action name="actionViewLayoutCompare_5_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1001,7 +1001,7 @@
   </action>
   <action name="actionViewLayoutCompare_6_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1010,7 +1010,7 @@
   </action>
   <action name="actionViewLayoutCompare_7_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1019,7 +1019,7 @@
   </action>
   <action name="actionViewLayoutCompare_8_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1028,7 +1028,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_2_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1037,7 +1037,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_3_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1046,7 +1046,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_4_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1055,7 +1055,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_5_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1064,7 +1064,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_6_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1073,7 +1073,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_7_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1082,7 +1082,7 @@
   </action>
   <action name="actionViewLayoutCompareWidescreen_8_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
@@ -1091,7 +1091,7 @@
   </action>
   <action name="actionViewLayoutCompareGrid">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
    </property>
    <property name="text">
@@ -1100,7 +1100,7 @@
   </action>
   <action name="actionViewLayoutCompareGrid_2x2_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
    </property>
    <property name="text">
@@ -1109,7 +1109,7 @@
   </action>
   <action name="actionViewLayoutCompareGrid_3x3_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
    </property>
    <property name="text">
@@ -1118,7 +1118,7 @@
   </action>
   <action name="actionViewLayoutCompareGrid_4x4_viewers">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
    </property>
    <property name="text">
@@ -1175,7 +1175,7 @@
  <resources>
   <include location="../SlicerQT.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
-  <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
  <connections>

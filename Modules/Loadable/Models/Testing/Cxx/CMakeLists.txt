@@ -31,8 +31,8 @@ foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 
-set(MODEL_FILE "${MRML_SOURCE_DIR}/Testing/TestData/cube.vtk")
-set(MODEL_SCENE "${MRML_SOURCE_DIR}/Testing/modelHierarchy.mrml")
+set(MODEL_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/cube.vtk")
+set(MODEL_SCENE "${MRMLCore_SOURCE_DIR}/Testing/modelHierarchy.mrml")
 
 SIMPLE_TEST( qSlicerModelsModuleWidgetTest1 ${MODEL_FILE} )
 SIMPLE_TEST( qSlicerModelsModuleWidgetTestScene ${MODEL_SCENE} )

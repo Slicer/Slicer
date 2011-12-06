@@ -78,7 +78,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOff.png</normaloff>
             <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
           </property>
@@ -239,7 +239,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../qSlicerCropVolumeModule.qrc"/>
  </resources>
  <connections>

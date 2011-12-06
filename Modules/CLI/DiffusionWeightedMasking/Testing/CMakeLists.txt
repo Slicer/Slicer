@@ -2,14 +2,14 @@
 #-----------------------------------------------------------------------------
 # DiffusionWeightedMasking tests
 #-----------------------------------------------------------------------------
-set (CLP DiffusionWeightedMasking)
+set(CLP DiffusionWeightedMasking)
 include_directories(
   ${vtkITK_INCLUDE_DIRS}
-  ${MRML_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS})
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries (${CLP}Test MRML vtkTeem SlicerBaseLogic)
+target_link_libraries (${CLP}Test MRMLCore vtkTeem SlicerBaseLogic)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)

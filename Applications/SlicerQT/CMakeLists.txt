@@ -49,9 +49,9 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${Slicer_Base_INCLUDE_DIRS}
-  ${MRML_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
-  ${qMRMLWidgets_INCLUDE_DIRS}
+  ${MRMLWidgets_INCLUDE_DIRS}
   )
 
 include_directories(${include_dirs})

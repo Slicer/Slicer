@@ -31,7 +31,7 @@ macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 endmacro()
 
-set(DTI_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
+set(DTI_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 
 SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
 SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )

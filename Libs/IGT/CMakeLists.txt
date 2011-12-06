@@ -30,7 +30,7 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${MRML_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 
@@ -111,7 +111,7 @@ set(srcs ${IGT_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
-  MRML
+  MRMLCore
   ${TRACKING_INTERFACE_LIB}
 )
 

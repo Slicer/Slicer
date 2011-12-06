@@ -30,7 +30,7 @@
 // vtkSlicerLogic includes
 #include "vtkSlicerTransformLogic.h"
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLUtils.h>
 
 // MRML includes

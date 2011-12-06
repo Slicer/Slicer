@@ -36,7 +36,7 @@ foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 
-SET(VOLUME_FILE "${MRML_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
+SET(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 
 SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest2 ${VOLUME_FILE})

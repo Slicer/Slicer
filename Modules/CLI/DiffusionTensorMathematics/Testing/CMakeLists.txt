@@ -2,11 +2,11 @@
 #-----------------------------------------------------------------------------
 # DiffusionTensorMathematics tests
 #-----------------------------------------------------------------------------
-set (CLP DiffusionTensorMathematics)
+set(CLP DiffusionTensorMathematics)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test MRML vtkTeem SlicerBaseLogic)
+target_link_libraries(${CLP}Test MRMLCore vtkTeem SlicerBaseLogic)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)

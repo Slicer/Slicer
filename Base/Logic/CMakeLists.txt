@@ -16,7 +16,7 @@ add_subdirectory(Resources)
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRML_INCLUDE_DIRS}
+  ${MRMLCore_INCLUDE_DIRS}
   ${MRMLCLI_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${ModuleDescriptionParser_INCLUDE_DIRS}
@@ -128,7 +128,7 @@ set(srcs ${SlicerBaseLogic_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
-  MRML
+  MRMLCore
   MRMLCLI
   MRMLLogic
   vtkITK

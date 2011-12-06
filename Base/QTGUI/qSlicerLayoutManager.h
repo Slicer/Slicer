@@ -24,7 +24,7 @@
 // CTK includes
 #include "qSlicerBaseQTGUIExport.h"
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLLayoutManager.h>
 
 class qSlicerLayoutManagerPrivate;

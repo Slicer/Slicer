@@ -27,7 +27,7 @@ mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 set(CLP N4ITKBiasFieldCorrection)
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
-set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData")
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")

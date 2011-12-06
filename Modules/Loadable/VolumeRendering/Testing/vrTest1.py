@@ -6,7 +6,7 @@ import os
 
 def load_default_volume():
   if not getNodes().has_key('moving'):
-    fileName = "c:/alexy/Slicer4/Libs/MRML/Testing/TestData/moving.nrrd"
+    fileName = "c:/alexy/Slicer4/Libs/MRML/Core/Testing/TestData/moving.nrrd"
     #fileName = os.environ['SLICER_HOME'] + "/share/MRML/Testing/TestData/moving.nrrd"
     #fileName = os.environ['HOME'] + "/Dropbox/data/faces/neutral.nrrd"
     vl = slicer.modules.volumes.logic()

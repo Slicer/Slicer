@@ -179,7 +179,7 @@
            <string>Display ROI</string>
           </property>
           <property name="indicatorIcon">
-           <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOn.png</normaloff>
             <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
           </property>
@@ -200,7 +200,7 @@
            <string>Fit to Volume</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
           </property>
          </widget>
@@ -667,7 +667,7 @@
         <string>Volume:</string>
        </property>
        <property name="indicatorIcon">
-        <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+        <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
          <normaloff>:/Icons/VisibleOn.png</normaloff>
          <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
        </property>
@@ -772,7 +772,7 @@
  </customwidgets>
  <resources>
   <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
-  <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>

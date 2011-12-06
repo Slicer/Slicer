@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLThreeDWidget.h>

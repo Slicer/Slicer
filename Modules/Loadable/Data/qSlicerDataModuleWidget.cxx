@@ -29,7 +29,7 @@
 // SlicerLibs includes
 #include <vtkSlicerTransformLogic.h>
 
-// qMRMLWidgets includes
+// MRMLWidgets includes
 
 // MRML includes
 #include <vtkMRMLLinearTransformNode.h>
