@@ -696,12 +696,20 @@ install(FILES
 set(files
   vtkSlicerConfigure.h
   vtkSlicerVersionConfigure.h
-  Scripts/runValgrind.sh
-  Scripts/runValgrindForOneModule.sh
-  Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
-  Scripts/computeCodeCoverageLocally.sh
-  Scripts/computeCodeCoverageForOneTest.sh
-  Scripts/runExperimentalOffScreen.sh
+  )
+foreach(f ${files})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${f}
+    )
+endforeach()
+set(files
+  Utilities/Scripts/runValgrind.sh
+  Utilities/Scripts/runValgrindForOneModule.sh
+  Utilities/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
+  Utilities/Scripts/computeCodeCoverageLocally.sh
+  Utilities/Scripts/computeCodeCoverageForOneTest.sh
+  Utilities/Scripts/runExperimentalOffScreen.sh
   )
 foreach(f ${files})
   configure_file(
