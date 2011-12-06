@@ -1,2 +1,0 @@
-Name: IGTToolSelector
-GUIName: IGTToolSelector
