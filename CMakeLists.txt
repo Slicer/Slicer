@@ -766,28 +766,6 @@ set(Slicer_CORE_LIBRARY qSlicerBaseQTCore)
 set(Slicer_GUI_LIBRARY qSlicerBaseQTGUI)
 
 #-----------------------------------------------------------------------------
-# Module Logic
-#-----------------------------------------------------------------------------
-if(Slicer_BUILD_QTLOADABLEMODULES)
-  # KWWidgets and Qt modules share the same logics typically located in the
-  # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
-  # we need to manually add them:
-  # Loop through Modules subdirectory and try to include Logic subdirectory if it exists
-  file(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
-  foreach(subdir ${modules_subdirs})
-    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
-      add_subdirectory(${subdir}/Logic)
-    endif()
-    file(GLOB subsubdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${subdir}/*)
-    foreach(subsubdir ${subsubdirs})
-      if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subsubdir}/Logic)
-        add_subdirectory(${subsubdir}/Logic)
-      endif()
-    endforeach()
-  endforeach()
-endif()
-
-#-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #-----------------------------------------------------------------------------
 
