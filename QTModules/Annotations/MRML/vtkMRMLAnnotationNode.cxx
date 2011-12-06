@@ -750,6 +750,14 @@ void vtkMRMLAnnotationNode::SaveView()
 
   // TODO support dual 3D view layout
 
+  if (this->m_RedSliceNode)
+    {
+    this->m_RedSliceNode->Delete();
+    this->m_YellowSliceNode->Delete();
+    this->m_GreenSliceNode->Delete();
+    this->m_CameraNode->Delete();
+    }
+
   // initialize our copies of the current sliceNodes
   this->m_RedSliceNode = vtkMRMLSliceNode::New();
   this->m_YellowSliceNode = vtkMRMLSliceNode::New();
