@@ -36,10 +36,6 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
   this->Locked = 0;
   this->m_Backup = 0;
 
-  this->m_RedSliceNode = 0;
-  this->m_YellowSliceNode = 0;
-  this->m_GreenSliceNode = 0;
-  this->m_CameraNode = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -49,30 +45,6 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
   if (this->ReferenceNodeID) 
     {
       delete [] this->ReferenceNodeID;
-    }
-
-  if (this->m_RedSliceNode)
-    {
-    this->m_RedSliceNode->Delete();
-    this->m_RedSliceNode = 0;
-    }
-
-  if (this->m_YellowSliceNode)
-    {
-    this->m_YellowSliceNode->Delete();
-    this->m_YellowSliceNode = 0;
-    }
-
-  if (this->m_GreenSliceNode)
-    {
-    this->m_GreenSliceNode->Delete();
-    this->m_GreenSliceNode = 0;
-    }
-
-  if (this->m_CameraNode)
-    {
-    this->m_CameraNode->Delete();
-    this->m_CameraNode = 0;
     }
 
   if (this->m_Backup)
@@ -750,19 +722,11 @@ void vtkMRMLAnnotationNode::SaveView()
 
   // TODO support dual 3D view layout
 
-  if (this->m_RedSliceNode)
-    {
-    this->m_RedSliceNode->Delete();
-    this->m_YellowSliceNode->Delete();
-    this->m_GreenSliceNode->Delete();
-    this->m_CameraNode->Delete();
-    }
-
   // initialize our copies of the current sliceNodes
-  this->m_RedSliceNode = vtkMRMLSliceNode::New();
-  this->m_YellowSliceNode = vtkMRMLSliceNode::New();
-  this->m_GreenSliceNode = vtkMRMLSliceNode::New();
-  this->m_CameraNode = vtkMRMLCameraNode::New();
+  this->m_RedSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  this->m_YellowSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  this->m_GreenSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  this->m_CameraNode = vtkSmartPointer<vtkMRMLCameraNode>::New();
 
   // now copy the current ones over to our sliceNodes
   if (redSliceNode)
@@ -788,23 +752,14 @@ void vtkMRMLAnnotationNode::SaveView()
 // Restore the saved views
 void vtkMRMLAnnotationNode::RestoreView()
 {
-
   // if we do not have stores views, exit now
-  if (!this->m_RedSliceNode)
+  if (this->m_RedSliceNode.GetPointer() == 0 ||
+      this->m_YellowSliceNode.GetPointer() == 0 ||
+      this->m_GreenSliceNode.GetPointer() == 0 ||
+      this->m_CameraNode.GetPointer() == 0)
     {
     return;
     }
-
-  if (!this->m_YellowSliceNode)
-    {
-    return;
-    }
-
-  if (!this->m_GreenSliceNode)
-    {
-    return;
-    }
-
 
   // pointers to the current sliceNodes in the scene
   vtkMRMLSliceNode* redSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));

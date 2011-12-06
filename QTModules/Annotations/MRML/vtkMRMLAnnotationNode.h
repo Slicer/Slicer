@@ -15,6 +15,9 @@
 // Annotations includes
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 class vtkMRMLCameraNode;
 class vtkMRMLSliceNode;
 class vtkMRMLAnnotationTextDisplayNode;
@@ -169,10 +172,10 @@ protected:
 
   vtkMRMLAnnotationNode * m_Backup;
 
-  vtkMRMLSliceNode* m_RedSliceNode;
-  vtkMRMLSliceNode* m_YellowSliceNode;
-  vtkMRMLSliceNode* m_GreenSliceNode;
-  vtkMRMLCameraNode* m_CameraNode;
+  vtkSmartPointer<vtkMRMLSliceNode> m_RedSliceNode;
+  vtkSmartPointer<vtkMRMLSliceNode> m_YellowSliceNode;
+  vtkSmartPointer<vtkMRMLSliceNode> m_GreenSliceNode;
+  vtkSmartPointer<vtkMRMLCameraNode> m_CameraNode;
 
 };
 
