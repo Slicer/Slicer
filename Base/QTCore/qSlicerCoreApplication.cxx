@@ -200,7 +200,10 @@ void qSlicerCoreApplicationPrivate::init()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    q->corePythonManager()->mainContext(); // Initialize python
+    if (q->corePythonManager())
+      {
+      q->corePythonManager()->mainContext(); // Initialize python
+      }
 # ifdef Q_WS_WIN
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate
     // to the environment initialized in python, let's make sure 'os.environ' is updated.
