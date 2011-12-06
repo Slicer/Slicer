@@ -1,2 +1,0 @@
-Name: FourDImage
-GUIName: 4D Image
