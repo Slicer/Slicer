@@ -24,6 +24,7 @@ set(qtmodules
   Transforms
   Annotations
   Data
+  FetchMI
   #Measurements
   Models
   #FiberBundles
