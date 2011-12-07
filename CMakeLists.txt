@@ -560,7 +560,7 @@ if(Slicer_USE_PYTHONQT)
   include(ctkMacroCompilePythonScript)
 
   # Enable qMRMLWidgets python wrapping
-  set(qMRMLWidgets_WRAP_PYTHON ON)
+  set(MRMLWidgets_WRAP_PYTHON ON)
 endif()
 
 #-----------------------------------------------------------------------------
