@@ -231,6 +231,11 @@ CMAKE_DEPENDENT_OPTION(
 mark_as_advanced(Slicer_BUILD_EMSegment)
 
 CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_OpenIGTLinkIF "Build OpenIGTLinkIF." OFF
+  "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_OpenIGTLink" OFF)
+mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)
+
+CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_SkullStripper "Build SkullStripper." ON
   "Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_SkullStripper)

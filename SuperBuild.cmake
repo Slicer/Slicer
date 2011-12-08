@@ -69,6 +69,9 @@ set(Slicer_DEPENDENCIES LibArchive cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK qCDa
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
+  if(Slicer_BUILD_OpenIGTLinkIF)
+    list(APPEND Slicer_DEPENDENCIES OpenIGTLinkIF)
+  endif()
 endif()
 if(ITK_VERSION_MAJOR GREATER 3)
   if(Slicer_USE_SimpleITK)
@@ -134,6 +137,7 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_CLI
   Slicer_BUILD_QTLOADABLEMODULES
   Slicer_BUILD_QTSCRIPTEDMODULES
+  Slicer_BUILD_OpenIGTLinkIF
   Slicer_USE_PYTHONQT
   Slicer_USE_PYTHONQT_WITH_TCL
   Slicer_USE_CTKAPPLAUNCHER
@@ -209,6 +213,9 @@ endif()
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND ep_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+  if(Slicer_BUILD_OpenIGTLinkIF)
+    list(APPEND ep_superbuild_extra_args -DOpenIGTLinkIF_SOURCE_DIR:PATH=${OpenIGTLinkIF_SOURCE_DIR})
+  endif()
 endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)

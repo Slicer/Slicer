@@ -42,3 +42,12 @@ if(Slicer_BUILD_EMSegment)
     ${CMAKE_CURRENT_BINARY_DIR}/EMSegment
     )
 endif()
+
+if(Slicer_USE_OpenIGTLink AND Slicer_BUILD_OpenIGTLinkIF)
+  # NOTE: OpenIGTLinkIF source code is checkout from NAMICSandBox repository using
+  #       "External_OpenIGTLinkIF.cmake".
+  add_subdirectory(
+    ${OpenIGTLinkIF_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenIGTLinkIF
+    )
+endif()
