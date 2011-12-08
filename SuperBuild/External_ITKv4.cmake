@@ -58,8 +58,8 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
-  set(ITKv4_REPOSITORY git://github.com/hjmjohnson/ITK.git)
-  set(ITKv4_GIT_TAG ITK_Slicer)
+  set(ITKv4_REPOSITORY git://itk.org/ITK.git)
+  set(ITKv4_GIT_TAG v4.0rc04)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
