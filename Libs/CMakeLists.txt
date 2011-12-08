@@ -67,6 +67,7 @@ set(include_dirs)
 foreach(dir ${dirs})
   string(REPLACE "/" "" dir_noslash ${dir})
   list(APPEND include_dirs ${${dir_noslash}_INCLUDE_DIRS})
+  list(APPEND include_dirs ${q${dir_noslash}_INCLUDE_DIRS})
 endforeach()
 
 # Set variable Slicer_Libs_INCLUDE_DIRS
