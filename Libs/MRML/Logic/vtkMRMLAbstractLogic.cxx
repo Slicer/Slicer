@@ -106,7 +106,7 @@ vtkMRMLAbstractLogic::vtkMRMLAbstractLogic()
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::~vtkMRMLAbstractLogic()
 {
-  this->SetAndObserveMRMLScene(0);
+  this->SetMRMLScene(0);
   delete this->Internal;
 }
 

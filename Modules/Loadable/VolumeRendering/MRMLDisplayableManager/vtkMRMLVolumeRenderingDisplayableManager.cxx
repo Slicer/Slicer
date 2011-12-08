@@ -117,6 +117,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
 {
+  this->RemoveDisplayNodes();
 
   if (this->VolumeRenderingLogic)
   {
