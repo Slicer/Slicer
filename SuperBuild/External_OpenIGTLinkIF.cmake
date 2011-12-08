@@ -24,7 +24,7 @@ if(NOT DEFINED OpenIGTLinkIF_SOURCE_DIR)
     #SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/IGTLoadableModules/QtModules/OpenIGTLinkIF/"
     #SVN_REVISION -r "7797"
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/OpenIGTLinkIF.git"
-    GIT_TAG "2b3f1c1683cda6c82dc812f3317e989339918c0d"
+    GIT_TAG "8330b769cc8c607067134296d577b64ae7c92b87"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
