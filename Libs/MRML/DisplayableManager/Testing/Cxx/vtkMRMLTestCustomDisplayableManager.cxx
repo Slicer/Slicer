@@ -104,7 +104,7 @@ void vtkMRMLTestCustomDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)

@@ -88,8 +88,8 @@ protected:
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 

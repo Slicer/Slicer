@@ -343,22 +343,16 @@ vtkMRMLThreeDReformatDisplayableManager::~vtkMRMLThreeDReformatDisplayableManage
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLThreeDReformatDisplayableManager::UpdateFromMRMLScene()
 {
   this->Internal->UpdateSliceNodes();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLThreeDReformatDisplayableManager
+::OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded)
 {
-  this->Internal->UpdateSliceNodes();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::
-OnMRMLSceneNodeAddedEvent(vtkMRMLNode* nodeAdded)
-{
-  if (this->GetMRMLScene()->GetIsUpdating() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() ||
       !nodeAdded->IsA("vtkMRMLSliceNode"))
     {
     return;
@@ -368,8 +362,8 @@ OnMRMLSceneNodeAddedEvent(vtkMRMLNode* nodeAdded)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::
-OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* nodeRemoved)
+void vtkMRMLThreeDReformatDisplayableManager
+::OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved)
 {
   if (!nodeRemoved->IsA("vtkMRMLSliceNode"))
     {

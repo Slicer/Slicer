@@ -48,9 +48,7 @@ protected slots:
   void moveUpSelected();
 
   /// respond to mrml events
-  void onMRMLSceneImportedEvent();
-  void onMRMLSceneClosedEvent();
-  void onMRMLSceneRestoredEvent();
+  void updateFromMRMLScene();
 
 protected:
   QScopedPointer<qSlicerSceneViewsModuleWidgetPrivate> d_ptr;

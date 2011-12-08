@@ -563,40 +563,23 @@ void vtkMRMLCrosshairDisplayableManager::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLCrosshairDisplayableManager::ObserveMRMLScene()
 {
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
+  this->Superclass::ObserveMRMLScene();
   this->Internal->BuildCrosshair();
 }
 
-
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneRestoredEvent()
+void vtkMRMLCrosshairDisplayableManager::UpdateFromMRMLScene()
 {
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
   this->Internal->UpdateSliceNode();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLCrosshairDisplayableManager::UnobserveMRMLScene()
 {
-  if (!this->GetMRMLScene())
-    {
-    this->Internal->SetSliceCompositeNode(0);
-    this->Internal->SetCrosshairNode(0);
-    return;
-    }
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
-  this->Internal->UpdateSliceNode();
+  this->Internal->SetSliceCompositeNode(0);
+  this->Internal->SetCrosshairNode(0);
 }
 
 //---------------------------------------------------------------------------

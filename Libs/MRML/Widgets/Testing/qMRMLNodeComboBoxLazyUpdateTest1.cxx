@@ -58,7 +58,7 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
   nodeSelector.setMRMLScene(scene.GetPointer());
   treeNodeSelector.setMRMLScene(scene.GetPointer());
 
-  scene->SetIsImporting(true);
+  scene->StartState(vtkMRMLScene::ImportState);
   vtkNew<vtkMRMLColorTableNode> node;
   scene->AddNode(node.GetPointer());
 
@@ -70,7 +70,7 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  scene->SetIsImporting(false);
+  scene->EndState(vtkMRMLScene::ImportState);
 
   if (nodeSelector.nodeCount() != 1 ||
       treeNodeSelector.nodeCount() != 1 )

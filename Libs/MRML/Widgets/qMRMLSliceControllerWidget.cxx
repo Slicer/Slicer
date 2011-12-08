@@ -559,24 +559,10 @@ void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onMRMLSceneChanged(
-  vtkObject* sender, void* calldata, unsigned long event, void* receiver)
+void qMRMLSliceControllerWidgetPrivate::updateFromMRMLScene()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  Q_UNUSED(sender);
-  Q_UNUSED(calldata);
-  Q_UNUSED(receiver);
-  if (q->mrmlScene() != sender ||
-      !q->mrmlScene() ||
-      q->mrmlScene()->GetIsUpdating())
-    {
-    return;
-    }
-  if (event == vtkMRMLScene::SceneImportedEvent ||
-      event == vtkMRMLScene::SceneRestoredEvent)
-    {
-    this->updateWidgetFromMRMLSliceCompositeNode();
-    }
+  this->updateWidgetFromMRMLSliceCompositeNode();
 }
 
 // --------------------------------------------------------------------------
@@ -642,7 +628,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  if (!q->mrmlScene() || q->mrmlScene()->GetIsUpdating())
+  if (!q->mrmlScene() || q->mrmlScene()->IsBatchProcessing())
     {// when we are loading, the scene might be in an inconsistent mode, where
     // the volumes pointed by the slice composite node don't exist yet
     return;
@@ -985,12 +971,8 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     }
   //d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneImportedEvent,
   //                 d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
-  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::NodeAddedEvent,
-                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
-  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneImportedEvent,
-                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
-  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneRestoredEvent,
-                   d, SLOT(onMRMLSceneChanged(vtkObject*,void*,ulong,void*)));
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
+                   d, SLOT(updateFromMRMLScene()));
   d->SliceLogic->SetMRMLScene(newScene);
 
   // Disable the node selectors as they would fire the signal currentIndexChanged(0)
@@ -1009,8 +991,7 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   //d->updateWidgetFromMRMLSliceCompositeNode();
   if (this->mrmlScene())
     {
-    d->onMRMLSceneChanged(this->mrmlScene(), reinterpret_cast<void*>(this),
-                          vtkMRMLScene::SceneImportedEvent, 0);
+    d->updateFromMRMLScene();
     }
 }
 

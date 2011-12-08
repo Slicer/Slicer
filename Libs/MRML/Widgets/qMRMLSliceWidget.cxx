@@ -214,36 +214,15 @@ qMRMLSliceWidgetPrivate::~qMRMLSliceWidgetPrivate()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onSceneAboutToBeClosedEvent()
+void qMRMLSliceWidgetPrivate::startProcessing()
 {
   this->VTKSliceView->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onSceneClosedEvent()
+void qMRMLSliceWidgetPrivate::endProcessing()
 {
   Q_Q(qMRMLSliceWidget);
-  if (!q->mrmlScene()->GetIsUpdating())
-    {
-    this->VTKSliceView->setRenderEnabled(true);
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onSceneAboutToBeImportedEvent()
-{
-  this->VTKSliceView->setRenderEnabled(false);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onSceneImportedEvent()
-{
-  this->VTKSliceView->setRenderEnabled(true);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::onSceneRestoredEvent()
-{
   this->VTKSliceView->setRenderEnabled(true);
 }
 
@@ -308,23 +287,11 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   d->qvtkReconnect(
     this->mrmlScene(), newScene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, d, SLOT(onSceneAboutToBeClosedEvent()));
+    vtkMRMLScene::StartBatchProcessEvent, d, SLOT(startProcessing()));
 
   d->qvtkReconnect(
     this->mrmlScene(), newScene,
-    vtkMRMLScene::SceneClosedEvent, d, SLOT(onSceneClosedEvent()));
-
-  d->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::SceneAboutToBeImportedEvent, d, SLOT(onSceneAboutToBeImportedEvent()));
-
-  d->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::SceneImportedEvent, d, SLOT(onSceneImportedEvent()));
-
-  d->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::SceneRestoredEvent, d, SLOT(onSceneRestoredEvent()));
+    vtkMRMLScene::EndBatchProcessEvent, d, SLOT(endProcessing()));
 
   this->Superclass::setMRMLScene(newScene);
 }
@@ -518,7 +485,10 @@ QList<double> qMRMLSliceWidget::convertDeviceToXYZ(const QList<int>& xy)
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
-  vtkMRMLCrosshairDisplayableManager *cmgr = vtkMRMLCrosshairDisplayableManager::SafeDownCast(d->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+  vtkMRMLCrosshairDisplayableManager *cmgr =
+    vtkMRMLCrosshairDisplayableManager::SafeDownCast(
+      d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
+        "vtkMRMLCrosshairDisplayableManager"));
   if (cmgr)
     {
     double xyz[3];

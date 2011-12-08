@@ -69,10 +69,10 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkSlicerModelsLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  if (!modelNode || this->GetMRMLScene()->GetIsUpdating())
+  if (!modelNode || this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }

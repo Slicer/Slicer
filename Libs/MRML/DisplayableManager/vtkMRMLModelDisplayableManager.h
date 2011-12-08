@@ -141,12 +141,11 @@ protected:
 
   virtual void AdditionnalInitializeStep();
 
-  virtual void OnMRMLSceneAboutToBeClosedEvent();
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartClose();
+  virtual void OnMRMLSceneEndClose();
+  virtual void UpdateFromMRMLScene();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
 

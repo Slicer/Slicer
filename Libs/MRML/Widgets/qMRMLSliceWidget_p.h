@@ -54,11 +54,8 @@ public:
 public slots:
 
   /// Handle MRML scene event
-  void onSceneAboutToBeClosedEvent();
-  void onSceneClosedEvent();
-  void onSceneAboutToBeImportedEvent();
-  void onSceneImportedEvent();
-  void onSceneRestoredEvent();
+  void startProcessing();
+  void endProcessing();
 
   /// Set the image data to the slice view
   void setImageData(vtkImageData * imageData);

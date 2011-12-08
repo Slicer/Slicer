@@ -67,12 +67,12 @@ public:
 
 public slots:
 
-  void onMRMLSceneAboutToBeClosedEvent();
-  void onMRMLSceneImportedEvent();
-  void onMRMLSceneClosedEvent();
+  void OnMRMLSceneStartClose();
+  void OnMRMLSceneEndImport();
+  void OnMRMLSceneEndClose();
   void onCrosshairNodeModeChangedEvent();
   void onSliceCompositeNodeChangedEvent();
-  
+
   void setCrosshairMode(int);
   void setCrosshairMode(bool); // used to toggle between last style and off
   void setCrosshairThickness(int);

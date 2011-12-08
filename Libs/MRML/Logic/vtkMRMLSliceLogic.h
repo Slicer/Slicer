@@ -8,7 +8,7 @@
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLSliceLogic.h,v $
   Date:      $Date$
-  Version:   $Revision$
+  Version:   $Revision: 18866 
 
 =========================================================================auto=*/
 
@@ -330,11 +330,7 @@ protected:
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  using vtkMRMLAbstractLogic::ProcessMRMLSceneEvents;
-  // Convenient function that updates the pipeline
-  void ProcessMRMLSceneEvents();
-  
-/// Get Logic CallbackCommand
+  /// Get Logic CallbackCommand
   vtkCallbackCommand * GetMRMLLogicCallbackCommand();
 
   static void MRMLLogicCallback(vtkObject*caller, unsigned long eid,
@@ -347,13 +343,12 @@ protected:
                                   void * callData);
   void ProcessLogicEvents();
 
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneAboutToBeClosedEvent();
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNewEvent();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+  virtual void UpdateFromMRMLScene();
+  virtual void OnMRMLSceneStartClose();
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneEndRestore();
 
   void UpdateSliceNodes();
   void SetupCrosshairNode();

@@ -48,13 +48,15 @@ public:
   /// Initialize listening to MRML events
   void InitializeEventListeners();
 
-  /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes();
-
 protected:
   vtkSlicerModuleTemplateLogic();
   virtual ~vtkSlicerModuleTemplateLogic();
-  
+
+  /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
+  virtual void RegisterNodes();
+  virtual void UpdateFromMRMLScene();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 private:
 
   vtkSlicerModuleTemplateLogic(const vtkSlicerModuleTemplateLogic&); // Not implemented

@@ -109,13 +109,8 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), q, SLOT(refreshTree()));
 
   // listen to some mrml events
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneImportedEvent,
-                 q, SLOT(onMRMLSceneImportedEvent()));
-
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneClosedEvent,
-                 q, SLOT(onMRMLSceneClosedEvent()));
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::SceneRestoredEvent,
-                 q, SLOT(onMRMLSceneRestoredEvent()));
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndBatchProcessEvent,
+                 q, SLOT(updateFromMRMLScene()));
 
   // update from the mrml scene
   q->refreshTree();
@@ -192,25 +187,10 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::onMRMLSceneImportedEvent()
+void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
 {
-  //qDebug("onMRMLSceneImportedEvent");
-
   // logic will be listening for this event as well and filling in missing
   // hierarchy nodes, so just refresh the tree
-  this->refreshTree();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::onMRMLSceneRestoredEvent()
-{
-  //qDebug("onMRMLSceneImportedEvent");
-  this->refreshTree();
-}
-//-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::onMRMLSceneClosedEvent()
-{
-  //qDebug("onMRMLSceneClosedEvent");
   this->refreshTree();
 }
 
@@ -223,7 +203,7 @@ void qSlicerSceneViewsModuleWidget::refreshTree()
   Q_D(qSlicerSceneViewsModuleWidget);
 
   if (d->logic() && d->logic()->GetMRMLScene() &&
-      d->logic()->GetMRMLScene()->GetIsUpdating())
+      d->logic()->GetMRMLScene()->IsBatchProcessing())
     {
     // scene is updating, return
     return;

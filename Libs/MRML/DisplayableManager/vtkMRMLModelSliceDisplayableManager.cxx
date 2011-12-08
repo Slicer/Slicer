@@ -472,7 +472,7 @@ void vtkMRMLModelSliceDisplayableManager
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
-::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if ( !node->IsA("vtkMRMLModelDisplayNode") 
       || node->IsA("vtkMRMLFiberBundleLineDisplayNode")
@@ -485,7 +485,7 @@ void vtkMRMLModelSliceDisplayableManager
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
-::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   vtkMRMLModelDisplayNode* displayNode =
     vtkMRMLModelDisplayNode::SafeDownCast(node);

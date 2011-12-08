@@ -104,12 +104,10 @@ protected:
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void OnMRMLSceneAboutToBeClosedEvent();
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneAboutToBeImportedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void UpdateFromMRMLScene();
+  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   /// Called after the corresponding MRML View container was modified
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);

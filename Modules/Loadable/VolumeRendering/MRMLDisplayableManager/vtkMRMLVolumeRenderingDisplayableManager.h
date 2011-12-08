@@ -90,12 +90,12 @@ public:
    */
   int IsCurrentMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
-  virtual void OnMRMLSceneAboutToBeClosedEvent();
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartClose();
+  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneEndRestore();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   void UpdateDisplayNodeList();
 
@@ -125,9 +125,9 @@ protected:
 
   virtual void OnInteractorStyleEvent(int eventId);
 
-  //virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  //virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
 
-  //virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  //virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   void OnCreate();
 

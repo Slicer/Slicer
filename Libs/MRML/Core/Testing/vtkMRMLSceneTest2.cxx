@@ -155,105 +155,63 @@ void mrmlEventCallback(vtkObject *vtkcaller, unsigned long eid,
       }
     ++numberOfRemovedNodes;
     }
-  else if (eid == vtkMRMLScene::SceneAboutToBeClosedEvent)
+  else if (eid == vtkMRMLScene::StartCloseEvent)
     {
-    if (scene->GetIsImporting())
+    if (scene->IsImporting())
       {
-      setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsImporting is expected to be 0");
+      setErrorString(__LINE__, "StartCloseEvent - IsImporting is expected to be 0");
       return;
       }
-    if (!scene->GetIsClosing())
+    if (scene->IsClosing())
       {
-      setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsClosing is expected to be 1");
+      setErrorString(__LINE__, "StartCloseEvent - IsClosing is expected to be 1");
       return;
       }
-    if (!scene->GetIsUpdating())
+    if (scene->IsBatchProcessing())
       {
-      setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsUpdating is expected to be 1");
+      setErrorString(__LINE__, "StartCloseEvent - IsUpdating is expected to be 1");
       return;
-      }
-    if (calledConnectMethod)
-      {
-      if (!scene->GetIsConnecting())
-        {
-        setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsConnecting is expected to be 1");
-        return;
-        }
-      }
-    else
-      {
-      if (scene->GetIsConnecting())
-        {
-        setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsConnecting is expected to be 0");
-        return;
-        }
       }
     ++numberOfSceneAboutToBeClosedEvents;
     }
-  else if (eid == vtkMRMLScene::SceneClosedEvent)
+  else if (eid == vtkMRMLScene::EndCloseEvent)
     {
-    if (scene->GetIsImporting())
+    if (scene->IsImporting())
       {
-      setErrorString(__LINE__, "SceneClosedEvent - IsImporting is expected to be 0");
+      setErrorString(__LINE__, "EndCloseEvent - IsImporting is expected to be 0");
       return;
       }
-    if (scene->GetIsClosing())
+    if (scene->IsClosing())
       {
-      setErrorString(__LINE__, errorString = "SceneClosedEvent - IsClosing is expected to be 0");
+      setErrorString(__LINE__, errorString = "EndCloseEvent - IsClosing is expected to be 0");
       return;
-      }
-    if (calledConnectMethod)
-      {
-      if (!scene->GetIsConnecting())
-        {
-        setErrorString(__LINE__, "SceneClosedEvent - IsConnecting is expected to be 1");
-        return;
-        }
-      if (!scene->GetIsUpdating())
-        {
-        setErrorString(__LINE__, "SceneClosedEvent - IsUpdating is expected to be > 0");
-        return;
-        }
-      }
-    else
-      {
-      if (scene->GetIsConnecting())
-        {
-        setErrorString(__LINE__, "SceneClosedEvent - IsConnecting is expected to be 0");
-        return;
-        }
-      if (scene->GetIsUpdating())
-        {
-        setErrorString(__LINE__, "SceneClosedEvent - IsUpdating is expected to be 0");
-        return;
-        }
       }
     ++numberOfSceneClosedEvents;
     }
-  else if (eid == vtkMRMLScene::SceneAboutToBeImportedEvent)
+  else if (eid == vtkMRMLScene::StartImportEvent)
     {
-    if (!scene->GetIsImporting())
+    if (!scene->IsImporting())
       {
-      setErrorString(__LINE__, "SceneAboutToBeClosedEvent - IsImporting is expected to be 1");
+      setErrorString(__LINE__, "StartImport - ImportState is expected");
       return;
       }
-    if (!scene->GetIsUpdating())
+    if (!scene->IsBatchProcessing())
       {
-      setErrorString(__LINE__, "SceneAboutToBeImportedEvent - IsUpdating is expected to be 1");
+      setErrorString(__LINE__, "StartImport - IsBatchProcessing is expected");
       return;
       }
     ++numberOfSceneAboutToBeImportedEvents;
     }
-  else if (eid == vtkMRMLScene::SceneImportedEvent)
+  else if (eid == vtkMRMLScene::EndImportEvent)
     {
-    if (scene->GetIsImporting())
+    if (scene->IsImporting())
       {
-      setErrorString(__LINE__, "SceneImportedEvent - IsImporting is expected to be 0");
+      setErrorString(__LINE__, "EndImportEvent - ImportState is not expected");
       return;
       }
-    if (scene->GetIsUpdating())
+    if (scene->IsBatchProcessing())
       {
-      setErrorString(__LINE__, "SceneImportedEvent - IsUpdating is expected to be 0");
+      setErrorString(__LINE__, "EndImportEvent - IsBatchProcessing is not expected");
       return;
       }
     ++numberOfSceneImportedEvents;
@@ -302,36 +260,30 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   scene->AddObserver(vtkMRMLScene::NodeAddedEvent, callback);
   scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, callback);
   scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::SceneAboutToBeClosedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::SceneClosedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::SceneAboutToBeImportedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::SceneImportedEvent, callback);
+  scene->AddObserver(vtkMRMLScene::StartCloseEvent, callback);
+  scene->AddObserver(vtkMRMLScene::EndCloseEvent, callback);
+  scene->AddObserver(vtkMRMLScene::StartImportEvent, callback);
+  scene->AddObserver(vtkMRMLScene::EndImportEvent, callback);
 
   //---------------------------------------------------------------------------
-  // Make sure IsClosing, IsConnecting, IsImporting, IsUpdating default values are correct
+  // Make sure IsClosing, IsImporting, IsBatchProcessing default values are correct
   //---------------------------------------------------------------------------
-  if (scene->GetIsClosing())
+  if (scene->IsClosing())
     {
     std::cerr << "line " << __LINE__ <<
-        " - Problem with GetIsClosing - 0 expected" << std::endl;
+        " - Problem with IsClosing - 0 expected" << std::endl;
     return EXIT_FAILURE;
     }
-  if (scene->GetIsImporting())
+  if (scene->IsImporting())
     {
     std::cerr << "line " << __LINE__ <<
-        " - Problem with GetIsImporting - 0 expected" << std::endl;
+        " - Problem with GetStates - 0 expected" << std::endl;
     return EXIT_FAILURE;
     }
-  if (scene->GetIsConnecting())
+  if (scene->IsBatchProcessing())
     {
     std::cerr << "line " << __LINE__ <<
-        " - Problem with GetIsConnecting - 0 expected" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (scene->GetIsUpdating())
-    {
-    std::cerr << "line " << __LINE__ <<
-        " - Problem with GetIsUpdating - 0 expected" << std::endl;
+        " - Problem with IsBatchProcessing - 0 expected" << std::endl;
     return EXIT_FAILURE;
     }
 

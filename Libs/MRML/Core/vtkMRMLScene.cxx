@@ -81,8 +81,8 @@ Version:   $Revision: 1.18 $
 
 // STD includes
 #include <algorithm>
-
-#include <assert.h>
+#include <cassert>
+#include <numeric>
 
 //#define MRMLSCENE_VERBOSE 1
 
@@ -118,10 +118,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->UserTagTable = NULL;
 
   this->ErrorCode = 0;
-  this->IsClosing = 0;
-  this->IsConnecting = 0;
-  this->IsImporting = 0;
-  this->IsRestoring = 0;
 
   this->LoadFromXMLString = 0;
 
@@ -461,7 +457,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
 #endif
   bool undoFlag = this->GetUndoFlag();
   this->SetUndoOff();
-  this->SetIsClosing(true);
+  this->StartState(vtkMRMLScene::CloseState);
 
   if (!removeSingletons)
     {
@@ -506,7 +502,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // to create a few new scene once the current one has been close.
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
-  this->SetIsClosing(false);
+  this->EndState(vtkMRMLScene::CloseState);
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();
   std::cerr << "vtkMRMLScene::Clear():" << timer->GetElapsedTime() << "\n";
@@ -717,122 +713,93 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::SetIsClosing(bool closing)
+namespace
 {
-  if (closing)
-    {
-    this->IsClosing++;
-    if (this->IsClosing == 1)
-      {
-      this->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
-      this->Modified();
-      }
-    }
-  else
-    {
-    if (this->IsClosing == 0)
-      {
-      vtkErrorMacro(<< "Make sure SetIsClosing(true) / SetIsClosing(false) "
-                    "are paired properly");
-      return;
-      }
-
-    this->IsClosing--;
-
-    if (this->IsClosing == 0)
-      {
-      this->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
-      this->Modified();
-      }
-    }
+int bitwiseOr(int firstValue, int secondValue)
+{
+  return firstValue | secondValue;
+}
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::GetIsClosing()
+int vtkMRMLScene::GetStates()const
 {
-  return this->IsClosing;
+  
+  return std::accumulate(this->States.begin(), this->States.end(),
+                         0x0000, bitwiseOr);
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::GetIsConnecting()
+void vtkMRMLScene::StartState(const StateType& state, int anticipatedMaxProgress)
 {
-  return this->IsConnecting;
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::SetIsImporting(bool importing)
-{
-  if (importing)
+  bool wasBatchProcessing = this->IsBatchProcessing();
+  bool wasInState = ((this->GetStates() & state ) == state);
+  this->States.push_back(state);
+  if (this->IsBatchProcessing() && !wasBatchProcessing)
     {
-    this->IsImporting++;
-    if (this->IsImporting == 1)
-      {
-      this->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
-      this->Modified();
-      }
+    this->InvokeEvent( StateEvent | StartEvent | BatchProcessState);
     }
-  else
+  if (state != vtkMRMLScene::BatchProcessState &&
+      !wasInState)
     {
-    if (this->IsImporting == 0)
-      {
-      vtkErrorMacro(<< "Make sure SetIsImporting(true) / SetIsImporting(false) "
-                    "are paired properly");
-      return;
-      }
-
-    // See comment at the end of Import method implementation
-    if (this->IsImporting == 1 && this->IsConnecting > 0)
-      {
-      this->IsConnecting--;
-      }
-
-    this->IsImporting--;
-
-    if (this->IsImporting == 0)
-      {
-      this->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
-      this->Modified();
-      }
+    this->InvokeEvent( StateEvent | StartEvent | state,
+                       reinterpret_cast<void*>(anticipatedMaxProgress));
     }
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::GetIsImporting()
+void vtkMRMLScene::EndState(const StateType& state)
 {
-  return this->IsImporting;
+  assert(this->States.back() == state);
+  this->States.pop_back();
+
+  bool isInState = ((this->GetStates() & state) == state);
+  // vtkMRMLScene::BatchProcessState is handled after
+  if (state != vtkMRMLScene::BatchProcessState &&
+      !isInState)
+    {
+    this->InvokeEvent( StateEvent | EndEvent | state );
+    }
+
+  if ((state & vtkMRMLScene::BatchProcessState) &&
+      !this->IsBatchProcessing())
+    {
+    this->InvokeEvent( StateEvent | EndEvent |
+                       vtkMRMLScene::BatchProcessState );
+    }
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::GetIsRestoring()
+void vtkMRMLScene::ProgressState(const StateType& state, int progress)
 {
-  return this->IsRestoring;
-}
-
-//------------------------------------------------------------------------------
-bool vtkMRMLScene::GetIsUpdating()
-{
-  return this->IsClosing || this->IsConnecting || this->IsImporting || this->IsRestoring;
+  if (state & vtkMRMLScene::BatchProcessState)
+    {
+    this->InvokeEvent( StateEvent | ProgressEvent | vtkMRMLScene::BatchProcessState,
+                       reinterpret_cast<void*>(progress));
+    }
+  if (state != vtkMRMLScene::BatchProcessState)
+    {
+    this->InvokeEvent( StateEvent | ProgressEvent | state ,
+                       reinterpret_cast<void*>(progress));
+    }
 }
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
-  if (this->GetIsConnecting())
-    {
-    vtkErrorMacro(<< "vtkMRMLScene::Connect should NOT be called recusively !");
-    return 0;
-    }
+  assert(!this->IsClosing());
+  assert(!this->IsImporting());
+
 #ifdef MRMLSCENE_VERBOSE
   vtkTimerLog* timer = vtkTimerLog::New();
   timer->StartTimer();
 #endif
-  this->IsConnecting++;
+  this->StartState(vtkMRMLScene::BatchProcessState);
   this->Clear(0);
   bool undoFlag = this->GetUndoFlag();
   int res = this->Import();
 
-  // Note that IsConnecting flag is decremented at the end of Import method
-  // This ensure that the event SceneImportedEvent is invoked after IsUpdating is decremented
+  this->EndState(vtkMRMLScene::BatchProcessState);
   this->SetUndoFlag(undoFlag);
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();
@@ -857,7 +824,7 @@ int vtkMRMLScene::Import()
   bool undoFlag = this->GetUndoFlag();
 
   this->SetUndoOff();
-  this->SetIsImporting(true); // Take care of sending SceneAboutToBeImportedEvent
+  this->StartState(vtkMRMLScene::ImportState);
   this->ClearReferencedNodeID();
 
   // read nodes into a temp scene
@@ -894,7 +861,7 @@ int vtkMRMLScene::Import()
 
     this->RemoveReservedIDs();
 
-    this->InvokeEvent(this->NewSceneEvent, NULL);
+    this->InvokeEvent(vtkMRMLScene::NewSceneEvent, NULL);
     for (scene->InitTraversal(it);
          (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
       {
@@ -947,7 +914,7 @@ int vtkMRMLScene::Import()
   vtkTimerLog* importingTimer = vtkTimerLog::New();
   importingTimer->StartTimer();
 #endif
-  this->SetIsImporting(false); // Takes care of sending SceneImportedEvent
+  this->EndState(vtkMRMLScene::ImportState);
 #ifdef MRMLSCENE_VERBOSE
   importingTimer->StopTimer();
 #endif
@@ -1406,7 +1373,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 #endif
 
   n->Register(this);
-  this->InvokeEvent(this->NodeAboutToBeRemovedEvent, n);
+  this->InvokeEvent(vtkMRMLScene::NodeAboutToBeRemovedEvent, n);
 
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
@@ -1419,10 +1386,10 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   this->NodeIDs.erase(n->GetID());
   this->NodeIDsMTime = this->Nodes->GetMTime();
 
-  this->InvokeEvent(this->NodeRemovedEvent, n);
+  this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, n);
   n->UnRegister(this);
 
-  if (!this->GetIsUpdating())
+  if (!this->IsBatchProcessing())
     {
     vtkMRMLNode *node = NULL;
     vtkCollectionSimpleIterator it;
@@ -1738,7 +1705,6 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
     return NULL;
     }
 }
-
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetSingletonNode(const char* singletonTag, const char* className)
 {
@@ -2260,7 +2226,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (this->GetIsUpdating())
+  if (this->IsBatchProcessing())
     {
     return;
     }
@@ -2286,7 +2252,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     {
     return;
     }
-  if (this->GetIsUpdating())
+  if (this->IsBatchProcessing())
     {
     return;
     }
@@ -2318,7 +2284,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     return;
     }
 
-  if (this->GetIsUpdating())
+  if (this->IsBatchProcessing())
     {
     return;
     }
@@ -2352,7 +2318,7 @@ void vtkMRMLScene::SaveStateForUndo ()
     return;
     }
 
-  if (this->GetIsUpdating())
+  if (this->IsBatchProcessing())
     {
     return;
     }
@@ -3140,7 +3106,6 @@ GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
   // clean up
   nodes->Delete();
 }
-
 //-----------------------------------------------------------------------------
 unsigned long vtkMRMLScene::GetSceneModifiedTime()
 {

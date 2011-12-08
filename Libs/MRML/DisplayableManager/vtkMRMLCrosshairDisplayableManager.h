@@ -70,9 +70,9 @@ private:
   vtkMRMLCrosshairDisplayableManager(const vtkMRMLCrosshairDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLCrosshairDisplayableManager&);                     // Not Implemented
 
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneClosedEvent();
+  virtual void UnobserveMRMLScene();
+  virtual void ObserveMRMLScene();
+  virtual void UpdateFromMRMLScene();
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   class vtkInternal;

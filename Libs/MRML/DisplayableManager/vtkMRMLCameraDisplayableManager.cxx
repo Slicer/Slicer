@@ -87,14 +87,14 @@ void vtkMRMLCameraDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndClose()
 {
   //this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(0);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndImport()
 {
   if (!this->GetMRMLScene())
     {
@@ -108,7 +108,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent()
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
 {
   assert(this->GetMRMLViewNode());
   if (!this->GetMRMLViewNode())
@@ -135,9 +135,9 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->GetIsUpdating() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() ||
       !node->IsA("vtkMRMLCameraNode"))
     {
     return;
@@ -147,9 +147,9 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* nod
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->GetIsUpdating() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() ||
       !node->IsA("vtkMRMLCameraNode"))
     {
     return;

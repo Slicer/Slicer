@@ -95,8 +95,8 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, do
 
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
 
-  xyz[0] = x - pokedRenderer->GetOrigin()[0];
-  xyz[1] = y - pokedRenderer->GetOrigin()[1];
+  xyz[0] = x - (pokedRenderer ? pokedRenderer->GetOrigin()[0] : 0.);
+  xyz[1] = y - (pokedRenderer ? pokedRenderer->GetOrigin()[1] : 0.);
   xyz[2] = z;
 }
 

@@ -58,11 +58,11 @@ protected:
 
   virtual void Create();
 
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneEndRestore();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   virtual void ProcessMRMLNodesEvents(vtkObject *caller,
                                       unsigned long event,

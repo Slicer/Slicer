@@ -385,9 +385,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   unsigned int n;
   vtkMRMLNode *node = NULL;
 
-  //this->Scene->SetIsClosing(1);
-  this->Scene->IsRestoring++;
-  this->Scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeRestoredEvent, NULL);
+  this->Scene->StartState(vtkMRMLScene::RestoreState);
 
   // remove nodes in the scene which are not stored in the snapshot
   std::map<std::string, vtkMRMLNode*> snapshotMap;
@@ -508,9 +506,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
     this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );
     }
 
-  this->Scene->IsRestoring--;
-
-  this->Scene->InvokeEvent(vtkMRMLScene::SceneRestoredEvent, this);
+  this->Scene->EndState(vtkMRMLScene::RestoreState);
 
 #ifndef NDEBUG
   // sanity checks

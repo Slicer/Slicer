@@ -1432,12 +1432,12 @@ bool vtkMRMLVolumeRenderingDisplayableManager::IsVolumeInView(vtkVolume* volume)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneStartClose()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndClose()
 {
   // Clean
   this->SetUpdateFromMRMLRequested(1);
@@ -1449,7 +1449,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneClosedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndImport()
 {
   // UpdateFromMRML will be executed only if there has been some actions
   // during the import that requested it (don't call
@@ -1464,7 +1464,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneRestoredEvent()
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndRestore()
 {
   // UpdateFromMRML will be executed only if there has been some actions
   // during the restoration that requested it (don't call
@@ -1476,7 +1476,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneRestoredEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (!node->IsA("vtkMRMLVolumeNode") &&
       !node->IsA("vtkMRMLVolumeRenderingDisplayNode") &&
@@ -1488,7 +1488,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRML
     }
 
   // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }
@@ -1507,7 +1507,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRML
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   assert(node);
 
@@ -1521,7 +1521,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMR
     }
 
   // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }

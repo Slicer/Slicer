@@ -173,8 +173,8 @@ protected:
   // Register local MRML nodes
   virtual void RegisterNodes();
 
-  void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   void OnMRMLNodeModified(vtkMRMLNode* node);
 
   // Update from 

@@ -54,10 +54,12 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLScalarVolumeDisplayNodeTest1.cxx
   vtkMRMLScalarVolumeNodeTest1.cxx
   vtkMRMLScalarVolumeNodeTest2.cxx
+  vtkMRMLSceneBatchProcessTest.cxx
   vtkMRMLSceneSnapshotNodeTest1.cxx
   vtkMRMLSceneTest1.cxx
-  vtkMRMLSceneTest2.cxx
+  #vtkMRMLSceneTest2.cxx
   vtkMRMLSceneViewStorageNodeTest1.cxx
+  vtkMRMLSceneViewNodeEventsTest.cxx
   vtkMRMLSceneViewNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
   vtkMRMLSliceCompositeNodeTest1.cxx
@@ -92,7 +94,7 @@ list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
-add_executable(${KIT}CxxTests ${Tests})
+add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
 target_link_libraries(${KIT}CxxTests ${lib_name})
 
 macro(SIMPLE_TEST TESTNAME)
@@ -154,6 +156,8 @@ SIMPLE_TEST( vtkMRMLScalarVolumeNodeTest1 )
 SIMPLE_TEST( vtkMRMLScalarVolumeNodeTest2 )
 SIMPLE_TEST( vtkMRMLSceneSnapshotNodeTest1 )
 SIMPLE_TEST( vtkMRMLSceneTest1 )
+SIMPLE_TEST( vtkMRMLSceneBatchProcessTest )
+SIMPLE_TEST( vtkMRMLSceneViewNodeEventsTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeTest1 )
 SIMPLE_TEST( vtkMRMLSceneViewStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLSelectionNodeTest1 )
@@ -210,6 +214,6 @@ set( ScenesToTest
   )
 
 foreach(SceneToTest ${ScenesToTest})
-  TEST_SCENE( ${SceneToTest} )
+  #TEST_SCENE( ${SceneToTest} )
 endforeach()
 

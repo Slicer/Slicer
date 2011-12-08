@@ -59,7 +59,7 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   /// Handler for specific SliceView actions
   virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);

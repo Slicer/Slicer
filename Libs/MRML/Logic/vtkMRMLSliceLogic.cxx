@@ -185,17 +185,17 @@ void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 
   // List of events the slice logics should listen
   vtkNew<vtkIntArray> events;
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
+  events->InsertNextValue(vtkMRMLScene::StartCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 
   this->ProcessLogicEvents();
-  this->ProcessMRMLSceneEvents(newScene, vtkMRMLScene::SceneImportedEvent, 0);
+  this->ProcessMRMLSceneEvents(newScene, vtkMRMLScene::EndBatchProcessEvent, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -348,65 +348,51 @@ bool vtkMRMLSliceLogic::EnterMRMLCallback()const
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::ProcessMRMLSceneEvents()
+void vtkMRMLSliceLogic::UpdateFromMRMLScene()
 {
-  this->ProcessMRMLSceneEvents(NULL, vtkMRMLScene::SceneImportedEvent, NULL);
+  this->UpdateSliceNodes();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneAboutToBeClosedEvent()
+void vtkMRMLSliceLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
+{
+  if (!(node->IsA("vtkMRMLSliceCompositeNode")
+        || node->IsA("vtkMRMLSliceNode")
+        || node->IsA("vtkMRMLVolumeNode")))
+    {
+    return;
+    }
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
+{
+  if (!(node->IsA("vtkMRMLSliceCompositeNode")
+        || node->IsA("vtkMRMLSliceNode")
+        || node->IsA("vtkMRMLVolumeNode")))
+    {
+    return;
+    }
+  this->UpdateSliceNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::OnMRMLSceneStartClose()
 {
   this->UpdateSliceNodeFromLayout();
   this->DeleteSliceModel();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneImportedEvent()
+void vtkMRMLSliceLogic::OnMRMLSceneEndImport()
 {
-  this->UpdateSliceNodes();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneClosedEvent()
-{
-  this->UpdateSliceNodes();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
-{
-  if (!(node->IsA("vtkMRMLSliceCompositeNode")
-        || node->IsA("vtkMRMLSliceNode")
-        || node->IsA("vtkMRMLVolumeNode")))
-    {
-    return;
-    }
-  this->UpdateSliceNodes();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
-{
-  if (!(node->IsA("vtkMRMLSliceCompositeNode")
-        || node->IsA("vtkMRMLSliceNode")
-        || node->IsA("vtkMRMLVolumeNode")))
-    {
-    return;
-    }
-  this->UpdateSliceNodes();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneRestoredEvent()
-{
-  this->UpdateSliceNodes();
   this->SetupCrosshairNode();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::OnMRMLSceneNewEvent()
+void vtkMRMLSliceLogic::OnMRMLSceneEndRestore()
 {
-  this->UpdateSliceNodes();
   this->SetupCrosshairNode();
 }
 
@@ -414,7 +400,7 @@ void vtkMRMLSliceLogic::OnMRMLSceneNewEvent()
 void vtkMRMLSliceLogic::UpdateSliceNodes()
 {
   if (this->GetMRMLScene()
-      && this->GetMRMLScene()->GetIsClosing())
+      && this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }
@@ -423,10 +409,7 @@ void vtkMRMLSliceLogic::UpdateSliceNodes()
   this->UpdateSliceNode();
   this->UpdateSliceCompositeNode();
 
-  if (this->GetProcessingMRMLSceneEvent() != vtkMRMLScene::NewSceneEvent)
-    {
-    this->UpdatePipeline();
-    }
+  this->UpdatePipeline();
 }
 
 //----------------------------------------------------------------------------
@@ -464,7 +447,7 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
 void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   assert(node);
-  if (this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }

@@ -117,10 +117,6 @@ protected:
   /// Reimplemented to listen to specific scene events
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  //virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNewEvent();
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   virtual void UpdateFromMRMLScene();

@@ -336,7 +336,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
   // see if the volume has any display node for a current viewer
   vtkMRMLVolumeRenderingDisplayNode *dnode =
     logic->GetFirstVolumeRenderingDisplayNode(volumeNode);
-  if (!this->mrmlScene()->GetIsClosing() && !dnode)
+  if (!this->mrmlScene()->IsClosing()
+      && !dnode)
     {
     bool wasLastVolumeVisible = d->VisibilityCheckBox->isChecked();
     dnode = d->createVolumeRenderingDisplayNode();

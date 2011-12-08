@@ -350,11 +350,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #  return 
   #}
 
-  if { [$::slicer3::MRMLScene GetIsClosing] ||
-        [$::slicer3::MRMLScene GetIsConnecting] ||
-        [$::slicer3::MRMLScene GetIsImporting] ||
-        [$::slicer3::MRMLScene GetIsRestoring] ||
-        [$::slicer3::MRMLScene GetIsUpdating] } {
+  if { [$::slicer3::MRMLScene IsBatchProcessing] } {
     return
   }
 

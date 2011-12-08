@@ -109,7 +109,7 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
     return;
     }
   
-  this->GetMRMLScene()->SetIsImporting(1);
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   // add the labels first
   this->AddLabelsNode();
@@ -140,7 +140,7 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   this->AddUserFileNodes();
    
   vtkDebugMacro("Done adding default color nodes");
-  this->GetMRMLScene()->SetIsImporting(0);
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 }
 
 //----------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
     return;
     }
 
-  this->GetMRMLScene()->SetIsClosing(true);
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
   vtkMRMLColorTableNode *node;
@@ -262,7 +262,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
       this->GetMRMLScene()->RemoveNode(node);
       }
     }
-  this->GetMRMLScene()->SetIsClosing(false);
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 }
 
 //----------------------------------------------------------------------------

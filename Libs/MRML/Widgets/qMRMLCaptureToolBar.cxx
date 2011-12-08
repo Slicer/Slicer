@@ -57,9 +57,8 @@ public:
   vtkSmartPointer<vtkMRMLScene>    MRMLScene;
 
 public slots:
-  void onMRMLSceneAboutToBeClosedEvent();
-  void onMRMLSceneImportedEvent();
-  void onMRMLSceneClosedEvent();
+  void OnMRMLSceneStartBatchProcessing();
+  void OnMRMLSceneEndBatchProcessing();
   void updateWidgetFromMRML();
   void createSceneView();
 };
@@ -129,14 +128,12 @@ void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     return;
     }
 /*
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneAboutToBeClosedEvent,
-                      this, SLOT(onMRMLSceneAboutToBeClosedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent,
+                      this, SLOT(OnMRMLSceneStartBatchProcessing()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
-                      this, SLOT(onMRMLSceneImportedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
+                      this, SLOT(OnMRMLSceneEndBatchProcessing()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneClosedEvent,
-                      this, SLOT(onMRMLSceneClosedEvent()));
 */
   this->MRMLScene = newScene;
 
@@ -147,26 +144,15 @@ void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
+void qMRMLCaptureToolBarPrivate::OnMRMLSceneStartBatchProcessing()
 {
   Q_Q(qMRMLCaptureToolBar);
   q->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::onMRMLSceneImportedEvent()
+void qMRMLCaptureToolBarPrivate::OnMRMLSceneEndBatchProcessing()
 {
-  this->updateWidgetFromMRML();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::onMRMLSceneClosedEvent()
-{
-  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
-    {
-    Q_ASSERT(this->MRMLScene);
-    return;
-    }
   this->updateWidgetFromMRML();
 }
 

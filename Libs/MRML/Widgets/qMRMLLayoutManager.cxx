@@ -275,7 +275,7 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   Q_UNUSED(scene);
   Q_ASSERT(scene);
   Q_ASSERT(scene == this->MRMLScene);
-  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+  if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
     {
     return;
     }
@@ -377,7 +377,7 @@ void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 {
   //qDebug() << "qMRMLLayoutManagerPrivate::onSceneClosedEvent";
-  if (this->MRMLScene->GetIsConnecting())
+  if (this->MRMLScene->IsBatchProcessing())
     {
     // some more processing on the scene is happeninng, let's just wait until it
     // finishes.
@@ -394,7 +394,7 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
 {
-  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+  if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
     {
     return;
     }
@@ -667,9 +667,7 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLScene = scene;
   d->MRMLLayoutNode = 0;
 
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
-                   d, SLOT(updateWidgetsFromViewNodes()));
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneRestoredEvent,
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndBatchProcessEvent,
                    d, SLOT(updateWidgetsFromViewNodes()));
   // We want to connect the logic to the scene first (before the following
   // qvtkReconnect); that way, anytime the scene is modified, the logic
@@ -683,19 +681,16 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeRemovedEvent,
                    d, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
 
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneImportedEvent,
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndBatchProcessEvent,
                    d, SLOT(updateLayoutFromMRMLScene()));
 
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneRestoredEvent,
-                   d, SLOT(updateLayoutFromMRMLScene()));
-
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneRestoredEvent,
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndRestoreEvent,
                    d, SLOT(onSceneRestoredEvent()));
 
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneAboutToBeClosedEvent,
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::StartCloseEvent,
                    d, SLOT(onSceneAboutToBeClosedEvent()));
 
-  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::SceneClosedEvent,
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndCloseEvent,
                    d, SLOT(onSceneClosedEvent()));
 
   // update all the slice views and the 3D views

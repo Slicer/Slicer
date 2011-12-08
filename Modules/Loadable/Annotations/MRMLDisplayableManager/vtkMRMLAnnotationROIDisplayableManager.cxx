@@ -216,7 +216,7 @@ void vtkMRMLAnnotationROIDisplayableManager::UpdatePosition(vtkAbstractWidget *w
 
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
 
   vtkMRMLAnnotationROINode *annotationNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
@@ -243,7 +243,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRML
       }
     }
 
-  this->Superclass::OnMRMLSceneNodeRemovedEvent(node);
+  this->Superclass::OnMRMLSceneNodeRemoved(node);
 }
 
 //---------------------------------------------------------------------------

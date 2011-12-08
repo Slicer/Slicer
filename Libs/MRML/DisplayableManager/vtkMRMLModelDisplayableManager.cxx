@@ -433,7 +433,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
                                                            unsigned long event,
                                                            void *callData)
 {
-  bool isUpdating = this->GetMRMLScene()->GetIsUpdating();
+  bool isUpdating = this->GetMRMLScene()->IsBatchProcessing();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
     // There is no need to request a render (which can be expensive if the
@@ -517,14 +517,14 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
+void vtkMRMLModelDisplayableManager::OnMRMLSceneStartClose()
 {
   this->RemoveHierarchyObservers(0);
   this->RemoveModelObservers(0);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLModelDisplayableManager::OnMRMLSceneEndClose()
 {
   // Clean
   this->RemoveModelProps();
@@ -536,7 +536,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneClosedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLModelDisplayableManager::UpdateFromMRMLScene()
 {
   // UpdateFromMRML will be executed only if there has been some actions
   // during the import that requested it (don't call
@@ -547,18 +547,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneRestoredEvent()
-{
-  // UpdateFromMRML will be executed only if there has been some actions
-  // during the restoration that requested it (don't call
-  // SetUpdateFromMRMLRequested(1) here, it should be done somewhere else
-  // maybe in OnMRMLSceneNodeAddedEvent, OnMRMLSceneNodeRemovedEvent or
-  // OnMRMLDisplayableModelNodeModifiedEvent).
-  this->RequestRender();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (!node->IsA("vtkMRMLDisplayableNode") &&
       !node->IsA("vtkMRMLDisplayNode") &&
@@ -571,7 +560,10 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
   this->SetUpdateFromMRMLRequested(1);
 
   // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->GetIsUpdating()){ return; }
+  if (this->GetMRMLScene()->IsBatchProcessing())
+    {
+    return;
+    }
 
   // Node specific processing
   if (node->IsA("vtkMRMLModelHierarchyNode"))
@@ -588,7 +580,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (!node->IsA("vtkMRMLDisplayableNode") &&
       !node->IsA("vtkMRMLDisplayNode") &&
@@ -601,7 +593,10 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* no
   this->SetUpdateFromMRMLRequested(1);
 
   // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->GetIsUpdating()){ return; }
+  if (this->GetMRMLScene()->IsBatchProcessing())
+    {
+    return;
+    }
 
   // Node specific processing
   if (node->IsA("vtkMRMLDisplayableNode"))

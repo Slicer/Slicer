@@ -125,14 +125,14 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     return;
     }
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneAboutToBeClosedEvent,
-                      this, SLOT(onMRMLSceneAboutToBeClosedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartCloseEvent,
+                      this, SLOT(OnMRMLSceneStartClose()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
-                      this, SLOT(onMRMLSceneImportedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndImportEvent,
+                      this, SLOT(OnMRMLSceneEndImport()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneClosedEvent,
-                      this, SLOT(onMRMLSceneClosedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndCloseEvent,
+                      this, SLOT(OnMRMLSceneEndClose()));
 
   this->MRMLScene = newScene;
 
@@ -317,14 +317,14 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annota
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
+void qSlicerMouseModeToolBarPrivate::OnMRMLSceneStartClose()
 {
   Q_Q(qSlicerMouseModeToolBar);
   q->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
+void qSlicerMouseModeToolBarPrivate::OnMRMLSceneEndImport()
 {
   Q_Q(qSlicerMouseModeToolBar);
 
@@ -336,11 +336,11 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBarPrivate::onMRMLSceneClosedEvent()
+void qSlicerMouseModeToolBarPrivate::OnMRMLSceneEndClose()
 {
   Q_Q(qSlicerMouseModeToolBar);
   Q_ASSERT(this->MRMLScene);
-  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+  if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
     {
     return;
     }

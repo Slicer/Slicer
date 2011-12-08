@@ -49,14 +49,8 @@ protected:
 
   virtual void Create();
 
-//  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
-//  virtual void OnMRMLSceneClosedEvent(){}
-//  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
-//  virtual void OnMRMLSceneImportedEvent(){}
-//  virtual void OnMRMLSceneRestoredEvent(){}
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-//  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
-  
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+
 private:
 
   vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&);// Not implemented

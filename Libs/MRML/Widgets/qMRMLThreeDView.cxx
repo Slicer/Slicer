@@ -142,27 +142,11 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, this, SLOT(onSceneStartProcessing()));
+    vtkMRMLScene::StartBatchProcessEvent, this, SLOT(onSceneStartProcessing()));
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneStartProcessing()));
-
-  this->qvtkReconnect(
-    this->MRMLScene, newScene,
-    vtkMRMLScene::SceneAboutToBeRestoredEvent, this, SLOT(onSceneStartProcessing()));
-
-  this->qvtkReconnect(
-    this->MRMLScene, newScene,
-    vtkMRMLScene::SceneClosedEvent, this, SLOT(onSceneEndProcessing()));
-
-  this->qvtkReconnect(
-    this->MRMLScene, newScene,
-    vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneEndProcessing()));
-
-  this->qvtkReconnect(
-    this->MRMLScene, newScene,
-    vtkMRMLScene::SceneRestoredEvent, this, SLOT(onSceneEndProcessing()));
+    vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onSceneEndProcessing()));
 
   this->MRMLScene = newScene;
   q->setRenderEnabled(this->MRMLScene != 0);

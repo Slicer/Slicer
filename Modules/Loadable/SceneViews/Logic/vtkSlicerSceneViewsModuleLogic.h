@@ -122,10 +122,10 @@ protected:
 
   virtual ~vtkSlicerSceneViewsModuleLogic();
 
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneEndRestore();
+  virtual void OnMRMLSceneEndClose();
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 

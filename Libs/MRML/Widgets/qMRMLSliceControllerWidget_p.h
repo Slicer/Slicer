@@ -90,7 +90,7 @@ public:
 
 public slots:
   /// Update widget state when the scene is modified
-  void onMRMLSceneChanged(vtkObject*,void*,ulong,void*);
+  void updateFromMRMLScene();
 
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();

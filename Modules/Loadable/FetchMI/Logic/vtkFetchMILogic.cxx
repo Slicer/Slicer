@@ -1246,7 +1246,7 @@ void vtkFetchMILogic::ProcessMRMLSceneEvents(vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* vtkNotUsed(node))
+void vtkFetchMILogic::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
   this->ApplySlicerDataTypeTag();
 }

@@ -227,10 +227,17 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
     return;
     }
 
+  if (this->Internal->MRMLScene != 0)
+    {
+    this->UnobserveMRMLScene();
+    }
+
   this->SetMRMLSceneInternal(newScene);
 
-  this->RegisterNodes();
-
+  if (newScene)
+    {
+    this->ObserveMRMLScene();
+    }
   this->Modified();
 }
 
@@ -238,7 +245,7 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
 void vtkMRMLAbstractLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   this->GetMRMLSceneObserverManager()->SetObject(
-      vtkObjectPointer(&this->Internal->MRMLScene), newScene);
+    vtkObjectPointer(&this->Internal->MRMLScene), newScene);
 }
 
 //----------------------------------------------------------------------------
@@ -249,9 +256,19 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
     return;
     }
 
+  if (this->Internal->MRMLScene != 0)
+    {
+    this->UnobserveMRMLScene();
+    }
+
   this->SetAndObserveMRMLSceneInternal(newScene);
 
-  this->RegisterNodes();
+  if (newScene)
+    {
+    this->ObserveMRMLScene();
+    }
+
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -269,11 +286,18 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
     return;
     }
 
+  if (this->Internal->MRMLScene)
+    {
+    this->UnobserveMRMLScene();
+    }
+
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
 
-  this->RegisterNodes();
-
-  this->InvokeEvent (vtkCommand::ModifiedEvent);
+  if (newScene)
+    {
+    this->ObserveMRMLScene();
+    }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -349,37 +373,70 @@ void vtkMRMLAbstractLogic
 
   switch(event)
     {
-    case vtkMRMLScene::SceneAboutToBeClosedEvent:
-      this->OnMRMLSceneAboutToBeClosedEvent();
+    case vtkMRMLScene::StartBatchProcessEvent:
+      this->OnMRMLSceneStartBatchProcess();
       break;
-    case vtkMRMLScene::SceneClosedEvent:
-      this->OnMRMLSceneClosedEvent();
+    case vtkMRMLScene::EndBatchProcessEvent:
+      this->OnMRMLSceneEndBatchProcess();
       break;
-    case vtkMRMLScene::SceneAboutToBeImportedEvent:
-      this->OnMRMLSceneAboutToBeImportedEvent();
+    case vtkMRMLScene::StartCloseEvent:
+      this->OnMRMLSceneStartClose();
       break;
-    case vtkMRMLScene::SceneImportedEvent:
-      this->OnMRMLSceneImportedEvent();
+    case vtkMRMLScene::EndCloseEvent:
+      this->OnMRMLSceneEndClose();
       break;
-    case vtkMRMLScene::SceneRestoredEvent:
-      this->OnMRMLSceneRestoredEvent();
+    case vtkMRMLScene::StartImportEvent:
+      this->OnMRMLSceneStartImport();
+      break;
+    case vtkMRMLScene::EndImportEvent:
+      this->OnMRMLSceneEndImport();
+      break;
+    case vtkMRMLScene::StartRestoreEvent:
+      this->OnMRMLSceneStartRestore();
+      break;
+    case vtkMRMLScene::EndRestoreEvent:
+      this->OnMRMLSceneEndRestore();
       break;
     case vtkMRMLScene::NewSceneEvent:
-      this->OnMRMLSceneNewEvent();
+      this->OnMRMLSceneNew();
       break;
     case vtkMRMLScene::NodeAddedEvent:
       node = reinterpret_cast<vtkMRMLNode*>(callData);
       assert(node);
-      this->OnMRMLSceneNodeAddedEvent(node);
+      this->OnMRMLSceneNodeAdded(node);
       break;
     case vtkMRMLScene::NodeRemovedEvent:
       node = reinterpret_cast<vtkMRMLNode*>(callData);
       assert(node);
-      this->OnMRMLSceneNodeRemovedEvent(node);
+      this->OnMRMLSceneNodeRemoved(node);
       break;
     default:
       break;
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::UnobserveMRMLScene()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::ObserveMRMLScene()
+{
+  this->RegisterNodes();
+
+  this->UpdateFromMRMLScene();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::UpdateFromMRMLScene()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::OnMRMLSceneEndBatchProcess()
+{
+  this->UpdateFromMRMLScene();
 }
 
 //---------------------------------------------------------------------------

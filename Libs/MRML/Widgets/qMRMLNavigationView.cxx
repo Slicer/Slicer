@@ -90,9 +90,7 @@ void qMRMLNavigationView::setMRMLScene(vtkMRMLScene* newScene)
   this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeRemovedEvent,
                       this, SLOT(updateFromMRMLScene()));
 
-  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::SceneClosedEvent,
-                      this, SLOT(updateFromMRMLScene()));
-  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
+  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
                       this, SLOT(updateFromMRMLScene()));
   d->MRMLScene = newScene;
   if (!d->MRMLViewNode || newScene != d->MRMLViewNode->GetScene())
@@ -131,7 +129,7 @@ vtkMRMLViewNode* qMRMLNavigationView::mrmlViewNode()const
 void qMRMLNavigationView::updateFromMRMLScene()
 {
   Q_D(qMRMLNavigationView);
-  if (!d->MRMLScene || d->MRMLScene->GetIsUpdating())
+  if (!d->MRMLScene || d->MRMLScene->IsBatchProcessing())
     {
     return;
     }

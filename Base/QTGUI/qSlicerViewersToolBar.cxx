@@ -328,14 +328,14 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     return;
     }
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneAboutToBeClosedEvent,
-                      this, SLOT(onMRMLSceneAboutToBeClosedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartCloseEvent,
+                      this, SLOT(OnMRMLSceneStartClose()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneImportedEvent,
-                      this, SLOT(onMRMLSceneImportedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndImportEvent,
+                      this, SLOT(OnMRMLSceneEndImport()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::SceneClosedEvent,
-                      this, SLOT(onMRMLSceneClosedEvent()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndCloseEvent,
+                      this, SLOT(OnMRMLSceneEndClose()));
 
   this->MRMLScene = newScene;
 
@@ -473,14 +473,14 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 
 
 //---------------------------------------------------------------------------
-void qSlicerViewersToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
+void qSlicerViewersToolBarPrivate::OnMRMLSceneStartClose()
 {
   Q_Q(qSlicerViewersToolBar);
   q->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerViewersToolBarPrivate::onMRMLSceneImportedEvent()
+void qSlicerViewersToolBarPrivate::OnMRMLSceneEndImport()
 {
   Q_Q(qSlicerViewersToolBar);
 
@@ -492,11 +492,11 @@ void qSlicerViewersToolBarPrivate::onMRMLSceneImportedEvent()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerViewersToolBarPrivate::onMRMLSceneClosedEvent()
+void qSlicerViewersToolBarPrivate::OnMRMLSceneEndClose()
 {
   Q_Q(qSlicerViewersToolBar);
   Q_ASSERT(this->MRMLScene);
-  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+  if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
     {
     return;
     }

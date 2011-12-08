@@ -49,19 +49,31 @@ void vtkSlicerModuleTemplateLogic::InitializeEventListeners()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
+  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
   this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerModuleTemplateLogic::RegisterNodes()
 {
-  if(!this->GetMRMLScene())
-    {
-    return;
-    }
-
+  assert(this->GetMRMLScene() != 0);
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerModuleTemplateLogic::UpdateFromMRMLScene()
+{
+  assert(this->GetMRMLScene() != 0);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleTemplateLogic
+::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleTemplateLogic
+::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
+{
+}
 

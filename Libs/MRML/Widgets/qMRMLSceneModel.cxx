@@ -311,10 +311,10 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
     scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, d->CallBack, -10.);
     scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, d->CallBack, 10.);
     scene->AddObserver(vtkCommand::DeleteEvent, d->CallBack);
-    scene->AddObserver(vtkMRMLScene::SceneAboutToBeClosedEvent, d->CallBack);
-    scene->AddObserver(vtkMRMLScene::SceneClosedEvent, d->CallBack);
-    scene->AddObserver(vtkMRMLScene::SceneAboutToBeImportedEvent, d->CallBack);
-    scene->AddObserver(vtkMRMLScene::SceneImportedEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::StartCloseEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::EndCloseEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::StartImportEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::EndImportEvent, d->CallBack);
     }
   d->MRMLScene = scene;
   this->updateScene();
@@ -1024,16 +1024,16 @@ void qMRMLSceneModel::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
     case vtkCommand::DeleteEvent:
       sceneModel->onMRMLSceneDeleted(scene);
       break;
-    case vtkMRMLScene::SceneAboutToBeClosedEvent:
+    case vtkMRMLScene::StartCloseEvent:
       sceneModel->onMRMLSceneAboutToBeClosed(scene);
       break;
-    case vtkMRMLScene::SceneClosedEvent:
+    case vtkMRMLScene::EndCloseEvent:
       sceneModel->onMRMLSceneClosed(scene);
       break;
-    case vtkMRMLScene::SceneAboutToBeImportedEvent:
+    case vtkMRMLScene::StartImportEvent:
       sceneModel->onMRMLSceneAboutToBeImported(scene);
       break;
-    case vtkMRMLScene::SceneImportedEvent:
+    case vtkMRMLScene::EndImportEvent:
       sceneModel->onMRMLSceneImported(scene);
       break;
     }
@@ -1060,7 +1060,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
-  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
     {
     return;
     }
@@ -1075,7 +1075,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
 
-  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
     {
     return;
     }
@@ -1126,7 +1126,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   Q_UNUSED(node);
-  if (d->LazyUpdate && d->MRMLScene->GetIsImporting())
+  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
     {
     return;
     }

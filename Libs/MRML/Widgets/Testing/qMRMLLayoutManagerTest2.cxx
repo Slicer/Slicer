@@ -92,8 +92,8 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     scene->Delete();
     return EXIT_FAILURE;
     }
-  scene->SetIsImporting(true);
-  scene->SetIsImporting(false);
+  scene->StartState(vtkMRMLScene::ImportState);
+  scene->EndState(vtkMRMLScene::ImportState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutCompareView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutCompareView)
@@ -105,9 +105,9 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     scene->Delete();
     return EXIT_FAILURE;
     }
-  scene->SetIsImporting(true);
+  scene->StartState(vtkMRMLScene::ImportState);
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
-  scene->SetIsImporting(false);
+  scene->EndState(vtkMRMLScene::ImportState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
@@ -120,8 +120,8 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
-  scene->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
+  scene->StartState(vtkMRMLScene::CloseState);
+  scene->EndState(vtkMRMLScene::CloseState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
@@ -134,9 +134,9 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
+  scene->StartState(vtkMRMLScene::CloseState);
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-  scene->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
+  scene->EndState(vtkMRMLScene::CloseState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
@@ -150,7 +150,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     }
 
   // The layout is changed to none only if vtkMRMLScene::Clear() is called
-  scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeClosedEvent, NULL);
+  scene->StartState(vtkMRMLScene::CloseState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
@@ -166,7 +166,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutNone);
 
   // and restore it back
-  scene->InvokeEvent(vtkMRMLScene::SceneClosedEvent, NULL);
+  scene->EndState(vtkMRMLScene::CloseState);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
       layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)

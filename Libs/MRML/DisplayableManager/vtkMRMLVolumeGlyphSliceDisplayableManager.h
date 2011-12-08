@@ -46,8 +46,8 @@ protected:
   vtkMRMLVolumeGlyphSliceDisplayableManager();
   virtual ~vtkMRMLVolumeGlyphSliceDisplayableManager();
 
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
+  virtual void UnobserveMRMLScene();
+  virtual void UpdateFromMRMLScene();
   virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
 
   /// Initialize the displayable manager based on its associated

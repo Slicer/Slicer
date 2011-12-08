@@ -94,7 +94,7 @@ void vtkMRMLTestSliceViewDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTestSliceViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLTestSliceViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)

@@ -454,7 +454,7 @@ void qSlicerAnnotationModuleWidget::refreshTree()
   Q_D(qSlicerAnnotationModuleWidget);
 
   if (d->logic() && d->logic()->GetMRMLScene() &&
-      d->logic()->GetMRMLScene()->GetIsUpdating())
+      d->logic()->GetMRMLScene()->IsBatchProcessing())
     {
     // scene is updating, return
     return;

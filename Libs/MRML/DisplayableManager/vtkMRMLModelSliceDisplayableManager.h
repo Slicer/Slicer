@@ -54,8 +54,8 @@ protected:
   vtkMRMLModelSliceDisplayableManager();
   virtual ~vtkMRMLModelSliceDisplayableManager();
 
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
 
   /// Initialize the displayable manager based on its associated

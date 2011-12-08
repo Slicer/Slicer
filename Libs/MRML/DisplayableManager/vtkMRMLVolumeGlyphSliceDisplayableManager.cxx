@@ -546,28 +546,15 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::PrintSelf(ostream& os, vtkIndent
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeGlyphSliceDisplayableManager
-::OnMRMLSceneImportedEvent()
+::UnobserveMRMLScene()
 {
-  if (!this->GetMRMLScene())
-    {
-    this->Internal->SetSliceCompositeNode(0);
-    return;
-    }
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
-  this->Internal->UpdateSliceNode();
+  this->Internal->SetSliceCompositeNode(0);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeGlyphSliceDisplayableManager
-::OnMRMLSceneRestoredEvent()
+::UpdateFromMRMLScene()
 {
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
   this->Internal->UpdateSliceNode();
 }
 

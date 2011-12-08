@@ -253,10 +253,11 @@ protected:
 
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  virtual void ObserveMRMLScene();
 
   // MRML events
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneEndClose();
   virtual void ProcessMRMLNodesEvents(vtkObject *caller,
                                       unsigned long event,
                                       void *callData );

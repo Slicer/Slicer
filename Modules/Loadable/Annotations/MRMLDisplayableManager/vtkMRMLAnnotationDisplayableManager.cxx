@@ -278,7 +278,7 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
   Superclass::SetMRMLSceneInternal(newScene);
 
   // after a new scene got associated, we want to make sure everything old is gone
-  this->OnMRMLSceneClosedEvent();
+  this->OnMRMLSceneEndClose();
 
   if (newScene)
     {
@@ -351,15 +351,9 @@ void vtkMRMLAnnotationDisplayableManager
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneEndClose()
 {
-
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
-{
-  vtkDebugMacro("OnMRMLSceneClosedEvent: remove observers?");
+  vtkDebugMacro("OnMRMLSceneEndClose: remove observers?");
   // run through all nodes and remove node and widget
   this->Helper->RemoveAllWidgetsAndNodes();
 
@@ -369,18 +363,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
-{
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLAnnotationDisplayableManager::UpdateFromMRMLScene()
 {
   this->UpdateFromMRML();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (!node || !this->GetMRMLScene())
     {
@@ -390,7 +379,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 
   // if the scene is still updating, jump out
-  if (this->GetMRMLScene()->GetIsUpdating())
+  if (this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }
@@ -479,7 +468,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneNodeRemovedEvent");
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);

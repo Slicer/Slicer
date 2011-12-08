@@ -194,13 +194,10 @@ vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
 //---------------------------------------------------------------------------
 void vtkMRMLSliceLayerLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
-  vtkIntArray *events = vtkIntArray::New();
-  //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
-  events->Delete();
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +207,8 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLSceneEvents(vtkObject * caller,
 {
   // ignore node events that aren't the observed volume or slice node
   if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
-    && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+    && (event == vtkMRMLScene::NodeAddedEvent ||
+        event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
     vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);

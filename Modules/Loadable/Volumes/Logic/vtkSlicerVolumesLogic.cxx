@@ -406,7 +406,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   //    this->GetMRMLScene()->GetIsImporting() == false)
   //  {
   //  importingScene = true;
-  this->GetMRMLScene()->SetIsImporting(true);
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
   //  }
   int centerImage = 0;
   int labelMap = 0;
@@ -729,7 +729,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     }
   //if (importingScene)
   //  {
-  this->GetMRMLScene()->SetIsImporting(false);
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   //  this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
   //  }
   if (modified)

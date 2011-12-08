@@ -53,8 +53,8 @@ protected:
   // On a change in scene, we need to manage the observations.
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   // Used internally to control whether we are in the process of

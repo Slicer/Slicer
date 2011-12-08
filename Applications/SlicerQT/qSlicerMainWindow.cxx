@@ -637,7 +637,7 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
   //Q_D(qSlicerMainWindow);
   //
   //vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
-  //if (scene && scene->GetIsUpdating())
+  //if (scene && scene->IsBatchProcessing())
   //  {
   //  return;
   //  }

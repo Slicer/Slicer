@@ -126,8 +126,8 @@ protected:
   vtkObserverManager * GetWidgetsObserverManager()const;
 
   /// Called by SetMRMLScene - Used to initialize the Scene
-  /// Observe all the events of the scene and call OnMRMLSceneClosedEvent()
-  /// or OnMRMLSceneImportedEvent() if the new scene is valid
+  /// Observe all the events of the scene and call OnMRMLSceneEndClose()
+  /// or OnMRMLSceneEndImport() if the new scene is valid
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Could be overloaded in DisplayableManager subclass

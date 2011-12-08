@@ -30,6 +30,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLDataElement.h>
 
@@ -419,16 +420,9 @@ vtkMRMLLayoutLogic::~vtkMRMLLayoutLogic()
 //------------------------------------------------------------------------------
 void vtkMRMLLayoutLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkIntArray* sceneEvents = vtkIntArray::New();
-  //sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
-  sceneEvents->Delete();
-
-  //this->UpdateViewNodes();
-  //this->UpdateLayoutNode();
-  this->OnMRMLSceneNewEvent();
+  vtkNew<vtkIntArray> sceneEvents;
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -442,31 +436,15 @@ void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
   this->UpdateLayoutNode();
   // Restore the layout to its old state after importing a scene
   // TBD: check on GetIsUpdating() should be enough
-  if (((this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::SceneClosedEvent &&
-        !this->GetMRMLScene()->GetIsUpdating()) ||
-       this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::SceneImportedEvent) &&
-      this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone)
+  if (this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone
+      && !this->GetMRMLScene()->IsBatchProcessing()
+      //&& (this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::EndCloseEvent
+      //    && !this->GetMRMLScene()->IsBatchProcessing())
+      //    || this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::EndImportEvent)
+      )
     {
     this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
     }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLLayoutLogic::OnMRMLSceneImportedEvent()
-{
-  this->UpdateFromMRMLScene();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLLayoutLogic::OnMRMLSceneClosedEvent()
-{
-  this->UpdateFromMRMLScene();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLLayoutLogic::OnMRMLSceneNewEvent()
-{
-  this->UpdateFromMRMLScene();
 }
 
 //----------------------------------------------------------------------------

@@ -14,8 +14,15 @@
 ///  vtkMRMLAbstractLogic - Superclass for MRML logic classes
 ///
 /// Superclass for all MRML logic classes.
-/// There must be a corresponding UI class that handles all UI interaction
-
+/// When a scene is set, SetMRMLScene(vtkMRMLScene*),
+/// - UnobserveMRMLScene() is called if a scene was previously set,
+/// - SetMRMLSceneInternal() is called to observe the scene events
+/// (e.g. StartImportEvent, EndBatchProcessEvent...)
+/// - ObserveMRMLScene() is called to initialize the scene from the logic
+/// - UpdateMRMLScene() is called to initialize the logic from the scene
+/// Later, when events are fired by the scene, corresponding methods
+/// (e.g. OnMRMLSceneNodeAdded, OnMRMLEndBatchProcess...) are called in the
+/// logic if the events have been previously observed in SetMRMLSceneInternal()
 #ifndef __vtkMRMLAbstractLogic_h
 #define __vtkMRMLAbstractLogic_h
 
@@ -190,24 +197,95 @@ protected:
   /// \sa SetMRMLNodesCallbackFlag()
   int GetInMRMLNodesCallbackFlag()const;
 
-  /// Called after the corresponding MRML event is triggered.
-  /// \sa ProcessMRMLSceneEvents
-  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
-  virtual void OnMRMLSceneClosedEvent(){}
-  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
-  virtual void OnMRMLSceneImportedEvent(){}
-  virtual void OnMRMLSceneRestoredEvent(){}
-  virtual void OnMRMLSceneNewEvent(){}
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/){}
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
+  /// Called anytime a scene is not set to the logic anymore (e.g. a new or
+  /// no scene is set)
+  /// Reimplement the method to delete all the scene specific information
+  /// such as a node IDs, pointers...
+  /// \sa SetMRMLSceneInternal, ObserveMRMLScene, UpdateFromMRMLScene
+  virtual void UnobserveMRMLScene();
+  /// Called after a scene is set to the logic. The scene events to observe
+  /// are already set in SetMRMLSceneInternal.
+  /// By default, ObserveMRMLScene() calls RegisterNodes and
+  /// UpdateFromMRMLScene. Overide for a custom behavior.
+  /// \sa SetMRMLSceneInternal, RegisterNodes, UnobserveMRMLScene
+  /// \sa UpdateFromMRMLScene
+  virtual void ObserveMRMLScene();
+  /// Called everytime the scene has been significantly changed.
+  /// If the scene BatchProcessState events are observed (in
+  /// SetMRMLSceneInternal() ), UpdateFromMRMLScene is called after each
+  /// batch process (Close, Import, Restore...). It is also being called by
+  /// default when a new scene is set (SetMRMLScene).
+  /// \sa SetMRMLSceneInternal, UnobserveMRMLScene, ObserveMRMLScene
+  virtual void UpdateFromMRMLScene();
+
+  /// If vtkMRMLScene::StartBatchProcessEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneEndBatchProcess
+  virtual void OnMRMLSceneStartBatchProcess(){}
+  /// If vtkMRMLScene::EndBatchProcessEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// Internally calls UpdateFromMRMLScene.
+  /// Can be reimplemented to change the default behavior.
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneStartBatchProcess
+  virtual void OnMRMLSceneEndBatchProcess();
+  /// If vtkMRMLScene::StartCloseEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneEndClose
+  virtual void OnMRMLSceneStartClose(){}
+  /// If vtkMRMLScene::EndCloseEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneStartClose
+  virtual void OnMRMLSceneEndClose(){}
+  /// If vtkMRMLScene::StartImportEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneEndImport, OnMRMLSceneNew
+  virtual void OnMRMLSceneStartImport(){}
+  /// If vtkMRMLScene::EndImportEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneStartImport, OnMRMLSceneNew
+  virtual void OnMRMLSceneEndImport(){}
+  /// If vtkMRMLScene::StartRestoreEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneEndRestore
+  virtual void OnMRMLSceneStartRestore(){}
+  /// If vtkMRMLScene::EndRestoreEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneStartRestore
+  virtual void OnMRMLSceneEndRestore(){}
+  /// If vtkMRMLScene::SceneNewEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneStartImport, OnMRMLSceneEndImport
+  virtual void OnMRMLSceneNew(){}
+  /// If vtkMRMLScene::NodeAddedEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneNodeRemoved, vtkMRMLScene::NodeAboutToBeAdded
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* /*node*/){}
+  /// If vtkMRMLScene::NodeRemovedEvent has been set to be observed in
+  ///  SetMRMLSceneInternal, it is called when the scene fires the event
+  /// \sa ProcessMRMLSceneEvents, SetMRMLSceneInternal
+  /// \sa OnMRMLSceneNodeAdded, vtkMRMLScene::NodeAboutToBeRemoved
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* /*node*/){}
 
   /// Called after the corresponding MRML event is triggered.
   /// \sa ProcessMRMLNodesEvents
   virtual void OnMRMLNodeModified(vtkMRMLNode* /*node*/){}
 
   /// Called each time a new scene is set. Can be reimplemented in derivated classes.
-  /// Doesn't observe the scene by default.
+  /// Doesn't observe the scene by default, that means that
+  /// UpdateFromMRMLScene() won't be called by default when a scene is imported,
+  /// closed or restored, only when a new scene is set.
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
+  /// \sa UpdateFromMRMLScene()
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
   /// Convenient method to set and observe the scene

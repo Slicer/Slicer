@@ -163,7 +163,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
     switch (event)
       {
       case vtkMRMLScene::NodeAddedEvent:
-        this->OnMRMLSceneNodeAddedEvent(annotationNode);
+        this->OnMRMLSceneNodeAdded(annotationNode);
         break;
       case vtkCommand::ModifiedEvent:
         this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
@@ -178,7 +178,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
@@ -220,17 +220,11 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
+void vtkSlicerAnnotationModuleLogic::OnMRMLSceneEndClose()
 {
-  if (this->m_LastAddedAnnotationNode)
-    {
-    this->m_LastAddedAnnotationNode = 0;
-    }
+  this->m_LastAddedAnnotationNode = 0;
 
-  if (this->GetActiveHierarchyNodeID())
-    {
-    this->SetActiveHierarchyNodeID(NULL);
-    }
+  this->SetActiveHierarchyNodeID(NULL);
 
   if (this->m_Widget)
     {
@@ -280,20 +274,18 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
+  events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
+}
 
-  if (this->GetMRMLScene() == NULL)
-    {
-    vtkWarningMacro("SetMRMLSceneInternal: no scene to listen to!");
-    return;
-    }
-
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
+{
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
-      vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    vtkMRMLInteractionNode::SafeDownCast(
+    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
   if (interactionNode)
     {
     vtkIntArray *interactionEvents = vtkIntArray::New();

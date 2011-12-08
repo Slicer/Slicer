@@ -529,7 +529,7 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
 
   virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event,
                                       void *callData);
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
                                       void *callData);
 

@@ -68,7 +68,7 @@ protected:
   std::map<vtkMRMLNode*, int> NodeGlyphTypes;
 
   // clean up when scene closes
-  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneEndClose();
 
 private:
 

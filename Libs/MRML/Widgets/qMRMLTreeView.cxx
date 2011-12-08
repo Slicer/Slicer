@@ -547,9 +547,9 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
       {
       visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
       }
-    this->mrmlScene()->SetIsImporting(true);
+    this->mrmlScene()->StartState(vtkMRMLScene::BatchProcessState);
     vtkMRMLModelHierarchyLogic::SetChildrenVisbility(displayableHierarchyNode,visibility);
-    this->mrmlScene()->SetIsImporting(false);
+    this->mrmlScene()->EndState(vtkMRMLScene::BatchProcessState);
     }
   else if (displayNode)
     {

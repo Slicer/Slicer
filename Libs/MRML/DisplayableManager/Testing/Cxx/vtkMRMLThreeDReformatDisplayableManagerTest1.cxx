@@ -962,9 +962,9 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   sliceNodeImported->SetWidgetVisible(1);
 
   // Simulate a scene loading
-  scene->SetIsImporting(1);
+  scene->StartState(vtkMRMLScene::ImportState);
   scene->AddNode(sliceNodeImported.GetPointer());
-  scene->SetIsImporting(0);
+  scene->EndState(vtkMRMLScene::ImportState);
 
   // Restored slice
   vtkNew<vtkMRMLSliceNode> sliceNodeRestored;
@@ -973,19 +973,9 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   sliceNodeRestored->SetWidgetVisible(1);
 
   // Simulate a scene restore
-  vtkNew<vtkAbortCommand> abortCommand;
-  scene->AddObserver(vtkCommand::AnyEvent, abortCommand.GetPointer(), 10000.);
-  scene->SetIsImporting(1);
-  scene->RemoveObserver(abortCommand.GetPointer());
-  
-  scene->InvokeEvent(vtkMRMLScene::SceneAboutToBeRestoredEvent, NULL);
+  scene->StartState(vtkMRMLScene::RestoreState);
   scene->AddNode(sliceNodeRestored.GetPointer());
-
-  scene->AddObserver(vtkCommand::AnyEvent, abortCommand.GetPointer(), 10000.);
-  scene->SetIsImporting(0);
-  scene->RemoveObserver(abortCommand.GetPointer());
-
-  scene->InvokeEvent(vtkMRMLScene::SceneRestoredEvent, NULL);
+  scene->EndState(vtkMRMLScene::RestoreState);
 
   // TODO: Automatically move the camera (simulating movements)
   // to have a good screenshot.

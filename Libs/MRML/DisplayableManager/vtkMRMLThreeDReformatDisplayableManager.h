@@ -49,10 +49,9 @@ protected:
   /// WidgetCallback is a static function to relay modified events from the Logic
   virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+  virtual void UpdateFromMRMLScene();
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
 private:

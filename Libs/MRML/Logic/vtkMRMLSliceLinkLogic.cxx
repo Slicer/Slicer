@@ -54,10 +54,6 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   // List of events the slice logics should listen
   vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
@@ -67,7 +63,7 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLSliceCompositeNode") 
       || node->IsA("vtkMRMLSliceNode"))
@@ -87,7 +83,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLSliceCompositeNode") 
       || node->IsA("vtkMRMLSliceNode"))
@@ -113,7 +109,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // Update from SliceNode
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-  if (sliceNode && !this->GetMRMLScene()->GetIsUpdating())
+  if (sliceNode && !this->GetMRMLScene()->IsBatchProcessing())
     {
 
     SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
@@ -169,7 +165,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   // Update from SliceCompositeNode
   vtkMRMLSliceCompositeNode* compositeNode 
     = vtkMRMLSliceCompositeNode::SafeDownCast(node);
-  if (compositeNode && !this->GetMRMLScene()->GetIsUpdating())
+  if (compositeNode && !this->GetMRMLScene()->IsBatchProcessing())
     {
 
     // if this is not the node that we are interacting with, short circuit

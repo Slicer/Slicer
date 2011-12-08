@@ -608,25 +608,22 @@ vtkObserverManager* vtkMRMLAbstractDisplayableManager::GetWidgetsObserverManager
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  if (this->GetMRMLScene())
-    {
-    // Give a chance to delete all the pointers holded on the current scene
-    this->OnMRMLSceneClosedEvent();
-    }
+  assert(newScene != this->GetMRMLScene());
 
   vtkNew<vtkIntArray> sceneEvents;
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeImportedEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartBatchProcessEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartImportEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartRestoreEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
-
-  this->OnMRMLSceneImportedEvent();
 }
 
 //---------------------------------------------------------------------------

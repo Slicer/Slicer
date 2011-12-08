@@ -74,7 +74,7 @@ protected:
 
   /// Reimplemented to delete the storage/display nodes when a displayable
   /// node is being removed.
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/);
+  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* /*node*/);
 
   /// 
   //

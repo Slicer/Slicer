@@ -227,7 +227,7 @@ void vtkSlicerVolumeRenderingLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
-::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode =
     vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
@@ -239,7 +239,7 @@ void vtkSlicerVolumeRenderingLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
-::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode =
     vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);

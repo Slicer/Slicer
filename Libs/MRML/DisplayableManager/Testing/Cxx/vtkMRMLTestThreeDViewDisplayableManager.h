@@ -52,7 +52,7 @@ protected:
 //  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
 //  virtual void OnMRMLSceneImportedEvent(){}
 //  virtual void OnMRMLSceneRestoredEvent(){}
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
 //  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
   
 private:

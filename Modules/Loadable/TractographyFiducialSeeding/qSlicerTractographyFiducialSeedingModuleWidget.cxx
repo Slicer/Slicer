@@ -138,7 +138,8 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
   this->settingMRMLScene = true;
   this->Superclass::setMRMLScene(scene);
 
-  qvtkReconnect(this->logic(), scene, vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
+  qvtkReconnect(this->logic(), scene, vtkMRMLScene::EndImportEvent,
+                this, SLOT(onSceneImportedEvent()));
 
   // find parameters node or create it if there is no one in the scene
   if (scene && this->TractographyFiducialSeedingNode == 0)
@@ -158,10 +159,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::onSceneImportedEvent()
 {
-  if (this->mrmlScene())
-  {
-    this->enter();
-  }
+  this->enter();
 }
 
 //-----------------------------------------------------------------------------

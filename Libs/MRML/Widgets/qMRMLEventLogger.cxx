@@ -85,11 +85,11 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
 
   this->EventNameToConnectionIdMap["SceneClosed"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneClosedEvent, q, SLOT(onSceneClosedEvent()), priority);
+    vtkMRMLScene::EndCloseEvent, q, SLOT(onSceneClosedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneAboutToBeClosed"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, q, SLOT(onSceneAboutToBeClosedEvent()), priority);
+    vtkMRMLScene::StartCloseEvent, q, SLOT(onSceneAboutToBeClosedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneEdited"] = this->qvtkReconnect(
     this->MRMLScene, scene,
@@ -109,15 +109,15 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
 
   this->EventNameToConnectionIdMap["SceneAboutToBeImported"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneAboutToBeImportedEvent, q, SLOT(onSceneAboutToBeImportedEvent()), priority);
+    vtkMRMLScene::StartImportEvent, q, SLOT(onSceneAboutToBeImportedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneImported"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneImportedEvent, q, SLOT(onSceneImportedEvent()), priority);
+    vtkMRMLScene::EndImportEvent, q, SLOT(onSceneImportedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneRestored"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneRestoredEvent, q, SLOT(onSceneRestoredEvent()), priority);
+    vtkMRMLScene::EndRestoreEvent, q, SLOT(onSceneRestoredEvent()), priority);
 
   this->MRMLScene = scene;
 }

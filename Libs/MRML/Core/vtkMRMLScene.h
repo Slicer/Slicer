@@ -288,25 +288,6 @@ public:
   static void SetActiveScene(vtkMRMLScene *);
   static vtkMRMLScene *GetActiveScene();
 
-  enum
-    {
-      NodeAddedEvent = 66000,
-      NodeRemovedEvent = 66001,
-      NewSceneEvent = 66002,
-      SceneClosedEvent = 66003,
-      SceneAboutToBeClosedEvent = 66004,
-      SceneRestoredEvent = 66005,
-      SceneAboutToBeRestoredEvent = 66014,
-      SceneEditedEvent = 66006,
-      MetadataAddedEvent = 66007,
-      ImportProgressFeedbackEvent = 66008,
-      SaveProgressFeedbackEvent = 66009,
-      SceneAboutToBeImportedEvent = 66010,
-      SceneImportedEvent = 66011,
-      NodeAboutToBeAddedEvent = 66012,
-      NodeAboutToBeRemovedEvent = 66013
-    };
-
   int IsFilePathRelative(const char * filepath);
 
   vtkSetMacro(ErrorCode,unsigned long);
@@ -377,37 +358,141 @@ public:
   /// Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
 
-  /// IsClosing should be set to True when a important number of node will be
-  /// removed to the scene.
-  /// \note Every call to SetIsClosing(true) should be paired with
-  /// exactly one SetIsClosing(false)
-  void SetIsClosing(bool closing);
+  /// The state of the scene reflects what the scene is doing.
+  /// The scene is in \a BatchProcessState when nodes are either inserted or
+  /// removed contiguously. The methods Connect, Import and Clear
+  /// automatically set the scene in specific states. It is possible to
+  /// manually set the scene in a specific state using \a StartState and
+  /// \a EndState.
+  /// When the scene is in \a BatchProcessState mode, observers can ignore
+  /// the events NodeAddedEvent and NodeRemovedEvent to
+  /// only synchronize with the scene when the scene is no longer in
+  ///  \a BatchProcessState (EndBatchProcessEvent being fired).
+  ///
+  /// The call <code>scene->Connect("myScene.mrml");</code> that closes and
+  /// import a scene will fire the events:
+  /// vtkMRMLScene::StartBatchProcessEvent,
+  /// vtkMRMLScene::StartCloseEvent,
+  ///
+  /// vtkMRMLScene::NodeAboutToBeRemovedEvent,
+  /// vtkMRMLScene::NodeRemovedEvent,
+  /// vtkMRMLScene::ProgressCloseEvent,
+  /// vtkMRMLScene::ProgressBatchProcessEvent,
+  /// ...
+  /// vtkMRMLScene::EndCloseEvent,
+  /// vtkMRMLScene::StartImportEvent,
+  ///
+  /// vtkMRMLScene::NodeAboutToBeAddedEvent,
+  /// vtkMRMLScene::NodeAddedEvent,
+  /// vtkMRMLScene::ProgressImportEvent,
+  /// vtkMRMLScene::ProgressBatchProcessEvent,
+  /// ...
+  /// vtkMRMLScene::EndImportEvent,
+  /// vtkMRMLScene::EndBatchProcessEvent
+  enum StateType
+    {
+    BatchProcessState = 0x0001,
+    CloseState = 0x0002 | BatchProcessState,
+    ImportState = 0x0004 | BatchProcessState,
+    RestoreState = 0x0008 | BatchProcessState,
+    SaveState = 0x0010
+    };
 
-  /// IsClosing is true during scene close
-  /// \sa Clear()
-  bool GetIsClosing();
+  /// Returns the current state of the scene.
+  /// It is a combination of all current states.
+  /// Returns 0 if the scene has no current state flag.
+  /// \sa IsBatchProcessing, IsClosing, IsImporting, IsRestoring
+  /// \sa StartState, EndState
+  int GetStates()const;
 
-  /// IsConnecting is True during scene connect
-  /// \sa Connect()
-  bool GetIsConnecting();
+  /// Return true if the scene is in BatchProcess state, false otherwise
+  inline bool IsBatchProcessing()const;
+  /// Return true if the scene is in Close state, false otherwise
+  inline bool IsClosing()const;
+  /// Return true if the scene is in Import state, false otherwise
+  inline bool IsImporting()const;
+  /// Return true if the scene is in Restore state, false otherwise
+  inline bool IsRestoring()const;
 
-  /// IsImporting should be set to True when a important number of node will be added to the scene.
-  /// \note Every call to SetIsImporting(true) should be paired with
-  /// exactly one SetIsImporting(false)
-  void SetIsImporting(bool importing);
+  /// Flag the scene as being in a \a state mode.
+  /// A matching EndState(\a state) must be called later.
+  /// Nested states are supported as long as they all have their own EndState
+  /// calls.
+  /// StartState() fires the \a state start event if it isn't already in that
+  /// state, e.g. StartImportEvent if \a state is ImportState.
+  /// If the state is BatchProcessState, CloseState, ImportState or
+  /// RestoreState and if the scene is not already in a BatchProcessState
+  /// state, it also fires the event StartBatchProcessEvent.
+  /// Example:
+  /// <code>
+  /// scene->StartState(vtkMRMLScene::ImportState);
+  /// // fires: StartBatchProcessEvent, StartImportEvent
+  /// scene->StartState(vtkMRMLScene::ImportState);
+  /// // doesn't fire anything
+  /// scene->StartState(vtkMRMLScene::RestoreState);
+  /// // fires: StartRestoreEvent
+  /// scene->EndState(vtkMRMLScene::RestoreState);
+  /// // fires: EndRestoreEvent
+  /// scene->EndState(vtkMRMLScene::ImportState);
+  /// // doesn't fire anything
+  /// scene->EndState(vtkMRMLScene::ImportState);
+  /// // fires: EndImportEvent, StartBatchProcessEvent
+  /// </code>
+  /// StartState internally pushes the state into a stack.
+  /// \sa EndState, GetStates
+  void StartState(const StateType& state, int anticipatedMaxProgress = 0);
 
-  /// IsImporting is True during scene import
-  /// \sa Import()
-  bool GetIsImporting();
+  /// Unflag the scene as being in a \state mode.
+  /// EndState() fires the state end event if the scene is no longer
+  /// in the \a state mode.
+  /// A matching StartState(\a state) must be called prior.
+  /// e.g. EndImportEvent if state is ImportState.
+  /// EndState internally pops the state out of the stack
+  void EndState(const StateType& state);
 
-  /// IsRestoring is True during scene restore
-  /// \sa vtkMRMLSceneViewNode::Restore()
-  bool GetIsRestoring();
+  /// TODO: Report progress of the current state.
+  void ProgressState(const StateType& state, int progress = 0);
 
-  /// Return True if the scene is either being "closed", "connected"
-  /// or "imported". False otherwise.
-  /// \sa Clear() Import() Connect()
-  bool GetIsUpdating();
+  enum SceneEventType
+    {
+    NodeAboutToBeAddedEvent = 0x2000,
+    NodeAddedEvent,
+    NodeAboutToBeRemovedEvent,
+    NodeRemovedEvent,
+
+    NewSceneEvent = 66030,
+    SceneEditedEvent,
+    MetadataAddedEvent,
+    ImportProgressFeedbackEvent,
+    SaveProgressFeedbackEvent,
+
+    /// \internal not to be used directly
+    StateEvent = 0x2000, // 1024 (decimal)
+    StartEvent = 0x0100,
+    EndEvent = 0x0200,
+    ProgressEvent = 0x0400,
+    /// \endinternal
+
+    StartBatchProcessEvent = StateEvent | StartEvent | BatchProcessState,
+    EndBatchProcessEvent = StateEvent | EndEvent | BatchProcessState,
+    ProgressBatchProcessEvent = StateEvent | ProgressEvent | BatchProcessState,
+
+    StartCloseEvent = StateEvent | StartEvent | CloseState,
+    EndCloseEvent = StateEvent | EndEvent | CloseState,
+    ProgressCloseEvent = StateEvent | ProgressEvent | CloseState,
+
+    StartImportEvent = StateEvent | StartEvent | ImportState,
+    EndImportEvent = StateEvent | EndEvent | ImportState,
+    ProgressImportEvent = StateEvent | EndEvent | ImportState,
+
+    StartRestoreEvent = StateEvent | StartEvent | RestoreState,
+    EndRestoreEvent = StateEvent | EndEvent | RestoreState,
+    ProgressRestoreEvent = StateEvent | ProgressEvent | RestoreState,
+
+    StartSaveEvent = StateEvent | StartEvent | SaveState,
+    EndSaveEvent = StateEvent | EndEvent | SaveState,
+    ProgressSaveEvent = StateEvent | ProgressEvent | SaveState,
+    };
 
   /// the version of the last loaded scene file
   vtkGetStringMacro(LastLoadedVersion);
@@ -445,6 +530,8 @@ protected:
   vtkDataIOManager * DataIOManager;
   vtkCollection *    URIHandlerCollection;
   vtkTagTable *      UserTagTable;
+
+  std::vector<StateType> States;
 
   int  UndoStackSize;
   bool UndoFlag;
@@ -497,8 +584,6 @@ private:
   vtkMRMLScene(const vtkMRMLScene&);   // Not implemented
   void operator=(const vtkMRMLScene&); // Not implemented
 
-  friend class vtkMRMLSceneViewNode; // For IsRestoring
-
   int LoadIntoScene(vtkCollection* scene);
 
   unsigned long ErrorCode;
@@ -506,11 +591,34 @@ private:
   char* ClassNameList;
 
   static vtkMRMLScene *ActiveScene;
-
-  int IsClosing;
-  int IsConnecting;
-  int IsImporting;
-  int IsRestoring;
 };
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsBatchProcessing()const
+{
+  return (this->GetStates() & vtkMRMLScene::BatchProcessState)
+         == vtkMRMLScene::BatchProcessState;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsClosing()const
+{
+  return (this->GetStates() & vtkMRMLScene::CloseState)
+         == vtkMRMLScene::CloseState;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsImporting()const
+{
+  return (this->GetStates() & vtkMRMLScene::ImportState)
+         == vtkMRMLScene::ImportState;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsRestoring()const
+{
+  return (this->GetStates() & vtkMRMLScene::RestoreState)
+         == vtkMRMLScene::RestoreState;
+}
 
 #endif

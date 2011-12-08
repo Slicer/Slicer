@@ -59,9 +59,9 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
 //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
 //  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
   events->Delete();
@@ -79,7 +79,7 @@ void vtkSlicerSceneViewsModuleLogic::AddMissingHierarchyNodes()
   
   // don't do anything if the scene is still updating
   if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetIsUpdating())
+      this->GetMRMLScene()->IsBatchProcessing())
     {
     vtkDebugMacro("AddMissingHierarchyNodes: updating, returning");
     return;
@@ -107,13 +107,13 @@ void vtkSlicerSceneViewsModuleLogic::AddMissingHierarchyNodes()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 
   // don't do anything if the scene is still updating
   if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetIsUpdating())
+      this->GetMRMLScene()->IsBatchProcessing())
     {
     vtkDebugMacro("OnMRMLSceneNodeAddedEvent: updating, returning");
     return;
@@ -157,9 +157,9 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneImportedEvent()
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndImport()
 {
-  vtkDebugMacro("OnMRMLSceneImportedEvent");
+  vtkDebugMacro("OnMRMLSceneEndImport");
 
   // this may have been an imported scene with old style snapshot nodes and no
   // hierarchies, so fill in some hierarchies
@@ -167,17 +167,18 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneImportedEvent()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneRestoredEvent()
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndRestore()
 {
-  vtkDebugMacro("OnMRMLSceneRestoredEvent");
+  vtkDebugMacro("OnMRMLSceneEndRestore");
 }
+
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLNodeModifiedEvent " << node->GetID());
 
   if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetIsUpdating())
+      this->GetMRMLScene()->IsBatchProcessing())
     {
     vtkDebugMacro("OnMRMLNodeModifiedEvent: updating, returning");
     return;
@@ -191,19 +192,13 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneClosedEvent()
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndClose()
 {
-  if (this->m_LastAddedSceneViewNode)
-    {
-    this->m_LastAddedSceneViewNode = 0;
-    }
+  this->m_LastAddedSceneViewNode = 0;
 
-  if (this->GetActiveHierarchyNodeID())
-    {
-    // this is important: otherwise adding a new scene view node might end up
-    // setting it's parent to itself
-    this->SetActiveHierarchyNodeID(NULL);
-    }
+  // this is important: otherwise adding a new scene view node might end up
+  // setting it's parent to itself
+  this->SetActiveHierarchyNodeID(NULL);
 }
 
 

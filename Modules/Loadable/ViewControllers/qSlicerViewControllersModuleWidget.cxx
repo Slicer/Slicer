@@ -257,7 +257,7 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
 {
   Q_D(qSlicerViewControllersModuleWidget);
 
-  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
     {
     return;
     }
@@ -299,7 +299,7 @@ void qSlicerViewControllersModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
 {
   Q_D(qSlicerViewControllersModuleWidget);
 
-  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
     {
     return;
     }
@@ -330,7 +330,7 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 {
   Q_D(qSlicerViewControllersModuleWidget);
 
-  if (!this->mrmlScene() || this->mrmlScene()->GetIsUpdating())
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
     {
     return;
     }
