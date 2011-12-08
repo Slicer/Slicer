@@ -65,8 +65,11 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl OpenIGTLink teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
+set(Slicer_DEPENDENCIES LibArchive cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
 
+if(Slicer_USE_OpenIGTLink)
+  list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
+endif()
 if(ITK_VERSION_MAJOR GREATER 3)
   if(Slicer_USE_SimpleITK)
     list(APPEND Slicer_DEPENDENCIES SimpleITK)

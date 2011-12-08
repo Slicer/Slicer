@@ -191,7 +191,7 @@ CMAKE_DEPENDENT_OPTION(
 # option(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
 set(Slicer_USE_BatchMake OFF CACHE INTERNAL "Build Slicer with BatchMake support." FORCE)
 option(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
-option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
+option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." OFF)
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 
