@@ -22,7 +22,7 @@
 #include <vtkMRMLConfigure.h>
 
 #if defined(WIN32) && !defined(VTKMRML_STATIC)
-#if defined(MRML_EXPORTS)
+#if defined(MRMLCore_EXPORTS)
 #define VTK_MRML_EXPORT __declspec( dllexport ) 
 #else
 #define VTK_MRML_EXPORT __declspec( dllimport ) 
