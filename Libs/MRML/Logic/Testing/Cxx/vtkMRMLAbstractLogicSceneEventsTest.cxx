@@ -415,7 +415,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   scene->AddNode(modelNode.GetPointer());
 
-  testLogic->Delete();
+  testLogic = 0;
 
   scene->AddNode(volumeNode.GetPointer());
 
