@@ -435,6 +435,7 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
       break;
       }
     }
+  crosshairs->Delete();
 
   if (!foundDefault)
     {

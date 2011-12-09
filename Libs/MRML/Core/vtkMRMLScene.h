@@ -159,6 +159,7 @@ public:
   vtkMRMLNode *GetNodeByID(std::string name);
 
   /// Get nodes of a specified class having the specified name
+  /// You are responsible for deleting the collection.
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
 
   /// Get number of nodes in the scene
@@ -175,6 +176,8 @@ public:
 
   /// Get vector of nodes of a specified class in the scene
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
+
+  /// You are responsible for deleting the returned collection
   vtkCollection* GetNodesByClass(const char *className);
 
   /// Search and return the singleton of type className with a singletonTag
