@@ -182,7 +182,12 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
+void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
+#ifndef NDEBUG
+ vtkMRMLNode* node)
+#else
+  vtkMRMLNode* vtkNotUsed(node))
+#endif
 {
   // ModifiedEvent is fired anytime vtkCamera is modified (when there is a
   // pan, zoom, rotation...)

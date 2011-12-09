@@ -102,10 +102,15 @@ void vtkDataIOManagerLogic::DataIOManagerCallback(
 }
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ProcessDataIOManagerEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkDataIOManagerLogic::ProcessDataIOManagerEvents(
+#ifndef NDEBUG
+  vtkObject *caller,
+#else
+  vtkObject *vtkNotUsed(caller),
+#endif
+  unsigned long event, void *callData)
 {
-  vtkDataIOManager *dataIOManager = vtkDataIOManager::SafeDownCast ( caller );
-  assert(dataIOManager);
+  assert(vtkDataIOManager::SafeDownCast( caller ));
   vtkMRMLNode *node = reinterpret_cast <vtkMRMLNode *> (callData);
   // ignore node events that aren't volumes or slice nodes
   if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )

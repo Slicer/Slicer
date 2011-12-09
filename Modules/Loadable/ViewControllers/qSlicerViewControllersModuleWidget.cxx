@@ -90,7 +90,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     }
 
   // create the ControllerWidget and wire it to the appropriate node
-  qMRMLViewControllerBar *barWidget;
+  qMRMLViewControllerBar *barWidget = 0;
   vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(n);
   if (sn)
     {

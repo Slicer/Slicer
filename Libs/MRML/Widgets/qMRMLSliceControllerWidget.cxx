@@ -561,7 +561,6 @@ void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateFromMRMLScene()
 {
-  Q_Q(qMRMLSliceControllerWidget);
   this->updateWidgetFromMRMLSliceCompositeNode();
 }
 

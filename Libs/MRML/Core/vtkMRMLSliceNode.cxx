@@ -1411,13 +1411,9 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
                    {  0,  0,  1 },   // superior
                    {  0,  0, -1 } }; // inferior
   
-  int closestAxis[3];
-  double closestDot[3];
+  int closestAxis[3] = {0., 0., 0.};
+  double closestDot[3] = {-1., -1., -1.};
 
-  for (col = 0; col < 3; col++)
-    {
-    closestDot[col] = -1;
-    }
   int direction;
   for (direction = 0; direction < 6; direction++)
     {
@@ -1441,13 +1437,15 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
   //
   // assign the vectors that correspond to each major direction
   //
-  double alignedRAS[6][3];
+  double alignedRAS[6][3] = {{0., 0., 0.},{0., 0., 0.},{0., 0., 0.},
+                             {0., 0., 0.},{0., 0., 0.},{0., 0., 0.}};
   for (col = 0; col < 3; col++)
     {
     for (row = 0; row < 3; row++)
       {
       switch (closestAxis[col])
         {
+        default:
         case 0:  // R
           alignedRAS[0][row] =  toRAS[col][row];
           alignedRAS[1][row] = -toRAS[col][row];

@@ -222,7 +222,6 @@ void qMRMLSliceWidgetPrivate::startProcessing()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::endProcessing()
 {
-  Q_Q(qMRMLSliceWidget);
   this->VTKSliceView->setRenderEnabled(true);
 }
 
