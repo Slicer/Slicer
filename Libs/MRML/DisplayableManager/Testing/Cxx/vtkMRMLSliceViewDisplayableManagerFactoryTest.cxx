@@ -34,6 +34,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 
@@ -46,8 +47,8 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   vtkNew<vtkRenderWindow> renderWindow;
   vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
-  renderWindow->AddRenderer(renderer);
-  renderWindow->SetInteractor(renderWindowInteractor);
+  renderWindow->AddRenderer(renderer.GetPointer());
+  renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // MRML scene
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
@@ -89,14 +90,14 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   // Check if GetRegisteredDisplayableManagerCount returns 1
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
     {
-    std::cerr << "Expected RegisteredDisplayableManagerCount: 2" << std::endl;
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 1" << std::endl;
     std::cerr << "Current RegisteredDisplayableManagerCount:"
         << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
     }
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
-    factory->InstantiateDisplayableManagers(rr);
+    factory->InstantiateDisplayableManagers(renderer.GetPointer());
 
   if (!displayableManagerGroup)
     {
@@ -109,7 +110,7 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   if (displayableManagerGroup->GetDisplayableManagerCount() != 1)
     {
     std::cerr << "Check displayableManagerGroup->GetDisplayableManagerCount()" << std::endl;
-    std::cerr << "Expected DisplayableManagerCount: 2" << std::endl;
+    std::cerr << "Expected DisplayableManagerCount: 1" << std::endl;
     std::cerr << "Current DisplayableManagerCount:"
       << displayableManagerGroup->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
