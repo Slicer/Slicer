@@ -30,6 +30,7 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
@@ -38,24 +39,22 @@
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Renderer, RenderWindow and Interactor
-  vtkRenderer* rr = vtkRenderer::New();
-  vtkRenderWindow* rw = vtkRenderWindow::New();
-  vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
-  rw->SetSize(600, 600);
-
-  rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
-
-  rw->AddRenderer(rr);
-  rw->SetInteractor(ri);
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
+  renderWindow->AddRenderer(renderer);
+  renderWindow->SetInteractor(renderWindowInteractor);
 
   // MRML scene
-  vtkMRMLScene* scene = vtkMRMLScene::New();
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
-  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+  vtkSmartPointer<vtkMRMLApplicationLogic> applicationLogic =
+    vtkSmartPointer<vtkMRMLApplicationLogic>::New();
   applicationLogic->SetMRMLScene(scene);
 
   // Add ViewNode
@@ -73,7 +72,8 @@ int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   sliceLogic->UpdateSliceCompositeNode();
 
   // Factory
-  vtkMRMLSliceViewDisplayableManagerFactory * factory = vtkMRMLSliceViewDisplayableManagerFactory::New();
+  vtkMRMLSliceViewDisplayableManagerFactory * factory =
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
@@ -84,7 +84,7 @@ int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
     return EXIT_FAILURE;
     }
 
-  factory->RegisterDisplayableManager("vtkMRMLSliceModelDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLModelSliceDisplayableManager");
 
   // Check if GetRegisteredDisplayableManagerCount returns 1
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
@@ -118,18 +118,10 @@ int vtkMRMLSliceModelDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   // Assign ViewNode
   displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
 
-
-  if (displayableManagerGroup)
-    {
-    displayableManagerGroup->Delete();
-    }
-  factory->Delete();
-  applicationLogic->Delete();
+  displayableManagerGroup->Delete();
+  applicationLogic = 0;
   sliceLogic->Delete();
-  scene->Delete();
-  rr->Delete();
-  rw->Delete();
-  ri->Delete();
+  scene = 0;
 
   return EXIT_SUCCESS;
 }
