@@ -565,8 +565,8 @@ void vtkMRMLCrosshairDisplayableManager::PrintSelf(ostream& os, vtkIndent indent
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::ObserveMRMLScene()
 {
-  this->Superclass::ObserveMRMLScene();
   this->Internal->BuildCrosshair();
+  this->Superclass::ObserveMRMLScene();
 }
 
 //---------------------------------------------------------------------------

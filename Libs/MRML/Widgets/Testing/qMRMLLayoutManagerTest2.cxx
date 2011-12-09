@@ -52,10 +52,11 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   scene->Delete();
   scene = vtkMRMLScene::New();
 
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::New();
-  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-  scene->AddNode(layoutNode);
-  layoutNode->Delete();
+  vtkMRMLLayoutNode* newLayoutNode = vtkMRMLLayoutNode::New();
+  newLayoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+  vtkMRMLLayoutNode* layoutNode =
+    vtkMRMLLayoutNode::SafeDownCast(scene->AddNode(newLayoutNode));
+  newLayoutNode->Delete();
   layoutManager->setMRMLScene(scene);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
@@ -92,6 +93,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     scene->Delete();
     return EXIT_FAILURE;
     }
+
   scene->StartState(vtkMRMLScene::ImportState);
   scene->EndState(vtkMRMLScene::ImportState);
 
@@ -105,6 +107,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     scene->Delete();
     return EXIT_FAILURE;
     }
+
   scene->StartState(vtkMRMLScene::ImportState);
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
   scene->EndState(vtkMRMLScene::ImportState);

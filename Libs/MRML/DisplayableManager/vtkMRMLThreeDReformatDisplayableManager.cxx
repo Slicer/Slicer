@@ -343,6 +343,12 @@ vtkMRMLThreeDReformatDisplayableManager::~vtkMRMLThreeDReformatDisplayableManage
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLThreeDReformatDisplayableManager::UnobserveMRMLScene()
+{
+  this->Internal->RemoveAllSliceNodes();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::UpdateFromMRMLScene()
 {
   this->Internal->UpdateSliceNodes();

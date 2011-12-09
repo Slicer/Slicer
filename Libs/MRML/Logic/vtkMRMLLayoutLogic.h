@@ -119,6 +119,7 @@ protected:
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
+  virtual void UnobserveMRMLScene();
   virtual void UpdateFromMRMLScene();
 
   /// Makes sure there is at least one 3D view node and three slice nodes (red,

@@ -426,6 +426,12 @@ void vtkMRMLLayoutLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::UnobserveMRMLScene()
+{
+  this->SetLayoutNode(0);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
 {
   vtkDebugMacro("vtkMRMLLayoutLogic::UpdateFromMRMLScene: got a NewScene event "
