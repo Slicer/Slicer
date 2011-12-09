@@ -287,10 +287,6 @@ public:
   /// the input node
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
-  /// Get/Set the active Scene
-  static void SetActiveScene(vtkMRMLScene *);
-  static vtkMRMLScene *GetActiveScene();
-
   int IsFilePathRelative(const char * filepath);
 
   vtkSetMacro(ErrorCode,unsigned long);

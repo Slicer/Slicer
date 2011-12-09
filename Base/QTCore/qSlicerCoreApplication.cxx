@@ -817,8 +817,6 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   QString workingDirectory = QDir::currentPath();
   newMRMLScene->SetRootDirectory(workingDirectory.toLatin1());
 
-  vtkMRMLScene::SetActiveScene( newMRMLScene );
-
   // Register the node type for the command line modules
   // TODO: should probably done in the command line logic
   vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
