@@ -298,6 +298,8 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # qCDashAPI
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
+    # Extensions
+    -DSlicer_BUILD_SkullStripper:BOOL=${Slicer_BUILD_SkullStripper}
   INSTALL_COMMAND ""
   )
 
