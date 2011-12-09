@@ -122,7 +122,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
   sliceNode->AddObserver(vtkCommand::ModifiedEvent,
                            this->External->GetMRMLNodesCallbackCommand());
   this->SliceNodes.insert(
-    std::pair<vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*>(sliceNode,0));
+    std::pair<vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*>(sliceNode, static_cast<vtkImplicitPlaneWidget*>(0)));
   this->UpdateWidget(sliceNode, 0);
 }
 
