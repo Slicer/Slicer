@@ -18,7 +18,7 @@ $events InsertNextValue 66001 ;#(vtkMRMLScene::NodeRemovedEvent);
 $logic SetAndObserveMRMLSceneEvents $sc $events
 $events Delete
 
-$sc SetURL $::Slicer_HOME/share/MRML/Testing/SlicePipeline.mrml
+$sc SetURL $::SlicerHome/share/MRML/Testing/SlicePipeline.mrml
 $sc Connect
 
 

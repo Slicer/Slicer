@@ -1,7 +1,7 @@
 
 
 set aissr [vtkITKArchetypeImageSeriesScalarReader New]
-$aissr SetArchetype $::Slicer_HOME/share/MRML/Testing/TestData/fixed.nrrd
+$aissr SetArchetype $::SlicerHome/share/MRML/Testing/TestData/fixed.nrrd
 
 set polyData [vtkPolyData New]
 

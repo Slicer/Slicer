@@ -1,7 +1,7 @@
 
 proc TestRestoreSceneSnapshotCompareView {} {
     # load the scene
-    $::slicer3::MRMLScene SetURL $::Slicer_HOME/share/MRML/Testing/restoreSceneSnapshotCompareView.mrml
+    $::slicer3::MRMLScene SetURL $::SlicerHome/share/MRML/Testing/restoreSceneSnapshotCompareView.mrml
     $::slicer3::MRMLScene Connect
 
     # restore the snapshot

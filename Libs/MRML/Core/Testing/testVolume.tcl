@@ -1,7 +1,7 @@
 catch "sc Delete"
 vtkMRMLScene sc
 
-sc SetURL $::Slicer_HOME/share/MRML/Testing/volScene3.xml
+sc SetURL $::SlicerHome/share/MRML/Testing/volScene3.xml
 sc Connect
 
 puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLScalarVolumeNode]"

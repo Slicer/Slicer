@@ -612,12 +612,12 @@ int Slicer_main(int& argc, char *argv[])
   // TODO: get rid of fixed size buffer
   char cmd[2048];
 
-  // Make sure Slicer_HOME is available
+  // Make sure SLICER_HOME is available
 
   sprintf(cmd, "set ::env(SLICER_HOME) {%s};", slicerHome.c_str());
   Slicer_Tcl_Eval(interp, cmd);
 
-  sprintf(cmd, "set ::Slicer_HOME {%s};", slicerHome.c_str());
+  sprintf(cmd, "set ::SlicerHome {%s};", slicerHome.c_str());
   Slicer_Tcl_Eval(interp, cmd);
 
   // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10

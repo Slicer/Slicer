@@ -1,6 +1,6 @@
 catch "sc Delete"
 set sc [vtkMRMLScene New]
-$sc SetURL $::Slicer_HOME/share/MRML/Testing/vol_and_cube_camera.mrml
+$sc SetURL $::SlicerHome/share/MRML/Testing/vol_and_cube_camera.mrml
 $sc Connect
 
 set node [$sc GetNodeByID vtkMRMLScalarVolumeNode1]
