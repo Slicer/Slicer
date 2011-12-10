@@ -55,7 +55,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     DiffusionTensorTest
     DiffusionWeightedTest
     LinearRegistration
-    MRIBiasFieldCorrection
     OtsuThresholdImageFilter
     OtsuThresholdSegmentation
     RegisterImagesModule
@@ -64,6 +63,11 @@ if(Slicer_BUILD_LEGACY_CLI)
     TestGridTransformRegistration
     )
   list(APPEND cli_modules ${legacy_cli_modules})
+if("${ITK_VERSION_MAJOR}" LESS 4)
+  ## The time necessary to rewrite this legacy application to work in ITKv4 is trivial, to make it work in
+  ## both ITKv4 and ITKv3 is painful.
+  list(APPEND cli_modules MRIBiasFieldCorrection)
+endif()
 endif()
 
 if("${ITK_VERSION_MAJOR}" LESS 4)

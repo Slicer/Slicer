@@ -6,7 +6,7 @@
 
 #if ITK_VERSION_MAJOR >= 4
 // This is  now officially part of ITKv4
-#include "itkN4MRIBiasFieldCorrectionImageFilter.h"
+#include "itkN4BiasFieldCorrectionImageFilter.h"
 #else
 // Need private version for ITKv3 that does not conflict with ITKv4 fixes
 #include "SlicerITKv3N4MRIBiasFieldCorrectionImageFilter.h"
@@ -86,8 +86,11 @@ int main(int argc, char* * argv)
   typedef itk::Image<unsigned char, ImageDimension> MaskImageType;
   MaskImageType::Pointer maskImage = NULL;
 
-  typedef itk::N4MRIBiasFieldCorrectionImageFilter<ImageType, MaskImageType,
-                                                   ImageType> CorrecterType;
+#if ITK_VERSION_MAJOR >= 4
+  typedef    itk::N4BiasFieldCorrectionImageFilter<ImageType, MaskImageType, ImageType> CorrecterType;
+#else
+  typedef itk::N4MRIBiasFieldCorrectionImageFilter<ImageType, MaskImageType, ImageType> CorrecterType;
+#endif
   CorrecterType::Pointer correcter = CorrecterType::New();
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
