@@ -8,7 +8,7 @@ class qSlicer@MODULENAME@ModuleTest1(unittest.TestCase):
   
   def test_module_valid(self):
     self.assertNotEqual(self.module, None)
-    self.assertEqual(self.module.name, '@MODULENAME_LC@')
+    self.assertEqual(self.module.name, '@MODULENAME@')
 
   def test_application(self):
     import slicer

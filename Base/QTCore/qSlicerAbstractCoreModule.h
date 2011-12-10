@@ -90,7 +90,8 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   /// Set/Get the name of the module. The name is used to uniquely describe
-  /// a module: Name must be unique.
+  /// a module: name must be unique.
+  /// The name is set by the module factory (the registered item key string).
   virtual QString name()const;
   virtual void setName(const QString& name);
 
