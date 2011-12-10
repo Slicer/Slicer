@@ -175,10 +175,12 @@ set(SLICER_ENVVARS_BUILD
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
   )
 
-# Note: The addition of Slicer_HOME to the build environment has been motivated by
+# Note: The addition of SLICER_HOME to the build environment has been motivated by
 #       EMSegmentCommandLine executable. Indeed, this CLI is instantiating
-#       qSlicerApplication which requires Slicer_HOME to be set so that it could
+#       qSlicerApplication which requires SLICER_HOME to be set so that it could
 #       properly initialize the python environment and execute both python and Tcl scripts.
+#       Please note that the environment variable is SLICER_HOME,
+#       CMake refers to the variable as Slicer_HOME, and the tcl variable is SlicerHome.
 
 if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
@@ -304,6 +306,9 @@ set(SLICER_PATHS_INSTALLED
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/lib/QtPlugins"
+  # SLICER_HOME might already be set on the machine, overwrite it because it
+  # could have unwanted side effects
+  "SLICER_HOME=${APPLAUNCHER_DIR}"
   )
 
 if(Slicer_USE_PYTHONQT)
