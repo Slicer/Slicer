@@ -997,7 +997,7 @@ QString qSlicerCoreApplication::copyrights()const
   QString copyrightsText(
     "Slicer is NOT an FDA approved medical device.\n\n"
     "See www.slicer.org for license details.\n\n"
-    "See http://www.na-mic.org/Wiki/index.php/Slicer3:Acknowledgements\n\n"
+    "See http://slicer.org/pages/Acknowledgments\n\n"
     "VTK http://www.vtk.org/copyright.php\n\n"
     "ITK http://www.itk.org/HTML/Copyright.htm\n\n"
     "Tcl/Tk http://www.tcl.tk\n\n"
