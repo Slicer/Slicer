@@ -133,7 +133,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     {
     std::cerr << "Line " << __LINE__
               << " - Problem with qSlicerCLILoadableModuleFactory"
-              << " - '" << qPrintable(cliModuleName) << "' module shouldn't
+              << " - '" << qPrintable(cliModuleName) << "' module shouldn't"
               << " have been registered; CLI modules are disabled"
               << std::endl;
     return EXIT_FAILURE;
