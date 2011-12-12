@@ -24,7 +24,7 @@ if(NOT DEFINED SkullStripper_SOURCE_DIR)
     #SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/SkullStripper"
     #SVN_REVISION -r "7735"
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SkullStripper.git"
-    GIT_TAG "33dfe1e5c43ef944b4f28a9ed93a5ffb39096220"
+    GIT_TAG "6ed556c206eff9a008030047c613b40cff8b7480"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
