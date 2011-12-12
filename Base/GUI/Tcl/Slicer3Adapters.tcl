@@ -25,6 +25,9 @@ namespace eval Slicer3Adapters {
       return
     }
 
+    # global variable used in some scripts and tests
+    set ::SlicerHome $::env(SLICER_HOME)
+
     # bring python wrapped slicer vtk classes into the tcl namespace
     py_package slicer
 
