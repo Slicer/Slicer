@@ -96,6 +96,9 @@ void runCli(void * data)
 //-----------------------------------------------------------------------------
 int qSlicerCLIModuleTest1(int argc, char * argv[])
 {
+  // The CLI4Test module (CLIModule4Test) has already been built as a normal
+  // CLI library. It can be found in
+  // Slicer-build/lib/Slicer4.0/cli-modules[/Debug|Release]
   QString cliModuleName("CLI4Test");
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
@@ -125,13 +128,24 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
   moduleFactoryManager->instantiateAllModules();
 
   QStringList moduleNames = moduleFactoryManager->moduleNames();
-
+#ifdef Slicer_BUILD_CLI
+  if (moduleNames.contains(cliModuleName))
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with qSlicerCLILoadableModuleFactory"
+              << " - '" << qPrintable(cliModuleName) << "' module shouldn't
+              << " have been registered; CLI modules are disabled"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+#else
   if (!moduleNames.contains(cliModuleName))
     {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLILoadableModuleFactory"
               << " - Failed to register '" << qPrintable(cliModuleName) << "' module" << std::endl;
     return EXIT_FAILURE;
     }
+#endif
 
   foreach(const QString& name, moduleNames)
     {
