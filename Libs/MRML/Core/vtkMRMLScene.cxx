@@ -1212,13 +1212,25 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     vtkMRMLNode *sn = this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName());
     if (sn != NULL)
       {
+      // A node can't be added twice into the scene
+      assert(sn != n);
       std::string oldId(sn->GetID());
+      std::string newId(n->GetID());
       sn->CopyWithSceneWithSingleModifiedEvent(n);
 
       this->RemoveNodeReferences(n);
-      // cache the node so the whole scene cache stays up-todate
-      this->NodeIDs.erase(oldId);
-      this->NodeIDs[std::string(sn->GetID())] = sn;
+      // cache the node so the whole scene cache stays up-to-date
+      // Remove the old node ID only if the ID was associated with sn.
+      std::map<std::string, vtkMRMLNode*>::iterator nodeID =
+        this->NodeIDs.find(oldId);
+      if (nodeID != this->NodeIDs.end() &&
+          nodeID->second == sn)
+        {
+        this->NodeIDs.erase(nodeID);
+        }
+      // If NodeIDs[newId] already contains a value, that node can't be found
+      // anymore in the NodeIDs cache.
+      this->NodeIDs[newId] = sn;
       this->NodeIDsMTime = this->Nodes->GetMTime();
 
       n->EndModify(wasModifying);
@@ -1808,6 +1820,24 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
     {
     node = it->second;
     }
+#ifndef NDEBUG
+  else
+    {
+    // Ensure the node can't be found, and there is no error with the cache
+    // mechanism.
+    vtkMRMLNode* foundNode = 0;
+    vtkCollectionSimpleIterator it;
+    for (this->Nodes->InitTraversal(it);
+         (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
+      {
+      if (!strcmp(node->GetID(), id))
+        {
+        foundNode = node;
+        }
+      }
+    assert(foundNode == 0);
+    }
+#endif
   return node;
 }
 
