@@ -37,25 +37,25 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 # Check if '--python-scripts' / 'slicer.testing' works as expected
 #
 
-SLICER_ADD_PYTHON_TEST(
+slicer_add_python_test(
   SCRIPT SlicerTestingExitSuccessTest.py
   SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
 
-SLICER_ADD_PYTHON_TEST(
+slicer_add_python_test(
   SCRIPT SlicerTestingExitFailureTest.py
   SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
 set_tests_properties(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
-SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitSuccessTest.py)
+slicer_add_python_test(SCRIPT SlicerTestingExitSuccessTest.py)
 
-SLICER_ADD_PYTHON_TEST(SCRIPT SlicerTestingExitFailureTest.py)
+slicer_add_python_test(SCRIPT SlicerTestingExitFailureTest.py)
 set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 #
 # Check if 'slicer.testing.runUnitTest()' works as expected
 #
 
-SLICER_ADD_PYTHON_UNITTEST(
+slicer_add_python_unittest(
   SCRIPT SlicerUnitTestTest.py
   SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_)

@@ -1,6 +1,6 @@
 set(TEST_DATA ${CMAKE_SOURCE_DIR}/Testing/Data/Input)
 
-SLICER_ADD_PYTHON_TEST(SCRIPT ChangeTrackerTest1.py 
+slicer_add_python_test(SCRIPT ChangeTrackerTest1.py 
     SCRIPT_ARGS ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
     SLICER_ARGS --no-main-window)
   

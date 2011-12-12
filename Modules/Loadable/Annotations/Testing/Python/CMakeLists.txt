@@ -1,8 +1,8 @@
-SLICER_ADD_PYTHON_TEST(SCRIPT AnnotationsTestingAddManyFiducials.py 
+slicer_add_python_test(SCRIPT AnnotationsTestingAddManyFiducials.py 
   SLICER_ARGS --disable-cli-module)
 
-SLICER_ADD_PYTHON_TEST(SCRIPT AnnotationsTestingAddManyRulers.py 
+slicer_add_python_test(SCRIPT AnnotationsTestingAddManyRulers.py 
   SLICER_ARGS --disable-cli-module)
 
-SLICER_ADD_PYTHON_TEST(SCRIPT AnnotationsTestingAddManyROIs.py 
+slicer_add_python_test(SCRIPT AnnotationsTestingAddManyROIs.py 
   SLICER_ARGS --disable-cli-module)
