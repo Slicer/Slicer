@@ -138,7 +138,8 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   ModuleDescriptionParser parser;
   if (parser.Parse(xmlModuleDescription.toStdString(), desc) != 0)
     {
-    qWarning() << "Failed to parse xml module description";
+    qWarning() << "Failed to parse xml module description:\n"
+               << xmlModuleDescription;
     return;
     }
 

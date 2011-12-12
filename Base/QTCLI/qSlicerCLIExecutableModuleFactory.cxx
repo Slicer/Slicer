@@ -58,7 +58,21 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   bool res = cli.waitForFinished(5000);
   if (!res)
     {
+    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(QString("Failed to execute"));
     return 0;
+    }
+  QString errors = cli.readAllStandardError();
+  if (!errors.isEmpty())
+    {
+    this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
+    this->appendInstantiateErrorString(errors);
+    // TODO: More investigation for the following behavior:
+    // on my machine (Ubuntu 10.04 with ITKv4), having standard error trims the
+    // standard output results. The following readAllStandardOutput() is then
+    // missing chars and makes the XML invalid. I'm not sure if it's just on my
+    // machine so there is a chance it succeeds to parse the XML description
+    // on other machines.
     }
   QString xmlDescription = cli.readAllStandardOutput();
   if (xmlDescription.isEmpty())
