@@ -37,6 +37,9 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
+
 #include <vtkMRMLScene.h>
 
 #include <vtkMRMLModelHierarchyLogic.h>
@@ -52,6 +55,13 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->NodeMenu = 0;
   this->EditAction = 0;
   this->SceneMenu = 0;
+  this->ModelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
+
+}
+//------------------------------------------------------------------------------
+qMRMLTreeViewPrivate::~qMRMLTreeViewPrivate()
+{
+  this->ModelHierarchyLogic->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +127,6 @@ void qMRMLTreeViewPrivate::setSceneModel(qMRMLSceneModel* newModel)
 
   this->SceneModel = newModel;
   this->SortFilterModel->setSourceModel(this->SceneModel);
-
   q->expandToDepth(2);
 }
 
@@ -227,6 +236,8 @@ void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
   Q_ASSERT(d->SortFilterModel);
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
+  d->ModelHierarchyLogic->SetMRMLScene(scene);
+
   this->expandToDepth(2);
 }
 
@@ -587,10 +598,22 @@ void qMRMLTreeView::renameCurrentNode()
 //------------------------------------------------------------------------------
 void qMRMLTreeView::deleteCurrentNode()
 {
+  Q_D(qMRMLTreeView);
+
   if (!this->currentNode())
     {
     Q_ASSERT(this->currentNode());
     return;
+    }
+  // remove model hierarchy node if exists
+  vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(this->currentNode());
+  if (mnode)
+    {
+    vtkMRMLModelHierarchyNode* mhnode = d->ModelHierarchyLogic->GetModelHierarchyNode(mnode->GetID());
+    if (mhnode)
+      {
+      this->mrmlScene()->RemoveNode(mhnode);
+      }
     }
   this->mrmlScene()->RemoveNode(this->currentNode());
 }

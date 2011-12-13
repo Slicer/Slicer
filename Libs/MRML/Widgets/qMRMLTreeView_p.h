@@ -31,6 +31,7 @@ class QMenu;
 #include "qMRMLWidgetsExport.h"
 class qMRMLSceneModel;
 class qMRMLSortFilterProxyModel;
+class vtkMRMLModelHierarchyLogic;
 
 //------------------------------------------------------------------------------
 class qMRMLTreeViewPrivate
@@ -40,6 +41,7 @@ protected:
   qMRMLTreeView* const q_ptr;
 public:
   qMRMLTreeViewPrivate(qMRMLTreeView& object);
+  virtual ~qMRMLTreeViewPrivate();
   void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
@@ -55,6 +57,8 @@ public:
   QMenu*                     NodeMenu;
   QAction*                   EditAction;
   QMenu*                     SceneMenu;
+  vtkMRMLModelHierarchyLogic* ModelHierarchyLogic;
+
 };
 
 #endif

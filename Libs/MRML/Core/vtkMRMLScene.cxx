@@ -1245,7 +1245,16 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       oldID = n->GetID();
       }
     //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
-    n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+
+    std::string className(n->GetClassName());
+
+    // include SingletonTag in node ID
+    if (n->GetSingletonTag() != NULL)
+      {
+      // TODO: uncomment this once widgets implement batch upadte on scene load
+      // className += std::string(n->GetSingletonTag());
+      }
+    n->ConstructAndSetID(className.c_str(), this->GetUniqueIDIndexByClass(className.c_str()));
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID());
