@@ -317,6 +317,8 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationStickyNode", "");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png");
     }
+  // Superclass::ObserveMRMLScene calls UpdateFromMRMLScene();
+  this->Superclass::ObserveMRMLScene();
 }
 
 //-----------------------------------------------------------------------------

@@ -236,6 +236,7 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
 
   if (newScene)
     {
+    this->RegisterNodes();
     this->ObserveMRMLScene();
     }
   this->Modified();
@@ -423,8 +424,6 @@ void vtkMRMLAbstractLogic::UnobserveMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::ObserveMRMLScene()
 {
-  this->RegisterNodes();
-
   this->UpdateFromMRMLScene();
 }
 

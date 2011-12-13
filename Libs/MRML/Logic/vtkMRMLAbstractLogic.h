@@ -203,9 +203,10 @@ protected:
   /// such as a node IDs, pointers...
   /// \sa SetMRMLSceneInternal, ObserveMRMLScene, UpdateFromMRMLScene
   virtual void UnobserveMRMLScene();
-  /// Called after a scene is set to the logic. The scene events to observe
-  /// are already set in SetMRMLSceneInternal.
-  /// By default, ObserveMRMLScene() calls RegisterNodes and
+  /// Called after a scene is set to the logic and nodes are registered
+  /// (RegisterNodes()).
+  /// The scene events to observe are already set in SetMRMLSceneInternal().
+  /// By default, ObserveMRMLScene() calls 
   /// UpdateFromMRMLScene. Overide for a custom behavior.
   /// \sa SetMRMLSceneInternal, RegisterNodes, UnobserveMRMLScene
   /// \sa UpdateFromMRMLScene
