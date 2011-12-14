@@ -707,7 +707,7 @@ class PyBuildExt(build_ext):
                                       '/usr/contrib/ssl/lib/'
                                      ] )
 
-        if (ssl_incs is not None and
+        if (False and ssl_incs is not None and
             ssl_libs is not None):
             exts.append( Extension('_ssl', ['_ssl.c'],
                                    include_dirs = ssl_incs,
@@ -725,7 +725,7 @@ class PyBuildExt(build_ext):
         # look for the openssl version header on the compiler search path.
         opensslv_h = find_file('openssl/opensslv.h', [],
                 inc_dirs + search_for_ssl_incs_in)
-        if opensslv_h:
+        if False and opensslv_h:
             name = os.path.join(opensslv_h[0], 'openssl/opensslv.h')
             if sys.platform == 'darwin' and is_macosx_sdk_path(name):
                 name = os.path.join(macosx_sdk_root(), name[1:])
@@ -739,8 +739,7 @@ class PyBuildExt(build_ext):
                 print "IOError while reading opensshv.h:", msg
                 pass
 
-
-        if (ssl_incs is not None and
+        if (False and ssl_incs is not None and
             ssl_libs is not None and
             openssl_ver >= 0x00907000):
             # The _hashlib module wraps optimized implementations
@@ -762,7 +761,7 @@ class PyBuildExt(build_ext):
                             depends = ['md5.h']) )
             missing.append('_hashlib')
 
-        if (openssl_ver < 0x00908000):
+        #if (openssl_ver < 0x00908000):
             # OpenSSL doesn't do these until 0.9.8 so we'll bring our own hash
             exts.append( Extension('_sha256', ['sha256module.c']) )
             exts.append( Extension('_sha512', ['sha512module.c']) )
