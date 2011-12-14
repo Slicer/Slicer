@@ -47,9 +47,9 @@ ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
   ## Tag of master branch on Dec. 10th 2011
-  #GIT_REPOSITORY http://itk.org/SimpleITK.git
-  GIT_REPOSITORY https://github.com/dblezek/SimpleITK
-  GIT_TAG "SIMPLEITK-204_UpdateITKTowardsRC4"
+  GIT_REPOSITORY http://itk.org/SimpleITK.git
+  # This is the tag for the "master" branch as of December 13, 2011 to address ITKv4.rc4 status
+  GIT_TAG b83441ba3b903c3de99f27bdafd42142c5133bf1
   UPDATE_COMMAND ""
   CMAKE_ARGS
     ${ep_common_args}
