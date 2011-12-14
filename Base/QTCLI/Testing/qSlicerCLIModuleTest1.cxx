@@ -145,6 +145,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
               << std::endl;
     return EXIT_FAILURE;
     }
+  return EXIT_SUCCESS;
 #endif
 
   foreach(const QString& name, moduleNames)
