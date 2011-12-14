@@ -18,17 +18,17 @@ if(NOT DEFINED LibArchive_DIR)
 
   #
   # WARNING - Before updating the version of LibArchive, please consider the following:
-  # 
+  #
   #   * LibArchive 2.7.1:
   #         - Patched version where '-Werror' is commented out - Available here [1]
   #         - Compiles on: All unix-like platform + windows 32bits
   #         - Doesn't compile on windows 64bits
-  # 
-  #   * LibArchive 2.8.4 
+  #
+  #   * LibArchive 2.8.4
   #         - Patched version where '-Werror' is commented out - Available here [2]
   #         - Doesn't compile on all unix-like platform (See errors listed below)
   #         - Compiles compile on windows 64bits
-  # 
+  #
   #   * LibArchive trunk (r3461)
   #         - Compiles properly on all unix-like platform
   #         - Doesn't compile on windows 64bits
@@ -38,7 +38,7 @@ if(NOT DEFINED LibArchive_DIR)
   #
   #
   # Listed below the errors occurring when compiling LibArchive2.8.4-patched.tar.gz
-  # 
+  #
   #   MacOSX:
   #    ../LibArchive/libarchive/archive_entry_copy_stat.c: \
   #    In function ‘archive_entry_copy_stat’:
@@ -70,6 +70,15 @@ if(NOT DEFINED LibArchive_DIR)
   else()
     set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz)
     set(LibArchive_MD5 fce7fc069ff7f7ecb2eaccac6bab3d7e)
+    if(${CMAKE_VERSION} VERSION_GREATER "2.8.5")
+      # Note that CMAKE_DISABLE_FIND_PACKAGE_* is only supported in CMake >= 2.8.6
+      list(APPEND ADDITIONAL_CMAKE_ARGS
+        -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL:BOOL=TRUE
+        )
+      message(STATUS "${proj} - Configured *WITHOUT* OpenSSL support.")
+    else()
+      message(STATUS "${proj} - Configured *WITH* OpenSSL support.")
+    endif()
   endif()
 
   # Set CMake OSX variable to pass down the external project
