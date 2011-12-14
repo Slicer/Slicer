@@ -51,7 +51,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   // ======================
   node2->Reset();
   node2->StartModify();
-  node2->Initialize(mrmlScene);
+  //node2->Initialize(mrmlScene);
 
 
   node2->SetName("AnnotationROINodeTest") ;
