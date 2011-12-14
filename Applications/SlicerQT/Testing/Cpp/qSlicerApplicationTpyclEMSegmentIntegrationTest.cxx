@@ -13,7 +13,7 @@
 #include <cstdio>
 
 // test the tcl adapter provided by the Slicer Common Interface
-int qSlicerApplicationTpyclEMSegmentIntegrationTest(int argc, char** argv)
+int qSlicerApplicationTpyclEMSegmentIntegrationTest(int argc, char* argv[])
 {
   if (argc < 2)
     {
