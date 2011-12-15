@@ -23,6 +23,8 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <cassert>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerSuperBuildLoadableExtensionTemplateLogic);
@@ -49,24 +51,31 @@ void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::InitializeEventListeners
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
+  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
   this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::RegisterNodes()
 {
-  if(!this->GetMRMLScene())
-    {
-    return;
-    }
-
+  assert(this->GetMRMLScene() != 0);
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::ProcessMRMLEvents(
-  vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void * vtkNotUsed(callData))
+//---------------------------------------------------------------------------
+void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::UpdateFromMRMLScene()
+{
+  assert(this->GetMRMLScene() != 0);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
+::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
+::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
