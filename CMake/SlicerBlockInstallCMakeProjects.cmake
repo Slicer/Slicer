@@ -16,7 +16,8 @@ endif()
 # -------------------------------------------------------------------------
 # Install SlicerExecutionModel
 # -------------------------------------------------------------------------
-if(NOT "${SlicerExecutionModel_DIR}" STREQUAL "" AND EXISTS "${SlicerExecutionModel_DIR}/CMakeCache.txt")
+if(Slicer_BUILD_CLI_SUPPORT
+  AND NOT "${SlicerExecutionModel_DIR}" STREQUAL "" AND EXISTS "${SlicerExecutionModel_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SlicerExecutionModel_DIR};SlicerExecutionModel;RuntimeLibraries;/")
 endif()
 
@@ -30,14 +31,16 @@ endif()
 # -------------------------------------------------------------------------
 # Install BatchMake
 # -------------------------------------------------------------------------
-if(NOT "${BatchMake_DIR}" STREQUAL "" AND EXISTS "${BatchMake_DIR}/CMakeCache.txt")
+if(Slicer_USE_BatchMake
+  AND NOT "${BatchMake_DIR}" STREQUAL "" AND EXISTS "${BatchMake_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;Runtime;/")
 endif()
 
 # -------------------------------------------------------------------------
 # Install OpenIGTLink
 # -------------------------------------------------------------------------
-if(NOT "${OpenIGTLink_DIR}" STREQUAL "" AND EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
+if(Slicer_USE_OpenIGTLink
+  AND NOT "${OpenIGTLink_DIR}" STREQUAL "" AND EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;RuntimeLibraries;/")
 endif()
 
