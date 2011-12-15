@@ -235,10 +235,14 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_OpenIGTLink" OFF)
 mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)
 
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_SkullStripper "Build SkullStripper." ON
-  "Slicer_BUILD_CLI" OFF)
-mark_as_advanced(Slicer_BUILD_SkullStripper)
+if("${ITK_VERSION_MAJOR}" STREQUAL "4")
+  CMAKE_DEPENDENT_OPTION(
+    Slicer_BUILD_SkullStripper "Build SkullStripper." ON
+    "Slicer_BUILD_CLI" OFF)
+  mark_as_advanced(Slicer_BUILD_SkullStripper)
+else()
+  set(Slicer_BUILD_SkullStripper OFF CACHE BOOL "SkullStripper disabled with ITKv3" FORCE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
