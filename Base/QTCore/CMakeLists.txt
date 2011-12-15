@@ -4,8 +4,10 @@ project(qSlicerBaseQTCore)
 # Third party library
 #
 
-# Required to define ModuleDescriptionParser_INCLUDE_DIRS
-find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+if(Slicer_BUILD_CLI_SUPPORT)
+  # Required to define ModuleDescriptionParser_INCLUDE_DIRS
+  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+endif()
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
@@ -15,12 +17,17 @@ set(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
 
 # Additional directories to include
 set(KIT_include_directories
-  ${ModuleDescriptionParser_INCLUDE_DIRS}
-  ${MRMLCLI_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${MRMLDisplayableManager_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS} # for qSlicerXcedeCatalogIO
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND KIT_include_directories
+    ${ModuleDescriptionParser_INCLUDE_DIRS}
+    ${MRMLCLI_INCLUDE_DIRS}
+    )
+endif()
 
 # Source files
 set(KIT_SRCS
@@ -73,7 +80,6 @@ set(KIT_MOC_SRCS
 
 # Additional Target libraries (QT libs already included)
 set(KIT_target_libraries
-  ModuleDescriptionParser
   SlicerBaseLogic
   MRMLDisplayableManager
   FreeSurfer # for qSlicerXcedeCatalogIO
@@ -82,6 +88,12 @@ set(KIT_target_libraries
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND KIT_target_libraries
+    ModuleDescriptionParser
+    )
+endif()
 
 # Resources
 set(KIT_resources

@@ -38,6 +38,7 @@
 //  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
 //  - Slicer_BUILD_WIN32_CONSOLE
+//  - Slicer_BUILD_CLI_SUPPORT
 #include "vtkSlicerConfigure.h"
 
 #ifdef Slicer_USE_PYTHONQT
@@ -68,7 +69,9 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLCrosshairNode.h>
-#include <vtkMRMLCommandLineModuleNode.h>
+#ifdef Slicer_BUILD_CLI_SUPPORT
+# include <vtkMRMLCommandLineModuleNode.h>
+#endif
 
 // VTK includes
 #include <vtkNew.h>
@@ -816,10 +819,12 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   QString workingDirectory = QDir::currentPath();
   newMRMLScene->SetRootDirectory(workingDirectory.toLatin1());
 
+#ifdef Slicer_BUILD_CLI_SUPPORT
   // Register the node type for the command line modules
   // TODO: should probably done in the command line logic
   vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
   newMRMLScene->RegisterNodeClass(clmNode.GetPointer());
+#endif
 
   // First scene needs a crosshair to be added manually
   vtkNew<vtkMRMLCrosshairNode> crosshair;

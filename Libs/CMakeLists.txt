@@ -14,11 +14,19 @@ set(dirs
   vtkITK
   FreeSurfer
   MRML/Core
-  MRML/CLI
+  )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND dirs MRML/CLI)
+endif()
+list(APPEND dirs
   RemoteIO
   MRML/Logic
   MRML/DisplayableManager
-  MRML/IDImageIO
+  )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND dirs MRML/IDImageIO)
+endif()
+list(APPEND dirs
   MGHImageIO
   IGT
   MRML/Widgets
@@ -28,11 +36,13 @@ set(dirs
 # Set library properties
 #-----------------------------------------------------------------------------
 
-# Python support within ModuleDescriptionParser is used only within ModuleFactory.cxx
-# Considering the ModuleFactory isn't used anymore to discover modules, let's disable the
-# associated python support so that the python library aren't a dependency of
-# either ModuleDescriptionParser or program/library depending on ModuleDescriptionParser.
-set(ModuleDescriptionParser_USE_PYTHON OFF)
+if(Slicer_BUILD_CLI_SUPPORT)
+  # Python support within ModuleDescriptionParser is used only within ModuleFactory.cxx
+  # Considering the ModuleFactory isn't used anymore to discover modules, let's disable the
+  # associated python support so that the python library aren't a dependency of
+  # either ModuleDescriptionParser or program/library depending on ModuleDescriptionParser.
+  set(ModuleDescriptionParser_USE_PYTHON OFF)
+endif()
 
 # ITKFactories directories
 set(MGHImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
@@ -84,20 +94,26 @@ set(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs include
 # Anticipating the move of MRML related libraries to a standalone project,
 # let's group these libraries.
 # Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
-set(MRML_LIBRARIES
-  MRMLCore MRMLCLI MRMLLogic MRMLDisplayableManager
-  CACHE INTERNAL "MRML libraries" FORCE)
+set(_mrml_libraries MRMLCore MRMLLogic MRMLDisplayableManager)
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND _mrml_libraries MRMLCLI)
+endif()
+set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
 #-----------------------------------------------------------------------------
-set(Slicer_Libs_VTK_WRAPPED_LIBRARIES
+set(_vtk_wrapped_libraries
   vtkTeem
   vtkITK
   FreeSurfer
   MRMLCore
-  MRMLCLI
   MRMLLogic
   MRMLDisplayableManager
   RemoteIO
-  CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)
+  )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND _vtk_wrapped_libraries MRMLCLI)
+endif()
+set(Slicer_Libs_VTK_WRAPPED_LIBRARIES
+  ${_vtk_wrapped_libraries} CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)

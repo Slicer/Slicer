@@ -1,0 +1,12 @@
+""" This module loads the Slicer library modules into its namespace."""
+
+__kits_to_load = [ @Slicer_PYTHON_MODULES_CONFIG@ ]
+
+for kit in __kits_to_load:
+   try:
+     exec "from %s import *" % (kit)
+   except ImportError as detail:
+     print detail
+
+# Removing things the user shouldn't have to see.
+del __kits_to_load

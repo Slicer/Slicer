@@ -20,9 +20,13 @@ set(qtmodules
   ViewControllers
   Volumes
   TractographyFiducialSeeding # tractography depends of Volumes
-  CropVolume
   VolumeRendering # Volume Rendering depends of Volumes
   )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND qtmodules
+    CropVolume
+    )
+endif()
 if(BUILD_TESTING)
   list(APPEND qtmodules ModuleTemplate)
 endif()
@@ -34,7 +38,7 @@ foreach(module ${qtmodules})
   endif()
 endforeach(module)
 
-if(Slicer_BUILD_EMSegment)
+if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_EMSegment)
   # NOTE: EMSegment source code is checkout from Slicer3 repository using
   #       "External_EMSegment.cmake".
   add_subdirectory(

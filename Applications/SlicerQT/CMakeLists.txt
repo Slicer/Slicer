@@ -71,20 +71,18 @@ add_library(${lib_name}
 set_target_properties(${lib_name} PROPERTIES LABELS SlicerQT)
 
 set(SlicerQT_LIBRARIES
-  qSlicerBaseQTCLI
   qSlicerBaseQTCoreModules
   )
 
-if(Slicer_USE_PYTHONQT)
-  set(SlicerQT_LIBRARIES
-    ${SlicerQT_LIBRARIES}
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND SlicerQT_LIBRARIES
+    qSlicerBaseQTCLI
     )
 endif()
 
 target_link_libraries(${lib_name}
   ${SlicerQT_LIBRARIES}
   )
-
 
 # --------------------------------------------------------------------------
 # Configure Application Bundle Resources (Mac Only)

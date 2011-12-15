@@ -33,9 +33,13 @@ set(designer_plugin_MOC_SRCS
   )
 
 set(designer_plugin_TARGET_LIBRARIES
-  qSlicerBaseQTCLI
   qSlicerBaseQTGUI
   )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND designer_plugin_TARGET_LIBRARIES
+    qSlicerBaseQTCLI
+    )
+endif()
 
 qctk_build_designer_plugin(
   NAME ${PROJECT_NAME}

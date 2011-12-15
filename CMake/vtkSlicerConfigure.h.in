@@ -42,6 +42,7 @@
 
 #define Slicer_QtPlugins_DIR "@Slicer_QtPlugins_DIR@"
 
+#cmakedefine Slicer_BUILD_CLI_SUPPORT
 #cmakedefine Slicer_BUILD_CLI
 #define Slicer_CLIMODULES_SUBDIR "@Slicer_CLIMODULES_SUBDIR@"
 #define Slicer_CLIMODULES_BIN_DIR "@Slicer_CLIMODULES_BIN_DIR@"

@@ -4,6 +4,11 @@ project(VolumeRenderingReplacements)
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
+#
+# Third-Party
+#
+find_package(OpenGL REQUIRED)
+
 set(module_replacements_name "${PROJECT_NAME}")
 
 # The header '${module_replacements_name}Export.h' will be automatically configured.
@@ -67,6 +72,7 @@ set(module_replacements_SRCS
 # Additional Target libraries
 set(module_replacements_target_libraries
   ${VTK_LIBRARIES}
+  ${OPENGL_gl_LIBRARY}
   )
 
 SlicerMacroBuildModuleLogic(

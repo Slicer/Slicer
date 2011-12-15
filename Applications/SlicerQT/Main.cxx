@@ -27,6 +27,7 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // CTK includes
+#include <ctkAbstractLibraryFactory.h>
 #include <ctkCallback.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
@@ -35,10 +36,15 @@
 // MRMLWidgets includes
 #include <qMRMLEventLoggerWidget.h>
 
+// Slicer includes
+#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL, Slicer_BUILD_CLI_SUPPORT
+
 // SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerCLIExecutableModuleFactory.h"
-#include "qSlicerCLILoadableModuleFactory.h"
+#ifdef Slicer_BUILD_CLI_SUPPORT
+# include "qSlicerCLIExecutableModuleFactory.h"
+# include "qSlicerCLILoadableModuleFactory.h"
+#endif
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerLoadableModuleFactory.h"
@@ -46,9 +52,6 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerStyle.h"
-
-// Slicer includes
-#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL
 
 // VTK includes
 //#include <vtkObject.h>
@@ -175,6 +178,7 @@ void registerScriptedLoadableModuleFactory(
 }
 
 //----------------------------------------------------------------------------
+#ifdef Slicer_BUILD_CLI_SUPPORT
 void registerCLIModuleFactory(
   qSlicerModuleFactoryManager * moduleFactoryManager, const QString& tempDirectory,
   const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
@@ -193,6 +197,7 @@ void registerCLIModuleFactory(
   moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
                                         cliExecutableModuleFactory);
 }
+#endif
 
 //----------------------------------------------------------------------------
 void showMRMLEventLoggerWidget()
@@ -283,6 +288,7 @@ int slicerQtMain(int argc, char* argv[])
     {
     registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->sharedItems());
     }
+#ifdef Slicer_BUILD_CLI_SUPPORT
   if (!app.commandOptions()->disableCLIModules())
     {
     registerCLIModuleFactory(
@@ -290,6 +296,7 @@ int slicerQtMain(int argc, char* argv[])
           qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory(),
           coreModuleFactory->sharedItems());
     }
+#endif
 
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
 

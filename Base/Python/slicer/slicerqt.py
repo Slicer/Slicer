@@ -2,7 +2,12 @@ import vtk, qt, ctk
 import slicer
 
 from slicer.util import *
-import slicer.cli
+
+# HACK Ideally constant from vtkSlicerConfigure should be wrapped,
+#      that way the following try/except could be avoided.
+try:
+  import slicer.cli
+except: pass
 
 #
 # loadSlicerRCFile - Let's not add this function to 'slicer.util' so that

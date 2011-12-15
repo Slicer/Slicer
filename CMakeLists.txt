@@ -165,7 +165,11 @@ CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)
-option(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
+option(Slicer_BUILD_CLI_SUPPORT "Build Slicer with CLI support" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_CLI "Build Slicer CLI Plugins" ON
+  "Slicer_BUILD_CLI_SUPPORT" OFF
+  )
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_LEGACY_CLI "Build Slicer LEGACY_CLI Plugins" ON
   "Slicer_BUILD_CLI" OFF
@@ -217,17 +221,17 @@ CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support
 # module can be enabled/disabled at the superbuild level.
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
-  "Slicer_BUILD_CLI" OFF)
+  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
 
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_ChangeTrackerPy "Build ChangeTrackerPy." ON
-  "Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
+  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
 mark_as_advanced(Slicer_BUILD_ChangeTrackerPy)
 
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_EMSegment "Build EMSegment." ON
-  "Slicer_BUILD_QTLOADABLEMODULES" OFF)
+  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_QTLOADABLEMODULES" OFF)
 mark_as_advanced(Slicer_BUILD_EMSegment)
 
 CMAKE_DEPENDENT_OPTION(
@@ -238,10 +242,10 @@ mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)
 if("${ITK_VERSION_MAJOR}" STREQUAL "4")
   CMAKE_DEPENDENT_OPTION(
     Slicer_BUILD_SkullStripper "Build SkullStripper." ON
-    "Slicer_BUILD_CLI" OFF)
+    "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI" OFF)
   mark_as_advanced(Slicer_BUILD_SkullStripper)
 else()
-  set(Slicer_BUILD_SkullStripper OFF CACHE BOOL "SkullStripper disabled with ITKv3" FORCE)
+  set(Slicer_BUILD_SkullStripper OFF CACHE INTERNAL "SkullStripper disabled with ITKv3" FORCE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -321,14 +325,16 @@ set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VE
 set(Slicer_SHARE_DIR "share/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
-# NOTE: Make sure to update vtkSlicerApplicationLogic::GetModuleShareDirectory()
-#       if the following variables are changed.
+if(Slicer_BUILD_CLI_SUPPORT)
+  # NOTE: Make sure to update vtkSlicerApplicationLogic::GetModuleShareDirectory()
+  #       if the following variables are changed.
 
-set(Slicer_CLIMODULES_SUBDIR "cli-modules")
+  set(Slicer_CLIMODULES_SUBDIR "cli-modules")
 
-set(Slicer_CLIMODULES_BIN_DIR "${Slicer_LIB_DIR}/${Slicer_CLIMODULES_SUBDIR}")
-set(Slicer_CLIMODULES_LIB_DIR "${Slicer_LIB_DIR}/${Slicer_CLIMODULES_SUBDIR}")
-set(Slicer_CLIMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/${Slicer_CLIMODULES_SUBDIR}")
+  set(Slicer_CLIMODULES_BIN_DIR "${Slicer_LIB_DIR}/${Slicer_CLIMODULES_SUBDIR}")
+  set(Slicer_CLIMODULES_LIB_DIR "${Slicer_LIB_DIR}/${Slicer_CLIMODULES_SUBDIR}")
+  set(Slicer_CLIMODULES_SHARE_DIR "${Slicer_SHARE_DIR}/${Slicer_CLIMODULES_SUBDIR}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Slicer install directories
@@ -346,22 +352,24 @@ set(Slicer_INSTALL_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_INCLUDE_DIR}")
 set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
-set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
-if(APPLE)
-  # HACK - On Mac OSX, since all libraries are fixed using the same "install_name" (specifying the
-  # location of the dependent libraries relatively to the location of Slicer executable), it
-  # is required for CLI executable to be located at same depth as Slicer executable.
-  # See also Slicer/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in
-  #
-  # A more elegant solution would be to create a "Slicer.framework" on which both "Slicer.app"
-  # and the plugins/extensions (or loadable bundles) would depend on.
-  #
-  # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
-  #       the following variable is changed.
-  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_CLIMODULES_SUBDIR}")
+if(Slicer_BUILD_CLI_SUPPORT)
+  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
+  if(APPLE)
+    # HACK - On Mac OSX, since all libraries are fixed using the same "install_name" (specifying the
+    # location of the dependent libraries relatively to the location of Slicer executable), it
+    # is required for CLI executable to be located at same depth as Slicer executable.
+    # See also Slicer/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in
+    #
+    # A more elegant solution would be to create a "Slicer.framework" on which both "Slicer.app"
+    # and the plugins/extensions (or loadable bundles) would depend on.
+    #
+    # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
+    #       the following variable is changed.
+    set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_CLIMODULES_SUBDIR}")
+  endif()
+  set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")
 endif()
-set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
-set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")
 
 #-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
@@ -403,7 +411,9 @@ endif()
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
-include(SlicerMacroBuildCLI)
+if(Slicer_BUILD_CLI_SUPPORT)
+  include(SlicerMacroBuildCLI)
+endif()
 
 # Clear SlicerTargets.cmake
 file(WRITE "${Slicer_BINARY_DIR}/SlicerTargets.cmake"
@@ -735,11 +745,13 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     )
 endif()
 
-#-----------------------------------------------------------------------------
-# CLI wrapper
-#-----------------------------------------------------------------------------
-set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX
-  ${CMAKE_CURRENT_SOURCE_DIR}/Modules/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+if(Slicer_BUILD_CLI_SUPPORT)
+  #-----------------------------------------------------------------------------
+  # CLI wrapper
+  #-----------------------------------------------------------------------------
+  set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX
+    ${CMAKE_CURRENT_SOURCE_DIR}/Modules/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+endif()
 
 #-----------------------------------------------------------------------------
 # Includes

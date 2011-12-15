@@ -76,11 +76,16 @@ set(SLICER_LIBRARY_PATHS_BUILD
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
   ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
-  ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${LibArchive_DIR}/${LIB_SUBDIR}
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>
+    )
+endif()
 
 # The following lines allow Slicer to load a CLI module extension that depends
 # on libraries (i.e a logic class) provided by a loadable module extension.
@@ -89,7 +94,7 @@ if(CMAKE_CONFIGURATION_TYPES)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD ../${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>)
 endif()
 
-if(Slicer_BUILD_CLI)
+if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
     )
@@ -155,7 +160,7 @@ set(SLICER_PATHS_BUILD
   ${QT_BINARY_DIR}
   )
 
-if(Slicer_BUILD_CLI)
+if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
   list(APPEND SLICER_PATHS_BUILD
     <APPLAUNCHER_DIR>/${Slicer_CLIMODULES_BIN_DIR}/<CMAKE_CFG_INTDIR>
     )

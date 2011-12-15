@@ -9,6 +9,7 @@
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerColorLogic.h"
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_CLI_SUPPORT
 #include "vtkSlicerTask.h"
 
 // VTK includes
@@ -18,7 +19,9 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorTableStorageNode.h>
-#include <vtkMRMLCommandLineModuleNode.h>
+#ifdef Slicer_BUILD_CLI_SUPPORT
+# include <vtkMRMLCommandLineModuleNode.h>
+#endif
 #include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
@@ -833,7 +836,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLDisplayableNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
+#ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLCommandLineModuleNode *clp = 0;
+#endif
 
   nd = this->GetMRMLScene()->GetNodeByID( req.GetNode().c_str() );
 
@@ -865,8 +870,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   fbnd  = vtkMRMLDisplayableNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
-
+#ifdef Slicer_BUILD_CLI_SUPPORT
   clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
+#endif
 
   bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
   bool storageNodeExists = false;
@@ -1078,13 +1084,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         }
       }
 
+#ifdef Slicer_BUILD_CLI_SUPPORT
     // if the node was a CommandLineModule node, then read the file
     // (no storage node for these, yet)
     if (clp)
       {
       clp->ReadParameterFile(req.GetFilename());
       }
-
+#endif
 
     // Delete the file if requested
     if (req.GetDeleteFile())

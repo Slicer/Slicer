@@ -3,7 +3,9 @@ project(SlicerBaseLogic)
 # --------------------------------------------------------------------------
 # Third party library
 # --------------------------------------------------------------------------
-find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+if(Slicer_BUILD_CLI_SUPPORT)
+  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+endif()
 
 # --------------------------------------------------------------------------
 # Subdirectories
@@ -17,14 +19,19 @@ set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRMLCore_INCLUDE_DIRS}
-  ${MRMLCLI_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
-  ${ModuleDescriptionParser_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND include_dirs
+    ${MRMLCLI_INCLUDE_DIRS}
+    ${ModuleDescriptionParser_INCLUDE_DIRS}
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND include_dirs
@@ -129,7 +136,6 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   MRMLCore
-  MRMLCLI
   MRMLLogic
   vtkITK
   ${OPENTRACKER_LIB}
@@ -138,6 +144,12 @@ set(libs
   RemoteIO
   ${LibArchive_LIBRARY}
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND libs
+    MRMLCLI
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND libs

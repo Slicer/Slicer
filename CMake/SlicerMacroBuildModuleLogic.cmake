@@ -29,25 +29,34 @@ macro(SlicerMacroBuildModuleLogic)
     ${ARGN}
     )
 
-  # Third-party library
-  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
-
   list(APPEND MODULELOGIC_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
-    ${ModuleDescriptionParser_INCLUDE_DIRS}
     ${Slicer_ModuleLogic_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}
     )
 
-  # Note: Linking against qSlicerBaseQTCLI provides logic with
-  #       access to the core application modulemanager. Using the module manager
-  #       a module logic can then use the services provided by registrered
-  #       command line module (CLI).
+  if(Slicer_BUILD_CLI_SUPPORT)
+    # Third-party library
+    find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+    list(APPEND MODULELOGIC_INCLUDE_DIRECTORIES
+      ${ModuleDescriptionParser_INCLUDE_DIRS}
+      )
 
-  list(APPEND MODULELOGIC_TARGET_LIBRARIES
-    qSlicerBaseQTCLI
-    )
+    # Note: Linking against qSlicerBaseQTCLI provides logic with
+    #       access to the core application modulemanager. Using the module manager
+    #       a module logic can then use the services provided by registrered
+    #       command line module (CLI).
+
+    list(APPEND MODULELOGIC_TARGET_LIBRARIES
+      qSlicerBaseQTCLI
+      )
+  else()
+    list(APPEND MODULELOGIC_TARGET_LIBRARIES
+      SlicerBaseLogic
+      MRMLDisplayableManager
+      )
+  endif()
 
   set(MODULELOGIC_NO_INSTALL_OPTION)
   if(MODULELOGIC_NO_INSTALL)

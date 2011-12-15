@@ -1,7 +1,11 @@
 """ This module loads the Slicer Module Logic vtk classes into its namespace."""
 
 # Import the CLI logic
-from qSlicerBaseQTCLIPython import vtkSlicerCLIModuleLogic
+# HACK Ideally constant from vtkSlicerConfigure should be wrapped,
+#      that way the following try/except could be avoided.
+try:
+  from qSlicerBaseQTCLIPython import vtkSlicerCLIModuleLogic
+except: pass
 
 from __main__ import _qSlicerCoreApplicationInstance as app
 from slicer.util import importVTKClassesFromDirectory

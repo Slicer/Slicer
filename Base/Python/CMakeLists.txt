@@ -1,7 +1,5 @@
 
 set(Slicer_PYTHON_SCRIPTS
-  slicer/__init__
-  slicer/cli
   slicer/logic
   slicer/slicerqt
   slicer/testing
@@ -10,13 +8,52 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/modulemrml/__init__
   slicer/modulewidget/__init__
   mrml
-  mrmlcli
   mrmlLogic
   teem
   freesurfer
   remoteio
   vtkITK
   )
+
+set(Slicer_PYTHON_MODULES_CONFIG "
+# slicer libs
+'freesurfer',
+'mrml',
+'mrmlLogic',
+'remoteio',
+'teem',
+'qMRMLWidgetsPythonQt',
+# slicer base libs
+'logic',
+'qSlicerBaseQTCorePythonQt',
+'qSlicerBaseQTGUIPythonQt',
+# slicer module
+'modulelogic',
+'modulemrml',
+'modulewidget'"
+  )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND Slicer_PYTHON_SCRIPTS
+    slicer/cli
+    mrmlcli
+    )
+  set(Slicer_PYTHON_MODULES_CONFIG "${Slicer_PYTHON_MODULES_CONFIG},
+# slicer libs (Slicer_BUILD_CLI_SUPPORT:ON)
+'mrmlcli',
+# slicer base libs (Slicer_BUILD_CLI_SUPPORT:ON)
+'qSlicerBaseQTCLIPythonQt',
+#CLI logic (Slicer_BUILD_CLI_SUPPORT:ON)
+"
+  )
+endif()
+
+configure_file(
+  slicer/__init__.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/slicer/__init__.py
+  @ONLY
+  )
+list(APPEND Slicer_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/slicer/__init__.py)
 
 set(Slicer_PYTHON_RESOURCES
   )

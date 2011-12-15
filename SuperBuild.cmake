@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI SlicerExecutionModel)
+set(Slicer_DEPENDENCIES LibArchive cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
@@ -78,17 +78,20 @@ if(ITK_VERSION_MAJOR GREATER 3)
     list(APPEND Slicer_DEPENDENCIES SimpleITK)
   endif()
 endif()
-if(Slicer_BUILD_BRAINSTOOLS)
-    list(APPEND Slicer_DEPENDENCIES BRAINSTools)
-endif()
-if(Slicer_BUILD_ChangeTrackerPy)
-  list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
-endif()
-if(Slicer_BUILD_EMSegment)
-  list(APPEND Slicer_DEPENDENCIES EMSegment)
-endif()
-if(Slicer_BUILD_SkullStripper)
-  list(APPEND Slicer_DEPENDENCIES SkullStripper)
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND Slicer_DEPENDENCIES SlicerExecutionModel)
+  if(Slicer_BUILD_BRAINSTOOLS)
+      list(APPEND Slicer_DEPENDENCIES BRAINSTools)
+  endif()
+  if(Slicer_BUILD_ChangeTrackerPy)
+    list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
+  endif()
+  if(Slicer_BUILD_EMSegment)
+    list(APPEND Slicer_DEPENDENCIES EMSegment)
+  endif()
+  if(Slicer_BUILD_SkullStripper)
+    list(APPEND Slicer_DEPENDENCIES SkullStripper)
+  endif()
 endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
@@ -133,8 +136,8 @@ set(ep_cmake_boolean_args
   BUILD_SHARED_LIBS
   WITH_COVERAGE
   WITH_MEMCHECK
-  Slicer_BUILD_BRAINSTOOLS
   Slicer_BUILD_CLI
+  Slicer_BUILD_CLI_SUPPORT
   Slicer_BUILD_QTLOADABLEMODULES
   Slicer_BUILD_QTSCRIPTEDMODULES
   Slicer_BUILD_OpenIGTLinkIF
@@ -147,7 +150,17 @@ set(ep_cmake_boolean_args
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
+  Slicer_USE_SimpleITK
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND ep_cmake_boolean_args
+    Slicer_BUILD_BRAINSTOOLS
+    Slicer_BUILD_ChangeTrackerPy
+    Slicer_BUILD_EMSegment
+    Slicer_BUILD_SkullStripper
+    )
+endif()
 
 # Add CTEST_USE_LAUNCHER only if already defined and enabled.
 # It avoids extra overhead for manual builds and still allow the option
@@ -222,20 +235,24 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND ep_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
-if(Slicer_BUILD_BRAINSTOOLS)
-  list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
-endif()
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND ep_superbuild_extra_args -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR})
 
-if(Slicer_BUILD_ChangeTrackerPy)
-  list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
-endif()
+  if(Slicer_BUILD_BRAINSTOOLS)
+    list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
+  endif()
 
-if(Slicer_BUILD_EMSegment)
-  list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
-endif()
+  if(Slicer_BUILD_ChangeTrackerPy)
+    list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
+  endif()
 
-if(Slicer_BUILD_SkullStripper)
-  list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
+  if(Slicer_BUILD_EMSegment)
+    list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
+  endif()
+
+  if(Slicer_BUILD_SkullStripper)
+    list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
+  endif()
 endif()
 
 # Set CMake OSX variable to pass down the external project
@@ -279,10 +296,6 @@ ExternalProject_Add(${proj}
     # ITK
     -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
     -DITK_DIR:PATH=${ITK_DIR}
-    # SimpleITK reference
-    -DSlicer_USE_SimpleITK:BOOL=${Slicer_USE_SimpleITK}
-    # SlicerExecutionModel
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     # Teem
     -DTeem_DIR:PATH=${Teem_DIR}
     # VTK
@@ -298,8 +311,6 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # qCDashAPI
     -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
-    # Extensions
-    -DSlicer_BUILD_SkullStripper:BOOL=${Slicer_BUILD_SkullStripper}
   INSTALL_COMMAND ""
   )
 
