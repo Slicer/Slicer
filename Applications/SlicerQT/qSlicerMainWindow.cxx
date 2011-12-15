@@ -562,6 +562,9 @@ void qSlicerMainWindow::setupMenuActions()
 #ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   d->actionViewExtensionManager->setVisible(false);
 #endif
+#ifndef Slicer_USE_PYTHONQT
+  d->actionWindowPythonInteractor->setVisible(false);
+#endif
 
 }
 #undef qSlicerMainWindowCore_connect
