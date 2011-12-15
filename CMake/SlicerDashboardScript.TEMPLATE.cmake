@@ -6,7 +6,7 @@
 # Note: The specific version and processor type of this machine should be reported in the
 # header above. Indeed, this file will be send to the dashboard as a NOTE file.
 
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8.4)
 
 #
 # For additional information, see http://www.slicer.org/slicerWiki/index.php/Slicer4:_Dashboard_Setup
