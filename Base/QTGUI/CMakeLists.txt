@@ -33,15 +33,6 @@ set(KIT_SRCS
   qSlicerDirectoryListView.cxx
   qSlicerDirectoryListView.h
 
-  qSlicerExtensionsWizard.cxx
-  qSlicerExtensionsWizard.h
-  qSlicerExtensionsWizardOverviewPage.cxx
-  qSlicerExtensionsWizardOverviewPage.h
-  qSlicerExtensionsWizardRestartPage.cxx
-  qSlicerExtensionsWizardRestartPage.h
-  qSlicerExtensionsWizardWelcomePage.cxx
-  qSlicerExtensionsWizardWelcomePage.h
-
   qSlicerFileDialog.cxx
   qSlicerFileDialog.h
   qSlicerIOManager.cxx
@@ -84,6 +75,19 @@ set(KIT_SRCS
   qSlicerWidget.h
   )
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_SRCS
+    qSlicerExtensionsWizard.cxx
+    qSlicerExtensionsWizard.h
+    qSlicerExtensionsWizardOverviewPage.cxx
+    qSlicerExtensionsWizardOverviewPage.h
+    qSlicerExtensionsWizardRestartPage.cxx
+    qSlicerExtensionsWizardRestartPage.h
+    qSlicerExtensionsWizardWelcomePage.cxx
+    qSlicerExtensionsWizardWelcomePage.h
+    )
+endif()
+
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_SRCS
     qSlicerScriptedLoadableModuleFactory.cxx
@@ -124,10 +128,6 @@ set(KIT_MOC_SRCS
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
   qSlicerDirectoryListView.h
-  qSlicerExtensionsWizard.h
-  qSlicerExtensionsWizardOverviewPage.h
-  qSlicerExtensionsWizardRestartPage.h
-  qSlicerExtensionsWizardWelcomePage.h
   qSlicerFileDialog.h
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.h
@@ -148,8 +148,17 @@ set(KIT_MOC_SRCS
   qSlicerSettingsGeneralPanel.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
- qSlicerWidget.h
+  qSlicerWidget.h
   )
+
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerExtensionsWizard.h
+    qSlicerExtensionsWizardOverviewPage.h
+    qSlicerExtensionsWizardRestartPage.h
+    qSlicerExtensionsWizardWelcomePage.h
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
@@ -169,15 +178,19 @@ endif()
 set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
   Resources/UI/qSlicerDataDialog.ui
-  Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
-  Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
-  Resources/UI/qSlicerExtensionsWizardRestartPage.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
   Resources/UI/qSlicerSaveDataDialog.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
   Resources/UI/qSlicerSettingsGeneralPanel.ui
 )
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_UI_SRCS
+    Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
+    Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
+    Resources/UI/qSlicerExtensionsWizardRestartPage.ui
+    )
+endif()
 
 # PythonQt decorator
 if(Slicer_USE_PYTHONQT)
@@ -189,10 +202,15 @@ endif()
 # Additional Target libraries (QT libs already included)
 set(KIT_target_libraries
   MRMLDisplayableManager
-  qCDashAPI
   qSlicerBaseQTCore
   qMRMLWidgets
   )
+
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_target_libraries
+    qCDashAPI
+    )
+endif()
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)

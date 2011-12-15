@@ -20,6 +20,7 @@ set(Slicer_PATCH_VERSION "@Slicer_PATCH_VERSION@")
 # Whether Slicer was built with modules and CLI support.
 set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
 set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
+set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
 set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
 
 # Whether Slicer was built with shared libraries.

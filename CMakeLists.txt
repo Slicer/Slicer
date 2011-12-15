@@ -174,6 +174,7 @@ CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_LEGACY_CLI "Build Slicer LEGACY_CLI Plugins" ON
   "Slicer_BUILD_CLI" OFF
   )
+option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
 option(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
 CMAKE_DEPENDENT_OPTION(
   Slicer_UPLOAD_EXTENSIONS "Build, test, package and upload extensions" OFF
@@ -524,8 +525,10 @@ include(${CTK_USE_FILE})
 #-----------------------------------------------------------------------------
 # qCDashAPI
 #-----------------------------------------------------------------------------
-find_package(qCDashAPI REQUIRED)
-include(${qCDashAPI_USE_FILE})
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  find_package(qCDashAPI REQUIRED)
+  include(${qCDashAPI_USE_FILE})
+endif()
 
 #-----------------------------------------------------------------------------
 # Qt
@@ -597,17 +600,19 @@ include(${SLICERLIBCURL_USE_FILE})
 #-----------------------------------------------------------------------------
 # LibArchive
 #-----------------------------------------------------------------------------
-set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
-if(WIN32)
-  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
-else()
-  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
-endif()
-foreach(var LibArchive_LIBRARY LibArchive_INCLUDE_DIR)
-  if(NOT EXISTS "${${var}}")
-    message(FATAL_ERROR "error: ${var} corresponds to an inexistant file or directory. [${${var}}]")
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
+  if(WIN32)
+    set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
+  else()
+    set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   endif()
-endforeach()
+  foreach(var LibArchive_LIBRARY LibArchive_INCLUDE_DIR)
+    if(NOT EXISTS "${${var}}")
+      message(FATAL_ERROR "error: ${var} corresponds to an inexistant file or directory. [${${var}}]")
+    endif()
+  endforeach()
+endif()
 
 #-----------------------------------------------------------------------------
 # BatchMake

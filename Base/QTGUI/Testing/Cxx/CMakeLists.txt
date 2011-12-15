@@ -2,18 +2,25 @@ if(BUILD_TESTING)
   # Code specfic to Slicer testing is added here.
   set(KIT QTGUI)
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
-  create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  set(KIT_TEST_SRCS
     qSlicerAbstractModuleTest1.cxx
     qSlicerAbstractModuleWidgetTest1.cxx
     qSlicerApplicationTest1.cxx
     qSlicerDataDialogTest1.cxx
     qSlicerDirectoryListViewTest1.cxx
-    qSlicerExtensionsWizardTest1.cxx
     qSlicerLayoutManagerTest1.cxx
     qSlicerLoadableModuleTest1.cxx
     qSlicerModulePanelTest1.cxx
     qSlicerWidgetTest1.cxx
     qSlicerWidgetTest2.cxx
+    )
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    list(APPEND KIT_TEST_SRCS
+      qSlicerExtensionsWizardTest1.cxx
+      )
+  endif()
+  create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+    ${KIT_TEST_SRCS}
     EXTRA_INCLUDE TestingMacros.h
     )
 
@@ -40,12 +47,14 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerAbstractModuleWidgetTest1 )
   SIMPLE_TEST( qSlicerDataDialogTest1 )
   SIMPLE_TEST( qSlicerDirectoryListViewTest1 )
-  SIMPLE_TEST( qSlicerExtensionsWizardTest1 )
   SIMPLE_TEST( qSlicerLayoutManagerTest1 )
   SIMPLE_TEST( qSlicerLoadableModuleTest1 )
   SIMPLE_TEST( qSlicerModulePanelTest1 )
   SIMPLE_TEST( qSlicerWidgetTest1 )
   SIMPLE_TEST( qSlicerWidgetTest2 )
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    SIMPLE_TEST( qSlicerExtensionsWizardTest1 )
+  endif()
 
 endif()
 

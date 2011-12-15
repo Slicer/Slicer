@@ -35,9 +35,11 @@
 // SlicerQt includes
 #include "qSlicerMainWindow.h"
 #include "ui_qSlicerMainWindow.h"
-#include "qSlicerApplication.h"
+#include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
 #include "qSlicerAbstractModule.h"
-#include "qSlicerExtensionsWizard.h"
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+# include "qSlicerExtensionsWizard.h"
+#endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
@@ -47,7 +49,7 @@
 #include "qSlicerSettingsGeneralPanel.h"
 
 #ifdef Slicer_USE_PYTHONQT
-#include "qSlicerSettingsPythonPanel.h"
+# include "qSlicerSettingsPythonPanel.h"
 #endif
 
 // qMRML includes
@@ -557,6 +559,10 @@ void qSlicerMainWindow::setupMenuActions()
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
 
+#ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  d->actionViewExtensionManager->setVisible(false);
+#endif
+
 }
 #undef qSlicerMainWindowCore_connect
 
@@ -569,8 +575,10 @@ void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 {
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerExtensionsWizard extensionsManager(this);
   extensionsManager.exec();
+#endif
 }
 
 //---------------------------------------------------------------------------

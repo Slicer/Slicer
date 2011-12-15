@@ -85,8 +85,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerColorLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
-  vtkSlicerExtensionsLogic.cxx
-  vtkArchive.cxx
   vtkImageSlicePaint.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
@@ -102,6 +100,17 @@ set(SlicerBaseLogic_SRCS
   vtkImageStash.cxx
   )
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND SlicerBaseLogic_SRCS
+    vtkSlicerExtensionsLogic.cxx
+    vtkArchive.cxx
+    )
+  set_source_files_properties(
+    vtkArchive.cxx
+    WRAP_EXCLUDE
+  )
+endif()
+
 if(Slicer_USE_PYTHONQT)
   list(APPEND SlicerBaseLogic_SRCS
     vtkSlicerScriptedLoadableModuleLogic.cxx
@@ -110,7 +119,6 @@ endif()
 
 set_source_files_properties(
   vtkPichonFastMarchingPDF.cxx
-  vtkArchive.cxx
   WRAP_EXCLUDE
 )
 
@@ -142,8 +150,13 @@ set(libs
   FreeSurfer
   ${VTK_LIBRARIES}
   RemoteIO
-  ${LibArchive_LIBRARY}
   )
+
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND libs
+    ${LibArchive_LIBRARY}
+    )
+endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND libs

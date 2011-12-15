@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES LibArchive cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK qCDashAPI)
+set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
@@ -92,6 +92,9 @@ if(Slicer_BUILD_CLI_SUPPORT)
   if(Slicer_BUILD_SkullStripper)
     list(APPEND Slicer_DEPENDENCIES SkullStripper)
   endif()
+endif()
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND Slicer_DEPENDENCIES LibArchive qCDashAPI)
 endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
@@ -138,6 +141,7 @@ set(ep_cmake_boolean_args
   WITH_MEMCHECK
   Slicer_BUILD_CLI
   Slicer_BUILD_CLI_SUPPORT
+  Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Slicer_BUILD_QTLOADABLEMODULES
   Slicer_BUILD_QTSCRIPTEDMODULES
   Slicer_BUILD_OpenIGTLinkIF
@@ -255,6 +259,13 @@ if(Slicer_BUILD_CLI_SUPPORT)
   endif()
 endif()
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND ep_superbuild_extra_args
+    -DLibArchive_DIR:PATH=${LibArchive_DIR}
+    -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
+    )
+endif()
+
 # Set CMake OSX variable to pass down the external project
 set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
 if(APPLE)
@@ -303,14 +314,10 @@ ExternalProject_Add(${proj}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
-    # LibArchive
-    -DLibArchive_DIR:PATH=${LibArchive_DIR}
     # Qt
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     # CTK
     -DCTK_DIR:PATH=${CTK_DIR}
-    # qCDashAPI
-    -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
   INSTALL_COMMAND ""
   )
 
