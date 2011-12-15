@@ -84,20 +84,20 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
   QIcon historyIcon(":Icons/ModuleHistory.png");
 
-  // Modules menu
-  this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"),q);
-  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
-                   q, SLOT(onModuleSelected(QString)));
-
   // Modules Label
   q->addWidget(new QLabel(QObject::tr("Modules:"), q));
 
   // Modules comboBox
   this->ModulesComboBox = new ctkMenuComboBox(q);
   this->ModulesComboBox->setToolTip(QObject::tr("Select a module from the module list"));
-  this->ModulesComboBox->setMenu(this->ModulesMenu);
   this->ModulesComboBox->setMinimumContentsLength(20);
   q->addWidget(this->ModulesComboBox);
+
+  // Modules menu
+  this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"), this->ModulesComboBox);
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
+                   q, SLOT(onModuleSelected(QString)));
+  this->ModulesComboBox->setMenu(this->ModulesMenu);
 
   // History
   this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
