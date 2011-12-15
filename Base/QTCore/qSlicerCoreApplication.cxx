@@ -680,7 +680,6 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 void qSlicerCoreApplication::handleCommandLineArguments()
 {
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
-  Q_ASSERT(options);
 
 #ifndef Slicer_USE_PYTHONQT
   Q_UNUSED(options);

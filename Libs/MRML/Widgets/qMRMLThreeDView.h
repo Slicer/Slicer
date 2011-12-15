@@ -37,7 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLThreeDView : public ctkVTKRenderView
 public:
   /// Superclass typedef
   typedef ctkVTKRenderView Superclass;
-  
+
   /// Constructors
   explicit qMRMLThreeDView(QWidget* parent = 0);
   virtual ~qMRMLThreeDView();
@@ -57,7 +57,7 @@ public:
   vtkMRMLViewNode* mrmlViewNode()const;
 
   /// Returns the interactor style of the view
-  vtkInteractorObserver* interactorStyle()const;
+  //vtkInteractorObserver* interactorStyle()const;
 
 public slots:
 
