@@ -234,11 +234,12 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   endforeach()
 
   include(SlicerBlockCTKAppLauncherSettings)
+  set(splash_image_path ${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png)
   ctkAppLauncherConfigure(
     TARGET SlicerQT${SlicerQT_EXE_SUFFIX}
     APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
     APPLICATION_NAME Slicer
-    SPLASH_IMAGE_PATH ${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
+    SPLASH_IMAGE_PATH ${splash_image_path}
     SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
     SPLASHSCREEN_HIDE_DELAY_MS 3000
     HELP_SHORT_ARG "-h"
@@ -268,7 +269,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
     install(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
 
     install(
-      FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png"
+      FILES ${splash_image_path}
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       )
     install(
