@@ -1,4 +1,4 @@
-/* 
+/*
  * Here is where system computed values get stored.
  * These values should only change when the target compile platform changes.
  */
@@ -11,3 +11,6 @@
 #ifndef BUILD_SHARED_LIBS
 #define VTKMRMLLogic_STATIC
 #endif
+
+#cmakedefine MRML_USE_LibArchive
+

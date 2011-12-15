@@ -46,8 +46,10 @@
 #include <sstream>
 
 // LibArchive includes
-#include <archive.h>
-#include <archive_entry.h>
+#ifdef MRML_USE_LibArchive
+# include <archive.h>
+# include <archive_entry.h>
+#endif
 
 // For LoadDefaultParameterSets
 #ifdef WIN32
@@ -303,6 +305,12 @@ void vtkMRMLApplicationLogic::FitSliceToAll()
 //----------------------------------------------------------------------------
 const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *tempDir, vtkImageData *screenShot)
 {
+#ifndef MRML_USE_LibArchive
+  (void)(zipFileName);
+  (void)(tempDir);
+  (void)(screenShot);
+  return 0;
+#else
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("Zip: no scene to zip!");
@@ -715,6 +723,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     }
 
   return archiveFileName.c_str();
+#endif
 }
 
 //----------------------------------------------------------------------------

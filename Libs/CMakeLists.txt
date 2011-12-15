@@ -3,6 +3,11 @@ project(SlicerLibs)
 # Enable this option to avoid unnecessary re-compilation associated with command line module
 set(GENERATECLP_USE_MD5 ON)
 
+set(MRML_USE_LibArchive ${Slicer_BUILD_EXTENSIONMANAGER_SUPPORT})
+
+#set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
+#set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
+
 # --------------------------------------------------------------------------
 #                      ----] W A R N I N G [----
 # --------------------------------------------------------------------------
@@ -49,10 +54,6 @@ set(MGHImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
 set(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
-
-# IGT options
-#set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
-#set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
 
 # vtkITK contains tests that uses MRML's test data.
 set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Core/Testing/TestData)
