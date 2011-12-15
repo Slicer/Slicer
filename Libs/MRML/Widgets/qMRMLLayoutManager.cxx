@@ -205,6 +205,7 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
                                              sliceNode->GetLayoutColor()[1],
                                              sliceNode->GetLayoutColor()[2]);
   sliceWidget->setSliceViewName(sliceLayoutName);
+  sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
   sliceWidget->setSliceViewLabel(sliceLayoutLabel);
   sliceWidget->setSliceViewColor(sliceLayoutColor);
   sliceWidget->setMRMLScene(this->MRMLScene);
