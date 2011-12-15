@@ -267,11 +267,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         #-----------------------------------------------------------------------------
         include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
         include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASUploadPackage.cmake")
-        if(CMAKE_PATCH_VERSION LESS 3)
-          include("${CTEST_SOURCE_DIRECTORY}/CMake/Pre283CMakeParseArguments.cmake")
-        else()
-          include(CMakeParseArguments)
-        endif()
+        include(CMakeParseArguments)
         set(packages)
         message("Packaging ...")
         SlicerFunctionCTestPackage(
