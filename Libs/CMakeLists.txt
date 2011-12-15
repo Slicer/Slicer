@@ -28,7 +28,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 list(APPEND dirs
   MGHImageIO
-  IGT
+#  IGT
   MRML/Widgets
   )
 
@@ -50,8 +50,9 @@ set(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 
-set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
-set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
+# IGT options
+#set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
+#set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
 
 # vtkITK contains tests that uses MRML's test data.
 set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Core/Testing/TestData)
