@@ -160,6 +160,7 @@ bool qSlicerIOManager::openLoadSceneDialog()
 {
   qSlicerIO::IOProperties properties;
   properties["clear"] = true;
+  properties["objectName"] = "LoadSceneDialog";
   return this->openDialog(qSlicerIO::SceneFile, qSlicerFileDialog::Read, properties);
 }
 
@@ -168,12 +169,13 @@ bool qSlicerIOManager::openAddSceneDialog()
 {
   qSlicerIO::IOProperties properties;
   properties["clear"] = false;
+  properties["objectName"] = "AddSceneDialog";
   return this->openDialog(qSlicerIO::SceneFile, qSlicerFileDialog::Read, properties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, 
-                                  qSlicerFileDialog::IOAction action, 
+                                  qSlicerFileDialog::IOAction action,
                                   const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerIOManager);

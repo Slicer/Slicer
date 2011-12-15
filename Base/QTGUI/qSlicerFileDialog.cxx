@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 
 // CTK includes
 #include <ctkFileDialog.h>
@@ -130,6 +131,12 @@ qSlicerFileDialog::IOAction qSlicerStandardFileDialog::action()const
 ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     const qSlicerIO::IOProperties& ioProperties)
 {
+  if(ioProperties["objectName"].toString().isEmpty())
+    {
+    qWarning() << "Impossible to create the ctkFileDialog - No object name has been set";
+    return 0;
+    }
+
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog* fileDialog = new ctkFileDialog();
 
@@ -157,6 +164,8 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     fileDialog->setOption(QFileDialog::ShowDirsOnly);
     fileDialog->setFileMode(QFileDialog::DirectoryOnly);
     }
+
+  fileDialog->setObjectName(ioProperties["objectName"].toString());
 
   return fileDialog;
 }
@@ -242,6 +251,7 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
 {
   QStringList files;
   ioProperties["multipleFiles"] = QFileDialog::ExistingFiles;
+  ioProperties["objectName"] = "getOpenFileName";
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
                                 ioProperties);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
@@ -251,6 +261,7 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
     files = fileDialog->selectedFiles();
     }
   ioManager->setFavorites(fileDialog->sidebarUrls());
+  delete fileDialog;
   return files;
 }
 
@@ -260,6 +271,7 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
 {
   QString directory;
   ioProperties["fileMode"] = QFileDialog::Directory;
+  ioProperties["objectName"] = "getExistingDirectory";
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
                                 ioProperties);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
@@ -269,5 +281,6 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
     directory = fileDialog->selectedFiles().value(0);
     }
   ioManager->setFavorites(fileDialog->sidebarUrls());
+  delete fileDialog;
   return directory;
 }

@@ -36,8 +36,7 @@ public:
   /// used.
   bool openDialog(qSlicerIO::IOFileType fileType,
                   qSlicerFileDialog::IOAction action,
-                  const qSlicerIO::IOProperties& ioProperties
-                    = qSlicerIO::IOProperties());
+                  const qSlicerIO::IOProperties& ioProperties);
 
   void addHistory(const QString& path);
   const QStringList& history()const;
@@ -95,13 +94,17 @@ private:
 //------------------------------------------------------------------------------
 bool qSlicerIOManager::openAddDataDialog()
 {
-  return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddDataDialog";
+  return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddVolumeDialog()
 {
-  return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddVolumeDialog";
+  return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,49 +112,64 @@ bool qSlicerIOManager::openAddVolumesDialog()
 {
   qSlicerIO::IOProperties ioProperties;
   ioProperties["multipleFiles"] = true;
+  ioProperties["objectName"] = "AddVolumesDialog";
   return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddModelDialog()
 {
-  return this->openDialog(qSlicerIO::ModelFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddModelDialog";
+  return this->openDialog(qSlicerIO::ModelFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddScalarOverlayDialog()
 {
-  return this->openDialog(qSlicerIO::ScalarOverlayFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddScalarOverlayDialog";
+  return this->openDialog(qSlicerIO::ScalarOverlayFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddTransformDialog()
 {
-  return this->openDialog(qSlicerIO::TransformFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddTransformDialog";
+  return this->openDialog(qSlicerIO::TransformFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddColorTableDialog()
 {
-  return this->openDialog(qSlicerIO::ColorTableFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddColorTableDialog";
+  return this->openDialog(qSlicerIO::ColorTableFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddFiducialDialog()
 {
-  return this->openDialog(qSlicerIO::FiducialListFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddFiducialDialog";
+  return this->openDialog(qSlicerIO::FiducialListFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddFiberBundleDialog()
 {
-  return this->openDialog(qSlicerIO::FiberBundleFile, qSlicerFileDialog::Read);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "AddFiberBundleDialog";
+  return this->openDialog(qSlicerIO::FiberBundleFile, qSlicerFileDialog::Read, ioProperties);
 }
 
 //------------------------------------------------------------------------------
 bool qSlicerIOManager::openSaveDataDialog()
 {
-  return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Write);
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["objectName"] = "SaveDataDialog";
+  return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Write, ioProperties);
 }
 
 #endif
