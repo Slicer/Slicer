@@ -1,8 +1,0 @@
-
-scm       svn
-svnpath   https://www.nitrc.org/svn/abc/trunk
-name      ABC
-cmakeproject ABC
-svnusername slicerbot
-svnpassword slicer
-

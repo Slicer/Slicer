@@ -1,7 +1,0 @@
-
-scm       svn
-svnpath   https://www.nitrc.org/svn/slicer3examples/trunk/Slicer3ExampleModules/CommandLine
-name      ExampleCommandLine
-cmakeproject      Slicer3ExampleModules
-svnusername slicerbot
-svnpassword slicer
