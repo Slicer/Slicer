@@ -35,9 +35,13 @@ else()
   set(teem_PNG_LIBRARY ${VTK_DIR}/bin/libvtkpng.so)
 endif()
 
+set(teem_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem-1.10.0-src.tar.gz)
+set(teem_MD5 efe219575adc89f6470994154d86c05b)
+
 ExternalProject_Add(${proj}
-  SVN_REPOSITORY "http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0"
-  UPDATE_COMMAND ""
+  URL ${teem_URL}
+  URL_MD5 ${teem_MD5}
+  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR teem
   BINARY_DIR teem-build
   CMAKE_GENERATOR ${gen}
