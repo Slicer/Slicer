@@ -33,12 +33,15 @@ if(WIN32)
     set(TCL_TK_VERSION_DOT "8.5")
     set(TCL_TK_VERSION "85")
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl85-x64-build")
+    set(tcl_SVN_REVISION -r "159")
   else()
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
+    set(tcl_SVN_REVISION -r "176")
   endif()
   set(tcl_SOURCE_DIR tcl-build)
 else()
   set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
+  set(tcl_SVN_REVISION -r "81")
   set(tcl_SOURCE_DIR tcl/tcl)
   set(tcl_BUILD_IN_SOURCE 1)
 
@@ -70,6 +73,7 @@ endif()
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
+  SVN_REVISION ${tcl_SVN_REVISION}
   SOURCE_DIR ${tcl_SOURCE_DIR}
   BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
   UPDATE_COMMAND ""

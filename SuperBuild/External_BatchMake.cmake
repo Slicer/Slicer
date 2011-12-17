@@ -25,9 +25,10 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
-  GIT_TAG "origin/master"
+  GIT_TAG "43d21fcccd09e5a12497bc1fb924bc6d5718f98c"
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
+  UPDATE_COMMAND ""
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_compiler_args}

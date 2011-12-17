@@ -18,6 +18,7 @@ set(proj SciPy)
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.scipy.org/svn/scipy/branches/0.7.x"
   SOURCE_DIR python/scipy
+  UPDATE_COMMAND ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND ""

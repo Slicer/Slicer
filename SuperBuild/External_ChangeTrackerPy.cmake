@@ -25,6 +25,7 @@ if(NOT DEFINED ChangeTrackerPy_SOURCE_DIR)
     GIT_TAG "06d5f0c7de0ed66f5ef76a5022a01f23e44f1b52"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
+    UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

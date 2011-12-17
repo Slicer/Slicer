@@ -15,8 +15,8 @@ set(proj NUMPY)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
-set(numpy_url http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
-set(numpy_md5 5c7b5349dc3161763f7f366ceb96516b)
+set(numpy_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
+set(numpy_MD5 5c7b5349dc3161763f7f366ceb96516b)
 
 # Note: Both NUMPY_configure_step.cmake and NUMPY_make_step.cmake expects
 #       this variable to be defined.
@@ -39,8 +39,8 @@ configure_file(
 # Create an external project to download numpy,
 # and configure and build it
 ExternalProject_Add(${proj}
-  URL ${numpy_url}
-  URL_MD5 ${numpy_md5}
+  URL ${numpy_URL}
+  URL_MD5 ${numpy_MD5}
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY

@@ -31,9 +31,10 @@ if(NOT DEFINED qCDashAPI_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/jcfr/qCDashAPI.git"
-    GIT_TAG "origin/master"
+    GIT_TAG "9cd19663c1884b28ba4ad4153b290bf9da5500ab"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
+    UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

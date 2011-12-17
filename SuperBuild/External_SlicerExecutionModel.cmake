@@ -32,9 +32,10 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
-    GIT_TAG "origin/master"
+    GIT_TAG "4e34682a8deefc8b6279d719ebc066c4dee6351e"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
+    UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

@@ -18,6 +18,7 @@ set(proj incrTcl)
 set(INCR_TCL_VERSION_DOT "3.2")
 set(INCR_TCL_VERSION "32")
 set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
+set(incrTcl_SVN_REVISION -r "4")
 set(incrTcl_BUILD_IN_SOURCE 1)
 set(incrTcl_PATCH_COMMAND "")
 
@@ -52,15 +53,10 @@ configure_file(
 set(incrTcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_install_step.cmake)
 
 
-#-----------------------------------------------------------------------------
-# WARNING - Since the likelihood of updating that project is close to zero,
-#           let's disable its UPDATE_COMMAND. Doing so will avoid unnecessary
-#           configure/make/install cycle.
-#-----------------------------------------------------------------------------
-
 if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
+    SVN_REVISION ${incrTcl_SVN_REVISION}
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${incrTcl_BUILD_IN_SOURCE}
     PATCH_COMMAND ${incrTcl_PATCH_COMMAND}

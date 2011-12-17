@@ -38,6 +38,7 @@ if(NOT DEFINED ITK_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
+    UPDATE_COMMAND ""
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

@@ -18,6 +18,7 @@ if(NOT WIN32)
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
+  set(tk_SVN_REVISION -r "114")
   set(tk_SOURCE_DIR "")
   set(tk_BINARY_DIR "")
   set(tk_BUILD_IN_SOURCE 0)
@@ -55,6 +56,7 @@ if(NOT WIN32)
 
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
+    SVN_REVISION ${tk_SVN_REVISION}
     SOURCE_DIR ${tk_SOURCE_DIR}
     UPDATE_COMMAND ""
     BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
