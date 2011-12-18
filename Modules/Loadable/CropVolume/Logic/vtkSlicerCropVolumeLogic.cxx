@@ -245,6 +245,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   this->GetMRMLScene()->RemoveNode(refVolume);
 
+  outputVolume->SetAndObserveTransformNodeID(NULL);
   outputVolume->ModifiedSinceReadOn();
   pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
   return 0;
