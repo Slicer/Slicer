@@ -33,6 +33,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
   Q_OBJECT
   Q_PROPERTY(bool noSplash READ noSplash)
   Q_PROPERTY(bool disableToolTips READ disableToolTips)
+  Q_PROPERTY(bool noMainWindow READ noMainWindow)
   Q_PROPERTY(bool showPythonInteractor READ showPythonInteractor)
 public:
   typedef qSlicerCoreCommandOptions Superclass;

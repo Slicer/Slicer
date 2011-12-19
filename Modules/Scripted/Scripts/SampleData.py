@@ -24,8 +24,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     # Trigger the menu to be added when application has started up
-    qt.QTimer.singleShot(0, self.addMenu);
-    
+    if not slicer.app.commandOptions().noMainWindow :
+      qt.QTimer.singleShot(0, self.addMenu);
+
 
   def addMenu(self):
     actionIcon = self.parent.icon

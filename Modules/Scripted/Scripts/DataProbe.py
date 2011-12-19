@@ -19,16 +19,19 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     # TODO: need a DataProbe icon
     #parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
     self.parent = parent
+    self.infoWidget = 0
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     # Trigger the menu to be added when application has started up
-    qt.QTimer.singleShot(0, self.addView);
+    if not slicer.app.commandOptions().noMainWindow :
+      qt.QTimer.singleShot(0, self.addView);
 
 
   def __del__(self):
-    self.infoWidget.removeObservers()
+    if self.infoWidget:
+      self.infoWidget.removeObservers()
 
   def addView(self):
     """
