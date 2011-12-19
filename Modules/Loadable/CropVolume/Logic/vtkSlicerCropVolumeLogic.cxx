@@ -73,7 +73,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
-  vtkMRMLLinearTransformNode *movingVolumeTransform = NULL;
+  vtkMRMLLinearTransformNode *movingVolumeTransform = NULL, *roiTransform = NULL;
 
   // make sure inputs are initialized
   if(!inputVolume || !inputROI ){
@@ -179,6 +179,14 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputIJKToRAS->SetElement(1,3,roiXYZ[1]-roiRadius[1]+outputSpacing[1]*.5);
   outputIJKToRAS->SetElement(2,3,roiXYZ[2]-roiRadius[2]+outputSpacing[2]*.5);
 
+  // account for the ROI parent transform, if present
+  roiTransform = vtkMRMLLinearTransformNode::SafeDownCast(inputROI->GetParentTransformNode());
+  if(roiTransform){
+    vtkMatrix4x4 *roiMatrix = vtkMatrix4x4::New();
+    roiTransform->GetMatrixTransformToWorld(roiMatrix);
+    outputIJKToRAS->Multiply4x4(roiMatrix, outputIJKToRAS, outputIJKToRAS);
+  }
+
   outputRASToIJK->DeepCopy(outputIJKToRAS);
   outputRASToIJK->Invert();
 
@@ -191,17 +199,6 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   refVolume->SetIJKToRASMatrix(outputIJKToRAS);
   refVolume->SetRASToIJKMatrix(outputRASToIJK);
-
-  /*
-  vtkMRMLDisplayNode* inputDisplay = inputVolume->GetDisplayNode();
-  if(inputDisplay){
-    vtkMRMLDisplayNode* outputDisplay = inputDisplay->NewInstance();
-    outputDisplay->Copy(inputDisplay);
-    this->GetMRMLScene()->AddNodeNoNotify(outputDisplay);
-    outputVolume->SetAndObserveDisplayNodeID(outputDisplay->GetID());
-    outputDisplay->Delete();
-  }
-  */
 
   inputRASToIJK->Delete();
   inputIJKToRAS->Delete();
@@ -227,7 +224,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
   cmdNode->SetParameterAsString("referenceVolume",refVolume->GetID());
   cmdNode->SetParameterAsString("outputVolume",outputVolume->GetID());
-  movingVolumeTransform = static_cast<vtkMRMLLinearTransformNode*>(inputVolume->GetParentTransformNode());
+
+  movingVolumeTransform = vtkMRMLLinearTransformNode::SafeDownCast(inputVolume->GetParentTransformNode());
 
   if(movingVolumeTransform != NULL)
     cmdNode->SetParameterAsString("transformationFile",movingVolumeTransform->GetID());
