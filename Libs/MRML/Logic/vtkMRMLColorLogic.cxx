@@ -332,7 +332,9 @@ const char * vtkMRMLColorLogic::GetProceduralColorNodeID(const char *name)
 //----------------------------------------------------------------------------
 std::string vtkMRMLColorLogic::GetFileColorNodeSingletonTag(const char * fileName)
 {
-  return vtksys::SystemTools::GetFilenameName(fileName);
+  std::string singleton = std::string("File") +
+    vtksys::SystemTools::GetFilenameName(fileName);
+  return singleton;
 }
 
 //----------------------------------------------------------------------------
@@ -340,7 +342,7 @@ const char *vtkMRMLColorLogic::GetFileColorNodeID(const char * fileName)
 {
   char *id;
   std::string idStr =
-    std::string("vtkMRMLColorTableNodeFile") +
+    std::string("vtkMRMLColorTableNode") +
     vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName);
   id =  new char[idStr.length() + 1];
   strcpy(id, idStr.c_str());
