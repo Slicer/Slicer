@@ -108,21 +108,9 @@ vtkScalarsToColors* vtkMRMLProceduralColorNode::GetScalarsToColors()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLProceduralColorNode::SetType(int type)
+const char * vtkMRMLProceduralColorNode::GetTypeAsString()
 {
-  vtkWarningMacro("Subclass didn't define SetType!");
-
-  this->Type = type;
-
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
-
-  // Set up the custom colours here for this type
-  
-  // invoke a modified event
-  this->Modified();
-  
-  // invoke a type  modified event
-  this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
+  return this->GetName();
 }
 
 //---------------------------------------------------------------------------

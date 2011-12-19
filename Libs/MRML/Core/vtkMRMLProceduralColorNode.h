@@ -59,9 +59,8 @@ public:
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// 
-  /// Get/Set for Type. In SetType, set up the custom colour options for this
-  /// set of colours
-  virtual void SetType(int type);
+  /// return a text string describing the colour look up table type
+  virtual const char * GetTypeAsString();
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
