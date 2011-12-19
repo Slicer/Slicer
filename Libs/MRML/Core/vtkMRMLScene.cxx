@@ -99,8 +99,8 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
-  this->UniqueIDByClass.clear();
   this->UniqueIDs.clear();
+  this->UniqueNames.clear();
 
   this->Nodes =  vtkCollection::New();
   this->UndoStackSize = 100;
@@ -110,7 +110,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->ReferencedIDs.clear() ;
   this->ReferencingNodes.clear();
   this->ReferencedIDChanges.clear();
-
 
   this->CacheManager = NULL;
   this->DataIOManager = NULL;
@@ -483,8 +482,8 @@ void vtkMRMLScene::Clear(int removeSingletons)
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
-  this->UniqueIDByClass.clear();
   this->UniqueIDs.clear();
+  this->UniqueNames.clear();
 
   if ( this->GetUserTagTable() != NULL )
     {
@@ -824,6 +823,11 @@ int vtkMRMLScene::Import()
 
   if (res)
     {
+    /// In case the scene needs to change the ID of some nodes to add, the new
+    /// ID should not be one already existing in the scene nor one of the
+    /// imported scene.
+    /// Mark all the node IDs of the scene as reserved so the node ID
+    /// generator doesn't choose them.
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
     for (scene->InitTraversal(it);
@@ -1161,30 +1165,6 @@ int vtkMRMLScene::Commit(const char* url)
   return 1;
 }
 
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::RequestNodeID(vtkMRMLNode *node, const char *ID)
-{
-    if (node == NULL || ID == NULL)
-      {
-      return;
-      }
-    // is this ID in use?
-    if (this->GetNodeByID(ID) == NULL)
-      {
-      // not used yet, set it
-      vtkDebugMacro("vtkMRMLScene::RequestNodeID: ID " << ID << " not in use, setting node's ID");
-      node->SetID(ID);
-      }
-    else
-      {
-      // it's used already, get a unique id postfix for this class and use
-      // that in conjunction with the ID
-      node->ConstructAndSetID(ID, GetUniqueIDIndexByClass(node->GetClassName()));
-      vtkDebugMacro("vtkMRMLScene::RequestNodeID: ID " << ID << " was in use, set the node id to " << node->GetID());
-      }
-}
-
 //------------------------------------------------------------------------------
 vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
@@ -1215,7 +1195,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       // A node can't be added twice into the scene
       assert(sn != n);
       std::string oldId(sn->GetID());
-      std::string newId(n->GetID());
+      std::string newId(n->GetID() ? n->GetID() : sn->GetID());
       sn->CopyWithSceneWithSingleModifiedEvent(n);
 
       this->RemoveNodeReferences(n);
@@ -1237,6 +1217,11 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       return sn;
       }
     }
+  // Usually nodes to add to the scene don't have an ID set. However, when
+  // importing a scene (vtkMRMLScene::Import()), nodes to add already have an
+  // ID. This can create a node ID conflict with the nodes already in the
+  // scene. A new unique ID  must be set to the node to add and references to
+  // the node must be updated with the new ID.
   if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL)
     {
     std::string oldID;
@@ -1244,17 +1229,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       {
       oldID = n->GetID();
       }
-    //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
-
-    std::string className(n->GetClassName());
-
-    // include SingletonTag in node ID
-    if (n->GetSingletonTag() != NULL)
-      {
-      // TODO: uncomment this once widgets implement batch upadte on scene load
-      // className += std::string(n->GetSingletonTag());
-      }
-    n->ConstructAndSetID(className.c_str(), this->GetUniqueIDIndexByClass(className.c_str()));
+    n->SetID(this->GenerateUniqueID(n).c_str());
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID());
@@ -1265,9 +1240,10 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     }
 
   n->SetSceneRootDir(this->RootDirectory.c_str());
+  // Set a default name if none is given automatically
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
     {
-    n->SetName(n->GetID());
+    n->SetName(this->GenerateUniqueName(n).c_str());
     }
   n->SetScene( this );
   this->Nodes->vtkCollection::AddItem((vtkObject *)n);
@@ -1802,6 +1778,28 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetFirstNodeByName(const char* name)
+{
+  vtkMRMLNode *node = 0;
+  if (name == 0)
+    {
+    vtkErrorMacro("GetNodesByName: name is null");
+    return node;
+    }
+
+  vtkCollectionSimpleIterator it;
+  for (this->Nodes->InitTraversal(it);
+       (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
+    {
+    if (node->GetName() != 0 && !strcmp(node->GetName(), name))
+      {
+      return node;
+      }
+    }
+  return 0;
+}
+
+//------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(std::string id)
 {
   return this->GetNodeByID(id.c_str());
@@ -1914,7 +1912,7 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
       }
     int modifyStatus = n->GetDisableModifiedEvent();
     n->SetDisableModifiedEvent(1);
-    n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+    n->SetID(this->GenerateUniqueID(n).c_str());
     n->SetDisableModifiedEvent(modifyStatus);
     std::string newID(n->GetID());
     if (oldID != newID)
@@ -1994,7 +1992,7 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
       }
     int modifyStatus = n->GetDisableModifiedEvent();
     n->SetDisableModifiedEvent(1);
-    n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+    n->SetID(this->GenerateUniqueID(n).c_str());
     n->SetDisableModifiedEvent(modifyStatus);
     std::string newID(n->GetID());
     if (oldID != newID)
@@ -2105,137 +2103,146 @@ vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
     }
 }
 
-
 //------------------------------------------------------------------------------
-int vtkMRMLScene::GetUniqueIDIndexByClass(const char* className)
+std::string vtkMRMLScene::GenerateUniqueID(vtkMRMLNode* node)
 {
-  if (!className)
+  assert(node != 0);
+  std::string baseID = node->GetClassName();
+  if (node->GetSingletonTag())
     {
-    vtkErrorMacro("GetUniqueIDIndexByClass: class name is null");
-    return -1;
+    return baseID + node->GetSingletonTag();
     }
-  int hint = 1;
-  std::map< std::string, int>::iterator it = this->UniqueIDByClass.find(std::string(className));
-  if (it != this->UniqueIDByClass.end())
-    {
-    hint = it->second;
-    }
-  int index = this->GetUniqueIDIndexByClassFromIndex(className, hint);
-  this->UniqueIDByClass[std::string(className)] = index+1;
-  return index;
+  return this->GenerateUniqueID(baseID);
 }
 
 //------------------------------------------------------------------------------
-int vtkMRMLScene::GetUniqueIDIndexByClassFromIndex(const char* className, int hint)
+std::string vtkMRMLScene::GenerateUniqueID(const std::string& baseID)
 {
-  if (!className)
-    {
-    vtkErrorMacro("GetUniqueIDIndexByClassFromIndex: class name is null");
-    return -1;
-    }
+  int uniqueIDIndex = this->GetUniqueIDIndex(baseID);
+  // Register ID so it won't be available next time GetUniqueIDIndex is called
+  this->UniqueIDs[baseID] = uniqueIDIndex;
+  // Create the unique ID
+  return this->BuildID(baseID, uniqueIDIndex);
+}
 
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetUniqueIDIndex(const std::string& baseID)
+{
+  assert(baseID.size() != 0);
+  int lastIDIndex = 0;
+  std::map< std::string, int>::const_iterator uidIt =
+    this->UniqueIDs.find(baseID);
+  if (uidIt != this->UniqueIDs.end())
+    {
+    lastIDIndex = uidIt->second;
+    }
+  bool isUnique = false;
+  int index = lastIDIndex;
   // keep looping until you find an id that isn't yet in the scene
   // TODO: this could be speeded up if it becomes a bottleneck
-  int index;
-  std::string candidateName;
-  for (index = hint; ; index++)
+  for (; !isUnique; )
     {
-    std::stringstream ss;
-    ss << className;
-    ss << index;
-    ss >> candidateName;
-    if ( this->GetNodeByID( candidateName.c_str() ) == NULL )
-      {
-      // check reserved ID's
-      if (this->ReservedIDs.find(candidateName) == this->ReservedIDs.end())
-        {
-        break;
-        }
-      }
+    ++index;
+    std::string candidateID = this->BuildID(baseID, index);
+    isUnique =
+      (this->GetNodeByID(candidateID) == 0) &&
+      (std::find(this->ReservedIDs.begin(), this->ReservedIDs.end(), candidateID)
+         == this->ReservedIDs.end());
     }
   return index;
 }
 
 //------------------------------------------------------------------------------
-const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
+std::string vtkMRMLScene::BuildID(const std::string& baseID, int idIndex)const
 {
-  if (!className)
+  std::stringstream ss;
+  ss << baseID;
+  // idIndex == 0 is for singleton nodes.
+  if (idIndex != 0)
     {
-    vtkErrorMacro("GetUniqueNameByString: class name is null");
-    return "null";
+    ss << idIndex;
     }
-
-  std::string sname(className);
-  if (UniqueIDByClass.find(sname) == UniqueIDByClass.end() )
-    {
-    // first name is "foo", then "foo_1", then "foo_2"
-    UniqueIDByClass[className] = 0;  // Start counting at 0
-    }
-  int id = UniqueIDByClass[sname];
-
-  std::string name;
-
-  while (true)
-    {
-    std::stringstream ss;
-    ss << className;
-    if (id > 0)
-      {
-      ss << "_" << id;
-      }
-    name = ss.str();
-    bool nameExists = false;
-    unsigned int i;
-    for (i=0; i< UniqueIDs.size(); i++)
-      {
-      if (UniqueIDs[i] == name)
-        {
-        nameExists = true;
-        break;
-        }
-      }
-    if (nameExists)
-      {
-      id++;
-      continue;
-      }
-    else
-      {
-      // double check that no node has this name
-      vtkCollection *nodesByName = this->GetNodesByName(name.c_str());
-      int numberOfItems = nodesByName->GetNumberOfItems();
-      nodesByName->Delete();
-      if ( numberOfItems == 0 )
-        {
-        break;
-        }
-      else
-        {
-        vtkDebugMacro("GetUniqueNameByString: Thought we had a valid index " << id << ", but found a name that matches " << name.c_str() << endl);
-        nameExists = true;
-        id++;
-        continue;
-        }
-      }
-    }
-  UniqueIDByClass[className] = id + 1;
-  UniqueIDs.push_back(name);
-  return UniqueIDs[UniqueIDs.size()-1].c_str();
+  return ss.str();
 }
 
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GenerateUniqueName(vtkMRMLNode* node)
+{
+  assert(node);
+  return this->GenerateUniqueName(node->GetNodeTagName());
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::GenerateUniqueName(const std::string& baseName)
+{
+  int uniqueNameIndex = this->GetUniqueNameIndex(baseName);
+  // Register name so it won't be available next time GetUniqueNameIndex is called
+  this->UniqueNames[baseName] = uniqueNameIndex;
+  // Create the unique name
+  return this->BuildName(baseName, uniqueNameIndex);
+}
+
+//------------------------------------------------------------------------------
+const char* vtkMRMLScene::GetUniqueNameByString(const char* baseName)
+{
+  static std::string unsafeName;
+  unsafeName = this->GenerateUniqueName(baseName);
+  return unsafeName.c_str();
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetUniqueNameIndex(const std::string& baseName)
+{
+  assert(baseName.size() > 0);
+  int lastNameIndex = -1;
+  std::map< std::string, int>::const_iterator uNameIt =
+    this->UniqueNames.find(baseName);
+  if (uNameIt != this->UniqueNames.end())
+    {
+    lastNameIndex = uNameIt->second;
+    }
+  bool isUnique = false;
+  int index = lastNameIndex;
+  // keep looping until you find a name that isn't yet in the scene
+  // TODO: this could be speeded up if it becomes a bottleneck
+  for (; !isUnique; )
+    {
+    ++index;
+    std::string candidateName = this->BuildName(baseName, index);
+    isUnique = (this->GetFirstNodeByName(candidateName.c_str()) == 0);
+    }
+  return index;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLScene::BuildName(const std::string& baseName, int nameIndex)const
+{
+  std::stringstream name;
+  name << baseName;
+  if (nameIndex > 0)
+    {
+    // first name is "foo", then "foo_1", then "foo_2"
+    name << "_" << nameIndex;
+    }
+  return name.str();
+}
+
+//------------------------------------------------------------------------------
 void vtkMRMLScene::AddReservedID(const char *id)
 {
   if (id == NULL)
     {
     return;
     }
-  else
-    {
-    this->ReservedIDs[std::string(id)] = 0;
-    }
+  this->ReservedIDs.push_back(std::string(id));
 }
 
-//------------
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveReservedIDs()
+{
+  this->ReservedIDs.clear();
+}
+
 //------------------------------------------------------------------------------
 // Pushes the current scene onto the undo stack, and makes a backup copy of the
 // passed node so that changes to the node are undoable; several signatures to handle
@@ -2928,7 +2935,7 @@ void vtkMRMLScene::UpdateNodeChangedIDs()
       node = this->GetNodeByID(iterChanged->first.c_str());
       if (node)
         {
-        node->UpdateID(iterChanged->second.c_str());
+        node->SetID(iterChanged->second.c_str());
         }
       }
     }
@@ -3122,7 +3129,7 @@ GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
     if (originalNode)
       {
       node->Copy(originalNode);
-      node->CopyID(originalNode);
+      node->SetID(originalNode->GetID());
       }
 
     // add the nodes to the scene

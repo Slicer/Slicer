@@ -47,6 +47,9 @@ public:
   qMRMLSceneModelPrivate(qMRMLSceneModel& object);
   virtual ~qMRMLSceneModelPrivate();
   void init();
+
+  QModelIndexList indexes(const QString& nodeID)const;
+
   QStringList extraItems(QStandardItem* parent, const QString& extraType)const;
   void insertExtraItem(int row, QStandardItem* parent,
                        const QString& text, const QString& extraType,

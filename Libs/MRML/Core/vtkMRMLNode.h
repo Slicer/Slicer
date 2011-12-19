@@ -172,7 +172,10 @@ public:
   virtual void Copy(vtkMRMLNode *node);
 
   /// 
-  /// Copy everything from another node of the same type.
+  /// Copy everything (including Scene and ID) from another node of the same
+  /// type.
+  /// Note the the node is not added into the scene of \a node. You must do it
+  /// manually before or after CopyWithScene.
   void CopyWithScene(vtkMRMLNode *node);
   
   /// 
@@ -274,18 +277,12 @@ public:
   //vtkSetStringMacro(ID);
   vtkGetStringMacro(ID);
 
-  void UpdateID(const char *newID)
-    {
-    this->SetID(newID);
-    };
-  /// 
-  /// Copy node's ID
-  void CopyID(vtkMRMLNode *node);
-
   /// 
   /// Tag that make this node a singleton in the scene
   /// if NULL multiple instances of this node class allowed,
   /// otherwise scene can only replace this node not add new instances.
+  /// The SingletonTag is used by the scene to build a unique ID.
+  /// \sa vtkMRMLScene::BuildID
   vtkSetStringMacro(SingletonTag);
   vtkGetStringMacro(SingletonTag);
 
@@ -422,7 +419,8 @@ public:
   /// this node is associated changes
   enum
     {
-      HierarchyModifiedEvent = 16000
+      HierarchyModifiedEvent = 16000,
+      IDChangedEvent = 16001
     };
 
 protected:
@@ -475,17 +473,9 @@ protected:
   
 private:
   /// 
-  /// ID use by other nodes to reference this node in XML
-  vtkSetStringMacro(ID);
- 
-  /// 
-  /// Return the string that can be used for the id given a string and an
-  /// index
-  const char* ConstructID(const char * str, int index);
-
-  /// 
-  /// Set the ID from a string and an index, calls ConstructID
-  void ConstructAndSetID(const char * str, int index);
+  /// ID use by other nodes to reference this node in XML.
+  /// The ID must be unique in the scene. Only the scene can set the ID
+  void SetID(const char* newID);
 
   /// 
   /// Variable used to manage encoded/decoded URL strings

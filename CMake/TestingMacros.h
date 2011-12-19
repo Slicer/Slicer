@@ -347,18 +347,6 @@
     TEST_SET_GET_STRING( node, Description );                           \
     TEST_SET_GET_STRING( node, SceneRootDir );                          \
     TEST_SET_GET_STRING( node, Name );                                  \
-    node->UpdateID("newID");                                            \
-    if (strcmp(node->GetID(), "newID") != 0)                            \
-      {                                                                 \
-      std::cerr << "Error in UpdateID()" << std::endl;                  \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    node->CopyID(node1);                                                \
-    if (node->GetID() != node1->GetID())                                \
-      {                                                                 \
-      std::cerr << "Error in CopyID()" << std::endl;                    \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
     TEST_SET_GET_STRING( node, SingletonTag );                          \
     TEST_SET_GET_BOOLEAN( node, ModifiedSinceRead );                    \
     TEST_SET_GET_BOOLEAN( node, SaveWithScene );                        \

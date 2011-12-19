@@ -172,6 +172,9 @@ protected slots:
   void onMRMLSceneDeleted(vtkObject* scene);
 
   void onMRMLNodeModified(vtkObject* node);
+  /// The node has its ID changed. The scene model needs to update the UIDRole
+  /// associated with the node in order to keep being in sync.
+  void onMRMLNodeIDChanged(vtkObject* node, void* callData);
   void onItemChanged(QStandardItem * item);
   void delayedItemChanged();
 
@@ -228,6 +231,9 @@ protected:
   /// \sa updateItemFromNode, updateNodeFromItemData, updateItemFromNode,
   /// nodeFlags
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
+
+  /// Update the items associated with the node and uid.
+  void updateNodeItems(vtkMRMLNode* node, const QString& uid);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);

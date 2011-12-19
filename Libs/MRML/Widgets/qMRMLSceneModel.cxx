@@ -87,10 +87,43 @@ void qMRMLSceneModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
+QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID)const
+{
+  Q_Q(const qMRMLSceneModel);
+  QModelIndex scene = q->mrmlSceneIndex();
+  if (scene == QModelIndex())
+    {
+    return QModelIndexList();
+    }
+  // QAbstractItemModel::match doesn't browse through columns
+  // we need to do it manually
+  QModelIndexList nodeIndexes = q->match(
+    scene, qMRMLSceneModel::UIDRole, nodeID,
+    1, Qt::MatchExactly | Qt::MatchRecursive);
+  Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
+  if (nodeIndexes.size() == 0)
+    {
+    return nodeIndexes;
+    }
+  // Add the QModelIndexes from the other columns
+  const int row = nodeIndexes[0].row();
+  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
+  const int sceneColumnCount = q->columnCount(nodeParentIndex);
+  for (int j = 1; j < sceneColumnCount; ++j)
+    {
+    nodeIndexes << nodeParentIndex.child(row, j);
+    }
+  return nodeIndexes;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 {
   Q_Q(qMRMLSceneModel);
   q->qvtkDisconnect(0, vtkCommand::ModifiedEvent, q, SLOT(onMRMLNodeModified(vtkObject*)));
+  q->qvtkDisconnect(0, vtkMRMLNode::IDChangedEvent,
+                    q, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
+
   if (!this->ListenNodeModifiedEvent)
     {
     return;
@@ -99,8 +132,11 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
   const int count = q->rowCount(sceneIndex);
   for (int i = 0; i < count; ++i)
     {
-    q->qvtkConnect(q->mrmlNodeFromIndex(sceneIndex.child(i,0)),vtkCommand::ModifiedEvent,
+    vtkMRMLNode* node = q->mrmlNodeFromIndex(sceneIndex.child(i,0));
+    q->qvtkConnect(node,vtkCommand::ModifiedEvent,
                    q, SLOT(onMRMLNodeModified(vtkObject*)));
+    q->qvtkConnect(node, vtkMRMLNode::IDChangedEvent,
+                   q, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
     }
 }
 
@@ -426,32 +462,9 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
 {
-  QModelIndex scene = this->mrmlSceneIndex();
-  if (scene == QModelIndex())
-    {
-    return QModelIndexList();
-    }
-  // QAbstractItemModel::match doesn't browse through columns
-  // we need to do it manually
-  QModelIndexList nodeIndexes = this->match(
-    scene, qMRMLSceneModel::UIDRole, QString(node->GetID()),
-    1, Qt::MatchExactly | Qt::MatchRecursive);
-  Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
-  if (nodeIndexes.size() == 0)
-    {
-    return nodeIndexes;
-    }
-  // Add the QModelIndexes from the other columns
-  const int row = nodeIndexes[0].row();
-  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
-  const int sceneColumnCount = this->columnCount(nodeParentIndex);
-  for (int j = 1; j < sceneColumnCount; ++j)
-    {
-    nodeIndexes << nodeParentIndex.child(row, j);
-    }
-  return nodeIndexes;
+  Q_D(const qMRMLSceneModel);
+  return d->indexes(QString(node->GetID()));
 }
-
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModel::parentNode(vtkMRMLNode* node)const
@@ -605,6 +618,8 @@ void qMRMLSceneModel::updateScene()
   // could be called ...)
   qvtkDisconnect(0, vtkCommand::ModifiedEvent,
                  this, SLOT(onMRMLNodeModified(vtkObject*)));
+  qvtkDisconnect(0, vtkMRMLNode::IDChangedEvent,
+                 this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
 
   // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
@@ -740,6 +755,8 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
     {
     qvtkConnect(node, vtkCommand::ModifiedEvent,
                 this, SLOT(onMRMLNodeModified(vtkObject*)));
+    qvtkConnect(node, vtkMRMLNode::IDChangedEvent,
+                this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
     }
   return items[0];
 }
@@ -1092,6 +1109,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
              " vtkMRMLScene::AddNodeNoNotify() has been used instead of "
              "vtkMRMLScene::AddNode");
   Q_UNUSED(connectionsRemoved);
+  qvtkDisconnect(node, vtkMRMLNode::IDChangedEvent,
+                 this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
 
   // TODO: can be fasten by browsing the tree only once
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,
@@ -1191,9 +1210,23 @@ void printStandardItem(QStandardItem* item, const QString& offset)
 void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 {
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
+  this->updateNodeItems(modifiedNode, QString(modifiedNode->GetID()));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::onMRMLNodeIDChanged(vtkObject* node, void* callData)
+{
+  char* oldID = reinterpret_cast<char *>(callData);
+  this->updateNodeItems(vtkMRMLNode::SafeDownCast(node), QString(oldID));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* modifiedNode, const QString& uid)
+{
+  Q_D(qMRMLSceneModel);
   Q_ASSERT(modifiedNode && modifiedNode->GetScene());
   //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
-  QModelIndexList nodeIndexes = this->indexes(modifiedNode);
+  QModelIndexList nodeIndexes = d->indexes(uid);
   Q_ASSERT(nodeIndexes.count());
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
   for (int i = 0; i < nodeIndexes.size(); ++i)

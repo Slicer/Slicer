@@ -70,6 +70,7 @@ public:
   /// return a default color node id for a file based node, based on the file name
   /// Delete the returned char* to avoid memory leak
   static const char * GetFileColorNodeID(const char *fileName);
+  static std::string  GetFileColorNodeSingletonTag(const char * fileName);
 
   /// Return a default color node id for a freesurfer label map volume
   virtual const char * GetDefaultFreeSurferLabelMapColorNodeID();

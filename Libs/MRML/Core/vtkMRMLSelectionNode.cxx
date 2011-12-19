@@ -38,7 +38,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
-  this->SetSingletonTag("vtkMRMLSelectionNode");
+  this->SetSingletonTag("Singleton");
 
   this->ActiveVolumeID = NULL;
   this->SecondaryVolumeID = NULL;

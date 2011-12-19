@@ -116,14 +116,18 @@ public:
     return this->Nodes;
     };
 
-  /// Called by another class to request that the node's id be set to the given
-  /// string
-  /// If the id is not in use, set it, otherwise, useit as a base for a unique
-  /// id and then set it
-  void RequestNodeID(vtkMRMLNode *node, const char *ID);
-
-  /// Add a node to the scene and send NewNode and SceneModified events.
-  vtkMRMLNode* AddNode(vtkMRMLNode *n);
+  /// Add a node to the scene and send NodeAboutToBeAddedEvent, NodeAddedEvent
+  /// and SceneModified events.
+  /// A unique ID (e.g. "vtkMRMLModeNode1", "vtkMRMLScalarVolumeNode4") is
+  /// generated and set to the node. If the node has no name
+  /// (i.e. vtkMRMLNode::GetName() == 0), a unique name is given to the node
+  /// (e.g. "Model" if it's the first model node added into the scene,
+  /// "Model_1" if it's the second, etc.
+  /// If node is a singleton, and a node of the same class with the
+  /// same singleton tag already exists in the scene, \a nodeToAdd is NOT
+  /// added but its properties are copied (c.f. vtkMRMLNode::CopyWithScene())
+  /// into the already existing singleton node. That node is then returned.
+  vtkMRMLNode* AddNode(vtkMRMLNode *nodeToAdd);
 
   /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
@@ -153,6 +157,7 @@ public:
 
   /// Get nodes having the specified name
   vtkCollection *GetNodesByName(const char* name);
+  vtkMRMLNode *GetFirstNodeByName(const char* name);
 
   /// Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
@@ -196,13 +201,13 @@ public:
   /// Useful for iterating through nodes to find all the possible storage nodes.
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
 
-  const char* GetUniqueNameByString(const char* className);
-  /// Explore the MRML tree to find the next unique index for use as an ID,
-  /// starting from 1
-  int GetUniqueIDIndexByClass(const char* className);
-  /// Explore the MRML tree to find the next unique index for use as an ID,
-  /// starting from hint
-  int GetUniqueIDIndexByClassFromIndex(const char* className, int hint);
+  /// Generate a node name that is unique in the scene.
+  std::string GenerateUniqueName(const std::string& baseName);
+
+  /// Obsolete utility function that provides an unsafe API for
+  /// GenerateUniqueName()
+  /// \sa GenerateUniqueName, GenerateUniqueID
+  const char* GetUniqueNameByString(const char* baseName);
 
   /// insert a node in the scene after a specified node
   vtkMRMLNode* InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
@@ -272,9 +277,7 @@ public:
 
   void AddReservedID(const char *id);
 
-  void RemoveReservedIDs() {
-    this->ReservedIDs.clear();
-  };
+  void RemoveReservedIDs();
 
   /// get the new id of the node that is different from one in the mrml file
   /// or NULL if id has not changed
@@ -521,6 +524,15 @@ protected:
   static void SceneCallback( vtkObject *caller, unsigned long eid,
                              void *clientData, void *callData );
 
+  std::string GenerateUniqueID(vtkMRMLNode* node);
+  std::string GenerateUniqueID(const std::string& baseID);
+  int GetUniqueIDIndex(const std::string& baseID);
+  std::string BuildID(const std::string& baseID, int idIndex)const;
+
+  std::string GenerateUniqueName(vtkMRMLNode* node);
+  int GetUniqueNameIndex(const std::string& baseName);
+  std::string BuildName(const std::string& baseName, int nameIndex)const;
+
   vtkCollection*  Nodes;
   unsigned long   SceneModifiedTime;
 
@@ -543,8 +555,10 @@ protected:
   std::string                 URL;
   std::string                 RootDirectory;
 
-  std::map< std::string, int> UniqueIDByClass;
-  std::vector< std::string >  UniqueIDs;
+  std::map<std::string, int> UniqueIDs;
+  std::map<std::string, int> UniqueNames;
+  std::vector<std::string>   ReservedIDs;
+  
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
 
@@ -552,7 +566,6 @@ protected:
   std::vector< vtkMRMLNode* >         ReferencingNodes;
   std::map< std::string, std::string> ReferencedIDChanges;
   std::map<std::string, vtkMRMLNode*> NodeIDs;
-  std::map<std::string, int> ReservedIDs;
 
   std::string ErrorMessage;
 

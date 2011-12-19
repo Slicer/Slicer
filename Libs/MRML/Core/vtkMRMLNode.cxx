@@ -135,15 +135,6 @@ void vtkMRMLNode::CopyWithScene(vtkMRMLNode *node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::CopyID(vtkMRMLNode *node)
-{
-  if (node->GetID()) 
-    {
-    this->SetID( node->GetID() );
-    } 
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   int disabledModify = this->StartModify();
@@ -414,22 +405,28 @@ void vtkMRMLNode::SetAddToSceneNoModify(int value)
 }
 
 //----------------------------------------------------------------------------
-const char*  vtkMRMLNode::ConstructID(const char * str, int index)
+void vtkMRMLNode::SetID (const char* _arg)
 {
-  static std::string tempID;
-
-  std::stringstream ss;
-  ss << str;
-  ss << index;
-  ss >> tempID;
-  return tempID.c_str();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLNode::ConstructAndSetID(const char * str, int index)
-{
-  this->SetID(this->ConstructID(str, index));
-  assert(this->ID);
+  // Mostly copied from vtkSetStringMacro() in vtkSetGet.cxx
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting ID to " << (_arg?_arg:"(null)") );
+  if ( this->ID == NULL && _arg == NULL) { return;}
+  if ( this->ID && _arg && (!strcmp(this->ID,_arg))) { return;}
+  char* oldID = this->ID;
+  if (_arg)
+    {
+    size_t n = strlen(_arg) + 1;
+    char *cp1 =  new char[n];
+    const char *cp2 = (_arg);
+    this->ID = cp1;
+    do { *cp1++ = *cp2++; } while ( --n );
+    }
+   else
+    {
+    this->ID = NULL;
+    }
+  this->InvokeEvent(vtkMRMLNode::IDChangedEvent, oldID);
+  if (oldID) { delete [] oldID; }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
