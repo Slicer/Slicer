@@ -50,7 +50,7 @@ foreach(extension_name ${EXTENSION_LIST})
   #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY STATUS DESCRIPTION)
   #  message(${v}:${EXTENSION_SEXT_${v}})
   #endforeach()
-  
+
   # Set apporpriate default value for optional property
   if("${EXTENSION_SEXT_BUILD_SUBDIRECTORY}" STREQUAL "")
     set(EXTENSION_SEXT_BUILD_SUBDIRECTORY ".")
@@ -173,7 +173,7 @@ foreach(extension_name ${EXTENSION_LIST})
             CMAKE_ARGS
               -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
               -DBUILD_TESTING:BOOL=OFF
-              -DSlicer_DIR:PATH=${Slicer_BINARY_DIR}/Slicer-build
+              -DSlicer_DIR:PATH=${Slicer_DIR}
               -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
               ${sext_ep_option_scm_executable}
             ${EXTENSION_DEPENDS}
