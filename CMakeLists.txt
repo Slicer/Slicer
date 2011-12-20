@@ -824,6 +824,7 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   install(FILES
     ${Slicer_BINARY_DIR}/UseSlicer.cmake
     ${Slicer_BINARY_DIR}/SlicerConfig.cmake
+    ${Slicer_BINARY_DIR}/SlicerConfigVersion.cmake
     DESTINATION ${Slicer_INSTALL_LIB_DIR}
     COMPONENT Development
     )

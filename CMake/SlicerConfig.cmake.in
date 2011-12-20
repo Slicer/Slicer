@@ -89,11 +89,6 @@ include(SlicerBlockFindQtAndCheckVersion)
 set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
 set(Slicer_LAUNCH_COMMAND "@Slicer_LAUNCH_COMMAND_CONFIG@")
 
-# Slicer version number
-set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
-set(Slicer_VERSION_MINOR_ "@SlicerVERSION_MINOR_@")
-set(Slicer_VERSION_PATCH "@Slicer_VERSION_PATCH@")
-
 # Slicer working copy Revision, URL and Root
 set(Slicer_WC_REVISION "@Slicer_WC_REVISION@")
 set(Slicer_WC_URL "@Slicer_WC_URL@")

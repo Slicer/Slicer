@@ -42,5 +42,9 @@ export(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.
 # Since it might generate configuration file depending
 include(${Slicer_SOURCE_DIR}/CMake/SlicerGenerateSlicerConfig.cmake)
 
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/SlicerConfigVersion.cmake.in
+  ${Slicer_BINARY_DIR}/SlicerConfigVersion.cmake @ONLY)
+
 #-----------------------------------------------------------------------------
 include(${Slicer_SOURCE_DIR}/CMake/SlicerCPack.cmake)
