@@ -22,13 +22,14 @@
 #ifndef __vtkFSSurfaceScalarReader_h
 #define __vtkFSSurfaceScalarReader_h
 
-#include <FreeSurferConfigure.h>
+#include "FreeSurferConfigure.h"
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkDataReader.h"
-#include "vtkPolyData.h"
-#include "vtkFloatArray.h"
+
+// VTK includes
+#include <vtkDataReader.h>
 
 class vtkFloatArray;
+
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceScalarReader : public vtkDataReader
 {
 public:
@@ -36,18 +37,15 @@ public:
   vtkTypeMacro(vtkFSSurfaceScalarReader,vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkFloatArray *GetOutput()
-    {return this->scalars; };
-  void SetOutput(vtkFloatArray *output)
-    {this->scalars = output; };
+  vtkFloatArray *GetOutput();
+  void SetOutput(vtkFloatArray *output);
 
-  /// 
   /// Read the scalars from a file. Return 1 on success, 0 on failure
   int ReadFSScalars();
 
   /// file type magic numbers
   /// const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
-  enum 
+  enum
     {
       FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
     };
@@ -55,12 +53,12 @@ protected:
   vtkFSSurfaceScalarReader();
   ~vtkFSSurfaceScalarReader();
 
-  vtkFloatArray *scalars;
+  vtkFloatArray * Scalars;
 
   int ReadInt3 (FILE* iFile, int& oInt);
   int ReadInt2 (FILE* iFile, int& oInt);
   int ReadFloat (FILE* iFile, float& oInt);
-  
+
 private:
   vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader&);  /// Not implemented.
   void operator=(const vtkFSSurfaceScalarReader&);  /// Not implemented.

@@ -23,11 +23,11 @@
 #ifndef __vtkFSSurfaceLabelReader_h
 #define __vtkFSSurfaceLabelReader_h
 
-#include <FreeSurferConfigure.h>
+#include "FreeSurferConfigure.h"
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkDataReader.h"
-#include "vtkPolyData.h"
-#include "vtkFloatArray.h"
+
+// VTK includes
+#include <vtkDataReader.h>
 
 class vtkFloatArray;
 
@@ -37,36 +37,36 @@ public:
   static vtkFSSurfaceLabelReader *New();
   vtkTypeMacro(vtkFSSurfaceLabelReader,vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   vtkFloatArray *GetOutput()
       {return this->Scalars; };
   void SetOutput(vtkFloatArray *output)
       {this->Scalars = output; };
-  
+
   int ReadLabel();
 
-  /// 
+  ///
   /// Number of vertices on the surface
   vtkGetMacro(NumberOfVertices,int);
   vtkSetMacro(NumberOfVertices,int);
 
-  /// 
+  ///
   /// Number of values read from file, may not be the same as number of
   /// vertices
   vtkGetMacro(NumberOfValues, int);
 
-  /// 
+  ///
   /// Scalar value to use in the array at points in the file
   /// Defaults to 1.0
   vtkGetMacro(LabelOn, float);
   vtkSetMacro(LabelOn, float);
 
-  /// 
+  ///
   /// Scalar value to use in the array at points that don't appear in the file.
   /// defaults to 0.0
   vtkGetMacro(LabelOff, float);
   vtkSetMacro(LabelOff, float);
-  
+
   enum
   {
     /// error codes
@@ -80,7 +80,7 @@ public:
     /// file type magic numbers
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
   };
-  
+
 protected:
   vtkFSSurfaceLabelReader();
   ~vtkFSSurfaceLabelReader();
@@ -88,18 +88,18 @@ protected:
   vtkFloatArray *Scalars;
 
 
-  /// 
+  ///
   /// this is the number of vertices in the associated model file,
   /// there may not be as many value in this scalar file as there
   /// are vertices
   int NumberOfVertices;
-  /// 
+  ///
   /// number of values read from file
   int NumberOfValues;
 
   float LabelOff;
   float LabelOn;
-/*  
+/*
   int ReadInt3 (FILE* iFile, int& oInt);
   int ReadInt2 (FILE* iFile, int& oInt);
   int ReadFloat (FILE* iFile, float& oInt);

@@ -25,12 +25,15 @@
 #ifndef __vtkFSSurfaceAnnotationReader_h
 #define __vtkFSSurfaceAnnotationReader_h
 
-#include <FreeSurferConfigure.h>
+// FreeSurfer includes
+#include "FreeSurferConfigure.h"
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkDataReader.h"
-#include "vtkLookupTable.h"
-#include "vtkPolyData.h"
 
+// VTK includes
+#include <vtkDataReader.h>
+
+class vtkIntArray;
+class vtkLookupTable;
 
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceAnnotationReader : public vtkDataReader
 {
@@ -39,38 +42,36 @@ public:
   vtkTypeMacro(vtkFSSurfaceAnnotationReader,vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkIntArray *GetOutput()
-    {return this->Labels; };
-  void SetOutput(vtkIntArray *output)
-    {this->Labels = output; };
+  vtkIntArray *GetOutput();
+  void SetOutput(vtkIntArray *output);
 
-  vtkLookupTable *GetColorTableOutput()
-    {return this->Colors; };
-  void SetColorTableOutput(vtkLookupTable* colors)
-    {this->Colors = colors; };
+  vtkLookupTable *GetColorTableOutput();
+  void SetColorTableOutput(vtkLookupTable* colors);
 
   char* GetColorTableNames();
 
   int ReadFSAnnotation();
+
+  /// write out the annotation file, using an internal color table
   int WriteFSAnnotation();
 
   vtkGetMacro(NumColorTableEntries, int);
   void SetColorTableFileName (char*);
-  
+
   vtkGetMacro(UseExternalColorTableFile,int);
   vtkSetMacro(UseExternalColorTableFile,int);
   vtkBooleanMacro(UseExternalColorTableFile,int);
 
-  /// 
+  ///
   /// previously defined as constants
   enum
   {
     /// tag
     FS_COLOR_TABLE_TAG = 1,
-    
+
     FS_COLOR_TABLE_NAME_LENGTH = 1024,
     FS_COLOR_TABLE_ENTRY_NAME_LENGTH = 1024,
-    
+
     FS_ERROR_LOADING_COLOR_TABLE = 1,
     FS_ERROR_LOADING_ANNOTATION = 2,
     FS_ERROR_PARSING_COLOR_TABLE = 3,
@@ -94,11 +95,11 @@ protected:
   /// Read color table information from a source, allocate the arrays
   /// to hold rgb and name values, and return pointers to the
   /// arrays. The caller is responsible for disposing of the memory.
-  int ReadEmbeddedColorTable (FILE* annotFile, int* numEntries, 
+  int ReadEmbeddedColorTable (FILE* annotFile, int* numEntries,
                   int*** rgbValues, char*** names);
-  int ReadExternalColorTable (char* fileName, int* numEntries, 
+  int ReadExternalColorTable (char* fileName, int* numEntries,
                   int*** rgbValues, char*** names);
-  
+
 
 private:
   vtkFSSurfaceAnnotationReader(const vtkFSSurfaceAnnotationReader&);  /// Not implemented.

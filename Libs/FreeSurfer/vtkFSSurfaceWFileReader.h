@@ -22,11 +22,11 @@
 #ifndef __vtkFSSurfaceWFileReader_h
 #define __vtkFSSurfaceWFileReader_h
 
-#include <FreeSurferConfigure.h>
+#include "FreeSurferConfigure.h"
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkDataReader.h"
-#include "vtkPolyData.h"
-#include "vtkFloatArray.h"
+
+// VTK includes
+#include <vtkDataReader.h>
 
 class vtkFloatArray;
 
@@ -36,12 +36,10 @@ public:
   static vtkFSSurfaceWFileReader *New();
   vtkTypeMacro(vtkFSSurfaceWFileReader,vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  vtkFloatArray *GetOutput()
-      {return this->scalars; };
-  void SetOutput(vtkFloatArray *output)
-      {this->scalars = output; };
-  
+
+  vtkFloatArray *GetOutput();
+  void SetOutput(vtkFloatArray *output);
+
   int ReadWFile();
 
   vtkGetMacro(NumberOfVertices,int);
@@ -60,24 +58,22 @@ public:
     /// file type magic numbers
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
   };
-  
+
 protected:
   vtkFSSurfaceWFileReader();
   ~vtkFSSurfaceWFileReader();
 
-  vtkFloatArray *scalars;
+  vtkFloatArray * Scalars;
 
-
-  /// 
   /// this is the number of vertices in the associated model file,
   /// there may not be as many value in this scalar file as there
   /// are vertices
   int NumberOfVertices;
-  
+
   int ReadInt3 (FILE* iFile, int& oInt);
   int ReadInt2 (FILE* iFile, int& oInt);
   int ReadFloat (FILE* iFile, float& oInt);
-  
+
 private:
   vtkFSSurfaceWFileReader(const vtkFSSurfaceWFileReader&);  /// Not implemented.
   void operator=(const vtkFSSurfaceWFileReader&);  /// Not implemented.

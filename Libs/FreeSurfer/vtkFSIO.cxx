@@ -11,8 +11,12 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
+
+// FreeSurfer includes
 #include "vtkFSIO.h"
-#include "vtkByteSwap.h"
+
+// VTK includes
+#include <vtkByteSwap.h>
 
 //------------------------------------------------------------------------------
 int vtkFSIO::ReadShort (FILE* iFile, short& oShort) {
@@ -107,7 +111,7 @@ int vtkFSIO::ReadInt2 (FILE* iFile, int& oInt) {
   result = fread (&i, 2, 1, iFile);
   vtkByteSwap::Swap4BE (&i);
   oInt = i;
-  
+
   return result;
 }
 
@@ -121,7 +125,7 @@ int vtkFSIO::ReadInt2Z (gzFile iFile, int& oInt) {
   result = gzread (iFile, &i, 2*sizeof(int));
   vtkByteSwap::Swap4BE (&i);
   oInt = i;
-  
+
   return result;
 }
 
@@ -135,7 +139,7 @@ int vtkFSIO::ReadFloat (FILE* iFile, float& oFloat) {
   result = fread (&f, 4, 1, iFile);
   vtkByteSwap::Swap4BE (&f);
   oFloat = f;
-  
+
   return result;
 }
 
@@ -149,7 +153,7 @@ int vtkFSIO::ReadFloatZ (gzFile iFile, float& oFloat) {
   result = gzread (iFile, &f, sizeof(float));
   vtkByteSwap::Swap4BE (&f);
   oFloat = f;
-  
+
   return result;
 }
 
@@ -178,7 +182,7 @@ int vtkFSIO::WriteInt3 (FILE* oFile, int iInt)
 
     i = ((i>>8) & 0xffffff);
     vtkByteSwap::Swap4BE(&i);
-    
+
     result = fwrite(&i, 3, 1, oFile);
     return result;
 }

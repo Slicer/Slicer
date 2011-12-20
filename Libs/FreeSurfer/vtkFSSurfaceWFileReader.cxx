@@ -12,24 +12,39 @@
 
 =========================================================================auto=*/
 
-#include "vtkFSSurfaceWFileReader.h"
-#include "vtkObjectFactory.h"
+// FreeSurfer includes
 #include "vtkFSIO.h"
+#include "vtkFSSurfaceWFileReader.h"
+
+// VTK includes
+#include <vtkFloatArray.h>
+#include <vtkObjectFactory.h>
 
 //-------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceWFileReader);
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader::vtkFSSurfaceWFileReader()
 {
-  this->scalars = NULL;
+  this->Scalars = NULL;
   this->NumberOfVertices = 0;
 }
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader::~vtkFSSurfaceWFileReader()
 {
+}
+
+//-------------------------------------------------------------------------
+vtkFloatArray * vtkFSSurfaceWFileReader::GetOutput()
+{
+  return this->Scalars;
+}
+
+//-------------------------------------------------------------------------
+void vtkFSSurfaceWFileReader::SetOutput(vtkFloatArray *output)
+{
+  this->Scalars = output;
 }
 
 //-------------------------------------------------------------------------
@@ -43,7 +58,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   int vIndexFromFile;
   float fvalue;
   float *FSscalars;
-  vtkFloatArray *output = this->scalars;
+  vtkFloatArray *output = this->Scalars;
 
   // Do some basic sanity checks.
   if (output == NULL)
@@ -52,22 +67,22 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     return this->FS_ERROR_W_OUTPUT_NULL;
     }
   vtkDebugMacro( << "vtkFSSurfaceWFileReader Execute() " << endl);
-  
-  if (!this->FileName) 
+
+  if (!this->FileName)
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader Execute: FileName not specified.");
     return this->FS_ERROR_W_NO_FILENAME;
     }
-  
+
   vtkDebugMacro(<<"Reading surface WFile data...");
-  
+
   // Try to open the file.
   wFile = fopen(this->FileName, "rb") ;
-  if (!wFile) 
+  if (!wFile)
     {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
     return this->FS_ERROR_W_OPEN;
-    }  
+    }
 
   // I'm not sure what this is. In the original FreeSurfer code, there
   // is this:
@@ -81,7 +96,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
 
   // This is the number of values in the wfile.
   vtkFSIO::ReadInt3 (wFile, numValues);
-  if (numValues < 0) 
+  if (numValues < 0)
     {
     vtkErrorMacro (<< "vtkFSSurfaceWFileReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
     return this->FS_ERROR_W_NUM_VALUES;
@@ -94,9 +109,9 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader: Number of vertices in the associated scalar file has not been set, using number of values in the file");
     this->NumberOfVertices = numValues;
     }
-  
+
   vtkDebugMacro(<<"vtkFSSurfaceWFileReader: numValues = " << numValues << ", numVertices = " << this->NumberOfVertices);
-  
+
   // Make our float array.
   // scalars = (float*) calloc (numValues, sizeof(float));
   // make the array big enough to hold all vertices, calloc inits all values
@@ -107,18 +122,18 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader: error allocating " << this->NumberOfVertices << " floats!");
     return this->FS_ERROR_W_ALLOC;
     }
-  
+
   // For each value in the wfile...
-  for (vIndex = 0; vIndex < numValues; vIndex ++ ) 
+  for (vIndex = 0; vIndex < numValues; vIndex ++ )
     {
-    
+
     // Check for eof.
-    if (feof(wFile)) 
+    if (feof(wFile))
       {
       vtkErrorMacro (<< "vtkFSSurfaceWFileReader.cxx Execute: Unexpected EOF after " << vIndex << " values read. Tried to read " << numValues);
       return this->FS_ERROR_W_EOF;
       }
-    
+
     // Read the 3 byte int index and float value. The wfile is weird
     // in that there is an index/value pair for every value. I guess
     // this means that the wfile could have fewer values than the
@@ -128,23 +143,23 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     // really needed.
     vtkFSIO::ReadInt3 (wFile, vIndexFromFile);
     vtkFSIO::ReadFloat (wFile, fvalue);
-    
+
     // Make sure the index is in bounds. If not, print a warning and
     // try to do the next value. If this happens, there is probably a
     // mismatch between the wfile and the surface, but I think there
     // is a reason for being able to load a mismatched file. But this
     // should raise some kind of message to the user like, "This wfile
     // appears to be for a different surface; continue loading?"
-    if (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices) 
-      { 
+    if (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices)
+      {
       vtkErrorMacro (<< "vtkFSSurfaceWFileReader.cxx Execute: Read an index that is out of bounds (" << vIndexFromFile << " not in 0-" << this->NumberOfVertices << ", breaking.");
       break;
       }
-    
+
     // Set the value in the scalars array based on the index we read
     // in, not the index in our for loop.
     FSscalars[vIndexFromFile] = fvalue;
-    
+
     if (numValues < 10000 ||
         (vIndex % 100) == 0)
       {
@@ -154,7 +169,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
 
   this->SetProgressText("");
   this->UpdateProgress(0.0);
-  
+
   // Close the file.
   fclose (wFile);
 

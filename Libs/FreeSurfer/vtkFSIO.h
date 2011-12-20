@@ -20,12 +20,11 @@
 #define __vtkFSIO_h
 
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkConfigure.h"
-#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
-#include "vtk_zlib.h"
-#else
-#include "zlib.h"
-#endif
+
+// VTK includes
+#include <vtk_zlib.h>
+
+// STD includes
 #include <cstdio>
 
 namespace vtkFSIO {

@@ -19,12 +19,11 @@
 #ifndef __vtkFSSurfaceReader_h
 #define __vtkFSSurfaceReader_h
 
-#include <FreeSurferConfigure.h>
+#include "FreeSurferConfigure.h"
 #include "vtkFreeSurferWin32Header.h"
-#include "vtkDataReader.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkPolyData.h"
+
+// VTK includes
+#include <vtkDataReader.h>
 
 /// Prints debugging info.
 #define FS_DEBUG 0
@@ -43,13 +42,11 @@ public:
   vtkTypeMacro(vtkFSSurfaceReader,vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
   /// Get the output of this reader.
   vtkPolyData *GetOutput();
   vtkPolyData *GetOutput(int idx);
   void SetOutput(vtkPolyData *output);
 
-  //Description:
   /// old previous versions constants
   enum
   {
@@ -65,22 +62,16 @@ public:
       vtkInformation *,
       vtkInformationVector **,
       vtkInformationVector *outputVector);
-  
+
 protected:
   vtkFSSurfaceReader();
   ~vtkFSSurfaceReader();
 
-  //void Execute();
-
-  /// Update extent of PolyData is specified in pieces.  
+  /// Update extent of PolyData is specified in pieces.
   /// Since all DataObjects should be able to set UpdateExent as pieces,
   /// just copy output->UpdateExtent  all Inputs.
-#if (VTK_MAJOR_VERSION >= 5)
   virtual int FillOutputPortInformation(int, vtkInformation*);
-#else
-  void ComputeInputUpdateExtents(vtkDataObject *output);
-#endif
-  
+
   /// Used by streaming: The extent of the output being processed by
   /// the execute method. Set in the ComputeInputUpdateExtents method.
   int ExecutePiece;

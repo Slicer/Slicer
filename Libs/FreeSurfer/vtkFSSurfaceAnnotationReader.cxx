@@ -11,24 +11,31 @@
   Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
-#include "vtkFSSurfaceAnnotationReader.h"
-#include "vtkObjectFactory.h"
+
+// FreeSurfer includes
 #include "vtkFSIO.h"
+#include "vtkFSSurfaceAnnotationReader.h"
+
+// VTK includes
+#include <vtkIntArray.h>
+#include <vtkLookupTable.h>
+#include <vtkObjectFactory.h>
 
 //-------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceAnnotationReader);
 
+//-------------------------------------------------------------------------
 vtkFSSurfaceAnnotationReader::vtkFSSurfaceAnnotationReader()
 {
   this->Labels = NULL;
   this->Colors = NULL;
   this->NamesList = NULL;
   this->NumColorTableEntries = -1;
-  this->UseExternalColorTableFile = 0; 
+  this->UseExternalColorTableFile = 0;
   strcpy (this->ColorTableFileName, "");
 }
 
+//-------------------------------------------------------------------------
 vtkFSSurfaceAnnotationReader::~vtkFSSurfaceAnnotationReader()
 {
   if (NULL != this->NamesList)
@@ -37,6 +44,7 @@ vtkFSSurfaceAnnotationReader::~vtkFSSurfaceAnnotationReader()
   }
 }
 
+//-------------------------------------------------------------------------
 void vtkFSSurfaceAnnotationReader::SetColorTableFileName (char* name)
 {
   if (NULL != name)
@@ -45,18 +53,7 @@ void vtkFSSurfaceAnnotationReader::SetColorTableFileName (char* name)
   }
 }
 
-//void vtkFSSurfaceAnnotationReader::DoUseExternalColorTableFile ()
-//{
-//  this->UseExternalColorTableFile = true;
-//}
-
-//void vtkFSSurfaceAnnotationReader::DontUseExternalColorTableFile ()
-//{
-//  this->UseExternalColorTableFile = false;
-//}
-
-
-
+//-------------------------------------------------------------------------
 int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
 {
   vtkIntArray *olabels = this->Labels;
@@ -84,7 +81,7 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
 
   int thisStep = 0;
   int totalSteps = 1;
-  
+
   vtkDebugMacro( << "starting ReadFSAnnotation\n");
   if (olabels == NULL)
   {
@@ -96,42 +93,42 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       vtkErrorMacro(<< "ReadFSAnnotation: color table output is null");
       return -1;
   }
-  
-  if (NULL == this->FileName) 
+
+  if (NULL == this->FileName)
   {
       vtkErrorMacro(<< "ReadFSAnnotation: fileName not specified.");
       return -1;
   }
-  
+
   vtkDebugMacro( << "ReadFSAnnotation: Reading surface annotation data... from " << this->FileName << "\n");
-  
+
   // Try to open the file.
   annotFile = fopen (this->FileName, "rb");
-  if (NULL == annotFile) 
+  if (NULL == annotFile)
   {
-      vtkErrorMacro (<< "\nReadFSAnnotation: could not open file\n " 
+      vtkErrorMacro (<< "\nReadFSAnnotation: could not open file\n "
                      << this->FileName);
       return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_ANNOTATION;
-  }  
-  
+  }
+
   // Read the number of label elements in the file.
   read = vtkFSIO::ReadInt (annotFile, numLabels);
   vtkDebugMacro( << "ReadFSAnnotation:  after ReadInt, numLabels = " << numLabels << endl);
-  
+
   if (read != 1)
   {
       vtkErrorMacro(<< "ReadFSAnnotation: error reading number of labels");
       fclose (annotFile);
       return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_ANNOTATION;
   }
-  if (numLabels <= 0) 
+  if (numLabels <= 0)
   {
       vtkErrorMacro (<< "\nReadFSAnnotation: number of labels is "
                      << "0 or negative, can't process file.");
       fclose (annotFile);
       return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_ANNOTATION;
   }
-  
+
   // Allocate our arrays to hold the rgb values from the annotation
   // file and the label indices into which we'll transform them.
   vtkDebugMacro( << "nReadFSAnnotation: Callocing rgbs and labels to be numlabels ints " << numLabels << endl);
@@ -144,26 +141,26 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       fclose (annotFile);
       return -1;
   }
-  
+
   // Read in all the label rgb values.
   vtkDebugMacro( << "ReadFSAnnotation:  About to read in all the label rgb values, up to " << numLabels << ".\n");
 
   // this calc will be wrong, as it doesn't count the setting up of the colour
   // table stuff.
   totalSteps = numLabels*2;
-      
+
   for (labelIndex = 0; labelIndex < numLabels; labelIndex ++ )
-  {    
-      if (feof (annotFile) ) 
+  {
+      if (feof (annotFile) )
       {
-          vtkErrorMacro (<< "\nReadFSAnnotation: unexpected EOF after\n " 
+          vtkErrorMacro (<< "\nReadFSAnnotation: unexpected EOF after\n "
                          << numLabels << " values read.");
           fclose (annotFile);
           free (rgbs);
           free (labels);
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_ANNOTATION;
       }
-      
+
       // Read a vertex index and an rgb value. Set the appropriate
       // value in the rgb array.
       read = vtkFSIO::ReadInt (annotFile, vertexIndex);
@@ -204,11 +201,11 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
         this->UpdateProgress(1.0*thisStep/totalSteps);
     }
   }
-  
-  
+
+
   // Are we using an embedded or an external color table?
   vtkDebugMacro( << "ReadFSAnnotation: Are we using an external color table?\n\t" << this->UseExternalColorTableFile << endl);
-  
+
   if (this->UseExternalColorTableFile != 0)
   {
       vtkDebugMacro(<< "ReadFSAnnotation: Using external color table file\n");
@@ -224,8 +221,8 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
           free (labels);
           return error;
       }
-  } 
-  else 
+  }
+  else
   {
       vtkDebugMacro( << "ReadFSAnnotation: Not using external color table file\n");
       error = ReadEmbeddedColorTable (annotFile,
@@ -247,12 +244,12 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       }
   }
 
-  
-      
+
+
   // Now match up rgb values with table entries to find the label
   // indices for each vertex.
   vtkDebugMacro( << "ReadFSAnnotation: Now match up rgb values with table entries to find the label indices for each vertex, numLabels = " << numLabels << ", numColorTableEntries = " << numColorTableEntries << endl);
-  
+
   unassignedEntry = false;
   for (labelIndex = 0; labelIndex < numLabels; labelIndex++)
   {
@@ -263,7 +260,7 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       r = rgbs[labelIndex] & 0xff;
       g = (rgbs[labelIndex] >> 8) & 0xff;
       b = (rgbs[labelIndex] >> 16) & 0xff;
-/*     
+/*
 if (labelIndex % 1000 == 0) {
     cerr << "\t r " << r;
     cerr <<  " g " << g;
@@ -272,8 +269,8 @@ if (labelIndex % 1000 == 0) {
 */
       // Look for this rgb value in the table.
       found = false;
-      for (colorTableEntryIndex = 0; 
-           (found == false) && (colorTableEntryIndex < numColorTableEntries); 
+      for (colorTableEntryIndex = 0;
+           (found == false) && (colorTableEntryIndex < numColorTableEntries);
            colorTableEntryIndex++)
       {
           if (colorTableRGBs[colorTableEntryIndex] != NULL &&
@@ -297,14 +294,14 @@ if (labelIndex % 1000 == 0) {
                   //return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_ANNOTATION;
               }
           }
-          
+
       }
       thisStep++;
       if (thisStep % 1000 == 0)
       {
           this->UpdateProgress(1.0*thisStep/totalSteps);
       }
-      
+
       // Didn't find an entry so just set it to -1.
       if (!found)
       {
@@ -313,18 +310,18 @@ if (labelIndex % 1000 == 0) {
           labels[labelIndex] = 0;
       }
   }
-  
+
   // reset total steps, as have to do stuff for the colour table entries
   vtkDebugMacro(<<"ReadFSAnnotation: increasing totalSteps " << totalSteps << " by 3 times the number of colour table entries : " << 3*numColorTableEntries << ", thsi step is currently " << thisStep);
 
   totalSteps += 3*numColorTableEntries;
-  
+
   // Copy the names as a list into a new string. First find the
   // length that the string should be.
   vtkDebugMacro(<< "ReadFSAnnotation: Copy the names as a list into a new string\n");
   stringLength = 0;
-  for (colorTableEntryIndex = 0; 
-       colorTableEntryIndex < numColorTableEntries; 
+  for (colorTableEntryIndex = 0;
+       colorTableEntryIndex < numColorTableEntries;
        colorTableEntryIndex++)
   {
       if (colorTableNames[colorTableEntryIndex] != NULL)
@@ -334,8 +331,8 @@ if (labelIndex % 1000 == 0) {
           stringLength += 7;
       }
       else
-      { 
-        vtkWarningMacro( "WARNING: null colour table names entry at index " << colorTableEntryIndex << endl); 
+      {
+        vtkWarningMacro( "WARNING: null colour table names entry at index " << colorTableEntryIndex << endl);
       }
       thisStep++;
       if (thisStep % 1000 == 0)
@@ -352,20 +349,20 @@ if (labelIndex % 1000 == 0) {
   }
   vtkDebugMacro(<<"Allocating one big string for the names list, of size " << stringLength + 1 << "chars.\n");
   this->NamesList = (char*) calloc (stringLength+1, sizeof(char));
-  if (NULL == this->NamesList) 
+  if (NULL == this->NamesList)
     {
       vtkErrorMacro(<<"ERROR: ReadFSAnnotation: could not calloc a pointer to a string of characters, of size " << stringLength + 1 );
       fclose(annotFile);
       return -1;
     }
-  for (colorTableEntryIndex = 0; 
-       colorTableEntryIndex < numColorTableEntries; 
+  for (colorTableEntryIndex = 0;
+       colorTableEntryIndex < numColorTableEntries;
        colorTableEntryIndex++)
   {
       if (colorTableNames[colorTableEntryIndex] != NULL)
       {
           sprintf (this->NamesList, "%s%3d {%s} ", this->NamesList,
-                   colorTableEntryIndex, 
+                   colorTableEntryIndex,
                    colorTableNames[colorTableEntryIndex]);
       }
       thisStep++;
@@ -375,24 +372,24 @@ if (labelIndex % 1000 == 0) {
       }
   }
   this->NumColorTableEntries = numColorTableEntries;
-  
-  
+
+
   // We're done, so now start setting the values in our output objects.
-  
+
   // Set all the values in the output array.
   olabels->SetArray (labels, numLabels, 0);
-  
+
   // Now convert the color table arrays to a real lookup table.
   ocolors->SetNumberOfColors (numColorTableEntries);
   ocolors->SetTableRange (0.0, 255.0);
-  for (colorTableEntryIndex = 0; 
-       colorTableEntryIndex < numColorTableEntries; 
+  for (colorTableEntryIndex = 0;
+       colorTableEntryIndex < numColorTableEntries;
        colorTableEntryIndex++)
   {
       if (colorTableRGBs[colorTableEntryIndex] != NULL)
       {
-          
-          ocolors->SetTableValue (colorTableEntryIndex, 
+
+          ocolors->SetTableValue (colorTableEntryIndex,
                                   (colorTableRGBs[colorTableEntryIndex][0] / 255.0),
                                   (colorTableRGBs[colorTableEntryIndex][1] / 255.0),
                                   (colorTableRGBs[colorTableEntryIndex][2] / 255.0),
@@ -410,7 +407,7 @@ if (labelIndex % 1000 == 0) {
           this->UpdateProgress(1.0*thisStep/totalSteps);
       }
   }
-  
+
   if (unassignedEntry)
   {
       result = vtkFSSurfaceAnnotationReader::FS_WARNING_UNASSIGNED_LABELS;
@@ -418,18 +415,18 @@ if (labelIndex % 1000 == 0) {
 
   this->SetProgressText("");
   this->UpdateProgress(0.0);
-  
+
   // Close the file.
   fclose (annotFile);
-  
+
   // Delete the stuff we allocated. This causes a crash in Slicer, so comment
   // it out for now
   /*
   vtkDebugMacro(<< "ReadFSAnnotation: Freeing rgbs, colorTableRGBs, colorTableNames\n");
   free (rgbs);
   vtkDebugMacro( << "done rgbs\n");
-  for (colorTableEntryIndex = 0; 
-       colorTableEntryIndex < numColorTableEntries; 
+  for (colorTableEntryIndex = 0;
+       colorTableEntryIndex < numColorTableEntries;
        colorTableEntryIndex++)
   {
       // both loops are causing bus errors/seg faults
@@ -442,7 +439,7 @@ if (labelIndex % 1000 == 0) {
       {
           vtkDebugMacro( << "WARNING: tried to free null entry in colorTableNames at index " << colorTableEntryIndex << endl);
       }
-     
+
       if (colorTableRGBs[colorTableEntryIndex] != NULL)
       {
           free (colorTableRGBs[colorTableEntryIndex]);
@@ -463,9 +460,10 @@ if (labelIndex % 1000 == 0) {
   return result;
 }
 
+//-------------------------------------------------------------------------
 int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
-                              int* onumEntries, 
-                              int*** orgbValues, 
+                              int* onumEntries,
+                              int*** orgbValues,
                               char*** onames)
 {
   int read;
@@ -490,7 +488,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
     return vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE;
     }
   // check the value of the tag, should be 1
-  
+
   if (vtkFSSurfaceAnnotationReader::FS_COLOR_TABLE_TAG == tag)
     {
     // Read the number of entries.
@@ -501,9 +499,9 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
                      << "number of entries");
       return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
       }
-    // check the next int, if it's >0 it's the old format, 
-    // and this int is the number of entries, if it's <0 it's the new format, 
-    // and it's the negative version number 
+    // check the next int, if it's >0 it's the old format,
+    // and this int is the number of entries, if it's <0 it's the new format,
+    // and it's the negative version number
     if (numColorTableEntries > 0)
       {
       // old version
@@ -522,24 +520,24 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
                        << "table name");
         return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
         }
-      
+
       // Allocate arrays for our r/g/b values and for our names.
       rgbValues = (int**) calloc (numColorTableEntries, sizeof(int*) );
       names = (char**) calloc (numColorTableEntries, sizeof(char*) );
       if (NULL == rgbValues || NULL == names)
         {
         vtkErrorMacro (<< "\nReadEmbeddedColorTable: error allocating "
-                       << "rgb or name arrays with\n " 
+                       << "rgb or name arrays with\n "
                        << numColorTableEntries << " entries.");
         return -1;
         }
-      
+
       // Read all the entries.
       for (entryIndex = 0; entryIndex < numColorTableEntries; entryIndex++)
         {
-        
+
         // Allocate the name.
-        names[entryIndex] = 
+        names[entryIndex] =
           (char*) calloc (vtkFSSurfaceAnnotationReader::FS_COLOR_TABLE_ENTRY_NAME_LENGTH,sizeof(char));
         if (NULL == names[entryIndex])
           {
@@ -553,7 +551,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           free (names);
           return -1;
           }
-        
+
         // Allocate rgb holders.
         //cerr << "\nReadEmbeddedColorTable: allocating "
         //         << "rgb entry " << entryIndex << endl;
@@ -570,13 +568,13 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           free (names);
           return -1;
           }
-        
+
         // Read the name length and name.
         read = vtkFSIO::ReadInt (annotFile, nameLength);
         if (read != 1)
           {
           vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"
-                         << "entry name length for entry " 
+                         << "entry name length for entry "
                          << entryIndex);
           free (rgbValues);
           for (deleteIndex = 0; deleteIndex <= entryIndex; deleteIndex++)
@@ -586,7 +584,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           free (names);
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
           }
-        read = fread (names[entryIndex], sizeof(char), 
+        read = fread (names[entryIndex], sizeof(char),
                       nameLength, annotFile);
         if (read != nameLength)
           {
@@ -601,7 +599,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           free (names);
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
           }
-        
+
         // Read the in the rgb values.
         read = vtkFSIO::ReadInt (annotFile, rgbValues[entryIndex][0]);
         if (read != 1)
@@ -686,7 +684,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
         if (NULL == rgbValues || NULL == names)
           {
           vtkErrorMacro (<< "\nReadEmbeddedColorTable: error allocating "
-                         << "rgb or name arrays with\n " 
+                         << "rgb or name arrays with\n "
                          << numColorTableEntries << " entries.");
           return -1;
           }
@@ -726,14 +724,14 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           if (read != 1 || structure < 0)
             {
             vtkErrorMacro("ReadEmbeddedColorTable: error in structure " << structure << " at entry " << i);
-            free(rgbValues); free(names); 
+            free(rgbValues); free(names);
             return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
             }
           // check if we already have an entry here
           if (rgbValues[structure] != NULL)
             {
             vtkErrorMacro("ReadEmbeddedColorTable: duplicate structure " << structure << " at index " << i);
-            free(rgbValues); free(names); 
+            free(rgbValues); free(names);
             return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
             }
           // create the entry
@@ -755,7 +753,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           if (read != 1)
             {
             vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"
-                           << "entry name length for entry " 
+                           << "entry name length for entry "
                            << structure);
             free (rgbValues);
             for (deleteIndex = 0; deleteIndex <= i; deleteIndex++)
@@ -766,7 +764,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
             return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
             }
           names[structure] = (char*) malloc (nameLength+1);
-          read = fread (names[structure], sizeof(char), 
+          read = fread (names[structure], sizeof(char),
                         nameLength, annotFile);
           if (read != nameLength)
             {
@@ -787,7 +785,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           read += vtkFSIO::ReadInt (annotFile, rgbValues[structure][2]);
           read += vtkFSIO::ReadInt (annotFile, t);
           if (read != 4)
-            { 
+            {
             vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading RGBT "
                            << "value for entry structure " << structure << " at index " << i);
             free (rgbValues);
@@ -808,28 +806,29 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
         vtkErrorMacro("ReadEmbeddedColorTable: version of embedded color table not supported: " << version);
         return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
         }
-      
+
       }
-    
+
     }
   else
     {
     return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
     }
-  
+
   *onumEntries = numColorTableEntries;
   *orgbValues = rgbValues;
   *onames = names;
-  
+
   return 0;
 }
 
+//-------------------------------------------------------------------------
 int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
-                              int* onumEntries, 
-                              int*** orgbValues, 
+                              int* onumEntries,
+                              int*** orgbValues,
                               char*** onames)
 {
-  
+
   FILE* file = NULL;
   int highestIndex;
   int lineNumber;
@@ -854,74 +853,74 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
                      << fileName);
       return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_COLOR_TABLE;
   }
-  
+
   highestIndex = 0;
   lineNumber = 0;
-  while (!feof (file)) 
+  while (!feof (file))
   {
       got = fgets (lineText, 1024, file);
       if (got)
       {
           read = sscanf (lineText, "%d %*s %d %d %d %*s",
                          &entryIndex, &r, &g, &b);
-          if (4 != read && -1 != read) 
+          if (4 != read && -1 != read)
           {
               vtkWarningMacro(<< "ReadExternalColorTable: error parsing "
                               << fileName << ": Malformed line "
                               << lineNumber << "\n\t" << lineText );
               return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
-          }  
-          
+          }
+
           if (entryIndex > highestIndex)
           {
               highestIndex = entryIndex;
           }
-          
+
           lineNumber++;
       }
   }
-  
+
   fclose (file);
   file = NULL;
-  
+
   // We got the highest zero-based index, so our number of entries is
   // that plus one.
   numColorTableEntries = highestIndex + 1;
-  
+
   // Allocate our arrays.
   vtkDebugMacro(<< "\nReadExternalColorTable: callocing rgbValues as int** x " << numColorTableEntries);
-  
+
   rgbValues = (int**) calloc (numColorTableEntries, sizeof(int*) );
   names = (char**) calloc (numColorTableEntries, sizeof(char*) );
   if (NULL == rgbValues || NULL == names)
   {
       vtkErrorMacro (<< "\nReadExternalColorTable: error allocating "
-                     << "rgb or name arrays with " 
+                     << "rgb or name arrays with "
                      << numColorTableEntries << " entries.");
       return -1;
   }
-  
+
   // Read all the entries.
   file = fopen (fileName, "r" );
   if (NULL == file)
   {
-      vtkErrorMacro (<< "\nReadExternalColorTable: could not open file\n " 
+      vtkErrorMacro (<< "\nReadExternalColorTable: could not open file\n "
                      << fileName);
       free (rgbValues);
       free (names);
       return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_ANNOTATION;
   }
-  
+
   lineNumber = 0;
-  while (!feof (file) ) 
+  while (!feof (file) )
   {
-      
+
       got = fgets (lineText, 1024, file);
       if (got)
       {
           read = sscanf (lineText, "%d %s %d %d %d %*s",
                          &entryIndex, name, &r, &g, &b);
-          if (5 != read && -1 != read) 
+          if (5 != read && -1 != read)
           {
               vtkWarningMacro(<< "ReadExternalColorTable: error parsing "
                               << fileName << ": Malformed line "
@@ -930,10 +929,10 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
               free (names);
           fclose(file);
               return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
-          }  
-          
+          }
+
           // Allocate the name.
-          names[entryIndex] = 
+          names[entryIndex] =
               (char*) calloc (vtkFSSurfaceAnnotationReader::FS_COLOR_TABLE_ENTRY_NAME_LENGTH,sizeof(char));
           if (NULL == names[entryIndex])
           {
@@ -948,7 +947,7 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
           fclose(file);
               return -1;
           }
-          
+
           // Allocate rgb holders.
           rgbValues[entryIndex] = (int*) calloc (3, sizeof(int));
           if (rgbValues[entryIndex] == NULL)
@@ -964,17 +963,17 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
           fclose(file);
               return -1;
           }
-          
+
           // Set values.
           rgbValues[entryIndex][0] = r;
           rgbValues[entryIndex][1] = g;
           rgbValues[entryIndex][2] = b;
-          
+
           // Copy the name.
           strcpy (names[entryIndex], name);
           lineNumber++;
       }
-      
+
   }
   fclose(file);
   vtkDebugMacro(<< "ReadExternalColorTable: got num color table entries = " << numColorTableEntries << ", and line number = " << lineNumber );
@@ -989,17 +988,42 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
   return 0;
 }
 
+//-------------------------------------------------------------------------
+vtkIntArray * vtkFSSurfaceAnnotationReader::GetOutput()
+{
+  return this->Labels;
+}
+
+//-------------------------------------------------------------------------
+void vtkFSSurfaceAnnotationReader::SetOutput(vtkIntArray *output)
+{
+  this->Labels = output;
+}
+
+//-------------------------------------------------------------------------
+vtkLookupTable * vtkFSSurfaceAnnotationReader::GetColorTableOutput()
+{
+  return this->Colors;
+}
+
+//-------------------------------------------------------------------------
+void vtkFSSurfaceAnnotationReader::SetColorTableOutput(vtkLookupTable* colors)
+{
+  this->Colors = colors;
+}
+
+//-------------------------------------------------------------------------
 char* vtkFSSurfaceAnnotationReader::GetColorTableNames()
 {
   if (NULL == this->NamesList || this->NumColorTableEntries < 0)
   {
       return NULL;
   }
-  
+
   return this->NamesList;
 }
 
-
+//-------------------------------------------------------------------------
 void vtkFSSurfaceAnnotationReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkDataReader::PrintSelf(os,indent);
@@ -1041,10 +1065,9 @@ void vtkFSSurfaceAnnotationReader::PrintSelf(ostream& os, vtkIndent indent)
   {
       os << "(None)\n";
   }
-  
 }
 
-// write out the annotation file, using an internal color table
+//-------------------------------------------------------------------------
 int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
 {
     FILE* annotFile = NULL;
@@ -1055,7 +1078,7 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
     int labelIndex, colorTableIndex;
     double *colours;
     int rgb;
-    
+
     vtkDebugMacro( << "starting WriteFSAnnotation\n");
     if (olabels == NULL)
     {
@@ -1067,14 +1090,14 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
         vtkErrorMacro(<< "WriteFSAnnotation: color table is null");
         return -1;
     }
-    if (NULL == this->FileName) 
+    if (NULL == this->FileName)
     {
       vtkErrorMacro(<< "WriteFSAnnotation: fileName not specified.");
       return -1;
     }
 
     vtkDebugMacro( << "WriteFSAnnotation: Writing surface annotation data to: " << this->FileName << "\n");
-    
+
     // Try to open the file.
     annotFile = fopen(this->FileName, "rb");
     if (annotFile != NULL)
@@ -1082,9 +1105,9 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
         fclose(annotFile);
     }
     annotFile = fopen (this->FileName, "wb");
-    if (NULL == annotFile) 
+    if (NULL == annotFile)
     {
-        vtkErrorMacro (<< "\nWriteFSAnnotation: could not open file\n " 
+        vtkErrorMacro (<< "\nWriteFSAnnotation: could not open file\n "
                        << this->FileName);
         return vtkFSSurfaceAnnotationReader::FS_ERROR_LOADING_ANNOTATION;
     }
@@ -1092,7 +1115,7 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
     // write the number of label elements in the file.
     numLabels = olabels->GetNumberOfTuples();
     vtkDebugMacro(<<"numLabels = " << numLabels);
-    
+
     write = vtkFSIO::WriteInt(annotFile, numLabels);
     if (write != 1)
     {
@@ -1121,7 +1144,7 @@ int vtkFSSurfaceAnnotationReader::WriteFSAnnotation()
             // them down and anding with 0xff, so just shift them back into
             // place and or them together
             rgb = (int)(colours[0]) | ((int)(colours[1]) << 8) | ((int)(colours[2]) << 16);
-        
+
             vtkDebugMacro(<<"label index " << labelIndex << ", colorTableIndex " << colorTableIndex << ", rgb " << rgb);
         } else {
             vtkErrorMacro(<<"Null colours at label index " << labelIndex << ", colorTableIndex " << colorTableIndex);

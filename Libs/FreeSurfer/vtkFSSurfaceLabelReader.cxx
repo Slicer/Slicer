@@ -12,11 +12,14 @@
 
 =========================================================================auto=*/
 
+// FreeSurfer includes
 #include "vtkFSSurfaceLabelReader.h"
-#include "vtkObjectFactory.h"
+
+// VTK includes
+#include <vtkFloatArray.h>
+#include <vtkObjectFactory.h>
 
 //-------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceLabelReader);
 
 //-------------------------------------------------------------------------
@@ -55,22 +58,22 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     return this->FS_ERROR_W_OUTPUT_NULL;
     }
   vtkDebugMacro( << "vtkFSSurfaceLabelReader Execute() " << endl);
-  
-  if (!this->FileName) 
+
+  if (!this->FileName)
     {
     vtkErrorMacro(<<"vtkFSSurfaceLabelReader Execute: FileName not specified.");
     return this->FS_ERROR_W_NO_FILENAME;
     }
-  
+
   vtkDebugMacro(<<"Reading surface Label data...");
-  
+
   // Try to open the file. It's a plain ascii file
   labelFile = fopen(this->FileName, "r") ;
-  if (!labelFile) 
+  if (!labelFile)
     {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
     return this->FS_ERROR_W_OPEN;
-    }  
+    }
 
   // read the comment line
   char lineString[1024];
@@ -82,17 +85,17 @@ int vtkFSSurfaceLabelReader::ReadLabel()
 
   // TODO: parse the comment string, there may be a label number before the
   // comma
-  
+
   // This is the number of values in the label file.
   int numread = fscanf (labelFile, "%d", &numValues);
-  if (numValues < 0 || numread <= 0) 
+  if (numValues < 0 || numread <= 0)
     {
     vtkErrorMacro (<< "vtkFSSurfaceLabelReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
     return this->FS_ERROR_W_NUM_VALUES;
     }
 
   this->NumberOfValues = numValues;
-  
+
   // Check to see that NumberOfVertices was set and is larger than number of values
   if (this->NumberOfVertices == 0)
     {
@@ -100,9 +103,9 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     vtkErrorMacro(<<"vtkFSSurfaceLabelReader: Number of vertices in the associated scalar file has not been set, using number of values in the file");
     this->NumberOfVertices = numValues;
     }
-  
+
   vtkDebugMacro(<<"vtkFSSurfaceLabelReader: numValues = " << this->NumberOfValues << ", numVertices = " << this->NumberOfVertices);
-  
+
   // Make our float array.
   // scalars = (float*) calloc (numValues, sizeof(float));
   // make the array big enough to hold all vertices, calloc inits all values
@@ -124,11 +127,11 @@ int vtkFSSurfaceLabelReader::ReadLabel()
 
   this->NumberOfValues = 0;
   // For each value in the file...
-  for (vIndex = 0; vIndex < numValues; vIndex ++ ) 
+  for (vIndex = 0; vIndex < numValues; vIndex ++ )
     {
-    
+
     // Check for eof.
-    if (feof(labelFile)) 
+    if (feof(labelFile))
       {
       vtkErrorMacro (<< "vtkFSSurfaceLabelReader.cxx Execute: Unexpected EOF after " << vIndex << " values read. Tried to read " << numValues);
       return this->FS_ERROR_W_EOF;
@@ -139,7 +142,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     // This means that the label file could have fewer values than the
     // number of vertices in the surface.
     // index x y z w
-    // Currently, ignoring the values after the index    
+    // Currently, ignoring the values after the index
     int retval2 = fscanf(labelFile, "%d %f %f %f %f", &vIndexFromFile, &xValue, &yValue, &zValue, &wValue);
 
     if (retval2 != 5)
@@ -148,23 +151,23 @@ int vtkFSSurfaceLabelReader::ReadLabel()
       break;
       }
     this->NumberOfValues++;
-    
+
     // Make sure the index is in bounds. If not, print a warning and
     // try to do the next value. If this happens, there is probably a
     // mismatch between the file and the surface, but I think there
     // is a reason for being able to load a mismatched file. But this
     // should raise some kind of message to the user like, "This file
     // appears to be for a different surface; continue loading?"
-    if (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices) 
-      { 
+    if (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices)
+      {
       vtkErrorMacro (<< "ReadLabel: value #" << this->NumberOfValues << ": Read an index that is out of bounds (" << vIndexFromFile << " not in 0-" << this->NumberOfVertices << "), ignoring.");
       break;
       }
-    
+
     // Set the value in the scalars array based on the index we read
     // in, not the index in our for loop.
     scalars[vIndexFromFile] = this->LabelOn;
-    
+
     if (numValues < 10000 ||
         (vIndex % 100) == 0)
       {
@@ -174,7 +177,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
 
   this->SetProgressText("");
   this->UpdateProgress(0.0);
-  
+
   // Close the file.
   fclose (labelFile);
 

@@ -12,25 +12,42 @@
 
 =========================================================================auto=*/
 
-#include "vtkFSSurfaceScalarReader.h"
-#include "vtkObjectFactory.h"
+// FreeSurfer includes
 #include "vtkFSIO.h"
-#include "vtkByteSwap.h"
+#include "vtkFSSurfaceScalarReader.h"
+
+// VTK includes
+#include <vtkByteSwap.h>
+#include <vtkFloatArray.h>
+#include <vtkObjectFactory.h>
 
 //-------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceScalarReader);
 
+//-------------------------------------------------------------------------
 vtkFSSurfaceScalarReader::vtkFSSurfaceScalarReader()
 {
-    this->scalars = NULL;
-
+    this->Scalars = NULL;
 }
 
+//-------------------------------------------------------------------------
 vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader()
 {
 }
 
+//-------------------------------------------------------------------------
+vtkFloatArray * vtkFSSurfaceScalarReader::GetOutput()
+{
+  return this->Scalars;
+}
+
+//-------------------------------------------------------------------------
+void vtkFSSurfaceScalarReader::SetOutput(vtkFloatArray *output)
+{
+  this->Scalars = output;
+}
+
+//-------------------------------------------------------------------------
 int vtkFSSurfaceScalarReader::ReadFSScalars()
 {
   FILE* scalarFile;
@@ -42,7 +59,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   int ivalue;
   float fvalue;
   float *FSscalars;
-  vtkFloatArray *output = this->scalars;
+  vtkFloatArray *output = this->Scalars;
 
   if (output == NULL)
   {
@@ -63,7 +80,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   if (!scalarFile) {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
     return 0;
-  }  
+  }
 
 
   // In the old file type, there is no magin number; the first three
@@ -103,7 +120,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
       {
       vtkErrorMacro("Error reading number of values per point, should be 1, in filename " << this->FileName);
       }
-    
+
     if (numValuesPerPoint != 1) {
       vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file.");
       return 0;
@@ -117,7 +134,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
     vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
       return 0;
   }
-  
+
   // Make our float array.
   FSscalars = (float*) calloc (numValues, sizeof(float));
 
@@ -154,12 +171,12 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
     {
         this->UpdateProgress(1.0*vIndex/numValues);
     }
-    
+
   }
-  
+
   this->SetProgressText("");
   this->UpdateProgress(0.0);
-  
+
   // Close the file.
   fclose (scalarFile);
 
@@ -169,6 +186,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   return 1;
 }
 
+//-------------------------------------------------------------------------
 void vtkFSSurfaceScalarReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkDataReader::PrintSelf(os,indent);
