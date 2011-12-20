@@ -34,7 +34,7 @@ class vtkMRMLdGEMRICProceduralColorNode;
 class vtkMRMLColorTableNode;
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
 {

@@ -37,7 +37,7 @@ class vtkMRMLLayoutNode;
 class vtkXMLDataElement;
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 /// vtkMRMLLayoutLogic is a logic that controls the layout node and the view
 /// nodes in a MRML scene.

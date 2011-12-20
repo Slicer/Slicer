@@ -22,9 +22,9 @@
 #ifndef __IP_MISC_H__
 #define __IP_MISC_H__
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cerrno>
 #include <sys/types.h>
 
 typedef enum

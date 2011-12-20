@@ -22,7 +22,7 @@
 #include <QApplication>
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 int qMRMLNodeFactoryTest1( int argc, char * argv [] )
 {

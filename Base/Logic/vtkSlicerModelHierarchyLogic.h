@@ -16,7 +16,7 @@
 #ifndef __vtkSlicerModelHierarchyLogic_h
 #define __vtkSlicerModelHierarchyLogic_h
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkSlicerBaseLogic.h"
 #include "vtkMRMLAbstractLogic.h"

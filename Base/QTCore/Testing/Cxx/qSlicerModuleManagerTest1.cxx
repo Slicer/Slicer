@@ -14,7 +14,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactory.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 #include "TestingMacros.h"

@@ -17,7 +17,7 @@
 #include <vtkMRMLScene.h>
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "TestingMacros.h"
 

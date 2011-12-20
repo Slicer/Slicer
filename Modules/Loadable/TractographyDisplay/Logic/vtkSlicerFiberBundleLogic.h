@@ -25,7 +25,7 @@
 #include "vtkSlicerTractographyDisplayModuleLogicExport.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 class vtkMRMLFiberBundleNode;
 

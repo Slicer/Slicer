@@ -21,8 +21,8 @@
 // adapted to C++: Martin Styner 20.July.2000
 // integrated into slicer: Stephen Aylward, 20, Aug, 2007
 /*****************************************************************************/
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 /********************************  Konstanten  *******************************/
 #define LIM  1 /* Voxelwert >= LIM => Objekt (Input-Bild) */

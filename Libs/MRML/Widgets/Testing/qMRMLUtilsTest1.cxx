@@ -24,7 +24,7 @@
 // qMRMLWidgets include
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 int qMRMLUtilsTest1( int argc, char * argv [] )
 {

@@ -11,7 +11,7 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include <stdlib.h>
+#include <cstdlib>
 #include <valarray>
 #include <vector>
 #include <string>

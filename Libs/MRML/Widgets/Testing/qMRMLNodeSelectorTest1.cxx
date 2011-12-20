@@ -9,7 +9,7 @@
 #include "vtkMRMLScene.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 int qMRMLNodeSelectorTest1( int argc, char * argv [] )

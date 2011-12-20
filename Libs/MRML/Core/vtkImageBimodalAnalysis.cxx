@@ -17,7 +17,7 @@
 #include "vtkImageData.h"
 
 //#include <math.h>
-//#include <stdlib.h>
+//#include <cstdlib>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkImageBimodalAnalysis);

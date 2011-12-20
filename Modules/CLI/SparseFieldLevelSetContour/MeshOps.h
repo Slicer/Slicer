@@ -14,8 +14,8 @@
 #ifndef MESHOPS
 #define MESHOPS
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <iostream>
 #include <valarray>
 #include "vtkCellArray.h"

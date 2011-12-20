@@ -25,7 +25,7 @@
 #include "vtkMRMLAbstractLogic.h"
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 class vtkCacheManager;
 class vtkDataIOManager;

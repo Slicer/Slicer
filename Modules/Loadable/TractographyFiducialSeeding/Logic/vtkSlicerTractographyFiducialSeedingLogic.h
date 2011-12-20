@@ -22,7 +22,7 @@
 #ifndef __vtkSlicerTractographyFiducialSeedingLogic_h
 #define __vtkSlicerTractographyFiducialSeedingLogic_h
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerTractographyFiducialSeedingModuleLogicExport.h"

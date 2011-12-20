@@ -20,7 +20,7 @@
 
 #include "qSlicerAbstractCoreModule.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 class AModule: public qSlicerAbstractCoreModule
 {

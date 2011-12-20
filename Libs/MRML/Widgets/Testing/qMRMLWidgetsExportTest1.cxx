@@ -1,7 +1,7 @@
 #include <QApplication>
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 int qMRMLWidgetsExportTest1( int argc, char * argv [] )
 {
