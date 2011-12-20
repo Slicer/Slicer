@@ -299,23 +299,23 @@ TODAY(Slicer_BUILDDATE)
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
-set(Slicer_MAJOR_VERSION "4")
-set(Slicer_MINOR_VERSION "0")
+set(Slicer_VERSION_MAJOR "4")
+set(Slicer_VERSION_MINOR "0")
 
-if(NOT Slicer_PATCH_VERSION)
-  set(Slicer_PATCH_VERSION "1-${Slicer_BUILDDATE}")
+if(NOT Slicer_VERSION_PATCH)
+  set(Slicer_VERSION_PATCH "1-${Slicer_BUILDDATE}")
 endif()
 
-set(Slicer_VERSION      "${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
-set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_PATCH_VERSION}")
+set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
 #-----------------------------------------------------------------------------
 set(Slicer_BIN_DIR "bin")
-set(Slicer_LIB_DIR "lib/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
-set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
-set(Slicer_SHARE_DIR "share/Slicer-${Slicer_MAJOR_VERSION}.${Slicer_MINOR_VERSION}")
+set(Slicer_LIB_DIR "lib/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_SHARE_DIR "share/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 
 if(Slicer_BUILD_CLI_SUPPORT)
