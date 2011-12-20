@@ -4,7 +4,7 @@ import slicer
 # test that brainsfit is available and can run
 # if this fails, changetracker cannot be used
 
-tfm = slicer.mrmlScene.CreateNodeByClass('vtkMRMLLinearTransformNode')
+tfm = slicer.vtkMRMLLinearTransformNode()
 slicer.mrmlScene.AddNode(tfm)
 
 vl = slicer.modules.volumes.logic()
