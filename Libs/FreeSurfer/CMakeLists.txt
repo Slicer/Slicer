@@ -76,6 +76,8 @@ set(srcs ${FreeSurfer_SRCS})
 
 add_library(${lib_name} ${srcs})
 
+set(VTK_LIBRARIES vtkCommon vtkFiltering vtkIO)
+
 set(libs
   ${VTK_LIBRARIES}
   vtkzlib
