@@ -56,6 +56,10 @@ foreach(var ${expected_variables})
   endif()
 endforeach()
 
+if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
+  set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
+endif()
+
 # Make sure command 'ctest_upload' is available if WITH_PACKAGES is True
 if(WITH_PACKAGES)
   if(NOT COMMAND ctest_upload)
