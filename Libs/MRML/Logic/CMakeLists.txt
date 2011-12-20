@@ -82,6 +82,15 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${MRMLLogic_SRCS})
 add_library(${lib_name} ${srcs})
 
+set(VTK_LIBRARIES
+  #Common # Provided by MRMLCore, vtkTeem, RemoteIO
+  #Filtering # Provided by MRMLCore, vtkTeem
+  #Graphics # Provided by MRMLCore, vtkTeem
+  #Imaging # Provided by MRMLCore, vtkTeem
+  #Rendering # Provided by MRMLCore
+  "" # Since no direct dependency to VTK libraries are required, let's explicitly set
+     # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
+  )
 set(libs
   MRMLCore
   vtkTeem
@@ -127,6 +136,7 @@ if(VTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${MRMLLogic_SRCS}
+    KIT_PYTHON_LIBRARIES MRMLCorePythonD
     KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )

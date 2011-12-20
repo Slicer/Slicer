@@ -82,7 +82,6 @@ set(KIT_MOC_SRCS
 set(KIT_target_libraries
   SlicerBaseLogic
   MRMLDisplayableManager
-  FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
   CTKDICOMCore
   CTKImageProcessingITKCore

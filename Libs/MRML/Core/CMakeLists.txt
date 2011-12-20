@@ -208,6 +208,17 @@ set(srcs ${MRMLCore_SRCS} ${MRMLCore_SRCS_HEADERS})
 set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
+
+set(VTK_LIBRARIES
+  #vtkCommon # Provided by vtkITK, FreeSurfer
+  #vtkFiltering # Provided by vtkITK, FreeSurfer
+  vtkGraphics
+  vtkHybrid
+  #vtkIO # Provided by FreeSurfer
+  #vtkImaging # Provided by vtkITK
+  vtkRendering
+  )
+
 set(libs
   vtkITK
   ${ITK_LIBRARIES}

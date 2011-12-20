@@ -110,6 +110,8 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkITK_SRCS})
 add_library(${lib_name} ${srcs})
 
+set(VTK_LIBRARIES vtkCommon vtkFiltering vtkImaging)
+
 set(libs
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}

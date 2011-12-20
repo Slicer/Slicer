@@ -142,14 +142,19 @@ set(srcs ${SlicerBaseLogic_SRCS})
 
 add_library(${lib_name} ${srcs})
 
+set(VTK_LIBRARIES
+  #vtkCommon # Provided by MRMLLogic
+  #vtkFiltering # Provided by MRMLLogic
+  #vtkGraphics # Provided by MRMLLogic
+  #vtkHybrid # Provided by MRMLLogic
+  #vtkIO # Provided by MRMLLogic
+  "" # Since no direct dependency to VTK libraries are required, let's explicitly set
+     # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
+  )
+
 set(libs
-  MRMLCore
   MRMLLogic
-  vtkITK
-  ${OPENTRACKER_LIB}
-  FreeSurfer
   ${VTK_LIBRARIES}
-  RemoteIO
   )
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)

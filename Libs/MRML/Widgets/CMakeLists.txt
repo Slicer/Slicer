@@ -305,7 +305,6 @@ set(MRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES}
   ${CTK_EXTERNAL_LIBRARIES}
-  MRMLCore
   MRMLLogic
   MRMLDisplayableManager
   )

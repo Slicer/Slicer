@@ -128,6 +128,16 @@ set(srcs
 set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
+set(VTK_LIBRARIES
+  #vtkCommon # Provided by MRMLCore, MRMLLogic
+  #vtkFiltering # Provided by MRMLCore, MRMLLogic
+  #vtkGraphics # Provided by MRMLCore, MRMLLogic
+  #vtkHybrid # Provided by MRMLCore
+  #vtkIO # Provided by MRMLCore
+  #vtkRendering # Provided by MRMLCore, MRMLLogic
+  vtkWidgets
+  )
+
 set(libs
   ${VTK_LIBRARIES}
   MRMLCore

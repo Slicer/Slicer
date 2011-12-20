@@ -201,7 +201,6 @@ endif()
 
 # Additional Target libraries (QT libs already included)
 set(KIT_target_libraries
-  MRMLDisplayableManager
   qSlicerBaseQTCore
   qMRMLWidgets
   )

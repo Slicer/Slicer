@@ -109,6 +109,14 @@ else ( ${Teem_VERSION_MAJOR} GREATER 1 )
   endif ( ${Teem_VERSION_MINOR} LESS 10 )
 endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
+set(VTK_LIBRARIES
+  vtkCommon
+  vtkFiltering
+  vtkGraphics
+  vtkIO
+  vtkImaging
+  )
+
 set(libs
   ${Teem_LIBRARIES}
   ${VTK_LIBRARIES}
