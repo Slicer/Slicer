@@ -79,6 +79,9 @@ if(NOT DEFINED LibArchive_DIR)
     else()
       message(STATUS "${proj} - Configured *WITH* OpenSSL support.")
     endif()
+    list(APPEND ADDITIONAL_CMAKE_ARGS
+      -DCRYPTO_LIBRARY:FILEPATH=
+      )
   endif()
 
   # Set CMake OSX variable to pass down the external project
