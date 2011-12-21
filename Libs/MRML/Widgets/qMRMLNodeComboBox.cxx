@@ -476,9 +476,10 @@ void qMRMLNodeComboBox::renameCurrentNode()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
+void qMRMLNodeComboBox::emitCurrentNodeChanged()
 {
   Q_D(qMRMLNodeComboBox);
+  int currentIndex = d->ComboBox->currentIndex();
   vtkMRMLNode*  node = d->mrmlNode(currentIndex);
   if (!node && ((!d->NoneEnabled &&currentIndex != -1) || (d->NoneEnabled && currentIndex != 0)) )
     {
@@ -813,8 +814,8 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   d->setModel(oldModel);
 
-  connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(emitCurrentNodeChanged(int)));
+  connect(d->ComboBox, SIGNAL(currentIndexChanged(QString)),
+          this, SLOT(emitCurrentNodeChanged()));
   connect(d->ComboBox, SIGNAL(activated(int)),
           this, SLOT(emitNodeActivated(int)));
   d->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,

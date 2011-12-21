@@ -248,7 +248,7 @@ protected:
 
 protected slots:
   void activateExtraItem(const QModelIndex& index);
-  void emitCurrentNodeChanged(int index);
+  void emitCurrentNodeChanged();
   void emitNodeActivated(int currentIndex);
   void emitNodesAdded(const QModelIndex & parent, int start, int end);
   void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
