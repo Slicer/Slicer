@@ -202,7 +202,9 @@ void qSlicerViewersToolBarPrivate::init()
                    this, SLOT(setCrosshairMode(bool)));
 
   q->addWidget(this->CrosshairToolButton);
-
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->CrosshairToolButton,
+                   SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   /// Other controls
   ///
 }

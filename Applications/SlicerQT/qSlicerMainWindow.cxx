@@ -280,6 +280,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Populate the View ToolBar with all the layouts of the layout manager
   QToolButton* layoutButton = new QToolButton(q);
+  layoutButton->setText(q->tr("Layout"));
   layoutButton->setMenu(this->MenuLayout);
   layoutButton->setPopupMode(QToolButton::InstantPopup);
   layoutButton->setDefaultAction(this->actionViewLayoutConventional);
@@ -287,8 +288,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    layoutButton, SLOT(setDefaultAction(QAction*)));
   QObject::connect(this->MenuLayout, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
-  this->ViewToolBar->addWidget(layoutButton);
 
+  this->ViewToolBar->addWidget(layoutButton);
+  QObject::connect(this->ViewToolBar,
+                   SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   layoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+  
   //----------------------------------------------------------------------------
   // Viewers Toolbar
   //----------------------------------------------------------------------------

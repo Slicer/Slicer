@@ -85,13 +85,15 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QIcon historyIcon(":Icons/ModuleHistory.png");
 
   // Modules Label
-  q->addWidget(new QLabel(QObject::tr("Modules:"), q));
+  q->addWidget(new QLabel(q->tr("Modules:"), q));
 
   // Modules comboBox
   this->ModulesComboBox = new ctkMenuComboBox(q);
   this->ModulesComboBox->setToolTip(QObject::tr("Select a module from the module list"));
   this->ModulesComboBox->setMinimumContentsLength(20);
   q->addWidget(this->ModulesComboBox);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->ModulesComboBox,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   // Modules menu
   this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"), this->ModulesComboBox);
@@ -102,40 +104,46 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // History
   this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
   this->HistoryButton = new QToolButton;
+  this->HistoryButton->setText(q->tr("History"));
   this->HistoryButton->setIcon(historyIcon);
   this->HistoryButton->setToolTip(QObject::tr("Modules history"));
   this->HistoryButton->setMenu(this->HistoryMenu);
   this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
   q->addWidget(this->HistoryButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->HistoryButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   // Previous button
   this->PreviousHistoryMenu = new QMenu("Modules Previous History", q);
   this->PreviousButton = new QToolButton(q);
   this->PreviousButton->setIcon(previousIcon);
-  this->PreviousButton->setText(QObject::tr("Previous"));
-  this->PreviousButton->setToolTip(QObject::tr("Previous modules"));
+  this->PreviousButton->setText(q->tr("Previous"));
+  this->PreviousButton->setToolTip(q->tr("Previous modules"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
   // selectPreviousModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
   QObject::connect(this->PreviousButton, SIGNAL(clicked(bool)),
                    q, SLOT(selectPreviousModule()));
   q->addWidget(this->PreviousButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->PreviousButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->PreviousButton->setEnabled(this->PreviousHistoryMenu->actions().size() > 0);
 
   // Next button
   this->NextHistoryMenu = new QMenu("Modules Next History", q);
   this->NextButton = new QToolButton(q);
   this->NextButton->setIcon(nextIcon);
-  this->NextButton->setText(QObject::tr("Next"));
-  this->NextButton->setToolTip(QObject::tr("Next modules"));
+  this->NextButton->setText(q->tr("Next"));
+  this->NextButton->setToolTip(q->tr("Next modules"));
   this->NextButton->setMenu(this->NextHistoryMenu);
   // selectNextModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
   QObject::connect(this->NextButton, SIGNAL(clicked(bool)),
                    q, SLOT(selectNextModule()));
   q->addWidget(this->NextButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->NextButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
-
 }
 
 //---------------------------------------------------------------------------

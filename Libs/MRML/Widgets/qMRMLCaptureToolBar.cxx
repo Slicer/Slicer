@@ -119,6 +119,9 @@ void qMRMLCaptureToolBarPrivate::init()
   //QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
   //                 this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
   q->addWidget(sceneViewMenuButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                  sceneViewMenuButton,
+                  SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 }
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)

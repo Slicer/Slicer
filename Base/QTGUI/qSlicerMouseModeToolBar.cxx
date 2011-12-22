@@ -85,6 +85,9 @@ void qSlicerMouseModeToolBarPrivate::init()
   QObject::connect( this->CreateAndPlaceMenu, SIGNAL(triggered(QAction*)),
                     this->CreateAndPlaceToolButton, SLOT(setDefaultAction(QAction*)));
   q->addWidget(this->CreateAndPlaceToolButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+                   this->CreateAndPlaceToolButton,
+                   SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   // persistence
   this->PersistenceCheckBox = new QCheckBox(q);
