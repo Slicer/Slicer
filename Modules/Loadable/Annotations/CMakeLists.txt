@@ -104,12 +104,18 @@ set(qt_module_SRCS
   ${Logic_SRCS}
   ${VTKWidget_SRCS}
   ${GUI_SRCS}
+  qSlicerAnnotationsIO.cxx
+  qSlicerAnnotationsIO.h
+  qSlicerAnnotationsIOOptionsWidget.cxx
+  qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.cxx
   qSlicerAnnotationsModule.h
   )
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
+  qSlicerAnnotationsIO.h
+  qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.h
   GUI/qMRMLSceneAnnotationModel.h
   GUI/qMRMLAnnotationTreeView.h
@@ -122,6 +128,7 @@ set(qt_module_MOC_SRCS
 # UI files
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
+  Resources/UI/qSlicerAnnotationModuleIOOptionsWidget.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
   )
