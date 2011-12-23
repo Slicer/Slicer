@@ -15,18 +15,18 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node2 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   node2->SetScene(mrmlScene);
-  {
 
-    vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
-    node1->SetScene(mrmlScene);
-    EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
-    node1->UpdateReferences();
-    node2->Copy( node1 );
+  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
+  node1->SetScene(mrmlScene);
+  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  
+  node1->UpdateReferences();
+  node2->Copy( node1 );
+  
+  mrmlScene->RegisterNodeClass(node1);
+  mrmlScene->AddNode(node2);
 
-    mrmlScene->RegisterNodeClass(node1);
-    mrmlScene->AddNode(node2);
-  }
  
   std::cout << "Passed Basic" << std::endl;
   
@@ -55,49 +55,42 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
   
   std::string nodeTagName = node2->GetNodeTagName();
   std::cout << "Node Tag Name = " << nodeTagName << std::endl;
-
-  {
-    //cout << "Hey "<< endl;
-    //const char* text = "Test 1";
-    //node2->SetText(0,text, 1, 0);
-    //if (node2->GetText(0).compare(text))
-    //{
-    //  std::cerr << "Error in AddText(): did not add text correctly  '" << node2->GetText(0) << "'" <<  std::endl;
-    //  return EXIT_FAILURE;
-    //}
-
-    double ctp[3] = { 1, 2, 3};
-    const char* text = "Test 1 2";
-    if (!node2->SetFiducial(text,ctp,1,0)) 
-      {
+  
+  double ctp[3] = { 1, 2, 3};
+  const char* text = "Test 1 2";
+  node2->SetFiducialLabel(text);
+  if (!node2->SetFiducial(ctp,1,0)) 
+    {
     vtkIndent f;
     node2->PrintSelf(cout,f);
     std::cerr << "Error: Could not define Fiducial " << std::endl;
     return EXIT_FAILURE;
-      }
+    }
+  node2->SetSelected(1);
+  node2->SetVisible(0);
   
-    double *_ctp =  node2->GetFiducialCoordinates();
-
-    if ( !node2->GetNumberOfTexts() || node2->GetFiducialLabel().compare(text)) 
-      {
+  double *_ctp =  node2->GetFiducialCoordinates();
+  
+  if ( !node2->GetNumberOfTexts() || node2->GetFiducialLabel().compare(text)) 
+    {
     std::cerr << "Error in SetFiducial: Label is not set correct " << std::endl;
     return EXIT_FAILURE;
       }
-
-    if (_ctp[0] != ctp[0] ||_ctp[1] != ctp[1] ||_ctp[2] != ctp[2])
-      {
+  
+  if (_ctp[0] != ctp[0] ||_ctp[1] != ctp[1] ||_ctp[2] != ctp[2])
+    {
     std::cerr << "Error in SetFiducial: coordinates are not set correct " << std::endl;
     return EXIT_FAILURE;
-      }
-
-    if (!node2->GetSelected() || node2->GetVisible())
-      {
+    }
+  
+  if (!node2->GetSelected() || node2->GetVisible())
+    {
     std::cerr << "Error in SetFiducial: attributes are not set correct " << std::endl;
     return EXIT_FAILURE;
-      }
-  }
-  node2->Modified();
+    }
 
+  node2->Modified();
+  
   // ======================
   // Test WriteXML and ReadXML 
   // ======================
@@ -110,17 +103,17 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
 
   if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode") != 1) 
     {
-        std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
+    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     return EXIT_FAILURE;
     }
  
   vtkMRMLAnnotationFiducialNode *node3 = dynamic_cast < vtkMRMLAnnotationFiducialNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationFiducialNode"));
   if (!node3) 
-      {
+    {
     std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     return EXIT_FAILURE;
-      }
-
+    }
+  
   vtkIndent ind;
   std::stringstream initialAnnotation, afterAnnotation;
   
@@ -129,12 +122,12 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
   node2->PrintAnnotationInfo(initialAnnotation,ind);
   node3->PrintAnnotationInfo(afterAnnotation,ind);
   if (initialAnnotation.str().compare(afterAnnotation.str())) 
-  {
+    {
     std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
     std::cerr << "After:" << std::endl << afterAnnotation.str() <<std::endl;
     return EXIT_FAILURE;
-  }
+    }
   cout << "Passed XML" << endl;
 
   return EXIT_SUCCESS;

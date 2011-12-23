@@ -8,10 +8,14 @@
 
 // QTGUI includes
 #include <qSlicerApplication.h>
+#include <qSlicerCoreApplication.h>
+#include <qSlicerCoreIOManager.h>
+
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModule.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
+#include "qSlicerAnnotationsIO.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationsModule, qSlicerAnnotationsModule);
@@ -38,6 +42,8 @@ qSlicerAnnotationsModule::~qSlicerAnnotationsModule()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsModule::setup()
 {
+  /// Register Displayable Managers:
+  
   // 3D
   QStringList threeDdisplayableManagers;
   threeDdisplayableManagers
@@ -74,6 +80,11 @@ void qSlicerAnnotationsModule::setup()
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
         QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toLatin1());
     }
+
+  /// Register IO
+  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+    new qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
+
 
 }
 

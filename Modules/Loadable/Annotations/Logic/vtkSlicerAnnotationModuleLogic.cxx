@@ -2,7 +2,6 @@
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // Annotation/MRML includes
-#include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
@@ -10,6 +9,7 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
@@ -32,6 +32,9 @@
 #include <vtkNew.h>
 #include <vtkPNGWriter.h>
 #include <vtkSmartPointer.h>
+
+/// ITK includes
+#include <itksys/SystemTools.hxx>
 
 // STD includes
 #include <string>
@@ -105,6 +108,68 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "LastAddedAnnotationNode: " << (this->m_LastAddedAnnotationNode->GetID() ? this->m_LastAddedAnnotationNode->GetID() : "NULL ID") << std::endl;
     }
+}
+
+//-----------------------------------------------------------------------------
+// Load an annotation from file
+//-----------------------------------------------------------------------------
+char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const char *name, int fileType)
+{
+  if (!filename)
+    {
+    vtkErrorMacro("LoadAnnotation: null filename, cannot load");
+    return NULL;
+    }
+  vtkDebugMacro("LoadAnnotation: filename = " << filename << ", fileType = " << fileType);
+//  std::cout << "LoadAnnotation: filename = " << filename << ", fileType = " << fileType << std::endl;
+
+  const itksys_stl::string fname(filename);
+
+  if (fileType == this->Fiducial)
+    {
+    vtkSmartPointer<vtkMRMLAnnotationFiducialsStorageNode> fStorageNode = vtkSmartPointer<vtkMRMLAnnotationFiducialsStorageNode>::New();
+    // vtkSmartPointer<vtkMRMLAnnotationFiducialNode> fnode = vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New();
+    vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
+    fnode->SetName(name);
+    
+    fStorageNode->SetFileName(filename);
+    
+    // add the storage node to the scene
+    this->GetMRMLScene()->AddNode(fStorageNode);
+    fnode->SetScene(this->GetMRMLScene());
+
+    this->GetMRMLScene()->AddNode(fnode);
+    fnode->SetAndObserveStorageNodeID(fStorageNode->GetID());
+  
+    if (fStorageNode->ReadData(fnode))
+      {
+      vtkDebugMacro("LoadAnnotation: fiducial storage node read " << filename);
+      return fnode->GetID();
+      }
+    }
+  else if (fileType == this->Ruler)
+    {
+    vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode> rStorageNode = vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode>::New();
+    vtkSmartPointer<vtkMRMLAnnotationRulerNode> rNode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
+    rNode->SetName(name);
+    
+    rStorageNode->SetFileName(filename);
+  
+    if (rStorageNode->ReadData(rNode))
+      {
+      vtkDebugMacro("LoadAnnotation: ruler storage node read " << filename);
+      return rNode->GetID();
+      }
+    }
+  else if (fileType == this->ROI)
+    {
+    vtkErrorMacro("LoadAnnotation: ROI reading not supported yet, cannot read " << filename);
+    }
+  else
+    {
+    vtkErrorMacro("LoadAnnotation: unknown file type " << fileType << ", cannot read " << filename);
+    }
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -222,9 +287,15 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::OnMRMLSceneEndClose()
 {
-  this->m_LastAddedAnnotationNode = 0;
+  if (this->m_LastAddedAnnotationNode)
+    {
+    this->m_LastAddedAnnotationNode = 0;
+    }
 
-  this->SetActiveHierarchyNodeID(NULL);
+  if (this->GetActiveHierarchyNodeID())
+    {
+    this->SetActiveHierarchyNodeID(NULL);
+    }
 
   if (this->m_Widget)
     {
@@ -638,6 +709,11 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       vtkMRMLAnnotationFiducialNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationFiducialNode);
   annotationFiducialNode->Delete();
+
+  vtkMRMLAnnotationFiducialsStorageNode* annotationFiducialsStorageNode =
+      vtkMRMLAnnotationFiducialsStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationFiducialsStorageNode);
+  annotationFiducialsStorageNode->Delete();
 
   //
   // Annotation hierarchies

@@ -18,25 +18,31 @@ vtkMRMLAnnotationFiducialNode::~vtkMRMLAnnotationFiducialNode()
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialNode::SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag)
+int vtkMRMLAnnotationFiducialNode::SetFiducial(double newControl[3],int selectedFlag, int visibleFlag)
 {
-  if (!this->SetFiducialCoordinates(newControl))
+  if (!this->SetFiducialCoordinates(newControl, selectedFlag, visibleFlag))
     {
-      return 0;
+    return 0;
     }
 
+  // this is wrong, it's over riding the Text when read a fiducial from a file
+  /*
   if (label) 
     {
-      this->SetFiducialLabel(label);
+    this->SetFiducialLabel(label);
     }
   else 
     {
-      this->SetTextFromID();      
+    this->SetTextFromID();      
     }
+  */
 
+  /* and this is wrong because it's setting the flags on the node rather than
+  on the control point
   this->SetSelected(selectedFlag);
   this->SetVisible(visibleFlag);
-
+  */
+  
   return 1;
 }
 

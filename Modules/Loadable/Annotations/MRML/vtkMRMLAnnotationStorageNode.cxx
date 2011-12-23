@@ -61,8 +61,8 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
 {
   if (annotationDisplayNode == NULL)
     {
-      vtkErrorMacro("ReadData: unable to get associated AnnotationTextDisplayNode"); 
-      return -1;
+    vtkErrorMacro("ReadAnnotationDisplayProperties: null associated AnnotationDisplayNode"); 
+    return -1;
     }
 
  int textOffset = preposition.size();
@@ -183,7 +183,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
 {
   if (annotationDisplayNode == NULL)
     {
-      vtkErrorMacro("ReadData: unable to get associated AnnotationTextDisplayNode"); 
+      vtkErrorMacro("ReadAnnotationTextDisplayProperties: null associated AnnotationTextDisplayNode"); 
       return -1;
     }
 
@@ -222,7 +222,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 
   if (this->GetFileName() == NULL && this->GetURI() == NULL) 
     {
-    vtkErrorMacro("ReadData: file name and uri not set");
+    vtkErrorMacro("OpenFileToRead: file name and uri not set");
     return 0;
     }
 
@@ -231,7 +231,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
   if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
-    vtkWarningMacro("ReadData: Read state is pending, returning.");
+    vtkWarningMacro("OpenFileToRead: Read state is pending, returning.");
     return 0;
     }
   
@@ -247,7 +247,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 
   if (!fstr.is_open())
     {
-      vtkErrorMacro("ReadData: unable to open file " << fullName.c_str() << " for reading");
+      vtkErrorMacro("OpenFileToRead: unable to open file " << fullName.c_str() << " for reading");
       return 0;
     }
 
@@ -255,28 +255,27 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *refNode, char line[1024], int typeColumn, int annotationColumn,  int selColumn,  int visColumn, int numColumns)
+int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *refNode, char line[1024], int typeColumn, int annotationColumn,  int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
     {
     vtkErrorMacro("ReadAnnotationTextData: reference node is null.");
-    return;
+    return 0;
     }
 
   if (typeColumn)
     {
     vtkErrorMacro("Type column has to be zero but is" << typeColumn);
-    return;
+    return 0;
     }
   // is it empty?
   if (line[0] == '\0')
     {
     vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
-    return;
+    return 0;
     }
   
-  vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"");
-  std::cout << "ReadAnnotationTextData: got a line: \n\"" << line << "\"" << std::endl;
+  vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"\n\tAnnotation Storage type = " << this->GetAnnotationStorageType());
   
   std::string attValue(line);
   int size = std::string(this->GetAnnotationStorageType()).size();
@@ -326,8 +325,14 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
     if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
       {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
+      return 0;
+      }
+    else
+      {
+      return 1;
       }
     }
+  return 0;
 }
 //----------------------------------------------------------------------------
  
@@ -346,7 +351,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
   int flag = this->ReadAnnotationTextDisplayProperties(refNode->GetAnnotationTextDisplayNode(), line,this->GetAnnotationStorageType());
   if (flag) 
     {
-      return flag;
+    return flag;
     } 
 
   vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
@@ -409,7 +414,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
 {
   if (annotationNode == NULL)
     {
-      vtkErrorMacro("ReadData: input is NULL");
+      vtkErrorMacro("ReadAnnotation: input is NULL");
       return 0;
     }
 
@@ -525,7 +530,8 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream&
 {
  if (!refNode)
    {
-     return;
+   vtkErrorMacro("WriteAnnotationTextDisplayProperties: null annotation text display node");
+   return;
    }
  this->WriteAnnotationDisplayProperties(of, refNode, preposition);
 

@@ -23,8 +23,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
    // Description:
   // Read data and set it in the referenced node
   // NOTE: Subclasses should implement this method
-  int ReadData(); 
-  virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) {return this->ReadData();  }
+  int ReadData(vtkMRMLNode *refNode);
 
   // Description:
   // Get node XML tag name (like Storage, Model)
@@ -42,7 +41,7 @@ protected:
   vtkMRMLAnnotationFiducialsStorageNode(const vtkMRMLAnnotationFiducialsStorageNode&);
   void operator=(const vtkMRMLAnnotationFiducialsStorageNode&);
 
-  int ReadAnnotation();
+  int ReadAnnotation(vtkMRMLAnnotationFiducialNode *refNode);
   int ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,  
                       int selColumn,  int visColumn, int numColumns);
   int ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int &labelColumn, 

@@ -34,7 +34,7 @@ public:
 
   virtual const char* GetIcon() {return ":/Icons/AnnotationPoint.png";};
 
-  int  SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag);
+  int  SetFiducial(double newControl[3],int selectedFlag, int visibleFlag);
   
   // Selected and visible are currently always set to 1 and are controlled by selected and visible flag - we can change this later
   void SetFiducialLabel(const char* newLabel) 
@@ -58,14 +58,14 @@ public:
     return 0;
     }
 
-  int SetFiducialCoordinates(double newCoord[3]) 
+  int SetFiducialCoordinates(double newCoord[3], int selFlag = 1, int visFlag = 1) 
     {
-    return this->SetControlPoint(0,newCoord,1,1);
+    return this->SetControlPoint(0,newCoord,selFlag,visFlag);
     }
 
-  int SetFiducialWorldCoordinates(double newCoord[3]) 
+  int SetFiducialWorldCoordinates(double newCoord[3], int selFlag = 1, int visFlag = 1) 
     {
-    return this->SetControlPointWorldCoordinates(0,newCoord,1,1);
+    return this->SetControlPointWorldCoordinates(0,newCoord,selFlag,visFlag);
     }
 
   int SetFiducialCoordinates(double x, double y, double z) 

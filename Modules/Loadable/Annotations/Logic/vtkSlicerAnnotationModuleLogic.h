@@ -244,6 +244,21 @@ public:
   /// Add a model display node to the scene for a passed in hierarchy node, if
   /// it doesn't already have one, return the ID, NULL on failure
   const char* AddDisplayNodeForHierarchyNode(vtkMRMLAnnotationHierarchyNode *hnode);
+
+  
+  /// Load an annotation from file, return NULL on error, node ID string
+  /// otherwise. Adds the appropriate storage and display nodes to the scene
+  /// as well. fileType is from this class's enum
+  char *LoadAnnotation(const char *filename, const char *name, int fileType);
+  /// Enumeration listing valid file types to load
+  enum
+  {
+    None = 0,
+    Fiducial,
+    Ruler,
+    ROI
+  };
+
   
 protected:
 
