@@ -58,6 +58,7 @@ public:
     FiducialListFile = 8,
     FiberBundleFile = 9,
     TransferFunctionFile = 10,
+    AnnotationFile = 11,
     UserFile = 32,
   };
 
