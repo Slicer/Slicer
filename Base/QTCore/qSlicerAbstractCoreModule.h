@@ -105,14 +105,14 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// The help is displayed inside the module as a tab.
   /// \a helpText must be reimplemented for each module.
   /// \sa acknowledgement, contributor
-    Q_PROPERTY(QString helpText READ helpTest)
+  Q_PROPERTY(QString helpText READ helpText)
 
   /// This property holds the acknowledgments for the module
   /// Credits (organization, grants, thanks...) can be given and are displayed
   /// in the acknowledgment tab in the module panel.
   /// \a acknowledgementText() must be reimplemented for each module.
   /// \sa helpText, contributor
-  virtual QString acknowledgementText()const;
+  Q_PROPERTY(QString acknowledgementText READ acknowledgementText)
 
   /// This property holds the authors of the module
   /// It is shown in the Acknowledgement page.
