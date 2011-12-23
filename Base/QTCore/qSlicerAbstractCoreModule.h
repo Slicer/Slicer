@@ -56,16 +56,73 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// order to have the signal/slots working and the meta-class name valid.
   Q_OBJECT
 
-  /// The following properties will be added to the meta-class
-  /// and will also be available through PythonQt.
+  /// The following properties are added to the meta-class
+  /// and though are available through PythonQt.
+
+  /// This property contains the name of the module.
+  /// e.g. "Volumes", "VolumeRendering", "SampleData"...
+  /// The name identifies a module and must be unique.
+  /// In comparison to \a title, \a name contains only letter characters,
+  /// no space/hyphen/apostrophe.
+  /// The module name is set by the module factory (the registered item key
+  /// string).
+  /// Because \a name is unique, slots and functions that take a module as
+  /// argument should use \name and not \a title.
   Q_PROPERTY(QString name READ name)
+
+  /// This property contains the title of the module.
+  /// e.g. "Volumes", "Volume Rendering", "Welcome to Slicer"...
+  /// \a title (not \a name) is displayed to the user in the GUI (but internally
+  /// \a name is used to uniquely identify the module).
+  /// The module title can contain any characters.
+  /// \a title() must be overwritten for each module.
   Q_PROPERTY(QString title READ title)
+
+  /// This property holds the category a module belongs to.
+  /// It is used to organize modules in the modules menu.
+  /// Sub-categories are supported by using '.' as a a separator to specify a
+  /// subcategory (no depth limit), e.g.: "Filtering.Arithmetic".
+  /// A category doesn't have to exist, it will be created if needed.
+  /// The method \a category() must be reimplemented for each module.
   Q_PROPERTY(QString category READ category)
-  Q_PROPERTY(QString contributor READ contributor)
+
+  /// This property controls the index used to sort modules in the module
+  ///  selector's menu in the module's category.
+  /// An index of 0 means the module should be first in the category,
+  /// a value of 1 if the module should be second and so on.
+  /// -1 means that the module should be added at the end. In case modules
+  /// indexes have the same index, the alphabetical order will be used.
+  /// -1 by default.
   Q_PROPERTY(int index READ index)
-  Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
+
+  /// This property holds whether the module is visible to the user.
+  /// If the module is hidden, it doesn't appear in the list of modules menu.
+  /// However, the module is programatically accessible.
+  /// By default, modules are visible (hidden == false).
   Q_PROPERTY(bool hidden READ isHidden)
+
+  /// This property holds the authors of the module
+  /// It is shown in the Acknowledgement page.
+  /// \a category() must be reimplemented for each module
+  Q_PROPERTY(QString contributor READ contributor)
+
+  /// This property holds the URL of the module for the Slicer wiki.
+  /// It can be used in the help/ackknowledgement.
+  /// \tbd: obsolete ? should be static ?
+  Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
+
+  /// This property holds the path of the module if any.
+  /// The path is the library (dll, so...) location on disk.
+  /// \a path is set by the module factory and shouldn't be reimplemented
+  /// in each module.
+  /// \todo Ideally this function should be added within the
+  /// qSlicerLoadableModule.
   Q_PROPERTY(QString path READ path)
+
+  /// This property holds whether the module is loaded from an installed
+  /// directory.
+  /// \a isInstalled is set by the module factory and shouldn't be
+  /// reimplemented in each module.
   Q_PROPERTY(bool isInstalled READ isInstalled)
 
 public:
@@ -96,21 +153,25 @@ public:
   virtual void setName(const QString& name);
 
   /// Title of the module, (displayed to the user)
+  /// \a title() must be reimplemented in derived classes.
   virtual QString title()const = 0;
+
   /// Category the module belongs to. Categories support subcategories. Use the
   /// '.' separator to specify a subcategory (no depth limit), e.g.:
   /// "Filtering.Arithmetic".
   /// The function must be reimplemented in derived classes.
   /// Note: If a category doesn't exist, it will be created.
   virtual QString category()const;
-  virtual QString contributor()const;
 
-  /// Index used to sort modules in the module selector's menu in the
-  /// module's category. An index of 0 significates that the module should
-  /// be first, a value of 1 if the module should be second and so on.
-  /// -1 means that the module should be added at the end. In case modules
-  /// indexes have the same index, the alphabetical order will be used.
+  /// Return the index of the module.
   virtual int index()const;
+
+  /// Returns true if the module should be hidden to the user.
+  /// By default, modules are not hidden.
+  virtual bool isHidden()const;
+
+  /// Return the contributors of the module
+  virtual QString contributor()const;
 
   /// Return help/acknowledgement text
   /// These functions must be reimplemented in the derived classes
@@ -138,10 +199,6 @@ public:
   /// Returns true if the module is enabled.
   /// By default, a module is disabled
   bool isEnabled()const;
-
-  /// Returns true if the module should be hidden to the user.
-  /// By default, modules are not hidden.
-  virtual bool isHidden()const;
 
   /// Returns path if any
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
