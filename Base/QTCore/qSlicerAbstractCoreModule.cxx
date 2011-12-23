@@ -40,7 +40,6 @@ public:
   qSlicerAbstractCoreModulePrivate();
   virtual ~qSlicerAbstractCoreModulePrivate();
 
-  bool                                       Enabled;
   bool                                       Hidden;
   QString                                    Name;
   QString                                    Path;
@@ -55,7 +54,6 @@ public:
 // qSlicerAbstractCoreModulePrivate methods
 qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
 {
-  this->Enabled = false;
   this->Hidden = false;
   this->Name = "NA";
   this->WidgetRepresentation = 0;
@@ -182,10 +180,6 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
-
-//-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
-CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
 bool qSlicerAbstractCoreModule::isHidden()const

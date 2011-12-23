@@ -101,9 +101,23 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// By default, modules are visible (hidden == false).
   Q_PROPERTY(bool hidden READ isHidden)
 
+  /// This property holds the help of the module.
+  /// The help is displayed inside the module as a tab.
+  /// \a helpText must be reimplemented for each module.
+  /// \sa acknowledgement, contributor
+    Q_PROPERTY(QString helpText READ helpTest)
+
+  /// This property holds the acknowledgments for the module
+  /// Credits (organization, grants, thanks...) can be given and are displayed
+  /// in the acknowledgment tab in the module panel.
+  /// \a acknowledgementText() must be reimplemented for each module.
+  /// \sa helpText, contributor
+  virtual QString acknowledgementText()const;
+
   /// This property holds the authors of the module
   /// It is shown in the Acknowledgement page.
-  /// \a category() must be reimplemented for each module
+  /// \a category() must be reimplemented for each module.
+  /// \sa helpText, acknowledgementText
   Q_PROPERTY(QString contributor READ contributor)
 
   /// This property holds the URL of the module for the Slicer wiki.
@@ -173,9 +187,12 @@ public:
   /// Return the contributors of the module
   virtual QString contributor()const;
 
-  /// Return help/acknowledgement text
-  /// These functions must be reimplemented in the derived classes
+  /// Return help text of the module
+  /// Must be reimplemented in the derived classes
   virtual QString helpText()const;
+
+  /// Return acknowledgement text for the module
+  /// Must be reimplemented in the derived classes
   virtual QString acknowledgementText()const;
 
   /// This method allows to get a pointer to the WidgetRepresentation.
@@ -196,10 +213,6 @@ public:
   /// Return a pointer on the MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  /// Returns true if the module is enabled.
-  /// By default, a module is disabled
-  bool isEnabled()const;
-
   /// Returns path if any
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
   QString path()const;
@@ -211,9 +224,6 @@ public:
   void setInstalled(bool value);
 
 public slots:
-
-  /// Enable/Disable the module
-  virtual void setEnabled(bool enabled);
 
   /// Set the current MRML scene to the module, it is propagated to the logic
   /// and representations if any
