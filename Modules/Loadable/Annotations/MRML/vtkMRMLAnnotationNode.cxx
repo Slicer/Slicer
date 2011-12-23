@@ -278,11 +278,11 @@ void vtkMRMLAnnotationNode::ResetAnnotations()
 {
   if (!this->TextList) 
     {
-      this->TextList = vtkStringArray::New();
+    this->TextList = vtkStringArray::New();
     }
   else 
     {
-      this->TextList->Initialize(); 
+    this->TextList->Initialize(); 
     }
 
   this->ResetTextAttributesAll();
