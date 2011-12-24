@@ -22,9 +22,6 @@
 #include <QDir>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerFiberBundleIO.h"
 
 // Logic includes
@@ -33,10 +30,37 @@
 // MRML includes
 #include <vtkMRMLFiberBundleNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //-----------------------------------------------------------------------------
-qSlicerFiberBundleIO::qSlicerFiberBundleIO(QObject* _parent)
-  :qSlicerIO(_parent)
+class qSlicerFiberBundleIOPrivate
 {
+public:
+  vtkSmartPointer<vtkSlicerFiberBundleLogic> FiberBundleLogic;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerFiberBundleIO::qSlicerFiberBundleIO(
+  vtkSlicerFiberBundleLogic* _fiberBundleLogic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerFiberBundleIOPrivate)
+{
+  this->setFiberBundleLogic(_fiberBundleLogic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerFiberBundleIO::setFiberBundleLogic(vtkSlicerFiberBundleLogic* newFiberBundleLogic)
+{
+  Q_D(qSlicerFiberBundleIO);
+  d->FiberBundleLogic = newFiberBundleLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerFiberBundleLogic* qSlicerFiberBundleIO::fiberBundleLogic()const
+{
+  Q_D(const qSlicerFiberBundleIO);
+  return d->FiberBundleLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -60,6 +84,7 @@ QStringList qSlicerFiberBundleIO::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerFiberBundleIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerFiberBundleIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
@@ -79,16 +104,15 @@ bool qSlicerFiberBundleIO::load(const IOProperties& properties)
     fileNames << fileName;
     }
 
-  vtkSlicerFiberBundleLogic* fiberBundleLogic =
-    vtkSlicerFiberBundleLogic::SafeDownCast(
-      qSlicerCoreApplication::application()->moduleManager()
-      ->module("TractographyDisplay")->logic());
-  Q_ASSERT(fiberBundleLogic);
+  if (d->FiberBundleLogic.GetPointer() == 0)
+    {
+    return false;
+    }
 
   QStringList nodes;
   foreach(QString file, fileNames)
     {
-    vtkMRMLFiberBundleNode* node = fiberBundleLogic->AddFiberBundle(file.toLatin1(), 1);
+    vtkMRMLFiberBundleNode* node = d->FiberBundleLogic->AddFiberBundle(file.toLatin1(), 1);
     if (node)
       {
       if (properties.contains("name"))

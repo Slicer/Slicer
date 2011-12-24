@@ -21,9 +21,6 @@
 // Qt includes
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerColorsIO.h"
 
 // Logic includes
@@ -32,10 +29,37 @@
 // MRML includes
 #include <vtkMRMLColorNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //-----------------------------------------------------------------------------
-qSlicerColorsIO::qSlicerColorsIO(QObject* _parent)
-  :qSlicerIO(_parent)
+class qSlicerColorsIOPrivate
 {
+public:
+  vtkSmartPointer<vtkSlicerColorLogic> ColorLogic;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerColorsIO::qSlicerColorsIO(
+  vtkSlicerColorLogic* _colorLogic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerColorsIOPrivate)
+{
+  this->setColorLogic(_colorLogic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsIO::setColorLogic(vtkSlicerColorLogic* newColorLogic)
+{
+  Q_D(qSlicerColorsIO);
+  d->ColorLogic = newColorLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerColorLogic* qSlicerColorsIO::colorLogic()const
+{
+  Q_D(const qSlicerColorsIO);
+  return d->ColorLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -59,27 +83,22 @@ QStringList qSlicerColorsIO::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerColorsIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerColorsIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  // TODO: Set the logic to qSlicerColorsIO directly
-  vtkSlicerColorLogic* colorLogic =
-    vtkSlicerColorLogic::SafeDownCast(
-      qSlicerCoreApplication::application()->moduleManager()
-        ->module("Colors")->logic());
-  Q_ASSERT(colorLogic && colorLogic->GetMRMLScene() == this->mrmlScene());
-  //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
-  //Q_ASSERT(colorLogic);
-  //colorLogic->SetMRMLScene(this->mrmlScene());
-  vtkMRMLColorNode* node = colorLogic->LoadColorFile(fileName.toLatin1());
+  if (d->ColorLogic.GetPointer() == 0)
+    {
+    return false;
+    }
+
+  vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toLatin1());
+  QStringList loadedNodes;
   if (node)
     {
-    this->setLoadedNodes(QStringList(QString(node->GetID())));
+    loadedNodes << QString(node->GetID());
     }
-  else
-    {
-    this->setLoadedNodes(QStringList());
-    }
+  this->setLoadedNodes(loadedNodes);
   return node != 0;
 }
 

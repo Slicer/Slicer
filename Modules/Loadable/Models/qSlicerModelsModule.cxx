@@ -109,8 +109,10 @@ void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ioManager->registerIO(new qSlicerModelsIO(this));
-  ioManager->registerIO(new qSlicerScalarOverlayIO(this));
+  vtkSlicerModelsLogic* modelsLogic =
+    vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  ioManager->registerIO(new qSlicerModelsIO(modelsLogic, this));
+  ioManager->registerIO(new qSlicerScalarOverlayIO(modelsLogic, this));
   ioManager->registerDialog(new qSlicerModelsDialog(this));
 }
 

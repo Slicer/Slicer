@@ -21,9 +21,6 @@
 // Qt includes
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerTransformsIO.h"
 
 // Logic includes
@@ -32,10 +29,37 @@
 // MRML includes
 #include <vtkMRMLTransformNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //-----------------------------------------------------------------------------
-qSlicerTransformsIO::qSlicerTransformsIO(QObject* _parent)
-  :qSlicerIO(_parent)
+class qSlicerTransformsIOPrivate
 {
+public:
+  vtkSmartPointer<vtkSlicerTransformLogic> TransformLogic;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerTransformsIO::qSlicerTransformsIO(
+  vtkSlicerTransformLogic* _transformLogic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerTransformsIOPrivate)
+{
+  this->setTransformLogic(_transformLogic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsIO::setTransformLogic(vtkSlicerTransformLogic* newTransformLogic)
+{
+  Q_D(qSlicerTransformsIO);
+  d->TransformLogic = newTransformLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerTransformLogic* qSlicerTransformsIO::transformLogic()const
+{
+  Q_D(const qSlicerTransformsIO);
+  return d->TransformLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -59,16 +83,15 @@ QStringList qSlicerTransformsIO::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerTransformsIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerTransformsIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  vtkSlicerTransformLogic* transformLogic =
-    vtkSlicerTransformLogic::SafeDownCast(
-      qSlicerCoreApplication::application()->moduleManager()
-      ->module("Transforms")->logic());
-  Q_ASSERT(transformLogic && transformLogic->GetMRMLScene() == this->mrmlScene());
-  //transformLogic->SetMRMLScene(this->mrmlScene());
-  vtkMRMLTransformNode* node = transformLogic->AddTransform(
+  if (d->TransformLogic.GetPointer() == 0)
+    {
+    return false;
+    }
+  vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
     fileName.toLatin1().data(), this->mrmlScene());
   if (node)
     {

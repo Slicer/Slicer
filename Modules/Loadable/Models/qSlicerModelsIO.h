@@ -18,11 +18,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerModelsIO
-#define __qSlicerModelsIO
+#ifndef __qSlicerModelsIO_h
+#define __qSlicerModelsIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerModelsIOPrivate;
+
+// Slicer includes
+class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
@@ -30,12 +34,23 @@ class qSlicerModelsIO: public qSlicerIO
 {
   Q_OBJECT
 public: 
-  qSlicerModelsIO(QObject* parent = 0);
+  qSlicerModelsIO(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
+
+  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
+  vtkSlicerModelsLogic* modelsLogic()const;
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerModelsIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerModelsIO);
+  Q_DISABLE_COPY(qSlicerModelsIO);
 };
 
 #endif

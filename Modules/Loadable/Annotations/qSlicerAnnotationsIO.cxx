@@ -22,9 +22,6 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-//#include "qSlicerAbstractModule.h"
-//#include "qSlicerCoreApplication.h"
-//#include "qSlicerModuleManager.h"
 #include "qSlicerAnnotationsIO.h"
 #include "qSlicerAnnotationsIOOptionsWidget.h"
 
@@ -43,7 +40,7 @@
 class qSlicerAnnotationsIOPrivate
 {
   public:
-  vtkSmartPointer<vtkSlicerAnnotationModuleLogic> Logic;
+  vtkSmartPointer<vtkSlicerAnnotationModuleLogic> AnnotationLogic;
 };
 
 
@@ -60,7 +57,7 @@ qSlicerAnnotationsIO::qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic* logic
   :qSlicerIO(_parent)
   , d_ptr(new qSlicerAnnotationsIOPrivate)
 {
-  this->setLogic(logic);
+  this->setAnnotationLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
@@ -69,17 +66,17 @@ qSlicerAnnotationsIO::~qSlicerAnnotationsIO()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationsIO::setLogic(vtkSlicerAnnotationModuleLogic* logic)
+void qSlicerAnnotationsIO::setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
   Q_D(qSlicerAnnotationsIO);
-  d->Logic = logic;
+  d->AnnotationLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerAnnotationModuleLogic* qSlicerAnnotationsIO::logic()const
+vtkSlicerAnnotationModuleLogic* qSlicerAnnotationsIO::annotationLogic()const
 {
   Q_D(const qSlicerAnnotationsIO);
-  return d->Logic.GetPointer();
+  return d->AnnotationLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -120,7 +117,10 @@ bool qSlicerAnnotationsIO::load(const IOProperties& properties)
     name = properties["name"].toString();
     }
 
-  Q_ASSERT(d->Logic);
+  if (d->AnnotationLogic.GetPointer() == 0)
+    {
+    return false;
+    }
   
   // file type
   int fileType = vtkSlicerAnnotationModuleLogic::None;
@@ -137,7 +137,8 @@ bool qSlicerAnnotationsIO::load(const IOProperties& properties)
     fileType = vtkSlicerAnnotationModuleLogic::ROI;
     }
 
-  char * nodeID = d->Logic->LoadAnnotation(fileName.toLatin1().data(), name.toLatin1(), fileType);
+  char * nodeID = d->AnnotationLogic->LoadAnnotation(
+    fileName.toLatin1().data(), name.toLatin1(), fileType);
   if (!nodeID)
     {
     this->setLoadedNodes(QStringList());

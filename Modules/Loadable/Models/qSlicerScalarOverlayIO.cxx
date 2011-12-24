@@ -22,9 +22,6 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerScalarOverlayIO.h"
 #include "qSlicerScalarOverlayIOOptionsWidget.h"
 
@@ -34,10 +31,37 @@
 // MRML includes
 #include <vtkMRMLStorageNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //-----------------------------------------------------------------------------
-qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(QObject* _parent)
-  :qSlicerIO(_parent)
+class qSlicerScalarOverlayIOPrivate
 {
+public:
+  vtkSmartPointer<vtkSlicerModelsLogic> ModelsLogic;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(
+  vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerScalarOverlayIOPrivate)
+{
+  this->setModelsLogic(_modelsLogic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScalarOverlayIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
+{
+  Q_D(qSlicerScalarOverlayIO);
+  d->ModelsLogic = newModelsLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerModelsLogic* qSlicerScalarOverlayIO::modelsLogic()const
+{
+  Q_D(const qSlicerScalarOverlayIO);
+  return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -70,6 +94,7 @@ qSlicerIOOptions* qSlicerScalarOverlayIO::options()const
 //-----------------------------------------------------------------------------
 bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerScalarOverlayIO);
   Q_ASSERT(properties.contains("fileName"));
   if (!properties.contains("modelNodeId"))
     {
@@ -81,21 +106,18 @@ bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
       this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1().data()));
   Q_ASSERT(modelNode);
 
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleManager()
-    ->module("Models")->logic());
-  Q_ASSERT(modelsLogic);
+  if (d->ModelsLogic == 0)
+    {
+    return false;
+    }
 
-  vtkMRMLStorageNode* node = modelsLogic->AddScalar(fileName.toLatin1().data(), modelNode);
+  vtkMRMLStorageNode* node =
+    d->ModelsLogic->AddScalar(fileName.toLatin1().data(), modelNode);
+  QStringList loadedNodes;
   if (node)
     {
-    this->setLoadedNodes(QStringList(QString(node->GetID())));
+    loadedNodes << QString(node->GetID());
     }
-  else
-    {
-    this->setLoadedNodes(QStringList());
-    }
-  modelsLogic->Delete();
+  this->setLoadedNodes(loadedNodes);
   return node != 0;
 }
-

@@ -13,9 +13,6 @@
 =========================================================================auto=*/
 
 // CLI invocation
-#include <qSlicerCoreApplication.h>
-#include <qSlicerModuleManager.h>
-#include <qSlicerModuleFactoryManager.h>
 #include <qSlicerCLIModule.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
@@ -130,11 +127,11 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMRMLScalarVolumeNode *svnode = vtkMRMLScalarVolumeNode::SafeDownCast(inputVolume);
 
   if(!this->Internal->VolumesLogic){
-      qWarning() << "CropVolume: ERROR: failed to get hold of Volumes logic";
+      std::cerr << "CropVolume: ERROR: failed to get hold of Volumes logic" << std::endl;
       return -2;
   }
   if(dtvnode){
-    qWarning() << "CropVolume: ERROR: Diffusion tensor volumes are not supported by this module!";
+    std::cerr << "CropVolume: ERROR: Diffusion tensor volumes are not supported by this module!" << std::endl;
     return -2;
   }
  
@@ -235,13 +232,9 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputRASToIJK->Delete();
   outputIJKToRAS->Delete();
 
-  // use the prepared volume as the reference for resampling
-  qSlicerAbstractCoreModule* resampleVolume2 =
-    qSlicerCoreApplication::application()->moduleManager()->module("ResampleVolume2");
-
-  if(!resampleVolume2)
+  if(this->Internal->ResampleVolume2Logic == 0)
     {
-    qWarning() << "CropVolume: ERROR: resamplevolume2 module reference was not found!";
+    std::cerr << "CropVolume: ERROR: resamplevolume2 logic is not set!";
     return -3;
     }
 

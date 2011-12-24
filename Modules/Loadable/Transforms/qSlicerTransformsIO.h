@@ -18,23 +18,38 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerTransformsIO
-#define __qSlicerTransformsIO
+#ifndef __qSlicerTransformsIO_h
+#define __qSlicerTransformsIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerTransformsIOPrivate;
+
+// Slicer includes
+class vtkSlicerTransformLogic;
 
 //-----------------------------------------------------------------------------
 class qSlicerTransformsIO: public qSlicerIO
 {
   Q_OBJECT
 public:
-  qSlicerTransformsIO(QObject* parent = 0);
+  qSlicerTransformsIO(vtkSlicerTransformLogic* transformLogic, QObject* parent = 0);
+
+  void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
+  vtkSlicerTransformLogic* transformLogic()const;
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerTransformsIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerTransformsIO);
+  Q_DISABLE_COPY(qSlicerTransformsIO);
 };
 
 #endif

@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerVolumeRenderingIO
-#define __qSlicerVolumeRenderingIO
+#ifndef __qSlicerVolumeRenderingIO_h
+#define __qSlicerVolumeRenderingIO_h
 
 // SlicerQT includes
 #include <qSlicerIO.h>
@@ -38,8 +38,8 @@ public:
   qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
   virtual ~qSlicerVolumeRenderingIO();
 
-  void setLogic(vtkSlicerVolumeRenderingLogic* logic);
-  vtkSlicerVolumeRenderingLogic* logic()const;
+  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
 
   // Reimplemented for IO specific description
   virtual QString description()const;

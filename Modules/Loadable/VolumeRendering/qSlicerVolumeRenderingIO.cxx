@@ -22,9 +22,6 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerVolumeRenderingIO.h"
 
 // Logic includes
@@ -45,7 +42,7 @@
 class qSlicerVolumeRenderingIOPrivate
 {
   public:
-  vtkSmartPointer<vtkSlicerVolumeRenderingLogic> Logic;
+  vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
 //-----------------------------------------------------------------------------
@@ -65,21 +62,21 @@ qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic
   : qSlicerIO(_parent)
   , d_ptr(new qSlicerVolumeRenderingIOPrivate)
 {
-  this->setLogic(logic);
+  this->setVolumeRenderingLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingIO::setLogic(vtkSlicerVolumeRenderingLogic* logic)
+void qSlicerVolumeRenderingIO::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
 {
   Q_D(qSlicerVolumeRenderingIO);
-  d->Logic = logic;
+  d->VolumeRenderingLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingIO::logic()const
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingIO::volumeRenderingLogic()const
 {
   Q_D(const qSlicerVolumeRenderingIO);
-  return d->Logic.GetPointer();
+  return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
@@ -114,9 +111,12 @@ bool qSlicerVolumeRenderingIO::load(const IOProperties& properties)
   //  {
   //  name = properties["name"].toString();
   //  }
-  Q_ASSERT(d->Logic.GetPointer());
+  if (d->VolumeRenderingLogic.GetPointer() == 0)
+    {
+    return false;
+    }
   vtkMRMLVolumePropertyNode* node =
-    d->Logic->AddVolumePropertyFromFile(fileName.toLatin1());
+    d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toLatin1());
   QStringList loadedNodes;
   if (node)
     {

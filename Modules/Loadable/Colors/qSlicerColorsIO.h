@@ -18,23 +18,37 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerColorsIO
-#define __qSlicerColorsIO
+#ifndef __qSlicerColorsIO_h
+#define __qSlicerColorsIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerColorsIOPrivate;
+
+// Slicer includes
+class vtkSlicerColorLogic;
 
 //-----------------------------------------------------------------------------
 class qSlicerColorsIO: public qSlicerIO
 {
   Q_OBJECT
 public:
-  qSlicerColorsIO(QObject* parent = 0);
+  qSlicerColorsIO(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
+
+  void setColorLogic(vtkSlicerColorLogic* colorLogic);
+  vtkSlicerColorLogic* colorLogic()const;
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+protected:
+  QScopedPointer<qSlicerColorsIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerColorsIO);
+  Q_DISABLE_COPY(qSlicerColorsIO);
 };
 
 #endif

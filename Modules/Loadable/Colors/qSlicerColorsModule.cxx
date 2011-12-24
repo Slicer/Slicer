@@ -81,7 +81,9 @@ void qSlicerColorsModule::setup()
     {
     return;
     }
-  app->coreIOManager()->registerIO(new qSlicerColorsIO());
+  vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
+  app->coreIOManager()->registerIO(
+    new qSlicerColorsIO(colorLogic, this));
 
   QStringList paths = app->settings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList();
 #ifdef Q_OS_WIN32
@@ -89,7 +91,6 @@ void qSlicerColorsModule::setup()
 #else
   QString joinedPaths = paths.join(":");
 #endif
-  vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
   // Warning: If the logic has already created the color nodes (AddDefaultColorNodes),
   // setting the user color file paths doesn't trigger any action to add new nodes.
   // It's something that must be fixed into the logic, not here

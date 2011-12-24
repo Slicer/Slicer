@@ -18,14 +18,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFiberBundleIO
-#define __qSlicerFiberBundleIO
-
-// CTK includes
-#include <ctkPimpl.h>
+#ifndef __qSlicerFiberBundleIO_h
+#define __qSlicerFiberBundleIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerFiberBundleIOPrivate;
+
+// Slicer includes
+class vtkSlicerFiberBundleLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_TractographyDisplay
@@ -33,12 +34,23 @@ class qSlicerFiberBundleIO: public qSlicerIO
 {
   Q_OBJECT
 public:
-  qSlicerFiberBundleIO(QObject* parent = 0);
+  qSlicerFiberBundleIO(vtkSlicerFiberBundleLogic* fiberBundleLogic, QObject* parent = 0);
+
+  void setFiberBundleLogic(vtkSlicerFiberBundleLogic* fiberBundleLogic);
+  vtkSlicerFiberBundleLogic* fiberBundleLogic()const;
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerFiberBundleIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerFiberBundleIO);
+  Q_DISABLE_COPY(qSlicerFiberBundleIO);
 };
 
 #endif

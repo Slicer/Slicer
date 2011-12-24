@@ -28,13 +28,36 @@
 #include "vtkSlicerModelsLogic.h"
 
 // VTK includes
-#include <vtkNew.h>
+#include <vtkSmartPointer.h>
+
+//-----------------------------------------------------------------------------
+class qSlicerModelsIOPrivate
+{
+public:
+  vtkSmartPointer<vtkSlicerModelsLogic> ModelsLogic;
+};
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
-qSlicerModelsIO::qSlicerModelsIO(QObject* _parent)
-  :qSlicerIO(_parent)
+qSlicerModelsIO::qSlicerModelsIO(vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerModelsIOPrivate)
 {
+  this->setModelsLogic(_modelsLogic);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
+{
+  Q_D(qSlicerModelsIO);
+  d->ModelsLogic = newModelsLogic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerModelsLogic* qSlicerModelsIO::modelsLogic()const
+{
+  Q_D(const qSlicerModelsIO);
+  return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
@@ -60,23 +83,19 @@ QStringList qSlicerModelsIO::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerModelsIO::load(const IOProperties& properties)
 {
+  Q_D(qSlicerModelsIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  // FIXME: Use the following commented lines when qSlicerModelsIO.[x/cxx] will
-  // be in the same directory than the Models module. Create its own logic for
-  // now.
-  // vtkSlicerModelsLogic* modelsLogic =
-  //   vtkSlicerModelsLogic::SafeDownCast(
-  //     qSlicerCoreApplication::application()->moduleManager()
-  //     ->module("Models")->logic());
-  vtkNew<vtkSlicerModelsLogic> modelsLogic;
-  modelsLogic->SetMRMLScene(this->mrmlScene());
-  vtkMRMLModelNode* node = modelsLogic->AddModel(
+  this->setLoadedNodes(QStringList());
+  if (d->ModelsLogic.GetPointer() == 0)
+    {
+    return false;
+    }
+  vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
     fileName.toLatin1().data());
   if (!node)
     {
-    this->setLoadedNodes(QStringList());
     return false;
     }
   this->setLoadedNodes( QStringList(QString(node->GetID())) );

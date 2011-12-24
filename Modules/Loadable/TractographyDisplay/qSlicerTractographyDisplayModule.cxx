@@ -48,8 +48,10 @@ qSlicerTractographyDisplayModule(QObject* _parent):Superclass(_parent)
 void qSlicerTractographyDisplayModule::setup()
 {
   this->Superclass::setup();
+  vtkSlicerFiberBundleLogic* fiberBundleLogic =
+    vtkSlicerFiberBundleLogic::SafeDownCast(this->logic());
   qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerFiberBundleIO(this));
+    new qSlicerFiberBundleIO(fiberBundleLogic, this));
 }
 
 //-----------------------------------------------------------------------------

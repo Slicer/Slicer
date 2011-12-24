@@ -18,24 +18,39 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScalarOverlayIO
-#define __qSlicerScalarOverlayIO
+#ifndef __qSlicerScalarOverlayIO_h
+#define __qSlicerScalarOverlayIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
+class qSlicerScalarOverlayIOPrivate;
+
+// Slicer includes
+class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
 class qSlicerScalarOverlayIO: public qSlicerIO
 {
   Q_OBJECT
 public:
-  qSlicerScalarOverlayIO(QObject* parent = 0);
+  qSlicerScalarOverlayIO(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
+
+  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
+  vtkSlicerModelsLogic* modelsLogic()const;
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
   virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerScalarOverlayIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIO);
+  Q_DISABLE_COPY(qSlicerScalarOverlayIO);
 };
 
 #endif

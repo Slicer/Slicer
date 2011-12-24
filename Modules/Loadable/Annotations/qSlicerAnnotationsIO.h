@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerAnnotationsIO
-#define __qSlicerAnnotationsIO
+#ifndef __qSlicerAnnotationsIO_h
+#define __qSlicerAnnotationsIO_h
 
 // SlicerQt includes
 #include "qSlicerIO.h"
@@ -37,8 +37,8 @@ public:
   qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
   virtual ~qSlicerAnnotationsIO();
   
-  vtkSlicerAnnotationModuleLogic* logic()const;
-  void setLogic(vtkSlicerAnnotationModuleLogic* logic);
+  vtkSlicerAnnotationModuleLogic* annotationLogic()const;
+  void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
