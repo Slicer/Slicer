@@ -36,8 +36,9 @@ class vtkMRMLVolumeNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
-class vtkStringArray;
 class vtkMRMLCropVolumeParametersNode;
+class vtkSlicerVolumesLogic;
+class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic :
@@ -48,6 +49,9 @@ public:
   static vtkSlicerCropVolumeLogic *New();
   vtkTypeRevisionMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  void SetVolumesLogic(vtkSlicerVolumesLogic* logic);
+  vtkSlicerVolumesLogic* GetVolumesLogic();
 
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
@@ -62,6 +66,8 @@ private:
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented
   void operator=(const vtkSlicerCropVolumeLogic&);               // Not implementedo
 
+  class vtkInternal;
+  vtkInternal* Internal;
 };
 
 #endif

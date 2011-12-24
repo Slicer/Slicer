@@ -22,16 +22,18 @@ public:
   virtual ~qSlicerCropVolumeModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
+
+  /// Return a custom icon for the module
+  virtual QIcon icon()const;
+  virtual QString category() const { return QString("Converters"); };
+
   /// Help to use the module
   virtual QString helpText()const;
-  virtual QString category() const { return QString("Converters"); };
 
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
-  
-  /// Return a custom icon for the module
-  virtual QIcon icon()const;
+
+  virtual QStringList dependencies()const;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

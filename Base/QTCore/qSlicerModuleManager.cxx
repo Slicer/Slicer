@@ -132,6 +132,14 @@ bool qSlicerModuleManager::loadModule(const QString& name)
     return 0;
     }
 
+  // Load the modules the module depends on.
+  // There is no cycle check, so be careful
+  foreach(const QString& dependency, _module->dependencies())
+    {
+    // no-op if the module is already loaded
+    this->loadModule(dependency);
+    }
+
   // Update internal Map
   d->ModuleList[name] = _module;
 

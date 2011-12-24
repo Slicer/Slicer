@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QObject>
+#include <QStringList>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -125,6 +126,14 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// \tbd: obsolete ? should be static ?
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
 
+  /// This property holds the module name list of the module dependencies.
+  /// It is used to order the loading of the modules. When setup() is called
+  /// it is ensured that all the dependencies have already been setup.
+  /// There is no dependency cycle check, so special care must be taken to
+  /// avoid infinite loop.
+  /// By default, there is no dependencies.
+  Q_PROPERTY(QStringList dependencies READ dependencies)
+
   /// This property holds the path of the module if any.
   /// The path is the library (dll, so...) location on disk.
   /// \a path is set by the module factory and shouldn't be reimplemented
@@ -212,6 +221,8 @@ public:
 
   /// Return a pointer on the MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
+
+  virtual QStringList dependencies()const;
 
   /// Returns path if any
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.

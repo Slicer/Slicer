@@ -188,6 +188,12 @@ bool qSlicerAbstractCoreModule::isHidden()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerAbstractCoreModule::dependencies()const
+{
+  return QStringList();
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, QString, path, Path);
 CTK_SET_CPP(qSlicerAbstractCoreModule, const QString&, setPath, Path);
 

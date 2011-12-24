@@ -2,8 +2,13 @@
 // Qt includes
 #include <QtPlugin>
 
+// Slicer includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+
 // CropVolume Logic includes
 #include <vtkSlicerCropVolumeLogic.h>
+#include <vtkSlicerVolumesLogic.h>
 
 // CropVolume includes
 #include "qSlicerCropVolumeModule.h"
@@ -65,9 +70,23 @@ QIcon qSlicerCropVolumeModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerCropVolumeModule::dependencies()const
+{
+  return QStringList(QString("Volumes"));
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCropVolumeModule::setup()
 {
   this->Superclass::setup();
+
+  qSlicerAbstractCoreModule* volumesModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
+  vtkSlicerVolumesLogic* volumesLogic = 
+    vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
+  vtkSlicerCropVolumeLogic* cropVolumeLogic =
+    vtkSlicerCropVolumeLogic::SafeDownCast(this->logic());
+  cropVolumeLogic->SetVolumesLogic(volumesLogic);
 }
 
 //-----------------------------------------------------------------------------
