@@ -124,7 +124,6 @@ public:
   /// 
   /// Get/Set vtkMRMLModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic();
-  void SetModelHierarchyLogic(vtkMRMLModelHierarchyLogic* newModelHierarchyLogic);
 
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
                              int planeDirection,

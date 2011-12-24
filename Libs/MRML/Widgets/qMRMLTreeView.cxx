@@ -55,13 +55,11 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->NodeMenu = 0;
   this->EditAction = 0;
   this->SceneMenu = 0;
-  this->ModelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
-
+  this->ModelHierarchyLogic = 0;
 }
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::~qMRMLTreeViewPrivate()
 {
-  this->ModelHierarchyLogic->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -236,8 +234,6 @@ void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
   Q_ASSERT(d->SortFilterModel);
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
-  d->ModelHierarchyLogic->SetMRMLScene(scene);
-
   this->expandToDepth(2);
 }
 
@@ -314,6 +310,14 @@ vtkMRMLNode* qMRMLTreeView::currentNode()const
   Q_D(const qMRMLTreeView);
   return d->SortFilterModel->mrmlNodeFromIndex(this->selectionModel()->currentIndex());
 }
+
+void qMRMLTreeView::setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic* logic)
+{
+  Q_D(qMRMLTreeView);
+
+  d->ModelHierarchyLogic = logic;
+}
+
 
 //------------------------------------------------------------------------------
 void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)

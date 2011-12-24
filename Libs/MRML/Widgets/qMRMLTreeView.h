@@ -36,6 +36,7 @@ class qMRMLSceneModel;
 class qMRMLTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
+class vtkMRMLModelHierarchyLogic;
 
 // TODO: Rename to qMRMLSceneTreeView
 class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
@@ -55,6 +56,9 @@ public:
   vtkMRMLScene* mrmlScene()const;
   
   vtkMRMLNode* currentNode()const;
+
+  void setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic* logic);
+
 
   /// Could be Transform, Displayable, ModelHierarchy or ""
   QString sceneModelType()const;

@@ -22,6 +22,7 @@
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include <vtkMRMLSliceLinkLogic.h>
+#include <vtkMRMLModelHierarchyLogic.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -74,6 +75,7 @@ public:
   vtkSmartPointer<vtkMRMLInteractionNode>  InteractionNode;
   vtkSmartPointer<vtkCollection> SliceLogics;
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
+  vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
 };
 
 //----------------------------------------------------------------------------
@@ -83,6 +85,7 @@ public:
 vtkMRMLApplicationLogic::vtkInternal::vtkInternal()
 {
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
+  this->ModelHierarchyLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -98,6 +101,7 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
 {
   this->Internal = new vtkInternal;
   this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
+  this->Internal->ModelHierarchyLogic->SetMRMLApplicationLogic(this);
 }
 
 //----------------------------------------------------------------------------
@@ -122,6 +126,12 @@ vtkMRMLSelectionNode * vtkMRMLApplicationLogic::GetSelectionNode()const
 vtkMRMLInteractionNode * vtkMRMLApplicationLogic::GetInteractionNode()const
 {
   return this->Internal->InteractionNode;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelHierarchyLogic* vtkMRMLApplicationLogic::GetModelHierarchyLogic()const
+{
+  return this->Internal->ModelHierarchyLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -225,6 +235,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
   this->Superclass::SetMRMLSceneInternal(newScene);
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
+  this->Internal->ModelHierarchyLogic->SetMRMLScene(newScene);
 }
 
 //----------------------------------------------------------------------------

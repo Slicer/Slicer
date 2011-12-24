@@ -44,8 +44,6 @@ public:
 
   virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
 
-  vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelLogic;
-
 };
 
 //------------------------------------------------------------------------------
@@ -53,7 +51,6 @@ qMRMLSceneModelHierarchyModelPrivate
 ::qMRMLSceneModelHierarchyModelPrivate(qMRMLSceneModelHierarchyModel& object)
   : Superclass(object)
 {
-  this->ModelLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +78,6 @@ qMRMLSceneModelHierarchyModel::~qMRMLSceneModelHierarchyModel()
 void qMRMLSceneModelHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLSceneModelHierarchyModel);
-  d->ModelLogic->SetMRMLScene(scene);
   this->qMRMLSceneModel::setMRMLScene(scene);
 }
 

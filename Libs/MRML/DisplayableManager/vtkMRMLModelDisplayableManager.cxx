@@ -17,6 +17,7 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelDisplayableManager.h"
 #include "vtkThreeDViewInteractorStyle.h"
+#include "vtkMRMLApplicationLogic.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
@@ -92,7 +93,6 @@ public:
 
   bool                         ModelHierarchiesPresent;
   bool                         UpdateHierachyRequested;
-  vtkMRMLModelHierarchyLogic * ModelHierarchyLogic;
 
   vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
   vtkSmartPointer<vtkPropPicker>       PropPicker;
@@ -119,7 +119,6 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
 
   this->ModelHierarchiesPresent = false;
   this->UpdateHierachyRequested = false;
-  this->ModelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
 
   // Instantiate and initialize Pickers
   this->WorldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
@@ -181,8 +180,6 @@ vtkMRMLModelDisplayableManager::vtkMRMLModelDisplayableManager()
 //---------------------------------------------------------------------------
 vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
 {
-  this->SetModelHierarchyLogic(0);
-
   vtkSetMRMLNodeMacro(this->Internal->ClipModelsNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->RedSliceNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->GreenSliceNode, 0);
@@ -190,11 +187,6 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
 
   // release the DisplayedModelActors
   this->Internal->DisplayedActors.clear();
-
-  if (this->Internal->ModelHierarchyLogic)
-    {
-    this->Internal->ModelHierarchyLogic->Delete();
-    }
 
   delete this->Internal;
 }
@@ -234,6 +226,7 @@ void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
       interactorStyle->SetModelDisplayableManager(this);
       }
     }
+
 }
 
 //---------------------------------------------------------------------------
@@ -973,12 +966,11 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::CheckModelHierarchies()
 {
-  if (this->GetMRMLScene() == 0 || this->Internal->ModelHierarchyLogic == 0)
+  if (this->GetMRMLScene() == 0 || this->GetMRMLApplicationLogic()->GetModelHierarchyLogic() == 0)
     {
     return;
     }
-  this->Internal->ModelHierarchyLogic->SetMRMLScene(this->GetMRMLScene());
-  int nnodes = this->Internal->ModelHierarchyLogic->GetNumberOfModelsInHierarchy();
+  int nnodes = this->GetMRMLApplicationLogic()->GetModelHierarchyLogic()->GetNumberOfModelsInHierarchy();
   this->Internal->ModelHierarchiesPresent = nnodes > 0 ? true:false;
   if (this->Internal->ModelHierarchiesPresent && this->Internal->RegisteredModelHierarchies.size() == 0)
     {
@@ -1056,7 +1048,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModel
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model)
 {
-  if (model && this->Internal->ModelHierarchyLogic)
+  if (model && this->GetMRMLApplicationLogic()->GetModelHierarchyLogic())
     {
     vtkMRMLModelHierarchyNode* mhnode = vtkMRMLModelHierarchyNode::SafeDownCast(
         vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(), model->GetID()));
@@ -1743,16 +1735,8 @@ void vtkMRMLModelDisplayableManager::SetPickedPointID(vtkIdType newPointID)
 vtkMRMLModelHierarchyLogic* vtkMRMLModelDisplayableManager::GetModelHierarchyLogic()
 {
   vtkDebugMacro("returning Internal->ModelHierarchyLogic address "
-                << this->Internal->ModelHierarchyLogic);
-  return this->Internal->ModelHierarchyLogic;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::SetModelHierarchyLogic(
-    vtkMRMLModelHierarchyLogic* newModelHierarchyLogic)
-{
-  vtkSetObjectBodyMacro(Internal->ModelHierarchyLogic, vtkMRMLModelHierarchyLogic,
-                        newModelHierarchyLogic);
+                << this->GetMRMLApplicationLogic()->GetModelHierarchyLogic());
+  return this->GetMRMLApplicationLogic()->GetModelHierarchyLogic();
 }
 
 //---------------------------------------------------------------------------

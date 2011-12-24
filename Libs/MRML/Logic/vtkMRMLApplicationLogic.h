@@ -28,6 +28,7 @@
 
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
+class vtkMRMLModelHierarchyLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkImageData;
@@ -52,6 +53,9 @@ public:
   vtkCollection* GetSliceLogics()const;
   vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
   vtkMRMLSliceLogic* GetSliceLogicByLayoutLabel(const char* layoutLabel) const;
+
+  /// Get ModelHierarchyLogic
+  vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;
 
   /// 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
@@ -85,6 +89,7 @@ public:
   /// Returns the total number of loaded parameter sets
   static int LoadDefaultParameterSets(vtkMRMLScene * scene,
                                       const std::vector<std::string>& directories);
+
   
 protected:
 
@@ -95,6 +100,8 @@ protected:
 
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );
+
+
 private:
   
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
