@@ -38,8 +38,6 @@
 qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object)
   :q_ptr(&object)
 {
-  this->ProcessInformation = 0;
-  this->Name = "NA";
   this->CommandLineModuleNode = 0;
   this->CLIModuleUIHelper = 0;
 }
@@ -73,11 +71,15 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->Ui_qSlicerCLIModuleWidget::setupUi(widget);
 
-  this->ModuleCollapsibleButton->setText(this->Title);
+  QString title = QString::fromStdString(
+    this->logic()->GetDefaultModuleDescription().GetTitle());
+  this->ModuleCollapsibleButton->setText(title);
 
-  this->MRMLCommandLineModuleNodeSelector->setBaseName(this->Title);
+  this->MRMLCommandLineModuleNodeSelector->setBaseName(title);
+  /// Use the title of the CLI to filter all the command line module node
+  /// It is not very robust but there shouldn't be twice the same title.
   this->MRMLCommandLineModuleNodeSelector->addAttribute(
-    "vtkMRMLCommandLineModuleNode", "CommandLineModule", this->Title);
+    "vtkMRMLCommandLineModuleNode", "CommandLineModule", title);
 
   this->addParameterGroups();
 
@@ -177,7 +179,7 @@ void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLine
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
   // Note that node will fire a ModifyEvent.
-  node->SetModuleDescription(this->ModuleDescriptionObject);
+  node->SetModuleDescription(this->logic()->GetDefaultModuleDescription());
   this->CLIProgressBar->setCommandLineModuleNode(vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode));
 }
 
@@ -185,8 +187,10 @@ void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLine
 void qSlicerCLIModuleWidgetPrivate::addParameterGroups()
 {
   // iterate over each parameter group
-  for (ParameterGroupConstIterator pgIt = this->ParameterGroups.begin();
-       pgIt != this->ParameterGroups.end(); ++pgIt)
+  const ModuleDescription& moduleDescription =
+    this->logic()->GetDefaultModuleDescription();
+  for (ParameterGroupConstIterator pgIt = moduleDescription.GetParameterGroups().begin();
+       pgIt != moduleDescription.GetParameterGroups().end(); ++pgIt)
     {
     this->addParameterGroup(this->VerticalLayout, *pgIt);
     }
@@ -287,29 +291,17 @@ void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QV
 // qSlicerCLIModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
-  ModuleDescription* desc, QWidget* _parent)
+qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerCLIModuleWidgetPrivate(*this))
 {
-  Q_ASSERT(desc);
   Q_D(qSlicerCLIModuleWidget);
-
-  d->ModuleDescriptionObject = *desc;
 
   d->CLIModuleUIHelper = new qSlicerCLIModuleUIHelper(this);
   this->connect(d->CLIModuleUIHelper,
                 SIGNAL(valueChanged(QString,QVariant)),
                 d,
                 SLOT(onValueChanged(QString,QVariant)));
-
-  // Set properties
-  d->Title = QString::fromStdString(desc->GetTitle());
-  d->Contributor = QString::fromStdString(desc->GetContributor());
-  d->Category = QString::fromStdString(desc->GetCategory());
-
-  d->ProcessInformation = desc->GetProcessInformation();
-  d->ParameterGroups = desc->GetParameterGroups();
 }
 
 //-----------------------------------------------------------------------------
@@ -321,6 +313,7 @@ qSlicerCLIModuleWidget::~qSlicerCLIModuleWidget()
 void qSlicerCLIModuleWidget::setup()
 {
   Q_D(qSlicerCLIModuleWidget);
+
   d->setupUi(this);
 }
 
@@ -368,16 +361,13 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
 }
 
 //-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerCLIModuleWidget, const QString&, setModuleEntryPoint, ModuleEntryPoint);
-
-//-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::apply()
 {
   Q_D(qSlicerCLIModuleWidget);
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->CLIModuleUIHelper->updateMRMLCommandLineModuleNode(node);
-  d->module()->run(node, /* waitForCompletion= */ false);
+  this->run(node, /* waitForCompletion= */ false);
 }
 
 //-----------------------------------------------------------------------------
@@ -386,15 +376,41 @@ void qSlicerCLIModuleWidget::cancel()
   Q_D(qSlicerCLIModuleWidget);
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
-  d->module()->cancel(node);
+  this->cancel(node);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::reset()
 {
   Q_D(qSlicerCLIModuleWidget);
-  //qDebug() << "qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed";
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->setDefaultNodeValue(node);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::run(vtkMRMLCommandLineModuleNode* parameterNode, bool waitForCompletion)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  Q_ASSERT(d->logic());
+
+  if (waitForCompletion)
+    {
+    d->logic()->ApplyAndWait(parameterNode);
+    }
+  else
+    {
+    d->logic()->Apply(parameterNode);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
+{
+  if (!node)
+    {
+    return;
+    }
+  qDebug() << "Cancel module processing...";
+  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
 }

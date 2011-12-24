@@ -104,21 +104,9 @@ public slots:
   void onValueChanged(const QString& name, const QVariant& type);
 
 public:
-
-  QString           Name;
-  QString           Title;
-  QString           Category;
-  QString           Contributor;
-
-  std::vector<ModuleParameterGroup> ParameterGroups;
-  ModuleProcessInformation*         ProcessInformation;
-  ModuleDescription                 ModuleDescriptionObject;
-
   qSlicerCLIModuleUIHelper* CLIModuleUIHelper; 
   
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
-  QString                       ModuleEntryPoint;
-  QString                       ModuleType;
 };
 
 

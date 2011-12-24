@@ -18,6 +18,7 @@
 
 // MRMLCLI includes
 #include "vtkMRMLCommandLineModuleNode.h"
+class ModuleDescription;
 
 // MRML include
 #include "vtkMRMLScene.h"
@@ -37,6 +38,12 @@ public:
   static vtkSlicerCLIModuleLogic *New();
   vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  void SetDefaultModuleDescription(const ModuleDescription& moduleDescription);
+  const ModuleDescription& GetDefaultModuleDescription()const;
+
+  /// Instantiate a default command line module node.
+  vtkMRMLCommandLineModuleNode* CreateNode();
 
   // TODO: do we need to observe MRML here?
   virtual void ProcessMrmlEvents(vtkObject * vtkNotUsed(caller),
@@ -87,6 +94,7 @@ private:
   vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
   void operator=(const vtkSlicerCLIModuleLogic&);
 
+  ModuleDescription DefaultModuleDescription;
   int DeleteTemporaryFiles;
 
   int RedirectModuleStreams;

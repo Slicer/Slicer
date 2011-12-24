@@ -1,5 +1,6 @@
 
 // Qt includes
+#include <QDebug>
 #include <QtPlugin>
 
 // Slicer includes
@@ -7,6 +8,7 @@
 #include <qSlicerModuleManager.h>
 
 // CropVolume Logic includes
+#include <vtkSlicerCLIModuleLogic.h>
 #include <vtkSlicerCropVolumeLogic.h>
 #include <vtkSlicerVolumesLogic.h>
 
@@ -72,7 +74,7 @@ QIcon qSlicerCropVolumeModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerCropVolumeModule::dependencies()const
 {
-  return QStringList(QString("Volumes"));
+  return QStringList() << "Volumes" << "ResampleVolume2";
 }
 
 //-----------------------------------------------------------------------------
@@ -80,13 +82,34 @@ void qSlicerCropVolumeModule::setup()
 {
   this->Superclass::setup();
 
-  qSlicerAbstractCoreModule* volumesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
-  vtkSlicerVolumesLogic* volumesLogic = 
-    vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
   vtkSlicerCropVolumeLogic* cropVolumeLogic =
     vtkSlicerCropVolumeLogic::SafeDownCast(this->logic());
-  cropVolumeLogic->SetVolumesLogic(volumesLogic);
+
+  qSlicerAbstractCoreModule* volumesModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
+  if (volumesModule)
+    {
+    vtkSlicerVolumesLogic* volumesLogic = 
+      vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
+    cropVolumeLogic->SetVolumesLogic(volumesLogic);
+    }
+  else
+    {
+    qWarning() << "Volumes module is not found";
+    }
+
+  qSlicerAbstractCoreModule* resampleVolume2Module =
+    qSlicerCoreApplication::application()->moduleManager()->module("ResampleVolume2");
+  if (resampleVolume2Module)
+    {
+    vtkSlicerCLIModuleLogic* resampleVolume2Logic = 
+      vtkSlicerCLIModuleLogic::SafeDownCast(resampleVolume2Module->logic());
+    cropVolumeLogic->SetResampleVolume2Logic(resampleVolume2Logic);
+    }
+  else
+    {
+    qWarning() << "ResampleVolume2 module is not found";
+    }
 }
 
 //-----------------------------------------------------------------------------

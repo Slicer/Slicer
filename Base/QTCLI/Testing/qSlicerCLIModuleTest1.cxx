@@ -36,6 +36,7 @@
 
 // MRMLCLI includes
 #include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkSlicerCLIModuleLogic.h>
 
 // STD includes
 
@@ -60,7 +61,8 @@ void runCli(void * data)
   //outputFile.close();
 
   // Create node
-  vtkMRMLCommandLineModuleNode * cliModuleNode = CLIModule->createNode();
+  vtkMRMLCommandLineModuleNode * cliModuleNode =
+    CLIModule->cliModuleLogic()->CreateNode();
 
   // Values
   int inputValue1 = 4;
@@ -73,7 +75,7 @@ void runCli(void * data)
   cliModuleNode->SetParameterAsString("OutputFile", outputFile.fileName().toLatin1());
 
   // Execute synchronously so that we can check the content of the file after the module execution
-  CLIModule->run(cliModuleNode, /* waitForCompletion= */ true);
+  CLIModule->cliModuleLogic()->ApplyAndWait(cliModuleNode);
 
   // Read outputFile
   QTextStream stream(&outputFile);

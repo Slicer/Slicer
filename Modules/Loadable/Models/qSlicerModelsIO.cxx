@@ -22,9 +22,6 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-//#include "qSlicerAbstractModule.h"
-//#include "qSlicerCoreApplication.h"
-//#include "qSlicerModuleManager.h"
 #include "qSlicerModelsIO.h"
 
 // Logic includes

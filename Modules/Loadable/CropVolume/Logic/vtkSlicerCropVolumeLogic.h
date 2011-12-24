@@ -23,26 +23,16 @@
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
-
-// MRML includes
-#include <vtkMRML.h>
-
-// STD includes
-#include <cstdlib>
-
-#include "vtkSlicerCropVolumeModuleLogicExport.h"
-
-class vtkMRMLVolumeNode;
-class vtkMRMLScalarVolumeNode;
-class vtkMRMLScalarVolumeDisplayNode;
-class vtkMRMLVolumeHeaderlessStorageNode;
-class vtkMRMLCropVolumeParametersNode;
+class vtkSlicerCLIModuleLogic;
 class vtkSlicerVolumesLogic;
-class vtkStringArray;
+
+// CropVolumes includes
+#include "vtkSlicerCropVolumeModuleLogicExport.h"
+class vtkMRMLCropVolumeParametersNode;
 
 /// \ingroup Slicer_QtModules_CropVolume
-class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
+  : public vtkSlicerModuleLogic
 {
 public:
   
@@ -53,6 +43,9 @@ public:
   void SetVolumesLogic(vtkSlicerVolumesLogic* logic);
   vtkSlicerVolumesLogic* GetVolumesLogic();
 
+  void SetResampleVolume2Logic(vtkSlicerCLIModuleLogic* logic);
+  vtkSlicerCLIModuleLogic* GetResampleVolume2Logic();
+
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
   virtual void RegisterNodes();
@@ -62,9 +55,8 @@ protected:
   virtual ~vtkSlicerCropVolumeLogic();
 
 private:
-
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented
-  void operator=(const vtkSlicerCropVolumeLogic&);               // Not implementedo
+  void operator=(const vtkSlicerCropVolumeLogic&);           // Not implemented
 
   class vtkInternal;
   vtkInternal* Internal;

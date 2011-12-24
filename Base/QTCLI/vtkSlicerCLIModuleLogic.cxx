@@ -105,6 +105,28 @@ void vtkSlicerCLIModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 
+//-----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetDefaultModuleDescription(const ModuleDescription& description)
+{
+  this->DefaultModuleDescription = description;
+}
+
+//-----------------------------------------------------------------------------
+const ModuleDescription& vtkSlicerCLIModuleLogic
+::GetDefaultModuleDescription()const
+{
+  return this->DefaultModuleDescription;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNode()
+{
+  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(
+    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  node->SetModuleDescription(this->DefaultModuleDescription);
+  return node;
+}
+
 //----------------------------------------------------------------------------
 std::string
 vtkSlicerCLIModuleLogic

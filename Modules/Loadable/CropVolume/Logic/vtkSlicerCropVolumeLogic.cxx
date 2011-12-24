@@ -12,8 +12,6 @@
 
 =========================================================================auto=*/
 
-// Qt includes
-
 // CLI invocation
 #include <qSlicerCoreApplication.h>
 #include <qSlicerModuleManager.h>
@@ -22,6 +20,7 @@
 #include <vtkSlicerCLIModuleLogic.h>
 
 // CropLogic includes
+#include "vtkSlicerCLIModuleLogic.h"
 #include "vtkSlicerCropVolumeLogic.h"
 #include "vtkSlicerVolumesLogic.h"
 
@@ -39,6 +38,7 @@
 #include <vtkImageData.h>
 
 // STD includes
+#include <cassert>
 
 //----------------------------------------------------------------------------
 class vtkSlicerCropVolumeLogic::vtkInternal
@@ -47,12 +47,14 @@ public:
   vtkInternal();
 
   vtkSlicerVolumesLogic* VolumesLogic;
+  vtkSlicerCLIModuleLogic* ResampleVolume2Logic;
 };
 
 //----------------------------------------------------------------------------
 vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()
 {
   this->VolumesLogic = 0;
+  this->ResampleVolume2Logic = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -81,6 +83,18 @@ void vtkSlicerCropVolumeLogic::SetVolumesLogic(vtkSlicerVolumesLogic* logic)
 vtkSlicerVolumesLogic* vtkSlicerCropVolumeLogic::GetVolumesLogic()
 {
   return this->Internal->VolumesLogic;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCropVolumeLogic::SetResampleVolume2Logic(vtkSlicerCLIModuleLogic* logic)
+{
+  this->Internal->ResampleVolume2Logic = logic;
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerCLIModuleLogic* vtkSlicerCropVolumeLogic::GetResampleVolume2Logic()
+{
+  return this->Internal->ResampleVolume2Logic;
 }
 
 //----------------------------------------------------------------------------
@@ -231,8 +245,9 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     return -3;
     }
 
-  qSlicerCLIModule * cliModule = qobject_cast<qSlicerCLIModule*>(resampleVolume2);
-  vtkMRMLCommandLineModuleNode* cmdNode = cliModule->createNode();
+  vtkSmartPointer<vtkMRMLCommandLineModuleNode> cmdNode;
+  cmdNode.TakeReference(this->Internal->ResampleVolume2Logic->CreateNode());
+  assert(cmdNode.GetPointer() != 0);
 
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
   cmdNode->SetParameterAsString("referenceVolume",refVolume->GetID());
@@ -252,7 +267,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   }
 
   cmdNode->SetParameterAsString("interpolationType", interp.c_str());
-  cliModule->run(cmdNode, true);
+  this->Internal->ResampleVolume2Logic->ApplyAndWait(cmdNode);
 
   this->GetMRMLScene()->RemoveNode(refVolume);
 

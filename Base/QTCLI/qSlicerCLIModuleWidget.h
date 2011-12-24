@@ -42,7 +42,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleWidget : public qSlicerAbstract
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerCLIModuleWidget(ModuleDescription* desc, QWidget *parent=0);
+  qSlicerCLIModuleWidget(QWidget *parent=0);
   virtual ~qSlicerCLIModuleWidget();
 
   /// Set the \a entryPoint associated with the module
@@ -63,6 +63,13 @@ protected:
   /// 
   virtual void setup();
 
+  /// Run a command line module given \a parameterNode
+  /// If \a waitForCompletion is True, the call will return only upon completion of
+  /// the module execution.
+  void run(vtkMRMLCommandLineModuleNode* parameterNode, bool waitForCompletion = false);
+
+  /// Abort the execution of the module associated with \a node
+  void cancel(vtkMRMLCommandLineModuleNode* node);
 protected:
   QScopedPointer<qSlicerCLIModuleWidgetPrivate> d_ptr;
 

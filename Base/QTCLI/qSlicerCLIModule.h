@@ -78,20 +78,8 @@ public:
   virtual QString title() const;
   virtual QString category() const;
   virtual QString contributor() const;
+
   virtual QImage logo() const;
-
-  /// Using the following function to create a commandLineModule node will ensure
-  /// ensure the created node is selected within the UI.
-  vtkMRMLCommandLineModuleNode* createNode();
-
-  /// Run a command line module given \a parameterNode
-  /// If \a waitForCompletion is True, the call will return only upon completion of
-  /// the module execution.
-  void run(vtkMRMLCommandLineModuleNode* parameterNode, bool waitForCompletion = false);
-
-  /// Abort the execution of the module associated with \a node
-  void cancel(vtkMRMLCommandLineModuleNode* node);
-
   void setLogo(const ModuleLogo& logo);
 
   /// Convert a ModuleLogo into a QIcon
