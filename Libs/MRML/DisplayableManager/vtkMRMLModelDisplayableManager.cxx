@@ -966,7 +966,7 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::CheckModelHierarchies()
 {
-  if (this->GetMRMLScene() == 0 || this->GetMRMLApplicationLogic()->GetModelHierarchyLogic() == 0)
+  if (this->GetMRMLScene() == 0 || this->GetMRMLApplicationLogic() == 0 || this->GetMRMLApplicationLogic()->GetModelHierarchyLogic() == 0)
     {
     return;
     }
@@ -1048,7 +1048,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModel
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model)
 {
-  if (model && this->GetMRMLApplicationLogic()->GetModelHierarchyLogic())
+  if (model)
     {
     vtkMRMLModelHierarchyNode* mhnode = vtkMRMLModelHierarchyNode::SafeDownCast(
         vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(), model->GetID()));
@@ -1734,6 +1734,10 @@ void vtkMRMLModelDisplayableManager::SetPickedPointID(vtkIdType newPointID)
 //---------------------------------------------------------------------------
 vtkMRMLModelHierarchyLogic* vtkMRMLModelDisplayableManager::GetModelHierarchyLogic()
 {
+  if (this->GetMRMLApplicationLogic() == 0)
+    {
+    return 0;
+    }
   vtkDebugMacro("returning Internal->ModelHierarchyLogic address "
                 << this->GetMRMLApplicationLogic()->GetModelHierarchyLogic());
   return this->GetMRMLApplicationLogic()->GetModelHierarchyLogic();

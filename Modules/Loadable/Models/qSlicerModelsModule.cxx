@@ -122,7 +122,10 @@ void qSlicerModelsModule::setup()
 qSlicerAbstractModuleRepresentation * qSlicerModelsModule::createWidgetRepresentation()
 {
   qSlicerModelsModuleWidget* widget = new qSlicerModelsModuleWidget;
-  widget->setMRMLModelHierarchyLogic(this->appLogic()->GetModelHierarchyLogic());
+  if (this->appLogic())
+    {
+    widget->setMRMLModelHierarchyLogic(this->appLogic()->GetModelHierarchyLogic());
+    }
   return widget;
 }
 
