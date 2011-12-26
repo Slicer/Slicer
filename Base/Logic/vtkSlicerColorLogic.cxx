@@ -20,7 +20,7 @@
 #include <windows.h>
 #else
 #include <dirent.h>
-#include <errno.h>
+#include <cerrno>
 #endif
 
 vtkCxxRevisionMacro(vtkSlicerColorLogic, "$Revision$");
