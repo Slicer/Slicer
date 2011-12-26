@@ -49,6 +49,11 @@ qSlicerColorsIO::qSlicerColorsIO(
 }
 
 //-----------------------------------------------------------------------------
+qSlicerColorsIO::~qSlicerColorsIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerColorsIO::setColorLogic(vtkSlicerColorLogic* newColorLogic)
 {
   Q_D(qSlicerColorsIO);

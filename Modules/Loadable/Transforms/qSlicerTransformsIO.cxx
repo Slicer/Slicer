@@ -48,6 +48,12 @@ qSlicerTransformsIO::qSlicerTransformsIO(
   this->setTransformLogic(_transformLogic);
 }
 
+
+//-----------------------------------------------------------------------------
+qSlicerTransformsIO::~qSlicerTransformsIO()
+{
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerTransformsIO::setTransformLogic(vtkSlicerTransformLogic* newTransformLogic)
 {

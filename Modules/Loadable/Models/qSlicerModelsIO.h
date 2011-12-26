@@ -35,6 +35,7 @@ class qSlicerModelsIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerModelsIO(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
+  virtual ~qSlicerModelsIO();
 
   void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
   vtkSlicerModelsLogic* modelsLogic()const;

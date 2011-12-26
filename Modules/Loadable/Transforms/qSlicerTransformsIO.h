@@ -34,6 +34,7 @@ class qSlicerTransformsIO: public qSlicerIO
   Q_OBJECT
 public:
   qSlicerTransformsIO(vtkSlicerTransformLogic* transformLogic, QObject* parent = 0);
+  virtual ~qSlicerTransformsIO();
 
   void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
   vtkSlicerTransformLogic* transformLogic()const;

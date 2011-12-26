@@ -51,6 +51,11 @@ qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(
 }
 
 //-----------------------------------------------------------------------------
+qSlicerScalarOverlayIO::~qSlicerScalarOverlayIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerScalarOverlayIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 {
   Q_D(qSlicerScalarOverlayIO);

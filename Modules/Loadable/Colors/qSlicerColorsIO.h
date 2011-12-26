@@ -34,6 +34,7 @@ class qSlicerColorsIO: public qSlicerIO
   Q_OBJECT
 public:
   qSlicerColorsIO(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
+  virtual ~qSlicerColorsIO();
 
   void setColorLogic(vtkSlicerColorLogic* colorLogic);
   vtkSlicerColorLogic* colorLogic()const;

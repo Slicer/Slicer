@@ -47,6 +47,11 @@ qSlicerModelsIO::qSlicerModelsIO(vtkSlicerModelsLogic* _modelsLogic, QObject* _p
 }
 
 //-----------------------------------------------------------------------------
+qSlicerModelsIO::~qSlicerModelsIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModelsIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 {
   Q_D(qSlicerModelsIO);

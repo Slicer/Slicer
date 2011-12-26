@@ -35,6 +35,7 @@ class qSlicerFiberBundleIO: public qSlicerIO
   Q_OBJECT
 public:
   qSlicerFiberBundleIO(vtkSlicerFiberBundleLogic* fiberBundleLogic, QObject* parent = 0);
+  virtual ~qSlicerFiberBundleIO();
 
   void setFiberBundleLogic(vtkSlicerFiberBundleLogic* fiberBundleLogic);
   vtkSlicerFiberBundleLogic* fiberBundleLogic()const;

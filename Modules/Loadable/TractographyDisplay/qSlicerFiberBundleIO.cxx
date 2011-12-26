@@ -50,6 +50,11 @@ qSlicerFiberBundleIO::qSlicerFiberBundleIO(
 }
 
 //-----------------------------------------------------------------------------
+qSlicerFiberBundleIO::~qSlicerFiberBundleIO()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerFiberBundleIO::setFiberBundleLogic(vtkSlicerFiberBundleLogic* newFiberBundleLogic)
 {
   Q_D(qSlicerFiberBundleIO);

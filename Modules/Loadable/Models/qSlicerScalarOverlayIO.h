@@ -34,6 +34,7 @@ class qSlicerScalarOverlayIO: public qSlicerIO
   Q_OBJECT
 public:
   qSlicerScalarOverlayIO(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
+  virtual ~qSlicerScalarOverlayIO();
 
   void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
   vtkSlicerModelsLogic* modelsLogic()const;
