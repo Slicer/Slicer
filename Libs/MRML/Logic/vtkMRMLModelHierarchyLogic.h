@@ -74,7 +74,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
 
   ///
   /// Set visibility on all children of the node recursively
-  static void SetChildrenVisbility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibilty);
+  static void SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibilty);
 
 protected:
   vtkMRMLModelHierarchyLogic();
