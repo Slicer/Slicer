@@ -190,7 +190,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->temporaryPath().toLatin1());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
-  this->DataIOManagerLogic->SetApplicationLogic(this->AppLogic);
+  this->DataIOManagerLogic->SetMRMLApplicationLogic(this->AppLogic);
   this->DataIOManagerLogic->SetAndObserveDataIOManager(this->MRMLRemoteIOLogic->GetDataIOManager());
 
   // Create MRML scene

@@ -174,7 +174,7 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
     vtkSlicerModuleLogic::SafeDownCast(d->Logic);
   if (moduleLogic)
     {
-    moduleLogic->SetApplicationLogic(newAppLogic);
+    moduleLogic->SetMRMLApplicationLogic(newAppLogic);
     }
 }
 
@@ -254,7 +254,7 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
     vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
     if (moduleLogic)
       {
-      moduleLogic->SetApplicationLogic(d->AppLogic);
+      moduleLogic->SetMRMLApplicationLogic(d->AppLogic);
       moduleLogic->SetModuleShareDirectory(vtkSlicerApplicationLogic::GetModuleShareDirectory(
                                        this->name().toStdString(), this->path().toStdString()));
       }

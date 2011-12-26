@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -27,7 +27,7 @@ int vtkDataIOManagerLogicTest1(int , char * [] )
   logic->SetAndObserveDataIOManager(dataIOManager.GetPointer());
 
   vtkNew<vtkSlicerApplicationLogic> slicerApplictionLogic;
-  logic->SetApplicationLogic(slicerApplictionLogic.GetPointer());
+  logic->SetMRMLApplicationLogic(slicerApplictionLogic.GetPointer());
   logic->GetApplicationLogic()->Print(std::cout);
 
   return EXIT_SUCCESS;

@@ -7,7 +7,7 @@
 
 =========================================================================auto=*/
 ///  vtkSlicerModuleLogic - superclass for slicer module logic classes
-/// 
+///
 /// Superclass for all slicer module logic classes
 /// \note No GUI code goes in the logic class.
 
@@ -31,7 +31,7 @@ public:
 
   /// Get access to overall application state
   virtual vtkSlicerApplicationLogic* GetApplicationLogic();
-  virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
+  //TODO virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
 
   std::string GetModuleShareDirectory()const;
   void SetModuleShareDirectory(const std::string& shareDirectory);

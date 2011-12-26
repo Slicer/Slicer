@@ -22,19 +22,13 @@ vtkSlicerModuleLogic::vtkSlicerModuleLogic()
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::~vtkSlicerModuleLogic()
 {
-  this->SetApplicationLogic(0);
+  this->SetMRMLApplicationLogic(0);
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic* vtkSlicerModuleLogic::GetApplicationLogic()
 {
   return vtkSlicerApplicationLogic::SafeDownCast(this->GetMRMLApplicationLogic());
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerModuleLogic::SetApplicationLogic(vtkSlicerApplicationLogic* logic)
-{
-  this->SetMRMLApplicationLogic(logic);
 }
 
 //----------------------------------------------------------------------------
