@@ -1,3 +1,5 @@
+# Note that on MacOS X, java can be found but not installed. You can prevent find_package to find
+# Java by passing to CMake >2.8.6 CMAKE_DISABLE_FIND_PACKAGE_Java:BOOL=TRUE
 find_package( Java )
 
 # Since not all dashboard are running cmake 2.8.1, let's set the legacy variable

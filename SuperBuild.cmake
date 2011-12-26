@@ -174,6 +174,9 @@ if(DEFINED CTEST_USE_LAUNCHER AND "${CTEST_USE_LAUNCHER}")
   list(APPEND ep_cmake_boolean_args CTEST_USE_LAUNCHER)
 endif()
 
+# Add the option to disable Java even when found on the machine.
+list(APPEND ep_cmake_boolean_args CMAKE_DISABLE_FIND_PACKAGE_Java)
+
 set(ep_superbuild_boolean_args)
 foreach(ep_cmake_arg ${ep_cmake_boolean_args})
   list(APPEND ep_superbuild_boolean_args -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
