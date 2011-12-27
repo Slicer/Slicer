@@ -1,17 +1,17 @@
 """ This module is a place holder for convenient functions allowing to interact with CLI."""
 
-def createNode(module, parameters = None):
+def createNode(moduleName, parameters = None):
   '''Creates a new vtkMRMLCommandLineModuleNode for a specific module, with
   optional parameters'''
   import slicer.util
-  widget = slicer.util.getModuleGui(module)
-  if not widget:
+  cliModule = slicer.util.getModule(moduleName)
+  if not cliModule:
     return None
-  selector = widget.findChild("qMRMLNodeComboBox", "MRMLCommandLineModuleNodeSelector")
-  if not selector:
-    print "Could not find node selector for name '%s" % moduleName
+  cliLogic = cliModule.logic()
+  if not cliLogic:
+    print "Could not find logic for name '%s" % moduleName
     return None
-  node = selector.addNode()
+  node = cliLogic.CreateNodeInScene()
   setNodeParameters(node, parameters)
   return node
 

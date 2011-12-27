@@ -238,8 +238,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     return -3;
     }
 
-  vtkSmartPointer<vtkMRMLCommandLineModuleNode> cmdNode;
-  cmdNode.TakeReference(this->Internal->ResampleVolume2Logic->CreateNode());
+  vtkSmartPointer<vtkMRMLCommandLineModuleNode> cmdNode =
+    this->Internal->ResampleVolume2Logic->CreateNodeInScene();
   assert(cmdNode.GetPointer() != 0);
 
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
@@ -263,10 +263,12 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   this->Internal->ResampleVolume2Logic->ApplyAndWait(cmdNode);
 
   this->GetMRMLScene()->RemoveNode(refVolume);
+  this->GetMRMLScene()->RemoveNode(cmdNode);
 
   outputVolume->SetAndObserveTransformNodeID(NULL);
   outputVolume->ModifiedSinceReadOn();
   pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
+
   return 0;
 }
 

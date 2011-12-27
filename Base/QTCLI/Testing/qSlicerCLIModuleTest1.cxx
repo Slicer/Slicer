@@ -62,7 +62,7 @@ void runCli(void * data)
 
   // Create node
   vtkMRMLCommandLineModuleNode * cliModuleNode =
-    CLIModule->cliModuleLogic()->CreateNode();
+    CLIModule->cliModuleLogic()->CreateNodeInScene();
 
   // Values
   int inputValue1 = 4;

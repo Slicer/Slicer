@@ -127,6 +127,15 @@ vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNode()
   return node;
 }
 
+//-----------------------------------------------------------------------------
+vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNodeInScene()
+{
+  vtkMRMLCommandLineModuleNode* node = this->CreateNode();
+  this->GetMRMLScene()->AddNode(node);
+  node->Delete();
+  return node;
+}
+
 //----------------------------------------------------------------------------
 std::string
 vtkSlicerCLIModuleLogic

@@ -43,7 +43,13 @@ public:
   const ModuleDescription& GetDefaultModuleDescription()const;
 
   /// Instantiate a default command line module node.
+  /// Warning: The caller is responsible for deleting it.
   vtkMRMLCommandLineModuleNode* CreateNode();
+
+  /// Instantiate a default command line module node and add it into the
+  /// scene.
+  /// The caller is responsible for remove the node from the scene.
+  vtkMRMLCommandLineModuleNode* CreateNodeInScene();
 
   // TODO: do we need to observe MRML here?
   virtual void ProcessMrmlEvents(vtkObject * vtkNotUsed(caller),
