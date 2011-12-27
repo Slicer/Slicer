@@ -27,6 +27,7 @@
 #include <vtkCutter.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkObject.h>
 #include <vtkPlane.h>
@@ -159,8 +160,8 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   if (this->Is2DDisplayableManager())
     {
-    vtkPropCollection *actors = vtkPropCollection::New();
-    boxRepresentation->GetActors2D(actors);
+    vtkNew<vtkPropCollection> actors;
+    boxRepresentation->GetActors2D(actors.GetPointer());
     for (int i=0; i<actors->GetNumberOfItems(); i++)
       {
       this->GetRenderer()->AddActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
@@ -234,8 +235,8 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode*
     if (rep)
       {
       // update actor's visbility from mrml
-      vtkPropCollection *actors = vtkPropCollection::New();
-      rep->GetActors2D(actors);
+      vtkNew<vtkPropCollection> actors;
+      rep->GetActors2D(actors.GetPointer());
       for (int i=0; i<actors->GetNumberOfItems(); i++)
         {
         this->GetRenderer()->RemoveActor2D(vtkProp::SafeDownCast(actors->GetItemAsObject(i)));
@@ -541,8 +542,8 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
 
   // update actor's visbility from mrml
 
-  vtkPropCollection *actors = vtkPropCollection::New();
-  rep->GetActors2D(actors);
+  vtkNew<vtkPropCollection> actors;
+  rep->GetActors2D(actors.GetPointer());
   for (int i=0; i<actors->GetNumberOfItems(); i++)
     {
     vtkProp::SafeDownCast(actors->GetItemAsObject(i))->SetVisibility(roiNode->GetVisibility());
@@ -733,15 +734,14 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
 
-    vtkSmartPointer<vtkPropCollection> actors =  vtkSmartPointer<vtkPropCollection>::New();
-    rep->GetActors(actors);
+    vtkNew<vtkPropCollection> actors;
+    rep->GetActors(actors.GetPointer());
 
     for (int i=0; i<actors->GetNumberOfItems(); i++)
       {
       vtkActor *actor = vtkActor::SafeDownCast(actors->GetItemAsObject(i));
       actor->SetUserMatrix(transformToWorld);
       }
-
     //rep->SetTransform(xform);
 
     widget->InvokeEvent(vtkCommand::EndInteractionEvent);
