@@ -55,7 +55,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   nodeFactory.removeAttribute("Category");
   nodeFactory.createNode("vtkMRMLDoubleArrayNode");
   model.setMRMLScene(scene);
-  nodeFactory.createNode("vtkMRMLVolumePropertyNode");
+  nodeFactory.createNode("vtkMRMLScalarVolumeNode");
   nodeFactory.addAttribute("Category", "Second Category");
   nodeFactory.createNode("vtkMRMLSliceNode");
   nodeFactory.createNode("vtkMRMLSliceNode");
