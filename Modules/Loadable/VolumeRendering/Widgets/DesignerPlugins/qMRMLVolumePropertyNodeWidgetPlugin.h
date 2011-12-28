@@ -21,11 +21,11 @@
 #ifndef __qMRMLVolumePropertyNodeWidgetPlugin_h
 #define __qMRMLVolumePropertyNodeWidgetPlugin_h
 
-#include "qMRMLWidgetsAbstractPlugin.h"
+#include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLVolumePropertyNodeWidgetPlugin
+class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXPORT qMRMLVolumePropertyNodeWidgetPlugin
   : public QObject
-  , public qMRMLWidgetsAbstractPlugin
+  , public qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 

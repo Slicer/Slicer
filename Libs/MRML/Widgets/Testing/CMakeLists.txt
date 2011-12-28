@@ -55,7 +55,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLUtf8Test1.cxx
   qMRMLUtilsTest1.cxx
   qMRMLVolumeInfoWidgetTest1.cxx
-  qMRMLVolumePropertyNodeWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
@@ -141,7 +140,6 @@ SCENE_TEST(  qMRMLTreeViewTest1 vol_and_cube.mrml )
 SCENE_TEST(  qMRMLUtf8Test1 cube-utf8.mrml )
 SIMPLE_TEST( qMRMLUtilsTest1 )
 SIMPLE_TEST( qMRMLVolumeInfoWidgetTest1 )
-SIMPLE_TEST( qMRMLVolumePropertyNodeWidgetTest1 )
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )

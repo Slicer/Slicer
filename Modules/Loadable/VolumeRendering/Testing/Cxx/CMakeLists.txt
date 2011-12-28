@@ -8,8 +8,11 @@ SlicerMacroConfigureGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KI
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
+  qMRMLVolumePropertyNodeWidgetTest1.cxx
   qSlicerVolumeRenderingModuleWidgetTest1.cxx
   qSlicerVolumeRenderingModuleWidgetTest2.cxx
+  vtkMRMLVolumePropertyNodeTest1.cxx
+  vtkMRMLVolumePropertyStorageNodeTest1.cxx
   vtkMRMLVolumeRenderingDisplayableManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
@@ -33,8 +36,11 @@ endmacro()
 foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
+SIMPLE_TEST( qMRMLVolumePropertyNodeWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest2 ${VOLUME_FILE} )
+SIMPLE_TEST( vtkMRMLVolumePropertyNodeTest1 )
+SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeRenderingDisplayableManagerTest1 )
 
 # Install the testing data

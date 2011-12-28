@@ -25,6 +25,7 @@
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLVolumePropertyNode.h>
 #include <vtkMRMLVolumePropertyStorageNode.h>
 
 // VTKSYS includes
@@ -105,14 +106,18 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene());
-  // :NOTE: 20050513 tgl: Guard this so it is only registered once.
-  vtkMRMLVolumeRenderingScenarioNode *vrsNode = vtkMRMLVolumeRenderingScenarioNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(vrsNode);
-  vrsNode->Delete();
 
-  vtkMRMLVolumeRenderingDisplayNode *vrpNode = vtkMRMLVolumeRenderingDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(vrpNode);
-  vrpNode->Delete();
+  vtkNew<vtkMRMLVolumePropertyNode> vpn;
+  this->GetMRMLScene()->RegisterNodeClass( vpn.GetPointer() );
+
+  vtkNew<vtkMRMLVolumePropertyStorageNode> vpsn;
+  this->GetMRMLScene()->RegisterNodeClass( vpsn.GetPointer() );
+
+  vtkNew<vtkMRMLVolumeRenderingScenarioNode> vrsNode;
+  this->GetMRMLScene()->RegisterNodeClass( vrsNode.GetPointer() );
+
+  vtkNew<vtkMRMLVolumeRenderingDisplayNode> vrpNode;
+  this->GetMRMLScene()->RegisterNodeClass( vrpNode.GetPointer() );
 }
 
 //----------------------------------------------------------------------------

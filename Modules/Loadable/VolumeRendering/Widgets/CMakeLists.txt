@@ -18,16 +18,20 @@ set(module_widgets_SRCS
   qSlicerPresetComboBox.cxx
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
+  qMRMLVolumePropertyNodeWidget.cxx
+  qMRMLVolumePropertyNodeWidget.h
   )
 
 # Headers that should run through moc
 set(module_widgets_MOC_SRCS
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
+  qMRMLVolumePropertyNodeWidget.h
   )
 
 # UI files
 set(module_widgets_UI_SRCS
+  ../Resources/UI/qMRMLVolumePropertyNodeWidget.ui
   )
 
 # Resources

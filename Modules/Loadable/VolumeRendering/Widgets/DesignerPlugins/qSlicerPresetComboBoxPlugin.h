@@ -24,7 +24,8 @@
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
 class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXPORT qSlicerPresetComboBoxPlugin
-    : public QObject, public qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
+  : public QObject
+  , public qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 

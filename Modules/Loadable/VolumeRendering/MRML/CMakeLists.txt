@@ -15,6 +15,8 @@ set(module_mrml_include_directories
 
 # Source files
 set(module_mrml_SRCS
+  vtkMRMLVolumePropertyNode.cxx
+  vtkMRMLVolumePropertyStorageNode.cxx
   vtkMRMLVolumeRenderingDisplayNode.cxx
   vtkMRMLVolumeRenderingDisplayNode.h
   vtkMRMLVolumeRenderingScenarioNode.cxx
@@ -25,6 +27,7 @@ set(module_mrml_SRCS
 set(module_mrml_target_libraries
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
+  vtkRendering
   vtkSlicerAnnotationsModuleMRML
   )
 

@@ -85,8 +85,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeDisplayNodeTest1.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
   vtkMRMLVolumeNodeTest1.cxx
-  vtkMRMLVolumePropertyNodeTest1.cxx
-  vtkMRMLVolumePropertyStorageNodeTest1.cxx
   vtkMRMLXYPlotManagerNodeTest1.cxx
   vtkObserverManagerTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
@@ -187,8 +185,6 @@ SIMPLE_TEST( vtkMRMLVolumeArchetypeStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeHeaderlessStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeNodeTest1 )
-SIMPLE_TEST( vtkMRMLVolumePropertyNodeTest1 )
-SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLXYPlotManagerNodeTest1 )
 SIMPLE_TEST( vtkObserverManagerTest1 )
 

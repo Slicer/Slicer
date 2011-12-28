@@ -150,8 +150,6 @@ set(MRMLCore_SRCS
   vtkURIHandler.cxx
   vtkTagTableCollection.cxx
   vtkTagTable.cxx
-  vtkMRMLVolumePropertyNode.cxx
-  vtkMRMLVolumePropertyStorageNode.cxx
   vtkMRMLdGEMRICProceduralColorNode.cxx
   vtkMRMLPETProceduralColorNode.cxx
   # Classes for 2D Plotting
@@ -216,7 +214,6 @@ set(VTK_LIBRARIES
   vtkHybrid
   #vtkIO # Provided by FreeSurfer
   #vtkImaging # Provided by vtkITK
-  vtkRendering
   )
 
 set(libs

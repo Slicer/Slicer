@@ -50,8 +50,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkURIHandler.h"
 #include "vtkMRMLLayoutNode.h"
-#include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLVolumePropertyStorageNode.h"
 
 #include "vtkMRMLArrayPlotNode.h"
 #include "vtkMRMLXYPlotManagerNode.h"
@@ -331,14 +329,6 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::New();
   this->RegisterNodeClass( btn );
   btn->Delete();
-
-  vtkMRMLVolumePropertyNode *vpn = vtkMRMLVolumePropertyNode::New();
-  this->RegisterNodeClass( vpn );
-  vpn->Delete();
-
-  vtkMRMLVolumePropertyStorageNode *vpsn = vtkMRMLVolumePropertyStorageNode::New();
-  this->RegisterNodeClass( vpsn );
-  vpsn->Delete();
 
   vtkMRMLArrayPlotNode *apn = vtkMRMLArrayPlotNode::New();
   this->RegisterNodeClass( apn );

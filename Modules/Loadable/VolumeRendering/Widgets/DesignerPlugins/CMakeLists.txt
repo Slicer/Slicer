@@ -9,6 +9,8 @@ set(module_widgets_export_directive "Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXP
 
 # Source files
 set(designer_plugin_SRCS
+  qMRMLVolumePropertyNodeWidgetPlugin.cxx
+  qMRMLVolumePropertyNodeWidgetPlugin.h
   qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.cxx
   qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h
   qSlicerVolumeRenderingModuleWidgetsPlugin.cxx
@@ -23,6 +25,7 @@ set(designer_plugin_SRCS
 set(designer_plugin_MOC_SRCS
   qSlicerVolumeRenderingModuleWidgetsPlugin.h
 
+  qMRMLVolumePropertyNodeWidgetPlugin.h
   qSlicerPresetComboBoxPlugin.h
   )
 

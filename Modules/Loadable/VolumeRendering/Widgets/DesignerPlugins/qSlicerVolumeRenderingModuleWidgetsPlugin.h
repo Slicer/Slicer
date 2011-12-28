@@ -25,6 +25,7 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // VolumeRendering includes
+#include "qMRMLVolumePropertyNodeWidgetPlugin.h"
 #include "qSlicerPresetComboBoxPlugin.h"
 
 // \class Group the plugins in one library
@@ -39,7 +40,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qSlicerPresetComboBoxPlugin;
+    plugins << new qMRMLVolumePropertyNodeWidgetPlugin
+            << new qSlicerPresetComboBoxPlugin;
     return plugins;
     }
 };
