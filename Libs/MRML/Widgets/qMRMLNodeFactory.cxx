@@ -65,8 +65,6 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
   Q_D(qMRMLNodeFactory);
   
-  Q_ASSERT(d->MRMLScene);
-  Q_ASSERT(!className.isEmpty());
   if (!d->MRMLScene || className.isEmpty())
     {
     return 0; 
@@ -100,12 +98,6 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     }
   node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toLatin1()));
 
-  if (node->GetSingletonTag() != 0 && node->GetID() == 0)
-    {
-    qDebug() << "Problem creating node [" << className << "] - "
-                "Can't add a node with a SingletonTag and an empty ID";
-    return 0;
-    }
   // Set node attributes
   // Attributes must be set before adding the node into the scene as the node
   // combobox filter might hide the node if the attributes are not set yet.
@@ -124,8 +116,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   if (!node->GetScene())
     {
     vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
-    Q_ASSERT(nodeAdded == node);
-    Q_UNUSED(nodeAdded);
+    Q_ASSERT(nodeAdded == node ||
+             node->GetSingletonTag() != 0);
+    node = nodeAdded;
     }
   emit this->nodeAdded(node);
 
@@ -160,6 +153,13 @@ void qMRMLNodeFactory::removeAttribute(const QString& name)
 {
   Q_D(qMRMLNodeFactory);
   d->Attributes.remove(name);
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLNodeFactory::attribute(const QString& name)const
+{
+  Q_D(const qMRMLNodeFactory);
+  return d->Attributes[name];
 }
 
 //------------------------------------------------------------------------------

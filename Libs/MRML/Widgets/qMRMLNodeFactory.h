@@ -50,7 +50,8 @@ public:
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory();
   
-  /// Set/Get MRML scene
+  /// Get MRML scene.
+  /// By default, there is no scene.
   vtkMRMLScene* mrmlScene()const;
 
   /// 
@@ -61,9 +62,14 @@ public:
   /// \a nodeAdded(vtkMRMLNode*)
   /// on that order. It allows the user to add custom steps by connecting slots
   /// to the emitted signals.
+  /// No-op if the scene is 0 or if className is empty/null. However, if className
+  /// is not empty but invalid (not an existing node), an assert throws an exception.
   /// Note: The attributes will be applied to the node before being added into
   /// the scene. The scene takes the ownership of the node and is responsible 
   /// to delete it
+  /// If the node is a singleton that already exists in the scene, the existing
+  /// node is returned.
+  /// \sa vtkMRMLScene::AddNode
   vtkMRMLNode* createNode(const QString& className);
 
   /// 
@@ -75,8 +81,9 @@ public:
   /// Add attribute that will be passed to any new created node.
   /// TODO: Support attributes for more than 1 node class
   /// Note: If an attribute already exist, it's value will be overwritten.
-  void addAttribute(const QString& name, const QString& value);
-  void removeAttribute(const QString& name);
+  void addAttribute(const QString& attributeName, const QString& attributeValue);
+  void removeAttribute(const QString& attributeName);
+  QString attribute(const QString& attributeName)const;
 
   /// Base name used to generate a name for create node.
   void setBaseName(const QString& className, const QString& baseName);
@@ -84,7 +91,7 @@ public:
 
 public slots:
   /// 
-  /// Set/Get MRML scene
+  /// Set MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
 
 signals:
