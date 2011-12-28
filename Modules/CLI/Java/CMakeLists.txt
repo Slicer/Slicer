@@ -2,20 +2,12 @@
 # Java by passing to CMake >2.8.6 CMAKE_DISABLE_FIND_PACKAGE_Java:BOOL=TRUE
 find_package( Java )
 
-# Since not all dashboard are running cmake 2.8.1, let's set the legacy variable
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.8.1")
-  set(Java_JAVA_EXECUTABLE ${JAVA_RUNTIME})
-  set(Java_JAVAC_EXECUTABLE ${JAVA_COMPILE})
-  set(Java_JAR_EXECUTABLE ${JAVA_ARCHIVE})
-endif()
-
 if(NOT Java_JAVAC_EXECUTABLE)
   message(STATUS "Skipping installation of CLI/Application/Java - Set Java_JAVAC_EXECUTABLE variable to fix the problem")
   return()
 endif()
 
 project(JavaExamples Java )
-
 
 slicer3_set_plugins_output_path()
 
