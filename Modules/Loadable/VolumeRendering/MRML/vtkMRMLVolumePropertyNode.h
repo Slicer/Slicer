@@ -6,6 +6,9 @@
 #ifndef __vtkMRMLVolumePropertyNode_h
 #define __vtkMRMLVolumePropertyNode_h
 
+// VolumeRendering includes
+#include "vtkSlicerVolumeRenderingModuleMRMLExport.h"
+
 // MRML includes
 #include "vtkMRMLStorableNode.h"
 
@@ -21,7 +24,7 @@ class vtkVolumeProperty;
 
 #define COUNT_CROPPING_REGION_PLANES 6
 
-class VTK_MRML_EXPORT vtkMRMLVolumePropertyNode : public vtkMRMLStorableNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode : public vtkMRMLStorableNode
 {
 public:
   //--------------------------------------------------------------------------

@@ -18,13 +18,16 @@
 #ifndef __vtkMRMLVolumePropertyStorageNode_h
 #define __vtkMRMLVolumePropertyStorageNode_h
 
-#include "vtkMRML.h"
+// VolumeRendering includes
+#include "vtkSlicerVolumeRenderingModuleMRMLExport.h"
+
+// MRML includes
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLTransformNode.h" 
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVolumePropertyStorageNode : public vtkMRMLStorageNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorageNode
+  : public vtkMRMLStorageNode
 {
   public:
   static vtkMRMLVolumePropertyStorageNode *New();

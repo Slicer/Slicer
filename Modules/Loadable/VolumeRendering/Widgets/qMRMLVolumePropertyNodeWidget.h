@@ -27,8 +27,8 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// qMRMLWidget includes
-#include "qMRMLWidgetsExport.h"
+// VolumeRendering includes
+#include "qSlicerVolumeRenderingModuleWidgetsExport.h"
 class qMRMLVolumePropertyNodeWidgetPrivate;
 
 // MRML includes
@@ -39,7 +39,7 @@ class vtkMRMLVolumePropertyNode;
 class vtkControlPointsItem;
 class vtkVolumeProperty;
 
-class QMRML_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidget
   : public QWidget
 {
   Q_OBJECT
