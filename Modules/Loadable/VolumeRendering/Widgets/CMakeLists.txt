@@ -11,6 +11,8 @@ set(module_widgets_export_directive "Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXP
 
 # Additional directories to include
 set(module_widgets_include_directories
+  ${vtkSlicerVolumeRenderingModuleMRML_SOURCE_DIR}
+  ${vtkSlicerVolumeRenderingModuleMRML_BINARY_DIR}
   )
 
 # Source files
@@ -40,6 +42,7 @@ set(module_widgets_resources
 
 # Additional Target libraries
 set(module_widgets_target_libraries
+  vtkSlicerVolumeRenderingModuleMRML
   )
 
 SlicerMacroBuildModuleWidgets(

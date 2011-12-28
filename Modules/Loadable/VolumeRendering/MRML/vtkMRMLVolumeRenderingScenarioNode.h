@@ -20,16 +20,11 @@
 #ifndef __vtkMRMLVolumeRenderingScenarioNode_h
 #define __vtkMRMLVolumeRenderingScenarioNode_h
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLVolumePropertyNode.h"
-
+// VolumeRendering includes
 #include "vtkSlicerVolumeRenderingModuleMRMLExport.h"
 
-
-#include "vtkMatrix4x4.h"
+// MRML includes
+#include "vtkMRMLNode.h"
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingScenarioNode : public vtkMRMLNode

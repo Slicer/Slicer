@@ -16,7 +16,9 @@ set(module_mrml_include_directories
 # Source files
 set(module_mrml_SRCS
   vtkMRMLVolumePropertyNode.cxx
+  vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx
+  vtkMRMLVolumePropertyStorageNode.h
   vtkMRMLVolumeRenderingDisplayNode.cxx
   vtkMRMLVolumeRenderingDisplayNode.h
   vtkMRMLVolumeRenderingScenarioNode.cxx

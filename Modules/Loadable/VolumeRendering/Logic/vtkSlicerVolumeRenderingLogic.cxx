@@ -18,6 +18,9 @@
 #include "vtkMRMLSliceLogic.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
+// Annotations includes
+#include <vtkMRMLAnnotationROINode.h>
+
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorNode.h>
