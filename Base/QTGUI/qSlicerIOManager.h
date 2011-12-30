@@ -66,7 +66,7 @@ public:
   /// A dragEnterEvent has been forwarded to the IOManager;
   /// it checks whether the dragEnterEvent is accepted or not by itself.
   void dragEnterEvent(QDragEnterEvent *event);
-  /// Create a qSlicerDataDialog and forward him the QDropEvent.
+  /// Create a qSlicerDataDialog and forward the drop event to the dialog.
   void dropEvent(QDropEvent *event);
 
 public slots:

@@ -26,8 +26,6 @@ public:
   explicit qSlicerDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerDataDialogPrivate();
 
-  void dropEvent(QDropEvent *event);
-
   QList<qSlicerIO::IOProperties> selectedFiles()const;
 public slots:
   void addDirectory();
@@ -56,6 +54,10 @@ protected:
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
 
   void dragEnterEvent(QDragEnterEvent *event);
+  void dropEvent(QDropEvent *event);
+
+private:
+  friend class qSlicerDataDialog;
 };
 
 
