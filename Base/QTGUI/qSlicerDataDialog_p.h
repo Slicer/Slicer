@@ -13,6 +13,9 @@
 #include "qSlicerDataDialog.h"
 #include "ui_qSlicerDataDialog.h"
 
+class QDragEnterEvent;
+class QDropEvent;
+
 //-----------------------------------------------------------------------------
 class qSlicerDataDialogPrivate
   : public QDialog
@@ -22,7 +25,9 @@ class qSlicerDataDialogPrivate
 public:
   explicit qSlicerDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerDataDialogPrivate();
-                                     
+
+  void dropEvent(QDropEvent *event);
+
   QList<qSlicerIO::IOProperties> selectedFiles()const;
 public slots:
   void addDirectory();
@@ -43,11 +48,14 @@ protected:
     TypeColumn = 1,
     OptionsColumn = 2
   };
+
   void addDirectory(const QDir& directory);
   // addFile doesn't resize the columns to contents (as it might be a bit too
   // time consuming if you do it for every file added).
   void addFile(const QFileInfo& file);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
+
+  void dragEnterEvent(QDragEnterEvent *event);
 };
 
 

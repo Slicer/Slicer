@@ -1,5 +1,6 @@
 /// Qt includes
 #include <QDebug>
+#include <QDragEnterEvent>
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QSettings>
@@ -197,6 +198,23 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
     delete dialog;
     }
   return res;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
+{
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    {
+    event->acceptProposedAction();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::dropEvent(QDropEvent *event)
+{
+  qSlicerDataDialog* dataDialog = new qSlicerDataDialog(this);
+  dataDialog->dropEvent(event);
+  dataDialog->exec();
 }
 
 //-----------------------------------------------------------------------------

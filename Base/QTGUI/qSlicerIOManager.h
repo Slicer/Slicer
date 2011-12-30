@@ -16,6 +16,8 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 /// QT declarations
+class QDragEnterEvent;
+class QDropEvent;
 class QWidget;
 
 class qSlicerIOManagerPrivate;
@@ -60,6 +62,13 @@ public:
   /// It internally calls loadNodes() for each file.
   virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
                          vtkCollection* loadedNodes = 0);
+
+  /// A dragEnterEvent has been forwarded to the IOManager;
+  /// it checks whether the dragEnterEvent is accepted or not by itself.
+  void dragEnterEvent(QDragEnterEvent *event);
+  /// Create a qSlicerDataDialog and forward him the QDropEvent.
+  void dropEvent(QDropEvent *event);
+
 public slots:
 
   void openScreenshotDialog();

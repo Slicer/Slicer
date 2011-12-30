@@ -275,6 +275,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->CaptureToolBar->setActiveMRMLThreeDViewNode(
       this->LayoutManager->activeMRMLThreeDViewNode());
 
+  // Authorize Drops action from outside
+  q->setAcceptDrops(true);
+
   //----------------------------------------------------------------------------
   // View Toolbar
   //----------------------------------------------------------------------------
@@ -734,6 +737,18 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
       action->trigger();
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+  qSlicerApplication::application()->ioManager()->dragEnterEvent(event);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::dropEvent(QDropEvent *event)
+{
+  qSlicerApplication::application()->ioManager()->dropEvent(event);
 }
 
 //---------------------------------------------------------------------------

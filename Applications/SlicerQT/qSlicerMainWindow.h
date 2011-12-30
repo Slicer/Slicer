@@ -74,6 +74,15 @@ protected:
   // Connect MainWindow action with slots defined in MainWindowCore
   void setupMenuActions();
 
+  // Description:
+  // Forward the dragEnterEvent to the IOManager which will
+  // decide if it could accept a drag/drop or not.
+  void dragEnterEvent(QDragEnterEvent *event);
+
+  // Description:
+  // Forward the dropEvent to the IOManager.
+  void dropEvent(QDropEvent *event);
+
   virtual void closeEvent(QCloseEvent *event);
 
 protected:

@@ -21,6 +21,8 @@
 /// Qt includes
 #include <QDebug>
 #include <QComboBox>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QFileDialog>
 
 /// CTK includes
@@ -78,6 +80,9 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   // Reset clears the FileWidget of all previously added files.
   QPushButton* resetButton = this->ButtonBox->button(QDialogButtonBox::Reset);
   connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+
+  // Authorize Drops action from outside
+  this->setAcceptDrops(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -180,6 +185,47 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
   this->FileWidget->setSortingEnabled(sortingEnabled);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dragEnterEvent(QDragEnterEvent *event)
+{
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    {
+    event->acceptProposedAction();
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::dropEvent(QDropEvent *event)
+{
+  QList<QUrl> urls = event->mimeData()->urls();
+  if (urls.isEmpty())
+    {
+    return;
+    }
+
+  QString localPath;
+  QFileInfo pathInfo;
+  foreach(QUrl url, urls)
+    {
+    if (!url.isValid() || url.isEmpty())
+      {
+      continue;
+      }
+
+    localPath = url.toLocalFile(); // convert QUrl to local path
+    pathInfo.setFile(localPath); // information about the path
+
+    if (pathInfo.isDir()) // if it is a directory we add the files to the dialog
+      {
+      this->addDirectory(QDir(localPath));
+      }
+    else if (pathInfo.isFile()) // if it is a file we simply add the file
+      {
+      this->addFile(pathInfo);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -350,6 +396,14 @@ qSlicerIO::IOFileType qSlicerDataDialog::fileType()const
 qSlicerFileDialog::IOAction qSlicerDataDialog::action()const
 {
   return qSlicerFileDialog::Read;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialog::dropEvent(QDropEvent *event)
+{
+  Q_D(qSlicerDataDialog);
+
+  d->dropEvent(event);
 }
 
 //-----------------------------------------------------------------------------
