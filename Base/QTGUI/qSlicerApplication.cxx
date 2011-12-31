@@ -25,8 +25,8 @@
 
 // CTK includes
 #include <ctkColorDialog.h>
-#include <ctkConfirmExitDialog.h>
 #include <ctkErrorLogModel.h>
+#include <ctkMessageBox.h>
 #include <ctkSettings.h>
 #include <ctkToolTipTrapper.h>
 
@@ -290,25 +290,21 @@ void qSlicerApplication::setToolTipsEnabled(bool enable)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerApplication::confirmRestart(const QString& reason)
+void qSlicerApplication::confirmRestart(QString reason)
 {
-  QString reasonText(reason);
-  if (reasonText.isEmpty())
+  if (reason.isEmpty())
     {
-    reasonText = tr("Are you sure you want to restart?");
+    reason = tr("Are you sure you want to restart?");
     }
 
-  bool restart = true;
-  QSettings settings;
-  bool confirm = settings.value("MainWindow/ConfirmRestart", true).toBool();
-  if (confirm)
-    {
-    ctkConfirmExitDialog dialog;
-    dialog.setText(reasonText);
-    restart = (dialog.exec() == QDialog::Accepted);
-    settings.setValue("MainWindow/ConfirmRestart", !dialog.dontShowAnymore());
-    }
-  if (restart)
+  ctkMessageBox confirmDialog;
+  confirmDialog.setText(reason);
+  confirmDialog.setIcon(QMessageBox::Question);
+  confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  confirmDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+  bool restartConfirmed = (confirmDialog.exec() == QMessageBox::Ok);
+
+  if (restartConfirmed)
     {
     this->restart();
     }

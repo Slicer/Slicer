@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QMessageBox>
 #include <QSplashScreen>
 #include <QTimer>
 
@@ -28,7 +27,6 @@
 
 // CTK includes
 #include <ctkAbstractLibraryFactory.h>
-#include <ctkCallback.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
 #endif
@@ -74,18 +72,6 @@
 
 namespace
 {
-//----------------------------------------------------------------------------
-void popupDisclaimerDialog(void * data)
-{
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting))
-    {
-    QString message = QString("Thank you for using %1!\n\n"
-                              "This software is not intended for clinical use.")
-      .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
-    QMessageBox::information(reinterpret_cast<qSlicerMainWindow*>(data), "3D Slicer", message);
-    }
-}
-
 
 #ifdef Slicer_USE_PYTHONQT
 //----------------------------------------------------------------------------
@@ -347,15 +333,6 @@ int slicerQtMain(int argc, char* argv[])
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
-
-  // Popup disclaimer
-  ctkCallback popupDisclaimerDialogCallback;
-  if (window)
-    {
-    popupDisclaimerDialogCallback.setCallback(popupDisclaimerDialog);
-    popupDisclaimerDialogCallback.setCallbackData(window.data());
-    QTimer::singleShot(0, &popupDisclaimerDialogCallback, SLOT(invoke()));
-    }
 
   // showMRMLEventLoggerWidget();
 

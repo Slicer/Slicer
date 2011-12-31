@@ -22,12 +22,13 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QSettings>
+#include <QShowEvent>
 #include <QTimer>
 #include <QToolButton>
 #include <QMenu>
 
 // CTK includes
-#include <ctkConfirmExitDialog.h>
+#include <ctkMessageBox.h>
 #include <ctkSettingsDialog.h>
 #include <ctkVTKMagnifyView.h>
 #include <ctkVTKSliceView.h>
@@ -37,6 +38,7 @@
 #include "ui_qSlicerMainWindow.h"
 #include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
 #include "qSlicerAbstractModule.h"
+#include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsWizard.h"
 #endif
@@ -370,16 +372,7 @@ void qSlicerMainWindowPrivate::writeSettings()
 bool qSlicerMainWindowPrivate::confirmClose()
 {
   Q_Q(qSlicerMainWindow);
-  bool close = true;
-  QSettings settings;
-  bool confirm = settings.value("MainWindow/ConfirmExit", true).toBool();
-  if (confirm)
-    {
-    ctkConfirmExitDialog dialog(q);
-    close = (dialog.exec() == QDialog::Accepted);
-    settings.setValue("MainWindow/ConfirmExit", !dialog.dontShowAnymore());
-    }
-  return close;
+  return ctkMessageBox::confirmExit("MainWindow/DontConfirmExit", q);
 }
 
 //-----------------------------------------------------------------------------
@@ -464,6 +457,39 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
     {
     QTimer::singleShot(0, qApp, SLOT(closeAllWindows()));
     }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindow::showEvent(QShowEvent *event)
+{
+  this->Superclass::showEvent(event);
+  if (!event->spontaneous())
+    {
+    this->disclaimer();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindow::disclaimer()
+{
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
+      !app->coreCommandOptions()->pythonCode().isEmpty() ||
+      !app->coreCommandOptions()->pythonScript().isEmpty())
+    {
+    return;
+    }
+  QString message = QString("Thank you for using %1!\n\n"
+                            "This software is not intended for clinical use.")
+    .arg(app->applicationName() + " " + app->applicationVersion());
+
+  ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
+  disclaimerMessage->setAttribute( Qt::WA_DeleteOnClose, true );
+  disclaimerMessage->setText(message);
+  disclaimerMessage->setIcon(QMessageBox::Information);
+  disclaimerMessage->setDontShowAgainSettingsKey("MainWindow/DontShowDisclaimerMessage");
+  QTimer::singleShot(0, disclaimerMessage, SLOT(exec()));
 }
 
 //-----------------------------------------------------------------------------

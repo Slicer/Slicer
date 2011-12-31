@@ -70,9 +70,11 @@ protected slots:
   void onLayoutChanged(int);
 protected:
 
-  // Description:
-  // Connect MainWindow action with slots defined in MainWindowCore
+  /// Connect MainWindow action with slots defined in MainWindowCore
   void setupMenuActions();
+
+  /// Open a popup to warn the user Slicer is not for clinical use.
+  void disclaimer();
 
   // Description:
   // Forward the dragEnterEvent to the IOManager which will
@@ -84,6 +86,7 @@ protected:
   void dropEvent(QDropEvent *event);
 
   virtual void closeEvent(QCloseEvent *event);
+  virtual void showEvent(QShowEvent *event);
 
 protected:
   QScopedPointer<qSlicerMainWindowPrivate> d_ptr;

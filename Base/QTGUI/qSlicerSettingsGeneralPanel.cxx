@@ -19,7 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QSettings>
+
+// CTK includes
+#include <ctkBooleanMapper.h>
 
 // QtGUI includes
 #include "qSlicerApplication.h"
@@ -77,10 +83,16 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
                       SIGNAL(toggled(bool)));
-  q->registerProperty("MainWindow/ConfirmRestart", this->ConfirmRestartCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
-  q->registerProperty("MainWindow/ConfirmExit", this->ConfirmExitCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
+  ctkBooleanMapper* restartMapper = new ctkBooleanMapper(this->ConfirmRestartCheckBox, "checked", SIGNAL(toggled(bool)));
+  restartMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
+  restartMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
+  q->registerProperty("MainWindow/DontConfirmRestart",
+                      restartMapper,"valueAsInt", SIGNAL(valueAsIntChanged(int)));
+  ctkBooleanMapper* exitMapper = new ctkBooleanMapper(this->ConfirmExitCheckBox, "checked", SIGNAL(toggled(bool)));
+  exitMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
+  exitMapper->setFalseValue(static_cast<int>(QMessageBox::Ok));
+  q->registerProperty("MainWindow/DontConfirmExit",
+                      exitMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
   q->registerProperty("SlicerWikiURL", this->SlicerWikiURLLineEdit, "text",
                       SIGNAL(textChanged(QString)));
 }

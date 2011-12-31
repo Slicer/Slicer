@@ -104,7 +104,7 @@ public slots:
 
   /// Popup a dialog asking the user if the application should be restarted.
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"
-  void confirmRestart(const QString& reason = QString());
+  void confirmRestart(QString reason = QString());
 
 protected slots:
   void onSettingDialogAccepted();
