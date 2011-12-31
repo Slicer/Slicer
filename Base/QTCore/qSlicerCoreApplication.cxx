@@ -732,6 +732,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       {
       if (QFile::exists(pythonScript))
         {
+        qApp->processEvents();
         this->corePythonManager()->executeFile(pythonScript);
         exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
         }
@@ -743,6 +744,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     QString pythonCode = options->pythonCode();
     if(!pythonCode.isEmpty())
       {
+      qApp->processEvents();
       this->corePythonManager()->executeString(pythonCode);
       exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
       }
