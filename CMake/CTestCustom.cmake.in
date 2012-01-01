@@ -30,7 +30,7 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
   ".*/DesignerPlugins/.*"
 
   # Exclude generated cpp files
-  ".*/generated_cpp/.*
+  ".*/generated_cpp/.*"
 
   )
 
