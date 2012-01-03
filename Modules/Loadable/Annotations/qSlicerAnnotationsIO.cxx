@@ -95,7 +95,7 @@ qSlicerIO::IOFileType qSlicerAnnotationsIO::fileType()const
 QStringList qSlicerAnnotationsIO::extensions()const
 {
   return QStringList()
-    << "Annotatations (*.acsv)";
+    << "Annotations (*.acsv)";
 }
 
 //-----------------------------------------------------------------------------
