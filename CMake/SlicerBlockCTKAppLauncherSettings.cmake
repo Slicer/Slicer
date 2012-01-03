@@ -310,10 +310,10 @@ set(SLICER_PATHS_INSTALLED
 # ENVVARS
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_INSTALLED
-  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/lib/QtPlugins"
+  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
   # SLICER_HOME might already be set on the machine, overwrite it because it
   # could have unwanted side effects
-  "SLICER_HOME=${APPLAUNCHER_DIR}"
+  "SLICER_HOME=<APPLAUNCHER_DIR>"
   )
 
 if(Slicer_USE_PYTHONQT)
