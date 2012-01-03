@@ -87,7 +87,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_BIN_DIR@/designer/[^/]+\\.dylib$")
+  if(item MATCHES "@Slicer_BIN_DIR@/designer/[^/]+\\.(so|dylib)$")
     set(path "@executable_path@/../@Slicer_LIB_DIR@/designer")
   endif()
 
@@ -130,6 +130,8 @@ function(fixup_bundle_with_plugins app)
 
   set(candiates_pattern
     "${app_dir}/Contents/@Slicer_LIB_DIR@/designer/*${suffix}"
+    "${app_dir}/Contents/@Slicer_LIB_DIR@/designer/*Plugin.so"
+    "${app_dir}/Contents/@Slicer_LIB_DIR@/designer/*Plugins.so"
     "${app_dir}/Contents/@Slicer_LIB_DIR@/iconengines/*${suffix}"
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*${suffix}"
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.so"
