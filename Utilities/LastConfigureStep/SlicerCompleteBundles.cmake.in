@@ -99,6 +99,14 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
   endif()
 
+  if(item MATCHES "@Slicer_QtPlugins_DIR@/imageformats/[^/]+\\.(so|dylib)$")
+    set(path "@executable_path@/../@Slicer_QtPlugins_DIR@/imageformats")
+  endif()
+
+  if(item MATCHES "@Slicer_QtPlugins_DIR@/sqldrivers/[^/]+\\.(so|dylib)$")
+    set(path "@executable_path@/../@Slicer_QtPlugins_DIR@/sqldrivers")
+  endif()
+
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
   set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
   if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
@@ -216,6 +224,7 @@ function(fixup_bundle_with_plugins app)
   if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
     list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_CLIMODULES_LIB_DIR@")
   endif()
+  list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QtPlugins_DIR@")
 
   list(REMOVE_DUPLICATES libs_path)
 
