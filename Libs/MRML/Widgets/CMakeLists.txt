@@ -17,10 +17,6 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
 
-# CMake Macros
-include(CMake/qCTKParseArgumentsMacro.cmake)
-include(CMake/qCTKDesignerPluginMacros.cmake)
-
 # CMake module
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MRMLWidgets_SOURCE_DIR}/CMake")
 

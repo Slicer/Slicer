@@ -22,9 +22,9 @@
 #define __qMRMLWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qMRMLWidgetsPlugin_Export.h"
+#include "qMRMLWidgetsPluginsExport.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:

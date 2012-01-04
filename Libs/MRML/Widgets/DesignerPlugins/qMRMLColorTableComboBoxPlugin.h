@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLColorTableComboBoxPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLColorTableComboBoxPlugin
   : public QObject, public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT

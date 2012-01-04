@@ -1,14 +1,15 @@
-project(qSlicerBaseQTGUIPlugin)
+set(KIT ${PROJECT_NAME}Plugins)
+project(${KIT})
 
 #
-# See CMake/qCTKDesignerPluginMacros.cmake for details
+# See CTK/CMake/ctkMacroBuildQtPlugin.cmake for details
 #
 
-# The header '${module_widgets_name}Export.h' will be automatically configured.
-set(module_widgets_export_directive "Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT")
+# The header '${KIT}Export.h' will be automatically configured.
+set(${KIT}_EXPORT "Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT")
 
 # Source files
-set(designer_plugin_SRCS
+set(${KIT}_SRCS
   qSlicerQTGUIAbstractPlugin.cxx
   qSlicerQTGUIAbstractPlugin.h
   qSlicerQTGUIPlugins.cxx
@@ -23,7 +24,7 @@ set(designer_plugin_SRCS
   )
 
 # Headers that should run through moc
-set(designer_plugin_MOC_SRCS
+set(${KIT}_MOC_SRCS
   qSlicerQTGUIPlugins.h
 
   qSlicerQTGUIAbstractPlugin.h
@@ -32,19 +33,19 @@ set(designer_plugin_MOC_SRCS
   qSlicerWidgetPlugin.h
   )
 
-set(designer_plugin_TARGET_LIBRARIES
+set(${KIT}_TARGET_LIBRARIES
   qSlicerBaseQTGUI
   )
 if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND designer_plugin_TARGET_LIBRARIES
+  list(APPEND ${KIT}_TARGET_LIBRARIES
     qSlicerBaseQTCLI
     )
 endif()
 
-qctk_build_designer_plugin(
+ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}
-  EXPORT_DIRECTIVE ${module_widgets_export_directive}
-  SRCS ${designer_plugin_SRCS}
-  MOC_SRCS ${designer_plugin_MOC_SRCS}
-  TARGET_LIBRARIES ${designer_plugin_TARGET_LIBRARIES}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT}
+  SRCS ${${KIT}_SRCS}
+  MOC_SRCS ${${KIT}_MOC_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

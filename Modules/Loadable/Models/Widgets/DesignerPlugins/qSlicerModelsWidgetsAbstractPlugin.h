@@ -22,9 +22,9 @@
 #define __qSlicerModelsWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qSlicerModelsWidgetsPlugin_Export.h"
+#include "qSlicerModelsModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGIN_EXPORT qSlicerModelsWidgetsAbstractPlugin
+class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qSlicerModelsWidgetsAbstractPlugin
   : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);

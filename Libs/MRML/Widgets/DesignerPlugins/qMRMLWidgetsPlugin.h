@@ -57,7 +57,7 @@
 #include "qMRMLSceneFactoryWidgetPlugin.h"
 
 // \class Group the plugins in one library
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLWidgetsPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsPlugin
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

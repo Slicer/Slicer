@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLCheckableNodeComboBoxPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCheckableNodeComboBoxPlugin
   : public QObject, public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT

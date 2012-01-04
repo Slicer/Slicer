@@ -22,9 +22,9 @@
 #define __qSlicerAnnotationModuleWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qSlicerAnnotationsModuleWidgetsPlugin_Export.h"
+#include "qSlicerAnnotationsModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGIN_EXPORT qSlicerAnnotationModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerAnnotationModuleWidgetsAbstractPlugin
     : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);

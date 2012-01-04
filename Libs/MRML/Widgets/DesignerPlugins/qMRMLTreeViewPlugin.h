@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLTreeViewPlugin :
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTreeViewPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {

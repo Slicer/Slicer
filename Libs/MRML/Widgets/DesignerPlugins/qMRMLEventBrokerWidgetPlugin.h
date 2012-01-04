@@ -22,7 +22,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLEventBrokerWidgetPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLEventBrokerWidgetPlugin
   : public QObject
   , public qMRMLWidgetsAbstractPlugin
 {

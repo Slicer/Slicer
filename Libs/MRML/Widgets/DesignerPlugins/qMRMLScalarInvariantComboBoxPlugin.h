@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLScalarInvariantComboBoxPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLScalarInvariantComboBoxPlugin
   : public QObject
   ,  public qMRMLWidgetsAbstractPlugin
 {

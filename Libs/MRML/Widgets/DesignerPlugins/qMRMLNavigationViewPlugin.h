@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLNavigationViewPlugin :
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNavigationViewPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {

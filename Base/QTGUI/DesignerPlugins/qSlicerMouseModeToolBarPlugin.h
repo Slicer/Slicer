@@ -23,7 +23,7 @@
 
 #include "qSlicerQTGUIAbstractPlugin.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGIN_EXPORT qSlicerMouseModeToolBarPlugin
+class Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT qSlicerMouseModeToolBarPlugin
   : public qSlicerQTGUIAbstractPlugin
 {
   Q_OBJECT

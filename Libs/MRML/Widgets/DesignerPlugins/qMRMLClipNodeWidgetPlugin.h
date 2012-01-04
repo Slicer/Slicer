@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLClipNodeWidgetPlugin : public QObject,
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLClipNodeWidgetPlugin : public QObject,
                                          public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT

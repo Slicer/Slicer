@@ -3,7 +3,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLVolumeThresholdWidgetPlugin : public QObject,
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLVolumeThresholdWidgetPlugin : public QObject,
                                          public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT

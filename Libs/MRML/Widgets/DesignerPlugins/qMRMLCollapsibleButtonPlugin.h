@@ -23,7 +23,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLCollapsibleButtonPlugin :
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCollapsibleButtonPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {

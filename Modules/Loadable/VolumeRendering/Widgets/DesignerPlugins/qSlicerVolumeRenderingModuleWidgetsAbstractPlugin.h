@@ -22,10 +22,10 @@
 #define __qSlicerVolumeRenderingModuleWidgetsAbstractPlugin_h
 
 #include <QDesignerCustomWidgetInterface>
-#include "qSlicerVolumeRenderingModuleWidgetsPlugin_Export.h"
+#include "qSlicerVolumeRenderingModuleWidgetsPluginsExport.h"
 
-class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
+  : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:

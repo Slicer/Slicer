@@ -28,7 +28,7 @@
 #include "qMRMLModelDisplayNodeWidgetPlugin.h"
 
 // \class Group the plugins in one library
-class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGIN_EXPORT qSlicerModelsWidgetsPlugin
+class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qSlicerModelsWidgetsPlugin
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

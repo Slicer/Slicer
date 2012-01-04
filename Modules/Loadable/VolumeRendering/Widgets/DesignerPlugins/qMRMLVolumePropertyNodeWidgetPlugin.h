@@ -23,7 +23,7 @@
 
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
-class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGIN_EXPORT qMRMLVolumePropertyNodeWidgetPlugin
+class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qMRMLVolumePropertyNodeWidgetPlugin
   : public QObject
   , public qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
 {

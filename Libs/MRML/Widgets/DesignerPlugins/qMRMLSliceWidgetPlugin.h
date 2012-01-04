@@ -3,7 +3,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLSliceWidgetPlugin :
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSliceWidgetPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {

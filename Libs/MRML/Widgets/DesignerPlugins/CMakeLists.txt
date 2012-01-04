@@ -1,14 +1,15 @@
-project(qMRMLWidgetsPlugin)
+set(KIT ${PROJECT_NAME})
+project(${KIT}Plugins)
 
 #
-# See CMake/qCTKDesignerPluginMacros.cmake for details
+# See CTK/CMake/ctkMacroBuildQtPlugin.cmake for details
 #
 
-# The header '${module_widgets_name}Export.h' will be automatically configured.
-set(module_widgets_export_directive "QMRML_WIDGETS_PLUGIN_EXPORT")
+# The header '${KIT}PluginsExport.h' will be automatically configured.
+set(${KIT}_EXPORT "QMRML_WIDGETS_PLUGINS_EXPORT")
 
 # Source files
-set(designer_plugin_SRCS
+set(${KIT}_SRCS
   qMRMLWidgetsAbstractPlugin.cxx
   qMRMLWidgetsAbstractPlugin.h
   qMRMLWidgetsPlugin.cxx
@@ -79,7 +80,7 @@ set(designer_plugin_SRCS
   )
 
 # Headers that should run through moc
-set(designer_plugin_MOC_SRCS
+set(${KIT}_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
   qMRMLCaptureToolBarPlugin.h
@@ -115,14 +116,14 @@ set(designer_plugin_MOC_SRCS
   qMRMLWindowLevelWidgetPlugin.h
   )
 
-set(designer_plugin_TARGET_LIBRARIES
+set(${KIT}_TARGET_LIBRARIES
   qMRMLWidgets
   )
 
-qctk_build_designer_plugin(
+ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}
-  EXPORT_DIRECTIVE ${module_widgets_export_directive}
-  SRCS ${designer_plugin_SRCS}
-  MOC_SRCS ${designer_plugin_MOC_SRCS}
-  TARGET_LIBRARIES ${designer_plugin_TARGET_LIBRARIES}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT}
+  SRCS ${${KIT}_SRCS}
+  MOC_SRCS ${${KIT}_MOC_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

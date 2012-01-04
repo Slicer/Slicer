@@ -22,7 +22,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLMatrixWidgetPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLMatrixWidgetPlugin
   : public QObject
   , public qMRMLWidgetsAbstractPlugin
 {

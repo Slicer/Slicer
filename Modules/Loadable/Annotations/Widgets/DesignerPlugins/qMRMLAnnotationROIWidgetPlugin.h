@@ -23,7 +23,7 @@
 
 #include "qSlicerAnnotationModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGIN_EXPORT qMRMLAnnotationROIWidgetPlugin
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLAnnotationROIWidgetPlugin
     : public QObject, public qSlicerAnnotationModuleWidgetsAbstractPlugin
 {
   Q_OBJECT

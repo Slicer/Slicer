@@ -3,7 +3,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLThreeDViewPlugin :
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLThreeDViewPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {

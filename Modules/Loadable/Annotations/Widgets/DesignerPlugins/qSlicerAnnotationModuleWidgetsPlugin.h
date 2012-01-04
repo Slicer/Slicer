@@ -28,7 +28,7 @@
 #include "qMRMLAnnotationROIWidgetPlugin.h"
 
 // \class Group the plugins in one library
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGIN_EXPORT qSlicerAnnotationModuleWidgetsPlugin
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerAnnotationModuleWidgetsPlugin
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

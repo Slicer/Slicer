@@ -23,7 +23,7 @@
 
 #include "qSlicerModelsWidgetsAbstractPlugin.h"
 
-class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGIN_EXPORT qMRMLModelDisplayNodeWidgetPlugin
+class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qMRMLModelDisplayNodeWidgetPlugin
   : public QObject
   , public qSlicerModelsWidgetsAbstractPlugin
 {
