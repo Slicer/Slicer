@@ -133,22 +133,20 @@ void qSlicerWelcomeModuleWidget::setup()
           this, SLOT (loadNonDicomData()));
   connect(d->LoadSampleDataButton, SIGNAL(clicked()),
           this, SLOT (loadRemoteSampleData()));
-  connect(d->LoadVolumeButton, SIGNAL(clicked()),
-          this, SLOT (loadVolume()));
+  connect(d->EditApplicationSettingsButton, SIGNAL(clicked()),
+          this, SLOT (editApplicationSettings()));
 
   this->Superclass::setup();
 }
 
+
 //-----------------------------------------------------------------------------
-bool qSlicerWelcomeModuleWidget::loadVolume()
+void qSlicerWelcomeModuleWidget::editApplicationSettings()
 {
-  qSlicerIOManager *ioManager = qSlicerApplication::application()->ioManager();
-  if (!ioManager)
-    {
-    return false;
-    }
-  return ioManager->openAddVolumesDialog();
+  qSlicerApplication::application()->settingsDialog()->exec();
 }
+
+
 
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadDicomData()

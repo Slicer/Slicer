@@ -48,7 +48,7 @@ public slots:
   bool loadNonDicomData();
   bool loadRemoteSampleData();
   bool loadDicomData();
-  bool loadVolume();
+  void editApplicationSettings();
   bool presentTutorials();
   
 protected:

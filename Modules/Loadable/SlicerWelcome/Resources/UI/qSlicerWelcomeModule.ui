@@ -100,17 +100,17 @@
             </item>
 
             <item row="1" column="0">
-              <widget class="QPushButton" name="LoadVolumeButton">
+              <widget class="QPushButton" name="EditApplicationSettingsButton">
                 <property name="text">
-                  <string>Load Volume Data</string>
+                  <string>Customize Slicer</string>
                 </property>
                 <property name="icon">
                   <iconset resource="../qSlicerWelcomeModule.qrc">
-                    <normaloff>:/Images/SlicerLoadVolume-Original.png</normaloff>:/Images/SlicerLoadVolume-Original.png</iconset>
+                    <normaloff>:/Images/SlicerAdvancedGear-Original.png</normaloff>:/Images/SlicerAdvancedGear-Original.png</iconset>
                 </property>
                 <property name="iconSize">
                   <size>
-                    <width>45</width>
+                    <width>22</width>
                     <height>22</height>
                   </size>
                 </property>
@@ -524,10 +524,10 @@
       </hints>
     </connection>
     <connection>
-      <sender>LoadVolumeButton</sender>
+      <sender>EditApplicationSettingsButton</sender>
       <signal>clicked()</signal>
       <receiver>qSlicerWelcomeModuleWidget</receiver>
-      <slot>loadVolume()</slot>
+      <slot>editApplicationSettings()</slot>
       <hints>
         <hint type="sourcelabel">
           <x>424</x>
@@ -539,5 +539,6 @@
         </hint>
       </hints>
     </connection>
+
   </connections>
 </ui>
