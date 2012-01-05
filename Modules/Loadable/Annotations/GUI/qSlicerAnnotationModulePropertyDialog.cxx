@@ -1478,12 +1478,12 @@ void qSlicerAnnotationModulePropertyDialog::setColorOnAnnotationDisplayNodes(con
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(id);
   if (textDisplayNode)
     {
-    textDisplayNode->SetColor(color);
     // if it's the currently displayed node, update the button
     if (this->m_id.compare(id) == 0)
       {
       ui.textUnselectedColorPickerButton->setColor(qcolor);
       }
+    textDisplayNode->SetColor(color);
     }
   
   // get the point display node
