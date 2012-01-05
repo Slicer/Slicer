@@ -160,6 +160,10 @@ void vtkSliceViewInteractorStyle::OnChar()
     }
   else if ( !strcmp(key, "s") )
     {
+    vtkErrorMacro("TODO: set active lightbox/compare view slice");
+    /*
+     * This is commented out until the active slice highlight and the 
+     * correct texture is assigned.  See but #1644
     double xyz[4];
     this->GetEventXYZ(xyz);
     int k = static_cast<int>(xyz[2] + 0.5);
@@ -167,6 +171,7 @@ void vtkSliceViewInteractorStyle::OnChar()
       {
       sliceNode->SetActiveSlice(k);
       }
+    */
     }
   else if ( !strcmp(key, "S") )
     {
