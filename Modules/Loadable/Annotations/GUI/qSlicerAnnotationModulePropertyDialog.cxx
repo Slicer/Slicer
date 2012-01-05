@@ -748,7 +748,7 @@ void qSlicerAnnotationModulePropertyDialog::undo(vtkMRMLNode* node)
 void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor qcolor)
 {
   double color[3];
-  qSlicerAnnotationModulePropertyDialog::toQColor(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationTextUnselectedColor(this->m_id.c_str(),color);
 }
@@ -757,7 +757,7 @@ void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor 
 void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qcolor)
 {
   double color[3];
-  qSlicerAnnotationModulePropertyDialog::toQColor(color, qcolor);
+  qSlicerAnnotationModulePropertyDialog::toColor(qcolor, color);
 
   this->m_logic->SetAnnotationTextSelectedColor(this->m_id.c_str(),color);
 }
@@ -1478,12 +1478,12 @@ void qSlicerAnnotationModulePropertyDialog::setColorOnAnnotationDisplayNodes(con
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(id);
   if (textDisplayNode)
     {
+    textDisplayNode->SetColor(color);
     // if it's the currently displayed node, update the button
     if (this->m_id.compare(id) == 0)
       {
       ui.textUnselectedColorPickerButton->setColor(qcolor);
       }
-    textDisplayNode->SetColor(color);
     }
   
   // get the point display node
