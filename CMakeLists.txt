@@ -375,6 +375,12 @@ if(BUILD_TESTING)
 endif()
 
 #-----------------------------------------------------------------------------
+# Qt plugins (designer, imageformats, ...) relative directories
+#-----------------------------------------------------------------------------
+set(Slicer_QtPlugins_DIR "lib/QtPlugins")
+set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
+
+#-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
@@ -418,12 +424,6 @@ file(WRITE "${Slicer_BINARY_DIR}/SlicerTargets.cmake"
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
-
-#-----------------------------------------------------------------------------
-# Qt plugins (imageformats, ...) relative directories
-#------------------------------------------------------------------------------
-set(Slicer_QtPlugins_DIR "lib/QtPlugins")
-set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
 
 #-----------------------------------------------------------------------------
 # Slicer Home

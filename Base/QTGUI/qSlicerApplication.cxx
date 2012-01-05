@@ -154,11 +154,6 @@ void qSlicerApplicationPrivate::initStyle()
   // Force showing the icons in the menus despite the native OS style
   // discourages it
   QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, false);
-
-  // Init the style of the icons
-  // The plugin qSlicerIconEnginePlugin is located in <Slicer_LIB_DIR>/iconengines
-  // By adding the path to the lib dir, Qt will automatically load the icon engine plugin.
-  q->addLibraryPath(q->slicerHome() + "/" + Slicer_LIB_DIR);
 }
 
 //-----------------------------------------------------------------------------
