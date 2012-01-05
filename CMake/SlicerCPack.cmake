@@ -39,7 +39,8 @@ else()
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
 "[Paths]
-  Plugins = ${Slicer_QtPlugins_DIR}:${Slicer_LIB_DIR}")
+Plugins = ${Slicer_QtPlugins_DIR}
+")
   # .. and install
   install(FILES ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
           DESTINATION ${Slicer_INSTALL_ROOT}Resources
