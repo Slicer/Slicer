@@ -29,3 +29,7 @@ ctkMacroCompilePythonScript(
 add_subdirectory(
   DICOM2FullBrainTractography
   )
+
+if(BUILD_TESTING AND PYTHON_EXECUTABLE)
+  add_subdirectory(Testing)
+endif()
