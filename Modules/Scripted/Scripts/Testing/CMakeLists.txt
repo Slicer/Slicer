@@ -15,6 +15,8 @@ foreach(script_name ${KIT_UNITTEST_SCRIPTS})
     SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
 endforeach()
 
+list(APPEND KIT_UNITTEST_SCRIPTS qSlicerSampleDataModuleDownloadVolumeTest.py)
+
 foreach(script_name ${KIT_UNITTEST_SCRIPTS})
   slicer_add_python_unittest(SCRIPT ${script_name})
 endforeach()
