@@ -66,7 +66,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   delete oldLayout;
   flowLayout->setContentsMargins(0,0,0,0);
   this->setLayout(flowLayout);
-
+  
   this->FileTypeButtonGroup = new QButtonGroup(flowLayout);
   this->FileTypeButtonGroup->addButton(d->FiducialRadioButton);
   this->FileTypeButtonGroup->addButton(d->RulerRadioButton);
@@ -88,7 +88,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   // fiducial file by default
   d->FiducialRadioButton->setChecked(true);
   // in case the user doesn't touch anything, set up the properties now
-//  this->updateProperties();
+  this->updateProperties();
 }
 
 //-----------------------------------------------------------------------------
