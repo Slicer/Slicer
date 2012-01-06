@@ -30,11 +30,6 @@ class vtkMRMLVolumeRenderingScenarioNode;
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-//#include <vtkMRMLVolumeNode.h>
-//#include <vtkMRMLVolumePropertyNode.h>
-//#include <vtkMRMLAnnotationROINode.h>
-//#include "vtkMRMLVolumeRenderingDisplayNode.h"
-//#include "vtkMRMLVolumeRenderingScenarioNode.h"
 class vtkMRMLAnnotationROINode;
 class vtkMRMLLabelMapVolumeDisplayNode;
 class vtkMRMLNode;
@@ -60,10 +55,24 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerVolumeRenderingLog
   public vtkSlicerModuleLogic
 {
 public:
-  
+
   static vtkSlicerVolumeRenderingLogic *New();
   vtkTypeRevisionMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  /// The default rendering method is set to display nodes created in
+  /// CreateVolumeRenderingDisplayNode(). If no rendering method is given
+  /// the VTKCPURayCast is set.
+  /// \sa CreateVolumeRenderingDisplayNode
+  vtkSetMacro(DefaultRenderingMethod, int);
+  vtkGetMacro(DefaultRenderingMethod, int);
+
+  /// Create and add into the scene a volume rendering display node.
+  /// The new node is initialized with default properties such as
+  /// CurrentVolumeMapper.
+  /// Return the created node or 0 if there is no scene.
+  /// \sa setDefaultRenderingMethod
+  vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode();
 
   void AddVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
   void RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
@@ -73,9 +82,9 @@ public:
   void CopyDisplayToVolumeRenderingDisplayNode(
     vtkMRMLVolumeRenderingDisplayNode* node,
     vtkMRMLVolumeDisplayNode* displayNode = 0);
-  // Applies the properties (window level, threshold and color function) of
-  // the scalar display node to the volume rendering displaynode.
-  // If scalarDisplayNode is 0, it uses the first display node.
+  /// Applies the properties (window level, threshold and color function) of
+  /// the scalar display node to the volume rendering displaynode.
+  /// If scalarDisplayNode is 0, it uses the first display node.
   void CopyScalarDisplayToVolumeRenderingDisplayNode(
     vtkMRMLVolumeRenderingDisplayNode* volumeRenderingDisplayNode,
     vtkMRMLScalarVolumeDisplayNode* scalarDisplayNode = 0);
@@ -94,10 +103,6 @@ public:
     double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
   void SetLabelMapToVolumeProp(vtkLookupTable* lut, vtkVolumeProperty* node);
-
-  // Description:
-  // Create DisplayNode
-  vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode();
 
   // Description:
   // Update DisplayNode from VolumeNode,
@@ -158,6 +163,9 @@ public:
 
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 
+  /// Return the scene containing the volume rendering presets.
+  /// If there is no presets scene, a scene is created and presets are loaded
+  /// into.
   vtkMRMLScene* GetPresetsScene();
 
   bool IsDifferentFunction(vtkPiecewiseFunction* function1,
@@ -179,6 +187,8 @@ protected:
 
   // Update from 
   void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+
+  int DefaultRenderingMethod;
 
   typedef std::vector<vtkMRMLNode*> DisplayNodesType;
   DisplayNodesType DisplayNodes;

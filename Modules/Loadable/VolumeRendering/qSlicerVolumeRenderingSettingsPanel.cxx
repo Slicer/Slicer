@@ -29,10 +29,14 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLVolumeRenderingDisplayableManager.h>
 
+// VolumeRendering Logic includes
+#include <vtkSlicerVolumeRenderingLogic.h>
+
 // VTK includes
 #include <vtkGPUInfo.h>
 #include <vtkGPUInfoList.h>
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
 // --------------------------------------------------------------------------
 // qSlicerVolumeRenderingSettingsPanelPrivate
@@ -49,8 +53,9 @@ public:
   void init();
   int memoryFromString(const QString& memory)const;
   QString memoryToString(int memory)const;
-  
+
   QRegExp MemoryRegExp;
+  vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
 // --------------------------------------------------------------------------
@@ -97,6 +102,13 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
 
   q->registerProperty("VolumeRendering/GPUMemorySize", q, "gpuMemory",
                       SIGNAL(gpuMemoryChanged(int)));
+
+  // Default rendering method
+  QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(updateVolumeRenderingLogicDefaultRenderingMethod()));
+
+  q->registerProperty("VolumeRendering/RenderingMethod", this->RenderingMethodComboBox,
+                      "currentIndex", SIGNAL(currentIndexChanged(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -147,6 +159,15 @@ qSlicerVolumeRenderingSettingsPanel::~qSlicerVolumeRenderingSettingsPanel()
 }
 
 // --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel
+::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  d->VolumeRenderingLogic = logic;
+  this->updateVolumeRenderingLogicDefaultRenderingMethod();
+}
+
+// --------------------------------------------------------------------------
 int qSlicerVolumeRenderingSettingsPanel::gpuMemory()const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
@@ -190,4 +211,17 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
   // into account.
   //vtkMRMLThreeDViewDisplayableManagerFactory* factory
   //  = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel
+::updateVolumeRenderingLogicDefaultRenderingMethod()
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  if (d->VolumeRenderingLogic == 0)
+    {
+    return;
+    }
+  d->VolumeRenderingLogic->SetDefaultRenderingMethod(
+    d->RenderingMethodComboBox->currentIndex());
 }

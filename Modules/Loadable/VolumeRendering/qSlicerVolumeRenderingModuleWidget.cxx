@@ -468,8 +468,12 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     d->DisplayNode ? d->DisplayNode->GetCroppingEnabled() : false);
 
   // Techniques tab
+  QSettings settings;
+  int defaultRenderingMethod =
+    settings.value("VolumeRendering/RenderingMethod",
+                   vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast).toInt();
   int currentVolumeMapper = d->DisplayNode ?
-    d->DisplayNode->GetCurrentVolumeMapper() : -1;
+    d->DisplayNode->GetCurrentVolumeMapper() : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex( currentVolumeMapper );
   int index = d->DisplayNode ?
     d->MemorySizeComboBox->findData(QVariant(d->DisplayNode->GetGPUMemorySize())) : -1;
@@ -681,9 +685,6 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
     return;
     }
   d->DisplayNode->SetCurrentVolumeMapper(index);
-
-  QSettings settings;
-  settings.setValue("VolumeRenderingMethod", d->RenderingMethodComboBox->itemText(index));
 }
 
 // --------------------------------------------------------------------------
@@ -697,9 +698,6 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged(int index)
   int gpuMemorySize = d->MemorySizeComboBox->itemData(index).toInt();
   Q_ASSERT(gpuMemorySize >= 0 && gpuMemorySize < 10000);
   d->DisplayNode->SetGPUMemorySize(gpuMemorySize);
-
-  QSettings settings;
-  settings.setValue("GPUMemorySize", gpuMemorySize);
 }
 
 // --------------------------------------------------------------------------

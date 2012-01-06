@@ -216,6 +216,9 @@
       </item>
       <item row="3" column="1">
        <widget class="QComboBox" name="RenderingMethodComboBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <item>
          <property name="text">
           <string>VTK CPU Ray Casting</string>
@@ -1156,6 +1159,22 @@
     <hint type="destinationlabel">
      <x>49</x>
      <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>DisplayNodeComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>RenderingMethodComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>49</x>
+     <y>33</y>
     </hint>
    </hints>
   </connection>

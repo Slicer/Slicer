@@ -52,9 +52,9 @@ This module provides interactive visualization of 3D image data.
   </parameter>
   <parameter>
     <label>Rendering</label>
-   <description>Select a volume rendering method.
-***"VTK CPU Ray Casting": Available on all platforms, the volume rendering is enterily realized on the CPU
-***"VTK GPU Ray Casting": Available on Windows and Linux, fastest method to volume render
+   <description>Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.
+***"VTK CPU Ray Casting": Available on all platforms, the volume rendering is enterily realized on the CPU (default)
+***"VTK GPU Ray Casting": Available on all platforms except on Mac with an NVidia graphic card, fastest method to volume render
 ***"VTK OpenGL 3D Texture Mapping": Available on all platforms, use the GPU but it is not ray casting
 ***"NCI GPU Ray Casting": Available on all platforms, ray caster on the GPU, doesn't support compositing.</description>
   </parameter>
@@ -65,8 +65,10 @@ This module provides interactive visualization of 3D image data.
   <parameter>
    <label>Technique</label>
    <description>Advanced properties of the current volume rendering method.</description>
+  </parameter>
+  <parameter>
    <label>GPU Memory Size</label>
-   <description>Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the Application Settings dialog.</description>
+   <description>Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the application settings Volume Rendering panel.</description>
   </parameter>
   <parameter>
     <label>Quality Control</label>

@@ -99,17 +99,21 @@ QIcon qSlicerVolumeRenderingModule::icon()const
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
-  if (qSlicerApplication::application())
-    {
-    qSlicerApplication::application()->settingsDialog()->addPanel(
-      "Volume rendering", new qSlicerVolumeRenderingSettingsPanel);
-    }
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
     RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  if (qSlicerApplication::application())
+    {
+    qSlicerVolumeRenderingSettingsPanel* panel =
+      new qSlicerVolumeRenderingSettingsPanel;
+    panel->setVolumeRenderingLogic(volumeRenderingLogic);
+    qSlicerApplication::application()->settingsDialog()->addPanel(
+      "Volume rendering", panel);
+    }
   qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerVolumeRenderingIO(
-      vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic()), this));
+    new qSlicerVolumeRenderingIO(volumeRenderingLogic, this));
 }
 
 //-----------------------------------------------------------------------------

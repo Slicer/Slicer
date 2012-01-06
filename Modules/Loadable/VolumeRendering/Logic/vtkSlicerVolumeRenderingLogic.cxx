@@ -81,6 +81,7 @@ vtkStandardNewMacro(vtkSlicerVolumeRenderingLogic);
 //----------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
 {
+  this->DefaultRenderingMethod = vtkMRMLVolumeRenderingDisplayNode::None;
   this->PresetsScene = 0;
 }
 
@@ -606,13 +607,16 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
 {
   vtkMRMLVolumeRenderingDisplayNode *node = NULL;
 
-  if (this->GetMRMLScene())
-  {
-    node = vtkMRMLVolumeRenderingDisplayNode::New();
-    node->SetCurrentVolumeMapper(vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast);
-    this->GetMRMLScene()->AddNode(node);
-    node->Delete();
-  }
+  if (this->GetMRMLScene() == 0)
+    {
+    return node;
+    }
+  node = vtkMRMLVolumeRenderingDisplayNode::New();
+  node->SetCurrentVolumeMapper(
+    this->DefaultRenderingMethod != vtkMRMLVolumeRenderingDisplayNode::None ?
+    this->DefaultRenderingMethod : vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast);
+  this->GetMRMLScene()->AddNode(node);
+  node->Delete();
 
   return node;
 }

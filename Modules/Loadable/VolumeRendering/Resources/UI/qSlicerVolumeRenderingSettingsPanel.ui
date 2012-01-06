@@ -26,6 +26,9 @@
    </item>
    <item row="0" column="1">
     <widget class="QComboBox" name="GPUMemoryComboBox">
+     <property name="toolTip">
+      <string>Amount of memory available on the graphic card</string>
+     </property>
      <item>
       <property name="text">
        <string>128 Mo</string>
@@ -64,6 +67,40 @@
      <item>
       <property name="text">
        <string>4 Go</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="RenderingMethodLabel">
+     <property name="text">
+      <string>Default rendering method:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="RenderingMethodComboBox">
+     <property name="toolTip">
+      <string>Default rendering method</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>VTK CPU Ray Casting</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VTK GPU Ray Casting</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VTK OpenGL 3D Texture Mapping</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>NCI GPU Ray Casting</string>
       </property>
      </item>
     </widget>

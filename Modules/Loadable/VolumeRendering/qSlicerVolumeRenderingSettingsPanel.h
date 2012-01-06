@@ -24,9 +24,10 @@
 // CTK includes
 #include <ctkSettingsPanel.h>
 
-// QtGUI includes
+// VolumeRendering includes
 #include "qSlicerVolumeRenderingModuleExport.h"
 class qSlicerVolumeRenderingSettingsPanelPrivate;
+class vtkSlicerVolumeRenderingLogic;
 
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPanel
   : public ctkSettingsPanel
@@ -43,6 +44,11 @@ public:
   /// Destructor
   virtual ~qSlicerVolumeRenderingSettingsPanel();
 
+  /// Volume rendering logic is synchronized with the settings.
+  /// \sa vtkSlicerVolumeRenderingLogic::SetDefaultRenderingMethod
+  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+
   int gpuMemory()const;
   void setGPUMemory(int gpuMemory);
 
@@ -51,6 +57,7 @@ signals:
 
 protected slots:
   void onGPUMemoryChanged();
+  void updateVolumeRenderingLogicDefaultRenderingMethod();
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingSettingsPanelPrivate> d_ptr;

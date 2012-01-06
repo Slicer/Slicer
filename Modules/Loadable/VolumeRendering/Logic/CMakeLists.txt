@@ -46,3 +46,7 @@ configure_file(
 install(
   FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${qt_module_name}/presets.xml
   DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${qt_module_name} COMPONENT Runtime)
+
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
