@@ -35,4 +35,10 @@ class qSlicer@MODULENAME@ModuleTest1(unittest.TestCase):
     self.assertEqual(self.module.mrmlScene(), scene)
     self.module.setMRMLScene(slicer.mrmlScene)
     self.assertEqual(self.module.mrmlScene(), slicer.mrmlScene)
-    
+
+  def test_setCurrentModule(self):
+    import slicer
+    if not slicer.app.commandOptions().noMainWindow :
+      mainWindow = slicer.util.mainWindow()
+      mainWindow.moduleSelector().selectModule(self.module.name)
+
