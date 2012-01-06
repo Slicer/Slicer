@@ -260,7 +260,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
           if (!this->ReadAnnotationFiducialsProperties(refNode, line, labelColumn, xPointColumn, yPointColumn,  zPointColumn, selPointColumn, visPointColumn, numPointColumns))
             {
             // or it could be defining the point display properties
-            if (this->ReadAnnotationPointDisplayProperties(refNode->GetAnnotationPointDisplayNode(), line,"") < 0 )
+            if (this->ReadAnnotationPointDisplayProperties(refNode->GetAnnotationPointDisplayNode(), line, "point") < 0 )
               {
               vtkWarningMacro("ReadAnnotation: have a # line that can't parse:\n'" << line << "'");
               // skip, may be the file name/header line

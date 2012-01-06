@@ -4,6 +4,8 @@
 
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include <vtkMRMLScene.h>
 
 
@@ -54,16 +56,22 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   annNode->CreateAnnotationTextDisplayNode();
   if (!annNode->GetAnnotationTextDisplayNode())
     {
-       std::cerr << "Error in vtkMRMLAnnotationNode::AnnotationTextDisplayNode() " << std::endl;
-       return EXIT_FAILURE;
-    }  
+    std::cerr << "Error in vtkMRMLAnnotationNode::AnnotationTextDisplayNode() " << std::endl;
+    return EXIT_FAILURE;
+    }
+  double textColor[3] = {0.5, 0.25, 1.0};
+  annNode->GetAnnotationTextDisplayNode()->SetColor(textColor);
+
 
   annNode->CreateAnnotationPointDisplayNode();
   if (!annNode->GetAnnotationPointDisplayNode())
     {
        std::cerr << "Error in vtkMRMLAnnotationFiducialNode::AnnotationPointDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    }  
+    }
+  double pointColor[3] = {1.0, 0.5, 0.33};
+  annNode->GetAnnotationPointDisplayNode()->SetColor(pointColor);
+
   cout << "AnnotationPointDisplayNode Passed" << endl;
 
   annNode->Modified();
@@ -88,6 +96,14 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   std::stringstream initialAnnotation, afterAnnotation;
   annNode->PrintAnnotationInfo(initialAnnotation,in);
   annNode->ResetAnnotations();
+  if (annNode->GetAnnotationTextDisplayNode())
+    {
+    annNode->GetAnnotationTextDisplayNode()->SetColor(0.0, 0.0, 0.0);
+    }
+  if (annNode->GetAnnotationPointDisplayNode())
+    {
+    annNode->GetAnnotationPointDisplayNode()->SetColor(0.0, 0.0, 0.0);
+    }
   std::cout << "After ResetAnnotations, annNode GetVisible = " << annNode->GetVisible() << std::endl;
   node2->ReadData(annNode);
   std::cout << "After ReadData, annNode GetVisible = " << annNode->GetVisible() << std::endl;
@@ -101,6 +117,37 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
+  // check the colors manually
+  if (!annNode->GetAnnotationTextDisplayNode())
+    {
+    std::cerr << "Error in getting AnnotationTextDisplayNode() after read data" << std::endl;
+    return EXIT_FAILURE;
+    }
+  double afterTextColor[3] = {0.0, 0.0, 0.0};
+  annNode->GetAnnotationTextDisplayNode()->GetColor(afterTextColor);
+  if (fabs(afterTextColor[0] - textColor[0]) > 0.1 ||
+      fabs(afterTextColor[1] - textColor[1]) > 0.1 ||
+      fabs(afterTextColor[2] - textColor[2]) > 0.1)
+    {
+    std::cerr << "Error in retrieving the text display colour after write/read, expected " << textColor[0] << ", " << textColor[1] << ", " << textColor[2] << ", but got " << afterTextColor[0] << ", " << afterTextColor[1] << ", " << afterTextColor[2] << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!annNode->GetAnnotationPointDisplayNode())
+    {
+    std::cerr << "Error in getting AnnotationPointDisplayNode() after read data" << std::endl;
+    return EXIT_FAILURE;
+    }
+  double afterPointColor[3] = {0.0, 0.0, 0.0};
+  annNode->GetAnnotationPointDisplayNode()->GetColor(afterPointColor);
+  if (fabs(afterPointColor[0] - pointColor[0]) > 0.1 ||
+      fabs(afterPointColor[1] - pointColor[1]) > 0.1 ||
+      fabs(afterPointColor[2] - pointColor[2]) > 0.1)
+    {
+    std::cerr << "Error in retrieving the point display colour after write/read, expected " << pointColor[0] << ", " << pointColor[1] << ", " << pointColor[2] << ", but got " << afterPointColor[0] << ", " << afterPointColor[1] << ", " << afterPointColor[2] << std::endl;
+    return EXIT_FAILURE;
+    }
+  
   return EXIT_SUCCESS;
   
 }
