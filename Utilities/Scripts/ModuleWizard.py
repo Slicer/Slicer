@@ -16,6 +16,7 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.ui") or \
               fnmatch.fnmatch(file, "*.qrc") or \
               fnmatch.fnmatch(file, "*.py") or \
+              fnmatch.fnmatch(file, "*.xml") or \
               fnmatch.fnmatch(file, "*.png"):
             file = os.path.join(root,file)
             file = file[len(dir):] # strip common dir 
@@ -47,9 +48,9 @@ def usage():
   print "  --templateKey default is dirname of template"
   print "  --target default ./Modules/Loadable/<moduleName>"
   print "Examples (from Slicer4 source directory):"
-  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
-  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
-  print "  ./Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorTool MyEditorTool"
+  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
+  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
+  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect"
   print ""
 
 def main(argv):
