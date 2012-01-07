@@ -303,7 +303,7 @@ set(Slicer_VERSION_MAJOR "4")
 set(Slicer_VERSION_MINOR "0")
 set(Slicer_VERSION_PATCH "1")
 # Releases define a tweak level
-#set(Slicer_VERSION_TWEAK 0)
+set(Slicer_VERSION_TWEAK 0)
 
 if(NOT DEFINED Slicer_VERSION_TWEAK)
   # if it's not a release, use the date as a tweak
